@@ -1,0 +1,5 @@
+{
+  "extends": "@karyana-yandi/typescript-config/react",
+  "exclude": ["node_modules", "dist"]
+}
+

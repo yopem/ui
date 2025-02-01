@@ -1,0 +1,49 @@
+{
+  "name": "ui",
+  "private": true,
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yopem/ui.git"
+  },
+  "author": "Karyana Yandi <karyana@yandi.me>",
+  "license": "MIT",
+  "scripts": {
+    "build": "turbo run build --filter=!./apps/web/",
+    "build:all": "turbo run build",
+    "build:fast": "turbo run build:fast --filter=!./apps/web/",
+    "build:web": "turbo run build --filter=./apps/web/",
+    "clean": "pnpm -r --parallel exec git clean -xdf dist .cache .turbo .next *.log",
+    "clean:all": "pnpm clean && pnpm clean:deps",
+    "clean:deps": "pnpm -r --parallel exec git clean -xdf node_modules",
+    "dev": "turbo dev",
+    "format:fix": "prettier --write \"**/*.{ts,tsx,mjs,md}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,mjs,md}\"",
+    "lint": "turbo lint",
+    "lint:fix": "turbo lint:fix",
+    "postinstall": "lefthook install",
+    "prebuild": "pnpm install",
+    "release": "changeset publish",
+    "release:dev": "changeset publish --tag dev",
+    "typecheck": "turbo typecheck",
+    "version:dev": "changeset version --snapshot dev",
+    "version:set": "changeset version"
+  },
+  "devDependencies": {
+    "@changesets/changelog-github": "0.5.0",
+    "@changesets/cli": "2.27.12",
+    "@changesets/get-release-plan": "4.0.6",
+    "@changesets/types": "6.0.0",
+    "@karyana-yandi/eslint-config": "catalog:tooling",
+    "@karyana-yandi/prettier-config": "catalog:tooling",
+    "lefthook": "1.10.10",
+    "prettier": "catalog:tooling",
+    "turbo": "2.4.0",
+    "typescript": "catalog:tooling"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "packageManager": "pnpm@9.15.4",
+  "prettier": "@karyana-yandi/prettier-config/base"
+}

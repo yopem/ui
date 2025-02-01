@@ -1,0 +1,49 @@
+{
+  "name": "@yopem-ui/web",
+  "version": "0.0.1",
+  "description": "",
+  "keywords": [
+    "yopem-ui",
+    "web",
+    "ui",
+    "tailwindcss"
+  ],
+  "type": "module",
+  "private": true,
+  "author": "Karyana Yandi <karyana@yandi.me>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yopem/ui",
+    "directory": "apps/web"
+  },
+  "bugs": {
+    "url": "https://github.com/yopem/ui/issues"
+  },
+  "scripts": {
+    "dev": "next dev --turbopack --port 3000",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint --max-warnings 0",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@yopem-ui/react": "^0.0.1",
+    "@yopem-ui/utils": "^0.0.1",
+    "next": "15.1.6",
+    "react": "catalog:react",
+    "react-dom": "catalog:react"
+  },
+  "devDependencies": {
+    "@karyana-yandi/eslint-config": "catalog:tooling",
+    "@karyana-yandi/prettier-config": "catalog:tooling",
+    "@karyana-yandi/typescript-config": "catalog:tooling",
+    "@types/node": "22.13.0",
+    "@types/react": "catalog:react",
+    "@types/react-dom": "catalog:react",
+    "prettier": "catalog:tooling",
+    "typescript": "catalog:tooling",
+    "velite": "0.2.2"
+  },
+  "prettier": "@karyana-yandi/prettier-config/react"
+}
