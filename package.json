@@ -23,6 +23,7 @@
     "lint:fix": "turbo lint:fix",
     "postinstall": "lefthook install",
     "prebuild": "pnpm install",
+    "predev": "pnpm build --filter=!./apps/web/",
     "release": "changeset publish",
     "release:dev": "changeset publish --tag dev",
     "typecheck": "turbo typecheck",
