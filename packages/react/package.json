@@ -1,6 +1,7 @@
 {
   "name": "@yopem-ui/react",
   "version": "0.0.0",
+  "private": true,
   "description": "",
   "keywords": [
     "yopem-ui",
@@ -30,9 +31,6 @@
     "./package.json": "./package.json"
   },
   "sideEffects": false,
-  "publishConfig": {
-    "access": "public"
-  },
   "author": "Karyana Yandi <karyana@yandi.me>",
   "license": "MIT",
   "repository": {
