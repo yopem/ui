@@ -1,5 +1,3 @@
-/* eslint-disable prettier/prettier */
-
 import * as React from "react"
 import { cn, cva, type VariantProps } from "@yopem-ui/utils"
 
