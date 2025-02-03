@@ -1,4 +1,5 @@
 name: Publish Any Commit
+
 on: [push, pull_request]
 
 jobs:
@@ -9,16 +10,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - run: corepack enable
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: "pnpm"
-
-      - name: Install dependencies
-        run: pnpm install
+      - name: Install
+        uses: ./.github/composite-actions/install
 
       - name: Build
         run: pnpm build
 
-      - run: pnpx pkg-pr-new publish
+      - run: pnpx pkg-pr-new publish './packages/*'
