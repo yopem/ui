@@ -1,6 +1,6 @@
-import baseConfig from "@karyana-yandi/eslint-config/base"
-import reactConfig from "@karyana-yandi/eslint-config/react"
-import tailwindCssConfig from "@karyana-yandi/eslint-config/tailwindcss"
+import baseConfig from "@yopem/eslint-config/base"
+import reactConfig from "@yopem/eslint-config/react"
+import tailwindCssConfig from "@yopem/eslint-config/tailwindcss"
 
 /** @type {import('typescript-eslint').Config} */
 export default [

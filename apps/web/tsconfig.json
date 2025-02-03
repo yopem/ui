@@ -1,5 +1,5 @@
 {
-  "extends": "@karyana-yandi/typescript-config/nextjs",
+  "extends": "@yopem/typescript-config/nextjs",
   "compilerOptions": {
     "plugins": [
       {

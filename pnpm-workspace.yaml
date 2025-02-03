@@ -4,9 +4,9 @@ packages:
 
 catalogs:
   tooling:
-    "@karyana-yandi/eslint-config": ^0.0.3
-    "@karyana-yandi/prettier-config": ^0.0.3
-    "@karyana-yandi/typescript-config": ^0.0.3
+    "@yopem/eslint-config": ^0.1.0
+    "@yopem/prettier-config": ^0.1.0
+    "@yopem/typescript-config": ^0.1.0
     eslint: ^9.19.0
     prettier: ^3.4.2
     tailwindcss: ^4.0.2

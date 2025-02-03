@@ -28,16 +28,16 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@yopem-ui/react": "^0.0.1",
-    "@yopem-ui/utils": "^0.0.1",
+    "@yopem-ui/react": "workspace:*",
+    "@yopem-ui/utils": "workspace:*",
     "next": "15.1.6",
     "react": "catalog:react",
     "react-dom": "catalog:react"
   },
   "devDependencies": {
-    "@karyana-yandi/eslint-config": "catalog:tooling",
-    "@karyana-yandi/prettier-config": "catalog:tooling",
-    "@karyana-yandi/typescript-config": "catalog:tooling",
+    "@yopem/eslint-config": "catalog:tooling",
+    "@yopem/prettier-config": "catalog:tooling",
+    "@yopem/typescript-config": "catalog:tooling",
     "@types/node": "22.13.0",
     "@types/react": "catalog:react",
     "@types/react-dom": "catalog:react",
@@ -45,5 +45,5 @@
     "typescript": "catalog:tooling",
     "velite": "0.2.2"
   },
-  "prettier": "@karyana-yandi/prettier-config/react"
+  "prettier": "@yopem/prettier-config/react"
 }

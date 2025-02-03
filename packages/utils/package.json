@@ -57,15 +57,15 @@
     "tailwind-merge": "3.0.1"
   },
   "devDependencies": {
-    "@karyana-yandi/eslint-config": "catalog:tooling",
-    "@karyana-yandi/prettier-config": "catalog:tooling",
-    "@karyana-yandi/typescript-config": "catalog:tooling",
+    "@yopem/eslint-config": "catalog:tooling",
+    "@yopem/prettier-config": "catalog:tooling",
+    "@yopem/typescript-config": "catalog:tooling",
     "eslint": "catalog:tooling",
     "prettier": "catalog:tooling",
     "tsup": "catalog:tooling",
     "typescript": "catalog:tooling"
   },
-  "prettier": "@karyana-yandi/prettier-config/react",
+  "prettier": "@yopem/prettier-config/react",
   "tsup": {
     "clean": true,
     "target": "es2022",

@@ -34,8 +34,8 @@
     "@changesets/cli": "2.27.12",
     "@changesets/get-release-plan": "4.0.6",
     "@changesets/types": "6.0.0",
-    "@karyana-yandi/eslint-config": "catalog:tooling",
-    "@karyana-yandi/prettier-config": "catalog:tooling",
+    "@yopem/eslint-config": "catalog:tooling",
+    "@yopem/prettier-config": "catalog:tooling",
     "lefthook": "1.10.10",
     "prettier": "catalog:tooling",
     "turbo": "2.4.0",
@@ -45,5 +45,5 @@
     "node": ">=20"
   },
   "packageManager": "pnpm@9.15.4",
-  "prettier": "@karyana-yandi/prettier-config/base"
+  "prettier": "@yopem/prettier-config/base"
 }
