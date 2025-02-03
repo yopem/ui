@@ -47,6 +47,8 @@
     "build": "tsup src --dts",
     "build:fast": "tsup src",
     "dev": "pnpm build:fast -- --watch",
+    "format:fix": "prettier --write \"**/*.{ts,tsx,mjs,md}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,mjs,md}\"",
     "lint": "eslint ./src",
     "lint:fix": "eslint ./src --fix",
     "typecheck": "tsc --noEmit"

@@ -13,6 +13,8 @@
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
       "outputs": ["dist/**", ".next/**"]
     },
+    "format:check": {},
+    "format:fix": {},
     "test": {},
     "lint": {},
     "lint:fix": {},
@@ -29,4 +31,3 @@
     }
   }
 }
-

@@ -21,26 +21,31 @@
     "url": "https://github.com/yopem/ui/issues"
   },
   "scripts": {
-    "dev": "next dev --turbopack --port 3000",
     "build": "next build",
-    "start": "next start",
+    "dev": "next dev --turbopack --port 3000",
+    "format:check": "prettier --check \"**/*.{ts,tsx,mjs,md}\"",
+    "format:fix": "prettier --write \"**/*.{ts,tsx,mjs,md}\"",
     "lint": "next lint --max-warnings 0",
+    "start": "next start",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@tailwindcss/postcss": "^4.0.3",
     "@yopem-ui/react": "workspace:*",
     "@yopem-ui/utils": "workspace:*",
     "next": "15.1.6",
+    "postcss": "^8.5.1",
     "react": "catalog:react",
-    "react-dom": "catalog:react"
+    "react-dom": "catalog:react",
+    "tailwindcss": "^4.0.3"
   },
   "devDependencies": {
-    "@yopem/eslint-config": "catalog:tooling",
-    "@yopem/prettier-config": "catalog:tooling",
-    "@yopem/typescript-config": "catalog:tooling",
     "@types/node": "22.13.0",
     "@types/react": "catalog:react",
     "@types/react-dom": "catalog:react",
+    "@yopem/eslint-config": "catalog:tooling",
+    "@yopem/prettier-config": "catalog:tooling",
+    "@yopem/typescript-config": "catalog:tooling",
     "prettier": "catalog:tooling",
     "typescript": "catalog:tooling",
     "velite": "0.2.2"
