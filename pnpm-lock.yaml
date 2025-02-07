@@ -104,63 +104,8 @@ importers:
         version: 4.0.3
     devDependencies:
       '@types/node':
-        specifier: 22.13.0
-        version: 22.13.0
-      '@types/react':
-        specifier: catalog:react
-        version: 19.0.8
-      '@types/react-dom':
-        specifier: catalog:react
-        version: 19.0.3(@types/react@19.0.8)
-      '@yopem/eslint-config':
-        specifier: catalog:tooling
-        version: 0.1.0(@typescript-eslint/parser@8.22.0(eslint@9.19.0(jiti@2.4.2))(typescript@5.7.3))(jiti@2.4.2)(prettier@3.4.2)(tailwindcss@4.0.3)(turbo@2.4.0)(typescript@5.7.3)
-      '@yopem/prettier-config':
-        specifier: catalog:tooling
-        version: 0.1.0
-      '@yopem/typescript-config':
-        specifier: catalog:tooling
-        version: 0.1.0
-      prettier:
-        specifier: catalog:tooling
-        version: 3.4.2
-      typescript:
-        specifier: catalog:tooling
-        version: 5.7.3
-      velite:
-        specifier: 0.2.2
-        version: 0.2.2(acorn@8.14.0)
-
-  apps/web2:
-    dependencies:
-      '@tailwindcss/postcss':
-        specifier: ^4.0.3
-        version: 4.0.3
-      '@yopem-ui/react':
-        specifier: workspace:*
-        version: link:../../packages/react
-      '@yopem-ui/utils':
-        specifier: workspace:*
-        version: link:../../packages/utils
-      next:
-        specifier: 15.1.6
-        version: 15.1.6(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
-      postcss:
-        specifier: ^8.5.1
-        version: 8.5.1
-      react:
-        specifier: catalog:react
-        version: 19.0.0
-      react-dom:
-        specifier: catalog:react
-        version: 19.0.0(react@19.0.0)
-      tailwindcss:
-        specifier: ^4.0.3
-        version: 4.0.3
-    devDependencies:
-      '@types/node':
-        specifier: 22.13.0
-        version: 22.13.0
+        specifier: 22.13.1
+        version: 22.13.1
       '@types/react':
         specifier: catalog:react
         version: 19.0.8
@@ -1015,8 +960,8 @@ packages:
   '@types/node@12.20.55':
     resolution: {integrity: sha512-J8xLz7q2OFulZ2cyGTLE1TbbZcjpno7FaN6zdJNrgAdrJ+DZzh/uFR6YrTb4C+nXakvud8Q4+rbhoIWlYQbUFQ==}
 
-  '@types/node@22.13.0':
-    resolution: {integrity: sha512-ClIbNe36lawluuvq3+YYhnIN2CELi+6q8NpnM7PYp4hBn/TatfboPgVSm2rwKRfnV2M+Ty9GWDFI64KEe+kysA==}
+  '@types/node@22.13.1':
+    resolution: {integrity: sha512-jK8uzQlrvXqEU91UxiK5J7pKHyzgnI1Qnl0QDHIgVGuolJhRb9EEl28Cj9b3rGR8B2lhFCtvIm5os8lFnO/1Ew==}
 
   '@types/react-dom@19.0.3':
     resolution: {integrity: sha512-0Knk+HJiMP/qOZgMyNFamlIjw9OFCsyC2ZbigmEEyXXixgre6IQpm/4V+r3qH4GC1JPvRJKInw+on2rV6YZLeA==}
@@ -3884,7 +3829,7 @@ snapshots:
 
   '@types/node@12.20.55': {}
 
-  '@types/node@22.13.0':
+  '@types/node@22.13.1':
     dependencies:
       undici-types: 6.20.0
 
