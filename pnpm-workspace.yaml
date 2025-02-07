@@ -4,7 +4,7 @@ packages:
 
 catalogs:
   tooling:
-    "@yopem/eslint-config": ^0.1.0
+    "@yopem/eslint-config": ^0.1.1
     "@yopem/prettier-config": ^0.1.0
     "@yopem/typescript-config": ^0.1.0
     eslint: ^9.19.0
