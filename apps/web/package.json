@@ -30,7 +30,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@tailwindcss/postcss": "^4.0.4",
+    "@tailwindcss/postcss": "^4.0.5",
     "@yopem-ui/react": "workspace:*",
     "@yopem-ui/utils": "workspace:*",
     "next": "15.1.6",
