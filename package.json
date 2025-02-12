@@ -39,7 +39,7 @@
     "@yopem/prettier-config": "catalog:tooling",
     "lefthook": "1.10.10",
     "prettier": "catalog:tooling",
-    "turbo": "2.4.0",
+    "turbo": "2.4.1",
     "typescript": "catalog:tooling"
   },
   "engines": {
