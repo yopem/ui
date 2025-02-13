@@ -34,7 +34,7 @@
     "@yopem-ui/react": "workspace:*",
     "@yopem-ui/utils": "workspace:*",
     "next": "15.1.7",
-    "postcss": "^8.5.1",
+    "postcss": "^8.5.2",
     "react": "catalog:react",
     "react-dom": "catalog:react",
     "tailwindcss": "^4.0.5"
