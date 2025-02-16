@@ -2,4 +2,3 @@
   "extends": "@yopem/typescript-config/react",
   "exclude": ["node_modules", "dist"]
 }
-

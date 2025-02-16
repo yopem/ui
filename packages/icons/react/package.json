@@ -1,42 +1,46 @@
 {
-  "name": "@yopem-ui/react",
-  "version": "0.0.0",
-  "private": true,
+  "name": "@yopem-ui/react-icons",
+  "version": "0.0.1",
   "description": "",
   "keywords": [
     "yopem-ui",
     "react",
+    "icon",
+    "lucide",
     "ui",
     "tailwindcss"
   ],
   "type": "module",
-  "main": "src/index.ts",
-  "module": "src/index.ts",
-  "types": "src/index.ts",
+  "main": "dist/index.cjs",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
   "files": [
-    "src"
+    "dist"
   ],
   "exports": {
     ".": {
       "source": "./src/index.ts",
       "import": {
-        "types": "./src/index.ts",
-        "default": "./src/index.ts"
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
       },
       "require": {
-        "types": "./src/index.ts",
-        "default": "./src/index.ts"
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
       }
     },
     "./package.json": "./package.json"
   },
   "sideEffects": false,
+  "publishConfig": {
+    "access": "public"
+  },
   "author": "Karyana Yandi <karyana@yandi.me>",
   "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/yopem/ui",
-    "directory": "packages/react"
+    "directory": "packages/icons/react"
   },
   "bugs": {
     "url": "https://github.com/yopem/ui/issues"
@@ -53,12 +57,10 @@
   },
   "dependencies": {
     "react": "catalog:react",
-    "react-dom": "catalog:react"
+    "lucide-react": "0.475.0"
   },
   "devDependencies": {
     "@types/react": "catalog:react",
-    "@types/react-dom": "catalog:react",
-    "@yopem-ui/utils": "workspace:*",
     "@yopem/eslint-config": "catalog:tooling",
     "@yopem/prettier-config": "catalog:tooling",
     "@yopem/typescript-config": "catalog:tooling",
@@ -69,7 +71,7 @@
   },
   "peerDependencies": {
     "react": "catalog:react",
-    "react-dom": "catalog:react"
+    "lucide-react": "0.475.0"
   },
   "prettier": "@yopem/prettier-config/react",
   "tsup": {
