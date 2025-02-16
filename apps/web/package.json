@@ -23,6 +23,7 @@
   "scripts": {
     "build": "next build",
     "dev": "next dev --turbopack --port 3000",
+    "predev": "cd ../../packages/utils && pnpm build:fast",
     "format:check": "prettier --check \"**/*.{ts,tsx,mjs,md}\"",
     "format:fix": "prettier --write \"**/*.{ts,tsx,mjs,md}\"",
     "lint": "next lint --max-warnings 0",
@@ -31,11 +32,14 @@
   },
   "dependencies": {
     "@tailwindcss/postcss": "^4.0.6",
+    "@yopem-ui/react": "workspace:*",
+    "@yopem-ui/utils": "workspace:*",
     "next": "15.1.7",
     "postcss": "^8.5.2",
     "react": "catalog:react",
     "react-dom": "catalog:react",
-    "tailwindcss": "^4.0.6"
+    "tailwindcss": "^4.0.6",
+    "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
     "@types/node": "22.13.4",
