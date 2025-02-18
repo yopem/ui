@@ -170,9 +170,6 @@ importers:
       prettier:
         specifier: catalog:tooling
         version: 3.5.1
-      tsup:
-        specifier: catalog:tooling
-        version: 8.3.6(jiti@2.4.2)(postcss@8.5.2)(typescript@5.7.3)
       typescript:
         specifier: catalog:tooling
         version: 5.7.3
