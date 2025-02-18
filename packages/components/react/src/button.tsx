@@ -1,4 +1,5 @@
 import * as React from "react"
+import { ark } from "@ark-ui/react/factory"
 import { cn, cva, type VariantProps } from "@yopem-ui/utils"
 
 const buttonVariants = cva(
@@ -32,13 +33,15 @@ const buttonVariants = cva(
 
 export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
-    VariantProps<typeof buttonVariants> {}
+    VariantProps<typeof buttonVariants> {
+  asChild?: boolean
+}
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, ...props }, ref) => {
-    const Comp = "button"
+  ({ className, asChild, variant, size, ...props }, ref) => {
     return (
-      <Comp
+      <ark.button
+        asChild={asChild}
         className={cn(buttonVariants({ variant, size, className }))}
         ref={ref}
         {...props}
