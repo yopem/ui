@@ -23,7 +23,7 @@
   "scripts": {
     "build": "next build",
     "dev": "next dev --turbopack --port 3000",
-    "predev": "cd ../../ && pnpmn build:fast",
+    "predev": "cd ../../ && pnpm build:fast",
     "format:check": "prettier --check \"**/*.{ts,tsx,mjs,md}\"",
     "format:fix": "prettier --write \"**/*.{ts,tsx,mjs,md}\"",
     "lint": "next lint --max-warnings 0",
