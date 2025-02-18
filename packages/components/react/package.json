@@ -42,9 +42,6 @@
     "url": "https://github.com/yopem/ui/issues"
   },
   "scripts": {
-    "build": "tsup src --dts",
-    "build:fast": "tsup src",
-    "dev": "pnpm build:fast -- --watch",
     "format:fix": "prettier --write \"**/*.{ts,tsx,mjs,md}\"",
     "format:check": "prettier --check \"**/*.{ts,tsx,mjs,md}\"",
     "lint": "eslint ./src",
@@ -65,20 +62,11 @@
     "@yopem/typescript-config": "catalog:tooling",
     "eslint": "catalog:tooling",
     "prettier": "catalog:tooling",
-    "tsup": "catalog:tooling",
     "typescript": "catalog:tooling"
   },
   "peerDependencies": {
     "@ark-ui/react": "^4.9.1",
     "react": "catalog:react"
   },
-  "prettier": "@yopem/prettier-config/react",
-  "tsup": {
-    "clean": true,
-    "target": "es2022",
-    "format": [
-      "cjs",
-      "esm"
-    ]
-  }
+  "prettier": "@yopem/prettier-config/react"
 }
