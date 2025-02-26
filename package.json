@@ -45,7 +45,7 @@
   "engines": {
     "node": ">=20"
   },
-  "prettier": "@yopem/prettier-config/base",
+  "packageManager": "pnpm@10.5.0",
   "pnpm": {
     "onlyBuiltDependencies": [
       "esbuild",
@@ -53,5 +53,5 @@
       "sharp"
     ]
   },
-  "packageManager": "pnpm@10.4.1"
+  "prettier": "@yopem/prettier-config/base"
 }
