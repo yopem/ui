@@ -1,25 +1,15 @@
-name: Add changeset to Dependabot updates
+name: "Dependabot Changesets"
 
-on:
-  pull_request_target:
-    types: [opened, synchronize, labeled]
+on: pull_request
+
+permissions:
+  contents: write
+  pull-requests: write
 
 jobs:
-  dependabot:
-    name: Update Dependabot PR
+  changesets:
     runs-on: ubuntu-latest
-    if: contains(github.event.pull_request.labels.*.name, 'dependencies')
-
+    if: ${{ github.actor == 'dependabot[bot]' }}
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-          ref: ${{ github.event.pull_request.head.ref }}
-      - name: Update PR
-        uses: StafflinePeoplePlus/dependabot-changesets@v0.1.0
-        with:
-          owner: MyGithubUser
-          repo: my-cool-repo
-          pr-number: ${{ github.event.pull_request.number }}
-          token: ${{ github.token }}
+      - name: Dependabot Changesets
+        uses: feelepxyz/dependabot-changesets@v1
