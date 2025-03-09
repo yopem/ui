@@ -14,4 +14,4 @@ jobs:
     if: contains(github.event.pull_request.labels.*.name, 'dependencies')
     steps:
       - name: Dependabot Changesets
-        uses: feelepxyz/dependabot-changesets@v1
+        uses: timofei-iatsenko/dependabot-changesets@v1
