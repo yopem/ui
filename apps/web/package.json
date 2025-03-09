@@ -26,7 +26,8 @@
     "predev": "cd ../../ && pnpm build:fast",
     "format:check": "prettier --check \"**/*.{ts,tsx,mjs,md}\"",
     "format:fix": "prettier --write \"**/*.{ts,tsx,mjs,md}\"",
-    "lint": "next lint --max-warnings 0",
+    "lint": "eslint",
+    "lint:fix": "eslint --fix",
     "start": "next start",
     "typecheck": "tsc --noEmit"
   },
