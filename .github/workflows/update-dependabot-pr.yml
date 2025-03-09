@@ -18,3 +18,8 @@ jobs:
           ref: ${{ github.event.pull_request.head.ref }}
       - name: Update PR
         uses: StafflinePeoplePlus/dependabot-changesets@v0.1.0
+        with:
+          owner: MyGithubUser
+          repo: my-cool-repo
+          pr-number: ${{ github.event.pull_request.number }}
+          token: ${{ github.token }}
