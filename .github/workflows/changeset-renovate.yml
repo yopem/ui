@@ -1,0 +1,23 @@
+name: Generate changeset for Renovate
+
+on:
+  pull_request_target:
+    types: [opened, synchronize, labeled]
+
+jobs:
+  generate-changeset:
+    runs-on: ubuntu-latest
+    if: contains(github.event.pull_request.labels.*.name, 'dependencies')
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+          ref: ${{ github.head_ref }}
+      - name: Git Identity
+        run: |
+          git config --global user.name 'Yopem Bot'
+          git config --global user.email 'github@yopem.com'
+      - uses: pnpm/action-setup@v4.1.0
+      - name: Run changesets-renovate
+        run: pnpm dlx @scaleway/changesets-renovate
