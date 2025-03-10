@@ -4,6 +4,8 @@ on:
   pull_request_target:
     types: [opened, synchronize, labeled]
 
+env:
+  LEFTHOOK: 0
 jobs:
   generate-changeset:
     runs-on: ubuntu-latest
