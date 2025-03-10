@@ -13,6 +13,7 @@ concurrency:
 
 env:
   LEFTHOOK: 0
+
 jobs:
   # tests:
   #   name: Tests
