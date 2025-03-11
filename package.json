@@ -18,7 +18,7 @@
     "clean:deps": "pnpm -r --parallel exec git clean -xdf node_modules",
     "dev": "turbo dev",
     "format:check": "turbo format:check",
-    "format:fix": "turbo format:fix",
+    "format:write": "turbo format:write",
     "lint": "turbo lint",
     "lint:fix": "turbo lint:fix",
     "postinstall": "lefthook install",
