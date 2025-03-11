@@ -14,7 +14,7 @@
       "outputs": ["dist/**", ".next/**"]
     },
     "format:check": {},
-    "format:fix": {},
+    "format:write": {},
     "test": {},
     "lint": {},
     "lint:fix": {},
