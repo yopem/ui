@@ -1,5 +1,17 @@
 # @yopem-ui/react-icon
 
+## 0.0.3
+
+### Patch Changes
+
+- [`8976021`](https://github.com/yopem/ui/commit/89760217ea129524f9e78298eeaf49cb3670e8aa)
+  Thanks [@karyanayandi](https://github.com/karyanayandi)! - feat(components):
+  add Icon component using lucide-react
+
+  Implement a reusable Icon component that wraps lucide-react icons with a
+  simple API. The component allows referencing icons by name and forwards all
+  SVG props.
+
 ## 0.0.2
 
 ### Patch Changes
