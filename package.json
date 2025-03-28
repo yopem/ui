@@ -37,7 +37,7 @@
     "@changesets/types": "6.1.0",
     "@yopem/eslint-config": "catalog:tooling",
     "@yopem/prettier-config": "catalog:tooling",
-    "lefthook": "1.11.2",
+    "lefthook": "1.11.5",
     "prettier": "catalog:tooling",
     "turbo": "2.4.4",
     "typescript": "catalog:tooling"
