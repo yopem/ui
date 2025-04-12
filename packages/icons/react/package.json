@@ -57,7 +57,7 @@
   },
   "dependencies": {
     "react": "catalog:react",
-    "lucide-react": "0.485.0"
+    "lucide-react": "0.487.0"
   },
   "devDependencies": {
     "@types/react": "catalog:react",
@@ -71,7 +71,7 @@
   },
   "peerDependencies": {
     "react": "catalog:react",
-    "lucide-react": "0.485.0"
+    "lucide-react": "0.487.0"
   },
   "prettier": "@yopem/prettier-config/react",
   "tsup": {
