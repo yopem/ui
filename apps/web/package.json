@@ -34,7 +34,7 @@
   "dependencies": {
     "@yopem-ui/react": "workspace:*",
     "@yopem-ui/utils": "workspace:*",
-    "next": "15.2.3",
+    "next": "15.2.4",
     "react": "catalog:react",
     "react-dom": "catalog:react"
   },
