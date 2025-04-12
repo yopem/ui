@@ -59,7 +59,7 @@ importers:
         version: 6.1.0
       '@yopem/eslint-config':
         specifier: catalog:tooling
-        version: 0.1.10(@eslint/compat@1.2.7(eslint@9.23.0(jiti@2.4.2)))(@eslint/js@9.23.0)(@next/eslint-plugin-next@15.2.4)(@types/eslint@9.6.1)(eslint-config-prettier@10.1.1(eslint@9.23.0(jiti@2.4.2)))(eslint-plugin-import@2.31.0(@typescript-eslint/parser@8.28.0(eslint@9.23.0(jiti@2.4.2))(typescript@5.8.3))(eslint@9.23.0(jiti@2.4.2)))(eslint-plugin-jsx-a11y@6.10.2(eslint@9.23.0(jiti@2.4.2)))(eslint-plugin-prettier@5.2.5(@types/eslint@9.6.1)(eslint-config-prettier@10.1.1(eslint@9.23.0(jiti@2.4.2)))(eslint@9.23.0(jiti@2.4.2))(prettier@3.5.3))(eslint-plugin-react-hooks@5.2.0(eslint@9.23.0(jiti@2.4.2)))(eslint-plugin-react@7.37.4(eslint@9.23.0(jiti@2.4.2)))(eslint@9.23.0(jiti@2.4.2))(turbo@2.4.4)(typescript-eslint@8.28.0(eslint@9.23.0(jiti@2.4.2))(typescript@5.8.3))
+        version: 0.1.12(@eslint/compat@1.2.7(eslint@9.23.0(jiti@2.4.2)))(@eslint/js@9.23.0)(@next/eslint-plugin-next@15.2.4)(@types/eslint@9.6.1)(eslint-config-prettier@10.1.1(eslint@9.23.0(jiti@2.4.2)))(eslint-plugin-import@2.31.0(@typescript-eslint/parser@8.28.0(eslint@9.23.0(jiti@2.4.2))(typescript@5.8.3))(eslint@9.23.0(jiti@2.4.2)))(eslint-plugin-jsx-a11y@6.10.2(eslint@9.23.0(jiti@2.4.2)))(eslint-plugin-prettier@5.2.5(@types/eslint@9.6.1)(eslint-config-prettier@10.1.1(eslint@9.23.0(jiti@2.4.2)))(eslint@9.23.0(jiti@2.4.2))(prettier@3.5.3))(eslint-plugin-react-hooks@5.2.0(eslint@9.23.0(jiti@2.4.2)))(eslint-plugin-react@7.37.4(eslint@9.23.0(jiti@2.4.2)))(eslint@9.23.0(jiti@2.4.2))(typescript-eslint@8.28.0(eslint@9.23.0(jiti@2.4.2))(typescript@5.8.3))
       '@yopem/prettier-config':
         specifier: catalog:tooling
         version: 0.1.3(@ianvs/prettier-plugin-sort-imports@4.4.1(prettier@3.5.3))(prettier-plugin-tailwindcss@0.6.11(@ianvs/prettier-plugin-sort-imports@4.4.1(prettier@3.5.3))(prettier@3.5.3))(prettier@3.5.3)
@@ -1246,6 +1246,22 @@ packages:
 
   '@yopem/eslint-config@0.1.10':
     resolution: {integrity: sha512-cjj7/HtnXony95AHyPd30qkHZyIW0hP6QeEQJyAX6yrlhLfbmfKOT8AeXHgSXfJKYsYeecgj6NzK1pqdGDjxYg==}
+    peerDependencies:
+      '@eslint/compat': ^1.2.7
+      '@eslint/js': ^9.21.0
+      '@next/eslint-plugin-next': ^15.2.0
+      '@types/eslint': ^9.6.1
+      eslint: ^9.21.0
+      eslint-config-prettier: ^10.0.2
+      eslint-plugin-import: ^2.31.0
+      eslint-plugin-jsx-a11y: ^6.10.2
+      eslint-plugin-prettier: ^5.2.3
+      eslint-plugin-react: ^7.37.4
+      eslint-plugin-react-hooks: ^5.1.0
+      typescript-eslint: ^8.25.0
+
+  '@yopem/eslint-config@0.1.12':
+    resolution: {integrity: sha512-KZVM4QWDbnwce7o7RrWhTRUSkzU6u1Xn8lw0up4vgBoWGFtofoTtyf4aRvB8P/yijygt7bxtxdcWpWeXBJqaIA==}
     peerDependencies:
       '@eslint/compat': ^1.2.7
       '@eslint/js': ^9.21.0
@@ -4630,7 +4646,7 @@ snapshots:
     transitivePeerDependencies:
       - turbo
 
-  '@yopem/eslint-config@0.1.10(@eslint/compat@1.2.7(eslint@9.23.0(jiti@2.4.2)))(@eslint/js@9.23.0)(@next/eslint-plugin-next@15.2.4)(@types/eslint@9.6.1)(eslint-config-prettier@10.1.1(eslint@9.23.0(jiti@2.4.2)))(eslint-plugin-import@2.31.0(@typescript-eslint/parser@8.28.0(eslint@9.23.0(jiti@2.4.2))(typescript@5.8.3))(eslint@9.23.0(jiti@2.4.2)))(eslint-plugin-jsx-a11y@6.10.2(eslint@9.23.0(jiti@2.4.2)))(eslint-plugin-prettier@5.2.5(@types/eslint@9.6.1)(eslint-config-prettier@10.1.1(eslint@9.23.0(jiti@2.4.2)))(eslint@9.23.0(jiti@2.4.2))(prettier@3.5.3))(eslint-plugin-react-hooks@5.2.0(eslint@9.23.0(jiti@2.4.2)))(eslint-plugin-react@7.37.4(eslint@9.23.0(jiti@2.4.2)))(eslint@9.23.0(jiti@2.4.2))(turbo@2.4.4)(typescript-eslint@8.28.0(eslint@9.23.0(jiti@2.4.2))(typescript@5.8.3))':
+  '@yopem/eslint-config@0.1.12(@eslint/compat@1.2.7(eslint@9.23.0(jiti@2.4.2)))(@eslint/js@9.23.0)(@next/eslint-plugin-next@15.2.4)(@types/eslint@9.6.1)(eslint-config-prettier@10.1.1(eslint@9.23.0(jiti@2.4.2)))(eslint-plugin-import@2.31.0(@typescript-eslint/parser@8.28.0(eslint@9.23.0(jiti@2.4.2))(typescript@5.8.3))(eslint@9.23.0(jiti@2.4.2)))(eslint-plugin-jsx-a11y@6.10.2(eslint@9.23.0(jiti@2.4.2)))(eslint-plugin-prettier@5.2.5(@types/eslint@9.6.1)(eslint-config-prettier@10.1.1(eslint@9.23.0(jiti@2.4.2)))(eslint@9.23.0(jiti@2.4.2))(prettier@3.5.3))(eslint-plugin-react-hooks@5.2.0(eslint@9.23.0(jiti@2.4.2)))(eslint-plugin-react@7.37.4(eslint@9.23.0(jiti@2.4.2)))(eslint@9.23.0(jiti@2.4.2))(typescript-eslint@8.28.0(eslint@9.23.0(jiti@2.4.2))(typescript@5.8.3))':
     dependencies:
       '@eslint/compat': 1.2.7(eslint@9.23.0(jiti@2.4.2))
       '@eslint/js': 9.23.0
@@ -4643,10 +4659,7 @@ snapshots:
       eslint-plugin-prettier: 5.2.5(@types/eslint@9.6.1)(eslint-config-prettier@10.1.1(eslint@9.23.0(jiti@2.4.2)))(eslint@9.23.0(jiti@2.4.2))(prettier@3.5.3)
       eslint-plugin-react: 7.37.4(eslint@9.23.0(jiti@2.4.2))
       eslint-plugin-react-hooks: 5.2.0(eslint@9.23.0(jiti@2.4.2))
-      eslint-plugin-turbo: 2.4.4(eslint@9.23.0(jiti@2.4.2))(turbo@2.4.4)
       typescript-eslint: 8.28.0(eslint@9.23.0(jiti@2.4.2))(typescript@5.8.3)
-    transitivePeerDependencies:
-      - turbo
 
   '@yopem/prettier-config@0.1.3(@ianvs/prettier-plugin-sort-imports@4.4.1(prettier@3.5.3))(prettier-plugin-tailwindcss@0.6.11(@ianvs/prettier-plugin-sort-imports@4.4.1(prettier@3.5.3))(prettier@3.5.3))(prettier@3.5.3)':
     dependencies:
