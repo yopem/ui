@@ -62,7 +62,7 @@ importers:
         version: 0.1.12(@eslint/compat@1.2.7(eslint@9.23.0(jiti@2.4.2)))(@eslint/js@9.23.0)(@next/eslint-plugin-next@15.2.4)(@types/eslint@9.6.1)(eslint-config-prettier@10.1.1(eslint@9.23.0(jiti@2.4.2)))(eslint-plugin-import@2.31.0(eslint@9.23.0(jiti@2.4.2)))(eslint-plugin-jsx-a11y@6.10.2(eslint@9.23.0(jiti@2.4.2)))(eslint-plugin-prettier@5.2.5(@types/eslint@9.6.1)(eslint-config-prettier@10.1.1(eslint@9.23.0(jiti@2.4.2)))(eslint@9.23.0(jiti@2.4.2))(prettier@3.5.3))(eslint-plugin-react-hooks@5.2.0(eslint@9.23.0(jiti@2.4.2)))(eslint-plugin-react@7.37.4(eslint@9.23.0(jiti@2.4.2)))(eslint@9.23.0(jiti@2.4.2))(typescript-eslint@8.28.0(eslint@9.23.0(jiti@2.4.2))(typescript@5.8.3))
       '@yopem/prettier-config':
         specifier: catalog:tooling
-        version: 0.1.3(@ianvs/prettier-plugin-sort-imports@4.4.1(prettier@3.5.3))(prettier-plugin-tailwindcss@0.6.11(@ianvs/prettier-plugin-sort-imports@4.4.1(prettier@3.5.3))(prettier@3.5.3))(prettier@3.5.3)
+        version: 0.1.4(@ianvs/prettier-plugin-sort-imports@4.4.1(prettier@3.5.3))(prettier-plugin-tailwindcss@0.6.11(@ianvs/prettier-plugin-sort-imports@4.4.1(prettier@3.5.3))(prettier@3.5.3))(prettier@3.5.3)
       lefthook:
         specifier: 1.11.9
         version: 1.11.9
@@ -1394,6 +1394,13 @@ packages:
 
   '@yopem/prettier-config@0.1.3':
     resolution: {integrity: sha512-8BPiGwfOwgwDV7I0A8dkqESQtGQHYPPXo4KyzEVlesGc3apo97cL5WFU6DAAgCVz8JI+dt1/i+1tYAZuAZiPFw==}
+    peerDependencies:
+      '@ianvs/prettier-plugin-sort-imports': ^4.4.1
+      prettier: ^3.5.2
+      prettier-plugin-tailwindcss: ^0.6.11
+
+  '@yopem/prettier-config@0.1.4':
+    resolution: {integrity: sha512-H9bewSn/3u85uDc4cNr0yG/YJa/lKJq+WEZYcQYzMF2gOatA9MeGSoPcSTmEUMo4Msbnpsm/BqjftqYYeyU/xw==}
     peerDependencies:
       '@ianvs/prettier-plugin-sort-imports': ^4.4.1
       prettier: ^3.5.2
@@ -4865,6 +4872,12 @@ snapshots:
       typescript-eslint: 8.28.0(eslint@9.23.0(jiti@2.4.2))(typescript@5.8.3)
 
   '@yopem/prettier-config@0.1.3(@ianvs/prettier-plugin-sort-imports@4.4.1(prettier@3.5.3))(prettier-plugin-tailwindcss@0.6.11(@ianvs/prettier-plugin-sort-imports@4.4.1(prettier@3.5.3))(prettier@3.5.3))(prettier@3.5.3)':
+    dependencies:
+      '@ianvs/prettier-plugin-sort-imports': 4.4.1(prettier@3.5.3)
+      prettier: 3.5.3
+      prettier-plugin-tailwindcss: 0.6.11(@ianvs/prettier-plugin-sort-imports@4.4.1(prettier@3.5.3))(prettier@3.5.3)
+
+  '@yopem/prettier-config@0.1.4(@ianvs/prettier-plugin-sort-imports@4.4.1(prettier@3.5.3))(prettier-plugin-tailwindcss@0.6.11(@ianvs/prettier-plugin-sort-imports@4.4.1(prettier@3.5.3))(prettier@3.5.3))(prettier@3.5.3)':
     dependencies:
       '@ianvs/prettier-plugin-sort-imports': 4.4.1(prettier@3.5.3)
       prettier: 3.5.3
