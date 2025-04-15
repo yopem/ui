@@ -2,7 +2,7 @@ import * as React from "react"
 import * as LucideIcons from "lucide-react"
 import { type LucideIcon as LucideIconType } from "lucide-react"
 
-interface IconProps extends React.SVGProps<SVGSVGElement> {
+export interface IconProps extends React.SVGProps<SVGSVGElement> {
   name: keyof typeof LucideIcons
 }
 
