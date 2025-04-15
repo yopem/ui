@@ -1,5 +1,13 @@
 # @yopem-ui/react-icon
 
+## 0.0.6
+
+### Patch Changes
+
+- [`f3e1add`](https://github.com/yopem/ui/commit/f3e1add1b650cafb04fb11106bf7fb8f30880bd9)
+  Thanks [@karyanayandi](https://github.com/karyanayandi)! - fix(icons): update
+  React peer dependency and export interface
+
 ## 0.0.5
 
 ### Patch Changes
