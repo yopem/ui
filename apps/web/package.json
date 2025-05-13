@@ -33,6 +33,7 @@
   },
   "dependencies": {
     "@yopem-ui/react": "workspace:*",
+    "@yopem-ui/react-icons": "workspace:*",
     "@yopem-ui/utils": "workspace:*",
     "next": "15.3.2",
     "react": "catalog:react",
