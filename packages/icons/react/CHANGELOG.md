@@ -1,5 +1,14 @@
 # @yopem-ui/react-icon
 
+## 0.0.7
+
+### Patch Changes
+
+- [#131](https://github.com/yopem/ui/pull/131)
+  [`068fce3`](https://github.com/yopem/ui/commit/068fce347f73725624e0f6f1cad1af2ae8b9e7ee)
+  Thanks [@renovate](https://github.com/apps/renovate)! - Updated dependency
+  `react` to `^18.0.0 || ^19.0.0`.
+
 ## 0.0.6
 
 ### Patch Changes
