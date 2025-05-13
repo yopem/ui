@@ -51,12 +51,12 @@
   "dependencies": {
     "@ark-ui/react": "^5.0.0",
     "@yopem-ui/react-icons": "workspace:*",
+    "@yopem-ui/utils": "workspace:*",
     "react": "catalog:react"
   },
   "devDependencies": {
     "@types/react": "catalog:react",
     "@types/react-dom": "catalog:react",
-    "@yopem-ui/utils": "workspace:*",
     "@yopem/eslint-config": "catalog:tooling",
     "@yopem/prettier-config": "catalog:tooling",
     "@yopem/typescript-config": "catalog:tooling",

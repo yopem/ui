@@ -1,22 +1,46 @@
+"use client"
+
+import * as React from "react"
 import {
   Accordion,
   AccordionItem,
   AccordionItemContent,
   AccordionItemTrigger,
+  Alert,
+  AlertDescription,
+  AlertTitle,
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
   Badge,
+  Breadcrumb,
+  BreadcrumbEllipsis,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
   Button,
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+  Checkbox,
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+  Input,
 } from "@yopem-ui/react"
+import { Icon } from "@yopem-ui/react-icons"
 
 export default function Home() {
   return (
     <main className="mx-auto my-8 flex flex-col space-y-4 px-20">
       <h1 className="text-4xl">Hello, World!</h1>
-      <div>
-        <Button>Click me</Button>
-      </div>
-      <div>
-        <Badge>Badge</Badge>
-      </div>
+
+      {/* Accordion */}
       <div className="max-w-md rounded border p-4">
         <Accordion collapsible className="w-full">
           <AccordionItem value="item-1">
@@ -41,6 +65,142 @@ export default function Home() {
           </AccordionItem>
         </Accordion>
       </div>
+
+      {/* Alert */}
+      <div className="flex flex-col space-y-4">
+        <Alert variant="default">
+          <Icon name="Terminal" className="size" />
+          <AlertTitle>Heads up!</AlertTitle>
+          <AlertDescription>
+            You can add components to your app using the cli.
+          </AlertDescription>
+        </Alert>
+        <Alert variant="danger">
+          <Icon name="Terminal" className="size" />
+          <AlertTitle>Heads up!</AlertTitle>
+          <AlertDescription>
+            You can add components to your app using the cli.
+          </AlertDescription>
+        </Alert>
+      </div>
+
+      {/* Avatar */}
+      <Avatar>
+        <AvatarImage
+          src="https://github.com/karyanayandi.png"
+          alt="@karyanayandi"
+        />
+        <AvatarFallback>KY</AvatarFallback>
+      </Avatar>
+
+      {/* Badge */}
+      <div className="space-x-2">
+        <Badge>Default</Badge>
+        <Badge variant="outline">Outline</Badge>
+        <Badge variant="secondary">Secondary</Badge>
+        <Badge variant="danger">Danger</Badge>
+      </div>
+
+      {/* Breadcrumb */}
+      <Breadcrumb>
+        <BreadcrumbList>
+          <BreadcrumbItem>
+            <BreadcrumbLink href="/">Home</BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem>
+            <BreadcrumbEllipsis className="size-4" />
+            <span className="sr-only">Toggle menu</span>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem>
+            <BreadcrumbLink href="/docs/components">Components</BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem>
+            <BreadcrumbPage>Breadcrumb</BreadcrumbPage>
+          </BreadcrumbItem>
+        </BreadcrumbList>
+      </Breadcrumb>
+
+      {/* Button */}
+      <div className="flex space-x-2">
+        <Button>Default</Button>
+        <Button asChild variant="link">
+          <a href="#">Link</a>
+        </Button>
+        <Button variant="ghost">Ghost</Button>
+        <Button variant="outline">Outline</Button>
+        <Button variant="secondary">Secondary</Button>
+        <Button variant="danger">Danger</Button>
+      </div>
+
+      {/* Card */}
+      <Card className="w-[350px]">
+        <CardHeader>
+          <CardTitle>Create project</CardTitle>
+          <CardDescription>
+            Deploy your new project in one-click.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <form>
+            <div className="grid w-full items-center gap-4">
+              <div className="flex flex-col space-y-1.5">
+                <label htmlFor="name">Name</label>
+                <Input id="name" placeholder="Name of your project" />
+              </div>
+              <div className="flex flex-col space-y-1.5">
+                <label htmlFor="framework">Framework</label>
+                <Input id="framework" placeholder="Framework" />
+              </div>
+            </div>
+          </form>
+        </CardContent>
+        <CardFooter className="flex justify-between">
+          <Button variant="outline">Cancel</Button>
+          <Button>Deploy</Button>
+        </CardFooter>
+      </Card>
+
+      {/* Checkbox FIX: not working */}
+      <div className="flex items-center space-x-2">
+        <Checkbox id="terms" />
+        <label
+          htmlFor="terms"
+          className="text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+        >
+          Accept terms and conditions
+        </label>
+      </div>
+
+      {/* Collapsible */}
+      <Collapsible className="w-[350px] space-y-2">
+        <div className="flex items-center justify-between space-x-4 px-4">
+          <h4 className="text-sm font-semibold">
+            @peduarte starred 3 repositories
+          </h4>
+          <CollapsibleTrigger asChild>
+            <Button variant="ghost" size="sm" className="w-9 p-0">
+              <Icon name="ChevronsUpDown" className="h-4 w-4" />
+              <span className="sr-only">Toggle</span>
+            </Button>
+          </CollapsibleTrigger>
+        </div>
+        <div className="rounded-md border px-4 py-3 font-mono text-sm">
+          @ark-ui/react
+        </div>
+        <CollapsibleContent className="space-y-2">
+          <div className="rounded-md border px-4 py-3 font-mono text-sm">
+            @ark-ui/vue
+          </div>
+          <div className="rounded-md border px-4 py-3 font-mono text-sm">
+            @ark-ui/solid
+          </div>
+        </CollapsibleContent>
+      </Collapsible>
+
+      {/* Select FIX: not working  */}
     </main>
   )
 }
