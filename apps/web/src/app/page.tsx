@@ -31,13 +31,19 @@ import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
   Input,
 } from "@yopem-ui/react"
 import { Icon } from "@yopem-ui/react-icons"
 
 export default function Home() {
   return (
-    <main className="mx-auto my-8 flex flex-col space-y-4 px-20">
+    <main className="container mx-auto flex flex-col space-y-8 px-4 py-8 sm:px-6">
       <h1 className="text-4xl">Hello, World!</h1>
 
       {/* Accordion */}
@@ -124,7 +130,7 @@ export default function Home() {
       </Breadcrumb>
 
       {/* Button */}
-      <div className="flex space-x-2">
+      <div className="flex flex-wrap gap-2">
         <Button>Default</Button>
         <Button asChild variant="link">
           <a href="#">Link</a>
@@ -182,7 +188,7 @@ export default function Home() {
           </h4>
           <CollapsibleTrigger asChild>
             <Button variant="ghost" size="sm" className="w-9 p-0">
-              <Icon name="ChevronsUpDown" className="h-4 w-4" />
+              <Icon name="ChevronsUpDown" className="size-4" />
               <span className="sr-only">Toggle</span>
             </Button>
           </CollapsibleTrigger>
@@ -199,6 +205,22 @@ export default function Home() {
           </div>
         </CollapsibleContent>
       </Collapsible>
+
+      {/* Dialog */}
+      <Dialog>
+        <DialogTrigger asChild>
+          <Button>Open Dialog</Button>
+        </DialogTrigger>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Are you absolutely sure?</DialogTitle>
+            <DialogDescription>
+              This action cannot be undone. This will permanently delete your
+              account and remove your data from our servers.
+            </DialogDescription>
+          </DialogHeader>
+        </DialogContent>
+      </Dialog>
 
       {/* Select FIX: not working  */}
     </main>
