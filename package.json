@@ -35,12 +35,12 @@
     "@changesets/cli": "2.29.4",
     "@changesets/get-release-plan": "4.0.12",
     "@changesets/types": "6.1.0",
-    "@yopem/eslint-config": "catalog:tooling",
-    "@yopem/prettier-config": "catalog:tooling",
+    "@yopem/eslint-config": "catalog:config",
+    "@yopem/prettier-config": "catalog:config",
     "lefthook": "1.11.12",
-    "prettier": "catalog:tooling",
+    "prettier": "catalog:config",
     "turbo": "2.5.3",
-    "typescript": "catalog:tooling"
+    "typescript": "catalog:config"
   },
   "engines": {
     "node": ">=20"
