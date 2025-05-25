@@ -1,5 +1,14 @@
 # @yopem-ui/react-icon
 
+## 0.0.8
+
+### Patch Changes
+
+- [#147](https://github.com/yopem/ui/pull/147)
+  [`7c89e1c`](https://github.com/yopem/ui/commit/7c89e1cf7a762c2127ec77a433bbb70b8a636ae1)
+  Thanks [@renovate](https://github.com/apps/renovate)! - Updated dependency
+  `lucide-react` to `0.511.0`.
+
 ## 0.0.7
 
 ### Patch Changes
