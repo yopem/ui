@@ -109,7 +109,7 @@ export default function Home() {
             You can add components to your app using the cli.
           </AlertDescription>
         </Alert>
-        <Alert variant="danger">
+        <Alert variant="destructive">
           <Icon name="Terminal" className="size" />
           <AlertTitle>Heads up!</AlertTitle>
           <AlertDescription>
@@ -132,7 +132,7 @@ export default function Home() {
         <Badge>Default</Badge>
         <Badge variant="outline">Outline</Badge>
         <Badge variant="secondary">Secondary</Badge>
-        <Badge variant="danger">Danger</Badge>
+        <Badge variant="destructive">Destructive</Badge>
       </div>
 
       {/* Breadcrumb */}
@@ -166,7 +166,7 @@ export default function Home() {
         <Button variant="ghost">Ghost</Button>
         <Button variant="outline">Outline</Button>
         <Button variant="secondary">Secondary</Button>
-        <Button variant="danger">Danger</Button>
+        <Button variant="destructive">Destructive</Button>
       </div>
 
       {/* Card */}
