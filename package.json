@@ -11,7 +11,6 @@
   "scripts": {
     "build": "turbo run build --filter=!./apps/web/",
     "build:all": "turbo run build",
-    "build:fast": "turbo run build:fast --filter=!./apps/web/",
     "build:web": "turbo run build --filter=./apps/web/",
     "clean": "pnpm -r --parallel exec git clean -xdf dist .cache .turbo .next *.log",
     "clean:all": "pnpm clean && pnpm clean:deps",

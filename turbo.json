@@ -8,11 +8,6 @@
       "outputs": ["dist/**", ".next/**"],
       "cache": false
     },
-    "build:fast": {
-      "dependsOn": ["^build"],
-      "inputs": ["$TURBO_DEFAULT$", ".env*"],
-      "outputs": ["dist/**", ".next/**"]
-    },
     "format:check": {},
     "format:write": {},
     "test": {},
