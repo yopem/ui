@@ -31,6 +31,7 @@ import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
+  createListCollection,
   Dialog,
   DialogContent,
   DialogDescription,
@@ -58,8 +59,15 @@ import {
   ProgressLinear,
   RadioGroup,
   RadioGroupItem,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectItemIndicator,
+  SelectItemText,
+  SelectTrigger,
+  SelectValueText,
   Skeleton,
-  // Slider,
+  Slider,
   Toggle,
   ToggleGroup,
   ToggleGroupItem,
@@ -70,6 +78,10 @@ import {
 import { Icon } from "@yopem-ui/react-icons"
 
 export default function Home() {
+  const collection = createListCollection({
+    items: ["light", "dark", "system"],
+  })
+
   return (
     <main className="flex-start container mx-auto flex flex-col justify-start space-y-8 px-4 py-8 sm:px-6">
       <h1 className="text-4xl">Hello, World!</h1>
@@ -197,7 +209,6 @@ export default function Home() {
         </CardFooter>
       </Card>
 
-      {/* Checkbox FIX: not working */}
       <div className="flex items-center space-x-2">
         <Checkbox id="terms" />
         <label
@@ -406,12 +417,24 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Slider FIX: not working */}
-      {/* <div> */}
-      {/*   <Slider defaultValue={[50]} max={100} step={1} /> */}
-      {/* </div> */}
+      <div>
+        <Slider defaultValue={[50]} max={100} step={1} />
+      </div>
 
-      {/* Select FIX: not working  */}
+      {/* @ts-expect-error  FIX: Select not working and style very bad  */}
+      <Select collection={collection}>
+        <SelectTrigger className="w-[180px]">
+          <SelectValueText placeholder="Theme" />
+        </SelectTrigger>
+        <SelectContent>
+          {collection.items.map((item) => (
+            <SelectItem key={item} item={item}>
+              <SelectItemText>{item}</SelectItemText>
+              <SelectItemIndicator>✓</SelectItemIndicator>
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
 
       {/* Toggle Group TODO: need to recheck mode */}
       <div>

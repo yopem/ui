@@ -5,28 +5,28 @@ import { Accordion as AccordionPrimitive } from "@ark-ui/react/accordion"
 import { Icon } from "@yopem-ui/react-icons"
 import { cn } from "@yopem-ui/utils"
 
-const Accordion = AccordionPrimitive.Root
+export const Accordion = AccordionPrimitive.Root
 
-const AccordionItem = React.forwardRef<
-  React.ComponentRef<typeof AccordionPrimitive.Item>,
-  React.ComponentPropsWithoutRef<typeof AccordionPrimitive.Item>
->(({ className, ...props }, ref) => (
+export const AccordionItem = ({
+  className,
+  ...props
+}: React.ComponentProps<typeof AccordionPrimitive.Item>) => (
   <AccordionPrimitive.Item
-    ref={ref}
-    className={cn("border-b", className)}
+    data-slot="accordion-item"
+    className={cn("border-b last:border-b-0", className)}
     {...props}
   />
-))
-AccordionItem.displayName = "AccordionItem"
+)
 
-const AccordionItemTrigger = React.forwardRef<
-  React.ComponentRef<typeof AccordionPrimitive.ItemTrigger>,
-  React.ComponentPropsWithoutRef<typeof AccordionPrimitive.ItemTrigger>
->(({ className, children, ...props }, ref) => (
+export const AccordionItemTrigger = ({
+  className,
+  children,
+  ...props
+}: React.ComponentProps<typeof AccordionPrimitive.ItemTrigger>) => (
   <AccordionPrimitive.ItemTrigger
-    ref={ref}
+    data-slot="accordion-item-trigger"
     className={cn(
-      "flex flex-1 cursor-pointer items-center justify-between py-4 font-medium transition-all hover:underline [&[data-state=open]>svg]:rotate-180",
+      "focus-visible:border-ring focus-visible:ring-ring/50 flex flex-1 cursor-pointer items-start justify-between gap-4 rounded-md py-4 text-left text-sm font-medium transition-all outline-none hover:underline focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50 [&[data-state=open]>svg]:rotate-180",
       className,
     )}
     {...props}
@@ -34,25 +34,21 @@ const AccordionItemTrigger = React.forwardRef<
     {children}
     <Icon
       name="ChevronDown"
-      className="size-4 shrink-0 transition-transform duration-200"
+      className="text-muted-foreground pointer-events-none size-4 shrink-0 translate-y-0.5 transition-transform duration-200"
     />
   </AccordionPrimitive.ItemTrigger>
-))
-AccordionItemTrigger.displayName = AccordionPrimitive.ItemTrigger.displayName
+)
 
-const AccordionItemContent = React.forwardRef<
-  React.ComponentRef<typeof AccordionPrimitive.ItemContent>,
-  React.ComponentPropsWithoutRef<typeof AccordionPrimitive.ItemContent>
->(({ className, children, ...props }, ref) => (
+export const AccordionItemContent = ({
+  className,
+  children,
+  ...props
+}: React.ComponentProps<typeof AccordionPrimitive.ItemContent>) => (
   <AccordionPrimitive.ItemContent
-    ref={ref}
-    className="data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down overflow-hidden text-sm transition-all"
+    data-slot="accordion-content"
+    className="data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down overflow-hidden text-sm"
     {...props}
   >
     <div className={cn("pt-0 pb-4", className)}>{children}</div>
   </AccordionPrimitive.ItemContent>
-))
-
-AccordionItemContent.displayName = AccordionPrimitive.ItemContent.displayName
-
-export { Accordion, AccordionItem, AccordionItemTrigger, AccordionItemContent }
+)
