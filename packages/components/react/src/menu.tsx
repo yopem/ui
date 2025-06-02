@@ -16,7 +16,21 @@ export const MenuTrigger = ({
 }: React.ComponentProps<typeof MenuPrimitive.Trigger>) => {
   return <MenuPrimitive.Trigger data-slot="menu-trigger" {...props} />
 }
-
+export const MenuTriggerItem = ({
+  className,
+  ...props
+}: React.ComponentProps<typeof MenuPrimitive.TriggerItem>) => {
+  return (
+    <MenuPrimitive.TriggerItem
+      data-slot="menu-trigger-item"
+      className={cn(
+        "hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground data-[variant=destructive]:text-destructive data-[variant=destructive]:focus:bg-destructive/10 dark:data-[variant=destructive]:focus:bg-destructive/20 data-[variant=destructive]:focus:text-destructive data-[variant=destructive]:*:[svg]:!text-destructive [&_svg:not([class*='text-'])]:text-muted-foreground relative flex cursor-default items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-hidden select-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50 data-[inset]:pl-8 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+        className,
+      )}
+      {...props}
+    />
+  )
+}
 const MenuPositioner = ({
   ...props
 }: React.ComponentProps<typeof MenuPrimitive.Positioner>) => {
@@ -32,7 +46,7 @@ export const MenuContent = ({
       <MenuPrimitive.Content
         data-slot="menu-content"
         className={cn(
-          "bg-popover text-popover-foreground data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 z-50 max-h-(--radix-menu-content-available-height) min-w-[8rem] origin-(--radix-menu-content-transform-origin) overflow-x-hidden overflow-y-auto rounded-md border p-1 shadow-md",
+          "bg-popover text-popover-foreground data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 z-50 flex max-h-(--radix-menu-content-available-height) min-w-[8rem] origin-(--radix-menu-content-transform-origin) flex-col gap-2 overflow-x-hidden overflow-y-auto rounded-md rounded-sm border px-2 py-1.5 text-sm shadow-md",
           className,
         )}
         {...props}
@@ -45,6 +59,12 @@ export const MenuItemGroup = ({
   ...props
 }: React.ComponentProps<typeof MenuPrimitive.ItemGroup>) => {
   return <MenuPrimitive.ItemGroup data-slot="menu-item-group" {...props} />
+}
+
+export const MenuItemText = ({
+  ...props
+}: React.ComponentProps<typeof MenuPrimitive.ItemText>) => {
+  return <MenuPrimitive.ItemText data-slot="menu-item-text" {...props} />
 }
 
 export const MenuItem = ({
@@ -62,7 +82,7 @@ export const MenuItem = ({
       data-inset={inset}
       data-variant={variant}
       className={cn(
-        "focus:bg-accent focus:text-accent-foreground data-[variant=destructive]:text-destructive data-[variant=destructive]:focus:bg-destructive/10 dark:data-[variant=destructive]:focus:bg-destructive/20 data-[variant=destructive]:focus:text-destructive data-[variant=destructive]:*:[svg]:!text-destructive [&_svg:not([class*='text-'])]:text-muted-foreground relative flex cursor-default items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-hidden select-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50 data-[inset]:pl-8 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+        "hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground data-[variant=destructive]:text-destructive data-[variant=destructive]:focus:bg-destructive/10 dark:data-[variant=destructive]:focus:bg-destructive/20 data-[variant=destructive]:focus:text-destructive data-[variant=destructive]:*:[svg]:!text-destructive [&_svg:not([class*='text-'])]:text-muted-foreground relative flex cursor-default items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-hidden select-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50 data-[inset]:pl-8 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
         className,
       )}
       {...props}
@@ -80,7 +100,7 @@ export const MenuCheckboxItem = ({
     <MenuPrimitive.CheckboxItem
       data-slot="menu-checkbox-item"
       className={cn(
-        "focus:bg-accent focus:text-accent-foreground relative flex cursor-default items-center gap-2 rounded-sm py-1.5 pr-2 pl-8 text-sm outline-hidden select-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+        "hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground relative flex cursor-default items-center gap-2 rounded-sm py-1.5 pr-2 pl-8 text-sm outline-hidden select-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
         className,
       )}
       checked={checked}
@@ -116,7 +136,7 @@ export const MenuRadioItem = ({
     <MenuPrimitive.RadioItem
       data-slot="menu-radio-item"
       className={cn(
-        "focus:bg-accent focus:text-accent-foreground relative flex cursor-default items-center gap-2 rounded-sm py-1.5 pr-2 pl-8 text-sm outline-hidden select-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+        "hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground relative flex cursor-default items-center gap-2 rounded-sm py-1.5 pr-2 pl-8 text-sm outline-hidden select-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
         className,
       )}
       {...props}
@@ -143,7 +163,7 @@ export const MenuItemGroupLabel = ({
       data-slot="menu-item-group-label"
       data-inset={inset}
       className={cn(
-        "px-2 py-1.5 text-sm font-medium data-[inset]:pl-8",
+        "px-2 py-1.5 text-sm font-semibold data-[inset]:pl-8",
         className,
       )}
       {...props}
@@ -151,6 +171,13 @@ export const MenuItemGroupLabel = ({
   )
 }
 
+export const MenuItemIndicator = ({
+  ...props
+}: React.ComponentProps<typeof MenuPrimitive.ItemIndicator>) => {
+  return (
+    <MenuPrimitive.ItemIndicator data-slot="menu-item-indicator" {...props} />
+  )
+}
 export const MenuSeparator = ({
   className,
   ...props
