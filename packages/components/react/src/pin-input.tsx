@@ -4,50 +4,62 @@ import * as React from "react"
 import { PinInput as PinInputPrimitive } from "@ark-ui/react/pin-input"
 import { cn } from "@yopem-ui/utils"
 
-const PinInput = PinInputPrimitive.Root
-const PinInputLabel = PinInputPrimitive.Label
-const PinInputHiddenInput = PinInputPrimitive.HiddenInput
+export const PinInput = ({
+  ...props
+}: React.ComponentProps<typeof PinInputPrimitive.Root>) => (
+  <PinInputPrimitive.Root data-slot="pin-input" {...props} />
+)
 
-const PinInputInput = React.forwardRef<
-  React.ComponentRef<typeof PinInputPrimitive.Input>,
-  React.ComponentPropsWithoutRef<typeof PinInputPrimitive.Input>
->(({ className, ...props }, ref) => (
-  <PinInputPrimitive.Input
-    ref={ref}
-    className={cn(
-      "flex items-center gap-2 has-[:disabled]:opacity-50",
-      className,
-    )}
-    {...props}
-  />
-))
-PinInputInput.displayName = "PinInputInput"
+export const PinInputLabel = ({
+  ...props
+}: React.ComponentProps<typeof PinInputPrimitive.Label>) => (
+  <PinInputPrimitive.Label data-slot="pin-input-label" {...props} />
+)
 
-const PinInputControl = React.forwardRef<
-  React.ComponentRef<typeof PinInputPrimitive.Control>,
-  React.ComponentPropsWithoutRef<typeof PinInputPrimitive.Control>
->(({ className, ...props }, ref) => (
-  <PinInputPrimitive.Control
-    ref={ref}
-    className={cn("disabled:cursor-not-allowed", className)}
-    {...props}
-  />
-))
-PinInputControl.displayName = "PinInputControl"
+export const PinInputHiddenInput = ({
+  ...props
+}: React.ComponentProps<typeof PinInputPrimitive.HiddenInput>) => (
+  <PinInputPrimitive.HiddenInput data-slot="pin-input-hidden" {...props} />
+)
 
-const PinInputGroup = React.forwardRef<
-  React.ComponentRef<"div">,
-  React.ComponentPropsWithoutRef<"div">
->(({ className, ...props }, ref) => (
-  <div ref={ref} className={cn("flex items-center", className)} {...props} />
-))
-PinInputGroup.displayName = "PinInputGroup"
+export const PinInputInput = ({
+  className,
+  ...props
+}: React.ComponentProps<typeof PinInputPrimitive.Input>) => {
+  return (
+    <PinInputPrimitive.Input
+      data-slot="pin-input-input"
+      className={cn(
+        "flex items-center gap-2 has-[:disabled]:opacity-50",
+        className,
+      )}
+      {...props}
+    />
+  )
+}
 
-export {
-  PinInput,
-  PinInputLabel,
-  PinInputInput,
-  PinInputControl,
-  PinInputGroup,
-  PinInputHiddenInput,
+export const PinInputControl = ({
+  className,
+  ...props
+}: React.ComponentProps<typeof PinInputPrimitive.Control>) => {
+  return (
+    <PinInputPrimitive.Control
+      data-slot="pin-input-control"
+      className={cn("disabled:cursor-not-allowed", className)}
+      {...props}
+    />
+  )
+}
+
+export const PinInputGroup = ({
+  className,
+  ...props
+}: React.ComponentProps<"div">) => {
+  return (
+    <div
+      data-slot="pin-input-group"
+      className={cn("flex items-center", className)}
+      {...props}
+    />
+  )
 }

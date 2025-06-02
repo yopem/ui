@@ -1,14 +1,14 @@
 import * as React from "react"
 import { cn, cva, type VariantProps } from "@yopem-ui/utils"
 
-const alertVariants = cva(
-  "[&>svg]:text-foreground relative w-full rounded-lg border px-4 py-3 text-sm [&>svg]:absolute [&>svg]:top-4 [&>svg]:left-4 [&>svg+div]:translate-y-[-3px] [&>svg~*]:pl-7",
+export const alertVariants = cva(
+  "relative grid w-full grid-cols-[0_1fr] items-start gap-y-0.5 rounded-lg border px-4 py-3 text-sm has-[>svg]:grid-cols-[calc(var(--spacing)*4)_1fr] has-[>svg]:gap-x-3 [&>svg]:size-4 [&>svg]:translate-y-0.5 [&>svg]:text-current",
   {
     variants: {
       variant: {
-        default: "bg-background text-foreground",
+        default: "bg-card text-card-foreground",
         destructive:
-          "border-destructive/50 text-destructive dark:border-destructive [&>svg]:text-destructive",
+          "text-destructive bg-card *:data-[slot=alert-description]:text-destructive/90 [&>svg]:text-current",
       },
     },
     defaultVariants: {
@@ -17,41 +17,43 @@ const alertVariants = cva(
   },
 )
 
-const Alert = React.forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement> & VariantProps<typeof alertVariants>
->(({ className, variant, ...props }, ref) => (
+export const Alert = ({
+  className,
+  variant,
+  ...props
+}: React.ComponentProps<"div"> & VariantProps<typeof alertVariants>) => (
   <div
-    ref={ref}
+    data-slot="alert"
     role="alert"
     className={cn(alertVariants({ variant }), className)}
     {...props}
   />
-))
-Alert.displayName = "Alert"
+)
 
-const AlertTitle = React.forwardRef<
-  HTMLParagraphElement,
-  React.HTMLAttributes<HTMLHeadingElement>
->(({ className, ...props }, ref) => (
-  <h5
-    ref={ref}
-    className={cn("mb-1 leading-none font-medium tracking-tight", className)}
-    {...props}
-  />
-))
-AlertTitle.displayName = "AlertTitle"
-
-const AlertDescription = React.forwardRef<
-  HTMLParagraphElement,
-  React.HTMLAttributes<HTMLParagraphElement>
->(({ className, ...props }, ref) => (
+export const AlertTitle = ({
+  className,
+  ...props
+}: React.ComponentProps<"div">) => (
   <div
-    ref={ref}
-    className={cn("text-sm [&_p]:leading-relaxed", className)}
+    data-slot="alert-title"
+    className={cn(
+      "col-start-2 line-clamp-1 min-h-4 font-medium tracking-tight",
+      className,
+    )}
     {...props}
   />
-))
-AlertDescription.displayName = "AlertDescription"
+)
 
-export { Alert, AlertTitle, AlertDescription }
+export const AlertDescription = ({
+  className,
+  ...props
+}: React.ComponentProps<"div">) => (
+  <div
+    data-slot="alert-description"
+    className={cn(
+      "text-muted-foreground col-start-2 grid justify-items-start gap-1 text-sm [&_p]:leading-relaxed",
+      className,
+    )}
+    {...props}
+  />
+)

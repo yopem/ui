@@ -2,10 +2,24 @@
 
 import { Collapsible as CollapsiblePrimitive } from "@ark-ui/react/collapsible"
 
-const Collapsible = CollapsiblePrimitive.Root
+export const Collapsible = ({
+  ...props
+}: React.ComponentProps<typeof CollapsiblePrimitive.Root>) => {
+  return <CollapsiblePrimitive.Root data-slot="collapsible" {...props} />
+}
 
-const CollapsibleTrigger = CollapsiblePrimitive.Trigger
+export const CollapsibleTrigger = ({
+  ...props
+}: React.ComponentProps<typeof CollapsiblePrimitive.Trigger>) => {
+  return (
+    <CollapsiblePrimitive.Trigger data-slot="collapsible-trigger" {...props} />
+  )
+}
 
-const CollapsibleContent = CollapsiblePrimitive.Content
-
-export { Collapsible, CollapsibleTrigger, CollapsibleContent }
+export const CollapsibleContent = ({
+  ...props
+}: React.ComponentProps<typeof CollapsiblePrimitive.Content>) => {
+  return (
+    <CollapsiblePrimitive.Content data-slot="collapsible-content" {...props} />
+  )
+}
