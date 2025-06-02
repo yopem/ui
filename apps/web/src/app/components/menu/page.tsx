@@ -5,7 +5,7 @@ import { CheckboxMenu } from "@/components/menu/CheckboxMenu"
 import { GroupMenu } from "@/components/menu/GroupMenu"
 import { NestedMenu } from "@/components/menu/NestedMenu"
 import { RadioGroupContent } from "@/components/menu/RadioGroupContent"
-import { components } from "@/data/component"
+import { components } from "@/data/components"
 
 interface Props {
   params: { slug: string }
