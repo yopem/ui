@@ -10,7 +10,7 @@ import {
 } from "@yopem-ui/react"
 
 export const PinInputBasic = () => (
-  <PinInput onValueComplete={(e) => alert(e.valueAsString)}>
+  <PinInput onValueComplete={(value) => alert(value)}>
     <PinInputGroup>
       <PinInputLabel>Basic</PinInputLabel>
       <PinInputControl>
