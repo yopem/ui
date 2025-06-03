@@ -1,10 +1,10 @@
 import Link from "next/link"
 import clsx from "clsx"
 
-import { CheckboxMenu } from "@/components/menu/CheckboxMenu"
-import { GroupMenu } from "@/components/menu/GroupMenu"
-import { NestedMenu } from "@/components/menu/NestedMenu"
-import { RadioGroupContent } from "@/components/menu/RadioGroupContent"
+import { CheckboxMenu } from "@/components/menu/checkbox-menu"
+import { GroupMenu } from "@/components/menu/group-menu"
+import { NestedMenu } from "@/components/menu/nested-menu"
+import { RadioGroupContent } from "@/components/menu/radio-group-menu"
 import { components } from "@/data/components"
 
 interface Props {

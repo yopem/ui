@@ -1,8 +1,8 @@
 import Link from "next/link"
 import clsx from "clsx"
 
-import { PinInputBasic } from "@/components/pininput/PinInputBasic"
-import { PinInputBlurred } from "@/components/pininput/PinInputBlurred"
+import { PinInputBasic } from "@/components/pin-input/pin-input-basic"
+import { PinInputBlurred } from "@/components/pin-input/pin-input-blurred"
 import { components } from "@/data/components"
 
 interface Props {
