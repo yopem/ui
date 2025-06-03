@@ -40,11 +40,7 @@ export const PinInputInput = ({
     <PinInputPrimitive.Input
       data-slot="pin-input-input"
       className={cn(
-        "border-input bg-background size-10 rounded-md border text-center text-sm shadow-sm",
-        "transition-all outline-none",
-        "focus-visible:ring-ring focus-visible:ring-2 focus-visible:ring-offset-2",
-        "ring-0 focus:ring-2",
-        "disabled:cursor-not-allowed disabled:opacity-50",
+        "border-input bg-background focus-visible:ring-ring size-10 rounded-md border text-center text-sm shadow-sm ring-0 transition-all outline-none focus:ring-2 focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
         className,
       )}
       {...props}
