@@ -1,4 +1,3 @@
-// app/page.tsx or any component
 "use client"
 
 import { Button, useToast } from "@yopem-ui/react"
