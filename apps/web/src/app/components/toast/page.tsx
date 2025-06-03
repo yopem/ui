@@ -1,17 +1,15 @@
 import Link from "next/link"
 import clsx from "clsx"
 
-import { CheckboxMenu } from "@/components/menu/checkbox-menu"
-import { GroupMenu } from "@/components/menu/group-menu"
-import { NestedMenu } from "@/components/menu/nested-menu"
-import { RadioGroupContent } from "@/components/menu/radio-group-menu"
+import ToastBasic from "@/components/toast/toast-basic"
+import ToastError from "@/components/toast/toast-error"
 import { components } from "@/data/components"
 
 interface Props {
   params: { slug: string }
 }
 
-export default function MenuComponentPage({ params }: Props) {
+export default function ToastComponentPage({ params }: Props) {
   return (
     <main className="flex w-full px-4 py-12">
       {/* Sidebar */}
@@ -45,11 +43,9 @@ export default function MenuComponentPage({ params }: Props) {
       </aside>
 
       {/* Content */}
-      <section className="flex max-w-4xl flex-1 gap-2 pl-6">
-        <RadioGroupContent />
-        <NestedMenu />
-        <GroupMenu />
-        <CheckboxMenu />
+      <section className="flex max-w-4xl flex-1 flex-col gap-2 pl-6">
+        <ToastBasic />
+        <ToastError />
       </section>
     </main>
   )
