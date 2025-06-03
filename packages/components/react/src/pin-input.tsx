@@ -5,15 +5,25 @@ import { PinInput as PinInputPrimitive } from "@ark-ui/react/pin-input"
 import { cn } from "@yopem-ui/utils"
 
 export const PinInput = ({
+  className,
   ...props
 }: React.ComponentProps<typeof PinInputPrimitive.Root>) => (
-  <PinInputPrimitive.Root data-slot="pin-input" {...props} />
+  <PinInputPrimitive.Root
+    data-slot="pin-input"
+    className={cn("flex gap-2", className)}
+    {...props}
+  />
 )
 
 export const PinInputLabel = ({
+  className,
   ...props
 }: React.ComponentProps<typeof PinInputPrimitive.Label>) => (
-  <PinInputPrimitive.Label data-slot="pin-input-label" {...props} />
+  <PinInputPrimitive.Label
+    data-slot="pin-input-label"
+    className={cn("text-muted-foreground block text-sm font-medium", className)}
+    {...props}
+  />
 )
 
 export const PinInputHiddenInput = ({
@@ -30,7 +40,11 @@ export const PinInputInput = ({
     <PinInputPrimitive.Input
       data-slot="pin-input-input"
       className={cn(
-        "flex items-center gap-2 has-[:disabled]:opacity-50",
+        "border-input bg-background h-10 w-10 rounded-md border text-center text-sm shadow-sm",
+        "transition-all outline-none",
+        "focus-visible:ring-ring focus-visible:ring-2 focus-visible:ring-offset-2",
+        "ring-0 focus:ring-2",
+        "disabled:cursor-not-allowed disabled:opacity-50",
         className,
       )}
       {...props}
@@ -45,7 +59,7 @@ export const PinInputControl = ({
   return (
     <PinInputPrimitive.Control
       data-slot="pin-input-control"
-      className={cn("disabled:cursor-not-allowed", className)}
+      className={cn("flex gap-2", className)}
       {...props}
     />
   )
@@ -58,7 +72,7 @@ export const PinInputGroup = ({
   return (
     <div
       data-slot="pin-input-group"
-      className={cn("flex items-center", className)}
+      className={cn("flex flex-col gap-1", className)}
       {...props}
     />
   )
