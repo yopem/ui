@@ -11,9 +11,10 @@ export default function ToastError() {
       <Button
         onClick={() =>
           toast({
+            id: "error",
             title: "Toast Title",
             description: "This is a reusable toast!",
-            type: "error",
+            type: "destructive",
           })
         }
       >
