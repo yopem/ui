@@ -21,6 +21,6 @@ export * from "./slider"
 export * from "./toggle-group"
 export * from "./toggle"
 export * from "./tooltip"
-export * from "./use-toast"
+export * from "./toast"
 
 export { createListCollection } from "@ark-ui/react"

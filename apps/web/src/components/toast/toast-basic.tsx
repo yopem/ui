@@ -11,6 +11,7 @@ export default function ToastBasic() {
       <Button
         onClick={() =>
           toast({
+            id: "basic",
             title: "Toast Title",
             description: "This is a reusable toast!",
             action: {

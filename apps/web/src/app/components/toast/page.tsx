@@ -3,8 +3,6 @@ import clsx from "clsx"
 
 import ToastBasic from "@/components/toast/toast-basic"
 import ToastError from "@/components/toast/toast-error"
-import ToastInfo from "@/components/toast/toast-info"
-import ToastSuccess from "@/components/toast/toast-success"
 import { components } from "@/data/components"
 
 interface Props {
@@ -47,9 +45,7 @@ export default function ToastComponentPage({ params }: Props) {
       {/* Content */}
       <section className="flex max-w-4xl flex-1 flex-col gap-2 pl-6">
         <ToastBasic />
-        <ToastSuccess />
         <ToastError />
-        <ToastInfo />
       </section>
     </main>
   )
