@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import Link from "next/link"
 import {
   Accordion,
   AccordionItem,
@@ -308,11 +309,12 @@ export default function Home() {
             <Button variant="outline">Open</Button>
           </MenuTrigger>
           <MenuContent className="w-56">
-            {/* <MenuLabel>Panel Position</MenuLabel> */}
-            <MenuSeparator />
             <MenuItemGroup>
-              <MenuRadioItem value="top">Top</MenuRadioItem>
+              <MenuRadioItem value="top">
+                <Link href="/">Top</Link>
+              </MenuRadioItem>
               <MenuRadioItem value="bottom">Bottom</MenuRadioItem>
+              <MenuSeparator />
               <MenuRadioItem value="right">Right</MenuRadioItem>
             </MenuItemGroup>
           </MenuContent>
