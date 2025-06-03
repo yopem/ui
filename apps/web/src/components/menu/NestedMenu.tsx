@@ -22,7 +22,7 @@ export const NestedMenu = () => (
       <MenuItem value="vue">Vue</MenuItem>
       <Menu>
         <MenuTriggerItem>
-          JS Frameworks <Icon name="ChevronDown" />
+          JS Frameworks <Icon name="ChevronRight" />
         </MenuTriggerItem>
         <DialogPortal>
           <MenuContent>
@@ -34,7 +34,7 @@ export const NestedMenu = () => (
       </Menu>
       <Menu>
         <MenuTriggerItem>
-          CSS Frameworks <Icon name="ChevronDown" />
+          CSS Frameworks <Icon name="ChevronRight" />
         </MenuTriggerItem>
         <DialogPortal>
           <MenuContent>
