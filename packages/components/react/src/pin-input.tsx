@@ -40,7 +40,7 @@ export const PinInputInput = ({
     <PinInputPrimitive.Input
       data-slot="pin-input-input"
       className={cn(
-        "border-input bg-background h-10 w-10 rounded-md border text-center text-sm shadow-sm",
+        "border-input bg-background size-10 rounded-md border text-center text-sm shadow-sm",
         "transition-all outline-none",
         "focus-visible:ring-ring focus-visible:ring-2 focus-visible:ring-offset-2",
         "ring-0 focus:ring-2",
@@ -59,7 +59,7 @@ export const PinInputControl = ({
   return (
     <PinInputPrimitive.Control
       data-slot="pin-input-control"
-      className={cn("flex gap-2", className)}
+      className={cn("flex gap-2 disabled:cursor-not-allowed", className)}
       {...props}
     />
   )
