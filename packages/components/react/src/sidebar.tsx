@@ -468,6 +468,23 @@ export const SidebarMenu = ({
   )
 }
 
+export const SidebarSubMenu = ({
+  className,
+  ...props
+}: React.ComponentProps<"ul">) => {
+  return (
+    <ul
+      data-slot="sidebar-menu"
+      data-sidebar="menu"
+      className={cn(
+        "border-sidebar-border mx-3.5 flex min-w-0 translate-x-px flex-col gap-1 border-l px-2.5 py-0.5",
+        className,
+      )}
+      {...props}
+    />
+  )
+}
+
 export const SidebarMenuItem = ({
   className,
   ...props
@@ -479,6 +496,32 @@ export const SidebarMenuItem = ({
       className={cn("group/menu-item relative", className)}
       {...props}
     />
+  )
+}
+
+export const SidebarMenuItemCollapsible = ({
+  className,
+  label,
+  defaultOpen = false,
+  children,
+  ...props
+}: React.ComponentProps<"li"> & {
+  label: string
+  defaultOpen?: boolean
+}) => {
+  const [open, setOpen] = React.useState(defaultOpen)
+
+  return (
+    <SidebarMenuItem className={className} {...props}>
+      <SidebarMenuButton onClick={() => setOpen((o) => !o)}>
+        <span className="flex-1">{label}</span>
+        <Icon
+          name="ChevronRight"
+          className={cn("ml-auto transition-transform", open && "rotate-90")}
+        />
+      </SidebarMenuButton>
+      {open && <SidebarSubMenu className="ml-2">{children}</SidebarSubMenu>}
+    </SidebarMenuItem>
   )
 }
 
@@ -526,7 +569,11 @@ export const SidebarMenuButton = ({
       data-sidebar="menu-button"
       data-size={size}
       data-active={isActive}
-      className={cn(sidebarMenuButtonVariants({ variant, size }), className)}
+      className={cn(
+        "p-2",
+        sidebarMenuButtonVariants({ variant, size }),
+        className,
+      )}
       {...props}
     />
   )
