@@ -6,23 +6,20 @@ import { cn } from "@yopem-ui/utils"
 
 export const ProgressLinear = ({
   className,
-  value,
   ...props
 }: React.ComponentProps<typeof ProgressPrimitive.Root>) => {
   return (
-    <ProgressPrimitive.Root
-      data-slot="progress"
-      className={cn(
-        "bg-primary/20 relative h-2 w-full overflow-hidden rounded-full",
-        className,
-      )}
-      {...props}
-    >
-      <ProgressPrimitive.Track data-slot="progress-track">
+    <ProgressPrimitive.Root data-slot="progress" {...props}>
+      <ProgressPrimitive.Track
+        data-slot="progress-track"
+        className={cn(
+          "bg-primary/20 relative h-2 w-full overflow-hidden rounded-full",
+          className,
+        )}
+      >
         <ProgressPrimitive.Range
           data-slot="progress-range"
-          className="bg-primary h-full w-full flex-1 transition-all"
-          style={{ transform: `translateX(-${100 - (value ?? 0)}%)` }}
+          className="bg-primary h-full flex-1 transition-all"
         />
       </ProgressPrimitive.Track>
     </ProgressPrimitive.Root>

@@ -389,7 +389,7 @@ export default function Home() {
 
       {/* Progress FIX: need to recheck and not working */}
       <div>
-        <ProgressLinear defaultValue={20} min={10} max={30} />
+        <ProgressLinear defaultValue={64} />
       </div>
 
       {/* Radio Group FIX: not working */}
