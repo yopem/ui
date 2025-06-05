@@ -17,12 +17,36 @@ import {
   SidebarMenuItem,
   SidebarMenuItemCollapsible,
   SidebarProvider,
-  SidebarSeparator,
   SidebarTrigger,
 } from "@yopem-ui/react"
-import { Icon } from "@yopem-ui/react-icons"
+import { Icon, type IconProps } from "@yopem-ui/react-icons"
 
 import { components } from "@/data/components"
+import { NavDocuments } from "./nav-document"
+import { NavMain } from "./nav-main"
+import { NavUser } from "./nav-user"
+
+interface NavMainItem {
+  title: string
+  url: string
+  icon: IconProps["name"]
+}
+
+interface DocumentItem {
+  name: string
+  url: string
+  icon: IconProps["name"]
+}
+
+interface Data {
+  user: {
+    name: string
+    email: string
+    avatar: string
+  }
+  navMain: NavMainItem[]
+  documents: DocumentItem[]
+}
 
 export default function SidebarExample({
   children,
@@ -31,16 +55,81 @@ export default function SidebarExample({
 }) {
   const pathname = usePathname()
 
+  const data: Data = {
+    user: {
+      name: "Guerilla",
+      email: "m@example.com",
+      avatar: "https://avatars.githubusercontent.com/u/76994066",
+    },
+    navMain: [
+      {
+        title: "Dashboard",
+        url: "#",
+        icon: "CircleGauge",
+      },
+      {
+        title: "Lifecycle",
+        url: "#",
+        icon: "ActivitySquare",
+      },
+      {
+        title: "Analytics",
+        url: "#",
+        icon: "ChartArea",
+      },
+      {
+        title: "Projects",
+        url: "#",
+        icon: "Folder",
+      },
+      {
+        title: "Team",
+        url: "#",
+        icon: "Users",
+      },
+    ],
+
+    documents: [
+      {
+        name: "Data Library",
+        url: "#",
+        icon: "Database",
+      },
+      {
+        name: "Reports",
+        url: "#",
+        icon: "MessageSquareWarning",
+      },
+      {
+        name: "Word Assistant",
+        url: "#",
+        icon: "FilePen",
+      },
+    ],
+  }
+
   return (
     <SidebarProvider>
       <Sidebar>
         <SidebarHeader>
-          <Link href="/">
-            🏠 <span className="ml-1">Home</span>
-          </Link>
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <SidebarMenuButton
+                asChild
+                className="data-[slot=sidebar-menu-button]:!p-1.5"
+              >
+                <a href="#">
+                  <Icon name="Accessibility" className="!size-5" />
+                  <span className="text-base font-semibold">Acme Inc.</span>
+                </a>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          </SidebarMenu>
         </SidebarHeader>
 
         <SidebarContent>
+          <NavMain items={data.navMain} />
+          <NavDocuments items={data.documents} />
           <SidebarGroup>
             <SidebarGroupLabel>Docs</SidebarGroupLabel>
             <SidebarGroupContent>
@@ -102,13 +191,7 @@ export default function SidebarExample({
         </SidebarContent>
 
         <SidebarFooter>
-          <SidebarSeparator />
-          <SidebarMenuItem>
-            <SidebarMenuButton tooltip="Logout">
-              <Icon name="LogOut" className="mr-2 h-4 w-4" />
-              <span>Logout</span>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
+          <NavUser user={data.user} />
         </SidebarFooter>
       </Sidebar>
 
@@ -116,9 +199,7 @@ export default function SidebarExample({
         <SidebarTrigger />
       </div>
 
-      <SidebarInset>
-        <div className="p-4">{children}</div>
-      </SidebarInset>
+      <SidebarInset>{children}</SidebarInset>
     </SidebarProvider>
   )
 }
