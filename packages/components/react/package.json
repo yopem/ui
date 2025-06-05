@@ -52,6 +52,7 @@
   },
   "dependencies": {
     "@ark-ui/react": "^5.0.0",
+    "@tanstack/react-form": "^1.12.1",
     "@yopem-ui/react-icons": "workspace:*",
     "@yopem-ui/utils": "workspace:*",
     "react": "catalog:react"

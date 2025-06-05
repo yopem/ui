@@ -99,6 +99,9 @@ importers:
       tw-animate-css:
         specifier: ^1.3.3
         version: 1.3.3
+      zod:
+        specifier: ^3.25.51
+        version: 3.25.51
     devDependencies:
       '@tailwindcss/postcss':
         specifier: ^4.0.9
@@ -139,6 +142,9 @@ importers:
       '@ark-ui/react':
         specifier: ^5.0.0
         version: 5.11.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@tanstack/react-form':
+        specifier: ^1.12.1
+        version: 1.12.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       '@yopem-ui/react-icons':
         specifier: workspace:*
         version: link:../../icons/react
@@ -1028,6 +1034,30 @@ packages:
   '@tailwindcss/postcss@4.1.8':
     resolution: {integrity: sha512-vB/vlf7rIky+w94aWMw34bWW1ka6g6C3xIOdICKX2GC0VcLtL6fhlLiafF0DVIwa9V6EHz8kbWMkS2s2QvvNlw==}
 
+  '@tanstack/form-core@1.12.1':
+    resolution: {integrity: sha512-cCR3udteesUakO0K7T+2GkL8F2HKp7+khJmdLbebz63XbKCuHqSuEtC+bz4cw+Ad6eZxV2hvTkmZxdn39F8XUw==}
+
+  '@tanstack/react-form@1.12.1':
+    resolution: {integrity: sha512-wcxqqM9mKcjy4ePUQNYZDpuK1dicGHGYbM21UujKNGY2maYk7eXPmZ2xeCYAOEl2rpCjgOf2MZHlfi3Exlaocg==}
+    peerDependencies:
+      '@tanstack/react-start': ^1.112.0
+      react: ^17.0.0 || ^18.0.0 || ^19.0.0
+      vinxi: ^0.5.0
+    peerDependenciesMeta:
+      '@tanstack/react-start':
+        optional: true
+      vinxi:
+        optional: true
+
+  '@tanstack/react-store@0.7.1':
+    resolution: {integrity: sha512-qUTEKdId6QPWGiWyKAPf/gkN29scEsz6EUSJ0C3HgLMgaqTAyBsQ2sMCfGVcqb+kkhEXAdjleCgH6LAPD6f2sA==}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+      react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+
+  '@tanstack/store@0.7.1':
+    resolution: {integrity: sha512-PjUQKXEXhLYj2X5/6c1Xn/0/qKY0IVFxTJweopRfF26xfjVyb14yALydJrHupDh3/d+1WKmfEgZPBVCmDkzzwg==}
+
   '@types/debug@4.1.12':
     resolution: {integrity: sha512-vIChWdVG3LG1SMxEvI/AK+FWJthlrqlTu7fbrlywTkkaONwk/UAGaULXRlf8vkzFBLVm0zkMdCquhL5aOjhXPQ==}
 
@@ -1658,6 +1688,9 @@ packages:
       supports-color:
         optional: true
 
+  decode-formdata@0.9.0:
+    resolution: {integrity: sha512-q5uwOjR3Um5YD+ZWPOF/1sGHVW9A5rCrRwITQChRXlmPkxDFBqCm4jNTIVdGHNH9OnR+V9MoZVgRhsFb+ARbUw==}
+
   decode-named-character-reference@1.1.0:
     resolution: {integrity: sha512-Wy+JTSbFThEOXQIR2L6mxJvEs+veIzpmqD7ynWxMXGpnk3smkHQOp6forLdHsKpAMW9iJpaBBIxz285t1n1C3w==}
 
@@ -1683,6 +1716,9 @@ packages:
   detect-libc@2.0.4:
     resolution: {integrity: sha512-3UDv+G9CsCKO1WKMGw9fwq/SWJYbI0c5Y7LU1AXYoDdbhE2AHQ6N6Nb34sG8Fj7T5APy8qXDCKuuIHd1BR0tVA==}
     engines: {node: '>=8'}
+
+  devalue@5.1.1:
+    resolution: {integrity: sha512-maua5KUiapvEwiEAe+XnlZ3Rh0GD+qI1J/nb9vrJc3muPXvcF/8gXYTWF76+5DAqHyDUtOIImEuo0YKE9mshVw==}
 
   devlop@1.1.0:
     resolution: {integrity: sha512-RWmIqhcFf1lRYBvNmr7qTNuyCt/7/ns2jbpp1+PalgE/rDQcBT0fioSMUpJ93irlUhC5hrg4cYqe6U+0ImW0rA==}
@@ -3435,6 +3471,11 @@ packages:
   uri-js@4.4.1:
     resolution: {integrity: sha512-7rKUyy33Q1yc98pQ1DAmLtwX109F7TIfWlW1Ydo8Wl1ii1SeHieeh0HHfPeL2fMXK6z0s8ecKs9frCuLJvndBg==}
 
+  use-sync-external-store@1.5.0:
+    resolution: {integrity: sha512-Rb46I4cGGVBmjamjphe8L/UnvJD+uPPtTkNvX5mZgqdbavhI4EbgIWJiIHXJ8bc/i9EQGPRh4DwEURJ552Do0A==}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+
   velite@0.2.4:
     resolution: {integrity: sha512-mNmtPBnEtsYEMlqZb5i0Adr0UJUHoaggQ81srsl+kjvJ3itWTmkCcNZ1zLzY3eQUcZAFXW49EdqyFcwhilAGvw==}
     engines: {node: ^18.17.0 || >=20.3.0}
@@ -3498,6 +3539,9 @@ packages:
   yocto-queue@0.1.0:
     resolution: {integrity: sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==}
     engines: {node: '>=10'}
+
+  zod@3.25.51:
+    resolution: {integrity: sha512-TQSnBldh+XSGL+opiSIq0575wvDPqu09AqWe1F7JhUMKY+M91/aGlK4MhpVNO7MgYfHcVCB1ffwAUTJzllKJqg==}
 
   zwitch@2.0.4:
     resolution: {integrity: sha512-bXE4cR/kVZhKZX/RjPEflHaKVhUVl85noU3v6b8apfQEc1x4A+zBxjZ4lN8LqGd6WZ3dl98pY4o717VFmoPp+A==}
@@ -4301,6 +4345,29 @@ snapshots:
       '@tailwindcss/oxide': 4.1.8
       postcss: 8.5.4
       tailwindcss: 4.1.8
+
+  '@tanstack/form-core@1.12.1':
+    dependencies:
+      '@tanstack/store': 0.7.1
+
+  '@tanstack/react-form@1.12.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0)':
+    dependencies:
+      '@tanstack/form-core': 1.12.1
+      '@tanstack/react-store': 0.7.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      decode-formdata: 0.9.0
+      devalue: 5.1.1
+      react: 19.1.0
+    transitivePeerDependencies:
+      - react-dom
+
+  '@tanstack/react-store@0.7.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0)':
+    dependencies:
+      '@tanstack/store': 0.7.1
+      react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
+      use-sync-external-store: 1.5.0(react@19.1.0)
+
+  '@tanstack/store@0.7.1': {}
 
   '@types/debug@4.1.12':
     dependencies:
@@ -5239,6 +5306,8 @@ snapshots:
     dependencies:
       ms: 2.1.3
 
+  decode-formdata@0.9.0: {}
+
   decode-named-character-reference@1.1.0:
     dependencies:
       character-entities: 2.0.2
@@ -5262,6 +5331,8 @@ snapshots:
   detect-indent@6.1.0: {}
 
   detect-libc@2.0.4: {}
+
+  devalue@5.1.1: {}
 
   devlop@1.1.0:
     dependencies:
@@ -7472,6 +7543,10 @@ snapshots:
     dependencies:
       punycode: 2.3.1
 
+  use-sync-external-store@1.5.0(react@19.1.0):
+    dependencies:
+      react: 19.1.0
+
   velite@0.2.4(acorn@8.14.1):
     dependencies:
       '@mdx-js/mdx': 3.1.0(acorn@8.14.1)
@@ -7569,5 +7644,7 @@ snapshots:
   yallist@5.0.0: {}
 
   yocto-queue@0.1.0: {}
+
+  zod@3.25.51: {}
 
   zwitch@2.0.4: {}
