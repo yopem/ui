@@ -60,6 +60,7 @@ import {
   ProgressLinear,
   RadioGroup,
   RadioGroupItem,
+  RadioGroupLabel,
   Select,
   SelectContent,
   SelectItem,
@@ -389,24 +390,22 @@ export default function Home() {
 
       {/* Progress FIX: need to recheck and not working */}
       <div>
-        <ProgressLinear defaultValue={20} min={10} max={30} />
+        <ProgressLinear defaultValue={64} />
       </div>
 
       {/* Radio Group FIX: not working */}
       <div>
         <RadioGroup defaultValue="comfortable">
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value="default" id="r1" />
-            <label htmlFor="r1">Default</label>
-          </div>
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value="comfortable" id="r2" />
-            <label htmlFor="r2">Comfortable</label>
-          </div>
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value="compact" id="r3" />
-            <label htmlFor="r3">Compact</label>
-          </div>
+          <RadioGroupLabel>Pilih Mode Tampilan</RadioGroupLabel>
+          <RadioGroupItem value="default" id="r1">
+            Default
+          </RadioGroupItem>
+          <RadioGroupItem value="comfortable" id="r2">
+            Comfortable
+          </RadioGroupItem>
+          <RadioGroupItem value="compact" id="r3">
+            Compact
+          </RadioGroupItem>
         </RadioGroup>
       </div>
 
