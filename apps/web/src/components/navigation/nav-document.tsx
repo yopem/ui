@@ -42,7 +42,7 @@ export function NavDocuments({
                   showOnHover
                   className="data-[state=open]:bg-accent rounded-sm"
                 >
-                  <Icon name="Dot" />
+                  <Icon name="Ellipsis" />
                   <span className="sr-only">More</span>
                 </SidebarMenuAction>
               </MenuTrigger>
