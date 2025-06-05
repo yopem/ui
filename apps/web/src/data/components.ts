@@ -65,17 +65,17 @@ export const components = [
     description: "Dropdown menu for actions or navigation.",
   },
   {
-    slug: "pininput",
+    slug: "pin-input",
     name: "Pin Input",
     description: "Input fields for entering PIN codes.",
   },
   {
-    slug: "progress",
+    slug: "progress-linear",
     name: "Progress",
     description: "Linear progress bar to indicate process status.",
   },
   {
-    slug: "radiogroup",
+    slug: "radio-group",
     name: "Radio Group",
     description: "Single-choice group using radio buttons.",
   },

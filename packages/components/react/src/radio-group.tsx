@@ -12,7 +12,19 @@ export const RadioGroup = ({
   return (
     <RadioGroupPrimitive.Root
       data-slot="radio-group"
-      className={cn("grid gap-3", className)}
+      className={cn("grid gap-2", className)}
+      {...props}
+    />
+  )
+}
+
+export const RadioGroupLabel = ({
+  className,
+  ...props
+}: React.ComponentProps<typeof RadioGroupPrimitive.Label>) => {
+  return (
+    <RadioGroupPrimitive.Label
+      className={cn("text-foreground text-sm font-medium", className)}
       {...props}
     />
   )
@@ -20,26 +32,37 @@ export const RadioGroup = ({
 
 export const RadioGroupItem = ({
   className,
+  value,
+  id,
+  children,
   ...props
-}: React.ComponentProps<typeof RadioGroupPrimitive.Item>) => {
+}: React.ComponentProps<typeof RadioGroupPrimitive.Item> & {
+  id: string
+  children: React.ReactNode
+}) => {
   return (
     <RadioGroupPrimitive.Item
-      data-slot="radio-group-item"
-      className={cn(
-        "border-input text-primary focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:bg-input/30 aspect-square size-4 shrink-0 rounded-full border shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50",
-        className,
-      )}
+      id={id}
+      value={value}
+      className={cn("group flex items-center space-x-2", className)}
       {...props}
     >
-      <RadioGroupPrimitive.Indicator
-        data-slot="radio-group-indicator"
-        className="relative flex items-center justify-center"
+      <RadioGroupPrimitive.ItemControl
+        className={cn(
+          "border-muted bg-background ring-offset-background focus-visible:ring-ring flex size-4 shrink-0 items-center justify-center rounded-full border transition-colors group-data-[disabled]:cursor-not-allowed group-data-[disabled]:opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
+        )}
       >
         <Icon
-          name="Circle"
-          className="fill-primary absolute top-1/2 left-1/2 size-2 -translate-x-1/2 -translate-y-1/2"
+          name="Check"
+          className={cn(
+            "bg-primary block size-2 rounded-full opacity-0 transition-opacity group-data-[state=checked]:opacity-100",
+          )}
         />
-      </RadioGroupPrimitive.Indicator>
+      </RadioGroupPrimitive.ItemControl>
+      <RadioGroupPrimitive.ItemText className="text-foreground group-data-[disabled]:text-muted-foreground text-sm font-normal group-data-[disabled]:cursor-not-allowed">
+        {children}
+      </RadioGroupPrimitive.ItemText>
+      <RadioGroupPrimitive.ItemHiddenInput />
     </RadioGroupPrimitive.Item>
   )
 }
