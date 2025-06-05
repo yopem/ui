@@ -474,8 +474,8 @@ export const SidebarSubMenu = ({
 }: React.ComponentProps<"ul">) => {
   return (
     <ul
-      data-slot="sidebar-menu"
-      data-sidebar="menu"
+      data-slot="sidebar-sub-menu"
+      data-sidebar="sub-menu"
       className={cn(
         "border-sidebar-border mx-3.5 flex min-w-0 translate-x-px flex-col gap-1 border-l px-2.5 py-0.5",
         className,
@@ -570,7 +570,7 @@ export const SidebarMenuButton = ({
       data-size={size}
       data-active={isActive}
       className={cn(
-        "p-2",
+        "text-sidebar-foreground ring-sidebar-ring hover:bg-sidebar-accent hover:text-sidebar-accent-foreground active:bg-sidebar-accent active:text-sidebar-accent-foreground [data-[active=true]:bg-sidebar-accent data-[active=true]:text-sidebar-accent-foreground flex items-center gap-2 overflow-hidden rounded-md px-2 text-sm outline-hidden focus-visible:ring-2 disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0",
         sidebarMenuButtonVariants({ variant, size }),
         className,
       )}
