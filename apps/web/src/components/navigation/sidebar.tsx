@@ -17,7 +17,6 @@ import {
   SidebarMenuItem,
   SidebarMenuItemCollapsible,
   SidebarProvider,
-  SidebarTrigger,
 } from "@yopem-ui/react"
 import { Icon, type IconProps } from "@yopem-ui/react-icons"
 
@@ -194,10 +193,6 @@ export default function SidebarExample({
           <NavUser user={data.user} />
         </SidebarFooter>
       </Sidebar>
-
-      <div className="p-2 md:hidden">
-        <SidebarTrigger />
-      </div>
 
       <SidebarInset>{children}</SidebarInset>
     </SidebarProvider>
