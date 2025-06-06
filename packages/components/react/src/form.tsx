@@ -1,6 +1,7 @@
 "use client"
 
 import type { InputHTMLAttributes } from "react"
+import type { ListCollection } from "@ark-ui/react"
 import { createFormHook, createFormHookContexts } from "@tanstack/react-form"
 import { cn } from "@yopem-ui/utils"
 
@@ -15,6 +16,16 @@ import {
   PinInputLabel,
 } from "./pin-input"
 import { RadioGroup, RadioGroupItem, RadioGroupLabel } from "./radio-group"
+import {
+  createListCollection,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectItemGroup,
+  SelectLabel,
+  SelectTrigger,
+  SelectValueText,
+} from "./select"
 
 export const { fieldContext, formContext, useFieldContext } =
   createFormHookContexts()
@@ -228,6 +239,56 @@ export const TextareaField = ({
   )
 }
 
+interface SelectFieldProps {
+  label?: string
+  placeholder?: string
+  options: {
+    label: string
+    value: string
+    disabled?: boolean
+  }[]
+}
+
+export const SelectField = ({
+  label,
+  placeholder = "Select...",
+  options,
+}: SelectFieldProps) => {
+  const field = useFieldContext<string>()
+
+  const collection: ListCollection = createListCollection({
+    items: options,
+  })
+
+  return (
+    <Select
+      value={[field.state.value]}
+      collection={collection}
+      onValueChange={(e) => {
+        field.handleChange(e.value[0])
+      }}
+    >
+      {label && <SelectLabel>{label}</SelectLabel>}
+
+      <div className="w-full">
+        <SelectTrigger className="w-full">
+          <SelectValueText placeholder={placeholder} />
+        </SelectTrigger>
+      </div>
+
+      <SelectContent className="w-full">
+        <SelectItemGroup>
+          {collection.items.map((item) => (
+            <SelectItem key={item.value} item={item}>
+              {item.label}
+            </SelectItem>
+          ))}
+        </SelectItemGroup>
+      </SelectContent>
+    </Select>
+  )
+}
+
 export const { useAppForm } = createFormHook({
   fieldContext,
   formContext,
@@ -237,6 +298,7 @@ export const { useAppForm } = createFormHook({
     PinInputField,
     TextareaField,
     CheckboxField,
+    SelectField,
   },
   formComponents: {
     FormItem,
