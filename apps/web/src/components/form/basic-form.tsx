@@ -12,6 +12,7 @@ const schema = z.object({
   gender: z.enum(["Male", "Female", "Other"], {
     errorMap: () => ({ message: "Select a gender" }),
   }),
+  framework: z.enum(["react", "solid", "vue", "svelte"]),
   pin: z
     .array(z.string().length(1))
     .length(6, "PIN must be 6 digits")
@@ -30,6 +31,7 @@ export default function ProfileForm() {
       gender: "",
       pin: Array(6).fill(""),
       bio: "",
+      framework: "",
     },
     validators: {
       onChange: schema,
@@ -72,6 +74,22 @@ export default function ProfileForm() {
           <form.FormItem>
             <form.FormLabel>Gender</form.FormLabel>
             <field.RadioGroupField options={["Male", "Female", "Other"]} />
+            <form.FormMessage />
+          </form.FormItem>
+        )}
+      </form.AppField>
+      <form.AppField name="framework">
+        {(field) => (
+          <form.FormItem>
+            <form.FormLabel>Framework</form.FormLabel>
+            <field.SelectField
+              options={[
+                { label: "React", value: "react" },
+                { label: "Vue", value: "vue" },
+                { label: "Svelte", value: "svelte", disabled: true },
+              ]}
+              placeholder="Pilih framework"
+            />
             <form.FormMessage />
           </form.FormItem>
         )}
