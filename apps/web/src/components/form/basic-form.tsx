@@ -32,7 +32,7 @@ export default function ProfileForm() {
       gender: "",
       pin: Array(6).fill(""),
       bio: "",
-      files: [""],
+      files: [],
       framework: "",
     },
     validators: {

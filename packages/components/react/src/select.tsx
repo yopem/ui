@@ -134,7 +134,7 @@ export const SelectItem = ({
       <span className="absolute right-2 flex hidden size-3.5 items-center justify-center group-data-[state=checked]:block">
         <Icon name="Check" className="size-4" />
       </span>
-      <span>{children}</span>
+      <SelectPrimitive.ItemText>{children}</SelectPrimitive.ItemText>
     </SelectPrimitive.Item>
   )
 }
