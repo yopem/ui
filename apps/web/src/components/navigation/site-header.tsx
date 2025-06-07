@@ -1,3 +1,4 @@
+import Link from "next/link"
 import { Button, Separator, SidebarTrigger } from "@yopem-ui/react"
 
 export function SiteHeader() {
@@ -12,14 +13,14 @@ export function SiteHeader() {
         <h1 className="text-base font-medium">Documents</h1>
         <div className="ml-auto flex items-center gap-2">
           <Button variant="ghost" asChild size="sm" className="hidden sm:flex">
-            <a
-              href="/"
+            <Link
+              href="https://github.com/yopem/ui"
               rel="noopener noreferrer"
               target="_blank"
               className="dark:text-foreground"
             >
               GitHub
-            </a>
+            </Link>
           </Button>
         </div>
       </div>
