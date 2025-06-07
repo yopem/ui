@@ -49,7 +49,7 @@ export const RadioGroupItem = ({
     >
       <RadioGroupPrimitive.ItemControl
         className={cn(
-          "border-muted bg-background ring-offset-background focus-visible:ring-ring flex size-4 shrink-0 items-center justify-center rounded-full border transition-colors group-data-[disabled]:cursor-not-allowed group-data-[disabled]:opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
+          "border-input bg-background ring-offset-background focus-visible:ring-ring flex size-4 shrink-0 items-center justify-center rounded-full border transition-colors group-data-[disabled]:cursor-not-allowed group-data-[disabled]:opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
         )}
       >
         <Icon
