@@ -6,6 +6,7 @@ import { cn } from "@yopem-ui/utils"
 import {
   BaseField,
   CheckboxField,
+  DatePickerField,
   FileUploadDropzoneField,
   PinInputField,
   RadioGroupField,
@@ -90,6 +91,7 @@ export const { useAppForm } = createFormHook({
     CheckboxField,
     SelectField,
     FileUploadDropzoneField,
+    DatePickerField,
   },
   formComponents: {
     FormItem,
