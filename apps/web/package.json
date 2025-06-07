@@ -42,7 +42,7 @@
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.0.9",
-    "@types/node": "22.15.29",
+    "@types/node": "22.15.30",
     "@types/react": "catalog:react",
     "@types/react-dom": "catalog:react",
     "@yopem/eslint-config": "catalog:config",
