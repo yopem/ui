@@ -6,12 +6,14 @@ import { z } from "zod"
 const schema = z.object({
   name: z.string().min(1, "Name is required"),
   email: z.string().email("Invalid email"),
+  date: z.string().min(1, "Date is required"),
   acceptTerms: z.literal(true).refine(Boolean, {
     message: "You must accept the terms",
   }),
-  gender: z.enum(["Male", "Female", "Other"], {
+  gender: z.enum(["male", "female", "other"], {
     errorMap: () => ({ message: "Select a gender" }),
   }),
+  framework: z.enum(["react", "solid", "vue", "svelte"]),
   pin: z
     .array(z.string().length(1))
     .length(6, "PIN must be 6 digits")
@@ -19,6 +21,7 @@ const schema = z.object({
       message: "PIN must be numbers only",
     }),
   bio: z.string().max(500, "Bio too long"),
+  files: z.array(z.string()).max(5, "Maximum 5 files"),
 })
 
 export default function ProfileForm() {
@@ -30,6 +33,9 @@ export default function ProfileForm() {
       gender: "",
       pin: Array(6).fill(""),
       bio: "",
+      files: [""],
+      framework: "",
+      date: "",
     },
     validators: {
       onChange: schema,
@@ -66,12 +72,42 @@ export default function ProfileForm() {
           </form.FormItem>
         )}
       </form.AppField>
-
+      <form.AppField name="date">
+        {(field) => (
+          <form.FormItem>
+            <form.FormLabel>Date</form.FormLabel>
+            <field.DatePickerField />
+            <form.FormMessage />
+          </form.FormItem>
+        )}
+      </form.AppField>
       <form.AppField name="gender">
         {(field) => (
           <form.FormItem>
             <form.FormLabel>Gender</form.FormLabel>
-            <field.RadioGroupField options={["Male", "Female", "Other"]} />
+            <field.RadioGroupField
+              options={[
+                { label: "Male", value: "male" },
+                { label: "Female", value: "female" },
+                { label: "Other", value: "other", disabled: true },
+              ]}
+            />
+            <form.FormMessage />
+          </form.FormItem>
+        )}
+      </form.AppField>
+      <form.AppField name="framework">
+        {(field) => (
+          <form.FormItem>
+            <form.FormLabel>Framework</form.FormLabel>
+            <field.SelectField
+              options={[
+                { label: "React", value: "react" },
+                { label: "Vue", value: "vue" },
+                { label: "Svelte", value: "svelte", disabled: true },
+              ]}
+              placeholder="Pilih framework"
+            />
             <form.FormMessage />
           </form.FormItem>
         )}
@@ -85,6 +121,19 @@ export default function ProfileForm() {
           </form.FormItem>
         )}
       </form.AppField>
+      <form.AppField name="files">
+        {(field) => (
+          <form.FormItem>
+            <field.FileUploadDropzoneField
+              label="Upload Documents"
+              category="document"
+              multiple
+            />
+            <form.FormMessage />
+          </form.FormItem>
+        )}
+      </form.AppField>
+
       <form.AppField name="bio">
         {(field) => (
           <form.FormItem>
