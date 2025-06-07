@@ -1,3 +1,5 @@
+"use client"
+
 import * as React from "react"
 import { createListCollection, type ListCollection } from "@ark-ui/react"
 import { Icon } from "@yopem-ui/react-icons"
@@ -25,8 +27,7 @@ import {
   SelectValueText,
 } from "./select"
 
-export interface BaseFieldProps
-  extends React.InputHTMLAttributes<HTMLInputElement> {
+export interface BaseFieldProps extends React.ComponentProps<"input"> {
   label?: string
   type?: string
 }
@@ -135,11 +136,8 @@ export const PinInputField = ({ label, length = 6 }: PinInputFieldProps) => {
   )
 }
 
-export interface TextareaFieldProps {
+export interface TextareaFieldProps extends React.ComponentProps<"textarea"> {
   label?: string
-  placeholder?: string
-  rows?: number
-  className?: string
 }
 
 export const TextareaField = ({
