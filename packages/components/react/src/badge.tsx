@@ -23,7 +23,7 @@ export const badgeVariants = cva(
   },
 )
 
-export interface BadgeProps
+interface BadgeProps
   extends React.ComponentProps<typeof ark.div>,
     VariantProps<typeof badgeVariants> {
   asChild?: boolean
