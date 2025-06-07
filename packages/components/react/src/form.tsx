@@ -19,14 +19,14 @@ export const { fieldContext, formContext, useFieldContext } =
 export const FormItem = ({
   className,
   ...props
-}: React.HTMLAttributes<HTMLDivElement>) => (
+}: React.ComponentProps<"div">) => (
   <div className={cn("space-y-2", className)} {...props} />
 )
 
 export const FormLabel = ({
   className,
   ...props
-}: React.LabelHTMLAttributes<HTMLLabelElement>) => {
+}: React.ComponentProps<"label">) => {
   const field = useFieldContext()
   return (
     <label
@@ -41,7 +41,7 @@ export const FormControl = ({
   children,
   className,
   ...props
-}: React.HTMLAttributes<HTMLDivElement>) => (
+}: React.ComponentProps<"div">) => (
   <div className={cn("form-control", className)} {...props}>
     {children}
   </div>
@@ -50,7 +50,7 @@ export const FormControl = ({
 export const FormMessage = ({
   className,
   ...props
-}: React.HTMLAttributes<HTMLParagraphElement>) => {
+}: React.ComponentProps<"p">) => {
   const field = useFieldContext()
   const { meta } = field.state
   const shouldShowError = meta.isTouched || meta.isDirty
@@ -75,7 +75,7 @@ export const FormMessage = ({
 export const FormDescription = ({
   className,
   ...props
-}: React.HTMLAttributes<HTMLParagraphElement>) => (
+}: React.ComponentProps<"p">) => (
   <p className={cn("text-muted-foreground text-sm", className)} {...props} />
 )
 
