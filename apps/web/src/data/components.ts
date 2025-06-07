@@ -85,6 +85,11 @@ export const components = [
     description: "Loading placeholder while content loads.",
   },
   {
+    slug: "table",
+    name: "Table",
+    description: "Structured data display in rows and columns.",
+  },
+  {
     slug: "togglegroup",
     name: "Toggle Group",
     description: "Group of toggle buttons for multiple or single selection.",
