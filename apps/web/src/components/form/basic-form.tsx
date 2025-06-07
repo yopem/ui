@@ -6,6 +6,7 @@ import { z } from "zod"
 const schema = z.object({
   name: z.string().min(1, "Name is required"),
   email: z.string().email("Invalid email"),
+  date: z.string().min(1, "Date is required"),
   acceptTerms: z.literal(true).refine(Boolean, {
     message: "You must accept the terms",
   }),
@@ -32,8 +33,9 @@ export default function ProfileForm() {
       gender: "",
       pin: Array(6).fill(""),
       bio: "",
-      files: [],
+      files: [""],
       framework: "",
+      date: "",
     },
     validators: {
       onChange: schema,
@@ -70,7 +72,15 @@ export default function ProfileForm() {
           </form.FormItem>
         )}
       </form.AppField>
-
+      <form.AppField name="date">
+        {(field) => (
+          <form.FormItem>
+            <form.FormLabel>Date</form.FormLabel>
+            <field.DatePickerField />
+            <form.FormMessage />
+          </form.FormItem>
+        )}
+      </form.AppField>
       <form.AppField name="gender">
         {(field) => (
           <form.FormItem>

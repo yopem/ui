@@ -1,11 +1,16 @@
 "use client"
 
 import * as React from "react"
-import { createListCollection, type ListCollection } from "@ark-ui/react"
+import {
+  createListCollection,
+  type DatePickerValueChangeDetails,
+  type ListCollection,
+} from "@ark-ui/react"
 import { Icon } from "@yopem-ui/react-icons"
 import { cn } from "@yopem-ui/utils"
 
 import { Checkbox } from "./checkbox"
+import { DatePicker } from "./date-picker"
 import { useFieldContext } from "./form"
 import { Input } from "./input"
 import {
@@ -326,4 +331,13 @@ export const FileUploadDropzoneField = ({
       )}
     </div>
   )
+}
+
+export const DatePickerField = ({ label }: { label?: string }) => {
+  const field = useFieldContext<string | null>()
+  const handleOnValueChange = (e: DatePickerValueChangeDetails) => {
+    field.handleChange(e.valueAsString[0])
+  }
+
+  return <DatePicker label={label} handleOnValueChange={handleOnValueChange} />
 }
