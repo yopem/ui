@@ -1,10 +1,12 @@
 "use client"
 
 import * as React from "react"
+import { createListCollection, type ListCollection } from "@ark-ui/react"
 import {
   createColumnHelper,
   flexRender,
   getCoreRowModel,
+  getFacetedRowModel,
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
@@ -18,6 +20,7 @@ import {
 import { Icon } from "@yopem-ui/react-icons"
 import { cn } from "@yopem-ui/utils"
 
+import { Input } from "./input"
 import {
   Pagination,
   PaginationContent,
@@ -26,6 +29,13 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "./pagination"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValueText,
+} from "./select"
 import {
   Table,
   TableBody,
@@ -73,8 +83,13 @@ export function FilteredTable<TData extends RowData>({
     getFilteredRowModel: getFilteredRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
+    getFacetedRowModel: getFacetedRowModel(),
     manualPagination: false,
     autoResetPageIndex: false,
+  })
+
+  const pageSizeCollection: ListCollection = createListCollection({
+    items: ["10", "20", "30", "40", "50"],
   })
 
   return (
@@ -88,7 +103,7 @@ export function FilteredTable<TData extends RowData>({
                   key={header.id}
                   colSpan={header.colSpan}
                   className={cn(
-                    "space-y-1",
+                    "space-y-1 py-2",
                     header.column.getCanSort() && "cursor-pointer select-none",
                   )}
                 >
@@ -121,7 +136,7 @@ export function FilteredTable<TData extends RowData>({
                   )}
 
                   {header.column.getCanFilter() && (
-                    <div className="pt-1">
+                    <div>
                       <Filter<TData> column={header.column} />
                     </div>
                   )}
@@ -199,7 +214,8 @@ export function FilteredTable<TData extends RowData>({
           <PaginationItem>
             <span className="ml-2 flex items-center gap-1 text-sm">
               | Go to page:
-              <input
+              <Input
+                aria-label="Page number"
                 type="number"
                 min={1}
                 max={table.getPageCount()}
@@ -208,22 +224,29 @@ export function FilteredTable<TData extends RowData>({
                   const page = e.target.value ? Number(e.target.value) - 1 : 0
                   table.setPageIndex(page)
                 }}
-                className="w-16 rounded border px-1 py-0.5 text-sm"
+                className="h-8 w-16 rounded border px-1 py-0.5 text-sm"
               />
             </span>
           </PaginationItem>
           <PaginationItem>
-            <select
-              value={table.getState().pagination.pageSize}
-              onChange={(e) => table.setPageSize(Number(e.target.value))}
-              className="ml-2 rounded border px-1 py-0.5 text-sm"
+            <Select
+              value={[String(table.getState().pagination.pageSize)]}
+              collection={pageSizeCollection}
+              onValueChange={(e) => {
+                table.setPageSize(Number(e.value[0]))
+              }}
             >
-              {[10, 20, 30, 40, 50].map((pageSize) => (
-                <option key={pageSize} value={pageSize}>
-                  Show {pageSize}
-                </option>
-              ))}
-            </select>
+              <SelectTrigger className="ml-2 !h-8 w-[120px] px-2 py-1 text-sm">
+                <SelectValueText placeholder="Page size" />
+              </SelectTrigger>
+              <SelectContent>
+                {pageSizeCollection.items.map((item) => (
+                  <SelectItem key={item} item={item}>
+                    Show {item}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </PaginationItem>
         </PaginationContent>
       </Pagination>
@@ -267,19 +290,29 @@ function SelectFilter<TData extends RowData>({
     return Array.from(unique)
   }, [column, options])
 
+  const rangeCollection: ListCollection = createListCollection({
+    items: ["", ...values],
+  })
+
   return (
-    <select
-      onChange={(e) => column.setFilterValue(e.target.value)}
-      value={columnFilterValue}
-      className="rounded border p-1"
+    <Select
+      value={[columnFilterValue]}
+      collection={rangeCollection}
+      onValueChange={(e) => {
+        column.setFilterValue(e.value[0])
+      }}
     >
-      <option value="">All</option>
-      {values.map((val) => (
-        <option key={val} value={val}>
-          {val}
-        </option>
-      ))}
-    </select>
+      <SelectTrigger className="!h-8 w-32 p-2">
+        <SelectValueText placeholder="All" />
+      </SelectTrigger>
+      <SelectContent>
+        {rangeCollection.items.map((item) => (
+          <SelectItem key={item} item={item}>
+            {item === "" ? "All" : item}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
   )
 }
 
@@ -303,7 +336,10 @@ function Filter<TData extends RowData>({ column }: FilterProps<TData>) {
             type="number"
             value={Array.isArray(columnFilterValue) ? columnFilterValue[0] : ""}
             onChange={(value) =>
-              column.setFilterValue((old: [number, number]) => [value, old[1]])
+              column.setFilterValue((old?: [number, number]) => [
+                value,
+                Number(old?.[1]) ? old?.[1] : undefined,
+              ])
             }
             placeholder="Min"
             className="w-24 rounded border shadow"
@@ -312,13 +348,15 @@ function Filter<TData extends RowData>({ column }: FilterProps<TData>) {
             type="number"
             value={Array.isArray(columnFilterValue) ? columnFilterValue[1] : ""}
             onChange={(value) =>
-              column.setFilterValue((old: [number, number]) => [old[0], value])
+              column.setFilterValue((old?: [number, number]) => [
+                Number(old?.[0]) ? old?.[0] : undefined,
+                value,
+              ])
             }
             placeholder="Max"
             className="w-24 rounded border shadow"
           />
         </div>
-        <div className="h-1" />
       </div>
     )
   } else if (filterVariant === "select") {
@@ -373,10 +411,11 @@ function DebouncedInput({
   }, [value, onChange, debounce])
 
   return (
-    <input
+    <Input
       {...props}
       value={value}
       onChange={(e) => setValue(e.target.value)}
+      className="h-8 min-w-16 p-2"
     />
   )
 }
