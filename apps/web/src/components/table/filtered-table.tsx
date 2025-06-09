@@ -222,7 +222,7 @@ const data: Person[] = [
 
 export default function FilteredTableExample() {
   return (
-    <div className="max-w-full p-4">
+    <div className="min-w-full">
       <FilteredTable columns={columns} data={data} />
     </div>
   )
