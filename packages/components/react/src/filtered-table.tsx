@@ -235,8 +235,6 @@ export function FilteredTable<TData extends RowData>({
   )
 }
 
-/**
- */
 interface SelectFilterProps<TData extends RowData> {
   column: Column<TData, unknown>
   options?: string[]
@@ -285,9 +283,6 @@ function SelectFilter<TData extends RowData>({
   )
 }
 
-/**
- * Props for Filter component
- */
 interface FilterProps<TData extends RowData> {
   column: Column<TData, unknown>
 }
@@ -352,14 +347,8 @@ function Filter<TData extends RowData>({ column }: FilterProps<TData>) {
   )
 }
 
-/**
- * Debounced input component for filters
- */
 interface DebouncedInputProps
-  extends Omit<
-    React.InputHTMLAttributes<HTMLInputElement>,
-    "onChange" | "value"
-  > {
+  extends Omit<React.ComponentProps<"input">, "onChange" | "value"> {
   value: string | number
   onChange: (value: string | number) => void
   debounce?: number
