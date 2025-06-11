@@ -1,5 +1,6 @@
 import FilteredTable from "@/components/table/filtered-table"
 import { TableBasic } from "@/components/table/table-basic"
+import { TMDbTable } from "@/components/table/tmdb-table"
 
 export default function TablePage() {
   return (
@@ -13,6 +14,9 @@ export default function TablePage() {
 
         <div className="">
           <FilteredTable />
+        </div>
+        <div className="mt-12">
+          <TMDbTable />
         </div>
       </div>
     </div>
