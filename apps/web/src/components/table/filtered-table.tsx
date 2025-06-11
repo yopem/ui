@@ -2,8 +2,8 @@
 
 import * as React from "react"
 import {
+  ControlledTable,
   createColumnHelperInstance,
-  FilteredTable,
   type ColumnDef,
 } from "@yopem-ui/react"
 
@@ -222,7 +222,11 @@ const data: Person[] = [
 export default function FilteredTableExample() {
   return (
     <div className="min-w-full">
-      <FilteredTable columns={columns} data={data} />
+      <ControlledTable<Person>
+        manualMode={false}
+        columns={columns}
+        data={data}
+      />
     </div>
   )
 }
