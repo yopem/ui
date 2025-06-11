@@ -439,7 +439,7 @@ function Filter<TData extends RowData>({ column }: FilterProps<TData>) {
 
 interface DebouncedInputProps
   extends Omit<React.ComponentProps<"input">, "onChange" | "value"> {
-  value: string | number
+  value?: string | number
   onChange: (value: string | number) => void
   debounce?: number
 }
@@ -449,24 +449,27 @@ function DebouncedInput({
   debounce = 500,
   ...props
 }: DebouncedInputProps) {
-  const [value, setValue] = React.useState<string | number>(initialValue)
+  const [value, setValue] = React.useState(initialValue ?? "")
+  const timeoutRef = React.useRef<NodeJS.Timeout | null>(null)
 
-  React.useEffect(() => {
-    setValue(initialValue)
-  }, [initialValue])
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = e.target.value
+    setValue(newValue)
 
-  React.useEffect(() => {
-    const timeout = setTimeout(() => {
-      onChange(value)
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current)
+    }
+
+    timeoutRef.current = setTimeout(() => {
+      onChange(newValue)
     }, debounce)
-    return () => clearTimeout(timeout)
-  }, [value, onChange, debounce])
+  }
 
   return (
     <Input
       {...props}
       value={value}
-      onChange={(e) => setValue(e.target.value)}
+      onChange={handleChange}
       className="h-8 min-w-16 p-2"
     />
   )
