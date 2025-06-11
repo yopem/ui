@@ -1,12 +1,11 @@
 "use client"
 
 import * as React from "react"
-import { createListCollection, type ListCollection } from "@ark-ui/react"
+import type { ListCollection } from "@ark-ui/react"
 import {
   createColumnHelper,
   flexRender,
   getCoreRowModel,
-  getFacetedRowModel,
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
@@ -14,8 +13,9 @@ import {
   type Column,
   type ColumnDef,
   type ColumnFiltersState,
-  type FilterFn,
+  type PaginationState,
   type RowData,
+  type SortingState,
 } from "@tanstack/react-table"
 import { Icon } from "@yopem-ui/react-icons"
 import { cn } from "@yopem-ui/utils"
@@ -30,6 +30,7 @@ import {
   PaginationPrevious,
 } from "./pagination"
 import {
+  createListCollection,
   Select,
   SelectContent,
   SelectItem,
@@ -50,55 +51,87 @@ export type { ColumnDef, FilterFn, RowData } from "@tanstack/react-table"
 export const createColumnHelperInstance = <TData extends RowData>() =>
   createColumnHelper<TData>()
 
-export interface FilteredTableProps<TData extends RowData> {
+interface ControlledTableProps<TData extends RowData> {
   columns: ColumnDef<TData, unknown>[]
   data: TData[]
-  filterFns?: Record<string, FilterFn<TData>>
+  manualMode: boolean
+  totalPages?: number
+  isLoading?: boolean
+  pagination?: PaginationState
+  sorting?: SortingState
+  columnFilters?: ColumnFiltersState
+  setPagination?: (
+    updater: PaginationState | ((old: PaginationState) => PaginationState),
+  ) => void
+  setSorting?: (
+    updater: SortingState | ((old: SortingState) => SortingState),
+  ) => void
+  setColumnFilters?: (
+    updater:
+      | ColumnFiltersState
+      | ((old: ColumnFiltersState) => ColumnFiltersState),
+  ) => void
+  pageSizeOptions?: number[]
 }
 
-export function FilteredTable<TData extends RowData>({
+export function ControlledTable<TData extends RowData>({
   columns,
   data,
-  filterFns = {},
-}: FilteredTableProps<TData>) {
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    [],
-  )
-  const [pagination, setPagination] = React.useState({
-    pageIndex: 0,
-    pageSize: 10,
-  })
+  manualMode = true,
+  totalPages = 1,
+  isLoading = false,
+  pagination,
+  sorting,
+  columnFilters,
+  setPagination,
+  setSorting,
+  setColumnFilters,
+  pageSizeOptions = [10, 20, 30],
+}: ControlledTableProps<TData>) {
+  const [internalPagination, setInternalPagination] =
+    React.useState<PaginationState>({
+      pageIndex: 0,
+      pageSize: pageSizeOptions[0] || 10,
+    })
+  const [internalSorting, setInternalSorting] = React.useState<SortingState>([])
+  const [internalColumnFilters, setInternalColumnFilters] =
+    React.useState<ColumnFiltersState>([])
 
   const table = useReactTable<TData>({
     data,
     columns,
-    filterFns,
     state: {
-      columnFilters,
-      pagination,
+      pagination: manualMode ? pagination : internalPagination,
+      sorting: manualMode ? sorting : internalSorting,
+      columnFilters: manualMode ? columnFilters : internalColumnFilters,
     },
-    onColumnFiltersChange: setColumnFilters,
-    onPaginationChange: setPagination,
+    manualFiltering: manualMode,
+    manualSorting: manualMode,
+    manualPagination: manualMode,
+    pageCount: manualMode ? totalPages : undefined,
+    onPaginationChange: manualMode ? setPagination : setInternalPagination,
+    onSortingChange: manualMode ? setSorting : setInternalSorting,
+    onColumnFiltersChange: manualMode
+      ? setColumnFilters
+      : setInternalColumnFilters,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
-    getFacetedRowModel: getFacetedRowModel(),
-    manualPagination: false,
     autoResetPageIndex: false,
   })
 
   const pageSizeCollection: ListCollection = createListCollection({
-    items: ["10", "20", "30", "40", "50"],
+    items: pageSizeOptions.map((size) => String(size)),
   })
 
   return (
-    <>
-      <Table>
+    <div>
+      <Table className="min-w-full border border-gray-200">
         <TableHeader>
-          {table.getHeaderGroups().map((headerGroup) => (
-            <TableRow key={headerGroup.id}>
-              {headerGroup.headers.map((header) => (
+          {table.getHeaderGroups().map((hg) => (
+            <TableRow key={hg.id} className="bg-gray-100">
+              {hg.headers.map((header) => (
                 <TableHead
                   key={header.id}
                   colSpan={header.colSpan}
@@ -145,16 +178,35 @@ export function FilteredTable<TData extends RowData>({
             </TableRow>
           ))}
         </TableHeader>
+
         <TableBody>
-          {table.getRowModel().rows.map((row) => (
-            <TableRow key={row.id}>
-              {row.getVisibleCells().map((cell) => (
-                <TableCell key={cell.id}>
-                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                </TableCell>
-              ))}
+          {isLoading ? (
+            <TableRow>
+              <TableCell colSpan={columns.length} className="p-4 text-center">
+                Loading...
+              </TableCell>
             </TableRow>
-          ))}
+          ) : data.length === 0 ? (
+            <TableRow>
+              <TableCell colSpan={columns.length} className="p-4 text-center">
+                No data found
+              </TableCell>
+            </TableRow>
+          ) : (
+            table.getRowModel().rows.map((row) => (
+              <TableRow key={row.id} className="hover:bg-gray-50">
+                {row.getVisibleCells().map((cell) => (
+                  <TableCell
+                    key={cell.id}
+                    className="truncate border px-3 py-2"
+                    title={String(cell.getValue())}
+                  >
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </TableCell>
+                ))}
+              </TableRow>
+            ))
+          )}
         </TableBody>
       </Table>
 
@@ -254,7 +306,7 @@ export function FilteredTable<TData extends RowData>({
       <div className="mt-1 text-sm">
         {table.getPrePaginationRowModel().rows.length} Rows
       </div>
-    </>
+    </div>
   )
 }
 
@@ -387,7 +439,7 @@ function Filter<TData extends RowData>({ column }: FilterProps<TData>) {
 
 interface DebouncedInputProps
   extends Omit<React.ComponentProps<"input">, "onChange" | "value"> {
-  value: string | number
+  value?: string | number
   onChange: (value: string | number) => void
   debounce?: number
 }
@@ -397,24 +449,27 @@ function DebouncedInput({
   debounce = 500,
   ...props
 }: DebouncedInputProps) {
-  const [value, setValue] = React.useState<string | number>(initialValue)
+  const [value, setValue] = React.useState(initialValue ?? "")
+  const timeoutRef = React.useRef<NodeJS.Timeout | null>(null)
 
-  React.useEffect(() => {
-    setValue(initialValue)
-  }, [initialValue])
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = e.target.value
+    setValue(newValue)
 
-  React.useEffect(() => {
-    const timeout = setTimeout(() => {
-      onChange(value)
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current)
+    }
+
+    timeoutRef.current = setTimeout(() => {
+      onChange(newValue)
     }, debounce)
-    return () => clearTimeout(timeout)
-  }, [value, onChange, debounce])
+  }
 
   return (
     <Input
       {...props}
       value={value}
-      onChange={(e) => setValue(e.target.value)}
+      onChange={handleChange}
       className="h-8 min-w-16 p-2"
     />
   )
