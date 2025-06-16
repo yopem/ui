@@ -68,21 +68,11 @@ export default function SidebarExample({
                     </SidebarMenuItem>
                   ))}
                 </SidebarMenuItemCollapsible>
-
-                <SidebarMenuItem>
-                  <SidebarMenuButton
-                    isActive={pathname === "/docs/faq"}
-                    asChild
-                  >
-                    <Link href="/docs/faq">FAQ</Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
               </SidebarMenu>
             </SidebarGroupContent>
           </SidebarGroup>
         </SidebarContent>
       </Sidebar>
-
       <SidebarInset>{children}</SidebarInset>
     </SidebarProvider>
   )
