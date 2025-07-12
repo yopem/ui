@@ -15,32 +15,6 @@ env:
   LEFTHOOK: 0
 
 jobs:
-  # tests:
-  #   name: Tests
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Checkout branch
-  #       uses: actions/checkout@v4
-  #
-  #     - name: Install
-  #       uses: ./.github/composite-actions/install
-  #
-  #     - name: Run tests
-  #       run: pnpm test
-
-  lint:
-    name: Lint
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout branch
-        uses: actions/checkout@v4
-
-      - name: Install
-        uses: ./.github/composite-actions/install
-
-      - name: Run lint
-        run: pnpm lint
-
   release:
     name: Release
     runs-on: ubuntu-latest
@@ -52,13 +26,13 @@ jobs:
         uses: ./.github/composite-actions/install
 
       - name: Build
-        run: pnpm build
+        uses: bun run build
 
       - name: Create release Pull Request or publish to NPM
         id: changesets
         uses: changesets/action@v1
         with:
-          publish: pnpm release
+          publish: bun release
           commit: "ci(changesets): version packages"
           setupGitUser: false
         env:

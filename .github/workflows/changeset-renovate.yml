@@ -18,6 +18,10 @@ jobs:
         run: |
           git config --global user.name 'Yopem Bot'
           git config --global user.email 'github@yopem.com'
-      - uses: pnpm/action-setup@v4.1.0
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
       - name: Run changesets-renovate
-        run: pnpm dlx @scaleway/changesets-renovate
+        run: bunx @scaleway/changesets-renovate
