@@ -11,7 +11,7 @@ const schema = z.object({
     message: "You must accept the terms",
   }),
   gender: z.enum(["male", "female", "other"], {
-    errorMap: () => ({ message: "Select a gender" }),
+    error: () => ({ message: "Select a gender" }),
   }),
   framework: z.enum(["react", "solid", "vue", "svelte"]),
   pin: z
