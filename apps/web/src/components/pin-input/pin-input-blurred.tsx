@@ -10,21 +10,12 @@ import {
 } from "@yopem-ui/react"
 
 export const PinInputBlurred = () => (
-  <PinInput
-    blurOnComplete
-    onValueComplete={(value) => {
-      console.log("Completed:", value)
-    }}
-  >
+  <PinInput blurOnComplete>
     <PinInputGroup>
       <PinInputLabel>Blurred</PinInputLabel>
       <PinInputControl>
         {[0, 1, 2].map((id, index) => (
-          <PinInputInput
-            onBlur={() => console.log("Blurred")}
-            key={id}
-            index={index}
-          />
+          <PinInputInput key={id} index={index} />
         ))}
       </PinInputControl>
       <PinInputHiddenInput />
