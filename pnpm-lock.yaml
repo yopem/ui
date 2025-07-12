@@ -13,8 +13,8 @@ catalogs:
       specifier: ^0.1.3
       version: 0.1.6
     '@yopem/typescript-config':
-      specifier: ^0.1.0
-      version: 0.1.0
+      specifier: ^0.2.0
+      version: 0.2.1
     eslint:
       specifier: ^9.21.0
       version: 9.28.0
@@ -126,7 +126,7 @@ importers:
         version: 0.1.6(@ianvs/prettier-plugin-sort-imports@4.4.2(prettier@3.5.3))(prettier-plugin-tailwindcss@0.6.12(@ianvs/prettier-plugin-sort-imports@4.4.2(prettier@3.5.3))(prettier@3.5.3))(prettier@3.5.3)
       '@yopem/typescript-config':
         specifier: catalog:config
-        version: 0.1.0
+        version: 0.2.1
       prettier:
         specifier: catalog:config
         version: 3.5.3
@@ -178,7 +178,7 @@ importers:
         version: 0.1.6(@ianvs/prettier-plugin-sort-imports@4.4.2(prettier@3.5.3))(prettier-plugin-tailwindcss@0.6.12(@ianvs/prettier-plugin-sort-imports@4.4.2(prettier@3.5.3))(prettier@3.5.3))(prettier@3.5.3)
       '@yopem/typescript-config':
         specifier: catalog:config
-        version: 0.1.0
+        version: 0.2.1
       eslint:
         specifier: catalog:config
         version: 9.28.0(jiti@2.4.2)
@@ -209,7 +209,7 @@ importers:
         version: 0.1.6(@ianvs/prettier-plugin-sort-imports@4.4.2(prettier@3.5.3))(prettier-plugin-tailwindcss@0.6.12(@ianvs/prettier-plugin-sort-imports@4.4.2(prettier@3.5.3))(prettier@3.5.3))(prettier@3.5.3)
       '@yopem/typescript-config':
         specifier: catalog:config
-        version: 0.1.0
+        version: 0.2.1
       eslint:
         specifier: catalog:config
         version: 9.28.0(jiti@2.4.2)
@@ -243,7 +243,7 @@ importers:
         version: 0.1.6(@ianvs/prettier-plugin-sort-imports@4.4.2(prettier@3.5.3))(prettier-plugin-tailwindcss@0.6.12(@ianvs/prettier-plugin-sort-imports@4.4.2(prettier@3.5.3))(prettier@3.5.3))(prettier@3.5.3)
       '@yopem/typescript-config':
         specifier: catalog:config
-        version: 0.1.0
+        version: 0.2.1
       eslint:
         specifier: catalog:config
         version: 9.28.0(jiti@2.4.2)
@@ -1233,8 +1233,8 @@ packages:
       prettier: ^3.5.2
       prettier-plugin-tailwindcss: ^0.6.11
 
-  '@yopem/typescript-config@0.1.0':
-    resolution: {integrity: sha512-z5BefaENo0Ow/Mqx1BaalxQg7pxvrFWquNtl7esbWUEZIoYJVj3MVNzAIfLFwRFnhlmBi+NvF/22UY6tnxYgdw==}
+  '@yopem/typescript-config@0.2.1':
+    resolution: {integrity: sha512-/jg5qY4Skn9mjXKKbbQOerwGfQzg+ERtdE0Fi+J5iSAZSlFbK3phoO8QNeAT9wNh/82WdBHsYRC3NKMVvM3AzQ==}
 
   '@zag-js/accordion@1.15.0':
     resolution: {integrity: sha512-EKNeuKx+lOQ/deCe/ApCjVPxpxpDwT2NXvMPL+YvqXmSv7hAnTLs9fDKjbDUQUMmsyx32BsBd8t6d17DL3rPXg==}
@@ -4600,7 +4600,7 @@ snapshots:
       prettier: 3.5.3
       prettier-plugin-tailwindcss: 0.6.12(@ianvs/prettier-plugin-sort-imports@4.4.2(prettier@3.5.3))(prettier@3.5.3)
 
-  '@yopem/typescript-config@0.1.0': {}
+  '@yopem/typescript-config@0.2.1': {}
 
   '@zag-js/accordion@1.15.0':
     dependencies:
