@@ -8,49 +8,49 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { Route as rootRouteImport } from "./routes/__root"
-import { Route as IndexRouteImport } from "./routes/index"
-import { Route as StylexIndexRouteImport } from "./routes/stylex/index"
-import { Route as TailwindIndexRouteImport } from "./routes/tailwind/index"
+import { Route as rootRouteImport } from './routes/__root'
+import { Route as IndexRouteImport } from './routes/index'
+import { Route as StylexIndexRouteImport } from './routes/stylex/index'
+import { Route as TailwindIndexRouteImport } from './routes/tailwind/index'
 
 const IndexRoute = IndexRouteImport.update({
-  id: "/",
-  path: "/",
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const StylexIndexRoute = StylexIndexRouteImport.update({
-  id: "/stylex/",
-  path: "/stylex/",
+  id: '/stylex/',
+  path: '/stylex/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const TailwindIndexRoute = TailwindIndexRouteImport.update({
-  id: "/tailwind/",
-  path: "/tailwind/",
+  id: '/tailwind/',
+  path: '/tailwind/',
   getParentRoute: () => rootRouteImport,
 } as any)
 
 export interface FileRoutesByFullPath {
-  "/": typeof IndexRoute
-  "/stylex/": typeof StylexIndexRoute
-  "/tailwind/": typeof TailwindIndexRoute
+  '/': typeof IndexRoute
+  '/stylex/': typeof StylexIndexRoute
+  '/tailwind/': typeof TailwindIndexRoute
 }
 export interface FileRoutesByTo {
-  "/": typeof IndexRoute
-  "/stylex": typeof StylexIndexRoute
-  "/tailwind": typeof TailwindIndexRoute
+  '/': typeof IndexRoute
+  '/stylex': typeof StylexIndexRoute
+  '/tailwind': typeof TailwindIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  "/": typeof IndexRoute
-  "/stylex/": typeof StylexIndexRoute
-  "/tailwind/": typeof TailwindIndexRoute
+  '/': typeof IndexRoute
+  '/stylex/': typeof StylexIndexRoute
+  '/tailwind/': typeof TailwindIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: "/" | "/stylex/" | "/tailwind/"
+  fullPaths: '/' | '/stylex/' | '/tailwind/'
   fileRoutesByTo: FileRoutesByTo
-  to: "/" | "/stylex" | "/tailwind"
-  id: "__root__" | "/" | "/stylex/" | "/tailwind/"
+  to: '/' | '/stylex' | '/tailwind'
+  id: '__root__' | '/' | '/stylex/' | '/tailwind/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -59,26 +59,26 @@ export interface RootRouteChildren {
   TailwindIndexRoute: typeof TailwindIndexRoute
 }
 
-declare module "@tanstack/react-router" {
+declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    "/": {
-      id: "/"
-      path: "/"
-      fullPath: "/"
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    "/stylex/": {
-      id: "/stylex/"
-      path: "/stylex"
-      fullPath: "/stylex/"
+    '/stylex/': {
+      id: '/stylex/'
+      path: '/stylex'
+      fullPath: '/stylex/'
       preLoaderRoute: typeof StylexIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    "/tailwind/": {
-      id: "/tailwind/"
-      path: "/tailwind"
-      fullPath: "/tailwind/"
+    '/tailwind/': {
+      id: '/tailwind/'
+      path: '/tailwind'
+      fullPath: '/tailwind/'
       preLoaderRoute: typeof TailwindIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
@@ -94,10 +94,9 @@ export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
 
-import type { createStart } from "@tanstack/react-start"
-
-import type { getRouter } from "./router.tsx"
-declare module "@tanstack/react-start" {
+import type { getRouter } from './router.tsx'
+import type { createStart } from '@tanstack/react-start'
+declare module '@tanstack/react-start' {
   interface Register {
     ssr: true
     router: Awaited<ReturnType<typeof getRouter>>
