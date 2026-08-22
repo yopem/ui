@@ -1,3 +1,4 @@
+// oxlint-disable jsx-a11y/prefer-tag-over-role -- spinner uses role=status for live region; output tag not appropriate for icon
 import type React from "react"
 
 import { Loader2Icon } from "lucide-react"

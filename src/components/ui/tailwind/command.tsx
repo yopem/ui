@@ -121,6 +121,7 @@ export function CommandInput({
   return (
     <div className="px-2.5 py-1.5">
       <AutocompleteInput
+        // oxlint-disable-next-line jsx-a11y/no-autofocus -- command palette needs immediate focus
         autoFocus
         className={cn(
           "border-transparent! bg-transparent! shadow-none before:hidden has-focus-visible:ring-0",

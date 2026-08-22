@@ -1,5 +1,7 @@
 "use client"
 
+// oxlint-disable jsx-a11y/prefer-tag-over-role -- Button group uses div+role=group for styling; fieldset not appropriate
+
 import type * as React from "react"
 
 import { mergeProps } from "@base-ui/react/merge-props"
