@@ -162,6 +162,7 @@ import {
 import { Separator } from "@/components/ui/tailwind/separator"
 import {
   Sheet,
+  SheetClose,
   SheetDescription,
   SheetFooter,
   SheetHeader,
@@ -354,7 +355,16 @@ function RouteComponent() {
                     </AlertDescription>
                     {v === "default" ? (
                       <AlertAction>
-                        <Button size="xs" variant="outline">
+                        <Button
+                          size="xs"
+                          variant="outline"
+                          onClick={() =>
+                            toastManager.add({
+                              title: "Alert action",
+                              description: "Action button clicked",
+                            })
+                          }
+                        >
                           Action
                         </Button>
                       </AlertAction>
@@ -519,7 +529,7 @@ function RouteComponent() {
                       Card content with body text and layout.
                     </p>
                   </CardContent>
-                  <CardFooter>
+                  <CardFooter className="gap-2">
                     <Button size="sm">Action</Button>
                     <Button size="sm" variant="outline">
                       Cancel
@@ -695,9 +705,14 @@ function RouteComponent() {
                     </SheetHeader>
                     <div className="p-4 text-sm">Sheet content</div>
                     <SheetFooter>
-                      <Button size="sm" variant="outline">
+                      <SheetClose
+                        className={buttonVariants({
+                          size: "sm",
+                          variant: "outline",
+                        })}
+                      >
                         Close
-                      </Button>
+                      </SheetClose>
                     </SheetFooter>
                   </SheetPopup>
                 </Sheet>
