@@ -9,6 +9,8 @@
     "dev": "vite dev --port 3000",
     "generate-routes": "tsr generate",
     "build": "vite build",
+    "fmt": "oxfmt fmt .",
+    "lint": "oxlint lint .",
     "preview": "vite preview"
   },
   "dependencies": {
