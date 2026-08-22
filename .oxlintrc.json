@@ -58,7 +58,10 @@
     "no-unused-expressions": "error",
     "no-unused-labels": "error",
     "no-unused-private-class-members": "error",
-    "no-unused-vars": ["error", { "argsIgnorePattern": "^_", "varsIgnorePattern": "^_" }],
+    "no-unused-vars": [
+      "error",
+      { "argsIgnorePattern": "^_", "varsIgnorePattern": "^_" }
+    ],
     "no-useless-backreference": "error",
     "no-useless-catch": "error",
     "no-useless-escape": "error",
@@ -93,7 +96,10 @@
     "typescript/no-implied-eval": "error",
     "typescript/no-inferrable-types": "error",
     "typescript/no-misused-new": "error",
-    "typescript/no-misused-promises": ["error", { "checksVoidReturn": { "attributes": false } }],
+    "typescript/no-misused-promises": [
+      "error",
+      { "checksVoidReturn": { "attributes": false } }
+    ],
     "typescript/no-namespace": "error",
     "typescript/no-non-null-asserted-optional-chain": "error",
     "typescript/no-redundant-type-constituents": "error",

@@ -1,6 +1,6 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router"
 
-import appCss from "@/styles.css?url";
+import appCss from "@/styles.css?url"
 
 export const Route = createFileRoute("/tailwind/")({
   head: () => ({
@@ -13,8 +13,8 @@ export const Route = createFileRoute("/tailwind/")({
   }),
 
   component: RouteComponent,
-});
+})
 
 function RouteComponent() {
-  return <div>Hello "/tailwind/"!</div>;
+  return <div>Hello "/tailwind/"!</div>
 }

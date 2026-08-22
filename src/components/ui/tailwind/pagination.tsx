@@ -1,11 +1,17 @@
-"use client";
+"use client"
 
-import { mergeProps } from "@base-ui/react/merge-props";
-import { useRender } from "@base-ui/react/use-render";
-import { ChevronLeftIcon, ChevronRightIcon, MoreHorizontalIcon } from "lucide-react";
-import type * as React from "react";
-import { cn } from "@/lib/utils";
-import { type Button, buttonVariants } from "@/components/ui/tailwind/button";
+import type * as React from "react"
+
+import { mergeProps } from "@base-ui/react/merge-props"
+import { useRender } from "@base-ui/react/use-render"
+import {
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  MoreHorizontalIcon,
+} from "lucide-react"
+
+import { type Button, buttonVariants } from "@/components/ui/tailwind/button"
+import { cn } from "@/lib/utils"
 
 export function Pagination({
   className,
@@ -18,7 +24,7 @@ export function Pagination({
       data-slot="pagination"
       {...props}
     />
-  );
+  )
 }
 
 export function PaginationContent({
@@ -31,17 +37,19 @@ export function PaginationContent({
       data-slot="pagination-content"
       {...props}
     />
-  );
+  )
 }
 
-export function PaginationItem({ ...props }: React.ComponentProps<"li">): React.ReactElement {
-  return <li data-slot="pagination-item" {...props} />;
+export function PaginationItem({
+  ...props
+}: React.ComponentProps<"li">): React.ReactElement {
+  return <li data-slot="pagination-item" {...props} />
 }
 
 export type PaginationLinkProps = {
-  isActive?: boolean;
-  size?: React.ComponentProps<typeof Button>["size"];
-} & useRender.ComponentProps<"a">;
+  isActive?: boolean
+  size?: React.ComponentProps<typeof Button>["size"]
+} & useRender.ComponentProps<"a">
 
 export function PaginationLink({
   className,
@@ -63,13 +71,13 @@ export function PaginationLink({
         ),
     "data-active": isActive,
     "data-slot": "pagination-link",
-  };
+  }
 
   return useRender({
     defaultTagName: "a",
     props: mergeProps<"a">(defaultProps, props),
     render,
-  });
+  })
 }
 
 export function PaginationPrevious({
@@ -86,7 +94,7 @@ export function PaginationPrevious({
       <ChevronLeftIcon className="sm:-ms-1" />
       <span className="max-sm:hidden">Previous</span>
     </PaginationLink>
-  );
+  )
 }
 
 export function PaginationNext({
@@ -103,7 +111,7 @@ export function PaginationNext({
       <span className="max-sm:hidden">Next</span>
       <ChevronRightIcon className="sm:-me-1" />
     </PaginationLink>
-  );
+  )
 }
 
 export function PaginationEllipsis({
@@ -120,5 +128,5 @@ export function PaginationEllipsis({
       <MoreHorizontalIcon className="size-5 sm:size-4" />
       <span className="sr-only">More pages</span>
     </span>
-  );
+  )
 }
