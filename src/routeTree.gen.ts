@@ -10,33 +10,53 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as StylexIndexRouteImport } from './routes/stylex/index'
+import { Route as TailwindIndexRouteImport } from './routes/tailwind/index'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const StylexIndexRoute = StylexIndexRouteImport.update({
+  id: '/stylex/',
+  path: '/stylex/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TailwindIndexRoute = TailwindIndexRouteImport.update({
+  id: '/tailwind/',
+  path: '/tailwind/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/stylex/': typeof StylexIndexRoute
+  '/tailwind/': typeof TailwindIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/stylex': typeof StylexIndexRoute
+  '/tailwind': typeof TailwindIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/stylex/': typeof StylexIndexRoute
+  '/tailwind/': typeof TailwindIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths: '/' | '/stylex/' | '/tailwind/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/stylex' | '/tailwind'
+  id: '__root__' | '/' | '/stylex/' | '/tailwind/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  StylexIndexRoute: typeof StylexIndexRoute
+  TailwindIndexRoute: typeof TailwindIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +68,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/stylex/': {
+      id: '/stylex/'
+      path: '/stylex'
+      fullPath: '/stylex/'
+      preLoaderRoute: typeof StylexIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tailwind/': {
+      id: '/tailwind/'
+      path: '/tailwind'
+      fullPath: '/tailwind/'
+      preLoaderRoute: typeof TailwindIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  StylexIndexRoute: StylexIndexRoute,
+  TailwindIndexRoute: TailwindIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
