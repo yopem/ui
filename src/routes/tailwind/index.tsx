@@ -28,6 +28,9 @@ import {
   ShieldAlertIcon,
   SparklesIcon,
   StarIcon,
+  ArrowDownIcon,
+  ArrowUpIcon,
+  CornerDownLeftIcon,
   TrashIcon,
   UsersIcon,
 } from "lucide-react"
@@ -106,10 +109,12 @@ import {
 } from "@/components/ui/tailwind/combobox"
 import {
   Command,
+  CommandCollection,
   CommandDialog,
   CommandDialogPopup,
   CommandDialogTrigger,
   CommandEmpty,
+  CommandFooter,
   CommandGroup,
   CommandGroupLabel,
   CommandInput,
@@ -117,6 +122,7 @@ import {
   CommandList,
   CommandPanel,
   CommandSeparator,
+  CommandShortcut,
 } from "@/components/ui/tailwind/command"
 import {
   ContextMenu,
@@ -315,6 +321,113 @@ function DemoCard({
       </div>
       <div className="p-4">{children}</div>
     </div>
+  )
+}
+
+function CommandPaletteDemo() {
+  const [open, setOpen] = React.useState(false)
+  const groupedItems = React.useMemo(
+    () => [
+      {
+        items: [
+          { label: "Linear", shortcut: "⌘L", value: "linear" },
+          { label: "Figma", shortcut: "⌘F", value: "figma" },
+          { label: "Slack", shortcut: "⌘S", value: "slack" },
+        ],
+        value: "Suggestions",
+      },
+      {
+        items: [
+          { label: "Clipboard History", shortcut: "⌘⇧C", value: "clipboard" },
+          { label: "Import Extension", shortcut: "⌘I", value: "import" },
+          { label: "Create Snippet", shortcut: "⌘N", value: "snippet" },
+        ],
+        value: "Commands",
+      },
+    ],
+    [],
+  )
+  React.useEffect(() => {
+    const down = (e: KeyboardEvent) => {
+      if (e.key === "j" && (e.metaKey || e.ctrlKey)) {
+        e.preventDefault()
+        setOpen((o) => !o)
+      }
+    }
+    document.addEventListener("keydown", down)
+    return () => document.removeEventListener("keydown", down)
+  }, [])
+  return (
+    <CommandDialog open={open} onOpenChange={setOpen}>
+      <CommandDialogTrigger render={<Button variant="outline" />}>
+        Open palette
+        <KbdGroup>
+          <Kbd>⌘</Kbd>
+          <Kbd>J</Kbd>
+        </KbdGroup>
+      </CommandDialogTrigger>
+      <CommandDialogPopup>
+        <Command items={groupedItems}>
+          <CommandInput placeholder="Search for apps and commands…" />
+          <CommandPanel>
+            <CommandEmpty>No results found.</CommandEmpty>
+            <CommandList>
+              {(
+                group: {
+                  value: string
+                  items: { label: string; shortcut?: string; value: string }[]
+                },
+                _idx: number,
+              ) => (
+                <React.Fragment key={group.value}>
+                  <CommandGroup items={group.items}>
+                    <CommandGroupLabel>{group.value}</CommandGroupLabel>
+                    <CommandCollection>
+                      {(item: {
+                        label: string
+                        shortcut?: string
+                        value: string
+                      }) => (
+                        <CommandItem
+                          key={item.value}
+                          value={item.value}
+                          onClick={() => setOpen(false)}
+                        >
+                          <span className="flex-1">{item.label}</span>
+                          {item.shortcut ? (
+                            <CommandShortcut>{item.shortcut}</CommandShortcut>
+                          ) : null}
+                        </CommandItem>
+                      )}
+                    </CommandCollection>
+                  </CommandGroup>
+                  <CommandSeparator />
+                </React.Fragment>
+              )}
+            </CommandList>
+          </CommandPanel>
+          <CommandFooter>
+            <div className="flex items-center gap-2">
+              <KbdGroup>
+                <Kbd>
+                  <ArrowUpIcon className="size-3" />
+                </Kbd>
+                <Kbd>
+                  <ArrowDownIcon className="size-3" />
+                </Kbd>
+              </KbdGroup>
+              <span>Navigate</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Kbd>
+                <CornerDownLeftIcon className="size-3" />
+              </Kbd>
+              <span>Select</span>
+            </div>
+          </CommandFooter>
+        </Command>
+      </CommandDialogPopup>
+    </CommandDialog>
   )
 }
 
@@ -1151,51 +1264,60 @@ function RouteComponent() {
               </div>
             </Section>
 
-            <Section id="command" title="Command" desc="palette • search">
-              <DemoCard label="Open palette (Cmd+K style)">
-                <CommandDialog>
-                  <CommandDialogTrigger
-                    className={buttonVariants({
-                      variant: "outline",
-                      size: "sm",
-                    })}
-                  >
-                    <SearchIcon /> Open command <Kbd>⌘K</Kbd>
-                  </CommandDialogTrigger>
-                  <CommandDialogPopup>
-                    <Command>
-                      <CommandInput placeholder="Search commands…" />
-                      <CommandList>
+            <Section
+              id="command"
+              title="Command"
+              desc="palette • search • from coss docs (p-command-1)"
+            >
+              <div className="grid gap-4 md:grid-cols-2">
+                <DemoCard label="Palette — ⌘J trigger">
+                  <CommandPaletteDemo />
+                </DemoCard>
+                <DemoCard label="Inline — always open (preview)">
+                  <div className="bg-popover rounded-xl border">
+                    <Command
+                      items={[
+                        {
+                          items: [
+                            { label: "Dashboard", value: "dashboard" },
+                            { label: "Projects", value: "projects" },
+                          ],
+                          value: "Pages",
+                        },
+                      ]}
+                    >
+                      <CommandInput placeholder="Search…" />
+                      <CommandPanel>
+                        <CommandList>
+                          {(group: {
+                            value: string
+                            items: { label: string; value: string }[]
+                          }) => (
+                            <React.Fragment key={group.value}>
+                              <CommandGroup items={group.items}>
+                                <CommandGroupLabel>
+                                  {group.value}
+                                </CommandGroupLabel>
+                                <CommandCollection>
+                                  {(item: { label: string; value: string }) => (
+                                    <CommandItem
+                                      key={item.value}
+                                      value={item.value}
+                                    >
+                                      {item.label}
+                                    </CommandItem>
+                                  )}
+                                </CommandCollection>
+                              </CommandGroup>
+                            </React.Fragment>
+                          )}
+                        </CommandList>
                         <CommandEmpty>No results.</CommandEmpty>
-                        <CommandPanel>
-                          <CommandGroup>
-                            <CommandGroupLabel>Suggestions</CommandGroupLabel>
-                            <CommandItem>
-                              <RocketIcon className="size-4" /> New project
-                            </CommandItem>
-                            <CommandItem>
-                              <UsersIcon className="size-4" /> Invite members
-                            </CommandItem>
-                          </CommandGroup>
-                          <CommandSeparator />
-                          <CommandGroup>
-                            <CommandGroupLabel>Recent</CommandGroupLabel>
-                            <CommandItem>
-                              <BookIcon className="size-4" /> Open docs
-                            </CommandItem>
-                            <CommandItem>
-                              <SettingsIcon className="size-4" /> Settings
-                            </CommandItem>
-                          </CommandGroup>
-                        </CommandPanel>
-                      </CommandList>
-                      <CommandPanel className="text-muted-foreground border-t p-2 text-center text-xs">
-                        Press ↑↓ to navigate • Enter to select
                       </CommandPanel>
                     </Command>
-                  </CommandDialogPopup>
-                </CommandDialog>
-              </DemoCard>
+                  </div>
+                </DemoCard>
+              </div>
             </Section>
 
             <Section id="context-menu" title="ContextMenu">
