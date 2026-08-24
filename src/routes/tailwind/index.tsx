@@ -523,7 +523,7 @@ function RouteComponent() {
           </div>
         </header>
         <div className="mx-auto grid max-w-[1600px] grid-cols-1 gap-6 px-6 py-6 lg:grid-cols-[210px_1fr]">
-          <nav className="hidden h-fit lg:sticky lg:top-[65px] lg:block">
+          <nav className="hidden h-fit lg:sticky lg:top-16.25 lg:block">
             <div className="bg-card rounded-xl border p-3">
               <div className="mb-2 text-xs font-semibold tracking-widest uppercase opacity-60">
                 Components
