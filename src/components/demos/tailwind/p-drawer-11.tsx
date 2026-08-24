@@ -1,0 +1,78 @@
+// next/link replaced -> anchor
+import { Button } from "@/components/ui/tailwind/button";
+import {
+  Drawer,
+  DrawerClose,
+  DrawerHeader,
+  DrawerPanel,
+  DrawerPopup,
+  DrawerTitle,
+  DrawerTrigger,
+} from "@/components/ui/tailwind/drawer";
+
+export default function Particle() {
+  return (
+    <Drawer position="left">
+      <DrawerTrigger render={<Button variant="outline" />}>
+        Open menu
+      </DrawerTrigger>
+      <DrawerPopup showCloseButton variant="straight">
+        <DrawerHeader>
+          <DrawerTitle>Menu</DrawerTitle>
+        </DrawerHeader>
+        <DrawerPanel>
+          <nav className="-mx-[calc(--spacing(3)-1px)] flex flex-col gap-0.5">
+            <DrawerClose
+              nativeButton={false}
+              render={
+                <Button
+                  className="justify-start"
+                  render={<a href="#" />}
+                  variant="ghost"
+                />
+              }
+            >
+              Home
+            </DrawerClose>
+            <DrawerClose
+              nativeButton={false}
+              render={
+                <Button
+                  className="justify-start"
+                  render={<a href="#" />}
+                  variant="ghost"
+                />
+              }
+            >
+              Profile
+            </DrawerClose>
+            <DrawerClose
+              nativeButton={false}
+              render={
+                <Button
+                  className="justify-start"
+                  render={<a href="#" />}
+                  variant="ghost"
+                />
+              }
+            >
+              Settings
+            </DrawerClose>
+            <DrawerClose
+              nativeButton={false}
+              render={
+                <Button
+                  className="justify-start"
+                  render={<a href="#" />}
+                  variant="ghost"
+                />
+              }
+            >
+              Sign out
+            </DrawerClose>
+          </nav>
+        </DrawerPanel>
+      </DrawerPopup>
+    </Drawer>
+  );
+}

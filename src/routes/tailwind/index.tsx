@@ -1,281 +1,516 @@
 import { createFileRoute } from "@tanstack/react-router"
-import {
-  AlertCircleIcon,
-  AlertTriangleIcon,
-  ArrowRightIcon,
-  BarChart3Icon,
-  BellIcon,
-  BookIcon,
-  CalendarIcon,
-  CheckIcon,
-  ChevronDownIcon,
-  ChevronRightIcon,
-  CircleAlertIcon,
-  CreditCardIcon,
-  DownloadIcon,
-  FolderIcon,
-  HeartIcon,
-  InboxIcon,
-  LayoutDashboardIcon,
-  LoaderCircleIcon,
-  MailIcon,
-  PackageIcon,
-  RocketIcon,
-  RouteIcon,
-  SearchIcon,
-  SettingsIcon,
-  Share2Icon,
-  ShieldAlertIcon,
-  SparklesIcon,
-  StarIcon,
-  ArrowDownIcon,
-  ArrowUpIcon,
-  CornerDownLeftIcon,
-  TrashIcon,
-  UsersIcon,
-} from "lucide-react"
 import * as React from "react"
 
-import {
-  Accordion,
-  AccordionItem,
-  AccordionPanel,
-  AccordionTrigger,
-} from "@/components/ui/tailwind/accordion"
-import {
-  Alert,
-  AlertAction,
-  AlertDescription,
-  AlertTitle,
-} from "@/components/ui/tailwind/alert"
-import {
-  AlertDialog,
-  AlertDialogClose,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogPopup,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/tailwind/alert-dialog"
-import {
-  Autocomplete,
-  AutocompleteEmpty,
-  AutocompleteInput,
-  AutocompleteItem,
-  AutocompleteList,
-  AutocompletePopup,
-} from "@/components/ui/tailwind/autocomplete"
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "@/components/ui/tailwind/avatar"
-import { Badge } from "@/components/ui/tailwind/badge"
-import {
-  Breadcrumb,
-  BreadcrumbEllipsis,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/tailwind/breadcrumb"
-import { Button, buttonVariants } from "@/components/ui/tailwind/button"
-import { Calendar } from "@/components/ui/tailwind/calendar"
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-  CardPanel,
-} from "@/components/ui/tailwind/card"
-import { Checkbox } from "@/components/ui/tailwind/checkbox"
-import { CheckboxGroup } from "@/components/ui/tailwind/checkbox-group"
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/tailwind/collapsible"
-import {
-  Combobox,
-  ComboboxEmpty,
-  ComboboxInput,
-  ComboboxItem,
-  ComboboxList,
-  ComboboxPopup,
-} from "@/components/ui/tailwind/combobox"
-import {
-  Command,
-  CommandCollection,
-  CommandDialog,
-  CommandDialogPopup,
-  CommandDialogTrigger,
-  CommandEmpty,
-  CommandFooter,
-  CommandGroup,
-  CommandGroupLabel,
-  CommandInput,
-  CommandItem,
-  CommandList,
-  CommandPanel,
-  CommandSeparator,
-  CommandShortcut,
-} from "@/components/ui/tailwind/command"
-import {
-  ContextMenu,
-  ContextMenuItem,
-  ContextMenuPopup,
-  ContextMenuSeparator,
-  ContextMenuTrigger,
-} from "@/components/ui/tailwind/context-menu"
-import {
-  Dialog,
-  DialogClose,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogPanel,
-  DialogPopup,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/tailwind/dialog"
-import {
-  Drawer,
-  DrawerClose,
-  DrawerDescription,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerPopup,
-  DrawerTitle,
-  DrawerTrigger,
-} from "@/components/ui/tailwind/drawer"
-import {
-  Empty,
-  EmptyContent,
-  EmptyDescription,
-  EmptyHeader,
-  EmptyMedia,
-  EmptyTitle,
-} from "@/components/ui/tailwind/empty"
-import {
-  Field,
-  FieldDescription,
-  FieldError,
-  FieldLabel,
-} from "@/components/ui/tailwind/field"
-import { Fieldset, FieldsetLegend } from "@/components/ui/tailwind/fieldset"
-import { Form } from "@/components/ui/tailwind/form"
-import { Frame } from "@/components/ui/tailwind/frame"
-import { Group } from "@/components/ui/tailwind/group"
-import { Input } from "@/components/ui/tailwind/input"
-import {
-  InputGroup,
-  InputGroupAddon,
-  InputGroupInput,
-} from "@/components/ui/tailwind/input-group"
-import { Kbd, KbdGroup } from "@/components/ui/tailwind/kbd"
-import { Label } from "@/components/ui/tailwind/label"
-import {
-  Menu,
-  MenuItem,
-  MenuPopup,
-  MenuSeparator,
-  MenuTrigger,
-  MenuGroupLabel,
-  MenuGroup,
-  MenuShortcut,
-  MenuSub,
-  MenuSubPopup,
-  MenuSubTrigger,
-} from "@/components/ui/tailwind/menu"
-import {
-  Meter,
-  MeterIndicator,
-  MeterLabel,
-  MeterTrack,
-  MeterValue,
-} from "@/components/ui/tailwind/meter"
-import { NumberField } from "@/components/ui/tailwind/number-field"
-import { OTPField, OTPFieldInput } from "@/components/ui/tailwind/otp-field"
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-} from "@/components/ui/tailwind/pagination"
-import {
-  Popover,
-  PopoverPopup,
-  PopoverTrigger,
-} from "@/components/ui/tailwind/popover"
-import {
-  PreviewCard,
-  PreviewCardPopup,
-  PreviewCardTrigger,
-} from "@/components/ui/tailwind/preview-card"
-import {
-  Progress,
-  ProgressIndicator,
-  ProgressLabel,
-  ProgressTrack,
-  ProgressValue,
-} from "@/components/ui/tailwind/progress"
-import { Radio, RadioGroup } from "@/components/ui/tailwind/radio-group"
-import { ScrollArea } from "@/components/ui/tailwind/scroll-area"
-import {
-  Select,
-  SelectButton,
-  SelectItem,
-  SelectPopup,
-  SelectValue,
-} from "@/components/ui/tailwind/select"
-import { Separator } from "@/components/ui/tailwind/separator"
-import {
-  Sheet,
-  SheetClose,
-  SheetDescription,
-  SheetFooter,
-  SheetHeader,
-  SheetPopup,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/tailwind/sheet"
-import { Skeleton } from "@/components/ui/tailwind/skeleton"
-import { Slider } from "@/components/ui/tailwind/slider"
-import { Spinner } from "@/components/ui/tailwind/spinner"
-import { Switch } from "@/components/ui/tailwind/switch"
-import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/tailwind/table"
-import {
-  Tabs,
-  TabsList,
-  TabsPanel,
-  TabsTab,
-} from "@/components/ui/tailwind/tabs"
-import { Textarea } from "@/components/ui/tailwind/textarea"
-import { ToastProvider, toastManager } from "@/components/ui/tailwind/toast"
-import { Toggle } from "@/components/ui/tailwind/toggle"
-import {
-  ToggleGroup,
-  ToggleGroupItem,
-} from "@/components/ui/tailwind/toggle-group"
-import { Toolbar } from "@/components/ui/tailwind/toolbar"
-import {
-  Tooltip,
-  TooltipPopup,
-  TooltipTrigger,
-} from "@/components/ui/tailwind/tooltip"
+import Accordion1 from "@/components/demos/tailwind/p-accordion-1"
+import Accordion2 from "@/components/demos/tailwind/p-accordion-2"
+import Accordion3 from "@/components/demos/tailwind/p-accordion-3"
+import Accordion4 from "@/components/demos/tailwind/p-accordion-4"
+import Alert1 from "@/components/demos/tailwind/p-alert-1"
+import Alert2 from "@/components/demos/tailwind/p-alert-2"
+import Alert3 from "@/components/demos/tailwind/p-alert-3"
+import Alert4 from "@/components/demos/tailwind/p-alert-4"
+import Alert5 from "@/components/demos/tailwind/p-alert-5"
+import Alert6 from "@/components/demos/tailwind/p-alert-6"
+import Alert7 from "@/components/demos/tailwind/p-alert-7"
+import AlertDialog1 from "@/components/demos/tailwind/p-alert-dialog-1"
+import AlertDialog2 from "@/components/demos/tailwind/p-alert-dialog-2"
+import Autocomplete1 from "@/components/demos/tailwind/p-autocomplete-1"
+import Autocomplete2 from "@/components/demos/tailwind/p-autocomplete-2"
+import Autocomplete3 from "@/components/demos/tailwind/p-autocomplete-3"
+import Autocomplete4 from "@/components/demos/tailwind/p-autocomplete-4"
+import Autocomplete5 from "@/components/demos/tailwind/p-autocomplete-5"
+import Autocomplete6 from "@/components/demos/tailwind/p-autocomplete-6"
+import Autocomplete7 from "@/components/demos/tailwind/p-autocomplete-7"
+import Autocomplete8 from "@/components/demos/tailwind/p-autocomplete-8"
+import Autocomplete9 from "@/components/demos/tailwind/p-autocomplete-9"
+import Autocomplete10 from "@/components/demos/tailwind/p-autocomplete-10"
+import Autocomplete11 from "@/components/demos/tailwind/p-autocomplete-11"
+import Autocomplete12 from "@/components/demos/tailwind/p-autocomplete-12"
+import Autocomplete13 from "@/components/demos/tailwind/p-autocomplete-13"
+import Autocomplete14 from "@/components/demos/tailwind/p-autocomplete-14"
+import Autocomplete15 from "@/components/demos/tailwind/p-autocomplete-15"
+import Autocomplete16 from "@/components/demos/tailwind/p-autocomplete-16"
+import Avatar1 from "@/components/demos/tailwind/p-avatar-1"
+import Avatar2 from "@/components/demos/tailwind/p-avatar-2"
+import Avatar3 from "@/components/demos/tailwind/p-avatar-3"
+import Avatar4 from "@/components/demos/tailwind/p-avatar-4"
+import Avatar5 from "@/components/demos/tailwind/p-avatar-5"
+import Avatar6 from "@/components/demos/tailwind/p-avatar-6"
+import Avatar7 from "@/components/demos/tailwind/p-avatar-7"
+import Avatar8 from "@/components/demos/tailwind/p-avatar-8"
+import Avatar9 from "@/components/demos/tailwind/p-avatar-9"
+import Avatar10 from "@/components/demos/tailwind/p-avatar-10"
+import Avatar11 from "@/components/demos/tailwind/p-avatar-11"
+import Avatar12 from "@/components/demos/tailwind/p-avatar-12"
+import Avatar13 from "@/components/demos/tailwind/p-avatar-13"
+import Avatar14 from "@/components/demos/tailwind/p-avatar-14"
+import Badge1 from "@/components/demos/tailwind/p-badge-1"
+import Badge2 from "@/components/demos/tailwind/p-badge-2"
+import Badge3 from "@/components/demos/tailwind/p-badge-3"
+import Badge4 from "@/components/demos/tailwind/p-badge-4"
+import Badge5 from "@/components/demos/tailwind/p-badge-5"
+import Badge6 from "@/components/demos/tailwind/p-badge-6"
+import Badge7 from "@/components/demos/tailwind/p-badge-7"
+import Badge8 from "@/components/demos/tailwind/p-badge-8"
+import Badge9 from "@/components/demos/tailwind/p-badge-9"
+import Badge10 from "@/components/demos/tailwind/p-badge-10"
+import Badge11 from "@/components/demos/tailwind/p-badge-11"
+import Badge12 from "@/components/demos/tailwind/p-badge-12"
+import Badge13 from "@/components/demos/tailwind/p-badge-13"
+import Badge14 from "@/components/demos/tailwind/p-badge-14"
+import Badge15 from "@/components/demos/tailwind/p-badge-15"
+import Badge16 from "@/components/demos/tailwind/p-badge-16"
+import Badge17 from "@/components/demos/tailwind/p-badge-17"
+import Badge18 from "@/components/demos/tailwind/p-badge-18"
+import Badge19 from "@/components/demos/tailwind/p-badge-19"
+import Badge20 from "@/components/demos/tailwind/p-badge-20"
+import Breadcrumb1 from "@/components/demos/tailwind/p-breadcrumb-1"
+import Breadcrumb2 from "@/components/demos/tailwind/p-breadcrumb-2"
+import Breadcrumb3 from "@/components/demos/tailwind/p-breadcrumb-3"
+import Breadcrumb4 from "@/components/demos/tailwind/p-breadcrumb-4"
+import Breadcrumb5 from "@/components/demos/tailwind/p-breadcrumb-5"
+import Breadcrumb6 from "@/components/demos/tailwind/p-breadcrumb-6"
+import Breadcrumb7 from "@/components/demos/tailwind/p-breadcrumb-7"
+import Button1 from "@/components/demos/tailwind/p-button-1"
+import Button2 from "@/components/demos/tailwind/p-button-2"
+import Button3 from "@/components/demos/tailwind/p-button-3"
+import Button4 from "@/components/demos/tailwind/p-button-4"
+import Button5 from "@/components/demos/tailwind/p-button-5"
+import Button6 from "@/components/demos/tailwind/p-button-6"
+import Button7 from "@/components/demos/tailwind/p-button-7"
+import Button8 from "@/components/demos/tailwind/p-button-8"
+import Button9 from "@/components/demos/tailwind/p-button-9"
+import Button10 from "@/components/demos/tailwind/p-button-10"
+import Button11 from "@/components/demos/tailwind/p-button-11"
+import Button12 from "@/components/demos/tailwind/p-button-12"
+import Button13 from "@/components/demos/tailwind/p-button-13"
+import Button14 from "@/components/demos/tailwind/p-button-14"
+import Button15 from "@/components/demos/tailwind/p-button-15"
+import Button16 from "@/components/demos/tailwind/p-button-16"
+import Button17 from "@/components/demos/tailwind/p-button-17"
+import Button18 from "@/components/demos/tailwind/p-button-18"
+import Button19 from "@/components/demos/tailwind/p-button-19"
+import Button20 from "@/components/demos/tailwind/p-button-20"
+import Button21 from "@/components/demos/tailwind/p-button-21"
+import Button22 from "@/components/demos/tailwind/p-button-22"
+import Button23 from "@/components/demos/tailwind/p-button-23"
+import Button24 from "@/components/demos/tailwind/p-button-24"
+import Button26 from "@/components/demos/tailwind/p-button-26"
+import Button27 from "@/components/demos/tailwind/p-button-27"
+import Button28 from "@/components/demos/tailwind/p-button-28"
+import Button29 from "@/components/demos/tailwind/p-button-29"
+import Button30 from "@/components/demos/tailwind/p-button-30"
+import Button31 from "@/components/demos/tailwind/p-button-31"
+import Button32 from "@/components/demos/tailwind/p-button-32"
+import Button33 from "@/components/demos/tailwind/p-button-33"
+import Button34 from "@/components/demos/tailwind/p-button-34"
+import Button35 from "@/components/demos/tailwind/p-button-35"
+import Button36 from "@/components/demos/tailwind/p-button-36"
+import Button37 from "@/components/demos/tailwind/p-button-37"
+import Button38 from "@/components/demos/tailwind/p-button-38"
+import Button39 from "@/components/demos/tailwind/p-button-39"
+import Button40 from "@/components/demos/tailwind/p-button-40"
+import Button41 from "@/components/demos/tailwind/p-button-41"
+import Calendar1 from "@/components/demos/tailwind/p-calendar-1"
+import Calendar2 from "@/components/demos/tailwind/p-calendar-2"
+import Calendar3 from "@/components/demos/tailwind/p-calendar-3"
+import Calendar4 from "@/components/demos/tailwind/p-calendar-4"
+import Calendar5 from "@/components/demos/tailwind/p-calendar-5"
+import Calendar6 from "@/components/demos/tailwind/p-calendar-6"
+import Calendar7 from "@/components/demos/tailwind/p-calendar-7"
+import Calendar8 from "@/components/demos/tailwind/p-calendar-8"
+import Calendar9 from "@/components/demos/tailwind/p-calendar-9"
+import Calendar10 from "@/components/demos/tailwind/p-calendar-10"
+import Calendar11 from "@/components/demos/tailwind/p-calendar-11"
+import Calendar12 from "@/components/demos/tailwind/p-calendar-12"
+import Calendar13 from "@/components/demos/tailwind/p-calendar-13"
+import Calendar14 from "@/components/demos/tailwind/p-calendar-14"
+import Calendar15 from "@/components/demos/tailwind/p-calendar-15"
+import Calendar16 from "@/components/demos/tailwind/p-calendar-16"
+import Calendar17 from "@/components/demos/tailwind/p-calendar-17"
+import Calendar18 from "@/components/demos/tailwind/p-calendar-18"
+import Calendar19 from "@/components/demos/tailwind/p-calendar-19"
+import Calendar20 from "@/components/demos/tailwind/p-calendar-20"
+import Calendar21 from "@/components/demos/tailwind/p-calendar-21"
+import Calendar22 from "@/components/demos/tailwind/p-calendar-22"
+import Calendar23 from "@/components/demos/tailwind/p-calendar-23"
+import Calendar24 from "@/components/demos/tailwind/p-calendar-24"
+import Calendar25 from "@/components/demos/tailwind/p-calendar-25"
+import Card1 from "@/components/demos/tailwind/p-card-1"
+import Card2 from "@/components/demos/tailwind/p-card-2"
+import Card3 from "@/components/demos/tailwind/p-card-3"
+import Card4 from "@/components/demos/tailwind/p-card-4"
+import Card5 from "@/components/demos/tailwind/p-card-5"
+import Card6 from "@/components/demos/tailwind/p-card-6"
+import Card7 from "@/components/demos/tailwind/p-card-7"
+import Card8 from "@/components/demos/tailwind/p-card-8"
+import Card9 from "@/components/demos/tailwind/p-card-9"
+import Card10 from "@/components/demos/tailwind/p-card-10"
+import Card11 from "@/components/demos/tailwind/p-card-11"
+import Checkbox1 from "@/components/demos/tailwind/p-checkbox-1"
+import Checkbox2 from "@/components/demos/tailwind/p-checkbox-2"
+import Checkbox3 from "@/components/demos/tailwind/p-checkbox-3"
+import Checkbox4 from "@/components/demos/tailwind/p-checkbox-4"
+import Checkbox5 from "@/components/demos/tailwind/p-checkbox-5"
+import CheckboxGroup1 from "@/components/demos/tailwind/p-checkbox-group-1"
+import CheckboxGroup2 from "@/components/demos/tailwind/p-checkbox-group-2"
+import CheckboxGroup3 from "@/components/demos/tailwind/p-checkbox-group-3"
+import CheckboxGroup4 from "@/components/demos/tailwind/p-checkbox-group-4"
+import CheckboxGroup5 from "@/components/demos/tailwind/p-checkbox-group-5"
+import Collapsible1 from "@/components/demos/tailwind/p-collapsible-1"
+import Combobox1 from "@/components/demos/tailwind/p-combobox-1"
+import Combobox2 from "@/components/demos/tailwind/p-combobox-2"
+import Combobox3 from "@/components/demos/tailwind/p-combobox-3"
+import Combobox4 from "@/components/demos/tailwind/p-combobox-4"
+import Combobox5 from "@/components/demos/tailwind/p-combobox-5"
+import Combobox6 from "@/components/demos/tailwind/p-combobox-6"
+import Combobox7 from "@/components/demos/tailwind/p-combobox-7"
+import Combobox8 from "@/components/demos/tailwind/p-combobox-8"
+import Combobox9 from "@/components/demos/tailwind/p-combobox-9"
+import Combobox10 from "@/components/demos/tailwind/p-combobox-10"
+import Combobox11 from "@/components/demos/tailwind/p-combobox-11"
+import Combobox12 from "@/components/demos/tailwind/p-combobox-12"
+import Combobox13 from "@/components/demos/tailwind/p-combobox-13"
+import Combobox14 from "@/components/demos/tailwind/p-combobox-14"
+import Combobox15 from "@/components/demos/tailwind/p-combobox-15"
+import Combobox16 from "@/components/demos/tailwind/p-combobox-16"
+import Combobox17 from "@/components/demos/tailwind/p-combobox-17"
+import Combobox18 from "@/components/demos/tailwind/p-combobox-18"
+import Combobox19 from "@/components/demos/tailwind/p-combobox-19"
+import Combobox20 from "@/components/demos/tailwind/p-combobox-20"
+import Command1 from "@/components/demos/tailwind/p-command-1"
+import Command2 from "@/components/demos/tailwind/p-command-2"
+import ContextMenu1 from "@/components/demos/tailwind/p-context-menu-1"
+import ContextMenu2 from "@/components/demos/tailwind/p-context-menu-2"
+import ContextMenu3 from "@/components/demos/tailwind/p-context-menu-3"
+import ContextMenu4 from "@/components/demos/tailwind/p-context-menu-4"
+import ContextMenu5 from "@/components/demos/tailwind/p-context-menu-5"
+import ContextMenu6 from "@/components/demos/tailwind/p-context-menu-6"
+import ContextMenu7 from "@/components/demos/tailwind/p-context-menu-7"
+import ContextMenu8 from "@/components/demos/tailwind/p-context-menu-8"
+import DatePicker1 from "@/components/demos/tailwind/p-date-picker-1"
+import DatePicker2 from "@/components/demos/tailwind/p-date-picker-2"
+import DatePicker3 from "@/components/demos/tailwind/p-date-picker-3"
+import DatePicker4 from "@/components/demos/tailwind/p-date-picker-4"
+import DatePicker5 from "@/components/demos/tailwind/p-date-picker-5"
+import DatePicker6 from "@/components/demos/tailwind/p-date-picker-6"
+import DatePicker7 from "@/components/demos/tailwind/p-date-picker-7"
+import DatePicker8 from "@/components/demos/tailwind/p-date-picker-8"
+import DatePicker9 from "@/components/demos/tailwind/p-date-picker-9"
+import Dialog1 from "@/components/demos/tailwind/p-dialog-1"
+import Dialog2 from "@/components/demos/tailwind/p-dialog-2"
+import Dialog3 from "@/components/demos/tailwind/p-dialog-3"
+import Dialog4 from "@/components/demos/tailwind/p-dialog-4"
+import Dialog5 from "@/components/demos/tailwind/p-dialog-5"
+import Dialog6 from "@/components/demos/tailwind/p-dialog-6"
+import Drawer1 from "@/components/demos/tailwind/p-drawer-1"
+import Drawer2 from "@/components/demos/tailwind/p-drawer-2"
+import Drawer3 from "@/components/demos/tailwind/p-drawer-3"
+import Drawer4 from "@/components/demos/tailwind/p-drawer-4"
+import Drawer5 from "@/components/demos/tailwind/p-drawer-5"
+import Drawer6 from "@/components/demos/tailwind/p-drawer-6"
+import Drawer7 from "@/components/demos/tailwind/p-drawer-7"
+import Drawer8 from "@/components/demos/tailwind/p-drawer-8"
+import Drawer9 from "@/components/demos/tailwind/p-drawer-9"
+import Drawer10 from "@/components/demos/tailwind/p-drawer-10"
+import Drawer11 from "@/components/demos/tailwind/p-drawer-11"
+import Drawer12 from "@/components/demos/tailwind/p-drawer-12"
+import Drawer13 from "@/components/demos/tailwind/p-drawer-13"
+import Drawer14 from "@/components/demos/tailwind/p-drawer-14"
+import Empty1 from "@/components/demos/tailwind/p-empty-1"
+import Field1 from "@/components/demos/tailwind/p-field-1"
+import Field2 from "@/components/demos/tailwind/p-field-2"
+import Field3 from "@/components/demos/tailwind/p-field-3"
+import Field4 from "@/components/demos/tailwind/p-field-4"
+import Field5 from "@/components/demos/tailwind/p-field-5"
+import Field6 from "@/components/demos/tailwind/p-field-6"
+import Field7 from "@/components/demos/tailwind/p-field-7"
+import Field8 from "@/components/demos/tailwind/p-field-8"
+import Field9 from "@/components/demos/tailwind/p-field-9"
+import Field10 from "@/components/demos/tailwind/p-field-10"
+import Field11 from "@/components/demos/tailwind/p-field-11"
+import Field12 from "@/components/demos/tailwind/p-field-12"
+import Field13 from "@/components/demos/tailwind/p-field-13"
+import Field14 from "@/components/demos/tailwind/p-field-14"
+import Field15 from "@/components/demos/tailwind/p-field-15"
+import Field16 from "@/components/demos/tailwind/p-field-16"
+import Field17 from "@/components/demos/tailwind/p-field-17"
+import Field18 from "@/components/demos/tailwind/p-field-18"
+import Fieldset1 from "@/components/demos/tailwind/p-fieldset-1"
+import Form1 from "@/components/demos/tailwind/p-form-1"
+import Form2 from "@/components/demos/tailwind/p-form-2"
+import Frame1 from "@/components/demos/tailwind/p-frame-1"
+import Frame2 from "@/components/demos/tailwind/p-frame-2"
+import Frame3 from "@/components/demos/tailwind/p-frame-3"
+import Frame4 from "@/components/demos/tailwind/p-frame-4"
+import Group1 from "@/components/demos/tailwind/p-group-1"
+import Group2 from "@/components/demos/tailwind/p-group-2"
+import Group3 from "@/components/demos/tailwind/p-group-3"
+import Group4 from "@/components/demos/tailwind/p-group-4"
+import Group5 from "@/components/demos/tailwind/p-group-5"
+import Group6 from "@/components/demos/tailwind/p-group-6"
+import Group7 from "@/components/demos/tailwind/p-group-7"
+import Group8 from "@/components/demos/tailwind/p-group-8"
+import Group9 from "@/components/demos/tailwind/p-group-9"
+import Group10 from "@/components/demos/tailwind/p-group-10"
+import Group11 from "@/components/demos/tailwind/p-group-11"
+import Group12 from "@/components/demos/tailwind/p-group-12"
+import Group13 from "@/components/demos/tailwind/p-group-13"
+import Group14 from "@/components/demos/tailwind/p-group-14"
+import Group15 from "@/components/demos/tailwind/p-group-15"
+import Group16 from "@/components/demos/tailwind/p-group-16"
+import Group17 from "@/components/demos/tailwind/p-group-17"
+import Group18 from "@/components/demos/tailwind/p-group-18"
+import Group19 from "@/components/demos/tailwind/p-group-19"
+import Group20 from "@/components/demos/tailwind/p-group-20"
+import Group22 from "@/components/demos/tailwind/p-group-22"
+import Group23 from "@/components/demos/tailwind/p-group-23"
+import Input1 from "@/components/demos/tailwind/p-input-1"
+import Input2 from "@/components/demos/tailwind/p-input-2"
+import Input3 from "@/components/demos/tailwind/p-input-3"
+import Input4 from "@/components/demos/tailwind/p-input-4"
+import Input5 from "@/components/demos/tailwind/p-input-5"
+import Input6 from "@/components/demos/tailwind/p-input-6"
+import Input7 from "@/components/demos/tailwind/p-input-7"
+import Input8 from "@/components/demos/tailwind/p-input-8"
+import Input9 from "@/components/demos/tailwind/p-input-9"
+import Input10 from "@/components/demos/tailwind/p-input-10"
+import Input11 from "@/components/demos/tailwind/p-input-11"
+import Input12 from "@/components/demos/tailwind/p-input-12"
+import Input13 from "@/components/demos/tailwind/p-input-13"
+import Input14 from "@/components/demos/tailwind/p-input-14"
+import Input15 from "@/components/demos/tailwind/p-input-15"
+import Input16 from "@/components/demos/tailwind/p-input-16"
+import Input17 from "@/components/demos/tailwind/p-input-17"
+import Input18 from "@/components/demos/tailwind/p-input-18"
+import Input19 from "@/components/demos/tailwind/p-input-19"
+import InputGroup1 from "@/components/demos/tailwind/p-input-group-1"
+import InputGroup2 from "@/components/demos/tailwind/p-input-group-2"
+import InputGroup3 from "@/components/demos/tailwind/p-input-group-3"
+import InputGroup4 from "@/components/demos/tailwind/p-input-group-4"
+import InputGroup5 from "@/components/demos/tailwind/p-input-group-5"
+import InputGroup6 from "@/components/demos/tailwind/p-input-group-6"
+import InputGroup7 from "@/components/demos/tailwind/p-input-group-7"
+import InputGroup8 from "@/components/demos/tailwind/p-input-group-8"
+import InputGroup9 from "@/components/demos/tailwind/p-input-group-9"
+import InputGroup10 from "@/components/demos/tailwind/p-input-group-10"
+import InputGroup11 from "@/components/demos/tailwind/p-input-group-11"
+import InputGroup12 from "@/components/demos/tailwind/p-input-group-12"
+import InputGroup13 from "@/components/demos/tailwind/p-input-group-13"
+import InputGroup14 from "@/components/demos/tailwind/p-input-group-14"
+import InputGroup15 from "@/components/demos/tailwind/p-input-group-15"
+import InputGroup16 from "@/components/demos/tailwind/p-input-group-16"
+import InputGroup17 from "@/components/demos/tailwind/p-input-group-17"
+import InputGroup18 from "@/components/demos/tailwind/p-input-group-18"
+import InputGroup19 from "@/components/demos/tailwind/p-input-group-19"
+import InputGroup20 from "@/components/demos/tailwind/p-input-group-20"
+import InputGroup21 from "@/components/demos/tailwind/p-input-group-21"
+import InputGroup22 from "@/components/demos/tailwind/p-input-group-22"
+import InputGroup23 from "@/components/demos/tailwind/p-input-group-23"
+import InputGroup24 from "@/components/demos/tailwind/p-input-group-24"
+import InputGroup26 from "@/components/demos/tailwind/p-input-group-26"
+import InputGroup27 from "@/components/demos/tailwind/p-input-group-27"
+import InputGroup28 from "@/components/demos/tailwind/p-input-group-28"
+import InputGroup29 from "@/components/demos/tailwind/p-input-group-29"
+import Kbd1 from "@/components/demos/tailwind/p-kbd-1"
+import Menu1 from "@/components/demos/tailwind/p-menu-1"
+import Menu2 from "@/components/demos/tailwind/p-menu-2"
+import Menu3 from "@/components/demos/tailwind/p-menu-3"
+import Menu4 from "@/components/demos/tailwind/p-menu-4"
+import Menu5 from "@/components/demos/tailwind/p-menu-5"
+import Menu6 from "@/components/demos/tailwind/p-menu-6"
+import Menu7 from "@/components/demos/tailwind/p-menu-7"
+import Menu8 from "@/components/demos/tailwind/p-menu-8"
+import Menu9 from "@/components/demos/tailwind/p-menu-9"
+import Meter1 from "@/components/demos/tailwind/p-meter-1"
+import Meter2 from "@/components/demos/tailwind/p-meter-2"
+import Meter3 from "@/components/demos/tailwind/p-meter-3"
+import Meter4 from "@/components/demos/tailwind/p-meter-4"
+import Navigation1 from "@/components/demos/tailwind/p-navigation-1"
+import Navigation2 from "@/components/demos/tailwind/p-navigation-2"
+import Navigation3 from "@/components/demos/tailwind/p-navigation-3"
+import NumberField1 from "@/components/demos/tailwind/p-number-field-1"
+import NumberField2 from "@/components/demos/tailwind/p-number-field-2"
+import NumberField3 from "@/components/demos/tailwind/p-number-field-3"
+import NumberField4 from "@/components/demos/tailwind/p-number-field-4"
+import NumberField5 from "@/components/demos/tailwind/p-number-field-5"
+import NumberField6 from "@/components/demos/tailwind/p-number-field-6"
+import NumberField7 from "@/components/demos/tailwind/p-number-field-7"
+import NumberField8 from "@/components/demos/tailwind/p-number-field-8"
+import NumberField9 from "@/components/demos/tailwind/p-number-field-9"
+import NumberField10 from "@/components/demos/tailwind/p-number-field-10"
+import NumberField11 from "@/components/demos/tailwind/p-number-field-11"
+import OtpField1 from "@/components/demos/tailwind/p-otp-field-1"
+import OtpField2 from "@/components/demos/tailwind/p-otp-field-2"
+import OtpField3 from "@/components/demos/tailwind/p-otp-field-3"
+import OtpField4 from "@/components/demos/tailwind/p-otp-field-4"
+import OtpField6 from "@/components/demos/tailwind/p-otp-field-6"
+import OtpField7 from "@/components/demos/tailwind/p-otp-field-7"
+import OtpField8 from "@/components/demos/tailwind/p-otp-field-8"
+import OtpField9 from "@/components/demos/tailwind/p-otp-field-9"
+import OtpField10 from "@/components/demos/tailwind/p-otp-field-10"
+import Pagination1 from "@/components/demos/tailwind/p-pagination-1"
+import Pagination2 from "@/components/demos/tailwind/p-pagination-2"
+import Pagination3 from "@/components/demos/tailwind/p-pagination-3"
+import Popover1 from "@/components/demos/tailwind/p-popover-1"
+import Popover2 from "@/components/demos/tailwind/p-popover-2"
+import Popover3 from "@/components/demos/tailwind/p-popover-3"
+import Popover4 from "@/components/demos/tailwind/p-popover-4"
+import PreviewCard1 from "@/components/demos/tailwind/p-preview-card-1"
+import Progress1 from "@/components/demos/tailwind/p-progress-1"
+import Progress2 from "@/components/demos/tailwind/p-progress-2"
+import Progress3 from "@/components/demos/tailwind/p-progress-3"
+import RadioGroup1 from "@/components/demos/tailwind/p-radio-group-1"
+import RadioGroup2 from "@/components/demos/tailwind/p-radio-group-2"
+import RadioGroup3 from "@/components/demos/tailwind/p-radio-group-3"
+import RadioGroup4 from "@/components/demos/tailwind/p-radio-group-4"
+import RadioGroup5 from "@/components/demos/tailwind/p-radio-group-5"
+import RadioGroup6 from "@/components/demos/tailwind/p-radio-group-6"
+import RadioGroup7 from "@/components/demos/tailwind/p-radio-group-7"
+import RadioGroup8 from "@/components/demos/tailwind/p-radio-group-8"
+import RadioGroup9 from "@/components/demos/tailwind/p-radio-group-9"
+import ScrollArea1 from "@/components/demos/tailwind/p-scroll-area-1"
+import ScrollArea2 from "@/components/demos/tailwind/p-scroll-area-2"
+import ScrollArea3 from "@/components/demos/tailwind/p-scroll-area-3"
+import ScrollArea4 from "@/components/demos/tailwind/p-scroll-area-4"
+import ScrollArea5 from "@/components/demos/tailwind/p-scroll-area-5"
+import Select1 from "@/components/demos/tailwind/p-select-1"
+import Select2 from "@/components/demos/tailwind/p-select-2"
+import Select3 from "@/components/demos/tailwind/p-select-3"
+import Select4 from "@/components/demos/tailwind/p-select-4"
+import Select5 from "@/components/demos/tailwind/p-select-5"
+import Select6 from "@/components/demos/tailwind/p-select-6"
+import Select7 from "@/components/demos/tailwind/p-select-7"
+import Select8 from "@/components/demos/tailwind/p-select-8"
+import Select9 from "@/components/demos/tailwind/p-select-9"
+import Select10 from "@/components/demos/tailwind/p-select-10"
+import Select11 from "@/components/demos/tailwind/p-select-11"
+import Select12 from "@/components/demos/tailwind/p-select-12"
+import Select13 from "@/components/demos/tailwind/p-select-13"
+import Select14 from "@/components/demos/tailwind/p-select-14"
+import Select15 from "@/components/demos/tailwind/p-select-15"
+import Select16 from "@/components/demos/tailwind/p-select-16"
+import Select17 from "@/components/demos/tailwind/p-select-17"
+import Select18 from "@/components/demos/tailwind/p-select-18"
+import Select19 from "@/components/demos/tailwind/p-select-19"
+import Select20 from "@/components/demos/tailwind/p-select-20"
+import Select21 from "@/components/demos/tailwind/p-select-21"
+import Select22 from "@/components/demos/tailwind/p-select-22"
+import Select23 from "@/components/demos/tailwind/p-select-23"
+import Separator1 from "@/components/demos/tailwind/p-separator-1"
+import Sheet1 from "@/components/demos/tailwind/p-sheet-1"
+import Sheet2 from "@/components/demos/tailwind/p-sheet-2"
+import Sheet3 from "@/components/demos/tailwind/p-sheet-3"
+import Skeleton1 from "@/components/demos/tailwind/p-skeleton-1"
+import Skeleton2 from "@/components/demos/tailwind/p-skeleton-2"
+import Slider1 from "@/components/demos/tailwind/p-slider-1"
+import Slider2 from "@/components/demos/tailwind/p-slider-2"
+import Slider3 from "@/components/demos/tailwind/p-slider-3"
+import Slider4 from "@/components/demos/tailwind/p-slider-4"
+import Slider5 from "@/components/demos/tailwind/p-slider-5"
+import Slider6 from "@/components/demos/tailwind/p-slider-6"
+import Slider7 from "@/components/demos/tailwind/p-slider-7"
+import Slider8 from "@/components/demos/tailwind/p-slider-8"
+import Slider9 from "@/components/demos/tailwind/p-slider-9"
+import Slider10 from "@/components/demos/tailwind/p-slider-10"
+import Slider11 from "@/components/demos/tailwind/p-slider-11"
+import Slider12 from "@/components/demos/tailwind/p-slider-12"
+import Slider13 from "@/components/demos/tailwind/p-slider-13"
+import Slider14 from "@/components/demos/tailwind/p-slider-14"
+import Slider15 from "@/components/demos/tailwind/p-slider-15"
+import Slider16 from "@/components/demos/tailwind/p-slider-16"
+import Slider17 from "@/components/demos/tailwind/p-slider-17"
+import Slider18 from "@/components/demos/tailwind/p-slider-18"
+import Slider19 from "@/components/demos/tailwind/p-slider-19"
+import Slider20 from "@/components/demos/tailwind/p-slider-20"
+import Slider21 from "@/components/demos/tailwind/p-slider-21"
+import Slider22 from "@/components/demos/tailwind/p-slider-22"
+import Slider23 from "@/components/demos/tailwind/p-slider-23"
+import Spinner1 from "@/components/demos/tailwind/p-spinner-1"
+import Switch1 from "@/components/demos/tailwind/p-switch-1"
+import Switch2 from "@/components/demos/tailwind/p-switch-2"
+import Switch3 from "@/components/demos/tailwind/p-switch-3"
+import Switch4 from "@/components/demos/tailwind/p-switch-4"
+import Switch5 from "@/components/demos/tailwind/p-switch-5"
+import Switch6 from "@/components/demos/tailwind/p-switch-6"
+import Switch7 from "@/components/demos/tailwind/p-switch-7"
+import Switch8 from "@/components/demos/tailwind/p-switch-8"
+import Switch9 from "@/components/demos/tailwind/p-switch-9"
+import Table1 from "@/components/demos/tailwind/p-table-1"
+import Table2 from "@/components/demos/tailwind/p-table-2"
+import Table3 from "@/components/demos/tailwind/p-table-3"
+import Table4 from "@/components/demos/tailwind/p-table-4"
+import Table5 from "@/components/demos/tailwind/p-table-5"
+import Table6 from "@/components/demos/tailwind/p-table-6"
+import Table7 from "@/components/demos/tailwind/p-table-7"
+import Table8 from "@/components/demos/tailwind/p-table-8"
+import Tabs1 from "@/components/demos/tailwind/p-tabs-1"
+import Tabs2 from "@/components/demos/tailwind/p-tabs-2"
+import Tabs3 from "@/components/demos/tailwind/p-tabs-3"
+import Tabs4 from "@/components/demos/tailwind/p-tabs-4"
+import Tabs5 from "@/components/demos/tailwind/p-tabs-5"
+import Tabs6 from "@/components/demos/tailwind/p-tabs-6"
+import Tabs7 from "@/components/demos/tailwind/p-tabs-7"
+import Tabs8 from "@/components/demos/tailwind/p-tabs-8"
+import Tabs9 from "@/components/demos/tailwind/p-tabs-9"
+import Tabs10 from "@/components/demos/tailwind/p-tabs-10"
+import Tabs11 from "@/components/demos/tailwind/p-tabs-11"
+import Tabs12 from "@/components/demos/tailwind/p-tabs-12"
+import Tabs13 from "@/components/demos/tailwind/p-tabs-13"
+import Tabs14 from "@/components/demos/tailwind/p-tabs-14"
+import Tabs15 from "@/components/demos/tailwind/p-tabs-15"
+import Textarea1 from "@/components/demos/tailwind/p-textarea-1"
+import Textarea2 from "@/components/demos/tailwind/p-textarea-2"
+import Textarea3 from "@/components/demos/tailwind/p-textarea-3"
+import Textarea4 from "@/components/demos/tailwind/p-textarea-4"
+import Textarea5 from "@/components/demos/tailwind/p-textarea-5"
+import Textarea6 from "@/components/demos/tailwind/p-textarea-6"
+import Textarea7 from "@/components/demos/tailwind/p-textarea-7"
+import Textarea8 from "@/components/demos/tailwind/p-textarea-8"
+import Textarea9 from "@/components/demos/tailwind/p-textarea-9"
+import Textarea10 from "@/components/demos/tailwind/p-textarea-10"
+import Textarea11 from "@/components/demos/tailwind/p-textarea-11"
+import Textarea12 from "@/components/demos/tailwind/p-textarea-12"
+import Textarea13 from "@/components/demos/tailwind/p-textarea-13"
+import Textarea14 from "@/components/demos/tailwind/p-textarea-14"
+import Textarea15 from "@/components/demos/tailwind/p-textarea-15"
+import Toast1 from "@/components/demos/tailwind/p-toast-1"
+import Toast2 from "@/components/demos/tailwind/p-toast-2"
+import Toast3 from "@/components/demos/tailwind/p-toast-3"
+import Toast4 from "@/components/demos/tailwind/p-toast-4"
+import Toast5 from "@/components/demos/tailwind/p-toast-5"
+import Toast6 from "@/components/demos/tailwind/p-toast-6"
+import Toast7 from "@/components/demos/tailwind/p-toast-7"
+import Toast8 from "@/components/demos/tailwind/p-toast-8"
+import Toast9 from "@/components/demos/tailwind/p-toast-9"
+import Toast10 from "@/components/demos/tailwind/p-toast-10"
+import Toast11 from "@/components/demos/tailwind/p-toast-11"
+import Toast12 from "@/components/demos/tailwind/p-toast-12"
+import Toast13 from "@/components/demos/tailwind/p-toast-13"
+import Toggle1 from "@/components/demos/tailwind/p-toggle-1"
+import Toggle2 from "@/components/demos/tailwind/p-toggle-2"
+import Toggle3 from "@/components/demos/tailwind/p-toggle-3"
+import Toggle4 from "@/components/demos/tailwind/p-toggle-4"
+import Toggle5 from "@/components/demos/tailwind/p-toggle-5"
+import Toggle6 from "@/components/demos/tailwind/p-toggle-6"
+import Toggle7 from "@/components/demos/tailwind/p-toggle-7"
+import Toggle8 from "@/components/demos/tailwind/p-toggle-8"
+import ToggleGroup1 from "@/components/demos/tailwind/p-toggle-group-1"
+import ToggleGroup2 from "@/components/demos/tailwind/p-toggle-group-2"
+import ToggleGroup3 from "@/components/demos/tailwind/p-toggle-group-3"
+import ToggleGroup4 from "@/components/demos/tailwind/p-toggle-group-4"
+import ToggleGroup5 from "@/components/demos/tailwind/p-toggle-group-5"
+import ToggleGroup6 from "@/components/demos/tailwind/p-toggle-group-6"
+import ToggleGroup7 from "@/components/demos/tailwind/p-toggle-group-7"
+import ToggleGroup8 from "@/components/demos/tailwind/p-toggle-group-8"
+import ToggleGroup9 from "@/components/demos/tailwind/p-toggle-group-9"
+import Toolbar1 from "@/components/demos/tailwind/p-toolbar-1"
+import Tooltip1 from "@/components/demos/tailwind/p-tooltip-1"
+import Tooltip2 from "@/components/demos/tailwind/p-tooltip-2"
+import Tooltip3 from "@/components/demos/tailwind/p-tooltip-3"
+import Tooltip4 from "@/components/demos/tailwind/p-tooltip-4"
+import { buttonVariants } from "@/components/ui/tailwind/button"
+import { ToastProvider } from "@/components/ui/tailwind/toast"
 import appCss from "@/styles.css?url"
 
 export const Route = createFileRoute("/tailwind/")({
@@ -319,115 +554,10 @@ function DemoCard({
       <div className="text-muted-foreground bg-muted/30 border-b px-3 py-1.5 text-xs font-medium">
         {label}
       </div>
-      <div className="p-4">{children}</div>
+      <div className="flex min-h-[100px] items-center justify-center p-4">
+        {children}
+      </div>
     </div>
-  )
-}
-
-function CommandPaletteDemo() {
-  const [open, setOpen] = React.useState(false)
-  const groupedItems = React.useMemo(
-    () => [
-      {
-        items: [
-          { label: "Linear", shortcut: "⌘L", value: "linear" },
-          { label: "Figma", shortcut: "⌘F", value: "figma" },
-          { label: "Slack", shortcut: "⌘S", value: "slack" },
-        ],
-        value: "Suggestions",
-      },
-      {
-        items: [
-          { label: "Clipboard History", shortcut: "⌘⇧C", value: "clipboard" },
-          { label: "Import Extension", shortcut: "⌘I", value: "import" },
-          { label: "Create Snippet", shortcut: "⌘N", value: "snippet" },
-        ],
-        value: "Commands",
-      },
-    ],
-    [],
-  )
-  React.useEffect(() => {
-    const down = (e: KeyboardEvent) => {
-      if (e.key === "j" && (e.metaKey || e.ctrlKey)) {
-        e.preventDefault()
-        setOpen((o) => !o)
-      }
-    }
-    document.addEventListener("keydown", down)
-    return () => document.removeEventListener("keydown", down)
-  }, [])
-  return (
-    <CommandDialog open={open} onOpenChange={setOpen}>
-      <CommandDialogTrigger render={<Button variant="outline" />}>
-        Open palette
-        <KbdGroup>
-          <Kbd>⌘</Kbd>
-          <Kbd>J</Kbd>
-        </KbdGroup>
-      </CommandDialogTrigger>
-      <CommandDialogPopup>
-        <Command items={groupedItems}>
-          <CommandInput placeholder="Search for apps and commands…" />
-          <CommandPanel>
-            <CommandEmpty>No results found.</CommandEmpty>
-            <CommandList>
-              {(
-                group: {
-                  value: string
-                  items: { label: string; shortcut?: string; value: string }[]
-                },
-                _idx: number,
-              ) => (
-                <React.Fragment key={group.value}>
-                  <CommandGroup items={group.items}>
-                    <CommandGroupLabel>{group.value}</CommandGroupLabel>
-                    <CommandCollection>
-                      {(item: {
-                        label: string
-                        shortcut?: string
-                        value: string
-                      }) => (
-                        <CommandItem
-                          key={item.value}
-                          value={item.value}
-                          onClick={() => setOpen(false)}
-                        >
-                          <span className="flex-1">{item.label}</span>
-                          {item.shortcut ? (
-                            <CommandShortcut>{item.shortcut}</CommandShortcut>
-                          ) : null}
-                        </CommandItem>
-                      )}
-                    </CommandCollection>
-                  </CommandGroup>
-                  <CommandSeparator />
-                </React.Fragment>
-              )}
-            </CommandList>
-          </CommandPanel>
-          <CommandFooter>
-            <div className="flex items-center gap-2">
-              <KbdGroup>
-                <Kbd>
-                  <ArrowUpIcon className="size-3" />
-                </Kbd>
-                <Kbd>
-                  <ArrowDownIcon className="size-3" />
-                </Kbd>
-              </KbdGroup>
-              <span>Navigate</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Kbd>
-                <CornerDownLeftIcon className="size-3" />
-              </Kbd>
-              <span>Select</span>
-            </div>
-          </CommandFooter>
-        </Command>
-      </CommandDialogPopup>
-    </CommandDialog>
   )
 }
 
@@ -441,7 +571,6 @@ const NAV = [
   "breadcrumb",
   "button",
   "calendar",
-  "date-picker",
   "card",
   "checkbox",
   "checkbox-group",
@@ -449,6 +578,7 @@ const NAV = [
   "combobox",
   "command",
   "context-menu",
+  "date-picker",
   "dialog",
   "drawer",
   "empty",
@@ -460,7 +590,6 @@ const NAV = [
   "input",
   "input-group",
   "kbd",
-  "label",
   "menu",
   "meter",
   "number-field",
@@ -471,7 +600,6 @@ const NAV = [
   "progress",
   "radio-group",
   "scroll-area",
-  "segmented-control",
   "select",
   "separator",
   "sheet",
@@ -487,19 +615,12 @@ const NAV = [
   "toggle-group",
   "toolbar",
   "tooltip",
-  "sidebar",
+  "navigation",
+  "label",
+  "segmented-control",
 ]
 
 function RouteComponent() {
-  const [date, setDate] = React.useState<Date | undefined>(undefined)
-  const fruitItems = [
-    { label: "Apple", value: "apple" },
-    { label: "Banana", value: "banana" },
-    { label: "Orange", value: "orange" },
-    { label: "Grape", value: "grape" },
-    { label: "Strawberry", value: "strawberry" },
-    { label: "Mango", value: "mango" },
-  ]
   return (
     <ToastProvider>
       <div className="bg-background text-foreground min-h-screen">
@@ -510,8 +631,7 @@ function RouteComponent() {
                 Tailwind UI — COSS Complete Preview
               </h1>
               <p className="text-muted-foreground text-xs">
-                54 components • segmented real-world examples from
-                coss.com/ui/docs • particles adapted
+                508 demos • 54 components • all particles from cosscom/coss
               </p>
             </div>
             <a
@@ -545,2085 +665,1964 @@ function RouteComponent() {
             <Section
               id="accordion"
               title="Accordion"
-              desc="FAQ • Settings grouping • real-world"
+              desc="A set of collapsible panels with headings and content."
             >
               <div className="grid gap-4 md:grid-cols-2">
-                <DemoCard label="Basic / FAQ">
-                  <Accordion className="w-full">
-                    {[
-                      {
-                        id: "1",
-                        title: "What is COSS?",
-                        content:
-                          "COSS is Cal.com design system built on Base UI + Tailwind — unstyled primitives with full accessibility.",
-                      },
-                      {
-                        id: "2",
-                        title: "Is it accessible?",
-                        content:
-                          "Yes. All components follow WAI-ARIA, keyboard nav, focus management via Base UI.",
-                      },
-                      {
-                        id: "3",
-                        title: "Can I use in my project?",
-                        content:
-                          "Yes — free and open source, copy-paste components.",
-                      },
-                    ].map((i) => (
-                      <AccordionItem key={i.id} value={i.id}>
-                        <AccordionTrigger>{i.title}</AccordionTrigger>
-                        <AccordionPanel>{i.content}</AccordionPanel>
-                      </AccordionItem>
-                    ))}
-                  </Accordion>
+                <DemoCard label="p-accordion-1">
+                  <Accordion1 />
                 </DemoCard>
-                <DemoCard label="Real-world — Help center (single-open)">
-                  <Accordion
-                    className="w-full max-w-xl"
-                    defaultValue={["billing"]}
-                  >
-                    <AccordionItem value="billing">
-                      <AccordionTrigger>
-                        <CreditCardIcon className="size-4" /> Billing & plans
-                      </AccordionTrigger>
-                      <AccordionPanel>
-                        Manage subscriptions, invoices and seats from Settings →
-                        Billing. Contact support for custom plans.
-                      </AccordionPanel>
-                    </AccordionItem>
-                    <AccordionItem value="security">
-                      <AccordionTrigger>
-                        <ShieldAlertIcon className="size-4" /> Security
-                      </AccordionTrigger>
-                      <AccordionPanel>
-                        SSO, 2FA and audit logs are available on Pro. Data
-                        encrypted at rest with AES-256.
-                      </AccordionPanel>
-                    </AccordionItem>
-                    <AccordionItem value="api">
-                      <AccordionTrigger>
-                        <SettingsIcon className="size-4" /> API
-                      </AccordionTrigger>
-                      <AccordionPanel>
-                        Rate limit 60 req/min per key. Use pagination with
-                        cursor param. See /docs/api.
-                      </AccordionPanel>
-                    </AccordionItem>
-                  </Accordion>
+                <DemoCard label="p-accordion-2">
+                  <Accordion2 />
+                </DemoCard>
+                <DemoCard label="p-accordion-3">
+                  <Accordion3 />
+                </DemoCard>
+                <DemoCard label="p-accordion-4">
+                  <Accordion4 />
                 </DemoCard>
               </div>
             </Section>
-
             <Section
               id="alert"
               title="Alert"
-              desc="info • success • warning • error • with actions"
+              desc="A callout for displaying important information."
             >
-              <div className="grid gap-3">
-                <DemoCard label="Real-world — App notices">
-                  <div className="grid gap-3">
-                    <Alert variant="info">
-                      <CircleAlertIcon />
-                      <AlertTitle>Scheduled maintenance</AlertTitle>
-                      <AlertDescription>
-                        API will be unavailable Sunday 02:00–04:00 UTC. Upgrade
-                        cal.com/coss.
-                      </AlertDescription>
-                    </Alert>
-                    <Alert variant="success">
-                      <CheckIcon />
-                      <AlertTitle>Deployment succeeded</AlertTitle>
-                      <AlertDescription>
-                        Version 2.14.0 is live. View changelog.
-                      </AlertDescription>
-                      <AlertAction>
-                        <Button size="xs" variant="outline">
-                          Changelog
-                        </Button>
-                      </AlertAction>
-                    </Alert>
-                    <Alert variant="warning">
-                      <AlertTriangleIcon />
-                      <AlertTitle>Trial ends in 3 days</AlertTitle>
-                      <AlertDescription>
-                        Upgrade to keep SSO and audit logs.
-                      </AlertDescription>
-                      <AlertAction>
-                        <Button size="xs">Upgrade</Button>
-                      </AlertAction>
-                    </Alert>
-                    <Alert variant="error">
-                      <AlertCircleIcon />
-                      <AlertTitle>Payment failed</AlertTitle>
-                      <AlertDescription>
-                        Card ending 4242 declined. Update payment method.
-                      </AlertDescription>
-                      <AlertAction>
-                        <Button size="xs" variant="outline">
-                          Update
-                        </Button>
-                      </AlertAction>
-                    </Alert>
-                  </div>
+              <div className="grid gap-4 md:grid-cols-2">
+                <DemoCard label="p-alert-1">
+                  <Alert1 />
+                </DemoCard>
+                <DemoCard label="p-alert-2">
+                  <Alert2 />
+                </DemoCard>
+                <DemoCard label="p-alert-3">
+                  <Alert3 />
+                </DemoCard>
+                <DemoCard label="p-alert-4">
+                  <Alert4 />
+                </DemoCard>
+                <DemoCard label="p-alert-5">
+                  <Alert5 />
+                </DemoCard>
+                <DemoCard label="p-alert-6">
+                  <Alert6 />
+                </DemoCard>
+                <DemoCard label="p-alert-7">
+                  <Alert7 />
                 </DemoCard>
               </div>
             </Section>
-
             <Section
               id="alert-dialog"
-              title="AlertDialog"
-              desc="destructive confirmation"
+              title="Alert Dialog"
+              desc="A dialog that requires user response to proceed."
             >
               <div className="grid gap-4 md:grid-cols-2">
-                <DemoCard label="Delete project — destructive">
-                  <AlertDialog>
-                    <AlertDialogTrigger
-                      className={buttonVariants({
-                        variant: "destructive",
-                        size: "sm",
-                      })}
-                    >
-                      Delete project
-                    </AlertDialogTrigger>
-                    <AlertDialogPopup>
-                      <AlertDialogHeader>
-                        <AlertDialogTitle>
-                          Delete “Website Redesign”?
-                        </AlertDialogTitle>
-                        <AlertDialogDescription>
-                          This removes project, tasks and files. This cannot be
-                          undone.
-                        </AlertDialogDescription>
-                      </AlertDialogHeader>
-                      <AlertDialogFooter className="mt-4 flex justify-end gap-2">
-                        <AlertDialogClose
-                          className={buttonVariants({
-                            variant: "outline",
-                            size: "sm",
-                          })}
-                        >
-                          Cancel
-                        </AlertDialogClose>
-                        <Button size="sm" variant="destructive">
-                          <TrashIcon /> Delete
-                        </Button>
-                      </AlertDialogFooter>
-                    </AlertDialogPopup>
-                  </AlertDialog>
+                <DemoCard label="p-alert-dialog-1">
+                  <AlertDialog1 />
                 </DemoCard>
-                <DemoCard label="Leave team">
-                  <AlertDialog>
-                    <AlertDialogTrigger
-                      className={buttonVariants({
-                        variant: "outline",
-                        size: "sm",
-                      })}
-                    >
-                      Leave team
-                    </AlertDialogTrigger>
-                    <AlertDialogPopup>
-                      <AlertDialogHeader>
-                        <AlertDialogTitle>
-                          Leave “Design Team”?
-                        </AlertDialogTitle>
-                        <AlertDialogDescription>
-                          You will lose access to shared boards. Re-invite
-                          required to rejoin.
-                        </AlertDialogDescription>
-                      </AlertDialogHeader>
-                      <AlertDialogFooter className="mt-4 flex justify-end gap-2">
-                        <AlertDialogClose
-                          className={buttonVariants({
-                            variant: "outline",
-                            size: "sm",
-                          })}
-                        >
-                          Cancel
-                        </AlertDialogClose>
-                        <Button size="sm">Leave</Button>
-                      </AlertDialogFooter>
-                    </AlertDialogPopup>
-                  </AlertDialog>
+                <DemoCard label="p-alert-dialog-2">
+                  <AlertDialog2 />
                 </DemoCard>
               </div>
             </Section>
-
-            <Section id="autocomplete" title="Autocomplete">
+            <Section
+              id="autocomplete"
+              title="Autocomplete"
+              desc="An input that suggests options as you type."
+            >
               <div className="grid gap-4 md:grid-cols-2">
-                <DemoCard label="Fruit search — filter">
-                  <Autocomplete items={fruitItems}>
-                    <AutocompleteInput
-                      aria-label="Search fruit"
-                      placeholder="Search fruit…"
-                    />
-                    <AutocompletePopup>
-                      <AutocompleteEmpty>No fruit found.</AutocompleteEmpty>
-                      <AutocompleteList>
-                        {(item: { label: string; value: string }) => (
-                          <AutocompleteItem key={item.value} value={item}>
-                            {item.label}
-                          </AutocompleteItem>
-                        )}
-                      </AutocompleteList>
-                    </AutocompletePopup>
-                  </Autocomplete>
+                <DemoCard label="p-autocomplete-1">
+                  <Autocomplete1 />
                 </DemoCard>
-                <DemoCard label="Command-like — pluggable">
-                  <Autocomplete items={fruitItems}>
-                    <AutocompleteInput
-                      aria-label="Pick"
-                      placeholder="Type to filter…"
-                    />
-                    <AutocompletePopup className="max-h-40">
-                      <AutocompleteList>
-                        {(item: { label: string; value: string }) => (
-                          <AutocompleteItem key={item.value} value={item}>
-                            <SearchIcon className="size-4 opacity-60" />{" "}
-                            {item.label}
-                          </AutocompleteItem>
-                        )}
-                      </AutocompleteList>
-                    </AutocompletePopup>
-                  </Autocomplete>
+                <DemoCard label="p-autocomplete-2">
+                  <Autocomplete2 />
+                </DemoCard>
+                <DemoCard label="p-autocomplete-3">
+                  <Autocomplete3 />
+                </DemoCard>
+                <DemoCard label="p-autocomplete-4">
+                  <Autocomplete4 />
+                </DemoCard>
+                <DemoCard label="p-autocomplete-5">
+                  <Autocomplete5 />
+                </DemoCard>
+                <DemoCard label="p-autocomplete-6">
+                  <Autocomplete6 />
+                </DemoCard>
+                <DemoCard label="p-autocomplete-7">
+                  <Autocomplete7 />
+                </DemoCard>
+                <DemoCard label="p-autocomplete-8">
+                  <Autocomplete8 />
+                </DemoCard>
+                <DemoCard label="p-autocomplete-9">
+                  <Autocomplete9 />
+                </DemoCard>
+                <DemoCard label="p-autocomplete-10">
+                  <Autocomplete10 />
+                </DemoCard>
+                <DemoCard label="p-autocomplete-11">
+                  <Autocomplete11 />
+                </DemoCard>
+                <DemoCard label="p-autocomplete-12">
+                  <Autocomplete12 />
+                </DemoCard>
+                <DemoCard label="p-autocomplete-13">
+                  <Autocomplete13 />
+                </DemoCard>
+                <DemoCard label="p-autocomplete-14">
+                  <Autocomplete14 />
+                </DemoCard>
+                <DemoCard label="p-autocomplete-15">
+                  <Autocomplete15 />
+                </DemoCard>
+                <DemoCard label="p-autocomplete-16">
+                  <Autocomplete16 />
                 </DemoCard>
               </div>
             </Section>
-
             <Section
               id="avatar"
               title="Avatar"
-              desc="image • fallback • sizes • group • status"
+              desc="An image element with a fallback for representing the user."
             >
               <div className="grid gap-4 md:grid-cols-2">
-                <DemoCard label="Variants">
-                  <div className="flex flex-wrap items-center gap-3">
-                    <Avatar>
-                      <AvatarImage
-                        alt="avatar"
-                        src="https://i.pravatar.cc/100?img=12"
-                      />
-                      <AvatarFallback>AB</AvatarFallback>
-                    </Avatar>
-                    <Avatar>
-                      <AvatarFallback>CD</AvatarFallback>
-                    </Avatar>
-                    <Avatar className="size-12">
-                      <AvatarFallback>LG</AvatarFallback>
-                    </Avatar>
-                    <Avatar className="size-6">
-                      <AvatarFallback className="text-xs">SM</AvatarFallback>
-                    </Avatar>
-                  </div>
+                <DemoCard label="p-avatar-1">
+                  <Avatar1 />
                 </DemoCard>
-                <DemoCard label="Real-world — Assignees stack">
-                  <div className="flex items-center">
-                    <div className="flex -space-x-2">
-                      {[1, 2, 3].map((i) => (
-                        <Avatar
-                          key={i}
-                          className="border-background size-8 border-2"
-                        >
-                          <AvatarImage
-                            alt="u"
-                            src={"https://i.pravatar.cc/100?img=" + (10 + i)}
-                          />
-                          <AvatarFallback>U{i}</AvatarFallback>
-                        </Avatar>
-                      ))}
-                      <span className="bg-muted border-background flex size-8 items-center justify-center rounded-full border-2 text-xs">
-                        +4
-                      </span>
-                    </div>
-                    <span className="text-muted-foreground ml-3 text-sm">
-                      7 assignees
-                    </span>
-                  </div>
+                <DemoCard label="p-avatar-2">
+                  <Avatar2 />
+                </DemoCard>
+                <DemoCard label="p-avatar-3">
+                  <Avatar3 />
+                </DemoCard>
+                <DemoCard label="p-avatar-4">
+                  <Avatar4 />
+                </DemoCard>
+                <DemoCard label="p-avatar-5">
+                  <Avatar5 />
+                </DemoCard>
+                <DemoCard label="p-avatar-6">
+                  <Avatar6 />
+                </DemoCard>
+                <DemoCard label="p-avatar-7">
+                  <Avatar7 />
+                </DemoCard>
+                <DemoCard label="p-avatar-8">
+                  <Avatar8 />
+                </DemoCard>
+                <DemoCard label="p-avatar-9">
+                  <Avatar9 />
+                </DemoCard>
+                <DemoCard label="p-avatar-10">
+                  <Avatar10 />
+                </DemoCard>
+                <DemoCard label="p-avatar-11">
+                  <Avatar11 />
+                </DemoCard>
+                <DemoCard label="p-avatar-12">
+                  <Avatar12 />
+                </DemoCard>
+                <DemoCard label="p-avatar-13">
+                  <Avatar13 />
+                </DemoCard>
+                <DemoCard label="p-avatar-14">
+                  <Avatar14 />
                 </DemoCard>
               </div>
             </Section>
-
-            <Section id="badge" title="Badge" desc="status • real-world">
+            <Section
+              id="badge"
+              title="Badge"
+              desc="A badge or a component that looks like a badge."
+            >
               <div className="grid gap-4 md:grid-cols-2">
-                <DemoCard label="Variants">
-                  <div className="flex flex-wrap gap-2">
-                    {(
-                      [
-                        "default",
-                        "secondary",
-                        "outline",
-                        "success",
-                        "warning",
-                        "error",
-                        "info",
-                      ] as const
-                    ).map((v) => (
-                      <Badge key={v} variant={v}>
-                        {v}
-                      </Badge>
-                    ))}
-                  </div>
+                <DemoCard label="p-badge-1">
+                  <Badge1 />
                 </DemoCard>
-                <DemoCard label="Real-world — Ticket labels">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <Badge variant="info">
-                      <PackageIcon className="size-3" /> Feature
-                    </Badge>
-                    <Badge variant="warning">In review</Badge>
-                    <Badge variant="success">
-                      <CheckIcon className="size-3" /> Done
-                    </Badge>
-                    <Badge variant="error">Blocked</Badge>
-                    <Badge variant="outline">v2.4.0</Badge>
-                  </div>
+                <DemoCard label="p-badge-2">
+                  <Badge2 />
+                </DemoCard>
+                <DemoCard label="p-badge-3">
+                  <Badge3 />
+                </DemoCard>
+                <DemoCard label="p-badge-4">
+                  <Badge4 />
+                </DemoCard>
+                <DemoCard label="p-badge-5">
+                  <Badge5 />
+                </DemoCard>
+                <DemoCard label="p-badge-6">
+                  <Badge6 />
+                </DemoCard>
+                <DemoCard label="p-badge-7">
+                  <Badge7 />
+                </DemoCard>
+                <DemoCard label="p-badge-8">
+                  <Badge8 />
+                </DemoCard>
+                <DemoCard label="p-badge-9">
+                  <Badge9 />
+                </DemoCard>
+                <DemoCard label="p-badge-10">
+                  <Badge10 />
+                </DemoCard>
+                <DemoCard label="p-badge-11">
+                  <Badge11 />
+                </DemoCard>
+                <DemoCard label="p-badge-12">
+                  <Badge12 />
+                </DemoCard>
+                <DemoCard label="p-badge-13">
+                  <Badge13 />
+                </DemoCard>
+                <DemoCard label="p-badge-14">
+                  <Badge14 />
+                </DemoCard>
+                <DemoCard label="p-badge-15">
+                  <Badge15 />
+                </DemoCard>
+                <DemoCard label="p-badge-16">
+                  <Badge16 />
+                </DemoCard>
+                <DemoCard label="p-badge-17">
+                  <Badge17 />
+                </DemoCard>
+                <DemoCard label="p-badge-18">
+                  <Badge18 />
+                </DemoCard>
+                <DemoCard label="p-badge-19">
+                  <Badge19 />
+                </DemoCard>
+                <DemoCard label="p-badge-20">
+                  <Badge20 />
                 </DemoCard>
               </div>
             </Section>
-
-            <Section id="breadcrumb" title="Breadcrumb">
+            <Section
+              id="breadcrumb"
+              title="Breadcrumb"
+              desc="Displays the path to the current resource using a hierarchy of links."
+            >
               <div className="grid gap-4 md:grid-cols-2">
-                <DemoCard label="Basic">
-                  <Breadcrumb>
-                    <BreadcrumbList>
-                      <BreadcrumbItem>
-                        <BreadcrumbLink href="#">Home</BreadcrumbLink>
-                      </BreadcrumbItem>
-                      <BreadcrumbSeparator>
-                        <ChevronRightIcon className="size-4" />
-                      </BreadcrumbSeparator>
-                      <BreadcrumbItem>
-                        <BreadcrumbLink href="#">Projects</BreadcrumbLink>
-                      </BreadcrumbItem>
-                      <BreadcrumbSeparator />
-                      <BreadcrumbItem>
-                        <BreadcrumbPage>Website Redesign</BreadcrumbPage>
-                      </BreadcrumbItem>
-                    </BreadcrumbList>
-                  </Breadcrumb>
+                <DemoCard label="p-breadcrumb-1">
+                  <Breadcrumb1 />
                 </DemoCard>
-                <DemoCard label="Real-world — Docs path + ellipsis">
-                  <Breadcrumb>
-                    <BreadcrumbList>
-                      <BreadcrumbItem>
-                        <BreadcrumbLink href="#">Docs</BreadcrumbLink>
-                      </BreadcrumbItem>
-                      <BreadcrumbSeparator />
-                      <BreadcrumbItem>
-                        <BreadcrumbEllipsis />
-                      </BreadcrumbItem>
-                      <BreadcrumbSeparator />
-                      <BreadcrumbItem>
-                        <BreadcrumbLink href="#">Components</BreadcrumbLink>
-                      </BreadcrumbItem>
-                      <BreadcrumbSeparator />
-                      <BreadcrumbItem>
-                        <BreadcrumbPage>Breadcrumb</BreadcrumbPage>
-                      </BreadcrumbItem>
-                    </BreadcrumbList>
-                  </Breadcrumb>
+                <DemoCard label="p-breadcrumb-2">
+                  <Breadcrumb2 />
+                </DemoCard>
+                <DemoCard label="p-breadcrumb-3">
+                  <Breadcrumb3 />
+                </DemoCard>
+                <DemoCard label="p-breadcrumb-4">
+                  <Breadcrumb4 />
+                </DemoCard>
+                <DemoCard label="p-breadcrumb-5">
+                  <Breadcrumb5 />
+                </DemoCard>
+                <DemoCard label="p-breadcrumb-6">
+                  <Breadcrumb6 />
+                </DemoCard>
+                <DemoCard label="p-breadcrumb-7">
+                  <Breadcrumb7 />
                 </DemoCard>
               </div>
             </Section>
-
             <Section
               id="button"
               title="Button"
-              desc="variants • sizes • states • real-world CTA bar"
+              desc="A button or a component that looks like a button."
             >
-              <div className="grid gap-4">
-                <DemoCard label="Variants">
-                  <div className="flex flex-wrap gap-2">
-                    {(
-                      [
-                        "default",
-                        "destructive",
-                        "destructive-outline",
-                        "ghost",
-                        "link",
-                        "outline",
-                        "secondary",
-                      ] as const
-                    ).map((v) => (
-                      <Button key={v} variant={v}>
-                        {v}
-                      </Button>
-                    ))}
-                  </div>
-                </DemoCard>
-                <DemoCard label="Real-world — Editor toolbar actions + loading">
-                  <div className="flex flex-wrap gap-2">
-                    <Button>
-                      <SparklesIcon /> Generate
-                    </Button>
-                    <Button variant="outline">
-                      <DownloadIcon /> Export
-                    </Button>
-                    <Button variant="ghost">
-                      <Share2Icon /> Share
-                    </Button>
-                    <Button disabled>Disabled</Button>
-                    <Button loading>Publishing…</Button>
-                    <Button size="icon" variant="outline" aria-label="fav">
-                      <HeartIcon />
-                    </Button>
-                  </div>
-                </DemoCard>
-              </div>
-            </Section>
-
-            <Section id="calendar" title="Calendar">
               <div className="grid gap-4 md:grid-cols-2">
-                <DemoCard label="Single pick">
-                  <Calendar
-                    mode="single"
-                    defaultMonth={new Date()}
-                    className="max-w-fit rounded-lg border p-3 shadow-xs/5"
-                    captionLayout="dropdown"
-                  />
+                <DemoCard label="p-button-1">
+                  <Button1 />
                 </DemoCard>
-                <DemoCard label="Real-world — Booking preview">
-                  <Calendar
-                    mode="single"
-                    defaultMonth={new Date()}
-                    className="max-w-fit rounded-lg border p-3"
-                  />
+                <DemoCard label="p-button-2">
+                  <Button2 />
+                </DemoCard>
+                <DemoCard label="p-button-3">
+                  <Button3 />
+                </DemoCard>
+                <DemoCard label="p-button-4">
+                  <Button4 />
+                </DemoCard>
+                <DemoCard label="p-button-5">
+                  <Button5 />
+                </DemoCard>
+                <DemoCard label="p-button-6">
+                  <Button6 />
+                </DemoCard>
+                <DemoCard label="p-button-7">
+                  <Button7 />
+                </DemoCard>
+                <DemoCard label="p-button-8">
+                  <Button8 />
+                </DemoCard>
+                <DemoCard label="p-button-9">
+                  <Button9 />
+                </DemoCard>
+                <DemoCard label="p-button-10">
+                  <Button10 />
+                </DemoCard>
+                <DemoCard label="p-button-11">
+                  <Button11 />
+                </DemoCard>
+                <DemoCard label="p-button-12">
+                  <Button12 />
+                </DemoCard>
+                <DemoCard label="p-button-13">
+                  <Button13 />
+                </DemoCard>
+                <DemoCard label="p-button-14">
+                  <Button14 />
+                </DemoCard>
+                <DemoCard label="p-button-15">
+                  <Button15 />
+                </DemoCard>
+                <DemoCard label="p-button-16">
+                  <Button16 />
+                </DemoCard>
+                <DemoCard label="p-button-17">
+                  <Button17 />
+                </DemoCard>
+                <DemoCard label="p-button-18">
+                  <Button18 />
+                </DemoCard>
+                <DemoCard label="p-button-19">
+                  <Button19 />
+                </DemoCard>
+                <DemoCard label="p-button-20">
+                  <Button20 />
+                </DemoCard>
+                <DemoCard label="p-button-21">
+                  <Button21 />
+                </DemoCard>
+                <DemoCard label="p-button-22">
+                  <Button22 />
+                </DemoCard>
+                <DemoCard label="p-button-23">
+                  <Button23 />
+                </DemoCard>
+                <DemoCard label="p-button-24">
+                  <Button24 />
+                </DemoCard>
+                <DemoCard label="p-button-26">
+                  <Button26 />
+                </DemoCard>
+                <DemoCard label="p-button-27">
+                  <Button27 />
+                </DemoCard>
+                <DemoCard label="p-button-28">
+                  <Button28 />
+                </DemoCard>
+                <DemoCard label="p-button-29">
+                  <Button29 />
+                </DemoCard>
+                <DemoCard label="p-button-30">
+                  <Button30 />
+                </DemoCard>
+                <DemoCard label="p-button-31">
+                  <Button31 />
+                </DemoCard>
+                <DemoCard label="p-button-32">
+                  <Button32 />
+                </DemoCard>
+                <DemoCard label="p-button-33">
+                  <Button33 />
+                </DemoCard>
+                <DemoCard label="p-button-34">
+                  <Button34 />
+                </DemoCard>
+                <DemoCard label="p-button-35">
+                  <Button35 />
+                </DemoCard>
+                <DemoCard label="p-button-36">
+                  <Button36 />
+                </DemoCard>
+                <DemoCard label="p-button-37">
+                  <Button37 />
+                </DemoCard>
+                <DemoCard label="p-button-38">
+                  <Button38 />
+                </DemoCard>
+                <DemoCard label="p-button-39">
+                  <Button39 />
+                </DemoCard>
+                <DemoCard label="p-button-40">
+                  <Button40 />
+                </DemoCard>
+                <DemoCard label="p-button-41">
+                  <Button41 />
                 </DemoCard>
               </div>
             </Section>
-
             <Section
-              id="date-picker"
-              title="Date Picker"
-              desc="Popover + Calendar composition (from docs)"
+              id="calendar"
+              title="Calendar"
+              desc="A date picker component with range and multi-select support."
             >
               <div className="grid gap-4 md:grid-cols-2">
-                <DemoCard label="Pick a date (single)">
-                  <Popover>
-                    <PopoverTrigger
-                      className={buttonVariants({ variant: "outline" })}
-                    >
-                      <CalendarIcon />{" "}
-                      {date ? date.toLocaleDateString() : "Pick a date"}
-                    </PopoverTrigger>
-                    <PopoverPopup className="p-0">
-                      <Calendar
-                        mode="single"
-                        selected={date}
-                        onSelect={setDate}
-                        defaultMonth={date}
-                      />
-                    </PopoverPopup>
-                  </Popover>
-                  {date ? (
-                    <p className="text-muted-foreground mt-2 text-xs">
-                      Selected: {date.toDateString()}
-                    </p>
-                  ) : null}
+                <DemoCard label="p-calendar-1">
+                  <Calendar1 />
                 </DemoCard>
-                <DemoCard label="Real-world — Trip dates">
-                  <div className="flex gap-2">
-                    <Popover>
-                      <PopoverTrigger
-                        className={buttonVariants({
-                          variant: "outline",
-                          size: "sm",
-                        })}
-                      >
-                        <CalendarIcon /> Check in
-                      </PopoverTrigger>
-                      <PopoverPopup className="p-0">
-                        <Calendar
-                          mode="single"
-                          onSelect={setDate}
-                          selected={date}
-                        />
-                      </PopoverPopup>
-                    </Popover>
-                    <Popover>
-                      <PopoverTrigger
-                        className={buttonVariants({
-                          variant: "outline",
-                          size: "sm",
-                        })}
-                      >
-                        <CalendarIcon /> Check out
-                      </PopoverTrigger>
-                      <PopoverPopup className="p-0">
-                        <Calendar mode="single" />
-                      </PopoverPopup>
-                    </Popover>
-                  </div>
-                  <p className="text-muted-foreground mt-2 text-xs">
-                    Composed from Popover + Calendar — same as coss date-picker
-                    docs.
-                  </p>
+                <DemoCard label="p-calendar-2">
+                  <Calendar2 />
+                </DemoCard>
+                <DemoCard label="p-calendar-3">
+                  <Calendar3 />
+                </DemoCard>
+                <DemoCard label="p-calendar-4">
+                  <Calendar4 />
+                </DemoCard>
+                <DemoCard label="p-calendar-5">
+                  <Calendar5 />
+                </DemoCard>
+                <DemoCard label="p-calendar-6">
+                  <Calendar6 />
+                </DemoCard>
+                <DemoCard label="p-calendar-7">
+                  <Calendar7 />
+                </DemoCard>
+                <DemoCard label="p-calendar-8">
+                  <Calendar8 />
+                </DemoCard>
+                <DemoCard label="p-calendar-9">
+                  <Calendar9 />
+                </DemoCard>
+                <DemoCard label="p-calendar-10">
+                  <Calendar10 />
+                </DemoCard>
+                <DemoCard label="p-calendar-11">
+                  <Calendar11 />
+                </DemoCard>
+                <DemoCard label="p-calendar-12">
+                  <Calendar12 />
+                </DemoCard>
+                <DemoCard label="p-calendar-13">
+                  <Calendar13 />
+                </DemoCard>
+                <DemoCard label="p-calendar-14">
+                  <Calendar14 />
+                </DemoCard>
+                <DemoCard label="p-calendar-15">
+                  <Calendar15 />
+                </DemoCard>
+                <DemoCard label="p-calendar-16">
+                  <Calendar16 />
+                </DemoCard>
+                <DemoCard label="p-calendar-17">
+                  <Calendar17 />
+                </DemoCard>
+                <DemoCard label="p-calendar-18">
+                  <Calendar18 />
+                </DemoCard>
+                <DemoCard label="p-calendar-19">
+                  <Calendar19 />
+                </DemoCard>
+                <DemoCard label="p-calendar-20">
+                  <Calendar20 />
+                </DemoCard>
+                <DemoCard label="p-calendar-21">
+                  <Calendar21 />
+                </DemoCard>
+                <DemoCard label="p-calendar-22">
+                  <Calendar22 />
+                </DemoCard>
+                <DemoCard label="p-calendar-23">
+                  <Calendar23 />
+                </DemoCard>
+                <DemoCard label="p-calendar-24">
+                  <Calendar24 />
+                </DemoCard>
+                <DemoCard label="p-calendar-25">
+                  <Calendar25 />
                 </DemoCard>
               </div>
             </Section>
-
-            <Section id="card" title="Card" desc="real-world layouts">
+            <Section
+              id="card"
+              title="Card"
+              desc="A content container for grouping related information."
+            >
               <div className="grid gap-4 md:grid-cols-2">
-                <DemoCard label="Create project (form inside card)">
-                  <Card className="w-full max-w-xs">
-                    <CardHeader>
-                      <CardTitle>Create project</CardTitle>
-                      <CardDescription>
-                        Deploy your new project.
-                      </CardDescription>
-                    </CardHeader>
-                    <CardPanel className="flex flex-col gap-3">
-                      <Field>
-                        <FieldLabel>Project name</FieldLabel>
-                        <Input placeholder="my-app" />
-                      </Field>
-                      <Field>
-                        <FieldLabel>Framework</FieldLabel>
-                        <Select defaultValue="next">
-                          <SelectButton>
-                            <SelectValue />
-                          </SelectButton>
-                          <SelectPopup>
-                            <SelectItem>next</SelectItem>
-                            <SelectItem>vite</SelectItem>
-                            <SelectItem>astro</SelectItem>
-                          </SelectPopup>
-                        </Select>
-                      </Field>
-                    </CardPanel>
-                    <CardFooter className="justify-between">
-                      <Button variant="outline" size="sm">
-                        Cancel
-                      </Button>
-                      <Button size="sm">Deploy</Button>
-                    </CardFooter>
-                  </Card>
+                <DemoCard label="p-card-1">
+                  <Card1 />
                 </DemoCard>
-                <DemoCard label="Login">
-                  <Card className="w-full max-w-xs">
-                    <CardHeader className="border-b">
-                      <CardTitle>Login to account</CardTitle>
-                      <CardDescription>
-                        Enter email and password
-                      </CardDescription>
-                    </CardHeader>
-                    <CardPanel className="flex flex-col gap-3">
-                      <Field>
-                        <FieldLabel>Email</FieldLabel>
-                        <Input placeholder="you@example.com" type="email" />
-                      </Field>
-                      <Field>
-                        <FieldLabel>Password</FieldLabel>
-                        <Input placeholder="••••••••" type="password" />
-                      </Field>
-                    </CardPanel>
-                    <CardFooter>
-                      <Button className="w-full">Sign in</Button>
-                    </CardFooter>
-                  </Card>
+                <DemoCard label="p-card-2">
+                  <Card2 />
                 </DemoCard>
-              </div>
-              <div className="mt-4 grid gap-4 md:grid-cols-3">
-                <Card>
-                  <CardHeader>
-                    <CardDescription>Revenue</CardDescription>
-                    <CardTitle>$24,580</CardTitle>
-                  </CardHeader>
-                  <CardContent className="text-muted-foreground text-xs">
-                    +12% vs last month
-                  </CardContent>
-                </Card>
-                <Card>
-                  <CardHeader>
-                    <CardDescription>Active users</CardDescription>
-                    <CardTitle>1,284</CardTitle>
-                  </CardHeader>
-                  <CardContent className="text-muted-foreground text-xs">
-                    304 currently online
-                  </CardContent>
-                </Card>
-                <Card>
-                  <CardHeader>
-                    <CardDescription>Open tasks</CardDescription>
-                    <CardTitle>32</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <Progress max={100} value={64}>
-                      <ProgressTrack>
-                        <ProgressIndicator style={{ width: "64%" }} />
-                      </ProgressTrack>
-                    </Progress>
-                  </CardContent>
-                </Card>
+                <DemoCard label="p-card-3">
+                  <Card3 />
+                </DemoCard>
+                <DemoCard label="p-card-4">
+                  <Card4 />
+                </DemoCard>
+                <DemoCard label="p-card-5">
+                  <Card5 />
+                </DemoCard>
+                <DemoCard label="p-card-6">
+                  <Card6 />
+                </DemoCard>
+                <DemoCard label="p-card-7">
+                  <Card7 />
+                </DemoCard>
+                <DemoCard label="p-card-8">
+                  <Card8 />
+                </DemoCard>
+                <DemoCard label="p-card-9">
+                  <Card9 />
+                </DemoCard>
+                <DemoCard label="p-card-10">
+                  <Card10 />
+                </DemoCard>
+                <DemoCard label="p-card-11">
+                  <Card11 />
+                </DemoCard>
               </div>
             </Section>
-
-            <Section id="checkbox" title="Checkbox / CheckboxGroup">
+            <Section
+              id="checkbox"
+              title="Checkbox"
+              desc="A control allowing the user to toggle between checked and not checked."
+            >
               <div className="grid gap-4 md:grid-cols-2">
-                <DemoCard label="States">
-                  <div className="flex flex-wrap items-center gap-4">
-                    <Label className="gap-2">
-                      <Checkbox defaultChecked /> Checked
-                    </Label>
-                    <Label className="gap-2">
-                      <Checkbox /> Unchecked
-                    </Label>
-                    <Label className="gap-2">
-                      <Checkbox indeterminate /> Indeterminate
-                    </Label>
-                  </div>
+                <DemoCard label="p-checkbox-1">
+                  <Checkbox1 />
                 </DemoCard>
-                <DemoCard label="Real-world — Task list">
-                  <CheckboxGroup defaultValue={["notif"]}>
-                    <Label className="gap-2">
-                      <Checkbox value="notif" /> Email notifications
-                    </Label>
-                    <Label className="gap-2">
-                      <Checkbox value="marketing" /> Marketing emails
-                    </Label>
-                    <Label className="gap-2">
-                      <Checkbox value="security" /> Security alerts
-                    </Label>
-                  </CheckboxGroup>
+                <DemoCard label="p-checkbox-2">
+                  <Checkbox2 />
+                </DemoCard>
+                <DemoCard label="p-checkbox-3">
+                  <Checkbox3 />
+                </DemoCard>
+                <DemoCard label="p-checkbox-4">
+                  <Checkbox4 />
+                </DemoCard>
+                <DemoCard label="p-checkbox-5">
+                  <Checkbox5 />
                 </DemoCard>
               </div>
             </Section>
-
-            <Section id="collapsible" title="Collapsible">
+            <Section
+              id="checkbox-group"
+              title="Checkbox Group"
+              desc="Provides shared state to a series of checkboxes."
+            >
               <div className="grid gap-4 md:grid-cols-2">
-                <DemoCard label="Basic">
-                  <Collapsible
-                    defaultOpen
-                    className="max-w-xl rounded-lg border p-3"
-                  >
-                    <CollapsibleTrigger className="text-sm font-medium">
-                      Toggle details
-                    </CollapsibleTrigger>
-                    <CollapsibleContent className="text-muted-foreground mt-2 text-sm">
-                      Collapsible content — shipping address, billing info, etc.
-                    </CollapsibleContent>
-                  </Collapsible>
+                <DemoCard label="p-checkbox-group-1">
+                  <CheckboxGroup1 />
                 </DemoCard>
-                <DemoCard label="Real-world — Show more">
-                  <Collapsible className="max-w-xl rounded-lg border p-3">
-                    <CollapsibleTrigger className="flex items-center gap-1 text-sm font-medium">
-                      Details <ChevronDownIcon className="size-4" />
-                    </CollapsibleTrigger>
-                    <CollapsibleContent className="text-muted-foreground mt-2 text-sm leading-6">
-                      Estimated delivery: 3–5 days. Free returns within 30 days.
-                      Need help? Contact support.
-                    </CollapsibleContent>
-                  </Collapsible>
+                <DemoCard label="p-checkbox-group-2">
+                  <CheckboxGroup2 />
+                </DemoCard>
+                <DemoCard label="p-checkbox-group-3">
+                  <CheckboxGroup3 />
+                </DemoCard>
+                <DemoCard label="p-checkbox-group-4">
+                  <CheckboxGroup4 />
+                </DemoCard>
+                <DemoCard label="p-checkbox-group-5">
+                  <CheckboxGroup5 />
                 </DemoCard>
               </div>
             </Section>
-
-            <Section id="combobox" title="Combobox">
+            <Section
+              id="collapsible"
+              title="Collapsible"
+              desc="A collapsible panel controlled by a button trigger."
+            >
               <div className="grid gap-4 md:grid-cols-2">
-                <DemoCard label="Single select">
-                  <Combobox items={fruitItems}>
-                    <ComboboxInput
-                      aria-label="Select fruit"
-                      placeholder="Select fruit…"
-                    />
-                    <ComboboxPopup>
-                      <ComboboxEmpty>No fruit.</ComboboxEmpty>
-                      <ComboboxList>
-                        {(item: { label: string; value: string }) => (
-                          <ComboboxItem key={item.value} value={item}>
-                            {item.label}
-                          </ComboboxItem>
-                        )}
-                      </ComboboxList>
-                    </ComboboxPopup>
-                  </Combobox>
-                </DemoCard>
-                <DemoCard label="Real-world — Assign to project">
-                  <Combobox
-                    items={[
-                      { label: "Website Redesign", value: "wr" },
-                      { label: "Mobile App", value: "ma" },
-                      { label: "Brand Kit", value: "bk" },
-                    ]}
-                  >
-                    <ComboboxInput
-                      aria-label="Project"
-                      placeholder="Search projects…"
-                    />
-                    <ComboboxPopup>
-                      <ComboboxEmpty>No project</ComboboxEmpty>
-                      <ComboboxList>
-                        {(item: { label: string; value: string }) => (
-                          <ComboboxItem key={item.value} value={item}>
-                            <PackageIcon className="size-4 opacity-60" />{" "}
-                            {item.label}
-                          </ComboboxItem>
-                        )}
-                      </ComboboxList>
-                    </ComboboxPopup>
-                  </Combobox>
+                <DemoCard label="p-collapsible-1">
+                  <Collapsible1 />
                 </DemoCard>
               </div>
             </Section>
-
+            <Section
+              id="combobox"
+              title="Combobox"
+              desc="An input combined with a list of predefined items to select."
+            >
+              <div className="grid gap-4 md:grid-cols-2">
+                <DemoCard label="p-combobox-1">
+                  <Combobox1 />
+                </DemoCard>
+                <DemoCard label="p-combobox-2">
+                  <Combobox2 />
+                </DemoCard>
+                <DemoCard label="p-combobox-3">
+                  <Combobox3 />
+                </DemoCard>
+                <DemoCard label="p-combobox-4">
+                  <Combobox4 />
+                </DemoCard>
+                <DemoCard label="p-combobox-5">
+                  <Combobox5 />
+                </DemoCard>
+                <DemoCard label="p-combobox-6">
+                  <Combobox6 />
+                </DemoCard>
+                <DemoCard label="p-combobox-7">
+                  <Combobox7 />
+                </DemoCard>
+                <DemoCard label="p-combobox-8">
+                  <Combobox8 />
+                </DemoCard>
+                <DemoCard label="p-combobox-9">
+                  <Combobox9 />
+                </DemoCard>
+                <DemoCard label="p-combobox-10">
+                  <Combobox10 />
+                </DemoCard>
+                <DemoCard label="p-combobox-11">
+                  <Combobox11 />
+                </DemoCard>
+                <DemoCard label="p-combobox-12">
+                  <Combobox12 />
+                </DemoCard>
+                <DemoCard label="p-combobox-13">
+                  <Combobox13 />
+                </DemoCard>
+                <DemoCard label="p-combobox-14">
+                  <Combobox14 />
+                </DemoCard>
+                <DemoCard label="p-combobox-15">
+                  <Combobox15 />
+                </DemoCard>
+                <DemoCard label="p-combobox-16">
+                  <Combobox16 />
+                </DemoCard>
+                <DemoCard label="p-combobox-17">
+                  <Combobox17 />
+                </DemoCard>
+                <DemoCard label="p-combobox-18">
+                  <Combobox18 />
+                </DemoCard>
+                <DemoCard label="p-combobox-19">
+                  <Combobox19 />
+                </DemoCard>
+                <DemoCard label="p-combobox-20">
+                  <Combobox20 />
+                </DemoCard>
+              </div>
+            </Section>
             <Section
               id="command"
               title="Command"
-              desc="palette • search • from coss docs (p-command-1)"
+              desc="A command palette component built with Dialog and Autocomplete for searching and executing commands."
             >
               <div className="grid gap-4 md:grid-cols-2">
-                <DemoCard label="Palette — ⌘J trigger">
-                  <CommandPaletteDemo />
+                <DemoCard label="p-command-1">
+                  <Command1 />
                 </DemoCard>
-                <DemoCard label="Inline — always open (preview)">
-                  <div className="bg-popover rounded-xl border">
-                    <Command
-                      items={[
-                        {
-                          items: [
-                            { label: "Dashboard", value: "dashboard" },
-                            { label: "Projects", value: "projects" },
-                          ],
-                          value: "Pages",
-                        },
-                      ]}
-                    >
-                      <CommandInput placeholder="Search…" />
-                      <CommandPanel>
-                        <CommandList>
-                          {(group: {
-                            value: string
-                            items: { label: string; value: string }[]
-                          }) => (
-                            <React.Fragment key={group.value}>
-                              <CommandGroup items={group.items}>
-                                <CommandGroupLabel>
-                                  {group.value}
-                                </CommandGroupLabel>
-                                <CommandCollection>
-                                  {(item: { label: string; value: string }) => (
-                                    <CommandItem
-                                      key={item.value}
-                                      value={item.value}
-                                    >
-                                      {item.label}
-                                    </CommandItem>
-                                  )}
-                                </CommandCollection>
-                              </CommandGroup>
-                            </React.Fragment>
-                          )}
-                        </CommandList>
-                        <CommandEmpty>No results.</CommandEmpty>
-                      </CommandPanel>
-                    </Command>
-                  </div>
+                <DemoCard label="p-command-2">
+                  <Command2 />
                 </DemoCard>
               </div>
             </Section>
-
-            <Section id="context-menu" title="ContextMenu">
-              <div className="grid gap-4 md:grid-cols-2">
-                <DemoCard label="Right-click area">
-                  <ContextMenu>
-                    <ContextMenuTrigger className="text-muted-foreground flex h-28 w-full items-center justify-center rounded-lg border border-dashed text-sm">
-                      Right click here
-                    </ContextMenuTrigger>
-                    <ContextMenuPopup>
-                      <ContextMenuItem>
-                        <ArrowRightIcon className="size-4" /> Open
-                      </ContextMenuItem>
-                      <ContextMenuItem>Duplicate</ContextMenuItem>
-                      <ContextMenuSeparator />
-                      <ContextMenuItem className="text-destructive">
-                        Delete
-                      </ContextMenuItem>
-                    </ContextMenuPopup>
-                  </ContextMenu>
-                </DemoCard>
-                <DemoCard label="Real-world — File row">
-                  <ContextMenu>
-                    <ContextMenuTrigger className="flex items-center justify-between rounded-lg border p-3 text-sm">
-                      <span className="flex items-center gap-2">
-                        <FolderIcon className="size-4" /> proposal.pdf
-                      </span>
-                      <span className="text-muted-foreground text-xs">
-                        Right-click for actions
-                      </span>
-                    </ContextMenuTrigger>
-                    <ContextMenuPopup>
-                      <ContextMenuItem>Rename</ContextMenuItem>
-                      <ContextMenuItem>Move to…</ContextMenuItem>
-                      <ContextMenuSeparator />
-                      <ContextMenuItem>
-                        <DownloadIcon className="size-4" /> Download
-                      </ContextMenuItem>
-                    </ContextMenuPopup>
-                  </ContextMenu>
-                </DemoCard>
-              </div>
-            </Section>
-
-            <Section id="dialog" title="Dialog / Drawer / Sheet / AlertDialog">
-              <div className="flex flex-wrap gap-2">
-                <Dialog>
-                  <DialogTrigger
-                    className={buttonVariants({
-                      size: "sm",
-                      variant: "outline",
-                    })}
-                  >
-                    Edit profile
-                  </DialogTrigger>
-                  <DialogPopup className="sm:max-w-sm">
-                    <DialogHeader>
-                      <DialogTitle>Edit profile</DialogTitle>
-                      <DialogDescription>
-                        Make changes and save.
-                      </DialogDescription>
-                    </DialogHeader>
-                    <DialogPanel className="flex flex-col gap-3">
-                      <Field>
-                        <FieldLabel>Name</FieldLabel>
-                        <Input placeholder="Ada Lovelace" />
-                      </Field>
-                      <Field>
-                        <FieldLabel>Email</FieldLabel>
-                        <Input placeholder="ada@example.com" />
-                      </Field>
-                    </DialogPanel>
-                    <DialogFooter>
-                      <DialogClose
-                        className={buttonVariants({
-                          variant: "outline",
-                          size: "sm",
-                        })}
-                      >
-                        Cancel
-                      </DialogClose>
-                      <Button size="sm">Save</Button>
-                    </DialogFooter>
-                  </DialogPopup>
-                </Dialog>
-                <Drawer>
-                  <DrawerTrigger
-                    className={buttonVariants({
-                      size: "sm",
-                      variant: "outline",
-                    })}
-                  >
-                    Drawer
-                  </DrawerTrigger>
-                  <DrawerPopup showBar>
-                    <DrawerHeader className="text-center">
-                      <DrawerTitle>Cart</DrawerTitle>
-                      <DrawerDescription>2 items • $84.00</DrawerDescription>
-                    </DrawerHeader>
-                    <div className="space-y-2 p-4 text-sm">
-                      <div className="flex justify-between rounded-md border p-2">
-                        <span>Plan Pro (monthly)</span>
-                        <span>$49</span>
-                      </div>
-                      <div className="flex justify-between rounded-md border p-2">
-                        <span>Seats × 2</span>
-                        <span>$35</span>
-                      </div>
-                    </div>
-                    <DrawerFooter variant="bare" className="justify-center">
-                      <DrawerClose
-                        className={buttonVariants({
-                          size: "sm",
-                          variant: "outline",
-                        })}
-                      >
-                        Close
-                      </DrawerClose>
-                      <Button size="sm">Checkout</Button>
-                    </DrawerFooter>
-                  </DrawerPopup>
-                </Drawer>
-                <Sheet>
-                  <SheetTrigger
-                    className={buttonVariants({
-                      size: "sm",
-                      variant: "outline",
-                    })}
-                  >
-                    Sheet
-                  </SheetTrigger>
-                  <SheetPopup>
-                    <SheetHeader>
-                      <SheetTitle>Settings</SheetTitle>
-                      <SheetDescription>Manage preferences</SheetDescription>
-                    </SheetHeader>
-                    <div className="space-y-3 p-4 text-sm">
-                      <Label className="gap-2">
-                        <Switch defaultChecked /> Email notifications
-                      </Label>
-                      <Label className="gap-2">
-                        <Switch /> Marketing emails
-                      </Label>
-                    </div>
-                    <SheetFooter>
-                      <SheetClose
-                        className={buttonVariants({
-                          size: "sm",
-                          variant: "outline",
-                        })}
-                      >
-                        Close
-                      </SheetClose>
-                    </SheetFooter>
-                  </SheetPopup>
-                </Sheet>
-              </div>
-            </Section>
-
-            <Section id="empty" title="Empty" desc="real-world placeholders">
-              <div className="grid gap-4 md:grid-cols-2">
-                <DemoCard label="No meetings">
-                  <Empty>
-                    <EmptyHeader>
-                      <EmptyMedia variant="icon">
-                        <RouteIcon />
-                      </EmptyMedia>
-                      <EmptyTitle>No upcoming meetings</EmptyTitle>
-                      <EmptyDescription>
-                        Create a meeting to get started.
-                      </EmptyDescription>
-                    </EmptyHeader>
-                    <EmptyContent>
-                      <div className="flex justify-center gap-2">
-                        <Button size="sm">Create meeting</Button>
-                        <Button size="sm" variant="outline">
-                          <BookIcon />
-                          Docs
-                        </Button>
-                      </div>
-                    </EmptyContent>
-                  </Empty>
-                </DemoCard>
-                <DemoCard label="No orders">
-                  <Empty>
-                    <EmptyHeader>
-                      <EmptyMedia variant="icon">
-                        <InboxIcon />
-                      </EmptyMedia>
-                      <EmptyTitle>No orders yet</EmptyTitle>
-                      <EmptyDescription>
-                        Orders will appear after checkout.
-                      </EmptyDescription>
-                    </EmptyHeader>
-                    <EmptyContent>
-                      <Button size="sm" variant="outline">
-                        <PackageIcon /> Browse products
-                      </Button>
-                    </EmptyContent>
-                  </Empty>
-                </DemoCard>
-              </div>
-            </Section>
-
             <Section
-              id="form"
-              title="Form / Field / Fieldset"
-              desc="validation • real-world"
+              id="context-menu"
+              title="Context Menu"
+              desc="A menu that appears at the pointer on right click or long press."
             >
               <div className="grid gap-4 md:grid-cols-2">
-                <DemoCard label="Sign up">
-                  <Form className="flex flex-col gap-3">
-                    <Field>
-                      <FieldLabel>Email</FieldLabel>
-                      <Input placeholder="you@example.com" />
-                      <FieldDescription>
-                        We will not share your email.
-                      </FieldDescription>
-                    </Field>
-                    <Field>
-                      <FieldLabel>Password</FieldLabel>
-                      <Input placeholder="••••••••" type="password" />
-                    </Field>
-                    <Button type="submit" size="sm">
-                      Create account
-                    </Button>
-                  </Form>
+                <DemoCard label="p-context-menu-1">
+                  <ContextMenu1 />
                 </DemoCard>
-                <DemoCard label="With error + fieldset">
-                  <Fieldset>
-                    <FieldsetLegend>Shipping address</FieldsetLegend>
-                    <div className="mt-3 flex flex-col gap-3">
-                      <Field>
-                        <FieldLabel>Name</FieldLabel>
-                        <Input placeholder="Ada" />
-                      </Field>
-                      <Field>
-                        <FieldLabel>Address</FieldLabel>
-                        <Input aria-invalid placeholder="Required" />
-                        <FieldError>Address is required</FieldError>
-                      </Field>
-                    </div>
-                  </Fieldset>
+                <DemoCard label="p-context-menu-2">
+                  <ContextMenu2 />
+                </DemoCard>
+                <DemoCard label="p-context-menu-3">
+                  <ContextMenu3 />
+                </DemoCard>
+                <DemoCard label="p-context-menu-4">
+                  <ContextMenu4 />
+                </DemoCard>
+                <DemoCard label="p-context-menu-5">
+                  <ContextMenu5 />
+                </DemoCard>
+                <DemoCard label="p-context-menu-6">
+                  <ContextMenu6 />
+                </DemoCard>
+                <DemoCard label="p-context-menu-7">
+                  <ContextMenu7 />
+                </DemoCard>
+                <DemoCard label="p-context-menu-8">
+                  <ContextMenu8 />
                 </DemoCard>
               </div>
             </Section>
-
-            <Section id="group" title="Group" desc="real-world: joined actions">
-              <div className="grid gap-4 md:grid-cols-2">
-                <DemoCard label="Horizontal — Filter bar">
-                  <Group orientation="horizontal">
-                    <Button variant="outline" size="sm">
-                      All
-                    </Button>
-                    <Button variant="outline" size="sm">
-                      Active
-                    </Button>
-                    <Button variant="outline" size="sm">
-                      Archived
-                    </Button>
-                  </Group>
-                </DemoCard>
-                <DemoCard label="Vertical — Share segment">
-                  <Group orientation="vertical" className="w-fit">
-                    <Button variant="outline" size="sm">
-                      <Share2Icon /> Link
-                    </Button>
-                    <Button variant="outline" size="sm">
-                      <MailIcon /> Email
-                    </Button>
-                    <Button variant="outline" size="sm">
-                      <BellIcon /> Invite
-                    </Button>
-                  </Group>
-                </DemoCard>
-              </div>
-            </Section>
-
-            <Section id="input" title="Input / NumberField / OTPField">
-              <div className="grid gap-4">
-                <DemoCard label="Real-world — Checkout">
-                  <div className="grid gap-3 sm:grid-cols-2">
-                    <Input placeholder="Card number" />
-                    <Input placeholder="MM / YY" />
-                    <Input placeholder="CVC" />
-                    <NumberField defaultValue={1} min={1} max={10} />
-                    <div className="flex gap-2 sm:col-span-2">
-                      <OTPField length={6}>
-                        <OTPFieldInput />
-                        <OTPFieldInput />
-                        <OTPFieldInput />
-                        <OTPFieldInput />
-                        <OTPFieldInput />
-                        <OTPFieldInput />
-                      </OTPField>
-                      <span className="text-muted-foreground self-center text-xs">
-                        Verify code
-                      </span>
-                    </div>
-                  </div>
-                </DemoCard>
-              </div>
-            </Section>
-
-            <Section id="input-group" title="InputGroup">
-              <div className="grid gap-4 md:grid-cols-2">
-                <DemoCard label="Search + kbd">
-                  <InputGroup>
-                    <InputGroupAddon align="inline-start">
-                      <SearchIcon className="size-4 opacity-60" />
-                    </InputGroupAddon>
-                    <InputGroupInput placeholder="Search docs…" />
-                    <InputGroupAddon align="inline-end">
-                      <Kbd>⌘K</Kbd>
-                    </InputGroupAddon>
-                  </InputGroup>
-                </DemoCard>
-                <DemoCard label="Subscribe">
-                  <InputGroup>
-                    <InputGroupInput placeholder="you@example.com" />
-                    <InputGroupAddon align="inline-end">
-                      <Button size="xs">Subscribe</Button>
-                    </InputGroupAddon>
-                  </InputGroup>
-                </DemoCard>
-              </div>
-            </Section>
-
-            <Section id="kbd" title="Kbd">
-              <DemoCard label="Shortcuts">
-                <div className="flex flex-wrap items-center gap-2">
-                  <Kbd>⌘</Kbd> <Kbd>K</Kbd>
-                  <KbdGroup>
-                    <Kbd>⌘</Kbd>
-                    <Kbd>⇧</Kbd>
-                    <Kbd>P</Kbd>
-                  </KbdGroup>
-                  <span className="text-muted-foreground text-sm">+</span>{" "}
-                  <Kbd>Ctrl</Kbd>{" "}
-                  <span className="text-muted-foreground text-sm">+</span>{" "}
-                  <Kbd>C</Kbd>
-                </div>
-              </DemoCard>
-            </Section>
-
-            <Section id="menu" title="Menu">
-              <div className="grid gap-4 md:grid-cols-2">
-                <DemoCard label="Actions">
-                  <Menu>
-                    <MenuTrigger
-                      className={buttonVariants({
-                        variant: "outline",
-                        size: "sm",
-                      })}
-                    >
-                      Open menu
-                    </MenuTrigger>
-                    <MenuPopup>
-                      <MenuGroup>
-                        <MenuGroupLabel>Actions</MenuGroupLabel>
-                        <MenuItem>
-                          <RocketIcon className="size-4" /> New project{" "}
-                          <MenuShortcut>⌘N</MenuShortcut>
-                        </MenuItem>
-                        <MenuItem>Duplicate</MenuItem>
-                        <MenuSeparator />
-                        <MenuItem className="text-destructive">
-                          <TrashIcon className="size-4" /> Delete
-                        </MenuItem>
-                      </MenuGroup>
-                    </MenuPopup>
-                  </Menu>
-                </DemoCard>
-                <DemoCard label="With submenu">
-                  <Menu>
-                    <MenuTrigger
-                      className={buttonVariants({
-                        variant: "outline",
-                        size: "sm",
-                      })}
-                    >
-                      Export
-                    </MenuTrigger>
-                    <MenuPopup>
-                      <MenuItem>
-                        <DownloadIcon className="size-4" /> Export as PDF
-                      </MenuItem>
-                      <MenuSub>
-                        <MenuSubTrigger>
-                          More formats{" "}
-                          <ChevronRightIcon className="ml-auto size-4" />
-                        </MenuSubTrigger>
-                        <MenuSubPopup>
-                          <MenuItem>PNG</MenuItem>
-                          <MenuItem>SVG</MenuItem>
-                        </MenuSubPopup>
-                      </MenuSub>
-                    </MenuPopup>
-                  </Menu>
-                </DemoCard>
-              </div>
-            </Section>
-
-            <Section id="meter" title="Meter">
-              <div className="grid gap-4 md:grid-cols-2">
-                <DemoCard label="Storage — real-world">
-                  <Meter max={100} value={72}>
-                    <div className="flex justify-between text-sm">
-                      <MeterLabel>Storage</MeterLabel>
-                      <MeterValue />
-                    </div>
-                    <MeterTrack>
-                      <MeterIndicator style={{ width: "72%" }} />
-                    </MeterTrack>
-                  </Meter>
-                </DemoCard>
-                <DemoCard label="Download">
-                  <Meter max={100} value={45}>
-                    <div className="flex justify-between text-sm">
-                      <MeterLabel>Download</MeterLabel>
-                      <MeterValue />
-                    </div>
-                    <MeterTrack>
-                      <MeterIndicator style={{ width: "45%" }} />
-                    </MeterTrack>
-                  </Meter>
-                </DemoCard>
-              </div>
-            </Section>
-
-            <Section id="number-field" title="NumberField">
-              <DemoCard label="Quantity — ecommerce">
-                <div className="flex items-center gap-4">
-                  <NumberField defaultValue={2} min={0} max={10} />
-                  <span className="text-muted-foreground text-sm">
-                    × $29 = $58
-                  </span>
-                </div>
-              </DemoCard>
-            </Section>
-
-            <Section id="otp-field" title="OTPField">
-              <DemoCard label="Verify email">
-                <div className="flex flex-col gap-3">
-                  <p className="text-sm">Code sent to ada@example.com</p>
-                  <OTPField length={6}>
-                    <OTPFieldInput />
-                    <OTPFieldInput />
-                    <OTPFieldInput />
-                    <OTPFieldInput />
-                    <OTPFieldInput />
-                    <OTPFieldInput />
-                  </OTPField>
-                </div>
-              </DemoCard>
-            </Section>
-
-            <Section id="pagination" title="Pagination">
-              <DemoCard label="Table footer">
-                <Pagination>
-                  <PaginationContent>
-                    <PaginationItem>
-                      <PaginationLink href="#">‹ Prev</PaginationLink>
-                    </PaginationItem>
-                    <PaginationItem>
-                      <PaginationLink href="#" isActive>
-                        1
-                      </PaginationLink>
-                    </PaginationItem>
-                    <PaginationItem>
-                      <PaginationLink href="#">2</PaginationLink>
-                    </PaginationItem>
-                    <PaginationItem>
-                      <PaginationEllipsis />
-                    </PaginationItem>
-                    <PaginationItem>
-                      <PaginationLink href="#">10</PaginationLink>
-                    </PaginationItem>
-                    <PaginationItem>
-                      <PaginationLink href="#">Next ›</PaginationLink>
-                    </PaginationItem>
-                  </PaginationContent>
-                </Pagination>
-              </DemoCard>
-            </Section>
-
-            <Section id="popover" title="Popover / Tooltip / PreviewCard">
-              <div className="flex flex-wrap gap-4">
-                <DemoCard label="Help popover">
-                  <Popover>
-                    <PopoverTrigger
-                      className={buttonVariants({
-                        variant: "outline",
-                        size: "sm",
-                      })}
-                    >
-                      What is this?
-                    </PopoverTrigger>
-                    <PopoverPopup className="bg-popover max-w-xs rounded-lg border p-3 text-sm shadow-md">
-                      Popovers show extra info without navigating. Click outside
-                      to close.
-                    </PopoverPopup>
-                  </Popover>
-                </DemoCard>
-                <DemoCard label="Tooltip">
-                  <Tooltip>
-                    <TooltipTrigger
-                      className={buttonVariants({
-                        variant: "outline",
-                        size: "sm",
-                      })}
-                    >
-                      Hover me
-                    </TooltipTrigger>
-                    <TooltipPopup>Tooltip — helpful hint</TooltipPopup>
-                  </Tooltip>
-                </DemoCard>
-                <DemoCard label="Link preview">
-                  <PreviewCard>
-                    <PreviewCardTrigger
-                      className={buttonVariants({
-                        variant: "outline",
-                        size: "sm",
-                      })}
-                    >
-                      cal.com
-                    </PreviewCardTrigger>
-                    <PreviewCardPopup className="bg-popover rounded-lg border p-3 text-sm">
-                      Cal.com — open scheduling infrastructure. PreviewCard
-                      shows on hover with delay.
-                    </PreviewCardPopup>
-                  </PreviewCard>
-                </DemoCard>
-              </div>
-            </Section>
-
-            <Section id="progress" title="Progress / Meter">
-              <div className="grid gap-4 md:grid-cols-2">
-                <DemoCard label="Upload">
-                  <Progress max={100} value={68}>
-                    <div className="flex justify-between text-sm">
-                      <ProgressLabel>Uploading…</ProgressLabel>
-                      <ProgressValue />
-                    </div>
-                    <ProgressTrack>
-                      <ProgressIndicator style={{ width: "68%" }} />
-                    </ProgressTrack>
-                  </Progress>
-                </DemoCard>
-                <DemoCard label="Onboarding">
-                  <Progress max={4} value={2}>
-                    <div className="flex justify-between text-sm">
-                      <ProgressLabel>Step 2 of 4</ProgressLabel>
-                      <ProgressValue />
-                    </div>
-                    <ProgressTrack>
-                      <ProgressIndicator style={{ width: "50%" }} />
-                    </ProgressTrack>
-                  </Progress>
-                </DemoCard>
-              </div>
-            </Section>
-
             <Section
-              id="radio-group"
-              title="RadioGroup"
-              desc="real-world selector"
+              id="date-picker"
+              title="Date Picker"
+              desc="A date picker component built with Calendar and Popover."
             >
               <div className="grid gap-4 md:grid-cols-2">
-                <DemoCard label="Plan">
-                  <RadioGroup defaultValue="pro">
-                    <Label className="gap-2 rounded-lg border p-3">
-                      <Radio value="free" /> Free{" "}
-                      <span className="text-muted-foreground ml-auto text-xs">
-                        $0
-                      </span>
-                    </Label>
-                    <Label className="bg-accent gap-2 rounded-lg border p-3">
-                      <Radio value="pro" /> Pro{" "}
-                      <span className="ml-auto text-xs">$19/mo</span>
-                    </Label>
-                    <Label className="gap-2 rounded-lg border p-3">
-                      <Radio value="team" /> Team{" "}
-                      <span className="text-muted-foreground ml-auto text-xs">
-                        $39/mo
-                      </span>
-                    </Label>
-                  </RadioGroup>
+                <DemoCard label="p-date-picker-1">
+                  <DatePicker1 />
                 </DemoCard>
-                <DemoCard label="Delivery">
-                  <RadioGroup defaultValue="standard">
-                    <Label className="gap-2">
-                      <Radio value="standard" /> Standard (3–5d) — Free
-                    </Label>
-                    <Label className="gap-2">
-                      <Radio value="express" /> Express (1–2d) — $12
-                    </Label>
-                    <Label className="gap-2 opacity-60">
-                      <Radio disabled value="pickup" /> Pickup — Unavailable
-                    </Label>
-                  </RadioGroup>
+                <DemoCard label="p-date-picker-2">
+                  <DatePicker2 />
+                </DemoCard>
+                <DemoCard label="p-date-picker-3">
+                  <DatePicker3 />
+                </DemoCard>
+                <DemoCard label="p-date-picker-4">
+                  <DatePicker4 />
+                </DemoCard>
+                <DemoCard label="p-date-picker-5">
+                  <DatePicker5 />
+                </DemoCard>
+                <DemoCard label="p-date-picker-6">
+                  <DatePicker6 />
+                </DemoCard>
+                <DemoCard label="p-date-picker-7">
+                  <DatePicker7 />
+                </DemoCard>
+                <DemoCard label="p-date-picker-8">
+                  <DatePicker8 />
+                </DemoCard>
+                <DemoCard label="p-date-picker-9">
+                  <DatePicker9 />
                 </DemoCard>
               </div>
             </Section>
-
-            <Section id="scroll-area" title="ScrollArea / Frame">
-              <div className="grid gap-4 md:grid-cols-2">
-                <DemoCard label="Chat scroll">
-                  <ScrollArea className="h-36 rounded-lg border">
-                    <div className="space-y-2 p-3 text-sm">
-                      {Array.from({ length: 16 }, (_, i) => (
-                        <div
-                          key={i}
-                          className="bg-muted/40 rounded-md px-2 py-1"
-                        >
-                          Message {i + 1}: Hey there — shipped fix for calendar
-                          scroll.
-                        </div>
-                      ))}
-                    </div>
-                  </ScrollArea>
-                </DemoCard>
-                <DemoCard label="Frame">
-                  <Frame className="rounded-lg border p-4 text-sm">
-                    Frame — generic container. Use for diagrams, embeds, code
-                    blocks, or framed media.
-                  </Frame>
-                </DemoCard>
-              </div>
-            </Section>
-
-            <Section id="select" title="Select" desc="real-world forms">
-              <div className="grid gap-4 md:grid-cols-2">
-                <DemoCard label="Framework">
-                  <Select defaultValue="apple">
-                    <SelectButton style={{ width: 180 }}>
-                      <SelectValue />
-                    </SelectButton>
-                    <SelectPopup>
-                      <SelectItem>apple</SelectItem>
-                      <SelectItem>banana</SelectItem>
-                      <SelectItem>orange</SelectItem>
-                    </SelectPopup>
-                  </Select>
-                </DemoCard>
-                <DemoCard label="Sizes + placeholder">
-                  <div className="flex gap-2">
-                    <Select>
-                      <SelectButton size="sm" style={{ width: 140 }}>
-                        <SelectValue placeholder="Pick" />
-                      </SelectButton>
-                      <SelectPopup>
-                        <SelectItem>one</SelectItem>
-                        <SelectItem>two</SelectItem>
-                      </SelectPopup>
-                    </Select>
-                    <Select defaultValue="banana">
-                      <SelectButton size="lg" style={{ width: 140 }}>
-                        <SelectValue />
-                      </SelectButton>
-                      <SelectPopup>
-                        <SelectItem>apple</SelectItem>
-                        <SelectItem>banana</SelectItem>
-                      </SelectPopup>
-                    </Select>
-                  </div>
-                </DemoCard>
-              </div>
-            </Section>
-
-            <Section id="separator" title="Separator">
-              <DemoCard label="Horizontal + vertical">
-                <div className="flex flex-col gap-3">
-                  <div className="text-sm">Section above</div>
-                  <Separator />
-                  <div className="text-sm">Section below</div>
-                  <div className="flex h-8 items-center gap-3">
-                    <span className="text-sm">Left</span>
-                    <Separator orientation="vertical" />
-                    <span className="text-sm">Right</span>
-                  </div>
-                </div>
-              </DemoCard>
-            </Section>
-
             <Section
-              id="skeleton"
-              title="Skeleton / Spinner"
-              desc="loading states"
+              id="dialog"
+              title="Dialog"
+              desc="A popup that opens on top of the entire page."
             >
               <div className="grid gap-4 md:grid-cols-2">
-                <DemoCard label="Article loading">
-                  <div className="flex flex-col gap-3">
-                    <div className="flex items-center gap-3">
-                      <Skeleton className="size-10 rounded-full" />
-                      <div className="flex flex-col gap-2">
-                        <Skeleton className="h-4 w-32" />
-                        <Skeleton className="h-3 w-24" />
-                      </div>
-                    </div>
-                    <Skeleton className="h-4 w-full" />
-                    <Skeleton className="h-4 w-3/4" />
-                    <Skeleton className="h-20 w-full" />
-                  </div>
+                <DemoCard label="p-dialog-1">
+                  <Dialog1 />
                 </DemoCard>
-                <DemoCard label="Spinners">
-                  <div className="flex items-center gap-3">
-                    <Spinner />
-                    <Spinner className="size-6" />
-                    <span className="inline-flex items-center gap-2 text-sm">
-                      <LoaderCircleIcon className="size-4 animate-spin" />{" "}
-                      Loading…
-                    </span>
-                  </div>
+                <DemoCard label="p-dialog-2">
+                  <Dialog2 />
+                </DemoCard>
+                <DemoCard label="p-dialog-3">
+                  <Dialog3 />
+                </DemoCard>
+                <DemoCard label="p-dialog-4">
+                  <Dialog4 />
+                </DemoCard>
+                <DemoCard label="p-dialog-5">
+                  <Dialog5 />
+                </DemoCard>
+                <DemoCard label="p-dialog-6">
+                  <Dialog6 />
                 </DemoCard>
               </div>
             </Section>
-
-            <Section id="slider" title="Slider">
-              <div className="grid gap-4 md:grid-cols-2">
-                <DemoCard label="Volume">
-                  <Slider defaultValue={[42]} />
-                  <p className="text-muted-foreground mt-2 text-xs">
-                    Volume control — drag to adjust
-                  </p>
-                </DemoCard>
-                <DemoCard label="Price range">
-                  <Slider defaultValue={[20, 80]} />
-                  <div className="mt-1 flex justify-between text-xs">
-                    <span>$20</span>
-                    <span>$80</span>
-                  </div>
-                </DemoCard>
-              </div>
-            </Section>
-
-            <Section id="switch" title="Switch">
-              <div className="grid gap-4 md:grid-cols-2">
-                <DemoCard label="Settings toggles">
-                  <div className="flex flex-col gap-3">
-                    <Label className="justify-between">
-                      <span className="flex items-center gap-2">
-                        <BellIcon className="size-4" /> Notifications
-                      </span>
-                      <Switch defaultChecked />
-                    </Label>
-                    <Separator />
-                    <Label className="justify-between opacity-60">
-                      <span>Airplane mode</span>
-                      <Switch disabled />
-                    </Label>
-                  </div>
-                </DemoCard>
-                <DemoCard label="States">
-                  <div className="flex gap-4">
-                    <Label className="gap-2">
-                      <Switch /> Off
-                    </Label>
-                    <Label className="gap-2">
-                      <Switch defaultChecked /> On
-                    </Label>
-                  </div>
-                </DemoCard>
-              </div>
-            </Section>
-
-            <Section id="table" title="Table" desc="real-world invoices + team">
-              <div className="grid gap-6">
-                <DemoCard label="Invoices">
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Invoice</TableHead>
-                        <TableHead>Status</TableHead>
-                        <TableHead className="text-right">Amount</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      <TableRow>
-                        <TableCell className="font-medium">INV001</TableCell>
-                        <TableCell>
-                          <Badge size="sm" variant="success">
-                            Paid
-                          </Badge>
-                        </TableCell>
-                        <TableCell className="text-right">$250.00</TableCell>
-                      </TableRow>
-                      <TableRow>
-                        <TableCell className="font-medium">INV002</TableCell>
-                        <TableCell>
-                          <Badge size="sm" variant="warning">
-                            Pending
-                          </Badge>
-                        </TableCell>
-                        <TableCell className="text-right">$150.00</TableCell>
-                      </TableRow>
-                      <TableRow>
-                        <TableCell className="font-medium">INV003</TableCell>
-                        <TableCell>
-                          <Badge size="sm" variant="error">
-                            Overdue
-                          </Badge>
-                        </TableCell>
-                        <TableCell className="text-right">$350.00</TableCell>
-                      </TableRow>
-                    </TableBody>
-                    <TableCaption>Recent invoices</TableCaption>
-                  </Table>
-                </DemoCard>
-                <DemoCard label="Team — card variant">
-                  <Table variant="card">
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Member</TableHead>
-                        <TableHead>Role</TableHead>
-                        <TableHead>Status</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      <TableRow>
-                        <TableCell className="flex items-center gap-2">
-                          <Avatar className="size-6">
-                            <AvatarFallback className="text-xs">
-                              AL
-                            </AvatarFallback>
-                          </Avatar>{" "}
-                          Ada
-                        </TableCell>
-                        <TableCell>Engineer</TableCell>
-                        <TableCell>
-                          <Badge size="sm" variant="outline">
-                            Active
-                          </Badge>
-                        </TableCell>
-                      </TableRow>
-                      <TableRow>
-                        <TableCell className="flex items-center gap-2">
-                          <Avatar className="size-6">
-                            <AvatarFallback className="text-xs">
-                              BO
-                            </AvatarFallback>
-                          </Avatar>{" "}
-                          Bob
-                        </TableCell>
-                        <TableCell>Designer</TableCell>
-                        <TableCell>
-                          <Badge size="sm" variant="secondary">
-                            Away
-                          </Badge>
-                        </TableCell>
-                      </TableRow>
-                    </TableBody>
-                  </Table>
-                </DemoCard>
-              </div>
-            </Section>
-
-            <Section
-              id="tabs"
-              title="Tabs"
-              desc="segmented-control style via variant"
-            >
-              <div className="grid gap-4">
-                <DemoCard label="Account settings (default)">
-                  <Tabs defaultValue="account">
-                    <TabsList>
-                      <TabsTab value="account">Account</TabsTab>
-                      <TabsTab value="password">Password</TabsTab>
-                      <TabsTab value="billing">Billing</TabsTab>
-                    </TabsList>
-                    <TabsPanel value="account">
-                      <div className="rounded-lg border p-4 text-sm">
-                        Account: name, email, avatar.
-                      </div>
-                    </TabsPanel>
-                    <TabsPanel value="password">
-                      <div className="rounded-lg border p-4 text-sm">
-                        Password: change password form.
-                      </div>
-                    </TabsPanel>
-                  </Tabs>
-                </DemoCard>
-                <DemoCard label="Underline — docs nav">
-                  <Tabs defaultValue="code">
-                    <TabsList variant="underline">
-                      <TabsTab value="code">Code</TabsTab>
-                      <TabsTab value="preview">Preview</TabsTab>
-                      <TabsTab value="props">Props</TabsTab>
-                    </TabsList>
-                    <TabsPanel value="code">
-                      <div className="bg-muted/30 rounded-md p-3 font-mono text-sm">
-                        {"<Button>Click</Button>"}
-                      </div>
-                    </TabsPanel>
-                  </Tabs>
-                </DemoCard>
-              </div>
-            </Section>
-
-            <Section id="textarea" title="Textarea">
-              <div className="grid gap-4 md:grid-cols-2">
-                <DemoCard label="Comment">
-                  <Textarea placeholder="Write a comment…" rows={3} />
-                </DemoCard>
-                <DemoCard label="Real-world — Feedback + char count">
-                  <div className="grid gap-2">
-                    <Textarea
-                      placeholder="Tell us what you think…"
-                      rows={3}
-                      defaultValue="Great product! Would love dark mode tweaks."
-                    />
-                    <span className="text-muted-foreground text-right text-xs">
-                      48 / 500
-                    </span>
-                  </div>
-                </DemoCard>
-              </div>
-            </Section>
-
-            <Section id="toast" title="Toast">
-              <DemoCard label="Actions">
-                <div className="flex flex-wrap gap-2">
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() =>
-                      toastManager.add({
-                        title: "Event created",
-                        description: "Monday, Jan 3 at 6:00pm",
-                      })
-                    }
-                  >
-                    Default
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() =>
-                      toastManager.add({ title: "Saved", type: "success" })
-                    }
-                  >
-                    Success
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() =>
-                      toastManager.add({
-                        title: "Failed to save",
-                        type: "error",
-                      })
-                    }
-                  >
-                    Error
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() =>
-                      toastManager.add({
-                        title: "Info",
-                        description: "New version available",
-                        type: "info",
-                      })
-                    }
-                  >
-                    Info
-                  </Button>
-                </div>
-              </DemoCard>
-            </Section>
-
-            <Section id="toggle" title="Toggle">
-              <DemoCard label="Formatting">
-                <div className="flex flex-wrap gap-2">
-                  <Toggle variant="outline">
-                    <StarIcon /> Bookmark
-                  </Toggle>
-                  <Toggle pressed variant="outline">
-                    <StarIcon className="fill-current" /> Bookmarked
-                  </Toggle>
-                  <Toggle size="sm" variant="outline">
-                    sm
-                  </Toggle>
-                  <Toggle size="lg" variant="outline">
-                    lg
-                  </Toggle>
-                </div>
-              </DemoCard>
-            </Section>
-
-            <Section id="toggle-group" title="ToggleGroup">
-              <div className="grid gap-4 md:grid-cols-2">
-                <DemoCard label="Multiple — formatting">
-                  <ToggleGroup defaultValue={["bold"]}>
-                    <ToggleGroupItem value="bold">Bold</ToggleGroupItem>
-                    <ToggleGroupItem value="italic">Italic</ToggleGroupItem>
-                    <ToggleGroupItem value="underline">
-                      Underline
-                    </ToggleGroupItem>
-                  </ToggleGroup>
-                </DemoCard>
-                <DemoCard label="Single — align">
-                  <ToggleGroup defaultValue={["center"]}>
-                    <ToggleGroupItem value="left">Left</ToggleGroupItem>
-                    <ToggleGroupItem value="center">Center</ToggleGroupItem>
-                    <ToggleGroupItem value="right">Right</ToggleGroupItem>
-                  </ToggleGroup>
-                </DemoCard>
-              </div>
-            </Section>
-
-            <Section id="toolbar" title="Toolbar">
-              <DemoCard label="Editor">
-                <Toolbar className="flex w-fit items-center gap-1 rounded-lg border p-1">
-                  <Button aria-label="bold" size="icon-sm" variant="ghost">
-                    <StarIcon className="size-4" />
-                  </Button>
-                  <Separator className="mx-1 h-6" orientation="vertical" />
-                  <Button size="sm" variant="ghost">
-                    <SettingsIcon className="size-4" /> Settings
-                  </Button>
-                  <Button size="sm" variant="ghost">
-                    <TrashIcon className="size-4" /> Delete
-                  </Button>
-                </Toolbar>
-              </DemoCard>
-            </Section>
-
-            <Section id="tooltip" title="Tooltip">
-              <div className="grid gap-4 md:grid-cols-2">
-                <DemoCard label="Basic">
-                  <Tooltip>
-                    <TooltipTrigger
-                      className={buttonVariants({
-                        variant: "outline",
-                        size: "sm",
-                      })}
-                    >
-                      Hover for tip
-                    </TooltipTrigger>
-                    <TooltipPopup>Helpful context</TooltipPopup>
-                  </Tooltip>
-                </DemoCard>
-                <DemoCard label="Real-world — Icon buttons">
-                  <div className="flex gap-2">
-                    <Tooltip>
-                      <TooltipTrigger
-                        className={buttonVariants({
-                          variant: "ghost",
-                          size: "icon-sm",
-                        })}
-                      >
-                        <SettingsIcon />
-                      </TooltipTrigger>
-                      <TooltipPopup>Settings</TooltipPopup>
-                    </Tooltip>
-                    <Tooltip>
-                      <TooltipTrigger
-                        className={buttonVariants({
-                          variant: "ghost",
-                          size: "icon-sm",
-                        })}
-                      >
-                        <BellIcon />
-                      </TooltipTrigger>
-                      <TooltipPopup>Notifications</TooltipPopup>
-                    </Tooltip>
-                    <Tooltip>
-                      <TooltipTrigger
-                        className={buttonVariants({
-                          variant: "ghost",
-                          size: "icon-sm",
-                        })}
-                      >
-                        <HeartIcon />
-                      </TooltipTrigger>
-                      <TooltipPopup>Favorite</TooltipPopup>
-                    </Tooltip>
-                  </div>
-                </DemoCard>
-              </div>
-            </Section>
-
-            <Section
-              id="checkbox-group"
-              title="CheckboxGroup"
-              desc="controlled group"
-            >
-              <DemoCard label="Preferences">
-                <CheckboxGroup defaultValue={["email"]}>
-                  <Label className="gap-2">
-                    <Checkbox value="email" /> Email updates
-                  </Label>
-                  <Label className="gap-2">
-                    <Checkbox value="sms" /> SMS alerts
-                  </Label>
-                  <Label className="gap-2">
-                    <Checkbox value="push" /> Push notifications
-                  </Label>
-                </CheckboxGroup>
-              </DemoCard>
-            </Section>
-
-            <Section
-              id="field"
-              title="Field"
-              desc="label + control + description"
-            >
-              <DemoCard label="With description">
-                <Field>
-                  <FieldLabel>Username</FieldLabel>
-                  <Input placeholder="johndoe" />
-                  <FieldDescription>
-                    Public handle, 3–16 chars.
-                  </FieldDescription>
-                </Field>
-              </DemoCard>
-            </Section>
-
-            <Section id="fieldset" title="Fieldset" desc="grouped fields">
-              <DemoCard label="Address">
-                <Fieldset>
-                  <FieldsetLegend>Delivery address</FieldsetLegend>
-                  <div className="mt-3 grid gap-3 sm:grid-cols-2">
-                    <Field>
-                      <FieldLabel>Street</FieldLabel>
-                      <Input placeholder="123 Main St" />
-                    </Field>
-                    <Field>
-                      <FieldLabel>City</FieldLabel>
-                      <Input placeholder="San Francisco" />
-                    </Field>
-                  </div>
-                </Fieldset>
-              </DemoCard>
-            </Section>
-
-            <Section id="frame" title="Frame" desc="generic container">
-              <DemoCard label="Media frame">
-                <Frame className="bg-muted/20 rounded-xl border p-6 text-center text-sm">
-                  Frame — wrap images, code, or embeds with consistent
-                  border/radius.
-                </Frame>
-              </DemoCard>
-            </Section>
-
-            <Section id="label" title="Label" desc="a11y label">
-              <DemoCard label="Associated">
-                <Field>
-                  <FieldLabel htmlFor="label-demo">Email address</FieldLabel>
-                  <Input id="label-demo" placeholder="you@example.com" />
-                </Field>
-              </DemoCard>
-            </Section>
-
-            <Section
-              id="segmented-control"
-              title="SegmentedControl"
-              desc="alias — implemented via Tabs variant (see coss docs)"
-            >
-              <DemoCard label="View switch (Tabs as segmented)">
-                <Tabs defaultValue="all">
-                  <TabsList>
-                    <TabsTab value="all">All</TabsTab>
-                    <TabsTab value="active">Active</TabsTab>
-                    <TabsTab value="archived">Archived</TabsTab>
-                  </TabsList>
-                  <TabsPanel value="all">
-                    <div className="rounded-lg border p-3 text-sm">
-                      All projects
-                    </div>
-                  </TabsPanel>
-                  <TabsPanel value="active">
-                    <div className="rounded-lg border p-3 text-sm">
-                      Active only
-                    </div>
-                  </TabsPanel>
-                </Tabs>
-                <p className="text-muted-foreground mt-2 text-xs">
-                  COSS segmented-control shares styling with Tabs — same{" "}
-                  <code>segmentedControl</code> lib, no separate component
-                  export.
-                </p>
-              </DemoCard>
-            </Section>
-
-            <Section id="spinner" title="Spinner">
-              <DemoCard label="Loading">
-                <div className="flex items-center gap-4">
-                  <Spinner />
-                  <Spinner className="size-6" />
-                  <span className="inline-flex items-center gap-2 text-sm">
-                    <LoaderCircleIcon className="size-4 animate-spin" />{" "}
-                    Syncing…
-                  </span>
-                </div>
-              </DemoCard>
-            </Section>
-
             <Section
               id="drawer"
               title="Drawer"
-              desc="bottom sheet — see Dialog section"
+              desc="A panel that slides in from the edge of the screen with swipe gestures, snap points, and nested drawer support."
             >
-              <DemoCard label="Drawer — mobile cart">
-                <p className="text-muted-foreground text-sm">
-                  Full Drawer demo is inside the Dialog section above (combined
-                  real-world cart example).{" "}
-                  <a href="#dialog" className="underline">
-                    Jump to Dialog
-                  </a>
-                </p>
-              </DemoCard>
+              <div className="grid gap-4 md:grid-cols-2">
+                <DemoCard label="p-drawer-1">
+                  <Drawer1 />
+                </DemoCard>
+                <DemoCard label="p-drawer-2">
+                  <Drawer2 />
+                </DemoCard>
+                <DemoCard label="p-drawer-3">
+                  <Drawer3 />
+                </DemoCard>
+                <DemoCard label="p-drawer-4">
+                  <Drawer4 />
+                </DemoCard>
+                <DemoCard label="p-drawer-5">
+                  <Drawer5 />
+                </DemoCard>
+                <DemoCard label="p-drawer-6">
+                  <Drawer6 />
+                </DemoCard>
+                <DemoCard label="p-drawer-7">
+                  <Drawer7 />
+                </DemoCard>
+                <DemoCard label="p-drawer-8">
+                  <Drawer8 />
+                </DemoCard>
+                <DemoCard label="p-drawer-9">
+                  <Drawer9 />
+                </DemoCard>
+                <DemoCard label="p-drawer-10">
+                  <Drawer10 />
+                </DemoCard>
+                <DemoCard label="p-drawer-11">
+                  <Drawer11 />
+                </DemoCard>
+                <DemoCard label="p-drawer-12">
+                  <Drawer12 />
+                </DemoCard>
+                <DemoCard label="p-drawer-13">
+                  <Drawer13 />
+                </DemoCard>
+                <DemoCard label="p-drawer-14">
+                  <Drawer14 />
+                </DemoCard>
+              </div>
             </Section>
-
+            <Section
+              id="empty"
+              title="Empty"
+              desc="A container for displaying empty state information."
+            >
+              <div className="grid gap-4 md:grid-cols-2">
+                <DemoCard label="p-empty-1">
+                  <Empty1 />
+                </DemoCard>
+              </div>
+            </Section>
+            <Section
+              id="field"
+              title="Field"
+              desc="A component that provides labelling and validation for form controls."
+            >
+              <div className="grid gap-4 md:grid-cols-2">
+                <DemoCard label="p-field-1">
+                  <Field1 />
+                </DemoCard>
+                <DemoCard label="p-field-2">
+                  <Field2 />
+                </DemoCard>
+                <DemoCard label="p-field-3">
+                  <Field3 />
+                </DemoCard>
+                <DemoCard label="p-field-4">
+                  <Field4 />
+                </DemoCard>
+                <DemoCard label="p-field-5">
+                  <Field5 />
+                </DemoCard>
+                <DemoCard label="p-field-6">
+                  <Field6 />
+                </DemoCard>
+                <DemoCard label="p-field-7">
+                  <Field7 />
+                </DemoCard>
+                <DemoCard label="p-field-8">
+                  <Field8 />
+                </DemoCard>
+                <DemoCard label="p-field-9">
+                  <Field9 />
+                </DemoCard>
+                <DemoCard label="p-field-10">
+                  <Field10 />
+                </DemoCard>
+                <DemoCard label="p-field-11">
+                  <Field11 />
+                </DemoCard>
+                <DemoCard label="p-field-12">
+                  <Field12 />
+                </DemoCard>
+                <DemoCard label="p-field-13">
+                  <Field13 />
+                </DemoCard>
+                <DemoCard label="p-field-14">
+                  <Field14 />
+                </DemoCard>
+                <DemoCard label="p-field-15">
+                  <Field15 />
+                </DemoCard>
+                <DemoCard label="p-field-16">
+                  <Field16 />
+                </DemoCard>
+                <DemoCard label="p-field-17">
+                  <Field17 />
+                </DemoCard>
+                <DemoCard label="p-field-18">
+                  <Field18 />
+                </DemoCard>
+              </div>
+            </Section>
+            <Section
+              id="fieldset"
+              title="Fieldset"
+              desc="A native fieldset element with a legend."
+            >
+              <div className="grid gap-4 md:grid-cols-2">
+                <DemoCard label="p-fieldset-1">
+                  <Fieldset1 />
+                </DemoCard>
+              </div>
+            </Section>
+            <Section
+              id="form"
+              title="Form"
+              desc="A form wrapper component that simplifies validation and submission."
+            >
+              <div className="grid gap-4 md:grid-cols-2">
+                <DemoCard label="p-form-1">
+                  <Form1 />
+                </DemoCard>
+                <DemoCard label="p-form-2">
+                  <Form2 />
+                </DemoCard>
+              </div>
+            </Section>
+            <Section
+              id="frame"
+              title="Frame"
+              desc="A framed container for grouping related information."
+            >
+              <div className="grid gap-4 md:grid-cols-2">
+                <DemoCard label="p-frame-1">
+                  <Frame1 />
+                </DemoCard>
+                <DemoCard label="p-frame-2">
+                  <Frame2 />
+                </DemoCard>
+                <DemoCard label="p-frame-3">
+                  <Frame3 />
+                </DemoCard>
+                <DemoCard label="p-frame-4">
+                  <Frame4 />
+                </DemoCard>
+              </div>
+            </Section>
+            <Section
+              id="group"
+              title="Group"
+              desc="A component for visually grouping a series of controls."
+            >
+              <div className="grid gap-4 md:grid-cols-2">
+                <DemoCard label="p-group-1">
+                  <Group1 />
+                </DemoCard>
+                <DemoCard label="p-group-2">
+                  <Group2 />
+                </DemoCard>
+                <DemoCard label="p-group-3">
+                  <Group3 />
+                </DemoCard>
+                <DemoCard label="p-group-4">
+                  <Group4 />
+                </DemoCard>
+                <DemoCard label="p-group-5">
+                  <Group5 />
+                </DemoCard>
+                <DemoCard label="p-group-6">
+                  <Group6 />
+                </DemoCard>
+                <DemoCard label="p-group-7">
+                  <Group7 />
+                </DemoCard>
+                <DemoCard label="p-group-8">
+                  <Group8 />
+                </DemoCard>
+                <DemoCard label="p-group-9">
+                  <Group9 />
+                </DemoCard>
+                <DemoCard label="p-group-10">
+                  <Group10 />
+                </DemoCard>
+                <DemoCard label="p-group-11">
+                  <Group11 />
+                </DemoCard>
+                <DemoCard label="p-group-12">
+                  <Group12 />
+                </DemoCard>
+                <DemoCard label="p-group-13">
+                  <Group13 />
+                </DemoCard>
+                <DemoCard label="p-group-14">
+                  <Group14 />
+                </DemoCard>
+                <DemoCard label="p-group-15">
+                  <Group15 />
+                </DemoCard>
+                <DemoCard label="p-group-16">
+                  <Group16 />
+                </DemoCard>
+                <DemoCard label="p-group-17">
+                  <Group17 />
+                </DemoCard>
+                <DemoCard label="p-group-18">
+                  <Group18 />
+                </DemoCard>
+                <DemoCard label="p-group-19">
+                  <Group19 />
+                </DemoCard>
+                <DemoCard label="p-group-20">
+                  <Group20 />
+                </DemoCard>
+                <DemoCard label="p-group-22">
+                  <Group22 />
+                </DemoCard>
+                <DemoCard label="p-group-23">
+                  <Group23 />
+                </DemoCard>
+              </div>
+            </Section>
+            <Section id="input" title="Input" desc="A native input element.">
+              <div className="grid gap-4 md:grid-cols-2">
+                <DemoCard label="p-input-1">
+                  <Input1 />
+                </DemoCard>
+                <DemoCard label="p-input-2">
+                  <Input2 />
+                </DemoCard>
+                <DemoCard label="p-input-3">
+                  <Input3 />
+                </DemoCard>
+                <DemoCard label="p-input-4">
+                  <Input4 />
+                </DemoCard>
+                <DemoCard label="p-input-5">
+                  <Input5 />
+                </DemoCard>
+                <DemoCard label="p-input-6">
+                  <Input6 />
+                </DemoCard>
+                <DemoCard label="p-input-7">
+                  <Input7 />
+                </DemoCard>
+                <DemoCard label="p-input-8">
+                  <Input8 />
+                </DemoCard>
+                <DemoCard label="p-input-9">
+                  <Input9 />
+                </DemoCard>
+                <DemoCard label="p-input-10">
+                  <Input10 />
+                </DemoCard>
+                <DemoCard label="p-input-11">
+                  <Input11 />
+                </DemoCard>
+                <DemoCard label="p-input-12">
+                  <Input12 />
+                </DemoCard>
+                <DemoCard label="p-input-13">
+                  <Input13 />
+                </DemoCard>
+                <DemoCard label="p-input-14">
+                  <Input14 />
+                </DemoCard>
+                <DemoCard label="p-input-15">
+                  <Input15 />
+                </DemoCard>
+                <DemoCard label="p-input-16">
+                  <Input16 />
+                </DemoCard>
+                <DemoCard label="p-input-17">
+                  <Input17 />
+                </DemoCard>
+                <DemoCard label="p-input-18">
+                  <Input18 />
+                </DemoCard>
+                <DemoCard label="p-input-19">
+                  <Input19 />
+                </DemoCard>
+              </div>
+            </Section>
+            <Section
+              id="input-group"
+              title="Input Group"
+              desc="A flexible component for grouping inputs with addons, buttons, and other elements."
+            >
+              <div className="grid gap-4 md:grid-cols-2">
+                <DemoCard label="p-input-group-1">
+                  <InputGroup1 />
+                </DemoCard>
+                <DemoCard label="p-input-group-2">
+                  <InputGroup2 />
+                </DemoCard>
+                <DemoCard label="p-input-group-3">
+                  <InputGroup3 />
+                </DemoCard>
+                <DemoCard label="p-input-group-4">
+                  <InputGroup4 />
+                </DemoCard>
+                <DemoCard label="p-input-group-5">
+                  <InputGroup5 />
+                </DemoCard>
+                <DemoCard label="p-input-group-6">
+                  <InputGroup6 />
+                </DemoCard>
+                <DemoCard label="p-input-group-7">
+                  <InputGroup7 />
+                </DemoCard>
+                <DemoCard label="p-input-group-8">
+                  <InputGroup8 />
+                </DemoCard>
+                <DemoCard label="p-input-group-9">
+                  <InputGroup9 />
+                </DemoCard>
+                <DemoCard label="p-input-group-10">
+                  <InputGroup10 />
+                </DemoCard>
+                <DemoCard label="p-input-group-11">
+                  <InputGroup11 />
+                </DemoCard>
+                <DemoCard label="p-input-group-12">
+                  <InputGroup12 />
+                </DemoCard>
+                <DemoCard label="p-input-group-13">
+                  <InputGroup13 />
+                </DemoCard>
+                <DemoCard label="p-input-group-14">
+                  <InputGroup14 />
+                </DemoCard>
+                <DemoCard label="p-input-group-15">
+                  <InputGroup15 />
+                </DemoCard>
+                <DemoCard label="p-input-group-16">
+                  <InputGroup16 />
+                </DemoCard>
+                <DemoCard label="p-input-group-17">
+                  <InputGroup17 />
+                </DemoCard>
+                <DemoCard label="p-input-group-18">
+                  <InputGroup18 />
+                </DemoCard>
+                <DemoCard label="p-input-group-19">
+                  <InputGroup19 />
+                </DemoCard>
+                <DemoCard label="p-input-group-20">
+                  <InputGroup20 />
+                </DemoCard>
+                <DemoCard label="p-input-group-21">
+                  <InputGroup21 />
+                </DemoCard>
+                <DemoCard label="p-input-group-22">
+                  <InputGroup22 />
+                </DemoCard>
+                <DemoCard label="p-input-group-23">
+                  <InputGroup23 />
+                </DemoCard>
+                <DemoCard label="p-input-group-24">
+                  <InputGroup24 />
+                </DemoCard>
+                <DemoCard label="p-input-group-26">
+                  <InputGroup26 />
+                </DemoCard>
+                <DemoCard label="p-input-group-27">
+                  <InputGroup27 />
+                </DemoCard>
+                <DemoCard label="p-input-group-28">
+                  <InputGroup28 />
+                </DemoCard>
+                <DemoCard label="p-input-group-29">
+                  <InputGroup29 />
+                </DemoCard>
+              </div>
+            </Section>
+            <Section
+              id="kbd"
+              title="Kbd"
+              desc="A component for displaying keyboard keys and shortcuts."
+            >
+              <div className="grid gap-4 md:grid-cols-2">
+                <DemoCard label="p-kbd-1">
+                  <Kbd1 />
+                </DemoCard>
+              </div>
+            </Section>
+            <Section
+              id="menu"
+              title="Menu"
+              desc="A list of actions in a dropdown, enhanced with keyboard navigation."
+            >
+              <div className="grid gap-4 md:grid-cols-2">
+                <DemoCard label="p-menu-1">
+                  <Menu1 />
+                </DemoCard>
+                <DemoCard label="p-menu-2">
+                  <Menu2 />
+                </DemoCard>
+                <DemoCard label="p-menu-3">
+                  <Menu3 />
+                </DemoCard>
+                <DemoCard label="p-menu-4">
+                  <Menu4 />
+                </DemoCard>
+                <DemoCard label="p-menu-5">
+                  <Menu5 />
+                </DemoCard>
+                <DemoCard label="p-menu-6">
+                  <Menu6 />
+                </DemoCard>
+                <DemoCard label="p-menu-7">
+                  <Menu7 />
+                </DemoCard>
+                <DemoCard label="p-menu-8">
+                  <Menu8 />
+                </DemoCard>
+                <DemoCard label="p-menu-9">
+                  <Menu9 />
+                </DemoCard>
+              </div>
+            </Section>
+            <Section
+              id="meter"
+              title="Meter"
+              desc="A graphical display of a numeric value within a range."
+            >
+              <div className="grid gap-4 md:grid-cols-2">
+                <DemoCard label="p-meter-1">
+                  <Meter1 />
+                </DemoCard>
+                <DemoCard label="p-meter-2">
+                  <Meter2 />
+                </DemoCard>
+                <DemoCard label="p-meter-3">
+                  <Meter3 />
+                </DemoCard>
+                <DemoCard label="p-meter-4">
+                  <Meter4 />
+                </DemoCard>
+              </div>
+            </Section>
+            <Section
+              id="number-field"
+              title="Number Field"
+              desc="A numeric input element with increment and decrement buttons, and a scrub area."
+            >
+              <div className="grid gap-4 md:grid-cols-2">
+                <DemoCard label="p-number-field-1">
+                  <NumberField1 />
+                </DemoCard>
+                <DemoCard label="p-number-field-2">
+                  <NumberField2 />
+                </DemoCard>
+                <DemoCard label="p-number-field-3">
+                  <NumberField3 />
+                </DemoCard>
+                <DemoCard label="p-number-field-4">
+                  <NumberField4 />
+                </DemoCard>
+                <DemoCard label="p-number-field-5">
+                  <NumberField5 />
+                </DemoCard>
+                <DemoCard label="p-number-field-6">
+                  <NumberField6 />
+                </DemoCard>
+                <DemoCard label="p-number-field-7">
+                  <NumberField7 />
+                </DemoCard>
+                <DemoCard label="p-number-field-8">
+                  <NumberField8 />
+                </DemoCard>
+                <DemoCard label="p-number-field-9">
+                  <NumberField9 />
+                </DemoCard>
+                <DemoCard label="p-number-field-10">
+                  <NumberField10 />
+                </DemoCard>
+                <DemoCard label="p-number-field-11">
+                  <NumberField11 />
+                </DemoCard>
+              </div>
+            </Section>
+            <Section
+              id="otp-field"
+              title="OTP Field"
+              desc="A segmented input for one-time passwords and verification codes."
+            >
+              <div className="grid gap-4 md:grid-cols-2">
+                <DemoCard label="p-otp-field-1">
+                  <OtpField1 />
+                </DemoCard>
+                <DemoCard label="p-otp-field-2">
+                  <OtpField2 />
+                </DemoCard>
+                <DemoCard label="p-otp-field-3">
+                  <OtpField3 />
+                </DemoCard>
+                <DemoCard label="p-otp-field-4">
+                  <OtpField4 />
+                </DemoCard>
+                <DemoCard label="p-otp-field-6">
+                  <OtpField6 />
+                </DemoCard>
+                <DemoCard label="p-otp-field-7">
+                  <OtpField7 />
+                </DemoCard>
+                <DemoCard label="p-otp-field-8">
+                  <OtpField8 />
+                </DemoCard>
+                <DemoCard label="p-otp-field-9">
+                  <OtpField9 />
+                </DemoCard>
+                <DemoCard label="p-otp-field-10">
+                  <OtpField10 />
+                </DemoCard>
+              </div>
+            </Section>
+            <Section
+              id="pagination"
+              title="Pagination"
+              desc="A pagination with page navigation, next and previous links."
+            >
+              <div className="grid gap-4 md:grid-cols-2">
+                <DemoCard label="p-pagination-1">
+                  <Pagination1 />
+                </DemoCard>
+                <DemoCard label="p-pagination-2">
+                  <Pagination2 />
+                </DemoCard>
+                <DemoCard label="p-pagination-3">
+                  <Pagination3 />
+                </DemoCard>
+              </div>
+            </Section>
+            <Section
+              id="popover"
+              title="Popover"
+              desc="An accessible popup anchored to a button."
+            >
+              <div className="grid gap-4 md:grid-cols-2">
+                <DemoCard label="p-popover-1">
+                  <Popover1 />
+                </DemoCard>
+                <DemoCard label="p-popover-2">
+                  <Popover2 />
+                </DemoCard>
+                <DemoCard label="p-popover-3">
+                  <Popover3 />
+                </DemoCard>
+                <DemoCard label="p-popover-4">
+                  <Popover4 />
+                </DemoCard>
+              </div>
+            </Section>
+            <Section
+              id="preview-card"
+              title="Preview Card"
+              desc="A popup that appears when a link is hovered, showing a preview for sighted users."
+            >
+              <div className="grid gap-4 md:grid-cols-2">
+                <DemoCard label="p-preview-card-1">
+                  <PreviewCard1 />
+                </DemoCard>
+              </div>
+            </Section>
+            <Section
+              id="progress"
+              title="Progress"
+              desc="Displays the status of a task that takes a long time."
+            >
+              <div className="grid gap-4 md:grid-cols-2">
+                <DemoCard label="p-progress-1">
+                  <Progress1 />
+                </DemoCard>
+                <DemoCard label="p-progress-2">
+                  <Progress2 />
+                </DemoCard>
+                <DemoCard label="p-progress-3">
+                  <Progress3 />
+                </DemoCard>
+              </div>
+            </Section>
+            <Section
+              id="radio-group"
+              title="Radio Group"
+              desc="A set of checkable buttons where no more than one of the buttons can be checked at a time."
+            >
+              <div className="grid gap-4 md:grid-cols-2">
+                <DemoCard label="p-radio-group-1">
+                  <RadioGroup1 />
+                </DemoCard>
+                <DemoCard label="p-radio-group-2">
+                  <RadioGroup2 />
+                </DemoCard>
+                <DemoCard label="p-radio-group-3">
+                  <RadioGroup3 />
+                </DemoCard>
+                <DemoCard label="p-radio-group-4">
+                  <RadioGroup4 />
+                </DemoCard>
+                <DemoCard label="p-radio-group-5">
+                  <RadioGroup5 />
+                </DemoCard>
+                <DemoCard label="p-radio-group-6">
+                  <RadioGroup6 />
+                </DemoCard>
+                <DemoCard label="p-radio-group-7">
+                  <RadioGroup7 />
+                </DemoCard>
+                <DemoCard label="p-radio-group-8">
+                  <RadioGroup8 />
+                </DemoCard>
+                <DemoCard label="p-radio-group-9">
+                  <RadioGroup9 />
+                </DemoCard>
+              </div>
+            </Section>
+            <Section
+              id="scroll-area"
+              title="Scroll Area"
+              desc="A native scroll container with custom scrollbars."
+            >
+              <div className="grid gap-4 md:grid-cols-2">
+                <DemoCard label="p-scroll-area-1">
+                  <ScrollArea1 />
+                </DemoCard>
+                <DemoCard label="p-scroll-area-2">
+                  <ScrollArea2 />
+                </DemoCard>
+                <DemoCard label="p-scroll-area-3">
+                  <ScrollArea3 />
+                </DemoCard>
+                <DemoCard label="p-scroll-area-4">
+                  <ScrollArea4 />
+                </DemoCard>
+                <DemoCard label="p-scroll-area-5">
+                  <ScrollArea5 />
+                </DemoCard>
+              </div>
+            </Section>
+            <Section
+              id="select"
+              title="Select"
+              desc="A common form component for choosing a predefined value in a dropdown menu."
+            >
+              <div className="grid gap-4 md:grid-cols-2">
+                <DemoCard label="p-select-1">
+                  <Select1 />
+                </DemoCard>
+                <DemoCard label="p-select-2">
+                  <Select2 />
+                </DemoCard>
+                <DemoCard label="p-select-3">
+                  <Select3 />
+                </DemoCard>
+                <DemoCard label="p-select-4">
+                  <Select4 />
+                </DemoCard>
+                <DemoCard label="p-select-5">
+                  <Select5 />
+                </DemoCard>
+                <DemoCard label="p-select-6">
+                  <Select6 />
+                </DemoCard>
+                <DemoCard label="p-select-7">
+                  <Select7 />
+                </DemoCard>
+                <DemoCard label="p-select-8">
+                  <Select8 />
+                </DemoCard>
+                <DemoCard label="p-select-9">
+                  <Select9 />
+                </DemoCard>
+                <DemoCard label="p-select-10">
+                  <Select10 />
+                </DemoCard>
+                <DemoCard label="p-select-11">
+                  <Select11 />
+                </DemoCard>
+                <DemoCard label="p-select-12">
+                  <Select12 />
+                </DemoCard>
+                <DemoCard label="p-select-13">
+                  <Select13 />
+                </DemoCard>
+                <DemoCard label="p-select-14">
+                  <Select14 />
+                </DemoCard>
+                <DemoCard label="p-select-15">
+                  <Select15 />
+                </DemoCard>
+                <DemoCard label="p-select-16">
+                  <Select16 />
+                </DemoCard>
+                <DemoCard label="p-select-17">
+                  <Select17 />
+                </DemoCard>
+                <DemoCard label="p-select-18">
+                  <Select18 />
+                </DemoCard>
+                <DemoCard label="p-select-19">
+                  <Select19 />
+                </DemoCard>
+                <DemoCard label="p-select-20">
+                  <Select20 />
+                </DemoCard>
+                <DemoCard label="p-select-21">
+                  <Select21 />
+                </DemoCard>
+                <DemoCard label="p-select-22">
+                  <Select22 />
+                </DemoCard>
+                <DemoCard label="p-select-23">
+                  <Select23 />
+                </DemoCard>
+              </div>
+            </Section>
+            <Section
+              id="separator"
+              title="Separator"
+              desc="A separator element accessible to screen readers."
+            >
+              <div className="grid gap-4 md:grid-cols-2">
+                <DemoCard label="p-separator-1">
+                  <Separator1 />
+                </DemoCard>
+              </div>
+            </Section>
             <Section
               id="sheet"
               title="Sheet"
-              desc="side overlay — see Dialog section"
+              desc="A flyout that opens from the side of the screen, based on the dialog component."
             >
-              <DemoCard label="Sheet — side panel">
-                <p className="text-muted-foreground text-sm">
-                  Sheet demo lives in the Dialog section (Settings sheet).{" "}
-                  <a href="#dialog" className="underline">
-                    Jump to Dialog
-                  </a>
-                </p>
-              </DemoCard>
+              <div className="grid gap-4 md:grid-cols-2">
+                <DemoCard label="p-sheet-1">
+                  <Sheet1 />
+                </DemoCard>
+                <DemoCard label="p-sheet-2">
+                  <Sheet2 />
+                </DemoCard>
+                <DemoCard label="p-sheet-3">
+                  <Sheet3 />
+                </DemoCard>
+              </div>
             </Section>
-
             <Section
-              id="preview-card"
-              title="PreviewCard"
-              desc="link hover preview"
+              id="skeleton"
+              title="Skeleton"
+              desc="A loading state skeleton for your components."
             >
-              <DemoCard label="Real-world — Blog link">
-                <PreviewCard>
-                  <PreviewCardTrigger className="underline decoration-dotted">
-                    Read: Building with COSS →
-                  </PreviewCardTrigger>
-                  <PreviewCardPopup className="bg-popover max-w-xs rounded-lg border p-3 text-sm shadow-md">
-                    PreviewCard shows rich hover preview with delay — used for
-                    links, user cards, article previews.
-                  </PreviewCardPopup>
-                </PreviewCard>
-              </DemoCard>
+              <div className="grid gap-4 md:grid-cols-2">
+                <DemoCard label="p-skeleton-1">
+                  <Skeleton1 />
+                </DemoCard>
+                <DemoCard label="p-skeleton-2">
+                  <Skeleton2 />
+                </DemoCard>
+              </div>
             </Section>
-
             <Section
-              id="sidebar"
-              title="Sidebar"
-              desc="layout chrome — real world app shell preview"
+              id="slider"
+              title="Slider"
+              desc="An input where the user selects a value from within a given range."
             >
-              <DemoCard label="App shell — docs style">
-                <div className="grid h-56 grid-cols-[160px_1fr] gap-0 overflow-hidden rounded-lg border">
-                  <div className="bg-muted/40 flex flex-col gap-1 border-r p-2">
-                    <div className="flex items-center gap-1.5 px-2 py-1 text-xs font-semibold">
-                      <LayoutDashboardIcon className="size-4" /> Dashboard
-                    </div>
-                    <div className="bg-accent rounded-md px-2 py-1.5 text-sm font-medium">
-                      Projects
-                    </div>
-                    <div className="text-muted-foreground px-2 py-1.5 text-sm">
-                      Calendar
-                    </div>
-                    <div className="text-muted-foreground px-2 py-1.5 text-sm">
-                      Settings
-                    </div>
-                    <div className="mt-auto flex items-center gap-2 border-t px-2 pt-2">
-                      <Avatar className="size-6">
-                        <AvatarFallback className="text-xs">AL</AvatarFallback>
-                      </Avatar>
-                      <span className="text-xs">Ada</span>
-                    </div>
-                  </div>
-                  <div className="bg-background p-4">
-                    <h3 className="font-medium">Projects</h3>
-                    <p className="text-muted-foreground text-sm">
-                      3 active projects • Select from sidebar to view details.
-                    </p>
-                    <div className="mt-3 grid grid-cols-2 gap-2">
-                      <div className="rounded-lg border p-3 text-sm">
-                        <BarChart3Icon className="mb-1 size-4" /> Analytics
-                        <br />
-                        <span className="text-muted-foreground text-xs">
-                          Last 7 days
-                        </span>
-                      </div>
-                      <div className="rounded-lg border p-3 text-sm">
-                        <UsersIcon className="mb-1 size-4" /> Team
-                        <br />
-                        <span className="text-muted-foreground text-xs">
-                          12 members
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </DemoCard>
+              <div className="grid gap-4 md:grid-cols-2">
+                <DemoCard label="p-slider-1">
+                  <Slider1 />
+                </DemoCard>
+                <DemoCard label="p-slider-2">
+                  <Slider2 />
+                </DemoCard>
+                <DemoCard label="p-slider-3">
+                  <Slider3 />
+                </DemoCard>
+                <DemoCard label="p-slider-4">
+                  <Slider4 />
+                </DemoCard>
+                <DemoCard label="p-slider-5">
+                  <Slider5 />
+                </DemoCard>
+                <DemoCard label="p-slider-6">
+                  <Slider6 />
+                </DemoCard>
+                <DemoCard label="p-slider-7">
+                  <Slider7 />
+                </DemoCard>
+                <DemoCard label="p-slider-8">
+                  <Slider8 />
+                </DemoCard>
+                <DemoCard label="p-slider-9">
+                  <Slider9 />
+                </DemoCard>
+                <DemoCard label="p-slider-10">
+                  <Slider10 />
+                </DemoCard>
+                <DemoCard label="p-slider-11">
+                  <Slider11 />
+                </DemoCard>
+                <DemoCard label="p-slider-12">
+                  <Slider12 />
+                </DemoCard>
+                <DemoCard label="p-slider-13">
+                  <Slider13 />
+                </DemoCard>
+                <DemoCard label="p-slider-14">
+                  <Slider14 />
+                </DemoCard>
+                <DemoCard label="p-slider-15">
+                  <Slider15 />
+                </DemoCard>
+                <DemoCard label="p-slider-16">
+                  <Slider16 />
+                </DemoCard>
+                <DemoCard label="p-slider-17">
+                  <Slider17 />
+                </DemoCard>
+                <DemoCard label="p-slider-18">
+                  <Slider18 />
+                </DemoCard>
+                <DemoCard label="p-slider-19">
+                  <Slider19 />
+                </DemoCard>
+                <DemoCard label="p-slider-20">
+                  <Slider20 />
+                </DemoCard>
+                <DemoCard label="p-slider-21">
+                  <Slider21 />
+                </DemoCard>
+                <DemoCard label="p-slider-22">
+                  <Slider22 />
+                </DemoCard>
+                <DemoCard label="p-slider-23">
+                  <Slider23 />
+                </DemoCard>
+              </div>
             </Section>
-
-            <div className="text-muted-foreground py-6 text-center text-xs">
-              End — {NAV.length} components • particles from cosscom/coss
-              adapted to @/components/ui/tailwind
-            </div>
+            <Section
+              id="spinner"
+              title="Spinner"
+              desc="An indicator that can be used to show a loading state."
+            >
+              <div className="grid gap-4 md:grid-cols-2">
+                <DemoCard label="p-spinner-1">
+                  <Spinner1 />
+                </DemoCard>
+              </div>
+            </Section>
+            <Section
+              id="switch"
+              title="Switch"
+              desc="A control that indicates whether a setting is on or off."
+            >
+              <div className="grid gap-4 md:grid-cols-2">
+                <DemoCard label="p-switch-1">
+                  <Switch1 />
+                </DemoCard>
+                <DemoCard label="p-switch-2">
+                  <Switch2 />
+                </DemoCard>
+                <DemoCard label="p-switch-3">
+                  <Switch3 />
+                </DemoCard>
+                <DemoCard label="p-switch-4">
+                  <Switch4 />
+                </DemoCard>
+                <DemoCard label="p-switch-5">
+                  <Switch5 />
+                </DemoCard>
+                <DemoCard label="p-switch-6">
+                  <Switch6 />
+                </DemoCard>
+                <DemoCard label="p-switch-7">
+                  <Switch7 />
+                </DemoCard>
+                <DemoCard label="p-switch-8">
+                  <Switch8 />
+                </DemoCard>
+                <DemoCard label="p-switch-9">
+                  <Switch9 />
+                </DemoCard>
+              </div>
+            </Section>
+            <Section
+              id="table"
+              title="Table"
+              desc="A simple table component for displaying tabular data."
+            >
+              <div className="grid gap-4 md:grid-cols-2">
+                <DemoCard label="p-table-1">
+                  <Table1 />
+                </DemoCard>
+                <DemoCard label="p-table-2">
+                  <Table2 />
+                </DemoCard>
+                <DemoCard label="p-table-3">
+                  <Table3 />
+                </DemoCard>
+                <DemoCard label="p-table-4">
+                  <Table4 />
+                </DemoCard>
+                <DemoCard label="p-table-5">
+                  <Table5 />
+                </DemoCard>
+                <DemoCard label="p-table-6">
+                  <Table6 />
+                </DemoCard>
+                <DemoCard label="p-table-7">
+                  <Table7 />
+                </DemoCard>
+                <DemoCard label="p-table-8">
+                  <Table8 />
+                </DemoCard>
+              </div>
+            </Section>
+            <Section
+              id="tabs"
+              title="Tabs"
+              desc="A component for toggling between related panels on the same page."
+            >
+              <div className="grid gap-4 md:grid-cols-2">
+                <DemoCard label="p-tabs-1">
+                  <Tabs1 />
+                </DemoCard>
+                <DemoCard label="p-tabs-2">
+                  <Tabs2 />
+                </DemoCard>
+                <DemoCard label="p-tabs-3">
+                  <Tabs3 />
+                </DemoCard>
+                <DemoCard label="p-tabs-4">
+                  <Tabs4 />
+                </DemoCard>
+                <DemoCard label="p-tabs-5">
+                  <Tabs5 />
+                </DemoCard>
+                <DemoCard label="p-tabs-6">
+                  <Tabs6 />
+                </DemoCard>
+                <DemoCard label="p-tabs-7">
+                  <Tabs7 />
+                </DemoCard>
+                <DemoCard label="p-tabs-8">
+                  <Tabs8 />
+                </DemoCard>
+                <DemoCard label="p-tabs-9">
+                  <Tabs9 />
+                </DemoCard>
+                <DemoCard label="p-tabs-10">
+                  <Tabs10 />
+                </DemoCard>
+                <DemoCard label="p-tabs-11">
+                  <Tabs11 />
+                </DemoCard>
+                <DemoCard label="p-tabs-12">
+                  <Tabs12 />
+                </DemoCard>
+                <DemoCard label="p-tabs-13">
+                  <Tabs13 />
+                </DemoCard>
+                <DemoCard label="p-tabs-14">
+                  <Tabs14 />
+                </DemoCard>
+                <DemoCard label="p-tabs-15">
+                  <Tabs15 />
+                </DemoCard>
+              </div>
+            </Section>
+            <Section
+              id="textarea"
+              title="Textarea"
+              desc="A native textarea element."
+            >
+              <div className="grid gap-4 md:grid-cols-2">
+                <DemoCard label="p-textarea-1">
+                  <Textarea1 />
+                </DemoCard>
+                <DemoCard label="p-textarea-2">
+                  <Textarea2 />
+                </DemoCard>
+                <DemoCard label="p-textarea-3">
+                  <Textarea3 />
+                </DemoCard>
+                <DemoCard label="p-textarea-4">
+                  <Textarea4 />
+                </DemoCard>
+                <DemoCard label="p-textarea-5">
+                  <Textarea5 />
+                </DemoCard>
+                <DemoCard label="p-textarea-6">
+                  <Textarea6 />
+                </DemoCard>
+                <DemoCard label="p-textarea-7">
+                  <Textarea7 />
+                </DemoCard>
+                <DemoCard label="p-textarea-8">
+                  <Textarea8 />
+                </DemoCard>
+                <DemoCard label="p-textarea-9">
+                  <Textarea9 />
+                </DemoCard>
+                <DemoCard label="p-textarea-10">
+                  <Textarea10 />
+                </DemoCard>
+                <DemoCard label="p-textarea-11">
+                  <Textarea11 />
+                </DemoCard>
+                <DemoCard label="p-textarea-12">
+                  <Textarea12 />
+                </DemoCard>
+                <DemoCard label="p-textarea-13">
+                  <Textarea13 />
+                </DemoCard>
+                <DemoCard label="p-textarea-14">
+                  <Textarea14 />
+                </DemoCard>
+                <DemoCard label="p-textarea-15">
+                  <Textarea15 />
+                </DemoCard>
+              </div>
+            </Section>
+            <Section
+              id="toast"
+              title="Toast"
+              desc="A temporary notification that appears on screen to inform users."
+            >
+              <div className="grid gap-4 md:grid-cols-2">
+                <DemoCard label="p-toast-1">
+                  <Toast1 />
+                </DemoCard>
+                <DemoCard label="p-toast-2">
+                  <Toast2 />
+                </DemoCard>
+                <DemoCard label="p-toast-3">
+                  <Toast3 />
+                </DemoCard>
+                <DemoCard label="p-toast-4">
+                  <Toast4 />
+                </DemoCard>
+                <DemoCard label="p-toast-5">
+                  <Toast5 />
+                </DemoCard>
+                <DemoCard label="p-toast-6">
+                  <Toast6 />
+                </DemoCard>
+                <DemoCard label="p-toast-7">
+                  <Toast7 />
+                </DemoCard>
+                <DemoCard label="p-toast-8">
+                  <Toast8 />
+                </DemoCard>
+                <DemoCard label="p-toast-9">
+                  <Toast9 />
+                </DemoCard>
+                <DemoCard label="p-toast-10">
+                  <Toast10 />
+                </DemoCard>
+                <DemoCard label="p-toast-11">
+                  <Toast11 />
+                </DemoCard>
+                <DemoCard label="p-toast-12">
+                  <Toast12 />
+                </DemoCard>
+                <DemoCard label="p-toast-13">
+                  <Toast13 />
+                </DemoCard>
+              </div>
+            </Section>
+            <Section
+              id="toggle"
+              title="Toggle"
+              desc="A two-state button that can be toggled on or off."
+            >
+              <div className="grid gap-4 md:grid-cols-2">
+                <DemoCard label="p-toggle-1">
+                  <Toggle1 />
+                </DemoCard>
+                <DemoCard label="p-toggle-2">
+                  <Toggle2 />
+                </DemoCard>
+                <DemoCard label="p-toggle-3">
+                  <Toggle3 />
+                </DemoCard>
+                <DemoCard label="p-toggle-4">
+                  <Toggle4 />
+                </DemoCard>
+                <DemoCard label="p-toggle-5">
+                  <Toggle5 />
+                </DemoCard>
+                <DemoCard label="p-toggle-6">
+                  <Toggle6 />
+                </DemoCard>
+                <DemoCard label="p-toggle-7">
+                  <Toggle7 />
+                </DemoCard>
+                <DemoCard label="p-toggle-8">
+                  <Toggle8 />
+                </DemoCard>
+              </div>
+            </Section>
+            <Section
+              id="toggle-group"
+              title="Toggle Group"
+              desc="Provides a shared state to a series of toggle buttons."
+            >
+              <div className="grid gap-4 md:grid-cols-2">
+                <DemoCard label="p-toggle-group-1">
+                  <ToggleGroup1 />
+                </DemoCard>
+                <DemoCard label="p-toggle-group-2">
+                  <ToggleGroup2 />
+                </DemoCard>
+                <DemoCard label="p-toggle-group-3">
+                  <ToggleGroup3 />
+                </DemoCard>
+                <DemoCard label="p-toggle-group-4">
+                  <ToggleGroup4 />
+                </DemoCard>
+                <DemoCard label="p-toggle-group-5">
+                  <ToggleGroup5 />
+                </DemoCard>
+                <DemoCard label="p-toggle-group-6">
+                  <ToggleGroup6 />
+                </DemoCard>
+                <DemoCard label="p-toggle-group-7">
+                  <ToggleGroup7 />
+                </DemoCard>
+                <DemoCard label="p-toggle-group-8">
+                  <ToggleGroup8 />
+                </DemoCard>
+                <DemoCard label="p-toggle-group-9">
+                  <ToggleGroup9 />
+                </DemoCard>
+              </div>
+            </Section>
+            <Section
+              id="toolbar"
+              title="Toolbar"
+              desc="A container for grouping a set of buttons and controls."
+            >
+              <div className="grid gap-4 md:grid-cols-2">
+                <DemoCard label="p-toolbar-1">
+                  <Toolbar1 />
+                </DemoCard>
+              </div>
+            </Section>
+            <Section
+              id="tooltip"
+              title="Tooltip"
+              desc="A popup that appears when an element is hovered or focused, showing a hint for sighted users."
+            >
+              <div className="grid gap-4 md:grid-cols-2">
+                <DemoCard label="p-tooltip-1">
+                  <Tooltip1 />
+                </DemoCard>
+                <DemoCard label="p-tooltip-2">
+                  <Tooltip2 />
+                </DemoCard>
+                <DemoCard label="p-tooltip-3">
+                  <Tooltip3 />
+                </DemoCard>
+                <DemoCard label="p-tooltip-4">
+                  <Tooltip4 />
+                </DemoCard>
+              </div>
+            </Section>
+            <Section
+              id="segmented-control"
+              title="Segmented Control"
+              desc="Visual pattern using radio-group and navigation primitives"
+            >
+              <div className="grid gap-4 md:grid-cols-2">
+                <DemoCard label="p-radio-group-7">
+                  <RadioGroup7 />
+                </DemoCard>
+                <DemoCard label="p-radio-group-8">
+                  <RadioGroup8 />
+                </DemoCard>
+                <DemoCard label="p-radio-group-9">
+                  <RadioGroup9 />
+                </DemoCard>
+                <DemoCard label="p-navigation-1">
+                  <Navigation1 />
+                </DemoCard>
+                <DemoCard label="p-navigation-2">
+                  <Navigation2 />
+                </DemoCard>
+                <DemoCard label="p-navigation-3">
+                  <Navigation3 />
+                </DemoCard>
+              </div>
+            </Section>
           </div>
         </div>
       </div>
