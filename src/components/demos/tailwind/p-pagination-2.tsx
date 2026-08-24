@@ -6,7 +6,7 @@ import {
   PaginationItem,
 } from "@/components/ui/tailwind/pagination"
 
-type PaginationProps = {
+interface PaginationProps {
   currentPage: number
   totalPages: number
 }
@@ -20,7 +20,10 @@ export default function Particle({ currentPage, totalPages }: PaginationProps) {
             disabled={currentPage === 1}
             render={
               currentPage === 1 ? undefined : (
-                <a href={`#/page/${currentPage - 1}`} />
+                <a
+                  aria-label="Go to previous page"
+                  href={`#/page/${currentPage - 1}`}
+                />
               )
             }
             variant="outline"
@@ -33,7 +36,10 @@ export default function Particle({ currentPage, totalPages }: PaginationProps) {
             disabled={currentPage === totalPages}
             render={
               currentPage === totalPages ? undefined : (
-                <a href={`#/page/${currentPage + 1}`} />
+                <a
+                  aria-label="Go to next page"
+                  href={`#/page/${currentPage + 1}`}
+                />
               )
             }
             variant="outline"

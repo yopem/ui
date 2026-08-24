@@ -2,7 +2,7 @@
 
 import type { ReactNode } from "react"
 
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 
 import {
   Autocomplete,
@@ -15,7 +15,11 @@ import {
 } from "@/components/ui/tailwind/autocomplete"
 import { Spinner } from "@/components/ui/tailwind/spinner"
 
-type Movie = { id: string; title: string; year: number }
+interface Movie {
+  id: string
+  title: string
+  year: number
+}
 const top100Movies: Movie[] = [
   { id: "1", title: "The Shawshank Redemption", year: 1994 },
   { id: "2", title: "The Godfather", year: 1972 },
@@ -48,37 +52,42 @@ export default function Particle() {
   const [error, setError] = useState<string | null>(null)
 
   const { contains } = useAutocompleteFilter({ sensitivity: "base" })
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const ignoreRef = useRef(false)
 
   useEffect(() => {
-    if (!searchValue) {
+    return () => {
+      if (timeoutRef.current) clearTimeout(timeoutRef.current)
+      ignoreRef.current = true
+    }
+  }, [])
+
+  const handleValueChange = (value: string) => {
+    setSearchValue(value)
+    if (timeoutRef.current) clearTimeout(timeoutRef.current)
+    ignoreRef.current = false
+    if (!value) {
       setSearchResults([])
       setIsLoading(false)
+      setError(null)
       return
     }
-
     setIsLoading(true)
     setError(null)
-    let ignore = false
-
-    const timeoutId = setTimeout(async () => {
+    timeoutRef.current = setTimeout(async () => {
       try {
-        const results = await searchMovies(searchValue, contains)
-        if (!ignore) setSearchResults(results)
+        const results = await searchMovies(value, contains)
+        if (!ignoreRef.current) setSearchResults(results)
       } catch {
-        if (!ignore) {
+        if (!ignoreRef.current) {
           setError("Failed to fetch movies. Please try again.")
           setSearchResults([])
         }
       } finally {
-        if (!ignore) setIsLoading(false)
+        if (!ignoreRef.current) setIsLoading(false)
       }
     }, 300)
-
-    return () => {
-      clearTimeout(timeoutId)
-      ignore = true
-    }
-  }, [searchValue, contains])
+  }
 
   let status: ReactNode = `${searchResults.length} result${searchResults.length === 1 ? "" : "s"} found`
   if (isLoading) {
@@ -107,7 +116,7 @@ export default function Particle() {
       filter={null}
       items={searchResults}
       itemToStringValue={(item: unknown) => (item as Movie).title}
-      onValueChange={setSearchValue}
+      onValueChange={handleValueChange}
       value={searchValue}
     >
       <AutocompleteInput placeholder="e.g. Pulp Fiction or 1994" />

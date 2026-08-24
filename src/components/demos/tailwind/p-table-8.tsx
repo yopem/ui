@@ -1,15 +1,5 @@
 "use client"
 
-import {
-  type ColumnDef,
-  flexRender,
-  getCoreRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
-  type PaginationState,
-  type SortingState,
-  useReactTable,
-} from "@tanstack/react-table"
 import { ChevronDownIcon, ChevronUpIcon, PlaneTakeoffIcon } from "lucide-react"
 import { useState } from "react"
 
@@ -39,9 +29,19 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/tailwind/table"
+import {
+  type ColumnDef,
+  flexRender,
+  getCoreRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  type PaginationState,
+  type SortingState,
+  useReactTable,
+} from "@/lib/table-wrapper"
 import { cn } from "@/lib/utils"
 
-type Flight = {
+interface Flight {
   id: string
   flightCode: string
   destination: string
@@ -230,7 +230,7 @@ export default function Particle() {
                     }
                   >
                     {header.isPlaceholder ? null : header.column.getCanSort() ? (
-                      <div
+                      <button
                         className="flex h-full cursor-pointer items-center justify-between gap-2 select-none"
                         onClick={header.column.getToggleSortingHandler()}
                         onKeyDown={(e) => {
@@ -239,8 +239,7 @@ export default function Particle() {
                             header.column.getToggleSortingHandler()?.(e)
                           }
                         }}
-                        role="button"
-                        tabIndex={0}
+                        type="button"
                       >
                         {flexRender(
                           header.column.columnDef.header,
@@ -260,7 +259,7 @@ export default function Particle() {
                             />
                           ),
                         }[header.column.getIsSorted() as string] ?? null}
-                      </div>
+                      </button>
                     ) : (
                       flexRender(
                         header.column.columnDef.header,

@@ -25,7 +25,7 @@ export default function Particle() {
           <ItalicIcon aria-hidden="true" />
         </Toggle>
         <Button aria-label="Link" size="icon-sm" variant="ghost">
-          <aIcon aria-hidden="true" />
+          <LinkIcon aria-hidden="true" />
         </Button>
       </InputGroupAddon>
     </InputGroup>

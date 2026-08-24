@@ -6,7 +6,6 @@ import {
   InputGroup,
   InputGroupAddon,
   InputGroupInput,
-  InputGroupText,
 } from "@/components/ui/tailwind/input-group"
 
 export default function Particle() {
@@ -24,13 +23,12 @@ export default function Particle() {
         value={value}
       />
       <InputGroupAddon align="inline-end">
-        <InputGroupText
+        <output
           aria-live="polite"
-          className="text-xs tabular-nums"
-          role="status"
+          className="text-muted-foreground flex items-center gap-2 truncate text-xs tabular-nums [&_svg]:pointer-events-none [&_svg]:-mx-0.5 in-[[data-slot=input-group]:has([data-slot=input-control],[data-slot=textarea-control])]:[&_svg:not([class*='size-'])]:size-4.5 sm:in-[[data-slot=input-group]:has([data-slot=input-control],[data-slot=textarea-control])]:[&_svg:not([class*='size-'])]:size-4"
         >
           {value.length}/{maxLength}
-        </InputGroupText>
+        </output>
       </InputGroupAddon>
     </InputGroup>
   )

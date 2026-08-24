@@ -27,7 +27,7 @@ export default function Particle() {
               render={
                 <Button
                   className="justify-start"
-                  render={<a href="#" />}
+                  render={<a aria-label="Home" href="/" />}
                   variant="ghost"
                 />
               }
@@ -39,7 +39,7 @@ export default function Particle() {
               render={
                 <Button
                   className="justify-start"
-                  render={<a href="#" />}
+                  render={<a aria-label="Home" href="/" />}
                   variant="ghost"
                 />
               }
@@ -51,7 +51,7 @@ export default function Particle() {
               render={
                 <Button
                   className="justify-start"
-                  render={<a href="#" />}
+                  render={<a aria-label="Home" href="/" />}
                   variant="ghost"
                 />
               }
@@ -63,7 +63,7 @@ export default function Particle() {
               render={
                 <Button
                   className="justify-start"
-                  render={<a href="#" />}
+                  render={<a aria-label="Home" href="/" />}
                   variant="ghost"
                 />
               }

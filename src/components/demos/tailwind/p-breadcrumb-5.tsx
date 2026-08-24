@@ -17,7 +17,7 @@ export default function Particle() {
         <BreadcrumbItem>
           <BreadcrumbLink
             className="inline-flex items-center gap-1.5"
-            render={<a href="/" />}
+            render={<a aria-label="Home" href="/" />}
           >
             <HomeIcon aria-hidden="true" className="size-4" />
             Home
@@ -27,7 +27,7 @@ export default function Particle() {
         <BreadcrumbItem>
           <BreadcrumbLink
             className="inline-flex items-center gap-1.5"
-            render={<a href="/docs/" />}
+            render={<a aria-label="Docs" href="/docs/" />}
           >
             <ComponentIcon aria-hidden="true" className="size-4" />
             Components

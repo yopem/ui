@@ -33,28 +33,28 @@ export default function Particle() {
             <nav className="-mx-[calc(--spacing(3)-1px)] flex flex-col gap-0.5">
               <Button
                 className="justify-start"
-                render={<a href="#" />}
+                render={<a aria-label="Home" href="/" />}
                 variant="ghost"
               >
                 Home
               </Button>
               <Button
                 className="justify-start"
-                render={<a href="#" />}
+                render={<a aria-label="Home" href="/" />}
                 variant="ghost"
               >
                 Profile
               </Button>
               <Button
                 className="justify-start"
-                render={<a href="#" />}
+                render={<a aria-label="Home" href="/" />}
                 variant="ghost"
               >
                 Settings
               </Button>
               <Button
                 className="justify-start"
-                render={<a href="#" />}
+                render={<a aria-label="Home" href="/" />}
                 variant="ghost"
               >
                 Sign out

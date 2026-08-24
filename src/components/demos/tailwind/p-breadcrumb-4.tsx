@@ -22,7 +22,9 @@ export default function Particle() {
     <Breadcrumb>
       <BreadcrumbList>
         <BreadcrumbItem>
-          <BreadcrumbLink render={<a href="/" />}>Home</BreadcrumbLink>
+          <BreadcrumbLink render={<a aria-label="Home" href="/" />}>
+            Home
+          </BreadcrumbLink>
         </BreadcrumbItem>
         <BreadcrumbSeparator />
         <BreadcrumbItem>
@@ -40,14 +42,20 @@ export default function Particle() {
               <FoldersIcon aria-hidden="true" />
             </MenuTrigger>
             <MenuPopup align="start">
-              <MenuItem render={<a href="/docs" />}>Docs</MenuItem>
-              <MenuItem render={<a href="/particles" />}>Particles</MenuItem>
+              <MenuItem render={<a aria-label="More pages" href="/docs" />}>
+                Docs
+              </MenuItem>
+              <MenuItem
+                render={<a aria-label="Components" href="/particles" />}
+              >
+                Particles
+              </MenuItem>
             </MenuPopup>
           </Menu>
         </BreadcrumbItem>
         <BreadcrumbSeparator />
         <BreadcrumbItem>
-          <BreadcrumbLink render={<a href="/docs/" />}>
+          <BreadcrumbLink render={<a aria-label="Docs" href="/docs/" />}>
             Components
           </BreadcrumbLink>
         </BreadcrumbItem>

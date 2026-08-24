@@ -18,7 +18,7 @@ export default function Particle() {
     setLoading(true)
     await new Promise((r) => setTimeout(r, 800))
     setLoading(false)
-    console.log(formData.get("marketing"))
+    console.info(formData.get("marketing"))
 
     const enabled = formData.get("marketing")
     alert(`Marketing emails: ${enabled}`)

@@ -19,7 +19,7 @@ import { Spinner } from "@/components/ui/tailwind/spinner"
 // live suggestions. Without a key, the demo falls back to sample addresses.
 const GOOGLE_MAPS_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY ?? ""
 
-type AddressSuggestion = {
+interface AddressSuggestion {
   placeId: string
   text: string
   mainText: string
@@ -68,7 +68,7 @@ function newSessionToken() {
   return Math.random().toString(36).slice(2)
 }
 
-type PlacesAutocompleteResponse = {
+interface PlacesAutocompleteResponse {
   suggestions?: {
     placePrediction?: {
       placeId?: string
@@ -133,22 +133,41 @@ export default function Particle() {
   const [suggestions, setSuggestions] = useState<AddressSuggestion[]>([])
   const [error, setError] = useState<string | null>(null)
   const sessionTokenRef = useRef<string | null>(null)
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const ignoreRef = useRef(false)
+  const controllerRef = useRef<AbortController | null>(null)
 
   useEffect(() => {
-    const query = searchValue.trim()
+    return () => {
+      if (timeoutRef.current) clearTimeout(timeoutRef.current)
+      controllerRef.current?.abort()
+      ignoreRef.current = true
+    }
+  }, [])
+
+  const handleValueChangeWithSearch = (
+    value: string,
+    eventDetails: { reason: string },
+  ) => {
+    setSearchValue(value)
+    if (eventDetails.reason === "item-press") {
+      sessionTokenRef.current = null
+    }
+    if (timeoutRef.current) clearTimeout(timeoutRef.current)
+    controllerRef.current?.abort()
+    ignoreRef.current = false
+    const query = value.trim()
     if (!query) {
       setSuggestions([])
       setIsLoading(false)
       setError(null)
       return
     }
-
     setIsLoading(true)
     setError(null)
-    let ignore = false
     const controller = new AbortController()
-
-    const timeoutId = setTimeout(async () => {
+    controllerRef.current = controller
+    timeoutRef.current = setTimeout(async () => {
       try {
         sessionTokenRef.current ??= newSessionToken()
         const results = GOOGLE_MAPS_API_KEY
@@ -158,23 +177,17 @@ export default function Particle() {
               controller.signal,
             )
           : await searchSampleAddresses(query)
-        if (!ignore) setSuggestions(results)
+        if (!ignoreRef.current) setSuggestions(results)
       } catch {
-        if (!ignore && !controller.signal.aborted) {
+        if (!ignoreRef.current && !controller.signal.aborted) {
           setError("Could not load address suggestions. Please try again.")
           setSuggestions([])
         }
       } finally {
-        if (!ignore) setIsLoading(false)
+        if (!ignoreRef.current) setIsLoading(false)
       }
     }, 300)
-
-    return () => {
-      ignore = true
-      controller.abort()
-      clearTimeout(timeoutId)
-    }
-  }, [searchValue])
+  }
 
   let status: ReactNode = `${suggestions.length} suggestion${suggestions.length === 1 ? "" : "s"} found`
   if (isLoading) {
@@ -204,14 +217,7 @@ export default function Particle() {
       filter={null}
       items={suggestions}
       itemToStringValue={(item: unknown) => (item as AddressSuggestion).text}
-      onValueChange={(value, eventDetails) => {
-        setSearchValue(value)
-        if (eventDetails.reason === "item-press") {
-          // Selecting a suggestion ends the billing session. In a real app,
-          // fetch the place details with the same token before resetting it.
-          sessionTokenRef.current = null
-        }
-      }}
+      onValueChange={handleValueChangeWithSearch}
       value={searchValue}
     >
       <AutocompleteInput

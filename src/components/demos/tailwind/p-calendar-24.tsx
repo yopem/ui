@@ -3,7 +3,7 @@
 import type { DayButtonProps } from "@daypicker/react"
 
 import { format } from "date-fns"
-import { useEffect, useState } from "react"
+import { useState } from "react"
 
 import { Calendar } from "@/components/ui/tailwind/calendar"
 import { cn } from "@/lib/utils"
@@ -14,23 +14,19 @@ export default function Particle() {
   const today = new Date()
   const [date, setDate] = useState<Date | undefined>(today)
 
-  const [mockPriceData, setMockPriceData] = useState<Record<string, number>>({})
-  useEffect(() => {
-    const generateMockPriceData = () => {
-      const data: Record<string, number> = {}
-      const todayDate = new Date()
+  const [mockPriceData] = useState<Record<string, number>>(() => {
+    const data: Record<string, number> = {}
+    const todayDate = new Date()
 
-      for (let i = 0; i < 180; i++) {
-        const date = new Date(todayDate)
-        date.setDate(todayDate.getDate() + i)
-        const dateKey = format(date, "yyyy-MM-dd")
-        const randomPrice = Math.floor(Math.random() * (200 - 80 + 1)) + 80
-        data[dateKey] = randomPrice
-      }
-      return data
+    for (let i = 0; i < 180; i++) {
+      const d = new Date(todayDate)
+      d.setDate(todayDate.getDate() + i)
+      const dateKey = format(d, "yyyy-MM-dd")
+      const randomPrice = Math.floor(Math.random() * (200 - 80 + 1)) + 80
+      data[dateKey] = randomPrice
     }
-    setMockPriceData(generateMockPriceData())
-  }, [])
+    return data
+  })
 
   const isDateDisabled = (date: Date) => {
     return !mockPriceData[format(date, "yyyy-MM-dd")]

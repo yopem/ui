@@ -9,10 +9,9 @@ export default function Particle() {
   return (
     <div>
       <Slider aria-label="Value selector" defaultValue={5} max={max} />
-      <div
+      <fieldset
         aria-label="Value scale from 0 to 12"
         className="text-muted-foreground mt-3 flex w-full items-center justify-between gap-1 px-2.5 text-xs font-medium"
-        role="group"
       >
         {ticks.map((_, i) => (
           <span
@@ -30,7 +29,7 @@ export default function Particle() {
             </span>
           </span>
         ))}
-      </div>
+      </fieldset>
     </div>
   )
 }

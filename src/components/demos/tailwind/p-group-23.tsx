@@ -26,7 +26,7 @@ import {
 } from "@/components/ui/tailwind/group"
 import { cn } from "@/lib/utils"
 
-type FilterOption = {
+interface FilterOption {
   id: string
   label: string
   avatar?: string

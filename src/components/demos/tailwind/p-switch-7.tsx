@@ -43,7 +43,7 @@ const days = [
 
 type Day = (typeof days)[number]
 
-type TimeRange = {
+interface TimeRange {
   id: number
   start: string
   end: string

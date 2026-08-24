@@ -26,7 +26,7 @@ const schema = z.object({
 
 type Errors = Record<string, string | string[]>
 
-async function submitForm(event: FormEvent<HTMLFormElement>) {
+function submitForm(event: FormEvent<HTMLFormElement>) {
   event.preventDefault()
 
   const formData = new FormData(event.currentTarget)
@@ -48,7 +48,7 @@ export default function Particle() {
 
   const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
     setLoading(true)
-    const response = await submitForm(event)
+    const response = submitForm(event)
     await new Promise((r) => setTimeout(r, 800))
     setLoading(false)
     if (Object.keys(response.errors).length === 0) {

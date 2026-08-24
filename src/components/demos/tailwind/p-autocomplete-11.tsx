@@ -15,7 +15,10 @@ import {
 
 // Limit results demo
 const limit = 7
-type SimpleTag = { id: string; value: string }
+interface SimpleTag {
+  id: string
+  value: string
+}
 const manyTags: SimpleTag[] = [
   { id: "lang-js", value: "JavaScript" },
   { id: "lang-ts", value: "TypeScript" },

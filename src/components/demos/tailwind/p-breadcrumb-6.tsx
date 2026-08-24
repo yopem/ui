@@ -15,13 +15,16 @@ export default function Particle() {
     <Breadcrumb>
       <BreadcrumbList>
         <BreadcrumbItem>
-          <BreadcrumbLink aria-label="Home" render={<a href="/" />}>
+          <BreadcrumbLink
+            aria-label="Home"
+            render={<a aria-label="Home" href="/" />}
+          >
             <HomeIcon aria-hidden="true" className="size-4" />
           </BreadcrumbLink>
         </BreadcrumbItem>
         <BreadcrumbSeparator> · </BreadcrumbSeparator>
         <BreadcrumbItem>
-          <BreadcrumbLink render={<a href="/docs/" />}>
+          <BreadcrumbLink render={<a aria-label="Home" href="/docs/" />}>
             Components
           </BreadcrumbLink>
         </BreadcrumbItem>

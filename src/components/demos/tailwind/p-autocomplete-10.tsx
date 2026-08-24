@@ -16,8 +16,15 @@ import {
 } from "@/components/ui/tailwind/autocomplete"
 
 // Grouped items demo
-type Tag = { id: string; label: string; group: "Status" | "Priority" | "Team" }
-type TagGroup = { value: string; items: Tag[] }
+interface Tag {
+  id: string
+  label: string
+  group: "Status" | "Priority" | "Team"
+}
+interface TagGroup {
+  value: string
+  items: Tag[]
+}
 
 const tagsData: Tag[] = [
   // Status
@@ -76,7 +83,7 @@ function groupTags(tags: Tag[]): TagGroup[] {
     groups[tag.group]?.push(tag)
   }
 
-  const order: Array<TagGroup["value"]> = ["Status", "Priority", "Team"]
+  const order: TagGroup["value"][] = ["Status", "Priority", "Team"]
   return order.map((value) => ({ items: groups[value] ?? [], value }))
 }
 

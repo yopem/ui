@@ -106,7 +106,7 @@ export default function Particle() {
           <GroupText
             aria-live="polite"
             className="cursor-default gap-2"
-            role="status"
+            render={<output />}
           >
             <Spinner />
             <span

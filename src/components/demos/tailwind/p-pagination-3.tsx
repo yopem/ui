@@ -18,7 +18,7 @@ import {
   SelectValue,
 } from "@/components/ui/tailwind/select"
 
-type PaginationProps = {
+interface PaginationProps {
   currentPage?: number
   totalPages?: number
   totalResults: number

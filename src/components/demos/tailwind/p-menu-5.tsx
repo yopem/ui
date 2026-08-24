@@ -12,8 +12,12 @@ export default function Particle() {
     <Menu>
       <MenuTrigger render={<Button variant="outline" />}>Open menu</MenuTrigger>
       <MenuPopup>
-        <MenuLinkItem render={<a href="/docs" />}>Docs</MenuLinkItem>
-        <MenuLinkItem render={<a href="/particles" />}>Particles</MenuLinkItem>
+        <MenuLinkItem render={<a aria-label="Particles" href="/docs" />}>
+          Docs
+        </MenuLinkItem>
+        <MenuLinkItem render={<a aria-label="Particles" href="/particles" />}>
+          Particles
+        </MenuLinkItem>
       </MenuPopup>
     </Menu>
   )

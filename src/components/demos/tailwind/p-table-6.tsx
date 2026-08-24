@@ -2,12 +2,6 @@
 
 import type React from "react"
 
-import {
-  type ColumnDef,
-  flexRender,
-  getCoreRowModel,
-  useReactTable,
-} from "@tanstack/react-table"
 import { useMemo, useState } from "react"
 
 import { Badge } from "@/components/ui/tailwind/badge"
@@ -22,8 +16,14 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/tailwind/table"
+import {
+  type ColumnDef,
+  flexRender,
+  getCoreRowModel,
+  useReactTable,
+} from "@/lib/table-wrapper"
 
-type Project = {
+interface Project {
   id: string
   project: string
   status: "Paid" | "Unpaid" | "Pending" | "Failed"

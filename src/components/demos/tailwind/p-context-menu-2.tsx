@@ -13,10 +13,12 @@ export default function Particle() {
         Right click here
       </ContextMenuTrigger>
       <ContextMenuPopup>
-        <ContextMenuLinkItem render={<a href="/docs" />}>
+        <ContextMenuLinkItem render={<a aria-label="Particles" href="/docs" />}>
           Docs
         </ContextMenuLinkItem>
-        <ContextMenuLinkItem render={<a href="/particles" />}>
+        <ContextMenuLinkItem
+          render={<a aria-label="Particles" href="/particles" />}
+        >
           Particles
         </ContextMenuLinkItem>
       </ContextMenuPopup>

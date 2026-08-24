@@ -1,7 +1,7 @@
 "use client"
 
 import { LoaderCircleIcon, MicIcon, SearchIcon } from "lucide-react"
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 
 import { Button } from "@/components/ui/tailwind/button"
 import {
@@ -18,34 +18,40 @@ import {
 export default function Particle() {
   const [inputValue, setInputValue] = useState("")
   const [isLoading, setIsLoading] = useState(false)
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   useEffect(() => {
-    if (inputValue) {
-      setIsLoading(true)
-      const timer = setTimeout(() => {
-        setIsLoading(false)
-      }, 500)
-      return () => clearTimeout(timer)
+    return () => {
+      if (timeoutRef.current) clearTimeout(timeoutRef.current)
     }
-    setIsLoading(false)
-  }, [inputValue])
+  }, [])
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value
+    setInputValue(value)
+    if (timeoutRef.current) clearTimeout(timeoutRef.current)
+    if (value) {
+      setIsLoading(true)
+      timeoutRef.current = setTimeout(() => setIsLoading(false), 500)
+    } else {
+      setIsLoading(false)
+    }
+  }
 
   return (
     <InputGroup>
       <InputGroupAddon>
         {isLoading ? (
-          <LoaderCircleIcon
-            aria-label="Loading..."
-            className="animate-spin"
-            role="status"
-          />
+          <output aria-label="Loading...">
+            <LoaderCircleIcon aria-hidden="true" className="animate-spin" />
+          </output>
         ) : (
           <SearchIcon aria-hidden="true" />
         )}
       </InputGroupAddon>
       <InputGroupInput
         aria-label="Search"
-        onChange={(e) => setInputValue(e.target.value)}
+        onChange={handleChange}
         placeholder="Search..."
         type="search"
         value={inputValue}

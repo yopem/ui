@@ -39,7 +39,7 @@ export default function Particle() {
             <Button aria-label="Copy link" size="icon" variant="outline" />
           }
         >
-          <aIcon aria-hidden="true" />
+          <LinkIcon aria-hidden="true" />
         </TooltipTrigger>
         <GroupSeparator orientation="horizontal" />
         <TooltipTrigger

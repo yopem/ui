@@ -9,15 +9,14 @@ export default function Particle() {
         max={35}
         min={5}
       />
-      <div
+      <fieldset
         aria-label="Storage size reference values"
         className="text-muted-foreground mt-4 flex w-full items-center justify-between gap-1 text-xs font-medium"
-        role="group"
       >
         <span>5 GB</span>
         <span>20 GB</span>
         <span>35 GB</span>
-      </div>
+      </fieldset>
     </div>
   )
 }

@@ -27,7 +27,9 @@ export default function Particle() {
     <Breadcrumb>
       <BreadcrumbList>
         <BreadcrumbItem>
-          <BreadcrumbLink render={<a href="/" />}>Databases</BreadcrumbLink>
+          <BreadcrumbLink render={<a aria-label="Home" href="/" />}>
+            Databases
+          </BreadcrumbLink>
         </BreadcrumbItem>
         <BreadcrumbSeparator />
         <BreadcrumbItem>

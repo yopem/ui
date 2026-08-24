@@ -144,7 +144,7 @@ interface AIState {
   query: string
   submittedQuery: string
   response: string
-  referenceLinks: Array<{ title: string; url: string }>
+  referenceLinks: { title: string; url: string }[]
   isGenerating: boolean
   error: string | null
 }
@@ -174,7 +174,7 @@ export default function PCommand2() {
   const aiInputRef = useRef<HTMLInputElement>(null)
   const searchInputRef = useRef<HTMLInputElement>(null)
   const abortControllerRef = useRef<AbortController | null>(null)
-  const commandResetKeyRef = useRef(0)
+  const [commandResetKey, setCommandResetKey] = useState(0)
 
   // Cleanup on unmount
   useEffect(() => {
@@ -195,7 +195,7 @@ export default function PCommand2() {
   const handleBackToSearch = useCallback(() => {
     resetAIState()
     setSearchQuery("")
-    commandResetKeyRef.current += 1
+    setCommandResetKey((k) => k + 1)
     searchInputRef.current?.focus()
   }, [resetAIState])
 
@@ -348,7 +348,7 @@ export default function PCommand2() {
             <Command
               filter={filterItem}
               items={commandGroups}
-              key={commandResetKeyRef.current}
+              key={commandResetKey}
             >
               <div className="relative flex items-center *:first:flex-1">
                 <CommandInput
@@ -571,7 +571,9 @@ export default function PCommand2() {
                             {aiState.referenceLinks.map((link, index) => (
                               <Button
                                 key={`${link.url}-${index}`}
-                                render={<a href={link.url} />}
+                                render={
+                                  <a aria-label={link.title} href={link.url} />
+                                }
                                 size="sm"
                                 variant="secondary"
                               >

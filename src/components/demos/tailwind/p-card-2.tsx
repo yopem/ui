@@ -19,7 +19,7 @@ export default function Particle() {
         <CardAction>
           <a
             className="text-muted-foreground text-sm leading-4.5 hover:underline"
-            href="#"
+            href="/"
           >
             Sign up
           </a>

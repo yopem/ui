@@ -77,20 +77,15 @@ export default function Particle() {
         </InputGroup>
       </div>
 
-      <div
+      <progress
         aria-label="Password strength"
-        aria-valuemax={4}
-        aria-valuemin={0}
-        aria-valuenow={strengthScore}
-        className="bg-border h-1 w-full overflow-hidden rounded-full"
-        role="progressbar"
-        tabIndex={-1}
-      >
-        <div
-          className={`h-full ${getStrengthColor(strengthScore)} transition-all duration-500 ease-out`}
-          style={{ width: `${(strengthScore / 4) * 100}%` }}
-        />
-      </div>
+        className={`bg-border h-1 w-full overflow-hidden rounded-full [&::-webkit-progress-bar]:bg-transparent ${(() => {
+          const c = getStrengthColor(strengthScore)
+          return `[&::-webkit-progress-value]:${c} [&::-moz-progress-bar]:${c}`
+        })()} [&::-moz-progress-bar]:transition-all [&::-webkit-progress-value]:transition-all [&::-webkit-progress-value]:duration-500`}
+        max={4}
+        value={strengthScore}
+      />
 
       <p
         className="text-foreground text-sm font-medium"

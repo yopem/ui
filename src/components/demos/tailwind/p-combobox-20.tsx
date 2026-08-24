@@ -19,7 +19,7 @@ import {
   ComboboxPopup,
 } from "@/components/ui/tailwind/combobox"
 
-type TeamMember = {
+interface TeamMember {
   avatar: string
   initials: string
   label: string
