@@ -1,10 +1,11 @@
-"use client";
+"use client"
 
-import { useState } from "react";
-import { Calendar } from "@/components/ui/tailwind/calendar";
+import { useState } from "react"
+
+import { Calendar } from "@/components/ui/tailwind/calendar"
 
 export default function Particle() {
-  const [date, setDate] = useState<Date | undefined>(new Date());
+  const [date, setDate] = useState<Date | undefined>(new Date())
 
   return (
     <Calendar
@@ -15,5 +16,5 @@ export default function Particle() {
       onSelect={setDate}
       selected={date}
     />
-  );
+  )
 }

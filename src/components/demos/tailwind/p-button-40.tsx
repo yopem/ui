@@ -1,70 +1,75 @@
-"use client";
+"use client"
 
-import { DownloadIcon, XIcon } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
-import { Button } from "@/components/ui/tailwind/button";
-import { Group, GroupSeparator, GroupText } from "@/components/ui/tailwind/group";
-import { Spinner } from "@/components/ui/tailwind/spinner";
-import { toastManager } from "@/components/ui/tailwind/toast";
+import { DownloadIcon, XIcon } from "lucide-react"
+import { useEffect, useRef, useState } from "react"
+
+import { Button } from "@/components/ui/tailwind/button"
+import {
+  Group,
+  GroupSeparator,
+  GroupText,
+} from "@/components/ui/tailwind/group"
+import { Spinner } from "@/components/ui/tailwind/spinner"
+import { toastManager } from "@/components/ui/tailwind/toast"
 import {
   Tooltip,
   TooltipPopup,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/ui/tailwind/tooltip";
+} from "@/components/ui/tailwind/tooltip"
 
 export default function Particle() {
-  const [isDownloading, setIsDownloading] = useState(false);
-  const [progress, setProgress] = useState(0);
-  const abortControllerRef = useRef<AbortController | null>(null);
-  const infoToastIdRef = useRef<string | null>(null);
+  const [isDownloading, setIsDownloading] = useState(false)
+  const [progress, setProgress] = useState(0)
+  const abortControllerRef = useRef<AbortController | null>(null)
+  const infoToastIdRef = useRef<string | null>(null)
 
   useEffect(() => {
-    if (!isDownloading) return;
+    if (!isDownloading) return
 
     const interval = setInterval(() => {
       setProgress((prev) =>
         Math.min(99, prev + Math.round(Math.random() * 8 + 2)),
-      );
-    }, 300);
+      )
+    }, 300)
 
-    return () => clearInterval(interval);
-  }, [isDownloading]);
+    return () => clearInterval(interval)
+  }, [isDownloading])
 
   async function handleDownload() {
-    if (isDownloading) return;
+    if (isDownloading) return
 
-    setIsDownloading(true);
-    setProgress(0);
-    abortControllerRef.current = new AbortController();
+    setIsDownloading(true)
+    setProgress(0)
+    abortControllerRef.current = new AbortController()
 
     infoToastIdRef.current = toastManager.add({
       description: "Your download will begin once ready.",
       title: "Generating report…",
       type: "info",
-    });
+    })
 
     try {
       await new Promise<string>((resolve, reject) => {
-        const shouldSucceed = Math.random() > 0.2;
+        const shouldSucceed = Math.random() > 0.2
         const timeoutId = setTimeout(() => {
           if (shouldSucceed) {
-            resolve("Download complete");
+            resolve("Download complete")
           } else {
-            reject(new Error("Download failed"));
+            reject(new Error("Download failed"))
           }
-        }, 4000);
+        }, 4000)
 
         abortControllerRef.current?.signal.addEventListener("abort", () => {
-          clearTimeout(timeoutId);
-          reject(new DOMException("Cancelled", "AbortError"));
-        });
-      });
+          clearTimeout(timeoutId)
+          reject(new DOMException("Cancelled", "AbortError"))
+        })
+      })
     } catch (err) {
       // Close info toast before showing error
       if (infoToastIdRef.current) {
-        toastManager.close(infoToastIdRef.current);
-        infoToastIdRef.current = null;
+        toastManager.close(infoToastIdRef.current)
+        infoToastIdRef.current = null
       }
 
       if (err instanceof DOMException && err.name === "AbortError") {
@@ -73,25 +78,25 @@ export default function Particle() {
           description: "Report generation was cancelled.",
           title: "Cancelled",
           type: "error",
-        });
+        })
       } else {
         // Other errors
         toastManager.add({
           description: "Please try again later.",
           title: "Failed to generate report",
           type: "error",
-        });
+        })
       }
     } finally {
-      setIsDownloading(false);
-      setProgress(0);
-      abortControllerRef.current = null;
-      infoToastIdRef.current = null;
+      setIsDownloading(false)
+      setProgress(0)
+      abortControllerRef.current = null
+      infoToastIdRef.current = null
     }
   }
 
   function handleCancel() {
-    abortControllerRef.current?.abort();
+    abortControllerRef.current?.abort()
   }
 
   return (
@@ -106,7 +111,7 @@ export default function Particle() {
             <Spinner />
             <span
               aria-hidden="true"
-              className="font-medium text-foreground tabular-nums"
+              className="text-foreground font-medium tabular-nums"
             >
               {progress.toString().padStart(2, "\u2007")}%
             </span>
@@ -138,5 +143,5 @@ export default function Particle() {
         </Button>
       )}
     </TooltipProvider>
-  );
+  )
 }

@@ -1,4 +1,4 @@
-"use client";
+"use client"
 
 import {
   CopyIcon,
@@ -6,9 +6,9 @@ import {
   PencilIcon,
   ShareIcon,
   TrashIcon,
-} from "lucide-react";
-import { useMediaQuery } from "@/hooks/use-media-query";
-import { Button } from "@/components/ui/tailwind/button";
+} from "lucide-react"
+
+import { Button } from "@/components/ui/tailwind/button"
 import {
   Drawer,
   DrawerClose,
@@ -24,7 +24,7 @@ import {
   DrawerPanel,
   DrawerPopup,
   DrawerTrigger,
-} from "@/components/ui/tailwind/drawer";
+} from "@/components/ui/tailwind/drawer"
 import {
   Menu,
   MenuCheckboxItem,
@@ -39,12 +39,13 @@ import {
   MenuSubPopup,
   MenuSubTrigger,
   MenuTrigger,
-} from "@/components/ui/tailwind/menu";
+} from "@/components/ui/tailwind/menu"
+import { useMediaQuery } from "@/hooks/use-media-query"
 
-const TRIGGER_ARIA_LABEL = "Open menu";
+const TRIGGER_ARIA_LABEL = "Open menu"
 
 export default function Particle() {
-  const isMobile = useMediaQuery("max-md");
+  const isMobile = useMediaQuery("max-md")
 
   if (isMobile) {
     return (
@@ -172,7 +173,7 @@ export default function Particle() {
           </DrawerPanel>
         </DrawerPopup>
       </Drawer>
-    );
+    )
   }
 
   return (
@@ -252,5 +253,5 @@ export default function Particle() {
         </MenuGroup>
       </MenuPopup>
     </Menu>
-  );
+  )
 }

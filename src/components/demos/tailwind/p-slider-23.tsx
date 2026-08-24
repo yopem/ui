@@ -1,26 +1,28 @@
-"use client";
+"use client"
 
-import type { FormEvent } from "react";
-import { useState } from "react";
-import { Button } from "@/components/ui/tailwind/button";
-import { Field, FieldDescription } from "@/components/ui/tailwind/field";
-import { Fieldset, FieldsetLegend } from "@/components/ui/tailwind/fieldset";
-import { Form } from "@/components/ui/tailwind/form";
-import { Slider, SliderValue } from "@/components/ui/tailwind/slider";
+import type { FormEvent } from "react"
+
+import { useState } from "react"
+
+import { Button } from "@/components/ui/tailwind/button"
+import { Field, FieldDescription } from "@/components/ui/tailwind/field"
+import { Fieldset, FieldsetLegend } from "@/components/ui/tailwind/fieldset"
+import { Form } from "@/components/ui/tailwind/form"
+import { Slider, SliderValue } from "@/components/ui/tailwind/slider"
 
 export default function Particle() {
-  const [loading, setLoading] = useState<boolean>(false);
-  const [value, setValue] = useState<number | readonly number[]>([25, 75]);
+  const [loading, setLoading] = useState<boolean>(false)
+  const [value, setValue] = useState<number | readonly number[]>([25, 75])
 
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-    setLoading(true);
-    await new Promise((r) => setTimeout(r, 800));
-    setLoading(false);
-    const volumes = formData.getAll("volume");
-    alert(`Volume: ${volumes.join(", ")}`);
-  };
+    e.preventDefault()
+    const formData = new FormData(e.currentTarget)
+    setLoading(true)
+    await new Promise((r) => setTimeout(r, 800))
+    setLoading(false)
+    const volumes = formData.getAll("volume")
+    alert(`Volume: ${volumes.join(", ")}`)
+  }
 
   return (
     <Form className="flex w-full flex-col gap-4" onSubmit={onSubmit}>
@@ -39,5 +41,5 @@ export default function Particle() {
         Submit
       </Button>
     </Form>
-  );
+  )
 }

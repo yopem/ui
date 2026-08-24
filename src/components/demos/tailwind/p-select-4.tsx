@@ -4,13 +4,13 @@ import {
   SelectPopup,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/tailwind/select";
+} from "@/components/ui/tailwind/select"
 
 const items = [
   { label: "Next.js", value: "next" },
   { label: "Vite", value: "vite" },
   { label: "Astro", value: "astro" },
-];
+]
 
 export default function Particle() {
   return (
@@ -26,5 +26,5 @@ export default function Particle() {
         ))}
       </SelectPopup>
     </Select>
-  );
+  )
 }

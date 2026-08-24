@@ -1,11 +1,11 @@
-"use client";
+"use client"
 
 import {
   Field,
   FieldDescription,
   FieldLabel,
-} from "@/components/ui/tailwind/field";
-import { Textarea } from "@/components/ui/tailwind/textarea";
+} from "@/components/ui/tailwind/field"
+import { Textarea } from "@/components/ui/tailwind/textarea"
 
 export default function Particle() {
   return (
@@ -16,5 +16,5 @@ export default function Particle() {
         Write a short bio. Maximum 500 characters.
       </FieldDescription>
     </Field>
-  );
+  )
 }

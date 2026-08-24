@@ -1,5 +1,6 @@
-import { CheckIcon } from "lucide-react";
-import { Badge } from "@/components/ui/tailwind/badge";
+import { CheckIcon } from "lucide-react"
+
+import { Badge } from "@/components/ui/tailwind/badge"
 
 export default function Particle() {
   return (
@@ -7,5 +8,5 @@ export default function Particle() {
       <CheckIcon aria-hidden="true" />
       Verified
     </Badge>
-  );
+  )
 }

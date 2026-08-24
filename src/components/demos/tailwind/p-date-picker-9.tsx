@@ -1,19 +1,21 @@
-"use client";
+"use client"
 
-import type { DateRange } from "@daypicker/react";
-import { format } from "date-fns";
-import { CalendarIcon } from "lucide-react";
-import { useState } from "react";
-import { Button } from "@/components/ui/tailwind/button";
-import { Calendar } from "@/components/ui/tailwind/calendar";
+import type { DateRange } from "@daypicker/react"
+
+import { format } from "date-fns"
+import { CalendarIcon } from "lucide-react"
+import { useState } from "react"
+
+import { Button } from "@/components/ui/tailwind/button"
+import { Calendar } from "@/components/ui/tailwind/calendar"
 import {
   Popover,
   PopoverPopup,
   PopoverTrigger,
-} from "@/components/ui/tailwind/popover";
+} from "@/components/ui/tailwind/popover"
 
 export default function Particle() {
-  const [date, setDate] = useState<DateRange | undefined>();
+  const [date, setDate] = useState<DateRange | undefined>()
 
   return (
     <Popover>
@@ -43,5 +45,5 @@ export default function Particle() {
         />
       </PopoverPopup>
     </Popover>
-  );
+  )
 }

@@ -1,4 +1,4 @@
-import { Textarea } from "@/components/ui/tailwind/textarea";
+import { Textarea } from "@/components/ui/tailwind/textarea"
 
 export default function Particle() {
   return (
@@ -7,5 +7,5 @@ export default function Particle() {
       placeholder="Type your message here"
       rows={2}
     />
-  );
+  )
 }

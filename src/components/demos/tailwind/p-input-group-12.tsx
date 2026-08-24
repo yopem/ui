@@ -1,18 +1,19 @@
-"use client";
+"use client"
 
-import { InfoIcon } from "lucide-react";
-import { Button } from "@/components/ui/tailwind/button";
+import { InfoIcon } from "lucide-react"
+
+import { Button } from "@/components/ui/tailwind/button"
 import {
   InputGroup,
   InputGroupAddon,
   InputGroupInput,
-} from "@/components/ui/tailwind/input-group";
-import { Label } from "@/components/ui/tailwind/label";
+} from "@/components/ui/tailwind/input-group"
+import { Label } from "@/components/ui/tailwind/label"
 import {
   Popover,
   PopoverPopup,
   PopoverTrigger,
-} from "@/components/ui/tailwind/popover";
+} from "@/components/ui/tailwind/popover"
 
 export default function Particle() {
   return (
@@ -36,5 +37,5 @@ export default function Particle() {
         </Popover>
       </InputGroupAddon>
     </InputGroup>
-  );
+  )
 }

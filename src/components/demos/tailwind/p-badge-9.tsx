@@ -1,5 +1,5 @@
-import { Badge } from "@/components/ui/tailwind/badge";
+import { Badge } from "@/components/ui/tailwind/badge"
 
 export default function Particle() {
-  return <Badge size="sm">Badge</Badge>;
+  return <Badge size="sm">Badge</Badge>
 }

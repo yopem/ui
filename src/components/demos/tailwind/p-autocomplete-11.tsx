@@ -1,6 +1,7 @@
-"use client";
+"use client"
 
-import { useMemo, useState } from "react";
+import { useMemo, useState } from "react"
+
 import {
   Autocomplete,
   AutocompleteEmpty,
@@ -10,11 +11,11 @@ import {
   AutocompletePopup,
   AutocompleteStatus,
   useAutocompleteFilter,
-} from "@/components/ui/tailwind/autocomplete";
+} from "@/components/ui/tailwind/autocomplete"
 
 // Limit results demo
-const limit = 7;
-type SimpleTag = { id: string; value: string };
+const limit = 7
+type SimpleTag = { id: string; value: string }
 const manyTags: SimpleTag[] = [
   { id: "lang-js", value: "JavaScript" },
   { id: "lang-ts", value: "TypeScript" },
@@ -40,19 +41,19 @@ const manyTags: SimpleTag[] = [
   { id: "lang-lua", value: "Lua" },
   { id: "lang-ocaml", value: "OCaml" },
   { id: "lang-fsharp", value: "F#" },
-];
+]
 
 export default function Particle() {
-  const [value, setValue] = useState("");
-  const { contains } = useAutocompleteFilter({ sensitivity: "base" });
+  const [value, setValue] = useState("")
+  const { contains } = useAutocompleteFilter({ sensitivity: "base" })
 
   const totalMatches = useMemo(() => {
-    const trimmed = value.trim();
-    if (!trimmed) return manyTags.length;
-    return manyTags.filter((t) => contains(t.value, trimmed)).length;
-  }, [value, contains]);
+    const trimmed = value.trim()
+    if (!trimmed) return manyTags.length
+    return manyTags.filter((t) => contains(t.value, trimmed)).length
+  }, [value, contains])
 
-  const moreCount = Math.max(0, totalMatches - limit);
+  const moreCount = Math.max(0, totalMatches - limit)
 
   return (
     <Autocomplete
@@ -78,5 +79,5 @@ export default function Particle() {
         )}
       </AutocompletePopup>
     </Autocomplete>
-  );
+  )
 }

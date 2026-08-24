@@ -1,7 +1,9 @@
-"use client";
+"use client"
 
-import type { ReactNode } from "react";
-import { useEffect, useState } from "react";
+import type { ReactNode } from "react"
+
+import { useEffect, useState } from "react"
+
 import {
   Autocomplete,
   AutocompleteInput,
@@ -10,10 +12,10 @@ import {
   AutocompletePopup,
   AutocompleteStatus,
   useAutocompleteFilter,
-} from "@/components/ui/tailwind/autocomplete";
-import { Spinner } from "@/components/ui/tailwind/spinner";
+} from "@/components/ui/tailwind/autocomplete"
+import { Spinner } from "@/components/ui/tailwind/spinner"
 
-type Movie = { id: string; title: string; year: number };
+type Movie = { id: string; title: string; year: number }
 const top100Movies: Movie[] = [
   { id: "1", title: "The Shawshank Redemption", year: 1994 },
   { id: "2", title: "The Godfather", year: 1972 },
@@ -23,84 +25,82 @@ const top100Movies: Movie[] = [
   { id: "8", title: "Pulp Fiction", year: 1994 },
   { id: "11", title: "Forrest Gump", year: 1994 },
   { id: "14", title: "Inception", year: 2010 },
-];
+]
 
 async function searchMovies(
   query: string,
   filter: (item: string, query: string) => boolean,
 ): Promise<Movie[]> {
-  await new Promise((resolve) =>
-    setTimeout(resolve, Math.random() * 500 + 100),
-  );
+  await new Promise((resolve) => setTimeout(resolve, Math.random() * 500 + 100))
   if (Math.random() < 0.01 || query === "will_error") {
-    throw new Error("Network error");
+    throw new Error("Network error")
   }
   return top100Movies.filter(
     (movie) =>
       filter(movie.title, query) || filter(movie.year.toString(), query),
-  );
+  )
 }
 
 export default function Particle() {
-  const [searchValue, setSearchValue] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const [searchResults, setSearchResults] = useState<Movie[]>([]);
-  const [error, setError] = useState<string | null>(null);
+  const [searchValue, setSearchValue] = useState("")
+  const [isLoading, setIsLoading] = useState(false)
+  const [searchResults, setSearchResults] = useState<Movie[]>([])
+  const [error, setError] = useState<string | null>(null)
 
-  const { contains } = useAutocompleteFilter({ sensitivity: "base" });
+  const { contains } = useAutocompleteFilter({ sensitivity: "base" })
 
   useEffect(() => {
     if (!searchValue) {
-      setSearchResults([]);
-      setIsLoading(false);
-      return;
+      setSearchResults([])
+      setIsLoading(false)
+      return
     }
 
-    setIsLoading(true);
-    setError(null);
-    let ignore = false;
+    setIsLoading(true)
+    setError(null)
+    let ignore = false
 
     const timeoutId = setTimeout(async () => {
       try {
-        const results = await searchMovies(searchValue, contains);
-        if (!ignore) setSearchResults(results);
+        const results = await searchMovies(searchValue, contains)
+        if (!ignore) setSearchResults(results)
       } catch {
         if (!ignore) {
-          setError("Failed to fetch movies. Please try again.");
-          setSearchResults([]);
+          setError("Failed to fetch movies. Please try again.")
+          setSearchResults([])
         }
       } finally {
-        if (!ignore) setIsLoading(false);
+        if (!ignore) setIsLoading(false)
       }
-    }, 300);
+    }, 300)
 
     return () => {
-      clearTimeout(timeoutId);
-      ignore = true;
-    };
-  }, [searchValue, contains]);
+      clearTimeout(timeoutId)
+      ignore = true
+    }
+  }, [searchValue, contains])
 
-  let status: ReactNode = `${searchResults.length} result${searchResults.length === 1 ? "" : "s"} found`;
+  let status: ReactNode = `${searchResults.length} result${searchResults.length === 1 ? "" : "s"} found`
   if (isLoading) {
     status = (
-      <span className="flex items-center justify-between gap-2 text-muted-foreground">
+      <span className="text-muted-foreground flex items-center justify-between gap-2">
         Searching...
         <Spinner className="size-4.5 sm:size-4" />
       </span>
-    );
+    )
   } else if (error) {
     status = (
-      <span className="font-normal text-destructive text-sm">{error}</span>
-    );
+      <span className="text-destructive text-sm font-normal">{error}</span>
+    )
   } else if (searchResults.length === 0 && searchValue) {
     status = (
-      <span className="font-normal text-muted-foreground text-sm">
+      <span className="text-muted-foreground text-sm font-normal">
         Movie or year "{searchValue}" does not exist in the Top 100 IMDb movies
       </span>
-    );
+    )
   }
 
-  const shouldRenderPopup = searchValue !== "";
+  const shouldRenderPopup = searchValue !== ""
 
   return (
     <Autocomplete
@@ -131,5 +131,5 @@ export default function Particle() {
         </AutocompletePopup>
       )}
     </Autocomplete>
-  );
+  )
 }

@@ -1,9 +1,9 @@
-import { Checkbox } from "@/components/ui/tailwind/checkbox";
-import { Label } from "@/components/ui/tailwind/label";
+import { Checkbox } from "@/components/ui/tailwind/checkbox"
+import { Label } from "@/components/ui/tailwind/label"
 
 export default function Particle() {
   return (
-    <Label className="flex items-start gap-2 rounded-lg border p-3 hover:bg-accent/50 has-data-checked:border-primary/48 has-data-checked:bg-accent/50">
+    <Label className="hover:bg-accent/50 has-data-checked:border-primary/48 has-data-checked:bg-accent/50 flex items-start gap-2 rounded-lg border p-3">
       <Checkbox defaultChecked />
       <div className="flex flex-col gap-1">
         <p>Enable notifications</p>
@@ -12,5 +12,5 @@ export default function Particle() {
         </p>
       </div>
     </Label>
-  );
+  )
 }

@@ -1,8 +1,9 @@
-import { BoldIcon, ItalicIcon, UnderlineIcon } from "lucide-react";
+import { BoldIcon, ItalicIcon, UnderlineIcon } from "lucide-react"
+
 import {
   ToggleGroup,
   ToggleGroupItem,
-} from "@/components/ui/tailwind/toggle-group";
+} from "@/components/ui/tailwind/toggle-group"
 
 export default function ParticleItem() {
   return (
@@ -17,5 +18,5 @@ export default function ParticleItem() {
         <UnderlineIcon />
       </ToggleGroupItem>
     </ToggleGroup>
-  );
+  )
 }

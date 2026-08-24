@@ -1,11 +1,13 @@
-"use client";
+"use client"
 
-import type { DropdownProps } from "@daypicker/react";
-import { format } from "date-fns";
-import { CalendarIcon } from "lucide-react";
-import * as React from "react";
-import { Button } from "@/components/ui/tailwind/button";
-import { Calendar } from "@/components/ui/tailwind/calendar";
+import type { DropdownProps } from "@daypicker/react"
+
+import { format } from "date-fns"
+import { CalendarIcon } from "lucide-react"
+import * as React from "react"
+
+import { Button } from "@/components/ui/tailwind/button"
+import { Calendar } from "@/components/ui/tailwind/calendar"
 import {
   Combobox,
   ComboboxEmpty,
@@ -13,40 +15,40 @@ import {
   ComboboxItem,
   ComboboxList,
   ComboboxPopup,
-} from "@/components/ui/tailwind/combobox";
-import { Field, FieldLabel } from "@/components/ui/tailwind/field";
+} from "@/components/ui/tailwind/combobox"
+import { Field, FieldLabel } from "@/components/ui/tailwind/field"
 import {
   Popover,
   PopoverPopup,
   PopoverTrigger,
-} from "@/components/ui/tailwind/popover";
+} from "@/components/ui/tailwind/popover"
 
 interface DropdownItem {
-  disabled?: boolean;
-  label: string;
-  value: string;
+  disabled?: boolean
+  label: string
+  value: string
 }
 
 function CalendarDropdown(props: DropdownProps) {
-  const { options, value, onChange, "aria-label": ariaLabel } = props;
+  const { options, value, onChange, "aria-label": ariaLabel } = props
 
   const items: DropdownItem[] =
     options?.map((option) => ({
       disabled: option.disabled,
       label: option.label,
       value: option.value.toString(),
-    })) ?? [];
+    })) ?? []
 
-  const selectedItem = items.find((item) => item.value === value?.toString());
+  const selectedItem = items.find((item) => item.value === value?.toString())
 
   const handleValueChange = (newValue: DropdownItem | null) => {
     if (onChange && newValue) {
       const syntheticEvent = {
         target: { value: newValue.value },
-      } as React.ChangeEvent<HTMLSelectElement>;
-      onChange(syntheticEvent);
+      } as React.ChangeEvent<HTMLSelectElement>
+      onChange(syntheticEvent)
     }
-  };
+  }
 
   return (
     <Combobox
@@ -75,12 +77,12 @@ function CalendarDropdown(props: DropdownProps) {
         </ComboboxList>
       </ComboboxPopup>
     </Combobox>
-  );
+  )
 }
 
 export default function Particle() {
-  const [date, setDate] = React.useState<Date | undefined>();
-  const id = React.useId();
+  const [date, setDate] = React.useState<Date | undefined>()
+  const id = React.useId()
   return (
     <Field>
       <FieldLabel htmlFor={id}>Start date</FieldLabel>
@@ -106,5 +108,5 @@ export default function Particle() {
         </PopoverPopup>
       </Popover>
     </Field>
-  );
+  )
 }

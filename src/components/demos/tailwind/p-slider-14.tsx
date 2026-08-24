@@ -1,17 +1,18 @@
-"use client";
+"use client"
 
-import { MinusIcon, PlusIcon } from "lucide-react";
-import { useState } from "react";
-import { Button } from "@/components/ui/tailwind/button";
-import { Field, FieldLabel } from "@/components/ui/tailwind/field";
-import { Slider } from "@/components/ui/tailwind/slider";
+import { MinusIcon, PlusIcon } from "lucide-react"
+import { useState } from "react"
 
-const min = 0;
-const max = 200;
-const step = 5;
+import { Button } from "@/components/ui/tailwind/button"
+import { Field, FieldLabel } from "@/components/ui/tailwind/field"
+import { Slider } from "@/components/ui/tailwind/slider"
+
+const min = 0
+const max = 200
+const step = 5
 
 export default function Particle() {
-  const [value, setValue] = useState(100);
+  const [value, setValue] = useState(100)
 
   return (
     <Field name="credits">
@@ -46,5 +47,5 @@ export default function Particle() {
         </Button>
       </div>
     </Field>
-  );
+  )
 }

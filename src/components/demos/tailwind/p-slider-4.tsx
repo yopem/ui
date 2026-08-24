@@ -1,4 +1,4 @@
-import { Slider } from "@/components/ui/tailwind/slider";
+import { Slider } from "@/components/ui/tailwind/slider"
 
 export default function Particle() {
   return (
@@ -11,7 +11,7 @@ export default function Particle() {
       />
       <div
         aria-label="Storage size reference values"
-        className="mt-4 flex w-full items-center justify-between gap-1 font-medium text-muted-foreground text-xs"
+        className="text-muted-foreground mt-4 flex w-full items-center justify-between gap-1 text-xs font-medium"
         role="group"
       >
         <span>5 GB</span>
@@ -19,5 +19,5 @@ export default function Particle() {
         <span>35 GB</span>
       </div>
     </div>
-  );
+  )
 }

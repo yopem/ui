@@ -1,19 +1,19 @@
-"use client";
+"use client"
 
-import {
-  segmentedControlItemVariants,
-  segmentedControlRootClassName,
-} from "@/lib/segmented-control";
 import {
   RadioGroupPrimitive,
   RadioPrimitive,
-} from "@/components/ui/tailwind/radio-group";
+} from "@/components/ui/tailwind/radio-group"
+import {
+  segmentedControlItemVariants,
+  segmentedControlRootClassName,
+} from "@/lib/segmented-control"
 
 const itemClassName = segmentedControlItemVariants({
   className: "grow",
   size: "sm",
   state: "checked",
-});
+})
 
 export default function Particle() {
   return (
@@ -29,5 +29,5 @@ export default function Particle() {
         Yearly
       </RadioPrimitive.Root>
     </RadioGroupPrimitive>
-  );
+  )
 }

@@ -1,5 +1,5 @@
-import { Slider } from "@/components/ui/tailwind/slider";
+import { Slider } from "@/components/ui/tailwind/slider"
 
 export default function Particle() {
-  return <Slider defaultValue={[25, 75]} />;
+  return <Slider defaultValue={[25, 75]} />
 }

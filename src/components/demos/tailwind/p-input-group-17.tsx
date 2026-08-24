@@ -1,24 +1,25 @@
-"use client";
+"use client"
 
-import { ArrowUpIcon, PlusIcon } from "lucide-react";
-import { Button } from "@/components/ui/tailwind/button";
+import { ArrowUpIcon, PlusIcon } from "lucide-react"
+
+import { Button } from "@/components/ui/tailwind/button"
 import {
   InputGroup,
   InputGroupAddon,
   InputGroupText,
   InputGroupTextarea,
-} from "@/components/ui/tailwind/input-group";
+} from "@/components/ui/tailwind/input-group"
 import {
   Menu,
   MenuItem,
   MenuPopup,
   MenuTrigger,
-} from "@/components/ui/tailwind/menu";
+} from "@/components/ui/tailwind/menu"
 import {
   Tooltip,
   TooltipPopup,
   TooltipTrigger,
-} from "@/components/ui/tailwind/tooltip";
+} from "@/components/ui/tailwind/tooltip"
 
 export default function Particle() {
   return (
@@ -70,5 +71,5 @@ export default function Particle() {
         </Tooltip>
       </InputGroupAddon>
     </InputGroup>
-  );
+  )
 }

@@ -1,6 +1,6 @@
-import { Button } from "@/components/ui/tailwind/button";
-import { Group } from "@/components/ui/tailwind/group";
-import { Input } from "@/components/ui/tailwind/input";
+import { Button } from "@/components/ui/tailwind/button"
+import { Group } from "@/components/ui/tailwind/group"
+import { Input } from "@/components/ui/tailwind/input"
 
 export default function Particle() {
   return (
@@ -15,5 +15,5 @@ export default function Particle() {
         <Button variant="outline">Send</Button>
       </div>
     </Group>
-  );
+  )
 }

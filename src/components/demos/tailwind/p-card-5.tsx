@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/tailwind/button";
+import { Button } from "@/components/ui/tailwind/button"
 import {
   Card,
   CardFrame,
@@ -6,24 +6,24 @@ import {
   CardFrameHeader,
   CardFrameTitle,
   CardPanel,
-} from "@/components/ui/tailwind/card";
-import { Field, FieldLabel } from "@/components/ui/tailwind/field";
-import { Form } from "@/components/ui/tailwind/form";
-import { Input } from "@/components/ui/tailwind/input";
+} from "@/components/ui/tailwind/card"
+import { Field, FieldLabel } from "@/components/ui/tailwind/field"
+import { Form } from "@/components/ui/tailwind/form"
+import { Input } from "@/components/ui/tailwind/input"
 import {
   Select,
   SelectItem,
   SelectPopup,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/tailwind/select";
+} from "@/components/ui/tailwind/select"
 
 const frameworkOptions = [
   { label: "Next.js", value: "next" },
   { label: "Vite", value: "vite" },
   { label: "Remix", value: "remix" },
   { label: "Astro", value: "astro" },
-];
+]
 
 export default function Particle() {
   return (
@@ -63,5 +63,5 @@ export default function Particle() {
         </CardPanel>
       </Card>
     </CardFrame>
-  );
+  )
 }

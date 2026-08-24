@@ -2,7 +2,7 @@ import {
   Avatar,
   AvatarFallback,
   AvatarImage,
-} from "@/components/ui/tailwind/avatar";
+} from "@/components/ui/tailwind/avatar"
 
 export default function Particle() {
   return (
@@ -38,5 +38,5 @@ export default function Particle() {
         </svg>
       </span>
     </div>
-  );
+  )
 }

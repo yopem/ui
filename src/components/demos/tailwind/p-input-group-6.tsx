@@ -2,11 +2,11 @@ import {
   InputGroup,
   InputGroupAddon,
   InputGroupText,
-} from "@/components/ui/tailwind/input-group";
+} from "@/components/ui/tailwind/input-group"
 import {
   NumberField,
   NumberFieldInput,
-} from "@/components/ui/tailwind/number-field";
+} from "@/components/ui/tailwind/number-field"
 
 export default function Particle() {
   return (
@@ -21,5 +21,5 @@ export default function Particle() {
         <InputGroupText>EUR</InputGroupText>
       </InputGroupAddon>
     </InputGroup>
-  );
+  )
 }

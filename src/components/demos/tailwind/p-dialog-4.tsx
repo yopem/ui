@@ -1,6 +1,7 @@
-"use client";
+"use client"
 
-import { useState } from "react";
+import { useState } from "react"
+
 import {
   AlertDialog,
   AlertDialogClose,
@@ -9,8 +10,8 @@ import {
   AlertDialogHeader,
   AlertDialogPopup,
   AlertDialogTitle,
-} from "@/components/ui/tailwind/alert-dialog";
-import { Button } from "@/components/ui/tailwind/button";
+} from "@/components/ui/tailwind/alert-dialog"
+import { Button } from "@/components/ui/tailwind/button"
 import {
   Dialog,
   DialogClose,
@@ -21,23 +22,23 @@ import {
   DialogPopup,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/tailwind/dialog";
-import { Field } from "@/components/ui/tailwind/field";
-import { Form } from "@/components/ui/tailwind/form";
-import { Textarea } from "@/components/ui/tailwind/textarea";
+} from "@/components/ui/tailwind/dialog"
+import { Field } from "@/components/ui/tailwind/field"
+import { Form } from "@/components/ui/tailwind/form"
+import { Textarea } from "@/components/ui/tailwind/textarea"
 
 export default function Particle() {
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const [confirmOpen, setConfirmOpen] = useState(false);
-  const [value, setValue] = useState("");
+  const [dialogOpen, setDialogOpen] = useState(false)
+  const [confirmOpen, setConfirmOpen] = useState(false)
+  const [value, setValue] = useState("")
 
   return (
     <Dialog
       onOpenChange={(o) => {
         if (!o && value) {
-          setConfirmOpen(true);
+          setConfirmOpen(true)
         } else {
-          setDialogOpen(o);
+          setDialogOpen(o)
         }
       }}
       open={dialogOpen}
@@ -53,9 +54,9 @@ export default function Particle() {
         <Form
           className="contents"
           onSubmit={(event) => {
-            event.preventDefault();
+            event.preventDefault()
             // Close the dialog when submitting
-            setDialogOpen(false);
+            setDialogOpen(false)
           }}
         >
           <DialogPanel>
@@ -72,8 +73,8 @@ export default function Particle() {
             </DialogClose>
             <Button
               onClick={() => {
-                setValue("");
-                setDialogOpen(false);
+                setValue("")
+                setDialogOpen(false)
               }}
             >
               Send
@@ -97,9 +98,9 @@ export default function Particle() {
             </AlertDialogClose>
             <Button
               onClick={() => {
-                setConfirmOpen(false);
-                setValue("");
-                setDialogOpen(false);
+                setConfirmOpen(false)
+                setValue("")
+                setDialogOpen(false)
               }}
             >
               Discard
@@ -108,5 +109,5 @@ export default function Particle() {
         </AlertDialogPopup>
       </AlertDialog>
     </Dialog>
-  );
+  )
 }

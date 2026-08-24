@@ -1,5 +1,5 @@
 // next/link replaced -> anchor
-import { Button } from "@/components/ui/tailwind/button";
+import { Button } from "@/components/ui/tailwind/button"
 import {
   Drawer,
   DrawerClose,
@@ -8,7 +8,7 @@ import {
   DrawerPopup,
   DrawerTitle,
   DrawerTrigger,
-} from "@/components/ui/tailwind/drawer";
+} from "@/components/ui/tailwind/drawer"
 
 export default function Particle() {
   return (
@@ -74,5 +74,5 @@ export default function Particle() {
         </DrawerPanel>
       </DrawerPopup>
     </Drawer>
-  );
+  )
 }

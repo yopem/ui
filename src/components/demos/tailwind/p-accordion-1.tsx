@@ -3,7 +3,7 @@ import {
   AccordionItem,
   AccordionPanel,
   AccordionTrigger,
-} from "@/components/ui/tailwind/accordion";
+} from "@/components/ui/tailwind/accordion"
 
 export default function Particle() {
   const items = [
@@ -24,7 +24,7 @@ export default function Particle() {
       id: "3",
       title: "Can I use it for my project?",
     },
-  ];
+  ]
 
   return (
     <Accordion className="w-full" defaultValue={["3"]}>
@@ -35,5 +35,5 @@ export default function Particle() {
         </AccordionItem>
       ))}
     </Accordion>
-  );
+  )
 }

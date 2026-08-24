@@ -1,7 +1,8 @@
-"use client";
+"use client"
 
-import { useState } from "react";
-import { Button } from "@/components/ui/tailwind/button";
+import { useState } from "react"
+
+import { Button } from "@/components/ui/tailwind/button"
 import {
   Drawer,
   DrawerDescription,
@@ -10,13 +11,13 @@ import {
   DrawerPopup,
   DrawerTitle,
   DrawerTrigger,
-} from "@/components/ui/tailwind/drawer";
+} from "@/components/ui/tailwind/drawer"
 
 export default function Particle() {
-  const snapPoints = ["300px", 1] as const;
+  const snapPoints = ["300px", 1] as const
   const [snapPoint, setSnapPoint] = useState<
     (typeof snapPoints)[number] | null
-  >(snapPoints[0]);
+  >(snapPoints[0])
 
   return (
     <Drawer
@@ -42,7 +43,7 @@ export default function Particle() {
           <div className="flex flex-col gap-2">
             {Array.from({ length: 48 }, (_, i) => `box-${i}`).map((key) => (
               <div
-                className="h-12 shrink-0 rounded-xl border bg-muted"
+                className="bg-muted h-12 shrink-0 rounded-xl border"
                 key={key}
               />
             ))}
@@ -50,5 +51,5 @@ export default function Particle() {
         </DrawerPanel>
       </DrawerPopup>
     </Drawer>
-  );
+  )
 }

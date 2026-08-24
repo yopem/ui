@@ -1,4 +1,4 @@
-"use client";
+"use client"
 
 import {
   Meter,
@@ -6,7 +6,7 @@ import {
   MeterLabel,
   MeterTrack,
   MeterValue,
-} from "@/components/ui/tailwind/meter";
+} from "@/components/ui/tailwind/meter"
 
 export default function Particle() {
   return (
@@ -19,5 +19,5 @@ export default function Particle() {
         <MeterIndicator />
       </MeterTrack>
     </Meter>
-  );
+  )
 }

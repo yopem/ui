@@ -1,7 +1,8 @@
-"use client";
+"use client"
 
-import { useState } from "react";
-import { Button } from "@/components/ui/tailwind/button";
+import { useState } from "react"
+
+import { Button } from "@/components/ui/tailwind/button"
 import {
   Dialog,
   DialogClose,
@@ -10,16 +11,16 @@ import {
   DialogHeader,
   DialogPopup,
   DialogTitle,
-} from "@/components/ui/tailwind/dialog";
+} from "@/components/ui/tailwind/dialog"
 import {
   Menu,
   MenuItem,
   MenuPopup,
   MenuTrigger,
-} from "@/components/ui/tailwind/menu";
+} from "@/components/ui/tailwind/menu"
 
 export default function Particle() {
-  const [dialogOpen, setDialogOpen] = useState(false);
+  const [dialogOpen, setDialogOpen] = useState(false)
   return (
     <>
       <Menu>
@@ -42,5 +43,5 @@ export default function Particle() {
         </DialogPopup>
       </Dialog>
     </>
-  );
+  )
 }

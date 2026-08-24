@@ -1,5 +1,6 @@
-import { DownloadIcon } from "lucide-react";
-import { Button } from "@/components/ui/tailwind/button";
+import { DownloadIcon } from "lucide-react"
+
+import { Button } from "@/components/ui/tailwind/button"
 
 export default function Particle() {
   return (
@@ -7,5 +8,5 @@ export default function Particle() {
       <DownloadIcon aria-hidden="true" />
       Download
     </Button>
-  );
+  )
 }

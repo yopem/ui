@@ -1,14 +1,14 @@
-"use client";
+"use client"
 
-import { Field, FieldItem, FieldLabel } from "@/components/ui/tailwind/field";
-import { Fieldset, FieldsetLegend } from "@/components/ui/tailwind/fieldset";
-import { Radio, RadioGroup } from "@/components/ui/tailwind/radio-group";
+import { Field, FieldItem, FieldLabel } from "@/components/ui/tailwind/field"
+import { Fieldset, FieldsetLegend } from "@/components/ui/tailwind/fieldset"
+import { Radio, RadioGroup } from "@/components/ui/tailwind/radio-group"
 
 const items = [
   { label: "System", value: "system" },
   { label: "Light", value: "light" },
   { label: "Dark", value: "dark" },
-] as const;
+] as const
 
 export default function Particle() {
   return (
@@ -17,7 +17,7 @@ export default function Particle() {
       name="theme"
       render={(props) => <Fieldset {...props} />}
     >
-      <FieldsetLegend className="font-medium text-sm">
+      <FieldsetLegend className="text-sm font-medium">
         Choose a theme
       </FieldsetLegend>
       <RadioGroup className="flex-row gap-4" defaultValue="system">
@@ -25,7 +25,7 @@ export default function Particle() {
           <FieldItem key={item.value}>
             <FieldLabel className="cursor-pointer flex-col">
               <Radio className="peer sr-only absolute" value={item.value} />
-              <span className="relative block h-[70px] w-[88px] overflow-hidden rounded-lg not-peer-data-checked:opacity-80 shadow-xs transition-shadow peer-data-disabled:cursor-not-allowed peer-data-disabled:opacity-64 peer-data-checked:ring-2 peer-data-checked:ring-primary/48 peer-data-checked:ring-offset-1 peer-data-checked:ring-offset-background">
+              <span className="peer-data-checked:ring-primary/48 peer-data-checked:ring-offset-background relative block h-[70px] w-[88px] overflow-hidden rounded-lg shadow-xs transition-shadow not-peer-data-checked:opacity-80 peer-data-checked:ring-2 peer-data-checked:ring-offset-1 peer-data-disabled:cursor-not-allowed peer-data-disabled:opacity-64">
                 {themePreviews[item.value]}
               </span>
               <span className="not-peer-data-checked:text-muted-foreground/70">
@@ -36,7 +36,7 @@ export default function Particle() {
         ))}
       </RadioGroup>
     </Field>
-  );
+  )
 }
 
 const themePreviews = {
@@ -150,4 +150,4 @@ const themePreviews = {
       />
     </svg>
   ),
-} as const;
+} as const

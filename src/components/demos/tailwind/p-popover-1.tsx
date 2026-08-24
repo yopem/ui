@@ -1,16 +1,16 @@
-"use client";
+"use client"
 
-import { Button } from "@/components/ui/tailwind/button";
-import { Field } from "@/components/ui/tailwind/field";
-import { Form } from "@/components/ui/tailwind/form";
+import { Button } from "@/components/ui/tailwind/button"
+import { Field } from "@/components/ui/tailwind/field"
+import { Form } from "@/components/ui/tailwind/form"
 import {
   Popover,
   PopoverDescription,
   PopoverPopup,
   PopoverTitle,
   PopoverTrigger,
-} from "@/components/ui/tailwind/popover";
-import { Textarea } from "@/components/ui/tailwind/textarea";
+} from "@/components/ui/tailwind/popover"
+import { Textarea } from "@/components/ui/tailwind/textarea"
 
 export default function Particle() {
   return (
@@ -37,5 +37,5 @@ export default function Particle() {
         </Form>
       </PopoverPopup>
     </Popover>
-  );
+  )
 }

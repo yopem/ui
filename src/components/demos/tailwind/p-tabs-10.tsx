@@ -1,5 +1,10 @@
-import { Badge } from "@/components/ui/tailwind/badge";
-import { Tabs, TabsList, TabsPanel, TabsTab } from "@/components/ui/tailwind/tabs";
+import { Badge } from "@/components/ui/tailwind/badge"
+import {
+  Tabs,
+  TabsList,
+  TabsPanel,
+  TabsTab,
+} from "@/components/ui/tailwind/tabs"
 
 export default function Particle() {
   return (
@@ -34,20 +39,20 @@ export default function Particle() {
         </TabsTab>
       </TabsList>
       <TabsPanel value="tab-1">
-        <p className="p-4 text-center text-muted-foreground text-xs">
+        <p className="text-muted-foreground p-4 text-center text-xs">
           All items content
         </p>
       </TabsPanel>
       <TabsPanel value="tab-2">
-        <p className="p-4 text-center text-muted-foreground text-xs">
+        <p className="text-muted-foreground p-4 text-center text-xs">
           Pending items content
         </p>
       </TabsPanel>
       <TabsPanel value="tab-3">
-        <p className="p-4 text-center text-muted-foreground text-xs">
+        <p className="text-muted-foreground p-4 text-center text-xs">
           Completed items content
         </p>
       </TabsPanel>
     </Tabs>
-  );
+  )
 }

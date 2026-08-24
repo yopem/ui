@@ -1,5 +1,6 @@
-import { ArrowRightIcon } from "lucide-react";
-import { Button } from "@/components/ui/tailwind/button";
+import { ArrowRightIcon } from "lucide-react"
+
+import { Button } from "@/components/ui/tailwind/button"
 
 export default function Particle() {
   return (
@@ -7,8 +8,8 @@ export default function Particle() {
       Get Started
       <ArrowRightIcon
         aria-hidden="true"
-        className="in-[[data-slot=button]:hover]:translate-x-0.5 transition-transform"
+        className="transition-transform in-[[data-slot=button]:hover]:translate-x-0.5"
       />
     </Button>
-  );
+  )
 }

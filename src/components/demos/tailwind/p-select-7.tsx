@@ -1,4 +1,4 @@
-"use client";
+"use client"
 
 import {
   Select,
@@ -6,7 +6,7 @@ import {
   SelectPopup,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/tailwind/select";
+} from "@/components/ui/tailwind/select"
 
 const languages = {
   cpp: "C++",
@@ -19,21 +19,21 @@ const languages = {
   rust: "Rust",
   swift: "Swift",
   typescript: "TypeScript",
-};
+}
 
-type Language = keyof typeof languages;
+type Language = keyof typeof languages
 
-const values = Object.keys(languages) as Language[];
+const values = Object.keys(languages) as Language[]
 
 function renderValue(value: Language[]) {
   if (value.length === 0) {
-    return "Select languages…";
+    return "Select languages…"
   }
 
-  const firstLanguage = value[0] ? languages[value[0]] : "";
+  const firstLanguage = value[0] ? languages[value[0]] : ""
   const additionalLanguages =
-    value.length > 1 ? ` (+${value.length - 1} more)` : "";
-  return firstLanguage + additionalLanguages;
+    value.length > 1 ? ` (+${value.length - 1} more)` : ""
+  return firstLanguage + additionalLanguages
 }
 
 export default function Particle() {
@@ -54,5 +54,5 @@ export default function Particle() {
         ))}
       </SelectPopup>
     </Select>
-  );
+  )
 }

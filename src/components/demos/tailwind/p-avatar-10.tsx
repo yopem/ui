@@ -2,8 +2,8 @@ import {
   Avatar,
   AvatarFallback,
   AvatarImage,
-} from "@/components/ui/tailwind/avatar";
-import { Badge } from "@/components/ui/tailwind/badge";
+} from "@/components/ui/tailwind/avatar"
+import { Badge } from "@/components/ui/tailwind/badge"
 
 export default function Particle() {
   return (
@@ -16,11 +16,11 @@ export default function Particle() {
         <AvatarFallback>LT</AvatarFallback>
       </Avatar>
       <Badge
-        className="absolute -end-1 -top-1 rounded-full outline-2 outline-background outline-solid"
+        className="outline-background absolute -end-1 -top-1 rounded-full outline-2 outline-solid"
         size="sm"
       >
         6
       </Badge>
     </div>
-  );
+  )
 }

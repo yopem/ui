@@ -1,5 +1,5 @@
-import { Field, FieldLabel } from "@/components/ui/tailwind/field";
-import { Switch } from "@/components/ui/tailwind/switch";
+import { Field, FieldLabel } from "@/components/ui/tailwind/field"
+import { Switch } from "@/components/ui/tailwind/switch"
 
 export default function Particle() {
   return (
@@ -9,5 +9,5 @@ export default function Particle() {
         Email notifications
       </FieldLabel>
     </Field>
-  );
+  )
 }

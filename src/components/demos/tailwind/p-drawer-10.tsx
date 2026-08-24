@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/tailwind/button";
+import { Button } from "@/components/ui/tailwind/button"
 import {
   Drawer,
   DrawerClose,
@@ -9,10 +9,10 @@ import {
   DrawerPopup,
   DrawerTitle,
   DrawerTrigger,
-} from "@/components/ui/tailwind/drawer";
-import { Field, FieldLabel } from "@/components/ui/tailwind/field";
-import { Form } from "@/components/ui/tailwind/form";
-import { Input } from "@/components/ui/tailwind/input";
+} from "@/components/ui/tailwind/drawer"
+import { Field, FieldLabel } from "@/components/ui/tailwind/field"
+import { Form } from "@/components/ui/tailwind/form"
+import { Input } from "@/components/ui/tailwind/input"
 
 export default function Particle() {
   return (
@@ -82,5 +82,5 @@ export default function Particle() {
         </DrawerPopup>
       </Drawer>
     </div>
-  );
+  )
 }

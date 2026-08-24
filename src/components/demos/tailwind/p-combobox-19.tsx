@@ -1,14 +1,15 @@
-"use client";
+"use client"
 
-import { SearchIcon, XIcon } from "lucide-react";
-import { useState } from "react";
+import { SearchIcon, XIcon } from "lucide-react"
+import { useState } from "react"
+
 import {
   Avatar,
   AvatarFallback,
   AvatarImage,
-} from "@/components/ui/tailwind/avatar";
-import { Badge } from "@/components/ui/tailwind/badge";
-import { Button } from "@/components/ui/tailwind/button";
+} from "@/components/ui/tailwind/avatar"
+import { Badge } from "@/components/ui/tailwind/badge"
+import { Button } from "@/components/ui/tailwind/button"
 import {
   Combobox,
   ComboboxEmpty,
@@ -16,16 +17,16 @@ import {
   ComboboxItem,
   ComboboxList,
   ComboboxPopup,
-} from "@/components/ui/tailwind/combobox";
+} from "@/components/ui/tailwind/combobox"
 
 type TeamMember = {
-  avatar: string;
-  initials: string;
-  label: string;
-  priority: "Lowest" | "Low" | "Medium" | "High" | "Highest";
-  value: string;
-  weight: number;
-};
+  avatar: string
+  initials: string
+  label: string
+  priority: "Lowest" | "Low" | "Medium" | "High" | "Highest"
+  value: string
+  weight: number
+}
 
 const teamMembers: TeamMember[] = [
   {
@@ -82,13 +83,13 @@ const teamMembers: TeamMember[] = [
     value: "emma",
     weight: 100,
   },
-];
+]
 
 export default function Particle() {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(false)
   const [selected, setSelected] = useState<TeamMember[]>(
     teamMembers.slice(0, 2),
-  );
+  )
 
   return (
     <div className="flex w-full flex-col gap-2">
@@ -98,8 +99,8 @@ export default function Particle() {
         multiple
         onOpenChange={setOpen}
         onValueChange={(value) => {
-          setSelected(value);
-          setOpen(false);
+          setSelected(value)
+          setOpen(false)
         }}
         open={open}
         value={selected}
@@ -124,7 +125,7 @@ export default function Particle() {
         <ul className="flex flex-col gap-2">
           {selected.map((member) => (
             <li
-              className="flex items-center gap-2 rounded-lg border border-input p-1 ps-2 text-base sm:text-sm"
+              className="border-input flex items-center gap-2 rounded-lg border p-1 ps-2 text-base sm:text-sm"
               key={member.value}
             >
               <Avatar className="size-5">
@@ -157,5 +158,5 @@ export default function Particle() {
         </ul>
       )}
     </div>
-  );
+  )
 }

@@ -1,10 +1,11 @@
-"use client";
+"use client"
 
-import { CopyIcon, PlusIcon, SearchIcon, XIcon } from "lucide-react";
-import { useId, useState } from "react";
-import { Button } from "@/components/ui/tailwind/button";
-import { Checkbox } from "@/components/ui/tailwind/checkbox";
-import { CheckboxGroup } from "@/components/ui/tailwind/checkbox-group";
+import { CopyIcon, PlusIcon, SearchIcon, XIcon } from "lucide-react"
+import { useId, useState } from "react"
+
+import { Button } from "@/components/ui/tailwind/button"
+import { Checkbox } from "@/components/ui/tailwind/checkbox"
+import { CheckboxGroup } from "@/components/ui/tailwind/checkbox-group"
 import {
   Combobox,
   ComboboxEmpty,
@@ -14,21 +15,25 @@ import {
   ComboboxPopup,
   ComboboxTrigger,
   ComboboxValue,
-} from "@/components/ui/tailwind/combobox";
-import { Group, GroupSeparator, GroupText } from "@/components/ui/tailwind/group";
-import { Label } from "@/components/ui/tailwind/label";
+} from "@/components/ui/tailwind/combobox"
+import {
+  Group,
+  GroupSeparator,
+  GroupText,
+} from "@/components/ui/tailwind/group"
+import { Label } from "@/components/ui/tailwind/label"
 import {
   Popover,
   PopoverPopup,
   PopoverTrigger,
-} from "@/components/ui/tailwind/popover";
-import { Switch } from "@/components/ui/tailwind/switch";
+} from "@/components/ui/tailwind/popover"
+import { Switch } from "@/components/ui/tailwind/switch"
 import {
   Tooltip,
   TooltipPopup,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/ui/tailwind/tooltip";
+} from "@/components/ui/tailwind/tooltip"
 
 const days = [
   "Monday",
@@ -38,32 +43,32 @@ const days = [
   "Friday",
   "Saturday",
   "Sunday",
-] as const;
+] as const
 
-type Day = (typeof days)[number];
+type Day = (typeof days)[number]
 
 type TimeRange = {
-  id: number;
-  start: string;
-  end: string;
-};
+  id: number
+  start: string
+  end: string
+}
 
 const timeOptions = Array.from({ length: 96 }, (_, i) => {
-  const hours = Math.floor(i / 4);
-  const minutes = (i % 4) * 15;
-  const period = hours < 12 ? "AM" : "PM";
-  const displayHours = hours % 12 === 0 ? 12 : hours % 12;
-  return `${displayHours}:${minutes.toString().padStart(2, "0")} ${period}`;
-});
+  const hours = Math.floor(i / 4)
+  const minutes = (i % 4) * 15
+  const period = hours < 12 ? "AM" : "PM"
+  const displayHours = hours % 12 === 0 ? 12 : hours % 12
+  return `${displayHours}:${minutes.toString().padStart(2, "0")} ${period}`
+})
 
-const timeIndex = (time: string) => timeOptions.indexOf(time);
+const timeIndex = (time: string) => timeOptions.indexOf(time)
 
-let rangeId = 0;
+let rangeId = 0
 const createRange = (start: string, end: string): TimeRange => ({
   end,
   id: ++rangeId,
   start,
-});
+})
 
 const defaultAvailability: Record<Day, TimeRange[]> = {
   Friday: [createRange("9:00 AM", "5:00 PM")],
@@ -76,7 +81,7 @@ const defaultAvailability: Record<Day, TimeRange[]> = {
     createRange("3:00 PM", "5:00 PM"),
   ],
   Wednesday: [createRange("9:00 AM", "5:00 PM")],
-};
+}
 
 function TimeCombobox({
   ariaLabel,
@@ -85,11 +90,11 @@ function TimeCombobox({
   onChange,
   value,
 }: {
-  ariaLabel: string;
-  id: string;
-  items: string[];
-  onChange: (time: string) => void;
-  value: string;
+  ariaLabel: string
+  id: string
+  items: string[]
+  onChange: (time: string) => void
+  value: string
 }) {
   return (
     <Combobox
@@ -97,7 +102,7 @@ function TimeCombobox({
       items={items}
       onValueChange={(time) => {
         if (typeof time === "string") {
-          onChange(time);
+          onChange(time)
         }
       }}
       value={value}
@@ -135,7 +140,7 @@ function TimeCombobox({
         </ComboboxList>
       </ComboboxPopup>
     </Combobox>
-  );
+  )
 }
 
 function CopyTimesPopover({
@@ -143,19 +148,19 @@ function CopyTimesPopover({
   disabled,
   onCopy,
 }: {
-  day: Day;
-  disabled: boolean;
-  onCopy: (targets: Day[]) => void;
+  day: Day
+  disabled: boolean
+  onCopy: (targets: Day[]) => void
 }) {
-  const [open, setOpen] = useState(false);
-  const [selectedDays, setSelectedDays] = useState<string[]>([]);
+  const [open, setOpen] = useState(false)
+  const [selectedDays, setSelectedDays] = useState<string[]>([])
 
   return (
     <Popover
       onOpenChange={(nextOpen) => {
-        setOpen(nextOpen);
+        setOpen(nextOpen)
         if (nextOpen) {
-          setSelectedDays([]);
+          setSelectedDays([])
         }
       }}
       open={open}
@@ -181,7 +186,7 @@ function CopyTimesPopover({
       </Tooltip>
       <PopoverPopup align="end" className="w-44">
         <div className="flex flex-col gap-3">
-          <div className="font-medium text-foreground text-sm">
+          <div className="text-foreground text-sm font-medium">
             Copy times to
           </div>
           <CheckboxGroup
@@ -201,8 +206,8 @@ function CopyTimesPopover({
           <Button
             disabled={selectedDays.length === 0}
             onClick={() => {
-              onCopy(selectedDays as Day[]);
-              setOpen(false);
+              onCopy(selectedDays as Day[])
+              setOpen(false)
             }}
             size="sm"
           >
@@ -211,62 +216,62 @@ function CopyTimesPopover({
         </div>
       </PopoverPopup>
     </Popover>
-  );
+  )
 }
 
 export default function Particle() {
-  const id = useId();
+  const id = useId()
   const [availability, setAvailability] =
-    useState<Record<Day, TimeRange[]>>(defaultAvailability);
+    useState<Record<Day, TimeRange[]>>(defaultAvailability)
 
   const setDayRanges = (day: Day, ranges: TimeRange[]) => {
-    setAvailability((prev) => ({ ...prev, [day]: ranges }));
-  };
+    setAvailability((prev) => ({ ...prev, [day]: ranges }))
+  }
 
   const toggleDay = (day: Day, enabled: boolean) => {
-    setDayRanges(day, enabled ? [createRange("9:00 AM", "5:00 PM")] : []);
-  };
+    setDayRanges(day, enabled ? [createRange("9:00 AM", "5:00 PM")] : [])
+  }
 
   const addRange = (day: Day) => {
-    const ranges = availability[day];
-    const lastRange = ranges[ranges.length - 1];
+    const ranges = availability[day]
+    const lastRange = ranges[ranges.length - 1]
     if (!lastRange) {
-      setDayRanges(day, [createRange("9:00 AM", "5:00 PM")]);
-      return;
+      setDayRanges(day, [createRange("9:00 AM", "5:00 PM")])
+      return
     }
     const startIndex = Math.min(
       timeIndex(lastRange.end) + 4,
       timeOptions.length - 2,
-    );
-    const endIndex = Math.min(startIndex + 4, timeOptions.length - 1);
+    )
+    const endIndex = Math.min(startIndex + 4, timeOptions.length - 1)
     setDayRanges(day, [
       ...ranges,
       createRange(timeOptions[startIndex] ?? "", timeOptions[endIndex] ?? ""),
-    ]);
-  };
+    ])
+  }
 
   const removeRange = (day: Day, id: number) => {
     setDayRanges(
       day,
       availability[day].filter((range) => range.id !== id),
-    );
-  };
+    )
+  }
 
   const updateStart = (day: Day, id: number, start: string) => {
     setDayRanges(
       day,
       availability[day].map((range) => {
-        if (range.id !== id) return range;
+        if (range.id !== id) return range
         const end =
           timeIndex(start) >= timeIndex(range.end)
             ? (timeOptions[
                 Math.min(timeIndex(start) + 4, timeOptions.length - 1)
               ] ?? range.end)
-            : range.end;
-        return { ...range, end, start };
+            : range.end
+        return { ...range, end, start }
       }),
-    );
-  };
+    )
+  }
 
   const updateEnd = (day: Day, id: number, end: string) => {
     setDayRanges(
@@ -274,30 +279,30 @@ export default function Particle() {
       availability[day].map((range) =>
         range.id === id ? { ...range, end } : range,
       ),
-    );
-  };
+    )
+  }
 
   const copyTo = (source: Day, targets: Day[]) => {
     setAvailability((prev) => {
-      const next = { ...prev };
+      const next = { ...prev }
       for (const target of targets) {
         next[target] = prev[source].map((range) =>
           createRange(range.start, range.end),
-        );
+        )
       }
-      return next;
-    });
-  };
+      return next
+    })
+  }
 
   return (
     <TooltipProvider delay={0}>
       <div className="divide-y">
         {days.map((day) => {
-          const ranges = availability[day];
-          const lastRange = ranges[ranges.length - 1];
+          const ranges = availability[day]
+          const lastRange = ranges[ranges.length - 1]
           const addDisabled = lastRange
             ? timeIndex(lastRange.end) >= timeOptions.length - 2
-            : false;
+            : false
 
           return (
             <div
@@ -314,13 +319,13 @@ export default function Particle() {
               <div className="flex w-full min-w-0 items-start gap-4 md:flex-1">
                 <div className="flex min-w-0 flex-col gap-2">
                   {ranges.length === 0 ? (
-                    <p className="flex h-8 items-center text-muted-foreground sm:h-7 sm:text-sm">
+                    <p className="text-muted-foreground flex h-8 items-center sm:h-7 sm:text-sm">
                       Unavailable
                     </p>
                   ) : (
                     ranges.map((range) => {
-                      const startId = `${id}-start-${range.id}`;
-                      const endId = `${id}-end-${range.id}`;
+                      const startId = `${id}-start-${range.id}`
+                      const endId = `${id}-end-${range.id}`
 
                       return (
                         <div className="flex items-center gap-2" key={range.id}>
@@ -369,7 +374,7 @@ export default function Particle() {
                             <TooltipPopup>Delete range</TooltipPopup>
                           </Tooltip>
                         </div>
-                      );
+                      )
                     })
                   )}
                 </div>
@@ -398,9 +403,9 @@ export default function Particle() {
                 </div>
               </div>
             </div>
-          );
+          )
         })}
       </div>
     </TooltipProvider>
-  );
+  )
 }

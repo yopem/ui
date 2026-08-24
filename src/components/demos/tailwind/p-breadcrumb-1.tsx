@@ -7,14 +7,14 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from "@/components/ui/tailwind/breadcrumb";
-import { Button } from "@/components/ui/tailwind/button";
+} from "@/components/ui/tailwind/breadcrumb"
+import { Button } from "@/components/ui/tailwind/button"
 import {
   Menu,
   MenuItem,
   MenuPopup,
   MenuTrigger,
-} from "@/components/ui/tailwind/menu";
+} from "@/components/ui/tailwind/menu"
 
 export default function Particle() {
   return (
@@ -29,7 +29,7 @@ export default function Particle() {
             <MenuTrigger
               render={
                 <Button
-                  className="-m-1.5 text-muted-foreground"
+                  className="text-muted-foreground -m-1.5"
                   size="icon-sm"
                   variant="ghost"
                 />
@@ -55,5 +55,5 @@ export default function Particle() {
         </BreadcrumbItem>
       </BreadcrumbList>
     </Breadcrumb>
-  );
+  )
 }

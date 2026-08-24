@@ -6,15 +6,16 @@ import {
   FilmIcon,
   ShareIcon,
   TrashIcon,
-} from "lucide-react";
-import { Button } from "@/components/ui/tailwind/button";
-import { Group, GroupSeparator } from "@/components/ui/tailwind/group";
+} from "lucide-react"
+
+import { Button } from "@/components/ui/tailwind/button"
+import { Group, GroupSeparator } from "@/components/ui/tailwind/group"
 import {
   Menu,
   MenuItem,
   MenuPopup,
   MenuTrigger,
-} from "@/components/ui/tailwind/menu";
+} from "@/components/ui/tailwind/menu"
 
 export default function Particle() {
   return (
@@ -53,5 +54,5 @@ export default function Particle() {
         </MenuPopup>
       </Menu>
     </Group>
-  );
+  )
 }

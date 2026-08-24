@@ -1,32 +1,33 @@
-"use client";
+"use client"
 
-import { useRef, useState } from "react";
-import { Button } from "@/components/ui/tailwind/button";
-import { Spinner } from "@/components/ui/tailwind/spinner";
-import { anchoredToastManager } from "@/components/ui/tailwind/toast";
+import { useRef, useState } from "react"
+
+import { Button } from "@/components/ui/tailwind/button"
+import { Spinner } from "@/components/ui/tailwind/spinner"
+import { anchoredToastManager } from "@/components/ui/tailwind/toast"
 
 export default function Particle() {
-  const submitRef = useRef<HTMLButtonElement>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const toastIdRef = useRef<string | null>(null);
+  const submitRef = useRef<HTMLButtonElement>(null)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const toastIdRef = useRef<string | null>(null)
 
   function handleSubmit() {
-    if (!submitRef.current || isSubmitting) return;
+    if (!submitRef.current || isSubmitting) return
 
     if (toastIdRef.current) {
-      anchoredToastManager.close(toastIdRef.current);
-      toastIdRef.current = null;
+      anchoredToastManager.close(toastIdRef.current)
+      toastIdRef.current = null
     }
 
-    setIsSubmitting(true);
+    setIsSubmitting(true)
 
     new Promise<void>((_, reject) => {
       setTimeout(() => {
-        setIsSubmitting(false);
+        setIsSubmitting(false)
         reject(
           new Error("The server is not responding. Please try again later."),
-        );
-      }, 2000);
+        )
+      }, 2000)
     }).catch((error: Error) => {
       toastIdRef.current = anchoredToastManager.add({
         description: error.message,
@@ -36,8 +37,8 @@ export default function Particle() {
         },
         title: "Error submitting form",
         type: "error",
-      });
-    });
+      })
+    })
   }
 
   return (
@@ -56,5 +57,5 @@ export default function Particle() {
         "Submit"
       )}
     </Button>
-  );
+  )
 }

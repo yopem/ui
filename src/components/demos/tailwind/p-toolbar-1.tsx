@@ -1,4 +1,4 @@
-"use client";
+"use client"
 
 import {
   AlignCenterIcon,
@@ -6,37 +6,38 @@ import {
   AlignRightIcon,
   DollarSignIcon,
   PercentIcon,
-} from "lucide-react";
-import { Button } from "@/components/ui/tailwind/button";
+} from "lucide-react"
+
+import { Button } from "@/components/ui/tailwind/button"
 import {
   Select,
   SelectItem,
   SelectPopup,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/tailwind/select";
+} from "@/components/ui/tailwind/select"
 import {
   ToggleGroup,
   ToggleGroupItem,
-} from "@/components/ui/tailwind/toggle-group";
+} from "@/components/ui/tailwind/toggle-group"
 import {
   Toolbar,
   ToolbarButton,
   ToolbarGroup,
   ToolbarSeparator,
-} from "@/components/ui/tailwind/toolbar";
+} from "@/components/ui/tailwind/toolbar"
 import {
   Tooltip,
   TooltipPopup,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/ui/tailwind/tooltip";
+} from "@/components/ui/tailwind/tooltip"
 
 const items = [
   { label: "Helvetica", value: "helvetica" },
   { label: "Arial", value: "arial" },
   { label: "Times New Roman", value: "times-new-roman" },
-];
+]
 
 export default function Particle() {
   return (
@@ -153,5 +154,5 @@ export default function Particle() {
         </ToolbarGroup>
       </Toolbar>
     </TooltipProvider>
-  );
+  )
 }

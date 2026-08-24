@@ -1,4 +1,4 @@
-import { ScrollArea } from "@/components/ui/tailwind/scroll-area";
+import { ScrollArea } from "@/components/ui/tailwind/scroll-area"
 
 export default function Particle() {
   return (
@@ -20,5 +20,5 @@ export default function Particle() {
         Alice.
       </p>
     </ScrollArea>
-  );
+  )
 }

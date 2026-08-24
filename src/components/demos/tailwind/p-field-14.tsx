@@ -1,13 +1,13 @@
-"use client";
+"use client"
 
 import {
   Field,
   FieldDescription,
   FieldItem,
   FieldLabel,
-} from "@/components/ui/tailwind/field";
-import { Fieldset, FieldsetLegend } from "@/components/ui/tailwind/fieldset";
-import { Radio, RadioGroup } from "@/components/ui/tailwind/radio-group";
+} from "@/components/ui/tailwind/field"
+import { Fieldset, FieldsetLegend } from "@/components/ui/tailwind/fieldset"
+import { Radio, RadioGroup } from "@/components/ui/tailwind/radio-group"
 
 export default function Particle() {
   return (
@@ -16,7 +16,7 @@ export default function Particle() {
       name="plan"
       render={(props) => <Fieldset {...props} />}
     >
-      <FieldsetLegend className="font-medium text-sm">
+      <FieldsetLegend className="text-sm font-medium">
         Choose Plan
       </FieldsetLegend>
       <RadioGroup defaultValue="free">
@@ -38,5 +38,5 @@ export default function Particle() {
       </RadioGroup>
       <FieldDescription>Select the plan that fits your needs.</FieldDescription>
     </Field>
-  );
+  )
 }

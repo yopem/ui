@@ -1,20 +1,21 @@
-"use client";
+"use client"
 
-import { Code2Icon, GlobeIcon, LayersIcon, ZapIcon } from "lucide-react";
+import { Code2Icon, GlobeIcon, LayersIcon, ZapIcon } from "lucide-react"
+
 import {
   Select,
   SelectItem,
   SelectPopup,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/tailwind/select";
+} from "@/components/ui/tailwind/select"
 
 const items = [
   { icon: LayersIcon, label: "Components", value: "components" },
   { icon: ZapIcon, label: "Performance", value: "performance" },
   { icon: GlobeIcon, label: "Network", value: "network" },
   { icon: Code2Icon, label: "Development", value: "development" },
-];
+]
 
 export default function Particle() {
   return (
@@ -44,5 +45,5 @@ export default function Particle() {
         ))}
       </SelectPopup>
     </Select>
-  );
+  )
 }

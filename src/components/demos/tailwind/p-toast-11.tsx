@@ -1,9 +1,9 @@
-"use client";
+"use client"
 
-import { Button } from "@/components/ui/tailwind/button";
-import { toastManager } from "@/components/ui/tailwind/toast";
+import { Button } from "@/components/ui/tailwind/button"
+import { toastManager } from "@/components/ui/tailwind/toast"
 
-const ERROR_TOAST_ID = "coss-demo-error-upsert";
+const ERROR_TOAST_ID = "coss-demo-error-upsert"
 
 export default function Particle() {
   return (
@@ -15,11 +15,11 @@ export default function Particle() {
           id: ERROR_TOAST_ID,
           title: "Something went wrong",
           type: "error",
-        });
+        })
       }}
       variant="outline"
     >
       One Error Toast
     </Button>
-  );
+  )
 }

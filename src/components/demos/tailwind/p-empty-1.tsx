@@ -1,5 +1,6 @@
-import { BookIcon, RouteIcon } from "lucide-react";
-import { Button } from "@/components/ui/tailwind/button";
+import { BookIcon, RouteIcon } from "lucide-react"
+
+import { Button } from "@/components/ui/tailwind/button"
 import {
   Empty,
   EmptyContent,
@@ -7,7 +8,7 @@ import {
   EmptyHeader,
   EmptyMedia,
   EmptyTitle,
-} from "@/components/ui/tailwind/empty";
+} from "@/components/ui/tailwind/empty"
 
 export default function Particle() {
   return (
@@ -29,5 +30,5 @@ export default function Particle() {
         </div>
       </EmptyContent>
     </Empty>
-  );
+  )
 }

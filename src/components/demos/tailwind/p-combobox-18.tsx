@@ -1,6 +1,7 @@
-"use client";
+"use client"
 
-import { SearchIcon } from "lucide-react";
+import { SearchIcon } from "lucide-react"
+
 import {
   Combobox,
   ComboboxEmpty,
@@ -10,8 +11,8 @@ import {
   ComboboxPopup,
   ComboboxTrigger,
   ComboboxValue,
-} from "@/components/ui/tailwind/combobox";
-import { SelectButton } from "@/components/ui/tailwind/select";
+} from "@/components/ui/tailwind/combobox"
+import { SelectButton } from "@/components/ui/tailwind/select"
 
 const items = [
   { label: "Apple", value: "apple" },
@@ -24,7 +25,7 @@ const items = [
   { label: "Kiwi", value: "kiwi" },
   { label: "Peach", value: "peach" },
   { label: "Pear", value: "pear" },
-];
+]
 
 export default function Particle() {
   return (
@@ -51,5 +52,5 @@ export default function Particle() {
         </ComboboxList>
       </ComboboxPopup>
     </Combobox>
-  );
+  )
 }

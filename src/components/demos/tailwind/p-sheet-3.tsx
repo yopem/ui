@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/tailwind/button";
+import { Button } from "@/components/ui/tailwind/button"
 import {
   Sheet,
   SheetDescription,
@@ -7,7 +7,7 @@ import {
   SheetPopup,
   SheetTitle,
   SheetTrigger,
-} from "@/components/ui/tailwind/sheet";
+} from "@/components/ui/tailwind/sheet"
 
 export default function Particle() {
   return (
@@ -101,5 +101,5 @@ export default function Particle() {
         </SheetPopup>
       </Sheet>
     </div>
-  );
+  )
 }

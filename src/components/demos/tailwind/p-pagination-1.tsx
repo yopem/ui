@@ -6,7 +6,7 @@ import {
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
-} from "@/components/ui/tailwind/pagination";
+} from "@/components/ui/tailwind/pagination"
 
 export default function Particle() {
   return (
@@ -34,5 +34,5 @@ export default function Particle() {
         </PaginationItem>
       </PaginationContent>
     </Pagination>
-  );
+  )
 }

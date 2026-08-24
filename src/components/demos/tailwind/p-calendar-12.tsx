@@ -1,11 +1,13 @@
-"use client";
+"use client"
 
-import type { WeekNumberProps } from "@daypicker/react";
-import { useState } from "react";
-import { Calendar } from "@/components/ui/tailwind/calendar";
+import type { WeekNumberProps } from "@daypicker/react"
+
+import { useState } from "react"
+
+import { Calendar } from "@/components/ui/tailwind/calendar"
 
 export default function Particle() {
-  const [date, setDate] = useState<Date | undefined>(new Date());
+  const [date, setDate] = useState<Date | undefined>(new Date())
 
   return (
     <Calendar
@@ -17,7 +19,7 @@ export default function Particle() {
                 {week.weekNumber}
               </span>
             </th>
-          );
+          )
         },
       }}
       fixedWeeks
@@ -26,5 +28,5 @@ export default function Particle() {
       selected={date}
       showWeekNumber
     />
-  );
+  )
 }

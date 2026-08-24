@@ -1,7 +1,8 @@
-"use client";
+"use client"
 
-import { ChevronsUpDownIcon, SearchIcon } from "lucide-react";
-import { Button } from "@/components/ui/tailwind/button";
+import { ChevronsUpDownIcon, SearchIcon } from "lucide-react"
+
+import { Button } from "@/components/ui/tailwind/button"
 import {
   Combobox,
   ComboboxEmpty,
@@ -11,13 +12,13 @@ import {
   ComboboxPopup,
   ComboboxTrigger,
   ComboboxValue,
-} from "@/components/ui/tailwind/combobox";
+} from "@/components/ui/tailwind/combobox"
 
 interface Country {
-  code: string;
-  value: string | null;
-  continent: string;
-  label: string;
+  code: string
+  value: string | null
+  continent: string
+  label: string
 }
 
 const countries: Country[] = [
@@ -429,7 +430,7 @@ const countries: Country[] = [
   { code: "ye", continent: "Asia", label: "Yemen", value: "yemen" },
   { code: "zm", continent: "Africa", label: "Zambia", value: "zambia" },
   { code: "zw", continent: "Africa", label: "Zimbabwe", value: "zimbabwe" },
-];
+]
 
 export default function Particle() {
   return (
@@ -464,5 +465,5 @@ export default function Particle() {
         </ComboboxList>
       </ComboboxPopup>
     </Combobox>
-  );
+  )
 }

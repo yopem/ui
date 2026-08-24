@@ -1,23 +1,24 @@
-"use client";
+"use client"
 
-import { CheckIcon, CopyIcon } from "lucide-react";
-import { useRef } from "react";
-import { useCopyToClipboard } from "@/hooks/use-copy-to-clipboard";
-import { Button } from "@/components/ui/tailwind/button";
+import { CheckIcon, CopyIcon } from "lucide-react"
+import { useRef } from "react"
+
+import { Button } from "@/components/ui/tailwind/button"
 import {
   InputGroup,
   InputGroupAddon,
   InputGroupInput,
-} from "@/components/ui/tailwind/input-group";
+} from "@/components/ui/tailwind/input-group"
 import {
   Tooltip,
   TooltipPopup,
   TooltipTrigger,
-} from "@/components/ui/tailwind/tooltip";
+} from "@/components/ui/tailwind/tooltip"
+import { useCopyToClipboard } from "@/hooks/use-copy-to-clipboard"
 
 export default function Particle() {
-  const { copyToClipboard, isCopied } = useCopyToClipboard();
-  const inputRef = useRef<HTMLInputElement>(null);
+  const { copyToClipboard, isCopied } = useCopyToClipboard()
+  const inputRef = useRef<HTMLInputElement>(null)
 
   return (
     <InputGroup>
@@ -35,7 +36,7 @@ export default function Particle() {
                 aria-label="Copy"
                 onClick={() => {
                   if (inputRef.current) {
-                    copyToClipboard(inputRef.current.value);
+                    copyToClipboard(inputRef.current.value)
                   }
                 }}
                 size="icon-xs"
@@ -51,5 +52,5 @@ export default function Particle() {
         </Tooltip>
       </InputGroupAddon>
     </InputGroup>
-  );
+  )
 }

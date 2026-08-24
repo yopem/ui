@@ -1,25 +1,26 @@
-"use client";
+"use client"
 
-import { CheckIcon, CopyIcon } from "lucide-react";
-import { useRef, useState } from "react";
-import { Button } from "@/components/ui/tailwind/button";
+import { CheckIcon, CopyIcon } from "lucide-react"
+import { useRef, useState } from "react"
+
+import { Button } from "@/components/ui/tailwind/button"
 import {
   InputGroup,
   InputGroupAddon,
   InputGroupTextarea,
-} from "@/components/ui/tailwind/input-group";
+} from "@/components/ui/tailwind/input-group"
 import {
   Select,
   SelectItem,
   SelectPopup,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/tailwind/select";
+} from "@/components/ui/tailwind/select"
 import {
   Tooltip,
   TooltipPopup,
   TooltipTrigger,
-} from "@/components/ui/tailwind/tooltip";
+} from "@/components/ui/tailwind/tooltip"
 
 const languages = [
   { label: "JavaScript", value: "javascript" },
@@ -27,18 +28,18 @@ const languages = [
   { label: "Python", value: "python" },
   { label: "Go", value: "go" },
   { label: "Rust", value: "rust" },
-];
+]
 
 export default function Particle() {
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const [copied, setCopied] = useState(false);
+  const textareaRef = useRef<HTMLTextAreaElement>(null)
+  const [copied, setCopied] = useState(false)
 
   const handleCopy = () => {
-    const content = textareaRef.current?.value || "";
-    navigator.clipboard.writeText(content);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
+    const content = textareaRef.current?.value || ""
+    navigator.clipboard.writeText(content)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+  }
 
   return (
     <InputGroup>
@@ -50,7 +51,7 @@ export default function Particle() {
       />
       <InputGroupAddon
         align="block-start"
-        className="justify-between rounded-t-lg border-b bg-muted/72 p-2!"
+        className="bg-muted/72 justify-between rounded-t-lg border-b p-2!"
       >
         <Select defaultValue="javascript" items={languages}>
           <SelectTrigger className="w-fit" size="sm">
@@ -83,5 +84,5 @@ export default function Particle() {
         </Tooltip>
       </InputGroupAddon>
     </InputGroup>
-  );
+  )
 }

@@ -1,10 +1,10 @@
-import { Label } from "@/components/ui/tailwind/label";
-import { Radio, RadioGroup } from "@/components/ui/tailwind/radio-group";
+import { Label } from "@/components/ui/tailwind/label"
+import { Radio, RadioGroup } from "@/components/ui/tailwind/radio-group"
 
 export default function Particle() {
   return (
     <RadioGroup defaultValue="r-1">
-      <Label className="flex items-start gap-2 rounded-lg border p-3 hover:bg-accent/50 has-data-checked:border-primary/48 has-data-checked:bg-accent/50">
+      <Label className="hover:bg-accent/50 has-data-checked:border-primary/48 has-data-checked:bg-accent/50 flex items-start gap-2 rounded-lg border p-3">
         <Radio value="r-1" />
         <div className="flex flex-col gap-1">
           <p>Email</p>
@@ -13,7 +13,7 @@ export default function Particle() {
           </p>
         </div>
       </Label>
-      <Label className="flex items-start gap-2 rounded-lg border p-3 hover:bg-accent/50 has-data-checked:border-primary/48 has-data-checked:bg-accent/50">
+      <Label className="hover:bg-accent/50 has-data-checked:border-primary/48 has-data-checked:bg-accent/50 flex items-start gap-2 rounded-lg border p-3">
         <Radio value="r-2" />
         <div className="flex flex-col gap-1">
           <p>SMS</p>
@@ -23,5 +23,5 @@ export default function Particle() {
         </div>
       </Label>
     </RadioGroup>
-  );
+  )
 }

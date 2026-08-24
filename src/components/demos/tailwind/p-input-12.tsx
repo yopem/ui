@@ -2,8 +2,8 @@ import {
   InputGroup,
   InputGroupAddon,
   InputGroupInput,
-} from "@/components/ui/tailwind/input-group";
-import { Spinner } from "@/components/ui/tailwind/spinner";
+} from "@/components/ui/tailwind/input-group"
+import { Spinner } from "@/components/ui/tailwind/spinner"
 
 export default function Particle() {
   return (
@@ -13,5 +13,5 @@ export default function Particle() {
         <Spinner />
       </InputGroupAddon>
     </InputGroup>
-  );
+  )
 }

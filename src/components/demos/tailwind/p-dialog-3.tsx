@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/tailwind/button";
+import { Button } from "@/components/ui/tailwind/button"
 import {
   Dialog,
   DialogClose,
@@ -9,9 +9,9 @@ import {
   DialogPopup,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/tailwind/dialog";
-import { Field, FieldLabel } from "@/components/ui/tailwind/field";
-import { Input } from "@/components/ui/tailwind/input";
+} from "@/components/ui/tailwind/dialog"
+import { Field, FieldLabel } from "@/components/ui/tailwind/field"
+import { Input } from "@/components/ui/tailwind/input"
 
 export default function Particle() {
   return (
@@ -29,11 +29,11 @@ export default function Particle() {
         <DialogPanel className="grid gap-4">
           <div className="grid gap-1">
             <p className="text-muted-foreground text-sm">Name</p>
-            <p className="font-medium text-sm">Bora Baloglu</p>
+            <p className="text-sm font-medium">Bora Baloglu</p>
           </div>
           <div className="grid gap-1">
             <p className="text-muted-foreground text-sm">Email</p>
-            <p className="font-medium text-sm">bora@example.com</p>
+            <p className="text-sm font-medium">bora@example.com</p>
           </div>
         </DialogPanel>
         <DialogFooter>
@@ -69,5 +69,5 @@ export default function Particle() {
         </DialogFooter>
       </DialogPopup>
     </Dialog>
-  );
+  )
 }

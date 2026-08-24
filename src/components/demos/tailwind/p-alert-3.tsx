@@ -1,11 +1,12 @@
-import { InfoIcon } from "lucide-react";
+import { InfoIcon } from "lucide-react"
+
 import {
   Alert,
   AlertAction,
   AlertDescription,
   AlertTitle,
-} from "@/components/ui/tailwind/alert";
-import { Button } from "@/components/ui/tailwind/button";
+} from "@/components/ui/tailwind/alert"
+import { Button } from "@/components/ui/tailwind/button"
 
 export default function Particle() {
   return (
@@ -22,5 +23,5 @@ export default function Particle() {
         <Button size="xs">Ok</Button>
       </AlertAction>
     </Alert>
-  );
+  )
 }

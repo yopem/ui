@@ -1,45 +1,47 @@
-"use client";
+"use client"
 
-import type { FormEvent } from "react";
-import { useState } from "react";
-import { Button } from "@/components/ui/tailwind/button";
-import { Checkbox } from "@/components/ui/tailwind/checkbox";
+import type { FormEvent } from "react"
+
+import { useState } from "react"
+
+import { Button } from "@/components/ui/tailwind/button"
+import { Checkbox } from "@/components/ui/tailwind/checkbox"
 import {
   Field,
   FieldDescription,
   FieldError,
   FieldLabel,
-} from "@/components/ui/tailwind/field";
-import { Form } from "@/components/ui/tailwind/form";
-import { Input } from "@/components/ui/tailwind/input";
+} from "@/components/ui/tailwind/field"
+import { Form } from "@/components/ui/tailwind/form"
+import { Input } from "@/components/ui/tailwind/input"
 import {
   Select,
   SelectItem,
   SelectPopup,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/tailwind/select";
+} from "@/components/ui/tailwind/select"
 
 export default function Particle() {
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false)
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-    setLoading(true);
-    await new Promise((r) => setTimeout(r, 800));
-    setLoading(false);
+    e.preventDefault()
+    const formData = new FormData(e.currentTarget)
+    setLoading(true)
+    await new Promise((r) => setTimeout(r, 800))
+    setLoading(false)
     const data = {
       email: formData.get("email"),
       fullName: formData.get("fullName"),
       newsletter: formData.get("newsletter"),
       role: formData.get("role"),
-    };
+    }
     alert(
       `Full name: ${data.fullName || ""}\nEmail: ${data.email || ""}\nRole: ${
         data.role || ""
       }\nNewsletter: ${data.newsletter}`,
-    );
-  };
+    )
+  }
   return (
     <Form className="flex w-full flex-col gap-4" onSubmit={onSubmit}>
       <Field name="fullName">
@@ -95,5 +97,5 @@ export default function Particle() {
         Submit
       </Button>
     </Form>
-  );
+  )
 }

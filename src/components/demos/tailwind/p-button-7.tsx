@@ -1,5 +1,5 @@
-import { Button } from "@/components/ui/tailwind/button";
+import { Button } from "@/components/ui/tailwind/button"
 
 export default function Particle() {
-  return <Button variant="link">Link</Button>;
+  return <Button variant="link">Link</Button>
 }

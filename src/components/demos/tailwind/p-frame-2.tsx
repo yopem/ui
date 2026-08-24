@@ -1,11 +1,12 @@
-import { ChevronDownIcon, TrashIcon } from "lucide-react";
-import { Button } from "@/components/ui/tailwind/button";
+import { ChevronDownIcon, TrashIcon } from "lucide-react"
+
+import { Button } from "@/components/ui/tailwind/button"
 import {
   Collapsible,
   CollapsiblePanel,
   CollapsibleTrigger,
-} from "@/components/ui/tailwind/collapsible";
-import { Frame, FrameHeader, FramePanel } from "@/components/ui/tailwind/frame";
+} from "@/components/ui/tailwind/collapsible"
+import { Frame, FrameHeader, FramePanel } from "@/components/ui/tailwind/frame"
 
 export default function Particle() {
   return (
@@ -25,11 +26,11 @@ export default function Particle() {
         </FrameHeader>
         <CollapsiblePanel>
           <FramePanel>
-            <h2 className="font-semibold text-sm">Section title</h2>
+            <h2 className="text-sm font-semibold">Section title</h2>
             <p className="text-muted-foreground text-sm">Section description</p>
           </FramePanel>
         </CollapsiblePanel>
       </Collapsible>
     </Frame>
-  );
+  )
 }

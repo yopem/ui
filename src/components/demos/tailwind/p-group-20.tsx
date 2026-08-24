@@ -1,6 +1,6 @@
-import { Button } from "@/components/ui/tailwind/button";
-import { Group, GroupSeparator } from "@/components/ui/tailwind/group";
-import { Input } from "@/components/ui/tailwind/input";
+import { Button } from "@/components/ui/tailwind/button"
+import { Group, GroupSeparator } from "@/components/ui/tailwind/group"
+import { Input } from "@/components/ui/tailwind/input"
 
 export default function Particle() {
   return (
@@ -9,5 +9,5 @@ export default function Particle() {
       <GroupSeparator />
       <Button variant="outline">Subscribe</Button>
     </Group>
-  );
+  )
 }

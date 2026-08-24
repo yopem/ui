@@ -1,7 +1,8 @@
-"use client";
+"use client"
 
-import { XIcon } from "lucide-react";
-import { Button } from "@/components/ui/tailwind/button";
+import { XIcon } from "lucide-react"
+
+import { Button } from "@/components/ui/tailwind/button"
 import {
   Popover,
   PopoverClose,
@@ -9,7 +10,7 @@ import {
   PopoverPopup,
   PopoverTitle,
   PopoverTrigger,
-} from "@/components/ui/tailwind/popover";
+} from "@/components/ui/tailwind/popover"
 
 export default function Particle() {
   return (
@@ -34,5 +35,5 @@ export default function Particle() {
         <PopoverClose render={<Button variant="outline" />}>Close</PopoverClose>
       </PopoverPopup>
     </Popover>
-  );
+  )
 }

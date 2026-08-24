@@ -1,12 +1,13 @@
-"use client";
+"use client"
 
-import { Volume2Icon, VolumeXIcon } from "lucide-react";
-import { useState } from "react";
-import { Field, FieldLabel } from "@/components/ui/tailwind/field";
-import { Slider, SliderValue } from "@/components/ui/tailwind/slider";
+import { Volume2Icon, VolumeXIcon } from "lucide-react"
+import { useState } from "react"
+
+import { Field, FieldLabel } from "@/components/ui/tailwind/field"
+import { Slider, SliderValue } from "@/components/ui/tailwind/slider"
 
 export default function Particle() {
-  const [value, setValue] = useState<number | readonly number[]>(25);
+  const [value, setValue] = useState<number | readonly number[]>(25)
 
   return (
     <Field className="*:grid *:grid-cols-[auto_1fr_auto] *:items-center *:gap-x-2">
@@ -25,5 +26,5 @@ export default function Particle() {
         />
       </Slider>
     </Field>
-  );
+  )
 }

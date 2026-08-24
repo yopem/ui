@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/tailwind/button";
+import { Button } from "@/components/ui/tailwind/button"
 import {
   Drawer,
   DrawerClose,
@@ -9,7 +9,7 @@ import {
   DrawerPopup,
   DrawerTitle,
   DrawerTrigger,
-} from "@/components/ui/tailwind/drawer";
+} from "@/components/ui/tailwind/drawer"
 
 export default function Particle() {
   return (
@@ -44,7 +44,7 @@ export default function Particle() {
               </DrawerHeader>
               <DrawerPanel>
                 <div className="flex justify-center">
-                  <div className="size-48 shrink-0 rounded-xl border bg-muted" />
+                  <div className="bg-muted size-48 shrink-0 rounded-xl border" />
                 </div>
               </DrawerPanel>
               <DrawerFooter
@@ -68,7 +68,7 @@ export default function Particle() {
                     </DrawerHeader>
                     <DrawerPanel>
                       <div className="flex justify-center">
-                        <div className="size-32 shrink-0 rounded-full border bg-muted" />
+                        <div className="bg-muted size-32 shrink-0 rounded-full border" />
                       </div>
                     </DrawerPanel>
                   </DrawerPopup>
@@ -79,5 +79,5 @@ export default function Particle() {
         </DrawerFooter>
       </DrawerPopup>
     </Drawer>
-  );
+  )
 }

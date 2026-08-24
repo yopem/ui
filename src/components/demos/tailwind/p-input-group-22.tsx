@@ -1,16 +1,17 @@
-"use client";
+"use client"
 
-import { XIcon } from "lucide-react";
-import { useState } from "react";
-import { Button } from "@/components/ui/tailwind/button";
+import { XIcon } from "lucide-react"
+import { useState } from "react"
+
+import { Button } from "@/components/ui/tailwind/button"
 import {
   InputGroup,
   InputGroupAddon,
   InputGroupInput,
-} from "@/components/ui/tailwind/input-group";
+} from "@/components/ui/tailwind/input-group"
 
 export default function Particle() {
-  const [value, setValue] = useState("Clear me");
+  const [value, setValue] = useState("Clear me")
 
   return (
     <InputGroup>
@@ -34,5 +35,5 @@ export default function Particle() {
         </InputGroupAddon>
       )}
     </InputGroup>
-  );
+  )
 }

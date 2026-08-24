@@ -1,8 +1,9 @@
-import { useId } from "react";
-import { Textarea } from "@/components/ui/tailwind/textarea";
+import { useId } from "react"
+
+import { Textarea } from "@/components/ui/tailwind/textarea"
 
 export default function Particle() {
-  const id = useId();
+  const id = useId()
   return (
     <Textarea
       className="read-only:bg-muted"
@@ -10,5 +11,5 @@ export default function Particle() {
       id={id}
       readOnly
     />
-  );
+  )
 }

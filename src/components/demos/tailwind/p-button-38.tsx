@@ -1,5 +1,6 @@
-import { RiGithubFill, RiGoogleFill, RiTwitterXFill } from "@remixicon/react";
-import { Button } from "@/components/ui/tailwind/button";
+import { RiGithubFill, RiGoogleFill, RiTwitterXFill } from "@remixicon/react"
+
+import { Button } from "@/components/ui/tailwind/button"
 
 export default function Particle() {
   return (
@@ -17,5 +18,5 @@ export default function Particle() {
         <span className="flex-1">Login with GitHub</span>
       </Button>
     </div>
-  );
+  )
 }

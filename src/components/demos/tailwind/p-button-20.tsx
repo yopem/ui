@@ -1,5 +1,6 @@
-import { ChevronLeftIcon } from "lucide-react";
-import { Button } from "@/components/ui/tailwind/button";
+import { ChevronLeftIcon } from "lucide-react"
+
+import { Button } from "@/components/ui/tailwind/button"
 
 export default function Particle() {
   return (
@@ -7,5 +8,5 @@ export default function Particle() {
       <ChevronLeftIcon aria-hidden="true" />
       Go back
     </Button>
-  );
+  )
 }

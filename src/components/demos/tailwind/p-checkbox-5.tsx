@@ -1,23 +1,25 @@
-"use client";
+"use client"
 
-import type { FormEvent } from "react";
-import { useState } from "react";
-import { Button } from "@/components/ui/tailwind/button";
-import { Checkbox } from "@/components/ui/tailwind/checkbox";
-import { Field, FieldLabel } from "@/components/ui/tailwind/field";
-import { Form } from "@/components/ui/tailwind/form";
+import type { FormEvent } from "react"
+
+import { useState } from "react"
+
+import { Button } from "@/components/ui/tailwind/button"
+import { Checkbox } from "@/components/ui/tailwind/checkbox"
+import { Field, FieldLabel } from "@/components/ui/tailwind/field"
+import { Form } from "@/components/ui/tailwind/form"
 
 export default function Particle() {
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false)
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-    setLoading(true);
-    await new Promise((r) => setTimeout(r, 800));
-    setLoading(false);
-    const accepted = formData.get("terms");
-    alert(`Terms: ${accepted}`);
-  };
+    e.preventDefault()
+    const formData = new FormData(e.currentTarget)
+    setLoading(true)
+    await new Promise((r) => setTimeout(r, 800))
+    setLoading(false)
+    const accepted = formData.get("terms")
+    alert(`Terms: ${accepted}`)
+  }
   return (
     <Form className="flex w-auto flex-col gap-4" onSubmit={onSubmit}>
       <Field name="terms">
@@ -30,5 +32,5 @@ export default function Particle() {
         Submit
       </Button>
     </Form>
-  );
+  )
 }

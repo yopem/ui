@@ -1,12 +1,13 @@
-"use client";
+"use client"
 
-import { StarIcon } from "lucide-react";
-import { useState } from "react";
-import { Button } from "@/components/ui/tailwind/button";
+import { StarIcon } from "lucide-react"
+import { useState } from "react"
+
+import { Button } from "@/components/ui/tailwind/button"
 
 export default function Particle() {
-  const [isStarred, setIsStarred] = useState(false);
-  const count = isStarred ? 730 : 729;
+  const [isStarred, setIsStarred] = useState(false)
+  const count = isStarred ? 730 : 729
 
   return (
     <Button onClick={() => setIsStarred(!isStarred)}>
@@ -19,5 +20,5 @@ export default function Particle() {
         <span className="text-primary-foreground/60 text-xs">{count}</span>
       </span>
     </Button>
-  );
+  )
 }

@@ -1,6 +1,7 @@
-"use client";
+"use client"
 
-import { useId } from "react";
+import { useId } from "react"
+
 import {
   Autocomplete,
   AutocompleteEmpty,
@@ -8,8 +9,8 @@ import {
   AutocompleteItem,
   AutocompleteList,
   AutocompletePopup,
-} from "@/components/ui/tailwind/autocomplete";
-import { Label } from "@/components/ui/tailwind/label";
+} from "@/components/ui/tailwind/autocomplete"
+import { Label } from "@/components/ui/tailwind/label"
 
 const items = [
   { label: "Apple", value: "apple" },
@@ -22,10 +23,10 @@ const items = [
   { label: "Kiwi", value: "kiwi" },
   { label: "Peach", value: "peach" },
   { label: "Pear", value: "pear" },
-];
+]
 
 export default function Particle() {
-  const id = useId();
+  const id = useId()
   return (
     <Autocomplete items={items}>
       <div className="flex flex-col items-start gap-2">
@@ -47,5 +48,5 @@ export default function Particle() {
         </AutocompleteList>
       </AutocompletePopup>
     </Autocomplete>
-  );
+  )
 }

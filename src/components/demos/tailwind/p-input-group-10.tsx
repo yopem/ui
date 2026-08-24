@@ -1,9 +1,9 @@
-import { Badge } from "@/components/ui/tailwind/badge";
+import { Badge } from "@/components/ui/tailwind/badge"
 import {
   InputGroup,
   InputGroupAddon,
   InputGroupInput,
-} from "@/components/ui/tailwind/input-group";
+} from "@/components/ui/tailwind/input-group"
 
 export default function Particle() {
   return (
@@ -13,5 +13,5 @@ export default function Particle() {
         <Badge variant="info">Badge</Badge>
       </InputGroupAddon>
     </InputGroup>
-  );
+  )
 }

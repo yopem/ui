@@ -1,5 +1,5 @@
-import { Checkbox } from "@/components/ui/tailwind/checkbox";
-import { Field, FieldLabel } from "@/components/ui/tailwind/field";
+import { Checkbox } from "@/components/ui/tailwind/checkbox"
+import { Field, FieldLabel } from "@/components/ui/tailwind/field"
 
 export default function Particle() {
   return (
@@ -9,5 +9,5 @@ export default function Particle() {
         Accept terms and conditions
       </FieldLabel>
     </Field>
-  );
+  )
 }

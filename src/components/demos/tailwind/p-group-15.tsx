@@ -1,35 +1,36 @@
-"use client";
+"use client"
 
-import { SearchIcon } from "lucide-react";
-import { Button } from "@/components/ui/tailwind/button";
-import { Group, GroupSeparator } from "@/components/ui/tailwind/group";
-import { Input } from "@/components/ui/tailwind/input";
+import { SearchIcon } from "lucide-react"
+
+import { Button } from "@/components/ui/tailwind/button"
+import { Group, GroupSeparator } from "@/components/ui/tailwind/group"
+import { Input } from "@/components/ui/tailwind/input"
 import {
   Select,
   SelectItem,
   SelectPopup,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/tailwind/select";
+} from "@/components/ui/tailwind/select"
 
 const protocols = [
   { label: "http", value: "http" },
   { label: "https", value: "https" },
   { label: "http + https", value: "both" },
-];
+]
 
 const subdomains = [
   { label: "Subdomains", value: null },
   { label: "www", value: "www" },
   { label: "api", value: "api" },
   { label: "cdn", value: "cdn" },
-];
+]
 
 export default function Particle() {
   return (
     <Group aria-label="URL search">
       <Select defaultValue="both" items={protocols}>
-        <SelectTrigger className="w-fit min-w-none">
+        <SelectTrigger className="min-w-none w-fit">
           <SelectValue />
         </SelectTrigger>
         <SelectPopup>
@@ -49,7 +50,7 @@ export default function Particle() {
       />
       <GroupSeparator />
       <Select defaultValue={null} items={subdomains}>
-        <SelectTrigger className="w-fit min-w-none">
+        <SelectTrigger className="min-w-none w-fit">
           <SelectValue />
         </SelectTrigger>
         <SelectPopup>
@@ -65,5 +66,5 @@ export default function Particle() {
         <SearchIcon aria-hidden="true" />
       </Button>
     </Group>
-  );
+  )
 }

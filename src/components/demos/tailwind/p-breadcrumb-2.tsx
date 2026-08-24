@@ -6,7 +6,7 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from "@/components/ui/tailwind/breadcrumb";
+} from "@/components/ui/tailwind/breadcrumb"
 
 export default function Particle() {
   return (
@@ -27,5 +27,5 @@ export default function Particle() {
         </BreadcrumbItem>
       </BreadcrumbList>
     </Breadcrumb>
-  );
+  )
 }

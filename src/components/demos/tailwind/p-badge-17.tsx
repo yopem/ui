@@ -1,4 +1,4 @@
-import { Badge } from "@/components/ui/tailwind/badge";
+import { Badge } from "@/components/ui/tailwind/badge"
 
 export default function Particle() {
   return (
@@ -6,5 +6,5 @@ export default function Particle() {
       <span aria-hidden="true" className="size-1.5 rounded-full bg-amber-500" />
       Pending
     </Badge>
-  );
+  )
 }

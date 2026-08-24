@@ -1,30 +1,31 @@
-"use client";
+"use client"
 
-import { useState } from "react";
-import { Checkbox } from "@/components/ui/tailwind/checkbox";
-import { CheckboxGroup } from "@/components/ui/tailwind/checkbox-group";
-import { Label } from "@/components/ui/tailwind/label";
+import { useState } from "react"
+
+import { Checkbox } from "@/components/ui/tailwind/checkbox"
+import { CheckboxGroup } from "@/components/ui/tailwind/checkbox-group"
+import { Label } from "@/components/ui/tailwind/label"
 
 const mainPermissions = [
   { id: "view-dashboard", name: "View Dashboard" },
   { id: "manage-users", name: "Manage Users" },
   { id: "access-reports", name: "Access Reports" },
-];
+]
 
 const userManagementPermissions = [
   { id: "create-user", name: "Create User" },
   { id: "edit-user", name: "Edit User" },
   { id: "delete-user", name: "Delete User" },
   { id: "assign-roles", name: "Assign Roles" },
-];
+]
 
 export default function Particle() {
-  const [mainValue, setMainValue] = useState<string[]>([]);
-  const [managementValue, setManagementValue] = useState<string[]>([]);
+  const [mainValue, setMainValue] = useState<string[]>([])
+  const [managementValue, setManagementValue] = useState<string[]>([])
 
   const managementIsPartial =
     managementValue.length > 0 &&
-    managementValue.length !== userManagementPermissions.length;
+    managementValue.length !== userManagementPermissions.length
 
   return (
     <CheckboxGroup
@@ -32,13 +33,13 @@ export default function Particle() {
       aria-labelledby="user-permissions-caption"
       onValueChange={(value) => {
         if (value.includes("manage-users")) {
-          setManagementValue(userManagementPermissions.map((p) => p.id));
+          setManagementValue(userManagementPermissions.map((p) => p.id))
         } else if (
           managementValue.length === userManagementPermissions.length
         ) {
-          setManagementValue([]);
+          setManagementValue([])
         }
-        setMainValue(value);
+        setMainValue(value)
       }}
       value={mainValue}
     >
@@ -64,11 +65,11 @@ export default function Particle() {
           if (value.length === userManagementPermissions.length) {
             setMainValue((prev) =>
               Array.from(new Set([...prev, "manage-users"])),
-            );
+            )
           } else {
-            setMainValue((prev) => prev.filter((v) => v !== "manage-users"));
+            setMainValue((prev) => prev.filter((v) => v !== "manage-users"))
           }
-          setManagementValue(value);
+          setManagementValue(value)
         }}
         value={managementValue}
       >
@@ -85,5 +86,5 @@ export default function Particle() {
         ))}
       </CheckboxGroup>
     </CheckboxGroup>
-  );
+  )
 }

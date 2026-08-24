@@ -1,22 +1,23 @@
-"use client";
+"use client"
 
-import { useState } from "react";
-import { Button } from "@/components/ui/tailwind/button";
+import { useState } from "react"
+
+import { Button } from "@/components/ui/tailwind/button"
 
 export default function Particle() {
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false)
 
   const handleClick = () => {
-    setIsLoading(true);
+    setIsLoading(true)
 
     window.setTimeout(() => {
-      setIsLoading(false);
-    }, 1000);
-  };
+      setIsLoading(false)
+    }, 1000)
+  }
 
   return (
     <Button loading={isLoading} onClick={handleClick}>
       Submit
     </Button>
-  );
+  )
 }

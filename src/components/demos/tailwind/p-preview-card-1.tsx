@@ -1,10 +1,11 @@
-import { CornerUpLeftIcon, StarIcon } from "lucide-react";
-import { Button } from "@/components/ui/tailwind/button";
+import { CornerUpLeftIcon, StarIcon } from "lucide-react"
+
+import { Button } from "@/components/ui/tailwind/button"
 import {
   PreviewCard,
   PreviewCardPopup,
   PreviewCardTrigger,
-} from "@/components/ui/tailwind/preview-card";
+} from "@/components/ui/tailwind/preview-card"
 
 export default function Particle() {
   return (
@@ -15,13 +16,13 @@ export default function Particle() {
       <PreviewCardPopup>
         <div className="flex flex-col gap-4">
           <div className="flex flex-col gap-1">
-            <h4 className="font-medium text-sm">coss.com/ui</h4>
+            <h4 className="text-sm font-medium">coss.com/ui</h4>
             <p className="text-muted-foreground text-sm">
               Beautifully designed components that you can copy and paste into
               your apps.
             </p>
           </div>
-          <div className="flex items-center gap-4 text-muted-foreground text-xs">
+          <div className="text-muted-foreground flex items-center gap-4 text-xs">
             <div className="flex items-center gap-1">
               <span
                 aria-hidden="true"
@@ -41,5 +42,5 @@ export default function Particle() {
         </div>
       </PreviewCardPopup>
     </PreviewCard>
-  );
+  )
 }

@@ -1,7 +1,11 @@
-"use client";
+"use client"
 
-import { Field, FieldLabel, FieldValidity } from "@/components/ui/tailwind/field";
-import { Input } from "@/components/ui/tailwind/input";
+import {
+  Field,
+  FieldLabel,
+  FieldValidity,
+} from "@/components/ui/tailwind/field"
+import { Input } from "@/components/ui/tailwind/input"
 
 export default function FieldWithValidityDemo() {
   return (
@@ -16,8 +20,8 @@ export default function FieldWithValidityDemo() {
                 {validity.error}
               </p>
             )}
-            <div className="w-full rounded-md bg-muted p-2">
-              <pre className="max-h-60 overflow-y-auto font-mono text-xs [scrollbar-width:none]">
+            <div className="bg-muted w-full rounded-md p-2">
+              <pre className="max-h-60 [scrollbar-width:none] overflow-y-auto font-mono text-xs">
                 {JSON.stringify(validity, null, 2)}
               </pre>
             </div>
@@ -25,5 +29,5 @@ export default function FieldWithValidityDemo() {
         )}
       </FieldValidity>
     </Field>
-  );
+  )
 }

@@ -1,13 +1,15 @@
-"use client";
+"use client"
 
-import { BellIcon, UserIcon } from "lucide-react";
-import type { ComponentType } from "react";
+import type { ComponentType } from "react"
+
+import { BellIcon, UserIcon } from "lucide-react"
+
 import {
   Avatar,
   AvatarFallback,
   AvatarImage,
-} from "@/components/ui/tailwind/avatar";
-import { Button } from "@/components/ui/tailwind/button";
+} from "@/components/ui/tailwind/avatar"
+import { Button } from "@/components/ui/tailwind/button"
 import {
   Popover,
   PopoverCreateHandle,
@@ -15,9 +17,9 @@ import {
   PopoverPopup,
   PopoverTitle,
   PopoverTrigger,
-} from "@/components/ui/tailwind/popover";
+} from "@/components/ui/tailwind/popover"
 
-const popoverHandle = PopoverCreateHandle<ComponentType>();
+const popoverHandle = PopoverCreateHandle<ComponentType>()
 
 const NotificationsContent = () => {
   return (
@@ -27,8 +29,8 @@ const NotificationsContent = () => {
         You have no new notifications at this time.
       </PopoverDescription>
     </>
-  );
-};
+  )
+}
 
 const ProfileContent = () => {
   return (
@@ -42,8 +44,8 @@ const ProfileContent = () => {
           <AvatarFallback>MA</AvatarFallback>
         </Avatar>
         <div className="min-w-0 flex-1">
-          <h4 className="line-clamp-1 font-medium text-sm">Mark Andersson</h4>
-          <div className="flex items-center gap-3 text-muted-foreground text-xs">
+          <h4 className="line-clamp-1 text-sm font-medium">Mark Andersson</h4>
+          <div className="text-muted-foreground flex items-center gap-3 text-xs">
             Product Designer
           </div>
         </div>
@@ -52,8 +54,8 @@ const ProfileContent = () => {
         Log out
       </Button>
     </div>
-  );
-};
+  )
+}
 
 export default function Particle() {
   return (
@@ -82,5 +84,5 @@ export default function Particle() {
         )}
       </Popover>
     </div>
-  );
+  )
 }

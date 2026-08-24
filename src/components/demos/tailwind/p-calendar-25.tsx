@@ -1,66 +1,67 @@
-"use client";
+"use client"
 
-import { format } from "date-fns";
-import { ClockIcon } from "lucide-react";
-import { useState } from "react";
+import { format } from "date-fns"
+import { ClockIcon } from "lucide-react"
+import { useState } from "react"
+
 import {
   Autocomplete,
   AutocompleteInput,
   AutocompleteItem,
   AutocompleteList,
   AutocompletePopup,
-} from "@/components/ui/tailwind/autocomplete";
-import { Calendar } from "@/components/ui/tailwind/calendar";
-import { Field, FieldLabel } from "@/components/ui/tailwind/field";
+} from "@/components/ui/tailwind/autocomplete"
+import { Calendar } from "@/components/ui/tailwind/calendar"
+import { Field, FieldLabel } from "@/components/ui/tailwind/field"
 
 const times = Array.from({ length: 96 }, (_, i) => {
-  const hours = String(Math.floor(i / 4)).padStart(2, "0");
-  const minutes = String((i % 4) * 15).padStart(2, "0");
-  return `${hours}:${minutes}`;
-});
+  const hours = String(Math.floor(i / 4)).padStart(2, "0")
+  const minutes = String((i % 4) * 15).padStart(2, "0")
+  return `${hours}:${minutes}`
+})
 
 function parseTime(value: string): string | null {
-  const trimmed = value.trim();
+  const trimmed = value.trim()
   if (!trimmed) {
-    return null;
+    return null
   }
 
-  const colonMatch = /^(\d{1,2}):(\d{1,2})$/.exec(trimmed);
+  const colonMatch = /^(\d{1,2}):(\d{1,2})$/.exec(trimmed)
   if (colonMatch) {
-    const hours = Number(colonMatch[1]);
-    const minutes = Number(colonMatch[2]);
+    const hours = Number(colonMatch[1])
+    const minutes = Number(colonMatch[2])
     if (hours > 23 || minutes > 59) {
-      return null;
+      return null
     }
-    return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}`;
+    return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}`
   }
 
-  const digits = trimmed.replace(/\D/g, "");
+  const digits = trimmed.replace(/\D/g, "")
   if (digits.length === 0 || digits.length > 4) {
-    return null;
+    return null
   }
 
-  let hours: number;
-  let minutes: number;
+  let hours: number
+  let minutes: number
 
   if (digits.length <= 2) {
-    hours = Number(digits);
-    minutes = 0;
+    hours = Number(digits)
+    minutes = 0
   } else if (digits.length === 3) {
     // HMM → H:MM (215 → 02:15)
-    hours = Number(digits[0]);
-    minutes = Number(digits.slice(1));
+    hours = Number(digits[0])
+    minutes = Number(digits.slice(1))
   } else {
     // HHMM → HH:MM (2150 → 21:50)
-    hours = Number(digits.slice(0, 2));
-    minutes = Number(digits.slice(2));
+    hours = Number(digits.slice(0, 2))
+    minutes = Number(digits.slice(2))
   }
 
   if (hours > 23 || minutes > 59) {
-    return null;
+    return null
   }
 
-  return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}`;
+  return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}`
 }
 
 /**
@@ -70,131 +71,131 @@ function parseTime(value: string): string | null {
  * - 4 digits: HH:mm
  */
 function formatTimeInput(value: string) {
-  const digits = value.replace(/\D/g, "").slice(0, 4);
+  const digits = value.replace(/\D/g, "").slice(0, 4)
 
   if (digits.length <= 2) {
-    return digits;
+    return digits
   }
 
   if (digits.length === 3) {
-    const minutes = Number(digits.slice(1));
+    const minutes = Number(digits.slice(1))
     if (minutes <= 59) {
-      return `${digits[0]}:${digits.slice(1)}`;
+      return `${digits[0]}:${digits.slice(1)}`
     }
-    return digits;
+    return digits
   }
 
-  return parseTime(digits) ?? digits;
+  return parseTime(digits) ?? digits
 }
 
 function filterTime(item: string, query: string) {
-  const trimmed = query.trim().toLowerCase();
+  const trimmed = query.trim().toLowerCase()
   if (!trimmed) {
-    return true;
+    return true
   }
 
   if (item.toLowerCase().startsWith(trimmed)) {
-    return true;
+    return true
   }
 
-  const itemDigits = item.replace(/\D/g, "");
-  const queryDigits = trimmed.replace(/\D/g, "");
+  const itemDigits = item.replace(/\D/g, "")
+  const queryDigits = trimmed.replace(/\D/g, "")
   if (!queryDigits) {
-    return false;
+    return false
   }
 
-  const itemHour = Number(itemDigits.slice(0, 2));
-  const itemMinutes = itemDigits.slice(2);
+  const itemHour = Number(itemDigits.slice(0, 2))
+  const itemMinutes = itemDigits.slice(2)
   // Padded "0615" and unpadded "615" so "61" matches 06:15 while typing toward 615
-  const itemDigitsUnpadded = `${itemHour}${itemMinutes}`;
+  const itemDigitsUnpadded = `${itemHour}${itemMinutes}`
 
   if (
     itemDigits.startsWith(queryDigits) ||
     itemDigitsUnpadded.startsWith(queryDigits)
   ) {
-    return true;
+    return true
   }
 
   if (queryDigits.length >= 3) {
-    const normalized = parseTime(queryDigits);
-    return normalized === item;
+    const normalized = parseTime(queryDigits)
+    return normalized === item
   }
 
-  const queryHour = Number(queryDigits);
+  const queryHour = Number(queryDigits)
 
   if (trimmed.includes(":")) {
-    const minuteQuery = trimmed.split(":")[1]?.replace(/\D/g, "") ?? "";
+    const minuteQuery = trimmed.split(":")[1]?.replace(/\D/g, "") ?? ""
     return (
       itemHour === queryHour &&
       (!minuteQuery || itemMinutes.startsWith(minuteQuery))
-    );
+    )
   }
 
   if (queryDigits.length === 1) {
-    return itemHour === queryHour || String(itemHour).startsWith(queryDigits);
+    return itemHour === queryHour || String(itemHour).startsWith(queryDigits)
   }
 
-  return queryHour <= 23 && itemHour === queryHour;
+  return queryHour <= 23 && itemHour === queryHour
 }
 
 function applyTime(date: Date, time: string) {
-  const parsed = parseTime(time);
+  const parsed = parseTime(time)
   if (!parsed) {
-    return date;
+    return date
   }
-  const hours = Number(parsed.slice(0, 2));
-  const minutes = Number(parsed.slice(3, 5));
-  const next = new Date(date);
-  next.setHours(hours, minutes, 0, 0);
-  return next;
+  const hours = Number(parsed.slice(0, 2))
+  const minutes = Number(parsed.slice(3, 5))
+  const next = new Date(date)
+  next.setHours(hours, minutes, 0, 0)
+  return next
 }
 
 export default function Particle() {
   const [date, setDate] = useState<Date | undefined>(() => {
-    const initial = new Date();
-    initial.setHours(12, 0, 0, 0);
-    return initial;
-  });
-  const [month, setMonth] = useState<Date>(() => new Date());
-  const [time, setTime] = useState("12:00");
-  const [isEditing, setIsEditing] = useState(false);
+    const initial = new Date()
+    initial.setHours(12, 0, 0, 0)
+    return initial
+  })
+  const [month, setMonth] = useState<Date>(() => new Date())
+  const [time, setTime] = useState("12:00")
+  const [isEditing, setIsEditing] = useState(false)
 
   const handleDaySelect = (selectedDate: Date | undefined) => {
     if (!selectedDate) {
-      setDate(undefined);
-      return;
+      setDate(undefined)
+      return
     }
-    const next = applyTime(selectedDate, time);
-    setDate(next);
-    setMonth(next);
-  };
+    const next = applyTime(selectedDate, time)
+    setDate(next)
+    setMonth(next)
+  }
 
   const handleTimeChange = (value: string) => {
-    setIsEditing(true);
-    const next = formatTimeInput(value);
-    setTime(next);
+    setIsEditing(true)
+    const next = formatTimeInput(value)
+    setTime(next)
 
     // List picks and completed HH:mm only — avoid committing mid-typing ("2:1" → 02:01)
     if (date && /^\d{2}:\d{2}$/.test(next)) {
-      setDate(applyTime(date, next));
+      setDate(applyTime(date, next))
     }
-  };
+  }
 
   const handleTimeBlur = () => {
-    const normalized = parseTime(time);
+    const normalized = parseTime(time)
     if (normalized) {
-      setTime(normalized);
+      setTime(normalized)
       if (date) {
-        setDate(applyTime(date, normalized));
+        setDate(applyTime(date, normalized))
       }
     } else if (date) {
-      setTime(format(date, "HH:mm"));
+      setTime(format(date, "HH:mm"))
     }
-    setIsEditing(false);
-  };
+    setIsEditing(false)
+  }
 
-  const filterQuery = isEditing ? time : "";
-  const matchingTimes = times.filter((item) => filterTime(item, filterQuery));
+  const filterQuery = isEditing ? time : ""
+  const matchingTimes = times.filter((item) => filterTime(item, filterQuery))
 
   return (
     <div className="flex w-fit flex-col gap-2">
@@ -206,7 +207,7 @@ export default function Particle() {
         selected={date}
       />
       <Field className="w-0 min-w-full flex-row items-center gap-3">
-        <FieldLabel className="whitespace-nowrap text-xs">
+        <FieldLabel className="text-xs whitespace-nowrap">
           Enter time
         </FieldLabel>
         <Autocomplete
@@ -223,8 +224,8 @@ export default function Particle() {
             maxLength={5}
             onBlur={handleTimeBlur}
             onFocus={(event) => {
-              setIsEditing(false);
-              event.currentTarget.select();
+              setIsEditing(false)
+              event.currentTarget.select()
             }}
             placeholder="HH:mm"
             startAddon={<ClockIcon aria-hidden="true" />}
@@ -243,5 +244,5 @@ export default function Particle() {
         </Autocomplete>
       </Field>
     </div>
-  );
+  )
 }

@@ -1,6 +1,7 @@
-"use client";
+"use client"
 
-import { Fragment } from "react";
+import { Fragment } from "react"
+
 import {
   Autocomplete,
   AutocompleteCollection,
@@ -12,11 +13,11 @@ import {
   AutocompleteList,
   AutocompletePopup,
   AutocompleteSeparator,
-} from "@/components/ui/tailwind/autocomplete";
+} from "@/components/ui/tailwind/autocomplete"
 
 // Grouped items demo
-type Tag = { id: string; label: string; group: "Status" | "Priority" | "Team" };
-type TagGroup = { value: string; items: Tag[] };
+type Tag = { id: string; label: string; group: "Status" | "Priority" | "Team" }
+type TagGroup = { value: string; items: Tag[] }
 
 const tagsData: Tag[] = [
   // Status
@@ -64,22 +65,22 @@ const tagsData: Tag[] = [
   { group: "Team", id: "t-ux", label: "UX" },
   { group: "Team", id: "t-ui", label: "UI" },
   { group: "Team", id: "t-management", label: "Management" },
-];
+]
 
 function groupTags(tags: Tag[]): TagGroup[] {
-  const groups: Record<string, Tag[]> = {};
+  const groups: Record<string, Tag[]> = {}
   for (const tag of tags) {
     if (!groups[tag.group]) {
-      groups[tag.group] = [];
+      groups[tag.group] = []
     }
-    groups[tag.group]?.push(tag);
+    groups[tag.group]?.push(tag)
   }
 
-  const order: Array<TagGroup["value"]> = ["Status", "Priority", "Team"];
-  return order.map((value) => ({ items: groups[value] ?? [], value }));
+  const order: Array<TagGroup["value"]> = ["Status", "Priority", "Team"]
+  return order.map((value) => ({ items: groups[value] ?? [], value }))
 }
 
-const groupedTags: TagGroup[] = groupTags(tagsData);
+const groupedTags: TagGroup[] = groupTags(tagsData)
 
 export default function Particle() {
   return (
@@ -111,5 +112,5 @@ export default function Particle() {
         </AutocompleteList>
       </AutocompletePopup>
     </Autocomplete>
-  );
+  )
 }

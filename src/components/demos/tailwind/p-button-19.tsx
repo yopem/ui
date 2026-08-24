@@ -1,15 +1,16 @@
-"use client";
+"use client"
 
-import { ChevronDownIcon, ChevronUpIcon } from "lucide-react";
-import { useState } from "react";
-import { Button } from "@/components/ui/tailwind/button";
+import { ChevronDownIcon, ChevronUpIcon } from "lucide-react"
+import { useState } from "react"
+
+import { Button } from "@/components/ui/tailwind/button"
 
 export default function Particle() {
-  const [isExpanded, setIsExpanded] = useState<boolean>(false);
+  const [isExpanded, setIsExpanded] = useState<boolean>(false)
 
   const toggleExpand = () => {
-    setIsExpanded((prevState) => !prevState);
-  };
+    setIsExpanded((prevState) => !prevState)
+  }
 
   return (
     <Button
@@ -26,5 +27,5 @@ export default function Particle() {
         <ChevronDownIcon aria-hidden="true" className="-me-1" />
       )}
     </Button>
-  );
+  )
 }

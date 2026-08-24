@@ -1,17 +1,18 @@
-"use client";
+"use client"
 
-import { InfoIcon } from "lucide-react";
-import { Button } from "@/components/ui/tailwind/button";
+import { InfoIcon } from "lucide-react"
+
+import { Button } from "@/components/ui/tailwind/button"
 import {
   InputGroup,
   InputGroupAddon,
   InputGroupInput,
-} from "@/components/ui/tailwind/input-group";
+} from "@/components/ui/tailwind/input-group"
 import {
   Tooltip,
   TooltipPopup,
   TooltipTrigger,
-} from "@/components/ui/tailwind/tooltip";
+} from "@/components/ui/tailwind/tooltip"
 
 export default function Particle() {
   return (
@@ -38,5 +39,5 @@ export default function Particle() {
         type="text"
       />
     </InputGroup>
-  );
+  )
 }

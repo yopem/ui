@@ -1,4 +1,4 @@
-import { Badge } from "@/components/ui/tailwind/badge";
+import { Badge } from "@/components/ui/tailwind/badge"
 import {
   Table,
   TableBody,
@@ -7,7 +7,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/tailwind/table";
+} from "@/components/ui/tailwind/table"
 
 export default function Particle() {
   return (
@@ -41,7 +41,7 @@ export default function Particle() {
             <Badge variant="outline">
               <span
                 aria-hidden="true"
-                className="size-1.5 rounded-full bg-muted-foreground/64"
+                className="bg-muted-foreground/64 size-1.5 rounded-full"
               />
               Unpaid
             </Badge>
@@ -113,5 +113,5 @@ export default function Particle() {
         </TableRow>
       </TableFooter>
     </Table>
-  );
+  )
 }

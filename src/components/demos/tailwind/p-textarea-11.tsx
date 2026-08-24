@@ -1,12 +1,13 @@
-"use client";
+"use client"
 
-import { useState } from "react";
-import { Field, FieldDescription } from "@/components/ui/tailwind/field";
-import { Textarea } from "@/components/ui/tailwind/textarea";
+import { useState } from "react"
+
+import { Field, FieldDescription } from "@/components/ui/tailwind/field"
+import { Textarea } from "@/components/ui/tailwind/textarea"
 
 export default function Particle() {
-  const maxLength = 280;
-  const [value, setValue] = useState("");
+  const maxLength = 280
+  const [value, setValue] = useState("")
 
   return (
     <Field>
@@ -22,5 +23,5 @@ export default function Particle() {
         characters left
       </FieldDescription>
     </Field>
-  );
+  )
 }

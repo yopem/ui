@@ -1,48 +1,49 @@
-"use client";
+"use client"
 
-import { format, isValid, parse } from "date-fns";
-import { CalendarIcon } from "lucide-react";
-import { useState } from "react";
-import { Calendar } from "@/components/ui/tailwind/calendar";
-import { Field, FieldLabel } from "@/components/ui/tailwind/field";
+import { format, isValid, parse } from "date-fns"
+import { CalendarIcon } from "lucide-react"
+import { useState } from "react"
+
+import { Calendar } from "@/components/ui/tailwind/calendar"
+import { Field, FieldLabel } from "@/components/ui/tailwind/field"
 import {
   InputGroup,
   InputGroupAddon,
   InputGroupInput,
-} from "@/components/ui/tailwind/input-group";
+} from "@/components/ui/tailwind/input-group"
 
 export default function Particle() {
-  const [date, setDate] = useState<Date | undefined>(() => new Date());
-  const [month, setMonth] = useState<Date>(() => new Date());
+  const [date, setDate] = useState<Date | undefined>(() => new Date())
+  const [month, setMonth] = useState<Date>(() => new Date())
   const [inputValue, setInputValue] = useState(() =>
     format(new Date(), "yyyy-MM-dd"),
-  );
+  )
 
   const handleDayPickerSelect = (selectedDate: Date | undefined) => {
     if (!selectedDate) {
-      setInputValue("");
-      setDate(undefined);
+      setInputValue("")
+      setDate(undefined)
     } else {
-      setDate(selectedDate);
-      setMonth(selectedDate);
-      setInputValue(format(selectedDate, "yyyy-MM-dd"));
+      setDate(selectedDate)
+      setMonth(selectedDate)
+      setInputValue(format(selectedDate, "yyyy-MM-dd"))
     }
-  };
+  }
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setInputValue(value);
+    const value = e.target.value
+    setInputValue(value)
 
     if (value) {
-      const parsedDate = parse(value, "yyyy-MM-dd", new Date());
+      const parsedDate = parse(value, "yyyy-MM-dd", new Date())
       if (isValid(parsedDate)) {
-        setDate(parsedDate);
-        setMonth(parsedDate);
+        setDate(parsedDate)
+        setMonth(parsedDate)
       }
     } else {
-      setDate(undefined);
+      setDate(undefined)
     }
-  };
+  }
 
   return (
     <div className="flex flex-col gap-2">
@@ -69,5 +70,5 @@ export default function Particle() {
         </InputGroup>
       </Field>
     </div>
-  );
+  )
 }

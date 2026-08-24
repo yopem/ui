@@ -1,8 +1,10 @@
-"use client";
+"use client"
 
-import { MapPinIcon } from "lucide-react";
-import type { ReactNode } from "react";
-import { useEffect, useRef, useState } from "react";
+import type { ReactNode } from "react"
+
+import { MapPinIcon } from "lucide-react"
+import { useEffect, useRef, useState } from "react"
+
 import {
   Autocomplete,
   AutocompleteInput,
@@ -10,19 +12,19 @@ import {
   AutocompleteList,
   AutocompletePopup,
   AutocompleteStatus,
-} from "@/components/ui/tailwind/autocomplete";
-import { Spinner } from "@/components/ui/tailwind/spinner";
+} from "@/components/ui/tailwind/autocomplete"
+import { Spinner } from "@/components/ui/tailwind/spinner"
 
 // Set NEXT_PUBLIC_GOOGLE_MAPS_API_KEY with the Places API (New) enabled to fetch
 // live suggestions. Without a key, the demo falls back to sample addresses.
-const GOOGLE_MAPS_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY ?? "";
+const GOOGLE_MAPS_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY ?? ""
 
 type AddressSuggestion = {
-  placeId: string;
-  text: string;
-  mainText: string;
-  secondaryText: string;
-};
+  placeId: string
+  text: string
+  mainText: string
+  secondaryText: string
+}
 
 const sampleAddresses: AddressSuggestion[] = [
   {
@@ -55,29 +57,29 @@ const sampleAddresses: AddressSuggestion[] = [
   ...address,
   placeId: `sample-${index + 1}`,
   text: `${address.mainText}, ${address.secondaryText}`,
-}));
+}))
 
 // A short-lived session token groups Autocomplete + Place Details requests
 // for billing.
 function newSessionToken() {
   if (typeof crypto !== "undefined" && "randomUUID" in crypto) {
-    return crypto.randomUUID();
+    return crypto.randomUUID()
   }
-  return Math.random().toString(36).slice(2);
+  return Math.random().toString(36).slice(2)
 }
 
 type PlacesAutocompleteResponse = {
   suggestions?: {
     placePrediction?: {
-      placeId?: string;
-      text?: { text?: string };
+      placeId?: string
+      text?: { text?: string }
       structuredFormat?: {
-        mainText?: { text?: string };
-        secondaryText?: { text?: string };
-      };
-    };
-  }[];
-};
+        mainText?: { text?: string }
+        secondaryText?: { text?: string }
+      }
+    }
+  }[]
+}
 
 async function fetchAddressSuggestions(
   query: string,
@@ -95,108 +97,106 @@ async function fetchAddressSuggestions(
       method: "POST",
       signal,
     },
-  );
+  )
   if (!response.ok) {
-    throw new Error("Places API request failed");
+    throw new Error("Places API request failed")
   }
-  const data = (await response.json()) as PlacesAutocompleteResponse;
-  const suggestions: AddressSuggestion[] = [];
+  const data = (await response.json()) as PlacesAutocompleteResponse
+  const suggestions: AddressSuggestion[] = []
   for (const suggestion of data.suggestions ?? []) {
-    const prediction = suggestion.placePrediction;
-    if (!prediction?.placeId) continue;
-    const text = prediction.text?.text ?? "";
+    const prediction = suggestion.placePrediction
+    if (!prediction?.placeId) continue
+    const text = prediction.text?.text ?? ""
     suggestions.push({
       mainText: prediction.structuredFormat?.mainText?.text ?? text,
       placeId: prediction.placeId,
       secondaryText: prediction.structuredFormat?.secondaryText?.text ?? "",
       text,
-    });
+    })
   }
-  return suggestions;
+  return suggestions
 }
 
 async function searchSampleAddresses(
   query: string,
 ): Promise<AddressSuggestion[]> {
-  await new Promise((resolve) =>
-    setTimeout(resolve, Math.random() * 500 + 100),
-  );
-  const lowerQuery = query.toLowerCase();
+  await new Promise((resolve) => setTimeout(resolve, Math.random() * 500 + 100))
+  const lowerQuery = query.toLowerCase()
   return sampleAddresses.filter((address) =>
     address.text.toLowerCase().includes(lowerQuery),
-  );
+  )
 }
 
 export default function Particle() {
-  const [searchValue, setSearchValue] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const [suggestions, setSuggestions] = useState<AddressSuggestion[]>([]);
-  const [error, setError] = useState<string | null>(null);
-  const sessionTokenRef = useRef<string | null>(null);
+  const [searchValue, setSearchValue] = useState("")
+  const [isLoading, setIsLoading] = useState(false)
+  const [suggestions, setSuggestions] = useState<AddressSuggestion[]>([])
+  const [error, setError] = useState<string | null>(null)
+  const sessionTokenRef = useRef<string | null>(null)
 
   useEffect(() => {
-    const query = searchValue.trim();
+    const query = searchValue.trim()
     if (!query) {
-      setSuggestions([]);
-      setIsLoading(false);
-      setError(null);
-      return;
+      setSuggestions([])
+      setIsLoading(false)
+      setError(null)
+      return
     }
 
-    setIsLoading(true);
-    setError(null);
-    let ignore = false;
-    const controller = new AbortController();
+    setIsLoading(true)
+    setError(null)
+    let ignore = false
+    const controller = new AbortController()
 
     const timeoutId = setTimeout(async () => {
       try {
-        sessionTokenRef.current ??= newSessionToken();
+        sessionTokenRef.current ??= newSessionToken()
         const results = GOOGLE_MAPS_API_KEY
           ? await fetchAddressSuggestions(
               query,
               sessionTokenRef.current,
               controller.signal,
             )
-          : await searchSampleAddresses(query);
-        if (!ignore) setSuggestions(results);
+          : await searchSampleAddresses(query)
+        if (!ignore) setSuggestions(results)
       } catch {
         if (!ignore && !controller.signal.aborted) {
-          setError("Could not load address suggestions. Please try again.");
-          setSuggestions([]);
+          setError("Could not load address suggestions. Please try again.")
+          setSuggestions([])
         }
       } finally {
-        if (!ignore) setIsLoading(false);
+        if (!ignore) setIsLoading(false)
       }
-    }, 300);
+    }, 300)
 
     return () => {
-      ignore = true;
-      controller.abort();
-      clearTimeout(timeoutId);
-    };
-  }, [searchValue]);
+      ignore = true
+      controller.abort()
+      clearTimeout(timeoutId)
+    }
+  }, [searchValue])
 
-  let status: ReactNode = `${suggestions.length} suggestion${suggestions.length === 1 ? "" : "s"} found`;
+  let status: ReactNode = `${suggestions.length} suggestion${suggestions.length === 1 ? "" : "s"} found`
   if (isLoading) {
     status = (
-      <span className="flex items-center justify-between gap-2 text-muted-foreground">
+      <span className="text-muted-foreground flex items-center justify-between gap-2">
         Searching addresses...
         <Spinner className="size-4.5 sm:size-4" />
       </span>
-    );
+    )
   } else if (error) {
     status = (
-      <span className="font-normal text-destructive text-sm">{error}</span>
-    );
+      <span className="text-destructive text-sm font-normal">{error}</span>
+    )
   } else if (suggestions.length === 0 && searchValue) {
     status = (
-      <span className="font-normal text-muted-foreground text-sm">
+      <span className="text-muted-foreground text-sm font-normal">
         No addresses found for "{searchValue}"
       </span>
-    );
+    )
   }
 
-  const shouldRenderPopup = searchValue.trim() !== "";
+  const shouldRenderPopup = searchValue.trim() !== ""
 
   return (
     <Autocomplete
@@ -205,11 +205,11 @@ export default function Particle() {
       items={suggestions}
       itemToStringValue={(item: unknown) => (item as AddressSuggestion).text}
       onValueChange={(value, eventDetails) => {
-        setSearchValue(value);
+        setSearchValue(value)
         if (eventDetails.reason === "item-press") {
           // Selecting a suggestion ends the billing session. In a real app,
           // fetch the place details with the same token before resetting it.
-          sessionTokenRef.current = null;
+          sessionTokenRef.current = null
         }
       }}
       value={searchValue}
@@ -236,7 +236,7 @@ export default function Particle() {
                   <span className="truncate font-medium">
                     {suggestion.mainText}
                   </span>
-                  <span className="truncate text-muted-foreground text-xs">
+                  <span className="text-muted-foreground truncate text-xs">
                     {suggestion.secondaryText}
                   </span>
                 </span>
@@ -246,5 +246,5 @@ export default function Particle() {
         </AutocompletePopup>
       )}
     </Autocomplete>
-  );
+  )
 }

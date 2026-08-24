@@ -1,4 +1,4 @@
-"use client";
+"use client"
 
 import {
   ArrowDownIcon,
@@ -8,7 +8,7 @@ import {
   CornerDownLeftIcon,
   SearchIcon,
   SparklesIcon,
-} from "lucide-react";
+} from "lucide-react"
 // next/link replaced -> anchor
 import {
   Fragment,
@@ -17,9 +17,10 @@ import {
   useMemo,
   useRef,
   useState,
-} from "react";
-import { useAutocompleteFilter } from "@/components/ui/tailwind/autocomplete";
-import { Button } from "@/components/ui/tailwind/button";
+} from "react"
+
+import { useAutocompleteFilter } from "@/components/ui/tailwind/autocomplete"
+import { Button } from "@/components/ui/tailwind/button"
 import {
   Command,
   CommandCollection,
@@ -36,24 +37,24 @@ import {
   CommandPanel,
   CommandSeparator,
   CommandShortcut,
-} from "@/components/ui/tailwind/command";
-import { EmptyMedia } from "@/components/ui/tailwind/empty";
-import { Input } from "@/components/ui/tailwind/input";
-import { Kbd, KbdGroup } from "@/components/ui/tailwind/kbd";
-import { ScrollArea } from "@/components/ui/tailwind/scroll-area";
-import { Skeleton } from "@/components/ui/tailwind/skeleton";
-import { Spinner } from "@/components/ui/tailwind/spinner";
+} from "@/components/ui/tailwind/command"
+import { EmptyMedia } from "@/components/ui/tailwind/empty"
+import { Input } from "@/components/ui/tailwind/input"
+import { Kbd, KbdGroup } from "@/components/ui/tailwind/kbd"
+import { ScrollArea } from "@/components/ui/tailwind/scroll-area"
+import { Skeleton } from "@/components/ui/tailwind/skeleton"
+import { Spinner } from "@/components/ui/tailwind/spinner"
 
 interface Item {
-  value: string;
-  label: string;
-  shortcut?: string;
-  keywords?: string[];
+  value: string
+  label: string
+  shortcut?: string
+  keywords?: string[]
 }
 
 interface Group {
-  value: string;
-  items: Item[];
+  value: string
+  items: Item[]
 }
 
 const commandGroups: Group[] = [
@@ -121,31 +122,31 @@ const commandGroups: Group[] = [
     ],
     value: "Help",
   },
-];
+]
 
 const MOCK_AI_RESPONSE = `To create a new project, navigate to the Projects page and click the "New Project" button in the top right corner. You'll be prompted to enter a project name and description.
 
 Once created, you can invite team members by clicking the "Share" button and entering their email addresses. Team members will receive an invitation link via email or you can add them manually by clicking the "Add Team Member" button in the project settings.
 
-You can customize project settings at any time by clicking the settings icon in the project header. For more information, see the Project Settings documentation.`;
+You can customize project settings at any time by clicking the settings icon in the project header. For more information, see the Project Settings documentation.`
 
 const MOCK_REFERENCE_LINKS = [
   { title: "Creating Projects", url: "/docs/projects/create" },
   { title: "Team Collaboration", url: "/docs/team/collaborate" },
   { title: "Project Settings", url: "/docs/projects/settings" },
-];
+]
 
 export const commandHandle: ReturnType<typeof CommandCreateHandle> =
-  CommandCreateHandle();
+  CommandCreateHandle()
 
 interface AIState {
-  mode: boolean;
-  query: string;
-  submittedQuery: string;
-  response: string;
-  referenceLinks: Array<{ title: string; url: string }>;
-  isGenerating: boolean;
-  error: string | null;
+  mode: boolean
+  query: string
+  submittedQuery: string
+  response: string
+  referenceLinks: Array<{ title: string; url: string }>
+  isGenerating: boolean
+  error: string | null
 }
 
 const initialAIState: AIState = {
@@ -156,56 +157,56 @@ const initialAIState: AIState = {
   referenceLinks: [],
   response: "",
   submittedQuery: "",
-};
+}
 
 function markdownToSafeHTML(markdown: string): string {
   // Simple markdown to HTML converter for demo purposes
   return markdown
     .split("\n\n")
     .map((para) => `<p>${para}</p>`)
-    .join("");
+    .join("")
 }
 
 export default function PCommand2() {
-  const [open, setOpen] = useState(false);
-  const [aiState, setAIState] = useState<AIState>(initialAIState);
-  const [searchQuery, setSearchQuery] = useState("");
-  const aiInputRef = useRef<HTMLInputElement>(null);
-  const searchInputRef = useRef<HTMLInputElement>(null);
-  const abortControllerRef = useRef<AbortController | null>(null);
-  const commandResetKeyRef = useRef(0);
+  const [open, setOpen] = useState(false)
+  const [aiState, setAIState] = useState<AIState>(initialAIState)
+  const [searchQuery, setSearchQuery] = useState("")
+  const aiInputRef = useRef<HTMLInputElement>(null)
+  const searchInputRef = useRef<HTMLInputElement>(null)
+  const abortControllerRef = useRef<AbortController | null>(null)
+  const commandResetKeyRef = useRef(0)
 
   // Cleanup on unmount
   useEffect(() => {
     return () => {
-      abortControllerRef.current?.abort();
-    };
-  }, []);
+      abortControllerRef.current?.abort()
+    }
+  }, [])
 
   const resetAIState = useCallback(() => {
-    abortControllerRef.current?.abort();
-    setAIState(initialAIState);
-  }, []);
+    abortControllerRef.current?.abort()
+    setAIState(initialAIState)
+  }, [])
 
   const handleItemClick = useCallback(() => {
-    setOpen(false);
-  }, []);
+    setOpen(false)
+  }, [])
 
   const handleBackToSearch = useCallback(() => {
-    resetAIState();
-    setSearchQuery("");
-    commandResetKeyRef.current += 1;
-    searchInputRef.current?.focus();
-  }, [resetAIState]);
+    resetAIState()
+    setSearchQuery("")
+    commandResetKeyRef.current += 1
+    searchInputRef.current?.focus()
+  }, [resetAIState])
 
   const handleGenerateAI = useCallback(
     async (queryOverride?: string) => {
-      const query = queryOverride || aiState.query;
-      if (!query.trim()) return;
+      const query = queryOverride || aiState.query
+      if (!query.trim()) return
 
-      abortControllerRef.current?.abort();
-      const controller = new AbortController();
-      abortControllerRef.current = controller;
+      abortControllerRef.current?.abort()
+      const controller = new AbortController()
+      abortControllerRef.current = controller
 
       setAIState((prev) => ({
         ...prev,
@@ -215,102 +216,102 @@ export default function PCommand2() {
         referenceLinks: [],
         response: "",
         submittedQuery: query,
-      }));
+      }))
 
       try {
         await new Promise<void>((resolve, reject) => {
-          const timeout = setTimeout(resolve, 1500);
+          const timeout = setTimeout(resolve, 1500)
           controller.signal.addEventListener("abort", () => {
-            clearTimeout(timeout);
-            reject(new Error("aborted"));
-          });
-        });
+            clearTimeout(timeout)
+            reject(new Error("aborted"))
+          })
+        })
 
-        if (controller.signal.aborted) return;
+        if (controller.signal.aborted) return
 
         setAIState((prev) => ({
           ...prev,
           isGenerating: false,
           referenceLinks: MOCK_REFERENCE_LINKS,
           response: MOCK_AI_RESPONSE,
-        }));
+        }))
       } catch (error) {
         if (error instanceof Error && error.message === "aborted") {
-          return;
+          return
         }
 
-        if (controller.signal.aborted) return;
+        if (controller.signal.aborted) return
 
         setAIState((prev) => ({
           ...prev,
           error: "Failed to generate response. Please try again.",
           isGenerating: false,
-        }));
+        }))
       }
     },
     [aiState.query],
-  );
+  )
 
   const handleAskAI = useCallback(() => {
-    const currentQuery = searchQuery;
-    setSearchQuery("");
+    const currentQuery = searchQuery
+    setSearchQuery("")
 
     if (currentQuery.trim()) {
-      setAIState((prev) => ({ ...prev, mode: true }));
-      handleGenerateAI(currentQuery);
+      setAIState((prev) => ({ ...prev, mode: true }))
+      handleGenerateAI(currentQuery)
     } else {
-      setAIState((prev) => ({ ...prev, mode: true, query: "" }));
-      aiInputRef.current?.focus();
+      setAIState((prev) => ({ ...prev, mode: true, query: "" }))
+      aiInputRef.current?.focus()
     }
-  }, [searchQuery, handleGenerateAI]);
+  }, [searchQuery, handleGenerateAI])
 
-  const { contains } = useAutocompleteFilter({ sensitivity: "base" });
+  const { contains } = useAutocompleteFilter({ sensitivity: "base" })
 
   const filterItem = useCallback(
     (itemValue: unknown, query: string): boolean => {
       if (typeof itemValue !== "object" || itemValue === null) {
-        return false;
+        return false
       }
 
-      const item = itemValue as Item;
+      const item = itemValue as Item
 
       if (contains(item.label, query)) {
-        return true;
+        return true
       }
 
       if (contains(item.value, query)) {
-        return true;
+        return true
       }
 
       if (item.keywords?.some((keyword) => contains(keyword, query))) {
-        return true;
+        return true
       }
 
-      return false;
+      return false
     },
     [contains],
-  );
+  )
 
   useEffect(() => {
-    if (!open || !aiState.mode) return;
+    if (!open || !aiState.mode) return
 
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
-        e.preventDefault();
-        e.stopPropagation();
-        handleBackToSearch();
+        e.preventDefault()
+        e.stopPropagation()
+        handleBackToSearch()
       }
-    };
+    }
 
-    document.addEventListener("keydown", handleEscape, true);
-    return () => document.removeEventListener("keydown", handleEscape, true);
-  }, [open, aiState.mode, handleBackToSearch]);
+    document.addEventListener("keydown", handleEscape, true)
+    return () => document.removeEventListener("keydown", handleEscape, true)
+  }, [open, aiState.mode, handleBackToSearch])
 
   useEffect(() => {
     if (aiState.mode && !aiState.isGenerating) {
-      aiInputRef.current?.focus();
+      aiInputRef.current?.focus()
     }
-  }, [aiState.mode, aiState.isGenerating]);
+  }, [aiState.mode, aiState.isGenerating])
 
   const hasResults = useMemo(
     () =>
@@ -319,18 +320,18 @@ export default function PCommand2() {
         group.items.some((item) => filterItem(item, searchQuery)),
       ),
     [searchQuery, filterItem],
-  );
+  )
 
   const handleOpenChange = useCallback(
     (newOpen: boolean) => {
-      setOpen(newOpen);
+      setOpen(newOpen)
       if (!newOpen) {
-        setSearchQuery("");
-        resetAIState();
+        setSearchQuery("")
+        resetAIState()
       }
     },
     [resetAIState],
-  );
+  )
 
   return (
     <>
@@ -354,16 +355,16 @@ export default function PCommand2() {
                   onChange={(e) => setSearchQuery(e.target.value)}
                   onKeyDown={(e) => {
                     if (e.key === "Tab") {
-                      e.preventDefault();
-                      handleAskAI();
+                      e.preventDefault()
+                      handleAskAI()
                     }
                     if (
                       e.key === "Enter" &&
                       !hasResults &&
                       searchQuery.trim()
                     ) {
-                      e.preventDefault();
-                      handleAskAI();
+                      e.preventDefault()
+                      handleAskAI()
                     }
                   }}
                   placeholder="Type a command or search..."
@@ -371,7 +372,7 @@ export default function PCommand2() {
                   value={searchQuery}
                 />
                 <Button
-                  className="me-2.5 rounded-md not-hover:text-muted-foreground text-sm sm:text-xs"
+                  className="not-hover:text-muted-foreground me-2.5 rounded-md text-sm sm:text-xs"
                   onClick={handleAskAI}
                   size="sm"
                   variant="ghost"
@@ -384,7 +385,7 @@ export default function PCommand2() {
               <CommandPanel>
                 <CommandEmpty className="not-empty:py-12">
                   {searchQuery.trim() && (
-                    <div className="wrap-break-word flex flex-col flex-wrap items-center gap-2">
+                    <div className="flex flex-col flex-wrap items-center gap-2 wrap-break-word">
                       <EmptyMedia variant="icon">
                         <SearchIcon />
                       </EmptyMedia>
@@ -392,7 +393,7 @@ export default function PCommand2() {
                       <p>
                         Press <Kbd>Enter</Kbd> to ask AI about:
                         <br />{" "}
-                        <strong className="font-medium text-foreground">
+                        <strong className="text-foreground font-medium">
                           {searchQuery}
                         </strong>
                       </p>
@@ -468,7 +469,7 @@ export default function PCommand2() {
                   <div className="relative w-full">
                     <div
                       aria-hidden="true"
-                      className="pointer-events-none absolute inset-y-0 start-px z-10 flex items-center ps-[calc(--spacing(3)-1px)] opacity-80 has-[+[data-size=sm]]:ps-[calc(--spacing(2.5)-1px)] [&_svg:not([class*='size-'])]:size-4.5 sm:[&_svg:not([class*='size-'])]:size-4 [&_svg]:-mx-0.5"
+                      className="pointer-events-none absolute inset-y-0 start-px z-10 flex items-center ps-[calc(--spacing(3)-1px)] opacity-80 has-[+[data-size=sm]]:ps-[calc(--spacing(2.5)-1px)] [&_svg]:-mx-0.5 [&_svg:not([class*='size-'])]:size-4.5 sm:[&_svg:not([class*='size-'])]:size-4"
                       data-slot="autocomplete-start-addon"
                     >
                       <SparklesIcon />
@@ -485,11 +486,11 @@ export default function PCommand2() {
                       }
                       onKeyDown={(e) => {
                         if (e.key === "Enter" && !aiState.isGenerating) {
-                          handleGenerateAI();
+                          handleGenerateAI()
                         }
                         if (e.key === "Escape") {
-                          e.preventDefault();
-                          handleBackToSearch();
+                          e.preventDefault()
+                          handleBackToSearch()
                         }
                       }}
                       placeholder="Ask AI anything…"
@@ -500,7 +501,7 @@ export default function PCommand2() {
                   </div>
                 </div>
                 <Button
-                  className="me-2.5 rounded-md not-hover:text-muted-foreground text-sm sm:text-xs"
+                  className="not-hover:text-muted-foreground me-2.5 rounded-md text-sm sm:text-xs"
                   onClick={handleBackToSearch}
                   size="sm"
                   variant="ghost"
@@ -560,7 +561,7 @@ export default function PCommand2() {
                       <>
                         <div
                           aria-live="polite"
-                          className="text-muted-foreground text-sm **:[a]:underline **:[a]:underline-offset-4 **:[code]:rounded-md **:[code]:bg-muted **:[code]:px-[0.3rem] **:[code]:py-[0.2rem] **:[code]:font-mono **:[p]:not-first:mt-3 **:[p]:leading-relaxed **:[strong,a]:font-medium **:[strong,a]:text-foreground"
+                          className="text-muted-foreground **:[code]:bg-muted **:[strong,a]:text-foreground text-sm **:[a]:underline **:[a]:underline-offset-4 **:[code]:rounded-md **:[code]:px-[0.3rem] **:[code]:py-[0.2rem] **:[code]:font-mono **:[p]:leading-relaxed **:[p]:not-first:mt-3 **:[strong,a]:font-medium"
                           dangerouslySetInnerHTML={{
                             __html: markdownToSafeHTML(aiState.response),
                           }}
@@ -614,5 +615,5 @@ export default function PCommand2() {
         </CommandDialogPopup>
       </CommandDialog>
     </>
-  );
+  )
 }

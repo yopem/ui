@@ -1,7 +1,7 @@
-import { Button } from "@/components/ui/tailwind/button";
-import { Field, FieldLabel } from "@/components/ui/tailwind/field";
-import { Form } from "@/components/ui/tailwind/form";
-import { Input } from "@/components/ui/tailwind/input";
+import { Button } from "@/components/ui/tailwind/button"
+import { Field, FieldLabel } from "@/components/ui/tailwind/field"
+import { Form } from "@/components/ui/tailwind/form"
+import { Input } from "@/components/ui/tailwind/input"
 import {
   Sheet,
   SheetClose,
@@ -12,7 +12,7 @@ import {
   SheetPopup,
   SheetTitle,
   SheetTrigger,
-} from "@/components/ui/tailwind/sheet";
+} from "@/components/ui/tailwind/sheet"
 
 export default function Particle() {
   return (
@@ -45,5 +45,5 @@ export default function Particle() {
         </Form>
       </SheetPopup>
     </Sheet>
-  );
+  )
 }

@@ -4,18 +4,18 @@ import {
   SelectPopup,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/tailwind/select";
+} from "@/components/ui/tailwind/select"
 
 const items = [
   { label: "Next.js", value: "next" },
   { label: "Vite", value: "vite" },
   { label: "Astro", value: "astro" },
-];
+]
 
 export default function Particle() {
   return (
     <Select aria-label="Select framework" defaultValue="next" items={items}>
-      <SelectTrigger className="border-transparent bg-muted shadow-none before:hidden">
+      <SelectTrigger className="bg-muted border-transparent shadow-none before:hidden">
         <SelectValue />
       </SelectTrigger>
       <SelectPopup>
@@ -26,5 +26,5 @@ export default function Particle() {
         ))}
       </SelectPopup>
     </Select>
-  );
+  )
 }

@@ -1,25 +1,26 @@
-"use client";
+"use client"
 
-import { useState } from "react";
+import { useState } from "react"
+
 import {
   Field,
   FieldDescription,
   FieldError,
   FieldLabel,
-} from "@/components/ui/tailwind/field";
-import { OTPField, OTPFieldInput } from "@/components/ui/tailwind/otp-field";
+} from "@/components/ui/tailwind/field"
+import { OTPField, OTPFieldInput } from "@/components/ui/tailwind/otp-field"
 
-const OTP_LENGTH = 6;
+const OTP_LENGTH = 6
 
 const OTP_SLOT_KEYS = Array.from(
   { length: OTP_LENGTH },
   (_, i) => `otp-slot-${i}`,
-);
+)
 
 export default function Particle() {
-  const [value, setValue] = useState("");
-  const [invalid, setInvalid] = useState(false);
-  const valid = value.length === OTP_LENGTH && value === "123456";
+  const [value, setValue] = useState("")
+  const [invalid, setInvalid] = useState(false)
+  const valid = value.length === OTP_LENGTH && value === "123456"
 
   return (
     <Field className="items-center">
@@ -27,10 +28,10 @@ export default function Particle() {
       <OTPField
         length={OTP_LENGTH}
         onValueChange={(nextValue) => {
-          setValue(nextValue);
+          setValue(nextValue)
           setInvalid(
             nextValue.length === OTP_LENGTH ? nextValue !== "123456" : false,
-          );
+          )
         }}
         value={value}
       >
@@ -48,5 +49,5 @@ export default function Particle() {
       {invalid && <FieldError>Code must be 123456.</FieldError>}
       {valid && <FieldDescription>Code verified.</FieldDescription>}
     </Field>
-  );
+  )
 }

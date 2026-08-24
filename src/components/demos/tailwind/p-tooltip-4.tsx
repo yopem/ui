@@ -1,30 +1,32 @@
-"use client";
+"use client"
 
-import { LinkIcon, MailIcon, Share2Icon } from "lucide-react";
-import type { ComponentType } from "react";
-import { Button } from "@/components/ui/tailwind/button";
-import { Group, GroupSeparator } from "@/components/ui/tailwind/group";
+import type { ComponentType } from "react"
+
+import { LinkIcon, MailIcon, Share2Icon } from "lucide-react"
+
+import { Button } from "@/components/ui/tailwind/button"
+import { Group, GroupSeparator } from "@/components/ui/tailwind/group"
 import {
   Tooltip,
   TooltipCreateHandle,
   TooltipPopup,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/ui/tailwind/tooltip";
+} from "@/components/ui/tailwind/tooltip"
 
-const tooltipHandle = TooltipCreateHandle<ComponentType>();
+const tooltipHandle = TooltipCreateHandle<ComponentType>()
 
 const ShareLinkContent = () => {
-  return <span>Copy shareable link</span>;
-};
+  return <span>Copy shareable link</span>
+}
 
 const ShareEmailContent = () => {
-  return <span>Share via email</span>;
-};
+  return <span>Share via email</span>
+}
 
 const ShareSocialContent = () => {
-  return <span>Share to social media</span>;
-};
+  return <span>Share to social media</span>
+}
 
 export default function Particle() {
   return (
@@ -76,5 +78,5 @@ export default function Particle() {
         )}
       </Tooltip>
     </TooltipProvider>
-  );
+  )
 }

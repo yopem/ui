@@ -1,8 +1,10 @@
-"use client";
+"use client"
 
-import type { FormEvent } from "react";
-import { useState } from "react";
-import { Button } from "@/components/ui/tailwind/button";
+import type { FormEvent } from "react"
+
+import { useState } from "react"
+
+import { Button } from "@/components/ui/tailwind/button"
 import {
   Combobox,
   ComboboxEmpty,
@@ -10,9 +12,9 @@ import {
   ComboboxItem,
   ComboboxList,
   ComboboxPopup,
-} from "@/components/ui/tailwind/combobox";
-import { Field, FieldError, FieldLabel } from "@/components/ui/tailwind/field";
-import { Form } from "@/components/ui/tailwind/form";
+} from "@/components/ui/tailwind/combobox"
+import { Field, FieldError, FieldLabel } from "@/components/ui/tailwind/field"
+import { Form } from "@/components/ui/tailwind/form"
 
 const items = [
   { label: "Apple", value: "apple" },
@@ -25,21 +27,21 @@ const items = [
   { label: "Kiwi", value: "kiwi" },
   { label: "Peach", value: "peach" },
   { label: "Pear", value: "pear" },
-];
+]
 
 export default function Particle() {
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false)
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-    const selectedItem = formData.get("item");
+    e.preventDefault()
+    const formData = new FormData(e.currentTarget)
+    const selectedItem = formData.get("item")
     const itemValue =
-      items.find((item) => item.label === selectedItem)?.value || selectedItem;
-    setLoading(true);
-    await new Promise((r) => setTimeout(r, 800));
-    setLoading(false);
-    alert(`Favorite item: ${itemValue || ""}`);
-  };
+      items.find((item) => item.label === selectedItem)?.value || selectedItem
+    setLoading(true)
+    await new Promise((r) => setTimeout(r, 800))
+    setLoading(false)
+    alert(`Favorite item: ${itemValue || ""}`)
+  }
 
   return (
     <Form className="flex w-full max-w-64 flex-col gap-4" onSubmit={onSubmit}>
@@ -64,5 +66,5 @@ export default function Particle() {
         Submit
       </Button>
     </Form>
-  );
+  )
 }

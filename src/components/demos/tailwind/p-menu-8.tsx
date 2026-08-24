@@ -1,10 +1,10 @@
-import { Button } from "@/components/ui/tailwind/button";
+import { Button } from "@/components/ui/tailwind/button"
 import {
   Menu,
   MenuItem,
   MenuPopup,
   MenuTrigger,
-} from "@/components/ui/tailwind/menu";
+} from "@/components/ui/tailwind/menu"
 
 export default function Particle() {
   return (
@@ -16,5 +16,5 @@ export default function Particle() {
         <MenuItem closeOnClick>Log out</MenuItem>
       </MenuPopup>
     </Menu>
-  );
+  )
 }

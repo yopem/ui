@@ -1,11 +1,17 @@
-import { HouseIcon, PanelsTopLeftIcon, SettingsIcon } from "lucide-react";
-import { Tabs, TabsList, TabsPanel, TabsTab } from "@/components/ui/tailwind/tabs";
+import { HouseIcon, PanelsTopLeftIcon, SettingsIcon } from "lucide-react"
+
+import {
+  Tabs,
+  TabsList,
+  TabsPanel,
+  TabsTab,
+} from "@/components/ui/tailwind/tabs"
 import {
   Tooltip,
   TooltipPopup,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/ui/tailwind/tooltip";
+} from "@/components/ui/tailwind/tooltip"
 
 export default function Particle() {
   return (
@@ -38,21 +44,21 @@ export default function Particle() {
           </Tooltip>
         </TabsList>
         <TabsPanel value="tab-1">
-          <p className="p-4 text-center text-muted-foreground text-xs">
+          <p className="text-muted-foreground p-4 text-center text-xs">
             Overview content
           </p>
         </TabsPanel>
         <TabsPanel value="tab-2">
-          <p className="p-4 text-center text-muted-foreground text-xs">
+          <p className="text-muted-foreground p-4 text-center text-xs">
             Projects content
           </p>
         </TabsPanel>
         <TabsPanel value="tab-3">
-          <p className="p-4 text-center text-muted-foreground text-xs">
+          <p className="text-muted-foreground p-4 text-center text-xs">
             Settings content
           </p>
         </TabsPanel>
       </Tabs>
     </TooltipProvider>
-  );
+  )
 }

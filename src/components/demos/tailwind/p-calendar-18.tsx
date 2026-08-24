@@ -1,30 +1,31 @@
-"use client";
+"use client"
 
-import { ClockIcon } from "lucide-react";
-import { useState } from "react";
-import { Calendar } from "@/components/ui/tailwind/calendar";
-import { Field, FieldLabel } from "@/components/ui/tailwind/field";
+import { ClockIcon } from "lucide-react"
+import { useState } from "react"
+
+import { Calendar } from "@/components/ui/tailwind/calendar"
+import { Field, FieldLabel } from "@/components/ui/tailwind/field"
 import {
   InputGroup,
   InputGroupAddon,
   InputGroupInput,
-} from "@/components/ui/tailwind/input-group";
+} from "@/components/ui/tailwind/input-group"
 
 export default function Particle() {
-  const [date, setDate] = useState<Date | undefined>(() => new Date());
-  const [month, setMonth] = useState<Date>(() => new Date());
-  const [timeValue, setTimeValue] = useState("12:00:00");
+  const [date, setDate] = useState<Date | undefined>(() => new Date())
+  const [month, setMonth] = useState<Date>(() => new Date())
+  const [timeValue, setTimeValue] = useState("12:00:00")
 
   const handleDayPickerSelect = (selectedDate: Date | undefined) => {
-    setDate(selectedDate);
+    setDate(selectedDate)
     if (selectedDate) {
-      setMonth(selectedDate);
+      setMonth(selectedDate)
     }
-  };
+  }
 
   const handleTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setTimeValue(e.target.value);
-  };
+    setTimeValue(e.target.value)
+  }
 
   return (
     <div className="flex flex-col gap-2">
@@ -36,7 +37,7 @@ export default function Particle() {
         selected={date}
       />
       <Field className="flex-row items-center gap-3">
-        <FieldLabel className="whitespace-nowrap text-xs">
+        <FieldLabel className="text-xs whitespace-nowrap">
           Enter time
         </FieldLabel>
         <InputGroup className="grow">
@@ -54,5 +55,5 @@ export default function Particle() {
         </InputGroup>
       </Field>
     </div>
-  );
+  )
 }

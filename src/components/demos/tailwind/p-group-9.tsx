@@ -1,6 +1,7 @@
-import { ZoomInIcon, ZoomOutIcon } from "lucide-react";
-import { Button } from "@/components/ui/tailwind/button";
-import { Group, GroupSeparator } from "@/components/ui/tailwind/group";
+import { ZoomInIcon, ZoomOutIcon } from "lucide-react"
+
+import { Button } from "@/components/ui/tailwind/button"
+import { Group, GroupSeparator } from "@/components/ui/tailwind/group"
 
 export default function Particle() {
   return (
@@ -13,5 +14,5 @@ export default function Particle() {
         <ZoomOutIcon />
       </Button>
     </Group>
-  );
+  )
 }

@@ -1,7 +1,7 @@
-"use client";
+"use client"
 
-import { Button } from "@/components/ui/tailwind/button";
-import { toastManager } from "@/components/ui/tailwind/toast";
+import { Button } from "@/components/ui/tailwind/button"
+import { toastManager } from "@/components/ui/tailwind/toast"
 
 export default function Particle() {
   return (
@@ -12,7 +12,7 @@ export default function Particle() {
             description: "Your changes have been saved.",
             title: "Success!",
             type: "success",
-          });
+          })
         }}
         variant="outline"
       >
@@ -24,7 +24,7 @@ export default function Particle() {
             description: "There was a problem with your request.",
             title: "Uh oh! Something went wrong.",
             type: "error",
-          });
+          })
         }}
         variant="outline"
       >
@@ -36,7 +36,7 @@ export default function Particle() {
             description: "You can add components to your app using the cli.",
             title: "Heads up!",
             type: "info",
-          });
+          })
         }}
         variant="outline"
       >
@@ -48,12 +48,12 @@ export default function Particle() {
             description: "Your session is about to expire.",
             title: "Warning!",
             type: "warning",
-          });
+          })
         }}
         variant="outline"
       >
         Warning Toast
       </Button>
     </div>
-  );
+  )
 }

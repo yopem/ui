@@ -1,9 +1,10 @@
-import { useId } from "react";
-import { Input } from "@/components/ui/tailwind/input";
-import { Label } from "@/components/ui/tailwind/label";
+import { useId } from "react"
+
+import { Input } from "@/components/ui/tailwind/input"
+import { Label } from "@/components/ui/tailwind/label"
 
 export default function Particle() {
-  const id = useId();
+  const id = useId()
   return (
     <div className="flex flex-col gap-2">
       <Label htmlFor={id}>
@@ -11,5 +12,5 @@ export default function Particle() {
       </Label>
       <Input id={id} placeholder="Email" required type="email" />
     </div>
-  );
+  )
 }

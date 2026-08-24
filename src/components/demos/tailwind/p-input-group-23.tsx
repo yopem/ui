@@ -1,33 +1,34 @@
-"use client";
+"use client"
 
-import { LoaderCircleIcon, MicIcon, SearchIcon } from "lucide-react";
-import { useEffect, useState } from "react";
-import { Button } from "@/components/ui/tailwind/button";
+import { LoaderCircleIcon, MicIcon, SearchIcon } from "lucide-react"
+import { useEffect, useState } from "react"
+
+import { Button } from "@/components/ui/tailwind/button"
 import {
   InputGroup,
   InputGroupAddon,
   InputGroupInput,
-} from "@/components/ui/tailwind/input-group";
+} from "@/components/ui/tailwind/input-group"
 import {
   Tooltip,
   TooltipPopup,
   TooltipTrigger,
-} from "@/components/ui/tailwind/tooltip";
+} from "@/components/ui/tailwind/tooltip"
 
 export default function Particle() {
-  const [inputValue, setInputValue] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const [inputValue, setInputValue] = useState("")
+  const [isLoading, setIsLoading] = useState(false)
 
   useEffect(() => {
     if (inputValue) {
-      setIsLoading(true);
+      setIsLoading(true)
       const timer = setTimeout(() => {
-        setIsLoading(false);
-      }, 500);
-      return () => clearTimeout(timer);
+        setIsLoading(false)
+      }, 500)
+      return () => clearTimeout(timer)
     }
-    setIsLoading(false);
-  }, [inputValue]);
+    setIsLoading(false)
+  }, [inputValue])
 
   return (
     <InputGroup>
@@ -66,5 +67,5 @@ export default function Particle() {
         </Tooltip>
       </InputGroupAddon>
     </InputGroup>
-  );
+  )
 }

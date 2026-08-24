@@ -1,4 +1,4 @@
-import { Field, FieldDescription } from "@/components/ui/tailwind/field";
+import { Field, FieldDescription } from "@/components/ui/tailwind/field"
 import {
   NumberField,
   NumberFieldDecrement,
@@ -6,7 +6,7 @@ import {
   NumberFieldIncrement,
   NumberFieldInput,
   NumberFieldScrubArea,
-} from "@/components/ui/tailwind/number-field";
+} from "@/components/ui/tailwind/number-field"
 
 export default function Particle() {
   return (
@@ -21,5 +21,5 @@ export default function Particle() {
       </NumberField>
       <FieldDescription>Choose a value between 1 and 100.</FieldDescription>
     </Field>
-  );
+  )
 }

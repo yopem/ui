@@ -1,4 +1,4 @@
-import { Slider } from "@/components/ui/tailwind/slider";
+import { Slider } from "@/components/ui/tailwind/slider"
 
 export default function Particle() {
   return (
@@ -7,5 +7,5 @@ export default function Particle() {
       defaultValue={[25, 75]}
       thumbCollisionBehavior="swap"
     />
-  );
+  )
 }

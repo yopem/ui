@@ -1,15 +1,16 @@
-"use client";
+"use client"
 
-import { addDays } from "date-fns";
-import { useState } from "react";
-import { Button } from "@/components/ui/tailwind/button";
-import { Calendar } from "@/components/ui/tailwind/calendar";
+import { addDays } from "date-fns"
+import { useState } from "react"
+
+import { Button } from "@/components/ui/tailwind/button"
+import { Calendar } from "@/components/ui/tailwind/calendar"
 
 export default function Particle() {
-  const today = new Date();
-  const selectedDay = addDays(today, -28);
-  const [month, setMonth] = useState(selectedDay);
-  const [date, setDate] = useState<Date | undefined>(selectedDay);
+  const today = new Date()
+  const selectedDay = addDays(today, -28)
+  const [month, setMonth] = useState(selectedDay)
+  const [date, setDate] = useState<Date | undefined>(selectedDay)
 
   return (
     <div className="flex flex-col items-start gap-2">
@@ -24,5 +25,5 @@ export default function Particle() {
         Current month
       </Button>
     </div>
-  );
+  )
 }

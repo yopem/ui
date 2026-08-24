@@ -1,8 +1,9 @@
-import { useId } from "react";
-import { Input } from "@/components/ui/tailwind/input";
+import { useId } from "react"
+
+import { Input } from "@/components/ui/tailwind/input"
 
 export default function Particle() {
-  const id = useId();
+  const id = useId()
   return (
     <Input
       className="read-only:bg-muted"
@@ -11,5 +12,5 @@ export default function Particle() {
       readOnly
       type="text"
     />
-  );
+  )
 }

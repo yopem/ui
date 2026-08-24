@@ -1,26 +1,28 @@
-"use client";
+"use client"
 
-import type { FormEvent } from "react";
-import { useState } from "react";
-import { Button } from "@/components/ui/tailwind/button";
-import { Field, FieldLabel } from "@/components/ui/tailwind/field";
-import { Form } from "@/components/ui/tailwind/form";
-import { Switch } from "@/components/ui/tailwind/switch";
+import type { FormEvent } from "react"
+
+import { useState } from "react"
+
+import { Button } from "@/components/ui/tailwind/button"
+import { Field, FieldLabel } from "@/components/ui/tailwind/field"
+import { Form } from "@/components/ui/tailwind/form"
+import { Switch } from "@/components/ui/tailwind/switch"
 
 export default function Particle() {
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false)
 
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-    setLoading(true);
-    await new Promise((r) => setTimeout(r, 800));
-    setLoading(false);
-    console.log(formData.get("marketing"));
+    e.preventDefault()
+    const formData = new FormData(e.currentTarget)
+    setLoading(true)
+    await new Promise((r) => setTimeout(r, 800))
+    setLoading(false)
+    console.log(formData.get("marketing"))
 
-    const enabled = formData.get("marketing");
-    alert(`Marketing emails: ${enabled}`);
-  };
+    const enabled = formData.get("marketing")
+    alert(`Marketing emails: ${enabled}`)
+  }
 
   return (
     <Form className="flex flex-col gap-4" onSubmit={onSubmit}>
@@ -34,5 +36,5 @@ export default function Particle() {
         Submit
       </Button>
     </Form>
-  );
+  )
 }

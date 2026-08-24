@@ -1,4 +1,4 @@
-"use client";
+"use client"
 
 import {
   Autocomplete,
@@ -7,12 +7,12 @@ import {
   AutocompleteItem,
   AutocompleteList,
   AutocompletePopup,
-} from "@/components/ui/tailwind/autocomplete";
+} from "@/components/ui/tailwind/autocomplete"
 import {
   Field,
   FieldDescription,
   FieldLabel,
-} from "@/components/ui/tailwind/field";
+} from "@/components/ui/tailwind/field"
 
 const items = [
   { label: "Apple", value: "apple" },
@@ -25,7 +25,7 @@ const items = [
   { label: "Kiwi", value: "kiwi" },
   { label: "Peach", value: "peach" },
   { label: "Pear", value: "pear" },
-];
+]
 
 export default function Particle() {
   return (
@@ -49,5 +49,5 @@ export default function Particle() {
       </Autocomplete>
       <FieldDescription>Select a item.</FieldDescription>
     </Field>
-  );
+  )
 }

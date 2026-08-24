@@ -1,16 +1,17 @@
-"use client";
+"use client"
 
-import { useState } from "react";
+import { useState } from "react"
+
 import {
   InputGroup,
   InputGroupAddon,
   InputGroupInput,
   InputGroupText,
-} from "@/components/ui/tailwind/input-group";
+} from "@/components/ui/tailwind/input-group"
 
 export default function Particle() {
-  const maxLength = 14;
-  const [value, setValue] = useState("");
+  const maxLength = 14
+  const [value, setValue] = useState("")
 
   return (
     <InputGroup>
@@ -32,5 +33,5 @@ export default function Particle() {
         </InputGroupText>
       </InputGroupAddon>
     </InputGroup>
-  );
+  )
 }

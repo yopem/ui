@@ -1,17 +1,17 @@
-"use client";
+"use client"
 
 import {
   Avatar,
   AvatarFallback,
   AvatarImage,
-} from "@/components/ui/tailwind/avatar";
+} from "@/components/ui/tailwind/avatar"
 import {
   Select,
   SelectItem,
   SelectPopup,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/tailwind/select";
+} from "@/components/ui/tailwind/select"
 
 const users = [
   {
@@ -38,7 +38,7 @@ const users = [
     username: "@wyen.luna",
     value: "luna",
   },
-];
+]
 
 export default function Particle() {
   return (
@@ -57,7 +57,7 @@ export default function Particle() {
               </Avatar>
               <span className="flex flex-col text-left">
                 <span className="truncate font-medium">{item.label}</span>
-                <span className="truncate text-muted-foreground text-xs">
+                <span className="text-muted-foreground truncate text-xs">
                   {item.username}
                 </span>
               </span>
@@ -75,7 +75,7 @@ export default function Particle() {
               </Avatar>
               <span className="flex flex-col">
                 <span className="truncate font-medium">{item.label}</span>
-                <span className="truncate text-muted-foreground text-xs">
+                <span className="text-muted-foreground truncate text-xs">
                   {item.username}
                 </span>
               </span>
@@ -84,5 +84,5 @@ export default function Particle() {
         ))}
       </SelectPopup>
     </Select>
-  );
+  )
 }

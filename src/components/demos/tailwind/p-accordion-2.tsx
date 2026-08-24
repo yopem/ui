@@ -3,7 +3,7 @@ import {
   AccordionItem,
   AccordionPanel,
   AccordionTrigger,
-} from "@/components/ui/tailwind/accordion";
+} from "@/components/ui/tailwind/accordion"
 
 export default function Particle() {
   return (
@@ -29,5 +29,5 @@ export default function Particle() {
         </AccordionPanel>
       </AccordionItem>
     </Accordion>
-  );
+  )
 }

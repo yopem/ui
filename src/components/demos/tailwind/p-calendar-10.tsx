@@ -1,16 +1,18 @@
-"use client";
+"use client"
 
-import type { DateRange } from "@daypicker/react";
-import { addDays } from "date-fns";
-import { useState } from "react";
-import { Calendar } from "@/components/ui/tailwind/calendar";
+import type { DateRange } from "@daypicker/react"
+
+import { addDays } from "date-fns"
+import { useState } from "react"
+
+import { Calendar } from "@/components/ui/tailwind/calendar"
 
 export default function Particle() {
-  const today = new Date();
+  const today = new Date()
   const [date, setDate] = useState<DateRange | undefined>({
     from: today,
     to: addDays(today, 3),
-  });
+  })
 
   return (
     <Calendar
@@ -23,5 +25,5 @@ export default function Particle() {
       onSelect={setDate}
       selected={date}
     />
-  );
+  )
 }

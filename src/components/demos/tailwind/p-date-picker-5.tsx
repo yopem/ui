@@ -1,50 +1,51 @@
-"use client";
+"use client"
 
-import { format, isValid, parse } from "date-fns";
-import { CalendarIcon } from "lucide-react";
-import { useState } from "react";
-import { Button } from "@/components/ui/tailwind/button";
-import { Calendar } from "@/components/ui/tailwind/calendar";
+import { format, isValid, parse } from "date-fns"
+import { CalendarIcon } from "lucide-react"
+import { useState } from "react"
+
+import { Button } from "@/components/ui/tailwind/button"
+import { Calendar } from "@/components/ui/tailwind/calendar"
 import {
   InputGroup,
   InputGroupAddon,
   InputGroupInput,
-} from "@/components/ui/tailwind/input-group";
+} from "@/components/ui/tailwind/input-group"
 import {
   Popover,
   PopoverPopup,
   PopoverTrigger,
-} from "@/components/ui/tailwind/popover";
+} from "@/components/ui/tailwind/popover"
 
 export default function Particle() {
-  const [date, setDate] = useState<Date | undefined>();
-  const [inputValue, setInputValue] = useState("");
-  const [month, setMonth] = useState<Date>(() => new Date());
+  const [date, setDate] = useState<Date | undefined>()
+  const [inputValue, setInputValue] = useState("")
+  const [month, setMonth] = useState<Date>(() => new Date())
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setInputValue(value);
+    const value = e.target.value
+    setInputValue(value)
 
     if (value) {
-      const parsedDate = parse(value, "yyyy-MM-dd", new Date());
+      const parsedDate = parse(value, "yyyy-MM-dd", new Date())
       if (isValid(parsedDate)) {
-        setDate(parsedDate);
-        setMonth(parsedDate);
+        setDate(parsedDate)
+        setMonth(parsedDate)
       }
     } else {
-      setDate(undefined);
+      setDate(undefined)
     }
-  };
+  }
 
   const handleSelect = (selectedDate: Date | undefined) => {
-    setDate(selectedDate);
+    setDate(selectedDate)
     if (selectedDate) {
-      setInputValue(format(selectedDate, "yyyy-MM-dd"));
-      setMonth(selectedDate);
+      setInputValue(format(selectedDate, "yyyy-MM-dd"))
+      setMonth(selectedDate)
     } else {
-      setInputValue("");
+      setInputValue("")
     }
-  };
+  }
 
   return (
     <Popover>
@@ -78,5 +79,5 @@ export default function Particle() {
         />
       </PopoverPopup>
     </Popover>
-  );
+  )
 }

@@ -2,7 +2,7 @@ import {
   Avatar,
   AvatarFallback,
   AvatarImage,
-} from "@/components/ui/tailwind/avatar";
+} from "@/components/ui/tailwind/avatar"
 
 export default function Particle() {
   return (
@@ -16,8 +16,8 @@ export default function Particle() {
       </Avatar>
       <span
         aria-hidden="true"
-        className="absolute end-0 bottom-0 size-2 rounded-full bg-emerald-500 outline-2 outline-background"
+        className="outline-background absolute end-0 bottom-0 size-2 rounded-full bg-emerald-500 outline-2"
       />
     </div>
-  );
+  )
 }

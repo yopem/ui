@@ -2,8 +2,8 @@ import {
   InputGroup,
   InputGroupAddon,
   InputGroupInput,
-} from "@/components/ui/tailwind/input-group";
-import { Kbd } from "@/components/ui/tailwind/kbd";
+} from "@/components/ui/tailwind/input-group"
+import { Kbd } from "@/components/ui/tailwind/kbd"
 
 export default function Particle() {
   return (
@@ -13,5 +13,5 @@ export default function Particle() {
         <Kbd>⌘K</Kbd>
       </InputGroupAddon>
     </InputGroup>
-  );
+  )
 }

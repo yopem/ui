@@ -1,14 +1,15 @@
-"use client";
+"use client"
 
-import { CheckIcon } from "lucide-react";
-import { useId } from "react";
-import { Badge } from "@/components/ui/tailwind/badge";
-import { Checkbox } from "@/components/ui/tailwind/checkbox";
+import { CheckIcon } from "lucide-react"
+import { useId } from "react"
+
+import { Badge } from "@/components/ui/tailwind/badge"
+import { Checkbox } from "@/components/ui/tailwind/checkbox"
 
 export default function Particle() {
-  const id = useId();
+  const id = useId()
   return (
-    <Badge className="relative outline-none has-focus-visible:border-ring has-data-unchecked:bg-muted has-data-unchecked:text-muted-foreground has-focus-visible:ring-[3px] has-focus-visible:ring-ring/50">
+    <Badge className="has-focus-visible:border-ring has-data-unchecked:bg-muted has-data-unchecked:text-muted-foreground has-focus-visible:ring-ring/50 relative outline-none has-focus-visible:ring-[3px]">
       <Checkbox className="peer hidden" defaultChecked id={id} />
       <CheckIcon
         aria-hidden="true"
@@ -21,5 +22,5 @@ export default function Particle() {
         Selectable
       </label>
     </Badge>
-  );
+  )
 }

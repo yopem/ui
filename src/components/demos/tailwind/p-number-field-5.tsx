@@ -1,15 +1,16 @@
-import { useId } from "react";
-import { Label } from "@/components/ui/tailwind/label";
+import { useId } from "react"
+
+import { Label } from "@/components/ui/tailwind/label"
 import {
   NumberField,
   NumberFieldDecrement,
   NumberFieldGroup,
   NumberFieldIncrement,
   NumberFieldInput,
-} from "@/components/ui/tailwind/number-field";
+} from "@/components/ui/tailwind/number-field"
 
 export default function Particle() {
-  const id = useId();
+  const id = useId()
   return (
     <div className="flex flex-col items-start gap-2">
       <Label htmlFor={id}>Quantity</Label>
@@ -21,5 +22,5 @@ export default function Particle() {
         </NumberFieldGroup>
       </NumberField>
     </div>
-  );
+  )
 }

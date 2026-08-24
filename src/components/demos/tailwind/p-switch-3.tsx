@@ -1,9 +1,10 @@
-import { useId } from "react";
-import { Label } from "@/components/ui/tailwind/label";
-import { Switch } from "@/components/ui/tailwind/switch";
+import { useId } from "react"
+
+import { Label } from "@/components/ui/tailwind/label"
+import { Switch } from "@/components/ui/tailwind/switch"
 
 export default function Particle() {
-  const id = useId();
+  const id = useId()
 
   return (
     <div className="flex items-start gap-2">
@@ -15,5 +16,5 @@ export default function Particle() {
         </p>
       </div>
     </div>
-  );
+  )
 }

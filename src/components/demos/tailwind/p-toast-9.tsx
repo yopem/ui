@@ -1,50 +1,51 @@
-"use client";
+"use client"
 
-import { DownloadIcon } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
-import { Button } from "@/components/ui/tailwind/button";
-import { toastManager } from "@/components/ui/tailwind/toast";
+import { DownloadIcon } from "lucide-react"
+import { useEffect, useRef, useState } from "react"
+
+import { Button } from "@/components/ui/tailwind/button"
+import { toastManager } from "@/components/ui/tailwind/toast"
 
 export default function Particle() {
-  const [isGenerating, setIsGenerating] = useState(false);
-  const [progress, setProgress] = useState(0);
-  const abortControllerRef = useRef<AbortController | null>(null);
+  const [isGenerating, setIsGenerating] = useState(false)
+  const [progress, setProgress] = useState(0)
+  const abortControllerRef = useRef<AbortController | null>(null)
 
   useEffect(() => {
-    if (!isGenerating) return;
+    if (!isGenerating) return
 
     const interval = setInterval(() => {
       setProgress((prev) =>
         Math.min(99, prev + Math.round(Math.random() * 8 + 2)),
-      );
-    }, 300);
+      )
+    }, 300)
 
-    return () => clearInterval(interval);
-  }, [isGenerating]);
+    return () => clearInterval(interval)
+  }, [isGenerating])
 
   async function handleDownload() {
-    if (isGenerating) return;
+    if (isGenerating) return
 
-    setIsGenerating(true);
-    setProgress(0);
-    abortControllerRef.current = new AbortController();
+    setIsGenerating(true)
+    setProgress(0)
+    abortControllerRef.current = new AbortController()
 
     try {
       await toastManager.promise(
         new Promise<string>((resolve, reject) => {
-          const shouldSucceed = Math.random() > 0.2;
+          const shouldSucceed = Math.random() > 0.2
           const timeoutId = setTimeout(() => {
             if (shouldSucceed) {
-              resolve("Report ready");
+              resolve("Report ready")
             } else {
-              reject(new Error("Generation failed"));
+              reject(new Error("Generation failed"))
             }
-          }, 4000);
+          }, 4000)
 
           abortControllerRef.current?.signal.addEventListener("abort", () => {
-            clearTimeout(timeoutId);
-            reject(new DOMException("Cancelled", "AbortError"));
-          });
+            clearTimeout(timeoutId)
+            reject(new DOMException("Cancelled", "AbortError"))
+          })
         }),
         {
           error: (err: Error) => {
@@ -54,13 +55,13 @@ export default function Particle() {
                 description: "Report generation was cancelled.",
                 title: "Cancelled",
                 type: "info" as const,
-              };
+              }
             }
             return {
               actionProps: undefined,
               description: "Please try again later.",
               title: "Failed to generate report",
-            };
+            }
           },
           loading: {
             actionProps: {
@@ -76,11 +77,11 @@ export default function Particle() {
             title: "Download started",
           }),
         },
-      );
+      )
     } finally {
-      setIsGenerating(false);
-      setProgress(0);
-      abortControllerRef.current = null;
+      setIsGenerating(false)
+      setProgress(0)
+      abortControllerRef.current = null
     }
   }
 
@@ -100,5 +101,5 @@ export default function Particle() {
         </>
       )}
     </Button>
-  );
+  )
 }

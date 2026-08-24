@@ -1,7 +1,6 @@
-"use client";
+"use client"
 
-import { useMediaQuery } from "@/hooks/use-media-query";
-import { Button } from "@/components/ui/tailwind/button";
+import { Button } from "@/components/ui/tailwind/button"
 import {
   Dialog,
   DialogClose,
@@ -12,7 +11,7 @@ import {
   DialogPopup,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/tailwind/dialog";
+} from "@/components/ui/tailwind/dialog"
 import {
   Drawer,
   DrawerClose,
@@ -23,17 +22,18 @@ import {
   DrawerPopup,
   DrawerTitle,
   DrawerTrigger,
-} from "@/components/ui/tailwind/drawer";
-import { Field, FieldLabel } from "@/components/ui/tailwind/field";
-import { Form } from "@/components/ui/tailwind/form";
-import { Input } from "@/components/ui/tailwind/input";
+} from "@/components/ui/tailwind/drawer"
+import { Field, FieldLabel } from "@/components/ui/tailwind/field"
+import { Form } from "@/components/ui/tailwind/form"
+import { Input } from "@/components/ui/tailwind/input"
+import { useMediaQuery } from "@/hooks/use-media-query"
 
-const FORM_TITLE = "Edit profile";
+const FORM_TITLE = "Edit profile"
 const FORM_DESCRIPTION =
-  "Make changes to your profile here. Click save when you're done.";
-const TRIGGER_LABEL = "Open";
-const CANCEL_LABEL = "Cancel";
-const SAVE_LABEL = "Save";
+  "Make changes to your profile here. Click save when you're done."
+const TRIGGER_LABEL = "Open"
+const CANCEL_LABEL = "Cancel"
+const SAVE_LABEL = "Save"
 
 const formFields = (
   <>
@@ -46,10 +46,10 @@ const formFields = (
       <Input defaultValue="@maggie.welsh" type="text" />
     </Field>
   </>
-);
+)
 
 export default function Particle() {
-  const isMobile = useMediaQuery("max-md");
+  const isMobile = useMediaQuery("max-md")
 
   if (isMobile) {
     return (
@@ -75,7 +75,7 @@ export default function Particle() {
           </Form>
         </DrawerPopup>
       </Drawer>
-    );
+    )
   }
 
   return (
@@ -99,5 +99,5 @@ export default function Particle() {
         </Form>
       </DialogPopup>
     </Dialog>
-  );
+  )
 }

@@ -1,24 +1,25 @@
-"use client";
+"use client"
 
-import { format } from "date-fns";
-import { CalendarIcon } from "lucide-react";
-import { useState } from "react";
-import { Button } from "@/components/ui/tailwind/button";
-import { Calendar } from "@/components/ui/tailwind/calendar";
+import { format } from "date-fns"
+import { CalendarIcon } from "lucide-react"
+import { useState } from "react"
+
+import { Button } from "@/components/ui/tailwind/button"
+import { Calendar } from "@/components/ui/tailwind/calendar"
 import {
   Popover,
   PopoverPopup,
   PopoverTrigger,
-} from "@/components/ui/tailwind/popover";
+} from "@/components/ui/tailwind/popover"
 
 export default function Particle() {
-  const [date, setDate] = useState<Date | undefined>();
-  const [open, setOpen] = useState(false);
+  const [date, setDate] = useState<Date | undefined>()
+  const [open, setOpen] = useState(false)
 
   const handleSelect = (selectedDate: Date | undefined) => {
-    setDate(selectedDate);
-    setOpen(false);
-  };
+    setDate(selectedDate)
+    setOpen(false)
+  }
 
   return (
     <Popover onOpenChange={setOpen} open={open}>
@@ -32,5 +33,5 @@ export default function Particle() {
         <Calendar mode="single" onSelect={handleSelect} selected={date} />
       </PopoverPopup>
     </Popover>
-  );
+  )
 }

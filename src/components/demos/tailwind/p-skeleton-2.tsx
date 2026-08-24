@@ -1,4 +1,4 @@
-import { Skeleton } from "@/components/ui/tailwind/skeleton";
+import { Skeleton } from "@/components/ui/tailwind/skeleton"
 
 export default function Particle() {
   return (
@@ -13,5 +13,5 @@ export default function Particle() {
       </div>
       <Skeleton className="h-6 w-17" />
     </div>
-  );
+  )
 }

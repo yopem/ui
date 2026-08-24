@@ -1,40 +1,40 @@
-"use client";
+"use client"
 
-import type { DayButtonProps } from "@daypicker/react";
-import { format } from "date-fns";
-import { useEffect, useState } from "react";
-import { cn } from "@/lib/utils";
-import { Calendar } from "@/components/ui/tailwind/calendar";
+import type { DayButtonProps } from "@daypicker/react"
 
-const GOOD_PRICE_THRESHOLD = 100;
+import { format } from "date-fns"
+import { useEffect, useState } from "react"
+
+import { Calendar } from "@/components/ui/tailwind/calendar"
+import { cn } from "@/lib/utils"
+
+const GOOD_PRICE_THRESHOLD = 100
 
 export default function Particle() {
-  const today = new Date();
-  const [date, setDate] = useState<Date | undefined>(today);
+  const today = new Date()
+  const [date, setDate] = useState<Date | undefined>(today)
 
-  const [mockPriceData, setMockPriceData] = useState<Record<string, number>>(
-    {},
-  );
+  const [mockPriceData, setMockPriceData] = useState<Record<string, number>>({})
   useEffect(() => {
     const generateMockPriceData = () => {
-      const data: Record<string, number> = {};
-      const todayDate = new Date();
+      const data: Record<string, number> = {}
+      const todayDate = new Date()
 
       for (let i = 0; i < 180; i++) {
-        const date = new Date(todayDate);
-        date.setDate(todayDate.getDate() + i);
-        const dateKey = format(date, "yyyy-MM-dd");
-        const randomPrice = Math.floor(Math.random() * (200 - 80 + 1)) + 80;
-        data[dateKey] = randomPrice;
+        const date = new Date(todayDate)
+        date.setDate(todayDate.getDate() + i)
+        const dateKey = format(date, "yyyy-MM-dd")
+        const randomPrice = Math.floor(Math.random() * (200 - 80 + 1)) + 80
+        data[dateKey] = randomPrice
       }
-      return data;
-    };
-    setMockPriceData(generateMockPriceData());
-  }, []);
+      return data
+    }
+    setMockPriceData(generateMockPriceData())
+  }, [])
 
   const isDateDisabled = (date: Date) => {
-    return !mockPriceData[format(date, "yyyy-MM-dd")];
-  };
+    return !mockPriceData[format(date, "yyyy-MM-dd")]
+  }
 
   return (
     <Calendar
@@ -59,13 +59,13 @@ export default function Particle() {
       selected={date}
       showOutsideDays={false}
     />
-  );
+  )
 }
 
 function DayButton(props: DayButtonProps & { prices: Record<string, number> }) {
-  const { day, prices, modifiers: _modifiers, ...buttonProps } = props;
-  const price = prices[format(day.date, "yyyy-MM-dd")];
-  const isGoodPrice = price !== undefined && price < GOOD_PRICE_THRESHOLD;
+  const { day, prices, modifiers: _modifiers, ...buttonProps } = props
+  const price = prices[format(day.date, "yyyy-MM-dd")]
+  const isGoodPrice = price !== undefined && price < GOOD_PRICE_THRESHOLD
 
   return (
     <button {...buttonProps}>
@@ -74,7 +74,7 @@ function DayButton(props: DayButtonProps & { prices: Record<string, number> }) {
         {price && (
           <span
             className={cn(
-              "font-normal text-xs",
+              "text-xs font-normal",
               isGoodPrice
                 ? "text-emerald-500"
                 : "in-data-selected:text-primary-foreground/70 text-muted-foreground",
@@ -85,5 +85,5 @@ function DayButton(props: DayButtonProps & { prices: Record<string, number> }) {
         )}
       </span>
     </button>
-  );
+  )
 }

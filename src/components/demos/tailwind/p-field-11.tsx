@@ -2,14 +2,14 @@ import {
   Field,
   FieldDescription,
   FieldLabel,
-} from "@/components/ui/tailwind/field";
+} from "@/components/ui/tailwind/field"
 import {
   Select,
   SelectItem,
   SelectPopup,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/tailwind/select";
+} from "@/components/ui/tailwind/select"
 
 const items = [
   { label: "Select a country", value: null },
@@ -17,7 +17,7 @@ const items = [
   { label: "United Kingdom", value: "uk" },
   { label: "Canada", value: "ca" },
   { label: "Australia", value: "au" },
-];
+]
 
 export default function Particle() {
   return (
@@ -37,5 +37,5 @@ export default function Particle() {
       </Select>
       <FieldDescription>This is an optional field</FieldDescription>
     </Field>
-  );
+  )
 }

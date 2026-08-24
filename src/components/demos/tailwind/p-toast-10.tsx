@@ -1,9 +1,9 @@
-"use client";
+"use client"
 
-import { Button } from "@/components/ui/tailwind/button";
-import { toastManager } from "@/components/ui/tailwind/toast";
+import { Button } from "@/components/ui/tailwind/button"
+import { toastManager } from "@/components/ui/tailwind/toast"
 
-const DEDUP_ID = "coss-demo-dedup-toast";
+const DEDUP_ID = "coss-demo-dedup-toast"
 
 export default function Particle() {
   return (
@@ -15,11 +15,11 @@ export default function Particle() {
           id: DEDUP_ID,
           title: "Saved",
           type: "success",
-        });
+        })
       }}
       variant="outline"
     >
       One Success Toast
     </Button>
-  );
+  )
 }

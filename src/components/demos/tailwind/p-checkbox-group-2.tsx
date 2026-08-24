@@ -1,6 +1,6 @@
-import { Checkbox } from "@/components/ui/tailwind/checkbox";
-import { CheckboxGroup } from "@/components/ui/tailwind/checkbox-group";
-import { Label } from "@/components/ui/tailwind/label";
+import { Checkbox } from "@/components/ui/tailwind/checkbox"
+import { CheckboxGroup } from "@/components/ui/tailwind/checkbox-group"
+import { Label } from "@/components/ui/tailwind/label"
 
 export default function Particle() {
   return (
@@ -18,5 +18,5 @@ export default function Particle() {
         Astro
       </Label>
     </CheckboxGroup>
-  );
+  )
 }

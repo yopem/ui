@@ -1,11 +1,12 @@
-"use client";
+"use client"
 
-import { PlusIcon } from "lucide-react";
-import { useState } from "react";
-import { Button } from "@/components/ui/tailwind/button";
+import { PlusIcon } from "lucide-react"
+import { useState } from "react"
+
+import { Button } from "@/components/ui/tailwind/button"
 
 export default function Particle() {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(false)
 
   return (
     <Button
@@ -18,8 +19,8 @@ export default function Particle() {
     >
       <PlusIcon
         aria-hidden="true"
-        className="in-[[aria-expanded=true]]:rotate-[135deg] transition-transform duration-500 ease-[cubic-bezier(0.68,-0.6,0.32,1.6)]"
+        className="transition-transform duration-500 ease-[cubic-bezier(0.68,-0.6,0.32,1.6)] in-[[aria-expanded=true]]:rotate-[135deg]"
       />
     </Button>
-  );
+  )
 }

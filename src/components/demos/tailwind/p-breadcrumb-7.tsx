@@ -1,4 +1,5 @@
-import { DatabaseIcon } from "lucide-react";
+import { DatabaseIcon } from "lucide-react"
+
 // next/link replaced -> anchor
 import {
   Breadcrumb,
@@ -6,20 +7,20 @@ import {
   BreadcrumbLink,
   BreadcrumbList,
   BreadcrumbSeparator,
-} from "@/components/ui/tailwind/breadcrumb";
+} from "@/components/ui/tailwind/breadcrumb"
 import {
   Select,
   SelectItem,
   SelectPopup,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/tailwind/select";
+} from "@/components/ui/tailwind/select"
 
 const items = [
   { label: "Orion", value: "orion" },
   { label: "Sigma", value: "sigma" },
   { label: "Dorado", value: "dorado" },
-];
+]
 
 export default function Particle() {
   return (
@@ -50,5 +51,5 @@ export default function Particle() {
         </BreadcrumbItem>
       </BreadcrumbList>
     </Breadcrumb>
-  );
+  )
 }

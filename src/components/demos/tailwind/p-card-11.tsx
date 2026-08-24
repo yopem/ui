@@ -1,5 +1,6 @@
-import { FolderIcon, PlusIcon } from "lucide-react";
-import { Button } from "@/components/ui/tailwind/button";
+import { FolderIcon, PlusIcon } from "lucide-react"
+
+import { Button } from "@/components/ui/tailwind/button"
 import {
   Card,
   CardFrame,
@@ -8,14 +9,14 @@ import {
   CardFrameHeader,
   CardFrameTitle,
   CardPanel,
-} from "@/components/ui/tailwind/card";
+} from "@/components/ui/tailwind/card"
 import {
   Empty,
   EmptyDescription,
   EmptyHeader,
   EmptyMedia,
   EmptyTitle,
-} from "@/components/ui/tailwind/empty";
+} from "@/components/ui/tailwind/empty"
 
 export default function Particle() {
   return (
@@ -46,5 +47,5 @@ export default function Particle() {
         </CardPanel>
       </Card>
     </CardFrame>
-  );
+  )
 }

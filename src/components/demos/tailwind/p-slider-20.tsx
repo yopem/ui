@@ -1,4 +1,4 @@
-import { Slider } from "@/components/ui/tailwind/slider";
+import { Slider } from "@/components/ui/tailwind/slider"
 
 const bands = [
   { label: "60 Hz", value: 2 },
@@ -6,7 +6,7 @@ const bands = [
   { label: "1k", value: -1 },
   { label: "4k", value: -3 },
   { label: "16k", value: 2 },
-];
+]
 
 export default function Particle() {
   return (
@@ -22,5 +22,5 @@ export default function Particle() {
         />
       ))}
     </div>
-  );
+  )
 }

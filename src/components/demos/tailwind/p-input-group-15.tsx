@@ -1,10 +1,11 @@
-import { ArrowRightIcon } from "lucide-react";
-import { Button } from "@/components/ui/tailwind/button";
+import { ArrowRightIcon } from "lucide-react"
+
+import { Button } from "@/components/ui/tailwind/button"
 import {
   InputGroup,
   InputGroupAddon,
   InputGroupInput,
-} from "@/components/ui/tailwind/input-group";
+} from "@/components/ui/tailwind/input-group"
 
 export default function Particle() {
   return (
@@ -21,5 +22,5 @@ export default function Particle() {
         </Button>
       </InputGroupAddon>
     </InputGroup>
-  );
+  )
 }

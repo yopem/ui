@@ -1,13 +1,14 @@
-"use client";
+"use client"
 
-import { ChevronDownIcon } from "lucide-react";
-import { useState } from "react";
-import { Badge } from "@/components/ui/tailwind/badge";
-import { Button } from "@/components/ui/tailwind/button";
-import { Checkbox } from "@/components/ui/tailwind/checkbox";
-import { CheckboxGroup } from "@/components/ui/tailwind/checkbox-group";
-import { Group, GroupSeparator } from "@/components/ui/tailwind/group";
-import { Label } from "@/components/ui/tailwind/label";
+import { ChevronDownIcon } from "lucide-react"
+import { useState } from "react"
+
+import { Badge } from "@/components/ui/tailwind/badge"
+import { Button } from "@/components/ui/tailwind/button"
+import { Checkbox } from "@/components/ui/tailwind/checkbox"
+import { CheckboxGroup } from "@/components/ui/tailwind/checkbox-group"
+import { Group, GroupSeparator } from "@/components/ui/tailwind/group"
+import { Label } from "@/components/ui/tailwind/label"
 import {
   Popover,
   PopoverClose,
@@ -15,18 +16,18 @@ import {
   PopoverPopup,
   PopoverTitle,
   PopoverTrigger,
-} from "@/components/ui/tailwind/popover";
+} from "@/components/ui/tailwind/popover"
 
 const occurrences = [
   { date: "Wed, Jul 15", id: "occurrence-1", time: "9:00 – 9:30am" },
   { date: "Wed, Jul 15", id: "occurrence-2", time: "10:00 – 10:30am" },
   { date: "Wed, Jul 15", id: "occurrence-3", time: "11:00 – 11:30am" },
-];
+]
 
 export default function Particle() {
   const [selected, setSelected] = useState(
     occurrences.map((occurrence) => occurrence.id),
-  );
+  )
 
   return (
     <div className="flex gap-2">
@@ -66,7 +67,7 @@ export default function Particle() {
                 <Label className="flex w-full gap-2 py-1.5" key={occurrence.id}>
                   <Checkbox value={occurrence.id} />
                   <span className="tabular-nums">{occurrence.time}</span>
-                  <span className="ms-auto font-normal text-muted-foreground">
+                  <span className="text-muted-foreground ms-auto font-normal">
                     {occurrence.date}
                   </span>
                 </Label>
@@ -84,7 +85,7 @@ export default function Particle() {
                 render={<Button size="xs" />}
               >
                 Confirm selected
-                <Badge className="-me-1 text-primary-foreground/60">
+                <Badge className="text-primary-foreground/60 -me-1">
                   {selected.length}
                 </Badge>
               </PopoverClose>
@@ -93,5 +94,5 @@ export default function Particle() {
         </Popover>
       </Group>
     </div>
-  );
+  )
 }

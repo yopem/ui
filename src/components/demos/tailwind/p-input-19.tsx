@@ -1,4 +1,4 @@
-import { Input } from "@/components/ui/tailwind/input";
+import { Input } from "@/components/ui/tailwind/input"
 
 export default function Particle() {
   return (
@@ -8,5 +8,5 @@ export default function Particle() {
       placeholder="Enter text"
       type="text"
     />
-  );
+  )
 }

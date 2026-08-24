@@ -1,10 +1,11 @@
-"use client";
+"use client"
 
-import { addDays } from "date-fns";
-import { Calendar } from "@/components/ui/tailwind/calendar";
+import { addDays } from "date-fns"
+
+import { Calendar } from "@/components/ui/tailwind/calendar"
 
 export default function Particle() {
-  const today = new Date();
+  const today = new Date()
 
   return (
     <Calendar
@@ -24,5 +25,5 @@ export default function Particle() {
       excludeDisabled
       mode="range"
     />
-  );
+  )
 }

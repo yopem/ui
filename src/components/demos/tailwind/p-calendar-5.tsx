@@ -1,33 +1,35 @@
-"use client";
-import type { DropdownProps } from "@daypicker/react";
-import * as React from "react";
-import { Calendar } from "@/components/ui/tailwind/calendar";
+"use client"
+import type { DropdownProps } from "@daypicker/react"
+
+import * as React from "react"
+
+import { Calendar } from "@/components/ui/tailwind/calendar"
 import {
   Select,
   SelectItem,
   SelectPopup,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/tailwind/select";
+} from "@/components/ui/tailwind/select"
 
 function CalendarDropdown(props: DropdownProps) {
-  const { options, value, onChange, "aria-label": ariaLabel } = props;
+  const { options, value, onChange, "aria-label": ariaLabel } = props
 
   const handleValueChange = (newValue: string | null) => {
     if (onChange && newValue) {
       const syntheticEvent = {
         target: { value: newValue },
-      } as React.ChangeEvent<HTMLSelectElement>;
-      onChange(syntheticEvent);
+      } as React.ChangeEvent<HTMLSelectElement>
+      onChange(syntheticEvent)
     }
-  };
+  }
 
   const items =
     options?.map((option) => ({
       disabled: option.disabled,
       label: option.label,
       value: option.value.toString(),
-    })) ?? [];
+    })) ?? []
 
   return (
     <Select
@@ -51,11 +53,11 @@ function CalendarDropdown(props: DropdownProps) {
         ))}
       </SelectPopup>
     </Select>
-  );
+  )
 }
 
 export default function Particle() {
-  const [date, setDate] = React.useState<Date | undefined>(new Date());
+  const [date, setDate] = React.useState<Date | undefined>(new Date())
   return (
     <Calendar
       captionLayout="dropdown"
@@ -66,5 +68,5 @@ export default function Particle() {
       selected={date}
       startMonth={new Date(1930, 0)}
     />
-  );
+  )
 }

@@ -1,5 +1,5 @@
-import { Button } from "@/components/ui/tailwind/button";
-import { Spinner } from "@/components/ui/tailwind/spinner";
+import { Button } from "@/components/ui/tailwind/button"
+import { Spinner } from "@/components/ui/tailwind/spinner"
 
 export default function Particle() {
   return (
@@ -7,5 +7,5 @@ export default function Particle() {
       <Spinner />
       Loading...
     </Button>
-  );
+  )
 }

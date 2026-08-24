@@ -1,16 +1,17 @@
-"use client";
+"use client"
 
-import { useState } from "react";
+import { useState } from "react"
+
 import {
   Accordion,
   AccordionItem,
   AccordionPanel,
   AccordionTrigger,
-} from "@/components/ui/tailwind/accordion";
-import { Button } from "@/components/ui/tailwind/button";
+} from "@/components/ui/tailwind/accordion"
+import { Button } from "@/components/ui/tailwind/button"
 
 export default function Particle() {
-  const [value, setValue] = useState<string[]>([]);
+  const [value, setValue] = useState<string[]>([])
 
   return (
     <div className="flex w-full flex-col gap-4">
@@ -49,5 +50,5 @@ export default function Particle() {
         </p>
       </div>
     </div>
-  );
+  )
 }

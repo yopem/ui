@@ -1,18 +1,18 @@
-import { Group, GroupSeparator } from "@/components/ui/tailwind/group";
-import { Input } from "@/components/ui/tailwind/input";
+import { Group, GroupSeparator } from "@/components/ui/tailwind/group"
+import { Input } from "@/components/ui/tailwind/input"
 import {
   Select,
   SelectItem,
   SelectPopup,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/tailwind/select";
+} from "@/components/ui/tailwind/select"
 
 const domains = [
   { label: ".com", value: "com" },
   { label: ".org", value: "org" },
   { label: ".net", value: "net" },
-];
+]
 
 export default function Particle() {
   return (
@@ -20,7 +20,7 @@ export default function Particle() {
       <Input aria-label="Domain name" placeholder="example" type="text" />
       <GroupSeparator />
       <Select defaultValue="com" items={domains}>
-        <SelectTrigger className="w-fit min-w-none">
+        <SelectTrigger className="min-w-none w-fit">
           <SelectValue />
         </SelectTrigger>
         <SelectPopup>
@@ -32,5 +32,5 @@ export default function Particle() {
         </SelectPopup>
       </Select>
     </Group>
-  );
+  )
 }

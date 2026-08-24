@@ -1,4 +1,4 @@
-"use client";
+"use client"
 
 import {
   Select,
@@ -6,7 +6,7 @@ import {
   SelectPopup,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/tailwind/select";
+} from "@/components/ui/tailwind/select"
 
 const items = [
   { color: "bg-emerald-500", label: "Completed", value: "completed" },
@@ -14,7 +14,7 @@ const items = [
   { color: "bg-amber-500", label: "Pending", value: "pending" },
   { color: "bg-gray-500", label: "Cancelled", value: "cancelled" },
   { color: "bg-red-500", label: "Failed", value: "failed" },
-];
+]
 
 export default function Particle() {
   return (
@@ -50,5 +50,5 @@ export default function Particle() {
         ))}
       </SelectPopup>
     </Select>
-  );
+  )
 }

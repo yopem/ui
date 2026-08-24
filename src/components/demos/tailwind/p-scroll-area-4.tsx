@@ -1,12 +1,12 @@
-import { ScrollArea } from "@/components/ui/tailwind/scroll-area";
+import { ScrollArea } from "@/components/ui/tailwind/scroll-area"
 
-const tags = Array.from({ length: 50 }, (_, i) => `v1.0.0-alpha.${i}`);
+const tags = Array.from({ length: 50 }, (_, i) => `v1.0.0-alpha.${i}`)
 
 export default function Particle() {
   return (
     <ScrollArea className="h-64 rounded-lg border" scrollFade>
       <div className="px-4 py-2">
-        <h4 className="mb-2 font-medium text-sm">Tags</h4>
+        <h4 className="mb-2 text-sm font-medium">Tags</h4>
         <div className="flex flex-col gap-1">
           {tags.map((tag) => (
             <div className="text-sm" key={tag}>
@@ -16,5 +16,5 @@ export default function Particle() {
         </div>
       </div>
     </ScrollArea>
-  );
+  )
 }

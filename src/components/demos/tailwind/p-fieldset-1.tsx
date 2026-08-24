@@ -2,9 +2,9 @@ import {
   Field,
   FieldDescription,
   FieldLabel,
-} from "@/components/ui/tailwind/field";
-import { Fieldset, FieldsetLegend } from "@/components/ui/tailwind/fieldset";
-import { Input } from "@/components/ui/tailwind/input";
+} from "@/components/ui/tailwind/field"
+import { Fieldset, FieldsetLegend } from "@/components/ui/tailwind/fieldset"
+import { Input } from "@/components/ui/tailwind/input"
 
 export default function Particle() {
   return (
@@ -26,5 +26,5 @@ export default function Particle() {
         </FieldDescription>
       </Field>
     </Fieldset>
-  );
+  )
 }

@@ -1,17 +1,18 @@
-import { EllipsisIcon } from "lucide-react";
-import { Badge } from "@/components/ui/tailwind/badge";
-import { Button } from "@/components/ui/tailwind/button";
+import { EllipsisIcon } from "lucide-react"
+
+import { Badge } from "@/components/ui/tailwind/badge"
+import { Button } from "@/components/ui/tailwind/button"
 import {
   InputGroup,
   InputGroupAddon,
   InputGroupInput,
-} from "@/components/ui/tailwind/input-group";
+} from "@/components/ui/tailwind/input-group"
 import {
   Menu,
   MenuItem,
   MenuPopup,
   MenuTrigger,
-} from "@/components/ui/tailwind/menu";
+} from "@/components/ui/tailwind/menu"
 
 export default function Particle() {
   return (
@@ -38,5 +39,5 @@ export default function Particle() {
         </Menu>
       </InputGroupAddon>
     </InputGroup>
-  );
+  )
 }

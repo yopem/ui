@@ -1,5 +1,5 @@
-import { Checkbox } from "@/components/ui/tailwind/checkbox";
-import { Label } from "@/components/ui/tailwind/label";
+import { Checkbox } from "@/components/ui/tailwind/checkbox"
+import { Label } from "@/components/ui/tailwind/label"
 
 export default function Particle() {
   return (
@@ -7,5 +7,5 @@ export default function Particle() {
       <Checkbox defaultChecked disabled />
       Accept terms and conditions
     </Label>
-  );
+  )
 }

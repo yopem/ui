@@ -4,8 +4,8 @@ import {
   FrameHeader,
   FramePanel,
   FrameTitle,
-} from "@/components/ui/tailwind/frame";
-import { Separator } from "@/components/ui/tailwind/separator";
+} from "@/components/ui/tailwind/frame"
+import { Separator } from "@/components/ui/tailwind/separator"
 
 export default function Particle() {
   return (
@@ -16,15 +16,15 @@ export default function Particle() {
       </FrameHeader>
       <FramePanel className="p-0">
         <div className="p-5">
-          <h2 className="font-semibold text-sm">Stacked panel</h2>
+          <h2 className="text-sm font-semibold">Stacked panel</h2>
           <p className="text-muted-foreground text-sm">Section description</p>
         </div>
         <Separator />
         <div className="p-5">
-          <h2 className="font-semibold text-sm">Stacked panel</h2>
+          <h2 className="text-sm font-semibold">Stacked panel</h2>
           <p className="text-muted-foreground text-sm">Section description</p>
         </div>
       </FramePanel>
     </Frame>
-  );
+  )
 }

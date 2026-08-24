@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/tailwind/button";
+import { Button } from "@/components/ui/tailwind/button"
 import {
   Drawer,
   DrawerClose,
@@ -8,7 +8,7 @@ import {
   DrawerPopup,
   DrawerTitle,
   DrawerTrigger,
-} from "@/components/ui/tailwind/drawer";
+} from "@/components/ui/tailwind/drawer"
 
 export default function Particle() {
   return (
@@ -24,7 +24,7 @@ export default function Particle() {
           <div className="flex flex-col gap-2">
             {Array.from({ length: 48 }, (_, i) => `box-${i}`).map((key) => (
               <div
-                className="h-12 shrink-0 rounded-xl border bg-muted"
+                className="bg-muted h-12 shrink-0 rounded-xl border"
                 key={key}
               />
             ))}
@@ -35,5 +35,5 @@ export default function Particle() {
         </DrawerFooter>
       </DrawerPopup>
     </Drawer>
-  );
+  )
 }

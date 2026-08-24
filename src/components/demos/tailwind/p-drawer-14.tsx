@@ -1,5 +1,5 @@
 // next/link replaced -> anchor
-import { Button } from "@/components/ui/tailwind/button";
+import { Button } from "@/components/ui/tailwind/button"
 import {
   Drawer,
   DrawerHeader,
@@ -7,20 +7,20 @@ import {
   DrawerPopup,
   DrawerSwipeArea,
   DrawerTitle,
-} from "@/components/ui/tailwind/drawer";
+} from "@/components/ui/tailwind/drawer"
 
 export default function Particle() {
   return (
     <div className="relative min-h-80 w-full overflow-hidden rounded-xl border">
       <Drawer modal={false} position="left">
-        <DrawerSwipeArea className="absolute border-input border-e border-dashed bg-muted">
-          <span className="pointer-events-none absolute top-1/2 left-0 ms-2 -translate-y-1/2 rotate-90 whitespace-nowrap font-medium text-muted-foreground text-xs uppercase">
+        <DrawerSwipeArea className="border-input bg-muted absolute border-e border-dashed">
+          <span className="text-muted-foreground pointer-events-none absolute top-1/2 left-0 ms-2 -translate-y-1/2 rotate-90 text-xs font-medium whitespace-nowrap uppercase">
             Swipe area
           </span>
         </DrawerSwipeArea>
 
         <div className="flex min-h-80 items-center justify-center p-6 ps-14 text-center">
-          <p className="max-w-56 text-balance text-muted-foreground text-sm">
+          <p className="text-muted-foreground max-w-56 text-sm text-balance">
             Swipe from the left edge to open the menu.
           </p>
         </div>
@@ -64,5 +64,5 @@ export default function Particle() {
         </DrawerPopup>
       </Drawer>
     </div>
-  );
+  )
 }

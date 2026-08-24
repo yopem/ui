@@ -1,23 +1,24 @@
-"use client";
+"use client"
 
-import { SaveIcon } from "lucide-react";
-import { useRef } from "react";
-import { Button } from "@/components/ui/tailwind/button";
-import { anchoredToastManager } from "@/components/ui/tailwind/toast";
+import { SaveIcon } from "lucide-react"
+import { useRef } from "react"
+
+import { Button } from "@/components/ui/tailwind/button"
+import { anchoredToastManager } from "@/components/ui/tailwind/toast"
 import {
   Tooltip,
   TooltipPopup,
   TooltipTrigger,
-} from "@/components/ui/tailwind/tooltip";
+} from "@/components/ui/tailwind/tooltip"
 
-const ANCHORED_SAVE_ERROR_TOAST_ID = "coss-demo-anchored-save-error-toast";
+const ANCHORED_SAVE_ERROR_TOAST_ID = "coss-demo-anchored-save-error-toast"
 
 export default function Particle() {
-  const saveButtonRef = useRef<HTMLButtonElement>(null);
-  const toastTimeout = 2000;
+  const saveButtonRef = useRef<HTMLButtonElement>(null)
+  const toastTimeout = 2000
 
   function handleSave() {
-    if (!saveButtonRef.current) return;
+    if (!saveButtonRef.current) return
     anchoredToastManager.add({
       data: {
         tooltipStyle: true,
@@ -30,7 +31,7 @@ export default function Particle() {
       timeout: toastTimeout,
       title: "Couldn't save draft",
       type: "error",
-    });
+    })
   }
 
   return (
@@ -53,5 +54,5 @@ export default function Particle() {
         <p>Save</p>
       </TooltipPopup>
     </Tooltip>
-  );
+  )
 }

@@ -1,10 +1,10 @@
-import { Badge } from "@/components/ui/tailwind/badge";
+import { Badge } from "@/components/ui/tailwind/badge"
 
 export default function Particle() {
   return (
     <Badge variant="outline">
       Notifications
-      <span className="ms-1 font-semibold text-primary">5</span>
+      <span className="text-primary ms-1 font-semibold">5</span>
     </Badge>
-  );
+  )
 }

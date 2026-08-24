@@ -1,16 +1,17 @@
-"use client";
+"use client"
 
-import { format } from "date-fns";
-import { useState } from "react";
-import { Calendar } from "@/components/ui/tailwind/calendar";
-import { ScrollArea } from "@/components/ui/tailwind/scroll-area";
-import { Toggle } from "@/components/ui/tailwind/toggle";
-import { ToggleGroup } from "@/components/ui/tailwind/toggle-group";
+import { format } from "date-fns"
+import { useState } from "react"
+
+import { Calendar } from "@/components/ui/tailwind/calendar"
+import { ScrollArea } from "@/components/ui/tailwind/scroll-area"
+import { Toggle } from "@/components/ui/tailwind/toggle"
+import { ToggleGroup } from "@/components/ui/tailwind/toggle-group"
 
 export default function Particle() {
-  const today = new Date();
-  const [date, setDate] = useState<Date>(today);
-  const [time, setTime] = useState<string | null>(null);
+  const today = new Date()
+  const [date, setDate] = useState<Date>(today)
+  const [time, setTime] = useState<string | null>(null)
 
   const timeSlots = [
     { available: false, time: "09:00" },
@@ -31,7 +32,7 @@ export default function Particle() {
     { available: true, time: "16:30" },
     { available: true, time: "17:00" },
     { available: true, time: "17:30" },
-  ];
+  ]
 
   return (
     <div className="flex max-sm:flex-col">
@@ -41,8 +42,8 @@ export default function Particle() {
         mode="single"
         onSelect={(newDate) => {
           if (newDate) {
-            setDate(newDate);
-            setTime(null);
+            setDate(newDate)
+            setTime(null)
           }
         }}
         selected={date}
@@ -56,7 +57,7 @@ export default function Particle() {
             scrollFade
           >
             <div className="flex flex-col gap-3 py-3 sm:pt-0 sm:pb-2">
-              <div className="flex shrink-0 items-center font-medium text-sm sm:h-8 sm:px-5">
+              <div className="flex shrink-0 items-center text-sm font-medium sm:h-8 sm:px-5">
                 {format(date, "EEEE, d")}
               </div>
               <ToggleGroup
@@ -81,5 +82,5 @@ export default function Particle() {
         </div>
       </div>
     </div>
-  );
+  )
 }

@@ -1,4 +1,4 @@
-"use client";
+"use client"
 
 import {
   Select,
@@ -9,7 +9,7 @@ import {
   SelectSeparator,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/tailwind/select";
+} from "@/components/ui/tailwind/select"
 
 const countries = [
   {
@@ -36,9 +36,9 @@ const countries = [
       { flag: "\u{1F1EE}\u{1F1F3}", label: "India", value: "in" },
     ],
   },
-];
+]
 
-const allItems = countries.flatMap((c) => c.items);
+const allItems = countries.flatMap((c) => c.items)
 
 export default function Particle() {
   return (
@@ -74,5 +74,5 @@ export default function Particle() {
         ))}
       </SelectPopup>
     </Select>
-  );
+  )
 }

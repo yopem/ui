@@ -1,23 +1,24 @@
-"use client";
+"use client"
 
-import { InfoIcon, StarIcon } from "lucide-react";
-import { useState } from "react";
-import { Button } from "@/components/ui/tailwind/button";
+import { InfoIcon, StarIcon } from "lucide-react"
+import { useState } from "react"
+
+import { Button } from "@/components/ui/tailwind/button"
 import {
   InputGroup,
   InputGroupAddon,
   InputGroupInput,
-} from "@/components/ui/tailwind/input-group";
+} from "@/components/ui/tailwind/input-group"
 import {
   Popover,
   PopoverDescription,
   PopoverPopup,
   PopoverTitle,
   PopoverTrigger,
-} from "@/components/ui/tailwind/popover";
+} from "@/components/ui/tailwind/popover"
 
 export default function Particle() {
-  const [isFavorite, setIsFavorite] = useState(false);
+  const [isFavorite, setIsFavorite] = useState(false)
 
   return (
     <InputGroup className="[--radius-lg:9999px] [--radius:9999rem]">
@@ -43,7 +44,7 @@ export default function Particle() {
           </PopoverDescription>
         </PopoverPopup>
       </Popover>
-      <InputGroupAddon className="pl-1.5 text-muted-foreground">
+      <InputGroupAddon className="text-muted-foreground pl-1.5">
         https://
       </InputGroupAddon>
       <InputGroupInput
@@ -64,5 +65,5 @@ export default function Particle() {
         </Button>
       </InputGroupAddon>
     </InputGroup>
-  );
+  )
 }

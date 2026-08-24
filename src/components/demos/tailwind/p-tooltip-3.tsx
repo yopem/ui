@@ -1,32 +1,34 @@
-"use client";
+"use client"
 
-import { BoldIcon, ItalicIcon, UnderlineIcon } from "lucide-react";
-import type { ComponentType } from "react";
+import type { ComponentType } from "react"
+
+import { BoldIcon, ItalicIcon, UnderlineIcon } from "lucide-react"
+
 import {
   ToggleGroup,
   ToggleGroupItem,
-} from "@/components/ui/tailwind/toggle-group";
+} from "@/components/ui/tailwind/toggle-group"
 import {
   Tooltip,
   TooltipCreateHandle,
   TooltipPopup,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/ui/tailwind/tooltip";
+} from "@/components/ui/tailwind/tooltip"
 
-const tooltipHandle = TooltipCreateHandle<ComponentType>();
+const tooltipHandle = TooltipCreateHandle<ComponentType>()
 
 const BoldContent = () => {
-  return <span>Make text bold</span>;
-};
+  return <span>Make text bold</span>
+}
 
 const ItalicContent = () => {
-  return <span>Apply italic formatting to text</span>;
-};
+  return <span>Apply italic formatting to text</span>
+}
 
 const UnderlineContent = () => {
-  return <span>Underline text</span>;
-};
+  return <span>Underline text</span>
+}
 
 export default function Particle() {
   return (
@@ -66,5 +68,5 @@ export default function Particle() {
         )}
       </Tooltip>
     </TooltipProvider>
-  );
+  )
 }

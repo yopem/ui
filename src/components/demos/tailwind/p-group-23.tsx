@@ -1,20 +1,15 @@
-"use client";
+"use client"
 
-import {
-  ChevronsUpDownIcon,
-  FunnelIcon,
-  SearchIcon,
-  XIcon,
-} from "lucide-react";
-import { useState } from "react";
-import { cn } from "@/lib/utils";
+import { ChevronsUpDownIcon, FunnelIcon, SearchIcon, XIcon } from "lucide-react"
+import { useState } from "react"
+
 import {
   Avatar,
   AvatarFallback,
   AvatarImage,
-} from "@/components/ui/tailwind/avatar";
-import { Badge } from "@/components/ui/tailwind/badge";
-import { Button, buttonVariants } from "@/components/ui/tailwind/button";
+} from "@/components/ui/tailwind/avatar"
+import { Badge } from "@/components/ui/tailwind/badge"
+import { Button, buttonVariants } from "@/components/ui/tailwind/button"
 import {
   Combobox,
   ComboboxEmpty,
@@ -23,14 +18,19 @@ import {
   ComboboxList,
   ComboboxPopup,
   ComboboxTrigger,
-} from "@/components/ui/tailwind/combobox";
-import { Group, GroupSeparator, GroupText } from "@/components/ui/tailwind/group";
+} from "@/components/ui/tailwind/combobox"
+import {
+  Group,
+  GroupSeparator,
+  GroupText,
+} from "@/components/ui/tailwind/group"
+import { cn } from "@/lib/utils"
 
 type FilterOption = {
-  id: string;
-  label: string;
-  avatar?: string;
-};
+  id: string
+  label: string
+  avatar?: string
+}
 
 const members: FilterOption[] = [
   {
@@ -63,16 +63,16 @@ const members: FilterOption[] = [
     id: "james-miller",
     label: "James Miller",
   },
-];
+]
 
 function getInitials(name: string): string {
-  const parts = name.trim().split(/\s+/);
+  const parts = name.trim().split(/\s+/)
   if (parts.length === 1) {
-    return parts[0]?.charAt(0).toUpperCase() ?? "";
+    return parts[0]?.charAt(0).toUpperCase() ?? ""
   }
-  const first = parts[0]?.charAt(0) ?? "";
-  const last = parts[parts.length - 1]?.charAt(0) ?? "";
-  return (first + last).toUpperCase();
+  const first = parts[0]?.charAt(0) ?? ""
+  const last = parts[parts.length - 1]?.charAt(0) ?? ""
+  return (first + last).toUpperCase()
 }
 
 function MemberAvatar({
@@ -80,9 +80,9 @@ function MemberAvatar({
   avatarUrl,
   className,
 }: {
-  name: string;
-  avatarUrl?: string;
-  className?: string;
+  name: string
+  avatarUrl?: string
+  className?: string
 }) {
   return (
     <Avatar className={cn("size-5", className)}>
@@ -91,18 +91,18 @@ function MemberAvatar({
         {getInitials(name)}
       </AvatarFallback>
     </Avatar>
-  );
+  )
 }
 
 export default function Particle() {
   const [selectedMembers, setSelectedMembers] = useState<FilterOption[]>(
     members.slice(0, 2),
-  );
+  )
 
   const renderTriggerContent = () => {
-    if (selectedMembers.length === 0) return "Select";
-    const firstMember = selectedMembers[0];
-    const remainingCount = selectedMembers.length - 1;
+    if (selectedMembers.length === 0) return "Select"
+    const firstMember = selectedMembers[0]
+    const remainingCount = selectedMembers.length - 1
 
     return (
       <div className="flex items-center gap-2">
@@ -117,8 +117,8 @@ export default function Particle() {
           </Badge>
         )}
       </div>
-    );
-  };
+    )
+  }
 
   return (
     <Group>
@@ -141,7 +141,7 @@ export default function Particle() {
         multiple
         onValueChange={(value) => {
           if (Array.isArray(value)) {
-            setSelectedMembers(value);
+            setSelectedMembers(value)
           }
         }}
         value={selectedMembers}
@@ -194,5 +194,5 @@ export default function Particle() {
         <XIcon />
       </Button>
     </Group>
-  );
+  )
 }

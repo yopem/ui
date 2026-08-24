@@ -1,5 +1,5 @@
-import { Toggle } from "@/components/ui/tailwind/toggle";
+import { Toggle } from "@/components/ui/tailwind/toggle"
 
 export default function Particle() {
-  return <Toggle variant="outline">Outline Toggle</Toggle>;
+  return <Toggle variant="outline">Outline Toggle</Toggle>
 }

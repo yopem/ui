@@ -1,27 +1,28 @@
-"use client";
+"use client"
 
-import { BookmarkIcon } from "lucide-react";
-import { useRef, useState } from "react";
-import { anchoredToastManager } from "@/components/ui/tailwind/toast";
-import { Toggle } from "@/components/ui/tailwind/toggle";
+import { BookmarkIcon } from "lucide-react"
+import { useRef, useState } from "react"
+
+import { anchoredToastManager } from "@/components/ui/tailwind/toast"
+import { Toggle } from "@/components/ui/tailwind/toggle"
 import {
   Tooltip,
   TooltipPopup,
   TooltipTrigger,
-} from "@/components/ui/tailwind/tooltip";
+} from "@/components/ui/tailwind/tooltip"
 
 export default function Particle() {
-  const [bookmarked, setBookmarked] = useState(false);
-  const toggleRef = useRef<HTMLDivElement>(null);
-  const toastIdRef = useRef<string | null>(null);
-  const toastTimeout = 2000;
+  const [bookmarked, setBookmarked] = useState(false)
+  const toggleRef = useRef<HTMLDivElement>(null)
+  const toastIdRef = useRef<string | null>(null)
+  const toastTimeout = 2000
 
   function handleToggleChange(pressed: boolean) {
-    setBookmarked(pressed);
+    setBookmarked(pressed)
 
     if (toastIdRef.current) {
-      anchoredToastManager.close(toastIdRef.current);
-      toastIdRef.current = null;
+      anchoredToastManager.close(toastIdRef.current)
+      toastIdRef.current = null
     }
 
     if (pressed && toggleRef.current) {
@@ -35,7 +36,7 @@ export default function Particle() {
         timeout: toastTimeout,
         title: "Bookmarked!",
         type: "success",
-      });
+      })
     }
   }
 
@@ -58,5 +59,5 @@ export default function Particle() {
         <p>{bookmarked ? "Remove bookmark" : "Bookmark this"}</p>
       </TooltipPopup>
     </Tooltip>
-  );
+  )
 }

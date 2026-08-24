@@ -1,14 +1,15 @@
-import { ChevronDownIcon, GitForkIcon } from "lucide-react";
-import { Badge } from "@/components/ui/tailwind/badge";
-import { Button } from "@/components/ui/tailwind/button";
-import { Group, GroupSeparator } from "@/components/ui/tailwind/group";
+import { ChevronDownIcon, GitForkIcon } from "lucide-react"
+
+import { Badge } from "@/components/ui/tailwind/badge"
+import { Button } from "@/components/ui/tailwind/button"
+import { Group, GroupSeparator } from "@/components/ui/tailwind/group"
 import {
   Popover,
   PopoverDescription,
   PopoverPopup,
   PopoverTitle,
   PopoverTrigger,
-} from "@/components/ui/tailwind/popover";
+} from "@/components/ui/tailwind/popover"
 
 export default function Particle() {
   return (
@@ -35,5 +36,5 @@ export default function Particle() {
         </PopoverPopup>
       </Popover>
     </Group>
-  );
+  )
 }

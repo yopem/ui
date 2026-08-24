@@ -1,17 +1,18 @@
-"use client";
+"use client"
 
-import { useState } from "react";
-import { Button } from "@/components/ui/tailwind/button";
+import { useState } from "react"
+
+import { Button } from "@/components/ui/tailwind/button"
 import {
   InputGroup,
   InputGroupAddon,
   InputGroupText,
-} from "@/components/ui/tailwind/input-group";
+} from "@/components/ui/tailwind/input-group"
 import {
   NumberField,
   NumberFieldInput,
-} from "@/components/ui/tailwind/number-field";
-import { Slider } from "@/components/ui/tailwind/slider";
+} from "@/components/ui/tailwind/number-field"
+import { Slider } from "@/components/ui/tailwind/slider"
 
 const items = [
   { id: 1, price: 80 },
@@ -134,55 +135,55 @@ const items = [
   { id: 118, price: 895 },
   { id: 119, price: 898 },
   { id: 120, price: 900 },
-];
+]
 
-const tickCount = 40;
-const min = Math.min(...items.map((item) => item.price));
-const max = Math.max(...items.map((item) => item.price));
-const priceStep = (max - min) / tickCount;
+const tickCount = 40
+const min = Math.min(...items.map((item) => item.price))
+const max = Math.max(...items.map((item) => item.price))
+const priceStep = (max - min) / tickCount
 
 const itemCounts = Array.from({ length: tickCount }, (_, tick) => {
-  const rangeMin = min + tick * priceStep;
-  const rangeMax = min + (tick + 1) * priceStep;
+  const rangeMin = min + tick * priceStep
+  const rangeMax = min + (tick + 1) * priceStep
   return items.filter((item) => item.price >= rangeMin && item.price < rangeMax)
-    .length;
-});
+    .length
+})
 
-const maxCount = Math.max(...itemCounts);
+const maxCount = Math.max(...itemCounts)
 
 export default function Particle() {
-  const [values, setValues] = useState([200, 780]);
+  const [values, setValues] = useState([200, 780])
 
   const updateValue = (index: number, newValue: number | null) => {
-    const v = newValue ?? min;
+    const v = newValue ?? min
     setValues((prev) => {
-      const next = [...prev];
+      const next = [...prev]
       if (index === 0) {
         // Min value: clamp to not exceed max value
-        next[0] = Math.min(v, prev[1] ?? max);
+        next[0] = Math.min(v, prev[1] ?? max)
       } else {
         // Max value: clamp to not go below min value
-        next[1] = Math.max(v, prev[0] ?? min);
+        next[1] = Math.max(v, prev[0] ?? min)
       }
-      return next;
-    });
-  };
+      return next
+    })
+  }
 
   const countItemsInRange = () =>
     items.filter(
       (item) =>
         item.price >= (values[0] ?? min) && item.price <= (values[1] ?? max),
-    ).length;
+    ).length
 
   const isBarInSelectedRange = (index: number) => {
-    const rangeMin = min + index * priceStep;
-    const rangeMax = min + (index + 1) * priceStep;
+    const rangeMin = min + index * priceStep
+    const rangeMax = min + (index + 1) * priceStep
     return (
       countItemsInRange() > 0 &&
       rangeMin <= (values[1] ?? max) &&
       rangeMax >= (values[0] ?? min)
-    );
-  };
+    )
+  }
 
   return (
     <div className="flex flex-col gap-4">
@@ -195,7 +196,7 @@ export default function Particle() {
               style={{ height: `${(count / maxCount) * 100}%` }}
             >
               <span
-                className="mx-px size-full bg-primary/20 data-[selected=true]:bg-primary/50"
+                className="bg-primary/20 data-[selected=true]:bg-primary/50 mx-px size-full"
                 data-selected={isBarInSelectedRange(i)}
               />
             </div>
@@ -246,5 +247,5 @@ export default function Particle() {
         Show {countItemsInRange()} items
       </Button>
     </div>
-  );
+  )
 }

@@ -1,16 +1,18 @@
-"use client";
+"use client"
+
+import type React from "react"
 
 import {
   type ColumnDef,
   flexRender,
   getCoreRowModel,
   useReactTable,
-} from "@tanstack/react-table";
-import type React from "react";
-import { useMemo, useState } from "react";
-import { Badge } from "@/components/ui/tailwind/badge";
-import { CardFrame } from "@/components/ui/tailwind/card";
-import { Checkbox } from "@/components/ui/tailwind/checkbox";
+} from "@tanstack/react-table"
+import { useMemo, useState } from "react"
+
+import { Badge } from "@/components/ui/tailwind/badge"
+import { CardFrame } from "@/components/ui/tailwind/card"
+import { Checkbox } from "@/components/ui/tailwind/checkbox"
 import {
   Table,
   TableBody,
@@ -19,15 +21,15 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/tailwind/table";
+} from "@/components/ui/tailwind/table"
 
 type Project = {
-  id: string;
-  project: string;
-  status: "Paid" | "Unpaid" | "Pending" | "Failed";
-  team: string;
-  budget: number;
-};
+  id: string
+  project: string
+  status: "Paid" | "Unpaid" | "Pending" | "Failed"
+  team: string
+  budget: number
+}
 
 const data: Project[] = [
   {
@@ -72,27 +74,27 @@ const data: Project[] = [
     status: "Failed",
     team: "Security Team",
   },
-];
+]
 
 const getStatusColor = (status: Project["status"]) => {
   switch (status) {
     case "Paid":
-      return "bg-emerald-500";
+      return "bg-emerald-500"
     case "Unpaid":
-      return "bg-muted-foreground/64";
+      return "bg-muted-foreground/64"
     case "Pending":
-      return "bg-amber-500";
+      return "bg-amber-500"
     case "Failed":
-      return "bg-red-500";
+      return "bg-red-500"
     default:
-      return "bg-muted-foreground/64";
+      return "bg-muted-foreground/64"
   }
-};
+}
 
 const getColumns = (): ColumnDef<Project>[] => [
   {
     cell: ({ row }) => {
-      const toggleHandler = row.getToggleSelectedHandler();
+      const toggleHandler = row.getToggleSelectedHandler()
       return (
         <Checkbox
           aria-label="Select row"
@@ -102,17 +104,17 @@ const getColumns = (): ColumnDef<Project>[] => [
             // Create a synthetic event for the handler
             const syntheticEvent = {
               target: { checked: !!value },
-            } as unknown as React.ChangeEvent<HTMLInputElement>;
-            toggleHandler(syntheticEvent);
+            } as unknown as React.ChangeEvent<HTMLInputElement>
+            toggleHandler(syntheticEvent)
           }}
         />
-      );
+      )
     },
     enableSorting: false,
     header: ({ table }) => {
-      const isAllSelected = table.getIsAllPageRowsSelected();
-      const isSomeSelected = table.getIsSomePageRowsSelected();
-      const toggleHandler = table.getToggleAllPageRowsSelectedHandler();
+      const isAllSelected = table.getIsAllPageRowsSelected()
+      const isSomeSelected = table.getIsSomePageRowsSelected()
+      const toggleHandler = table.getToggleAllPageRowsSelectedHandler()
       return (
         <Checkbox
           aria-label="Select all"
@@ -122,11 +124,11 @@ const getColumns = (): ColumnDef<Project>[] => [
             // Create a synthetic event for the handler
             const syntheticEvent = {
               target: { checked: !!value },
-            } as unknown as React.ChangeEvent<HTMLInputElement>;
-            toggleHandler(syntheticEvent);
+            } as unknown as React.ChangeEvent<HTMLInputElement>
+            toggleHandler(syntheticEvent)
           }}
         />
-      );
+      )
     },
     id: "select",
   },
@@ -140,7 +142,7 @@ const getColumns = (): ColumnDef<Project>[] => [
   {
     accessorKey: "status",
     cell: ({ row }) => {
-      const status = row.getValue("status") as Project["status"];
+      const status = row.getValue("status") as Project["status"]
       return (
         <Badge variant="outline">
           <span
@@ -149,7 +151,7 @@ const getColumns = (): ColumnDef<Project>[] => [
           />
           {status}
         </Badge>
-      );
+      )
     },
     header: "Status",
   },
@@ -160,24 +162,24 @@ const getColumns = (): ColumnDef<Project>[] => [
   {
     accessorKey: "budget",
     cell: ({ row }) => {
-      const amount = Number.parseFloat(row.getValue("budget"));
+      const amount = Number.parseFloat(row.getValue("budget"))
       const formatted = new Intl.NumberFormat("en-US", {
         currency: "USD",
         maximumFractionDigits: 0,
         minimumFractionDigits: 0,
         style: "currency",
-      }).format(amount);
-      return <div className="text-right">{formatted}</div>;
+      }).format(amount)
+      return <div className="text-right">{formatted}</div>
     },
     header: () => <div className="text-right">Budget</div>,
   },
-];
+]
 
 export default function Particle() {
-  const [tableData] = useState<Project[]>(data);
-  const [rowSelection, setRowSelection] = useState({});
+  const [tableData] = useState<Project[]>(data)
+  const [rowSelection, setRowSelection] = useState({})
 
-  const columns = useMemo(() => getColumns(), []);
+  const columns = useMemo(() => getColumns(), [])
 
   const table = useReactTable({
     columns,
@@ -188,18 +190,18 @@ export default function Particle() {
     state: {
       rowSelection,
     },
-  });
+  })
 
   const totalBudget = tableData.reduce(
     (sum, project) => sum + project.budget,
     0,
-  );
+  )
   const formattedTotal = new Intl.NumberFormat("en-US", {
     currency: "USD",
     maximumFractionDigits: 0,
     minimumFractionDigits: 0,
     style: "currency",
-  }).format(totalBudget);
+  }).format(totalBudget)
 
   return (
     <CardFrame className="w-full">
@@ -217,7 +219,7 @@ export default function Particle() {
                           header.getContext(),
                         )}
                   </TableHead>
-                );
+                )
               })}
             </TableRow>
           ))}
@@ -252,5 +254,5 @@ export default function Particle() {
         </TableFooter>
       </Table>
     </CardFrame>
-  );
+  )
 }

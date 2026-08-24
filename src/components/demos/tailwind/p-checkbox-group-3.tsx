@@ -1,18 +1,19 @@
-"use client";
+"use client"
 
-import { useState } from "react";
-import { Checkbox } from "@/components/ui/tailwind/checkbox";
-import { CheckboxGroup } from "@/components/ui/tailwind/checkbox-group";
-import { Label } from "@/components/ui/tailwind/label";
+import { useState } from "react"
+
+import { Checkbox } from "@/components/ui/tailwind/checkbox"
+import { CheckboxGroup } from "@/components/ui/tailwind/checkbox-group"
+import { Label } from "@/components/ui/tailwind/label"
 
 const frameworks = [
   { id: "next", name: "Next.js" },
   { id: "vite", name: "Vite" },
   { id: "astro", name: "Astro" },
-];
+]
 
 export default function Particle() {
-  const [value, setValue] = useState<string[]>([]);
+  const [value, setValue] = useState<string[]>([])
 
   return (
     <CheckboxGroup
@@ -33,5 +34,5 @@ export default function Particle() {
         </Label>
       ))}
     </CheckboxGroup>
-  );
+  )
 }

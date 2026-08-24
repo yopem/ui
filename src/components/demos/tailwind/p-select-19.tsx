@@ -1,10 +1,10 @@
-"use client";
+"use client"
 
 import {
   Avatar,
   AvatarFallback,
   AvatarImage,
-} from "@/components/ui/tailwind/avatar";
+} from "@/components/ui/tailwind/avatar"
 import {
   Select,
   SelectGroup,
@@ -13,7 +13,7 @@ import {
   SelectPopup,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/tailwind/select";
+} from "@/components/ui/tailwind/select"
 
 const users = [
   {
@@ -37,7 +37,7 @@ const users = [
     label: "Luna Wyen",
     value: "luna",
   },
-];
+]
 
 export default function Particle() {
   return (
@@ -80,5 +80,5 @@ export default function Particle() {
         </SelectGroup>
       </SelectPopup>
     </Select>
-  );
+  )
 }

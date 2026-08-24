@@ -1,5 +1,5 @@
-import { Spinner } from "@/components/ui/tailwind/spinner";
+import { Spinner } from "@/components/ui/tailwind/spinner"
 
 export default function Particle() {
-  return <Spinner />;
+  return <Spinner />
 }

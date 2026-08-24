@@ -1,28 +1,29 @@
-"use client";
+"use client"
 
-import { useState } from "react";
-import { Button } from "@/components/ui/tailwind/button";
+import { useState } from "react"
+
+import { Button } from "@/components/ui/tailwind/button"
 import {
   Pagination,
   PaginationContent,
   PaginationItem,
   PaginationNext,
   PaginationPrevious,
-} from "@/components/ui/tailwind/pagination";
+} from "@/components/ui/tailwind/pagination"
 import {
   Select,
   SelectItem,
   SelectPopup,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/tailwind/select";
+} from "@/components/ui/tailwind/select"
 
 type PaginationProps = {
-  currentPage?: number;
-  totalPages?: number;
-  totalResults: number;
-  resultsPerPage?: number;
-};
+  currentPage?: number
+  totalPages?: number
+  totalResults: number
+  resultsPerPage?: number
+}
 
 export default function Particle({
   currentPage: initialPage = 1,
@@ -30,13 +31,13 @@ export default function Particle({
   totalResults,
   resultsPerPage = 10,
 }: PaginationProps) {
-  const [currentPage, setCurrentPage] = useState(initialPage);
+  const [currentPage, setCurrentPage] = useState(initialPage)
   const resultRanges = Array.from({ length: totalPages }, (_, i) => {
-    const start = i * resultsPerPage + 1;
-    const end = Math.min((i + 1) * resultsPerPage, totalResults);
-    const pageNum = i + 1;
-    return { label: `${start}-${end}`, value: pageNum };
-  });
+    const start = i * resultsPerPage + 1
+    const end = Math.min((i + 1) * resultsPerPage, totalResults)
+    const pageNum = i + 1
+    return { label: `${start}-${end}`, value: pageNum }
+  })
 
   return (
     <div className="flex items-center justify-between gap-2">
@@ -50,7 +51,7 @@ export default function Particle({
         >
           <SelectTrigger
             aria-label="Select result range"
-            className="w-fit min-w-none"
+            className="min-w-none w-fit"
             size="sm"
           >
             <SelectValue />
@@ -65,7 +66,7 @@ export default function Particle({
         </Select>
         <p className="text-muted-foreground text-sm">
           of{" "}
-          <strong className="font-medium text-foreground">
+          <strong className="text-foreground font-medium">
             {totalResults}
           </strong>{" "}
           results
@@ -111,5 +112,5 @@ export default function Particle({
         </Pagination>
       </div>
     </div>
-  );
+  )
 }

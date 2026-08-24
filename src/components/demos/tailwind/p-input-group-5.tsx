@@ -3,7 +3,7 @@ import {
   InputGroupAddon,
   InputGroupInput,
   InputGroupText,
-} from "@/components/ui/tailwind/input-group";
+} from "@/components/ui/tailwind/input-group"
 
 export default function Particle() {
   return (
@@ -21,5 +21,5 @@ export default function Particle() {
         <InputGroupText>.com</InputGroupText>
       </InputGroupAddon>
     </InputGroup>
-  );
+  )
 }

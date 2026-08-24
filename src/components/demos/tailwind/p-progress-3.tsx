@@ -1,4 +1,4 @@
-"use client";
+"use client"
 
 import {
   Progress,
@@ -6,7 +6,7 @@ import {
   ProgressLabel,
   ProgressTrack,
   ProgressValue,
-} from "@/components/ui/tailwind/progress";
+} from "@/components/ui/tailwind/progress"
 
 export default function Particle() {
   return (
@@ -19,5 +19,5 @@ export default function Particle() {
         <ProgressIndicator />
       </ProgressTrack>
     </Progress>
-  );
+  )
 }

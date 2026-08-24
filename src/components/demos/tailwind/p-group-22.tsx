@@ -1,10 +1,10 @@
-import { Group, GroupSeparator } from "@/components/ui/tailwind/group";
-import { Label } from "@/components/ui/tailwind/label";
+import { Group, GroupSeparator } from "@/components/ui/tailwind/group"
+import { Label } from "@/components/ui/tailwind/label"
 import {
   NumberField,
   NumberFieldGroup,
   NumberFieldInput,
-} from "@/components/ui/tailwind/number-field";
+} from "@/components/ui/tailwind/number-field"
 
 export default function Particle() {
   return (
@@ -20,5 +20,5 @@ export default function Particle() {
         </NumberField>
       </Group>
     </div>
-  );
+  )
 }

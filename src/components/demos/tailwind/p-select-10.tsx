@@ -1,4 +1,4 @@
-"use client";
+"use client"
 
 import {
   Select,
@@ -6,14 +6,14 @@ import {
   SelectPopup,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/tailwind/select";
+} from "@/components/ui/tailwind/select"
 
 const items = [
   { description: "npx create-next-app", label: "Next.js", value: "next" },
   { description: "npm create vite@latest", label: "Vite", value: "vite" },
   { description: "npm create astro@latest", label: "Astro", value: "astro" },
   { description: "npx create-remix", label: "Remix", value: "remix" },
-];
+]
 
 export default function Particle() {
   return (
@@ -27,7 +27,7 @@ export default function Particle() {
           {(item) => (
             <span className="flex flex-col">
               <span className="truncate">{item.label}</span>
-              <span className="truncate text-muted-foreground text-xs">
+              <span className="text-muted-foreground truncate text-xs">
                 {item.description}
               </span>
             </span>
@@ -39,7 +39,7 @@ export default function Particle() {
           <SelectItem key={item.value} value={item}>
             <span className="flex flex-col">
               <span className="truncate">{item.label}</span>
-              <span className="truncate text-muted-foreground text-xs">
+              <span className="text-muted-foreground truncate text-xs">
                 {item.description}
               </span>
             </span>
@@ -47,5 +47,5 @@ export default function Particle() {
         ))}
       </SelectPopup>
     </Select>
-  );
+  )
 }

@@ -1,11 +1,11 @@
-import { Slider } from "@/components/ui/tailwind/slider";
+import { Slider } from "@/components/ui/tailwind/slider"
 
 export default function Particle() {
   return (
     <div>
       <div
         aria-hidden="true"
-        className="mb-3 flex w-full items-center justify-between gap-2 font-medium text-muted-foreground text-xs"
+        className="text-muted-foreground mb-3 flex w-full items-center justify-between gap-2 text-xs font-medium"
       >
         <span>Low</span>
         <span>High</span>
@@ -16,5 +16,5 @@ export default function Particle() {
         step={10}
       />
     </div>
-  );
+  )
 }

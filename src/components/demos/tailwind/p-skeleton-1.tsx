@@ -1,14 +1,15 @@
-"use client";
+"use client"
 
-import { UserRoundPlusIcon, UsersRoundIcon } from "lucide-react";
-import { useEffect, useState } from "react";
+import { UserRoundPlusIcon, UsersRoundIcon } from "lucide-react"
+import { useEffect, useState } from "react"
+
 import {
   Avatar,
   AvatarFallback,
   AvatarImage,
-} from "@/components/ui/tailwind/avatar";
-import { Button } from "@/components/ui/tailwind/button";
-import { Skeleton } from "@/components/ui/tailwind/skeleton";
+} from "@/components/ui/tailwind/avatar"
+import { Button } from "@/components/ui/tailwind/button"
+import { Skeleton } from "@/components/ui/tailwind/skeleton"
 
 const users = [
   {
@@ -38,21 +39,21 @@ const users = [
     name: "Alex Rivera",
     role: "UI/UX Designer",
   },
-];
+]
 
 function UserCard({ delay, user }: { delay: number; user: (typeof users)[0] }) {
-  const [isLoaded, setIsLoaded] = useState(false);
+  const [isLoaded, setIsLoaded] = useState(false)
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      setIsLoaded(true);
-    }, delay);
+      setIsLoaded(true)
+    }, delay)
 
-    return () => clearTimeout(timer);
-  }, [delay]);
+    return () => clearTimeout(timer)
+  }, [delay])
 
   if (!isLoaded) {
-    return <UserCardSkeleton />;
+    return <UserCardSkeleton />
   }
 
   return (
@@ -62,8 +63,8 @@ function UserCard({ delay, user }: { delay: number; user: (typeof users)[0] }) {
         <AvatarFallback>{user.fallback}</AvatarFallback>
       </Avatar>
       <div className="flex min-w-0 flex-1 flex-col gap-1">
-        <h4 className="line-clamp-1 font-medium text-sm">{user.name}</h4>
-        <div className="flex items-center gap-3 text-muted-foreground text-xs">
+        <h4 className="line-clamp-1 text-sm font-medium">{user.name}</h4>
+        <div className="text-muted-foreground flex items-center gap-3 text-xs">
           <span className="truncate">{user.role}</span>
           <div className="flex min-w-0 items-center gap-1">
             <UsersRoundIcon className="size-3 shrink-0" />
@@ -79,7 +80,7 @@ function UserCard({ delay, user }: { delay: number; user: (typeof users)[0] }) {
         Follow
       </Button>
     </>
-  );
+  )
 }
 
 function UserCardSkeleton() {
@@ -95,7 +96,7 @@ function UserCardSkeleton() {
       </div>
       <Skeleton className="h-7 w-19 sm:h-6 sm:w-17" />
     </>
-  );
+  )
 }
 
 export default function Particle() {
@@ -107,5 +108,5 @@ export default function Particle() {
         </div>
       ))}
     </div>
-  );
+  )
 }

@@ -1,5 +1,5 @@
-import { Field, FieldError, FieldLabel } from "@/components/ui/tailwind/field";
-import { Textarea } from "@/components/ui/tailwind/textarea";
+import { Field, FieldError, FieldLabel } from "@/components/ui/tailwind/field"
+import { Textarea } from "@/components/ui/tailwind/textarea"
 
 export default function Particle() {
   return (
@@ -10,5 +10,5 @@ export default function Particle() {
       <Textarea placeholder="Type your message here" required />
       <FieldError>Please fill out this field.</FieldError>
     </Field>
-  );
+  )
 }

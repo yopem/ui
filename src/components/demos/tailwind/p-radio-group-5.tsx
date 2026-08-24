@@ -1,24 +1,26 @@
-"use client";
+"use client"
 
-import type { FormEvent } from "react";
-import { useState } from "react";
-import { Button } from "@/components/ui/tailwind/button";
-import { Field, FieldItem, FieldLabel } from "@/components/ui/tailwind/field";
-import { Fieldset, FieldsetLegend } from "@/components/ui/tailwind/fieldset";
-import { Form } from "@/components/ui/tailwind/form";
-import { Radio, RadioGroup } from "@/components/ui/tailwind/radio-group";
+import type { FormEvent } from "react"
+
+import { useState } from "react"
+
+import { Button } from "@/components/ui/tailwind/button"
+import { Field, FieldItem, FieldLabel } from "@/components/ui/tailwind/field"
+import { Fieldset, FieldsetLegend } from "@/components/ui/tailwind/fieldset"
+import { Form } from "@/components/ui/tailwind/form"
+import { Radio, RadioGroup } from "@/components/ui/tailwind/radio-group"
 
 export default function Particle() {
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false)
 
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-    setLoading(true);
-    await new Promise((r) => setTimeout(r, 800));
-    setLoading(false);
-    alert(`Selected: ${formData.get("frameworks")}`);
-  };
+    e.preventDefault()
+    const formData = new FormData(e.currentTarget)
+    setLoading(true)
+    await new Promise((r) => setTimeout(r, 800))
+    setLoading(false)
+    alert(`Selected: ${formData.get("frameworks")}`)
+  }
 
   return (
     <Form
@@ -30,7 +32,7 @@ export default function Particle() {
         name="frameworks"
         render={(props) => <Fieldset {...props} />}
       >
-        <FieldsetLegend className="font-medium text-sm">
+        <FieldsetLegend className="text-sm font-medium">
           Frameworks
         </FieldsetLegend>
         <RadioGroup defaultValue="next">
@@ -55,5 +57,5 @@ export default function Particle() {
         Submit
       </Button>
     </Form>
-  );
+  )
 }

@@ -1,9 +1,10 @@
-import { TriangleAlertIcon } from "lucide-react";
+import { TriangleAlertIcon } from "lucide-react"
+
 import {
   Alert,
   AlertDescription,
   AlertTitle,
-} from "@/components/ui/tailwind/alert";
+} from "@/components/ui/tailwind/alert"
 
 export default function Particle() {
   return (
@@ -14,5 +15,5 @@ export default function Particle() {
         Describe what can be done about it here.
       </AlertDescription>
     </Alert>
-  );
+  )
 }

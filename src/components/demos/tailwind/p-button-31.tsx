@@ -1,6 +1,7 @@
-import { PrinterIcon } from "lucide-react";
-import { Button } from "@/components/ui/tailwind/button";
-import { Kbd, KbdGroup } from "@/components/ui/tailwind/kbd";
+import { PrinterIcon } from "lucide-react"
+
+import { Button } from "@/components/ui/tailwind/button"
+import { Kbd, KbdGroup } from "@/components/ui/tailwind/kbd"
 
 export default function Particle() {
   return (
@@ -12,5 +13,5 @@ export default function Particle() {
         <Kbd>P</Kbd>
       </KbdGroup>
     </Button>
-  );
+  )
 }

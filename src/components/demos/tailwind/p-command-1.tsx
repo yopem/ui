@@ -1,8 +1,9 @@
-"use client";
+"use client"
 
-import { ArrowDownIcon, ArrowUpIcon, CornerDownLeftIcon } from "lucide-react";
-import { Fragment, useEffect, useState } from "react";
-import { Button } from "@/components/ui/tailwind/button";
+import { ArrowDownIcon, ArrowUpIcon, CornerDownLeftIcon } from "lucide-react"
+import { Fragment, useEffect, useState } from "react"
+
+import { Button } from "@/components/ui/tailwind/button"
 import {
   Command,
   CommandCollection,
@@ -19,18 +20,18 @@ import {
   CommandPanel,
   CommandSeparator,
   CommandShortcut,
-} from "@/components/ui/tailwind/command";
-import { Kbd, KbdGroup } from "@/components/ui/tailwind/kbd";
+} from "@/components/ui/tailwind/command"
+import { Kbd, KbdGroup } from "@/components/ui/tailwind/kbd"
 
 export interface Item {
-  value: string;
-  label: string;
-  shortcut?: string;
+  value: string
+  label: string
+  shortcut?: string
 }
 
 export interface Group {
-  value: string;
-  items: Item[];
+  value: string
+  items: Item[]
 }
 
 export const suggestions: Item[] = [
@@ -39,7 +40,7 @@ export const suggestions: Item[] = [
   { label: "Slack", shortcut: "⌘S", value: "slack" },
   { label: "YouTube", shortcut: "⌘Y", value: "youtube" },
   { label: "Raycast", shortcut: "⌘R", value: "raycast" },
-];
+]
 
 export const commands: Item[] = [
   { label: "Clipboard History", shortcut: "⌘⇧C", value: "clipboard-history" },
@@ -47,31 +48,31 @@ export const commands: Item[] = [
   { label: "Create Snippet", shortcut: "⌘N", value: "create-snippet" },
   { label: "System Preferences", shortcut: "⌘,", value: "system-preferences" },
   { label: "Window Management", shortcut: "⌘⇧W", value: "window-management" },
-];
+]
 
 export const groupedItems: Group[] = [
   { items: suggestions, value: "Suggestions" },
   { items: commands, value: "Commands" },
-];
+]
 
 export default function Particle() {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(false)
 
   function handleItemClick(_item: Item) {
-    setOpen(false);
+    setOpen(false)
   }
 
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
       if (e.key === "j" && (e.metaKey || e.ctrlKey)) {
-        e.preventDefault();
-        setOpen((open) => !open);
+        e.preventDefault()
+        setOpen((open) => !open)
       }
-    };
+    }
 
-    document.addEventListener("keydown", down);
-    return () => document.removeEventListener("keydown", down);
-  }, []);
+    document.addEventListener("keydown", down)
+    return () => document.removeEventListener("keydown", down)
+  }, [])
 
   return (
     <CommandDialog onOpenChange={setOpen} open={open}>
@@ -140,5 +141,5 @@ export default function Particle() {
         </Command>
       </CommandDialogPopup>
     </CommandDialog>
-  );
+  )
 }

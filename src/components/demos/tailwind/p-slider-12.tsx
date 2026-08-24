@@ -1,18 +1,19 @@
-"use client";
+"use client"
 
-import { useState } from "react";
+import { useState } from "react"
+
 import {
   NumberField,
   NumberFieldGroup,
   NumberFieldInput,
-} from "@/components/ui/tailwind/number-field";
-import { Slider } from "@/components/ui/tailwind/slider";
+} from "@/components/ui/tailwind/number-field"
+import { Slider } from "@/components/ui/tailwind/slider"
 
-const min = 0;
-const max = 150;
+const min = 0
+const max = 150
 
 export default function Particle() {
-  const [value, setValue] = useState(25);
+  const [value, setValue] = useState(25)
 
   return (
     <div className="flex items-center gap-4">
@@ -37,5 +38,5 @@ export default function Particle() {
         <NumberFieldInput />
       </NumberField>
     </div>
-  );
+  )
 }

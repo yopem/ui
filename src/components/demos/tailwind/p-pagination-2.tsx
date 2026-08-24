@@ -1,15 +1,15 @@
 // next/link replaced -> anchor
-import { Button } from "@/components/ui/tailwind/button";
+import { Button } from "@/components/ui/tailwind/button"
 import {
   Pagination,
   PaginationContent,
   PaginationItem,
-} from "@/components/ui/tailwind/pagination";
+} from "@/components/ui/tailwind/pagination"
 
 type PaginationProps = {
-  currentPage: number;
-  totalPages: number;
-};
+  currentPage: number
+  totalPages: number
+}
 
 export default function Particle({ currentPage, totalPages }: PaginationProps) {
   return (
@@ -43,5 +43,5 @@ export default function Particle({ currentPage, totalPages }: PaginationProps) {
         </PaginationItem>
       </PaginationContent>
     </Pagination>
-  );
+  )
 }

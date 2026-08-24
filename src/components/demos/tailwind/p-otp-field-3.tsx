@@ -2,15 +2,15 @@ import {
   OTPField,
   OTPFieldInput,
   OTPFieldSeparator,
-} from "@/components/ui/tailwind/otp-field";
+} from "@/components/ui/tailwind/otp-field"
 
-const OTP_LENGTH = 6;
-const GROUP_LENGTH = 3;
+const OTP_LENGTH = 6
+const GROUP_LENGTH = 3
 
 const OTP_SLOT_KEYS = Array.from(
   { length: OTP_LENGTH },
   (_, i) => `otp-slot-${i}`,
-);
+)
 
 export default function Particle() {
   return (
@@ -31,5 +31,5 @@ export default function Particle() {
         />
       ))}
     </OTPField>
-  );
+  )
 }

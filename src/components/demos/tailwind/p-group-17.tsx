@@ -1,6 +1,10 @@
-import { Group, GroupSeparator, GroupText } from "@/components/ui/tailwind/group";
-import { Input } from "@/components/ui/tailwind/input";
-import { Label } from "@/components/ui/tailwind/label";
+import {
+  Group,
+  GroupSeparator,
+  GroupText,
+} from "@/components/ui/tailwind/group"
+import { Input } from "@/components/ui/tailwind/input"
+import { Label } from "@/components/ui/tailwind/label"
 
 export default function Particle() {
   return (
@@ -17,5 +21,5 @@ export default function Particle() {
         USD
       </GroupText>
     </Group>
-  );
+  )
 }

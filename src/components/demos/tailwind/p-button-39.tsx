@@ -1,10 +1,11 @@
-"use client";
+"use client"
 
-import { useState } from "react";
-import { Button } from "@/components/ui/tailwind/button";
+import { useState } from "react"
+
+import { Button } from "@/components/ui/tailwind/button"
 
 export default function Particle() {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(false)
 
   return (
     <Button
@@ -28,18 +29,18 @@ export default function Particle() {
         xmlns="http://www.w3.org/2000/svg"
       >
         <path
-          className="origin-center in-[[data-slot=button][aria-expanded=true]]:translate-x-0 -translate-y-[7px] in-[[data-slot=button][aria-expanded=true]]:translate-y-0 in-[[data-slot=button][aria-expanded=true]]:rotate-315 transition-all duration-300 ease-[cubic-bezier(.5,.85,.25,1.1)]"
+          className="origin-center -translate-y-[7px] transition-all duration-300 ease-[cubic-bezier(.5,.85,.25,1.1)] in-[[data-slot=button][aria-expanded=true]]:translate-x-0 in-[[data-slot=button][aria-expanded=true]]:translate-y-0 in-[[data-slot=button][aria-expanded=true]]:rotate-315"
           d="M4 12L20 12"
         />
         <path
-          className="origin-center in-[[data-slot=button][aria-expanded=true]]:rotate-45 transition-all duration-300 ease-[cubic-bezier(.5,.85,.25,1.8)]"
+          className="origin-center transition-all duration-300 ease-[cubic-bezier(.5,.85,.25,1.8)] in-[[data-slot=button][aria-expanded=true]]:rotate-45"
           d="M4 12H20"
         />
         <path
-          className="origin-center in-[[data-slot=button][aria-expanded=true]]:translate-y-0 translate-y-[7px] in-[[data-slot=button][aria-expanded=true]]:rotate-135 transition-all duration-300 ease-[cubic-bezier(.5,.85,.25,1.1)]"
+          className="origin-center translate-y-[7px] transition-all duration-300 ease-[cubic-bezier(.5,.85,.25,1.1)] in-[[data-slot=button][aria-expanded=true]]:translate-y-0 in-[[data-slot=button][aria-expanded=true]]:rotate-135"
           d="M4 12H20"
         />
       </svg>
     </Button>
-  );
+  )
 }

@@ -2,8 +2,8 @@ import {
   Avatar,
   AvatarFallback,
   AvatarImage,
-} from "@/components/ui/tailwind/avatar";
-import { Button } from "@/components/ui/tailwind/button";
+} from "@/components/ui/tailwind/avatar"
+import { Button } from "@/components/ui/tailwind/button"
 
 export default function Particle() {
   return (
@@ -17,5 +17,5 @@ export default function Particle() {
       </Avatar>
       @georgelucas
     </Button>
-  );
+  )
 }

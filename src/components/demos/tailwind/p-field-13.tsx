@@ -1,9 +1,9 @@
-"use client";
+"use client"
 
-import { Checkbox } from "@/components/ui/tailwind/checkbox";
-import { CheckboxGroup } from "@/components/ui/tailwind/checkbox-group";
-import { Field, FieldItem, FieldLabel } from "@/components/ui/tailwind/field";
-import { Fieldset, FieldsetLegend } from "@/components/ui/tailwind/fieldset";
+import { Checkbox } from "@/components/ui/tailwind/checkbox"
+import { CheckboxGroup } from "@/components/ui/tailwind/checkbox-group"
+import { Field, FieldItem, FieldLabel } from "@/components/ui/tailwind/field"
+import { Fieldset, FieldsetLegend } from "@/components/ui/tailwind/fieldset"
 
 export default function Particle() {
   return (
@@ -12,7 +12,7 @@ export default function Particle() {
       name="frameworks"
       render={(props) => <Fieldset {...props} />}
     >
-      <FieldsetLegend className="font-medium text-sm">
+      <FieldsetLegend className="text-sm font-medium">
         Frameworks
       </FieldsetLegend>
       <CheckboxGroup defaultValue={["react"]}>
@@ -33,5 +33,5 @@ export default function Particle() {
         </FieldItem>
       </CheckboxGroup>
     </Field>
-  );
+  )
 }

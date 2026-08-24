@@ -1,4 +1,4 @@
-"use client";
+"use client"
 
 import {
   type ColumnDef,
@@ -9,28 +9,28 @@ import {
   type PaginationState,
   type SortingState,
   useReactTable,
-} from "@tanstack/react-table";
-import { ChevronDownIcon, ChevronUpIcon, PlaneTakeoffIcon } from "lucide-react";
-import { useState } from "react";
-import { cn } from "@/lib/utils";
-import { Badge } from "@/components/ui/tailwind/badge";
-import { Button } from "@/components/ui/tailwind/button";
-import { Checkbox } from "@/components/ui/tailwind/checkbox";
-import { Frame, FrameFooter } from "@/components/ui/tailwind/frame";
+} from "@tanstack/react-table"
+import { ChevronDownIcon, ChevronUpIcon, PlaneTakeoffIcon } from "lucide-react"
+import { useState } from "react"
+
+import { Badge } from "@/components/ui/tailwind/badge"
+import { Button } from "@/components/ui/tailwind/button"
+import { Checkbox } from "@/components/ui/tailwind/checkbox"
+import { Frame, FrameFooter } from "@/components/ui/tailwind/frame"
 import {
   Pagination,
   PaginationContent,
   PaginationItem,
   PaginationNext,
   PaginationPrevious,
-} from "@/components/ui/tailwind/pagination";
+} from "@/components/ui/tailwind/pagination"
 import {
   Select,
   SelectItem,
   SelectPopup,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/tailwind/select";
+} from "@/components/ui/tailwind/select"
 import {
   Table,
   TableBody,
@@ -38,34 +38,35 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/tailwind/table";
+} from "@/components/ui/tailwind/table"
+import { cn } from "@/lib/utils"
 
 type Flight = {
-  id: string;
-  flightCode: string;
-  destination: string;
-  departureTime: string;
-  arrivalTime: string;
-  terminal: string;
-  duration: string;
-  status: "On Time" | "Delayed" | "Cancelled" | "Boarding";
-  gate: string;
-};
+  id: string
+  flightCode: string
+  destination: string
+  departureTime: string
+  arrivalTime: string
+  terminal: string
+  duration: string
+  status: "On Time" | "Delayed" | "Cancelled" | "Boarding"
+  gate: string
+}
 
 const getStatusColor = (status: Flight["status"]) => {
   switch (status) {
     case "On Time":
-      return "bg-emerald-500";
+      return "bg-emerald-500"
     case "Delayed":
-      return "bg-amber-500";
+      return "bg-amber-500"
     case "Cancelled":
-      return "bg-red-500";
+      return "bg-red-500"
     case "Boarding":
-      return "bg-blue-500";
+      return "bg-blue-500"
     default:
-      return "bg-muted-foreground/64";
+      return "bg-muted-foreground/64"
   }
-};
+}
 
 const columns: ColumnDef<Flight>[] = [
   {
@@ -78,8 +79,8 @@ const columns: ColumnDef<Flight>[] = [
     ),
     enableSorting: false,
     header: ({ table }) => {
-      const isAllSelected = table.getIsAllPageRowsSelected();
-      const isSomeSelected = table.getIsSomePageRowsSelected();
+      const isAllSelected = table.getIsAllPageRowsSelected()
+      const isSomeSelected = table.getIsSomePageRowsSelected()
       return (
         <Checkbox
           aria-label="Select all rows"
@@ -87,7 +88,7 @@ const columns: ColumnDef<Flight>[] = [
           indeterminate={isSomeSelected && !isAllSelected}
           onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
         />
-      );
+      )
     },
     id: "select",
     size: 28,
@@ -95,7 +96,7 @@ const columns: ColumnDef<Flight>[] = [
   {
     accessorKey: "flightCode",
     cell: ({ row }) => (
-      <div className="font-medium font-mono text-muted-foreground">
+      <div className="text-muted-foreground font-mono font-medium">
         {row.getValue("flightCode")}
       </div>
     ),
@@ -105,8 +106,8 @@ const columns: ColumnDef<Flight>[] = [
   {
     accessorKey: "departureTime",
     cell: ({ row }) => {
-      const isCancelled = row.original.status === "Cancelled";
-      const isDelayed = row.original.status === "Delayed";
+      const isCancelled = row.original.status === "Cancelled"
+      const isDelayed = row.original.status === "Delayed"
       return (
         <div
           className={cn(
@@ -119,7 +120,7 @@ const columns: ColumnDef<Flight>[] = [
           </div>
           <div
             aria-hidden="true"
-            className="flex items-center gap-0.5 opacity-50 before:size-1.5 before:rounded-full before:border before:border-muted-foreground after:h-px after:w-3 after:border-muted-foreground after:border-t after:border-dashed"
+            className="before:border-muted-foreground after:border-muted-foreground flex items-center gap-0.5 opacity-50 before:size-1.5 before:rounded-full before:border after:h-px after:w-3 after:border-t after:border-dashed"
           />
           <div
             className={cn(
@@ -131,11 +132,11 @@ const columns: ColumnDef<Flight>[] = [
           </div>
           <div
             aria-hidden="true"
-            className="flex items-center gap-0.5 opacity-50 before:order-1 before:size-1.5 before:rounded-full before:border before:border-muted-foreground after:h-px after:w-3 after:border-muted-foreground after:border-t after:border-dashed"
+            className="before:border-muted-foreground after:border-muted-foreground flex items-center gap-0.5 opacity-50 before:order-1 before:size-1.5 before:rounded-full before:border after:h-px after:w-3 after:border-t after:border-dashed"
           />
           <div>{row.original.arrivalTime}</div>
         </div>
-      );
+      )
     },
     header: "Time",
     size: 220,
@@ -151,7 +152,7 @@ const columns: ColumnDef<Flight>[] = [
   {
     accessorKey: "status",
     cell: ({ row }) => {
-      const status = row.getValue("status") as Flight["status"];
+      const status = row.getValue("status") as Flight["status"]
       return (
         <Badge variant="outline">
           <span
@@ -160,7 +161,7 @@ const columns: ColumnDef<Flight>[] = [
           />
           {status}
         </Badge>
-      );
+      )
     },
     header: "Status",
     size: 120,
@@ -181,22 +182,22 @@ const columns: ColumnDef<Flight>[] = [
     header: "Gate",
     size: 80,
   },
-];
+]
 
 export default function Particle() {
-  const pageSize = 10;
+  const pageSize = 10
 
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: pageSize,
-  });
+  })
 
   const [sorting, setSorting] = useState<SortingState>([
     {
       desc: false,
       id: "departureTime",
     },
-  ]);
+  ])
 
   const table = useReactTable({
     columns,
@@ -211,7 +212,7 @@ export default function Particle() {
       pagination,
       sorting,
     },
-  });
+  })
 
   return (
     <Frame className="w-full">
@@ -220,7 +221,7 @@ export default function Particle() {
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow className="hover:bg-transparent" key={headerGroup.id}>
               {headerGroup.headers.map((header) => {
-                const columnSize = header.column.getSize();
+                const columnSize = header.column.getSize()
                 return (
                   <TableHead
                     key={header.id}
@@ -230,12 +231,12 @@ export default function Particle() {
                   >
                     {header.isPlaceholder ? null : header.column.getCanSort() ? (
                       <div
-                        className="flex h-full cursor-pointer select-none items-center justify-between gap-2"
+                        className="flex h-full cursor-pointer items-center justify-between gap-2 select-none"
                         onClick={header.column.getToggleSortingHandler()}
                         onKeyDown={(e) => {
                           if (e.key === "Enter" || e.key === " ") {
-                            e.preventDefault();
-                            header.column.getToggleSortingHandler()?.(e);
+                            e.preventDefault()
+                            header.column.getToggleSortingHandler()?.(e)
                           }
                         }}
                         role="button"
@@ -267,7 +268,7 @@ export default function Particle() {
                       )
                     )}
                   </TableHead>
-                );
+                )
               })}
             </TableRow>
           ))}
@@ -302,45 +303,45 @@ export default function Particle() {
             <p className="text-muted-foreground text-sm">Viewing</p>
             <Select
               items={Array.from({ length: table.getPageCount() }, (_, i) => {
-                const start = i * table.getState().pagination.pageSize + 1;
+                const start = i * table.getState().pagination.pageSize + 1
                 const end = Math.min(
                   (i + 1) * table.getState().pagination.pageSize,
                   table.getRowCount(),
-                );
-                const pageNum = i + 1;
-                return { label: `${start}-${end}`, value: pageNum };
+                )
+                const pageNum = i + 1
+                return { label: `${start}-${end}`, value: pageNum }
               })}
               onValueChange={(value) => {
-                table.setPageIndex((value as number) - 1);
+                table.setPageIndex((value as number) - 1)
               }}
               value={table.getState().pagination.pageIndex + 1}
             >
               <SelectTrigger
                 aria-label="Select result range"
-                className="w-fit min-w-none"
+                className="min-w-none w-fit"
                 size="sm"
               >
                 <SelectValue />
               </SelectTrigger>
               <SelectPopup>
                 {Array.from({ length: table.getPageCount() }, (_, i) => {
-                  const start = i * table.getState().pagination.pageSize + 1;
+                  const start = i * table.getState().pagination.pageSize + 1
                   const end = Math.min(
                     (i + 1) * table.getState().pagination.pageSize,
                     table.getRowCount(),
-                  );
-                  const pageNum = i + 1;
+                  )
+                  const pageNum = i + 1
                   return (
                     <SelectItem key={pageNum} value={pageNum}>
                       {`${start}-${end}`}
                     </SelectItem>
-                  );
+                  )
                 })}
               </SelectPopup>
             </Select>
             <p className="text-muted-foreground text-sm">
               of{" "}
-              <strong className="font-medium text-foreground">
+              <strong className="text-foreground font-medium">
                 {table.getRowCount()}
               </strong>{" "}
               results
@@ -381,7 +382,7 @@ export default function Particle() {
         </div>
       </FrameFooter>
     </Frame>
-  );
+  )
 }
 
 const flights: Flight[] = [
@@ -715,4 +716,4 @@ const flights: Flight[] = [
     status: "On Time",
     terminal: "3",
   },
-];
+]

@@ -1,14 +1,15 @@
-import { BoldIcon, ItalicIcon, UnderlineIcon } from "lucide-react";
+import { BoldIcon, ItalicIcon, UnderlineIcon } from "lucide-react"
+
 import {
   ToggleGroup,
   ToggleGroupItem,
-} from "@/components/ui/tailwind/toggle-group";
+} from "@/components/ui/tailwind/toggle-group"
 import {
   Tooltip,
   TooltipPopup,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/ui/tailwind/tooltip";
+} from "@/components/ui/tailwind/tooltip"
 
 export default function Particle() {
   return (
@@ -47,5 +48,5 @@ export default function Particle() {
         </Tooltip>
       </ToggleGroup>
     </TooltipProvider>
-  );
+  )
 }

@@ -1,13 +1,14 @@
-import { useId } from "react";
-import { Label } from "@/components/ui/tailwind/label";
-import { Switch } from "@/components/ui/tailwind/switch";
+import { useId } from "react"
+
+import { Label } from "@/components/ui/tailwind/label"
+import { Switch } from "@/components/ui/tailwind/switch"
 
 export default function Particle() {
-  const id = useId();
+  const id = useId()
 
   return (
     <Label
-      className="flex items-center gap-6 rounded-lg border p-3 hover:bg-accent/50 has-data-checked:border-primary/48 has-data-checked:bg-accent/50"
+      className="hover:bg-accent/50 has-data-checked:border-primary/48 has-data-checked:bg-accent/50 flex items-center gap-6 rounded-lg border p-3"
       htmlFor={id}
     >
       <div className="flex flex-col gap-1">
@@ -22,5 +23,5 @@ export default function Particle() {
         id={id}
       />
     </Label>
-  );
+  )
 }

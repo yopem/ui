@@ -1,20 +1,21 @@
-"use client";
+"use client"
 
-import { addDays, format } from "date-fns";
-import { CalendarIcon } from "lucide-react";
-import { useState } from "react";
-import { Button } from "@/components/ui/tailwind/button";
-import { Calendar } from "@/components/ui/tailwind/calendar";
+import { addDays, format } from "date-fns"
+import { CalendarIcon } from "lucide-react"
+import { useState } from "react"
+
+import { Button } from "@/components/ui/tailwind/button"
+import { Calendar } from "@/components/ui/tailwind/calendar"
 import {
   Popover,
   PopoverPopup,
   PopoverTrigger,
-} from "@/components/ui/tailwind/popover";
+} from "@/components/ui/tailwind/popover"
 
 export default function Particle() {
-  const today = new Date();
-  const [month, setMonth] = useState(today);
-  const [date, setDate] = useState<Date | undefined>(today);
+  const today = new Date()
+  const [month, setMonth] = useState(today)
+  const [date, setDate] = useState<Date | undefined>(today)
 
   return (
     <Popover>
@@ -31,8 +32,8 @@ export default function Particle() {
               <Button
                 className="w-full justify-start"
                 onClick={() => {
-                  setDate(today);
-                  setMonth(today);
+                  setDate(today)
+                  setMonth(today)
                 }}
                 size="sm"
                 variant="ghost"
@@ -42,9 +43,9 @@ export default function Particle() {
               <Button
                 className="w-full justify-start"
                 onClick={() => {
-                  const tomorrow = addDays(today, 1);
-                  setDate(tomorrow);
-                  setMonth(tomorrow);
+                  const tomorrow = addDays(today, 1)
+                  setDate(tomorrow)
+                  setMonth(tomorrow)
                 }}
                 size="sm"
                 variant="ghost"
@@ -54,9 +55,9 @@ export default function Particle() {
               <Button
                 className="w-full justify-start"
                 onClick={() => {
-                  const in3Days = addDays(today, 3);
-                  setDate(in3Days);
-                  setMonth(in3Days);
+                  const in3Days = addDays(today, 3)
+                  setDate(in3Days)
+                  setMonth(in3Days)
                 }}
                 size="sm"
                 variant="ghost"
@@ -66,9 +67,9 @@ export default function Particle() {
               <Button
                 className="w-full justify-start"
                 onClick={() => {
-                  const inAWeek = addDays(today, 7);
-                  setDate(inAWeek);
-                  setMonth(inAWeek);
+                  const inAWeek = addDays(today, 7)
+                  setDate(inAWeek)
+                  setMonth(inAWeek)
                 }}
                 size="sm"
                 variant="ghost"
@@ -88,5 +89,5 @@ export default function Particle() {
         </div>
       </PopoverPopup>
     </Popover>
-  );
+  )
 }

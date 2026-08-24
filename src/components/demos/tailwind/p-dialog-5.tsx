@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/tailwind/button";
+import { Button } from "@/components/ui/tailwind/button"
 import {
   Dialog,
   DialogClose,
@@ -8,7 +8,7 @@ import {
   DialogPopup,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/tailwind/dialog";
+} from "@/components/ui/tailwind/dialog"
 
 export default function Particle() {
   return (
@@ -21,7 +21,7 @@ export default function Particle() {
           <DialogTitle>Terms & Conditions</DialogTitle>
         </DialogHeader>
         <DialogPanel>
-          <div className="flex flex-col gap-4 [&_strong]:font-semibold [&_strong]:text-foreground">
+          <div className="[&_strong]:text-foreground flex flex-col gap-4 [&_strong]:font-semibold">
             <div className="flex flex-col gap-4">
               <div className="flex flex-col gap-1">
                 <p>
@@ -121,5 +121,5 @@ export default function Particle() {
         </DialogFooter>
       </DialogPopup>
     </Dialog>
-  );
+  )
 }

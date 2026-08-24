@@ -1,8 +1,10 @@
-"use client";
+"use client"
 
-import type { DropdownProps } from "@daypicker/react";
-import * as React from "react";
-import { Calendar } from "@/components/ui/tailwind/calendar";
+import type { DropdownProps } from "@daypicker/react"
+
+import * as React from "react"
+
+import { Calendar } from "@/components/ui/tailwind/calendar"
 import {
   Combobox,
   ComboboxEmpty,
@@ -10,34 +12,34 @@ import {
   ComboboxItem,
   ComboboxList,
   ComboboxPopup,
-} from "@/components/ui/tailwind/combobox";
+} from "@/components/ui/tailwind/combobox"
 
 interface DropdownItem {
-  disabled?: boolean;
-  label: string;
-  value: string;
+  disabled?: boolean
+  label: string
+  value: string
 }
 
 function YearDropdown(props: DropdownProps) {
-  const { options, value, onChange, "aria-label": ariaLabel } = props;
+  const { options, value, onChange, "aria-label": ariaLabel } = props
 
   const items: DropdownItem[] =
     options?.map((option) => ({
       disabled: option.disabled,
       label: option.label,
       value: option.value.toString(),
-    })) ?? [];
+    })) ?? []
 
-  const selectedItem = items.find((item) => item.value === value?.toString());
+  const selectedItem = items.find((item) => item.value === value?.toString())
 
   const handleValueChange = (newValue: DropdownItem | null) => {
     if (onChange && newValue) {
       const syntheticEvent = {
         target: { value: newValue.value },
-      } as React.ChangeEvent<HTMLSelectElement>;
-      onChange(syntheticEvent);
+      } as React.ChangeEvent<HTMLSelectElement>
+      onChange(syntheticEvent)
     }
-  };
+  }
 
   return (
     <Combobox
@@ -66,11 +68,11 @@ function YearDropdown(props: DropdownProps) {
         </ComboboxList>
       </ComboboxPopup>
     </Combobox>
-  );
+  )
 }
 
 export default function Particle() {
-  const [date, setDate] = React.useState<Date | undefined>(new Date());
+  const [date, setDate] = React.useState<Date | undefined>(new Date())
   return (
     <Calendar
       captionLayout="dropdown-years"
@@ -84,5 +86,5 @@ export default function Particle() {
       selected={date}
       startMonth={new Date(1930, 0)}
     />
-  );
+  )
 }

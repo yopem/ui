@@ -1,5 +1,5 @@
-import { Label } from "@/components/ui/tailwind/label";
-import { Radio, RadioGroup } from "@/components/ui/tailwind/radio-group";
+import { Label } from "@/components/ui/tailwind/label"
+import { Radio, RadioGroup } from "@/components/ui/tailwind/radio-group"
 
 export default function Particle() {
   return (
@@ -23,5 +23,5 @@ export default function Particle() {
         </div>
       </div>
     </RadioGroup>
-  );
+  )
 }

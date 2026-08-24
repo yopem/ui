@@ -1,24 +1,25 @@
-"use client";
+"use client"
 
-import { ArrowRightIcon } from "lucide-react";
-import { Button } from "@/components/ui/tailwind/button";
-import { Group, GroupSeparator } from "@/components/ui/tailwind/group";
+import { ArrowRightIcon } from "lucide-react"
+
+import { Button } from "@/components/ui/tailwind/button"
+import { Group, GroupSeparator } from "@/components/ui/tailwind/group"
 import {
   NumberField,
   NumberFieldGroup,
   NumberFieldInput,
-} from "@/components/ui/tailwind/number-field";
+} from "@/components/ui/tailwind/number-field"
 import {
   Select,
   SelectItem,
   SelectPopup,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/tailwind/select";
+} from "@/components/ui/tailwind/select"
 
 interface Currency {
-  value: string;
-  label: string;
+  value: string
+  label: string
 }
 
 const currencies: Currency[] = [
@@ -34,7 +35,7 @@ const currencies: Currency[] = [
     label: "British Pound",
     value: "£",
   },
-];
+]
 
 export default function Particle() {
   return (
@@ -44,7 +45,7 @@ export default function Particle() {
           defaultValue={currencies[0]}
           itemToStringValue={(currency) => currency.value}
         >
-          <SelectTrigger className="w-fit min-w-none">
+          <SelectTrigger className="min-w-none w-fit">
             <SelectValue>{(currency: Currency) => currency.value}</SelectValue>
           </SelectTrigger>
           <SelectPopup className="min-w-48">
@@ -71,5 +72,5 @@ export default function Particle() {
         </Button>
       </Group>
     </Group>
-  );
+  )
 }

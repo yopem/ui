@@ -1,5 +1,6 @@
-import { BoldIcon, ItalicIcon, UnderlineIcon } from "lucide-react";
-import { Toggle } from "@/components/ui/tailwind/toggle";
+import { BoldIcon, ItalicIcon, UnderlineIcon } from "lucide-react"
+
+import { Toggle } from "@/components/ui/tailwind/toggle"
 
 export default function Particle() {
   return (
@@ -14,5 +15,5 @@ export default function Particle() {
         <UnderlineIcon />
       </Toggle>
     </div>
-  );
+  )
 }

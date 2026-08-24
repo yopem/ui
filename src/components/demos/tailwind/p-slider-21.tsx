@@ -1,28 +1,29 @@
-"use client";
+"use client"
 
-import { RotateCcwIcon } from "lucide-react";
-import { useState } from "react";
-import { Button } from "@/components/ui/tailwind/button";
-import { Fieldset, FieldsetLegend } from "@/components/ui/tailwind/fieldset";
-import { Label } from "@/components/ui/tailwind/label";
+import { RotateCcwIcon } from "lucide-react"
+import { useState } from "react"
+
+import { Button } from "@/components/ui/tailwind/button"
+import { Fieldset, FieldsetLegend } from "@/components/ui/tailwind/fieldset"
+import { Label } from "@/components/ui/tailwind/label"
 import {
   NumberField,
   NumberFieldGroup,
   NumberFieldInput,
-} from "@/components/ui/tailwind/number-field";
-import { Slider } from "@/components/ui/tailwind/slider";
+} from "@/components/ui/tailwind/number-field"
+import { Slider } from "@/components/ui/tailwind/slider"
 
-const min = -10;
-const max = 10;
-const defaultValues = { x: 0, y: 0, z: 0 };
-const initialValues = { x: -2, y: 4, z: 2 };
+const min = -10
+const max = 10
+const defaultValues = { x: 0, y: 0, z: 0 }
+const initialValues = { x: -2, y: 4, z: 2 }
 
 export default function Particle() {
-  const [values, setValues] = useState(initialValues);
+  const [values, setValues] = useState(initialValues)
 
   const updateValue = (axis: keyof typeof values, v: number | null) => {
-    setValues((prev) => ({ ...prev, [axis]: v ?? 0 }));
-  };
+    setValues((prev) => ({ ...prev, [axis]: v ?? 0 }))
+  }
 
   return (
     <Fieldset className="flex w-full flex-col gap-4">
@@ -30,7 +31,7 @@ export default function Particle() {
       <div className="flex flex-col gap-2">
         {(["x", "y", "z"] as const).map((axis) => (
           <div className="flex items-center gap-2" key={axis}>
-            <Label className="w-3 text-muted-foreground text-xs">
+            <Label className="text-muted-foreground w-3 text-xs">
               {axis.toUpperCase()}
             </Label>
             <Slider
@@ -67,5 +68,5 @@ export default function Particle() {
         Reset
       </Button>
     </Fieldset>
-  );
+  )
 }

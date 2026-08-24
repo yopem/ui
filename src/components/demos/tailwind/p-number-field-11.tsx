@@ -4,7 +4,7 @@ import {
   NumberFieldGroup,
   NumberFieldIncrement,
   NumberFieldInput,
-} from "@/components/ui/tailwind/number-field";
+} from "@/components/ui/tailwind/number-field"
 
 export default function Particle() {
   return (
@@ -15,5 +15,5 @@ export default function Particle() {
         <NumberFieldIncrement />
       </NumberFieldGroup>
     </NumberField>
-  );
+  )
 }

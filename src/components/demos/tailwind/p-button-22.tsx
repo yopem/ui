@@ -4,8 +4,9 @@ import {
   ChevronRightIcon,
   ChevronUpIcon,
   CircleIcon,
-} from "lucide-react";
-import { Button } from "@/components/ui/tailwind/button";
+} from "lucide-react"
+
+import { Button } from "@/components/ui/tailwind/button"
 
 export default function Particle() {
   return (
@@ -41,5 +42,5 @@ export default function Particle() {
         <ChevronDownIcon aria-hidden="true" />
       </Button>
     </div>
-  );
+  )
 }

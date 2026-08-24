@@ -1,5 +1,6 @@
-import { UserIcon } from "lucide-react";
-import { Avatar, AvatarFallback } from "@/components/ui/tailwind/avatar";
+import { UserIcon } from "lucide-react"
+
+import { Avatar, AvatarFallback } from "@/components/ui/tailwind/avatar"
 
 export default function Particle() {
   return (
@@ -8,5 +9,5 @@ export default function Particle() {
         <UserIcon className="size-4" />
       </AvatarFallback>
     </Avatar>
-  );
+  )
 }

@@ -1,7 +1,7 @@
-"use client";
+"use client"
 
-import { Button } from "@/components/ui/tailwind/button";
-import { toastManager } from "@/components/ui/tailwind/toast";
+import { Button } from "@/components/ui/tailwind/button"
+import { toastManager } from "@/components/ui/tailwind/toast"
 
 export default function Particle() {
   return (
@@ -9,14 +9,14 @@ export default function Particle() {
       onClick={() => {
         toastManager.promise(
           new Promise<string>((resolve, reject) => {
-            const shouldSucceed = Math.random() > 0.3;
+            const shouldSucceed = Math.random() > 0.3
             setTimeout(() => {
               if (shouldSucceed) {
-                resolve("Data loaded successfully");
+                resolve("Data loaded successfully")
               } else {
-                reject(new Error("Failed to load data"));
+                reject(new Error("Failed to load data"))
               }
-            }, 2000);
+            }, 2000)
           }),
           {
             error: () => ({
@@ -32,11 +32,11 @@ export default function Particle() {
               title: "This is a success toast!",
             }),
           },
-        );
+        )
       }}
       variant="outline"
     >
       Run Promise
     </Button>
-  );
+  )
 }

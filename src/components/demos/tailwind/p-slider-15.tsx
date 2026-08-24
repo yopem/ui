@@ -1,19 +1,18 @@
-"use client";
+"use client"
 
-import { useState } from "react";
-import { Fieldset, FieldsetLegend } from "@/components/ui/tailwind/fieldset";
-import { Slider } from "@/components/ui/tailwind/slider";
+import { useState } from "react"
 
-const min = 5;
-const max = 1240;
+import { Fieldset, FieldsetLegend } from "@/components/ui/tailwind/fieldset"
+import { Slider } from "@/components/ui/tailwind/slider"
+
+const min = 5
+const max = 1240
 
 export default function Particle() {
-  const [values, setValues] = useState([min, max]);
+  const [values, setValues] = useState([min, max])
 
   const formatPrice = (price: number) =>
-    price === max
-      ? `$${price.toLocaleString()}+`
-      : `$${price.toLocaleString()}`;
+    price === max ? `$${price.toLocaleString()}+` : `$${price.toLocaleString()}`
 
   return (
     <Fieldset className="flex w-full flex-col gap-3">
@@ -30,5 +29,5 @@ export default function Particle() {
         value={values}
       />
     </Fieldset>
-  );
+  )
 }

@@ -1,15 +1,16 @@
-"use client";
+"use client"
 
-import { useState } from "react";
-import { Field, FieldLabel } from "@/components/ui/tailwind/field";
-import { Slider } from "@/components/ui/tailwind/slider";
+import { useState } from "react"
 
-const labels = ["Awful", "Poor", "Okay", "Good", "Amazing"];
+import { Field, FieldLabel } from "@/components/ui/tailwind/field"
+import { Slider } from "@/components/ui/tailwind/slider"
+
+const labels = ["Awful", "Poor", "Okay", "Good", "Amazing"]
 
 export default function Particle() {
-  const [value, setValue] = useState<number | readonly number[]>(3);
+  const [value, setValue] = useState<number | readonly number[]>(3)
 
-  const currentValue = Array.isArray(value) ? value[0] : value;
+  const currentValue = Array.isArray(value) ? value[0] : value
 
   return (
     <Field className="*:grid *:grid-cols-[auto_1fr_auto] *:items-center *:gap-x-2">
@@ -32,5 +33,5 @@ export default function Particle() {
         </span>
       </Slider>
     </Field>
-  );
+  )
 }

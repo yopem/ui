@@ -1,9 +1,10 @@
-import { SearchIcon } from "lucide-react";
+import { SearchIcon } from "lucide-react"
+
 import {
   InputGroup,
   InputGroupAddon,
   InputGroupInput,
-} from "@/components/ui/tailwind/input-group";
+} from "@/components/ui/tailwind/input-group"
 
 export default function Particle() {
   return (
@@ -13,5 +14,5 @@ export default function Particle() {
         <SearchIcon aria-hidden="true" />
       </InputGroupAddon>
     </InputGroup>
-  );
+  )
 }

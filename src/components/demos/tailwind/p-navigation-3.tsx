@@ -1,12 +1,12 @@
 import {
   segmentedControlItemVariants,
   segmentedControlRootClassName,
-} from "@/lib/segmented-control";
+} from "@/lib/segmented-control"
 
 const itemClassName = segmentedControlItemVariants({
   size: "lg",
   state: "current",
-});
+})
 
 export default function Particle() {
   return (
@@ -23,5 +23,5 @@ export default function Particle() {
         </a>
       </div>
     </nav>
-  );
+  )
 }

@@ -1,10 +1,10 @@
-import { Button } from "@/components/ui/tailwind/button";
+import { Button } from "@/components/ui/tailwind/button"
 import {
   Menu,
   MenuCheckboxItem,
   MenuPopup,
   MenuTrigger,
-} from "@/components/ui/tailwind/menu";
+} from "@/components/ui/tailwind/menu"
 
 export default function Particle() {
   return (
@@ -20,5 +20,5 @@ export default function Particle() {
         </MenuCheckboxItem>
       </MenuPopup>
     </Menu>
-  );
+  )
 }

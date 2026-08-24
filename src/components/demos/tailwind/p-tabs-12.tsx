@@ -1,6 +1,12 @@
-import { HouseIcon, InboxIcon, SettingsIcon } from "lucide-react";
-import { Badge } from "@/components/ui/tailwind/badge";
-import { Tabs, TabsList, TabsPanel, TabsTab } from "@/components/ui/tailwind/tabs";
+import { HouseIcon, InboxIcon, SettingsIcon } from "lucide-react"
+
+import { Badge } from "@/components/ui/tailwind/badge"
+import {
+  Tabs,
+  TabsList,
+  TabsPanel,
+  TabsTab,
+} from "@/components/ui/tailwind/tabs"
 
 export default function Particle() {
   return (
@@ -23,20 +29,20 @@ export default function Particle() {
         </TabsTab>
       </TabsList>
       <TabsPanel value="tab-1">
-        <p className="p-4 text-center text-muted-foreground text-xs">
+        <p className="text-muted-foreground p-4 text-center text-xs">
           Overview content
         </p>
       </TabsPanel>
       <TabsPanel value="tab-2">
-        <p className="p-4 text-center text-muted-foreground text-xs">
+        <p className="text-muted-foreground p-4 text-center text-xs">
           Inbox content
         </p>
       </TabsPanel>
       <TabsPanel value="tab-3">
-        <p className="p-4 text-center text-muted-foreground text-xs">
+        <p className="text-muted-foreground p-4 text-center text-xs">
           Settings content
         </p>
       </TabsPanel>
     </Tabs>
-  );
+  )
 }

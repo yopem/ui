@@ -1,5 +1,5 @@
-import { Field, FieldError, FieldLabel } from "@/components/ui/tailwind/field";
-import { Input } from "@/components/ui/tailwind/input";
+import { Field, FieldError, FieldLabel } from "@/components/ui/tailwind/field"
+import { Input } from "@/components/ui/tailwind/input"
 
 export default function FieldWithErrorDemo() {
   return (
@@ -8,5 +8,5 @@ export default function FieldWithErrorDemo() {
       <Input placeholder="Enter your email" type="email" />
       <FieldError>Please enter a valid email address.</FieldError>
     </Field>
-  );
+  )
 }

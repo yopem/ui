@@ -2,15 +2,15 @@ import {
   Field,
   FieldDescription,
   FieldLabel,
-} from "@/components/ui/tailwind/field";
-import { OTPField, OTPFieldInput } from "@/components/ui/tailwind/otp-field";
+} from "@/components/ui/tailwind/field"
+import { OTPField, OTPFieldInput } from "@/components/ui/tailwind/otp-field"
 
-const OTP_LENGTH = 6;
+const OTP_LENGTH = 6
 
 const OTP_SLOT_KEYS = Array.from(
   { length: OTP_LENGTH },
   (_, i) => `otp-slot-${i}`,
-);
+)
 
 export default function Particle() {
   return (
@@ -26,8 +26,8 @@ export default function Particle() {
       </OTPField>
       <FieldDescription>
         Accept letters and numbers for backup codes such as{" "}
-        <code className="font-mono text-foreground">A7C9XZ</code>.
+        <code className="text-foreground font-mono">A7C9XZ</code>.
       </FieldDescription>
     </Field>
-  );
+  )
 }

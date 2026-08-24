@@ -1,10 +1,10 @@
-import { Kbd, KbdGroup } from "@/components/ui/tailwind/kbd";
+import { Kbd, KbdGroup } from "@/components/ui/tailwind/kbd"
 
 export default function Particle() {
   return (
     <div className="flex flex-col gap-4">
       <div>
-        <p className="mb-2 text-muted-foreground text-sm">Single keys:</p>
+        <p className="text-muted-foreground mb-2 text-sm">Single keys:</p>
         <div className="flex gap-2">
           <Kbd>K</Kbd>
           <Kbd>⌘</Kbd>
@@ -13,7 +13,7 @@ export default function Particle() {
         </div>
       </div>
       <div>
-        <p className="mb-2 text-muted-foreground text-sm">Key combinations:</p>
+        <p className="text-muted-foreground mb-2 text-sm">Key combinations:</p>
         <div className="flex gap-2">
           <KbdGroup>
             <Kbd>⌘</Kbd>
@@ -32,5 +32,5 @@ export default function Particle() {
         </div>
       </div>
     </div>
-  );
+  )
 }
