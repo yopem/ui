@@ -32,7 +32,7 @@ for (const theme of ["light", "dark"] as const) {
     test.setTimeout(20 * 60_000)
     const violations: { demo: string; help: string; id: string }[] = []
     for (const demo of demos) {
-      await page.goto(`/render/stylex/${theme}/${demo}`)
+      await page.goto(`/render/${theme}/${demo}`)
       await page.locator("[data-parity-root]").waitFor()
       await page.waitForFunction(
         () =>

@@ -2,12 +2,6 @@
 
 Source-owned React components built with StyleX and Base UI.
 
-## Status
-
-Yopem UI is under active conversion from its Tailwind reference implementation.
-Canonical StyleX source lives in `packages/registry`; the Tailwind tree remains
-an internal parity oracle until v1.
-
 ## Commands
 
 ```sh
@@ -21,7 +15,6 @@ bun run test
 bun run test:e2e
 bun run test:a11y
 bun run test:fixtures
-bun run test:parity
 bun run build
 ```
 
@@ -54,4 +47,4 @@ docker run --rm -p 3000:3000 yopem-ui
 Tagged releases also produce self-hosted server and immutable registry archives.
 
 See `CONTRIBUTING.md` for contributor workflow, `NOTICE` for attribution, and
-`LICENSE` for MIT terms. Implementation plan remains at `docs/yopem-ui-plan.md`.
+`LICENSE` for MIT terms.

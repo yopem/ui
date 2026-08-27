@@ -18,7 +18,6 @@
     "test:a11y": "FULL_A11Y=1 playwright test --project=chromium --grep @full-a11y",
     "test:e2e": "playwright test",
     "test:fixtures": "bun run registry:build && bun run --cwd packages/cli build && bun scripts/test-fixtures.ts",
-    "test:parity": "bun run registry:build && bun run --cwd apps/docs build:test && PLAYWRIGHT_PRODUCTION=1 FULL_PARITY=1 playwright test --project=chromium --grep @parity",
     "lint": "oxlint lint .",
     "fmt": "oxfmt fmt .",
     "fmt:check": "oxfmt --check ."

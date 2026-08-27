@@ -7,7 +7,7 @@ test.beforeEach(async ({ page }) => {
 test("dialog opens from keyboard, closes with Escape, and restores focus", async ({
   page,
 }) => {
-  await page.goto("/render/stylex/light/p-dialog-1")
+  await page.goto("/render/light/p-dialog-1")
   const trigger = page.getByRole("button", { name: "Open Dialog" })
 
   await trigger.focus()
@@ -22,7 +22,7 @@ test("dialog opens from keyboard, closes with Escape, and restores focus", async
 })
 
 test("tabs support arrow-key navigation", async ({ page }) => {
-  await page.goto("/render/stylex/light/p-tabs-1")
+  await page.goto("/render/light/p-tabs-1")
   const firstTab = page.getByRole("tab", { name: "Tab 1" })
   const secondTab = page.getByRole("tab", { name: "Tab 2" })
 
@@ -36,7 +36,7 @@ test("tabs support arrow-key navigation", async ({ page }) => {
 })
 
 test("checkbox toggles with Space", async ({ page }) => {
-  await page.goto("/render/stylex/light/p-checkbox-1")
+  await page.goto("/render/light/p-checkbox-1")
   const checkbox = page.getByRole("checkbox", {
     name: "Accept terms and conditions",
   })

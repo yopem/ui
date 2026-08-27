@@ -8,9 +8,6 @@
   "singleQuote": false,
   "tabWidth": 2,
   "trailingComma": "all",
-  "experimentalTailwindcss": {
-    "functions": ["cn", "cva", "clsx"]
-  },
   "sortImports": {
     "newlinesBetween": true,
     "groups": [

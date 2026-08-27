@@ -3,8 +3,8 @@ import { expect, test } from "@playwright/test"
 
 test.beforeEach(async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" })
-  await page.goto("/components/button")
-  await expect(page.getByRole("heading", { name: "Button" })).toBeVisible()
+  await page.goto("/render/light/p-button-1")
+  await expect(page.getByRole("button", { name: "Button" })).toBeVisible()
 })
 
 test("Button vertical slice has no detectable accessibility violations", async ({

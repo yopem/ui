@@ -15,7 +15,6 @@ bun run test            # registry and CLI tests
 bun run test:e2e        # Playwright end-to-end tests
 bun run test:a11y       # full Chromium accessibility suite
 bun run test:fixtures   # installer fixture tests
-bun run test:parity     # StyleX/Tailwind parity suite
 bun run build           # registry, CLI, docs production build
 ```
 
@@ -23,10 +22,9 @@ Run `bun run lint && bun run fmt:check && bun run typecheck` after changes. Run 
 
 ## Workspace structure
 
-- `apps/docs/` — TanStack Start component catalog, StyleX and Tailwind reference demos, static registry host.
+- `apps/docs/` — TanStack Start component catalog and static registry host.
   - `src/components/ui/stylex/` — catalog-facing exports of canonical StyleX components.
   - `src/components/demos/stylex/` — StyleX component demos.
-  - `src/components/ui/tailwind/`, `src/components/demos/tailwind/` — internal parity reference. Do not add new production components here.
   - `src/routes/` — file-based routes. Run `bun run generate-routes` after route changes; never edit `routeTree.gen.ts`.
 - `packages/registry/` — canonical StyleX source and registry generator.
   - `src/components/ui/` — installable component source.
@@ -46,7 +44,7 @@ Path aliases: `@registry/*` for registry source; `@/*` within docs. Generated re
 - Use `"use client"` for client components and Base UI primitives from `@base-ui/react`.
 - Style with `@stylexjs/stylex`: keep styles in local `stylex.create` objects, compose with `stylex.props`, and use `stylexProps` from `@registry/lib/stylex` when merging consumer `className`.
 - Use semantic variables from `@registry/styles/tokens.stylex.ts`, not raw palette values. Theme selectors use markers from `@registry/styles/markers.stylex.ts`.
-- Keep variants as StyleX style objects. Do not add Tailwind classes or `cva` to canonical StyleX components.
+- Keep variants as StyleX style objects. Do not add utility classes or `cva` to canonical StyleX components.
 - Prefer logical CSS properties (`paddingInline`, `blockSize`, etc.) and preserve accessible states, keyboard behavior, focus styles, and coarse-pointer targets.
 - Icons: `lucide-react`; use Remix Icon only where existing component already requires it.
 - Unsupported descendant selectors belong only in scoped compatibility CSS under `packages/registry/src/styles/`.
@@ -59,6 +57,5 @@ For component work:
 2. Update or add metadata in `packages/registry/src/items/`, including files, dependencies, registry dependencies, docs, and exports.
 3. Add or update StyleX docs demo under `apps/docs/src/components/demos/stylex/`.
 4. Run `bun run registry:build` to regenerate hosted artifacts.
-5. Keep Tailwind reference in parity when conversion behavior or accessibility changes; add parity coverage when needed.
 
 Never hand-edit `packages/registry/dist/` or `apps/docs/public/r/`.

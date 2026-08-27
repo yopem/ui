@@ -6,15 +6,10 @@ export interface DemoModule {
 
 type DemoLoader = () => Promise<DemoModule>
 
-export const tailwindDemoModules = import.meta.glob<DemoModule>(
-  "../components/demos/tailwind/*.tsx",
-)
-
 export const stylexDemoModules = import.meta.glob<DemoModule>(
   "../components/demos/stylex/*.tsx",
 )
 
-export const tailwindDemoComponents = createComponents(tailwindDemoModules)
 export const stylexDemoComponents = createComponents(stylexDemoModules)
 
 export function findDemoModule(

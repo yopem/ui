@@ -28,7 +28,6 @@ bun run test
 bun run test:e2e
 bun run test:a11y
 bun run test:fixtures
-bun run test:parity
 bun run build
 ```
 
@@ -36,9 +35,7 @@ Install Chromium once with `bunx playwright install chromium`. To isolate a
 fixture while developing, run `FIXTURE=vite bun run test:fixtures` with any
 fixture directory name.
 
-Accessibility or behavior fixes found during conversion must also update the
-Tailwind reference implementation. Automated checks do not constitute VoiceOver
-or NVDA certification.
+Automated checks do not constitute VoiceOver or NVDA certification.
 
 ## Releases
 

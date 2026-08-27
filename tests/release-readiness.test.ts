@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test"
-import { readdir, readFile } from "node:fs/promises"
+import { readdir } from "node:fs/promises"
 import { resolve } from "node:path"
 
 const root = resolve(import.meta.dirname, "..")
@@ -75,32 +75,5 @@ describe("v1 release readiness", () => {
     expect(
       await tsxNames(resolve(root, "apps/docs/src/components/ui/stylex")),
     ).toEqual(expectedComponents)
-  })
-
-  test("every Tailwind demo has a StyleX counterpart", async () => {
-    const tailwind = await tsxNames(
-      resolve(root, "apps/docs/src/components/demos/tailwind"),
-    )
-    const stylex = await tsxNames(
-      resolve(root, "apps/docs/src/components/demos/stylex"),
-    )
-    expect(tailwind).toHaveLength(508)
-    expect(stylex).toEqual(tailwind)
-  })
-
-  test("StyleX source does not import Tailwind implementations", async () => {
-    for (const directory of [
-      "packages/registry/src/components/ui",
-      "apps/docs/src/components/demos/stylex",
-    ]) {
-      const fullDirectory = resolve(root, directory)
-      for (const file of await readdir(fullDirectory)) {
-        if (!file.endsWith(".tsx")) continue
-        const content = await readFile(resolve(fullDirectory, file), "utf8")
-        expect(content).not.toContain("/ui/tailwind/")
-        expect(content).not.toContain("class-variance-authority")
-        expect(content).not.toContain("tailwind-merge")
-      }
-    }
   })
 })
