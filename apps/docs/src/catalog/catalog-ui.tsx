@@ -108,11 +108,7 @@ export function DemoPanel({ demo }: { demo: CatalogDemo }) {
         <code>{demo.name}</code>
         <span>{open ? "Close" : "Open"}</span>
       </PopoverTrigger>
-      <PopoverPopup
-        align="start"
-        instant
-        portalProps={{ keepMounted: prepared }}
-      >
+      <PopoverPopup align="start" portalProps={{ keepMounted: prepared }}>
         <div {...stylex.props(catalogStyles.demoPopup)}>
           <div {...stylex.props(catalogStyles.demoTabs)}>
             <button
