@@ -14,11 +14,15 @@ node_modules
 
 # Testing
 coverage
+playwright-report
+test-results
 
 # Build
 dist/
 out/
 build/
+/apps/docs/public/r/
+/apps/docs/public/schema/
 .tanstack/
 .output/
 
@@ -42,7 +46,8 @@ next-env.d.ts
 routeTree.gen.ts
 
 # ai
-docs/
+/docs/*
+!/docs/yopem-ui-plan.md
 .opencode/
 openspec/
 opencode.jsonc

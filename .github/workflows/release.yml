@@ -1,0 +1,50 @@
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.4.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          registry-url: https://registry.npmjs.org
+      - run: bun install --frozen-lockfile
+      - name: Verify tag matches package version
+        run: |
+          version=$(bun -e 'console.log(require("./packages/cli/package.json").version)')
+          test "$GITHUB_REF_NAME" = "v$version"
+      - run: bun run registry:build
+      - run: bun run lint
+      - run: bun run fmt:check
+      - run: bun run typecheck
+      - run: bun run test
+      - run: bunx playwright install --with-deps chromium
+      - run: bun run test:e2e
+      - run: bun run test:a11y
+      - run: bun run test:fixtures
+      - run: bun run test:parity
+      - run: bun run build
+      - run: npm publish --provenance --access public
+        working-directory: packages/cli
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: Pack self-hosted artifacts
+        run: |
+          tar -czf "yopem-ui-${GITHUB_REF_NAME}-self-hosted.tar.gz" apps/docs/.output LICENSE NOTICE README.md
+          tar -czf "yopem-ui-${GITHUB_REF_NAME}-registry.tar.gz" packages/registry/dist LICENSE NOTICE
+      - uses: actions/upload-artifact@v4
+        with:
+          name: yopem-ui-${{ github.ref_name }}
+          path: yopem-ui-${{ github.ref_name }}-*.tar.gz

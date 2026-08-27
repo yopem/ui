@@ -1,0 +1,42 @@
+import * as stylex from "@stylexjs/stylex"
+import { BookIcon, RouteIcon } from "lucide-react"
+
+import { Button } from "@/components/ui/stylex/button"
+import {
+  Empty,
+  EmptyContent,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from "@/components/ui/stylex/empty"
+
+export default function Particle() {
+  return (
+    <Empty>
+      <EmptyHeader>
+        <EmptyMedia variant="icon">
+          <RouteIcon />
+        </EmptyMedia>
+        <EmptyTitle>No upcoming meetings</EmptyTitle>
+        <EmptyDescription>Create a meeting to get started.</EmptyDescription>
+      </EmptyHeader>
+      <EmptyContent>
+        <div {...stylex.props(demoStyles.demo1)}>
+          <Button size="sm">Create meeting</Button>
+          <Button size="sm" variant="outline">
+            <BookIcon />
+            View docs
+          </Button>
+        </div>
+      </EmptyContent>
+    </Empty>
+  )
+}
+
+const demoStyles = stylex.create({
+  demo1: {
+    display: "flex",
+    gap: "calc(0.25rem * 2)",
+  },
+})

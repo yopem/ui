@@ -1,0 +1,116 @@
+"use client"
+
+import { Tooltip as TooltipPrimitive } from "@base-ui/react/tooltip"
+import { stylexProps } from "@registry/lib/stylex"
+import { themeMarker } from "@registry/styles/markers.stylex"
+import { tokens } from "@registry/styles/tokens.stylex"
+import * as stylex from "@stylexjs/stylex"
+
+const styles = stylex.create({
+  positioner: {
+    blockSize: "var(--positioner-height)",
+    inlineSize: "var(--positioner-width)",
+    maxInlineSize: "var(--available-width)",
+    transitionProperty: "top, left, right, bottom, transform",
+    zIndex: 50,
+    "[data-instant]": { transitionProperty: "none" },
+  },
+  popup: {
+    backgroundClip: "padding-box",
+    backgroundColor: tokens.popover,
+    blockSize: "var(--popup-height, auto)",
+    borderColor: tokens.border,
+    borderRadius: tokens.radiusMedium,
+    borderStyle: "solid",
+    borderWidth: 1,
+    boxShadow: "0 4px 6px -1px color-mix(in oklab, #000 5%, transparent)",
+    color: tokens.popoverForeground,
+    display: "flex",
+    fontSize: "0.75rem",
+    inlineSize: "var(--popup-width, auto)",
+    position: "relative",
+    textWrap: "balance",
+    transformOrigin: "var(--transform-origin)",
+    transitionProperty: "width, height, scale, opacity",
+    "::before": {
+      borderRadius: "calc(var(--radius-md, 0.5rem) - 1px)",
+      boxShadow: {
+        default: "0 1px rgb(0 0 0 / 0.04)",
+        [stylex.when.ancestor('[data-theme="dark"]', themeMarker)]:
+          "0 -1px rgb(255 255 255 / 0.06)",
+      },
+      content: '""',
+      inset: 0,
+      pointerEvents: "none",
+      position: "absolute",
+    },
+    "[data-ending-style]": { opacity: 0, scale: 0.98 },
+    "[data-instant]": { transitionDuration: "0ms" },
+    "[data-starting-style]": { opacity: 0, scale: 0.98 },
+  },
+  viewport: {
+    blockSize: "100%",
+    inlineSize: "100%",
+    overflow: "clip",
+    paddingBlock: "0.25rem",
+    paddingInline: "var(--viewport-inline-padding)",
+    position: "relative",
+    "--viewport-inline-padding": "0.5rem",
+    "[data-instant]": { transitionProperty: "none" },
+  },
+})
+
+export const TooltipCreateHandle: typeof TooltipPrimitive.createHandle =
+  TooltipPrimitive.createHandle
+export const TooltipProvider: typeof TooltipPrimitive.Provider =
+  TooltipPrimitive.Provider
+export const Tooltip: typeof TooltipPrimitive.Root = TooltipPrimitive.Root
+
+export function TooltipTrigger(props: TooltipPrimitive.Trigger.Props) {
+  return <TooltipPrimitive.Trigger data-slot="tooltip-trigger" {...props} />
+}
+
+export function TooltipPopup({
+  className,
+  align = "center",
+  sideOffset = 4,
+  side = "top",
+  anchor,
+  children,
+  portalProps,
+  ...props
+}: TooltipPrimitive.Popup.Props & {
+  align?: TooltipPrimitive.Positioner.Props["align"]
+  side?: TooltipPrimitive.Positioner.Props["side"]
+  sideOffset?: TooltipPrimitive.Positioner.Props["sideOffset"]
+  anchor?: TooltipPrimitive.Positioner.Props["anchor"]
+  portalProps?: TooltipPrimitive.Portal.Props
+}) {
+  return (
+    <TooltipPrimitive.Portal {...portalProps}>
+      <TooltipPrimitive.Positioner
+        align={align}
+        anchor={anchor}
+        {...stylex.props(styles.positioner)}
+        data-slot="tooltip-positioner"
+        side={side}
+        sideOffset={sideOffset}
+      >
+        <TooltipPrimitive.Popup
+          {...stylexProps(className, styles.popup)}
+          data-slot="tooltip-popup"
+          {...props}
+        >
+          <TooltipPrimitive.Viewport
+            {...stylex.props(styles.viewport)}
+            data-slot="tooltip-viewport"
+          >
+            {children}
+          </TooltipPrimitive.Viewport>
+        </TooltipPrimitive.Popup>
+      </TooltipPrimitive.Positioner>
+    </TooltipPrimitive.Portal>
+  )
+}
+
+export { TooltipPrimitive, TooltipPopup as TooltipContent }

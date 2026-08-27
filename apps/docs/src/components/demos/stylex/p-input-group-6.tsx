@@ -1,0 +1,33 @@
+import * as stylex from "@stylexjs/stylex"
+
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupText,
+} from "@/components/ui/stylex/input-group"
+import {
+  NumberField,
+  NumberFieldInput,
+} from "@/components/ui/stylex/number-field"
+
+export default function Particle() {
+  return (
+    <InputGroup>
+      <NumberField aria-label="Enter the amount" defaultValue={10}>
+        <NumberFieldInput {...stylex.props(demoStyles.demo1)} />
+      </NumberField>
+      <InputGroupAddon>
+        <InputGroupText>€</InputGroupText>
+      </InputGroupAddon>
+      <InputGroupAddon align="inline-end">
+        <InputGroupText>EUR</InputGroupText>
+      </InputGroupAddon>
+    </InputGroup>
+  )
+}
+
+const demoStyles = stylex.create({
+  demo1: {
+    textAlign: "left",
+  },
+})

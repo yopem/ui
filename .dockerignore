@@ -1,0 +1,10 @@
+.git
+node_modules
+**/node_modules
+.output
+**/.output
+dist
+**/dist
+coverage
+test-results
+playwright-report

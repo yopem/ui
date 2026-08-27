@@ -1,0 +1,12 @@
+{
+  "extends": "@yopem/typescript-config/react",
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "noEmit": true,
+    "types": ["bun", "node"],
+    "paths": {
+      "@registry/*": ["./src/*"]
+    }
+  },
+  "include": ["src/**/*.ts", "src/**/*.tsx", "tests/**/*.ts"]
+}

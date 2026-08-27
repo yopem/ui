@@ -1,0 +1,153 @@
+"use client"
+
+import { Slider as SliderPrimitive } from "@base-ui/react/slider"
+import { stylexProps } from "@registry/lib/stylex"
+import { themeMarker } from "@registry/styles/markers.stylex"
+import { tokens } from "@registry/styles/tokens.stylex"
+import * as stylex from "@stylexjs/stylex"
+import * as React from "react"
+
+const styles = stylex.create({
+  root: {
+    inlineSize: { default: null, "[data-orientation=horizontal]": "100%" },
+  },
+  control: {
+    blockSize: { default: null, "[data-orientation=vertical]": "100%" },
+    display: "flex",
+    flexDirection: {
+      default: "row",
+      "[data-orientation=vertical]": "column",
+    },
+    inlineSize: { default: null, "[data-orientation=horizontal]": "100%" },
+    minBlockSize: {
+      default: null,
+      "[data-orientation=vertical]": "11rem",
+    },
+    minInlineSize: {
+      default: null,
+      "[data-orientation=horizontal]": "11rem",
+    },
+    opacity: { default: 1, "[data-disabled]": 0.64 },
+    pointerEvents: { default: "auto", "[data-disabled]": "none" },
+    touchAction: "none",
+    userSelect: "none",
+  },
+  track: {
+    blockSize: {
+      default: "0.25rem",
+      "[data-orientation=vertical]": "100%",
+    },
+    flexGrow: 1,
+    inlineSize: {
+      default: "100%",
+      "[data-orientation=vertical]": "0.25rem",
+    },
+    position: "relative",
+    userSelect: "none",
+    "::before": {
+      backgroundColor: tokens.input,
+      borderRadius: "9999px",
+      content: '""',
+      position: "absolute",
+    },
+  },
+  indicator: {
+    backgroundColor: tokens.primary,
+    borderRadius: "9999px",
+    userSelect: "none",
+  },
+  thumb: {
+    backgroundClip: "padding-box",
+    backgroundColor: "#fff",
+    blockSize: { default: "1.25rem", "@media (min-width: 640px)": "1rem" },
+    borderColor: {
+      default: tokens.input,
+      [stylex.when.ancestor('[data-theme="dark"]', themeMarker)]:
+        tokens.background,
+    },
+    borderRadius: "9999px",
+    borderStyle: "solid",
+    borderWidth: 1,
+    boxShadow: "0 1px 2px color-mix(in oklab, #000 5%, transparent)",
+    display: "block",
+    flexShrink: 0,
+    inlineSize: { default: "1.25rem", "@media (min-width: 640px)": "1rem" },
+    outline: "none",
+    scale: { default: 1, "[data-dragging]": 1.2 },
+    transitionProperty: "box-shadow, scale",
+    userSelect: "none",
+    ":focus-visible": {
+      boxShadow: `0 0 0 3px color-mix(in oklab, var(--ring, currentColor) 24%, transparent)`,
+    },
+  },
+  value: { display: "flex", fontSize: "0.875rem", justifyContent: "end" },
+})
+
+export function Slider({
+  className,
+  children,
+  defaultValue,
+  value,
+  min = 0,
+  max = 100,
+  ...props
+}: SliderPrimitive.Root.Props) {
+  const values = React.useMemo(() => {
+    if (value !== undefined) return Array.isArray(value) ? value : [value]
+    if (defaultValue !== undefined)
+      return Array.isArray(defaultValue) ? defaultValue : [defaultValue]
+    return [min]
+  }, [value, defaultValue, min])
+  const label = props["aria-label"]
+  return (
+    <SliderPrimitive.Root
+      {...stylexProps(className, styles.root)}
+      defaultValue={defaultValue}
+      max={max}
+      min={min}
+      thumbAlignment="edge"
+      value={value}
+      {...props}
+    >
+      {children}
+      <SliderPrimitive.Control
+        {...stylex.props(styles.control)}
+        data-slot="slider-control"
+      >
+        <SliderPrimitive.Track
+          {...stylex.props(styles.track)}
+          data-slot="slider-track"
+        >
+          <SliderPrimitive.Indicator
+            {...stylex.props(styles.indicator)}
+            data-slot="slider-indicator"
+          />
+          {Array.from({ length: values.length }, (_, index) => (
+            <SliderPrimitive.Thumb
+              {...stylex.props(styles.thumb)}
+              aria-label={
+                label && values.length > 1 ? `${label} ${index + 1}` : label
+              }
+              data-slot="slider-thumb"
+              index={index}
+              key={String(index)}
+            />
+          ))}
+        </SliderPrimitive.Track>
+      </SliderPrimitive.Control>
+    </SliderPrimitive.Root>
+  )
+}
+export function SliderValue({
+  className,
+  ...props
+}: SliderPrimitive.Value.Props) {
+  return (
+    <SliderPrimitive.Value
+      {...stylexProps(className, styles.value)}
+      data-slot="slider-value"
+      {...props}
+    />
+  )
+}
+export { SliderPrimitive }
