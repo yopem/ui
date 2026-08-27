@@ -43,6 +43,7 @@ const styles = stylex.create({
       pointerEvents: "none",
       position: "absolute",
     },
+    "[data-instant]": { transitionProperty: "none" },
     "[data-starting-style]": { opacity: 0, scale: 0.98 },
   },
   tooltipPopup: {
@@ -106,6 +107,7 @@ export function PopoverPopup({
   tooltipStyle = false,
   anchor,
   portalProps,
+  instant = false,
   ...props
 }: PopoverPrimitive.Popup.Props & {
   portalProps?: PopoverPrimitive.Portal.Props
@@ -115,6 +117,7 @@ export function PopoverPopup({
   alignOffset?: PopoverPrimitive.Positioner.Props["alignOffset"]
   tooltipStyle?: boolean
   anchor?: PopoverPrimitive.Positioner.Props["anchor"]
+  instant?: boolean
 }) {
   return (
     <PopoverPrimitive.Portal {...portalProps}>
@@ -123,6 +126,7 @@ export function PopoverPopup({
         alignOffset={alignOffset}
         anchor={anchor}
         {...stylex.props(styles.positioner)}
+        data-instant={instant || undefined}
         data-slot="popover-positioner"
         side={side}
         sideOffset={sideOffset}
@@ -141,6 +145,7 @@ export function PopoverPopup({
               styles.viewport,
               tooltipStyle ? styles.tooltipViewport : styles.scrollable,
             )}
+            data-instant={instant || undefined}
             data-slot="popover-viewport"
           >
             {children}

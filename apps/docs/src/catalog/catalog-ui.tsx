@@ -5,7 +5,13 @@ import { rootStyles } from "@registry/styles/root"
 import stylesCss from "@registry/styles/styles.css?url"
 import * as stylex from "@stylexjs/stylex"
 import { Link } from "@tanstack/react-router"
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
+
+import {
+  Popover,
+  PopoverPopup,
+  PopoverTrigger,
+} from "@/components/ui/stylex/popover"
 
 import type { CatalogDemo } from "./components"
 
@@ -51,14 +57,10 @@ export function InstallCommand({ command }: { command: string }) {
   )
 }
 
-export function DemoPanel({
-  defaultOpen,
-  demo,
-}: {
-  defaultOpen: boolean
-  demo: CatalogDemo
-}) {
-  const [open, setOpen] = useState(defaultOpen)
+export function DemoPanel({ demo }: { demo: CatalogDemo }) {
+  const [open, setOpen] = useState(false)
+  const [prepared, setPrepared] = useState(false)
+  const openFrame = useRef(0)
   const [mode, setMode] = useState<"preview" | "source">("preview")
   const [source, setSource] = useState<string>()
   const [sourceError, setSourceError] = useState(false)
@@ -81,18 +83,37 @@ export function DemoPanel({
     }
   }, [demo, mode, open, source, sourceError])
 
+  useEffect(() => () => cancelAnimationFrame(openFrame.current), [])
+
+  const onOpenChange = (nextOpen: boolean) => {
+    cancelAnimationFrame(openFrame.current)
+    if (!nextOpen) {
+      setOpen(false)
+      return
+    }
+    setPrepared(true)
+    openFrame.current = requestAnimationFrame(() => setOpen(true))
+  }
+
   return (
-    <details
-      {...stylex.props(catalogStyles.demo)}
-      onToggle={(event) => setOpen(event.currentTarget.open)}
-      open={open}
-    >
-      <summary {...stylex.props(catalogStyles.demoSummary)}>
+    <Popover onOpenChange={onOpenChange} open={open}>
+      <PopoverTrigger
+        render={
+          <button
+            {...stylex.props(catalogStyles.demo, catalogStyles.demoSummary)}
+            type="button"
+          />
+        }
+      >
         <code>{demo.name}</code>
         <span>{open ? "Close" : "Open"}</span>
-      </summary>
-      {open ? (
-        <div>
+      </PopoverTrigger>
+      <PopoverPopup
+        align="start"
+        instant
+        portalProps={{ keepMounted: prepared }}
+      >
+        <div {...stylex.props(catalogStyles.demoPopup)}>
           <div {...stylex.props(catalogStyles.demoTabs)}>
             <button
               {...stylex.props(
@@ -129,8 +150,8 @@ export function DemoPanel({
             </pre>
           )}
         </div>
-      ) : null}
-    </details>
+      </PopoverPopup>
+    </Popover>
   )
 }
 
@@ -219,6 +240,7 @@ export const catalogStyles = stylex.create({
     overflow: "clip",
   },
   demoList: { display: "grid", gap: "1rem" },
+  demoPopup: { inlineSize: "min(42rem, calc(100vw - 2rem))" },
   demoSummary: {
     alignItems: "center",
     cursor: "pointer",

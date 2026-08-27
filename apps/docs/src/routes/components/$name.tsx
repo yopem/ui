@@ -66,8 +66,8 @@ function ComponentPage() {
       <section {...stylex.props(catalogStyles.section)}>
         <h2 {...stylex.props(catalogStyles.sectionTitle)}>Demos</h2>
         <div {...stylex.props(catalogStyles.demoList)}>
-          {item.demos.map((demo, index) => (
-            <DemoPanel defaultOpen={index === 0} demo={demo} key={demo.name} />
+          {item.demos.map((demo) => (
+            <DemoPanel demo={demo} key={demo.name} />
           ))}
         </div>
       </section>
