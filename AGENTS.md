@@ -1,45 +1,64 @@
 # AGENTS.md
 
-UI lab built with **TanStack Start** (Vite + Nitro), React 19, file-based routing via TanStack Router. Package manager is **Bun**.
+Yopem UI is a Bun workspace for a source-owned **StyleX** React component library and registry. Components use React 19, Base UI, StyleX, and TypeScript. `apps/docs` is a TanStack Start (Vite + Nitro) catalog and registry host; `packages/cli` installs registry components.
 
 ## Commands
 
 ```sh
-bun dev                # dev server on :3000
-bun run build          # production build (vite + nitro)
-bun run lint           # oxlint
-bun run fmt            # oxfmt
-bun run generate-routes # regenerate src/routeTree.gen.ts after adding/changing routes
+bun run dev             # docs app at :3000
+bun run registry:build  # build registry, copy artifacts into apps/docs/public
+bun run lint            # oxlint
+bun run fmt             # format with oxfmt
+bun run fmt:check       # verify formatting
+bun run typecheck       # typecheck registry, CLI, docs
+bun run test            # registry and CLI tests
+bun run test:e2e        # Playwright end-to-end tests
+bun run test:a11y       # full Chromium accessibility suite
+bun run test:fixtures   # installer fixture tests
+bun run test:parity     # StyleX/Tailwind parity suite
+bun run build           # registry, CLI, docs production build
 ```
 
-No test framework configured. Lint/format via **oxlint/oxfmt** (configs: `.oxlintrc.json`, `.oxfmtrc.json`) — not ESLint/Prettier. Run `bun run lint && bun run fmt` before finishing work.
+Run `bun run lint && bun run fmt:check && bun run typecheck` after changes. Run focused test suites for affected behavior; use full release gate from `CONTRIBUTING.md` before release work.
 
-## Structure
+## Workspace structure
 
-- `src/routes/` — file-based routes. After adding one, run `bun run generate-routes`. Never edit `routeTree.gen.ts`.
-  - `/tailwind` and `/stylex` are the two component showcase routes.
-- `src/components/ui/tailwind/` — UI components styled with Tailwind (the current set).
-- `src/components/demos/tailwind/` — demo files named `p-{component}-{n}.tsx` (one per usage example).
-- `src/lib/utils.ts` — `cn()` helper (clsx + tailwind-merge). Reuse it; don't add another.
-- Path alias: `@/*` → `src/*`.
+- `apps/docs/` — TanStack Start component catalog, StyleX and Tailwind reference demos, static registry host.
+  - `src/components/ui/stylex/` — catalog-facing exports of canonical StyleX components.
+  - `src/components/demos/stylex/` — StyleX component demos.
+  - `src/components/ui/tailwind/`, `src/components/demos/tailwind/` — internal parity reference. Do not add new production components here.
+  - `src/routes/` — file-based routes. Run `bun run generate-routes` after route changes; never edit `routeTree.gen.ts`.
+- `packages/registry/` — canonical StyleX source and registry generator.
+  - `src/components/ui/` — installable component source.
+  - `src/items/` — registry item metadata, dependencies, files, docs.
+  - `src/styles/` — StyleX tokens, markers, themes, reset, compatibility CSS.
+  - `src/theme/` — ThemeProvider, theme root, theme script.
+  - `src/build.ts` — generates `dist/`, then copies artifacts to `apps/docs/public/r` and `apps/docs/public/schema`.
+- `packages/cli/` — `npx @yopem/ui` installer.
+- `fixtures/` — supported consumer-app installation fixtures.
+- `tests/` — release-readiness and Playwright tests.
+
+Path aliases: `@registry/*` for registry source; `@/*` within docs. Generated registry artifacts are not source of truth.
 
 ## Component conventions
 
-Components are built on **Base UI primitives** (`@base-ui/react`) using the shadcn/new-york layout (see `components.json`; registry `@coss`). Follow the existing files in `src/components/ui/tailwind/`:
+- Canonical components live in `packages/registry/src/components/ui/`; preserve Base UI behavior, public exports, `className`, and `data-slot` values.
+- Use `"use client"` for client components and Base UI primitives from `@base-ui/react`.
+- Style with `@stylexjs/stylex`: keep styles in local `stylex.create` objects, compose with `stylex.props`, and use `stylexProps` from `@registry/lib/stylex` when merging consumer `className`.
+- Use semantic variables from `@registry/styles/tokens.stylex.ts`, not raw palette values. Theme selectors use markers from `@registry/styles/markers.stylex.ts`.
+- Keep variants as StyleX style objects. Do not add Tailwind classes or `cva` to canonical StyleX components.
+- Prefer logical CSS properties (`paddingInline`, `blockSize`, etc.) and preserve accessible states, keyboard behavior, focus styles, and coarse-pointer targets.
+- Icons: `lucide-react`; use Remix Icon only where existing component already requires it.
+- Unsupported descendant selectors belong only in scoped compatibility CSS under `packages/registry/src/styles/`.
 
-- `"use client"` at the top.
-- Variants via `class-variance-authority` (`cva`), exported as `{name}Variants` alongside the component, composed through `cn()`.
-- `data-slot="{name}"` attribute on each rendered element.
-- Icons: lucide-react (or remixicon where already used).
-- Theme tokens are CSS variables defined in `src/styles.css` (Tailwind v4 CSS-first config — there is no `tailwind.config.*`). Use semantic tokens (`bg-primary`, `text-muted-foreground`…), not raw colors.
+## Registry workflow
 
-## Styling direction: Tailwind → StyleX
+For component work:
 
-Current state: all components are styled with Tailwind classes. A StyleX UI library is planned; `/stylex` route exists as its landing spot.
+1. Update canonical StyleX source in `packages/registry/src/components/ui/`.
+2. Update or add metadata in `packages/registry/src/items/`, including files, dependencies, registry dependencies, docs, and exports.
+3. Add or update StyleX docs demo under `apps/docs/src/components/demos/stylex/`.
+4. Run `bun run registry:build` to regenerate hosted artifacts.
+5. Keep Tailwind reference in parity when conversion behavior or accessibility changes; add parity coverage when needed.
 
-When asked to convert a component:
-
-- Keep the same API, variants, and behavior; only replace styling.
-- Mirror the directory split: converted components go under `src/components/ui/stylex/`, demos under `src/components/demos/stylex/` (matching the existing `tailwind/` trees).
-- Convert cva variant class strings into `stylex.create` variant objects; keep exported variant names identical so demos swap by changing imports only.
-- Don't delete the Tailwind version during conversion — both trees coexist until the StyleX side is complete.
+Never hand-edit `packages/registry/dist/` or `apps/docs/public/r/`.
