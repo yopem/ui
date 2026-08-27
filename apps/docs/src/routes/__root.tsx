@@ -36,6 +36,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
                 "*,*::before,*::after{animation:none!important;caret-color:transparent!important;transition:none!important}"
               }
             </style>
+            <link href="/virtual:stylex.css" rel="stylesheet" />
             <script src="/@id/virtual:stylex:runtime" type="module" />
           </>
         ) : null}
