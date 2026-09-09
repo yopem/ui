@@ -1,12 +1,12 @@
 "use client"
 
+import type { StyleXProps } from "@registry/lib/stylex"
 import type * as React from "react"
 
 import { OTPField as OTPFieldPrimitive } from "@base-ui/react/otp-field"
 import { Separator } from "@registry/components/ui/separator"
 import { stylexProps } from "@registry/lib/stylex"
-import { themeMarker } from "@registry/styles/markers.stylex"
-import { tokens } from "@registry/styles/tokens.stylex"
+import { themeMarker, tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 
 const styles = stylex.create({
@@ -16,7 +16,7 @@ const styles = stylex.create({
     gap: "0.5rem",
     opacity: {
       default: 1,
-      [stylex.when.descendant(":disabled")]: 0.64,
+      ":has(:disabled)": 0.64,
     },
   },
   defaultSize: {
@@ -45,20 +45,24 @@ const styles = stylex.create({
       [stylex.when.ancestor('[data-theme="dark"]', themeMarker)]: "border-box",
     },
     backgroundColor: {
-      default: tokens.background,
+      default: tokens["--background"],
       [stylex.when.ancestor('[data-theme="dark"]', themeMarker)]:
         "color-mix(in oklab, var(--input, currentColor) 32%, transparent)",
     },
-    blockSize: "var(--otp-field-input-size)",
+    blockSize: {
+      default: "var(--otp-field-input-size)",
+      ':is([data-slot="otp-field"][data-size="lg"] [data-slot="otp-field-input"])':
+        "2.5rem",
+    },
     borderColor: {
-      default: tokens.input,
-      ":focus-visible": tokens.ring,
-      "[aria-invalid]":
+      default: tokens["--input"],
+      ":focus-visible": tokens["--ring"],
+      '[aria-invalid="true"]':
         "color-mix(in oklab, var(--destructive, currentColor) 36%, transparent)",
-      ":focus-visible[aria-invalid]":
+      ':focus-visible[aria-invalid="true"]':
         "color-mix(in oklab, var(--destructive, currentColor) 64%, transparent)",
     },
-    borderRadius: tokens.radiusLarge,
+    borderRadius: tokens["--radius-lg"],
     borderStyle: "solid",
     borderWidth: 1,
     boxShadow: {
@@ -66,33 +70,40 @@ const styles = stylex.create({
       ":disabled": "none",
       ":focus-visible":
         "0 0 0 3px color-mix(in oklab, var(--ring, currentColor) 24%, transparent)",
-      "[aria-invalid]": "none",
-      ":focus-visible[aria-invalid]": {
+      '[aria-invalid="true"]': "none",
+      ':focus-visible[aria-invalid="true"]': {
         default:
           "0 0 0 3px color-mix(in oklab, var(--destructive, currentColor) 16%, transparent)",
         [stylex.when.ancestor('[data-theme="dark"]', themeMarker)]:
           "0 0 0 3px color-mix(in oklab, var(--destructive, currentColor) 24%, transparent)",
       },
     },
-    color: tokens.foreground,
-    fontSize: "var(--otp-field-input-font-size) !important",
-    inlineSize: "var(--otp-field-input-size)",
-    lineHeight: "var(--otp-field-input-size) !important",
+    color: tokens["--foreground"],
+    fontSize: "var(--otp-field-input-font-size)",
+    inlineSize: {
+      default: "var(--otp-field-input-size)",
+      ':is([data-slot="otp-field"][data-size="lg"] [data-slot="otp-field-input"])':
+        "2.5rem",
+    },
+    lineHeight: "var(--otp-field-input-size)",
     minInlineSize: 0,
     outline: "none",
     position: "relative",
     textAlign: "center",
     transitionProperty: "box-shadow",
-    zIndex: { default: "auto", ":focus-visible": 10 },
+    zIndex: {
+      default: "auto",
+      ":focus-visible": 10,
+    },
     "::before": {
       borderRadius: "calc(var(--radius-lg) - 1px)",
       boxShadow: {
         default: "var(--button-outline-inset-shadow)",
         [stylex.when.ancestor('[data-theme="dark"]', themeMarker)]:
           "var(--button-outline-inset-shadow-dark)",
-        [stylex.when.ancestor(":disabled")]: "none",
-        [stylex.when.ancestor(":focus-visible")]: "none",
-        [stylex.when.ancestor("[aria-invalid]")]: "none",
+        ":disabled": "none",
+        ":focus-visible": "none",
+        '[aria-invalid="true"]': "none",
       },
       content: '""',
       inset: 0,
@@ -101,26 +112,28 @@ const styles = stylex.create({
     },
   },
   separator: {
-    backgroundColor: tokens.input,
-    blockSize: "0.125rem !important",
+    backgroundColor: tokens["--input"],
+    blockSize: "0.125rem",
     borderRadius: "9999px",
-    inlineSize: "0.75rem !important",
+    inlineSize: "0.75rem",
   },
 })
 
 export function OTPField({
+  xstyle,
   className,
   size = "default",
   ...props
 }: React.ComponentProps<typeof OTPFieldPrimitive.Root> & {
   size?: "default" | "lg"
-}) {
+} & StyleXProps) {
   return (
     <OTPFieldPrimitive.Root
       {...stylexProps(
         className,
         styles.root,
         size === "lg" ? styles.largeSize : styles.defaultSize,
+        xstyle,
       )}
       data-size={size}
       data-slot="otp-field"
@@ -129,12 +142,13 @@ export function OTPField({
   )
 }
 export function OTPFieldInput({
+  xstyle,
   className,
   ...props
-}: React.ComponentProps<typeof OTPFieldPrimitive.Input>) {
+}: React.ComponentProps<typeof OTPFieldPrimitive.Input> & StyleXProps) {
   return (
     <OTPFieldPrimitive.Input
-      {...stylexProps(className, styles.input)}
+      {...stylexProps(className, styles.input, xstyle)}
       data-slot="otp-field-input"
       spellCheck={false}
       {...props}
@@ -142,14 +156,16 @@ export function OTPFieldInput({
   )
 }
 export function OTPFieldSeparator({
+  xstyle,
   className,
   ...props
-}: React.ComponentProps<typeof Separator>) {
+}: React.ComponentProps<typeof Separator> & StyleXProps) {
   return (
     <OTPFieldPrimitive.Separator
       render={
         <Separator
-          {...stylexProps(className, styles.separator)}
+          className={className}
+          xstyle={[styles.separator, xstyle]}
           orientation="horizontal"
           {...props}
         />

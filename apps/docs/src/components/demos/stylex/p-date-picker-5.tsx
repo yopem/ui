@@ -63,7 +63,10 @@ export default function Particle() {
               <Button aria-label="Select date" size="icon-xs" variant="ghost" />
             }
           >
-            <CalendarIcon aria-hidden="true" />
+            <CalendarIcon
+              {...stylex.props(demoStyles.icon)}
+              aria-hidden="true"
+            />
           </PopoverTrigger>
         </InputGroupAddon>
       </InputGroup>
@@ -81,6 +84,14 @@ export default function Particle() {
 }
 
 const demoStyles = stylex.create({
+  icon: {
+    blockSize: { default: "1rem", "@media (min-width: 640px)": "0.875rem" },
+    inlineSize: { default: "1rem", "@media (min-width: 640px)": "0.875rem" },
+    flexShrink: 0,
+    pointerEvents: "none",
+    opacity: 0.8,
+    marginInline: "-0.125rem",
+  },
   nativeInput: {
     appearance: "none",
     backgroundColor: "transparent",

@@ -18,7 +18,10 @@ export default function Particle() {
             <TooltipTrigger
               render={<TabsTab aria-label="Overview" value="tab-1" />}
             >
-              <HouseIcon aria-hidden="true" />
+              <HouseIcon
+                {...stylex.props(demoStyles.icon)}
+                aria-hidden="true"
+              />
             </TooltipTrigger>
             <TooltipPopup>Overview</TooltipPopup>
           </Tooltip>
@@ -26,7 +29,10 @@ export default function Particle() {
             <TooltipTrigger
               render={<TabsTab aria-label="Projects" value="tab-2" />}
             >
-              <PanelsTopLeftIcon aria-hidden="true" />
+              <PanelsTopLeftIcon
+                {...stylex.props(demoStyles.icon)}
+                aria-hidden="true"
+              />
             </TooltipTrigger>
             <TooltipPopup>Projects</TooltipPopup>
           </Tooltip>
@@ -34,7 +40,10 @@ export default function Particle() {
             <TooltipTrigger
               render={<TabsTab aria-label="Settings" value="tab-3" />}
             >
-              <SettingsIcon aria-hidden="true" />
+              <SettingsIcon
+                {...stylex.props(demoStyles.icon)}
+                aria-hidden="true"
+              />
             </TooltipTrigger>
             <TooltipPopup>Settings</TooltipPopup>
           </Tooltip>
@@ -54,6 +63,13 @@ export default function Particle() {
 }
 
 const demoStyles = stylex.create({
+  icon: {
+    blockSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
+    inlineSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
+    flexShrink: 0,
+    pointerEvents: "none",
+    marginInline: "-0.125rem",
+  },
   demo1: {
     alignItems: "center",
   },

@@ -235,9 +235,13 @@ export function ApiReference({
 }
 
 const styles = stylex.create({
-  section: { marginBlock: "2rem", minInlineSize: 0, color: tokens.foreground },
+  section: {
+    marginBlock: "2rem",
+    minInlineSize: 0,
+    color: tokens["--foreground"],
+  },
   h3: {
-    fontFamily: tokens.fontHeading,
+    fontFamily: tokens["--font-heading"],
     fontSize: "1.25rem",
     fontWeight: 650,
     marginBlock: "1.5rem 0.75rem",
@@ -251,7 +255,7 @@ const styles = stylex.create({
     whiteSpace: "pre-wrap",
   },
   link: {
-    color: tokens.primary,
+    color: tokens["--primary"],
     textDecorationLine: "underline",
     textUnderlineOffset: "0.2em",
   },
@@ -264,7 +268,7 @@ const styles = stylex.create({
   },
   focus: {
     ":focus-visible": {
-      outlineColor: tokens.ring,
+      outlineColor: tokens["--ring"],
       outlineStyle: "solid",
       outlineWidth: 2,
       outlineOffset: -2,
@@ -273,10 +277,10 @@ const styles = stylex.create({
   tableWrapper: {
     overflowX: "auto",
     marginBlock: "1rem",
-    borderColor: tokens.border,
+    borderColor: tokens["--border"],
     borderStyle: "solid",
     borderWidth: 1,
-    borderRadius: tokens.radiusLarge,
+    borderRadius: tokens["--radius-lg"],
   },
   table: {
     inlineSize: "100%",
@@ -288,18 +292,18 @@ const styles = stylex.create({
     textAlign: "start",
     verticalAlign: "top",
     padding: "0.75rem",
-    borderBlockEndColor: tokens.border,
+    borderBlockEndColor: tokens["--border"],
     borderBlockEndStyle: "solid",
     borderBlockEndWidth: 1,
-    backgroundColor: tokens.muted,
-    color: tokens.foreground,
+    backgroundColor: tokens["--muted"],
+    color: tokens["--foreground"],
     fontWeight: 600,
   },
   td: {
     textAlign: "start",
     verticalAlign: "top",
     padding: "0.75rem",
-    borderBlockEndColor: tokens.border,
+    borderBlockEndColor: tokens["--border"],
     borderBlockEndStyle: "solid",
     borderBlockEndWidth: 1,
     minInlineSize: "7rem",
@@ -307,7 +311,7 @@ const styles = stylex.create({
     whiteSpace: "pre-wrap",
   },
   code: {
-    fontFamily: tokens.fontMono,
+    fontFamily: tokens["--font-mono"],
     overflowWrap: "anywhere",
     fontSize: "0.8125rem",
   },
@@ -317,8 +321,8 @@ const styles = stylex.create({
     maxInlineSize: "36rem",
     marginBlock: "0.75rem",
     padding: "0.75rem",
-    backgroundColor: tokens.code,
-    color: tokens.codeForeground,
-    borderRadius: tokens.radiusSmall,
+    backgroundColor: tokens["--code"],
+    color: tokens["--code-foreground"],
+    borderRadius: tokens["--radius-sm"],
   },
 })

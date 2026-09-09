@@ -1,10 +1,11 @@
 "use client"
 
+import type { StyleXProps } from "@registry/lib/stylex"
+
 import { Radio as RadioPrimitive } from "@base-ui/react/radio"
 import { RadioGroup as RadioGroupPrimitive } from "@base-ui/react/radio-group"
 import { stylexProps } from "@registry/lib/stylex"
-import { themeMarker } from "@registry/styles/markers.stylex"
-import { tokens } from "@registry/styles/tokens.stylex"
+import { themeMarker, tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 
 const styles = stylex.create({
@@ -12,13 +13,13 @@ const styles = stylex.create({
   radio: {
     alignItems: "center",
     backgroundColor: {
-      default: tokens.background,
+      default: tokens["--background"],
       [stylex.when.ancestor('[data-theme="dark"]', themeMarker)]:
         "color-mix(in oklab, var(--input, currentColor) 32%, transparent)",
     },
     blockSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
     borderColor: {
-      default: tokens.input,
+      default: tokens["--input"],
       "[aria-invalid]":
         "color-mix(in oklab, var(--destructive, currentColor) 36%, transparent)",
     },
@@ -36,14 +37,14 @@ const styles = stylex.create({
     position: "relative",
     transitionProperty: "box-shadow",
     ":focus-visible": {
-      boxShadow: `0 0 0 2px ${tokens.ring}, 0 0 0 3px ${tokens.background}`,
+      boxShadow: `0 0 0 2px ${tokens["--ring"]}, 0 0 0 3px ${tokens["--background"]}`,
     },
   },
   indicator: {
     alignItems: "center",
     backgroundColor: {
       default: "transparent",
-      "[data-checked]": tokens.primary,
+      "[data-checked]": tokens["--primary"],
     },
     blockSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
     borderRadius: "9999px",
@@ -53,7 +54,7 @@ const styles = stylex.create({
     justifyContent: "center",
     position: "absolute",
     "::before": {
-      backgroundColor: tokens.primaryForeground,
+      backgroundColor: tokens["--primary-foreground"],
       blockSize: { default: "0.5rem", "@media (min-width: 640px)": "0.375rem" },
       borderRadius: "9999px",
       content: '""',
@@ -65,19 +66,27 @@ const styles = stylex.create({
   },
 })
 
-export function RadioGroup({ className, ...props }: RadioGroupPrimitive.Props) {
+export function RadioGroup({
+  xstyle,
+  className,
+  ...props
+}: RadioGroupPrimitive.Props & StyleXProps) {
   return (
     <RadioGroupPrimitive
-      {...stylexProps(className, styles.group)}
+      {...stylexProps(className, styles.group, xstyle)}
       data-slot="radio-group"
       {...props}
     />
   )
 }
-export function Radio({ className, ...props }: RadioPrimitive.Root.Props) {
+export function Radio({
+  xstyle,
+  className,
+  ...props
+}: RadioPrimitive.Root.Props & StyleXProps) {
   return (
     <RadioPrimitive.Root
-      {...stylexProps(className, styles.radio)}
+      {...stylexProps(className, styles.radio, xstyle)}
       data-slot="radio"
       {...props}
     >

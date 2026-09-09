@@ -16,7 +16,7 @@ export default function Particle() {
     <Empty>
       <EmptyHeader>
         <EmptyMedia variant="icon">
-          <RouteIcon />
+          <RouteIcon {...stylex.props(demoStyles.icon)} />
         </EmptyMedia>
         <EmptyTitle>No upcoming meetings</EmptyTitle>
         <EmptyDescription>Create a meeting to get started.</EmptyDescription>
@@ -25,7 +25,7 @@ export default function Particle() {
         <div {...stylex.props(demoStyles.demo1)}>
           <Button size="sm">Create meeting</Button>
           <Button size="sm" variant="outline">
-            <BookIcon />
+            <BookIcon {...stylex.props(demoStyles.icon2)} />
             View docs
           </Button>
         </div>
@@ -35,6 +35,20 @@ export default function Particle() {
 }
 
 const demoStyles = stylex.create({
+  icon: {
+    blockSize: "1.125rem",
+    inlineSize: "1.125rem",
+    flexShrink: 0,
+    pointerEvents: "none",
+  },
+  icon2: {
+    blockSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
+    inlineSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
+    flexShrink: 0,
+    pointerEvents: "none",
+    opacity: 0.8,
+    marginInline: "-0.125rem",
+  },
   demo1: {
     display: "flex",
     gap: "calc(0.25rem * 2)",

@@ -7,7 +7,11 @@ import {
 } from "lucide-react"
 
 import { Button } from "@/components/ui/stylex/button"
-import { Group, GroupSeparator } from "@/components/ui/stylex/group"
+import {
+  Group,
+  GroupSeparator,
+  groupItemStyles,
+} from "@/components/ui/stylex/group"
 import {
   Menu,
   MenuItem,
@@ -18,26 +22,37 @@ import {
 export default function Particle() {
   return (
     <Group aria-label="Subscription actions">
-      <Button>Subscribe</Button>
-      <GroupSeparator {...stylex.props(demoStyles.demo1)} />
+      <Button xstyle={groupItemStyles.item}>Subscribe</Button>
+      <GroupSeparator xstyle={demoStyles.demo1} />
       <Menu>
-        <MenuTrigger render={<Button aria-label="Copy options" size="icon" />}>
+        <MenuTrigger
+          render={
+            <Button
+              aria-label="Copy options"
+              size="icon"
+              xstyle={groupItemStyles.item}
+            />
+          }
+        >
           <ChevronDownIcon
             aria-hidden="true"
-            {...stylex.props(demoStyles.demo2)}
+            {...stylex.props(demoStyles.icon, demoStyles.demo2)}
           />
         </MenuTrigger>
         <MenuPopup align="end">
           <MenuItem>
-            <ShareIcon aria-hidden="true" />
+            <ShareIcon aria-hidden="true" {...stylex.props(demoStyles.icon)} />
             Share link
           </MenuItem>
           <MenuItem>
-            <DownloadIcon aria-hidden="true" />
+            <DownloadIcon
+              aria-hidden="true"
+              {...stylex.props(demoStyles.icon)}
+            />
             Download
           </MenuItem>
           <MenuItem>
-            <EditIcon aria-hidden="true" />
+            <EditIcon aria-hidden="true" {...stylex.props(demoStyles.icon)} />
             Duplicate
           </MenuItem>
         </MenuPopup>
@@ -47,6 +62,14 @@ export default function Particle() {
 }
 
 const demoStyles = stylex.create({
+  icon: {
+    blockSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
+    inlineSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
+    flexShrink: 0,
+    pointerEvents: "none",
+    opacity: 0.8,
+    marginInline: "-0.125rem",
+  },
   demo1: {
     backgroundColor: {
       default: "var(--primary)",

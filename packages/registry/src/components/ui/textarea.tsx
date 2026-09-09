@@ -1,24 +1,24 @@
 "use client"
 
+import type { StyleXProps } from "@registry/lib/stylex"
 import type * as React from "react"
 
 import { Field as FieldPrimitive } from "@base-ui/react/field"
 import { mergeProps } from "@base-ui/react/merge-props"
 import { stylexProps } from "@registry/lib/stylex"
-import { themeMarker } from "@registry/styles/markers.stylex"
-import { tokens } from "@registry/styles/tokens.stylex"
+import { themeMarker, tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 
 const styles = stylex.create({
   control: {
     backgroundClip: "padding-box",
     backgroundColor: {
-      default: tokens.background,
+      default: tokens["--background"],
       [stylex.when.ancestor('[data-theme="dark"]', themeMarker)]:
         "color-mix(in oklab, var(--input, currentColor) 32%, transparent)",
     },
-    borderColor: tokens.input,
-    borderRadius: tokens.radiusLarge,
+    borderColor: tokens["--input"],
+    borderRadius: tokens["--radius-lg"],
     borderStyle: "solid",
     borderWidth: 1,
     boxShadow: "0 1px 2px color-mix(in oklab, #000 5%, transparent)",
@@ -27,9 +27,21 @@ const styles = stylex.create({
     inlineSize: "100%",
     position: "relative",
     transitionProperty: "box-shadow",
+    ":has(:focus-visible)": {
+      borderColor: tokens["--ring"],
+      boxShadow: "0 0 0 3px color-mix(in oklab, var(--ring) 24%, transparent)",
+    },
+    ':has([aria-invalid="true"])': {
+      borderColor: "color-mix(in oklab, var(--destructive) 36%, transparent)",
+    },
+    ':has(:focus-visible):has([aria-invalid="true"])': {
+      borderColor: "color-mix(in oklab, var(--destructive) 36%, transparent)",
+      boxShadow: "0 0 0 3px color-mix(in oklab, var(--ring) 24%, transparent)",
+    },
+    ":has(:disabled)": { opacity: 0.64, boxShadow: "none" },
   },
   textarea: {
-    color: tokens.foreground,
+    color: tokens["--foreground"],
     fieldSizing: "content",
     inlineSize: "100%",
     minBlockSize: {
@@ -61,13 +73,17 @@ const styles = stylex.create({
   },
 })
 
-export type TextareaProps = React.ComponentPropsWithoutRef<"textarea"> &
+export type TextareaProps = StyleXProps &
+  React.ComponentPropsWithoutRef<"textarea"> &
   React.RefAttributes<HTMLTextAreaElement> & {
     size?: "sm" | "default" | "lg" | number
     unstyled?: boolean
+    controlXstyle?: StyleXProps["xstyle"]
   }
 
 export function Textarea({
+  xstyle,
+  controlXstyle,
   className,
   size = "default",
   unstyled = false,
@@ -79,9 +95,11 @@ export function Textarea({
   const wrapperClassName = typeof className === "string" ? className : undefined
   return (
     <span
-      {...(unstyled
-        ? { className: wrapperClassName }
-        : stylexProps(wrapperClassName, styles.control))}
+      {...stylexProps(
+        wrapperClassName,
+        !unstyled && styles.control,
+        controlXstyle,
+      )}
       data-size={size}
       data-slot="textarea-control"
     >
@@ -94,9 +112,12 @@ export function Textarea({
         name={props.name}
         render={(defaultProps: React.ComponentProps<"textarea">) => (
           <textarea
-            {...stylex.props(styles.textarea, sizeStyle)}
             data-slot="textarea"
-            {...mergeProps(defaultProps, props)}
+            {...mergeProps(
+              defaultProps,
+              stylex.props(styles.textarea, sizeStyle, xstyle),
+              props,
+            )}
           />
         )}
       />

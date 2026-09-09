@@ -24,14 +24,14 @@ const styles = stylex.create({
   full: { maxInlineSize: "90rem" },
   article: { minInlineSize: 0 },
   body: {
-    color: tokens.foreground,
+    color: tokens["--foreground"],
     fontSize: "0.9375rem",
     lineHeight: 1.8,
     minInlineSize: 0,
     overflowWrap: "break-word",
   },
   title: {
-    fontFamily: tokens.fontHeading,
+    fontFamily: tokens["--font-heading"],
     fontSize: { default: "2.75rem", "@media (max-width: 639px)": "2.125rem" },
     letterSpacing: "-0.045em",
     fontWeight: 650,
@@ -40,7 +40,7 @@ const styles = stylex.create({
     textWrap: "balance",
   },
   description: {
-    color: tokens.mutedForeground,
+    color: tokens["--muted-foreground"],
     fontSize: "1.125rem",
     lineHeight: 1.7,
     marginBlock: "0 2.5rem",
@@ -65,11 +65,14 @@ const styles = stylex.create({
   },
   tocLink: {
     display: "block",
-    color: tokens.mutedForeground,
+    color: tokens["--muted-foreground"],
     textDecoration: "none",
     lineHeight: 1.5,
-    ":hover": { color: tokens.foreground },
-    ":focus-visible": { outline: `2px solid ${tokens.ring}`, outlineOffset: 2 },
+    ":hover": { color: tokens["--foreground"] },
+    ":focus-visible": {
+      outline: `2px solid ${tokens["--ring"]}`,
+      outlineOffset: 2,
+    },
   },
   nested: { paddingInlineStart: "0.75rem" },
 })

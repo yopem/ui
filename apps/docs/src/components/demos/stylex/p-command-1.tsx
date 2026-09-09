@@ -121,17 +121,17 @@ export default function Particle() {
               <div {...stylex.props(demoStyles.demo3)}>
                 <KbdGroup>
                   <Kbd>
-                    <ArrowUpIcon />
+                    <ArrowUpIcon {...stylex.props(demoStyles.icon)} />
                   </Kbd>
                   <Kbd>
-                    <ArrowDownIcon />
+                    <ArrowDownIcon {...stylex.props(demoStyles.icon)} />
                   </Kbd>
                 </KbdGroup>
                 <span>Navigate</span>
               </div>
               <div {...stylex.props(demoStyles.demo3)}>
                 <Kbd>
-                  <CornerDownLeftIcon />
+                  <CornerDownLeftIcon {...stylex.props(demoStyles.icon)} />
                 </Kbd>
                 <span>Open</span>
               </div>
@@ -148,6 +148,12 @@ export default function Particle() {
 }
 
 const demoStyles = stylex.create({
+  icon: {
+    blockSize: "0.75rem",
+    inlineSize: "0.75rem",
+    flexShrink: 0,
+    pointerEvents: "none",
+  },
   demo1: {
     flex: "1",
   },

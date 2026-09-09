@@ -572,16 +572,16 @@ export default function Example() {
   group: `"use client"
 
 import { Button } from "@registry/components/ui/button"
-import { Group, GroupSeparator } from "@registry/components/ui/group"
+import { Group, GroupSeparator, groupItemStyles } from "@registry/components/ui/group"
 
 export default function Example() {
   return (
     <Group aria-label="History">
-      <Button variant="outline" onClick={() => window.alert("Undo")}>
+      <Button xstyle={groupItemStyles.item} variant="outline" onClick={() => window.alert("Undo")}>
         Undo
       </Button>
       <GroupSeparator />
-      <Button variant="outline" onClick={() => window.alert("Redo")}>
+      <Button xstyle={groupItemStyles.item} variant="outline" onClick={() => window.alert("Redo")}>
         Redo
       </Button>
     </Group>
@@ -979,6 +979,8 @@ export default function Example() {
 `,
   sidebar: `"use client"
 
+import * as stylex from "@stylexjs/stylex"
+import { HomeIcon, SettingsIcon } from "lucide-react"
 import {
   Sidebar,
   SidebarContent,
@@ -986,6 +988,8 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarMenuText,
+  sidebarSlotStyles,
   SidebarProvider,
   SidebarTrigger,
 } from "@registry/components/ui/sidebar"
@@ -1002,12 +1006,14 @@ export default function Example() {
                   isActive
                   render={<a href="/" aria-current="page" />}
                 >
-                  Home
+                  <HomeIcon {...stylex.props(sidebarSlotStyles.icon)} aria-hidden />
+                  <SidebarMenuText>Home</SidebarMenuText>
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
                 <SidebarMenuButton render={<a href="/settings" />}>
-                  Settings
+                  <SettingsIcon {...stylex.props(sidebarSlotStyles.icon)} aria-hidden />
+                  <SidebarMenuText>Settings</SidebarMenuText>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>

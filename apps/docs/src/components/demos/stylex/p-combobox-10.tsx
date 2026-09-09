@@ -442,7 +442,9 @@ export default function Particle() {
         }
       >
         <ComboboxValue />
-        <ChevronsUpDownIcon {...stylex.props(demoStyles.demo2)} />
+        <ChevronsUpDownIcon
+          {...stylex.props(demoStyles.icon, demoStyles.demo2)}
+        />
       </ComboboxTrigger>
       <ComboboxPopup aria-label="Select country">
         <div {...stylex.props(demoStyles.demo3)}>
@@ -450,7 +452,7 @@ export default function Particle() {
             {...stylex.props(demoStyles.demo4)}
             placeholder="e.g. United Kingdom"
             showTrigger={false}
-            startAddon={<SearchIcon />}
+            startAddon={<SearchIcon {...stylex.props(demoStyles.icon2)} />}
           />
         </div>
         <ComboboxEmpty>No countries found.</ComboboxEmpty>
@@ -467,6 +469,21 @@ export default function Particle() {
 }
 
 const demoStyles = stylex.create({
+  icon: {
+    blockSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
+    inlineSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
+    flexShrink: 0,
+    pointerEvents: "none",
+    opacity: 0.8,
+    marginInline: "-0.125rem",
+  },
+  icon2: {
+    blockSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
+    inlineSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
+    flexShrink: 0,
+    pointerEvents: "none",
+    opacity: 0.8,
+  },
   demo1: {
     inlineSize: "100%",
     justifyContent: "space-between",

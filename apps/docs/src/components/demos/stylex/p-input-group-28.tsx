@@ -33,7 +33,7 @@ export default function Particle() {
                   />
                 }
               >
-                <PaperclipIcon />
+                <PaperclipIcon {...stylex.props(demoStyles.icon)} />
               </TooltipTrigger>
               <TooltipPopup>Attach file</TooltipPopup>
             </Tooltip>
@@ -47,7 +47,7 @@ export default function Particle() {
                   />
                 }
               >
-                <ImageIcon />
+                <ImageIcon {...stylex.props(demoStyles.icon)} />
               </TooltipTrigger>
               <TooltipPopup>Insert image</TooltipPopup>
             </Tooltip>
@@ -60,6 +60,14 @@ export default function Particle() {
 }
 
 const demoStyles = stylex.create({
+  icon: {
+    blockSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
+    inlineSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
+    flexShrink: 0,
+    pointerEvents: "none",
+    opacity: 0.8,
+    marginInline: "-0.125rem",
+  },
   demo1: {
     justifyContent: "space-between",
   },

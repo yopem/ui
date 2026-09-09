@@ -1,5 +1,5 @@
 "use client"
-
+import * as stylex from "@stylexjs/stylex"
 import {
   CopyIcon,
   EllipsisIcon,
@@ -59,7 +59,7 @@ export default function Particle() {
             />
           }
         >
-          <EllipsisIcon aria-hidden />
+          <EllipsisIcon {...stylex.props(demoStyles.icon)} aria-hidden />
         </DrawerTrigger>
         <DrawerPopup showBar>
           <DrawerPanel>
@@ -67,15 +67,15 @@ export default function Particle() {
               <DrawerMenuGroup>
                 <DrawerMenuGroupLabel>Actions</DrawerMenuGroupLabel>
                 <DrawerClose render={<DrawerMenuItem />}>
-                  <PencilIcon aria-hidden />
+                  <PencilIcon {...stylex.props(demoStyles.icon)} aria-hidden />
                   Edit
                 </DrawerClose>
                 <DrawerClose render={<DrawerMenuItem />}>
-                  <CopyIcon aria-hidden />
+                  <CopyIcon {...stylex.props(demoStyles.icon)} aria-hidden />
                   Duplicate
                 </DrawerClose>
                 <DrawerClose render={<DrawerMenuItem />}>
-                  <ShareIcon aria-hidden />
+                  <ShareIcon {...stylex.props(demoStyles.icon)} aria-hidden />
                   Share
                 </DrawerClose>
               </DrawerMenuGroup>
@@ -165,7 +165,7 @@ export default function Particle() {
               <DrawerMenuGroup>
                 <DrawerMenuGroupLabel>Danger zone</DrawerMenuGroupLabel>
                 <DrawerClose render={<DrawerMenuItem variant="destructive" />}>
-                  <TrashIcon aria-hidden />
+                  <TrashIcon {...stylex.props(demoStyles.icon)} aria-hidden />
                   Delete
                 </DrawerClose>
               </DrawerMenuGroup>
@@ -187,21 +187,21 @@ export default function Particle() {
           />
         }
       >
-        <EllipsisIcon aria-hidden />
+        <EllipsisIcon {...stylex.props(demoStyles.icon)} aria-hidden />
       </MenuTrigger>
       <MenuPopup>
         <MenuGroup>
           <MenuGroupLabel>Actions</MenuGroupLabel>
           <MenuItem>
-            <PencilIcon aria-hidden />
+            <PencilIcon {...stylex.props(demoStyles.icon)} aria-hidden />
             Edit
           </MenuItem>
           <MenuItem>
-            <CopyIcon aria-hidden />
+            <CopyIcon {...stylex.props(demoStyles.icon)} aria-hidden />
             Duplicate
           </MenuItem>
           <MenuItem>
-            <ShareIcon aria-hidden />
+            <ShareIcon {...stylex.props(demoStyles.icon)} aria-hidden />
             Share
           </MenuItem>
         </MenuGroup>
@@ -247,7 +247,7 @@ export default function Particle() {
         <MenuGroup>
           <MenuGroupLabel>Danger zone</MenuGroupLabel>
           <MenuItem variant="destructive">
-            <TrashIcon aria-hidden />
+            <TrashIcon {...stylex.props(demoStyles.icon)} aria-hidden />
             Delete
           </MenuItem>
         </MenuGroup>
@@ -255,3 +255,14 @@ export default function Particle() {
     </Menu>
   )
 }
+
+const demoStyles = stylex.create({
+  icon: {
+    blockSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
+    inlineSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
+    flexShrink: 0,
+    pointerEvents: "none",
+    opacity: 0.8,
+    marginInline: "-0.125rem",
+  },
+})

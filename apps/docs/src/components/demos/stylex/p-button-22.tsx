@@ -18,7 +18,7 @@ export default function Particle() {
         size="icon"
         variant="outline"
       >
-        <ChevronUpIcon aria-hidden="true" />
+        <ChevronUpIcon {...stylex.props(demoStyles.icon)} aria-hidden="true" />
       </Button>
       <Button
         aria-label="Pan camera left"
@@ -26,13 +26,19 @@ export default function Particle() {
         size="icon"
         variant="outline"
       >
-        <ChevronLeftIcon aria-hidden="true" />
+        <ChevronLeftIcon
+          {...stylex.props(demoStyles.icon)}
+          aria-hidden="true"
+        />
       </Button>
       <div aria-hidden="true" {...stylex.props(demoStyles.demo4)}>
         <CircleIcon {...stylex.props(demoStyles.demo5)} />
       </div>
       <Button aria-label="Pan camera right" size="icon" variant="outline">
-        <ChevronRightIcon aria-hidden="true" />
+        <ChevronRightIcon
+          {...stylex.props(demoStyles.icon)}
+          aria-hidden="true"
+        />
       </Button>
       <Button
         aria-label="Pan camera down"
@@ -40,13 +46,24 @@ export default function Particle() {
         size="icon"
         variant="outline"
       >
-        <ChevronDownIcon aria-hidden="true" />
+        <ChevronDownIcon
+          {...stylex.props(demoStyles.icon)}
+          aria-hidden="true"
+        />
       </Button>
     </div>
   )
 }
 
 const demoStyles = stylex.create({
+  icon: {
+    blockSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
+    inlineSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
+    flexShrink: 0,
+    pointerEvents: "none",
+    opacity: 0.8,
+    marginInline: "-0.125rem",
+  },
   demo1: {
     display: "inline-grid",
     inlineSize: "fit-content",

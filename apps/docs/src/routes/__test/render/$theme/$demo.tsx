@@ -1,6 +1,9 @@
-import { themeMarker } from "@registry/styles/markers.stylex"
-import { rootStyles } from "@registry/styles/root"
-import { darkTheme, lightTheme } from "@registry/styles/themes"
+import {
+  themeMarker,
+  rootStyles,
+  darkTheme,
+  lightTheme,
+} from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import { createFileRoute, notFound, useNavigate } from "@tanstack/react-router"
 import { Suspense, createElement } from "react"

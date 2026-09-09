@@ -1,11 +1,11 @@
 "use client"
 
+import type { StyleXProps } from "@registry/lib/stylex"
 import type React from "react"
 
 import { AlertDialog as AlertDialogPrimitive } from "@base-ui/react/alert-dialog"
 import { stylexProps } from "@registry/lib/stylex"
-import { themeMarker } from "@registry/styles/markers.stylex"
-import { tokens } from "@registry/styles/tokens.stylex"
+import { themeMarker, tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 
 const styles = stylex.create({
@@ -38,13 +38,13 @@ const styles = stylex.create({
   },
   popup: {
     backgroundClip: "padding-box",
-    backgroundColor: tokens.popover,
-    borderColor: tokens.border,
+    backgroundColor: tokens["--popover"],
+    borderColor: tokens["--border"],
     borderRadius: "0.875rem",
     borderStyle: "solid",
     borderWidth: 1,
     boxShadow: "0 10px 15px -3px color-mix(in oklab, #000 5%, transparent)",
-    color: tokens.popoverForeground,
+    color: tokens["--popover-foreground"],
     display: "flex",
     flexDirection: "column",
     gridRowStart: 2,
@@ -116,19 +116,19 @@ const styles = stylex.create({
   footerDefault: {
     backgroundColor:
       "color-mix(in oklab, var(--muted, transparent) 72%, transparent)",
-    borderBlockStartColor: tokens.border,
+    borderBlockStartColor: tokens["--border"],
     borderBlockStartStyle: "solid",
     borderBlockStartWidth: 1,
     paddingBlock: "1rem",
   },
   footerBare: { paddingBlockEnd: "1.5rem" },
   title: {
-    fontFamily: tokens.fontHeading,
+    fontFamily: tokens["--font-heading"],
     fontSize: "1.25rem",
     fontWeight: 600,
     lineHeight: 1,
   },
-  description: { color: tokens.mutedForeground, fontSize: "0.875rem" },
+  description: { color: tokens["--muted-foreground"], fontSize: "0.875rem" },
 })
 
 export const AlertDialogCreateHandle: typeof AlertDialogPrimitive.createHandle =
@@ -145,12 +145,13 @@ export function AlertDialogTrigger(props: AlertDialogPrimitive.Trigger.Props) {
 }
 
 export function AlertDialogBackdrop({
+  xstyle,
   className,
   ...props
-}: AlertDialogPrimitive.Backdrop.Props) {
+}: AlertDialogPrimitive.Backdrop.Props & StyleXProps) {
   return (
     <AlertDialogPrimitive.Backdrop
-      {...stylexProps(className, styles.backdrop)}
+      {...stylexProps(className, styles.backdrop, xstyle)}
       data-slot="alert-dialog-backdrop"
       {...props}
     />
@@ -158,12 +159,13 @@ export function AlertDialogBackdrop({
 }
 
 export function AlertDialogViewport({
+  xstyle,
   className,
   ...props
-}: AlertDialogPrimitive.Viewport.Props) {
+}: AlertDialogPrimitive.Viewport.Props & StyleXProps) {
   return (
     <AlertDialogPrimitive.Viewport
-      {...stylexProps(className, styles.viewport)}
+      {...stylexProps(className, styles.viewport, xstyle)}
       data-slot="alert-dialog-viewport"
       {...props}
     />
@@ -171,6 +173,7 @@ export function AlertDialogViewport({
 }
 
 export function AlertDialogPopup({
+  xstyle,
   className,
   bottomStickOnMobile = true,
   portalProps,
@@ -178,7 +181,7 @@ export function AlertDialogPopup({
 }: AlertDialogPrimitive.Popup.Props & {
   bottomStickOnMobile?: boolean
   portalProps?: AlertDialogPrimitive.Portal.Props
-}) {
+} & StyleXProps) {
   return (
     <AlertDialogPortal {...portalProps}>
       <AlertDialogBackdrop />
@@ -193,6 +196,7 @@ export function AlertDialogPopup({
             className,
             styles.popup,
             bottomStickOnMobile && styles.popupBottomMobile,
+            xstyle,
           )}
           data-slot="alert-dialog-popup"
           {...props}
@@ -203,12 +207,13 @@ export function AlertDialogPopup({
 }
 
 export function AlertDialogHeader({
+  xstyle,
   className,
   ...props
-}: React.ComponentProps<"div">) {
+}: React.ComponentProps<"div"> & StyleXProps) {
   return (
     <div
-      {...stylexProps(className, styles.header)}
+      {...stylexProps(className, styles.header, xstyle)}
       data-slot="alert-dialog-header"
       {...props}
     />
@@ -216,16 +221,20 @@ export function AlertDialogHeader({
 }
 
 export function AlertDialogFooter({
+  xstyle,
   className,
   variant = "default",
   ...props
-}: React.ComponentProps<"div"> & { variant?: "default" | "bare" }) {
+}: React.ComponentProps<"div"> & {
+  variant?: "default" | "bare"
+} & StyleXProps) {
   return (
     <div
       {...stylexProps(
         className,
         styles.footer,
         variant === "default" ? styles.footerDefault : styles.footerBare,
+        xstyle,
       )}
       data-slot="alert-dialog-footer"
       {...props}
@@ -234,12 +243,13 @@ export function AlertDialogFooter({
 }
 
 export function AlertDialogTitle({
+  xstyle,
   className,
   ...props
-}: AlertDialogPrimitive.Title.Props) {
+}: AlertDialogPrimitive.Title.Props & StyleXProps) {
   return (
     <AlertDialogPrimitive.Title
-      {...stylexProps(className, styles.title)}
+      {...stylexProps(className, styles.title, xstyle)}
       data-slot="alert-dialog-title"
       {...props}
     />
@@ -247,12 +257,13 @@ export function AlertDialogTitle({
 }
 
 export function AlertDialogDescription({
+  xstyle,
   className,
   ...props
-}: AlertDialogPrimitive.Description.Props) {
+}: AlertDialogPrimitive.Description.Props & StyleXProps) {
   return (
     <AlertDialogPrimitive.Description
-      {...stylexProps(className, styles.description)}
+      {...stylexProps(className, styles.description, xstyle)}
       data-slot="alert-dialog-description"
       {...props}
     />

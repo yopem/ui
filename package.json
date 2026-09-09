@@ -14,7 +14,7 @@
     "start": "bun run --cwd apps/docs start",
     "preview": "bun run --cwd apps/docs preview",
     "typecheck": "bun run --cwd packages/registry typecheck && bun run --cwd apps/docs typecheck",
-    "test": "bun run registry:build && bun test packages/registry/tests apps/docs/src/catalog/docs-data.test.ts tests/release-readiness.test.ts",
+    "test": "bun run registry:build && bun test packages/registry/tests apps/docs/src/catalog tests/release-readiness.test.ts tests/xstyle.test.ts tests/strict-forms.test.ts tests/strict-overlays.test.ts",
     "test:a11y": "FULL_A11Y=1 playwright test --project=chromium --grep @full-a11y",
     "test:e2e": "playwright test",
     "lint": "oxlint lint .",

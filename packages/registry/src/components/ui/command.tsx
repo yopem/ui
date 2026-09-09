@@ -1,5 +1,6 @@
 "use client"
 
+import type { StyleXProps } from "@registry/lib/stylex"
 import type * as React from "react"
 
 import { Dialog as CommandDialogPrimitive } from "@base-ui/react/dialog"
@@ -15,8 +16,7 @@ import {
   AutocompleteSeparator,
 } from "@registry/components/ui/autocomplete"
 import { stylexProps } from "@registry/lib/stylex"
-import { themeMarker } from "@registry/styles/markers.stylex"
-import { tokens } from "@registry/styles/tokens.stylex"
+import { themeMarker, tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import { SearchIcon } from "lucide-react"
 
@@ -47,13 +47,13 @@ const styles = stylex.create({
   },
   popup: {
     backgroundClip: "padding-box",
-    backgroundColor: tokens.popover,
-    borderColor: tokens.border,
+    backgroundColor: tokens["--popover"],
+    borderColor: tokens["--border"],
     borderRadius: "0.875rem",
     borderStyle: "solid",
     borderWidth: 1,
     boxShadow: "0 10px 15px -3px color-mix(in oklab, #000 5%, transparent)",
-    color: tokens.popoverForeground,
+    color: tokens["--popover-foreground"],
     display: "flex",
     flexDirection: "column",
     inlineSize: "100%",
@@ -102,8 +102,8 @@ const styles = stylex.create({
   empty: { ":not(:empty)": { paddingBlock: "1.5rem" } },
   panel: {
     backgroundClip: "padding-box",
-    backgroundColor: tokens.popover,
-    borderColor: tokens.border,
+    backgroundColor: tokens["--popover"],
+    borderColor: tokens["--border"],
     borderRadius: "0.75rem 0.75rem 0 0",
     borderStyle: "solid",
     borderWidth: 1,
@@ -127,7 +127,7 @@ const styles = stylex.create({
   shortcut: {
     color:
       "color-mix(in oklab, var(--muted-foreground, currentColor) 72%, transparent)",
-    fontFamily: tokens.fontSans,
+    fontFamily: tokens["--font-sans"],
     fontSize: "0.75rem",
     fontWeight: 500,
     letterSpacing: "0.1em",
@@ -135,12 +135,12 @@ const styles = stylex.create({
   },
   footer: {
     alignItems: "center",
-    borderBlockStartColor: tokens.border,
+    borderBlockStartColor: tokens["--border"],
     borderBlockStartStyle: "solid",
     borderBlockStartWidth: 1,
     borderEndEndRadius: "calc(0.875rem - 1px)",
     borderEndStartRadius: "calc(0.875rem - 1px)",
-    color: tokens.mutedForeground,
+    color: tokens["--muted-foreground"],
     display: "flex",
     fontSize: "0.75rem",
     gap: "0.5rem",
@@ -167,43 +167,46 @@ export function CommandDialogTrigger(
   )
 }
 export function CommandDialogBackdrop({
+  xstyle,
   className,
   ...props
-}: CommandDialogPrimitive.Backdrop.Props) {
+}: CommandDialogPrimitive.Backdrop.Props & StyleXProps) {
   return (
     <CommandDialogPrimitive.Backdrop
-      {...stylexProps(className, styles.backdrop)}
+      {...stylexProps(className, styles.backdrop, xstyle)}
       data-slot="command-dialog-backdrop"
       {...props}
     />
   )
 }
 export function CommandDialogViewport({
+  xstyle,
   className,
   ...props
-}: CommandDialogPrimitive.Viewport.Props) {
+}: CommandDialogPrimitive.Viewport.Props & StyleXProps) {
   return (
     <CommandDialogPrimitive.Viewport
-      {...stylexProps(className, styles.viewport)}
+      {...stylexProps(className, styles.viewport, xstyle)}
       data-slot="command-dialog-viewport"
       {...props}
     />
   )
 }
 export function CommandDialogPopup({
+  xstyle,
   className,
   children,
   portalProps,
   ...props
 }: CommandDialogPrimitive.Popup.Props & {
   portalProps?: CommandDialogPrimitive.Portal.Props
-}) {
+} & StyleXProps) {
   return (
     <CommandDialogPortal {...portalProps}>
       <CommandDialogBackdrop />
       <CommandDialogViewport>
         <CommandDialogPrimitive.Popup
-          {...stylexProps(className, styles.popup)}
+          {...stylexProps(className, styles.popup, xstyle)}
           data-slot="command-dialog-popup"
           {...props}
         >
@@ -229,16 +232,18 @@ export function Command({
   )
 }
 export function CommandInput({
+  xstyle,
   className,
   placeholder,
   ...props
-}: React.ComponentProps<typeof AutocompleteInput>) {
+}: React.ComponentProps<typeof AutocompleteInput> & StyleXProps) {
   return (
     <div {...stylex.props(styles.inputWrap)}>
       <AutocompleteInput
         // oxlint-disable-next-line jsx-a11y/no-autofocus -- command palette needs immediate focus
         autoFocus
-        className={stylexProps(className, styles.commandInput).className}
+        className={className}
+        xstyle={[styles.commandInput, xstyle]}
         placeholder={placeholder}
         size="lg"
         startAddon={<SearchIcon />}
@@ -248,60 +253,69 @@ export function CommandInput({
   )
 }
 export function CommandList({
+  xstyle,
   className,
   ...props
-}: React.ComponentProps<typeof AutocompleteList>) {
+}: React.ComponentProps<typeof AutocompleteList> & StyleXProps) {
   return (
     <AutocompleteList
-      {...stylexProps(className, styles.list)}
+      className={className}
+      xstyle={[styles.list, xstyle]}
       data-slot="command-list"
       {...props}
     />
   )
 }
 export function CommandEmpty({
+  xstyle,
   className,
   ...props
-}: React.ComponentProps<typeof AutocompleteEmpty>) {
+}: React.ComponentProps<typeof AutocompleteEmpty> & StyleXProps) {
   return (
     <AutocompleteEmpty
-      {...stylexProps(className, styles.empty)}
+      className={className}
+      xstyle={[styles.empty, xstyle]}
       data-slot="command-empty"
       {...props}
     />
   )
 }
 export function CommandPanel({
+  xstyle,
   className,
   ...props
-}: React.ComponentProps<"div">) {
+}: React.ComponentProps<"div"> & StyleXProps) {
   return (
     <div
-      {...stylexProps(className, styles.panel)}
+      {...stylexProps(className, styles.panel, xstyle)}
       data-slot="command-panel"
       {...props}
     />
   )
 }
 export function CommandGroup({
+  xstyle,
   className,
   ...props
-}: React.ComponentProps<typeof AutocompleteGroup>) {
+}: React.ComponentProps<typeof AutocompleteGroup> & StyleXProps) {
   return (
     <AutocompleteGroup
       className={className}
+      xstyle={xstyle}
       data-slot="command-group"
       {...props}
     />
   )
 }
 export function CommandGroupLabel({
+  xstyle,
   className,
   ...props
-}: React.ComponentProps<typeof AutocompleteGroupLabel>) {
+}: React.ComponentProps<typeof AutocompleteGroupLabel> & StyleXProps) {
   return (
     <AutocompleteGroupLabel
       className={className}
+      xstyle={xstyle}
       data-slot="command-group-label"
       {...props}
     />
@@ -309,48 +323,54 @@ export function CommandGroupLabel({
 }
 export const CommandCollection = AutocompleteCollection
 export function CommandItem({
+  xstyle,
   className,
   ...props
-}: React.ComponentProps<typeof AutocompleteItem>) {
+}: React.ComponentProps<typeof AutocompleteItem> & StyleXProps) {
   return (
     <AutocompleteItem
-      {...stylexProps(className, styles.item)}
+      className={className}
+      xstyle={[styles.item, xstyle]}
       data-slot="command-item"
       {...props}
     />
   )
 }
 export function CommandSeparator({
+  xstyle,
   className,
   ...props
-}: React.ComponentProps<typeof AutocompleteSeparator>) {
+}: React.ComponentProps<typeof AutocompleteSeparator> & StyleXProps) {
   return (
     <AutocompleteSeparator
-      {...stylexProps(className, styles.separator)}
+      className={className}
+      xstyle={[styles.separator, xstyle]}
       data-slot="command-separator"
       {...props}
     />
   )
 }
 export function CommandShortcut({
+  xstyle,
   className,
   ...props
-}: React.ComponentProps<"kbd">) {
+}: React.ComponentProps<"kbd"> & StyleXProps) {
   return (
     <kbd
-      {...stylexProps(className, styles.shortcut)}
+      {...stylexProps(className, styles.shortcut, xstyle)}
       data-slot="command-shortcut"
       {...props}
     />
   )
 }
 export function CommandFooter({
+  xstyle,
   className,
   ...props
-}: React.ComponentProps<"div">) {
+}: React.ComponentProps<"div"> & StyleXProps) {
   return (
     <div
-      {...stylexProps(className, styles.footer)}
+      {...stylexProps(className, styles.footer, xstyle)}
       data-slot="command-footer"
       {...props}
     />

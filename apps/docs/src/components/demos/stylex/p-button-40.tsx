@@ -5,7 +5,12 @@ import { DownloadIcon, XIcon } from "lucide-react"
 import { useEffect, useRef, useState } from "react"
 
 import { Button } from "@/components/ui/stylex/button"
-import { Group, GroupSeparator, GroupText } from "@/components/ui/stylex/group"
+import {
+  groupItemStyles,
+  Group,
+  GroupSeparator,
+  GroupText,
+} from "@/components/ui/stylex/group"
 import { Spinner } from "@/components/ui/stylex/spinner"
 import { toastManager } from "@/components/ui/stylex/toast"
 import {
@@ -105,7 +110,7 @@ export default function Particle() {
             {...stylex.props(demoStyles.demo1)}
             render={<output />}
           >
-            <Spinner />
+            <Spinner {...stylex.props(demoStyles.icon)} />
             <span aria-hidden="true" {...stylex.props(demoStyles.demo2)}>
               {progress.toString().padStart(2, "\u2007")}%
             </span>
@@ -118,6 +123,7 @@ export default function Particle() {
             <TooltipTrigger
               render={
                 <Button
+                  xstyle={groupItemStyles.item}
                   aria-label="Cancel download"
                   onClick={handleCancel}
                   size="icon"
@@ -125,14 +131,14 @@ export default function Particle() {
                 />
               }
             >
-              <XIcon aria-hidden="true" />
+              <XIcon {...stylex.props(demoStyles.icon)} aria-hidden="true" />
             </TooltipTrigger>
             <TooltipPopup>Cancel</TooltipPopup>
           </Tooltip>
         </Group>
       ) : (
         <Button onClick={handleDownload} variant="outline">
-          <DownloadIcon aria-hidden="true" />
+          <DownloadIcon {...stylex.props(demoStyles.icon)} aria-hidden="true" />
           Download
         </Button>
       )}
@@ -141,6 +147,14 @@ export default function Particle() {
 }
 
 const demoStyles = stylex.create({
+  icon: {
+    blockSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
+    inlineSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
+    flexShrink: 0,
+    pointerEvents: "none",
+    opacity: 0.8,
+    marginInline: "-0.125rem",
+  },
   demo1: {
     cursor: "default",
     gap: "calc(0.25rem * 2)",

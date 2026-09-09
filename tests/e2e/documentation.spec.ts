@@ -1,5 +1,27 @@
 import { expect, test } from "@playwright/test"
 
+test("minimal setup and StyleX customization are documented", async ({
+  page,
+}) => {
+  await page.goto("/docs/installation")
+  await expect(
+    page.locator("summary").filter({ hasText: "src/yopem/" }),
+  ).toHaveCount(3)
+  await page.goto("/docs/theming")
+  await expect(
+    page.getByRole("heading", { name: "Component overrides", exact: true }),
+  ).toBeVisible()
+  await expect(
+    page.getByRole("heading", {
+      name: "Global and scoped themes",
+      exact: true,
+    }),
+  ).toBeVisible()
+  await expect(
+    page.locator("summary").filter({ hasText: "src/yopem/theme/" }),
+  ).toHaveCount(2)
+})
+
 test("component docs cover setup, source files, and API", async ({ page }) => {
   const missingStyles: string[] = []
   page.on("response", (response) => {

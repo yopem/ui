@@ -68,14 +68,14 @@ export default function Particle() {
           <Button aria-label="Notifications" size="icon" variant="outline" />
         }
       >
-        <BellIcon aria-hidden="true" />
+        <BellIcon {...stylex.props(demoStyles.icon)} aria-hidden="true" />
       </PopoverTrigger>
       <PopoverTrigger
         handle={popoverHandle}
         payload={ProfileContent}
         render={<Button aria-label="Profile" size="icon" variant="outline" />}
       >
-        <UserIcon aria-hidden="true" />
+        <UserIcon {...stylex.props(demoStyles.icon)} aria-hidden="true" />
       </PopoverTrigger>
       <Popover handle={popoverHandle}>
         {({ payload: Payload }) => (
@@ -89,6 +89,14 @@ export default function Particle() {
 }
 
 const demoStyles = stylex.create({
+  icon: {
+    blockSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
+    inlineSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
+    flexShrink: 0,
+    pointerEvents: "none",
+    opacity: 0.8,
+    marginInline: "-0.125rem",
+  },
   demo1: {
     fontSize: "1rem",
     lineHeight: "calc(1.5 / 1)",

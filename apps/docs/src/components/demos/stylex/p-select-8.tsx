@@ -1,3 +1,4 @@
+import * as stylex from "@stylexjs/stylex"
 import { CableIcon } from "lucide-react"
 
 import {
@@ -22,7 +23,7 @@ export default function Particle() {
       items={items}
     >
       <SelectTrigger>
-        <CableIcon aria-hidden="true" />
+        <CableIcon {...stylex.props(demoStyles.icon)} aria-hidden="true" />
         <SelectValue />
       </SelectTrigger>
       <SelectPopup alignItemWithTrigger={false}>
@@ -35,3 +36,12 @@ export default function Particle() {
     </Select>
   )
 }
+
+const demoStyles = stylex.create({
+  icon: {
+    blockSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
+    inlineSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
+    flexShrink: 0,
+    pointerEvents: "none",
+  },
+})

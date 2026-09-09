@@ -1,6 +1,10 @@
 import * as stylex from "@stylexjs/stylex"
 
-import { Group, GroupSeparator } from "@/components/ui/stylex/group"
+import {
+  Group,
+  GroupSeparator,
+  groupItemStyles,
+} from "@/components/ui/stylex/group"
 import { Label } from "@/components/ui/stylex/label"
 import {
   NumberField,
@@ -13,18 +17,18 @@ export default function Particle() {
     <div {...stylex.props(demoStyles.demo1)}>
       <Label>Range</Label>
       <Group aria-label="Range input">
-        <NumberField aria-label="Min value" render={<NumberFieldGroup />}>
-          <NumberFieldInput
-            {...stylex.props(demoStyles.demo2)}
-            placeholder="From"
-          />
+        <NumberField
+          aria-label="Min value"
+          render={<NumberFieldGroup xstyle={groupItemStyles.item} />}
+        >
+          <NumberFieldInput placeholder="From" xstyle={demoStyles.demo2} />
         </NumberField>
         <GroupSeparator />
-        <NumberField aria-label="Max value" render={<NumberFieldGroup />}>
-          <NumberFieldInput
-            {...stylex.props(demoStyles.demo2)}
-            placeholder="To"
-          />
+        <NumberField
+          aria-label="Max value"
+          render={<NumberFieldGroup xstyle={groupItemStyles.item} />}
+        >
+          <NumberFieldInput placeholder="To" xstyle={demoStyles.demo2} />
         </NumberField>
       </Group>
     </div>

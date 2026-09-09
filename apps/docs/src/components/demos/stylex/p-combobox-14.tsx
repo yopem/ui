@@ -1,5 +1,5 @@
 "use client"
-
+import * as stylex from "@stylexjs/stylex"
 import { SearchIcon } from "lucide-react"
 
 import {
@@ -30,7 +30,9 @@ const items = [
 export default function Particle() {
   return (
     <Combobox defaultValue={[items[0], items[3]]} items={items} multiple>
-      <ComboboxChips startAddon={<SearchIcon />}>
+      <ComboboxChips
+        startAddon={<SearchIcon {...stylex.props(demoStyles.icon)} />}
+      >
         <ComboboxValue>
           {(value: { value: string; label: string }[]) => (
             <>
@@ -60,3 +62,12 @@ export default function Particle() {
     </Combobox>
   )
 }
+
+const demoStyles = stylex.create({
+  icon: {
+    blockSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
+    inlineSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
+    flexShrink: 0,
+    pointerEvents: "none",
+  },
+})

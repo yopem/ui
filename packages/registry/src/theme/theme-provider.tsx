@@ -2,7 +2,14 @@
 
 import type React from "react"
 
-import { themeClasses } from "@registry/theme/theme-root"
+import {
+  MEDIA_QUERY,
+  STORAGE_KEY,
+  themeConfig,
+  type ResolvedTheme,
+  type Theme,
+  type ThemeConfig,
+} from "@registry/theme/theme"
 import {
   createContext,
   useCallback,
@@ -13,42 +20,18 @@ import {
   useSyncExternalStore,
 } from "react"
 
-type Theme = "dark" | "light" | "system"
-type ResolvedTheme = Exclude<Theme, "system">
-
-const STORAGE_KEY = "yopem-ui-theme"
-const MEDIA_QUERY = "(prefers-color-scheme: dark)"
-
-function applyTheme(theme: ResolvedTheme) {
-  const root = document.documentElement
-  root.classList.remove(...themeClasses.light, ...themeClasses.dark)
-  root.classList.add(
-    ...themeClasses.marker,
-    ...(theme === "dark" ? themeClasses.dark : themeClasses.light),
-  )
-  root.dataset.theme = theme
-}
-
 function subscribeToSystemTheme(callback: () => void) {
   const media = matchMedia(MEDIA_QUERY)
   media.addEventListener("change", callback)
   return () => media.removeEventListener("change", callback)
 }
 
-function getSystemTheme(): ResolvedTheme {
+function getSystemTheme() {
   return matchMedia(MEDIA_QUERY).matches ? "dark" : "light"
 }
 
-function getServerTheme(): ResolvedTheme {
-  return "light"
-}
-
-function getStoredTheme(defaultTheme: Theme) {
-  if (typeof localStorage === "undefined") return defaultTheme
-  const saved = localStorage.getItem(STORAGE_KEY)
-  return saved === "dark" || saved === "light" || saved === "system"
-    ? saved
-    : defaultTheme
+function getServerTheme() {
+  return "light" as const
 }
 
 interface ThemeContextValue {
@@ -59,18 +42,46 @@ interface ThemeContextValue {
 
 const ThemeContext = createContext<ThemeContextValue | undefined>(undefined)
 
+function subscribeToStorage(callback: () => void) {
+  window.addEventListener("storage", callback)
+  return () => window.removeEventListener("storage", callback)
+}
+
+function getServerPreference() {
+  return null
+}
+
 export interface ThemeProviderProps {
   children: React.ReactNode
   defaultTheme?: Theme
+  storageKey?: string
+  themes?: ThemeConfig
 }
 
 export function ThemeProvider({
   children,
   defaultTheme = "system",
+  storageKey = STORAGE_KEY,
+  themes = themeConfig,
 }: ThemeProviderProps) {
-  const [theme, setThemeState] = useState<Theme>(() =>
-    getStoredTheme(defaultTheme),
+  const [preference, setThemeState] = useState<Theme | null>(null)
+  const getStoredTheme = useCallback(() => {
+    try {
+      const saved = localStorage.getItem(storageKey)
+      if (saved === "light" || saved === "dark" || saved === "system")
+        return saved
+    } catch {
+      // Storage can be blocked. Use the configured default instead.
+    }
+    return defaultTheme
+  }, [defaultTheme, storageKey])
+  const storedTheme = useSyncExternalStore(
+    subscribeToStorage,
+    getStoredTheme,
+    getServerPreference,
   )
+  const theme = preference ?? storedTheme ?? defaultTheme
+  const ready = storedTheme !== null
   const systemTheme = useSyncExternalStore(
     subscribeToSystemTheme,
     getSystemTheme,
@@ -78,12 +89,26 @@ export function ThemeProvider({
   )
   const resolvedTheme = theme === "system" ? systemTheme : theme
 
-  useEffect(() => applyTheme(resolvedTheme), [resolvedTheme])
+  useEffect(() => {
+    if (!ready) return
+    const root = document.documentElement
+    root.classList.remove(...themes.classes.light, ...themes.classes.dark)
+    root.classList.add(...themes.classes[resolvedTheme])
+    root.dataset.theme = resolvedTheme
+    return () => root.classList.remove(...themes.classes[resolvedTheme])
+  }, [ready, resolvedTheme, themes])
 
-  const setTheme = useCallback((nextTheme: Theme) => {
-    localStorage.setItem(STORAGE_KEY, nextTheme)
-    setThemeState(nextTheme)
-  }, [])
+  const setTheme = useCallback(
+    (nextTheme: Theme) => {
+      try {
+        localStorage.setItem(storageKey, nextTheme)
+      } catch {
+        // Blocked storage must not prevent changing the current theme.
+      }
+      setThemeState(nextTheme)
+    },
+    [storageKey],
+  )
 
   const value = useMemo(
     () => ({ resolvedTheme, setTheme, theme }),

@@ -1,5 +1,7 @@
 "use client"
 
+import type { StyleXProps } from "@registry/lib/stylex"
+
 import { mergeProps } from "@base-ui/react/merge-props"
 import { useRender } from "@base-ui/react/use-render"
 import { Button } from "@registry/components/ui/button"
@@ -32,19 +34,37 @@ const SIDEBAR_WIDTH_MOBILE = "18rem"
 const SIDEBAR_WIDTH_ICON = "3rem"
 const SIDEBAR_KEYBOARD_SHORTCUT = "b"
 
+export const sidebarSlotStyles = stylex.create({
+  icon: { blockSize: "1rem", inlineSize: "1rem", flexShrink: 0 },
+  labelIcon: { flexShrink: 0 },
+  text: { overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" },
+})
+
 const styles = stylex.create({
-  wrapper: { display: "flex", inlineSize: "100%", minBlockSize: "100svh" },
+  wrapper: {
+    backgroundColor: {
+      default: null,
+      "@media (min-width: 800px)": {
+        default: null,
+        ':has([data-slot="sidebar"][data-variant="inset"])':
+          tokens["--sidebar"],
+      },
+    },
+    display: "flex",
+    inlineSize: "100%",
+    minBlockSize: "100svh",
+  },
   staticSidebar: {
-    backgroundColor: tokens.sidebar,
+    backgroundColor: tokens["--sidebar"],
     blockSize: "100%",
-    color: tokens.sidebarForeground,
+    color: tokens["--sidebar-foreground"],
     display: "flex",
     flexDirection: "column",
     inlineSize: "var(--sidebar-width)",
   },
   mobilePopup: {
-    backgroundColor: tokens.sidebar,
-    color: tokens.sidebarForeground,
+    backgroundColor: tokens["--sidebar"],
+    color: tokens["--sidebar-foreground"],
     inlineSize: "var(--sidebar-width)",
     padding: 0,
   },
@@ -66,41 +86,67 @@ const styles = stylex.create({
     inlineSize: "100%",
   },
   desktopRoot: {
-    color: tokens.sidebarForeground,
+    color: tokens["--sidebar-foreground"],
     display: "none",
     "@media (min-width: 800px)": { display: "block" },
   },
   gap: {
+    inlineSize: {
+      default: "var(--sidebar-width)",
+      ':is([data-slot="sidebar"][data-collapsible="offcanvas"] *)': 0,
+    },
+    rotate: {
+      default: null,
+      ':is([data-slot="sidebar"][data-side="right"] *)': "180deg",
+    },
     backgroundColor: "transparent",
-    inlineSize: "var(--sidebar-width)",
     position: "relative",
     transitionDuration: "200ms",
     transitionProperty: "width",
     transitionTimingFunction: "linear",
   },
   container: {
+    inlineSize: {
+      default: "var(--sidebar-width)",
+      ':is([data-slot="sidebar"][data-collapsible="icon"] *)':
+        "var(--sidebar-width-icon)",
+    },
     blockSize: "100svh",
-    display: "none",
-    inlineSize: "var(--sidebar-width)",
+    display: {
+      default: "none",
+      "@media (min-width: 800px)": "flex",
+    },
     insetBlock: 0,
     position: "fixed",
     transitionDuration: "200ms",
     transitionProperty: "left, right, width",
     transitionTimingFunction: "linear",
     zIndex: 10,
-    "@media (min-width: 800px)": { display: "flex" },
   },
-  left: { insetInlineStart: 0 },
-  right: { insetInlineEnd: 0 },
+  left: {
+    insetInlineStart: {
+      default: 0,
+      ':is([data-slot="sidebar"][data-collapsible="offcanvas"][data-side="left"] *)':
+        "calc(var(--sidebar-width) * -1)",
+    },
+  },
+  right: {
+    insetInlineEnd: {
+      default: 0,
+      ':is([data-slot="sidebar"][data-collapsible="offcanvas"][data-side="right"] *)':
+        "calc(var(--sidebar-width) * -1)",
+    },
+  },
   padded: { padding: "0.5rem" },
   inner: {
-    backgroundColor: tokens.sidebar,
+    backgroundColor: tokens["--sidebar"],
     blockSize: "100%",
     display: "flex",
     flexDirection: "column",
     inlineSize: "100%",
   },
   trigger: { blockSize: "1.75rem", inlineSize: "1.75rem" },
+  triggerIcon: { opacity: 0.8, pointerEvents: "none" },
   rail: {
     blockSize: "auto",
     display: "none",
@@ -120,10 +166,31 @@ const styles = stylex.create({
       position: "absolute",
     },
     "@media (min-width: 640px)": { display: "flex" },
-    ":hover": { "::after": { backgroundColor: tokens.sidebarBorder } },
+    ":hover": { "::after": { backgroundColor: tokens["--sidebar-border"] } },
   },
   inset: {
-    backgroundColor: tokens.background,
+    borderRadius: {
+      default: null,
+      "@media (min-width: 800px)": {
+        default: null,
+        ':is([data-slot="sidebar"][data-variant="inset"] ~ *)': "0.75rem",
+      },
+    },
+    margin: {
+      default: null,
+      "@media (min-width: 800px)": {
+        default: null,
+        ':is([data-slot="sidebar"][data-variant="inset"] ~ *)': "0.5rem",
+      },
+    },
+    marginInlineStart: {
+      default: null,
+      "@media (min-width: 800px)": {
+        default: null,
+        ':is([data-slot="sidebar"][data-variant="inset"] ~ *)': 0,
+      },
+    },
+    backgroundColor: tokens["--background"],
     display: "flex",
     flex: 1,
     flexDirection: "column",
@@ -131,7 +198,7 @@ const styles = stylex.create({
     position: "relative",
   },
   input: {
-    backgroundColor: tokens.background,
+    backgroundColor: tokens["--background"],
     blockSize: "2rem",
     boxShadow: "none",
     inlineSize: "100%",
@@ -143,12 +210,16 @@ const styles = stylex.create({
     padding: "0.5rem",
   },
   separator: {
-    backgroundColor: tokens.sidebarBorder,
+    backgroundColor: tokens["--sidebar-border"],
     inlineSize: "auto",
     marginInline: "0.5rem",
   },
   scrollArea: { flex: 1, minBlockSize: 0 },
   content: {
+    overflow: {
+      default: null,
+      ':is([data-slot="sidebar"][data-collapsible="icon"] *)': "hidden",
+    },
     blockSize: "100%",
     display: "flex",
     flexDirection: "column",
@@ -163,9 +234,17 @@ const styles = stylex.create({
     position: "relative",
   },
   groupLabel: {
+    marginBlockStart: {
+      default: null,
+      ':is([data-slot="sidebar"][data-collapsible="icon"] *)': "-2rem",
+    },
+    opacity: {
+      default: null,
+      ':is([data-slot="sidebar"][data-collapsible="icon"] *)': 0,
+    },
     alignItems: "center",
     blockSize: "2rem",
-    color: tokens.sidebarForeground,
+    color: tokens["--sidebar-foreground"],
     display: "flex",
     flexShrink: 0,
     fontSize: "0.75rem",
@@ -175,13 +254,23 @@ const styles = stylex.create({
     transitionDuration: "200ms",
     transitionProperty: "margin, opacity",
     transitionTimingFunction: "linear",
-    ":focus-visible": { boxShadow: `0 0 0 2px ${tokens.sidebarRing}` },
+    boxShadow: {
+      default: null,
+      ":focus-visible": `0 0 0 2px ${tokens["--sidebar-ring"]}`,
+    },
   },
   groupAction: {
+    transitionDuration: "200ms",
+    display: {
+      default: "flex",
+      ':is([data-slot="sidebar"][data-collapsible="icon"] *)': "none",
+    },
     alignItems: "center",
     aspectRatio: "1",
-    color: tokens.sidebarForeground,
-    display: "flex",
+    color: {
+      default: tokens["--sidebar-foreground"],
+      ":hover": tokens["--sidebar-accent-foreground"],
+    },
     inlineSize: "1.25rem",
     insetBlockStart: "0.875rem",
     insetInlineEnd: "0.75rem",
@@ -190,16 +279,22 @@ const styles = stylex.create({
     padding: 0,
     position: "absolute",
     transitionProperty: "transform",
-    ":hover": {
-      backgroundColor: tokens.sidebarAccent,
-      color: tokens.sidebarAccentForeground,
+    backgroundColor: {
+      default: null,
+      ":hover": tokens["--sidebar-accent"],
     },
-    ":focus-visible": { boxShadow: `0 0 0 2px ${tokens.sidebarRing}` },
+    boxShadow: {
+      default: null,
+      ":focus-visible": `0 0 0 2px ${tokens["--sidebar-ring"]}`,
+    },
     "::after": {
       content: '""',
       inset: "-0.5rem",
       position: "absolute",
-      "@media (min-width: 800px)": { display: "none" },
+      display: {
+        default: null,
+        "@media (min-width: 800px)": "none",
+      },
     },
   },
   groupContent: { fontSize: "0.875rem", inlineSize: "100%" },
@@ -212,9 +307,19 @@ const styles = stylex.create({
   },
   menuItem: { position: "relative" },
   menuButton: {
+    paddingInlineEnd: {
+      default: null,
+      ':is([data-slot="sidebar-menu-item"]:has([data-sidebar="menu-action"]) *)':
+        "2rem",
+    },
     alignItems: "center",
-    borderRadius: tokens.radiusLarge,
-    color: tokens.sidebarForeground,
+    borderRadius: tokens["--radius-lg"],
+    color: {
+      default: tokens["--sidebar-foreground"],
+      ":hover": tokens["--sidebar-accent-foreground"],
+      ":active": tokens["--sidebar-accent-foreground"],
+      "[data-active=true]": tokens["--sidebar-accent-foreground"],
+    },
     display: "flex",
     gap: "0.5rem",
     inlineSize: "100%",
@@ -223,67 +328,109 @@ const styles = stylex.create({
     padding: "0.5rem",
     textAlign: "start",
     transitionProperty: "width, height, padding",
-    ":hover": {
-      backgroundColor: tokens.sidebarAccent,
-      color: tokens.sidebarAccentForeground,
+    backgroundColor: {
+      default: null,
+      ":hover": tokens["--sidebar-accent"],
+      ":active": tokens["--sidebar-accent"],
+      "[data-active=true]": tokens["--sidebar-accent"],
     },
-    ":active": {
-      backgroundColor: tokens.sidebarAccent,
-      color: tokens.sidebarAccentForeground,
+    boxShadow: {
+      default: null,
+      ":focus-visible": `0 0 0 2px ${tokens["--sidebar-ring"]}`,
     },
-    ":focus-visible": { boxShadow: `0 0 0 2px ${tokens.sidebarRing}` },
-    ":disabled": { opacity: 0.5, pointerEvents: "none" },
-    "[aria-disabled=true]": { opacity: 0.5, pointerEvents: "none" },
-    "[data-active=true]": {
-      backgroundColor: tokens.sidebarAccent,
-      color: tokens.sidebarAccentForeground,
-      fontWeight: 500,
+    opacity: {
+      default: null,
+      ":disabled": 0.5,
+      "[aria-disabled=true]": 0.5,
+    },
+    pointerEvents: {
+      default: null,
+      ":disabled": "none",
+      "[aria-disabled=true]": "none",
+    },
+    fontWeight: {
+      default: null,
+      "[data-active=true]": 500,
     },
   },
   menuButtonDefault: { blockSize: "2rem", fontSize: "0.875rem" },
   menuButtonLarge: { blockSize: "3rem", fontSize: "0.875rem" },
   menuButtonSmall: { blockSize: "1.75rem", fontSize: "0.75rem" },
   menuButtonOutline: {
-    backgroundColor: tokens.background,
-    boxShadow: `0 0 0 1px ${tokens.sidebarBorder}`,
-    ":hover": { boxShadow: `0 0 0 1px ${tokens.sidebarAccent}` },
+    backgroundColor: tokens["--background"],
+    boxShadow: `0 0 0 1px ${tokens["--sidebar-border"]}`,
+    ":hover": { boxShadow: `0 0 0 1px ${tokens["--sidebar-accent"]}` },
   },
   menuAction: {
+    insetBlockStart: {
+      default: "0.375rem",
+      ':is([data-slot="sidebar-menu-button"][data-size="lg"] + *)': "0.625rem",
+      ':is([data-slot="sidebar-menu-button"][data-size="default"] + *)':
+        "0.375rem",
+      ':is([data-slot="sidebar-menu-button"][data-size="sm"] + *)': "0.25rem",
+    },
+    transitionDuration: "200ms",
+    display: {
+      default: "flex",
+      ':is([data-slot="sidebar"][data-collapsible="icon"] *)': "none",
+    },
     alignItems: "center",
     aspectRatio: "1",
-    color: tokens.sidebarForeground,
-    display: "flex",
+    color: {
+      default: tokens["--sidebar-foreground"],
+      ":hover": tokens["--sidebar-accent-foreground"],
+    },
     inlineSize: "1.25rem",
-    insetBlockStart: "0.375rem",
     insetInlineEnd: "0.25rem",
     justifyContent: "center",
     outline: "none",
     padding: 0,
     position: "absolute",
     transitionProperty: "transform",
-    ":hover": {
-      backgroundColor: tokens.sidebarAccent,
-      color: tokens.sidebarAccentForeground,
+    backgroundColor: {
+      default: null,
+      ":hover": tokens["--sidebar-accent"],
     },
-    ":focus-visible": { boxShadow: `0 0 0 2px ${tokens.sidebarRing}` },
+    boxShadow: {
+      default: null,
+      ":focus-visible": `0 0 0 2px ${tokens["--sidebar-ring"]}`,
+    },
     "::after": {
       content: '""',
       inset: "-0.5rem",
       position: "absolute",
-      "@media (min-width: 800px)": { display: "none" },
+      display: {
+        default: null,
+        "@media (min-width: 800px)": "none",
+      },
     },
   },
   menuActionHover: {
-    opacity: { default: 1, "@media (min-width: 800px)": 0 },
-    ":focus-within": { opacity: 1 },
-    ":hover": { opacity: 1 },
-    "[data-state=open]": { opacity: 1 },
+    opacity: {
+      default: 1,
+      ':is([data-slot="sidebar-menu-item"]:hover *, [data-slot="sidebar-menu-item"]:focus-within *)': 1,
+      "@media (min-width: 800px)": 0,
+      ":focus-within": 1,
+      ":hover": 1,
+      "[data-state=open]": 1,
+    },
   },
   badge: {
+    insetBlockStart: {
+      default: null,
+      ':is([data-slot="sidebar-menu-button"][data-size="lg"] + *)': "0.625rem",
+      ':is([data-slot="sidebar-menu-button"][data-size="default"] + *)':
+        "0.375rem",
+      ':is([data-slot="sidebar-menu-button"][data-size="sm"] + *)': "0.25rem",
+    },
+    transitionDuration: "200ms",
+    display: {
+      default: "flex",
+      ':is([data-slot="sidebar"][data-collapsible="icon"] *)': "none",
+    },
     alignItems: "center",
     blockSize: "1.25rem",
-    color: tokens.sidebarForeground,
-    display: "flex",
+    color: tokens["--sidebar-foreground"],
     fontSize: "0.75rem",
     fontVariantNumeric: "tabular-nums",
     fontWeight: 500,
@@ -304,7 +451,7 @@ const styles = stylex.create({
   },
   skeletonIcon: {
     blockSize: "1rem",
-    borderRadius: tokens.radiusLarge,
+    borderRadius: tokens["--radius-lg"],
     inlineSize: "1rem",
   },
   widths: (sidebarWidth: string, sidebarWidthIcon: string) => ({
@@ -319,10 +466,14 @@ const styles = stylex.create({
   },
   skeletonWidth: (width: string) => ({ "--skeleton-width": width }),
   menuSub: {
-    borderInlineStartColor: tokens.sidebarBorder,
+    transitionDuration: "200ms",
+    display: {
+      default: "flex",
+      ':is([data-slot="sidebar"][data-collapsible="icon"] *)': "none",
+    },
+    borderInlineStartColor: tokens["--sidebar-border"],
     borderInlineStartStyle: "solid",
     borderInlineStartWidth: 1,
-    display: "flex",
     flexDirection: "column",
     gap: "0.25rem",
     marginInline: "0.875rem",
@@ -334,8 +485,8 @@ const styles = stylex.create({
   subButton: {
     alignItems: "center",
     blockSize: { default: "2rem", "@media (min-width: 640px)": "1.75rem" },
-    borderRadius: tokens.radiusLarge,
-    color: tokens.sidebarForeground,
+    borderRadius: tokens["--radius-lg"],
+    color: tokens["--sidebar-foreground"],
     display: "flex",
     gap: "0.5rem",
     minInlineSize: 0,
@@ -344,17 +495,17 @@ const styles = stylex.create({
     paddingInline: "0.5rem",
     transform: "translateX(-1px)",
     ":hover": {
-      backgroundColor: tokens.sidebarAccent,
-      color: tokens.sidebarAccentForeground,
+      backgroundColor: tokens["--sidebar-accent"],
+      color: tokens["--sidebar-accent-foreground"],
     },
     ":active": {
-      backgroundColor: tokens.sidebarAccent,
-      color: tokens.sidebarAccentForeground,
+      backgroundColor: tokens["--sidebar-accent"],
+      color: tokens["--sidebar-accent-foreground"],
     },
-    ":focus-visible": { boxShadow: `0 0 0 2px ${tokens.sidebarRing}` },
+    ":focus-visible": { boxShadow: `0 0 0 2px ${tokens["--sidebar-ring"]}` },
     "[data-active=true]": {
-      backgroundColor: tokens.sidebarAccent,
-      color: tokens.sidebarAccentForeground,
+      backgroundColor: tokens["--sidebar-accent"],
+      color: tokens["--sidebar-accent-foreground"],
     },
   },
   textSmall: { fontSize: "0.75rem" },
@@ -405,6 +556,7 @@ export function useSidebar() {
 }
 
 export function SidebarProvider({
+  xstyle,
   defaultOpen = true,
   open: openProp,
   onOpenChange: setOpenProp,
@@ -416,7 +568,7 @@ export function SidebarProvider({
   defaultOpen?: boolean
   open?: boolean
   onOpenChange?: (open: boolean) => void
-}) {
+} & StyleXProps) {
   const isMobile = useIsMobile()
   const [openMobile, setOpenMobile] = React.useState(false)
   const [_open, _setOpen] = React.useState(defaultOpen)
@@ -471,6 +623,7 @@ export function SidebarProvider({
       className,
       styles.wrapper,
       styles.widths(SIDEBAR_WIDTH, SIDEBAR_WIDTH_ICON),
+      xstyle,
     ),
     { ...props, style },
   )
@@ -484,6 +637,7 @@ export function SidebarProvider({
 }
 
 export function Sidebar({
+  xstyle,
   side = "left",
   variant = "sidebar",
   collapsible = "offcanvas",
@@ -494,12 +648,12 @@ export function Sidebar({
   side?: "left" | "right"
   variant?: "sidebar" | "floating" | "inset"
   collapsible?: "offcanvas" | "icon" | "none"
-}) {
+} & StyleXProps) {
   const { isMobile, state, openMobile, setOpenMobile } = useSidebar()
   if (collapsible === "none")
     return (
       <div
-        {...stylexProps(className, styles.staticSidebar)}
+        {...stylexProps(className, styles.staticSidebar, xstyle)}
         data-slot="sidebar"
         {...props}
       >
@@ -510,12 +664,12 @@ export function Sidebar({
     return (
       <Sheet onOpenChange={setOpenMobile} open={openMobile} {...props}>
         <SheetPopup
-          {...stylexProps(className, styles.mobilePopup)}
+          className={className}
+          xstyle={[styles.mobilePopup, styles.mobileWidth, xstyle]}
           data-mobile="true"
           data-sidebar="sidebar"
           data-slot="sidebar"
           side={side}
-          {...stylex.props(styles.mobileWidth)}
         >
           <SheetHeader {...stylex.props(styles.visuallyHidden)}>
             <SheetTitle>Sidebar</SheetTitle>
@@ -542,6 +696,7 @@ export function Sidebar({
           styles.container,
           side === "left" ? styles.left : styles.right,
           padded && styles.padded,
+          xstyle,
         )}
         data-slot="sidebar-container"
         {...props}
@@ -559,14 +714,16 @@ export function Sidebar({
 }
 
 export function SidebarTrigger({
+  xstyle,
   className,
   onClick,
   ...props
-}: React.ComponentProps<typeof Button>) {
+}: React.ComponentProps<typeof Button> & StyleXProps) {
   const { toggleSidebar } = useSidebar()
   return (
     <Button
-      className={stylexProps(className, styles.trigger).className}
+      className={className}
+      xstyle={[styles.trigger, xstyle]}
       data-sidebar="trigger"
       data-slot="sidebar-trigger"
       onClick={(event) => {
@@ -577,20 +734,23 @@ export function SidebarTrigger({
       variant="ghost"
       {...props}
     >
-      <PanelLeftIcon />
+      <PanelLeftIcon
+        {...stylex.props(sidebarSlotStyles.icon, styles.triggerIcon)}
+      />
       <span {...stylex.props(styles.visuallyHidden)}>Toggle Sidebar</span>
     </Button>
   )
 }
 export function SidebarRail({
+  xstyle,
   className,
   ...props
-}: React.ComponentProps<"button">) {
+}: React.ComponentProps<"button"> & StyleXProps) {
   const { toggleSidebar } = useSidebar()
   return (
     <button
       aria-label="Toggle Sidebar"
-      {...stylexProps(className, styles.rail)}
+      {...stylexProps(className, styles.rail, xstyle)}
       data-sidebar="rail"
       data-slot="sidebar-rail"
       onClick={toggleSidebar}
@@ -602,24 +762,27 @@ export function SidebarRail({
   )
 }
 export function SidebarInset({
+  xstyle,
   className,
   ...props
-}: React.ComponentProps<"main">) {
+}: React.ComponentProps<"main"> & StyleXProps) {
   return (
     <main
-      {...stylexProps(className, styles.inset)}
+      {...stylexProps(className, styles.inset, xstyle)}
       data-slot="sidebar-inset"
       {...props}
     />
   )
 }
 export function SidebarInput({
+  xstyle,
   className,
   ...props
-}: React.ComponentProps<typeof Input>) {
+}: React.ComponentProps<typeof Input> & StyleXProps) {
   return (
     <Input
-      className={stylexProps(className, styles.input).className}
+      className={className}
+      xstyle={[styles.input, xstyle]}
       data-sidebar="input"
       data-slot="sidebar-input"
       {...props}
@@ -627,12 +790,13 @@ export function SidebarInput({
   )
 }
 export function SidebarHeader({
+  xstyle,
   className,
   ...props
-}: React.ComponentProps<"div">) {
+}: React.ComponentProps<"div"> & StyleXProps) {
   return (
     <div
-      {...stylexProps(className, styles.section)}
+      {...stylexProps(className, styles.section, xstyle)}
       data-sidebar="header"
       data-slot="sidebar-header"
       {...props}
@@ -640,12 +804,13 @@ export function SidebarHeader({
   )
 }
 export function SidebarFooter({
+  xstyle,
   className,
   ...props
-}: React.ComponentProps<"div">) {
+}: React.ComponentProps<"div"> & StyleXProps) {
   return (
     <div
-      {...stylexProps(className, styles.section)}
+      {...stylexProps(className, styles.section, xstyle)}
       data-sidebar="footer"
       data-slot="sidebar-footer"
       {...props}
@@ -653,12 +818,14 @@ export function SidebarFooter({
   )
 }
 export function SidebarSeparator({
+  xstyle,
   className,
   ...props
-}: React.ComponentProps<typeof Separator>) {
+}: React.ComponentProps<typeof Separator> & StyleXProps) {
   return (
     <Separator
-      className={stylexProps(className, styles.separator).className}
+      className={className}
+      xstyle={[styles.separator, xstyle]}
       data-sidebar="separator"
       data-slot="sidebar-separator"
       {...props}
@@ -666,9 +833,10 @@ export function SidebarSeparator({
   )
 }
 export function SidebarContent({
+  xstyle,
   className,
   ...props
-}: React.ComponentProps<"div">) {
+}: React.ComponentProps<"div"> & StyleXProps) {
   return (
     <ScrollArea
       className={stylex.props(styles.scrollArea).className}
@@ -677,7 +845,7 @@ export function SidebarContent({
       scrollFade
     >
       <div
-        {...stylexProps(className, styles.content)}
+        {...stylexProps(className, styles.content, xstyle)}
         data-sidebar="content"
         data-slot="sidebar-content"
         {...props}
@@ -686,12 +854,13 @@ export function SidebarContent({
   )
 }
 export function SidebarGroup({
+  xstyle,
   className,
   ...props
-}: React.ComponentProps<"div">) {
+}: React.ComponentProps<"div"> & StyleXProps) {
   return (
     <div
-      {...stylexProps(className, styles.group)}
+      {...stylexProps(className, styles.group, xstyle)}
       data-sidebar="group"
       data-slot="sidebar-group"
       {...props}
@@ -699,12 +868,13 @@ export function SidebarGroup({
   )
 }
 export function SidebarGroupLabel({
+  xstyle,
   className,
   render,
   ...props
-}: useRender.ComponentProps<"div">) {
+}: useRender.ComponentProps<"div"> & StyleXProps) {
   const defaultProps = {
-    ...stylexProps(className, styles.groupLabel),
+    ...stylexProps(className, styles.groupLabel, xstyle),
     "data-sidebar": "group-label",
     "data-slot": "sidebar-group-label",
   }
@@ -715,12 +885,13 @@ export function SidebarGroupLabel({
   })
 }
 export function SidebarGroupAction({
+  xstyle,
   className,
   render,
   ...props
-}: useRender.ComponentProps<"button">) {
+}: useRender.ComponentProps<"button"> & StyleXProps) {
   const defaultProps = {
-    ...stylexProps(className, styles.groupAction),
+    ...stylexProps(className, styles.groupAction, xstyle),
     "data-sidebar": "group-action",
     "data-slot": "sidebar-group-action",
   }
@@ -731,12 +902,13 @@ export function SidebarGroupAction({
   })
 }
 export function SidebarGroupContent({
+  xstyle,
   className,
   ...props
-}: React.ComponentProps<"div">) {
+}: React.ComponentProps<"div"> & StyleXProps) {
   return (
     <div
-      {...stylexProps(className, styles.groupContent)}
+      {...stylexProps(className, styles.groupContent, xstyle)}
       data-sidebar="group-content"
       data-slot="sidebar-group-content"
       {...props}
@@ -744,12 +916,13 @@ export function SidebarGroupContent({
   )
 }
 export function SidebarMenu({
+  xstyle,
   className,
   ...props
-}: React.ComponentProps<"ul">) {
+}: React.ComponentProps<"ul"> & StyleXProps) {
   return (
     <ul
-      {...stylexProps(className, styles.menu)}
+      {...stylexProps(className, styles.menu, xstyle)}
       data-sidebar="menu"
       data-slot="sidebar-menu"
       {...props}
@@ -757,12 +930,13 @@ export function SidebarMenu({
   )
 }
 export function SidebarMenuItem({
+  xstyle,
   className,
   ...props
-}: React.ComponentProps<"li">) {
+}: React.ComponentProps<"li"> & StyleXProps) {
   return (
     <li
-      {...stylexProps(className, styles.menuItem)}
+      {...stylexProps(className, styles.menuItem, xstyle)}
       data-sidebar="menu-item"
       data-slot="sidebar-menu-item"
       {...props}
@@ -771,6 +945,7 @@ export function SidebarMenuItem({
 }
 
 export function SidebarMenuButton({
+  xstyle,
   isActive = false,
   variant = "default",
   size = "default",
@@ -783,7 +958,7 @@ export function SidebarMenuButton({
   tooltip?: string | React.ComponentProps<typeof TooltipPopup>
   variant?: keyof typeof menuButtonVariantStyles | null
   size?: keyof typeof menuButtonSizeStyles | null
-}) {
+} & StyleXProps) {
   const { isMobile, state } = useSidebar()
   const defaultProps = {
     ...stylexProps(
@@ -791,6 +966,7 @@ export function SidebarMenuButton({
       styles.menuButton,
       menuButtonSizeStyles[size ?? "default"],
       menuButtonVariantStyles[variant ?? "default"],
+      xstyle,
     ),
     "data-active": isActive,
     "data-sidebar": "menu-button",
@@ -820,16 +996,20 @@ export function SidebarMenuButton({
   )
 }
 export function SidebarMenuAction({
+  xstyle,
   className,
   showOnHover = false,
   render,
   ...props
-}: useRender.ComponentProps<"button"> & { showOnHover?: boolean }) {
+}: useRender.ComponentProps<"button"> & {
+  showOnHover?: boolean
+} & StyleXProps) {
   const defaultProps = {
     ...stylexProps(
       className,
       styles.menuAction,
       showOnHover && styles.menuActionHover,
+      xstyle,
     ),
     "data-sidebar": "menu-action",
     "data-slot": "sidebar-menu-action",
@@ -841,12 +1021,13 @@ export function SidebarMenuAction({
   })
 }
 export function SidebarMenuBadge({
+  xstyle,
   className,
   ...props
-}: React.ComponentProps<"div">) {
+}: React.ComponentProps<"div"> & StyleXProps) {
   return (
     <div
-      {...stylexProps(className, styles.badge)}
+      {...stylexProps(className, styles.badge, xstyle)}
       data-sidebar="menu-badge"
       data-slot="sidebar-menu-badge"
       {...props}
@@ -854,16 +1035,17 @@ export function SidebarMenuBadge({
   )
 }
 export function SidebarMenuSkeleton({
+  xstyle,
   className,
   showIcon = false,
   ...props
-}: React.ComponentProps<"div"> & { showIcon?: boolean }) {
+}: React.ComponentProps<"div"> & { showIcon?: boolean } & StyleXProps) {
   const [width] = React.useState(
     () => `${Math.floor(Math.random() * 40) + 50}%`,
   )
   return (
     <div
-      {...stylexProps(className, styles.skeleton)}
+      {...stylexProps(className, styles.skeleton, xstyle)}
       data-sidebar="menu-skeleton"
       data-slot="sidebar-menu-skeleton"
       {...props}
@@ -886,12 +1068,13 @@ export function SidebarMenuSkeleton({
   )
 }
 export function SidebarMenuSub({
+  xstyle,
   className,
   ...props
-}: React.ComponentProps<"ul">) {
+}: React.ComponentProps<"ul"> & StyleXProps) {
   return (
     <ul
-      {...stylexProps(className, styles.menuSub)}
+      {...stylexProps(className, styles.menuSub, xstyle)}
       data-sidebar="menu-sub"
       data-slot="sidebar-menu-sub"
       {...props}
@@ -899,12 +1082,13 @@ export function SidebarMenuSub({
   )
 }
 export function SidebarMenuSubItem({
+  xstyle,
   className,
   ...props
-}: React.ComponentProps<"li">) {
+}: React.ComponentProps<"li"> & StyleXProps) {
   return (
     <li
-      className={className}
+      {...stylexProps(className, xstyle)}
       data-sidebar="menu-sub-item"
       data-slot="sidebar-menu-sub-item"
       {...props}
@@ -912,17 +1096,22 @@ export function SidebarMenuSubItem({
   )
 }
 export function SidebarMenuSubButton({
+  xstyle,
   size = "md",
   isActive = false,
   className,
   render,
   ...props
-}: useRender.ComponentProps<"a"> & { size?: "sm" | "md"; isActive?: boolean }) {
+}: useRender.ComponentProps<"a"> & {
+  size?: "sm" | "md"
+  isActive?: boolean
+} & StyleXProps) {
   const defaultProps = {
     ...stylexProps(
       className,
       styles.subButton,
       size === "sm" ? styles.textSmall : styles.textMedium,
+      xstyle,
     ),
     "data-active": isActive,
     "data-sidebar": "menu-sub-button",
@@ -934,4 +1123,18 @@ export function SidebarMenuSubButton({
     props: mergeProps<"a">(defaultProps, props),
     render,
   })
+}
+
+export function SidebarMenuText({
+  className,
+  xstyle,
+  ...props
+}: React.ComponentProps<"span"> & StyleXProps) {
+  return (
+    <span
+      {...stylexProps(className, sidebarSlotStyles.text, xstyle)}
+      data-slot="sidebar-menu-text"
+      {...props}
+    />
+  )
 }

@@ -1,3 +1,4 @@
+import * as stylex from "@stylexjs/stylex"
 import {
   PauseIcon,
   PlayIcon,
@@ -32,22 +33,28 @@ export default function Particle() {
         <MenuGroup>
           <MenuGroupLabel>Playback</MenuGroupLabel>
           <MenuItem>
-            <PlayIcon aria-hidden="true" />
+            <PlayIcon {...stylex.props(demoStyles.icon)} aria-hidden="true" />
             Play
             <MenuShortcut>⌘P</MenuShortcut>
           </MenuItem>
           <MenuItem disabled>
-            <PauseIcon aria-hidden="true" />
+            <PauseIcon {...stylex.props(demoStyles.icon)} aria-hidden="true" />
             Pause
             <MenuShortcut>⇧⌘P</MenuShortcut>
           </MenuItem>
           <MenuItem>
-            <SkipBackIcon aria-hidden="true" />
+            <SkipBackIcon
+              {...stylex.props(demoStyles.icon)}
+              aria-hidden="true"
+            />
             Previous
             <MenuShortcut>⌘[</MenuShortcut>
           </MenuItem>
           <MenuItem>
-            <SkipForwardIcon aria-hidden="true" />
+            <SkipForwardIcon
+              {...stylex.props(demoStyles.icon)}
+              aria-hidden="true"
+            />
             Next
             <MenuShortcut>⌘]</MenuShortcut>
           </MenuItem>
@@ -92,7 +99,7 @@ export default function Particle() {
         </MenuSub>
         <MenuSeparator />
         <MenuItem variant="destructive">
-          <TrashIcon aria-hidden="true" />
+          <TrashIcon {...stylex.props(demoStyles.icon)} aria-hidden="true" />
           Delete
           <MenuShortcut>⌘⌫</MenuShortcut>
         </MenuItem>
@@ -100,3 +107,14 @@ export default function Particle() {
     </Menu>
   )
 }
+
+const demoStyles = stylex.create({
+  icon: {
+    blockSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
+    inlineSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
+    flexShrink: 0,
+    pointerEvents: "none",
+    opacity: 0.8,
+    marginInline: "-0.125rem",
+  },
+})

@@ -1,5 +1,7 @@
 "use client"
 
+import type { StyleXProps } from "@registry/lib/stylex"
+
 import { Field as FieldPrimitive } from "@base-ui/react/field"
 import { stylexProps } from "@registry/lib/stylex"
 import { tokens } from "@registry/styles/tokens.stylex"
@@ -15,7 +17,7 @@ const styles = stylex.create({
   },
   label: {
     alignItems: "center",
-    color: tokens.foreground,
+    color: tokens["--foreground"],
     display: "inline-flex",
     fontSize: { default: "1rem", "@media (min-width: 640px)": "0.875rem" },
     fontWeight: 500,
@@ -25,66 +27,77 @@ const styles = stylex.create({
   },
   item: { display: "flex" },
   description: {
-    color: tokens.mutedForeground,
+    color: tokens["--muted-foreground"],
     fontSize: "0.75rem",
     lineHeight: "1rem",
   },
   error: {
-    color: tokens.destructiveForeground,
+    color: tokens["--destructive-foreground"],
     fontSize: "0.75rem",
     lineHeight: "1rem",
   },
 })
 
-export function Field({ className, ...props }: FieldPrimitive.Root.Props) {
+export function Field({
+  xstyle,
+  className,
+  ...props
+}: FieldPrimitive.Root.Props & StyleXProps) {
   return (
     <FieldPrimitive.Root
-      {...stylexProps(className, styles.root)}
+      {...stylexProps(className, styles.root, xstyle)}
       data-slot="field"
       {...props}
     />
   )
 }
 export function FieldLabel({
+  xstyle,
   className,
   ...props
-}: FieldPrimitive.Label.Props) {
+}: FieldPrimitive.Label.Props & StyleXProps) {
   return (
     <FieldPrimitive.Label
-      {...stylexProps(className, styles.label)}
+      {...stylexProps(className, styles.label, xstyle)}
       data-slot="field-label"
       {...props}
     />
   )
 }
-export function FieldItem({ className, ...props }: FieldPrimitive.Item.Props) {
+export function FieldItem({
+  xstyle,
+  className,
+  ...props
+}: FieldPrimitive.Item.Props & StyleXProps) {
   return (
     <FieldPrimitive.Item
-      {...stylexProps(className, styles.item)}
+      {...stylexProps(className, styles.item, xstyle)}
       data-slot="field-item"
       {...props}
     />
   )
 }
 export function FieldDescription({
+  xstyle,
   className,
   ...props
-}: FieldPrimitive.Description.Props) {
+}: FieldPrimitive.Description.Props & StyleXProps) {
   return (
     <FieldPrimitive.Description
-      {...stylexProps(className, styles.description)}
+      {...stylexProps(className, styles.description, xstyle)}
       data-slot="field-description"
       {...props}
     />
   )
 }
 export function FieldError({
+  xstyle,
   className,
   ...props
-}: FieldPrimitive.Error.Props) {
+}: FieldPrimitive.Error.Props & StyleXProps) {
   return (
     <FieldPrimitive.Error
-      {...stylexProps(className, styles.error)}
+      {...stylexProps(className, styles.error, xstyle)}
       data-slot="field-error"
       {...props}
     />

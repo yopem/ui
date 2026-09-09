@@ -1,5 +1,6 @@
 "use client"
 
+import type { StyleXProps } from "@registry/lib/stylex"
 import type * as React from "react"
 
 import { mergeProps } from "@base-ui/react/merge-props"
@@ -12,7 +13,7 @@ import { ChevronRight, MoreHorizontal } from "lucide-react"
 const styles = stylex.create({
   list: {
     alignItems: "center",
-    color: tokens.mutedForeground,
+    color: tokens["--muted-foreground"],
     display: "flex",
     flexWrap: "wrap",
     fontSize: "0.875rem",
@@ -21,10 +22,10 @@ const styles = stylex.create({
   },
   item: { alignItems: "center", display: "inline-flex", gap: "0.375rem" },
   link: {
-    color: { default: null, ":hover": tokens.foreground },
+    color: { default: null, ":hover": tokens["--foreground"] },
     transitionProperty: "color",
   },
-  page: { color: tokens.foreground, fontWeight: 400 },
+  page: { color: tokens["--foreground"], fontWeight: 400 },
   separator: { opacity: 0.8 },
   icon: { blockSize: "1rem", inlineSize: "1rem" },
   srOnly: {
@@ -44,12 +45,13 @@ export function Breadcrumb(props: React.ComponentProps<"nav">) {
 }
 
 export function BreadcrumbList({
+  xstyle,
   className,
   ...props
-}: React.ComponentProps<"ol">) {
+}: React.ComponentProps<"ol"> & StyleXProps) {
   return (
     <ol
-      {...stylexProps(className, styles.list)}
+      {...stylexProps(className, styles.list, xstyle)}
       data-slot="breadcrumb-list"
       {...props}
     />
@@ -57,12 +59,13 @@ export function BreadcrumbList({
 }
 
 export function BreadcrumbItem({
+  xstyle,
   className,
   ...props
-}: React.ComponentProps<"li">) {
+}: React.ComponentProps<"li"> & StyleXProps) {
   return (
     <li
-      {...stylexProps(className, styles.item)}
+      {...stylexProps(className, styles.item, xstyle)}
       data-slot="breadcrumb-item"
       {...props}
     />
@@ -70,12 +73,13 @@ export function BreadcrumbItem({
 }
 
 export function BreadcrumbLink({
+  xstyle,
   className,
   render,
   ...props
-}: useRender.ComponentProps<"a">) {
+}: useRender.ComponentProps<"a"> & StyleXProps) {
   const defaultProps = {
-    ...stylexProps(className, styles.link),
+    ...stylexProps(className, styles.link, xstyle),
     "data-slot": "breadcrumb-link",
   }
   return useRender({
@@ -86,13 +90,14 @@ export function BreadcrumbLink({
 }
 
 export function BreadcrumbPage({
+  xstyle,
   className,
   ...props
-}: React.ComponentProps<"span">) {
+}: React.ComponentProps<"span"> & StyleXProps) {
   return (
     <span
       aria-current="page"
-      {...stylexProps(className, styles.page)}
+      {...stylexProps(className, styles.page, xstyle)}
       data-slot="breadcrumb-page"
       {...props}
     />
@@ -100,14 +105,15 @@ export function BreadcrumbPage({
 }
 
 export function BreadcrumbSeparator({
+  xstyle,
   children,
   className,
   ...props
-}: React.ComponentProps<"li">) {
+}: React.ComponentProps<"li"> & StyleXProps) {
   return (
     <li
       aria-hidden="true"
-      {...stylexProps(className, styles.separator)}
+      {...stylexProps(className, styles.separator, xstyle)}
       data-slot="breadcrumb-separator"
       role="presentation"
       {...props}
@@ -118,13 +124,14 @@ export function BreadcrumbSeparator({
 }
 
 export function BreadcrumbEllipsis({
+  xstyle,
   className,
   ...props
-}: React.ComponentProps<"span">) {
+}: React.ComponentProps<"span"> & StyleXProps) {
   return (
     <span
       aria-hidden="true"
-      className={className}
+      {...stylexProps(className, xstyle)}
       data-slot="breadcrumb-ellipsis"
       role="presentation"
       {...props}

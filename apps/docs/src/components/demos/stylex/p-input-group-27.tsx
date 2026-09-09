@@ -74,7 +74,11 @@ export default function Particle() {
               />
             }
           >
-            {copied ? <CheckIcon /> : <CopyIcon />}
+            {copied ? (
+              <CheckIcon {...stylex.props(demoStyles.icon)} />
+            ) : (
+              <CopyIcon {...stylex.props(demoStyles.icon)} />
+            )}
           </TooltipTrigger>
           <TooltipPopup>
             {copied ? "Copied!" : "Copy to clipboard"}
@@ -86,6 +90,14 @@ export default function Particle() {
 }
 
 const demoStyles = stylex.create({
+  icon: {
+    blockSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
+    inlineSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
+    flexShrink: 0,
+    pointerEvents: "none",
+    opacity: 0.8,
+    marginInline: "-0.125rem",
+  },
   demo1: {
     fontFamily: '"Geist Mono", ui-monospace, monospace',
   },

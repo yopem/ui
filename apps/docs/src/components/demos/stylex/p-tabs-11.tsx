@@ -13,15 +13,21 @@ export default function Particle() {
       <div {...stylex.props(demoStyles.demo2)}>
         <TabsList variant="underline">
           <TabsTab value="tab-1">
-            <HouseIcon aria-hidden="true" />
+            <HouseIcon {...stylex.props(demoStyles.icon)} aria-hidden="true" />
             Overview
           </TabsTab>
           <TabsTab value="tab-2">
-            <PanelsTopLeftIcon aria-hidden="true" />
+            <PanelsTopLeftIcon
+              {...stylex.props(demoStyles.icon)}
+              aria-hidden="true"
+            />
             Projects
           </TabsTab>
           <TabsTab value="tab-3">
-            <SettingsIcon aria-hidden="true" />
+            <SettingsIcon
+              {...stylex.props(demoStyles.icon)}
+              aria-hidden="true"
+            />
             Settings
           </TabsTab>
         </TabsList>
@@ -40,6 +46,13 @@ export default function Particle() {
 }
 
 const demoStyles = stylex.create({
+  icon: {
+    blockSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
+    inlineSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
+    flexShrink: 0,
+    pointerEvents: "none",
+    marginInline: "-0.125rem",
+  },
   demo1: {
     inlineSize: "100%",
     flexDirection: "row",

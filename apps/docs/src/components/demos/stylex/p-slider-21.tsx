@@ -65,7 +65,10 @@ export default function Particle() {
         onClick={() => setValues(defaultValues)}
         variant="outline"
       >
-        <RotateCcwIcon aria-hidden="true" {...stylex.props(demoStyles.demo8)} />
+        <RotateCcwIcon
+          aria-hidden="true"
+          {...stylex.props(demoStyles.icon, demoStyles.demo8)}
+        />
         Reset
       </Button>
     </Fieldset>
@@ -73,6 +76,13 @@ export default function Particle() {
 }
 
 const demoStyles = stylex.create({
+  icon: {
+    blockSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
+    inlineSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
+    flexShrink: 0,
+    pointerEvents: "none",
+    marginInline: "-0.125rem",
+  },
   demo1: {
     display: "flex",
     inlineSize: "100%",

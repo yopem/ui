@@ -61,9 +61,15 @@ export default function Particle() {
               variant="ghost"
             >
               {isVisible ? (
-                <EyeOffIcon aria-hidden="true" />
+                <EyeOffIcon
+                  {...stylex.props(demoStyles.icon)}
+                  aria-hidden="true"
+                />
               ) : (
-                <EyeIcon aria-hidden="true" />
+                <EyeIcon
+                  {...stylex.props(demoStyles.icon)}
+                  aria-hidden="true"
+                />
               )}
             </Button>
           </InputGroupAddon>
@@ -114,6 +120,14 @@ export default function Particle() {
 }
 
 const demoStyles = stylex.create({
+  icon: {
+    blockSize: { default: "1rem", "@media (min-width: 640px)": "0.875rem" },
+    inlineSize: { default: "1rem", "@media (min-width: 640px)": "0.875rem" },
+    flexShrink: 0,
+    pointerEvents: "none",
+    opacity: 0.8,
+    marginInline: "-0.125rem",
+  },
   demo1: {
     display: "flex",
     flexDirection: "column",

@@ -109,7 +109,7 @@ export default function Particle() {
         <ComboboxInput
           aria-label="Add team members"
           placeholder="Add team members…"
-          startAddon={<SearchIcon />}
+          startAddon={<SearchIcon {...stylex.props(demoStyles.icon)} />}
         />
         <ComboboxPopup>
           <ComboboxEmpty>No team members found.</ComboboxEmpty>
@@ -157,7 +157,7 @@ export default function Particle() {
                 size="icon-xs"
                 variant="ghost"
               >
-                <XIcon />
+                <XIcon {...stylex.props(demoStyles.icon2)} />
               </Button>
             </li>
           ))}
@@ -168,6 +168,21 @@ export default function Particle() {
 }
 
 const demoStyles = stylex.create({
+  icon: {
+    blockSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
+    inlineSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
+    flexShrink: 0,
+    pointerEvents: "none",
+    opacity: 0.8,
+  },
+  icon2: {
+    blockSize: { default: "1rem", "@media (min-width: 640px)": "0.875rem" },
+    inlineSize: { default: "1rem", "@media (min-width: 640px)": "0.875rem" },
+    flexShrink: 0,
+    pointerEvents: "none",
+    opacity: 0.8,
+    marginInline: "-0.125rem",
+  },
   demo1: {
     display: "flex",
     inlineSize: "100%",

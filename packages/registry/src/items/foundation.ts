@@ -3,32 +3,25 @@ import type { SourceItem } from "@registry/items/types"
 export const foundationItems: SourceItem[] = [
   {
     categories: ["foundation"],
-    dependencies: [
-      "@fontsource-variable/inter@^5.3.0",
-      "@stylexjs/stylex@^0.19.0",
-      "clsx@^2.1.1",
-    ],
+    dependencies: ["@stylexjs/stylex@^0.19.0", "clsx@^2.1.1"],
     description:
-      "StyleX tokens, themes, reset, and theme runtime for Yopem UI.",
+      "Native StyleX tokens, themes, reset, and component styling helper for Yopem UI.",
     devDependencies: [],
     docs: {
       api: [
-        "ThemeProvider",
-        "ThemeProviderProps",
-        "ThemeScript",
-        "useTheme",
-        "getRootThemeProps",
+        "lightValues",
+        "darkValues",
         "tokens",
         "themeMarker",
         "lightTheme",
         "darkTheme",
         "rootStyles",
-        "themeClasses",
-        "themeClassNames",
         "stylexProps",
+        "StyleXStyle",
+        "StyleXProps",
       ],
       usage:
-        "Copy the base styles, theme runtime and StyleX helper into your project. Configure StyleX in your bundler and import the base stylesheet before using components.",
+        "Copy the base files, configure StyleX and import styles.css. Native tokens provide light defaults without a provider or script. Add the optional theme item for light/dark/system switching. Customize in the copied tokens.stylex.ts with stylex.createTheme(tokens, { ...lightValues, '--primary': '...' }); for dark use ...darkValues, not a partial theme layered over darkTheme. Keep these spreads in tokens.stylex.ts: StyleX 0.19 does not expand imported constant objects.",
     },
     files: [
       {
@@ -37,49 +30,9 @@ export const foundationItems: SourceItem[] = [
         type: "registry:style",
       },
       {
-        path: "styles/markers.stylex.ts",
-        target: "@styles/yopem/markers.stylex.ts",
-        type: "registry:style",
-      },
-      {
-        path: "styles/themes.ts",
-        target: "@styles/yopem/themes.ts",
-        type: "registry:style",
-      },
-      {
-        path: "styles/root.ts",
-        target: "@styles/yopem/root.ts",
-        type: "registry:style",
-      },
-      {
         path: "styles/styles.css",
         target: "@styles/yopem/styles.css",
         type: "registry:style",
-      },
-      {
-        path: "styles/display-form-compat.css",
-        target: "@styles/yopem/display-form-compat.css",
-        type: "registry:style",
-      },
-      {
-        path: "styles/remaining-compat.css",
-        target: "@styles/yopem/remaining-compat.css",
-        type: "registry:style",
-      },
-      {
-        path: "theme/theme-provider.tsx",
-        target: "@components/theme-provider.tsx",
-        type: "registry:lib",
-      },
-      {
-        path: "theme/theme-root.ts",
-        target: "@components/theme-root.ts",
-        type: "registry:lib",
-      },
-      {
-        path: "theme/theme-script.tsx",
-        target: "@components/theme-script.tsx",
-        type: "registry:lib",
       },
       {
         path: "lib/stylex.ts",
@@ -92,6 +45,51 @@ export const foundationItems: SourceItem[] = [
     registryDependencies: [],
     title: "Yopem base",
     type: "registry:base",
+  },
+  {
+    categories: ["foundation"],
+    dependencies: [],
+    description:
+      "Optional light, dark and system theme runtime with a CSP-compatible initial-paint script.",
+    devDependencies: [],
+    docs: {
+      api: [
+        "createThemeConfig",
+        "getRootThemeProps",
+        "ThemeScript",
+        "Theme",
+        "ResolvedTheme",
+        "STORAGE_KEY",
+        "MEDIA_QUERY",
+        "themeConfig",
+        "ThemeConfig",
+        "themeClasses",
+        "themeClassNames",
+        "ThemeScriptProps",
+        "ThemeProvider",
+        "useTheme",
+        "ThemeProviderProps",
+      ],
+      usage:
+        "Create complete light/dark themes in tokens.stylex.ts with StyleX, export those themes, then call createThemeConfig({ light, dark }) in your existing server-safe root layout. Pass the same serializable themes config to getRootThemeProps('light', themes), ThemeScript and ThemeProvider. Match defaultTheme and storageKey between script and provider. Pass your CSP nonce to ThemeScript; suppress hydration warnings on html because the script changes its class and data-theme before hydration. theme.tsx is server-safe; only theme-provider.tsx is a client entry.",
+    },
+    files: [
+      {
+        path: "theme/theme.tsx",
+        target: "@components/theme.tsx",
+        type: "registry:lib",
+      },
+      {
+        path: "theme/theme-provider.tsx",
+        target: "@components/theme-provider.tsx",
+        type: "registry:lib",
+      },
+    ],
+    name: "theme",
+    peerDependencies: ["react@>=18 <20", "react-dom@>=18 <20"],
+    registryDependencies: ["base"],
+    title: "Theme runtime",
+    type: "registry:lib",
   },
   {
     categories: ["feedback"],
@@ -122,7 +120,7 @@ export const foundationItems: SourceItem[] = [
       "Button with variants, sizes, rendering composition, and loading state.",
     devDependencies: [],
     docs: {
-      api: ["Button", "ButtonProps", "buttonVariants"],
+      api: ["buttonVariants", "Button", "ButtonProps"],
       usage: "`<Button>Save</Button>`",
     },
     files: [

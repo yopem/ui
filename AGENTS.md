@@ -33,7 +33,8 @@ Run `bun run lint && bun run fmt:check && bun run typecheck` after changes. Run 
   - `src/docs-extract.ts` — generates API data from canonical and dependency types.
   - `src/docs-notes.ts` — human-written usage notes and reviewed defaults.
   - `src/docs.generated.json` — ignored generated data; build, dev, and registry typecheck regenerate it.
-  - `src/styles/` — StyleX tokens, markers, themes, reset, compatibility CSS.
+  - `src/styles/tokens.stylex.ts` — native tokens, theme values, marker and root styles.
+  - `src/styles/styles.css` — reset, reduced motion and unavoidable upstream viewport rules.
   - `src/theme/` — ThemeProvider, theme root, theme script.
   - `src/build.ts` — generates `dist/`, then copies artifacts to `apps/docs/public/r` and `apps/docs/public/schema`.
 - `tests/` — release-readiness and Playwright tests.
@@ -45,12 +46,14 @@ Path aliases: `@registry/*` for registry source; `@/*` within docs. Generated re
 - Canonical components live in `packages/registry/src/components/ui/`; preserve Base UI behavior, public exports, `className`, and `data-slot` values.
 - Use `"use client"` for client components and Base UI primitives from `@base-ui/react`.
 - Style with `@stylexjs/stylex`: keep styles in local `stylex.create` objects, compose with `stylex.props`, and use `stylexProps` from `@registry/lib/stylex` when merging consumer `className`.
-- Use semantic variables from `@registry/styles/tokens.stylex.ts`, not raw palette values. Theme selectors use markers from `@registry/styles/markers.stylex.ts`.
+- Use semantic variables such as `tokens["--primary"]` from `@registry/styles/tokens.stylex.ts`, not raw palette values. The same module exports `themeMarker`, themes and root styles.
+- Merge consumer `xstyle` after defaults and variants. Input/Textarea expose `controlXstyle` for their outer wrappers and `xstyle` for native controls.
 - Keep variants as StyleX style objects. Do not add utility classes or `cva` to canonical StyleX components.
 - Docs and examples also use StyleX. No Tailwind/Fumadocs UI dependency, authored JSX `style` props, literal CSS class names, or embedded `<style>` blocks. Preserve consumer prop passthrough and upstream positioning; StyleX-generated runtime variables are allowed.
 - Prefer logical CSS properties (`paddingInline`, `blockSize`, etc.) and preserve accessible states, keyboard behavior, focus styles, and coarse-pointer targets.
 - Icons: `lucide-react`; use Remix Icon only where existing component already requires it.
-- Unsupported descendant selectors belong only in scoped compatibility CSS under `packages/registry/src/styles/`.
+- Style owned elements with StyleX, using explicit slot styles for consumer children. Do not restore automatic SVG/group-child CSS. Only unavoidable upstream-generated viewport selectors belong in styles.css.
+- Base setup remains three files: tokens.stylex.ts, styles.css, lib/stylex.ts. Theme switching is an optional two-file addition.
 
 ## Registry workflow
 

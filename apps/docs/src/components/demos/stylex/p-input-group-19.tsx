@@ -17,13 +17,13 @@ export default function Particle() {
       <InputGroupTextarea placeholder="Tell us about yourself…" />
       <InputGroupAddon align="block-start" {...stylex.props(demoStyles.demo1)}>
         <Toggle aria-label="Toggle bold" size="sm">
-          <BoldIcon aria-hidden="true" />
+          <BoldIcon {...stylex.props(demoStyles.icon)} aria-hidden="true" />
         </Toggle>
         <Toggle aria-label="Toggle italic" size="sm">
-          <ItalicIcon aria-hidden="true" />
+          <ItalicIcon {...stylex.props(demoStyles.icon)} aria-hidden="true" />
         </Toggle>
         <Button aria-label="Link" size="icon-sm" variant="ghost">
-          <LinkIcon aria-hidden="true" />
+          <LinkIcon {...stylex.props(demoStyles.icon2)} aria-hidden="true" />
         </Button>
       </InputGroupAddon>
     </InputGroup>
@@ -31,6 +31,21 @@ export default function Particle() {
 }
 
 const demoStyles = stylex.create({
+  icon: {
+    blockSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
+    inlineSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
+    flexShrink: 0,
+    pointerEvents: "none",
+    opacity: 0.8,
+  },
+  icon2: {
+    blockSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
+    inlineSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
+    flexShrink: 0,
+    pointerEvents: "none",
+    opacity: 0.8,
+    marginInline: "-0.125rem",
+  },
   demo1: {
     gap: "0.25rem",
     borderTopLeftRadius: "var(--radius)",

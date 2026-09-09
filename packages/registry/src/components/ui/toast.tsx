@@ -1,11 +1,11 @@
 "use client"
 
+import type { StyleXProps } from "@registry/lib/stylex"
 import type React from "react"
 
 import { Toast } from "@base-ui/react/toast"
 import { buttonVariants } from "@registry/components/ui/button"
-import { themeMarker } from "@registry/styles/markers.stylex"
-import { tokens } from "@registry/styles/tokens.stylex"
+import { themeMarker, tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import {
   CircleAlertIcon,
@@ -65,12 +65,12 @@ const styles = stylex.create({
     backgroundClip: "padding-box",
     backgroundColor:
       "color-mix(in srgb, var(--popover), #000 calc(1% * max(0, var(--toast-index, 0))))",
-    borderColor: tokens.border,
-    borderRadius: tokens.radiusLarge,
+    borderColor: tokens["--border"],
+    borderRadius: tokens["--radius-lg"],
     borderStyle: "solid",
     borderWidth: 1,
     boxShadow: "0 10px 15px -3px color-mix(in oklab, #000 5%, transparent)",
-    color: tokens.popoverForeground,
+    color: tokens["--popover-foreground"],
     blockSize: "var(--toast-calc-height)",
     inlineSize: "100%",
     position: "absolute",
@@ -155,7 +155,7 @@ const styles = stylex.create({
         "translateY(calc(var(--toast-swipe-movement-y) + 100% + var(--toast-inset)))",
     },
   },
-  expanded: { "[data-expanded]": { backgroundColor: tokens.popover } },
+  expanded: { "[data-expanded]": { backgroundColor: tokens["--popover"] } },
   replaySuccessOdd: {
     animationDuration: "320ms",
     animationName: successOdd,
@@ -181,6 +181,11 @@ const styles = stylex.create({
     "@media (prefers-reduced-motion: reduce)": { animationName: "none" },
   },
   content: {
+    pointerEvents: {
+      default: "auto",
+      ':is([data-slot="toast-root"][data-behind]:not([data-expanded]) [data-slot="toast-content"])':
+        "none",
+    },
     alignItems: "center",
     display: "flex",
     fontSize: "0.875rem",
@@ -189,17 +194,29 @@ const styles = stylex.create({
     overflow: "hidden",
     paddingBlock: "0.75rem",
     paddingInline: "0.875rem",
-    pointerEvents: "auto",
     transitionDuration: "250ms",
     transitionProperty: "opacity",
-    "[data-behind]": { opacity: 0 },
-    "[data-expanded]": { opacity: 1 },
+    opacity: {
+      default: null,
+      "[data-behind]": 0,
+      "[data-expanded]": 1,
+    },
   },
   message: { display: "flex", gap: "0.5rem" },
   text: { display: "flex", flexDirection: "column", gap: "0.125rem" },
   title: { fontWeight: 500 },
-  description: { color: tokens.mutedForeground },
+  description: { color: tokens["--muted-foreground"] },
   icon: { display: "block" },
+  iconSvg: {
+    blockSize: "1lh",
+    inlineSize: "1rem",
+    flexShrink: 0,
+    pointerEvents: "none",
+    '[data-toast-type="error"]': { color: tokens["--destructive-foreground"] },
+    '[data-toast-type="info"]': { color: tokens["--info"] },
+    '[data-toast-type="success"]': { color: tokens["--success"] },
+    '[data-toast-type="warning"]': { color: tokens["--warning"] },
+  },
   loadingIcon: {
     animationDuration: "1s",
     animationIterationCount: "infinite",
@@ -214,11 +231,11 @@ const styles = stylex.create({
   },
   anchoredRoot: {
     backgroundClip: "padding-box",
-    backgroundColor: tokens.popover,
-    borderColor: tokens.border,
+    backgroundColor: tokens["--popover"],
+    borderColor: tokens["--border"],
     borderStyle: "solid",
     borderWidth: 1,
-    color: tokens.popoverForeground,
+    color: tokens["--popover-foreground"],
     fontSize: "0.75rem",
     position: "relative",
     textWrap: "balance",
@@ -238,12 +255,12 @@ const styles = stylex.create({
     "[data-starting-style]": { opacity: 0, scale: 0.98 },
   },
   anchoredTooltip: {
-    borderRadius: tokens.radiusMedium,
+    borderRadius: tokens["--radius-md"],
     boxShadow: "0 4px 6px -1px color-mix(in oklab, #000 5%, transparent)",
     "::before": { borderRadius: "calc(var(--radius-md, 0.5rem) - 1px)" },
   },
   anchoredDefault: {
-    borderRadius: tokens.radiusLarge,
+    borderRadius: tokens["--radius-lg"],
     boxShadow: "0 10px 15px -3px color-mix(in oklab, #000 5%, transparent)",
     "::before": { borderRadius: "calc(var(--radius-lg, 0.625rem) - 1px)" },
   },
@@ -263,10 +280,11 @@ const TOAST_ICONS = {
 } as const
 type SwipeDirection = "up" | "down" | "left" | "right"
 interface ToastData {
-  rootProps?: Omit<
-    React.ComponentProps<typeof Toast.Root>,
-    "children" | "className" | "swipeDirection" | "toast"
-  >
+  rootProps?: StyleXProps &
+    Omit<
+      React.ComponentProps<typeof Toast.Root>,
+      "children" | "className" | "swipeDirection" | "toast"
+    >
   tooltipStyle?: boolean
 }
 
@@ -289,7 +307,10 @@ function ToastIcon({ type }: { type?: string }) {
   return (
     <div {...stylex.props(styles.icon)} data-slot="toast-icon">
       <Icon
-        {...stylex.props(type === "loading" && styles.loadingIcon)}
+        {...stylex.props(
+          styles.iconSvg,
+          type === "loading" && styles.loadingIcon,
+        )}
         data-toast-type={type}
       />
     </div>
@@ -298,9 +319,11 @@ function ToastIcon({ type }: { type?: string }) {
 
 function Toasts({
   position,
+  xstyle,
   portalProps,
 }: {
   position: ToastPosition
+  xstyle?: StyleXProps["xstyle"]
   portalProps?: React.ComponentProps<typeof Toast.Portal>
 }) {
   const { toasts } = Toast.useToastManager()
@@ -314,6 +337,8 @@ function Toasts({
       >
         {toasts.map((toast) => {
           const toastData = toast.data as ToastData | undefined
+          const { xstyle: rootXstyle, ...rootProps } =
+            toastData?.rootProps ?? {}
           return (
             <Toast.Root
               key={toast.id}
@@ -321,8 +346,10 @@ function Toasts({
                 styles.root,
                 styles.expanded,
                 getReplayStyle(toast),
+                xstyle,
+                rootXstyle,
               )}
-              {...toastData?.rootProps}
+              {...rootProps}
               data-position={position}
               data-slot="toast-root"
               swipeDirection={swipeDirection}
@@ -363,8 +390,9 @@ function Toasts({
 }
 
 function AnchoredToasts({
+  xstyle,
   portalProps,
-}: {
+}: StyleXProps & {
   portalProps?: React.ComponentProps<typeof Toast.Portal>
 }) {
   const { toasts } = Toast.useToastManager()
@@ -376,6 +404,8 @@ function AnchoredToasts({
       >
         {toasts.map((toast) => {
           const toastData = toast.data as ToastData | undefined
+          const { xstyle: rootXstyle, ...rootProps } =
+            toastData?.rootProps ?? {}
           const positionerProps = toast.positionerProps
           if (!positionerProps?.anchor) return null
           const tooltipStyle = toastData?.tooltipStyle ?? false
@@ -394,8 +424,10 @@ function AnchoredToasts({
                     ? styles.anchoredTooltip
                     : styles.anchoredDefault,
                   getReplayStyle(toast),
+                  xstyle,
+                  rootXstyle,
                 )}
-                {...toastData?.rootProps}
+                {...rootProps}
                 data-slot="toast-popup"
                 toast={toast}
               >
@@ -452,11 +484,12 @@ export type ToastPosition =
   | "bottom-left"
   | "bottom-center"
   | "bottom-right"
-export interface ToastProviderProps extends Toast.Provider.Props {
+export interface ToastProviderProps extends Toast.Provider.Props, StyleXProps {
   position?: ToastPosition
   portalProps?: React.ComponentProps<typeof Toast.Portal>
 }
 export function ToastProvider({
+  xstyle,
   children,
   position = "bottom-right",
   portalProps,
@@ -465,14 +498,16 @@ export function ToastProvider({
   return (
     <Toast.Provider toastManager={toastManager} {...props}>
       {children}
-      <Toasts portalProps={portalProps} position={position} />
+      <Toasts xstyle={xstyle} portalProps={portalProps} position={position} />
     </Toast.Provider>
   )
 }
-export interface AnchoredToastProviderProps extends Toast.Provider.Props {
+export interface AnchoredToastProviderProps
+  extends Toast.Provider.Props, StyleXProps {
   portalProps?: React.ComponentProps<typeof Toast.Portal>
 }
 export function AnchoredToastProvider({
+  xstyle,
   children,
   portalProps,
   ...props
@@ -480,7 +515,7 @@ export function AnchoredToastProvider({
   return (
     <Toast.Provider toastManager={anchoredToastManager} {...props}>
       {children}
-      <AnchoredToasts portalProps={portalProps} />
+      <AnchoredToasts xstyle={xstyle} portalProps={portalProps} />
     </Toast.Provider>
   )
 }

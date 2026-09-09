@@ -55,9 +55,9 @@ export default function Particle() {
         }
       >
         {isCopied ? (
-          <CheckIcon {...stylex.props(demoStyles.demo1)} />
+          <CheckIcon {...stylex.props(demoStyles.icon, demoStyles.demo1)} />
         ) : (
-          <CopyIcon {...stylex.props(demoStyles.demo1)} />
+          <CopyIcon {...stylex.props(demoStyles.icon, demoStyles.demo1)} />
         )}
       </TooltipTrigger>
       <TooltipPopup>
@@ -68,6 +68,12 @@ export default function Particle() {
 }
 
 const demoStyles = stylex.create({
+  icon: {
+    flexShrink: 0,
+    pointerEvents: "none",
+    opacity: 0.8,
+    marginInline: "-0.125rem",
+  },
   demo1: {
     inlineSize: "calc(0.25rem * 4)",
     blockSize: "calc(0.25rem * 4)",

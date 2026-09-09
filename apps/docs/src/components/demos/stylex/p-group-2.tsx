@@ -1,10 +1,15 @@
 "use client"
 
+import * as stylex from "@stylexjs/stylex"
 import { CheckIcon, CopyIcon } from "lucide-react"
 import { useRef } from "react"
 
 import { Button } from "@/components/ui/stylex/button"
-import { Group, GroupSeparator } from "@/components/ui/stylex/group"
+import {
+  Group,
+  GroupSeparator,
+  groupItemStyles,
+} from "@/components/ui/stylex/group"
 import { Input } from "@/components/ui/stylex/input"
 import {
   Tooltip,
@@ -24,6 +29,7 @@ export default function Particle() {
         defaultValue="https://coss.com"
         ref={inputRef}
         type="text"
+        controlXstyle={groupItemStyles.item}
       />
       <GroupSeparator />
       <Tooltip>
@@ -38,10 +44,15 @@ export default function Particle() {
               }}
               size="icon"
               variant="outline"
+              xstyle={groupItemStyles.item}
             />
           }
         >
-          {isCopied ? <CheckIcon /> : <CopyIcon />}
+          {isCopied ? (
+            <CheckIcon {...stylex.props(demoStyles.icon)} />
+          ) : (
+            <CopyIcon {...stylex.props(demoStyles.icon)} />
+          )}
         </TooltipTrigger>
         <TooltipPopup>
           <p>Copy to clipboard</p>
@@ -50,3 +61,14 @@ export default function Particle() {
     </Group>
   )
 }
+
+const demoStyles = stylex.create({
+  icon: {
+    blockSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
+    inlineSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
+    flexShrink: 0,
+    pointerEvents: "none",
+    opacity: 0.8,
+    marginInline: "-0.125rem",
+  },
+})

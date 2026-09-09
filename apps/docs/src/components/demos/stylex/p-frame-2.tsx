@@ -19,12 +19,16 @@ export default function Particle() {
             render={<Button variant="ghost" />}
           >
             <ChevronDownIcon
-              {...stylex.props(demoStyles.demo3, demoStyles.report1)}
+              {...stylex.props(
+                demoStyles.icon,
+                demoStyles.demo3,
+                demoStyles.report1,
+              )}
             />
             Section header
           </CollapsibleTrigger>
           <Button aria-label="Delete" size="icon" variant="ghost">
-            <TrashIcon />
+            <TrashIcon {...stylex.props(demoStyles.icon2)} />
           </Button>
         </FrameHeader>
         <CollapsiblePanel>
@@ -39,6 +43,20 @@ export default function Particle() {
 }
 
 const demoStyles = stylex.create({
+  icon: {
+    flexShrink: 0,
+    pointerEvents: "none",
+    opacity: 0.8,
+    marginInline: "-0.125rem",
+  },
+  icon2: {
+    blockSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
+    inlineSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
+    flexShrink: 0,
+    pointerEvents: "none",
+    opacity: 0.8,
+    marginInline: "-0.125rem",
+  },
   demo1: {
     inlineSize: "100%",
   },

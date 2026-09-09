@@ -29,7 +29,7 @@ export default function Particle() {
           <Button {...stylex.props(demoStyles.demo1)} variant="outline" />
         }
       >
-        <CalendarIcon />
+        <CalendarIcon {...stylex.props(demoStyles.icon)} />
         {date ? format(date, "PPP") : "Pick a date"}
       </PopoverTrigger>
       <PopoverPopup>
@@ -40,6 +40,14 @@ export default function Particle() {
 }
 
 const demoStyles = stylex.create({
+  icon: {
+    blockSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
+    inlineSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
+    flexShrink: 0,
+    pointerEvents: "none",
+    opacity: 0.8,
+    marginInline: "-0.125rem",
+  },
   demo1: {
     inlineSize: "100%",
     justifyContent: "flex-start",

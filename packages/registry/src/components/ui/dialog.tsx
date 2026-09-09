@@ -1,17 +1,25 @@
 "use client"
 
+import type { StyleXProps } from "@registry/lib/stylex"
+
 import { Dialog as DialogPrimitive } from "@base-ui/react/dialog"
 import { mergeProps } from "@base-ui/react/merge-props"
 import { useRender } from "@base-ui/react/use-render"
 import { Button } from "@registry/components/ui/button"
 import { ScrollArea } from "@registry/components/ui/scroll-area"
 import { stylexProps } from "@registry/lib/stylex"
-import { themeMarker } from "@registry/styles/markers.stylex"
-import { tokens } from "@registry/styles/tokens.stylex"
+import { themeMarker, tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import { XIcon } from "lucide-react"
 
 const styles = stylex.create({
+  closeIcon: {
+    blockSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
+    inlineSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
+    flexShrink: 0,
+    pointerEvents: "none",
+    opacity: 0.8,
+  },
   backdrop: {
     backdropFilter: "blur(4px)",
     backgroundColor: "rgb(0 0 0 / 0.32)",
@@ -41,13 +49,13 @@ const styles = stylex.create({
   },
   popup: {
     backgroundClip: "padding-box",
-    backgroundColor: tokens.popover,
-    borderColor: tokens.border,
+    backgroundColor: tokens["--popover"],
+    borderColor: tokens["--border"],
     borderRadius: "0.875rem",
     borderStyle: "solid",
     borderWidth: 1,
     boxShadow: "0 10px 15px -3px color-mix(in oklab, #000 5%, transparent)",
-    color: tokens.popoverForeground,
+    color: tokens["--popover-foreground"],
     display: "flex",
     flexDirection: "column",
     gridRowStart: 2,
@@ -102,11 +110,16 @@ const styles = stylex.create({
     position: "absolute",
   },
   header: {
+    paddingBlockEnd: {
+      default: null,
+      ':is(:is([data-slot="dialog-popup"], [data-slot="sheet-popup"], [data-slot="drawer-popup"]):has([data-slot$="panel"]) > [data-slot="dialog-header"])':
+        "0.75rem",
+      "@media (max-width: 639px)": "1rem",
+    },
     display: "flex",
     flexDirection: "column",
     gap: "0.5rem",
     padding: "1.5rem",
-    "@media (max-width: 639px)": { paddingBlockEnd: "1rem" },
   },
   footer: {
     display: "flex",
@@ -123,20 +136,39 @@ const styles = stylex.create({
   footerDefault: {
     backgroundColor:
       "color-mix(in oklab, var(--muted, transparent) 72%, transparent)",
-    borderBlockStartColor: tokens.border,
+    borderBlockStartColor: tokens["--border"],
     borderBlockStartStyle: "solid",
     borderBlockStartWidth: 1,
     paddingBlock: "1rem",
   },
-  footerBare: { paddingBlockEnd: "1.5rem", paddingBlockStart: "1rem" },
+  footerBare: {
+    paddingBlockStart: {
+      default: "1rem",
+      ':is(:is([data-slot="dialog-popup"], [data-slot="sheet-popup"], [data-slot="drawer-popup"]):has([data-slot$="panel"]) > [data-slot="dialog-footer"])':
+        "0.75rem",
+    },
+    paddingBlockEnd: "1.5rem",
+  },
   title: {
-    fontFamily: tokens.fontHeading,
+    fontFamily: tokens["--font-heading"],
     fontSize: "1.25rem",
     fontWeight: 600,
     lineHeight: 1,
   },
-  description: { color: tokens.mutedForeground, fontSize: "0.875rem" },
-  panel: { padding: "1.5rem" },
+  description: { color: tokens["--muted-foreground"], fontSize: "0.875rem" },
+  panel: {
+    paddingBlockStart: {
+      default: null,
+      ':is(:is([data-slot="dialog-popup"], [data-slot="sheet-popup"], [data-slot="drawer-popup"]):has([data-slot$="header"]) [data-slot="dialog-panel"])':
+        "0.25rem",
+    },
+    paddingBlockEnd: {
+      default: null,
+      ':is(:is([data-slot="dialog-popup"], [data-slot="sheet-popup"], [data-slot="drawer-popup"]):has([data-slot$="footer"][data-variant="bare"]) [data-slot="dialog-panel"])':
+        "0.25rem",
+    },
+    padding: "1.5rem",
+  },
 })
 
 export const DialogCreateHandle: typeof DialogPrimitive.createHandle =
@@ -152,24 +184,26 @@ export function DialogClose(props: DialogPrimitive.Close.Props) {
   return <DialogPrimitive.Close data-slot="dialog-close" {...props} />
 }
 export function DialogBackdrop({
+  xstyle,
   className,
   ...props
-}: DialogPrimitive.Backdrop.Props) {
+}: DialogPrimitive.Backdrop.Props & StyleXProps) {
   return (
     <DialogPrimitive.Backdrop
-      {...stylexProps(className, styles.backdrop)}
+      {...stylexProps(className, styles.backdrop, xstyle)}
       data-slot="dialog-backdrop"
       {...props}
     />
   )
 }
 export function DialogViewport({
+  xstyle,
   className,
   ...props
-}: DialogPrimitive.Viewport.Props) {
+}: DialogPrimitive.Viewport.Props & StyleXProps) {
   return (
     <DialogPrimitive.Viewport
-      {...stylexProps(className, styles.viewport)}
+      {...stylexProps(className, styles.viewport, xstyle)}
       data-slot="dialog-viewport"
       {...props}
     />
@@ -177,6 +211,7 @@ export function DialogViewport({
 }
 
 export function DialogPopup({
+  xstyle,
   className,
   children,
   showCloseButton = true,
@@ -189,7 +224,7 @@ export function DialogPopup({
   bottomStickOnMobile?: boolean
   closeProps?: DialogPrimitive.Close.Props
   portalProps?: DialogPrimitive.Portal.Props
-}) {
+} & StyleXProps) {
   return (
     <DialogPortal {...portalProps}>
       <DialogBackdrop />
@@ -204,6 +239,7 @@ export function DialogPopup({
             className,
             styles.popup,
             bottomStickOnMobile && styles.popupBottomMobile,
+            xstyle,
           )}
           data-slot="dialog-popup"
           {...props}
@@ -216,7 +252,7 @@ export function DialogPopup({
               render={<Button size="icon" variant="ghost" />}
               {...closeProps}
             >
-              <XIcon />
+              <XIcon {...stylex.props(styles.closeIcon)} />
             </DialogPrimitive.Close>
           ) : null}
         </DialogPrimitive.Popup>
@@ -226,12 +262,13 @@ export function DialogPopup({
 }
 
 export function DialogHeader({
+  xstyle,
   className,
   render,
   ...props
-}: useRender.ComponentProps<"div">) {
+}: useRender.ComponentProps<"div"> & StyleXProps) {
   const defaultProps = {
-    ...stylexProps(className, styles.header),
+    ...stylexProps(className, styles.header, xstyle),
     "data-slot": "dialog-header",
   }
   return useRender({
@@ -242,16 +279,20 @@ export function DialogHeader({
 }
 
 export function DialogFooter({
+  xstyle,
   className,
   variant = "default",
   render,
   ...props
-}: useRender.ComponentProps<"div"> & { variant?: "default" | "bare" }) {
+}: useRender.ComponentProps<"div"> & {
+  variant?: "default" | "bare"
+} & StyleXProps) {
   const defaultProps = {
     ...stylexProps(
       className,
       styles.footer,
       variant === "default" ? styles.footerDefault : styles.footerBare,
+      xstyle,
     ),
     "data-slot": "dialog-footer",
     "data-variant": variant,
@@ -264,24 +305,26 @@ export function DialogFooter({
 }
 
 export function DialogTitle({
+  xstyle,
   className,
   ...props
-}: DialogPrimitive.Title.Props) {
+}: DialogPrimitive.Title.Props & StyleXProps) {
   return (
     <DialogPrimitive.Title
-      {...stylexProps(className, styles.title)}
+      {...stylexProps(className, styles.title, xstyle)}
       data-slot="dialog-title"
       {...props}
     />
   )
 }
 export function DialogDescription({
+  xstyle,
   className,
   ...props
-}: DialogPrimitive.Description.Props) {
+}: DialogPrimitive.Description.Props & StyleXProps) {
   return (
     <DialogPrimitive.Description
-      {...stylexProps(className, styles.description)}
+      {...stylexProps(className, styles.description, xstyle)}
       data-slot="dialog-description"
       {...props}
     />
@@ -289,13 +332,14 @@ export function DialogDescription({
 }
 
 export function DialogPanel({
+  xstyle,
   className,
   scrollFade = true,
   render,
   ...props
-}: useRender.ComponentProps<"div"> & { scrollFade?: boolean }) {
+}: useRender.ComponentProps<"div"> & { scrollFade?: boolean } & StyleXProps) {
   const defaultProps = {
-    ...stylexProps(className, styles.panel),
+    ...stylexProps(className, styles.panel, xstyle),
     "data-slot": "dialog-panel",
   }
   const content = useRender({

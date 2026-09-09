@@ -25,7 +25,7 @@ export default function Particle() {
           {...stylex.props(demoStyles.demo2)}
           render={<Button size="icon" variant="ghost" />}
         >
-          <XIcon />
+          <XIcon {...stylex.props(demoStyles.icon)} />
         </PopoverClose>
         <div {...stylex.props(demoStyles.demo3)}>
           <PopoverTitle {...stylex.props(demoStyles.demo4)}>
@@ -42,6 +42,14 @@ export default function Particle() {
 }
 
 const demoStyles = stylex.create({
+  icon: {
+    blockSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
+    inlineSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
+    flexShrink: 0,
+    pointerEvents: "none",
+    opacity: 0.8,
+    marginInline: "-0.125rem",
+  },
   demo1: {
     inlineSize: "calc(0.25rem * 80)",
   },

@@ -1,9 +1,10 @@
 "use client"
 
+import type { StyleXProps } from "@registry/lib/stylex"
+
 import { Tabs as TabsPrimitive } from "@base-ui/react/tabs"
 import { stylexProps } from "@registry/lib/stylex"
-import { themeMarker } from "@registry/styles/markers.stylex"
-import { tokens } from "@registry/styles/tokens.stylex"
+import { themeMarker, tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import * as React from "react"
 
@@ -11,6 +12,16 @@ type TabsVariant = "default" | "underline"
 type TabsSize = "default" | "lg" | "sm"
 
 const TabsListContext = React.createContext<TabsSize>("default")
+
+export const tabsSlotStyles = stylex.create({
+  icon: {
+    blockSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
+    inlineSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
+    flexShrink: 0,
+    pointerEvents: "none",
+  },
+  itemIcon: { marginInline: "-0.125rem" },
+})
 
 const styles = stylex.create({
   root: {
@@ -21,7 +32,7 @@ const styles = stylex.create({
   },
   list: {
     alignItems: "center",
-    color: tokens.mutedForeground,
+    color: tokens["--muted-foreground"],
     display: "flex",
     inlineSize: "fit-content",
     justifyContent: "center",
@@ -30,8 +41,8 @@ const styles = stylex.create({
     "[data-orientation=vertical]": { flexDirection: "column" },
   },
   listDefault: {
-    backgroundColor: tokens.muted,
-    borderRadius: tokens.radiusLarge,
+    backgroundColor: tokens["--muted"],
+    borderRadius: tokens["--radius-lg"],
     columnGap: "0.125rem",
     color:
       "color-mix(in oklab, var(--muted-foreground, currentColor) 72%, transparent)",
@@ -56,15 +67,16 @@ const styles = stylex.create({
   },
   indicatorDefault: {
     backgroundColor: {
-      default: tokens.background,
-      [stylex.when.ancestor('[data-theme="dark"]', themeMarker)]: tokens.input,
+      default: tokens["--background"],
+      [stylex.when.ancestor('[data-theme="dark"]', themeMarker)]:
+        tokens["--input"],
     },
-    borderRadius: tokens.radiusMedium,
+    borderRadius: tokens["--radius-md"],
     boxShadow: "0 1px 2px color-mix(in oklab, #000 5%, transparent)",
     zIndex: -1,
   },
   indicatorUnderline: {
-    backgroundColor: tokens.primary,
+    backgroundColor: tokens["--primary"],
     zIndex: 10,
     "[data-orientation=horizontal]": {
       blockSize: "0.125rem",
@@ -78,30 +90,54 @@ const styles = stylex.create({
     },
   },
   tab: {
+    backgroundColor: {
+      default: null,
+      ':is([data-slot="tabs-list"] > [data-slot="tabs-tab"]:hover)':
+        tokens["--accent"],
+    },
     alignItems: "center",
     borderColor: "transparent",
-    borderRadius: tokens.radiusMedium,
+    borderRadius: tokens["--radius-md"],
     borderStyle: "solid",
     borderWidth: 1,
     cursor: "pointer",
     display: "flex",
     flexGrow: 1,
     flexShrink: 0,
-    fontSize: { default: "1rem", "@media (min-width: 640px)": "0.875rem" },
+    fontSize: {
+      default: "1rem",
+      "@media (min-width: 640px)": "0.875rem",
+    },
     fontWeight: 500,
     gap: "0.375rem",
-    justifyContent: "center",
+    justifyContent: {
+      default: "center",
+      "[data-orientation=vertical]": "flex-start",
+    },
     outline: "none",
     position: "relative",
     transitionProperty: "color, background-color, box-shadow",
     whiteSpace: "nowrap",
-    ":hover": { color: tokens.mutedForeground },
-    ":focus-visible": { boxShadow: `0 0 0 2px ${tokens.ring}` },
-    "[data-active]": { color: tokens.foreground },
-    "[data-disabled]": { opacity: 0.64, pointerEvents: "none" },
-    "[data-orientation=vertical]": {
-      inlineSize: "100%",
-      justifyContent: "flex-start",
+    color: {
+      default: null,
+      ":hover": tokens["--muted-foreground"],
+      "[data-active]": tokens["--foreground"],
+    },
+    boxShadow: {
+      default: null,
+      ":focus-visible": `0 0 0 2px ${tokens["--ring"]}`,
+    },
+    opacity: {
+      default: null,
+      "[data-disabled]": 0.64,
+    },
+    pointerEvents: {
+      default: null,
+      "[data-disabled]": "none",
+    },
+    inlineSize: {
+      default: null,
+      "[data-orientation=vertical]": "100%",
     },
   },
   tabDefault: {
@@ -125,10 +161,14 @@ const sizeStyles = {
   sm: styles.tabSmall,
 } as const
 
-export function Tabs({ className, ...props }: TabsPrimitive.Root.Props) {
+export function Tabs({
+  xstyle,
+  className,
+  ...props
+}: TabsPrimitive.Root.Props & StyleXProps) {
   return (
     <TabsPrimitive.Root
-      {...stylexProps(className, styles.root)}
+      {...stylexProps(className, styles.root, xstyle)}
       data-slot="tabs"
       {...props}
     />
@@ -136,18 +176,23 @@ export function Tabs({ className, ...props }: TabsPrimitive.Root.Props) {
 }
 
 export function TabsList({
+  xstyle,
   variant = "default",
   size = "default",
   className,
   children,
   ...props
-}: TabsPrimitive.List.Props & { size?: TabsSize; variant?: TabsVariant }) {
+}: TabsPrimitive.List.Props & {
+  size?: TabsSize
+  variant?: TabsVariant
+} & StyleXProps) {
   return (
     <TabsPrimitive.List
       {...stylexProps(
         className,
         styles.list,
         variant === "default" ? styles.listDefault : styles.listUnderline,
+        xstyle,
       )}
       data-size={size}
       data-slot="tabs-list"
@@ -170,16 +215,17 @@ export function TabsList({
 }
 
 export function TabsTab({
+  xstyle,
   className,
   size,
   ...props
-}: TabsPrimitive.Tab.Props & { size?: TabsSize }) {
+}: TabsPrimitive.Tab.Props & { size?: TabsSize } & StyleXProps) {
   const contextSize = React.useContext(TabsListContext)
   const resolvedSize = size ?? contextSize
 
   return (
     <TabsPrimitive.Tab
-      {...stylexProps(className, styles.tab, sizeStyles[resolvedSize])}
+      {...stylexProps(className, styles.tab, sizeStyles[resolvedSize], xstyle)}
       data-size={resolvedSize}
       data-slot="tabs-tab"
       {...props}
@@ -187,10 +233,14 @@ export function TabsTab({
   )
 }
 
-export function TabsPanel({ className, ...props }: TabsPrimitive.Panel.Props) {
+export function TabsPanel({
+  xstyle,
+  className,
+  ...props
+}: TabsPrimitive.Panel.Props & StyleXProps) {
   return (
     <TabsPrimitive.Panel
-      {...stylexProps(className, styles.panel)}
+      {...stylexProps(className, styles.panel, xstyle)}
       data-slot="tabs-content"
       {...props}
     />

@@ -382,7 +382,9 @@ export default function PCommand2() {
                   size="sm"
                   variant="ghost"
                 >
-                  <SparklesIcon {...stylex.props(demoStyles.demo2)} />
+                  <SparklesIcon
+                    {...stylex.props(demoStyles.icon, demoStyles.demo2)}
+                  />
                   Ask AI
                   <Kbd {...stylex.props(demoStyles.demo3)}>Tab</Kbd>
                 </Button>
@@ -392,7 +394,7 @@ export default function PCommand2() {
                   {searchQuery.trim() && (
                     <div {...stylex.props(demoStyles.demo5)}>
                       <EmptyMedia variant="icon">
-                        <SearchIcon />
+                        <SearchIcon {...stylex.props(demoStyles.icon2)} />
                       </EmptyMedia>
                       <p>No results found.</p>
                       <p>
@@ -441,17 +443,21 @@ export default function PCommand2() {
                       <div {...stylex.props(demoStyles.demo9)}>
                         <KbdGroup>
                           <Kbd>
-                            <ArrowUpIcon />
+                            <ArrowUpIcon {...stylex.props(demoStyles.icon3)} />
                           </Kbd>
                           <Kbd>
-                            <ArrowDownIcon />
+                            <ArrowDownIcon
+                              {...stylex.props(demoStyles.icon3)}
+                            />
                           </Kbd>
                         </KbdGroup>
                         <span>Navigate</span>
                       </div>
                       <div {...stylex.props(demoStyles.demo9)}>
                         <Kbd>
-                          <CornerDownLeftIcon />
+                          <CornerDownLeftIcon
+                            {...stylex.props(demoStyles.icon3)}
+                          />
                         </Kbd>
                         <span>Open</span>
                       </div>
@@ -513,7 +519,9 @@ export default function PCommand2() {
                   size="sm"
                   variant="ghost"
                 >
-                  <ArrowLeftIcon {...stylex.props(demoStyles.demo2)} />
+                  <ArrowLeftIcon
+                    {...stylex.props(demoStyles.icon, demoStyles.demo2)}
+                  />
                   Back to search
                   <Kbd {...stylex.props(demoStyles.demo3)}>Esc</Kbd>
                 </Button>
@@ -617,7 +625,7 @@ export default function PCommand2() {
                 ) : (
                   <div {...stylex.props(demoStyles.demo9)}>
                     <Kbd>
-                      <CornerDownLeftIcon />
+                      <CornerDownLeftIcon {...stylex.props(demoStyles.icon3)} />
                     </Kbd>
                     <span>Ask AI</span>
                   </div>
@@ -637,6 +645,24 @@ const pulse = stylex.keyframes({
 })
 
 const demoStyles = stylex.create({
+  icon: {
+    flexShrink: 0,
+    pointerEvents: "none",
+    opacity: 0.8,
+    marginInline: "-0.125rem",
+  },
+  icon2: {
+    blockSize: "1.125rem",
+    inlineSize: "1.125rem",
+    flexShrink: 0,
+    pointerEvents: "none",
+  },
+  icon3: {
+    blockSize: "0.75rem",
+    inlineSize: "0.75rem",
+    flexShrink: 0,
+    pointerEvents: "none",
+  },
   commandInput: {
     flexGrow: 1,
   },

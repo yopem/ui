@@ -4,7 +4,11 @@ import * as stylex from "@stylexjs/stylex"
 import { ArrowRightIcon } from "lucide-react"
 
 import { Button } from "@/components/ui/stylex/button"
-import { Group, GroupSeparator } from "@/components/ui/stylex/group"
+import {
+  Group,
+  GroupSeparator,
+  groupItemStyles,
+} from "@/components/ui/stylex/group"
 import {
   NumberField,
   NumberFieldGroup,
@@ -46,10 +50,12 @@ export default function Particle() {
           defaultValue={currencies[0]}
           itemToStringValue={(currency) => currency.value}
         >
-          <SelectTrigger {...stylex.props(demoStyles.selectTrigger)}>
+          <SelectTrigger
+            xstyle={[groupItemStyles.item, demoStyles.selectTrigger]}
+          >
             <SelectValue>{(currency: Currency) => currency.value}</SelectValue>
           </SelectTrigger>
-          <SelectPopup {...stylex.props(demoStyles.demo1)}>
+          <SelectPopup xstyle={demoStyles.demo1}>
             {currencies.map((curr) => (
               <SelectItem key={curr.value} value={curr}>
                 {curr.value}{" "}
@@ -61,16 +67,24 @@ export default function Particle() {
         <GroupSeparator />
         <NumberField
           aria-label="Enter the amount"
-          {...stylex.props(demoStyles.demo3)}
           defaultValue={10}
-          render={<NumberFieldGroup />}
+          render={<NumberFieldGroup xstyle={groupItemStyles.item} />}
+          xstyle={demoStyles.demo3}
         >
-          <NumberFieldInput {...stylex.props(demoStyles.demo4)} />
+          <NumberFieldInput xstyle={demoStyles.demo4} />
         </NumberField>
       </Group>
       <Group aria-label="Submit">
-        <Button aria-label="Send" size="icon" variant="outline">
-          <ArrowRightIcon aria-hidden="true" />
+        <Button
+          aria-label="Send"
+          size="icon"
+          variant="outline"
+          xstyle={groupItemStyles.item}
+        >
+          <ArrowRightIcon
+            aria-hidden="true"
+            {...stylex.props(demoStyles.icon)}
+          />
         </Button>
       </Group>
     </Group>
@@ -78,6 +92,14 @@ export default function Particle() {
 }
 
 const demoStyles = stylex.create({
+  icon: {
+    blockSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
+    inlineSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
+    flexShrink: 0,
+    pointerEvents: "none",
+    opacity: 0.8,
+    marginInline: "-0.125rem",
+  },
   selectTrigger: { inlineSize: "fit-content", minInlineSize: 0 },
   demo1: {
     minInlineSize: "calc(0.25rem * 48)",

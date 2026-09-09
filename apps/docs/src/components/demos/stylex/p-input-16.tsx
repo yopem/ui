@@ -17,13 +17,20 @@ export default function Particle() {
         type="search"
       />
       <InputGroupAddon align="inline-end">
-        <Spinner {...stylex.props(demoStyles.spinner)} />
+        <Spinner {...stylex.props(demoStyles.icon, demoStyles.spinner)} />
       </InputGroupAddon>
     </InputGroup>
   )
 }
 
 const demoStyles = stylex.create({
+  icon: {
+    blockSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
+    inlineSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
+    flexShrink: 0,
+    pointerEvents: "none",
+    opacity: 0.8,
+  },
   noShadow: { boxShadow: "none" },
   input: { paddingInlineEnd: "0.5rem" },
   spinner: { marginInline: "-0.125rem" },

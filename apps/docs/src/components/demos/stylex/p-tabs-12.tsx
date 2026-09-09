@@ -13,14 +13,14 @@ export default function Particle() {
           {...stylex.props(demoStyles.demo2)}
           value="tab-1"
         >
-          <HouseIcon aria-hidden="true" />
+          <HouseIcon {...stylex.props(demoStyles.icon)} aria-hidden="true" />
         </TabsTab>
         <TabsTab
           aria-label="Inbox"
           {...stylex.props(demoStyles.demo2, stylex.defaultMarker())}
           value="tab-2"
         >
-          <InboxIcon aria-hidden="true" />
+          <InboxIcon {...stylex.props(demoStyles.icon)} aria-hidden="true" />
           <Badge {...stylex.props(demoStyles.report1)} size="sm">
             5
           </Badge>
@@ -30,7 +30,7 @@ export default function Particle() {
           {...stylex.props(demoStyles.demo2)}
           value="tab-3"
         >
-          <SettingsIcon aria-hidden="true" />
+          <SettingsIcon {...stylex.props(demoStyles.icon)} aria-hidden="true" />
         </TabsTab>
       </TabsList>
       <TabsPanel value="tab-1">
@@ -47,6 +47,13 @@ export default function Particle() {
 }
 
 const demoStyles = stylex.create({
+  icon: {
+    blockSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
+    inlineSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
+    flexShrink: 0,
+    pointerEvents: "none",
+    marginInline: "-0.125rem",
+  },
   demo1: {
     alignItems: "center",
   },

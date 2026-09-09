@@ -1,24 +1,24 @@
 "use client"
 
+import type { StyleXProps } from "@registry/lib/stylex"
 import type React from "react"
 
 import { Checkbox as CheckboxPrimitive } from "@base-ui/react/checkbox"
 import { stylexProps } from "@registry/lib/stylex"
-import { themeMarker } from "@registry/styles/markers.stylex"
-import { tokens } from "@registry/styles/tokens.stylex"
+import { themeMarker, tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 
 const styles = stylex.create({
   root: {
     alignItems: "center",
     backgroundColor: {
-      default: tokens.background,
+      default: tokens["--background"],
       [stylex.when.ancestor('[data-theme="dark"]', themeMarker)]:
         "color-mix(in oklab, var(--input, currentColor) 32%, transparent)",
     },
     blockSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
     borderColor: {
-      default: tokens.input,
+      default: tokens["--input"],
       "[aria-invalid]":
         "color-mix(in oklab, var(--destructive, currentColor) 36%, transparent)",
     },
@@ -36,19 +36,19 @@ const styles = stylex.create({
     position: "relative",
     transitionProperty: "box-shadow",
     ":focus-visible": {
-      boxShadow: `0 0 0 2px ${tokens.ring}, 0 0 0 3px ${tokens.background}`,
+      boxShadow: `0 0 0 2px ${tokens["--ring"]}, 0 0 0 3px ${tokens["--background"]}`,
     },
   },
   indicator: {
     alignItems: "center",
     backgroundColor: {
       default: "transparent",
-      "[data-checked]": tokens.primary,
+      "[data-checked]": tokens["--primary"],
     },
     borderRadius: "0.25rem",
     color: {
-      default: tokens.primaryForeground,
-      "[data-indeterminate]": tokens.foreground,
+      default: tokens["--primary-foreground"],
+      "[data-indeterminate]": tokens["--foreground"],
     },
     display: { default: "flex", "[data-unchecked]": "none" },
     inset: -1,
@@ -62,12 +62,13 @@ const styles = stylex.create({
 })
 
 export function Checkbox({
+  xstyle,
   className,
   ...props
-}: CheckboxPrimitive.Root.Props) {
+}: CheckboxPrimitive.Root.Props & StyleXProps) {
   return (
     <CheckboxPrimitive.Root
-      {...stylexProps(className, styles.root)}
+      {...stylexProps(className, styles.root, xstyle)}
       data-slot="checkbox"
       {...props}
     >

@@ -1,21 +1,30 @@
 "use client"
 
+import type { StyleXProps } from "@registry/lib/stylex"
 import type * as React from "react"
 
 import { ContextMenu as ContextMenuPrimitive } from "@base-ui/react/context-menu"
 import { stylexProps } from "@registry/lib/stylex"
-import { themeMarker } from "@registry/styles/markers.stylex"
-import { tokens } from "@registry/styles/tokens.stylex"
+import { themeMarker, tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import { ChevronRightIcon } from "lucide-react"
+
+export const contextMenuSlotStyles = stylex.create({
+  icon: {
+    blockSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
+    inlineSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
+    flexShrink: 0,
+    pointerEvents: "none",
+  },
+})
 
 const styles = stylex.create({
   positioner: { zIndex: 50 },
   popup: {
     backgroundClip: "padding-box",
-    backgroundColor: tokens.popover,
-    borderColor: tokens.border,
-    borderRadius: tokens.radiusLarge,
+    backgroundColor: tokens["--popover"],
+    borderColor: tokens["--border"],
+    borderRadius: tokens["--radius-lg"],
     borderStyle: "solid",
     borderWidth: 1,
     boxShadow: "0 10px 15px -3px color-mix(in oklab, #000 5%, transparent)",
@@ -46,8 +55,8 @@ const styles = stylex.create({
   },
   item: {
     alignItems: "center",
-    borderRadius: tokens.radiusSmall,
-    color: tokens.foreground,
+    borderRadius: tokens["--radius-sm"],
+    color: tokens["--foreground"],
     cursor: "default",
     display: "flex",
     fontSize: { default: "1rem", "@media (min-width: 640px)": "0.875rem" },
@@ -58,17 +67,17 @@ const styles = stylex.create({
     paddingInline: "0.5rem",
     userSelect: "none",
     "[data-highlighted]": {
-      backgroundColor: tokens.accent,
-      color: tokens.accentForeground,
+      backgroundColor: tokens["--accent"],
+      color: tokens["--accent-foreground"],
     },
-    "[data-variant=destructive]": { color: tokens.destructiveForeground },
+    "[data-variant=destructive]": { color: tokens["--destructive-foreground"] },
     "[data-disabled]": { opacity: 0.64, pointerEvents: "none" },
     "[data-inset]": { paddingInlineStart: "2rem" },
   },
   choiceItem: {
     alignItems: "center",
-    borderRadius: tokens.radiusSmall,
-    color: tokens.foreground,
+    borderRadius: tokens["--radius-sm"],
+    color: tokens["--foreground"],
     cursor: "default",
     display: "grid",
     fontSize: { default: "1rem", "@media (min-width: 640px)": "0.875rem" },
@@ -79,8 +88,8 @@ const styles = stylex.create({
     paddingInlineStart: "0.5rem",
     userSelect: "none",
     "[data-highlighted]": {
-      backgroundColor: tokens.accent,
-      color: tokens.accentForeground,
+      backgroundColor: tokens["--accent"],
+      color: tokens["--accent-foreground"],
     },
     "[data-disabled]": { opacity: 0.64, pointerEvents: "none" },
   },
@@ -98,7 +107,7 @@ const styles = stylex.create({
   indicator: { gridColumnStart: 1, marginInlineStart: "-0.125rem" },
   switch: {
     alignItems: "center",
-    backgroundColor: tokens.input,
+    backgroundColor: tokens["--input"],
     blockSize: "calc(var(--thumb-size) + 2px)",
     borderRadius: "9999px",
     boxShadow: "inset 0 1px rgb(0 0 0 / 0.04)",
@@ -111,26 +120,44 @@ const styles = stylex.create({
     transitionProperty: "background-color, box-shadow",
     "--thumb-size": { default: "1rem", "@media (min-width: 640px)": "0.75rem" },
     ":focus-visible": {
-      boxShadow: `0 0 0 2px ${tokens.ring}, 0 0 0 3px ${tokens.background}`,
+      boxShadow: `0 0 0 2px ${tokens["--ring"]}, 0 0 0 3px ${tokens["--background"]}`,
     },
-    "[data-checked]": { backgroundColor: tokens.primary },
+    "[data-checked]": { backgroundColor: tokens["--primary"] },
     "[data-disabled]": { opacity: 0.64 },
   },
   switchThumb: {
+    borderRadius: {
+      default: "var(--thumb-size)",
+      ':is([data-slot="context-menu-checkbox-item"]:active [data-slot="context-menu-switch-thumb"])':
+        "calc(var(--thumb-size) / (var(--thumb-size) * 1.1))",
+    },
+    scale: {
+      default: null,
+      ':is([data-slot="context-menu-checkbox-item"]:active [data-slot="context-menu-switch-thumb"])':
+        "1.1 1",
+    },
+    transformOrigin: {
+      default: "left",
+      ':is([data-slot="context-menu-checkbox-item"][data-checked] [data-slot="context-menu-switch-thumb"])':
+        "var(--thumb-size) 50%",
+    },
+    translate: {
+      default: null,
+      ':is([data-slot="context-menu-checkbox-item"][data-checked] [data-slot="context-menu-switch-thumb"])':
+        "calc(var(--thumb-size) - 4px) 0",
+    },
     aspectRatio: "1",
-    backgroundColor: tokens.background,
+    backgroundColor: tokens["--background"],
     blockSize: "100%",
-    borderRadius: "var(--thumb-size)",
     boxShadow: "0 1px 2px color-mix(in oklab, #000 5%, transparent)",
     display: "block",
     pointerEvents: "none",
-    transformOrigin: "left",
     transition:
       "translate .15s, border-radius .15s, scale .1s .1s, transform-origin .15s",
     willChange: "transform",
   },
   label: {
-    color: tokens.mutedForeground,
+    color: tokens["--muted-foreground"],
     fontSize: "0.75rem",
     fontWeight: 500,
     paddingBlock: "0.375rem",
@@ -143,7 +170,7 @@ const styles = stylex.create({
     },
   },
   separator: {
-    backgroundColor: tokens.border,
+    backgroundColor: tokens["--border"],
     blockSize: 1,
     marginBlock: "0.25rem",
     marginInline: "0.5rem",
@@ -151,7 +178,7 @@ const styles = stylex.create({
   shortcut: {
     color:
       "color-mix(in oklab, var(--muted-foreground, currentColor) 72%, transparent)",
-    fontFamily: tokens.fontSans,
+    fontFamily: tokens["--font-sans"],
     fontSize: "0.75rem",
     fontWeight: 500,
     letterSpacing: "0.1em",
@@ -159,8 +186,8 @@ const styles = stylex.create({
   },
   subTrigger: {
     alignItems: "center",
-    borderRadius: tokens.radiusSmall,
-    color: tokens.foreground,
+    borderRadius: tokens["--radius-sm"],
+    color: tokens["--foreground"],
     display: "flex",
     fontSize: { default: "1rem", "@media (min-width: 640px)": "0.875rem" },
     gap: "0.5rem",
@@ -169,12 +196,12 @@ const styles = stylex.create({
     paddingBlock: "0.25rem",
     paddingInline: "0.5rem",
     "[data-highlighted]": {
-      backgroundColor: tokens.accent,
-      color: tokens.accentForeground,
+      backgroundColor: tokens["--accent"],
+      color: tokens["--accent-foreground"],
     },
     "[data-popup-open]": {
-      backgroundColor: tokens.accent,
-      color: tokens.accentForeground,
+      backgroundColor: tokens["--accent"],
+      color: tokens["--accent-foreground"],
     },
     "[data-disabled]": { opacity: 0.64, pointerEvents: "none" },
     "[data-inset]": { paddingInlineStart: "2rem" },
@@ -192,13 +219,14 @@ export const ContextMenuPortal: typeof ContextMenuPrimitive.Portal =
   ContextMenuPrimitive.Portal
 
 export function ContextMenuTrigger({
+  xstyle,
   className,
   children,
   ...props
-}: ContextMenuPrimitive.Trigger.Props) {
+}: ContextMenuPrimitive.Trigger.Props & StyleXProps) {
   return (
     <ContextMenuPrimitive.Trigger
-      className={className}
+      {...stylexProps(className, xstyle)}
       data-slot="context-menu-trigger"
       {...props}
     >
@@ -208,6 +236,7 @@ export function ContextMenuTrigger({
 }
 
 export function ContextMenuPopup({
+  xstyle,
   children,
   className,
   sideOffset = 4,
@@ -224,7 +253,7 @@ export function ContextMenuPopup({
   side?: ContextMenuPrimitive.Positioner.Props["side"]
   anchor?: ContextMenuPrimitive.Positioner.Props["anchor"]
   portalProps?: ContextMenuPrimitive.Portal.Props
-}) {
+} & StyleXProps) {
   return (
     <ContextMenuPortal {...portalProps}>
       <ContextMenuPrimitive.Positioner
@@ -237,7 +266,7 @@ export function ContextMenuPopup({
         sideOffset={sideOffset}
       >
         <ContextMenuPrimitive.Popup
-          {...stylexProps(className, styles.popup)}
+          {...stylexProps(className, styles.popup, xstyle)}
           data-slot="context-menu-popup"
           {...props}
         >
@@ -255,6 +284,7 @@ export function ContextMenuGroup(props: ContextMenuPrimitive.Group.Props) {
 }
 
 export function ContextMenuItem({
+  xstyle,
   className,
   inset,
   variant = "default",
@@ -262,10 +292,10 @@ export function ContextMenuItem({
 }: ContextMenuPrimitive.Item.Props & {
   inset?: boolean
   variant?: "default" | "destructive"
-}) {
+} & StyleXProps) {
   return (
     <ContextMenuPrimitive.Item
-      {...stylexProps(className, styles.item)}
+      {...stylexProps(className, styles.item, xstyle)}
       data-inset={inset}
       data-slot="context-menu-item"
       data-variant={variant}
@@ -275,6 +305,7 @@ export function ContextMenuItem({
 }
 
 export function ContextMenuLinkItem({
+  xstyle,
   className,
   inset,
   variant = "default",
@@ -283,10 +314,10 @@ export function ContextMenuLinkItem({
 }: ContextMenuPrimitive.LinkItem.Props & {
   inset?: boolean
   variant?: "default" | "destructive"
-}) {
+} & StyleXProps) {
   return (
     <ContextMenuPrimitive.LinkItem
-      {...stylexProps(className, styles.item)}
+      {...stylexProps(className, styles.item, xstyle)}
       closeOnClick={closeOnClick}
       data-inset={inset}
       data-slot="context-menu-link-item"
@@ -297,6 +328,7 @@ export function ContextMenuLinkItem({
 }
 
 export function ContextMenuCheckboxItem({
+  xstyle,
   className,
   children,
   checked,
@@ -304,7 +336,7 @@ export function ContextMenuCheckboxItem({
   ...props
 }: ContextMenuPrimitive.CheckboxItem.Props & {
   variant?: "default" | "switch"
-}) {
+} & StyleXProps) {
   return (
     <ContextMenuPrimitive.CheckboxItem
       checked={checked}
@@ -312,6 +344,7 @@ export function ContextMenuCheckboxItem({
         className,
         styles.choiceItem,
         variant === "switch" ? styles.choiceSwitch : styles.choiceDefault,
+        xstyle,
       )}
       data-slot="context-menu-checkbox-item"
       data-variant={variant}
@@ -336,6 +369,7 @@ export function ContextMenuCheckboxItem({
             {...stylex.props(styles.indicator)}
           >
             <svg
+              {...stylex.props(contextMenuSlotStyles.icon)}
               aria-hidden="true"
               fill="none"
               height="24"
@@ -369,13 +403,19 @@ export function ContextMenuRadioGroup(
 }
 
 export function ContextMenuRadioItem({
+  xstyle,
   className,
   children,
   ...props
-}: ContextMenuPrimitive.RadioItem.Props) {
+}: ContextMenuPrimitive.RadioItem.Props & StyleXProps) {
   return (
     <ContextMenuPrimitive.RadioItem
-      {...stylexProps(className, styles.choiceItem, styles.choiceDefault)}
+      {...stylexProps(
+        className,
+        styles.choiceItem,
+        styles.choiceDefault,
+        xstyle,
+      )}
       data-slot="context-menu-radio-item"
       {...props}
     >
@@ -383,6 +423,7 @@ export function ContextMenuRadioItem({
         {...stylex.props(styles.indicator)}
       >
         <svg
+          {...stylex.props(contextMenuSlotStyles.icon)}
           aria-hidden="true"
           fill="none"
           height="24"
@@ -403,13 +444,14 @@ export function ContextMenuRadioItem({
 }
 
 export function ContextMenuGroupLabel({
+  xstyle,
   className,
   inset,
   ...props
-}: ContextMenuPrimitive.GroupLabel.Props & { inset?: boolean }) {
+}: ContextMenuPrimitive.GroupLabel.Props & { inset?: boolean } & StyleXProps) {
   return (
     <ContextMenuPrimitive.GroupLabel
-      {...stylexProps(className, styles.label)}
+      {...stylexProps(className, styles.label, xstyle)}
       data-inset={inset}
       data-slot="context-menu-label"
       {...props}
@@ -417,24 +459,26 @@ export function ContextMenuGroupLabel({
   )
 }
 export function ContextMenuSeparator({
+  xstyle,
   className,
   ...props
-}: ContextMenuPrimitive.Separator.Props) {
+}: ContextMenuPrimitive.Separator.Props & StyleXProps) {
   return (
     <ContextMenuPrimitive.Separator
-      {...stylexProps(className, styles.separator)}
+      {...stylexProps(className, styles.separator, xstyle)}
       data-slot="context-menu-separator"
       {...props}
     />
   )
 }
 export function ContextMenuShortcut({
+  xstyle,
   className,
   ...props
-}: React.ComponentProps<"kbd">) {
+}: React.ComponentProps<"kbd"> & StyleXProps) {
   return (
     <kbd
-      {...stylexProps(className, styles.shortcut)}
+      {...stylexProps(className, styles.shortcut, xstyle)}
       data-slot="context-menu-shortcut"
       {...props}
     />
@@ -446,24 +490,30 @@ export function ContextMenuSub(props: ContextMenuPrimitive.SubmenuRoot.Props) {
   )
 }
 export function ContextMenuSubTrigger({
+  xstyle,
   className,
   inset,
   children,
   ...props
-}: ContextMenuPrimitive.SubmenuTrigger.Props & { inset?: boolean }) {
+}: ContextMenuPrimitive.SubmenuTrigger.Props & {
+  inset?: boolean
+} & StyleXProps) {
   return (
     <ContextMenuPrimitive.SubmenuTrigger
-      {...stylexProps(className, styles.subTrigger)}
+      {...stylexProps(className, styles.subTrigger, xstyle)}
       data-inset={inset}
       data-slot="context-menu-sub-trigger"
       {...props}
     >
       {children}
-      <ChevronRightIcon {...stylex.props(styles.subIcon)} />
+      <ChevronRightIcon
+        {...stylex.props(contextMenuSlotStyles.icon, styles.subIcon)}
+      />
     </ContextMenuPrimitive.SubmenuTrigger>
   )
 }
 export function ContextMenuSubPopup({
+  xstyle,
   className,
   sideOffset = 0,
   alignOffset,
@@ -473,13 +523,14 @@ export function ContextMenuSubPopup({
   align?: ContextMenuPrimitive.Positioner.Props["align"]
   sideOffset?: ContextMenuPrimitive.Positioner.Props["sideOffset"]
   alignOffset?: ContextMenuPrimitive.Positioner.Props["alignOffset"]
-}) {
+} & StyleXProps) {
   const defaultAlignOffset = align !== "center" ? -5 : undefined
   return (
     <ContextMenuPopup
       align={align}
       alignOffset={alignOffset ?? defaultAlignOffset}
       className={className}
+      xstyle={xstyle}
       data-slot="context-menu-sub-content"
       side="inline-end"
       sideOffset={sideOffset}

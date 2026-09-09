@@ -1,24 +1,34 @@
 "use client"
 
+import type { StyleXProps } from "@registry/lib/stylex"
+
 import { Slider as SliderPrimitive } from "@base-ui/react/slider"
 import { stylexProps } from "@registry/lib/stylex"
-import { themeMarker } from "@registry/styles/markers.stylex"
-import { tokens } from "@registry/styles/tokens.stylex"
+import { themeMarker, tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import * as React from "react"
 
 const styles = stylex.create({
   root: {
-    inlineSize: { default: null, "[data-orientation=horizontal]": "100%" },
+    inlineSize: {
+      default: null,
+      "[data-orientation=horizontal]": "100%",
+    },
   },
   control: {
-    blockSize: { default: null, "[data-orientation=vertical]": "100%" },
+    blockSize: {
+      default: null,
+      "[data-orientation=vertical]": "100%",
+    },
     display: "flex",
     flexDirection: {
       default: "row",
       "[data-orientation=vertical]": "column",
     },
-    inlineSize: { default: null, "[data-orientation=horizontal]": "100%" },
+    inlineSize: {
+      default: null,
+      "[data-orientation=horizontal]": "100%",
+    },
     minBlockSize: {
       default: null,
       "[data-orientation=vertical]": "11rem",
@@ -27,8 +37,14 @@ const styles = stylex.create({
       default: null,
       "[data-orientation=horizontal]": "11rem",
     },
-    opacity: { default: 1, "[data-disabled]": 0.64 },
-    pointerEvents: { default: "auto", "[data-disabled]": "none" },
+    opacity: {
+      default: 1,
+      "[data-disabled]": 0.64,
+    },
+    pointerEvents: {
+      default: "auto",
+      "[data-disabled]": "none",
+    },
     touchAction: "none",
     userSelect: "none",
   },
@@ -45,25 +61,38 @@ const styles = stylex.create({
     position: "relative",
     userSelect: "none",
     "::before": {
-      backgroundColor: tokens.input,
+      backgroundColor: tokens["--input"],
       borderRadius: "9999px",
       content: '""',
       position: "absolute",
+      insetBlock: {
+        default: null,
+        '[data-orientation="horizontal"]': 0,
+        '[data-orientation="vertical"]': "0.125rem",
+      },
+      insetInline: {
+        default: null,
+        '[data-orientation="horizontal"]': "0.125rem",
+        '[data-orientation="vertical"]': 0,
+      },
     },
   },
   indicator: {
-    backgroundColor: tokens.primary,
+    backgroundColor: tokens["--primary"],
     borderRadius: "9999px",
     userSelect: "none",
   },
   thumb: {
     backgroundClip: "padding-box",
     backgroundColor: "#fff",
-    blockSize: { default: "1.25rem", "@media (min-width: 640px)": "1rem" },
+    blockSize: {
+      default: "1.25rem",
+      "@media (min-width: 640px)": "1rem",
+    },
     borderColor: {
-      default: tokens.input,
+      default: tokens["--input"],
       [stylex.when.ancestor('[data-theme="dark"]', themeMarker)]:
-        tokens.background,
+        tokens["--background"],
     },
     borderRadius: "9999px",
     borderStyle: "solid",
@@ -71,19 +100,30 @@ const styles = stylex.create({
     boxShadow: "0 1px 2px color-mix(in oklab, #000 5%, transparent)",
     display: "block",
     flexShrink: 0,
-    inlineSize: { default: "1.25rem", "@media (min-width: 640px)": "1rem" },
+    inlineSize: {
+      default: "1.25rem",
+      "@media (min-width: 640px)": "1rem",
+    },
     outline: "none",
-    scale: { default: 1, "[data-dragging]": 1.2 },
+    scale: {
+      default: 1,
+      "[data-dragging]": 1.2,
+    },
     transitionProperty: "box-shadow, scale",
     userSelect: "none",
     ":focus-visible": {
       boxShadow: `0 0 0 3px color-mix(in oklab, var(--ring, currentColor) 24%, transparent)`,
     },
   },
-  value: { display: "flex", fontSize: "0.875rem", justifyContent: "end" },
+  value: {
+    display: "flex",
+    fontSize: "0.875rem",
+    justifyContent: "end",
+  },
 })
 
 export function Slider({
+  xstyle,
   className,
   children,
   defaultValue,
@@ -91,7 +131,7 @@ export function Slider({
   min = 0,
   max = 100,
   ...props
-}: SliderPrimitive.Root.Props) {
+}: SliderPrimitive.Root.Props & StyleXProps) {
   const values = React.useMemo(() => {
     if (value !== undefined) return Array.isArray(value) ? value : [value]
     if (defaultValue !== undefined)
@@ -101,7 +141,7 @@ export function Slider({
   const label = props["aria-label"]
   return (
     <SliderPrimitive.Root
-      {...stylexProps(className, styles.root)}
+      {...stylexProps(className, styles.root, xstyle)}
       defaultValue={defaultValue}
       max={max}
       min={min}
@@ -139,12 +179,13 @@ export function Slider({
   )
 }
 export function SliderValue({
+  xstyle,
   className,
   ...props
-}: SliderPrimitive.Value.Props) {
+}: SliderPrimitive.Value.Props & StyleXProps) {
   return (
     <SliderPrimitive.Value
-      {...stylexProps(className, styles.value)}
+      {...stylexProps(className, styles.value, xstyle)}
       data-slot="slider-value"
       {...props}
     />

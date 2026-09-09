@@ -1,4 +1,9 @@
-import { Group, GroupSeparator, GroupText } from "@/components/ui/stylex/group"
+import {
+  Group,
+  GroupSeparator,
+  GroupText,
+  groupItemStyles,
+} from "@/components/ui/stylex/group"
 import { Input } from "@/components/ui/stylex/input"
 import { Label } from "@/components/ui/stylex/label"
 
@@ -14,6 +19,7 @@ export default function Particle() {
         defaultValue="coss.com"
         id="domain"
         type="text"
+        controlXstyle={groupItemStyles.item}
       />
     </Group>
   )

@@ -20,7 +20,7 @@ export const Route = createFileRoute("/docs/installation")({
       {
         name: "description",
         content:
-          "Set up StyleX, shared styles, local source aliases, and React theme providers. Copy components without a CLI.",
+          "Set up StyleX, shared styles, local source aliases, and optional theme switching. Copy components without a CLI.",
       },
     ],
   }),
@@ -29,7 +29,6 @@ export const Route = createFileRoute("/docs/installation")({
 
 const manifest = `{
   "dependencies": {
-    "@fontsource-variable/inter": "^5.3.0",
     "@stylexjs/stylex": "^0.19.0",
     "clsx": "^2.1.1"
   },
@@ -48,6 +47,7 @@ const source = fileURLToPath(new URL("./src/yopem", import.meta.url))
 
 export default defineConfig({
   resolve: { alias: { "@registry": source } },
+  build: { cssCodeSplit: false },
   plugins: [
     stylex.vite({
       aliases: { "@registry/*": [source + "/*"] },
@@ -63,42 +63,28 @@ export default defineConfig({
 const client = `import "@registry/styles/styles.css"
 import * as stylex from "@stylexjs/stylex"
 import { createRoot } from "react-dom/client"
-import { rootStyles } from "@registry/styles/root"
-import { getRootThemeProps } from "@registry/theme/theme-root"
-import { ThemeProvider } from "@registry/theme/theme-provider"
+import { lightTheme, rootStyles, themeMarker } from "@registry/styles/tokens.stylex"
 import { App } from "./app"
 
-const rootTheme = getRootThemeProps("light")
-document.documentElement.classList.add(...(rootTheme.className ?? "").split(" ").filter(Boolean))
+const root = stylex.props(themeMarker, lightTheme, rootStyles.html)
+document.documentElement.classList.add(...(root.className ?? "").split(" ").filter(Boolean))
 document.documentElement.dataset.theme = "light"
 
-createRoot(document.getElementById("root")!).render(
-  <ThemeProvider>
-    <div {...stylex.props(rootStyles.body)}>
-      <App />
-    </div>
-  </ThemeProvider>,
-)`
+createRoot(document.getElementById("root")!).render(<App />)`
 
 const ssr = `import "@registry/styles/styles.css"
+import * as stylex from "@stylexjs/stylex"
 import { createRootRoute, HeadContent, Scripts } from "@tanstack/react-router"
-import { getRootThemeProps } from "@registry/theme/theme-root"
-import { ThemeProvider } from "@registry/theme/theme-provider"
-import { ThemeScript } from "@registry/theme/theme-script"
+import { lightTheme, rootStyles, themeMarker } from "@registry/styles/tokens.stylex"
 
-export const Route = createRootRoute({
-  shellComponent: RootDocument,
-})
+export const Route = createRootRoute({ shellComponent: RootDocument })
 
 function RootDocument({ children }: { children: React.ReactNode }) {
   return (
-    <html {...getRootThemeProps("light")} data-theme="light" lang="en" suppressHydrationWarning>
-      <head>
-        <ThemeScript />
-        <HeadContent />
-      </head>
-      <body>
-        <ThemeProvider>{children}</ThemeProvider>
+    <html {...stylex.props(themeMarker, lightTheme, rootStyles.html)} data-theme="light" lang="en">
+      <head><HeadContent /></head>
+      <body {...stylex.props(rootStyles.body)}>
+        {children}
         <Scripts />
       </body>
     </html>
@@ -136,15 +122,13 @@ module.exports = {
 }`
 
 const nextLayout = `import "@registry/styles/styles.css"
-import { getRootThemeProps } from "@registry/theme/theme-root"
-import { ThemeProvider } from "@registry/theme/theme-provider"
-import { ThemeScript } from "@registry/theme/theme-script"
+import * as stylex from "@stylexjs/stylex"
+import { lightTheme, rootStyles, themeMarker } from "@registry/styles/tokens.stylex"
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html {...getRootThemeProps("light")} data-theme="light" lang="en" suppressHydrationWarning>
-      <head><ThemeScript /></head>
-      <body><ThemeProvider>{children}</ThemeProvider></body>
+    <html {...stylex.props(themeMarker, lightTheme, rootStyles.html)} data-theme="light" lang="en">
+      <body {...stylex.props(rootStyles.body)}>{children}</body>
     </html>
   )
 }`
@@ -221,9 +205,11 @@ function Installation() {
           </h2>
           <p {...stylex.props(docsStyles.p)}>
             Create each file below with its complete contents. Copy these shared
-            files once, not once per component. The CSS files contain the reset,
-            theme colors, fonts, and selectors that cannot be expressed in
-            StyleX.
+            files once, not once per component. Base contains three files:
+            tokens.stylex.ts, lib/stylex.ts, and styles.css. Colors, font
+            stacks, radii, themes, and root styles live in StyleX. CSS contains
+            only reset, reduced-motion rules, and unavoidable Base UI viewport
+            selectors. No theme runtime or font package is required.
           </p>
           <div {...stylex.props(docsStyles.section)}>
             {data.files.map((file) => (
@@ -242,9 +228,11 @@ function Installation() {
           </h2>
           <p {...stylex.props(docsStyles.p)}>
             Import the shared CSS once from your application entry point. Use
-            the root classes and ThemeProvider so theme tokens and marker-based
-            selectors work. The client example preserves existing document
-            classes.
+            the compiled root classes so tokens and marker-based selectors work.
+            These examples use static light mode. Static dark mode also needs a
+            compiled colorScheme: "dark" override after rootStyles.html; see the
+            complete example in Theming. Neither static mode needs a provider or
+            script. The client example preserves existing document classes.
           </p>
           <CopyableCode
             code={client}
@@ -255,10 +243,12 @@ function Installation() {
           </h3>
           <p {...stylex.props(docsStyles.p)}>
             Import the shared stylesheet once in your root route. TanStack Start
-            includes the bundled CSS through HeadContent. Keep existing head
-            metadata and use this document shell, preserving any providers and
-            scripts your app already needs. Do not run the client-only document
-            setup above on the server.
+            includes the bundled CSS through HeadContent. Keep cssCodeSplit:
+            false in the Vite build configuration to avoid SSR CSS asset hash
+            mismatches. Use the side-effect CSS import shown here, not a ?url
+            import. Keep existing head metadata and use this document shell,
+            preserving any providers and scripts your app already needs. Do not
+            run the client-only document setup above on the server.
           </p>
           <CopyableCode
             code={ssr}
@@ -267,16 +257,16 @@ function Installation() {
           <p {...stylex.props(docsStyles.p)}>
             If your root already has a{" "}
             <code {...stylex.props(docsStyles.inlineCode)}>className</code>,
-            merge it with the class returned by{" "}
-            <code {...stylex.props(docsStyles.inlineCode)}>
-              getRootThemeProps
-            </code>
-            . Do not replace your existing font or application classes. The{" "}
+            compose your StyleX root styles last in{" "}
+            <code {...stylex.props(docsStyles.inlineCode)}>stylex.props</code>.
+            Preserve unrelated application classes separately. Mode switching is
+            optional and adds only theme/theme.tsx and theme/theme-provider.tsx.
+            The{" "}
             <Link {...stylex.props(docsStyles.link)} to="/docs/theming">
               theming guide
             </Link>{" "}
-            covers root class merging, custom colors, theme controls, and CSP
-            nonces.
+            includes those copyable runtime files, native custom themes,
+            component overrides, theme controls, and CSP nonces.
           </p>
           <h2 {...stylex.props(docsStyles.h2)} id="nextjs">
             Next.js
@@ -328,17 +318,14 @@ function Installation() {
           />
           <p {...stylex.props(docsStyles.p)}>
             Import the shared stylesheet in your root layout. Keep the layout as
-            a Server Component. ThemeProvider already declares its client
-            boundary.
+            a Server Component. Static themes need no client boundary.
           </p>
           <CopyableCode code={nextLayout} title="src/app/layout.tsx" />
           <p {...stylex.props(docsStyles.p)}>
-            With the Pages Router, import global CSS and mount ThemeProvider in{" "}
+            With the Pages Router, import global CSS in{" "}
             <code {...stylex.props(docsStyles.inlineCode)}>pages/_app.tsx</code>
             . Apply root theme classes to{" "}
-            <code {...stylex.props(docsStyles.inlineCode)}>Html</code> and place
-            ThemeScript in{" "}
-            <code {...stylex.props(docsStyles.inlineCode)}>Head</code> in{" "}
+            <code {...stylex.props(docsStyles.inlineCode)}>Html</code> in{" "}
             <code {...stylex.props(docsStyles.inlineCode)}>
               pages/_document.tsx
             </code>
@@ -364,8 +351,9 @@ function Installation() {
               and every required file exists.
             </li>
             <li {...stylex.props(docsStyles.li)}>
-              Test light, dark, and system themes. For SSR, reload in each theme
-              and check for hydration warnings.
+              Test your chosen static mode, or light, dark, and system if you
+              add switching. For SSR, reload in each enabled mode and check for
+              hydration warnings.
             </li>
             <li {...stylex.props(docsStyles.li)}>
               Run a production build. Development styling alone does not confirm

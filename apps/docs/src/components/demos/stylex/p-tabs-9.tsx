@@ -11,7 +11,7 @@ export default function Particle() {
           <TabsTab {...stylex.props(demoStyles.demo3)} value="tab-1">
             <HouseIcon
               aria-hidden="true"
-              {...stylex.props(demoStyles.demo4)}
+              {...stylex.props(demoStyles.icon, demoStyles.demo4)}
               size={16}
             />
             Overview
@@ -19,7 +19,7 @@ export default function Particle() {
           <TabsTab {...stylex.props(demoStyles.demo3)} value="tab-2">
             <PanelsTopLeftIcon
               aria-hidden="true"
-              {...stylex.props(demoStyles.demo4)}
+              {...stylex.props(demoStyles.icon, demoStyles.demo4)}
               size={16}
             />
             Projects
@@ -27,7 +27,7 @@ export default function Particle() {
           <TabsTab {...stylex.props(demoStyles.demo5)} value="tab-3">
             <BoxIcon
               aria-hidden="true"
-              {...stylex.props(demoStyles.demo4)}
+              {...stylex.props(demoStyles.icon, demoStyles.demo4)}
               size={16}
             />
             Packages
@@ -48,6 +48,11 @@ export default function Particle() {
 }
 
 const demoStyles = stylex.create({
+  icon: {
+    flexShrink: 0,
+    pointerEvents: "none",
+    marginInline: "-0.125rem",
+  },
   demo1: {
     alignItems: "center",
   },

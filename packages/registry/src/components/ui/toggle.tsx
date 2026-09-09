@@ -1,22 +1,27 @@
 "use client"
 
+import type { StyleXProps } from "@registry/lib/stylex"
+
 import { Toggle as TogglePrimitive } from "@base-ui/react/toggle"
-import { themeMarker } from "@registry/styles/markers.stylex"
-import { tokens } from "@registry/styles/tokens.stylex"
+import { stylexProps } from "@registry/lib/stylex"
+import { themeMarker, tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import { clsx } from "clsx"
 
 const styles = stylex.create({
   root: {
     alignItems: "center",
-    borderRadius: tokens.radiusLarge,
+    borderRadius: tokens["--radius-lg"],
     borderStyle: "solid",
     borderWidth: 1,
-    color: tokens.foreground,
+    color: tokens["--foreground"],
     cursor: "pointer",
     display: "inline-flex",
     flexShrink: 0,
-    fontSize: { default: "1rem", "@media (min-width: 640px)": "0.875rem" },
+    fontSize: {
+      default: "1rem",
+      "@media (min-width: 640px)": "0.875rem",
+    },
     fontWeight: 500,
     gap: "0.5rem",
     justifyContent: "center",
@@ -27,22 +32,92 @@ const styles = stylex.create({
     whiteSpace: "nowrap",
     backgroundColor: {
       default: "transparent",
-      ":hover": tokens.accent,
+      ":hover": tokens["--accent"],
       "[data-pressed]":
         "color-mix(in oklab, var(--input, currentColor) 64%, transparent)",
     },
     ":focus-visible": {
-      boxShadow: `0 0 0 2px ${tokens.ring}, 0 0 0 3px ${tokens.background}`,
+      boxShadow: `0 0 0 2px ${tokens["--ring"]}, 0 0 0 3px ${tokens["--background"]}`,
     },
-    ":disabled": { opacity: 0.64, pointerEvents: "none" },
+    ":disabled": {
+      opacity: 0.64,
+      pointerEvents: "none",
+    },
+    "::after": {
+      blockSize: {
+        default: null,
+        "@media (pointer: coarse)": "max(100%, 2.75rem)",
+      },
+      content: {
+        default: null,
+        "@media (pointer: coarse)": '""',
+      },
+      inlineSize: {
+        default: null,
+        "@media (pointer: coarse)": "max(100%, 2.75rem)",
+      },
+      inset: {
+        default: null,
+        "@media (pointer: coarse)": 0,
+      },
+      position: {
+        default: null,
+        "@media (pointer: coarse)": "absolute",
+      },
+    },
+    borderEndEndRadius: {
+      default: null,
+      ':is([data-slot="toggle-group"][data-variant="outline"][data-orientation="horizontal"] > [data-slot="toggle"]:not(:last-child))': 0,
+      ':is([data-slot="toggle-group"][data-variant="outline"][data-orientation="vertical"] > [data-slot="toggle"]:not(:last-child))': 0,
+    },
+    borderInlineEndWidth: {
+      default: null,
+      ':is([data-slot="toggle-group"][data-variant="outline"][data-orientation="horizontal"] > [data-slot="toggle"]:not(:last-child))': 0,
+    },
+    borderStartEndRadius: {
+      default: null,
+      ':is([data-slot="toggle-group"][data-variant="outline"][data-orientation="horizontal"] > [data-slot="toggle"]:not(:last-child))': 0,
+      ':is([data-slot="toggle-group"][data-variant="outline"][data-orientation="vertical"] > [data-slot="toggle"]:not(:first-child))': 0,
+    },
+    borderEndStartRadius: {
+      default: null,
+      ':is([data-slot="toggle-group"][data-variant="outline"][data-orientation="horizontal"] > [data-slot="toggle"]:not(:first-child))': 0,
+      ':is([data-slot="toggle-group"][data-variant="outline"][data-orientation="vertical"] > [data-slot="toggle"]:not(:last-child))': 0,
+    },
+    borderInlineStartWidth: {
+      default: null,
+      ':is([data-slot="toggle-group"][data-variant="outline"][data-orientation="horizontal"] > [data-slot="toggle"]:not(:first-child))': 0,
+    },
+    borderStartStartRadius: {
+      default: null,
+      ':is([data-slot="toggle-group"][data-variant="outline"][data-orientation="horizontal"] > [data-slot="toggle"]:not(:first-child))': 0,
+      ':is([data-slot="toggle-group"][data-variant="outline"][data-orientation="vertical"] > [data-slot="toggle"]:not(:first-child))': 0,
+    },
+    borderBlockEndWidth: {
+      default: null,
+      ':is([data-slot="toggle-group"][data-variant="outline"][data-orientation="vertical"] > [data-slot="toggle"]:not(:last-child))': 0,
+    },
+    borderBlockStartWidth: {
+      default: null,
+      ':is([data-slot="toggle-group"][data-variant="outline"][data-orientation="vertical"] > [data-slot="toggle"]:not(:first-child))': 0,
+    },
   },
   sizeDefault: {
-    blockSize: { default: "2.25rem", "@media (min-width: 640px)": "2rem" },
-    minInlineSize: { default: "2.25rem", "@media (min-width: 640px)": "2rem" },
+    blockSize: {
+      default: "2.25rem",
+      "@media (min-width: 640px)": "2rem",
+    },
+    minInlineSize: {
+      default: "2.25rem",
+      "@media (min-width: 640px)": "2rem",
+    },
     paddingInline: "calc(0.5rem - 1px)",
   },
   sizeLarge: {
-    blockSize: { default: "2.5rem", "@media (min-width: 640px)": "2.25rem" },
+    blockSize: {
+      default: "2.5rem",
+      "@media (min-width: 640px)": "2.25rem",
+    },
     minInlineSize: {
       default: "2.5rem",
       "@media (min-width: 640px)": "2.25rem",
@@ -50,21 +125,29 @@ const styles = stylex.create({
     paddingInline: "calc(0.625rem - 1px)",
   },
   sizeSmall: {
-    blockSize: { default: "2rem", "@media (min-width: 640px)": "1.75rem" },
-    minInlineSize: { default: "2rem", "@media (min-width: 640px)": "1.75rem" },
+    blockSize: {
+      default: "2rem",
+      "@media (min-width: 640px)": "1.75rem",
+    },
+    minInlineSize: {
+      default: "2rem",
+      "@media (min-width: 640px)": "1.75rem",
+    },
     paddingInline: "calc(0.375rem - 1px)",
   },
-  default: { borderColor: "transparent" },
+  default: {
+    borderColor: "transparent",
+  },
   outline: {
     backgroundColor: {
-      default: tokens.background,
+      default: tokens["--background"],
       [stylex.when.ancestor('[data-theme="dark"]', themeMarker)]:
         "color-mix(in oklab, var(--input, currentColor) 32%, transparent)",
-      ":hover": tokens.accent,
+      ":hover": tokens["--accent"],
       "[data-pressed]":
         "color-mix(in oklab, var(--input, currentColor) 64%, transparent)",
     },
-    borderColor: tokens.input,
+    borderColor: tokens["--input"],
     boxShadow: "0 1px 2px color-mix(in oklab, #000 5%, transparent)",
   },
 })
@@ -95,14 +178,23 @@ export function toggleVariants({
   )
 }
 export function Toggle({
+  xstyle,
   className,
   variant,
   size,
   ...props
-}: TogglePrimitive.Props & ToggleVariantProps) {
+}: TogglePrimitive.Props &
+  Omit<ToggleVariantProps, "className"> &
+  StyleXProps) {
   return (
     <TogglePrimitive
-      className={toggleVariants({ className, size, variant })}
+      {...stylexProps(
+        className,
+        styles.root,
+        sizeStyles[size ?? "default"],
+        variantStyles[variant ?? "default"],
+        xstyle,
+      )}
       data-slot="toggle"
       {...props}
     />

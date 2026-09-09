@@ -227,7 +227,12 @@ export default function Particle() {
               event.currentTarget.select()
             }}
             placeholder="HH:mm"
-            startAddon={<ClockIcon aria-hidden="true" />}
+            startAddon={
+              <ClockIcon
+                {...stylex.props(demoStyles.icon)}
+                aria-hidden="true"
+              />
+            }
           />
           <AutocompletePopup
             {...stylex.props(
@@ -249,6 +254,13 @@ export default function Particle() {
 }
 
 const demoStyles = stylex.create({
+  icon: {
+    blockSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
+    inlineSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
+    flexShrink: 0,
+    pointerEvents: "none",
+    opacity: 0.8,
+  },
   demo1: {
     display: "flex",
     inlineSize: "fit-content",

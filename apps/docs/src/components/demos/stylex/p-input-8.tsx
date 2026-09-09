@@ -1,4 +1,4 @@
-import { themeMarker } from "@registry/styles/markers.stylex"
+import { themeMarker } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import { InfoIcon } from "lucide-react"
 
@@ -35,7 +35,7 @@ export default function Particle() {
               <Button aria-label="More info" size="icon-xs" variant="ghost" />
             }
           >
-            <InfoIcon {...stylex.props(demoStyles.icon)} />
+            <InfoIcon {...stylex.props(demoStyles.icon2, demoStyles.icon)} />
           </PopoverTrigger>
           <PopoverPopup side="top" tooltipStyle>
             <p>The URL of your website</p>
@@ -47,6 +47,12 @@ export default function Particle() {
 }
 
 const demoStyles = stylex.create({
+  icon2: {
+    blockSize: { default: "1rem", "@media (min-width: 640px)": "0.875rem" },
+    inlineSize: { default: "1rem", "@media (min-width: 640px)": "0.875rem" },
+    flexShrink: 0,
+    pointerEvents: "none",
+  },
   outlined: { boxShadow: "var(--button-outline-shadow)" },
   input: { paddingInlineEnd: "0.5rem", paddingInlineStart: 0 },
   endAddon: { marginInlineEnd: "-0.5rem" },

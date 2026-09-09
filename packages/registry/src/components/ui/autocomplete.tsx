@@ -1,18 +1,59 @@
 "use client"
 
+import type { StyleXProps } from "@registry/lib/stylex"
+
 import { Autocomplete as AutocompletePrimitive } from "@base-ui/react/autocomplete"
 import { Input } from "@registry/components/ui/input"
 import { ScrollArea } from "@registry/components/ui/scroll-area"
 import { stylexProps } from "@registry/lib/stylex"
-import { themeMarker } from "@registry/styles/markers.stylex"
-import { tokens } from "@registry/styles/tokens.stylex"
+import { themeMarker, tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import { ChevronsUpDownIcon, XIcon } from "lucide-react"
 import * as React from "react"
 
+export const autocompleteSlotStyles = stylex.create({
+  icon: {
+    blockSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
+    inlineSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
+    flexShrink: 0,
+    pointerEvents: "none",
+  },
+})
+
 const styles = stylex.create({
+  inputPadding: {
+    paddingInlineStart: {
+      default: null,
+      ':is([data-slot="autocomplete-input-group"][data-has-start-addon] input)':
+        "calc(2.125rem - 1px)",
+    },
+    paddingInlineEnd: {
+      default: null,
+      ':is([data-slot="autocomplete-input-group"]:has([data-slot$="trigger"], [data-slot$="clear"]) input)':
+        "1.75rem",
+      ':is([data-slot="autocomplete-input-group"][data-size="sm"]:has([data-slot$="trigger"], [data-slot$="clear"]) input)':
+        "1.625rem",
+    },
+  },
+  trigger: {
+    display: {
+      default: null,
+      ':has(+ [data-slot$="clear"])': "none",
+    },
+  },
+  group: {
+    marginBlockStart: {
+      default: null,
+      ':is(:where([data-slot="autocomplete-group"], [data-slot="combobox-group"]) + *)':
+        "0.375rem",
+    },
+  },
   inputGroup: {
-    color: tokens.foreground,
+    opacity: {
+      default: null,
+      ":has(:disabled)": 0.64,
+    },
+    color: tokens["--foreground"],
     inlineSize: "100%",
     position: "relative",
   },
@@ -31,7 +72,7 @@ const styles = stylex.create({
     alignItems: "center",
     blockSize: { default: "2rem", "@media (min-width: 640px)": "1.75rem" },
     borderColor: "transparent",
-    borderRadius: tokens.radiusMedium,
+    borderRadius: tokens["--radius-md"],
     borderStyle: "solid",
     borderWidth: 1,
     cursor: "pointer",
@@ -57,9 +98,9 @@ const styles = stylex.create({
   positioner: { userSelect: "none", zIndex: 50 },
   surface: {
     backgroundClip: "padding-box",
-    backgroundColor: tokens.popover,
-    borderColor: tokens.border,
-    borderRadius: tokens.radiusLarge,
+    backgroundColor: tokens["--popover"],
+    borderColor: tokens["--border"],
+    borderRadius: tokens["--radius-lg"],
     borderStyle: "solid",
     borderWidth: 1,
     boxShadow: "0 10px 15px -3px color-mix(in oklab, #000 5%, transparent)",
@@ -84,7 +125,7 @@ const styles = stylex.create({
     },
   },
   popup: {
-    color: tokens.foreground,
+    color: tokens["--foreground"],
     display: "flex",
     flex: 1,
     flexDirection: "column",
@@ -92,7 +133,7 @@ const styles = stylex.create({
   },
   item: {
     alignItems: "center",
-    borderRadius: tokens.radiusSmall,
+    borderRadius: tokens["--radius-sm"],
     cursor: "default",
     display: "flex",
     fontSize: { default: "1rem", "@media (min-width: 640px)": "0.875rem" },
@@ -102,36 +143,37 @@ const styles = stylex.create({
     paddingInline: "0.5rem",
     userSelect: "none",
     "[data-highlighted]": {
-      backgroundColor: tokens.accent,
-      color: tokens.accentForeground,
+      backgroundColor: tokens["--accent"],
+      color: tokens["--accent-foreground"],
     },
     "[data-disabled]": { opacity: 0.64, pointerEvents: "none" },
   },
   separator: {
-    backgroundColor: tokens.border,
+    backgroundColor: tokens["--border"],
     blockSize: 1,
     marginBlock: "0.25rem",
     marginInline: "0.5rem",
     ":last-child": { display: "none" },
   },
   groupLabel: {
-    color: tokens.mutedForeground,
+    color: tokens["--muted-foreground"],
     fontSize: "0.75rem",
     fontWeight: 500,
     paddingBlock: "0.375rem",
     paddingInline: "0.5rem",
   },
   empty: {
-    color: tokens.mutedForeground,
+    color: tokens["--muted-foreground"],
     fontSize: { default: "1rem", "@media (min-width: 640px)": "0.875rem" },
     textAlign: "center",
     ":not(:empty)": { padding: "0.5rem" },
   },
   list: {
+    "[data-has-overflow-y]": { paddingInlineEnd: "0.75rem" },
     ":not(:empty)": { padding: "0.25rem", scrollPaddingBlock: "0.25rem" },
   },
   status: {
-    color: tokens.mutedForeground,
+    color: tokens["--muted-foreground"],
     fontSize: "0.75rem",
     fontWeight: 500,
     paddingBlock: "0.5rem",
@@ -143,23 +185,22 @@ const styles = stylex.create({
 export const Autocomplete: typeof AutocompletePrimitive.Root =
   AutocompletePrimitive.Root
 
-type AutocompleteInputProps = Omit<
-  AutocompletePrimitive.Input.Props,
-  "ref" | "size"
-> & {
-  showTrigger?: boolean
-  showClear?: boolean
-  startAddon?: React.ReactNode
-  size?: "sm" | "default" | "lg" | number
-  triggerProps?: AutocompletePrimitive.Trigger.Props
-  clearProps?: AutocompletePrimitive.Clear.Props
-}
+type AutocompleteInputProps = StyleXProps &
+  Omit<AutocompletePrimitive.Input.Props, "ref" | "size"> & {
+    showTrigger?: boolean
+    showClear?: boolean
+    startAddon?: React.ReactNode
+    size?: "sm" | "default" | "lg" | number
+    triggerProps?: AutocompletePrimitive.Trigger.Props
+    clearProps?: AutocompletePrimitive.Clear.Props
+  }
 
 export const AutocompleteInput = React.forwardRef<
   HTMLInputElement,
   AutocompleteInputProps
 >(function AutocompleteInput(
   {
+    xstyle,
     className,
     showTrigger = false,
     showClear = false,
@@ -192,7 +233,13 @@ export const AutocompleteInput = React.forwardRef<
         className={className}
         data-slot="autocomplete-input"
         ref={ref}
-        render={<Input nativeInput size={sizeValue} />}
+        render={
+          <Input
+            nativeInput
+            size={sizeValue}
+            xstyle={[styles.inputPadding, xstyle]}
+          />
+        }
         {...props}
       />
       {showTrigger ? (
@@ -204,7 +251,9 @@ export const AutocompleteInput = React.forwardRef<
           {...triggerProps}
         >
           <AutocompletePrimitive.Icon data-slot="autocomplete-icon">
-            <ChevronsUpDownIcon />
+            <ChevronsUpDownIcon
+              {...stylex.props(autocompleteSlotStyles.icon)}
+            />
           </AutocompletePrimitive.Icon>
         </AutocompleteTrigger>
       ) : null}
@@ -216,7 +265,7 @@ export const AutocompleteInput = React.forwardRef<
           )}
           {...clearProps}
         >
-          <XIcon />
+          <XIcon {...stylex.props(autocompleteSlotStyles.icon)} />
         </AutocompleteClear>
       ) : null}
     </AutocompletePrimitive.InputGroup>
@@ -224,6 +273,7 @@ export const AutocompleteInput = React.forwardRef<
 })
 
 export function AutocompletePopup({
+  xstyle,
   className,
   children,
   side = "bottom",
@@ -240,7 +290,7 @@ export function AutocompletePopup({
   side?: AutocompletePrimitive.Positioner.Props["side"]
   anchor?: AutocompletePrimitive.Positioner.Props["anchor"]
   portalProps?: AutocompletePrimitive.Portal.Props
-}) {
+} & StyleXProps) {
   return (
     <AutocompletePrimitive.Portal {...portalProps}>
       <AutocompletePrimitive.Positioner
@@ -252,9 +302,18 @@ export function AutocompletePopup({
         side={side}
         sideOffset={sideOffset}
       >
-        <span {...stylexProps(className, styles.surface)}>
+        <span
+          {...stylexProps(
+            typeof className === "string" ? className : undefined,
+            styles.surface,
+          )}
+        >
           <AutocompletePrimitive.Popup
-            {...stylex.props(styles.popup)}
+            {...stylexProps(
+              typeof className === "function" ? className : undefined,
+              styles.popup,
+              xstyle,
+            )}
             data-slot="autocomplete-popup"
             {...props}
           >
@@ -266,13 +325,14 @@ export function AutocompletePopup({
   )
 }
 export function AutocompleteItem({
+  xstyle,
   className,
   children,
   ...props
-}: AutocompletePrimitive.Item.Props) {
+}: AutocompletePrimitive.Item.Props & StyleXProps) {
   return (
     <AutocompletePrimitive.Item
-      {...stylexProps(className, styles.item)}
+      {...stylexProps(className, styles.item, xstyle)}
       data-slot="autocomplete-item"
       {...props}
     >
@@ -281,60 +341,65 @@ export function AutocompleteItem({
   )
 }
 export function AutocompleteSeparator({
+  xstyle,
   className,
   ...props
-}: AutocompletePrimitive.Separator.Props) {
+}: AutocompletePrimitive.Separator.Props & StyleXProps) {
   return (
     <AutocompletePrimitive.Separator
-      {...stylexProps(className, styles.separator)}
+      {...stylexProps(className, styles.separator, xstyle)}
       data-slot="autocomplete-separator"
       {...props}
     />
   )
 }
 export function AutocompleteGroup({
+  xstyle,
   className,
   ...props
-}: AutocompletePrimitive.Group.Props) {
+}: AutocompletePrimitive.Group.Props & StyleXProps) {
   return (
     <AutocompletePrimitive.Group
-      className={className}
+      {...stylexProps(className, styles.group, xstyle)}
       data-slot="autocomplete-group"
       {...props}
     />
   )
 }
 export function AutocompleteGroupLabel({
+  xstyle,
   className,
   ...props
-}: AutocompletePrimitive.GroupLabel.Props) {
+}: AutocompletePrimitive.GroupLabel.Props & StyleXProps) {
   return (
     <AutocompletePrimitive.GroupLabel
-      {...stylexProps(className, styles.groupLabel)}
+      {...stylexProps(className, styles.groupLabel, xstyle)}
       data-slot="autocomplete-group-label"
       {...props}
     />
   )
 }
 export function AutocompleteEmpty({
+  xstyle,
   className,
   ...props
-}: AutocompletePrimitive.Empty.Props) {
+}: AutocompletePrimitive.Empty.Props & StyleXProps) {
   return (
     <AutocompletePrimitive.Empty
-      {...stylexProps(className, styles.empty)}
+      {...stylexProps(className, styles.empty, xstyle)}
       data-slot="autocomplete-empty"
       {...props}
     />
   )
 }
 export function AutocompleteRow({
+  xstyle,
   className,
   ...props
-}: AutocompletePrimitive.Row.Props) {
+}: AutocompletePrimitive.Row.Props & StyleXProps) {
   return (
     <AutocompletePrimitive.Row
-      className={className}
+      {...stylexProps(className, xstyle)}
       data-slot="autocomplete-row"
       {...props}
     />
@@ -343,13 +408,14 @@ export function AutocompleteRow({
 export const AutocompleteValue: typeof AutocompletePrimitive.Value =
   AutocompletePrimitive.Value
 export function AutocompleteList({
+  xstyle,
   className,
   ...props
-}: AutocompletePrimitive.List.Props) {
+}: AutocompletePrimitive.List.Props & StyleXProps) {
   return (
     <ScrollArea overscrollContain scrollbarGutter scrollFade>
       <AutocompletePrimitive.List
-        {...stylexProps(className, styles.list)}
+        {...stylexProps(className, styles.list, xstyle)}
         data-slot="autocomplete-list"
         {...props}
       />
@@ -357,26 +423,28 @@ export function AutocompleteList({
   )
 }
 export function AutocompleteClear({
+  xstyle,
   className,
   ...props
-}: AutocompletePrimitive.Clear.Props) {
+}: AutocompletePrimitive.Clear.Props & StyleXProps) {
   return (
     <AutocompletePrimitive.Clear
-      {...stylexProps(className, styles.control)}
+      {...stylexProps(className, styles.control, xstyle)}
       data-slot="autocomplete-clear"
       {...props}
     >
-      <XIcon />
+      <XIcon {...stylex.props(autocompleteSlotStyles.icon)} />
     </AutocompletePrimitive.Clear>
   )
 }
 export function AutocompleteStatus({
+  xstyle,
   className,
   ...props
-}: AutocompletePrimitive.Status.Props) {
+}: AutocompletePrimitive.Status.Props & StyleXProps) {
   return (
     <AutocompletePrimitive.Status
-      {...stylexProps(className, styles.status)}
+      {...stylexProps(className, styles.status, xstyle)}
       data-slot="autocomplete-status"
       {...props}
     />
@@ -385,13 +453,14 @@ export function AutocompleteStatus({
 export const AutocompleteCollection: typeof AutocompletePrimitive.Collection =
   AutocompletePrimitive.Collection
 export function AutocompleteTrigger({
+  xstyle,
   className,
   children,
   ...props
-}: AutocompletePrimitive.Trigger.Props) {
+}: AutocompletePrimitive.Trigger.Props & StyleXProps) {
   return (
     <AutocompletePrimitive.Trigger
-      className={className}
+      {...stylexProps(className, styles.trigger, xstyle)}
       data-slot="autocomplete-trigger"
       {...props}
     >

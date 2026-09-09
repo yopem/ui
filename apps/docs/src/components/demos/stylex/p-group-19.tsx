@@ -1,6 +1,10 @@
 import * as stylex from "@stylexjs/stylex"
 
-import { Group, GroupSeparator } from "@/components/ui/stylex/group"
+import {
+  Group,
+  GroupSeparator,
+  groupItemStyles,
+} from "@/components/ui/stylex/group"
 import { Input } from "@/components/ui/stylex/input"
 import {
   Select,
@@ -19,10 +23,17 @@ const domains = [
 export default function Particle() {
   return (
     <Group aria-label="Domain input">
-      <Input aria-label="Domain name" placeholder="example" type="text" />
+      <Input
+        aria-label="Domain name"
+        placeholder="example"
+        type="text"
+        controlXstyle={groupItemStyles.item}
+      />
       <GroupSeparator />
       <Select defaultValue="com" items={domains}>
-        <SelectTrigger {...stylex.props(demoStyles.selectTrigger)}>
+        <SelectTrigger
+          xstyle={[groupItemStyles.item, demoStyles.selectTrigger]}
+        >
           <SelectValue />
         </SelectTrigger>
         <SelectPopup>

@@ -1,5 +1,5 @@
 "use client"
-
+import * as stylex from "@stylexjs/stylex"
 import { SearchIcon } from "lucide-react"
 
 import {
@@ -30,7 +30,7 @@ export default function Particle() {
       <AutocompleteInput
         aria-label="Search items"
         placeholder="Search items…"
-        startAddon={<SearchIcon />}
+        startAddon={<SearchIcon {...stylex.props(demoStyles.icon)} />}
       />
       <AutocompletePopup>
         <AutocompleteEmpty>No items found.</AutocompleteEmpty>
@@ -45,3 +45,13 @@ export default function Particle() {
     </Autocomplete>
   )
 }
+
+const demoStyles = stylex.create({
+  icon: {
+    blockSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
+    inlineSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
+    flexShrink: 0,
+    pointerEvents: "none",
+    opacity: 0.8,
+  },
+})

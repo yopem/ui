@@ -1,4 +1,5 @@
 // oxlint-disable jsx-a11y/prefer-tag-over-role -- status belongs on the loading icon; output would change its rendered element
+import type { StyleXProps } from "@registry/lib/stylex"
 import type React from "react"
 
 import { stylexProps } from "@registry/lib/stylex"
@@ -19,12 +20,13 @@ const styles = stylex.create({
 })
 
 export function Spinner({
+  xstyle,
   className,
   ...props
-}: React.ComponentProps<typeof Loader2Icon>) {
+}: React.ComponentProps<typeof Loader2Icon> & StyleXProps) {
   return (
     <Loader2Icon
-      {...stylexProps(className, styles.root)}
+      {...stylexProps(className, styles.root, xstyle)}
       aria-label="Loading"
       data-slot="spinner"
       role="status"

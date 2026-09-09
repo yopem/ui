@@ -48,5 +48,5 @@ const demoStyles = stylex.create({
     },
   },
 })
-import { themeMarker } from "@registry/styles/markers.stylex"
+import { themeMarker } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"

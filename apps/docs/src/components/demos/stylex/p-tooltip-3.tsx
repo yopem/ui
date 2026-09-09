@@ -41,7 +41,7 @@ export default function Particle() {
           payload={BoldContent}
           render={<ToggleGroupItem aria-label="Toggle bold" value="bold" />}
         >
-          <BoldIcon aria-hidden="true" />
+          <BoldIcon {...stylex.props(demoStyles.icon)} aria-hidden="true" />
         </TooltipTrigger>
         <TooltipTrigger
           {...stylex.props(demoStyles.demo1)}
@@ -49,7 +49,7 @@ export default function Particle() {
           payload={ItalicContent}
           render={<ToggleGroupItem aria-label="Toggle italic" value="italic" />}
         >
-          <ItalicIcon aria-hidden="true" />
+          <ItalicIcon {...stylex.props(demoStyles.icon)} aria-hidden="true" />
         </TooltipTrigger>
         <TooltipTrigger
           {...stylex.props(demoStyles.demo1)}
@@ -59,7 +59,10 @@ export default function Particle() {
             <ToggleGroupItem aria-label="Toggle underline" value="underline" />
           }
         >
-          <UnderlineIcon aria-hidden="true" />
+          <UnderlineIcon
+            {...stylex.props(demoStyles.icon)}
+            aria-hidden="true"
+          />
         </TooltipTrigger>
       </ToggleGroup>
 
@@ -73,6 +76,13 @@ export default function Particle() {
 }
 
 const demoStyles = stylex.create({
+  icon: {
+    blockSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
+    inlineSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
+    flexShrink: 0,
+    pointerEvents: "none",
+    opacity: 0.8,
+  },
   demo1: {
     "::after": {
       content: '""',

@@ -1,13 +1,14 @@
 "use client"
 
+import type { StyleXProps } from "@registry/lib/stylex"
+
 import { Dialog as SheetPrimitive } from "@base-ui/react/dialog"
 import { mergeProps } from "@base-ui/react/merge-props"
 import { useRender } from "@base-ui/react/use-render"
 import { Button } from "@registry/components/ui/button"
 import { ScrollArea } from "@registry/components/ui/scroll-area"
 import { stylexProps } from "@registry/lib/stylex"
-import { themeMarker } from "@registry/styles/markers.stylex"
-import { tokens } from "@registry/styles/tokens.stylex"
+import { themeMarker, tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import { XIcon } from "lucide-react"
 
@@ -15,6 +16,13 @@ type SheetSide = "right" | "left" | "top" | "bottom"
 type SheetVariant = "default" | "inset"
 
 const styles = stylex.create({
+  closeIcon: {
+    blockSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
+    inlineSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
+    flexShrink: 0,
+    pointerEvents: "none",
+    opacity: 0.8,
+  },
   backdrop: {
     backdropFilter: "blur(4px)",
     backgroundColor: "rgb(0 0 0 / 0.32)",
@@ -34,8 +42,8 @@ const styles = stylex.create({
   viewportInset: { "@media (min-width: 640px)": { padding: "1rem" } },
   popup: {
     backgroundClip: "padding-box",
-    backgroundColor: tokens.popover,
-    color: tokens.popoverForeground,
+    backgroundColor: tokens["--popover"],
+    color: tokens["--popover-foreground"],
     display: "flex",
     flexDirection: "column",
     inlineSize: "100%",
@@ -64,7 +72,7 @@ const styles = stylex.create({
     "[data-starting-style]": { opacity: 0 },
   },
   popupBottom: {
-    borderBlockStartColor: tokens.border,
+    borderBlockStartColor: tokens["--border"],
     borderBlockStartStyle: "solid",
     borderBlockStartWidth: 1,
     gridRowStart: 2,
@@ -72,14 +80,14 @@ const styles = stylex.create({
     "[data-starting-style]": { translate: "0 2rem" },
   },
   popupTop: {
-    borderBlockEndColor: tokens.border,
+    borderBlockEndColor: tokens["--border"],
     borderBlockEndStyle: "solid",
     borderBlockEndWidth: 1,
     "[data-ending-style]": { translate: "0 -2rem" },
     "[data-starting-style]": { translate: "0 -2rem" },
   },
   popupLeft: {
-    borderInlineEndColor: tokens.border,
+    borderInlineEndColor: tokens["--border"],
     borderInlineEndStyle: "solid",
     borderInlineEndWidth: 1,
     inlineSize: "calc(100% - 3rem)",
@@ -88,7 +96,7 @@ const styles = stylex.create({
     "[data-starting-style]": { translate: "-2rem 0" },
   },
   popupRight: {
-    borderInlineStartColor: tokens.border,
+    borderInlineStartColor: tokens["--border"],
     borderInlineStartStyle: "solid",
     borderInlineStartWidth: 1,
     gridColumnStart: 2,
@@ -100,7 +108,7 @@ const styles = stylex.create({
   popupInset: {
     "::before": { display: "none" },
     "@media (min-width: 640px)": {
-      borderColor: tokens.border,
+      borderColor: tokens["--border"],
       borderRadius: "0.875rem",
       borderStyle: "solid",
       borderWidth: 1,
@@ -112,39 +120,82 @@ const styles = stylex.create({
     position: "absolute",
   },
   header: {
+    paddingBlockEnd: {
+      default: null,
+      ':is(:is([data-slot="dialog-popup"], [data-slot="sheet-popup"], [data-slot="drawer-popup"]):has([data-slot$="panel"]) > [data-slot="sheet-header"])':
+        "0.75rem",
+      "@media (max-width: 639px)": "1rem",
+    },
     display: "flex",
     flexDirection: "column",
     gap: "0.5rem",
     padding: "1.5rem",
-    "@media (max-width: 639px)": { paddingBlockEnd: "1rem" },
   },
   footer: {
     display: "flex",
-    flexDirection: "column-reverse",
+    flexDirection: {
+      default: "column-reverse",
+      "@media (min-width: 640px)": "row",
+    },
     gap: "0.5rem",
     paddingInline: "1.5rem",
-    "@media (min-width: 640px)": {
-      flexDirection: "row",
-      justifyContent: "flex-end",
+    borderEndEndRadius: {
+      default: null,
+      "@media (min-width: 640px)": {
+        default: null,
+        ':is([data-slot="sheet-popup"][data-variant="inset"] [data-slot="sheet-footer"])':
+          "calc(0.875rem - 1px)",
+      },
+    },
+    borderEndStartRadius: {
+      default: null,
+      "@media (min-width: 640px)": {
+        default: null,
+        ':is([data-slot="sheet-popup"][data-variant="inset"] [data-slot="sheet-footer"])':
+          "calc(0.875rem - 1px)",
+      },
+    },
+    justifyContent: {
+      default: null,
+      "@media (min-width: 640px)": "flex-end",
     },
   },
   footerDefault: {
     backgroundColor:
       "color-mix(in oklab, var(--muted, transparent) 72%, transparent)",
-    borderBlockStartColor: tokens.border,
+    borderBlockStartColor: tokens["--border"],
     borderBlockStartStyle: "solid",
     borderBlockStartWidth: 1,
     paddingBlock: "1rem",
   },
-  footerBare: { paddingBlockEnd: "1.5rem", paddingBlockStart: "1rem" },
+  footerBare: {
+    paddingBlockStart: {
+      default: "1rem",
+      ':is(:is([data-slot="dialog-popup"], [data-slot="sheet-popup"], [data-slot="drawer-popup"]):has([data-slot$="panel"]) > [data-slot="sheet-footer"])':
+        "0.75rem",
+    },
+    paddingBlockEnd: "1.5rem",
+  },
   title: {
-    fontFamily: tokens.fontHeading,
+    fontFamily: tokens["--font-heading"],
     fontSize: "1.25rem",
     fontWeight: 600,
     lineHeight: 1,
   },
-  description: { color: tokens.mutedForeground, fontSize: "0.875rem" },
-  panel: { padding: "1.5rem" },
+  description: { color: tokens["--muted-foreground"], fontSize: "0.875rem" },
+  panel: {
+    paddingBlockStart: {
+      default: null,
+      ':is(:is([data-slot="dialog-popup"], [data-slot="sheet-popup"], [data-slot="drawer-popup"]):has([data-slot$="header"]) [data-slot="sheet-panel"])':
+        "0.25rem",
+    },
+    paddingBlockEnd: {
+      default: null,
+      ':is(:is([data-slot="dialog-popup"], [data-slot="sheet-popup"], [data-slot="drawer-popup"]):has([data-slot$="footer"][data-variant="bare"]) [data-slot="sheet-panel"])':
+        "0.25rem",
+    },
+    padding: "1.5rem",
+  },
 })
 
 const viewportSideStyles = {
@@ -169,12 +220,13 @@ export function SheetClose(props: SheetPrimitive.Close.Props) {
   return <SheetPrimitive.Close data-slot="sheet-close" {...props} />
 }
 export function SheetBackdrop({
+  xstyle,
   className,
   ...props
-}: SheetPrimitive.Backdrop.Props) {
+}: SheetPrimitive.Backdrop.Props & StyleXProps) {
   return (
     <SheetPrimitive.Backdrop
-      {...stylexProps(className, styles.backdrop)}
+      {...stylexProps(className, styles.backdrop, xstyle)}
       data-slot="sheet-backdrop"
       {...props}
     />
@@ -182,6 +234,7 @@ export function SheetBackdrop({
 }
 
 export function SheetViewport({
+  xstyle,
   className,
   side = "right",
   variant = "default",
@@ -189,7 +242,7 @@ export function SheetViewport({
 }: SheetPrimitive.Viewport.Props & {
   side?: SheetSide
   variant?: SheetVariant
-}) {
+} & StyleXProps) {
   return (
     <SheetPrimitive.Viewport
       {...stylexProps(
@@ -197,6 +250,7 @@ export function SheetViewport({
         styles.viewport,
         viewportSideStyles[side],
         variant === "inset" && styles.viewportInset,
+        xstyle,
       )}
       data-slot="sheet-viewport"
       {...props}
@@ -205,6 +259,7 @@ export function SheetViewport({
 }
 
 export function SheetPopup({
+  xstyle,
   className,
   children,
   showCloseButton = true,
@@ -219,7 +274,7 @@ export function SheetPopup({
   variant?: SheetVariant
   closeProps?: SheetPrimitive.Close.Props
   portalProps?: SheetPrimitive.Portal.Props
-}) {
+} & StyleXProps) {
   return (
     <SheetPortal {...portalProps}>
       <SheetBackdrop />
@@ -230,6 +285,7 @@ export function SheetPopup({
             styles.popup,
             popupSideStyles[side],
             variant === "inset" && styles.popupInset,
+            xstyle,
           )}
           data-side={side}
           data-slot="sheet-popup"
@@ -244,7 +300,7 @@ export function SheetPopup({
               render={<Button size="icon" variant="ghost" />}
               {...closeProps}
             >
-              <XIcon />
+              <XIcon {...stylex.props(styles.closeIcon)} />
             </SheetPrimitive.Close>
           ) : null}
         </SheetPrimitive.Popup>
@@ -254,12 +310,13 @@ export function SheetPopup({
 }
 
 export function SheetHeader({
+  xstyle,
   className,
   render,
   ...props
-}: useRender.ComponentProps<"div">) {
+}: useRender.ComponentProps<"div"> & StyleXProps) {
   const defaultProps = {
-    ...stylexProps(className, styles.header),
+    ...stylexProps(className, styles.header, xstyle),
     "data-slot": "sheet-header",
   }
   return useRender({
@@ -269,16 +326,20 @@ export function SheetHeader({
   })
 }
 export function SheetFooter({
+  xstyle,
   className,
   variant = "default",
   render,
   ...props
-}: useRender.ComponentProps<"div"> & { variant?: "default" | "bare" }) {
+}: useRender.ComponentProps<"div"> & {
+  variant?: "default" | "bare"
+} & StyleXProps) {
   const defaultProps = {
     ...stylexProps(
       className,
       styles.footer,
       variant === "default" ? styles.footerDefault : styles.footerBare,
+      xstyle,
     ),
     "data-slot": "sheet-footer",
     "data-variant": variant,
@@ -290,37 +351,40 @@ export function SheetFooter({
   })
 }
 export function SheetTitle({
+  xstyle,
   className,
   ...props
-}: SheetPrimitive.Title.Props) {
+}: SheetPrimitive.Title.Props & StyleXProps) {
   return (
     <SheetPrimitive.Title
-      {...stylexProps(className, styles.title)}
+      {...stylexProps(className, styles.title, xstyle)}
       data-slot="sheet-title"
       {...props}
     />
   )
 }
 export function SheetDescription({
+  xstyle,
   className,
   ...props
-}: SheetPrimitive.Description.Props) {
+}: SheetPrimitive.Description.Props & StyleXProps) {
   return (
     <SheetPrimitive.Description
-      {...stylexProps(className, styles.description)}
+      {...stylexProps(className, styles.description, xstyle)}
       data-slot="sheet-description"
       {...props}
     />
   )
 }
 export function SheetPanel({
+  xstyle,
   className,
   scrollFade = true,
   render,
   ...props
-}: useRender.ComponentProps<"div"> & { scrollFade?: boolean }) {
+}: useRender.ComponentProps<"div"> & { scrollFade?: boolean } & StyleXProps) {
   const defaultProps = {
-    ...stylexProps(className, styles.panel),
+    ...stylexProps(className, styles.panel, xstyle),
     "data-slot": "sheet-panel",
   }
   const content = useRender({

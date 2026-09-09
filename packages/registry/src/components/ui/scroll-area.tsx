@@ -1,5 +1,7 @@
 "use client"
 
+import type { StyleXProps } from "@registry/lib/stylex"
+
 import { ScrollArea as ScrollAreaPrimitive } from "@base-ui/react/scroll-area"
 import { stylexProps } from "@registry/lib/stylex"
 import { tokens } from "@registry/styles/tokens.stylex"
@@ -17,7 +19,7 @@ const styles = stylex.create({
     outline: "none",
     transitionProperty: "box-shadow",
     ":focus-visible": {
-      boxShadow: `0 0 0 2px ${tokens.ring}, 0 0 0 3px ${tokens.background}`,
+      boxShadow: `0 0 0 2px ${tokens["--ring"]}, 0 0 0 3px ${tokens["--background"]}`,
     },
   },
   overscrollContain: {
@@ -68,6 +70,7 @@ const styles = stylex.create({
 })
 
 export function ScrollArea({
+  xstyle,
   className,
   children,
   scrollFade = false,
@@ -82,11 +85,11 @@ export function ScrollArea({
   fill?: boolean
   clampContentMinWidth?: boolean
   overscrollContain?: boolean
-}) {
+} & StyleXProps) {
   const label = props["aria-label"] ?? "Scrollable content"
   return (
     <ScrollAreaPrimitive.Root
-      {...stylexProps(className, styles.root)}
+      {...stylexProps(className, styles.root, xstyle)}
       {...props}
     >
       <ScrollAreaPrimitive.Viewport
@@ -118,13 +121,14 @@ export function ScrollArea({
 }
 
 export function ScrollBar({
+  xstyle,
   className,
   orientation = "vertical",
   ...props
-}: ScrollAreaPrimitive.Scrollbar.Props) {
+}: ScrollAreaPrimitive.Scrollbar.Props & StyleXProps) {
   return (
     <ScrollAreaPrimitive.Scrollbar
-      {...stylexProps(className, styles.scrollbar)}
+      {...stylexProps(className, styles.scrollbar, xstyle)}
       data-slot="scroll-area-scrollbar"
       orientation={orientation}
       {...props}

@@ -1,6 +1,10 @@
 import * as stylex from "@stylexjs/stylex"
 
-import { Group, GroupSeparator } from "@/components/ui/stylex/group"
+import {
+  Group,
+  GroupSeparator,
+  groupItemStyles,
+} from "@/components/ui/stylex/group"
 import { Input } from "@/components/ui/stylex/input"
 import {
   Select,
@@ -21,7 +25,9 @@ export default function Particle() {
   return (
     <Group aria-label="URL input">
       <Select defaultValue="https" items={protocols}>
-        <SelectTrigger {...stylex.props(demoStyles.selectTrigger)}>
+        <SelectTrigger
+          xstyle={[groupItemStyles.item, demoStyles.selectTrigger]}
+        >
           <SelectValue />
         </SelectTrigger>
         <SelectPopup>
@@ -33,7 +39,12 @@ export default function Particle() {
         </SelectPopup>
       </Select>
       <GroupSeparator />
-      <Input aria-label="IP address" placeholder="192.168.1.1" type="text" />
+      <Input
+        aria-label="IP address"
+        placeholder="192.168.1.1"
+        type="text"
+        controlXstyle={groupItemStyles.item}
+      />
     </Group>
   )
 }

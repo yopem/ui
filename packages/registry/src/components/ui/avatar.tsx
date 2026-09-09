@@ -1,5 +1,7 @@
 "use client"
 
+import type { StyleXProps } from "@registry/lib/stylex"
+
 import { Avatar as AvatarPrimitive } from "@base-ui/react/avatar"
 import { stylexProps } from "@registry/lib/stylex"
 import { tokens } from "@registry/styles/tokens.stylex"
@@ -8,7 +10,7 @@ import * as stylex from "@stylexjs/stylex"
 const styles = stylex.create({
   root: {
     alignItems: "center",
-    backgroundColor: tokens.background,
+    backgroundColor: tokens["--background"],
     blockSize: "2rem",
     borderRadius: "9999px",
     display: "inline-flex",
@@ -24,7 +26,7 @@ const styles = stylex.create({
   image: { blockSize: "100%", inlineSize: "100%", objectFit: "cover" },
   fallback: {
     alignItems: "center",
-    backgroundColor: tokens.muted,
+    backgroundColor: tokens["--muted"],
     blockSize: "100%",
     borderRadius: "9999px",
     display: "flex",
@@ -33,10 +35,14 @@ const styles = stylex.create({
   },
 })
 
-export function Avatar({ className, ...props }: AvatarPrimitive.Root.Props) {
+export function Avatar({
+  xstyle,
+  className,
+  ...props
+}: AvatarPrimitive.Root.Props & StyleXProps) {
   return (
     <AvatarPrimitive.Root
-      {...stylexProps(className, styles.root)}
+      {...stylexProps(className, styles.root, xstyle)}
       data-slot="avatar"
       {...props}
     />
@@ -44,12 +50,13 @@ export function Avatar({ className, ...props }: AvatarPrimitive.Root.Props) {
 }
 
 export function AvatarImage({
+  xstyle,
   className,
   ...props
-}: AvatarPrimitive.Image.Props) {
+}: AvatarPrimitive.Image.Props & StyleXProps) {
   return (
     <AvatarPrimitive.Image
-      {...stylexProps(className, styles.image)}
+      {...stylexProps(className, styles.image, xstyle)}
       data-slot="avatar-image"
       {...props}
     />
@@ -57,12 +64,13 @@ export function AvatarImage({
 }
 
 export function AvatarFallback({
+  xstyle,
   className,
   ...props
-}: AvatarPrimitive.Fallback.Props) {
+}: AvatarPrimitive.Fallback.Props & StyleXProps) {
   return (
     <AvatarPrimitive.Fallback
-      {...stylexProps(className, styles.fallback)}
+      {...stylexProps(className, styles.fallback, xstyle)}
       data-slot="avatar-fallback"
       {...props}
     />

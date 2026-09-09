@@ -1,22 +1,23 @@
 "use client"
 
+import type { StyleXProps } from "@registry/lib/stylex"
+
 import { mergeProps } from "@base-ui/react/merge-props"
 import { useRender } from "@base-ui/react/use-render"
 import { stylexProps } from "@registry/lib/stylex"
-import { themeMarker } from "@registry/styles/markers.stylex"
-import { tokens } from "@registry/styles/tokens.stylex"
+import { themeMarker, tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 
 const styles = stylex.create({
   card: {
     backgroundClip: "padding-box",
-    backgroundColor: tokens.card,
-    borderColor: tokens.border,
+    backgroundColor: tokens["--card"],
+    borderColor: tokens["--border"],
     borderRadius: "1rem",
     borderStyle: "solid",
     borderWidth: 1,
     boxShadow: "var(--button-outline-shadow)",
-    color: tokens.cardForeground,
+    color: tokens["--card-foreground"],
     display: "flex",
     flexDirection: "column",
     position: "relative",
@@ -32,15 +33,19 @@ const styles = stylex.create({
       pointerEvents: "none",
       position: "absolute",
     },
+    margin: {
+      default: null,
+      ':is([data-slot="card-frame"] > [data-slot="card"])': "-1px",
+    },
   },
   frame: {
-    backgroundColor: tokens.card,
-    borderColor: tokens.border,
+    backgroundColor: tokens["--card"],
+    borderColor: tokens["--border"],
     borderRadius: "1rem",
     borderStyle: "solid",
     borderWidth: 1,
     boxShadow: "var(--button-outline-shadow)",
-    color: tokens.cardForeground,
+    color: tokens["--card-foreground"],
     display: "flex",
     flexDirection: "column",
     position: "relative",
@@ -58,6 +63,10 @@ const styles = stylex.create({
       pointerEvents: "none",
       position: "absolute",
     },
+    overflow: {
+      default: null,
+      ':has([data-slot="table-container"])': "hidden",
+    },
   },
   frameHeader: {
     alignItems: "start",
@@ -68,11 +77,19 @@ const styles = stylex.create({
     paddingBlock: "1rem",
     paddingInline: "1.5rem",
     position: "relative",
+    gridTemplateColumns: {
+      default: null,
+      ':has([data-slot="card-frame-action"])': "1fr auto",
+    },
   },
-  frameTitle: { alignSelf: "center", fontSize: "0.875rem", fontWeight: 600 },
+  frameTitle: {
+    alignSelf: "center",
+    fontSize: "0.875rem",
+    fontWeight: 600,
+  },
   frameDescription: {
     alignSelf: "center",
-    color: tokens.mutedForeground,
+    color: tokens["--muted-foreground"],
     fontSize: "0.875rem",
   },
   frameAction: {
@@ -81,7 +98,10 @@ const styles = stylex.create({
     gridColumnStart: "2",
     justifySelf: "end",
   },
-  frameFooter: { paddingBlock: "1rem", paddingInline: "1.5rem" },
+  frameFooter: {
+    paddingBlock: "1rem",
+    paddingInline: "1.5rem",
+  },
   header: {
     alignItems: "start",
     display: "grid",
@@ -89,14 +109,26 @@ const styles = stylex.create({
     gridAutoRows: "min-content",
     gridTemplateRows: "auto auto",
     padding: "1.5rem",
+    gridTemplateColumns: {
+      default: null,
+      ':has([data-slot="card-action"])': "1fr auto",
+    },
+    paddingBlockEnd: {
+      default: "1.5rem",
+      ':is([data-slot="card"]:has(> [data-slot="card-panel"]) > [data-slot="card-header"])':
+        "1rem",
+    },
   },
   title: {
-    fontFamily: tokens.fontHeading,
+    fontFamily: tokens["--font-heading"],
     fontSize: "1.125rem",
     fontWeight: 600,
     lineHeight: 1,
   },
-  description: { color: tokens.mutedForeground, fontSize: "0.875rem" },
+  description: {
+    color: tokens["--muted-foreground"],
+    fontSize: "0.875rem",
+  },
   action: {
     alignSelf: "start",
     display: "inline-flex",
@@ -104,23 +136,48 @@ const styles = stylex.create({
     gridRow: "1 / span 2",
     justifySelf: "end",
   },
-  panel: { flex: 1, padding: "1.5rem" },
-  footer: { alignItems: "center", display: "flex", padding: "1.5rem" },
+  panel: {
+    flex: 1,
+    padding: "1.5rem",
+    paddingBlockStart: {
+      default: "1.5rem",
+      ':is([data-slot="card"]:has(> [data-slot="card-header"]:not([data-separator])) > [data-slot="card-panel"])': 0,
+    },
+    paddingBlockEnd: {
+      default: "1.5rem",
+      ':is([data-slot="card"]:has(> [data-slot="card-footer"]:not([data-separator])) > [data-slot="card-panel"])': 0,
+    },
+  },
+  footer: {
+    alignItems: "center",
+    display: "flex",
+    padding: "1.5rem",
+    paddingBlockStart: {
+      default: "1.5rem",
+      ':is([data-slot="card"]:has(> [data-slot="card-panel"]) > [data-slot="card-footer"])':
+        "1rem",
+    },
+  },
+  headerSeparator: {
+    borderBlockEndWidth: 1,
+    borderBlockEndStyle: "solid",
+    borderBlockEndColor: tokens["--border"],
+  },
+  footerSeparator: {
+    borderBlockStartWidth: 1,
+    borderBlockStartStyle: "solid",
+    borderBlockStartColor: tokens["--border"],
+  },
 })
 
-function staticClassName(
-  className: useRender.ComponentProps<"div">["className"],
-) {
-  return typeof className === "string" ? className : undefined
-}
-
 export function Card({
+  xstyle,
   className,
   render,
   ...props
-}: useRender.ComponentProps<"div">) {
+}: useRender.ComponentProps<"div"> & StyleXProps) {
   const defaultProps = {
-    ...stylexProps(staticClassName(className), styles.card),
+    ...stylexProps(className, styles.card, xstyle),
     "data-slot": "card",
   }
   return useRender({
@@ -130,12 +187,13 @@ export function Card({
   })
 }
 export function CardFrame({
+  xstyle,
   className,
   render,
   ...props
-}: useRender.ComponentProps<"div">) {
+}: useRender.ComponentProps<"div"> & StyleXProps) {
   const defaultProps = {
-    ...stylexProps(staticClassName(className), styles.frame),
+    ...stylexProps(className, styles.frame, xstyle),
     "data-slot": "card-frame",
   }
   return useRender({
@@ -145,12 +203,13 @@ export function CardFrame({
   })
 }
 export function CardFrameHeader({
+  xstyle,
   className,
   render,
   ...props
-}: useRender.ComponentProps<"div">) {
+}: useRender.ComponentProps<"div"> & StyleXProps) {
   const defaultProps = {
-    ...stylexProps(staticClassName(className), styles.frameHeader),
+    ...stylexProps(className, styles.frameHeader, xstyle),
     "data-slot": "card-frame-header",
   }
   return useRender({
@@ -160,12 +219,13 @@ export function CardFrameHeader({
   })
 }
 export function CardFrameTitle({
+  xstyle,
   className,
   render,
   ...props
-}: useRender.ComponentProps<"div">) {
+}: useRender.ComponentProps<"div"> & StyleXProps) {
   const defaultProps = {
-    ...stylexProps(staticClassName(className), styles.frameTitle),
+    ...stylexProps(className, styles.frameTitle, xstyle),
     "data-slot": "card-frame-title",
   }
   return useRender({
@@ -175,12 +235,13 @@ export function CardFrameTitle({
   })
 }
 export function CardFrameDescription({
+  xstyle,
   className,
   render,
   ...props
-}: useRender.ComponentProps<"div">) {
+}: useRender.ComponentProps<"div"> & StyleXProps) {
   const defaultProps = {
-    ...stylexProps(staticClassName(className), styles.frameDescription),
+    ...stylexProps(className, styles.frameDescription, xstyle),
     "data-slot": "card-frame-description",
   }
   return useRender({
@@ -190,12 +251,13 @@ export function CardFrameDescription({
   })
 }
 export function CardFrameAction({
+  xstyle,
   className,
   render,
   ...props
-}: useRender.ComponentProps<"div">) {
+}: useRender.ComponentProps<"div"> & StyleXProps) {
   const defaultProps = {
-    ...stylexProps(staticClassName(className), styles.frameAction),
+    ...stylexProps(className, styles.frameAction, xstyle),
     "data-slot": "card-frame-action",
   }
   return useRender({
@@ -205,12 +267,13 @@ export function CardFrameAction({
   })
 }
 export function CardFrameFooter({
+  xstyle,
   className,
   render,
   ...props
-}: useRender.ComponentProps<"div">) {
+}: useRender.ComponentProps<"div"> & StyleXProps) {
   const defaultProps = {
-    ...stylexProps(staticClassName(className), styles.frameFooter),
+    ...stylexProps(className, styles.frameFooter, xstyle),
     "data-slot": "card-frame-footer",
   }
   return useRender({
@@ -220,13 +283,21 @@ export function CardFrameFooter({
   })
 }
 export function CardHeader({
+  xstyle,
+  separator = false,
   className,
   render,
   ...props
-}: useRender.ComponentProps<"div">) {
+}: useRender.ComponentProps<"div"> & StyleXProps & { separator?: boolean }) {
   const defaultProps = {
-    ...stylexProps(staticClassName(className), styles.header),
+    ...stylexProps(
+      className,
+      styles.header,
+      separator && styles.headerSeparator,
+      xstyle,
+    ),
     "data-slot": "card-header",
+    "data-separator": separator ? "" : undefined,
   }
   return useRender({
     defaultTagName: "div",
@@ -235,12 +306,13 @@ export function CardHeader({
   })
 }
 export function CardTitle({
+  xstyle,
   className,
   render,
   ...props
-}: useRender.ComponentProps<"div">) {
+}: useRender.ComponentProps<"div"> & StyleXProps) {
   const defaultProps = {
-    ...stylexProps(staticClassName(className), styles.title),
+    ...stylexProps(className, styles.title, xstyle),
     "data-slot": "card-title",
   }
   return useRender({
@@ -250,12 +322,13 @@ export function CardTitle({
   })
 }
 export function CardDescription({
+  xstyle,
   className,
   render,
   ...props
-}: useRender.ComponentProps<"div">) {
+}: useRender.ComponentProps<"div"> & StyleXProps) {
   const defaultProps = {
-    ...stylexProps(staticClassName(className), styles.description),
+    ...stylexProps(className, styles.description, xstyle),
     "data-slot": "card-description",
   }
   return useRender({
@@ -265,12 +338,13 @@ export function CardDescription({
   })
 }
 export function CardAction({
+  xstyle,
   className,
   render,
   ...props
-}: useRender.ComponentProps<"div">) {
+}: useRender.ComponentProps<"div"> & StyleXProps) {
   const defaultProps = {
-    ...stylexProps(staticClassName(className), styles.action),
+    ...stylexProps(className, styles.action, xstyle),
     "data-slot": "card-action",
   }
   return useRender({
@@ -280,12 +354,13 @@ export function CardAction({
   })
 }
 export function CardPanel({
+  xstyle,
   className,
   render,
   ...props
-}: useRender.ComponentProps<"div">) {
+}: useRender.ComponentProps<"div"> & StyleXProps) {
   const defaultProps = {
-    ...stylexProps(staticClassName(className), styles.panel),
+    ...stylexProps(className, styles.panel, xstyle),
     "data-slot": "card-panel",
   }
   return useRender({
@@ -295,13 +370,21 @@ export function CardPanel({
   })
 }
 export function CardFooter({
+  xstyle,
+  separator = false,
   className,
   render,
   ...props
-}: useRender.ComponentProps<"div">) {
+}: useRender.ComponentProps<"div"> & StyleXProps & { separator?: boolean }) {
   const defaultProps = {
-    ...stylexProps(staticClassName(className), styles.footer),
+    ...stylexProps(
+      className,
+      styles.footer,
+      separator && styles.footerSeparator,
+      xstyle,
+    ),
     "data-slot": "card-footer",
+    "data-separator": separator ? "" : undefined,
   }
   return useRender({
     defaultTagName: "div",

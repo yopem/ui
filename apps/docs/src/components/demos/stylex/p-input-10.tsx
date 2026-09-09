@@ -1,6 +1,6 @@
 "use client"
 
-import { themeMarker } from "@registry/styles/markers.stylex"
+import { themeMarker } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import { InfoIcon, StarIcon } from "lucide-react"
 import { useState } from "react"
@@ -41,7 +41,7 @@ export default function Particle() {
               />
             }
           >
-            <InfoIcon {...stylex.props(demoStyles.icon)} />
+            <InfoIcon {...stylex.props(demoStyles.icon2, demoStyles.icon)} />
           </PopoverTrigger>
         </InputGroupAddon>
         <PopoverPopup
@@ -78,6 +78,7 @@ export default function Particle() {
         >
           <StarIcon
             {...stylex.props(
+              demoStyles.icon3,
               demoStyles.icon,
               demoStyles.demo4,
               demoStyles.iconSize,
@@ -91,6 +92,16 @@ export default function Particle() {
 }
 
 const demoStyles = stylex.create({
+  icon2: {
+    blockSize: { default: "1rem", "@media (min-width: 640px)": "0.875rem" },
+    inlineSize: { default: "1rem", "@media (min-width: 640px)": "0.875rem" },
+    flexShrink: 0,
+    pointerEvents: "none",
+  },
+  icon3: {
+    flexShrink: 0,
+    pointerEvents: "none",
+  },
   outlined: {
     borderRadius: "var(--radius)",
     boxShadow: "var(--button-outline-shadow)",

@@ -1,12 +1,13 @@
 "use client"
 
+import type { StyleXProps } from "@registry/lib/stylex"
 import type * as React from "react"
 
 import { mergeProps } from "@base-ui/react/merge-props"
 import { useRender } from "@base-ui/react/use-render"
 import { Spinner } from "@registry/components/ui/spinner"
-import { themeMarker } from "@registry/styles/markers.stylex"
-import { tokens } from "@registry/styles/tokens.stylex"
+import { stylexProps } from "@registry/lib/stylex"
+import { themeMarker, tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import { clsx } from "clsx"
 
@@ -21,7 +22,7 @@ const styles = stylex.create({
     },
     display: "inline-flex",
     flexShrink: 0,
-    fontFamily: tokens.fontSans,
+    fontFamily: tokens["--font-sans"],
     fontSize: {
       default: "1rem",
       "@media (min-width: 640px)": "0.875rem",
@@ -91,13 +92,13 @@ const styles = stylex.create({
   },
   default: {
     backgroundColor: {
-      default: tokens.primary,
+      default: tokens["--primary"],
       ":hover":
         "color-mix(in oklab, var(--primary, currentColor) 90%, transparent)",
       "[data-pressed]":
         "color-mix(in oklab, var(--primary, currentColor) 90%, transparent)",
     },
-    borderColor: tokens.primary,
+    borderColor: tokens["--primary"],
     boxShadow: {
       default:
         "var(--button-solid-inset-highlight), 0 1px 2px color-mix(in oklab, var(--primary) 24%, transparent)",
@@ -111,16 +112,16 @@ const styles = stylex.create({
       ":focus-visible[data-pressed]":
         "var(--button-solid-inset-pressed), 0 0 0 1px var(--background), 0 0 0 3px var(--ring)",
     },
-    color: tokens.primaryForeground,
+    color: tokens["--primary-foreground"],
   },
   destructive: {
     backgroundColor: {
-      default: tokens.destructive,
+      default: tokens["--destructive"],
       ":hover": "color-mix(in oklab, var(--destructive) 90%, transparent)",
       "[data-pressed]":
         "color-mix(in oklab, var(--destructive) 90%, transparent)",
     },
-    borderColor: tokens.destructive,
+    borderColor: tokens["--destructive"],
     boxShadow: {
       default:
         "var(--button-solid-inset-highlight), 0 1px 2px color-mix(in oklab, var(--destructive) 24%, transparent)",
@@ -142,14 +143,14 @@ const styles = stylex.create({
       [stylex.when.ancestor('[data-theme="dark"]', themeMarker)]: "border-box",
     },
     backgroundColor: {
-      default: tokens.popover,
+      default: tokens["--popover"],
       [stylex.when.ancestor('[data-theme="dark"]', themeMarker)]:
         "color-mix(in oklab, var(--input, currentColor) 32%, transparent)",
       ":hover":
         "color-mix(in oklab, oklch(63.7% 0.237 25.331) 4%, transparent)",
     },
     borderColor: {
-      default: tokens.input,
+      default: tokens["--input"],
       ":hover": "color-mix(in oklab, var(--destructive) 32%, transparent)",
       "[data-pressed]":
         "color-mix(in oklab, var(--destructive) 32%, transparent)",
@@ -166,7 +167,7 @@ const styles = stylex.create({
       ":focus-visible[data-pressed]":
         "0 0 0 1px var(--background), 0 0 0 3px var(--ring)",
     },
-    color: tokens.destructiveForeground,
+    color: tokens["--destructive-foreground"],
     "::before": {
       boxShadow: {
         default: "var(--button-outline-inset-shadow)",
@@ -181,16 +182,16 @@ const styles = stylex.create({
   ghost: {
     backgroundColor: {
       default: "transparent",
-      ":hover": tokens.accent,
-      "[data-pressed]": tokens.accent,
+      ":hover": tokens["--accent"],
+      "[data-pressed]": tokens["--accent"],
     },
     borderColor: "transparent",
-    color: tokens.foreground,
+    color: tokens["--foreground"],
   },
   link: {
     backgroundColor: "transparent",
     borderColor: "transparent",
-    color: tokens.foreground,
+    color: tokens["--foreground"],
     textDecorationLine: {
       default: "none",
       ":hover": "underline",
@@ -199,20 +200,33 @@ const styles = stylex.create({
     textUnderlineOffset: "4px",
   },
   loadingIndicator: {
+    blockSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
+    inlineSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
+    flexShrink: 0,
+    marginInline: "-0.125rem",
+    opacity: 0.8,
     pointerEvents: "none",
     position: "absolute",
   },
+  loadingIndicatorSmall: {
+    blockSize: { default: "1rem", "@media (min-width: 640px)": "0.875rem" },
+    inlineSize: { default: "1rem", "@media (min-width: 640px)": "0.875rem" },
+  },
+  loadingIndicatorLarge: {
+    blockSize: { default: "1.25rem", "@media (min-width: 640px)": "1.125rem" },
+    inlineSize: { default: "1.25rem", "@media (min-width: 640px)": "1.125rem" },
+  },
   loadingIndicatorDefault: {
-    color: tokens.primaryForeground,
+    color: tokens["--primary-foreground"],
   },
   loadingIndicatorDestructive: {
     color: "#fff",
   },
   loadingIndicatorForeground: {
-    color: tokens.foreground,
+    color: tokens["--foreground"],
   },
   loadingIndicatorSecondary: {
-    color: tokens.secondaryForeground,
+    color: tokens["--secondary-foreground"],
   },
   outline: {
     backgroundClip: {
@@ -220,7 +234,7 @@ const styles = stylex.create({
       [stylex.when.ancestor('[data-theme="dark"]', themeMarker)]: "border-box",
     },
     backgroundColor: {
-      default: tokens.popover,
+      default: tokens["--popover"],
       [stylex.when.ancestor('[data-theme="dark"]', themeMarker)]:
         "color-mix(in oklab, var(--input, currentColor) 32%, transparent)",
       ":hover":
@@ -228,7 +242,7 @@ const styles = stylex.create({
       "[data-pressed]":
         "color-mix(in oklab, var(--accent, currentColor) 50%, transparent)",
     },
-    borderColor: tokens.input,
+    borderColor: tokens["--input"],
     boxShadow: {
       default: "var(--button-outline-shadow)",
       ":active": "none",
@@ -241,7 +255,7 @@ const styles = stylex.create({
       ":focus-visible[data-pressed]":
         "0 0 0 1px var(--background), 0 0 0 3px var(--ring)",
     },
-    color: tokens.foreground,
+    color: tokens["--foreground"],
     "::before": {
       boxShadow: {
         default: "var(--button-outline-inset-shadow)",
@@ -255,17 +269,17 @@ const styles = stylex.create({
   },
   secondary: {
     backgroundColor: {
-      default: tokens.secondary,
+      default: tokens["--secondary"],
       ":hover":
         "color-mix(in oklab, var(--secondary, currentColor) 90%, transparent)",
       "[data-pressed]":
         "color-mix(in oklab, var(--secondary, currentColor) 80%, transparent)",
     },
     borderColor: "transparent",
-    color: tokens.secondaryForeground,
+    color: tokens["--secondary-foreground"],
   },
   sizeDefault: {
-    borderRadius: tokens.radiusLarge,
+    borderRadius: tokens["--radius-lg"],
     blockSize: {
       default: "2.25rem",
       "@media (min-width: 640px)": "2rem",
@@ -273,7 +287,7 @@ const styles = stylex.create({
     paddingInline: "calc(0.75rem - 1px)",
   },
   sizeIcon: {
-    borderRadius: tokens.radiusLarge,
+    borderRadius: tokens["--radius-lg"],
     blockSize: {
       default: "2.25rem",
       "@media (min-width: 640px)": "2rem",
@@ -284,7 +298,7 @@ const styles = stylex.create({
     },
   },
   sizeIconLarge: {
-    borderRadius: tokens.radiusLarge,
+    borderRadius: tokens["--radius-lg"],
     blockSize: {
       default: "2.5rem",
       "@media (min-width: 640px)": "2.25rem",
@@ -295,7 +309,7 @@ const styles = stylex.create({
     },
   },
   sizeIconSmall: {
-    borderRadius: tokens.radiusLarge,
+    borderRadius: tokens["--radius-lg"],
     blockSize: {
       default: "2rem",
       "@media (min-width: 640px)": "1.75rem",
@@ -306,7 +320,7 @@ const styles = stylex.create({
     },
   },
   sizeIconXLarge: {
-    borderRadius: tokens.radiusLarge,
+    borderRadius: tokens["--radius-lg"],
     blockSize: {
       default: "2.75rem",
       "@media (min-width: 640px)": "2.5rem",
@@ -317,7 +331,7 @@ const styles = stylex.create({
     },
   },
   sizeIconXSmall: {
-    borderRadius: tokens.radiusMedium,
+    borderRadius: tokens["--radius-md"],
     blockSize: {
       default: "1.75rem",
       "@media (min-width: 640px)": "1.5rem",
@@ -331,7 +345,7 @@ const styles = stylex.create({
     },
   },
   sizeLarge: {
-    borderRadius: tokens.radiusLarge,
+    borderRadius: tokens["--radius-lg"],
     blockSize: {
       default: "2.5rem",
       "@media (min-width: 640px)": "2.25rem",
@@ -339,7 +353,7 @@ const styles = stylex.create({
     paddingInline: "calc(0.875rem - 1px)",
   },
   sizeSmall: {
-    borderRadius: tokens.radiusLarge,
+    borderRadius: tokens["--radius-lg"],
     blockSize: {
       default: "2rem",
       "@media (min-width: 640px)": "1.75rem",
@@ -348,7 +362,7 @@ const styles = stylex.create({
     paddingInline: "calc(0.625rem - 1px)",
   },
   sizeXLarge: {
-    borderRadius: tokens.radiusLarge,
+    borderRadius: tokens["--radius-lg"],
     blockSize: {
       default: "2.75rem",
       "@media (min-width: 640px)": "2.5rem",
@@ -364,7 +378,7 @@ const styles = stylex.create({
     paddingInline: "calc(1rem - 1px)",
   },
   sizeXSmall: {
-    borderRadius: tokens.radiusMedium,
+    borderRadius: tokens["--radius-md"],
     blockSize: {
       default: "1.75rem",
       "@media (min-width: 640px)": "1.5rem",
@@ -418,31 +432,34 @@ const loadingIndicatorStyles = {
   secondary: styles.loadingIndicatorSecondary,
 } as const
 
-interface ButtonVariantProps {
+interface ButtonVariantProps extends StyleXProps {
   className?: string
   size?: keyof typeof sizeStyles
   variant?: keyof typeof variantStyles
 }
 
 export function buttonVariants({
+  xstyle,
   className,
   size = "default",
   variant = "default",
 }: ButtonVariantProps = {}) {
   return clsx(
-    stylex.props(styles.root, sizeStyles[size], variantStyles[variant])
+    stylex.props(styles.root, sizeStyles[size], variantStyles[variant], xstyle)
       .className,
     className,
   )
 }
 
-export interface ButtonProps extends useRender.ComponentProps<"button"> {
+export interface ButtonProps
+  extends StyleXProps, useRender.ComponentProps<"button"> {
   variant?: ButtonVariantProps["variant"]
   size?: ButtonVariantProps["size"]
   loading?: boolean
 }
 
 export function Button({
+  xstyle,
   className,
   variant,
   size,
@@ -462,18 +479,26 @@ export function Button({
         {children}
         {loading ? (
           <Spinner
-            className={
-              stylex.props(
-                styles.loadingIndicator,
-                loadingIndicatorStyles[variant ?? "default"],
-              ).className
-            }
+            xstyle={[
+              styles.loadingIndicator,
+              (size === "xs" || size === "icon-xs") &&
+                styles.loadingIndicatorSmall,
+              (size === "xl" || size === "icon-xl") &&
+                styles.loadingIndicatorLarge,
+              loadingIndicatorStyles[variant ?? "default"],
+            ]}
             data-slot="button-loading-indicator"
           />
         ) : null}
       </>
     ),
-    className: buttonVariants({ className, size, variant }),
+    ...stylexProps(
+      className,
+      styles.root,
+      sizeStyles[size ?? "default"],
+      variantStyles[variant ?? "default"],
+      xstyle,
+    ),
     "aria-disabled": loading || undefined,
     "data-loading": loading ? "" : undefined,
     "data-size": size ?? "default",

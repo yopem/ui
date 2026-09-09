@@ -1,5 +1,7 @@
 "use client"
 
+import type { StyleXProps } from "@registry/lib/stylex"
+
 import { Accordion as AccordionPrimitive } from "@base-ui/react/accordion"
 import { stylexProps } from "@registry/lib/stylex"
 import { tokens } from "@registry/styles/tokens.stylex"
@@ -8,7 +10,7 @@ import { ChevronDownIcon } from "lucide-react"
 
 const styles = stylex.create({
   item: {
-    borderBlockEndColor: tokens.border,
+    borderBlockEndColor: tokens["--border"],
     borderBlockEndStyle: "solid",
     borderBlockEndWidth: 1,
     ":last-child": { borderBlockEndWidth: 0 },
@@ -16,7 +18,7 @@ const styles = stylex.create({
   header: { display: "flex" },
   trigger: {
     alignItems: "flex-start",
-    borderRadius: tokens.radiusMedium,
+    borderRadius: tokens["--radius-md"],
     cursor: "pointer",
     display: "flex",
     flex: 1,
@@ -31,14 +33,18 @@ const styles = stylex.create({
     transitionDuration: "150ms",
     transitionProperty: "all",
     ":disabled": { opacity: 0.64, pointerEvents: "none" },
-    ":focus-visible": { boxShadow: `0 0 0 3px ${tokens.ring}` },
+    ":focus-visible": { boxShadow: `0 0 0 3px ${tokens["--ring"]}` },
   },
   indicator: {
+    transform: {
+      default: "translateY(0.125rem)",
+      ':is([data-slot="accordion-trigger"][data-panel-open] [data-slot="accordion-indicator"])':
+        "translateY(0.125rem) rotate(180deg)",
+    },
     blockSize: "1rem",
     flexShrink: 0,
     opacity: 0.8,
     pointerEvents: "none",
-    transform: "translateY(0.125rem)",
     transitionDuration: "200ms",
     transitionProperty: "transform",
     transitionTimingFunction: "ease-in-out",
@@ -46,7 +52,7 @@ const styles = stylex.create({
   },
   panel: {
     blockSize: "var(--accordion-panel-height)",
-    color: tokens.mutedForeground,
+    color: tokens["--muted-foreground"],
     fontSize: "0.875rem",
     lineHeight: "1.25rem",
     overflow: "hidden",
@@ -64,12 +70,13 @@ export function Accordion(props: AccordionPrimitive.Root.Props) {
 }
 
 export function AccordionItem({
+  xstyle,
   className,
   ...props
-}: AccordionPrimitive.Item.Props) {
+}: AccordionPrimitive.Item.Props & StyleXProps) {
   return (
     <AccordionPrimitive.Item
-      {...stylexProps(className, styles.item)}
+      {...stylexProps(className, styles.item, xstyle)}
       data-slot="accordion-item"
       {...props}
     />
@@ -77,14 +84,15 @@ export function AccordionItem({
 }
 
 export function AccordionTrigger({
+  xstyle,
   className,
   children,
   ...props
-}: AccordionPrimitive.Trigger.Props) {
+}: AccordionPrimitive.Trigger.Props & StyleXProps) {
   return (
     <AccordionPrimitive.Header {...stylex.props(styles.header)}>
       <AccordionPrimitive.Trigger
-        {...stylexProps(className, styles.trigger)}
+        {...stylexProps(className, styles.trigger, xstyle)}
         data-slot="accordion-trigger"
         {...props}
       >
@@ -99,17 +107,29 @@ export function AccordionTrigger({
 }
 
 export function AccordionPanel({
+  xstyle,
   className,
   children,
   ...props
-}: AccordionPrimitive.Panel.Props) {
+}: AccordionPrimitive.Panel.Props & StyleXProps) {
   return (
     <AccordionPrimitive.Panel
-      {...stylex.props(styles.panel)}
+      {...stylexProps(
+        typeof className === "function" ? className : undefined,
+        styles.panel,
+      )}
       data-slot="accordion-panel"
       {...props}
     >
-      <div {...stylexProps(className, styles.panelContent)}>{children}</div>
+      <div
+        {...stylexProps(
+          typeof className === "string" ? className : undefined,
+          styles.panelContent,
+          xstyle,
+        )}
+      >
+        {children}
+      </div>
     </AccordionPrimitive.Panel>
   )
 }

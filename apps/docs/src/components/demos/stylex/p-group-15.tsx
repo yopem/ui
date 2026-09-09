@@ -4,7 +4,11 @@ import * as stylex from "@stylexjs/stylex"
 import { SearchIcon } from "lucide-react"
 
 import { Button } from "@/components/ui/stylex/button"
-import { Group, GroupSeparator } from "@/components/ui/stylex/group"
+import {
+  Group,
+  GroupSeparator,
+  groupItemStyles,
+} from "@/components/ui/stylex/group"
 import { Input } from "@/components/ui/stylex/input"
 import {
   Select,
@@ -31,7 +35,9 @@ export default function Particle() {
   return (
     <Group aria-label="URL search">
       <Select defaultValue="both" items={protocols}>
-        <SelectTrigger {...stylex.props(demoStyles.selectTrigger)}>
+        <SelectTrigger
+          xstyle={[groupItemStyles.item, demoStyles.selectTrigger]}
+        >
           <SelectValue />
         </SelectTrigger>
         <SelectPopup>
@@ -45,13 +51,15 @@ export default function Particle() {
       <GroupSeparator />
       <Input
         aria-label="URL"
-        {...stylex.props(demoStyles.demo1)}
         defaultValue="coss.com"
         type="text"
+        controlXstyle={[groupItemStyles.item, demoStyles.demo1]}
       />
       <GroupSeparator />
       <Select defaultValue={null} items={subdomains}>
-        <SelectTrigger {...stylex.props(demoStyles.selectTrigger)}>
+        <SelectTrigger
+          xstyle={[groupItemStyles.item, demoStyles.selectTrigger]}
+        >
           <SelectValue />
         </SelectTrigger>
         <SelectPopup>
@@ -63,14 +71,27 @@ export default function Particle() {
         </SelectPopup>
       </Select>
       <GroupSeparator />
-      <Button aria-label="Search" size="icon" variant="outline">
-        <SearchIcon aria-hidden="true" />
+      <Button
+        aria-label="Search"
+        size="icon"
+        variant="outline"
+        xstyle={groupItemStyles.item}
+      >
+        <SearchIcon aria-hidden="true" {...stylex.props(demoStyles.icon)} />
       </Button>
     </Group>
   )
 }
 
 const demoStyles = stylex.create({
+  icon: {
+    blockSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
+    inlineSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
+    flexShrink: 0,
+    pointerEvents: "none",
+    opacity: 0.8,
+    marginInline: "-0.125rem",
+  },
   selectTrigger: { inlineSize: "fit-content", minInlineSize: 0 },
   demo1: {
     flex: "1",

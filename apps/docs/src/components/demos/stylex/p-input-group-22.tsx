@@ -1,5 +1,5 @@
 "use client"
-
+import * as stylex from "@stylexjs/stylex"
 import { XIcon } from "lucide-react"
 import { useState } from "react"
 
@@ -30,10 +30,21 @@ export default function Particle() {
             size="icon-xs"
             variant="ghost"
           >
-            <XIcon aria-hidden="true" />
+            <XIcon {...stylex.props(demoStyles.icon)} aria-hidden="true" />
           </Button>
         </InputGroupAddon>
       )}
     </InputGroup>
   )
 }
+
+const demoStyles = stylex.create({
+  icon: {
+    blockSize: { default: "1rem", "@media (min-width: 640px)": "0.875rem" },
+    inlineSize: { default: "1rem", "@media (min-width: 640px)": "0.875rem" },
+    flexShrink: 0,
+    pointerEvents: "none",
+    opacity: 0.8,
+    marginInline: "-0.125rem",
+  },
+})

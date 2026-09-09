@@ -22,7 +22,11 @@ export default function Particle() {
       />
       <CheckIcon
         aria-hidden="true"
-        {...stylex.props(demoStyles.report3, checked && demoStyles.checkedIcon)}
+        {...stylex.props(
+          demoStyles.icon,
+          demoStyles.report3,
+          checked && demoStyles.checkedIcon,
+        )}
       />
       <label {...stylex.props(demoStyles.demo1)} htmlFor={id}>
         Selectable
@@ -32,6 +36,13 @@ export default function Particle() {
 }
 
 const demoStyles = stylex.create({
+  icon: {
+    blockSize: { default: "0.875rem", "@media (min-width: 640px)": "0.75rem" },
+    inlineSize: { default: "0.875rem", "@media (min-width: 640px)": "0.75rem" },
+    flexShrink: 0,
+    pointerEvents: "none",
+    opacity: 0.8,
+  },
   demo1: {
     cursor: "pointer",
     WebkitUserSelect: "none",

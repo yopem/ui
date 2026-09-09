@@ -1,5 +1,7 @@
 "use client"
 
+import type { StyleXProps } from "@registry/lib/stylex"
+
 import { Meter as MeterPrimitive } from "@base-ui/react/meter"
 import { stylexProps } from "@registry/lib/stylex"
 import { tokens } from "@registry/styles/tokens.stylex"
@@ -12,33 +14,41 @@ const styles = stylex.create({
     gap: "0.5rem",
     inlineSize: "100%",
   },
-  label: { color: tokens.foreground, fontSize: "0.875rem", fontWeight: 500 },
+  label: {
+    color: tokens["--foreground"],
+    fontSize: "0.875rem",
+    fontWeight: 500,
+  },
   track: {
-    backgroundColor: tokens.input,
+    backgroundColor: tokens["--input"],
     blockSize: "0.5rem",
     display: "block",
     inlineSize: "100%",
     overflow: "hidden",
   },
   indicator: {
-    backgroundColor: tokens.primary,
+    backgroundColor: tokens["--primary"],
     transitionDuration: "500ms",
     transitionProperty: "all",
   },
   value: {
-    color: tokens.foreground,
+    color: tokens["--foreground"],
     fontSize: "0.875rem",
     fontVariantNumeric: "tabular-nums",
   },
 })
 
 export function Meter({
+  xstyle,
   className,
   children,
   ...props
-}: MeterPrimitive.Root.Props) {
+}: MeterPrimitive.Root.Props & StyleXProps) {
   return (
-    <MeterPrimitive.Root {...stylexProps(className, styles.root)} {...props}>
+    <MeterPrimitive.Root
+      {...stylexProps(className, styles.root, xstyle)}
+      {...props}
+    >
       {children ?? (
         <MeterTrack>
           <MeterIndicator />
@@ -48,48 +58,52 @@ export function Meter({
   )
 }
 export function MeterLabel({
+  xstyle,
   className,
   ...props
-}: MeterPrimitive.Label.Props) {
+}: MeterPrimitive.Label.Props & StyleXProps) {
   return (
     <MeterPrimitive.Label
-      {...stylexProps(className, styles.label)}
+      {...stylexProps(className, styles.label, xstyle)}
       data-slot="meter-label"
       {...props}
     />
   )
 }
 export function MeterTrack({
+  xstyle,
   className,
   ...props
-}: MeterPrimitive.Track.Props) {
+}: MeterPrimitive.Track.Props & StyleXProps) {
   return (
     <MeterPrimitive.Track
-      {...stylexProps(className, styles.track)}
+      {...stylexProps(className, styles.track, xstyle)}
       data-slot="meter-track"
       {...props}
     />
   )
 }
 export function MeterIndicator({
+  xstyle,
   className,
   ...props
-}: MeterPrimitive.Indicator.Props) {
+}: MeterPrimitive.Indicator.Props & StyleXProps) {
   return (
     <MeterPrimitive.Indicator
-      {...stylexProps(className, styles.indicator)}
+      {...stylexProps(className, styles.indicator, xstyle)}
       data-slot="meter-indicator"
       {...props}
     />
   )
 }
 export function MeterValue({
+  xstyle,
   className,
   ...props
-}: MeterPrimitive.Value.Props) {
+}: MeterPrimitive.Value.Props & StyleXProps) {
   return (
     <MeterPrimitive.Value
-      {...stylexProps(className, styles.value)}
+      {...stylexProps(className, styles.value, xstyle)}
       data-slot="meter-value"
       {...props}
     />

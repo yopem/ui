@@ -1,8 +1,8 @@
+import type { StyleXProps } from "@registry/lib/stylex"
 import type React from "react"
 
 import { stylexProps } from "@registry/lib/stylex"
-import { themeMarker } from "@registry/styles/markers.stylex"
-import { tokens } from "@registry/styles/tokens.stylex"
+import { themeMarker, tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import { clsx } from "clsx"
 
@@ -36,10 +36,10 @@ const styles = stylex.create({
   },
   mediaDefault: { backgroundColor: "transparent" },
   mediaIcon: {
-    backgroundColor: tokens.card,
+    backgroundColor: tokens["--card"],
     blockSize: "2.25rem",
-    borderColor: tokens.border,
-    borderRadius: tokens.radiusMedium,
+    borderColor: tokens["--border"],
+    borderRadius: tokens["--radius-md"],
     borderStyle: "solid",
     borderWidth: 1,
     boxShadow: {
@@ -47,7 +47,7 @@ const styles = stylex.create({
       [stylex.when.ancestor('[data-theme="dark"]', themeMarker)]:
         "0 -1px 0 color-mix(in oklab, #fff 6%, transparent)",
     },
-    color: tokens.foreground,
+    color: tokens["--foreground"],
     inlineSize: "2.25rem",
     position: "relative",
   },
@@ -66,12 +66,12 @@ const styles = stylex.create({
     transformOrigin: "bottom right",
   },
   title: {
-    fontFamily: tokens.fontHeading,
+    fontFamily: tokens["--font-heading"],
     fontSize: "1.25rem",
     fontWeight: 600,
   },
   description: {
-    color: tokens.mutedForeground,
+    color: tokens["--muted-foreground"],
     fontSize: "0.875rem",
     marginBlockStart: "0.25rem",
   },
@@ -102,38 +102,44 @@ function emptyMediaVariants({
   )
 }
 
-export function Empty({ className, ...props }: React.ComponentProps<"div">) {
+export function Empty({
+  xstyle,
+  className,
+  ...props
+}: React.ComponentProps<"div"> & StyleXProps) {
   return (
     <div
-      {...stylexProps(className, styles.root)}
+      {...stylexProps(className, styles.root, xstyle)}
       data-slot="empty"
       {...props}
     />
   )
 }
 export function EmptyHeader({
+  xstyle,
   className,
   ...props
-}: React.ComponentProps<"div">) {
+}: React.ComponentProps<"div"> & StyleXProps) {
   return (
     <div
-      {...stylexProps(className, styles.header)}
+      {...stylexProps(className, styles.header, xstyle)}
       data-slot="empty-header"
       {...props}
     />
   )
 }
 export function EmptyMedia({
+  xstyle,
   className,
   variant = "default",
   ...props
 }: React.ComponentProps<"div"> & {
   variant?: keyof typeof mediaVariantStyles
-}) {
+} & StyleXProps) {
   const mediaClassName = emptyMediaVariants({ className, variant })
   return (
     <div
-      {...stylexProps(className, styles.mediaRoot)}
+      {...stylexProps(className, styles.mediaRoot, xstyle)}
       data-slot="empty-media"
       data-variant={variant}
       {...props}
@@ -161,36 +167,39 @@ export function EmptyMedia({
   )
 }
 export function EmptyTitle({
+  xstyle,
   className,
   ...props
-}: React.ComponentProps<"div">) {
+}: React.ComponentProps<"div"> & StyleXProps) {
   return (
     <div
-      {...stylexProps(className, styles.title)}
+      {...stylexProps(className, styles.title, xstyle)}
       data-slot="empty-title"
       {...props}
     />
   )
 }
 export function EmptyDescription({
+  xstyle,
   className,
   ...props
-}: React.ComponentProps<"p">) {
+}: React.ComponentProps<"p"> & StyleXProps) {
   return (
     <div
-      {...stylexProps(className, styles.description)}
+      {...stylexProps(className, styles.description, xstyle)}
       data-slot="empty-description"
       {...props}
     />
   )
 }
 export function EmptyContent({
+  xstyle,
   className,
   ...props
-}: React.ComponentProps<"div">) {
+}: React.ComponentProps<"div"> & StyleXProps) {
   return (
     <div
-      {...stylexProps(className, styles.content)}
+      {...stylexProps(className, styles.content, xstyle)}
       data-slot="empty-content"
       {...props}
     />

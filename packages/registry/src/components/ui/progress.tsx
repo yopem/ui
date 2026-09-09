@@ -1,5 +1,7 @@
 "use client"
 
+import type { StyleXProps } from "@registry/lib/stylex"
+
 import { Progress as ProgressPrimitive } from "@base-ui/react/progress"
 import { stylexProps } from "@registry/lib/stylex"
 import { tokens } from "@registry/styles/tokens.stylex"
@@ -14,7 +16,7 @@ const styles = stylex.create({
   },
   label: { fontSize: "0.875rem", fontWeight: 500 },
   track: {
-    backgroundColor: tokens.input,
+    backgroundColor: tokens["--input"],
     blockSize: "0.375rem",
     borderRadius: "9999px",
     display: "block",
@@ -22,7 +24,7 @@ const styles = stylex.create({
     overflow: "hidden",
   },
   indicator: {
-    backgroundColor: tokens.primary,
+    backgroundColor: tokens["--primary"],
     transitionDuration: "500ms",
     transitionProperty: "all",
   },
@@ -30,13 +32,14 @@ const styles = stylex.create({
 })
 
 export function Progress({
+  xstyle,
   className,
   children,
   ...props
-}: ProgressPrimitive.Root.Props) {
+}: ProgressPrimitive.Root.Props & StyleXProps) {
   return (
     <ProgressPrimitive.Root
-      {...stylexProps(className, styles.root)}
+      {...stylexProps(className, styles.root, xstyle)}
       data-slot="progress"
       {...props}
     >
@@ -49,48 +52,52 @@ export function Progress({
   )
 }
 export function ProgressLabel({
+  xstyle,
   className,
   ...props
-}: ProgressPrimitive.Label.Props) {
+}: ProgressPrimitive.Label.Props & StyleXProps) {
   return (
     <ProgressPrimitive.Label
-      {...stylexProps(className, styles.label)}
+      {...stylexProps(className, styles.label, xstyle)}
       data-slot="progress-label"
       {...props}
     />
   )
 }
 export function ProgressTrack({
+  xstyle,
   className,
   ...props
-}: ProgressPrimitive.Track.Props) {
+}: ProgressPrimitive.Track.Props & StyleXProps) {
   return (
     <ProgressPrimitive.Track
-      {...stylexProps(className, styles.track)}
+      {...stylexProps(className, styles.track, xstyle)}
       data-slot="progress-track"
       {...props}
     />
   )
 }
 export function ProgressIndicator({
+  xstyle,
   className,
   ...props
-}: ProgressPrimitive.Indicator.Props) {
+}: ProgressPrimitive.Indicator.Props & StyleXProps) {
   return (
     <ProgressPrimitive.Indicator
-      {...stylexProps(className, styles.indicator)}
+      {...stylexProps(className, styles.indicator, xstyle)}
       data-slot="progress-indicator"
       {...props}
     />
   )
 }
 export function ProgressValue({
+  xstyle,
   className,
   ...props
-}: ProgressPrimitive.Value.Props) {
+}: ProgressPrimitive.Value.Props & StyleXProps) {
   return (
     <ProgressPrimitive.Value
-      {...stylexProps(className, styles.value)}
+      {...stylexProps(className, styles.value, xstyle)}
       data-slot="progress-value"
       {...props}
     />

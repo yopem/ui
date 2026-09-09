@@ -18,22 +18,22 @@ export default function Particle() {
       </ContextMenuTrigger>
       <ContextMenuPopup>
         <ContextMenuItem>
-          <PencilIcon aria-hidden="true" />
+          <PencilIcon {...stylex.props(demoStyles.icon)} aria-hidden="true" />
           Edit
           <ContextMenuShortcut>⌘E</ContextMenuShortcut>
         </ContextMenuItem>
         <ContextMenuItem>
-          <CopyIcon aria-hidden="true" />
+          <CopyIcon {...stylex.props(demoStyles.icon)} aria-hidden="true" />
           Copy
           <ContextMenuShortcut>⌘C</ContextMenuShortcut>
         </ContextMenuItem>
         <ContextMenuItem>
-          <ShareIcon aria-hidden="true" />
+          <ShareIcon {...stylex.props(demoStyles.icon)} aria-hidden="true" />
           Share
         </ContextMenuItem>
         <ContextMenuSeparator />
         <ContextMenuItem variant="destructive">
-          <TrashIcon aria-hidden="true" />
+          <TrashIcon {...stylex.props(demoStyles.icon)} aria-hidden="true" />
           Delete
           <ContextMenuShortcut>⌘⌫</ContextMenuShortcut>
         </ContextMenuItem>
@@ -43,6 +43,12 @@ export default function Particle() {
 }
 
 const demoStyles = stylex.create({
+  icon: {
+    blockSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
+    inlineSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
+    flexShrink: 0,
+    pointerEvents: "none",
+  },
   demo1: {
     display: "flex",
     blockSize: "calc(0.25rem * 32)",

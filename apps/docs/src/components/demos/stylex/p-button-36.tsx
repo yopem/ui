@@ -1,5 +1,5 @@
 "use client"
-
+import * as stylex from "@stylexjs/stylex"
 import { CheckIcon, CopyIcon } from "lucide-react"
 import { useState } from "react"
 
@@ -18,15 +18,26 @@ export default function Particle() {
     <Button onClick={handleCopy} variant="outline">
       {copied ? (
         <>
-          <CheckIcon aria-hidden="true" />
+          <CheckIcon {...stylex.props(demoStyles.icon)} aria-hidden="true" />
           Copied
         </>
       ) : (
         <>
-          <CopyIcon aria-hidden="true" />
+          <CopyIcon {...stylex.props(demoStyles.icon)} aria-hidden="true" />
           Copy
         </>
       )}
     </Button>
   )
 }
+
+const demoStyles = stylex.create({
+  icon: {
+    blockSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
+    inlineSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
+    flexShrink: 0,
+    pointerEvents: "none",
+    opacity: 0.8,
+    marginInline: "-0.125rem",
+  },
+})

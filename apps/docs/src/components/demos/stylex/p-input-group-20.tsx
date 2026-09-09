@@ -1,3 +1,4 @@
+import * as stylex from "@stylexjs/stylex"
 import { SearchIcon } from "lucide-react"
 
 import {
@@ -10,9 +11,19 @@ export default function Particle() {
   return (
     <InputGroup>
       <InputGroupAddon>
-        <SearchIcon aria-hidden="true" />
+        <SearchIcon {...stylex.props(demoStyles.icon)} aria-hidden="true" />
       </InputGroupAddon>
       <InputGroupInput aria-label="Search" placeholder="Search" type="search" />
     </InputGroup>
   )
 }
+
+const demoStyles = stylex.create({
+  icon: {
+    blockSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
+    inlineSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
+    flexShrink: 0,
+    pointerEvents: "none",
+    opacity: 0.8,
+  },
+})

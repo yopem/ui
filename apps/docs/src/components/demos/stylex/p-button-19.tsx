@@ -23,11 +23,14 @@ export default function Particle() {
     >
       {isExpanded ? "Show less" : "Show more"}
       {isExpanded ? (
-        <ChevronUpIcon aria-hidden="true" {...stylex.props(demoStyles.demo2)} />
+        <ChevronUpIcon
+          aria-hidden="true"
+          {...stylex.props(demoStyles.icon, demoStyles.demo2)}
+        />
       ) : (
         <ChevronDownIcon
           aria-hidden="true"
-          {...stylex.props(demoStyles.demo2)}
+          {...stylex.props(demoStyles.icon, demoStyles.demo2)}
         />
       )}
     </Button>
@@ -35,6 +38,14 @@ export default function Particle() {
 }
 
 const demoStyles = stylex.create({
+  icon: {
+    blockSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
+    inlineSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
+    flexShrink: 0,
+    pointerEvents: "none",
+    opacity: 0.8,
+    marginInline: "-0.125rem",
+  },
   button: { gap: "0.25rem" },
   demo2: {
     marginInlineEnd: "calc(0.25rem * -1)",

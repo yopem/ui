@@ -85,7 +85,7 @@ export default function Particle({
               >
                 <ChevronLeftIcon
                   aria-hidden="true"
-                  {...stylex.props(demoStyles.report2)}
+                  {...stylex.props(demoStyles.icon, demoStyles.report2)}
                 />
                 Previous
               </Button>
@@ -102,7 +102,7 @@ export default function Particle({
                 Next
                 <ChevronRightIcon
                   aria-hidden="true"
-                  {...stylex.props(demoStyles.report2)}
+                  {...stylex.props(demoStyles.icon, demoStyles.report2)}
                 />
               </Button>
             </PaginationItem>
@@ -114,6 +114,14 @@ export default function Particle({
 }
 
 const demoStyles = stylex.create({
+  icon: {
+    blockSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
+    inlineSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
+    flexShrink: 0,
+    pointerEvents: "none",
+    opacity: 0.8,
+    marginInline: "-0.125rem",
+  },
   demo1: {
     display: "flex",
     alignItems: "center",

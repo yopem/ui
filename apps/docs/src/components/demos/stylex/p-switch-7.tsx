@@ -115,7 +115,7 @@ function TimeCombobox({
             placeholder="Search time"
             showTrigger={false}
             size="sm"
-            startAddon={<SearchIcon />}
+            startAddon={<SearchIcon {...stylex.props(demoStyles.icon)} />}
           />
         </div>
         <ComboboxEmpty>No times found.</ComboboxEmpty>
@@ -168,7 +168,7 @@ function CopyTimesPopover({
             />
           }
         >
-          <CopyIcon aria-hidden="true" />
+          <CopyIcon {...stylex.props(demoStyles.icon2)} aria-hidden="true" />
         </PopoverTrigger>
         <TooltipPopup>Copy to other days</TooltipPopup>
       </Tooltip>
@@ -342,7 +342,10 @@ export default function Particle() {
                               />
                             }
                           >
-                            <XIcon aria-hidden="true" />
+                            <XIcon
+                              {...stylex.props(demoStyles.icon2)}
+                              aria-hidden="true"
+                            />
                           </TooltipTrigger>
                           <TooltipPopup>Delete range</TooltipPopup>
                         </Tooltip>
@@ -363,7 +366,10 @@ export default function Particle() {
                         />
                       }
                     >
-                      <PlusIcon aria-hidden="true" />
+                      <PlusIcon
+                        {...stylex.props(demoStyles.icon2)}
+                        aria-hidden="true"
+                      />
                     </TooltipTrigger>
                     <TooltipPopup>Add range</TooltipPopup>
                   </Tooltip>
@@ -383,6 +389,21 @@ export default function Particle() {
 }
 
 const demoStyles = stylex.create({
+  icon: {
+    blockSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
+    inlineSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
+    flexShrink: 0,
+    pointerEvents: "none",
+    opacity: 0.8,
+  },
+  icon2: {
+    blockSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
+    inlineSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
+    flexShrink: 0,
+    pointerEvents: "none",
+    opacity: 0.8,
+    marginInline: "-0.125rem",
+  },
   demo1: {
     inlineSize: "calc(0.25rem * 27)",
     fontVariantNumeric: "   tabular-nums ",

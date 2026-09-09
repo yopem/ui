@@ -29,7 +29,7 @@ export default function Particle() {
         <SelectValue>
           {(item) => (
             <span {...stylex.props(demoStyles.demo1)}>
-              <item.icon />
+              <item.icon {...stylex.props(demoStyles.icon)} />
               <span {...stylex.props(demoStyles.demo2)}>{item.label}</span>
             </span>
           )}
@@ -39,7 +39,7 @@ export default function Particle() {
         {items.map((item) => (
           <SelectItem key={item.value} value={item}>
             <span {...stylex.props(demoStyles.demo1)}>
-              <item.icon />
+              <item.icon {...stylex.props(demoStyles.icon)} />
               <span {...stylex.props(demoStyles.demo2)}>{item.label}</span>
             </span>
           </SelectItem>
@@ -50,6 +50,12 @@ export default function Particle() {
 }
 
 const demoStyles = stylex.create({
+  icon: {
+    blockSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
+    inlineSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
+    flexShrink: 0,
+    pointerEvents: "none",
+  },
   demo1: {
     display: "flex",
     alignItems: "center",

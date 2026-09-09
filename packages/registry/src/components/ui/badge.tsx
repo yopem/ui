@@ -1,9 +1,11 @@
 "use client"
 
+import type { StyleXProps } from "@registry/lib/stylex"
+
 import { mergeProps } from "@base-ui/react/merge-props"
 import { useRender } from "@base-ui/react/use-render"
-import { themeMarker } from "@registry/styles/markers.stylex"
-import { tokens } from "@registry/styles/tokens.stylex"
+import { stylexProps } from "@registry/lib/stylex"
+import { themeMarker, tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import { clsx } from "clsx"
 
@@ -11,7 +13,7 @@ const styles = stylex.create({
   root: {
     alignItems: "center",
     borderColor: "transparent",
-    borderRadius: tokens.radiusSmall,
+    borderRadius: tokens["--radius-sm"],
     borderStyle: "solid",
     borderWidth: 1,
     display: "inline-flex",
@@ -23,15 +25,74 @@ const styles = stylex.create({
     position: "relative",
     transitionProperty: "box-shadow",
     whiteSpace: "nowrap",
-    ":disabled": { opacity: 0.64, pointerEvents: "none" },
+    ":disabled": {
+      opacity: 0.64,
+      pointerEvents: "none",
+    },
     ":focus-visible": {
-      boxShadow: `0 0 0 2px ${tokens.ring}, 0 0 0 3px ${tokens.background}`,
+      boxShadow: `0 0 0 2px ${tokens["--ring"]}, 0 0 0 3px ${tokens["--background"]}`,
+    },
+    cursor: {
+      default: null,
+      ':is(button[data-slot="badge"])': "pointer",
+      ':is(a[data-slot="badge"])': "pointer",
+    },
+    "::after": {
+      blockSize: {
+        default: null,
+        "@media (pointer: coarse)": {
+          default: null,
+          ':is(button[data-slot="badge"])': "max(100%, 2.75rem)",
+          ':is(a[data-slot="badge"])': "max(100%, 2.75rem)",
+        },
+      },
+      content: {
+        default: null,
+        "@media (pointer: coarse)": {
+          default: null,
+          ':is(button[data-slot="badge"])': '""',
+          ':is(a[data-slot="badge"])': '""',
+        },
+      },
+      inlineSize: {
+        default: null,
+        "@media (pointer: coarse)": {
+          default: null,
+          ':is(button[data-slot="badge"])': "max(100%, 2.75rem)",
+          ':is(a[data-slot="badge"])': "max(100%, 2.75rem)",
+        },
+      },
+      inset: {
+        default: null,
+        "@media (pointer: coarse)": {
+          default: null,
+          ':is(button[data-slot="badge"])': 0,
+          ':is(a[data-slot="badge"])': 0,
+        },
+      },
+      position: {
+        default: null,
+        "@media (pointer: coarse)": {
+          default: null,
+          ':is(button[data-slot="badge"])': "absolute",
+          ':is(a[data-slot="badge"])': "absolute",
+        },
+      },
     },
   },
   sizeDefault: {
-    blockSize: { default: "1.375rem", "@media (min-width: 640px)": "1.125rem" },
-    fontSize: { default: "0.875rem", "@media (min-width: 640px)": "0.75rem" },
-    lineHeight: { default: "1.25rem", "@media (min-width: 640px)": "1rem" },
+    blockSize: {
+      default: "1.375rem",
+      "@media (min-width: 640px)": "1.125rem",
+    },
+    fontSize: {
+      default: "0.875rem",
+      "@media (min-width: 640px)": "0.75rem",
+    },
+    lineHeight: {
+      default: "1.25rem",
+      "@media (min-width: 640px)": "1rem",
+    },
     minInlineSize: {
       default: "1.375rem",
       "@media (min-width: 640px)": "1.125rem",
@@ -39,8 +100,14 @@ const styles = stylex.create({
     paddingInline: "calc(0.25rem - 1px)",
   },
   sizeLarge: {
-    blockSize: { default: "1.625rem", "@media (min-width: 640px)": "1.375rem" },
-    fontSize: { default: "1rem", "@media (min-width: 640px)": "0.875rem" },
+    blockSize: {
+      default: "1.625rem",
+      "@media (min-width: 640px)": "1.375rem",
+    },
+    fontSize: {
+      default: "1rem",
+      "@media (min-width: 640px)": "0.875rem",
+    },
     lineHeight: {
       default: "1.5rem",
       "@media (min-width: 640px)": "1.25rem",
@@ -52,18 +119,45 @@ const styles = stylex.create({
     paddingInline: "calc(0.375rem - 1px)",
   },
   sizeSmall: {
-    blockSize: { default: "1.25rem", "@media (min-width: 640px)": "1rem" },
+    blockSize: {
+      default: "1.25rem",
+      "@media (min-width: 640px)": "1rem",
+    },
     borderRadius: "0.25rem",
-    fontSize: { default: "0.75rem", "@media (min-width: 640px)": "0.625rem" },
+    fontSize: {
+      default: "0.75rem",
+      "@media (min-width: 640px)": "0.625rem",
+    },
     lineHeight: {
       default: "1rem",
       "@media (min-width: 640px)": "calc(1 / 0.75)",
     },
-    minInlineSize: { default: "1.25rem", "@media (min-width: 640px)": "1rem" },
+    minInlineSize: {
+      default: "1.25rem",
+      "@media (min-width: 640px)": "1rem",
+    },
     paddingInline: "calc(0.25rem - 1px)",
   },
-  default: { backgroundColor: tokens.primary, color: tokens.primaryForeground },
-  destructive: { backgroundColor: tokens.destructive, color: "#fff" },
+  default: {
+    backgroundColor: {
+      default: tokens["--primary"],
+      ':is(button[data-slot="badge"][data-variant="default"]:hover)':
+        "color-mix( in oklab, var(--primary, currentColor) 90%, transparent )",
+      ':is(a[data-slot="badge"][data-variant="default"]:hover)':
+        "color-mix( in oklab, var(--primary, currentColor) 90%, transparent )",
+    },
+    color: tokens["--primary-foreground"],
+  },
+  destructive: {
+    backgroundColor: {
+      default: tokens["--destructive"],
+      ':is(button[data-slot="badge"][data-variant="destructive"]:hover)':
+        "color-mix( in oklab, var(--destructive, currentColor) 90%, transparent )",
+      ':is(a[data-slot="badge"][data-variant="destructive"]:hover)':
+        "color-mix( in oklab, var(--destructive, currentColor) 90%, transparent )",
+    },
+    color: "#fff",
+  },
   error: {
     backgroundColor: {
       default:
@@ -71,7 +165,7 @@ const styles = stylex.create({
       [stylex.when.ancestor('[data-theme="dark"]', themeMarker)]:
         "color-mix(in oklab, var(--destructive, currentColor) 16%, transparent)",
     },
-    color: tokens.destructiveForeground,
+    color: tokens["--destructive-foreground"],
   },
   info: {
     backgroundColor: {
@@ -79,20 +173,20 @@ const styles = stylex.create({
       [stylex.when.ancestor('[data-theme="dark"]', themeMarker)]:
         "color-mix(in oklab, var(--info, currentColor) 16%, transparent)",
     },
-    color: tokens.infoForeground,
+    color: tokens["--info-foreground"],
   },
   outline: {
     backgroundColor: {
-      default: tokens.background,
+      default: tokens["--background"],
       [stylex.when.ancestor('[data-theme="dark"]', themeMarker)]:
         "color-mix(in oklab, var(--input, currentColor) 32%, transparent)",
     },
-    borderColor: tokens.input,
-    color: tokens.foreground,
+    borderColor: tokens["--input"],
+    color: tokens["--foreground"],
   },
   secondary: {
-    backgroundColor: tokens.secondary,
-    color: tokens.secondaryForeground,
+    backgroundColor: tokens["--secondary"],
+    color: tokens["--secondary-foreground"],
   },
   success: {
     backgroundColor: {
@@ -101,7 +195,7 @@ const styles = stylex.create({
       [stylex.when.ancestor('[data-theme="dark"]', themeMarker)]:
         "color-mix(in oklab, var(--success, currentColor) 16%, transparent)",
     },
-    color: tokens.successForeground,
+    color: tokens["--success-foreground"],
   },
   warning: {
     backgroundColor: {
@@ -110,7 +204,7 @@ const styles = stylex.create({
       [stylex.when.ancestor('[data-theme="dark"]', themeMarker)]:
         "color-mix(in oklab, var(--warning, currentColor) 16%, transparent)",
     },
-    color: tokens.warningForeground,
+    color: tokens["--warning-foreground"],
   },
 })
 
@@ -148,12 +242,14 @@ export function badgeVariants({
   )
 }
 
-export interface BadgeProps extends useRender.ComponentProps<"span"> {
+export interface BadgeProps
+  extends StyleXProps, useRender.ComponentProps<"span"> {
   variant?: BadgeVariantProps["variant"]
   size?: BadgeVariantProps["size"]
 }
 
 export function Badge({
+  xstyle,
   className,
   variant,
   size,
@@ -161,7 +257,13 @@ export function Badge({
   ...props
 }: BadgeProps) {
   const defaultProps = {
-    className: badgeVariants({ className, size, variant }),
+    ...stylexProps(
+      className,
+      styles.root,
+      sizeStyles[size ?? "default"],
+      variantStyles[variant ?? "default"],
+      xstyle,
+    ),
     "data-size": size ?? "default",
     "data-slot": "badge",
     "data-variant": variant ?? "default",

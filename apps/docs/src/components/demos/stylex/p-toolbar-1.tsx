@@ -55,7 +55,7 @@ export default function Particle() {
                   aria-label="Align left"
                   render={<ToggleGroupItem value="left" />}
                 >
-                  <AlignLeftIcon />
+                  <AlignLeftIcon {...stylex.props(demoStyles.icon)} />
                 </ToolbarButton>
               }
             />
@@ -73,7 +73,7 @@ export default function Particle() {
                     />
                   }
                 >
-                  <AlignCenterIcon />
+                  <AlignCenterIcon {...stylex.props(demoStyles.icon)} />
                 </ToolbarButton>
               }
             />
@@ -88,7 +88,7 @@ export default function Particle() {
                     <ToggleGroupItem aria-label="Toggle right" value="right" />
                   }
                 >
-                  <AlignRightIcon />
+                  <AlignRightIcon {...stylex.props(demoStyles.icon)} />
                 </ToolbarButton>
               }
             />
@@ -104,7 +104,7 @@ export default function Particle() {
                   aria-label="Format as currency"
                   render={<Button size="icon" variant="ghost" />}
                 >
-                  <DollarSignIcon />
+                  <DollarSignIcon {...stylex.props(demoStyles.icon2)} />
                 </ToolbarButton>
               }
             />
@@ -117,7 +117,7 @@ export default function Particle() {
                   aria-label="Format as percent"
                   render={<Button size="icon" variant="ghost" />}
                 >
-                  <PercentIcon />
+                  <PercentIcon {...stylex.props(demoStyles.icon2)} />
                 </ToolbarButton>
               }
             />
@@ -162,6 +162,21 @@ export default function Particle() {
 }
 
 const demoStyles = stylex.create({
+  icon: {
+    blockSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
+    inlineSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
+    flexShrink: 0,
+    pointerEvents: "none",
+    opacity: 0.8,
+  },
+  icon2: {
+    blockSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
+    inlineSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
+    flexShrink: 0,
+    pointerEvents: "none",
+    opacity: 0.8,
+    marginInline: "-0.125rem",
+  },
   demo1: {
     borderStyle: "none",
     padding: "0px",

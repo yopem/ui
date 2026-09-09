@@ -60,7 +60,7 @@ test("docs do not depend on Tailwind or Fumadocs UI", () => {
 })
 
 test("theme changes use StyleX classes instead of imperative inline styling", () => {
-  for (const name of ["theme-provider.tsx", "theme-script.tsx"]) {
+  for (const name of ["theme-provider.tsx", "theme.tsx"]) {
     expect(
       readFileSync(resolve(import.meta.dir, "../src/theme", name), "utf8"),
     ).not.toContain(".style.")

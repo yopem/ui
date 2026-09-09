@@ -10,7 +10,7 @@ import {
   AvatarImage,
 } from "@/components/ui/stylex/avatar"
 import { Badge } from "@/components/ui/stylex/badge"
-import { Button, buttonVariants } from "@/components/ui/stylex/button"
+import { Button } from "@/components/ui/stylex/button"
 import {
   Combobox,
   ComboboxEmpty,
@@ -20,7 +20,12 @@ import {
   ComboboxPopup,
   ComboboxTrigger,
 } from "@/components/ui/stylex/combobox"
-import { Group, GroupSeparator, GroupText } from "@/components/ui/stylex/group"
+import {
+  Group,
+  GroupSeparator,
+  GroupText,
+  groupItemStyles,
+} from "@/components/ui/stylex/group"
 
 interface FilterOption {
   id: string
@@ -79,9 +84,9 @@ function MemberAvatar({
   avatarUrl?: string
 }) {
   return (
-    <Avatar {...stylex.props(demoStyles.avatar)}>
+    <Avatar xstyle={demoStyles.avatar}>
       {avatarUrl ? <AvatarImage alt={name} src={avatarUrl} /> : null}
-      <AvatarFallback {...stylex.props(demoStyles.demo1)}>
+      <AvatarFallback xstyle={demoStyles.demo1}>
         {getInitials(name)}
       </AvatarFallback>
     </Avatar>
@@ -106,7 +111,7 @@ export default function Particle() {
         />
         <span {...stylex.props(demoStyles.demo3)}>{firstMember?.label}</span>
         {remainingCount > 0 && (
-          <Badge {...stylex.props(demoStyles.demo4)} variant="secondary">
+          <Badge variant="secondary" xstyle={demoStyles.demo4}>
             +{remainingCount}
           </Badge>
         )}
@@ -116,14 +121,8 @@ export default function Particle() {
 
   return (
     <Group>
-      <GroupText
-        className={buttonVariants({
-          size: "sm",
-          variant: "outline",
-        })}
-        {...stylex.props(demoStyles.groupText)}
-      >
-        <FunnelIcon />
+      <GroupText xstyle={demoStyles.groupText}>
+        <FunnelIcon {...stylex.props(demoStyles.icon)} />
         Member
       </GroupText>
       <GroupSeparator />
@@ -141,26 +140,29 @@ export default function Particle() {
         <ComboboxTrigger
           render={
             <Button
-              {...stylex.props(
-                selectedMembers.length === 0 && demoStyles.emptyTrigger,
-              )}
               size="sm"
               variant="outline"
+              xstyle={[
+                groupItemStyles.item,
+                selectedMembers.length === 0 && demoStyles.emptyTrigger,
+              ]}
             />
           }
         >
           {renderTriggerContent()}
           {selectedMembers.length === 0 && (
-            <ChevronsUpDownIcon {...stylex.props(demoStyles.demo5)} />
+            <ChevronsUpDownIcon
+              {...stylex.props(demoStyles.icon, demoStyles.demo5)}
+            />
           )}
         </ComboboxTrigger>
         <ComboboxPopup aria-label="Select member">
           <div {...stylex.props(demoStyles.demo6)}>
             <ComboboxInput
-              {...stylex.props(demoStyles.demo7)}
               placeholder="Search members..."
               showTrigger={false}
-              startAddon={<SearchIcon />}
+              startAddon={<SearchIcon {...stylex.props(demoStyles.icon)} />}
+              xstyle={demoStyles.demo7}
             />
           </div>
           <ComboboxEmpty>No members found.</ComboboxEmpty>
@@ -182,16 +184,31 @@ export default function Particle() {
         onClick={() => setSelectedMembers([])}
         size="icon-sm"
         variant="outline"
+        xstyle={groupItemStyles.item}
       >
-        <XIcon />
+        <XIcon {...stylex.props(demoStyles.icon)} />
       </Button>
     </Group>
   )
 }
 
 const demoStyles = stylex.create({
+  icon: {
+    blockSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
+    inlineSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
+    flexShrink: 0,
+    pointerEvents: "none",
+    opacity: 0.8,
+    marginInline: "-0.125rem",
+  },
   avatar: { blockSize: "1.25rem", inlineSize: "1.25rem" },
-  groupText: { color: "var(--foreground)", pointerEvents: "none" },
+  groupText: {
+    color: "var(--foreground)",
+    pointerEvents: "none",
+    blockSize: { default: "2rem", "@media (min-width: 640px)": "1.75rem" },
+    gap: "0.375rem",
+    paddingInline: "calc(0.625rem - 1px)",
+  },
   emptyTrigger: {
     justifyContent: "space-between",
   },

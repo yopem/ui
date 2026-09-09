@@ -18,7 +18,7 @@ export default function Particle() {
     >
       <svg
         aria-hidden="true"
-        {...stylex.props(demoStyles.demo1)}
+        {...stylex.props(demoStyles.icon, demoStyles.demo1)}
         fill="none"
         height={16}
         stroke="currentColor"
@@ -59,6 +59,11 @@ export default function Particle() {
 }
 
 const demoStyles = stylex.create({
+  icon: {
+    flexShrink: 0,
+    opacity: 0.8,
+    marginInline: "-0.125rem",
+  },
   demo1: {
     pointerEvents: "none",
   },

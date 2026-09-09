@@ -1,3 +1,5 @@
+import { tokens } from "@registry/styles/tokens.stylex"
+import * as stylex from "@stylexjs/stylex"
 import { CircleAlertIcon } from "lucide-react"
 
 import {
@@ -9,7 +11,7 @@ import {
 export default function Particle() {
   return (
     <Alert variant="error">
-      <CircleAlertIcon />
+      <CircleAlertIcon {...stylex.props(demoStyles.icon)} />
       <AlertTitle>Heads up!</AlertTitle>
       <AlertDescription>
         Describe what can be done about it here.
@@ -17,3 +19,11 @@ export default function Particle() {
     </Alert>
   )
 }
+
+const demoStyles = stylex.create({
+  icon: {
+    blockSize: "1lh",
+    inlineSize: "1rem",
+    color: tokens["--destructive"],
+  },
+})

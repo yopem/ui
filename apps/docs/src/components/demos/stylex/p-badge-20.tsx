@@ -19,13 +19,20 @@ export default function Particle() {
         onClick={() => setIsActive(false)}
         type="button"
       >
-        <XIcon aria-hidden="true" />
+        <XIcon {...stylex.props(demoStyles.icon)} aria-hidden="true" />
       </button>
     </Badge>
   )
 }
 
 const demoStyles = stylex.create({
+  icon: {
+    blockSize: { default: "0.875rem", "@media (min-width: 640px)": "0.75rem" },
+    inlineSize: { default: "0.875rem", "@media (min-width: 640px)": "0.75rem" },
+    flexShrink: 0,
+    pointerEvents: "none",
+    opacity: 0.8,
+  },
   demo1: {
     gap: "0px",
   },

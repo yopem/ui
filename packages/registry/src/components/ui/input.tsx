@@ -1,12 +1,13 @@
 "use client"
 
+import type { StyleXProps } from "@registry/lib/stylex"
 import type * as React from "react"
 
 import { Input as InputPrimitive } from "@base-ui/react/input"
 import { stylexProps } from "@registry/lib/stylex"
-import { themeMarker } from "@registry/styles/markers.stylex"
-import { tokens } from "@registry/styles/tokens.stylex"
+import { themeMarker, tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
+import { clsx } from "clsx"
 
 const styles = stylex.create({
   control: {
@@ -16,21 +17,35 @@ const styles = stylex.create({
       [stylex.when.ancestor('[data-theme="dark"]', themeMarker)]:
         "var(--input-control-background, color-mix(in oklab, var(--input, currentColor) 32%, transparent))",
     },
-    borderColor: "var(--input-control-border, var(--input))",
+    borderColor: {
+      default: "var(--input-control-border, var(--input))",
+      ":has(:focus-visible)": tokens["--ring"],
+      ':has([aria-invalid="true"])':
+        "color-mix(in oklab, var(--destructive, currentColor) 36%, transparent)",
+      ':has([aria-invalid="true"]):has(:focus-visible)':
+        "color-mix(in oklab, var(--destructive, currentColor) 36%, transparent)",
+    },
     borderRadius: "var(--radius-lg)",
     borderStyle: "solid",
     borderWidth: 1,
     boxShadow: {
       default: "var(--input-control-shadow, var(--button-outline-shadow))",
-      [stylex.when.descendant(":disabled")]: "none",
-      [stylex.when.descendant(":focus-visible")]:
+      ':has([aria-invalid="true"])': "none",
+      ":has(:focus-visible)":
         "0 0 0 3px color-mix(in oklab, var(--ring, currentColor) 24%, transparent)",
-      [stylex.when.descendant("[aria-invalid]")]: "none",
-      [stylex.when.descendant(":focus-visible[aria-invalid]")]:
-        "0 0 0 3px color-mix(in oklab, var(--destructive, currentColor) 16%, transparent)",
+      ':has([aria-invalid="true"]):has(:focus-visible)':
+        "0 0 0 3px color-mix(in oklab, var(--ring, currentColor) 24%, transparent)",
+      ":has(:disabled)": "none",
     },
-    display: "inline-flex",
-    fontSize: { default: "1rem", "@media (min-width: 640px)": "0.875rem" },
+    display: {
+      default: "inline-flex",
+      ':is([data-slot="input-group"] > [data-slot="input-control"])':
+        "contents",
+    },
+    fontSize: {
+      default: "1rem",
+      "@media (min-width: 640px)": "0.875rem",
+    },
     inlineSize: "100%",
     lineHeight: {
       default: "1.5rem",
@@ -38,7 +53,7 @@ const styles = stylex.create({
     },
     opacity: {
       default: 1,
-      [stylex.when.descendant(":disabled")]: 0.64,
+      ":has(:disabled)": 0.64,
     },
     position: "relative",
     transitionProperty: "box-shadow",
@@ -49,9 +64,9 @@ const styles = stylex.create({
           "var(--input-control-inset-shadow, var(--button-outline-inset-shadow))",
         [stylex.when.ancestor('[data-theme="dark"]', themeMarker)]:
           "var(--input-control-inset-shadow, var(--button-outline-inset-shadow-dark))",
-        [stylex.when.descendant(":disabled")]: "none",
-        [stylex.when.descendant(":focus-visible")]: "none",
-        [stylex.when.descendant("[aria-invalid]")]: "none",
+        ":has(:disabled)": "none",
+        ":has(:focus-visible)": "none",
+        ':has([aria-invalid="true"])': "none",
       },
       content: '""',
       display: "var(--input-control-before-display, block)",
@@ -61,9 +76,12 @@ const styles = stylex.create({
     },
   },
   input: {
-    blockSize: { default: "2.125rem", "@media (min-width: 640px)": "1.875rem" },
+    blockSize: {
+      default: "2.125rem",
+      "@media (min-width: 640px)": "1.875rem",
+    },
     borderRadius: "inherit",
-    color: tokens.foreground,
+    color: tokens["--foreground"],
     inlineSize: "100%",
     lineHeight: {
       default: "2.125rem",
@@ -77,35 +95,62 @@ const styles = stylex.create({
       color:
         "color-mix(in oklab, var(--muted-foreground, currentColor) 72%, transparent)",
     },
+    WebkitTextFillColor: {
+      default: null,
+      ":-webkit-autofill": tokens["--foreground"],
+    },
+    paddingInlineEnd: {
+      default: "calc(0.75rem - 1px)",
+      ':is([data-slot="group"] [data-slot="input-group"]:has(> [data-align="inline-end"]) [data-slot="input"])':
+        "0.5rem",
+    },
   },
   small: {
-    blockSize: { default: "1.875rem", "@media (min-width: 640px)": "1.625rem" },
+    blockSize: {
+      default: "1.875rem",
+      "@media (min-width: 640px)": "1.625rem",
+    },
     lineHeight: {
       default: "1.875rem",
       "@media (min-width: 640px)": "1.625rem",
     },
-    paddingInline: "calc(0.625rem - 1px)",
+    paddingInlineStart: "calc(0.625rem - 1px)",
+    paddingInlineEnd: {
+      default: "calc(0.625rem - 1px)",
+      ':is([data-slot="group"] [data-slot="input-group"]:has(> [data-align="inline-end"]) [data-slot="input"])':
+        "0.5rem",
+    },
   },
   large: {
-    blockSize: { default: "2.375rem", "@media (min-width: 640px)": "2.125rem" },
+    blockSize: {
+      default: "2.375rem",
+      "@media (min-width: 640px)": "2.125rem",
+    },
     lineHeight: {
       default: "2.375rem",
       "@media (min-width: 640px)": "2.125rem",
     },
   },
   search: {
-    "::-webkit-search-cancel-button": { appearance: "none" },
-    "::-webkit-search-decoration": { appearance: "none" },
-    "::-webkit-search-results-button": { appearance: "none" },
-    "::-webkit-search-results-decoration": { appearance: "none" },
+    "::-webkit-search-cancel-button": {
+      appearance: "none",
+    },
+    "::-webkit-search-decoration": {
+      appearance: "none",
+    },
+    "::-webkit-search-results-button": {
+      appearance: "none",
+    },
+    "::-webkit-search-results-decoration": {
+      appearance: "none",
+    },
   },
   file: {
-    color: tokens.mutedForeground,
+    color: tokens["--muted-foreground"],
     "::file-selector-button": {
-      backgroundColor: "transparent",
       borderStyle: "solid",
       borderWidth: 0,
-      color: tokens.foreground,
+      color: tokens["--foreground"],
       fontFamily: "inherit",
       fontSize: "0.875rem",
       fontWeight: 500,
@@ -113,20 +158,30 @@ const styles = stylex.create({
       lineHeight: "inherit",
       marginInlineEnd: "0.75rem",
       padding: 0,
+      background: "transparent",
+    },
+  },
+  groupControl: {
+    display: {
+      default: null,
+      ':is([data-slot="input-group"] > [data-slot="input-control"])':
+        "contents",
     },
   },
 })
 
-export type InputProps = Omit<
-  InputPrimitive.Props & React.RefAttributes<HTMLInputElement>,
-  "size"
-> & {
-  size?: "sm" | "default" | "lg" | number
-  unstyled?: boolean
-  nativeInput?: boolean
-}
+export type InputProps = StyleXProps &
+  Omit<InputPrimitive.Props & React.RefAttributes<HTMLInputElement>, "size"> & {
+    size?: "sm" | "default" | "lg" | number
+    unstyled?: boolean
+    nativeInput?: boolean
+    /** StyleX styles for the decorative wrapper, including Group item geometry. */
+    controlXstyle?: StyleXProps["xstyle"]
+  }
 
 export function Input({
+  xstyle,
+  controlXstyle,
   className,
   size = "default",
   unstyled = false,
@@ -136,36 +191,53 @@ export function Input({
 }: InputProps) {
   const sizeStyle =
     size === "sm" ? styles.small : size === "lg" ? styles.large : null
-  const inputClassName = stylex.props(
+  const inputProps = stylexProps(
+    undefined,
     styles.input,
     sizeStyle,
     props.type === "search" && styles.search,
     props.type === "file" && styles.file,
     stylex.defaultMarker(),
-  ).className
+    xstyle,
+  )
   const wrapperClassName = typeof className === "string" ? className : undefined
   return (
     <span
-      {...(unstyled
-        ? { className: wrapperClassName }
-        : stylexProps(wrapperClassName, styles.control))}
+      {...stylexProps(
+        wrapperClassName,
+        !unstyled && styles.control,
+        unstyled && styles.groupControl,
+        controlXstyle,
+      )}
       data-size={size}
       data-slot="input-control"
     >
       {nativeInput ? (
         <input
-          className={inputClassName}
+          {...inputProps}
           data-slot="input"
           size={typeof size === "number" ? size : undefined}
-          style={typeof style === "function" ? undefined : style}
+          style={{
+            ...inputProps.style,
+            ...(typeof style === "function" ? undefined : style),
+          }}
           {...props}
         />
       ) : (
         <InputPrimitive
-          className={inputClassName}
+          {...inputProps}
+          className={
+            typeof className === "function"
+              ? (state) => clsx(inputProps.className, className(state))
+              : inputProps.className
+          }
           data-slot="input"
           size={typeof size === "number" ? size : undefined}
-          style={style}
+          style={
+            typeof style === "function"
+              ? (state) => ({ ...inputProps.style, ...style(state) })
+              : { ...inputProps.style, ...style }
+          }
           {...props}
         />
       )}

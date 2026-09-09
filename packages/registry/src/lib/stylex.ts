@@ -7,7 +7,7 @@ import type {
 import * as stylex from "@stylexjs/stylex"
 import { clsx } from "clsx"
 
-type StyleXStyle = StyleXArray<
+export type StyleXStyle = StyleXArray<
   | null
   | undefined
   | CompiledStyles
@@ -15,6 +15,25 @@ type StyleXStyle = StyleXArray<
   | Readonly<[CompiledStyles, InlineStyles]>
 >
 
+export interface StyleXProps {
+  /** StyleX styles applied after component defaults and variants. */
+  xstyle?: StyleXStyle
+}
+
+export function stylexProps(
+  className: string | undefined,
+  ...styles: readonly StyleXStyle[]
+): {
+  className: string
+  style: ReturnType<typeof stylex.props>["style"] | undefined
+}
+export function stylexProps<State>(
+  className: string | ((state: State) => string | undefined) | undefined,
+  ...styles: readonly StyleXStyle[]
+): {
+  className: string | ((state: State) => string)
+  style: ReturnType<typeof stylex.props>["style"] | undefined
+}
 export function stylexProps<State>(
   className: string | ((state: State) => string | undefined) | undefined,
   ...styles: readonly StyleXStyle[]
@@ -25,9 +44,9 @@ export function stylexProps<State>(
   return {
     ...props,
     style,
-    className: clsx(
-      props.className,
-      typeof className === "string" ? className : undefined,
-    ),
+    className:
+      typeof className === "function"
+        ? (state: State) => clsx(props.className, className(state))
+        : clsx(props.className, className),
   }
 }

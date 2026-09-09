@@ -1,5 +1,5 @@
 "use client"
-
+import * as stylex from "@stylexjs/stylex"
 import { BookmarkIcon } from "lucide-react"
 import { useRef, useState } from "react"
 
@@ -50,7 +50,10 @@ export default function Particle() {
               onPressedChange={handleToggleChange}
               pressed={bookmarked}
             >
-              <BookmarkIcon aria-hidden="true" />
+              <BookmarkIcon
+                {...stylex.props(demoStyles.icon)}
+                aria-hidden="true"
+              />
             </Toggle>
           </div>
         }
@@ -61,3 +64,13 @@ export default function Particle() {
     </Tooltip>
   )
 }
+
+const demoStyles = stylex.create({
+  icon: {
+    blockSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
+    inlineSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
+    flexShrink: 0,
+    pointerEvents: "none",
+    opacity: 0.8,
+  },
+})

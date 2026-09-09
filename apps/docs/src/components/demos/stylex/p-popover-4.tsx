@@ -8,7 +8,11 @@ import { Badge } from "@/components/ui/stylex/badge"
 import { Button } from "@/components/ui/stylex/button"
 import { Checkbox } from "@/components/ui/stylex/checkbox"
 import { CheckboxGroup } from "@/components/ui/stylex/checkbox-group"
-import { Group, GroupSeparator } from "@/components/ui/stylex/group"
+import {
+  groupItemStyles,
+  Group,
+  GroupSeparator,
+} from "@/components/ui/stylex/group"
 import { Label } from "@/components/ui/stylex/label"
 import {
   Popover,
@@ -36,18 +40,24 @@ export default function Particle() {
         Reject
       </Button>
       <Group aria-label="Confirm booking">
-        <Button size="xs">Confirm all</Button>
+        <Button xstyle={groupItemStyles.item} size="xs">
+          Confirm all
+        </Button>
         <GroupSeparator {...stylex.props(demoStyles.demo2)} />
         <Popover>
           <PopoverTrigger
             render={
               <Button
+                xstyle={groupItemStyles.item}
                 aria-label="Choose occurrences to confirm"
                 size="icon-xs"
               />
             }
           >
-            <ChevronDownIcon aria-hidden="true" />
+            <ChevronDownIcon
+              {...stylex.props(demoStyles.icon)}
+              aria-hidden="true"
+            />
           </PopoverTrigger>
           <PopoverPopup align="end" {...stylex.props(demoStyles.demo3)}>
             <div {...stylex.props(demoStyles.demo4)}>
@@ -101,6 +111,14 @@ export default function Particle() {
 }
 
 const demoStyles = stylex.create({
+  icon: {
+    blockSize: { default: "1rem", "@media (min-width: 640px)": "0.875rem" },
+    inlineSize: { default: "1rem", "@media (min-width: 640px)": "0.875rem" },
+    flexShrink: 0,
+    pointerEvents: "none",
+    opacity: 0.8,
+    marginInline: "-0.125rem",
+  },
   demo1: {
     display: "flex",
     gap: "calc(0.25rem * 2)",

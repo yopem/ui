@@ -106,23 +106,32 @@ function GettingStarted() {
             Customize safely
           </h2>
           <p {...stylex.props(docsStyles.p)}>
-            Change colors in{" "}
-            <code {...stylex.props(docsStyles.inlineCode)}>
-              src/yopem/styles/tokens.stylex.ts
-            </code>{" "}
-            and the theme definitions in{" "}
-            <code {...stylex.props(docsStyles.inlineCode)}>themes.ts</code>.
-            Keep the compatibility CSS variables in{" "}
-            <code {...stylex.props(docsStyles.inlineCode)}>styles.css</code> in
-            sync when changing your palette.
+            Customize semantic tokens with StyleX createTheme, or edit the
+            native defaults in tokens.stylex.ts. No CSS palette needs to stay in
+            sync. See the{" "}
+            <Link {...stylex.props(docsStyles.link)} to="/docs/theming">
+              theming guide
+            </Link>{" "}
+            for global and scoped themes, app tokens, and light/dark switching.
           </p>
           <p {...stylex.props(docsStyles.p)}>
-            For component-specific changes, edit its local{" "}
-            <code {...stylex.props(docsStyles.inlineCode)}>stylex.create</code>{" "}
-            object. Preserve Base UI props, keyboard handling, focus indicators,
-            and accessible names. Icon-only controls still need an{" "}
-            <code {...stylex.props(docsStyles.inlineCode)}>aria-label</code>.
+            Pass compiled styles through xstyle for component-specific
+            overrides. It applies after defaults and variants. Edit the copied
+            source when changing behavior; preserve Base UI props, keyboard
+            handling, focus indicators, and accessible names. Icon-only controls
+            still need an aria-label.
           </p>
+          <CopyableCode
+            title="src/components/save-button.tsx"
+            code={`import * as stylex from "@stylexjs/stylex"
+import { Button } from "@registry/components/ui/button"
+
+const styles = stylex.create({ button: { borderRadius: "999px" } })
+
+export function SaveButton() {
+  return <Button xstyle={styles.button}>Save changes</Button>
+}`}
+          />
           <p {...stylex.props(docsStyles.p)}>
             Source files use{" "}
             <code {...stylex.props(docsStyles.inlineCode)}>@registry/*</code>{" "}
@@ -131,9 +140,9 @@ function GettingStarted() {
             configuration together.
           </p>
           <p {...stylex.props(docsStyles.p)}>
-            Keep server-rendered theme attributes and the theme script when
-            using SSR. The theme script runs before hydration to avoid a flash
-            of the wrong theme.
+            Static themes need no provider or script. If you add mode switching
+            with SSR, use the optional early ThemeScript and ThemeProvider from
+            the theming guide to apply the saved preference before hydration.
           </p>
         </DocsBody>
       </DocsPage>

@@ -40,7 +40,10 @@ export default function Particle() {
                 />
               }
             >
-              <FoldersIcon aria-hidden="true" />
+              <FoldersIcon
+                {...stylex.props(demoStyles.icon)}
+                aria-hidden="true"
+              />
             </MenuTrigger>
             <MenuPopup align="start">
               <MenuItem render={<a aria-label="More pages" href="/docs" />}>
@@ -70,6 +73,14 @@ export default function Particle() {
 }
 
 const demoStyles = stylex.create({
+  icon: {
+    blockSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
+    inlineSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
+    flexShrink: 0,
+    pointerEvents: "none",
+    opacity: 0.8,
+    marginInline: "-0.125rem",
+  },
   demo1: {
     margin: "calc(0.25rem * -1.5)",
     color: "var(--muted-foreground)",

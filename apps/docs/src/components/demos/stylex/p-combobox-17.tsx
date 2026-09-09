@@ -57,7 +57,7 @@ export default function Particle() {
             {...stylex.props(demoStyles.demo2)}
             placeholder="e.g. Europe/London"
             showTrigger={false}
-            startAddon={<SearchIcon />}
+            startAddon={<SearchIcon {...stylex.props(demoStyles.icon)} />}
           />
         </div>
         <ComboboxEmpty>No timezones found.</ComboboxEmpty>
@@ -74,6 +74,13 @@ export default function Particle() {
 }
 
 const demoStyles = stylex.create({
+  icon: {
+    blockSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
+    inlineSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
+    flexShrink: 0,
+    pointerEvents: "none",
+    opacity: 0.8,
+  },
   demo1: {
     borderBlockEndStyle: "solid",
     borderBlockEndWidth: "1px",

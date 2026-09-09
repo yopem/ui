@@ -41,7 +41,7 @@ export default function Particle() {
                     />
                   }
                 >
-                  <PlusIcon />
+                  <PlusIcon {...stylex.props(demoStyles.icon)} />
                 </MenuTrigger>
               }
             />
@@ -66,7 +66,7 @@ export default function Particle() {
                 size="icon-sm"
                 variant="default"
               >
-                <ArrowUpIcon />
+                <ArrowUpIcon {...stylex.props(demoStyles.icon)} />
               </Button>
             }
           />
@@ -78,6 +78,14 @@ export default function Particle() {
 }
 
 const demoStyles = stylex.create({
+  icon: {
+    blockSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
+    inlineSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
+    flexShrink: 0,
+    pointerEvents: "none",
+    opacity: 0.8,
+    marginInline: "-0.125rem",
+  },
   demo1: {
     borderRadius: "calc(infinity * 1px)",
   },

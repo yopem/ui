@@ -1,3 +1,4 @@
+import * as stylex from "@stylexjs/stylex"
 import { BoldIcon, ItalicIcon, UnderlineIcon } from "lucide-react"
 
 import {
@@ -19,7 +20,7 @@ export default function Particle() {
           <TooltipTrigger
             render={<ToggleGroupItem aria-label="Toggle bold" value="bold" />}
           >
-            <BoldIcon />
+            <BoldIcon {...stylex.props(demoStyles.icon)} />
           </TooltipTrigger>
           <TooltipPopup>Bold</TooltipPopup>
         </Tooltip>
@@ -29,7 +30,7 @@ export default function Particle() {
               <ToggleGroupItem aria-label="Toggle italic" value="italic" />
             }
           >
-            <ItalicIcon />
+            <ItalicIcon {...stylex.props(demoStyles.icon)} />
           </TooltipTrigger>
           <TooltipPopup>Italic</TooltipPopup>
         </Tooltip>
@@ -42,7 +43,7 @@ export default function Particle() {
               />
             }
           >
-            <UnderlineIcon />
+            <UnderlineIcon {...stylex.props(demoStyles.icon)} />
           </TooltipTrigger>
           <TooltipPopup>Underline</TooltipPopup>
         </Tooltip>
@@ -50,3 +51,13 @@ export default function Particle() {
     </TooltipProvider>
   )
 }
+
+const demoStyles = stylex.create({
+  icon: {
+    blockSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
+    inlineSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
+    flexShrink: 0,
+    pointerEvents: "none",
+    opacity: 0.8,
+  },
+})

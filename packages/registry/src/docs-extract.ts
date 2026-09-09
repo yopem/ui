@@ -393,10 +393,9 @@ export function extractDocs() {
                 type,
                 required,
               })),
-              required: checker
-                .getPropertiesOfType(t)
-                .filter((p) => !(p.flags & ts.SymbolFlags.Optional))
-                .map((p) => p.name),
+              required: properties([t], node)
+                .filter((property) => property.required)
+                .map((property) => property.name),
             }))
           : [],
     }

@@ -12,22 +12,30 @@ export default function Particle() {
   return (
     <div {...stylex.props(demoStyles.demo1)}>
       <Button aria-label="Login with Google" size="icon" variant="outline">
-        <RiGoogleFill aria-hidden="true" />
+        <RiGoogleFill {...stylex.props(demoStyles.icon)} aria-hidden="true" />
       </Button>
       <Button aria-label="Login with Facebook" size="icon" variant="outline">
-        <RiFacebookFill aria-hidden="true" />
+        <RiFacebookFill {...stylex.props(demoStyles.icon)} aria-hidden="true" />
       </Button>
       <Button aria-label="Login with X" size="icon" variant="outline">
-        <RiTwitterXFill aria-hidden="true" />
+        <RiTwitterXFill {...stylex.props(demoStyles.icon)} aria-hidden="true" />
       </Button>
       <Button aria-label="Login with GitHub" size="icon" variant="outline">
-        <RiGithubFill aria-hidden="true" />
+        <RiGithubFill {...stylex.props(demoStyles.icon)} aria-hidden="true" />
       </Button>
     </div>
   )
 }
 
 const demoStyles = stylex.create({
+  icon: {
+    blockSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
+    inlineSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
+    flexShrink: 0,
+    pointerEvents: "none",
+    opacity: 0.8,
+    marginInline: "-0.125rem",
+  },
   demo1: {
     display: "inline-flex",
     flexWrap: "wrap",

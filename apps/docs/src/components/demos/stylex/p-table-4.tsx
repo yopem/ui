@@ -170,7 +170,7 @@ const columns: ColumnDef<Flight>[] = [
     accessorKey: "terminal",
     cell: ({ row }) => (
       <Badge {...stylex.props(demoStyles.demo5)} size="lg" variant="outline">
-        <PlaneTakeoffIcon />
+        <PlaneTakeoffIcon {...stylex.props(demoStyles.icon)} />
         <span>{row.getValue("terminal")}</span>
       </Badge>
     ),
@@ -362,7 +362,7 @@ export default function Particle() {
                 >
                   <ChevronLeftIcon
                     aria-hidden="true"
-                    {...stylex.props(demoStyles.report2)}
+                    {...stylex.props(demoStyles.icon2, demoStyles.report2)}
                   />
                   Previous
                 </Button>
@@ -377,7 +377,7 @@ export default function Particle() {
                   Next
                   <ChevronRightIcon
                     aria-hidden="true"
-                    {...stylex.props(demoStyles.report2)}
+                    {...stylex.props(demoStyles.icon2, demoStyles.report2)}
                   />
                 </Button>
               </PaginationItem>
@@ -723,6 +723,21 @@ const flights: Flight[] = [
 ]
 
 const demoStyles = stylex.create({
+  icon: {
+    blockSize: { default: "0.875rem", "@media (min-width: 640px)": "0.75rem" },
+    inlineSize: { default: "0.875rem", "@media (min-width: 640px)": "0.75rem" },
+    flexShrink: 0,
+    pointerEvents: "none",
+    opacity: 0.8,
+  },
+  icon2: {
+    blockSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
+    inlineSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
+    flexShrink: 0,
+    pointerEvents: "none",
+    opacity: 0.8,
+    marginInline: "-0.125rem",
+  },
   columnWidth: (inlineSize: string) => ({ inlineSize }),
   demo1: {
     fontFamily: '"Geist Mono", ui-monospace, monospace',

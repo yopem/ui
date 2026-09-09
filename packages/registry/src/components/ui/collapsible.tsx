@@ -1,5 +1,7 @@
 "use client"
 
+import type { StyleXProps } from "@registry/lib/stylex"
+
 import { Collapsible as CollapsiblePrimitive } from "@base-ui/react/collapsible"
 import { stylexProps } from "@registry/lib/stylex"
 import * as stylex from "@stylexjs/stylex"
@@ -20,12 +22,13 @@ export function Collapsible(props: CollapsiblePrimitive.Root.Props) {
 }
 
 export function CollapsibleTrigger({
+  xstyle,
   className,
   ...props
-}: CollapsiblePrimitive.Trigger.Props) {
+}: CollapsiblePrimitive.Trigger.Props & StyleXProps) {
   return (
     <CollapsiblePrimitive.Trigger
-      className={className}
+      {...stylexProps(className, xstyle)}
       data-slot="collapsible-trigger"
       {...props}
     />
@@ -33,12 +36,13 @@ export function CollapsibleTrigger({
 }
 
 export function CollapsiblePanel({
+  xstyle,
   className,
   ...props
-}: CollapsiblePrimitive.Panel.Props) {
+}: CollapsiblePrimitive.Panel.Props & StyleXProps) {
   return (
     <CollapsiblePrimitive.Panel
-      {...stylexProps(className, styles.panel)}
+      {...stylexProps(className, styles.panel, xstyle)}
       data-slot="collapsible-panel"
       {...props}
     />

@@ -28,7 +28,7 @@ export default function Particle() {
           size="icon"
           variant="outline"
         >
-          <MinusIcon aria-hidden="true" />
+          <MinusIcon {...stylex.props(demoStyles.icon)} aria-hidden="true" />
         </Button>
         <Slider
           aria-label="Credits slider"
@@ -46,7 +46,7 @@ export default function Particle() {
           size="icon"
           variant="outline"
         >
-          <PlusIcon aria-hidden="true" />
+          <PlusIcon {...stylex.props(demoStyles.icon)} aria-hidden="true" />
         </Button>
       </div>
     </Field>
@@ -54,6 +54,14 @@ export default function Particle() {
 }
 
 const demoStyles = stylex.create({
+  icon: {
+    blockSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
+    inlineSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
+    flexShrink: 0,
+    pointerEvents: "none",
+    opacity: 0.8,
+    marginInline: "-0.125rem",
+  },
   demo1: {
     fontVariantNumeric: "   tabular-nums ",
   },

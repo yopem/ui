@@ -1,9 +1,10 @@
 "use client"
 
+import type { StyleXProps } from "@registry/lib/stylex"
+
 import { Popover as PopoverPrimitive } from "@base-ui/react/popover"
 import { stylexProps } from "@registry/lib/stylex"
-import { themeMarker } from "@registry/styles/markers.stylex"
-import { tokens } from "@registry/styles/tokens.stylex"
+import { themeMarker, tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 
 const styles = stylex.create({
@@ -16,23 +17,40 @@ const styles = stylex.create({
     "[data-instant]": { transitionProperty: "none" },
   },
   popup: {
+    borderRadius: {
+      default: tokens["--radius-lg"],
+      ':has([data-slot="calendar"])': "0.875rem",
+    },
     backgroundClip: "padding-box",
-    backgroundColor: tokens.popover,
+    backgroundColor: tokens["--popover"],
     blockSize: "var(--popup-height, auto)",
-    borderColor: tokens.border,
-    borderRadius: tokens.radiusLarge,
+    borderColor: tokens["--border"],
     borderStyle: "solid",
     borderWidth: 1,
     boxShadow: "0 10px 15px -3px color-mix(in oklab, #000 5%, transparent)",
-    color: tokens.popoverForeground,
+    color: tokens["--popover-foreground"],
     display: "flex",
     inlineSize: "var(--popup-width, auto)",
     outline: "none",
     position: "relative",
     transformOrigin: "var(--transform-origin)",
-    transitionProperty: "width, height, scale, opacity",
+    transitionProperty: {
+      default: "width, height, scale, opacity",
+      "[data-instant]": "none",
+    },
+    opacity: {
+      default: null,
+      "[data-starting-style]": 0,
+    },
+    scale: {
+      default: null,
+      "[data-starting-style]": 0.98,
+    },
     "::before": {
-      borderRadius: "calc(var(--radius-lg, 0.625rem) - 1px)",
+      borderRadius: {
+        default: "calc(var(--radius-lg, 0.625rem) - 1px)",
+        ':has([data-slot="calendar"])': "calc(0.875rem - 1px)",
+      },
       boxShadow: {
         default: "0 1px rgb(0 0 0 / 0.04)",
         [stylex.when.ancestor('[data-theme="dark"]', themeMarker)]:
@@ -43,18 +61,32 @@ const styles = stylex.create({
       pointerEvents: "none",
       position: "absolute",
     },
-    "[data-instant]": { transitionProperty: "none" },
-    "[data-starting-style]": { opacity: 0, scale: 0.98 },
   },
   tooltipPopup: {
-    borderRadius: tokens.radiusMedium,
+    borderRadius: {
+      default: tokens["--radius-md"],
+      ':has([data-slot="calendar"])': "0.875rem",
+    },
     boxShadow: "0 4px 6px -1px color-mix(in oklab, #000 5%, transparent)",
     fontSize: "0.75rem",
     inlineSize: "fit-content",
     textWrap: "balance",
-    "::before": { borderRadius: "calc(var(--radius-md, 0.5rem) - 1px)" },
+    "::before": {
+      borderRadius: {
+        default: "calc(var(--radius-md, 0.5rem) - 1px)",
+        ':has([data-slot="calendar"])': "calc(0.875rem - 1px)",
+      },
+    },
   },
   viewport: {
+    padding: {
+      default: null,
+      ':has([data-slot="calendar"])': "0.5rem",
+    },
+    "--viewport-inline-padding": {
+      default: "1rem",
+      ':has([data-slot="calendar"])': "0.5rem",
+    },
     blockSize: "100%",
     maxBlockSize: "var(--available-height)",
     overflow: "clip",
@@ -62,19 +94,28 @@ const styles = stylex.create({
     paddingInline: "var(--viewport-inline-padding)",
     position: "relative",
     inlineSize: "100%",
-    "--viewport-inline-padding": "1rem",
-    "[data-instant]": { transitionProperty: "none" },
+    transitionProperty: {
+      default: null,
+      "[data-instant]": "none",
+    },
   },
   scrollable: {
     "[data-transitioning]": { overflowY: "clip" },
     overflowY: "auto",
   },
   tooltipViewport: {
+    padding: {
+      default: null,
+      ':has([data-slot="calendar"])': "0.5rem",
+    },
+    "--viewport-inline-padding": {
+      default: "0.5rem",
+      ':has([data-slot="calendar"])': "0.5rem",
+    },
     paddingBlock: "0.25rem",
-    "--viewport-inline-padding": "0.5rem",
   },
   title: { fontSize: "1.125rem", fontWeight: 600, lineHeight: 1 },
-  description: { color: tokens.mutedForeground, fontSize: "0.875rem" },
+  description: { color: tokens["--muted-foreground"], fontSize: "0.875rem" },
 })
 
 export const PopoverCreateHandle: typeof PopoverPrimitive.createHandle =
@@ -82,13 +123,14 @@ export const PopoverCreateHandle: typeof PopoverPrimitive.createHandle =
 export const Popover: typeof PopoverPrimitive.Root = PopoverPrimitive.Root
 
 export function PopoverTrigger({
+  xstyle,
   className,
   children,
   ...props
-}: PopoverPrimitive.Trigger.Props) {
+}: PopoverPrimitive.Trigger.Props & StyleXProps) {
   return (
     <PopoverPrimitive.Trigger
-      className={className}
+      {...stylexProps(className, xstyle)}
       data-slot="popover-trigger"
       {...props}
     >
@@ -98,6 +140,7 @@ export function PopoverTrigger({
 }
 
 export function PopoverPopup({
+  xstyle,
   children,
   className,
   side = "bottom",
@@ -118,7 +161,7 @@ export function PopoverPopup({
   tooltipStyle?: boolean
   anchor?: PopoverPrimitive.Positioner.Props["anchor"]
   instant?: boolean
-}) {
+} & StyleXProps) {
   return (
     <PopoverPrimitive.Portal {...portalProps}>
       <PopoverPrimitive.Positioner
@@ -136,6 +179,7 @@ export function PopoverPopup({
             className,
             styles.popup,
             tooltipStyle && styles.tooltipPopup,
+            xstyle,
           )}
           data-slot="popover-popup"
           {...props}
@@ -160,24 +204,26 @@ export function PopoverClose(props: PopoverPrimitive.Close.Props) {
   return <PopoverPrimitive.Close data-slot="popover-close" {...props} />
 }
 export function PopoverTitle({
+  xstyle,
   className,
   ...props
-}: PopoverPrimitive.Title.Props) {
+}: PopoverPrimitive.Title.Props & StyleXProps) {
   return (
     <PopoverPrimitive.Title
-      {...stylexProps(className, styles.title)}
+      {...stylexProps(className, styles.title, xstyle)}
       data-slot="popover-title"
       {...props}
     />
   )
 }
 export function PopoverDescription({
+  xstyle,
   className,
   ...props
-}: PopoverPrimitive.Description.Props) {
+}: PopoverPrimitive.Description.Props & StyleXProps) {
   return (
     <PopoverPrimitive.Description
-      {...stylexProps(className, styles.description)}
+      {...stylexProps(className, styles.description, xstyle)}
       data-slot="popover-description"
       {...props}
     />

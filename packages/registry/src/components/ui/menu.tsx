@@ -1,21 +1,31 @@
 "use client"
 
+import type { StyleXProps } from "@registry/lib/stylex"
 import type * as React from "react"
 
 import { Menu as MenuPrimitive } from "@base-ui/react/menu"
 import { stylexProps } from "@registry/lib/stylex"
-import { themeMarker } from "@registry/styles/markers.stylex"
-import { tokens } from "@registry/styles/tokens.stylex"
+import { themeMarker, tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import { ChevronRightIcon } from "lucide-react"
+
+export const menuSlotStyles = stylex.create({
+  icon: {
+    blockSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
+    inlineSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
+    flexShrink: 0,
+    pointerEvents: "none",
+  },
+  itemIcon: { marginInline: "-0.125rem", opacity: 0.8 },
+})
 
 const styles = stylex.create({
   positioner: { zIndex: 50 },
   popup: {
     backgroundClip: "padding-box",
-    backgroundColor: tokens.popover,
-    borderColor: tokens.border,
-    borderRadius: tokens.radiusLarge,
+    backgroundColor: tokens["--popover"],
+    borderColor: tokens["--border"],
+    borderRadius: tokens["--radius-lg"],
     borderStyle: "solid",
     borderWidth: 1,
     boxShadow: "0 10px 15px -3px color-mix(in oklab, #000 5%, transparent)",
@@ -46,8 +56,8 @@ const styles = stylex.create({
   },
   item: {
     alignItems: "center",
-    borderRadius: tokens.radiusSmall,
-    color: tokens.foreground,
+    borderRadius: tokens["--radius-sm"],
+    color: tokens["--foreground"],
     cursor: "default",
     display: "flex",
     fontSize: { default: "1rem", "@media (min-width: 640px)": "0.875rem" },
@@ -58,17 +68,17 @@ const styles = stylex.create({
     paddingInline: "0.5rem",
     userSelect: "none",
     "[data-highlighted]": {
-      backgroundColor: tokens.accent,
-      color: tokens.accentForeground,
+      backgroundColor: tokens["--accent"],
+      color: tokens["--accent-foreground"],
     },
-    "[data-variant=destructive]": { color: tokens.destructiveForeground },
+    "[data-variant=destructive]": { color: tokens["--destructive-foreground"] },
     "[data-disabled]": { opacity: 0.64, pointerEvents: "none" },
     "[data-inset]": { paddingInlineStart: "2rem" },
   },
   choiceItem: {
     alignItems: "center",
-    borderRadius: tokens.radiusSmall,
-    color: tokens.foreground,
+    borderRadius: tokens["--radius-sm"],
+    color: tokens["--foreground"],
     cursor: "default",
     display: "grid",
     fontSize: { default: "1rem", "@media (min-width: 640px)": "0.875rem" },
@@ -79,8 +89,8 @@ const styles = stylex.create({
     paddingInlineStart: "0.5rem",
     userSelect: "none",
     "[data-highlighted]": {
-      backgroundColor: tokens.accent,
-      color: tokens.accentForeground,
+      backgroundColor: tokens["--accent"],
+      color: tokens["--accent-foreground"],
     },
     "[data-disabled]": { opacity: 0.64, pointerEvents: "none" },
   },
@@ -98,7 +108,7 @@ const styles = stylex.create({
   indicator: { gridColumnStart: 1, marginInlineStart: "-0.125rem" },
   switch: {
     alignItems: "center",
-    backgroundColor: tokens.input,
+    backgroundColor: tokens["--input"],
     blockSize: "calc(var(--thumb-size) + 2px)",
     borderRadius: "9999px",
     boxShadow: "inset 0 1px rgb(0 0 0 / 0.04)",
@@ -111,26 +121,44 @@ const styles = stylex.create({
     transitionProperty: "background-color, box-shadow",
     "--thumb-size": { default: "1rem", "@media (min-width: 640px)": "0.75rem" },
     ":focus-visible": {
-      boxShadow: `0 0 0 2px ${tokens.ring}, 0 0 0 3px ${tokens.background}`,
+      boxShadow: `0 0 0 2px ${tokens["--ring"]}, 0 0 0 3px ${tokens["--background"]}`,
     },
-    "[data-checked]": { backgroundColor: tokens.primary },
+    "[data-checked]": { backgroundColor: tokens["--primary"] },
     "[data-disabled]": { opacity: 0.64 },
   },
   switchThumb: {
+    borderRadius: {
+      default: "var(--thumb-size)",
+      ':is([data-slot="menu-checkbox-item"]:active [data-slot="menu-switch-thumb"])':
+        "calc(var(--thumb-size) / (var(--thumb-size) * 1.1))",
+    },
+    scale: {
+      default: null,
+      ':is([data-slot="menu-checkbox-item"]:active [data-slot="menu-switch-thumb"])':
+        "1.1 1",
+    },
+    transformOrigin: {
+      default: "left",
+      ':is([data-slot="menu-checkbox-item"][data-checked] [data-slot="menu-switch-thumb"])':
+        "var(--thumb-size) 50%",
+    },
+    translate: {
+      default: null,
+      ':is([data-slot="menu-checkbox-item"][data-checked] [data-slot="menu-switch-thumb"])':
+        "calc(var(--thumb-size) - 4px) 0",
+    },
     aspectRatio: "1",
-    backgroundColor: tokens.background,
+    backgroundColor: tokens["--background"],
     blockSize: "100%",
-    borderRadius: "var(--thumb-size)",
     boxShadow: "0 1px 2px color-mix(in oklab, #000 5%, transparent)",
     display: "block",
     pointerEvents: "none",
-    transformOrigin: "left",
     transition:
       "translate .15s, border-radius .15s, scale .1s .1s, transform-origin .15s",
     willChange: "transform",
   },
   label: {
-    color: tokens.mutedForeground,
+    color: tokens["--muted-foreground"],
     fontSize: "0.75rem",
     fontWeight: 500,
     paddingBlock: "0.375rem",
@@ -143,7 +171,7 @@ const styles = stylex.create({
     },
   },
   separator: {
-    backgroundColor: tokens.border,
+    backgroundColor: tokens["--border"],
     blockSize: 1,
     marginBlock: "0.25rem",
     marginInline: "0.5rem",
@@ -151,7 +179,7 @@ const styles = stylex.create({
   shortcut: {
     color:
       "color-mix(in oklab, var(--muted-foreground, currentColor) 72%, transparent)",
-    fontFamily: tokens.fontSans,
+    fontFamily: tokens["--font-sans"],
     fontSize: "0.75rem",
     fontWeight: 500,
     letterSpacing: "0.1em",
@@ -159,8 +187,8 @@ const styles = stylex.create({
   },
   subTrigger: {
     alignItems: "center",
-    borderRadius: tokens.radiusSmall,
-    color: tokens.foreground,
+    borderRadius: tokens["--radius-sm"],
+    color: tokens["--foreground"],
     display: "flex",
     fontSize: { default: "1rem", "@media (min-width: 640px)": "0.875rem" },
     gap: "0.5rem",
@@ -169,12 +197,12 @@ const styles = stylex.create({
     paddingBlock: "0.25rem",
     paddingInline: "0.5rem",
     "[data-highlighted]": {
-      backgroundColor: tokens.accent,
-      color: tokens.accentForeground,
+      backgroundColor: tokens["--accent"],
+      color: tokens["--accent-foreground"],
     },
     "[data-popup-open]": {
-      backgroundColor: tokens.accent,
-      color: tokens.accentForeground,
+      backgroundColor: tokens["--accent"],
+      color: tokens["--accent-foreground"],
     },
     "[data-disabled]": { opacity: 0.64, pointerEvents: "none" },
     "[data-inset]": { paddingInlineStart: "2rem" },
@@ -192,13 +220,14 @@ export const Menu: typeof MenuPrimitive.Root = MenuPrimitive.Root
 export const MenuPortal: typeof MenuPrimitive.Portal = MenuPrimitive.Portal
 
 export function MenuTrigger({
+  xstyle,
   className,
   children,
   ...props
-}: MenuPrimitive.Trigger.Props) {
+}: MenuPrimitive.Trigger.Props & StyleXProps) {
   return (
     <MenuPrimitive.Trigger
-      className={className}
+      {...stylexProps(className, xstyle)}
       data-slot="menu-trigger"
       {...props}
     >
@@ -208,6 +237,7 @@ export function MenuTrigger({
 }
 
 export function MenuPopup({
+  xstyle,
   children,
   className,
   sideOffset = 4,
@@ -224,7 +254,7 @@ export function MenuPopup({
   side?: MenuPrimitive.Positioner.Props["side"]
   anchor?: MenuPrimitive.Positioner.Props["anchor"]
   portalProps?: MenuPrimitive.Portal.Props
-}) {
+} & StyleXProps) {
   return (
     <MenuPortal {...portalProps}>
       <MenuPrimitive.Positioner
@@ -237,7 +267,7 @@ export function MenuPopup({
         sideOffset={sideOffset}
       >
         <MenuPrimitive.Popup
-          {...stylexProps(className, styles.popup)}
+          {...stylexProps(className, styles.popup, xstyle)}
           data-slot="menu-popup"
           {...props}
         >
@@ -253,6 +283,7 @@ export function MenuGroup(props: MenuPrimitive.Group.Props) {
 }
 
 export function MenuItem({
+  xstyle,
   className,
   inset,
   variant = "default",
@@ -260,10 +291,10 @@ export function MenuItem({
 }: MenuPrimitive.Item.Props & {
   inset?: boolean
   variant?: "default" | "destructive"
-}) {
+} & StyleXProps) {
   return (
     <MenuPrimitive.Item
-      {...stylexProps(className, styles.item)}
+      {...stylexProps(className, styles.item, xstyle)}
       data-inset={inset}
       data-slot="menu-item"
       data-variant={variant}
@@ -273,6 +304,7 @@ export function MenuItem({
 }
 
 export function MenuLinkItem({
+  xstyle,
   className,
   inset,
   variant = "default",
@@ -281,10 +313,10 @@ export function MenuLinkItem({
 }: MenuPrimitive.LinkItem.Props & {
   inset?: boolean
   variant?: "default" | "destructive"
-}) {
+} & StyleXProps) {
   return (
     <MenuPrimitive.LinkItem
-      {...stylexProps(className, styles.item)}
+      {...stylexProps(className, styles.item, xstyle)}
       closeOnClick={closeOnClick}
       data-inset={inset}
       data-slot="menu-link-item"
@@ -295,12 +327,15 @@ export function MenuLinkItem({
 }
 
 export function MenuCheckboxItem({
+  xstyle,
   className,
   children,
   checked,
   variant = "default",
   ...props
-}: MenuPrimitive.CheckboxItem.Props & { variant?: "default" | "switch" }) {
+}: MenuPrimitive.CheckboxItem.Props & {
+  variant?: "default" | "switch"
+} & StyleXProps) {
   return (
     <MenuPrimitive.CheckboxItem
       checked={checked}
@@ -308,6 +343,7 @@ export function MenuCheckboxItem({
         className,
         styles.choiceItem,
         variant === "switch" ? styles.choiceSwitch : styles.choiceDefault,
+        xstyle,
       )}
       data-slot="menu-checkbox-item"
       data-variant={variant}
@@ -332,6 +368,7 @@ export function MenuCheckboxItem({
             {...stylex.props(styles.indicator)}
           >
             <svg
+              {...stylex.props(menuSlotStyles.icon)}
               aria-hidden="true"
               fill="none"
               height="24"
@@ -358,18 +395,25 @@ export function MenuRadioGroup(props: MenuPrimitive.RadioGroup.Props) {
 }
 
 export function MenuRadioItem({
+  xstyle,
   className,
   children,
   ...props
-}: MenuPrimitive.RadioItem.Props) {
+}: MenuPrimitive.RadioItem.Props & StyleXProps) {
   return (
     <MenuPrimitive.RadioItem
-      {...stylexProps(className, styles.choiceItem, styles.choiceDefault)}
+      {...stylexProps(
+        className,
+        styles.choiceItem,
+        styles.choiceDefault,
+        xstyle,
+      )}
       data-slot="menu-radio-item"
       {...props}
     >
       <MenuPrimitive.RadioItemIndicator {...stylex.props(styles.indicator)}>
         <svg
+          {...stylex.props(menuSlotStyles.icon)}
           aria-hidden="true"
           fill="none"
           height="24"
@@ -390,13 +434,14 @@ export function MenuRadioItem({
 }
 
 export function MenuGroupLabel({
+  xstyle,
   className,
   inset,
   ...props
-}: MenuPrimitive.GroupLabel.Props & { inset?: boolean }) {
+}: MenuPrimitive.GroupLabel.Props & { inset?: boolean } & StyleXProps) {
   return (
     <MenuPrimitive.GroupLabel
-      {...stylexProps(className, styles.label)}
+      {...stylexProps(className, styles.label, xstyle)}
       data-inset={inset}
       data-slot="menu-label"
       {...props}
@@ -404,24 +449,26 @@ export function MenuGroupLabel({
   )
 }
 export function MenuSeparator({
+  xstyle,
   className,
   ...props
-}: MenuPrimitive.Separator.Props) {
+}: MenuPrimitive.Separator.Props & StyleXProps) {
   return (
     <MenuPrimitive.Separator
-      {...stylexProps(className, styles.separator)}
+      {...stylexProps(className, styles.separator, xstyle)}
       data-slot="menu-separator"
       {...props}
     />
   )
 }
 export function MenuShortcut({
+  xstyle,
   className,
   ...props
-}: React.ComponentProps<"kbd">) {
+}: React.ComponentProps<"kbd"> & StyleXProps) {
   return (
     <kbd
-      {...stylexProps(className, styles.shortcut)}
+      {...stylexProps(className, styles.shortcut, xstyle)}
       data-slot="menu-shortcut"
       {...props}
     />
@@ -431,24 +478,28 @@ export function MenuSub(props: MenuPrimitive.SubmenuRoot.Props) {
   return <MenuPrimitive.SubmenuRoot data-slot="menu-sub" {...props} />
 }
 export function MenuSubTrigger({
+  xstyle,
   className,
   inset,
   children,
   ...props
-}: MenuPrimitive.SubmenuTrigger.Props & { inset?: boolean }) {
+}: MenuPrimitive.SubmenuTrigger.Props & { inset?: boolean } & StyleXProps) {
   return (
     <MenuPrimitive.SubmenuTrigger
-      {...stylexProps(className, styles.subTrigger)}
+      {...stylexProps(className, styles.subTrigger, xstyle)}
       data-inset={inset}
       data-slot="menu-sub-trigger"
       {...props}
     >
       {children}
-      <ChevronRightIcon {...stylex.props(styles.subIcon)} />
+      <ChevronRightIcon
+        {...stylex.props(menuSlotStyles.icon, styles.subIcon)}
+      />
     </MenuPrimitive.SubmenuTrigger>
   )
 }
 export function MenuSubPopup({
+  xstyle,
   className,
   sideOffset = 0,
   alignOffset,
@@ -458,13 +509,14 @@ export function MenuSubPopup({
   align?: MenuPrimitive.Positioner.Props["align"]
   sideOffset?: MenuPrimitive.Positioner.Props["sideOffset"]
   alignOffset?: MenuPrimitive.Positioner.Props["alignOffset"]
-}) {
+} & StyleXProps) {
   const defaultAlignOffset = align !== "center" ? -5 : undefined
   return (
     <MenuPopup
       align={align}
       alignOffset={alignOffset ?? defaultAlignOffset}
       className={className}
+      xstyle={xstyle}
       data-slot="menu-sub-content"
       side="inline-end"
       sideOffset={sideOffset}

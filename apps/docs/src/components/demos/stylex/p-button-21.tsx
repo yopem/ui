@@ -15,13 +15,21 @@ export default function Particle() {
       </div>
       <ChevronRightIcon
         aria-hidden="true"
-        {...stylex.props(demoStyles.report1)}
+        {...stylex.props(demoStyles.icon, demoStyles.report1)}
       />
     </Button>
   )
 }
 
 const demoStyles = stylex.create({
+  icon: {
+    blockSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
+    inlineSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
+    flexShrink: 0,
+    pointerEvents: "none",
+    opacity: 0.8,
+    marginInline: "-0.125rem",
+  },
   button: {
     blockSize: "auto",
     gap: "1rem",

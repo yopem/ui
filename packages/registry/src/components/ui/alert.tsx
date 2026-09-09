@@ -1,23 +1,27 @@
+import type { StyleXProps } from "@registry/lib/stylex"
 import type * as React from "react"
 
 import { stylexProps } from "@registry/lib/stylex"
-import { themeMarker } from "@registry/styles/markers.stylex"
-import { tokens } from "@registry/styles/tokens.stylex"
+import { themeMarker, tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
-import { clsx } from "clsx"
 
 const styles = stylex.create({
   root: {
     alignItems: "start",
-    borderColor: tokens.border,
-    borderRadius: tokens.radiusXLarge,
+    borderColor: tokens["--border"],
+    borderRadius: tokens["--radius-xl"],
     borderStyle: "solid",
     borderWidth: 1,
-    color: tokens.cardForeground,
+    color: tokens["--card-foreground"],
     columnGap: "0.5rem",
     display: "grid",
     fontSize: "0.875rem",
-    gridTemplateColumns: "1fr",
+    gridTemplateColumns: {
+      default: "1fr",
+      ':has([data-slot="alert-action"])': "1fr auto",
+      ":has(> svg)": "1rem 1fr",
+      ':has(> svg):has([data-slot="alert-action"])': "1rem 1fr auto",
+    },
     lineHeight: "1.25rem",
     paddingBlock: "0.75rem",
     paddingInline: "0.875rem",
@@ -56,18 +60,46 @@ const styles = stylex.create({
     borderColor:
       "color-mix(in oklab, var(--warning, currentColor) 32%, transparent)",
   },
-  title: { fontWeight: 500 },
+  title: {
+    fontWeight: 500,
+    gridColumnStart: {
+      default: null,
+      ':is([data-slot="alert"] > svg ~ [data-slot="alert-title"])': 2,
+    },
+  },
   description: {
-    color: tokens.mutedForeground,
+    color: tokens["--muted-foreground"],
     display: "flex",
     flexDirection: "column",
     gap: "0.625rem",
+    gridColumnStart: {
+      default: null,
+      ':is([data-slot="alert"] > svg ~ [data-slot="alert-description"])': 2,
+    },
   },
   action: {
     display: "flex",
     gap: "0.25rem",
-    marginBlockStart: { default: "0.5rem", "@media (min-width: 640px)": 0 },
-    alignSelf: { default: "auto", "@media (min-width: 640px)": "center" },
+    marginBlockStart: {
+      default: "0.5rem",
+      "@media (min-width: 640px)": 0,
+    },
+    alignSelf: {
+      default: "auto",
+      "@media (min-width: 640px)": "center",
+    },
+    gridColumnStart: {
+      default: 2,
+      "@media (min-width: 640px)": {
+        default: null,
+        ':is([data-slot="alert"] > svg ~ [data-slot="alert-title"] ~ [data-slot="alert-action"])': 3,
+        ':is([data-slot="alert"] > svg ~ [data-slot="alert-description"] ~ [data-slot="alert-action"])': 3,
+      },
+    },
+    gridRow: {
+      default: null,
+      "@media (min-width: 640px)": "1 / 3",
+    },
   },
 })
 
@@ -81,24 +113,20 @@ const variantStyles = {
 
 type AlertVariant = keyof typeof variantStyles
 
-function alertVariants({
-  className,
-  variant = "default",
-}: { className?: string; variant?: AlertVariant } = {}) {
-  return clsx(
-    stylex.props(styles.root, variantStyles[variant]).className,
-    className,
-  )
-}
-
 export function Alert({
+  xstyle,
   className,
   variant,
   ...props
-}: React.ComponentProps<"div"> & { variant?: AlertVariant }) {
+}: React.ComponentProps<"div"> & { variant?: AlertVariant } & StyleXProps) {
   return (
     <div
-      className={alertVariants({ className, variant })}
+      {...stylexProps(
+        className,
+        styles.root,
+        variantStyles[variant ?? "default"],
+        xstyle,
+      )}
       data-slot="alert"
       data-variant={variant ?? "default"}
       role="alert"
@@ -108,12 +136,13 @@ export function Alert({
 }
 
 export function AlertTitle({
+  xstyle,
   className,
   ...props
-}: React.ComponentProps<"div">) {
+}: React.ComponentProps<"div"> & StyleXProps) {
   return (
     <div
-      {...stylexProps(className, styles.title)}
+      {...stylexProps(className, styles.title, xstyle)}
       data-slot="alert-title"
       {...props}
     />
@@ -121,12 +150,13 @@ export function AlertTitle({
 }
 
 export function AlertDescription({
+  xstyle,
   className,
   ...props
-}: React.ComponentProps<"div">) {
+}: React.ComponentProps<"div"> & StyleXProps) {
   return (
     <div
-      {...stylexProps(className, styles.description)}
+      {...stylexProps(className, styles.description, xstyle)}
       data-slot="alert-description"
       {...props}
     />
@@ -134,12 +164,13 @@ export function AlertDescription({
 }
 
 export function AlertAction({
+  xstyle,
   className,
   ...props
-}: React.ComponentProps<"div">) {
+}: React.ComponentProps<"div"> & StyleXProps) {
   return (
     <div
-      {...stylexProps(className, styles.action)}
+      {...stylexProps(className, styles.action, xstyle)}
       data-slot="alert-action"
       {...props}
     />

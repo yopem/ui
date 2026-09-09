@@ -1,5 +1,6 @@
 "use client"
 
+import type { StyleXProps } from "@registry/lib/stylex"
 import type React from "react"
 
 import { Checkbox as CheckboxPrimitive } from "@base-ui/react/checkbox"
@@ -11,8 +12,7 @@ import { useRender } from "@base-ui/react/use-render"
 import { Button } from "@registry/components/ui/button"
 import { ScrollArea } from "@registry/components/ui/scroll-area"
 import { stylexProps } from "@registry/lib/stylex"
-import { themeMarker } from "@registry/styles/markers.stylex"
-import { tokens } from "@registry/styles/tokens.stylex"
+import { themeMarker, tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import { ChevronRightIcon, XIcon } from "lucide-react"
 import { createContext, useContext } from "react"
@@ -33,7 +33,24 @@ const directionMap: Record<
   top: "up",
 }
 
+export const drawerSlotStyles = stylex.create({
+  icon: {
+    blockSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
+    inlineSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
+    flexShrink: 0,
+    pointerEvents: "none",
+  },
+  itemIcon: { marginInline: "-0.125rem", opacity: 0.8 },
+})
+
 const styles = stylex.create({
+  closeIcon: {
+    blockSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
+    inlineSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
+    flexShrink: 0,
+    pointerEvents: "none",
+    opacity: 0.8,
+  },
   swipeArea: { position: "fixed", touchAction: "none", zIndex: 50 },
   swipeBottom: { blockSize: "2rem", bottom: 0, insetInline: 0 },
   swipeTop: { blockSize: "2rem", insetBlockStart: 0, insetInline: 0 },
@@ -85,8 +102,8 @@ const styles = stylex.create({
   viewportInsetNotTop: { paddingBlockEnd: "var(--inset)" },
   popup: {
     backgroundClip: "padding-box",
-    backgroundColor: tokens.popover,
-    color: tokens.popoverForeground,
+    backgroundColor: tokens["--popover"],
+    color: tokens["--popover-foreground"],
     display: "flex",
     flexDirection: "column",
     inlineSize: "100%",
@@ -122,7 +139,7 @@ const styles = stylex.create({
       position: "absolute",
     },
     "::after": {
-      backgroundColor: tokens.popover,
+      backgroundColor: tokens["--popover"],
       content: '""',
       pointerEvents: "none",
       position: "absolute",
@@ -136,7 +153,7 @@ const styles = stylex.create({
     "[data-swiping]": { userSelect: "none" },
   },
   popupBottom: {
-    borderBlockStartColor: tokens.border,
+    borderBlockStartColor: tokens["--border"],
     borderBlockStartStyle: "solid",
     borderBlockStartWidth: 1,
     gridRowStart: 2,
@@ -170,7 +187,7 @@ const styles = stylex.create({
     },
   },
   popupTop: {
-    borderBlockEndColor: tokens.border,
+    borderBlockEndColor: tokens["--border"],
     borderBlockEndStyle: "solid",
     borderBlockEndWidth: 1,
     transform: "translateY(var(--drawer-swipe-movement-y))",
@@ -192,7 +209,7 @@ const styles = stylex.create({
     },
   },
   popupLeft: {
-    borderInlineEndColor: tokens.border,
+    borderInlineEndColor: tokens["--border"],
     borderInlineEndStyle: "solid",
     borderInlineEndWidth: 1,
     inlineSize: "calc(100% - 3rem)",
@@ -216,7 +233,7 @@ const styles = stylex.create({
     },
   },
   popupRight: {
-    borderInlineStartColor: tokens.border,
+    borderInlineStartColor: tokens["--border"],
     borderInlineStartStyle: "solid",
     borderInlineStartWidth: 1,
     gridColumnStart: 2,
@@ -281,7 +298,7 @@ const styles = stylex.create({
   insetPopup: {
     "::before": { display: "none" },
     "@media (min-width: 640px)": {
-      borderColor: tokens.border,
+      borderColor: tokens["--border"],
       borderRadius: "0.875rem",
       borderStyle: "solid",
       borderWidth: 1,
@@ -296,45 +313,85 @@ const styles = stylex.create({
     position: "absolute",
   },
   header: {
+    paddingBlockEnd: {
+      default: null,
+      ':is(:is([data-slot="dialog-popup"], [data-slot="sheet-popup"], [data-slot="drawer-popup"]):has([data-slot$="panel"]) > [data-slot="drawer-header"])':
+        "0.75rem",
+      "@media (max-width: 639px)": "1rem",
+    },
     display: "flex",
     flexDirection: "column",
     gap: "0.5rem",
     padding: "1.5rem",
-    "@media (max-width: 639px)": { paddingBlockEnd: "1rem" },
   },
   footer: {
     display: "flex",
-    flexDirection: "column-reverse",
+    flexDirection: {
+      default: "column-reverse",
+      "@media (min-width: 640px)": "row",
+    },
     gap: "0.5rem",
     paddingBlockEnd: "var(--safe-area-inset-bottom, 0px)",
     paddingInline: "1.5rem",
-    "@media (min-width: 640px)": {
-      flexDirection: "row",
-      justifyContent: "flex-end",
+    borderEndEndRadius: {
+      default: null,
+      "@media (min-width: 640px)": {
+        default: null,
+        ':is([data-slot="drawer-popup"][data-variant="inset"] [data-slot="drawer-footer"])':
+          "calc(0.875rem - 1px)",
+      },
+    },
+    borderEndStartRadius: {
+      default: null,
+      "@media (min-width: 640px)": {
+        default: null,
+        ':is([data-slot="drawer-popup"][data-variant="inset"] [data-slot="drawer-footer"])':
+          "calc(0.875rem - 1px)",
+      },
+    },
+    justifyContent: {
+      default: null,
+      "@media (min-width: 640px)": "flex-end",
     },
   },
   footerDefault: {
     backgroundColor:
       "color-mix(in oklab, var(--muted, transparent) 72%, transparent)",
-    borderBlockStartColor: tokens.border,
+    borderBlockStartColor: tokens["--border"],
     borderBlockStartStyle: "solid",
     borderBlockStartWidth: 1,
     paddingBlockEnd: "calc(env(safe-area-inset-bottom, 0px) + 1rem)",
     paddingBlockStart: "1rem",
   },
   footerBare: {
+    paddingBlockStart: {
+      default: "1rem",
+      ':is(:is([data-slot="dialog-popup"], [data-slot="sheet-popup"], [data-slot="drawer-popup"]):has([data-slot$="panel"]) > [data-slot="drawer-footer"])':
+        "0.75rem",
+    },
     paddingBlockEnd: "calc(env(safe-area-inset-bottom, 0px) + 1.5rem)",
-    paddingBlockStart: "1rem",
   },
   noSelection: { cursor: "default" },
   title: {
-    fontFamily: tokens.fontHeading,
+    fontFamily: tokens["--font-heading"],
     fontSize: "1.25rem",
     fontWeight: 600,
     lineHeight: 1,
   },
-  description: { color: tokens.mutedForeground, fontSize: "0.875rem" },
-  panel: { padding: "1.5rem" },
+  description: { color: tokens["--muted-foreground"], fontSize: "0.875rem" },
+  panel: {
+    paddingBlockStart: {
+      default: null,
+      ':is(:is([data-slot="dialog-popup"], [data-slot="sheet-popup"], [data-slot="drawer-popup"]):has([data-slot$="header"]) [data-slot="drawer-panel"])':
+        "0.25rem",
+    },
+    paddingBlockEnd: {
+      default: null,
+      ':is(:is([data-slot="dialog-popup"], [data-slot="sheet-popup"], [data-slot="drawer-popup"]):has([data-slot$="footer"][data-variant="bare"]) [data-slot="drawer-panel"])':
+        "0.25rem",
+    },
+    padding: "1.5rem",
+  },
   touchAuto: { touchAction: "auto" },
   bar: {
     alignItems: "center",
@@ -344,7 +401,7 @@ const styles = stylex.create({
     position: "absolute",
     touchAction: "none",
     "::before": {
-      backgroundColor: tokens.input,
+      backgroundColor: tokens["--input"],
       borderRadius: "9999px",
       content: '""',
     },
@@ -364,8 +421,8 @@ const styles = stylex.create({
   menu: { display: "flex", flexDirection: "column", margin: "-0.5rem" },
   menuItem: {
     alignItems: "center",
-    borderRadius: tokens.radiusSmall,
-    color: tokens.foreground,
+    borderRadius: tokens["--radius-sm"],
+    color: tokens["--foreground"],
     cursor: "default",
     display: "flex",
     fontSize: { default: "1rem", "@media (min-width: 640px)": "0.875rem" },
@@ -377,21 +434,21 @@ const styles = stylex.create({
     paddingInline: "0.5rem",
     userSelect: "none",
     ":hover": {
-      backgroundColor: tokens.accent,
-      color: tokens.accentForeground,
+      backgroundColor: tokens["--accent"],
+      color: tokens["--accent-foreground"],
     },
     ":disabled": { opacity: 0.64, pointerEvents: "none" },
-    "[data-variant=destructive]": { color: tokens.destructiveForeground },
+    "[data-variant=destructive]": { color: tokens["--destructive-foreground"] },
   },
   menuSeparator: {
-    backgroundColor: tokens.border,
+    backgroundColor: tokens["--border"],
     blockSize: 1,
     marginBlock: "0.25rem",
     marginInline: "0.5rem",
   },
   menuGroup: { display: "flex", flexDirection: "column" },
   menuGroupLabel: {
-    color: tokens.mutedForeground,
+    color: tokens["--muted-foreground"],
     fontSize: "0.75rem",
     fontWeight: 500,
     paddingBlock: "0.375rem",
@@ -404,8 +461,8 @@ const styles = stylex.create({
   },
   choiceItem: {
     alignItems: "center",
-    borderRadius: tokens.radiusSmall,
-    color: tokens.foreground,
+    borderRadius: tokens["--radius-sm"],
+    color: tokens["--foreground"],
     cursor: "default",
     display: "grid",
     fontSize: { default: "1rem", "@media (min-width: 640px)": "0.875rem" },
@@ -417,8 +474,8 @@ const styles = stylex.create({
     paddingInlineStart: "0.5rem",
     userSelect: "none",
     ":hover": {
-      backgroundColor: tokens.accent,
-      color: tokens.accentForeground,
+      backgroundColor: tokens["--accent"],
+      color: tokens["--accent-foreground"],
     },
     "[data-disabled]": { opacity: 0.64, pointerEvents: "none" },
   },
@@ -432,7 +489,7 @@ const styles = stylex.create({
   choiceSecond: { gridColumnStart: 2 },
   switch: {
     alignItems: "center",
-    backgroundColor: tokens.input,
+    backgroundColor: tokens["--input"],
     blockSize: "calc(var(--thumb-size) + 2px)",
     borderRadius: "9999px",
     display: "inline-flex",
@@ -441,16 +498,30 @@ const styles = stylex.create({
     inlineSize: "calc(var(--thumb-size) * 2 - 2px)",
     padding: 1,
     "--thumb-size": { default: "1rem", "@media (min-width: 640px)": "0.75rem" },
-    "[data-checked]": { backgroundColor: tokens.primary },
+    "[data-checked]": { backgroundColor: tokens["--primary"] },
   },
   switchThumb: {
+    scale: {
+      default: null,
+      ':is([data-slot="drawer-menu-checkbox-item"]:active [data-slot="drawer-menu-switch-thumb"])':
+        "1.1 1",
+    },
+    transformOrigin: {
+      default: "left",
+      ':is([data-slot="drawer-menu-checkbox-item"][data-checked] [data-slot="drawer-menu-switch-thumb"])':
+        "var(--thumb-size) 50%",
+    },
+    translate: {
+      default: null,
+      ':is([data-slot="drawer-menu-checkbox-item"][data-checked] [data-slot="drawer-menu-switch-thumb"])':
+        "calc(var(--thumb-size) - 4px) 0",
+    },
     aspectRatio: "1",
-    backgroundColor: tokens.background,
+    backgroundColor: tokens["--background"],
     blockSize: "100%",
     borderRadius: "var(--thumb-size)",
     display: "block",
     pointerEvents: "none",
-    transformOrigin: "left",
     transition:
       "translate .15s, border-radius .15s, scale .1s .1s, transform-origin .15s",
     willChange: "transform",
@@ -514,33 +585,43 @@ export function DrawerClose(props: DrawerPrimitive.Close.Props) {
 }
 
 export function DrawerSwipeArea({
+  xstyle,
   className,
   position: positionProp,
   ...props
-}: DrawerPrimitive.SwipeArea.Props & { position?: DrawerPosition }) {
+}: DrawerPrimitive.SwipeArea.Props & {
+  position?: DrawerPosition
+} & StyleXProps) {
   const { position: contextPosition } = useContext(DrawerContext)
   const position = positionProp ?? contextPosition
   return (
     <DrawerPrimitive.SwipeArea
-      {...stylexProps(className, styles.swipeArea, swipeStyles[position])}
+      {...stylexProps(
+        className,
+        styles.swipeArea,
+        swipeStyles[position],
+        xstyle,
+      )}
       data-slot="drawer-swipe-area"
       {...props}
     />
   )
 }
 export function DrawerBackdrop({
+  xstyle,
   className,
   ...props
-}: DrawerPrimitive.Backdrop.Props) {
+}: DrawerPrimitive.Backdrop.Props & StyleXProps) {
   return (
     <DrawerPrimitive.Backdrop
-      {...stylexProps(className, styles.backdrop)}
+      {...stylexProps(className, styles.backdrop, xstyle)}
       data-slot="drawer-backdrop"
       {...props}
     />
   )
 }
 export function DrawerViewport({
+  xstyle,
   className,
   position = "bottom",
   variant = "default",
@@ -548,7 +629,7 @@ export function DrawerViewport({
 }: DrawerPrimitive.Viewport.Props & {
   position?: DrawerPosition
   variant?: DrawerVariant
-}) {
+} & StyleXProps) {
   return (
     <DrawerPrimitive.Viewport
       {...stylexProps(
@@ -560,6 +641,7 @@ export function DrawerViewport({
           position !== "bottom" &&
           styles.viewportInsetNotBottom,
         variant === "inset" && position !== "top" && styles.viewportInsetNotTop,
+        xstyle,
       )}
       data-slot="drawer-viewport"
       {...props}
@@ -568,6 +650,7 @@ export function DrawerViewport({
 }
 
 export function DrawerPopup({
+  xstyle,
   className,
   children,
   showCloseButton = false,
@@ -582,7 +665,7 @@ export function DrawerPopup({
   variant?: DrawerVariant
   showBar?: boolean
   portalProps?: DrawerPrimitive.Portal.Props
-}) {
+} & StyleXProps) {
   const { position: contextPosition } = useContext(DrawerContext)
   const position = positionProp ?? contextPosition
   return (
@@ -599,6 +682,7 @@ export function DrawerPopup({
             variant !== "straight" && roundedStyles[position],
             variant === "inset" && styles.insetPopup,
             variant === "straight" && styles.straightPopup,
+            xstyle,
           )}
           data-position={position}
           data-slot="drawer-popup"
@@ -612,7 +696,7 @@ export function DrawerPopup({
               className={stylex.props(styles.close).className}
               render={<Button size="icon" variant="ghost" />}
             >
-              <XIcon />
+              <XIcon {...stylex.props(styles.closeIcon)} />
             </DrawerPrimitive.Close>
           ) : null}
           {showBar ? <DrawerBar /> : null}
@@ -623,16 +707,20 @@ export function DrawerPopup({
 }
 
 export function DrawerHeader({
+  xstyle,
   className,
   allowSelection = false,
   render,
   ...props
-}: useRender.ComponentProps<"div"> & { allowSelection?: boolean }) {
+}: useRender.ComponentProps<"div"> & {
+  allowSelection?: boolean
+} & StyleXProps) {
   const defaultProps = {
     ...stylexProps(
       className,
       styles.header,
       !allowSelection && styles.noSelection,
+      xstyle,
     ),
     "data-slot": "drawer-header",
   }
@@ -643,6 +731,7 @@ export function DrawerHeader({
   })
 }
 export function DrawerFooter({
+  xstyle,
   className,
   variant = "default",
   allowSelection = true,
@@ -651,13 +740,14 @@ export function DrawerFooter({
 }: useRender.ComponentProps<"div"> & {
   variant?: "default" | "bare"
   allowSelection?: boolean
-}) {
+} & StyleXProps) {
   const defaultProps = {
     ...stylexProps(
       className,
       styles.footer,
       !allowSelection && styles.noSelection,
       variant === "default" ? styles.footerDefault : styles.footerBare,
+      xstyle,
     ),
     "data-slot": "drawer-footer",
     "data-variant": variant,
@@ -669,24 +759,26 @@ export function DrawerFooter({
   })
 }
 export function DrawerTitle({
+  xstyle,
   className,
   ...props
-}: DrawerPrimitive.Title.Props) {
+}: DrawerPrimitive.Title.Props & StyleXProps) {
   return (
     <DrawerPrimitive.Title
-      {...stylexProps(className, styles.title)}
+      {...stylexProps(className, styles.title, xstyle)}
       data-slot="drawer-title"
       {...props}
     />
   )
 }
 export function DrawerDescription({
+  xstyle,
   className,
   ...props
-}: DrawerPrimitive.Description.Props) {
+}: DrawerPrimitive.Description.Props & StyleXProps) {
   return (
     <DrawerPrimitive.Description
-      {...stylexProps(className, styles.description)}
+      {...stylexProps(className, styles.description, xstyle)}
       data-slot="drawer-description"
       {...props}
     />
@@ -694,6 +786,7 @@ export function DrawerDescription({
 }
 
 export function DrawerPanel({
+  xstyle,
   className,
   scrollFade = true,
   scrollable = true,
@@ -704,12 +797,13 @@ export function DrawerPanel({
   scrollFade?: boolean
   scrollable?: boolean
   allowSelection?: boolean
-}) {
+} & StyleXProps) {
   const defaultProps = {
     ...stylexProps(
       className,
       styles.panel,
       !allowSelection && styles.noSelection,
+      xstyle,
     ),
     "data-slot": "drawer-panel",
   }
@@ -732,11 +826,14 @@ export function DrawerPanel({
 }
 
 export function DrawerBar({
+  xstyle,
   className,
   position: positionProp,
   render,
   ...props
-}: useRender.ComponentProps<"div"> & { position?: DrawerPosition }) {
+}: useRender.ComponentProps<"div"> & {
+  position?: DrawerPosition
+} & StyleXProps) {
   const { position: contextPosition } = useContext(DrawerContext)
   const position = positionProp ?? contextPosition
   const horizontal = position === "left" || position === "right"
@@ -747,6 +844,7 @@ export function DrawerBar({
       styles.bar,
       horizontal ? styles.barHorizontal : styles.barVertical,
       barPositionStyles[position],
+      xstyle,
     ),
     "data-slot": "drawer-bar",
   }
@@ -760,12 +858,13 @@ export function DrawerBar({
 export const DrawerContent: typeof DrawerPrimitive.Content =
   DrawerPrimitive.Content
 export function DrawerMenu({
+  xstyle,
   className,
   render,
   ...props
-}: useRender.ComponentProps<"nav">) {
+}: useRender.ComponentProps<"nav"> & StyleXProps) {
   const defaultProps = {
-    ...stylexProps(className, styles.menu),
+    ...stylexProps(className, styles.menu, xstyle),
     "data-slot": "drawer-menu",
   }
   return useRender({
@@ -775,6 +874,7 @@ export function DrawerMenu({
   })
 }
 export function DrawerMenuItem({
+  xstyle,
   className,
   variant = "default",
   render,
@@ -782,9 +882,9 @@ export function DrawerMenuItem({
   ...props
 }: useRender.ComponentProps<"button"> & {
   variant?: "default" | "destructive"
-}) {
+} & StyleXProps) {
   const defaultProps = {
-    ...stylexProps(className, styles.menuItem),
+    ...stylexProps(className, styles.menuItem, xstyle),
     "data-slot": "drawer-menu-item",
     "data-variant": variant,
     disabled,
@@ -797,12 +897,13 @@ export function DrawerMenuItem({
   })
 }
 export function DrawerMenuSeparator({
+  xstyle,
   className,
   render,
   ...props
-}: useRender.ComponentProps<"div">) {
+}: useRender.ComponentProps<"div"> & StyleXProps) {
   const defaultProps = {
-    ...stylexProps(className, styles.menuSeparator),
+    ...stylexProps(className, styles.menuSeparator, xstyle),
     "data-slot": "drawer-menu-separator",
   }
   return useRender({
@@ -812,12 +913,13 @@ export function DrawerMenuSeparator({
   })
 }
 export function DrawerMenuGroup({
+  xstyle,
   className,
   render,
   ...props
-}: useRender.ComponentProps<"div">) {
+}: useRender.ComponentProps<"div"> & StyleXProps) {
   const defaultProps = {
-    ...stylexProps(className, styles.menuGroup),
+    ...stylexProps(className, styles.menuGroup, xstyle),
     "data-slot": "drawer-menu-group",
   }
   return useRender({
@@ -827,12 +929,13 @@ export function DrawerMenuGroup({
   })
 }
 export function DrawerMenuGroupLabel({
+  xstyle,
   className,
   render,
   ...props
-}: useRender.ComponentProps<"div">) {
+}: useRender.ComponentProps<"div"> & StyleXProps) {
   const defaultProps = {
-    ...stylexProps(className, styles.menuGroupLabel),
+    ...stylexProps(className, styles.menuGroupLabel, xstyle),
     "data-slot": "drawer-menu-group-label",
   }
   return useRender({
@@ -843,23 +946,27 @@ export function DrawerMenuGroupLabel({
 }
 
 export function DrawerMenuTrigger({
+  xstyle,
   className,
   children,
   ...props
-}: DrawerPrimitive.Trigger.Props) {
+}: DrawerPrimitive.Trigger.Props & StyleXProps) {
   return (
     <DrawerTrigger
-      {...stylexProps(className, styles.menuItem)}
+      {...stylexProps(className, styles.menuItem, xstyle)}
       data-slot="drawer-menu-trigger"
       {...props}
     >
       {children}
-      <ChevronRightIcon {...stylex.props(styles.menuTriggerIcon)} />
+      <ChevronRightIcon
+        {...stylex.props(drawerSlotStyles.icon, styles.menuTriggerIcon)}
+      />
     </DrawerTrigger>
   )
 }
 
 export function DrawerMenuCheckboxItem({
+  xstyle,
   className,
   children,
   checked,
@@ -872,7 +979,7 @@ export function DrawerMenuCheckboxItem({
 }: CheckboxPrimitive.Root.Props & {
   variant?: "default" | "switch"
   render?: React.ReactElement
-}) {
+} & StyleXProps) {
   return (
     <CheckboxPrimitive.Root
       checked={checked}
@@ -880,6 +987,7 @@ export function DrawerMenuCheckboxItem({
         className,
         styles.choiceItem,
         variant === "switch" ? styles.choiceSwitch : styles.choiceDefault,
+        xstyle,
       )}
       data-slot="drawer-menu-checkbox-item"
       data-variant={variant}
@@ -906,6 +1014,7 @@ export function DrawerMenuCheckboxItem({
         <>
           <CheckboxPrimitive.Indicator {...stylex.props(styles.choiceFirst)}>
             <svg
+              {...stylex.props(drawerSlotStyles.icon)}
               fill="none"
               height="24"
               stroke="currentColor"
@@ -926,28 +1035,38 @@ export function DrawerMenuCheckboxItem({
   )
 }
 export function DrawerMenuRadioGroup({
+  xstyle,
   className,
   ...props
-}: RadioGroupPrimitive.Props) {
+}: RadioGroupPrimitive.Props & StyleXProps) {
   return (
     <RadioGroupPrimitive
-      {...stylexProps(className, styles.menuGroup)}
+      {...stylexProps(className, styles.menuGroup, xstyle)}
       data-slot="drawer-menu-radio-group"
       {...props}
     />
   )
 }
 export function DrawerMenuRadioItem({
+  xstyle,
   className,
   children,
   value,
   disabled,
   render,
   ...props
-}: RadioPrimitive.Root.Props & { value: string; render?: React.ReactElement }) {
+}: RadioPrimitive.Root.Props & {
+  value: string
+  render?: React.ReactElement
+} & StyleXProps) {
   return (
     <RadioPrimitive.Root
-      {...stylexProps(className, styles.choiceItem, styles.choiceDefault)}
+      {...stylexProps(
+        className,
+        styles.choiceItem,
+        styles.choiceDefault,
+        xstyle,
+      )}
       data-slot="drawer-menu-radio-item"
       disabled={disabled}
       render={render}
@@ -956,6 +1075,7 @@ export function DrawerMenuRadioItem({
     >
       <RadioPrimitive.Indicator {...stylex.props(styles.choiceFirst)}>
         <svg
+          {...stylex.props(drawerSlotStyles.icon)}
           fill="none"
           height="24"
           stroke="currentColor"

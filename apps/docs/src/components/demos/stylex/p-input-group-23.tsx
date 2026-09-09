@@ -46,11 +46,11 @@ export default function Particle() {
           <output aria-label="Loading...">
             <LoaderCircleIcon
               aria-hidden="true"
-              {...stylex.props(demoStyles.report1)}
+              {...stylex.props(demoStyles.icon, demoStyles.report1)}
             />
           </output>
         ) : (
-          <SearchIcon aria-hidden="true" />
+          <SearchIcon {...stylex.props(demoStyles.icon)} aria-hidden="true" />
         )}
       </InputGroupAddon>
       <InputGroupInput
@@ -71,7 +71,7 @@ export default function Particle() {
               />
             }
           >
-            <MicIcon aria-hidden="true" />
+            <MicIcon {...stylex.props(demoStyles.icon2)} aria-hidden="true" />
           </TooltipTrigger>
           <TooltipPopup>Voice search</TooltipPopup>
         </Tooltip>
@@ -85,6 +85,21 @@ const spin = stylex.keyframes({
 })
 
 const demoStyles = stylex.create({
+  icon: {
+    blockSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
+    inlineSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
+    flexShrink: 0,
+    pointerEvents: "none",
+    opacity: 0.8,
+  },
+  icon2: {
+    blockSize: { default: "1rem", "@media (min-width: 640px)": "0.875rem" },
+    inlineSize: { default: "1rem", "@media (min-width: 640px)": "0.875rem" },
+    flexShrink: 0,
+    pointerEvents: "none",
+    opacity: 0.8,
+    marginInline: "-0.125rem",
+  },
   report1: {
     animation: `${spin} 1s linear infinite`,
   },

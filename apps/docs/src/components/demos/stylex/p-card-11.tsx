@@ -27,7 +27,7 @@ export default function Particle() {
         <CardFrameDescription>Manage your projects</CardFrameDescription>
         <CardFrameAction>
           <Button variant="outline">
-            <PlusIcon />
+            <PlusIcon {...stylex.props(demoStyles.icon)} />
             Add
           </Button>
         </CardFrameAction>
@@ -37,7 +37,7 @@ export default function Particle() {
           <Empty>
             <EmptyHeader>
               <EmptyMedia variant="icon">
-                <FolderIcon />
+                <FolderIcon {...stylex.props(demoStyles.icon2)} />
               </EmptyMedia>
               <EmptyTitle>No projects yet</EmptyTitle>
               <EmptyDescription>
@@ -52,6 +52,20 @@ export default function Particle() {
 }
 
 const demoStyles = stylex.create({
+  icon: {
+    blockSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
+    inlineSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
+    flexShrink: 0,
+    pointerEvents: "none",
+    opacity: 0.8,
+    marginInline: "-0.125rem",
+  },
+  icon2: {
+    blockSize: "1.125rem",
+    inlineSize: "1.125rem",
+    flexShrink: 0,
+    pointerEvents: "none",
+  },
   demo1: {
     inlineSize: "100%",
   },

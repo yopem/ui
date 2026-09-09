@@ -1,5 +1,5 @@
 "use client"
-
+import * as stylex from "@stylexjs/stylex"
 import { CheckIcon, CopyIcon } from "lucide-react"
 import { useRef } from "react"
 
@@ -44,7 +44,11 @@ export default function Particle() {
               />
             }
           >
-            {isCopied ? <CheckIcon /> : <CopyIcon />}
+            {isCopied ? (
+              <CheckIcon {...stylex.props(demoStyles.icon)} />
+            ) : (
+              <CopyIcon {...stylex.props(demoStyles.icon)} />
+            )}
           </TooltipTrigger>
           <TooltipPopup>
             <p>Copy to clipboard</p>
@@ -54,3 +58,14 @@ export default function Particle() {
     </InputGroup>
   )
 }
+
+const demoStyles = stylex.create({
+  icon: {
+    blockSize: { default: "1rem", "@media (min-width: 640px)": "0.875rem" },
+    inlineSize: { default: "1rem", "@media (min-width: 640px)": "0.875rem" },
+    flexShrink: 0,
+    pointerEvents: "none",
+    opacity: 0.8,
+    marginInline: "-0.125rem",
+  },
+})

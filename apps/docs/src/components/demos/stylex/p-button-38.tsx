@@ -7,15 +7,15 @@ export default function Particle() {
   return (
     <div {...stylex.props(demoStyles.demo1)}>
       <Button variant="outline">
-        <RiGoogleFill aria-hidden="true" />
+        <RiGoogleFill {...stylex.props(demoStyles.icon)} aria-hidden="true" />
         <span {...stylex.props(demoStyles.demo2)}>Login with Google</span>
       </Button>
       <Button variant="outline">
-        <RiTwitterXFill aria-hidden="true" />
+        <RiTwitterXFill {...stylex.props(demoStyles.icon)} aria-hidden="true" />
         <span {...stylex.props(demoStyles.demo2)}>Login with X</span>
       </Button>
       <Button variant="outline">
-        <RiGithubFill aria-hidden="true" />
+        <RiGithubFill {...stylex.props(demoStyles.icon)} aria-hidden="true" />
         <span {...stylex.props(demoStyles.demo2)}>Login with GitHub</span>
       </Button>
     </div>
@@ -23,6 +23,14 @@ export default function Particle() {
 }
 
 const demoStyles = stylex.create({
+  icon: {
+    blockSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
+    inlineSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
+    flexShrink: 0,
+    pointerEvents: "none",
+    opacity: 0.8,
+    marginInline: "-0.125rem",
+  },
   demo1: {
     display: "flex",
     flexDirection: "column",

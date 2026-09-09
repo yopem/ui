@@ -1,22 +1,23 @@
 "use client"
 
+import type { StyleXProps } from "@registry/lib/stylex"
+
 import { PreviewCard as PreviewCardPrimitive } from "@base-ui/react/preview-card"
 import { stylexProps } from "@registry/lib/stylex"
-import { themeMarker } from "@registry/styles/markers.stylex"
-import { tokens } from "@registry/styles/tokens.stylex"
+import { themeMarker, tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 
 const styles = stylex.create({
   positioner: { zIndex: 50 },
   popup: {
     backgroundClip: "padding-box",
-    backgroundColor: tokens.popover,
-    borderColor: tokens.border,
-    borderRadius: tokens.radiusLarge,
+    backgroundColor: tokens["--popover"],
+    borderColor: tokens["--border"],
+    borderRadius: tokens["--radius-lg"],
     borderStyle: "solid",
     borderWidth: 1,
     boxShadow: "0 10px 15px -3px color-mix(in oklab, #000 5%, transparent)",
-    color: tokens.popoverForeground,
+    color: tokens["--popover-foreground"],
     display: "flex",
     fontSize: "0.875rem",
     inlineSize: "16rem",
@@ -52,6 +53,7 @@ export function PreviewCardTrigger(props: PreviewCardPrimitive.Trigger.Props) {
 }
 
 export function PreviewCardPopup({
+  xstyle,
   className,
   children,
   align = "center",
@@ -64,7 +66,7 @@ export function PreviewCardPopup({
   sideOffset?: PreviewCardPrimitive.Positioner.Props["sideOffset"]
   anchor?: PreviewCardPrimitive.Positioner.Props["anchor"]
   portalProps?: PreviewCardPrimitive.Portal.Props
-}) {
+} & StyleXProps) {
   return (
     <PreviewCardPrimitive.Portal {...portalProps}>
       <PreviewCardPrimitive.Positioner
@@ -75,7 +77,7 @@ export function PreviewCardPopup({
         sideOffset={sideOffset}
       >
         <PreviewCardPrimitive.Popup
-          {...stylexProps(className, styles.popup)}
+          {...stylexProps(className, styles.popup, xstyle)}
           data-slot="preview-card-content"
           {...props}
         >

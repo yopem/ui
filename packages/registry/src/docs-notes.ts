@@ -1,9 +1,13 @@
 // These notes describe Yopem's composition choices, not only the upstream types.
 export const usageNotes: Record<string, [string, ...string[]]> = {
   base: [
-    "Copy the base files before copying a component. Configure StyleX in your bundler, include styles/styles.css, and mount ThemeProvider near the application root.",
-    "Place ThemeScript in the document head to apply the saved theme before paint. getRootThemeProps supplies the theme class and StyleX root styles. Keep the scoped compatibility CSS alongside the reset.",
+    "Copy the base files, configure StyleX in your bundler, and import styles/styles.css once. Native StyleX tokens provide light defaults; no provider, script, or font package is required.",
+    "Customize tokens and create complete light/dark themes in tokens.stylex.ts. The optional theme item adds saved light/dark/system switching. styles.css contains reset, reduced-motion policy, and unavoidable upstream viewport rules, not theme values.",
     "The documentation copies canonical files into src/yopem and maps @registry/* to that directory. Keep this alias in TypeScript and your bundler so imports work without editing every file.",
+  ],
+  theme: [
+    "Copy the two optional theme runtime files after base. Pass the same configuration to ThemeProvider, ThemeScript, and getRootThemeProps.",
+    "Create custom themes with StyleX in tokens.stylex.ts. Call createThemeConfig in your existing root layout; no extra config file is required. Match storageKey and defaultTheme between the provider and initial-paint script.",
   ],
   spinner: [
     "Use Spinner beside a loading label or inside a pending action.",
@@ -31,7 +35,7 @@ export const usageNotes: Record<string, [string, ...string[]]> = {
   ],
   card: [
     "Compose CardHeader, CardTitle, CardDescription, CardPanel and CardFooter inside Card.",
-    "CardContent aliases CardPanel. CardFrame and its header, title, description, action and footer parts add an outer frame around a card.",
+    "CardContent aliases CardPanel. Use separator on CardHeader or CardFooter for a divider and matching spacing. CardFrame parts add an outer frame.",
   ],
   empty: [
     "Use EmptyHeader with EmptyMedia, EmptyTitle and EmptyDescription, followed by EmptyContent for recovery actions.",
@@ -42,7 +46,7 @@ export const usageNotes: Record<string, [string, ...string[]]> = {
     "FrameTitle and FrameDescription label the group. Keep interactive controls inside the panels rather than making the entire frame clickable.",
   ],
   group: [
-    "Wrap adjacent controls in Group; use GroupText for fixed text and GroupSeparator between sections.",
+    "Wrap adjacent controls in Group. Apply groupItemStyles.item through each direct control's xstyle, or controlXstyle for Input and Textarea wrappers. GroupText and GroupSeparator apply joining styles themselves.",
     "orientation switches between horizontal and vertical layouts. ButtonGroup, ButtonGroupText and ButtonGroupSeparator are aliases.",
   ],
   kbd: [
@@ -63,7 +67,7 @@ export const usageNotes: Record<string, [string, ...string[]]> = {
   ],
   input: [
     "Pair Input with a label using Field or matching id and htmlFor.",
-    "The default uses Base UI's input. nativeInput selects a plain input. A numeric size controls the native input width; string sizes control the visual size. unstyled removes only the outer wrapper styles. The inner input keeps its styles. className applies to the wrapper, and a className callback is currently ignored even though the inherited type accepts it.",
+    "The default uses Base UI's input. nativeInput selects a plain input. A numeric size controls the native input width; string sizes control the visual size. unstyled removes only the outer wrapper styles. The inner input keeps its styles. A string className applies to the wrapper; a callback receives the actual Base UI input state.",
   ],
   textarea: [
     "Pair Textarea with a visible label and use rows to set the initial height.",
@@ -233,6 +237,10 @@ export const usageNotes: Record<string, [string, ...string[]]> = {
 }
 
 export const ownPropNotes: Record<string, string> = {
+  xstyle:
+    "StyleX styles merged after this part's defaults and variants. Accepts style objects, conditional arrays, themes and dynamic styles.",
+  controlXstyle:
+    "StyleX overrides and scoped themes for the decorative control wrapper. xstyle targets the native input or textarea.",
   children: "Content rendered inside this part.",
   className:
     "Additional CSS class names. When the type accepts a callback, it receives the Base UI part state.",

@@ -1,3 +1,4 @@
+import * as stylex from "@stylexjs/stylex"
 import { DatabaseIcon } from "lucide-react"
 
 // next/link replaced -> anchor
@@ -39,7 +40,7 @@ export default function Particle() {
             items={items}
           >
             <SelectTrigger size="sm">
-              <DatabaseIcon />
+              <DatabaseIcon {...stylex.props(demoStyles.icon)} />
               <SelectValue />
             </SelectTrigger>
             <SelectPopup>
@@ -55,3 +56,12 @@ export default function Particle() {
     </Breadcrumb>
   )
 }
+
+const demoStyles = stylex.create({
+  icon: {
+    blockSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
+    inlineSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
+    flexShrink: 0,
+    pointerEvents: "none",
+  },
+})

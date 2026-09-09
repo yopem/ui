@@ -1,5 +1,6 @@
 "use client"
 
+import type { StyleXProps } from "@registry/lib/stylex"
 import type * as React from "react"
 
 import { mergeProps } from "@base-ui/react/merge-props"
@@ -62,13 +63,14 @@ const styles = stylex.create({
 })
 
 export function Pagination({
+  xstyle,
   className,
   ...props
-}: React.ComponentProps<"nav">) {
+}: React.ComponentProps<"nav"> & StyleXProps) {
   return (
     <nav
       aria-label="pagination"
-      {...stylexProps(className, styles.root)}
+      {...stylexProps(className, styles.root, xstyle)}
       data-slot="pagination"
       {...props}
     />
@@ -76,12 +78,13 @@ export function Pagination({
 }
 
 export function PaginationContent({
+  xstyle,
   className,
   ...props
-}: React.ComponentProps<"ul">) {
+}: React.ComponentProps<"ul"> & StyleXProps) {
   return (
     <ul
-      {...stylexProps(className, styles.content)}
+      {...stylexProps(className, styles.content, xstyle)}
       data-slot="pagination-content"
       {...props}
     />
@@ -92,12 +95,13 @@ export function PaginationItem(props: React.ComponentProps<"li">) {
   return <li data-slot="pagination-item" {...props} />
 }
 
-export type PaginationLinkProps = {
+export type PaginationLinkProps = StyleXProps & {
   isActive?: boolean
   size?: React.ComponentProps<typeof Button>["size"]
 } & useRender.ComponentProps<"a">
 
 export function PaginationLink({
+  xstyle,
   className,
   isActive,
   size = "icon",
@@ -106,10 +110,15 @@ export function PaginationLink({
 }: PaginationLinkProps) {
   const defaultProps = {
     "aria-current": isActive ? ("page" as const) : undefined,
+    ...stylexProps(undefined, xstyle),
     className: render
-      ? className
+      ? stylexProps(className, xstyle).className
       : clsx(
-          buttonVariants({ size, variant: isActive ? "outline" : "ghost" }),
+          buttonVariants({
+            size,
+            variant: isActive ? "outline" : "ghost",
+            xstyle,
+          }),
           className,
         ),
     "data-active": isActive,
@@ -124,13 +133,15 @@ export function PaginationLink({
 }
 
 export function PaginationPrevious({
+  xstyle,
   className,
   ...props
-}: React.ComponentProps<typeof PaginationLink>) {
+}: React.ComponentProps<typeof PaginationLink> & StyleXProps) {
   return (
     <PaginationLink
       aria-label="Go to previous page"
-      className={stylexProps(className, styles.compact).className}
+      className={className}
+      xstyle={[styles.compact, xstyle]}
       size="default"
       {...props}
     >
@@ -141,13 +152,15 @@ export function PaginationPrevious({
 }
 
 export function PaginationNext({
+  xstyle,
   className,
   ...props
-}: React.ComponentProps<typeof PaginationLink>) {
+}: React.ComponentProps<typeof PaginationLink> & StyleXProps) {
   return (
     <PaginationLink
       aria-label="Go to next page"
-      className={stylexProps(className, styles.compact).className}
+      className={className}
+      xstyle={[styles.compact, xstyle]}
       size="default"
       {...props}
     >
@@ -158,13 +171,14 @@ export function PaginationNext({
 }
 
 export function PaginationEllipsis({
+  xstyle,
   className,
   ...props
-}: React.ComponentProps<"span">) {
+}: React.ComponentProps<"span"> & StyleXProps) {
   return (
     <span
       aria-hidden
-      {...stylexProps(className, styles.ellipsis)}
+      {...stylexProps(className, styles.ellipsis, xstyle)}
       data-slot="pagination-ellipsis"
       {...props}
     >
