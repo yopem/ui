@@ -2,6 +2,11 @@
 
 Source-owned React components built with StyleX and Base UI.
 
+First release is copy/paste-only. Docs use StyleX for UI and Fumadocs core for
+search. Pages include setup guides, examples, source files, dependencies, and
+API references generated from component types. Copy files into your project and
+install their dependencies. No Yopem CLI is needed.
+
 ## Commands
 
 ```sh
@@ -14,19 +19,17 @@ bun run typecheck
 bun run test
 bun run test:e2e
 bun run test:a11y
-bun run test:fixtures
 bun run build
 ```
 
 ## Workspace
 
-- `apps/docs` — component catalog and registry host
+- `apps/docs` — Fumadocs documentation, component previews, and source hosting
 - `packages/registry` — canonical component source and static registry builder
-- `packages/cli` — `npx @yopem/ui`
-- `fixtures` — supported framework and workspace fixtures
 
 Registry artifacts are generated under `packages/registry/dist` and copied to
-`apps/docs/public/r` and `apps/docs/public/schema`.
+`apps/docs/public/r` and `apps/docs/public/schema`. Generated API data stays out
+of version control and is rebuilt from source for development and builds.
 
 ## Self-hosting
 

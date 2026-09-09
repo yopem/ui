@@ -44,63 +44,60 @@ export default function Particle() {
     )
   }
   return (
-    <>
-      <style>{demoCss}</style>
-      <Form {...stylex.props(demoStyles.demo1)} onSubmit={onSubmit}>
-        <Field name="fullName">
-          <FieldLabel>
-            Full Name <span {...stylex.props(demoStyles.demo2)}>*</span>
+    <Form {...stylex.props(demoStyles.demo1)} onSubmit={onSubmit}>
+      <Field name="fullName">
+        <FieldLabel>
+          Full Name <span {...stylex.props(demoStyles.demo2)}>*</span>
+        </FieldLabel>
+        <Input placeholder="John Doe" required type="text" />
+        <FieldError>Please enter a valid name.</FieldError>
+      </Field>
+
+      <Field name="email">
+        <FieldLabel>
+          Email <span {...stylex.props(demoStyles.demo2)}>*</span>
+        </FieldLabel>
+        <Input placeholder="john@example.com" required type="email" />
+        <FieldError>Please enter a valid email.</FieldError>
+      </Field>
+
+      <Field name="role">
+        <FieldLabel>Role</FieldLabel>
+        <Select
+          items={[
+            { label: "Select your role", value: null },
+            { label: "Developer", value: "developer" },
+            { label: "Designer", value: "designer" },
+            { label: "Product Manager", value: "manager" },
+            { label: "Other", value: "other" },
+          ]}
+        >
+          <SelectTrigger>
+            <SelectValue />
+          </SelectTrigger>
+          <SelectPopup>
+            <SelectItem value="developer">Developer</SelectItem>
+            <SelectItem value="designer">Designer</SelectItem>
+            <SelectItem value="manager">Product Manager</SelectItem>
+            <SelectItem value="other">Other</SelectItem>
+          </SelectPopup>
+        </Select>
+        <FieldDescription>This is an optional field</FieldDescription>
+      </Field>
+
+      <Field name="newsletter">
+        <div {...stylex.props(demoStyles.demo3)}>
+          <Checkbox />
+          <FieldLabel {...stylex.props(demoStyles.demo4)}>
+            Subscribe to newsletter
           </FieldLabel>
-          <Input placeholder="John Doe" required type="text" />
-          <FieldError>Please enter a valid name.</FieldError>
-        </Field>
+        </div>
+      </Field>
 
-        <Field name="email">
-          <FieldLabel>
-            Email <span {...stylex.props(demoStyles.demo2)}>*</span>
-          </FieldLabel>
-          <Input placeholder="john@example.com" required type="email" />
-          <FieldError>Please enter a valid email.</FieldError>
-        </Field>
-
-        <Field name="role">
-          <FieldLabel>Role</FieldLabel>
-          <Select
-            items={[
-              { label: "Select your role", value: null },
-              { label: "Developer", value: "developer" },
-              { label: "Designer", value: "designer" },
-              { label: "Product Manager", value: "manager" },
-              { label: "Other", value: "other" },
-            ]}
-          >
-            <SelectTrigger>
-              <SelectValue />
-            </SelectTrigger>
-            <SelectPopup>
-              <SelectItem value="developer">Developer</SelectItem>
-              <SelectItem value="designer">Designer</SelectItem>
-              <SelectItem value="manager">Product Manager</SelectItem>
-              <SelectItem value="other">Other</SelectItem>
-            </SelectPopup>
-          </Select>
-          <FieldDescription>This is an optional field</FieldDescription>
-        </Field>
-
-        <Field name="newsletter">
-          <div {...stylex.props(demoStyles.demo3)}>
-            <Checkbox />
-            <FieldLabel {...stylex.props(demoStyles.demo4)}>
-              Subscribe to newsletter
-            </FieldLabel>
-          </div>
-        </Field>
-
-        <Button loading={loading} type="submit">
-          Submit
-        </Button>
-      </Form>
-    </>
+      <Button loading={loading} type="submit">
+        Submit
+      </Button>
+    </Form>
   )
 }
 
@@ -123,23 +120,3 @@ const demoStyles = stylex.create({
     cursor: "pointer",
   },
 })
-
-const demoCss = `
-  [data-slot="select-trigger"] svg { flex-shrink: 0; }
-  [data-slot="checkbox"] { background-clip: padding-box; }
-  [data-slot="checkbox"]::before {
-    border-radius: 3px;
-    box-shadow: 0 1px rgb(0 0 0 / 4%);
-    content: "";
-    inset: 0;
-    pointer-events: none;
-    position: absolute;
-  }
-  [data-theme="dark"] [data-slot="checkbox"] { background-clip: border-box; }
-  [data-theme="dark"] [data-slot="checkbox"]::before {
-    box-shadow: 0 -1px rgb(255 255 255 / 6%);
-  }
-  @media (min-width: 640px) {
-    [data-slot="select-trigger"] { line-height: 1.25rem; }
-  }
-`

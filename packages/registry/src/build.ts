@@ -1,36 +1,19 @@
 import { sourceItems } from "@registry/items/index"
-import {
-  configSchema,
-  lockSchema,
-  registryItemSchema,
-  registrySchema,
-} from "@registry/schema"
+import { registryItemSchema, registrySchema } from "@registry/schema"
 import { createHash } from "node:crypto"
 import { cp, mkdir, readFile, rm, writeFile } from "node:fs/promises"
 import { dirname, resolve } from "node:path"
 import { fileURLToPath } from "node:url"
 import { z } from "zod"
 
+import { componentDocs } from "./docs"
+import { rewriteImports } from "./source-files"
+
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..")
 const projectRoot = resolve(root, "../..")
 const dist = resolve(root, "dist")
 const version = "0.1.0"
 const schemaBase = "https://ui.yopem.com/schema"
-
-const replacements = [
-  ["@registry/components/ui/", "@ui/"],
-  ["@registry/hooks/", "@hooks/"],
-  ["@registry/lib/", "@lib/"],
-  ["@registry/styles/", "@styles/yopem/"],
-  ["@registry/theme/", "@components/"],
-] as const
-
-function rewriteImports(content: string) {
-  return replacements.reduce(
-    (result, [source, target]) => result.replaceAll(source, target),
-    content,
-  )
-}
 
 function integrity(content: string) {
   return `sha256-${createHash("sha256").update(content).digest("base64")}`
@@ -83,6 +66,16 @@ const registry = registrySchema.parse({
   version,
 })
 
+for (const doc of componentDocs) {
+  await writeJson(resolve(dist, "r/docs", `${doc.name}.json`), doc)
+}
+await writeJson(
+  resolve(dist, "r", "docs.json"),
+  componentDocs.map(({ parts: _, ...doc }) => ({
+    ...doc,
+    apiUrl: `/r/docs/${doc.name}.json`,
+  })),
+)
 await writeJson(resolve(dist, "r", "registry.json"), registry)
 await writeJson(
   resolve(dist, "schema", "registry.json"),
@@ -92,15 +85,6 @@ await writeJson(
   resolve(dist, "schema", "registry-item.json"),
   z.toJSONSchema(registryItemSchema),
 )
-await writeJson(
-  resolve(dist, "schema", "config.json"),
-  z.toJSONSchema(configSchema),
-)
-await writeJson(
-  resolve(dist, "schema", "lock.json"),
-  z.toJSONSchema(lockSchema),
-)
-
 const publicDir = resolve(projectRoot, "apps/docs/public")
 await rm(resolve(publicDir, "r"), { force: true, recursive: true })
 await rm(resolve(publicDir, "schema"), { force: true, recursive: true })

@@ -3,8 +3,13 @@ import { rootStyles } from "@registry/styles/root"
 import { darkTheme, lightTheme } from "@registry/styles/themes"
 import * as stylex from "@stylexjs/stylex"
 
-const lightClassName = stylex.props(lightTheme).className ?? ""
-const darkClassName = stylex.props(darkTheme).className ?? ""
+const schemes = stylex.create({
+  light: { colorScheme: "light" },
+  dark: { colorScheme: "dark" },
+})
+
+const lightClassName = stylex.props(lightTheme, schemes.light).className ?? ""
+const darkClassName = stylex.props(darkTheme, schemes.dark).className ?? ""
 const markerClassName = stylex.props(themeMarker).className ?? ""
 
 export const themeClasses = {
@@ -24,5 +29,6 @@ export function getRootThemeProps(theme: "dark" | "light" = "light") {
     themeMarker,
     theme === "dark" ? darkTheme : lightTheme,
     rootStyles.html,
+    theme === "dark" ? schemes.dark : schemes.light,
   )
 }

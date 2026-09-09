@@ -27,18 +27,15 @@ bun run typecheck
 bun run test
 bun run test:e2e
 bun run test:a11y
-bun run test:fixtures
 bun run build
 ```
 
-Install Chromium once with `bunx playwright install chromium`. To isolate a
-fixture while developing, run `FIXTURE=vite bun run test:fixtures` with any
-fixture directory name.
+Install Chromium once with `bunx playwright install chromium`.
 
 Automated checks do not constitute VoiceOver or NVDA certification.
 
 ## Releases
 
-Push tags matching the CLI version, such as `v0.1.0`. Tagged builds publish the
-CLI with npm provenance and attach self-hosted application and registry
-artifacts after the full release gate passes.
+Push version tags such as `v0.1.0`. Tagged builds upload self-hosted application
+and registry archives as workflow artifacts after the full release gate passes.
+The first release is copy/paste-only and does not publish an npm package.

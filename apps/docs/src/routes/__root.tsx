@@ -1,3 +1,4 @@
+import "@registry/styles/styles.css"
 import { ThemeProvider } from "@registry/theme/theme-provider"
 import { getRootThemeProps } from "@registry/theme/theme-root"
 import { ThemeScript } from "@registry/theme/theme-script"
@@ -7,6 +8,7 @@ import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools"
 
 export const Route = createRootRoute({
   head: () => ({
+    links: [{ rel: "icon", href: "/favicon.svg", type: "image/svg+xml" }],
     meta: [
       { charSet: "utf-8" },
       {
@@ -31,11 +33,6 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <ThemeScript />
         {__YOPEM_TEST_HARNESS__ ? (
           <>
-            <style>
-              {
-                "*,*::before,*::after{animation:none!important;caret-color:transparent!important;transition:none!important}"
-              }
-            </style>
             <link href="/virtual:stylex.css" rel="stylesheet" />
             <script src="/@id/virtual:stylex:runtime" type="module" />
           </>
@@ -44,7 +41,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       </head>
       <body>
         <ThemeProvider>{children}</ThemeProvider>
-        {!__YOPEM_TEST_HARNESS__ ? (
+        {import.meta.env.DEV && !__YOPEM_TEST_HARNESS__ ? (
           <TanStackDevtools
             config={{ position: "bottom-right" }}
             plugins={[

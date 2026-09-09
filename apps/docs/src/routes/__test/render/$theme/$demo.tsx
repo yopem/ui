@@ -1,6 +1,5 @@
 import { themeMarker } from "@registry/styles/markers.stylex"
 import { rootStyles } from "@registry/styles/root"
-import yopemCss from "@registry/styles/styles.css?url"
 import { darkTheme, lightTheme } from "@registry/styles/themes"
 import * as stylex from "@stylexjs/stylex"
 import { createFileRoute, notFound, useNavigate } from "@tanstack/react-router"
@@ -21,7 +20,6 @@ export const Route = createFileRoute("/__test/render/$theme/$demo")({
     if (!findDemoModule(stylexDemoModules, params.demo)) throw notFound()
   },
   head: ({ params }) => ({
-    links: [{ href: yopemCss, rel: "stylesheet" }],
     meta: [{ title: `${params.demo} ${params.theme}` }],
   }),
   component: DemoRender,

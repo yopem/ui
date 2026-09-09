@@ -23,6 +23,7 @@ out/
 build/
 /apps/docs/public/r/
 /apps/docs/public/schema/
+/packages/registry/src/docs.generated.json
 .tanstack/
 .output/
 

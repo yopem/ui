@@ -5,7 +5,8 @@
     "noEmit": true,
     "types": ["bun", "node"],
     "paths": {
-      "@registry/*": ["./src/*"]
+      "@registry/*": ["./src/*"],
+      "@docs/*": ["../../apps/docs/src/*"]
     }
   },
   "include": ["src/**/*.ts", "src/**/*.tsx", "tests/**/*.ts"]

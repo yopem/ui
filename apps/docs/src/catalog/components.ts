@@ -19,11 +19,9 @@ export interface CatalogDemo {
 
 export interface CatalogItem {
   demos: CatalogDemo[]
-  install: string
   name: string
   slug: string
   title: string
-  usage: string
 }
 
 const modules = import.meta.glob<DemoModule>("../components/demos/stylex/*.tsx")
@@ -64,21 +62,15 @@ for (const demo of demos) {
 
 const compositionOverrides: Record<
   string,
-  Pick<CatalogItem, "install" | "name" | "title" | "usage">
+  Pick<CatalogItem, "name" | "title">
 > = {
   "date-picker": {
-    install: "npx @yopem/ui add calendar popover",
     name: "DatePicker",
     title: "Date Picker",
-    usage:
-      'import { Calendar } from "@/components/ui/calendar"\nimport { Popover } from "@/components/ui/popover"',
   },
   navigation: {
-    install: "npx @yopem/ui add radio-group tabs",
     name: "SegmentedControl",
     title: "Segmented Control",
-    usage:
-      'import { RadioGroup } from "@/components/ui/radio-group"\nimport { Tabs } from "@/components/ui/tabs"',
   },
 }
 
@@ -96,34 +88,36 @@ export const catalog: CatalogItem[] = [...groups.values()]
             load().catch(() => ({ default: UnavailableDemo })),
           ),
           file,
-          loadSource,
+          loadSource: () =>
+            loadSource().then((source) =>
+              source
+                .replaceAll(
+                  "@/components/ui/stylex/",
+                  "@registry/components/ui/",
+                )
+                .replaceAll("@/lib/table-wrapper", "@tanstack/react-table")
+                .replaceAll("@/hooks/", "@registry/hooks/"),
+            ),
           name: demoName,
         }),
       ),
-      install: override?.install ?? `npx @yopem/ui add ${slug}`,
       name,
       slug,
       title: override?.title ?? titleCase(slug),
-      usage:
-        override?.usage ?? `import { ${name} } from "@/components/ui/${slug}"`,
     }
   })
   .concat(
     {
       demos: [],
-      install: "npx @yopem/ui add label",
       name: "Label",
       slug: "label",
       title: "Label",
-      usage: 'import { Label } from "@/components/ui/label"',
     },
     {
       demos: [],
-      install: "npx @yopem/ui add sidebar",
       name: "Sidebar",
       slug: "sidebar",
       title: "Sidebar",
-      usage: 'import { Sidebar } from "@/components/ui/sidebar"',
     },
   )
   .toSorted((left, right) => left.title.localeCompare(right.title))
@@ -146,6 +140,6 @@ function UnavailableDemo() {
   return createElement(
     "p",
     null,
-    "Demo waiting for its StyleX component wrapper.",
+    "Example could not load. Refresh the page and try again.",
   )
 }

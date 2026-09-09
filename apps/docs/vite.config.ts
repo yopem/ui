@@ -7,6 +7,8 @@ import { resolve } from "node:path"
 import { defineConfig } from "vite"
 
 const config = defineConfig({
+  // Shared CSS avoids mismatched stylesheet asset references in SSR and client builds.
+  build: { cssCodeSplit: false },
   define: {
     __YOPEM_TEST_HARNESS__: JSON.stringify(
       process.env.VITE_YOPEM_TEST_HARNESS === "1",

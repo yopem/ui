@@ -13,38 +13,33 @@ import { Radio, RadioGroup } from "@/components/ui/stylex/radio-group"
 
 export default function Particle() {
   return (
-    <>
-      <style>{demoCss}</style>
-      <Field
-        {...stylex.props(demoStyles.demo1)}
-        name="plan"
-        render={(props) => <Fieldset {...props} />}
-      >
-        <FieldsetLegend {...stylex.props(demoStyles.demo2)}>
-          Choose Plan
-        </FieldsetLegend>
-        <RadioGroup defaultValue="free">
-          <FieldItem>
-            <FieldLabel>
-              <Radio value="free" /> Free
-            </FieldLabel>
-          </FieldItem>
-          <FieldItem>
-            <FieldLabel>
-              <Radio value="pro" /> Pro
-            </FieldLabel>
-          </FieldItem>
-          <FieldItem>
-            <FieldLabel>
-              <Radio value="enterprise" /> Enterprise
-            </FieldLabel>
-          </FieldItem>
-        </RadioGroup>
-        <FieldDescription>
-          Select the plan that fits your needs.
-        </FieldDescription>
-      </Field>
-    </>
+    <Field
+      {...stylex.props(demoStyles.demo1)}
+      name="plan"
+      render={(props) => <Fieldset {...props} />}
+    >
+      <FieldsetLegend {...stylex.props(demoStyles.demo2)}>
+        Choose Plan
+      </FieldsetLegend>
+      <RadioGroup defaultValue="free">
+        <FieldItem>
+          <FieldLabel>
+            <Radio value="free" /> Free
+          </FieldLabel>
+        </FieldItem>
+        <FieldItem>
+          <FieldLabel>
+            <Radio value="pro" /> Pro
+          </FieldLabel>
+        </FieldItem>
+        <FieldItem>
+          <FieldLabel>
+            <Radio value="enterprise" /> Enterprise
+          </FieldLabel>
+        </FieldItem>
+      </RadioGroup>
+      <FieldDescription>Select the plan that fits your needs.</FieldDescription>
+    </Field>
   )
 }
 
@@ -58,22 +53,3 @@ const demoStyles = stylex.create({
     fontWeight: "500 !important",
   },
 })
-
-const demoCss = `
-  [data-slot="radio"] { background-clip: padding-box; }
-  [data-slot="radio"]::before {
-    border-radius: 9999px;
-    box-shadow: 0 1px rgb(0 0 0 / 4%);
-    content: "";
-    inset: 0;
-    pointer-events: none;
-    position: absolute;
-  }
-  [data-slot="radio"][data-checked] { box-shadow: none; }
-  [data-slot="radio"][data-checked]::before { box-shadow: none; }
-  [data-theme="dark"] [data-slot="radio"] { background-clip: border-box; }
-  [data-theme="dark"] [data-slot="radio"]::before {
-    box-shadow: 0 -1px rgb(255 255 255 / 6%);
-  }
-  [data-slot="radio"][data-checked]::before { box-shadow: none; }
-`

@@ -27,7 +27,6 @@ function applyTheme(theme: ResolvedTheme) {
     ...(theme === "dark" ? themeClasses.dark : themeClasses.light),
   )
   root.dataset.theme = theme
-  root.style.colorScheme = theme
 }
 
 function subscribeToSystemTheme(callback: () => void) {

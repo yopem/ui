@@ -53,43 +53,5 @@ export const registrySchema = z.object({
   version: z.string(),
 })
 
-const aliasesSchema = z.object({
-  components: z.string(),
-  hooks: z.string(),
-  lib: z.string(),
-  styles: z.string(),
-  ui: z.string(),
-})
-
-export const configSchema = z.object({
-  $schema: z.url().optional(),
-  aliases: aliasesSchema,
-  css: z.string(),
-  framework: z.enum([
-    "next-app",
-    "next-pages",
-    "tanstack-start",
-    "unknown",
-    "vite",
-  ]),
-  paths: aliasesSchema,
-  registry: z.url().default("https://ui.yopem.com/r"),
-})
-
-export const lockSchema = z.object({
-  items: z.record(
-    z.string(),
-    z.object({
-      dependencies: z.array(z.string()),
-      files: z.record(z.string(), z.string()),
-      registryDependencies: z.array(z.string()),
-      version: z.string().optional(),
-    }),
-  ),
-  version: z.literal(1),
-})
-
-export type Config = z.infer<typeof configSchema>
-export type Lock = z.infer<typeof lockSchema>
 export type Registry = z.infer<typeof registrySchema>
 export type RegistryItem = z.infer<typeof registryItemSchema>

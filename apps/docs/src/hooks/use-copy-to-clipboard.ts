@@ -8,44 +8,41 @@ export function useCopyToClipboard({
 }: {
   timeout?: number
   onCopy?: () => void
-} = {}): { copyToClipboard: (value: string) => void; isCopied: boolean } {
+} = {}) {
   const [isCopied, setIsCopied] = React.useState(false)
-  const timeoutIdRef = React.useRef<NodeJS.Timeout | null>(null)
+  const [copyError, setCopyError] = React.useState<string | null>(null)
+  const timeoutIdRef = React.useRef<ReturnType<typeof setTimeout> | null>(null)
 
-  const copyToClipboard = (value: string): void => {
-    if (typeof window === "undefined" || !navigator.clipboard.writeText) {
-      return
-    }
-
-    if (!value) return
-
-    navigator.clipboard.writeText(value).then(() => {
-      if (timeoutIdRef.current) {
-        clearTimeout(timeoutIdRef.current)
+  const copyToClipboard = async (value: string) => {
+    setCopyError(null)
+    setIsCopied(false)
+    try {
+      if (typeof navigator === "undefined" || !navigator.clipboard?.writeText) {
+        throw new Error(
+          "Clipboard unavailable. Select the code and copy it manually.",
+        )
       }
+      await navigator.clipboard.writeText(value)
+      if (timeoutIdRef.current) clearTimeout(timeoutIdRef.current)
       setIsCopied(true)
-
-      if (onCopy) {
-        onCopy()
-      }
-
+      onCopy?.()
       if (timeout !== 0) {
         timeoutIdRef.current = setTimeout(() => {
           setIsCopied(false)
           timeoutIdRef.current = null
         }, timeout)
       }
-    }, console.error)
+    } catch {
+      setCopyError("Could not copy. Select the code and copy it manually.")
+    }
   }
 
-  // Cleanup timeout on unmount
-  React.useEffect(() => {
-    return (): void => {
-      if (timeoutIdRef.current) {
-        clearTimeout(timeoutIdRef.current)
-      }
-    }
-  }, [])
+  React.useEffect(
+    () => () => {
+      if (timeoutIdRef.current) clearTimeout(timeoutIdRef.current)
+    },
+    [],
+  )
 
-  return { copyToClipboard, isCopied }
+  return { copyToClipboard, copyError, isCopied }
 }

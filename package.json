@@ -9,15 +9,14 @@
   "scripts": {
     "dev": "bun run --cwd apps/docs dev",
     "generate-routes": "bun run --cwd apps/docs generate-routes",
-    "build": "bun run registry:build && bun run --cwd packages/cli build && bun run --cwd apps/docs build",
+    "build": "bun run registry:build && bun run --cwd apps/docs build",
     "registry:build": "bun run --cwd packages/registry build",
     "start": "bun run --cwd apps/docs start",
     "preview": "bun run --cwd apps/docs preview",
-    "typecheck": "bun run --cwd packages/registry typecheck && bun run --cwd packages/cli typecheck && bun run --cwd apps/docs typecheck",
-    "test": "bun run registry:build && bun run --cwd packages/cli test && bun test packages/registry/tests tests/release-readiness.test.ts",
+    "typecheck": "bun run --cwd packages/registry typecheck && bun run --cwd apps/docs typecheck",
+    "test": "bun run registry:build && bun test packages/registry/tests apps/docs/src/catalog/docs-data.test.ts tests/release-readiness.test.ts",
     "test:a11y": "FULL_A11Y=1 playwright test --project=chromium --grep @full-a11y",
     "test:e2e": "playwright test",
-    "test:fixtures": "bun run registry:build && bun run --cwd packages/cli build && bun scripts/test-fixtures.ts",
     "lint": "oxlint lint .",
     "fmt": "oxfmt fmt .",
     "fmt:check": "oxfmt --check ."

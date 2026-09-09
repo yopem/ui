@@ -21,31 +21,21 @@ const items = [
 
 export default function Particle() {
   return (
-    <>
-      <style>{demoCss}</style>
-      <Field>
-        <FieldLabel>Country</FieldLabel>
-        <Select items={items}>
-          <SelectTrigger>
-            <SelectValue />
-          </SelectTrigger>
-          <SelectPopup>
-            {items.map(({ label, value }) => (
-              <SelectItem key={value} value={value}>
-                {label}
-              </SelectItem>
-            ))}
-          </SelectPopup>
-        </Select>
-        <FieldDescription>This is an optional field</FieldDescription>
-      </Field>
-    </>
+    <Field>
+      <FieldLabel>Country</FieldLabel>
+      <Select items={items}>
+        <SelectTrigger>
+          <SelectValue />
+        </SelectTrigger>
+        <SelectPopup>
+          {items.map(({ label, value }) => (
+            <SelectItem key={value} value={value}>
+              {label}
+            </SelectItem>
+          ))}
+        </SelectPopup>
+      </Select>
+      <FieldDescription>This is an optional field</FieldDescription>
+    </Field>
   )
 }
-
-const demoCss = `
-  [data-slot="select-trigger"] svg { flex-shrink: 0; }
-  @media (min-width: 640px) {
-    [data-slot="select-trigger"] { line-height: 1.25rem; }
-  }
-`

@@ -10,9 +10,10 @@
     "./*": "./src/*"
   },
   "scripts": {
-    "build": "bun src/build.ts",
-    "test": "bun test tests",
-    "typecheck": "tsc --noEmit"
+    "build": "bun run docs:generate && bun src/build.ts",
+    "docs:generate": "bun src/docs-extract.ts",
+    "test": "bun run docs:generate && bun test tests",
+    "typecheck": "bun run docs:generate && tsc --noEmit"
   },
   "dependencies": {
     "@base-ui/react": "^1.7.0",
@@ -28,7 +29,8 @@
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.4",
     "react": "^19.2.8",
-    "react-dom": "^19.2.8"
+    "react-dom": "^19.2.8",
+    "typescript-api": "npm:typescript@6.0.2"
   },
   "peerDependencies": {
     "react": ">=18 <20",

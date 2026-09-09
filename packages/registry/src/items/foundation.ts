@@ -12,8 +12,23 @@ export const foundationItems: SourceItem[] = [
       "StyleX tokens, themes, reset, and theme runtime for Yopem UI.",
     devDependencies: [],
     docs: {
-      api: ["ThemeProvider", "ThemeScript", "useTheme", "getRootThemeProps"],
-      usage: "Install with `npx @yopem/ui init`.",
+      api: [
+        "ThemeProvider",
+        "ThemeProviderProps",
+        "ThemeScript",
+        "useTheme",
+        "getRootThemeProps",
+        "tokens",
+        "themeMarker",
+        "lightTheme",
+        "darkTheme",
+        "rootStyles",
+        "themeClasses",
+        "themeClassNames",
+        "stylexProps",
+      ],
+      usage:
+        "Copy the base styles, theme runtime and StyleX helper into your project. Configure StyleX in your bundler and import the base stylesheet before using components.",
     },
     files: [
       {

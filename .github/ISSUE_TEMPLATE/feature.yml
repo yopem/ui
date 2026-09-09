@@ -7,14 +7,14 @@ body:
     id: problem
     attributes:
       label: Problem
-      description: What cannot be done with current components or CLI?
+      description: What cannot be done with current components?
     validations:
       required: true
   - type: textarea
     id: proposal
     attributes:
       label: Proposed change
-      description: Include API or command examples when useful.
+      description: Include API or usage examples when useful.
     validations:
       required: true
   - type: textarea
