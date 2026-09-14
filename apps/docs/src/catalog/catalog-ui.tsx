@@ -47,11 +47,7 @@ export function DemoPanel({
               {...stylex.props(catalogStyles.preview, localStyles.focus)}
               aria-label={`${exampleName} live preview`}
             >
-              <Suspense
-                fallback={
-                  <p {...stylex.props(localStyles.p)}>Loading example…</p>
-                }
-              >
+              <Suspense fallback={null}>
                 <LazyDemo />
               </Suspense>
             </KeyboardScrollArea>
@@ -182,7 +178,6 @@ const localStyles = stylex.create({
       outlineOffset: -2,
     },
   },
-  p: { marginBlock: "0.75rem", lineHeight: 1.7 },
   value: {
     color: tokens["--muted-foreground"],
     fontSize: "0.875rem",

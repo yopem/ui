@@ -16,9 +16,21 @@ import { docsStyles } from "@/catalog/docs-styles"
 import { getDocumentation } from "@/catalog/docs.functions"
 
 export const Route = createFileRoute("/components/$name")({
-  loader: ({ params }) => {
-    if (!getCatalogItem(params.name)) throw notFound()
-    return getDocumentation({ data: params.name })
+  loader: async ({ params }) => {
+    const item = getCatalogItem(params.name)
+    if (!item) throw notFound()
+    const data = await getDocumentation({ data: params.name })
+    const exampleNames = new Set(
+      data.examples.flatMap((group) =>
+        group.examples.map((example) => example.name),
+      ),
+    )
+    await Promise.all(
+      item.demos
+        .filter((demo) => exampleNames.has(demo.name))
+        .map((demo) => demo.preload()),
+    )
+    return data
   },
   head: ({ params }) => ({
     meta: [

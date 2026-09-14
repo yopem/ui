@@ -11,6 +11,7 @@ interface DemoModule {
 export interface CatalogDemo {
   component: LazyExoticComponent<ComponentType>
   name: string
+  preload: () => Promise<DemoModule>
 }
 
 export interface CatalogItem {
@@ -69,12 +70,16 @@ export const catalog: CatalogItem[] = [...groups.values()]
     const override = compositionOverrides[slug]
     const name = override?.name ?? componentIdentifier(slug)
     return {
-      demos: componentDemos.map(({ load, name: demoName }) => ({
-        component: lazy(() =>
-          load().catch(() => ({ default: UnavailableDemo })),
-        ),
-        name: demoName,
-      })),
+      demos: componentDemos.map(({ load, name: demoName }) => {
+        let promise: Promise<DemoModule> | undefined
+        const preload = () =>
+          (promise ??= load().catch(() => ({ default: UnavailableDemo })))
+        return {
+          component: lazy(preload),
+          name: demoName,
+          preload,
+        }
+      }),
       name,
       slug,
       title: override?.title ?? titleCase(slug),

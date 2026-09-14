@@ -23,6 +23,18 @@ test("minimal setup and StyleX customization are documented", async ({
 })
 
 test("component docs cover setup, source files, and API", async ({ page }) => {
+  await page.addInitScript(() => {
+    new MutationObserver((records) => {
+      if (
+        records.some((record) =>
+          [...record.addedNodes].some((node) =>
+            node.textContent?.includes("Loading example"),
+          ),
+        )
+      )
+        document.documentElement.dataset.loadingExampleSeen = "true"
+    }).observe(document, { childList: true, subtree: true })
+  })
   const missingStyles: string[] = []
   page.on("response", (response) => {
     if (
@@ -76,6 +88,9 @@ test("component docs cover setup, source files, and API", async ({ page }) => {
   await expect(
     page.getByRole("heading", { name: "Default", exact: true }),
   ).toBeVisible()
+  expect(
+    await page.locator("html").getAttribute("data-loading-example-seen"),
+  ).toBeNull()
   await expect(
     page.getByRole("heading", { name: "Button variant", exact: true }),
   ).toBeVisible()
