@@ -29,6 +29,30 @@ const frameworkOptions = [
   { label: "Astro", value: "astro" },
 ]
 
+const projectFields = [
+  {
+    control: <Input placeholder="Name of your project" type="text" />,
+    label: "Name",
+  },
+  {
+    control: (
+      <Select defaultValue="next" items={frameworkOptions}>
+        <SelectTrigger>
+          <SelectValue />
+        </SelectTrigger>
+        <SelectPopup>
+          {frameworkOptions.map(({ label, value }) => (
+            <SelectItem key={value} value={value}>
+              {label}
+            </SelectItem>
+          ))}
+        </SelectPopup>
+      </Select>
+    ),
+    label: "Framework",
+  },
+]
+
 export default function Particle() {
   return (
     <CardFrame {...stylex.props(demoStyles.demo1)}>
@@ -41,25 +65,12 @@ export default function Particle() {
       <Card {...stylex.props(demoStyles.demo2)}>
         <CardPanel>
           <Form {...stylex.props(demoStyles.demo3)}>
-            <Field>
-              <FieldLabel>Name</FieldLabel>
-              <Input placeholder="Name of your project" type="text" />
-            </Field>
-            <Field>
-              <FieldLabel>Framework</FieldLabel>
-              <Select defaultValue="next" items={frameworkOptions}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectPopup>
-                  {frameworkOptions.map(({ label, value }) => (
-                    <SelectItem key={value} value={value}>
-                      {label}
-                    </SelectItem>
-                  ))}
-                </SelectPopup>
-              </Select>
-            </Field>
+            {projectFields.map(({ control, label }) => (
+              <Field key={label}>
+                <FieldLabel>{label}</FieldLabel>
+                {control}
+              </Field>
+            ))}
             <Button {...stylex.props(demoStyles.demo4)} type="submit">
               Deploy
             </Button>

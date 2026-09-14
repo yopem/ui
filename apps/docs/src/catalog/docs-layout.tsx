@@ -244,9 +244,9 @@ function Navigation({ onNavigate }: { onNavigate?: () => void }) {
   return (
     <nav aria-label="Documentation" {...stylex.props(styles.nav)}>
       <ul {...stylex.props(styles.list)}>
-        {tree.children.map((item, index) =>
+        {tree.children.map((item) =>
           item.type === "separator" ? (
-            <li key={`section-${index}`} {...stylex.props(styles.group)}>
+            <li key={String(item.name)} {...stylex.props(styles.group)}>
               {item.name}
             </li>
           ) : item.type === "page" ? (

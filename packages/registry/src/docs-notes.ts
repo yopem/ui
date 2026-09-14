@@ -3,7 +3,7 @@ export const usageNotes: Record<string, [string, ...string[]]> = {
   base: [
     "Copy the base files, configure StyleX in your bundler, and import styles/styles.css once. Native StyleX tokens provide light defaults; no provider, script, or font package is required.",
     "Customize tokens and create complete light/dark themes in tokens.stylex.ts. The optional theme item adds saved light/dark/system switching. styles.css contains reset, reduced-motion policy, and unavoidable upstream viewport rules, not theme values.",
-    "The documentation copies canonical files into src/yopem and maps @registry/* to that directory. Keep this alias in TypeScript and your bundler so imports work without editing every file.",
+    "The documentation copies components into src/components/ui and uses the standard @/* alias for src. Keep this alias in TypeScript, your bundler, and StyleX.",
   ],
   theme: [
     "Copy the two optional theme runtime files after base. Pass the same configuration to ThemeProvider, ThemeScript, and getRootThemeProps.",

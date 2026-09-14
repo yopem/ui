@@ -1,7 +1,5 @@
 "use client"
 
-import type React from "react"
-
 import * as stylex from "@stylexjs/stylex"
 import { useMemo, useState } from "react"
 
@@ -90,42 +88,33 @@ const getStatusStyle = (status: Project["status"]) => {
   }
 }
 
+const currencyFormatter = new Intl.NumberFormat("en-US", {
+  currency: "USD",
+  maximumFractionDigits: 0,
+  minimumFractionDigits: 0,
+  style: "currency",
+})
+
 const getColumns = (): ColumnDef<Project>[] => [
   {
-    cell: ({ row }) => {
-      const toggleHandler = row.getToggleSelectedHandler()
-      return (
-        <Checkbox
-          aria-label="Select row"
-          checked={row.getIsSelected()}
-          disabled={!row.getCanSelect()}
-          onCheckedChange={(value) => {
-            // Create a synthetic event for the handler
-            const syntheticEvent = {
-              target: { checked: !!value },
-            } as unknown as React.ChangeEvent<HTMLInputElement>
-            toggleHandler(syntheticEvent)
-          }}
-        />
-      )
-    },
+    cell: ({ row }) => (
+      <Checkbox
+        aria-label="Select row"
+        checked={row.getIsSelected()}
+        disabled={!row.getCanSelect()}
+        onCheckedChange={(value) => row.toggleSelected(!!value)}
+      />
+    ),
     enableSorting: false,
     header: ({ table }) => {
       const isAllSelected = table.getIsAllPageRowsSelected()
       const isSomeSelected = table.getIsSomePageRowsSelected()
-      const toggleHandler = table.getToggleAllPageRowsSelectedHandler()
       return (
         <Checkbox
           aria-label="Select all"
           checked={isAllSelected}
           indeterminate={isSomeSelected && !isAllSelected}
-          onCheckedChange={(value) => {
-            // Create a synthetic event for the handler
-            const syntheticEvent = {
-              target: { checked: !!value },
-            } as unknown as React.ChangeEvent<HTMLInputElement>
-            toggleHandler(syntheticEvent)
-          }}
+          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
         />
       )
     },
@@ -141,7 +130,7 @@ const getColumns = (): ColumnDef<Project>[] => [
   {
     accessorKey: "status",
     cell: ({ row }) => {
-      const status = row.getValue("status") as Project["status"]
+      const status = row.original.status
       return (
         <Badge variant="outline">
           <span
@@ -162,17 +151,35 @@ const getColumns = (): ColumnDef<Project>[] => [
     accessorKey: "budget",
     cell: ({ row }) => {
       const amount = Number.parseFloat(row.getValue("budget"))
-      const formatted = new Intl.NumberFormat("en-US", {
-        currency: "USD",
-        maximumFractionDigits: 0,
-        minimumFractionDigits: 0,
-        style: "currency",
-      }).format(amount)
+      const formatted = currencyFormatter.format(amount)
       return <div {...stylex.props(demoStyles.demo2)}>{formatted}</div>
     },
     header: () => <div {...stylex.props(demoStyles.demo2)}>Budget</div>,
   },
 ]
+
+type ProjectTableModel = ReturnType<typeof useReactTable<Project>>
+
+function ProjectTableHeader({ table }: { table: ProjectTableModel }) {
+  return (
+    <TableHeader>
+      {table.getHeaderGroups().map((headerGroup) => (
+        <TableRow key={headerGroup.id}>
+          {headerGroup.headers.map((header) => (
+            <TableHead key={header.id}>
+              {header.isPlaceholder
+                ? null
+                : flexRender(
+                    header.column.columnDef.header,
+                    header.getContext(),
+                  )}
+            </TableHead>
+          ))}
+        </TableRow>
+      ))}
+    </TableHeader>
+  )
+}
 
 export default function Particle() {
   const [tableData] = useState<Project[]>(data)
@@ -195,34 +202,12 @@ export default function Particle() {
     (sum, project) => sum + project.budget,
     0,
   )
-  const formattedTotal = new Intl.NumberFormat("en-US", {
-    currency: "USD",
-    maximumFractionDigits: 0,
-    minimumFractionDigits: 0,
-    style: "currency",
-  }).format(totalBudget)
+  const formattedTotal = currencyFormatter.format(totalBudget)
 
   return (
     <Frame {...stylex.props(demoStyles.demo3)}>
       <Table variant="card">
-        <TableHeader>
-          {table.getHeaderGroups().map((headerGroup) => (
-            <TableRow key={headerGroup.id}>
-              {headerGroup.headers.map((header) => {
-                return (
-                  <TableHead key={header.id}>
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext(),
-                        )}
-                  </TableHead>
-                )
-              })}
-            </TableRow>
-          ))}
-        </TableHeader>
+        <ProjectTableHeader table={table} />
         <TableBody>
           {table.getRowModel().rows?.length ? (
             table.getRowModel().rows.map((row) => (

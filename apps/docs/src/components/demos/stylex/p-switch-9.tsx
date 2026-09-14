@@ -85,6 +85,20 @@ const defaultAvailability: Record<Day, TimeRange[]> = {
   Wednesday: [createRange("9:00 AM", "5:00 PM")],
 }
 
+function TimeSearch() {
+  return (
+    <div {...stylex.props(demoStyles.demo3)}>
+      <ComboboxInput
+        {...stylex.props(demoStyles.demo4)}
+        placeholder="Search time"
+        showTrigger={false}
+        size="sm"
+        startAddon={<SearchIcon {...stylex.props(demoStyles.icon)} />}
+      />
+    </div>
+  )
+}
+
 function TimeCombobox({
   ariaLabel,
   id,
@@ -124,15 +138,7 @@ function TimeCombobox({
         <ComboboxValue />
       </ComboboxTrigger>
       <ComboboxPopup aria-label={ariaLabel} {...stylex.props(demoStyles.demo2)}>
-        <div {...stylex.props(demoStyles.demo3)}>
-          <ComboboxInput
-            {...stylex.props(demoStyles.demo4)}
-            placeholder="Search time"
-            showTrigger={false}
-            size="sm"
-            startAddon={<SearchIcon {...stylex.props(demoStyles.icon)} />}
-          />
-        </div>
+        <TimeSearch />
         <ComboboxEmpty>No times found.</ComboboxEmpty>
         <ComboboxList>
           {(time: string) => (
@@ -143,6 +149,37 @@ function TimeCombobox({
         </ComboboxList>
       </ComboboxPopup>
     </Combobox>
+  )
+}
+
+function CopyTimesIcon() {
+  return <CopyIcon {...stylex.props(demoStyles.icon2)} aria-hidden="true" />
+}
+
+function CopyDayOptions({
+  day,
+  onChange,
+  value,
+}: {
+  day: Day
+  onChange: (days: string[]) => void
+  value: string[]
+}) {
+  return (
+    <CheckboxGroup
+      aria-label={`Copy ${day} times to`}
+      onValueChange={onChange}
+      value={value}
+    >
+      {days
+        .filter((target) => target !== day)
+        .map((target) => (
+          <Label key={target}>
+            <Checkbox value={target} />
+            {target}
+          </Label>
+        ))}
+    </CheckboxGroup>
   )
 }
 
@@ -183,27 +220,18 @@ function CopyTimesPopover({
             />
           }
         >
-          <CopyIcon {...stylex.props(demoStyles.icon2)} aria-hidden="true" />
+          <CopyTimesIcon />
         </PopoverTrigger>
         <TooltipPopup>Copy to other days</TooltipPopup>
       </Tooltip>
       <PopoverPopup align="end" {...stylex.props(demoStyles.demo6)}>
         <div {...stylex.props(demoStyles.demo7)}>
           <div {...stylex.props(demoStyles.demo8)}>Copy times to</div>
-          <CheckboxGroup
-            aria-label={`Copy ${day} times to`}
-            onValueChange={setSelectedDays}
+          <CopyDayOptions
+            day={day}
+            onChange={setSelectedDays}
             value={selectedDays}
-          >
-            {days
-              .filter((target) => target !== day)
-              .map((target) => (
-                <Label key={target}>
-                  <Checkbox value={target} />
-                  {target}
-                </Label>
-              ))}
-          </CheckboxGroup>
+          />
           <Button
             disabled={selectedDays.length === 0}
             onClick={() => {

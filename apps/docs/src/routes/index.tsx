@@ -65,7 +65,7 @@ function Introduction() {
           <CopyableCode
             title="Your first button"
             code={
-              'import { Button } from "@registry/components/ui/button"\n\nexport function SaveButton() {\n  return <Button variant="outline">Save changes</Button>\n}'
+              'import { Button } from "@/components/ui/button"\n\nexport function SaveButton() {\n  return <Button variant="outline">Save changes</Button>\n}'
             }
           />
           <h2 {...stylex.props(docsStyles.h2)} id="how-it-works">

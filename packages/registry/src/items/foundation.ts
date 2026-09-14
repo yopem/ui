@@ -26,17 +26,17 @@ export const foundationItems: SourceItem[] = [
     files: [
       {
         path: "styles/tokens.stylex.ts",
-        target: "@styles/yopem/tokens.stylex.ts",
+        target: "@/styles/tokens.stylex.ts",
         type: "registry:style",
       },
       {
         path: "styles/styles.css",
-        target: "@styles/yopem/styles.css",
+        target: "@/styles/styles.css",
         type: "registry:style",
       },
       {
         path: "lib/stylex.ts",
-        target: "@lib/stylex.ts",
+        target: "@/lib/stylex.ts",
         type: "registry:lib",
       },
     ],
@@ -76,12 +76,12 @@ export const foundationItems: SourceItem[] = [
     files: [
       {
         path: "theme/theme.tsx",
-        target: "@components/theme.tsx",
+        target: "@/theme/theme.tsx",
         type: "registry:lib",
       },
       {
         path: "theme/theme-provider.tsx",
-        target: "@components/theme-provider.tsx",
+        target: "@/theme/theme-provider.tsx",
         type: "registry:lib",
       },
     ],
@@ -103,7 +103,7 @@ export const foundationItems: SourceItem[] = [
     files: [
       {
         path: "components/ui/spinner.tsx",
-        target: "@ui/spinner.tsx",
+        target: "@/components/ui/spinner.tsx",
         type: "registry:ui",
       },
     ],
@@ -126,7 +126,7 @@ export const foundationItems: SourceItem[] = [
     files: [
       {
         path: "components/ui/button.tsx",
-        target: "@ui/button.tsx",
+        target: "@/components/ui/button.tsx",
         type: "registry:ui",
       },
     ],

@@ -179,6 +179,38 @@ export type InputProps = StyleXProps &
     controlXstyle?: StyleXProps["xstyle"]
   }
 
+function getInputSizeStyle(size: InputProps["size"]) {
+  if (size === "sm") return styles.small
+  if (size === "lg") return styles.large
+  return null
+}
+
+function mergeInputClassName(
+  inputClassName: string,
+  className: InputProps["className"],
+) {
+  if (typeof className !== "function") return inputClassName
+  return (state: InputPrimitive.State) => clsx(inputClassName, className(state))
+}
+
+function mergeInputStyle(
+  inputStyle: ReturnType<typeof stylexProps>["style"],
+  style: InputProps["style"],
+) {
+  if (typeof style !== "function") return { ...inputStyle, ...style }
+  return (state: InputPrimitive.State) => ({
+    ...inputStyle,
+    ...style(state),
+  })
+}
+
+function mergeNativeInputStyle(
+  inputStyle: ReturnType<typeof stylexProps>["style"],
+  style: InputProps["style"],
+) {
+  return typeof style === "function" ? inputStyle : { ...inputStyle, ...style }
+}
+
 export function Input({
   xstyle,
   controlXstyle,
@@ -189,8 +221,7 @@ export function Input({
   style,
   ...props
 }: InputProps) {
-  const sizeStyle =
-    size === "sm" ? styles.small : size === "lg" ? styles.large : null
+  const sizeStyle = getInputSizeStyle(size)
   const inputProps = stylexProps(
     undefined,
     styles.input,
@@ -217,27 +248,16 @@ export function Input({
           {...inputProps}
           data-slot="input"
           size={typeof size === "number" ? size : undefined}
-          style={{
-            ...inputProps.style,
-            ...(typeof style === "function" ? undefined : style),
-          }}
+          style={mergeNativeInputStyle(inputProps.style, style)}
           {...props}
         />
       ) : (
         <InputPrimitive
           {...inputProps}
-          className={
-            typeof className === "function"
-              ? (state) => clsx(inputProps.className, className(state))
-              : inputProps.className
-          }
+          className={mergeInputClassName(inputProps.className, className)}
           data-slot="input"
           size={typeof size === "number" ? size : undefined}
-          style={
-            typeof style === "function"
-              ? (state) => ({ ...inputProps.style, ...style(state) })
-              : { ...inputProps.style, ...style }
-          }
+          style={mergeInputStyle(inputProps.style, style)}
           {...props}
         />
       )}

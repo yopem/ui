@@ -36,7 +36,7 @@ test("copyable theming examples compile with the installed StyleX transform", ()
     for (const [name, filename] of Object.entries(filenames)) {
       expect(examples[name]).toBeDefined()
       examples[name] = examples[name].replaceAll(
-        '"@registry/styles/tokens.stylex"',
+        '"@/styles/tokens.stylex"',
         '"./tokens.stylex"',
       )
       if (name === "palette") {
@@ -53,7 +53,7 @@ test("copyable theming examples compile with the installed StyleX transform", ()
             plugin,
             {
               aliases: {
-                "@registry/*": [resolve(root, "packages/registry/src/*")],
+                "@/*": [resolve(root, "packages/registry/src/*")],
               },
               dev: false,
               runtimeInjection: false,

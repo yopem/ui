@@ -28,6 +28,39 @@ const frameworkOptions = [
   { label: "Astro", value: "astro" },
 ]
 
+function FrameworkOptions() {
+  return frameworkOptions.map(({ label, value }) => (
+    <SelectItem key={value} value={value}>
+      {label}
+    </SelectItem>
+  ))
+}
+
+function ProjectForm() {
+  return (
+    <Form {...stylex.props(demoStyles.demo2)}>
+      <Field>
+        <FieldLabel>Name</FieldLabel>
+        <Input placeholder="Name of your project" type="text" />
+      </Field>
+      <Field>
+        <FieldLabel>Framework</FieldLabel>
+        <Select defaultValue="next" items={frameworkOptions}>
+          <SelectTrigger>
+            <SelectValue />
+          </SelectTrigger>
+          <SelectPopup>
+            <FrameworkOptions />
+          </SelectPopup>
+        </Select>
+      </Field>
+      <Button {...stylex.props(demoStyles.demo3)} type="submit">
+        Deploy
+      </Button>
+    </Form>
+  )
+}
+
 export default function Particle() {
   return (
     <Frame {...stylex.props(demoStyles.demo1)}>
@@ -39,30 +72,7 @@ export default function Particle() {
       </FrameHeader>
       <Card>
         <CardPanel>
-          <Form {...stylex.props(demoStyles.demo2)}>
-            <Field>
-              <FieldLabel>Name</FieldLabel>
-              <Input placeholder="Name of your project" type="text" />
-            </Field>
-            <Field>
-              <FieldLabel>Framework</FieldLabel>
-              <Select defaultValue="next" items={frameworkOptions}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectPopup>
-                  {frameworkOptions.map(({ label, value }) => (
-                    <SelectItem key={value} value={value}>
-                      {label}
-                    </SelectItem>
-                  ))}
-                </SelectPopup>
-              </Select>
-            </Field>
-            <Button {...stylex.props(demoStyles.demo3)} type="submit">
-              Deploy
-            </Button>
-          </Form>
+          <ProjectForm />
         </CardPanel>
       </Card>
       <FrameFooter>

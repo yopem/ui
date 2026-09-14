@@ -15,7 +15,7 @@ import { stylexProps } from "@registry/lib/stylex"
 import { themeMarker, tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import { ChevronRightIcon, XIcon } from "lucide-react"
-import { createContext, useContext } from "react"
+import { createContext, useContext, useMemo } from "react"
 
 type DrawerPosition = "right" | "left" | "top" | "bottom"
 type DrawerVariant = "default" | "straight" | "inset"
@@ -566,8 +566,9 @@ export function Drawer({
   position = "bottom",
   ...props
 }: DrawerPrimitive.Root.Props & { position?: DrawerPosition }) {
+  const contextValue = useMemo(() => ({ position }), [position])
   return (
-    <DrawerContext.Provider value={{ position }}>
+    <DrawerContext.Provider value={contextValue}>
       <DrawerPrimitive.Root
         swipeDirection={swipeDirection ?? directionMap[position]}
         {...props}

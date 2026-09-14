@@ -3,17 +3,25 @@ import { expect, test } from "bun:test"
 
 import { compositionItems, getRequiredItems } from "./docs-data"
 import { getExampleDependencies } from "./example-dependencies"
+import { usageExamples } from "./usage"
 
 test("example dependencies distinguish local source from npm packages", () => {
   expect(
     getExampleDependencies(`
-    import { Button } from "@registry/components/ui/button"
-    import { ButtonProps } from "@registry/components/ui/button"
-    import { useMediaQuery } from "@registry/hooks/use-media-query"
+    import { Button } from "@/components/ui/button"
+    import { ButtonProps } from "@/components/ui/button"
+    import { useMediaQuery } from "@/hooks/use-media-query"
     import { useState } from "react"
     import { Root } from "@base-ui/react/dialog"
   `),
   ).toEqual({ components: ["button"], packages: ["react", "@base-ui/react"] })
+})
+
+test("usage examples use the standard component alias", () => {
+  for (const source of Object.values(usageExamples)) {
+    expect(source).not.toContain("@registry/")
+    expect(source).not.toContain("@/components/ui/stylex/")
+  }
 })
 
 test("copy lists include every transitive dependency exactly once", () => {

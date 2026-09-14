@@ -21,6 +21,25 @@ interface DropdownItem {
   value: string
 }
 
+interface YearDropdownOptionsProps {
+  ariaLabel: DropdownProps["aria-label"]
+}
+
+function YearDropdownOptions({ ariaLabel }: YearDropdownOptionsProps) {
+  return (
+    <ComboboxPopup aria-label={ariaLabel}>
+      <ComboboxEmpty>No items found.</ComboboxEmpty>
+      <ComboboxList>
+        {(item: DropdownItem) => (
+          <ComboboxItem disabled={item.disabled} key={item.value} value={item}>
+            {item.label}
+          </ComboboxItem>
+        )}
+      </ComboboxList>
+    </ComboboxPopup>
+  )
+}
+
 function YearDropdown(props: DropdownProps) {
   const { options, value, onChange, "aria-label": ariaLabel } = props
 
@@ -54,20 +73,7 @@ function YearDropdown(props: DropdownProps) {
         {...stylex.props(demoStyles.report1)}
         onFocus={(e) => e.currentTarget.select()}
       />
-      <ComboboxPopup aria-label={ariaLabel}>
-        <ComboboxEmpty>No items found.</ComboboxEmpty>
-        <ComboboxList>
-          {(item: DropdownItem) => (
-            <ComboboxItem
-              disabled={item.disabled}
-              key={item.value}
-              value={item}
-            >
-              {item.label}
-            </ComboboxItem>
-          )}
-        </ComboboxList>
-      </ComboboxPopup>
+      <YearDropdownOptions ariaLabel={ariaLabel} />
     </Combobox>
   )
 }

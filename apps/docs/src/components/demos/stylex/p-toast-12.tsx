@@ -13,6 +13,14 @@ import {
 
 const ANCHORED_SAVE_TOAST_ID = "coss-demo-anchored-save-toast"
 
+function SaveTooltipPopup() {
+  return (
+    <TooltipPopup>
+      <p>Save</p>
+    </TooltipPopup>
+  )
+}
+
 export default function Particle() {
   const saveButtonRef = useRef<HTMLButtonElement>(null)
   const toastTimeout = 2000
@@ -49,9 +57,7 @@ export default function Particle() {
       >
         <SaveIcon {...stylex.props(demoStyles.icon)} aria-hidden="true" />
       </TooltipTrigger>
-      <TooltipPopup>
-        <p>Save</p>
-      </TooltipPopup>
+      <SaveTooltipPopup />
     </Tooltip>
   )
 }

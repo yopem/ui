@@ -29,6 +29,46 @@ const frameworkOptions = [
   { label: "Astro", value: "astro" },
 ]
 
+const projectFields = [
+  {
+    control: <Input placeholder="Name of your project" type="text" />,
+    label: "Name",
+  },
+  {
+    control: (
+      <Select defaultValue="next" items={frameworkOptions}>
+        <SelectTrigger>
+          <SelectValue />
+        </SelectTrigger>
+        <SelectPopup>
+          {frameworkOptions.map(({ label, value }) => (
+            <SelectItem key={value} value={value}>
+              {label}
+            </SelectItem>
+          ))}
+        </SelectPopup>
+      </Select>
+    ),
+    label: "Framework",
+  },
+]
+
+function ProjectForm() {
+  return (
+    <Form {...stylex.props(demoStyles.demo2)}>
+      {projectFields.map(({ control, label }) => (
+        <Field key={label}>
+          <FieldLabel>{label}</FieldLabel>
+          {control}
+        </Field>
+      ))}
+      <Button {...stylex.props(demoStyles.demo3)} type="submit">
+        Deploy
+      </Button>
+    </Form>
+  )
+}
+
 export default function Particle() {
   return (
     <CardFrame {...stylex.props(demoStyles.demo1)}>
@@ -40,30 +80,7 @@ export default function Particle() {
       </CardFrameHeader>
       <Card>
         <CardPanel>
-          <Form {...stylex.props(demoStyles.demo2)}>
-            <Field>
-              <FieldLabel>Name</FieldLabel>
-              <Input placeholder="Name of your project" type="text" />
-            </Field>
-            <Field>
-              <FieldLabel>Framework</FieldLabel>
-              <Select defaultValue="next" items={frameworkOptions}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectPopup>
-                  {frameworkOptions.map(({ label, value }) => (
-                    <SelectItem key={value} value={value}>
-                      {label}
-                    </SelectItem>
-                  ))}
-                </SelectPopup>
-              </Select>
-            </Field>
-            <Button {...stylex.props(demoStyles.demo3)} type="submit">
-              Deploy
-            </Button>
-          </Form>
+          <ProjectForm />
         </CardPanel>
       </Card>
       <CardFrameFooter>

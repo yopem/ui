@@ -50,6 +50,23 @@ interface TimeRange {
   end: string
 }
 
+function renderTimeOption(time: string) {
+  return (
+    <ComboboxItem key={time} value={time}>
+      <span {...stylex.props(demoStyles.demo5)}>{time}</span>
+    </ComboboxItem>
+  )
+}
+
+function CopyDayOption({ day }: { day: Day }) {
+  return (
+    <Label>
+      <Checkbox value={day} />
+      {day}
+    </Label>
+  )
+}
+
 const timeOptions = Array.from({ length: 96 }, (_, i) => {
   const hours = Math.floor(i / 4)
   const minutes = (i % 4) * 15
@@ -119,13 +136,7 @@ function TimeCombobox({
           />
         </div>
         <ComboboxEmpty>No times found.</ComboboxEmpty>
-        <ComboboxList>
-          {(time: string) => (
-            <ComboboxItem key={time} value={time}>
-              <span {...stylex.props(demoStyles.demo5)}>{time}</span>
-            </ComboboxItem>
-          )}
-        </ComboboxList>
+        <ComboboxList>{renderTimeOption}</ComboboxList>
       </ComboboxPopup>
     </Combobox>
   )
@@ -142,6 +153,15 @@ function CopyTimesPopover({
 }) {
   const [open, setOpen] = useState(false)
   const [selectedDays, setSelectedDays] = useState<string[]>([])
+  const copyButton = (
+    <Button
+      aria-label={`Copy ${day} times to other days`}
+      disabled={disabled}
+      size="icon-sm"
+      variant="ghost"
+    />
+  )
+  const copyTooltipTrigger = <TooltipTrigger render={copyButton} />
 
   return (
     <Popover
@@ -154,20 +174,7 @@ function CopyTimesPopover({
       open={open}
     >
       <Tooltip disableHoverablePopup>
-        <PopoverTrigger
-          render={
-            <TooltipTrigger
-              render={
-                <Button
-                  aria-label={`Copy ${day} times to other days`}
-                  disabled={disabled}
-                  size="icon-sm"
-                  variant="ghost"
-                />
-              }
-            />
-          }
-        >
+        <PopoverTrigger render={copyTooltipTrigger}>
           <CopyIcon {...stylex.props(demoStyles.icon2)} aria-hidden="true" />
         </PopoverTrigger>
         <TooltipPopup>Copy to other days</TooltipPopup>
@@ -183,10 +190,7 @@ function CopyTimesPopover({
             {days
               .filter((target) => target !== day)
               .map((target) => (
-                <Label key={target}>
-                  <Checkbox value={target} />
-                  {target}
-                </Label>
+                <CopyDayOption day={target} key={target} />
               ))}
           </CheckboxGroup>
           <Button

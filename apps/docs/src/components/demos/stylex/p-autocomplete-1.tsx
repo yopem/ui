@@ -22,6 +22,21 @@ const items = [
   { label: "Pear", value: "pear" },
 ]
 
+function AutocompleteOptions() {
+  return (
+    <AutocompletePopup>
+      <AutocompleteEmpty>No items found.</AutocompleteEmpty>
+      <AutocompleteList>
+        {(item) => (
+          <AutocompleteItem key={item.value} value={item}>
+            {item.label}
+          </AutocompleteItem>
+        )}
+      </AutocompleteList>
+    </AutocompletePopup>
+  )
+}
+
 export default function Particle() {
   return (
     <Autocomplete items={items}>
@@ -29,16 +44,7 @@ export default function Particle() {
         aria-label="Search items"
         placeholder="Search items…"
       />
-      <AutocompletePopup>
-        <AutocompleteEmpty>No items found.</AutocompleteEmpty>
-        <AutocompleteList>
-          {(item) => (
-            <AutocompleteItem key={item.value} value={item}>
-              {item.label}
-            </AutocompleteItem>
-          )}
-        </AutocompleteList>
-      </AutocompletePopup>
+      <AutocompleteOptions />
     </Autocomplete>
   )
 }

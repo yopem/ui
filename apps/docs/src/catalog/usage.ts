@@ -1,4 +1,4 @@
-// Standalone TSX files. @registry resolves to the copied src/yopem tree.
+// Standalone TSX files use the standard @ alias for src.
 export const usageExamples: Record<string, string> = {
   accordion: `"use client"
 
@@ -7,7 +7,7 @@ import {
   AccordionItem,
   AccordionPanel,
   AccordionTrigger,
-} from "@registry/components/ui/accordion"
+} from "@/components/ui/accordion"
 
 export default function Example() {
   return (
@@ -28,7 +28,7 @@ import {
   Alert,
   AlertDescription,
   AlertTitle,
-} from "@registry/components/ui/alert"
+} from "@/components/ui/alert"
 
 export default function Example() {
   return (
@@ -50,8 +50,8 @@ import {
   AlertDialogPopup,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@registry/components/ui/alert-dialog"
-import { Button } from "@registry/components/ui/button"
+} from "@/components/ui/alert-dialog"
+import { Button } from "@/components/ui/button"
 
 export default function Example() {
   return (
@@ -83,7 +83,7 @@ import {
   AutocompleteItem,
   AutocompleteList,
   AutocompletePopup,
-} from "@registry/components/ui/autocomplete"
+} from "@/components/ui/autocomplete"
 
 export default function Example() {
   const items = [
@@ -114,7 +114,7 @@ import {
   Avatar,
   AvatarFallback,
   AvatarImage,
-} from "@registry/components/ui/avatar"
+} from "@/components/ui/avatar"
 
 export default function Example() {
   return (
@@ -127,7 +127,7 @@ export default function Example() {
 `,
   badge: `"use client"
 
-import { Badge } from "@registry/components/ui/badge"
+import { Badge } from "@/components/ui/badge"
 
 export default function Example() {
   return <Badge>Published</Badge>
@@ -142,7 +142,7 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from "@registry/components/ui/breadcrumb"
+} from "@/components/ui/breadcrumb"
 
 export default function Example() {
   return (
@@ -162,7 +162,7 @@ export default function Example() {
 `,
   button: `"use client"
 
-import { Button } from "@registry/components/ui/button"
+import { Button } from "@/components/ui/button"
 
 export default function Example() {
   return (
@@ -174,7 +174,7 @@ export default function Example() {
 `,
   calendar: `"use client"
 
-import { Calendar } from "@registry/components/ui/calendar"
+import { Calendar } from "@/components/ui/calendar"
 import { useState } from "react"
 
 export default function Example() {
@@ -192,7 +192,7 @@ import {
   CardHeader,
   CardPanel,
   CardTitle,
-} from "@registry/components/ui/card"
+} from "@/components/ui/card"
 
 export default function Example() {
   return (
@@ -209,8 +209,8 @@ export default function Example() {
 `,
   checkbox: `"use client"
 
-import { Checkbox } from "@registry/components/ui/checkbox"
-import { Label } from "@registry/components/ui/label"
+import { Checkbox } from "@/components/ui/checkbox"
+import { Label } from "@/components/ui/label"
 
 export default function Example() {
   return (
@@ -223,9 +223,9 @@ export default function Example() {
 `,
   "checkbox-group": `"use client"
 
-import { Checkbox } from "@registry/components/ui/checkbox"
-import { CheckboxGroup } from "@registry/components/ui/checkbox-group"
-import { Label } from "@registry/components/ui/label"
+import { Checkbox } from "@/components/ui/checkbox"
+import { CheckboxGroup } from "@/components/ui/checkbox-group"
+import { Label } from "@/components/ui/label"
 
 export default function Example() {
   return (
@@ -246,7 +246,7 @@ import {
   Collapsible,
   CollapsiblePanel,
   CollapsibleTrigger,
-} from "@registry/components/ui/collapsible"
+} from "@/components/ui/collapsible"
 
 export default function Example() {
   return (
@@ -266,7 +266,7 @@ import {
   ComboboxItem,
   ComboboxList,
   ComboboxPopup,
-} from "@registry/components/ui/combobox"
+} from "@/components/ui/combobox"
 
 export default function Example() {
   const items = [
@@ -300,7 +300,7 @@ import {
   CommandItem,
   CommandList,
   CommandPanel,
-} from "@registry/components/ui/command"
+} from "@/components/ui/command"
 
 export default function Example() {
   const items = [
@@ -340,7 +340,7 @@ import {
   ContextMenuItem,
   ContextMenuPopup,
   ContextMenuTrigger,
-} from "@registry/components/ui/context-menu"
+} from "@/components/ui/context-menu"
 import * as stylex from "@stylexjs/stylex"
 
 const styles = stylex.create({ trigger: { padding: "2rem" } })
@@ -364,14 +364,14 @@ export default function Example() {
 `,
   "date-picker": `"use client"
 
-import { Button } from "@registry/components/ui/button"
-import { Calendar } from "@registry/components/ui/calendar"
+import { Button } from "@/components/ui/button"
+import { Calendar } from "@/components/ui/calendar"
 import {
   Popover,
   PopoverPopup,
   PopoverTitle,
   PopoverTrigger,
-} from "@registry/components/ui/popover"
+} from "@/components/ui/popover"
 import { useState } from "react"
 
 export default function Example() {
@@ -392,7 +392,7 @@ export default function Example() {
 `,
   dialog: `"use client"
 
-import { Button } from "@registry/components/ui/button"
+import { Button } from "@/components/ui/button"
 import {
   Dialog,
   DialogClose,
@@ -402,7 +402,7 @@ import {
   DialogPopup,
   DialogTitle,
   DialogTrigger,
-} from "@registry/components/ui/dialog"
+} from "@/components/ui/dialog"
 
 export default function Example() {
   return (
@@ -427,7 +427,7 @@ export default function Example() {
 `,
   drawer: `"use client"
 
-import { Button } from "@registry/components/ui/button"
+import { Button } from "@/components/ui/button"
 import {
   Drawer,
   DrawerClose,
@@ -437,7 +437,7 @@ import {
   DrawerPopup,
   DrawerTitle,
   DrawerTrigger,
-} from "@registry/components/ui/drawer"
+} from "@/components/ui/drawer"
 
 export default function Example() {
   return (
@@ -467,7 +467,7 @@ import {
   EmptyDescription,
   EmptyHeader,
   EmptyTitle,
-} from "@registry/components/ui/empty"
+} from "@/components/ui/empty"
 
 export default function Example() {
   return (
@@ -488,8 +488,8 @@ import {
   Field,
   FieldDescription,
   FieldLabel,
-} from "@registry/components/ui/field"
-import { Input } from "@registry/components/ui/input"
+} from "@/components/ui/field"
+import { Input } from "@/components/ui/input"
 
 export default function Example() {
   return (
@@ -503,9 +503,9 @@ export default function Example() {
 `,
   fieldset: `"use client"
 
-import { Field, FieldLabel } from "@registry/components/ui/field"
-import { Fieldset, FieldsetLegend } from "@registry/components/ui/fieldset"
-import { Input } from "@registry/components/ui/input"
+import { Field, FieldLabel } from "@/components/ui/field"
+import { Fieldset, FieldsetLegend } from "@/components/ui/fieldset"
+import { Input } from "@/components/ui/input"
 
 export default function Example() {
   return (
@@ -521,10 +521,10 @@ export default function Example() {
 `,
   form: `"use client"
 
-import { Button } from "@registry/components/ui/button"
-import { Field, FieldError, FieldLabel } from "@registry/components/ui/field"
-import { Form } from "@registry/components/ui/form"
-import { Input } from "@registry/components/ui/input"
+import { Button } from "@/components/ui/button"
+import { Field, FieldError, FieldLabel } from "@/components/ui/field"
+import { Form } from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
 
 export default function Example() {
   return (
@@ -554,7 +554,7 @@ import {
   FrameHeader,
   FramePanel,
   FrameTitle,
-} from "@registry/components/ui/frame"
+} from "@/components/ui/frame"
 
 export default function Example() {
   return (
@@ -571,8 +571,8 @@ export default function Example() {
 `,
   group: `"use client"
 
-import { Button } from "@registry/components/ui/button"
-import { Group, GroupSeparator, groupItemStyles } from "@registry/components/ui/group"
+import { Button } from "@/components/ui/button"
+import { Group, GroupSeparator, groupItemStyles } from "@/components/ui/group"
 
 export default function Example() {
   return (
@@ -590,8 +590,8 @@ export default function Example() {
 `,
   input: `"use client"
 
-import { Field, FieldLabel } from "@registry/components/ui/field"
-import { Input } from "@registry/components/ui/input"
+import { Field, FieldLabel } from "@/components/ui/field"
+import { Input } from "@/components/ui/input"
 
 export default function Example() {
   return (
@@ -609,7 +609,7 @@ import {
   InputGroupAddon,
   InputGroupInput,
   InputGroupText,
-} from "@registry/components/ui/input-group"
+} from "@/components/ui/input-group"
 
 export default function Example() {
   return (
@@ -624,7 +624,7 @@ export default function Example() {
 `,
   kbd: `"use client"
 
-import { Kbd } from "@registry/components/ui/kbd"
+import { Kbd } from "@/components/ui/kbd"
 
 export default function Example() {
   return (
@@ -636,8 +636,8 @@ export default function Example() {
 `,
   label: `"use client"
 
-import { Input } from "@registry/components/ui/input"
-import { Label } from "@registry/components/ui/label"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
 
 export default function Example() {
   return (
@@ -650,14 +650,14 @@ export default function Example() {
 `,
   menu: `"use client"
 
-import { Button } from "@registry/components/ui/button"
+import { Button } from "@/components/ui/button"
 import {
   Menu,
   MenuGroup,
   MenuItem,
   MenuPopup,
   MenuTrigger,
-} from "@registry/components/ui/menu"
+} from "@/components/ui/menu"
 
 export default function Example() {
   return (
@@ -685,7 +685,7 @@ import {
   MeterLabel,
   MeterTrack,
   MeterValue,
-} from "@registry/components/ui/meter"
+} from "@/components/ui/meter"
 
 export default function Example() {
   return (
@@ -729,7 +729,7 @@ import {
   NumberFieldGroup,
   NumberFieldIncrement,
   NumberFieldInput,
-} from "@registry/components/ui/number-field"
+} from "@/components/ui/number-field"
 
 export default function Example() {
   return (
@@ -745,7 +745,7 @@ export default function Example() {
 `,
   "otp-field": `"use client"
 
-import { OTPField, OTPFieldInput } from "@registry/components/ui/otp-field"
+import { OTPField, OTPFieldInput } from "@/components/ui/otp-field"
 
 export default function Example() {
   return (
@@ -772,7 +772,7 @@ import {
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
-} from "@registry/components/ui/pagination"
+} from "@/components/ui/pagination"
 
 export default function Example() {
   return (
@@ -799,7 +799,7 @@ export default function Example() {
 `,
   popover: `"use client"
 
-import { Button } from "@registry/components/ui/button"
+import { Button } from "@/components/ui/button"
 import {
   Popover,
   PopoverClose,
@@ -807,7 +807,7 @@ import {
   PopoverPopup,
   PopoverTitle,
   PopoverTrigger,
-} from "@registry/components/ui/popover"
+} from "@/components/ui/popover"
 
 export default function Example() {
   return (
@@ -832,7 +832,7 @@ import {
   PreviewCard,
   PreviewCardPopup,
   PreviewCardTrigger,
-} from "@registry/components/ui/preview-card"
+} from "@/components/ui/preview-card"
 
 export default function Example() {
   return (
@@ -850,7 +850,7 @@ export default function Example() {
 `,
   progress: `"use client"
 
-import { Progress } from "@registry/components/ui/progress"
+import { Progress } from "@/components/ui/progress"
 
 export default function Example() {
   return <Progress aria-label="Upload progress" value={60} />
@@ -858,8 +858,8 @@ export default function Example() {
 `,
   "radio-group": `"use client"
 
-import { Label } from "@registry/components/ui/label"
-import { Radio, RadioGroup } from "@registry/components/ui/radio-group"
+import { Label } from "@/components/ui/label"
+import { Radio, RadioGroup } from "@/components/ui/radio-group"
 
 export default function Example() {
   return (
@@ -876,7 +876,7 @@ export default function Example() {
 `,
   "scroll-area": `"use client"
 
-import { ScrollArea } from "@registry/components/ui/scroll-area"
+import { ScrollArea } from "@/components/ui/scroll-area"
 import * as stylex from "@stylexjs/stylex"
 
 const styles = stylex.create({ viewport: { blockSize: "12rem" } })
@@ -902,7 +902,7 @@ import {
   SelectPopup,
   SelectTrigger,
   SelectValue,
-} from "@registry/components/ui/select"
+} from "@/components/ui/select"
 
 export default function Example() {
   const items = [
@@ -930,7 +930,7 @@ export default function Example() {
 `,
   separator: `"use client"
 
-import { Separator } from "@registry/components/ui/separator"
+import { Separator } from "@/components/ui/separator"
 
 export default function Example() {
   return (
@@ -944,7 +944,7 @@ export default function Example() {
 `,
   sheet: `"use client"
 
-import { Button } from "@registry/components/ui/button"
+import { Button } from "@/components/ui/button"
 import {
   Sheet,
   SheetClose,
@@ -954,7 +954,7 @@ import {
   SheetPopup,
   SheetTitle,
   SheetTrigger,
-} from "@registry/components/ui/sheet"
+} from "@/components/ui/sheet"
 
 export default function Example() {
   return (
@@ -992,7 +992,7 @@ import {
   sidebarSlotStyles,
   SidebarProvider,
   SidebarTrigger,
-} from "@registry/components/ui/sidebar"
+} from "@/components/ui/sidebar"
 
 export default function Example() {
   return (
@@ -1031,7 +1031,7 @@ export default function Example() {
 `,
   skeleton: `"use client"
 
-import { Skeleton } from "@registry/components/ui/skeleton"
+import { Skeleton } from "@/components/ui/skeleton"
 import * as stylex from "@stylexjs/stylex"
 
 const styles = stylex.create({ placeholder: { blockSize: "1rem", inlineSize: "12rem" } })
@@ -1049,7 +1049,7 @@ export default function Example() {
 `,
   slider: `"use client"
 
-import { Slider } from "@registry/components/ui/slider"
+import { Slider } from "@/components/ui/slider"
 
 export default function Example() {
   return <Slider aria-label="Volume" defaultValue={50} />
@@ -1057,7 +1057,7 @@ export default function Example() {
 `,
   spinner: `"use client"
 
-import { Spinner } from "@registry/components/ui/spinner"
+import { Spinner } from "@/components/ui/spinner"
 
 export default function Example() {
   return <Spinner aria-label="Loading" />
@@ -1065,8 +1065,8 @@ export default function Example() {
 `,
   switch: `"use client"
 
-import { Label } from "@registry/components/ui/label"
-import { Switch } from "@registry/components/ui/switch"
+import { Label } from "@/components/ui/label"
+import { Switch } from "@/components/ui/switch"
 
 export default function Example() {
   return (
@@ -1086,7 +1086,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@registry/components/ui/table"
+} from "@/components/ui/table"
 
 export default function Example() {
   return (
@@ -1115,7 +1115,7 @@ import {
   TabsList,
   TabsPanel,
   TabsTab,
-} from "@registry/components/ui/tabs"
+} from "@/components/ui/tabs"
 
 export default function Example() {
   return (
@@ -1134,8 +1134,8 @@ export default function Example() {
 `,
   textarea: `"use client"
 
-import { Field, FieldLabel } from "@registry/components/ui/field"
-import { Textarea } from "@registry/components/ui/textarea"
+import { Field, FieldLabel } from "@/components/ui/field"
+import { Textarea } from "@/components/ui/textarea"
 
 export default function Example() {
   return (
@@ -1148,11 +1148,11 @@ export default function Example() {
 `,
   toast: `"use client"
 
-import { Button } from "@registry/components/ui/button"
+import { Button } from "@/components/ui/button"
 import {
   toastManager,
   ToastProvider,
-} from "@registry/components/ui/toast"
+} from "@/components/ui/toast"
 
 export default function App() {
   return (
@@ -1179,7 +1179,7 @@ function ShowToastButton() {
 `,
   toggle: `"use client"
 
-import { Toggle } from "@registry/components/ui/toggle"
+import { Toggle } from "@/components/ui/toggle"
 
 export default function Example() {
   return <Toggle aria-label="Bold">Bold</Toggle>
@@ -1190,7 +1190,7 @@ export default function Example() {
 import {
   ToggleGroup,
   ToggleGroupItem,
-} from "@registry/components/ui/toggle-group"
+} from "@/components/ui/toggle-group"
 
 export default function Example() {
   return (
@@ -1207,12 +1207,12 @@ export default function Example() {
 `,
   toolbar: `"use client"
 
-import { Button } from "@registry/components/ui/button"
+import { Button } from "@/components/ui/button"
 import {
   Toolbar,
   ToolbarButton,
   ToolbarGroup,
-} from "@registry/components/ui/toolbar"
+} from "@/components/ui/toolbar"
 
 export default function Example() {
   return (
@@ -1237,13 +1237,13 @@ export default function Example() {
 `,
   tooltip: `"use client"
 
-import { Button } from "@registry/components/ui/button"
+import { Button } from "@/components/ui/button"
 import {
   Tooltip,
   TooltipPopup,
   TooltipProvider,
   TooltipTrigger,
-} from "@registry/components/ui/tooltip"
+} from "@/components/ui/tooltip"
 
 export default function Example() {
   return (

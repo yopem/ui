@@ -2,7 +2,6 @@ import * as stylex from "@stylexjs/stylex"
 import { Link, createFileRoute } from "@tanstack/react-router"
 import { useState } from "react"
 
-import { catalogStyles } from "@/catalog/catalog-ui"
 import { catalog } from "@/catalog/components"
 import { DocumentationLayout } from "@/catalog/docs-layout"
 import {
@@ -11,6 +10,7 @@ import {
   DocsPage,
   DocsTitle,
 } from "@/catalog/docs-page"
+import { catalogStyles } from "@/catalog/docs-styles"
 import { docsStyles } from "@/catalog/docs-styles"
 
 export const Route = createFileRoute("/components/")({

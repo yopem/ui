@@ -314,8 +314,13 @@ export function Combobox<Value, Multiple extends boolean | undefined = false>(
   props: ComboboxPrimitive.Root.Props<Value, Multiple>,
 ) {
   const chipsRef = React.useRef<Element | null>(null)
+  const multiple = Boolean(props.multiple)
+  const contextValue = React.useMemo(
+    () => ({ chipsRef, multiple }),
+    [chipsRef, multiple],
+  )
   return (
-    <ComboboxContext.Provider value={{ chipsRef, multiple: !!props.multiple }}>
+    <ComboboxContext.Provider value={contextValue}>
       <ComboboxPrimitive.Root {...props} />
     </ComboboxContext.Provider>
   )

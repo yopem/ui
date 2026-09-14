@@ -12,41 +12,28 @@ import {
   TooltipTrigger,
 } from "@/components/ui/stylex/tooltip"
 
+const formats = [
+  { Icon: BoldIcon, label: "Bold", value: "bold" },
+  { Icon: ItalicIcon, label: "Italic", value: "italic" },
+  { Icon: UnderlineIcon, label: "Underline", value: "underline" },
+]
+
 export default function Particle() {
   return (
     <TooltipProvider>
       <ToggleGroup defaultValue={["bold"]} multiple>
-        <Tooltip>
-          <TooltipTrigger
-            render={<ToggleGroupItem aria-label="Toggle bold" value="bold" />}
-          >
-            <BoldIcon {...stylex.props(demoStyles.icon)} />
-          </TooltipTrigger>
-          <TooltipPopup>Bold</TooltipPopup>
-        </Tooltip>
-        <Tooltip>
-          <TooltipTrigger
-            render={
-              <ToggleGroupItem aria-label="Toggle italic" value="italic" />
-            }
-          >
-            <ItalicIcon {...stylex.props(demoStyles.icon)} />
-          </TooltipTrigger>
-          <TooltipPopup>Italic</TooltipPopup>
-        </Tooltip>
-        <Tooltip>
-          <TooltipTrigger
-            render={
-              <ToggleGroupItem
-                aria-label="Toggle underline"
-                value="underline"
-              />
-            }
-          >
-            <UnderlineIcon {...stylex.props(demoStyles.icon)} />
-          </TooltipTrigger>
-          <TooltipPopup>Underline</TooltipPopup>
-        </Tooltip>
+        {formats.map(({ Icon, label, value }) => (
+          <Tooltip key={value}>
+            <TooltipTrigger
+              render={
+                <ToggleGroupItem aria-label={`Toggle ${value}`} value={value} />
+              }
+            >
+              <Icon {...stylex.props(demoStyles.icon)} />
+            </TooltipTrigger>
+            <TooltipPopup>{label}</TooltipPopup>
+          </Tooltip>
+        ))}
       </ToggleGroup>
     </TooltipProvider>
   )

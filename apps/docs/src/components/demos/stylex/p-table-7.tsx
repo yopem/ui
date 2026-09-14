@@ -12,97 +12,111 @@ import {
   TableRow,
 } from "@/components/ui/stylex/table"
 
+type ProjectStatus = "Paid" | "Unpaid" | "Pending" | "Failed"
+
+interface Project {
+  budget: string
+  name: string
+  status: ProjectStatus
+  team: string
+}
+
+const headings = ["Project", "Status", "Team", "Budget"]
+
+const projects: Project[] = [
+  {
+    budget: "$12,500",
+    name: "Website Redesign",
+    status: "Paid",
+    team: "Frontend Team",
+  },
+  {
+    budget: "$8,750",
+    name: "Mobile App",
+    status: "Unpaid",
+    team: "Mobile Team",
+  },
+  {
+    budget: "$5,200",
+    name: "API Integration",
+    status: "Pending",
+    team: "Backend Team",
+  },
+  {
+    budget: "$3,800",
+    name: "Database Migration",
+    status: "Paid",
+    team: "DevOps Team",
+  },
+  {
+    budget: "$7,200",
+    name: "User Dashboard",
+    status: "Paid",
+    team: "UX Team",
+  },
+  {
+    budget: "$2,100",
+    name: "Security Audit",
+    status: "Failed",
+    team: "Security Team",
+  },
+]
+
+function ProjectStatusBadge({ status }: { status: ProjectStatus }) {
+  return (
+    <Badge variant="outline">
+      <span
+        aria-hidden="true"
+        {...stylex.props(
+          status === "Paid"
+            ? demoStyles.demo4
+            : status === "Unpaid"
+              ? demoStyles.demo5
+              : status === "Pending"
+                ? demoStyles.demo6
+                : demoStyles.demo7,
+        )}
+      />
+      {status}
+    </Badge>
+  )
+}
+
+function ProjectTableRow({ project }: { project: Project }) {
+  return (
+    <TableRow>
+      <TableCell {...stylex.props(demoStyles.demo3)}>{project.name}</TableCell>
+      <TableCell>
+        <ProjectStatusBadge status={project.status} />
+      </TableCell>
+      <TableCell>{project.team}</TableCell>
+      <TableCell {...stylex.props(demoStyles.demo2)}>
+        {project.budget}
+      </TableCell>
+    </TableRow>
+  )
+}
+
 export default function Particle() {
   return (
     <CardFrame {...stylex.props(demoStyles.demo1)}>
       <Table variant="card">
         <TableHeader>
           <TableRow>
-            <TableHead>Project</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead>Team</TableHead>
-            <TableHead {...stylex.props(demoStyles.demo2)}>Budget</TableHead>
+            {headings.map((heading) => (
+              <TableHead
+                {...stylex.props(heading === "Budget" && demoStyles.demo2)}
+                key={heading}
+              >
+                {heading}
+              </TableHead>
+            ))}
           </TableRow>
         </TableHeader>
         <TableBody>
-          <TableRow>
-            <TableCell {...stylex.props(demoStyles.demo3)}>
-              Website Redesign
-            </TableCell>
-            <TableCell>
-              <Badge variant="outline">
-                <span aria-hidden="true" {...stylex.props(demoStyles.demo4)} />
-                Paid
-              </Badge>
-            </TableCell>
-            <TableCell>Frontend Team</TableCell>
-            <TableCell {...stylex.props(demoStyles.demo2)}>$12,500</TableCell>
-          </TableRow>
-          <TableRow>
-            <TableCell {...stylex.props(demoStyles.demo3)}>
-              Mobile App
-            </TableCell>
-            <TableCell>
-              <Badge variant="outline">
-                <span aria-hidden="true" {...stylex.props(demoStyles.demo5)} />
-                Unpaid
-              </Badge>
-            </TableCell>
-            <TableCell>Mobile Team</TableCell>
-            <TableCell {...stylex.props(demoStyles.demo2)}>$8,750</TableCell>
-          </TableRow>
-          <TableRow>
-            <TableCell {...stylex.props(demoStyles.demo3)}>
-              API Integration
-            </TableCell>
-            <TableCell>
-              <Badge variant="outline">
-                <span aria-hidden="true" {...stylex.props(demoStyles.demo6)} />
-                Pending
-              </Badge>
-            </TableCell>
-            <TableCell>Backend Team</TableCell>
-            <TableCell {...stylex.props(demoStyles.demo2)}>$5,200</TableCell>
-          </TableRow>
-          <TableRow>
-            <TableCell {...stylex.props(demoStyles.demo3)}>
-              Database Migration
-            </TableCell>
-            <TableCell>
-              <Badge variant="outline">
-                <span aria-hidden="true" {...stylex.props(demoStyles.demo4)} />
-                Paid
-              </Badge>
-            </TableCell>
-            <TableCell>DevOps Team</TableCell>
-            <TableCell {...stylex.props(demoStyles.demo2)}>$3,800</TableCell>
-          </TableRow>
-          <TableRow>
-            <TableCell {...stylex.props(demoStyles.demo3)}>
-              User Dashboard
-            </TableCell>
-            <TableCell>
-              <Badge variant="outline">
-                <span aria-hidden="true" {...stylex.props(demoStyles.demo4)} />
-                Paid
-              </Badge>
-            </TableCell>
-            <TableCell>UX Team</TableCell>
-            <TableCell {...stylex.props(demoStyles.demo2)}>$7,200</TableCell>
-          </TableRow>
-          <TableRow>
-            <TableCell {...stylex.props(demoStyles.demo3)}>
-              Security Audit
-            </TableCell>
-            <TableCell>
-              <Badge variant="outline">
-                <span aria-hidden="true" {...stylex.props(demoStyles.demo7)} />
-                Failed
-              </Badge>
-            </TableCell>
-            <TableCell>Security Team</TableCell>
-            <TableCell {...stylex.props(demoStyles.demo2)}>$2,100</TableCell>
-          </TableRow>
+          {projects.map((project) => (
+            <ProjectTableRow key={project.name} project={project} />
+          ))}
         </TableBody>
         <TableFooter>
           <TableRow>

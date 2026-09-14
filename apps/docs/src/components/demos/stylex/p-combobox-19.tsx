@@ -86,9 +86,24 @@ const teamMembers: TeamMember[] = [
   },
 ]
 
+function TeamMemberOptions() {
+  return (
+    <ComboboxPopup>
+      <ComboboxEmpty>No team members found.</ComboboxEmpty>
+      <ComboboxList>
+        {(item: TeamMember) => (
+          <ComboboxItem key={item.value} value={item}>
+            {item.label}
+          </ComboboxItem>
+        )}
+      </ComboboxList>
+    </ComboboxPopup>
+  )
+}
+
 export default function Particle() {
   const [open, setOpen] = useState(false)
-  const [selected, setSelected] = useState<TeamMember[]>(
+  const [selected, setSelected] = useState<TeamMember[]>(() =>
     teamMembers.slice(0, 2),
   )
 
@@ -111,16 +126,7 @@ export default function Particle() {
           placeholder="Add team members…"
           startAddon={<SearchIcon {...stylex.props(demoStyles.icon)} />}
         />
-        <ComboboxPopup>
-          <ComboboxEmpty>No team members found.</ComboboxEmpty>
-          <ComboboxList>
-            {(item: TeamMember) => (
-              <ComboboxItem key={item.value} value={item}>
-                {item.label}
-              </ComboboxItem>
-            )}
-          </ComboboxList>
-        </ComboboxPopup>
+        <TeamMemberOptions />
       </Combobox>
       {selected.length > 0 && (
         <ul {...stylex.props(demoStyles.demo2)}>

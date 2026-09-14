@@ -44,6 +44,7 @@ export function ToggleGroup({
 }: ToggleGroupPrimitive.Props &
   Omit<ToggleVariantProps, "className"> &
   StyleXProps) {
+  const contextValue = React.useMemo(() => ({ size, variant }), [size, variant])
   return (
     <ToggleGroupPrimitive
       {...stylexProps(
@@ -59,7 +60,7 @@ export function ToggleGroup({
       orientation={orientation}
       {...props}
     >
-      <ToggleGroupContext.Provider value={{ size, variant }}>
+      <ToggleGroupContext.Provider value={contextValue}>
         {children}
       </ToggleGroupContext.Provider>
     </ToggleGroupPrimitive>

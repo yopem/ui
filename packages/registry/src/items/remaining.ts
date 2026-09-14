@@ -527,7 +527,7 @@ export const remainingItems: SourceItem[] = definitions.map(
     files: [
       {
         path: `components/ui/${name}.tsx`,
-        target: `@ui/${name}.tsx`,
+        target: `@/components/ui/${name}.tsx`,
         type: "registry:ui" as const,
       },
     ],

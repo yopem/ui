@@ -16,6 +16,11 @@ import {
   SheetTrigger,
 } from "@/components/ui/stylex/sheet"
 
+const profileFields = [
+  { defaultValue: "Margaret Welsh", label: "Name" },
+  { defaultValue: "@maggie.welsh", label: "Username" },
+]
+
 export default function Particle() {
   return (
     <Sheet>
@@ -31,14 +36,12 @@ export default function Particle() {
         </SheetHeader>
         <Form {...stylex.props(demoStyles.demo1)}>
           <SheetPanel {...stylex.props(demoStyles.demo2)}>
-            <Field>
-              <FieldLabel>Name</FieldLabel>
-              <Input defaultValue="Margaret Welsh" type="text" />
-            </Field>
-            <Field>
-              <FieldLabel>Username</FieldLabel>
-              <Input defaultValue="@maggie.welsh" type="text" />
-            </Field>
+            {profileFields.map(({ defaultValue, label }) => (
+              <Field key={label}>
+                <FieldLabel>{label}</FieldLabel>
+                <Input defaultValue={defaultValue} type="text" />
+              </Field>
+            ))}
           </SheetPanel>
           <SheetFooter>
             <SheetClose render={<Button variant="ghost" />}>Cancel</SheetClose>

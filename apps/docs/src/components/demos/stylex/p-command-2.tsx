@@ -1,5 +1,7 @@
 "use client"
 
+import type { RefObject } from "react"
+
 import * as stylex from "@stylexjs/stylex"
 import {
   ArrowDownIcon,
@@ -137,7 +139,7 @@ const MOCK_REFERENCE_LINKS = [
   { title: "Project Settings", url: "/docs/projects/settings" },
 ]
 
-export const commandHandle: ReturnType<typeof CommandCreateHandle> =
+const commandHandle: ReturnType<typeof CommandCreateHandle> =
   CommandCreateHandle()
 
 interface AIState {
@@ -171,7 +173,7 @@ function markdownToSafeHTML(markdown: string): string {
     .join("")
 }
 
-export default function PCommand2() {
+function useCommandDemo() {
   const [open, setOpen] = useState(false)
   const [aiState, setAIState] = useState<AIState>(initialAIState)
   const [searchQuery, setSearchQuery] = useState("")
@@ -273,21 +275,33 @@ export default function PCommand2() {
 
   const filterItem = useCallback(
     (itemValue: unknown, query: string): boolean => {
-      if (typeof itemValue !== "object" || itemValue === null) {
+      if (
+        typeof itemValue !== "object" ||
+        itemValue === null ||
+        !("label" in itemValue) ||
+        typeof itemValue.label !== "string" ||
+        !("value" in itemValue) ||
+        typeof itemValue.value !== "string"
+      ) {
         return false
       }
 
-      const item = itemValue as Item
-
-      if (contains(item.label, query)) {
+      if (contains(itemValue.label, query)) {
         return true
       }
 
-      if (contains(item.value, query)) {
+      if (contains(itemValue.value, query)) {
         return true
       }
 
-      if (item.keywords?.some((keyword) => contains(keyword, query))) {
+      if (
+        "keywords" in itemValue &&
+        Array.isArray(itemValue.keywords) &&
+        itemValue.keywords.some(
+          (keyword: unknown) =>
+            typeof keyword === "string" && contains(keyword, query),
+        )
+      ) {
         return true
       }
 
@@ -337,301 +351,367 @@ export default function PCommand2() {
     [resetAIState],
   )
 
+  function handleOpen() {
+    setOpen(true)
+  }
+
+  function handleSearchQueryChange(query: string) {
+    setSearchQuery(query)
+  }
+
+  function handleAIQueryChange(query: string) {
+    setAIState((prev) => ({ ...prev, query }))
+  }
+
+  return {
+    aiInputRef,
+    aiState,
+    commandResetKey,
+    filterItem,
+    handleAIQueryChange,
+    handleAskAI,
+    handleBackToSearch,
+    handleGenerateAI,
+    handleItemClick,
+    handleOpen,
+    handleOpenChange,
+    handleSearchQueryChange,
+    hasResults,
+    open,
+    searchInputRef,
+    searchQuery,
+  }
+}
+
+interface SearchCommandProps {
+  commandResetKey: number
+  filterItem: (itemValue: unknown, query: string) => boolean
+  hasResults: boolean
+  onAskAI: () => void
+  onItemClick: () => void
+  onSearchQueryChange: (query: string) => void
+  searchInputRef: RefObject<HTMLInputElement | null>
+  searchQuery: string
+}
+
+function SearchCommand({
+  commandResetKey,
+  filterItem,
+  hasResults,
+  onAskAI,
+  onItemClick,
+  onSearchQueryChange,
+  searchInputRef,
+  searchQuery,
+}: SearchCommandProps) {
+  return (
+    <Command filter={filterItem} items={commandGroups} key={commandResetKey}>
+      <div {...stylex.props(demoStyles.report1)}>
+        <CommandInput
+          {...stylex.props(demoStyles.commandInput)}
+          onChange={(event) => onSearchQueryChange(event.target.value)}
+          onKeyDown={(event) => {
+            if (event.key === "Tab") {
+              event.preventDefault()
+              onAskAI()
+            }
+            if (event.key === "Enter" && !hasResults && searchQuery.trim()) {
+              event.preventDefault()
+              onAskAI()
+            }
+          }}
+          placeholder="Type a command or search..."
+          ref={searchInputRef}
+          value={searchQuery}
+        />
+        <Button
+          {...stylex.props(demoStyles.demo1)}
+          onClick={onAskAI}
+          size="sm"
+          variant="ghost"
+        >
+          <SparklesIcon {...stylex.props(demoStyles.icon, demoStyles.demo2)} />
+          Ask AI
+          <Kbd {...stylex.props(demoStyles.demo3)}>Tab</Kbd>
+        </Button>
+      </div>
+      <CommandPanel>
+        <CommandEmpty {...stylex.props(demoStyles.demo4)}>
+          {searchQuery.trim() && (
+            <div {...stylex.props(demoStyles.demo5)}>
+              <EmptyMedia variant="icon">
+                <SearchIcon {...stylex.props(demoStyles.icon2)} />
+              </EmptyMedia>
+              <p>No results found.</p>
+              <p>
+                Press <Kbd>Enter</Kbd> to ask AI about:
+                <br />{" "}
+                <strong {...stylex.props(demoStyles.demo6)}>
+                  {searchQuery}
+                </strong>
+              </p>
+            </div>
+          )}
+        </CommandEmpty>
+        <CommandList>
+          {(group: Group) => (
+            <Fragment key={group.value}>
+              <CommandGroup items={group.items}>
+                <CommandGroupLabel>{group.value}</CommandGroupLabel>
+                <CommandCollection>
+                  {(item: Item) => (
+                    <CommandItem
+                      key={item.value}
+                      onClick={onItemClick}
+                      value={item}
+                    >
+                      <span {...stylex.props(demoStyles.demo7)}>
+                        {item.label}
+                      </span>
+                      {item.shortcut && (
+                        <CommandShortcut>{item.shortcut}</CommandShortcut>
+                      )}
+                    </CommandItem>
+                  )}
+                </CommandCollection>
+              </CommandGroup>
+              <CommandSeparator />
+            </Fragment>
+          )}
+        </CommandList>
+      </CommandPanel>
+      <CommandFooter>
+        {hasResults ? (
+          <>
+            <div {...stylex.props(demoStyles.demo8)}>
+              <div {...stylex.props(demoStyles.demo9)}>
+                <KbdGroup>
+                  <Kbd>
+                    <ArrowUpIcon {...stylex.props(demoStyles.icon3)} />
+                  </Kbd>
+                  <Kbd>
+                    <ArrowDownIcon {...stylex.props(demoStyles.icon3)} />
+                  </Kbd>
+                </KbdGroup>
+                <span>Navigate</span>
+              </div>
+              <div {...stylex.props(demoStyles.demo9)}>
+                <Kbd>
+                  <CornerDownLeftIcon {...stylex.props(demoStyles.icon3)} />
+                </Kbd>
+                <span>Open</span>
+              </div>
+            </div>
+            <div {...stylex.props(demoStyles.demo9)}>
+              <Kbd>Esc</Kbd>
+              <span>Close</span>
+            </div>
+          </>
+        ) : (
+          <div {...stylex.props(demoStyles.demo10)}>
+            <Kbd>Esc</Kbd>
+            <span>Close</span>
+          </div>
+        )}
+      </CommandFooter>
+    </Command>
+  )
+}
+
+interface AICommandProps {
+  aiInputRef: RefObject<HTMLInputElement | null>
+  aiState: AIState
+  onBackToSearch: () => void
+  onGenerateAI: (queryOverride?: string) => Promise<void>
+  onQueryChange: (query: string) => void
+}
+
+function AICommand({
+  aiInputRef,
+  aiState,
+  onBackToSearch,
+  onGenerateAI,
+  onQueryChange,
+}: AICommandProps) {
+  return (
+    <Command>
+      <div {...stylex.props(demoStyles.report2)}>
+        <div {...stylex.props(demoStyles.demo11)}>
+          <div {...stylex.props(demoStyles.demo12)}>
+            <div
+              aria-hidden="true"
+              {...stylex.props(demoStyles.report3)}
+              data-slot="autocomplete-start-addon"
+            >
+              <SparklesIcon {...stylex.props(demoStyles.addonIcon)} />
+            </div>
+            <Input
+              aria-label="AI query input"
+              {...stylex.props(demoStyles.report4)}
+              disabled={aiState.isGenerating}
+              onChange={(event) => onQueryChange(event.target.value)}
+              onKeyDown={(event) => {
+                if (event.key === "Enter" && !aiState.isGenerating) {
+                  onGenerateAI()
+                }
+                if (event.key === "Escape") {
+                  event.preventDefault()
+                  onBackToSearch()
+                }
+              }}
+              placeholder="Ask AI anything…"
+              ref={aiInputRef}
+              size="lg"
+              value={aiState.query}
+            />
+          </div>
+        </div>
+        <Button
+          {...stylex.props(demoStyles.demo1)}
+          onClick={onBackToSearch}
+          size="sm"
+          variant="ghost"
+        >
+          <ArrowLeftIcon {...stylex.props(demoStyles.icon, demoStyles.demo2)} />
+          Back to search
+          <Kbd {...stylex.props(demoStyles.demo3)}>Esc</Kbd>
+        </Button>
+      </div>
+      <CommandPanel>
+        <ScrollArea overscrollContain scrollbarGutter scrollFade>
+          <div {...stylex.props(demoStyles.demo13)}>
+            {!aiState.isGenerating && !aiState.response && !aiState.error && (
+              <div {...stylex.props(demoStyles.demo14)}>
+                <p {...stylex.props(demoStyles.demo15)}>
+                  Ask AI anything and press <Kbd>Enter</Kbd> to get started.
+                </p>
+              </div>
+            )}
+
+            {aiState.error && (
+              <div
+                aria-live="polite"
+                {...stylex.props(demoStyles.demo16)}
+                role="alert"
+              >
+                {aiState.error}
+              </div>
+            )}
+
+            {aiState.isGenerating && (
+              <div {...stylex.props(demoStyles.demo17)}>
+                <div {...stylex.props(demoStyles.demo18)}>
+                  <Skeleton {...stylex.props(demoStyles.demo19)} />
+                  <Skeleton {...stylex.props(demoStyles.demo19)} />
+                  <Skeleton {...stylex.props(demoStyles.demo19)} />
+                  <Skeleton {...stylex.props(demoStyles.demo20)} />
+                </div>
+                <div {...stylex.props(demoStyles.demo18)}>
+                  <Skeleton {...stylex.props(demoStyles.demo19)} />
+                  <Skeleton {...stylex.props(demoStyles.demo19)} />
+                  <Skeleton {...stylex.props(demoStyles.demo21)} />
+                </div>
+                <div {...stylex.props(demoStyles.demo18)}>
+                  <Skeleton {...stylex.props(demoStyles.demo19)} />
+                  <Skeleton {...stylex.props(demoStyles.demo19)} />
+                  <Skeleton {...stylex.props(demoStyles.demo19)} />
+                  <Skeleton {...stylex.props(demoStyles.demo22)} />
+                </div>
+              </div>
+            )}
+
+            {aiState.response && !aiState.isGenerating && (
+              <>
+                <div
+                  aria-live="polite"
+                  {...stylex.props(demoStyles.report5)}
+                  dangerouslySetInnerHTML={{
+                    __html: markdownToSafeHTML(aiState.response),
+                  }}
+                />
+                {aiState.referenceLinks.length > 0 && (
+                  <div {...stylex.props(demoStyles.demo23)}>
+                    {aiState.referenceLinks.map((link) => (
+                      <Button
+                        key={link.url}
+                        render={<a aria-label={link.title} href={link.url} />}
+                        size="sm"
+                        variant="secondary"
+                      >
+                        {link.title}
+                      </Button>
+                    ))}
+                  </div>
+                )}
+              </>
+            )}
+          </div>
+        </ScrollArea>
+      </CommandPanel>
+
+      <CommandFooter>
+        {aiState.isGenerating ? (
+          <div aria-live="polite" {...stylex.props(demoStyles.demo9)}>
+            <div {...stylex.props(demoStyles.demo24)}>
+              <Spinner {...stylex.props(demoStyles.demo25)} />
+            </div>
+            <span {...stylex.props(demoStyles.report6)}>
+              Generating response…
+            </span>
+          </div>
+        ) : aiState.response ? (
+          <div {...stylex.props(demoStyles.demo9)}>
+            <div {...stylex.props(demoStyles.demo24)}>
+              <CircleQuestionMarkIcon {...stylex.props(demoStyles.demo25)} />
+            </div>
+            You asked: <span>&quot;{aiState.submittedQuery}&quot;</span>
+          </div>
+        ) : (
+          <div {...stylex.props(demoStyles.demo9)}>
+            <Kbd>
+              <CornerDownLeftIcon {...stylex.props(demoStyles.icon3)} />
+            </Kbd>
+            <span>Ask AI</span>
+          </div>
+        )}
+      </CommandFooter>
+    </Command>
+  )
+}
+
+export default function PCommand2() {
+  const demo = useCommandDemo()
+
   return (
     <>
-      <Button onClick={() => setOpen(true)} variant="outline">
+      <Button onClick={demo.handleOpen} variant="outline">
         Cmdk with AI
       </Button>
       <CommandDialog
         handle={commandHandle}
-        onOpenChange={handleOpenChange}
-        open={open}
+        onOpenChange={demo.handleOpenChange}
+        open={demo.open}
       >
         <CommandDialogPopup>
-          {!aiState.mode ? (
-            <Command
-              filter={filterItem}
-              items={commandGroups}
-              key={commandResetKey}
-            >
-              <div {...stylex.props(demoStyles.report1)}>
-                <CommandInput
-                  {...stylex.props(demoStyles.commandInput)}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === "Tab") {
-                      e.preventDefault()
-                      handleAskAI()
-                    }
-                    if (
-                      e.key === "Enter" &&
-                      !hasResults &&
-                      searchQuery.trim()
-                    ) {
-                      e.preventDefault()
-                      handleAskAI()
-                    }
-                  }}
-                  placeholder="Type a command or search..."
-                  ref={searchInputRef}
-                  value={searchQuery}
-                />
-                <Button
-                  {...stylex.props(demoStyles.demo1)}
-                  onClick={handleAskAI}
-                  size="sm"
-                  variant="ghost"
-                >
-                  <SparklesIcon
-                    {...stylex.props(demoStyles.icon, demoStyles.demo2)}
-                  />
-                  Ask AI
-                  <Kbd {...stylex.props(demoStyles.demo3)}>Tab</Kbd>
-                </Button>
-              </div>
-              <CommandPanel>
-                <CommandEmpty {...stylex.props(demoStyles.demo4)}>
-                  {searchQuery.trim() && (
-                    <div {...stylex.props(demoStyles.demo5)}>
-                      <EmptyMedia variant="icon">
-                        <SearchIcon {...stylex.props(demoStyles.icon2)} />
-                      </EmptyMedia>
-                      <p>No results found.</p>
-                      <p>
-                        Press <Kbd>Enter</Kbd> to ask AI about:
-                        <br />{" "}
-                        <strong {...stylex.props(demoStyles.demo6)}>
-                          {searchQuery}
-                        </strong>
-                      </p>
-                    </div>
-                  )}
-                </CommandEmpty>
-                <CommandList>
-                  {(group: Group) => (
-                    <Fragment key={group.value}>
-                      <CommandGroup items={group.items}>
-                        <CommandGroupLabel>{group.value}</CommandGroupLabel>
-                        <CommandCollection>
-                          {(item: Item) => (
-                            <CommandItem
-                              key={item.value}
-                              onClick={handleItemClick}
-                              value={item}
-                            >
-                              <span {...stylex.props(demoStyles.demo7)}>
-                                {item.label}
-                              </span>
-                              {item.shortcut && (
-                                <CommandShortcut>
-                                  {item.shortcut}
-                                </CommandShortcut>
-                              )}
-                            </CommandItem>
-                          )}
-                        </CommandCollection>
-                      </CommandGroup>
-                      <CommandSeparator />
-                    </Fragment>
-                  )}
-                </CommandList>
-              </CommandPanel>
-              <CommandFooter>
-                {hasResults ? (
-                  <>
-                    <div {...stylex.props(demoStyles.demo8)}>
-                      <div {...stylex.props(demoStyles.demo9)}>
-                        <KbdGroup>
-                          <Kbd>
-                            <ArrowUpIcon {...stylex.props(demoStyles.icon3)} />
-                          </Kbd>
-                          <Kbd>
-                            <ArrowDownIcon
-                              {...stylex.props(demoStyles.icon3)}
-                            />
-                          </Kbd>
-                        </KbdGroup>
-                        <span>Navigate</span>
-                      </div>
-                      <div {...stylex.props(demoStyles.demo9)}>
-                        <Kbd>
-                          <CornerDownLeftIcon
-                            {...stylex.props(demoStyles.icon3)}
-                          />
-                        </Kbd>
-                        <span>Open</span>
-                      </div>
-                    </div>
-                    <div {...stylex.props(demoStyles.demo9)}>
-                      <Kbd>Esc</Kbd>
-                      <span>Close</span>
-                    </div>
-                  </>
-                ) : (
-                  <div {...stylex.props(demoStyles.demo10)}>
-                    <Kbd>Esc</Kbd>
-                    <span>Close</span>
-                  </div>
-                )}
-              </CommandFooter>
-            </Command>
+          {demo.aiState.mode ? (
+            <AICommand
+              aiInputRef={demo.aiInputRef}
+              aiState={demo.aiState}
+              onBackToSearch={demo.handleBackToSearch}
+              onGenerateAI={demo.handleGenerateAI}
+              onQueryChange={demo.handleAIQueryChange}
+            />
           ) : (
-            <Command>
-              <div {...stylex.props(demoStyles.report2)}>
-                <div {...stylex.props(demoStyles.demo11)}>
-                  <div {...stylex.props(demoStyles.demo12)}>
-                    <div
-                      aria-hidden="true"
-                      {...stylex.props(demoStyles.report3)}
-                      data-slot="autocomplete-start-addon"
-                    >
-                      <SparklesIcon {...stylex.props(demoStyles.addonIcon)} />
-                    </div>
-                    <Input
-                      aria-label="AI query input"
-                      {...stylex.props(demoStyles.report4)}
-                      disabled={aiState.isGenerating}
-                      onChange={(e) =>
-                        setAIState((prev) => ({
-                          ...prev,
-                          query: e.target.value,
-                        }))
-                      }
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter" && !aiState.isGenerating) {
-                          handleGenerateAI()
-                        }
-                        if (e.key === "Escape") {
-                          e.preventDefault()
-                          handleBackToSearch()
-                        }
-                      }}
-                      placeholder="Ask AI anything…"
-                      ref={aiInputRef}
-                      size="lg"
-                      value={aiState.query}
-                    />
-                  </div>
-                </div>
-                <Button
-                  {...stylex.props(demoStyles.demo1)}
-                  onClick={handleBackToSearch}
-                  size="sm"
-                  variant="ghost"
-                >
-                  <ArrowLeftIcon
-                    {...stylex.props(demoStyles.icon, demoStyles.demo2)}
-                  />
-                  Back to search
-                  <Kbd {...stylex.props(demoStyles.demo3)}>Esc</Kbd>
-                </Button>
-              </div>
-              <CommandPanel>
-                <ScrollArea overscrollContain scrollbarGutter scrollFade>
-                  <div {...stylex.props(demoStyles.demo13)}>
-                    {!aiState.isGenerating &&
-                      !aiState.response &&
-                      !aiState.error && (
-                        <div {...stylex.props(demoStyles.demo14)}>
-                          <p {...stylex.props(demoStyles.demo15)}>
-                            Ask AI anything and press <Kbd>Enter</Kbd> to get
-                            started.
-                          </p>
-                        </div>
-                      )}
-
-                    {aiState.error && (
-                      <div
-                        aria-live="polite"
-                        {...stylex.props(demoStyles.demo16)}
-                        role="alert"
-                      >
-                        {aiState.error}
-                      </div>
-                    )}
-
-                    {aiState.isGenerating && (
-                      <div {...stylex.props(demoStyles.demo17)}>
-                        <div {...stylex.props(demoStyles.demo18)}>
-                          <Skeleton {...stylex.props(demoStyles.demo19)} />
-                          <Skeleton {...stylex.props(demoStyles.demo19)} />
-                          <Skeleton {...stylex.props(demoStyles.demo19)} />
-                          <Skeleton {...stylex.props(demoStyles.demo20)} />
-                        </div>
-                        <div {...stylex.props(demoStyles.demo18)}>
-                          <Skeleton {...stylex.props(demoStyles.demo19)} />
-                          <Skeleton {...stylex.props(demoStyles.demo19)} />
-                          <Skeleton {...stylex.props(demoStyles.demo21)} />
-                        </div>
-                        <div {...stylex.props(demoStyles.demo18)}>
-                          <Skeleton {...stylex.props(demoStyles.demo19)} />
-                          <Skeleton {...stylex.props(demoStyles.demo19)} />
-                          <Skeleton {...stylex.props(demoStyles.demo19)} />
-                          <Skeleton {...stylex.props(demoStyles.demo22)} />
-                        </div>
-                      </div>
-                    )}
-
-                    {aiState.response && !aiState.isGenerating && (
-                      <>
-                        <div
-                          aria-live="polite"
-                          {...stylex.props(demoStyles.report5)}
-                          dangerouslySetInnerHTML={{
-                            __html: markdownToSafeHTML(aiState.response),
-                          }}
-                        />
-                        {aiState.referenceLinks.length > 0 && (
-                          <div {...stylex.props(demoStyles.demo23)}>
-                            {aiState.referenceLinks.map((link, index) => (
-                              <Button
-                                key={`${link.url}-${index}`}
-                                render={
-                                  <a aria-label={link.title} href={link.url} />
-                                }
-                                size="sm"
-                                variant="secondary"
-                              >
-                                {link.title}
-                              </Button>
-                            ))}
-                          </div>
-                        )}
-                      </>
-                    )}
-                  </div>
-                </ScrollArea>
-              </CommandPanel>
-
-              <CommandFooter>
-                {aiState.isGenerating ? (
-                  <div aria-live="polite" {...stylex.props(demoStyles.demo9)}>
-                    <div {...stylex.props(demoStyles.demo24)}>
-                      <Spinner {...stylex.props(demoStyles.demo25)} />
-                    </div>
-                    <span {...stylex.props(demoStyles.report6)}>
-                      Generating response…
-                    </span>
-                  </div>
-                ) : aiState.response ? (
-                  <div {...stylex.props(demoStyles.demo9)}>
-                    <div {...stylex.props(demoStyles.demo24)}>
-                      <CircleQuestionMarkIcon
-                        {...stylex.props(demoStyles.demo25)}
-                      />
-                    </div>
-                    You asked: <span>&quot;{aiState.submittedQuery}&quot;</span>
-                  </div>
-                ) : (
-                  <div {...stylex.props(demoStyles.demo9)}>
-                    <Kbd>
-                      <CornerDownLeftIcon {...stylex.props(demoStyles.icon3)} />
-                    </Kbd>
-                    <span>Ask AI</span>
-                  </div>
-                )}
-              </CommandFooter>
-            </Command>
+            <SearchCommand
+              commandResetKey={demo.commandResetKey}
+              filterItem={demo.filterItem}
+              hasResults={demo.hasResults}
+              onAskAI={demo.handleAskAI}
+              onItemClick={demo.handleItemClick}
+              onSearchQueryChange={demo.handleSearchQueryChange}
+              searchInputRef={demo.searchInputRef}
+              searchQuery={demo.searchQuery}
+            />
           )}
         </CommandDialogPopup>
       </CommandDialog>

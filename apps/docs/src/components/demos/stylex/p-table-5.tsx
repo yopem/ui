@@ -11,6 +11,31 @@ import {
   TableRow,
 } from "@/components/ui/stylex/table"
 
+type ProjectStatus = "Paid" | "Unpaid" | "Pending" | "Failed"
+type ProjectRow = [string, ProjectStatus, string, string]
+
+const projectRows: ProjectRow[] = [
+  ["Website Redesign", "Paid", "Frontend Team", "$12,500"],
+  ["Mobile App", "Unpaid", "Mobile Team", "$8,750"],
+  ["API Integration", "Pending", "Backend Team", "$5,200"],
+  ["Database Migration", "Paid", "DevOps Team", "$3,800"],
+  ["User Dashboard", "Paid", "UX Team", "$7,200"],
+  ["Security Audit", "Failed", "Security Team", "$2,100"],
+]
+
+function getStatusStyle(status: ProjectStatus) {
+  switch (status) {
+    case "Paid":
+      return demoStyles.demo4
+    case "Unpaid":
+      return demoStyles.demo5
+    case "Pending":
+      return demoStyles.demo6
+    case "Failed":
+      return demoStyles.demo7
+  }
+}
+
 export default function Particle() {
   return (
     <Table {...stylex.props(demoStyles.demo1)} variant="card">
@@ -23,82 +48,22 @@ export default function Particle() {
         </TableRow>
       </TableHeader>
       <TableBody>
-        <TableRow>
-          <TableCell {...stylex.props(demoStyles.demo3)}>
-            Website Redesign
-          </TableCell>
-          <TableCell>
-            <Badge variant="outline">
-              <span aria-hidden="true" {...stylex.props(demoStyles.demo4)} />
-              Paid
-            </Badge>
-          </TableCell>
-          <TableCell>Frontend Team</TableCell>
-          <TableCell {...stylex.props(demoStyles.demo2)}>$12,500</TableCell>
-        </TableRow>
-        <TableRow>
-          <TableCell {...stylex.props(demoStyles.demo3)}>Mobile App</TableCell>
-          <TableCell>
-            <Badge variant="outline">
-              <span aria-hidden="true" {...stylex.props(demoStyles.demo5)} />
-              Unpaid
-            </Badge>
-          </TableCell>
-          <TableCell>Mobile Team</TableCell>
-          <TableCell {...stylex.props(demoStyles.demo2)}>$8,750</TableCell>
-        </TableRow>
-        <TableRow>
-          <TableCell {...stylex.props(demoStyles.demo3)}>
-            API Integration
-          </TableCell>
-          <TableCell>
-            <Badge variant="outline">
-              <span aria-hidden="true" {...stylex.props(demoStyles.demo6)} />
-              Pending
-            </Badge>
-          </TableCell>
-          <TableCell>Backend Team</TableCell>
-          <TableCell {...stylex.props(demoStyles.demo2)}>$5,200</TableCell>
-        </TableRow>
-        <TableRow>
-          <TableCell {...stylex.props(demoStyles.demo3)}>
-            Database Migration
-          </TableCell>
-          <TableCell>
-            <Badge variant="outline">
-              <span aria-hidden="true" {...stylex.props(demoStyles.demo4)} />
-              Paid
-            </Badge>
-          </TableCell>
-          <TableCell>DevOps Team</TableCell>
-          <TableCell {...stylex.props(demoStyles.demo2)}>$3,800</TableCell>
-        </TableRow>
-        <TableRow>
-          <TableCell {...stylex.props(demoStyles.demo3)}>
-            User Dashboard
-          </TableCell>
-          <TableCell>
-            <Badge variant="outline">
-              <span aria-hidden="true" {...stylex.props(demoStyles.demo4)} />
-              Paid
-            </Badge>
-          </TableCell>
-          <TableCell>UX Team</TableCell>
-          <TableCell {...stylex.props(demoStyles.demo2)}>$7,200</TableCell>
-        </TableRow>
-        <TableRow>
-          <TableCell {...stylex.props(demoStyles.demo3)}>
-            Security Audit
-          </TableCell>
-          <TableCell>
-            <Badge variant="outline">
-              <span aria-hidden="true" {...stylex.props(demoStyles.demo7)} />
-              Failed
-            </Badge>
-          </TableCell>
-          <TableCell>Security Team</TableCell>
-          <TableCell {...stylex.props(demoStyles.demo2)}>$2,100</TableCell>
-        </TableRow>
+        {projectRows.map(([project, status, team, budget]) => (
+          <TableRow key={project}>
+            <TableCell {...stylex.props(demoStyles.demo3)}>{project}</TableCell>
+            <TableCell>
+              <Badge variant="outline">
+                <span
+                  aria-hidden="true"
+                  {...stylex.props(getStatusStyle(status))}
+                />
+                {status}
+              </Badge>
+            </TableCell>
+            <TableCell>{team}</TableCell>
+            <TableCell {...stylex.props(demoStyles.demo2)}>{budget}</TableCell>
+          </TableRow>
+        ))}
       </TableBody>
       <TableFooter>
         <TableRow>

@@ -317,6 +317,34 @@ function ToastIcon({ type }: { type?: string }) {
   )
 }
 
+function DefaultToastContent({ toast }: { toast: Toast.Root.Props["toast"] }) {
+  return (
+    <Toast.Content {...stylex.props(styles.content)} data-slot="toast-content">
+      <div {...stylex.props(styles.message)}>
+        <ToastIcon type={toast.type} />
+        <div {...stylex.props(styles.text)}>
+          <Toast.Title
+            {...stylex.props(styles.title)}
+            data-slot="toast-title"
+          />
+          <Toast.Description
+            {...stylex.props(styles.description)}
+            data-slot="toast-description"
+          />
+        </div>
+      </div>
+      {toast.actionProps ? (
+        <Toast.Action
+          className={buttonVariants({ size: "xs" })}
+          data-slot="toast-action"
+        >
+          {toast.actionProps.children}
+        </Toast.Action>
+      ) : null}
+    </Toast.Content>
+  )
+}
+
 function Toasts({
   position,
   xstyle,
@@ -355,32 +383,7 @@ function Toasts({
               swipeDirection={swipeDirection}
               toast={toast}
             >
-              <Toast.Content
-                {...stylex.props(styles.content)}
-                data-slot="toast-content"
-              >
-                <div {...stylex.props(styles.message)}>
-                  <ToastIcon type={toast.type} />
-                  <div {...stylex.props(styles.text)}>
-                    <Toast.Title
-                      {...stylex.props(styles.title)}
-                      data-slot="toast-title"
-                    />
-                    <Toast.Description
-                      {...stylex.props(styles.description)}
-                      data-slot="toast-description"
-                    />
-                  </div>
-                </div>
-                {toast.actionProps ? (
-                  <Toast.Action
-                    className={buttonVariants({ size: "xs" })}
-                    data-slot="toast-action"
-                  >
-                    {toast.actionProps.children}
-                  </Toast.Action>
-                ) : null}
-              </Toast.Content>
+              <DefaultToastContent toast={toast} />
             </Toast.Root>
           )
         })}
@@ -439,32 +442,7 @@ function AnchoredToasts({
                     <Toast.Title data-slot="toast-title" />
                   </Toast.Content>
                 ) : (
-                  <Toast.Content
-                    {...stylex.props(styles.content)}
-                    data-slot="toast-content"
-                  >
-                    <div {...stylex.props(styles.message)}>
-                      <ToastIcon type={toast.type} />
-                      <div {...stylex.props(styles.text)}>
-                        <Toast.Title
-                          {...stylex.props(styles.title)}
-                          data-slot="toast-title"
-                        />
-                        <Toast.Description
-                          {...stylex.props(styles.description)}
-                          data-slot="toast-description"
-                        />
-                      </div>
-                    </div>
-                    {toast.actionProps ? (
-                      <Toast.Action
-                        className={buttonVariants({ size: "xs" })}
-                        data-slot="toast-action"
-                      >
-                        {toast.actionProps.children}
-                      </Toast.Action>
-                    ) : null}
-                  </Toast.Content>
+                  <DefaultToastContent toast={toast} />
                 )}
               </Toast.Root>
             </Toast.Positioner>

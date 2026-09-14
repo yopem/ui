@@ -2,7 +2,7 @@ import * as stylex from "@stylexjs/stylex"
 import { Link, createFileRoute, notFound } from "@tanstack/react-router"
 
 import { ApiReference } from "@/catalog/api-reference"
-import { DemoPanel, catalogStyles } from "@/catalog/catalog-ui"
+import { DemoPanel } from "@/catalog/catalog-ui"
 import { CopyableCode } from "@/catalog/code-block"
 import { getCatalogItem } from "@/catalog/components"
 import { DocumentationLayout } from "@/catalog/docs-layout"
@@ -12,7 +12,7 @@ import {
   DocsPage,
   DocsTitle,
 } from "@/catalog/docs-page"
-import { docsStyles } from "@/catalog/docs-styles"
+import { catalogStyles, docsStyles } from "@/catalog/docs-styles"
 import { getDocumentation } from "@/catalog/docs.functions"
 
 export const Route = createFileRoute("/components/$name")({
@@ -114,37 +114,20 @@ function ComponentPage() {
             </Link>{" "}
             first. Copy each required file to its destination below. Shared
             files only need to be copied once. Keep the{" "}
-            <code {...stylex.props(docsStyles.inlineCode)}>@registry/*</code>{" "}
-            alias pointing to{" "}
-            <code {...stylex.props(docsStyles.inlineCode)}>src/yopem/*</code>.
+            <code {...stylex.props(docsStyles.inlineCode)}>@/*</code> alias
+            pointing to{" "}
+            <code {...stylex.props(docsStyles.inlineCode)}>src/*</code>.
           </p>
           <h3 {...stylex.props(docsStyles.h3)}>Dependencies</h3>
-          <p {...stylex.props(docsStyles.p)}>
-            Add these packages to your application's package manifest and
-            install them with your package manager.
-          </p>
-          <ul {...stylex.props(docsStyles.ul)}>
-            {data.dependencies.map((dependency) => (
-              <li {...stylex.props(docsStyles.li)} key={dependency}>
-                <code {...stylex.props(docsStyles.inlineCode)}>
-                  {dependency}
-                </code>
-              </li>
-            ))}
-          </ul>
+          <CopyableCode
+            code={`npm install ${data.dependencies.join(" ")}`}
+            title="Install dependencies"
+          />
           {data.devDependencies.length ? (
-            <>
-              <h4 {...stylex.props(docsStyles.h4)}>Development dependencies</h4>
-              <ul {...stylex.props(docsStyles.ul)}>
-                {data.devDependencies.map((dependency) => (
-                  <li {...stylex.props(docsStyles.li)} key={dependency}>
-                    <code {...stylex.props(docsStyles.inlineCode)}>
-                      {dependency}
-                    </code>
-                  </li>
-                ))}
-              </ul>
-            </>
+            <CopyableCode
+              code={`npm install --save-dev ${data.devDependencies.join(" ")}`}
+              title="Install development dependencies"
+            />
           ) : null}
           <h4 {...stylex.props(docsStyles.h4)}>Peer dependencies</h4>
           <ul {...stylex.props(docsStyles.ul)}>
@@ -183,13 +166,7 @@ function ComponentPage() {
           <p {...stylex.props(docsStyles.p)}>
             Import from the destination you copied into your application.
           </p>
-          <CopyableCode
-            code={data.usage.replaceAll(
-              "@/components/ui/",
-              "@registry/components/ui/",
-            )}
-            title={`${item.title} usage`}
-          />
+          <CopyableCode code={data.usage} title={`${item.title} usage`} />
           <h2 {...stylex.props(docsStyles.h2)} id="api-reference">
             API reference
           </h2>

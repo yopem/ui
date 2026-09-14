@@ -9,7 +9,7 @@ export const apiNotes = [
   "Props are extracted from canonical source and the installed dependency declarations. Inherited HTML and React props are included; source identifies where each property is declared.",
   "An omitted default means no default was found in the declaration or wrapper, not that the value is false. Defaults from parameter initializers and upstream JSDoc are supplemented by reviewed wrapper defaults.",
   "required means required in every props branch. propVariants lists branch-specific requirements for union APIs such as Calendar. Named dependency types in signatures retain their TypeScript names.",
-  "Copy every file listed on the component page, including shared source dependencies, into src/yopem. Install the listed npm dependencies and configure the @registry/* alias as shown in the installation guide.",
+  "Copy every file listed on the component page, including shared source dependencies, into src. Run the listed npm install command and configure the standard @/* alias as shown in the installation guide.",
 ]
 
 export interface ApiProp {

@@ -1,5 +1,5 @@
 import * as stylex from "@stylexjs/stylex"
-import { createFileRoute } from "@tanstack/react-router"
+import { Link, createFileRoute } from "@tanstack/react-router"
 
 import { CopyableCode } from "@/catalog/code-block"
 import { DocumentationLayout } from "@/catalog/docs-layout"
@@ -27,7 +27,7 @@ export const Route = createFileRoute("/docs/theming")({
   component: Theming,
 })
 
-const palette = `// Append to src/yopem/styles/tokens.stylex.ts.
+const palette = `// Append to src/styles/tokens.stylex.ts.
 // Reuse its existing stylex import, tokens, lightValues, and darkValues.
 export const brandLight = stylex.createTheme(tokens, {
   ...lightValues,
@@ -48,8 +48,8 @@ export const brandDark = stylex.createTheme(tokens, {
 })`
 
 const scope = `import * as stylex from "@stylexjs/stylex"
-import { brandDark, tokens, rootStyles, themeMarker } from "@registry/styles/tokens.stylex"
-import { Button } from "@registry/components/ui/button"
+import { brandDark, tokens, rootStyles, themeMarker } from "@/styles/tokens.stylex"
+import { Button } from "@/components/ui/button"
 
 const styles = stylex.create({
   dark: { colorScheme: "dark" },
@@ -92,7 +92,7 @@ export const compact = stylex.createTheme(appTokens, {
 })`
 
 const usage = `import * as stylex from "@stylexjs/stylex"
-import { tokens } from "@registry/styles/tokens.stylex"
+import { tokens } from "@/styles/tokens.stylex"
 import { appTokens, compact } from "./app-tokens.stylex"
 
 const styles = stylex.create({
@@ -115,8 +115,8 @@ export function Panel() {
 }`
 
 const overrides = `import * as stylex from "@stylexjs/stylex"
-import { Button } from "@registry/components/ui/button"
-import { tokens } from "@registry/styles/tokens.stylex"
+import { Button } from "@/components/ui/button"
+import { tokens } from "@/styles/tokens.stylex"
 
 const styles = stylex.create({
   pill: { borderRadius: "999px" },
@@ -135,11 +135,11 @@ export function Action({ quiet = false, width = 180 }: { quiet?: boolean; width?
   )
 }`
 
-const rootSetup = `import "@registry/styles/styles.css"
+const rootSetup = `import "@/styles/styles.css"
 import * as stylex from "@stylexjs/stylex"
-import { brandLight, brandDark, rootStyles } from "@registry/styles/tokens.stylex"
-import { createThemeConfig, getRootThemeProps, ThemeScript } from "@registry/theme/theme"
-import { ThemeProvider } from "@registry/theme/theme-provider"
+import { brandLight, brandDark, rootStyles } from "@/styles/tokens.stylex"
+import { createThemeConfig, getRootThemeProps, ThemeScript } from "@/theme/theme"
+import { ThemeProvider } from "@/theme/theme-provider"
 
 // Keep this in your existing root layout; no extra config file needed.
 const appThemes = createThemeConfig({ light: brandLight, dark: brandDark })
@@ -157,7 +157,7 @@ export function Document({ children, nonce }: { children: React.ReactNode; nonce
 
 const switcher = `"use client"
 
-import { useTheme } from "@registry/theme/theme-provider"
+import { useTheme } from "@/theme/theme-provider"
 
 export function ThemePicker() {
   const { theme, setTheme } = useTheme()
@@ -201,10 +201,10 @@ function Theming() {
           </h2>
           <p {...stylex.props(docsStyles.p)}>
             Follow{" "}
-            <a {...stylex.props(docsStyles.link)} href="/docs/installation">
+            <Link {...stylex.props(docsStyles.link)} to="/docs/installation">
               Installation
-            </a>{" "}
-            first. All examples use the local @registry alias. Keep variable
+            </Link>{" "}
+            first. All examples use the standard @ alias. Keep variable
             definitions in .stylex.ts files and compile app styles with the same
             StyleX transform.
           </p>
@@ -239,7 +239,7 @@ function Theming() {
           </p>
           <CopyableCode
             code={palette}
-            title="src/yopem/styles/tokens.stylex.ts, append"
+            title="src/styles/tokens.stylex.ts, append"
           />
           <p {...stylex.props(docsStyles.p)}>
             Colors are complete CSS color values. Radius keys are independent
@@ -294,13 +294,13 @@ function Theming() {
           </h2>
           <p {...stylex.props(docsStyles.p)}>
             Styled wrappers accept xstyle, typed by StyleXProps from
-            @registry/lib/stylex. That module also exports StyleXStyle for your
-            own style props. Pass compiled stylex.create styles, arrays,
-            conditional entries, or dynamic style calls. Components compose
-            xstyle after defaults and variants; later entries win for
-            conflicting declarations in the same condition. A base value does
-            not erase a separate :hover, focus, disabled, or media-query rule.
-            Override the matching condition when needed.
+            @/lib/stylex. That module also exports StyleXStyle for your own
+            style props. Pass compiled stylex.create styles, arrays, conditional
+            entries, or dynamic style calls. Components compose xstyle after
+            defaults and variants; later entries win for conflicting
+            declarations in the same condition. A base value does not erase a
+            separate :hover, focus, disabled, or media-query rule. Override the
+            matching condition when needed.
           </p>
           <CopyableCode code={overrides} title="src/action.tsx" />
           <p {...stylex.props(docsStyles.p)}>
@@ -373,8 +373,8 @@ function Theming() {
           </h2>
           <h3 {...stylex.props(docsStyles.h3)}>ThemeProvider and useTheme</h3>
           <p {...stylex.props(docsStyles.p)}>
-            Import both from @registry/theme/theme-provider. ThemeProviderProps
-            requires children and accepts defaultTheme = "system", storageKey =
+            Import both from @/theme/theme-provider. ThemeProviderProps requires
+            children and accepts defaultTheme = "system", storageKey =
             "yopem-ui-theme", and themes = themeConfig. Saved valid preferences
             take precedence over the default. Use setTheme to select a mode. The
             provider renders no DOM wrapper and updates
@@ -401,8 +401,8 @@ function Theming() {
           </p>
           <h3 {...stylex.props(docsStyles.h3)}>ThemeScript and CSP</h3>
           <p {...stylex.props(docsStyles.p)}>
-            Import from @registry/theme/theme. ThemeScriptProps accepts nonce?:
-            string with no default, defaultTheme = "system", storageKey =
+            Import from @/theme/theme. ThemeScriptProps accepts nonce?: string
+            with no default, defaultTheme = "system", storageKey =
             "yopem-ui-theme", and themes = themeConfig. Keep defaultTheme,
             storageKey, and themes identical to the provider. The inline script
             validates saved preferences, resolves system with matchMedia, and
@@ -422,7 +422,7 @@ function Theming() {
             createThemeConfig and getRootThemeProps
           </h3>
           <p {...stylex.props(docsStyles.p)}>
-            Import from @registry/theme/theme. createThemeConfig(
+            Import from @/theme/theme. createThemeConfig(
             {"{ light, dark }"}) accepts two StyleX themes for the Yopem token
             group. It composes the marker, rootStyles.html, palette, and
             colorScheme through stylex.props. Its serializable ThemeConfig

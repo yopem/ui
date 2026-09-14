@@ -20,6 +20,21 @@ const demoSources = import.meta.glob<string>(
   },
 )
 
+const docsImportReplacements = [
+  ["@registry/components/ui/", "@/components/ui/"],
+  ["@registry/hooks/", "@/hooks/"],
+  ["@registry/lib/", "@/lib/"],
+  ["@registry/styles/", "@/styles/"],
+  ["@registry/theme/", "@/theme/"],
+] as const
+
+function prepareSource(content: string) {
+  return docsImportReplacements.reduce(
+    (source, [from, to]) => source.replaceAll(from, to),
+    content,
+  )
+}
+
 export const getDocumentation = createServerFn({ method: "GET" })
   .validator((slug: string) => {
     if (typeof slug !== "string" || !/^[a-z0-9-]+$/.test(slug))
@@ -76,9 +91,8 @@ export const getDocumentation = createServerFn({ method: "GET" })
         examples: group.examples.map((example) => ({
           ...example,
           source: example.source
-            .replaceAll("@/components/ui/stylex/", "@registry/components/ui/")
-            .replaceAll("@/lib/table-wrapper", "@tanstack/react-table")
-            .replaceAll("@/hooks/", "@registry/hooks/"),
+            .replaceAll("@/components/ui/stylex/", "@/components/ui/")
+            .replaceAll("@/lib/table-wrapper", "@tanstack/react-table"),
         })),
       })),
       notes: items.flatMap((item) => {
@@ -104,8 +118,8 @@ export const getDocumentation = createServerFn({ method: "GET" })
           if (!load) throw new Error(`Missing canonical source: ${file.path}`)
           return {
             path: file.path,
-            target: `src/yopem/${file.path}`,
-            content: await load(),
+            target: `src/${file.path}`,
+            content: prepareSource(await load()),
           }
         }),
       ),

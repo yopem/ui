@@ -43,6 +43,17 @@ import {
 import { useMediaQuery } from "@/hooks/use-media-query"
 
 const TRIGGER_ARIA_LABEL = "Open menu"
+const rockPlaylists = [
+  "Hard Rock",
+  "Soft Rock",
+  "Classic Rock",
+  "Metal",
+  "Punk",
+  "Grunge",
+  "Alternative",
+  "Indie",
+  "Electronic",
+]
 
 export default function Particle() {
   const isMobile = useMediaQuery("max-md")
@@ -228,16 +239,13 @@ export default function Particle() {
             <MenuSub>
               <MenuSubTrigger>Rock</MenuSubTrigger>
               <MenuSubPopup>
-                <MenuItem>Hard Rock</MenuItem>
-                <MenuItem>Soft Rock</MenuItem>
-                <MenuItem>Classic Rock</MenuItem>
+                {rockPlaylists.slice(0, 3).map((playlist) => (
+                  <MenuItem key={playlist}>{playlist}</MenuItem>
+                ))}
                 <MenuSeparator />
-                <MenuItem>Metal</MenuItem>
-                <MenuItem>Punk</MenuItem>
-                <MenuItem>Grunge</MenuItem>
-                <MenuItem>Alternative</MenuItem>
-                <MenuItem>Indie</MenuItem>
-                <MenuItem>Electronic</MenuItem>
+                {rockPlaylists.slice(3).map((playlist) => (
+                  <MenuItem key={playlist}>{playlist}</MenuItem>
+                ))}
               </MenuSubPopup>
             </MenuSub>
             <MenuItem>Pop</MenuItem>

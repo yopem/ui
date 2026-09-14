@@ -4,9 +4,9 @@ test("minimal setup and StyleX customization are documented", async ({
   page,
 }) => {
   await page.goto("/docs/installation")
-  await expect(
-    page.locator("summary").filter({ hasText: "src/yopem/" }),
-  ).toHaveCount(3)
+  await expect(page.locator("summary").filter({ hasText: "src/" })).toHaveCount(
+    3,
+  )
   await page.goto("/docs/theming")
   await expect(
     page.getByRole("heading", { name: "Component overrides", exact: true }),
@@ -18,7 +18,7 @@ test("minimal setup and StyleX customization are documented", async ({
     }),
   ).toBeVisible()
   await expect(
-    page.locator("summary").filter({ hasText: "src/yopem/theme/" }),
+    page.locator("summary").filter({ hasText: "src/theme/" }),
   ).toHaveCount(2)
 })
 
@@ -53,28 +53,28 @@ test("component docs cover setup, source files, and API", async ({ page }) => {
   ).toBeVisible()
   await page
     .locator("summary")
-    .filter({ hasText: "src/yopem/components/ui/button.tsx" })
+    .filter({ hasText: "src/components/ui/button.tsx" })
     .click()
   await page
     .locator("summary")
-    .filter({ hasText: "src/yopem/components/ui/spinner.tsx" })
+    .filter({ hasText: "src/components/ui/spinner.tsx" })
     .click()
   await expect(
     page.getByRole("button", {
-      name: "Copy src/yopem/components/ui/button.tsx",
+      name: "Copy src/components/ui/button.tsx",
       exact: true,
     }),
   ).toBeVisible()
   await expect(
     page.getByRole("button", {
-      name: "Copy src/yopem/components/ui/spinner.tsx",
+      name: "Copy src/components/ui/spinner.tsx",
       exact: true,
     }),
   ).toBeVisible()
   await expect(page.getByText("npx @yopem/ui", { exact: false })).toHaveCount(0)
   await expect(
     page.getByRole("button", {
-      name: "Copy src/yopem/components/ui/button.tsx",
+      name: "Copy src/components/ui/button.tsx",
       exact: true,
     }),
   ).toBeEnabled()
@@ -111,11 +111,11 @@ test("copy buttons copy source, not installation commands", async ({
   await page.goto("/components/button")
   await page
     .locator("summary")
-    .filter({ hasText: "src/yopem/components/ui/button.tsx" })
+    .filter({ hasText: "src/components/ui/button.tsx" })
     .click()
   await page
     .getByRole("button", {
-      name: "Copy src/yopem/components/ui/button.tsx",
+      name: "Copy src/components/ui/button.tsx",
       exact: true,
     })
     .click()
@@ -139,11 +139,11 @@ test("clipboard failures explain manual copying", async ({ page }) => {
   ).toBeEnabled()
   await page
     .locator("summary")
-    .filter({ hasText: "src/yopem/components/ui/button.tsx" })
+    .filter({ hasText: "src/components/ui/button.tsx" })
     .click()
   await page
     .getByRole("button", {
-      name: "Copy src/yopem/components/ui/button.tsx",
+      name: "Copy src/components/ui/button.tsx",
       exact: true,
     })
     .click()

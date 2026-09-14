@@ -13,6 +13,21 @@ import { Field, FieldLabel } from "@/components/ui/stylex/field"
 import { Form } from "@/components/ui/stylex/form"
 import { Input } from "@/components/ui/stylex/input"
 
+function LoginFields() {
+  return (
+    <>
+      <Field>
+        <FieldLabel>Email</FieldLabel>
+        <Input placeholder="Enter your email" type="email" />
+      </Field>
+      <Field>
+        <FieldLabel>Password</FieldLabel>
+        <Input placeholder="Enter your password" type="password" />
+      </Field>
+    </>
+  )
+}
+
 export default function Particle() {
   return (
     <Card {...stylex.props(demoStyles.demo1)}>
@@ -26,14 +41,7 @@ export default function Particle() {
       </CardHeader>
       <CardPanel>
         <Form {...stylex.props(demoStyles.demo3)}>
-          <Field>
-            <FieldLabel>Email</FieldLabel>
-            <Input placeholder="Enter your email" type="email" />
-          </Field>
-          <Field>
-            <FieldLabel>Password</FieldLabel>
-            <Input placeholder="Enter your password" type="password" />
-          </Field>
+          <LoginFields />
           <Button {...stylex.props(demoStyles.demo4)} type="submit">
             Login
           </Button>

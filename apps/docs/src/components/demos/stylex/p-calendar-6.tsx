@@ -21,6 +21,18 @@ interface DropdownItem {
   value: string
 }
 
+function CalendarDropdownList() {
+  return (
+    <ComboboxList>
+      {(item: DropdownItem) => (
+        <ComboboxItem disabled={item.disabled} key={item.value} value={item}>
+          {item.label}
+        </ComboboxItem>
+      )}
+    </ComboboxList>
+  )
+}
+
 function CalendarDropdown(props: DropdownProps) {
   const { options, value, onChange, "aria-label": ariaLabel } = props
 
@@ -56,17 +68,7 @@ function CalendarDropdown(props: DropdownProps) {
       />
       <ComboboxPopup aria-label={ariaLabel}>
         <ComboboxEmpty>No items found.</ComboboxEmpty>
-        <ComboboxList>
-          {(item: DropdownItem) => (
-            <ComboboxItem
-              disabled={item.disabled}
-              key={item.value}
-              value={item}
-            >
-              {item.label}
-            </ComboboxItem>
-          )}
-        </ComboboxList>
+        <CalendarDropdownList />
       </ComboboxPopup>
     </Combobox>
   )

@@ -1,10 +1,10 @@
 /** Import aliases used in the copyable source files served by the registry. */
 export const sourceImportReplacements = [
-  ["@registry/components/ui/", "@ui/"],
-  ["@registry/hooks/", "@hooks/"],
-  ["@registry/lib/", "@lib/"],
-  ["@registry/styles/", "@styles/yopem/"],
-  ["@registry/theme/", "@components/"],
+  ["@registry/components/ui/", "@/components/ui/"],
+  ["@registry/hooks/", "@/hooks/"],
+  ["@registry/lib/", "@/lib/"],
+  ["@registry/styles/", "@/styles/"],
+  ["@registry/theme/", "@/theme/"],
 ] as const
 
 export function rewriteImports(content: string) {

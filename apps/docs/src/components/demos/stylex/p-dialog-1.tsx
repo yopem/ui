@@ -16,6 +16,11 @@ import { Field, FieldLabel } from "@/components/ui/stylex/field"
 import { Form } from "@/components/ui/stylex/form"
 import { Input } from "@/components/ui/stylex/input"
 
+const profileFields = [
+  { defaultValue: "Margaret Welsh", label: "Name" },
+  { defaultValue: "@maggie.welsh", label: "Username" },
+]
+
 export default function Particle() {
   return (
     <Dialog>
@@ -31,14 +36,12 @@ export default function Particle() {
         </DialogHeader>
         <Form {...stylex.props(demoStyles.demo2)}>
           <DialogPanel {...stylex.props(demoStyles.demo3)}>
-            <Field>
-              <FieldLabel>Name</FieldLabel>
-              <Input defaultValue="Margaret Welsh" type="text" />
-            </Field>
-            <Field>
-              <FieldLabel>Username</FieldLabel>
-              <Input defaultValue="@maggie.welsh" type="text" />
-            </Field>
+            {profileFields.map((field) => (
+              <Field key={field.label}>
+                <FieldLabel>{field.label}</FieldLabel>
+                <Input defaultValue={field.defaultValue} type="text" />
+              </Field>
+            ))}
           </DialogPanel>
           <DialogFooter>
             <DialogClose render={<Button variant="ghost" />}>

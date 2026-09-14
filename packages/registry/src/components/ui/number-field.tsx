@@ -196,8 +196,9 @@ export function NumberField({
 } & StyleXProps) {
   const generatedId = React.useId()
   const fieldId = id ?? generatedId
+  const contextValue = React.useMemo(() => ({ fieldId }), [fieldId])
   return (
-    <NumberFieldContext.Provider value={{ fieldId }}>
+    <NumberFieldContext.Provider value={contextValue}>
       <NumberFieldPrimitive.Root
         {...stylexProps(className, styles.root, xstyle)}
         data-size={size}

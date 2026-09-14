@@ -22,6 +22,13 @@ import {
   MenuTrigger,
 } from "@/components/ui/stylex/menu"
 
+const menuItems = [
+  { icon: EditIcon, label: "Edit" },
+  { icon: ArchiveIcon, label: "Archive" },
+  { icon: ShareIcon, label: "Share" },
+  { icon: TrashIcon, label: "Delete", variant: "destructive" },
+] as const
+
 export default function Particle() {
   return (
     <Group aria-label="File actions">
@@ -51,25 +58,19 @@ export default function Particle() {
           />
         </MenuTrigger>
         <MenuPopup align="end">
-          <MenuItem>
-            <EditIcon aria-hidden="true" {...stylex.props(demoStyles.icon)} />
-            Edit
-          </MenuItem>
-          <MenuItem>
-            <ArchiveIcon
-              aria-hidden="true"
-              {...stylex.props(demoStyles.icon)}
-            />
-            Archive
-          </MenuItem>
-          <MenuItem>
-            <ShareIcon aria-hidden="true" {...stylex.props(demoStyles.icon)} />
-            Share
-          </MenuItem>
-          <MenuItem variant="destructive">
-            <TrashIcon aria-hidden="true" {...stylex.props(demoStyles.icon)} />
-            Delete
-          </MenuItem>
+          {menuItems.map((item) => {
+            const Icon = item.icon
+
+            return (
+              <MenuItem
+                key={item.label}
+                variant={"variant" in item ? item.variant : undefined}
+              >
+                <Icon aria-hidden="true" {...stylex.props(demoStyles.icon)} />
+                {item.label}
+              </MenuItem>
+            )
+          })}
         </MenuPopup>
       </Menu>
     </Group>

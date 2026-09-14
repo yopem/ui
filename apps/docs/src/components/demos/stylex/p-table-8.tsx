@@ -152,7 +152,7 @@ const columns: ColumnDef<Flight>[] = [
   {
     accessorKey: "status",
     cell: ({ row }) => {
-      const status = row.getValue("status") as Flight["status"]
+      const status = row.original.status
       return (
         <Badge variant="outline">
           <span
@@ -183,6 +183,38 @@ const columns: ColumnDef<Flight>[] = [
     size: 80,
   },
 ]
+
+type FlightTableModel = ReturnType<typeof useReactTable<Flight>>
+
+function FlightTableBody({ table }: { table: FlightTableModel }) {
+  return (
+    <TableBody>
+      {table.getRowModel().rows.length ? (
+        table.getRowModel().rows.map((row) => (
+          <TableRow
+            data-state={row.getIsSelected() ? "selected" : undefined}
+            key={row.id}
+          >
+            {row.getVisibleCells().map((cell) => (
+              <TableCell key={cell.id}>
+                {flexRender(cell.column.columnDef.cell, cell.getContext())}
+              </TableCell>
+            ))}
+          </TableRow>
+        ))
+      ) : (
+        <TableRow>
+          <TableCell
+            {...stylex.props(demoStyles.demo11)}
+            colSpan={columns.length}
+          >
+            No results.
+          </TableCell>
+        </TableRow>
+      )}
+    </TableBody>
+  )
+}
 
 export default function Particle() {
   const pageSize = 10
@@ -222,6 +254,7 @@ export default function Particle() {
             <TableRow {...stylex.props(demoStyles.demo8)} key={headerGroup.id}>
               {headerGroup.headers.map((header) => {
                 const columnSize = header.column.getSize()
+                const sortDirection = header.column.getIsSorted()
                 return (
                   <TableHead
                     {...(columnSize
@@ -245,20 +278,17 @@ export default function Particle() {
                           header.column.columnDef.header,
                           header.getContext(),
                         )}
-                        {{
-                          asc: (
-                            <ChevronUpIcon
-                              aria-hidden="true"
-                              {...stylex.props(demoStyles.demo10)}
-                            />
-                          ),
-                          desc: (
-                            <ChevronDownIcon
-                              aria-hidden="true"
-                              {...stylex.props(demoStyles.demo10)}
-                            />
-                          ),
-                        }[header.column.getIsSorted() as string] ?? null}
+                        {sortDirection === "asc" ? (
+                          <ChevronUpIcon
+                            aria-hidden="true"
+                            {...stylex.props(demoStyles.demo10)}
+                          />
+                        ) : sortDirection === "desc" ? (
+                          <ChevronDownIcon
+                            aria-hidden="true"
+                            {...stylex.props(demoStyles.demo10)}
+                          />
+                        ) : null}
                       </button>
                     ) : (
                       flexRender(
@@ -272,31 +302,7 @@ export default function Particle() {
             </TableRow>
           ))}
         </TableHeader>
-        <TableBody>
-          {table.getRowModel().rows.length ? (
-            table.getRowModel().rows.map((row) => (
-              <TableRow
-                data-state={row.getIsSelected() ? "selected" : undefined}
-                key={row.id}
-              >
-                {row.getVisibleCells().map((cell) => (
-                  <TableCell key={cell.id}>
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </TableCell>
-                ))}
-              </TableRow>
-            ))
-          ) : (
-            <TableRow>
-              <TableCell
-                {...stylex.props(demoStyles.demo11)}
-                colSpan={columns.length}
-              >
-                No results.
-              </TableCell>
-            </TableRow>
-          )}
-        </TableBody>
+        <FlightTableBody table={table} />
       </Table>
       <CardFrameFooter {...stylex.props(demoStyles.demo12)}>
         <div {...stylex.props(demoStyles.demo13)}>
@@ -314,7 +320,9 @@ export default function Particle() {
                 return { label: `${start}-${end}`, value: pageNum }
               })}
               onValueChange={(value) => {
-                table.setPageIndex((value as number) - 1)
+                if (typeof value === "number") {
+                  table.setPageIndex(value - 1)
+                }
               }}
               value={table.getState().pagination.pageIndex + 1}
             >
@@ -326,15 +334,16 @@ export default function Particle() {
                 <SelectValue />
               </SelectTrigger>
               <SelectPopup>
-                {Array.from({ length: table.getPageCount() }, (_, i) => {
-                  const start = i * table.getState().pagination.pageSize + 1
+                {table.getPageOptions().map((pageIndex) => {
+                  const start =
+                    pageIndex * table.getState().pagination.pageSize + 1
                   const end = Math.min(
-                    (i + 1) * table.getState().pagination.pageSize,
+                    (pageIndex + 1) * table.getState().pagination.pageSize,
                     table.getRowCount(),
                   )
-                  const pageNum = i + 1
+                  const pageNumber = pageIndex + 1
                   return (
-                    <SelectItem key={pageNum} value={pageNum}>
+                    <SelectItem key={pageIndex} value={pageNumber}>
                       {`${start}-${end}`}
                     </SelectItem>
                   )

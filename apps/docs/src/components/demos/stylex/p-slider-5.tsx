@@ -14,20 +14,20 @@ export default function Particle() {
         aria-label="Value scale from 0 to 12"
         {...stylex.props(demoStyles.demo1)}
       >
-        {ticks.map((_, i) => (
-          <span {...stylex.props(demoStyles.demo2)} key={String(i)}>
+        {ticks.map((tick) => (
+          <span {...stylex.props(demoStyles.demo2)} key={tick}>
             <span
               {...stylex.props(
                 demoStyles.tick,
-                i % skipInterval !== 0 && demoStyles.minorTick,
+                tick % skipInterval !== 0 && demoStyles.minorTick,
               )}
             />
             <span
               {...stylex.props(
-                i % skipInterval !== 0 && demoStyles.hiddenLabel,
+                tick % skipInterval !== 0 && demoStyles.hiddenLabel,
               )}
             >
-              {i}
+              {tick}
             </span>
           </span>
         ))}

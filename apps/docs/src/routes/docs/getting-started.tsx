@@ -80,7 +80,7 @@ function GettingStarted() {
               >
                 Button
               </Link>
-              . Add its listed dependencies to your package manifest.
+              . Run the listed npm install command.
             </li>
             <li {...stylex.props(docsStyles.li)}>
               Expand each required file and copy its complete content to the
@@ -93,7 +93,7 @@ function GettingStarted() {
           <CopyableCode
             title="src/components/save-button.tsx"
             code={
-              'import { Button } from "@registry/components/ui/button"\n\nexport function SaveButton() {\n  return <Button onClick={() => console.log("Saved")}>Save changes</Button>\n}'
+              'import { Button } from "@/components/ui/button"\n\nexport function SaveButton() {\n  return <Button onClick={() => console.log("Saved")}>Save changes</Button>\n}'
             }
           />
           <p {...stylex.props(docsStyles.p)}>
@@ -124,7 +124,7 @@ function GettingStarted() {
           <CopyableCode
             title="src/components/save-button.tsx"
             code={`import * as stylex from "@stylexjs/stylex"
-import { Button } from "@registry/components/ui/button"
+import { Button } from "@/components/ui/button"
 
 const styles = stylex.create({ button: { borderRadius: "999px" } })
 
@@ -133,11 +133,9 @@ export function SaveButton() {
 }`}
           />
           <p {...stylex.props(docsStyles.p)}>
-            Source files use{" "}
-            <code {...stylex.props(docsStyles.inlineCode)}>@registry/*</code>{" "}
-            for internal imports. This is a local alias, not a registry service.
-            You can rename it, but update every import and the StyleX build
-            configuration together.
+            Source files use the standard{" "}
+            <code {...stylex.props(docsStyles.inlineCode)}>@/*</code> alias for
+            src. Components import each other from @/components/ui.
           </p>
           <p {...stylex.props(docsStyles.p)}>
             Static themes need no provider or script. If you add mode switching

@@ -30,7 +30,7 @@ const occurrences = [
 ]
 
 export default function Particle() {
-  const [selected, setSelected] = useState(
+  const [selected, setSelected] = useState(() =>
     occurrences.map((occurrence) => occurrence.id),
   )
 

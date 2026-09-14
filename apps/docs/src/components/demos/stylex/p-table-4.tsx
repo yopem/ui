@@ -152,7 +152,7 @@ const columns: ColumnDef<Flight>[] = [
   {
     accessorKey: "status",
     cell: ({ row }) => {
-      const status = row.getValue("status") as Flight["status"]
+      const status = row.original.status
       return (
         <Badge variant="outline">
           <span
@@ -183,6 +183,133 @@ const columns: ColumnDef<Flight>[] = [
     size: 80,
   },
 ]
+
+type FlightTableModel = ReturnType<typeof useReactTable<Flight>>
+type FlightHeader = ReturnType<FlightTableModel["getFlatHeaders"]>[number]
+
+function FlightTableHead({ header }: { header: FlightHeader }) {
+  const columnSize = header.column.getSize()
+  const sortDirection = header.column.getIsSorted()
+
+  return (
+    <TableHead
+      {...(columnSize
+        ? stylex.props(demoStyles.columnWidth(`${columnSize}px`))
+        : {})}
+    >
+      {header.isPlaceholder ? null : header.column.getCanSort() ? (
+        <button
+          {...stylex.props(demoStyles.demo9)}
+          onClick={header.column.getToggleSortingHandler()}
+          onKeyDown={(event) => {
+            if (event.key === "Enter" || event.key === " ") {
+              event.preventDefault()
+              header.column.getToggleSortingHandler()?.(event)
+            }
+          }}
+          type="button"
+        >
+          {flexRender(header.column.columnDef.header, header.getContext())}
+          {sortDirection === "asc" ? (
+            <ChevronUpIcon
+              aria-hidden="true"
+              {...stylex.props(demoStyles.demo10)}
+            />
+          ) : sortDirection === "desc" ? (
+            <ChevronDownIcon
+              aria-hidden="true"
+              {...stylex.props(demoStyles.demo10)}
+            />
+          ) : null}
+        </button>
+      ) : (
+        flexRender(header.column.columnDef.header, header.getContext())
+      )}
+    </TableHead>
+  )
+}
+
+function PageRangeSelect({ table }: { table: FlightTableModel }) {
+  return (
+    <Select
+      items={Array.from({ length: table.getPageCount() }, (_, pageIndex) => {
+        const start = pageIndex * table.getState().pagination.pageSize + 1
+        const end = Math.min(
+          (pageIndex + 1) * table.getState().pagination.pageSize,
+          table.getRowCount(),
+        )
+        return { label: `${start}-${end}`, value: pageIndex + 1 }
+      })}
+      onValueChange={(value) => {
+        if (typeof value === "number") {
+          table.setPageIndex(value - 1)
+        }
+      }}
+      value={table.getState().pagination.pageIndex + 1}
+    >
+      <SelectTrigger
+        aria-label="Select result range"
+        {...stylex.props(demoStyles.report1, demoStyles.report1Manual)}
+        size="sm"
+      >
+        <SelectValue />
+      </SelectTrigger>
+      <SelectPopup>
+        {table.getPageOptions().map((pageIndex) => {
+          const start = pageIndex * table.getState().pagination.pageSize + 1
+          const end = Math.min(
+            (pageIndex + 1) * table.getState().pagination.pageSize,
+            table.getRowCount(),
+          )
+          const pageNumber = pageIndex + 1
+          return (
+            <SelectItem key={pageIndex} value={pageNumber}>
+              {`${start}-${end}`}
+            </SelectItem>
+          )
+        })}
+      </SelectPopup>
+    </Select>
+  )
+}
+
+function PreviousPageButton({ table }: { table: FlightTableModel }) {
+  return (
+    <PaginationItem>
+      <Button
+        disabled={!table.getCanPreviousPage()}
+        onClick={() => table.previousPage()}
+        size="sm"
+        variant="outline"
+      >
+        <ChevronLeftIcon
+          aria-hidden="true"
+          {...stylex.props(demoStyles.icon2, demoStyles.report2)}
+        />
+        Previous
+      </Button>
+    </PaginationItem>
+  )
+}
+
+function NextPageButton({ table }: { table: FlightTableModel }) {
+  return (
+    <PaginationItem>
+      <Button
+        disabled={!table.getCanNextPage()}
+        onClick={() => table.nextPage()}
+        size="sm"
+        variant="outline"
+      >
+        Next
+        <ChevronRightIcon
+          aria-hidden="true"
+          {...stylex.props(demoStyles.icon2, demoStyles.report2)}
+        />
+      </Button>
+    </PaginationItem>
+  )
+}
 
 export default function Particle() {
   const pageSize = 10
@@ -220,55 +347,9 @@ export default function Particle() {
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow {...stylex.props(demoStyles.demo8)} key={headerGroup.id}>
-              {headerGroup.headers.map((header) => {
-                const columnSize = header.column.getSize()
-                return (
-                  <TableHead
-                    {...(columnSize
-                      ? stylex.props(demoStyles.columnWidth(`${columnSize}px`))
-                      : {})}
-                    key={header.id}
-                  >
-                    {header.isPlaceholder ? null : header.column.getCanSort() ? (
-                      <button
-                        {...stylex.props(demoStyles.demo9)}
-                        onClick={header.column.getToggleSortingHandler()}
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter" || e.key === " ") {
-                            e.preventDefault()
-                            header.column.getToggleSortingHandler()?.(e)
-                          }
-                        }}
-                        type="button"
-                      >
-                        {flexRender(
-                          header.column.columnDef.header,
-                          header.getContext(),
-                        )}
-                        {{
-                          asc: (
-                            <ChevronUpIcon
-                              aria-hidden="true"
-                              {...stylex.props(demoStyles.demo10)}
-                            />
-                          ),
-                          desc: (
-                            <ChevronDownIcon
-                              aria-hidden="true"
-                              {...stylex.props(demoStyles.demo10)}
-                            />
-                          ),
-                        }[header.column.getIsSorted() as string] ?? null}
-                      </button>
-                    ) : (
-                      flexRender(
-                        header.column.columnDef.header,
-                        header.getContext(),
-                      )
-                    )}
-                  </TableHead>
-                )
-              })}
+              {headerGroup.headers.map((header) => (
+                <FlightTableHead header={header} key={header.id} />
+              ))}
             </TableRow>
           ))}
         </TableHeader>
@@ -303,44 +384,7 @@ export default function Particle() {
           {/* Results range selector */}
           <div {...stylex.props(demoStyles.demo14)}>
             <p {...stylex.props(demoStyles.demo15)}>Viewing</p>
-            <Select
-              items={Array.from({ length: table.getPageCount() }, (_, i) => {
-                const start = i * table.getState().pagination.pageSize + 1
-                const end = Math.min(
-                  (i + 1) * table.getState().pagination.pageSize,
-                  table.getRowCount(),
-                )
-                const pageNum = i + 1
-                return { label: `${start}-${end}`, value: pageNum }
-              })}
-              onValueChange={(value) => {
-                table.setPageIndex((value as number) - 1)
-              }}
-              value={table.getState().pagination.pageIndex + 1}
-            >
-              <SelectTrigger
-                aria-label="Select result range"
-                {...stylex.props(demoStyles.report1, demoStyles.report1Manual)}
-                size="sm"
-              >
-                <SelectValue />
-              </SelectTrigger>
-              <SelectPopup>
-                {Array.from({ length: table.getPageCount() }, (_, i) => {
-                  const start = i * table.getState().pagination.pageSize + 1
-                  const end = Math.min(
-                    (i + 1) * table.getState().pagination.pageSize,
-                    table.getRowCount(),
-                  )
-                  const pageNum = i + 1
-                  return (
-                    <SelectItem key={pageNum} value={pageNum}>
-                      {`${start}-${end}`}
-                    </SelectItem>
-                  )
-                })}
-              </SelectPopup>
-            </Select>
+            <PageRangeSelect table={table} />
             <p {...stylex.props(demoStyles.demo15)}>
               of{" "}
               <strong {...stylex.props(demoStyles.demo16)}>
@@ -353,34 +397,8 @@ export default function Particle() {
           {/* Pagination */}
           <Pagination {...stylex.props(demoStyles.demo17)}>
             <PaginationContent>
-              <PaginationItem>
-                <Button
-                  disabled={!table.getCanPreviousPage()}
-                  onClick={() => table.previousPage()}
-                  size="sm"
-                  variant="outline"
-                >
-                  <ChevronLeftIcon
-                    aria-hidden="true"
-                    {...stylex.props(demoStyles.icon2, demoStyles.report2)}
-                  />
-                  Previous
-                </Button>
-              </PaginationItem>
-              <PaginationItem>
-                <Button
-                  disabled={!table.getCanNextPage()}
-                  onClick={() => table.nextPage()}
-                  size="sm"
-                  variant="outline"
-                >
-                  Next
-                  <ChevronRightIcon
-                    aria-hidden="true"
-                    {...stylex.props(demoStyles.icon2, demoStyles.report2)}
-                  />
-                </Button>
-              </PaginationItem>
+              <PreviousPageButton table={table} />
+              <NextPageButton table={table} />
             </PaginationContent>
           </Pagination>
         </div>

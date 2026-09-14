@@ -8,16 +8,22 @@ import {
   NumberFieldScrubArea,
 } from "@/components/ui/stylex/number-field"
 
+function QuantityControls() {
+  return (
+    <NumberFieldGroup>
+      <NumberFieldDecrement />
+      <NumberFieldInput />
+      <NumberFieldIncrement />
+    </NumberFieldGroup>
+  )
+}
+
 export default function Particle() {
   return (
     <Field>
       <NumberField defaultValue={1} max={100} min={1}>
         <NumberFieldScrubArea label="Quantity" />
-        <NumberFieldGroup>
-          <NumberFieldDecrement />
-          <NumberFieldInput />
-          <NumberFieldIncrement />
-        </NumberFieldGroup>
+        <QuantityControls />
       </NumberField>
       <FieldDescription>Choose a value between 1 and 100.</FieldDescription>
     </Field>

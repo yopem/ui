@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useRef } from "react"
 
 import { Button } from "@/components/ui/stylex/button"
 import { toastManager } from "@/components/ui/stylex/toast"
@@ -13,14 +13,14 @@ const TEXTS = [
 ]
 
 export default function Particle() {
-  const [count, setCount] = useState(0)
+  const countRef = useRef(0)
 
   function createToast() {
-    setCount((prev) => prev + 1)
+    countRef.current += 1
     const description = TEXTS[Math.floor(Math.random() * TEXTS.length)]
     toastManager.add({
       description,
-      title: `Toast ${count + 1} created`,
+      title: `Toast ${countRef.current} created`,
     })
   }
 

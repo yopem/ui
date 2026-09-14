@@ -3,6 +3,12 @@ import { HouseIcon, PanelsTopLeftIcon, SettingsIcon } from "lucide-react"
 
 import { Tabs, TabsList, TabsPanel, TabsTab } from "@/components/ui/stylex/tabs"
 
+const tabs = [
+  { Icon: HouseIcon, label: "Overview", value: "tab-1" },
+  { Icon: PanelsTopLeftIcon, label: "Projects", value: "tab-2" },
+  { Icon: SettingsIcon, label: "Settings", value: "tab-3" },
+]
+
 export default function Particle() {
   return (
     <Tabs
@@ -12,35 +18,19 @@ export default function Particle() {
     >
       <div {...stylex.props(demoStyles.demo2)}>
         <TabsList variant="underline">
-          <TabsTab value="tab-1">
-            <HouseIcon {...stylex.props(demoStyles.icon)} aria-hidden="true" />
-            Overview
-          </TabsTab>
-          <TabsTab value="tab-2">
-            <PanelsTopLeftIcon
-              {...stylex.props(demoStyles.icon)}
-              aria-hidden="true"
-            />
-            Projects
-          </TabsTab>
-          <TabsTab value="tab-3">
-            <SettingsIcon
-              {...stylex.props(demoStyles.icon)}
-              aria-hidden="true"
-            />
-            Settings
-          </TabsTab>
+          {tabs.map(({ Icon, label, value }) => (
+            <TabsTab key={value} value={value}>
+              <Icon {...stylex.props(demoStyles.icon)} aria-hidden="true" />
+              {label}
+            </TabsTab>
+          ))}
         </TabsList>
       </div>
-      <TabsPanel value="tab-1">
-        <p {...stylex.props(demoStyles.demo3)}>Overview content</p>
-      </TabsPanel>
-      <TabsPanel value="tab-2">
-        <p {...stylex.props(demoStyles.demo3)}>Projects content</p>
-      </TabsPanel>
-      <TabsPanel value="tab-3">
-        <p {...stylex.props(demoStyles.demo3)}>Settings content</p>
-      </TabsPanel>
+      {tabs.map(({ label, value }) => (
+        <TabsPanel key={value} value={value}>
+          <p {...stylex.props(demoStyles.demo3)}>{label} content</p>
+        </TabsPanel>
+      ))}
     </Tabs>
   )
 }

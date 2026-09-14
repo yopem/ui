@@ -88,7 +88,7 @@ const teamMembers: TeamMember[] = [
 
 export default function Particle() {
   const [open, setOpen] = useState(false)
-  const [selected, setSelected] = useState<TeamMember[]>(
+  const [selected, setSelected] = useState<TeamMember[]>(() =>
     teamMembers.slice(0, 2),
   )
 

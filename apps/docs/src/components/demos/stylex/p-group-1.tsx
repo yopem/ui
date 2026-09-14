@@ -22,6 +22,12 @@ import {
   MenuTrigger,
 } from "@/components/ui/stylex/menu"
 
+const menuItems = [
+  { Icon: EditIcon, label: "Edit" },
+  { Icon: ArchiveIcon, label: "Archive" },
+  { Icon: ShareIcon, label: "Share" },
+]
+
 export default function Particle() {
   return (
     <Group aria-label="File actions">
@@ -49,21 +55,12 @@ export default function Particle() {
           <EllipsisIcon {...stylex.props(demoStyles.icon, demoStyles.demo1)} />
         </MenuTrigger>
         <MenuPopup align="end">
-          <MenuItem>
-            <EditIcon aria-hidden="true" {...stylex.props(demoStyles.icon)} />
-            Edit
-          </MenuItem>
-          <MenuItem>
-            <ArchiveIcon
-              aria-hidden="true"
-              {...stylex.props(demoStyles.icon)}
-            />
-            Archive
-          </MenuItem>
-          <MenuItem>
-            <ShareIcon aria-hidden="true" {...stylex.props(demoStyles.icon)} />
-            Share
-          </MenuItem>
+          {menuItems.map(({ Icon, label }) => (
+            <MenuItem key={label}>
+              <Icon aria-hidden="true" {...stylex.props(demoStyles.icon)} />
+              {label}
+            </MenuItem>
+          ))}
           <MenuItem variant="destructive">
             <TrashIcon aria-hidden="true" {...stylex.props(demoStyles.icon)} />
             Delete
