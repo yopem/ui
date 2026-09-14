@@ -1149,23 +1149,31 @@ export default function Example() {
   toast: `"use client"
 
 import { Button } from "@registry/components/ui/button"
-import { toastManager } from "@registry/components/ui/toast"
-import { ToastProvider } from "@registry/components/ui/toast"
+import {
+  toastManager,
+  ToastProvider,
+} from "@registry/components/ui/toast"
 
-export default function Example() {
+export default function App() {
   return (
     <ToastProvider>
-      <Button
-        onClick={() =>
-          toastManager.add({
-            title: "Event created",
-            description: "Your event is ready to share.",
-          })
-        }
-      >
-        Show toast
-      </Button>
+      <ShowToastButton />
     </ToastProvider>
+  )
+}
+
+function ShowToastButton() {
+  return (
+    <Button
+      onClick={() =>
+        toastManager.add({
+          title: "Event created",
+          description: "Your event is ready to share.",
+        })
+      }
+    >
+      Show toast
+    </Button>
   )
 }
 `,

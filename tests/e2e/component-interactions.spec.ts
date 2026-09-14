@@ -52,3 +52,10 @@ test("checkbox toggles with Space", async ({ page }) => {
   await page.keyboard.press("Space")
   await expect(checkbox).not.toBeChecked()
 })
+
+test("toast appears after trigger click", async ({ page }) => {
+  await page.goto("/render/light/p-toast-1")
+  await page.getByRole("button", { name: "Default Toast" }).click()
+
+  await expect(page.getByText("Event has been created")).toBeVisible()
+})

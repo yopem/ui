@@ -1,4 +1,5 @@
 import "@fontsource-variable/figtree"
+import { ToastProvider } from "@registry/components/ui/toast"
 import "@registry/styles/styles.css"
 import { getRootThemeProps, ThemeScript } from "@registry/theme/theme"
 import { ThemeProvider } from "@registry/theme/theme-provider"
@@ -41,7 +42,9 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <HeadContent />
       </head>
       <body>
-        <ThemeProvider>{children}</ThemeProvider>
+        <ThemeProvider>
+          <ToastProvider>{children}</ToastProvider>
+        </ThemeProvider>
         {isStyleXDevelopment ? <StyleXDevelopmentRuntime /> : null}
         {import.meta.env.DEV && !isTestMode ? (
           <TanStackDevtools
