@@ -10,6 +10,7 @@ import {
   DialogTrigger,
 } from "@registry/components/ui/dialog"
 import { Input } from "@registry/components/ui/input"
+import { ScrollArea } from "@registry/components/ui/scroll-area"
 import { tokens } from "@registry/styles/tokens.stylex"
 import { useTheme } from "@registry/theme/theme-provider"
 import * as stylex from "@stylexjs/stylex"
@@ -110,7 +111,8 @@ const styles = stylex.create({
     position: "sticky",
     insetBlockStart: "4rem",
   },
-  nav: { overflowY: "auto", padding: "1.25rem", flex: 1 },
+  navScroll: { flex: 1, minBlockSize: 0 },
+  nav: { padding: "1.25rem" },
   list: { listStyleType: "none", padding: 0, margin: 0 },
   group: {
     color: tokens["--muted-foreground"],
@@ -183,12 +185,11 @@ const styles = stylex.create({
     ":focus": { transform: "translateY(0)" },
   },
   popup: { padding: "1.5rem", gap: "1rem", maxBlockSize: "min(42rem, 85dvh)" },
+  resultsScroll: { minBlockSize: 0 },
   results: {
     listStyleType: "none",
     margin: 0,
     padding: 0,
-    overflowY: "auto",
-    minBlockSize: 0,
   },
   result: {
     display: "block",
@@ -242,31 +243,38 @@ function ThemeToggle() {
 function Navigation({ onNavigate }: { onNavigate?: () => void }) {
   const pathname = useLocation({ select: (location) => location.pathname })
   return (
-    <nav aria-label="Documentation" {...stylex.props(styles.nav)}>
-      <ul {...stylex.props(styles.list)}>
-        {tree.children.map((item) =>
-          item.type === "separator" ? (
-            <li key={String(item.name)} {...stylex.props(styles.group)}>
-              {item.name}
-            </li>
-          ) : item.type === "page" ? (
-            <li key={item.url}>
-              <Link
-                to={item.url}
-                aria-current={pathname === item.url ? "page" : undefined}
-                onClick={onNavigate}
-                {...stylex.props(
-                  styles.navLink,
-                  pathname === item.url && styles.active,
-                )}
-              >
+    <ScrollArea
+      aria-label="Documentation navigation"
+      overscrollContain
+      scrollFade
+      xstyle={styles.navScroll}
+    >
+      <nav aria-label="Documentation" {...stylex.props(styles.nav)}>
+        <ul {...stylex.props(styles.list)}>
+          {tree.children.map((item) =>
+            item.type === "separator" ? (
+              <li key={String(item.name)} {...stylex.props(styles.group)}>
                 {item.name}
-              </Link>
-            </li>
-          ) : null,
-        )}
-      </ul>
-    </nav>
+              </li>
+            ) : item.type === "page" ? (
+              <li key={item.url}>
+                <Link
+                  to={item.url}
+                  aria-current={pathname === item.url ? "page" : undefined}
+                  onClick={onNavigate}
+                  {...stylex.props(
+                    styles.navLink,
+                    pathname === item.url && styles.active,
+                  )}
+                >
+                  {item.name}
+                </Link>
+              </li>
+            ) : null,
+          )}
+        </ul>
+      </nav>
+    </ScrollArea>
   )
 }
 
@@ -397,28 +405,35 @@ function GlobalSearch() {
                 ? "Searching…"
                 : `${results.length} results`}
         </output>
-        <ul aria-label="Search results" {...stylex.props(styles.results)}>
-          {status === "ready"
-            ? results.map((result) => (
-                <li key={result.id}>
-                  <Link
-                    to={result.url}
-                    onClick={() => setOpen(false)}
-                    {...stylex.props(styles.result)}
-                  >
-                    {result.breadcrumbs?.length ? (
-                      <span {...stylex.props(styles.breadcrumb)}>
-                        {result.breadcrumbs
-                          .join(" / ")
-                          .replace(/<\/?mark>/g, "")}
-                      </span>
-                    ) : null}
-                    {result.content.replace(/<\/?mark>/g, "")}
-                  </Link>
-                </li>
-              ))
-            : null}
-        </ul>
+        <ScrollArea
+          aria-label="Search results"
+          overscrollContain
+          scrollFade
+          xstyle={styles.resultsScroll}
+        >
+          <ul {...stylex.props(styles.results)}>
+            {status === "ready"
+              ? results.map((result) => (
+                  <li key={result.id}>
+                    <Link
+                      to={result.url}
+                      onClick={() => setOpen(false)}
+                      {...stylex.props(styles.result)}
+                    >
+                      {result.breadcrumbs?.length ? (
+                        <span {...stylex.props(styles.breadcrumb)}>
+                          {result.breadcrumbs
+                            .join(" / ")
+                            .replace(/<\/?mark>/g, "")}
+                        </span>
+                      ) : null}
+                      {result.content.replace(/<\/?mark>/g, "")}
+                    </Link>
+                  </li>
+                ))
+              : null}
+          </ul>
+        </ScrollArea>
       </DialogPopup>
     </Dialog>
   )

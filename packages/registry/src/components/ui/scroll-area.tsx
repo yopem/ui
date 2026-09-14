@@ -15,6 +15,7 @@ const styles = stylex.create({
   },
   viewport: {
     blockSize: "100%",
+    maxBlockSize: "inherit",
     borderRadius: "inherit",
     outline: "none",
     transitionProperty: "box-shadow",

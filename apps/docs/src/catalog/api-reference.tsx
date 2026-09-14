@@ -1,10 +1,11 @@
 import type { ApiPart, ApiProp } from "@registry/docs"
 
+import { ScrollArea } from "@registry/components/ui/scroll-area"
 import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import { useState } from "react"
 
-import { CopyableCode, KeyboardScrollArea } from "./code-block"
+import { CopyableCode } from "./code-block"
 
 function PropertiesTable({
   properties,
@@ -14,9 +15,11 @@ function PropertiesTable({
   label?: string
 }) {
   return (
-    <KeyboardScrollArea
-      {...stylex.props(styles.tableWrapper, styles.focus)}
+    <ScrollArea
+      {...stylex.props(styles.tableWrapper)}
       aria-label={`${label} reference`}
+      clampContentMinWidth={false}
+      overscrollContain
     >
       <table {...stylex.props(styles.table)}>
         <thead>
@@ -73,7 +76,7 @@ function PropertiesTable({
           ))}
         </tbody>
       </table>
-    </KeyboardScrollArea>
+    </ScrollArea>
   )
 }
 
@@ -258,7 +261,6 @@ const styles = stylex.create({
     },
   },
   tableWrapper: {
-    overflowX: "auto",
     marginBlock: "1rem",
     borderColor: tokens["--border"],
     borderStyle: "solid",

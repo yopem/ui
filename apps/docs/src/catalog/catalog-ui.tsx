@@ -1,12 +1,13 @@
 "use client"
 
+import { ScrollArea } from "@registry/components/ui/scroll-area"
 import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import { Suspense } from "react"
 
 import type { CatalogDemo } from "./components"
 
-import { CopyableCode, KeyboardScrollArea } from "./code-block"
+import { CopyableCode } from "./code-block"
 import { catalogStyles } from "./docs-styles"
 
 const exampleHelpers = Object.entries(
@@ -44,14 +45,18 @@ export function DemoPanel({
             {examples.length > 1 ? (
               <h4 {...stylex.props(localStyles.value)}>{example.label}</h4>
             ) : null}
-            <KeyboardScrollArea
-              {...stylex.props(catalogStyles.preview, localStyles.focus)}
+            <ScrollArea
+              {...stylex.props(catalogStyles.preview)}
               aria-label={`${exampleName} live preview`}
+              clampContentMinWidth={false}
+              overscrollContain
             >
-              <Suspense fallback={null}>
-                <LazyDemo />
-              </Suspense>
-            </KeyboardScrollArea>
+              <div {...stylex.props(catalogStyles.previewContent)}>
+                <Suspense fallback={null}>
+                  <LazyDemo />
+                </Suspense>
+              </div>
+            </ScrollArea>
             <CopyableCode
               code={example.source}
               title={`${exampleName} example`}
@@ -80,14 +85,6 @@ const localStyles = stylex.create({
     fontWeight: 600,
     marginBlock: "0 0.75rem",
     scrollMarginBlockStart: "6rem",
-  },
-  focus: {
-    ":focus-visible": {
-      outlineColor: tokens["--ring"],
-      outlineStyle: "solid",
-      outlineWidth: 2,
-      outlineOffset: -2,
-    },
   },
   value: {
     color: tokens["--muted-foreground"],

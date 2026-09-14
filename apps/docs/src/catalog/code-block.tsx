@@ -1,5 +1,4 @@
-import type { ComponentProps } from "react"
-
+import { ScrollArea } from "@registry/components/ui/scroll-area"
 import { themeMarker, tokens } from "@registry/styles/tokens.stylex"
 import astro from "@shikijs/langs/astro"
 import css from "@shikijs/langs/css"
@@ -55,36 +54,6 @@ function highlightCode(code: string, title: string) {
   })
 }
 
-// Only overflowing regions need a tab stop. Observe content too: details and
-// lazy demos can change scroll dimensions without resizing the viewport.
-export function KeyboardScrollArea({
-  children,
-  ...props
-}: Omit<ComponentProps<"section">, "style" | "tabIndex" | "ref">) {
-  return (
-    <section
-      {...props}
-      ref={(element) => {
-        if (!element) return
-        const updateTabStop = () => {
-          element.tabIndex =
-            element.scrollHeight > element.clientHeight ||
-            element.scrollWidth > element.clientWidth
-              ? 0
-              : -1
-        }
-        const observer = new ResizeObserver(updateTabStop)
-        observer.observe(element)
-        for (const child of element.children) observer.observe(child)
-        updateTabStop()
-        return () => observer.disconnect()
-      }}
-    >
-      {children}
-    </section>
-  )
-}
-
 export function CopyableCode({
   code,
   title = "Code",
@@ -109,11 +78,17 @@ export function CopyableCode({
           {isCopied ? "Copied" : "Copy"}
         </button>
       </div>
-      <KeyboardScrollArea
-        {...stylex.props(styles.pre, styles.code, styles.focus)}
+      <ScrollArea
+        {...stylex.props(styles.pre, styles.code)}
         aria-label={title}
-        dangerouslySetInnerHTML={{ __html: highlightedCode }}
-      />
+        clampContentMinWidth={false}
+        overscrollContain
+      >
+        <div
+          {...stylex.props(styles.codeContent)}
+          dangerouslySetInnerHTML={{ __html: highlightedCode }}
+        />
+      </ScrollArea>
       <output
         {...stylex.props(styles.status, Boolean(copyError) && styles.error)}
       >
@@ -175,13 +150,16 @@ const styles = stylex.create({
   },
   pre: {
     margin: 0,
-    padding: "1rem",
-    overflow: "auto",
     maxBlockSize: "36rem",
     fontSize: "0.8125rem",
     lineHeight: 1.65,
     tabSize: 2,
     whiteSpace: "pre",
+  },
+  codeContent: {
+    inlineSize: "max-content",
+    minInlineSize: "100%",
+    padding: "1rem",
   },
   code: {
     colorScheme: {

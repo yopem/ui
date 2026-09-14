@@ -1,5 +1,6 @@
 import type { ComponentProps, ReactNode } from "react"
 
+import { ScrollArea } from "@registry/components/ui/scroll-area"
 import { stylexProps } from "@registry/lib/stylex"
 import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
@@ -52,7 +53,6 @@ const styles = stylex.create({
     insetBlockStart: "6rem",
     alignSelf: "start",
     maxBlockSize: "calc(100dvh - 8rem)",
-    overflowY: "auto",
     fontSize: "0.8125rem",
   },
   tocTitle: { fontWeight: 600, marginBlock: "0 1rem" },
@@ -99,24 +99,31 @@ export function DocsPage({
     >
       <article {...stylex.props(styles.article)}>{children}</article>
       {toc.length > 0 ? (
-        <nav aria-label="On this page" {...stylex.props(styles.toc)}>
-          <p {...stylex.props(styles.tocTitle)}>On this page</p>
-          <ul {...stylex.props(styles.tocList)}>
-            {toc.map((item) => (
-              <li key={item.url}>
-                <a
-                  href={item.url}
-                  {...stylex.props(
-                    styles.tocLink,
-                    item.depth > 2 && styles.nested,
-                  )}
-                >
-                  {item.title}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </nav>
+        <ScrollArea
+          aria-label="On this page"
+          overscrollContain
+          scrollFade
+          xstyle={styles.toc}
+        >
+          <nav aria-label="On this page">
+            <p {...stylex.props(styles.tocTitle)}>On this page</p>
+            <ul {...stylex.props(styles.tocList)}>
+              {toc.map((item) => (
+                <li key={item.url}>
+                  <a
+                    href={item.url}
+                    {...stylex.props(
+                      styles.tocLink,
+                      item.depth > 2 && styles.nested,
+                    )}
+                  >
+                    {item.title}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        </ScrollArea>
       ) : null}
     </div>
   )

@@ -238,17 +238,19 @@ export const catalogStyles = stylex.create({
     },
   },
   preview: {
-    alignItems: "center",
     backgroundColor: tokens["--background"],
     borderColor: tokens["--border"],
     borderRadius: tokens["--radius-lg"],
     borderStyle: "solid",
     borderWidth: 1,
+    minBlockSize: "12rem",
+  },
+  previewContent: {
+    alignItems: "center",
     display: "flex",
+    gap: "1rem",
     justifyContent: "center",
     minBlockSize: "12rem",
-    gap: "1rem",
-    overflow: "auto",
     padding: "1.5rem",
   },
   search: {
