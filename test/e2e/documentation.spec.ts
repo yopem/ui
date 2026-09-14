@@ -249,6 +249,24 @@ test("main document scrolls normally and restores position on back navigation", 
     .toBeLessThanOrEqual(saved + 10)
 })
 
+test("desktop table of contents stays fixed and tracks the section", async ({
+  page,
+}) => {
+  test.skip((page.viewportSize()?.width ?? 0) < 1280, "Desktop navigation only")
+  await page.goto("/components/accordion")
+  const contents = page.getByRole("complementary", { name: "On this page" })
+  const examples = contents.getByRole("link", { name: "Examples", exact: true })
+  await expect(contents).toBeVisible()
+
+  await examples.click()
+  await expect(examples).toHaveAttribute("aria-current", "location")
+  const fixedTop = (await contents.boundingBox())?.y
+  await page.mouse.wheel(0, 300)
+  await expect
+    .poll(async () => (await contents.boundingBox())?.y)
+    .toBeCloseTo(fixedTop ?? 0, 0)
+})
+
 test("setup guide explains compiler and shared files", async ({ page }) => {
   await page.goto("/docs/installation")
   await expect(
