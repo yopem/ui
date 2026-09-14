@@ -22,6 +22,7 @@ const config = defineConfig(({ command, mode }) => {
         },
         dev: isStyleXDevelopment,
         devMode: isStyleXDevelopment ? "full" : "off",
+        devPersistToDisk: isStyleXDevelopment,
         runtimeInjection: false,
         treeshakeCompensation: true,
         unstable_moduleResolution: { type: "commonJS" },
