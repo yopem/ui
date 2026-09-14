@@ -1,10 +1,59 @@
 import type { ComponentProps } from "react"
 
-import { tokens } from "@registry/styles/tokens.stylex"
+import { themeMarker, tokens } from "@registry/styles/tokens.stylex"
+import astro from "@shikijs/langs/astro"
+import css from "@shikijs/langs/css"
+import javascript from "@shikijs/langs/javascript"
+import json from "@shikijs/langs/json"
+import shellscript from "@shikijs/langs/shellscript"
+import tsx from "@shikijs/langs/tsx"
+import typescript from "@shikijs/langs/typescript"
+import githubDark from "@shikijs/themes/github-dark"
+import githubLight from "@shikijs/themes/github-light"
 import * as stylex from "@stylexjs/stylex"
 import { useHydrated } from "@tanstack/react-router"
+import { createHighlighterCoreSync } from "shiki/core"
+import { createJavaScriptRegexEngine } from "shiki/engine/javascript"
 
 import { useCopyToClipboard } from "@/hooks/use-copy-to-clipboard"
+
+const highlighter = createHighlighterCoreSync({
+  engine: createJavaScriptRegexEngine(),
+  langs: [astro, css, javascript, json, shellscript, tsx, typescript],
+  themes: [githubDark, githubLight],
+})
+
+function getCodeLanguage(title: string) {
+  if (/\.astro\b/i.test(title)) return "astro"
+  if (/\.css\b/i.test(title)) return "css"
+  if (/\.json\b/i.test(title)) return "json"
+  if (/\.(?:c|m)?js\b/i.test(title)) return "javascript"
+  if (/\.ts\b/i.test(title) || /(?:return type|signature)$/i.test(title))
+    return "typescript"
+  if (/^install\b/i.test(title)) return "shellscript"
+  return "tsx"
+}
+
+function highlightCode(code: string, title: string) {
+  return highlighter.codeToHtml(code, {
+    defaultColor: "light-dark()",
+    lang: getCodeLanguage(title),
+    themes: { dark: "github-dark", light: "github-light" },
+    transformers: [
+      {
+        code(node) {
+          node.properties.style = "font:inherit"
+        },
+        pre(node) {
+          delete node.properties.tabindex
+          delete node.properties.tabIndex
+          node.properties.style =
+            "margin:0;font:inherit;background:transparent;color:inherit"
+        },
+      },
+    ],
+  })
+}
 
 // Only overflowing regions need a tab stop. Observe content too: details and
 // lazy demos can change scroll dimensions without resizing the viewport.
@@ -45,6 +94,7 @@ export function CopyableCode({
 }) {
   const hydrated = useHydrated()
   const { copyToClipboard, copyError, isCopied } = useCopyToClipboard()
+  const highlightedCode = highlightCode(code, title)
   return (
     <div {...stylex.props(styles.root)}>
       <div {...stylex.props(styles.header)}>
@@ -60,13 +110,10 @@ export function CopyableCode({
         </button>
       </div>
       <KeyboardScrollArea
-        {...stylex.props(styles.pre, styles.focus)}
+        {...stylex.props(styles.pre, styles.code, styles.focus)}
         aria-label={title}
-      >
-        <pre {...stylex.props(styles.text)}>
-          <code {...stylex.props(styles.code)}>{code}</code>
-        </pre>
-      </KeyboardScrollArea>
+        dangerouslySetInnerHTML={{ __html: highlightedCode }}
+      />
       <output
         {...stylex.props(styles.status, Boolean(copyError) && styles.error)}
       >
@@ -136,8 +183,13 @@ const styles = stylex.create({
     tabSize: 2,
     whiteSpace: "pre",
   },
-  text: { margin: 0, font: "inherit" },
-  code: { fontFamily: tokens["--font-mono"] },
+  code: {
+    colorScheme: {
+      default: "light",
+      [stylex.when.ancestor('[data-theme="dark"]', themeMarker)]: "dark",
+    },
+    fontFamily: tokens["--font-mono"],
+  },
   status: {
     display: "block",
     paddingInline: "1rem",

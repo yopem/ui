@@ -1,4 +1,5 @@
 import "@fontsource-variable/figtree"
+import "@fontsource-variable/jetbrains-mono"
 import { ToastProvider } from "@registry/components/ui/toast"
 import "@registry/styles/styles.css"
 import { getRootThemeProps, ThemeScript } from "@registry/theme/theme"

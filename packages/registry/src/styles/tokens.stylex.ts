@@ -28,7 +28,7 @@ export const lightValues = {
   "--destructive-foreground": "oklch(50.5% 0.213 27.518)",
   "--font-heading": '"Figtree Variable", Figtree, sans-serif',
   "--font-mono":
-    'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
+    '"JetBrains Mono Variable", "JetBrains Mono", ui-monospace, monospace',
   "--font-sans": '"Figtree Variable", Figtree, sans-serif',
   "--foreground": "oklch(26.9% 0 none)",
   "--info": "oklch(62.3% 0.214 259.815)",
