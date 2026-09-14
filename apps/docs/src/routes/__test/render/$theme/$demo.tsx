@@ -18,7 +18,7 @@ import {
 export const Route = createFileRoute("/__test/render/$theme/$demo")({
   ssr: false,
   beforeLoad: ({ params }) => {
-    if (!__YOPEM_TEST_HARNESS__) throw notFound()
+    if (import.meta.env.MODE !== "test") throw notFound()
     if (params.theme !== "dark" && params.theme !== "light") throw notFound()
     if (!findDemoModule(stylexDemoModules, params.demo)) throw notFound()
   },

@@ -20,7 +20,7 @@ export default defineConfig({
   webServer: {
     command: process.env.PLAYWRIGHT_PRODUCTION
       ? `PORT=${port} bun run start`
-      : `bun run --cwd apps/docs dev -- --port ${port}`,
+      : `bun run --cwd apps/docs dev -- --mode test --port ${port}`,
     reuseExistingServer: !process.env.CI,
     timeout: 120_000,
     url: `http://127.0.0.1:${port}/components`,

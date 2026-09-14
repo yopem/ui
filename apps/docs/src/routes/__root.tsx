@@ -5,6 +5,7 @@ import { ThemeProvider } from "@registry/theme/theme-provider"
 import { TanStackDevtools } from "@tanstack/react-devtools"
 import { HeadContent, Scripts, createRootRoute } from "@tanstack/react-router"
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools"
+import { useEffect } from "react"
 
 export const Route = createRootRoute({
   head: () => ({
@@ -22,6 +23,8 @@ export const Route = createRootRoute({
 })
 
 function RootDocument({ children }: { children: React.ReactNode }) {
+  const isTestMode = import.meta.env.MODE === "test"
+
   return (
     <html
       {...getRootThemeProps("light")}
@@ -31,17 +34,15 @@ function RootDocument({ children }: { children: React.ReactNode }) {
     >
       <head>
         <ThemeScript />
-        {__YOPEM_TEST_HARNESS__ ? (
-          <>
-            <link href="/virtual:stylex.css" rel="stylesheet" />
-            <script src="/@id/virtual:stylex:runtime" type="module" />
-          </>
+        {isTestMode ? (
+          <link href="/virtual:stylex.css" rel="stylesheet" />
         ) : null}
         <HeadContent />
       </head>
       <body>
         <ThemeProvider>{children}</ThemeProvider>
-        {import.meta.env.DEV && !__YOPEM_TEST_HARNESS__ ? (
+        {isTestMode ? <StyleXDevelopmentRuntime /> : null}
+        {import.meta.env.DEV && !isTestMode ? (
           <TanStackDevtools
             config={{ position: "bottom-right" }}
             plugins={[
@@ -56,4 +57,16 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       </body>
     </html>
   )
+}
+
+function StyleXDevelopmentRuntime() {
+  useEffect(() => {
+    const script = document.createElement("script")
+    script.src = "/@id/virtual:stylex:runtime"
+    script.type = "module"
+    document.head.append(script)
+    return () => script.remove()
+  }, [])
+
+  return null
 }

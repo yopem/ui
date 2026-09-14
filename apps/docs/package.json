@@ -6,10 +6,10 @@
     "@/*": "./src/*"
   },
   "scripts": {
-    "dev": "bun run --cwd ../../packages/registry docs:generate && VITE_YOPEM_TEST_HARNESS=1 vite dev --host 127.0.0.1 --port 3000",
+    "dev": "bun run --cwd ../../packages/registry docs:generate && vite dev --host 127.0.0.1 --port 3000",
     "generate-routes": "tsr generate",
     "build": "vite build",
-    "build:test": "VITE_YOPEM_TEST_HARNESS=1 vite build --logLevel warn",
+    "build:test": "vite build --mode test --logLevel warn",
     "start": "node .output/server/index.mjs",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit"
