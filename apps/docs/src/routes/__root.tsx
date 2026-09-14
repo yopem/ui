@@ -7,7 +7,6 @@ import { ThemeProvider } from "@registry/theme/theme-provider"
 import { TanStackDevtools } from "@tanstack/react-devtools"
 import { HeadContent, Scripts, createRootRoute } from "@tanstack/react-router"
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools"
-import { useEffect } from "react"
 
 export const Route = createRootRoute({
   head: () => ({
@@ -38,7 +37,10 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       <head>
         <ThemeScript />
         {isStyleXDevelopment ? (
-          <link href="/virtual:stylex.css" rel="stylesheet" />
+          <>
+            <link href="/virtual:stylex.css" rel="stylesheet" />
+            <script src="/@id/virtual:stylex:runtime" type="module" />
+          </>
         ) : null}
         <HeadContent />
       </head>
@@ -46,7 +48,6 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <ThemeProvider>
           <ToastProvider>{children}</ToastProvider>
         </ThemeProvider>
-        {isStyleXDevelopment ? <StyleXDevelopmentRuntime /> : null}
         {import.meta.env.DEV && !isTestMode ? (
           <TanStackDevtools
             config={{ position: "bottom-right" }}
@@ -62,16 +63,4 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       </body>
     </html>
   )
-}
-
-function StyleXDevelopmentRuntime() {
-  useEffect(() => {
-    const script = document.createElement("script")
-    script.src = "/@id/virtual:stylex:runtime"
-    script.type = "module"
-    document.head.append(script)
-    return () => script.remove()
-  }, [])
-
-  return null
 }
