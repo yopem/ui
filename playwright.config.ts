@@ -10,7 +10,7 @@ export default defineConfig({
   reporter: process.env.CI ? "github" : "list",
   testDir: "tests/e2e",
   use: {
-    baseURL: `http://127.0.0.1:${port}`,
+    baseURL: `http://localhost:${port}`,
     screenshot: "only-on-failure",
     trace: "retain-on-failure",
   },
@@ -20,7 +20,7 @@ export default defineConfig({
       : `bun run --cwd apps/docs dev -- --mode test --port ${port}`,
     reuseExistingServer: !process.env.CI,
     timeout: 120_000,
-    url: `http://127.0.0.1:${port}/components`,
+    url: `http://localhost:${port}/components`,
   },
   projects: [
     {

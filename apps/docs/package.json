@@ -6,7 +6,7 @@
     "@/*": "./src/*"
   },
   "scripts": {
-    "dev": "(test -f ../../packages/registry/src/docs.generated.json || bun run --cwd ../../packages/registry docs:generate) && vite dev --host 127.0.0.1 --port 3100",
+    "dev": "(test -f ../../packages/registry/src/docs.generated.json || bun run --cwd ../../packages/registry docs:generate) && vite dev --port 3100",
     "generate-routes": "tsr generate",
     "build": "vite build",
     "build:test": "vite build --mode test --logLevel warn",
