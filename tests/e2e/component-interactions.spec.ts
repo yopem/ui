@@ -14,6 +14,10 @@ test("dialog opens from keyboard, closes with Escape, and restores focus", async
   await page.keyboard.press("Enter")
   const dialog = page.getByRole("dialog", { name: "Edit profile" })
   await expect(dialog).toBeVisible()
+  await expect(page.getByRole("button", { name: "Close" })).toHaveCSS(
+    "position",
+    "absolute",
+  )
   await expect(dialog.locator(":focus")).toBeVisible()
 
   await page.keyboard.press("Escape")
