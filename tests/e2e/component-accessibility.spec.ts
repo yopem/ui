@@ -33,7 +33,7 @@ for (const theme of ["light", "dark"] as const) {
     const violations: { demo: string; help: string; id: string }[] = []
     for (const demo of demos) {
       await page.goto(`/render/${theme}/${demo}`)
-      await page.locator("[data-parity-root]").waitFor()
+      await page.locator("[data-demo-root]").waitFor()
       await page.waitForFunction(
         () =>
           document.fonts.status === "loaded" &&
@@ -45,7 +45,7 @@ for (const theme of ["light", "dark"] as const) {
             0) > 0,
       )
       const result = await new AxeBuilder({ page })
-        .include("[data-parity-root]")
+        .include("[data-demo-root]")
         .analyze()
       violations.push(
         ...result.violations.map(({ help, id }) => ({ demo, help, id })),

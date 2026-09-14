@@ -6,10 +6,7 @@ export default defineConfig({
   expect: { timeout: 10_000 },
   fullyParallel: true,
   outputDir: `test-results/${port}`,
-  grepInvert:
-    process.env.FULL_PARITY || process.env.FULL_A11Y
-      ? undefined
-      : /@parity|@full-a11y/,
+  grepInvert: process.env.FULL_A11Y ? undefined : /@full-a11y/,
   reporter: process.env.CI ? "github" : "list",
   testDir: "tests/e2e",
   use: {
