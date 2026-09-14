@@ -11,6 +11,7 @@ import githubDark from "@shikijs/themes/github-dark"
 import githubLight from "@shikijs/themes/github-light"
 import * as stylex from "@stylexjs/stylex"
 import { useHydrated } from "@tanstack/react-router"
+import { CheckIcon, CopyIcon } from "lucide-react"
 import { createHighlighterCoreSync } from "shiki/core"
 import { createJavaScriptRegexEngine } from "shiki/engine/javascript"
 
@@ -66,18 +67,22 @@ export function CopyableCode({
   const highlightedCode = highlightCode(code, title)
   return (
     <div {...stylex.props(styles.root)}>
-      <div {...stylex.props(styles.header)}>
-        <code {...stylex.props(styles.title)}>{title}</code>
-        <button
-          {...stylex.props(styles.copy, styles.focus)}
-          type="button"
-          disabled={!hydrated}
-          aria-label={`Copy ${title}`}
-          onClick={() => void copyToClipboard(code)}
-        >
-          {isCopied ? "Copied" : "Copy"}
-        </button>
-      </div>
+      <button
+        {...stylex.props(styles.copy, styles.focus)}
+        type="button"
+        disabled={!hydrated}
+        aria-label={isCopied ? `${title} copied` : `Copy ${title}`}
+        onClick={() => void copyToClipboard(code)}
+      >
+        {isCopied ? (
+          <CheckIcon
+            {...stylex.props(styles.icon, styles.copiedIcon)}
+            aria-hidden="true"
+          />
+        ) : (
+          <CopyIcon {...stylex.props(styles.icon)} aria-hidden="true" />
+        )}
+      </button>
       <ScrollArea
         {...stylex.props(styles.pre, styles.code)}
         aria-label={title}
@@ -92,11 +97,21 @@ export function CopyableCode({
       <output
         {...stylex.props(styles.status, Boolean(copyError) && styles.error)}
       >
-        {copyError ?? (isCopied ? "Copied to clipboard." : "")}
+        {copyError ?? ""}
       </output>
     </div>
   )
 }
+
+const copied = stylex.keyframes({
+  from: { opacity: 0.5, transform: "scale(0.9)" },
+  to: { opacity: 1, transform: "scale(1)" },
+})
+
+const copiedReduced = stylex.keyframes({
+  from: { opacity: 0.5 },
+  to: { opacity: 1 },
+})
 
 const styles = stylex.create({
   root: {
@@ -109,36 +124,37 @@ const styles = stylex.create({
     marginBlock: "1.5rem",
     minInlineSize: 0,
     overflow: "hidden",
+    position: "relative",
   },
-  header: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "space-between",
-    gap: "1rem",
-    paddingBlock: "0.65rem",
-    paddingInline: "1rem",
-    backgroundColor: tokens["--muted"],
-    color: tokens["--foreground"],
-    fontSize: "0.75rem",
-  },
-  title: { fontFamily: tokens["--font-mono"], overflowWrap: "anywhere" },
   copy: {
+    alignItems: "center",
     backgroundColor: {
-      default: tokens["--background"],
+      default: "transparent",
       ":hover": tokens["--accent"],
     },
-    color: tokens["--foreground"],
+    blockSize: "2rem",
     borderColor: tokens["--border"],
     borderStyle: "solid",
     borderWidth: 1,
     borderRadius: tokens["--radius-sm"],
-    paddingBlock: "0.4rem",
-    paddingInline: "0.65rem",
-    minBlockSize: "2rem",
-    flexShrink: 0,
-    font: "inherit",
+    color: tokens["--foreground"],
     cursor: { default: "pointer", ":disabled": "wait" },
+    display: "flex",
+    inlineSize: "2rem",
+    insetBlockStart: "0.75rem",
+    insetInlineEnd: "0.75rem",
+    justifyContent: "center",
     opacity: { default: 1, ":disabled": 0.5 },
+    padding: 0,
+    position: "absolute",
+    zIndex: 1,
+  },
+  icon: { blockSize: "1rem", inlineSize: "1rem" },
+  copiedIcon: {
+    animation: {
+      default: `${copied} 150ms cubic-bezier(0.23, 1, 0.32, 1)`,
+      "@media (prefers-reduced-motion: reduce)": `${copiedReduced} 150ms cubic-bezier(0.23, 1, 0.32, 1)`,
+    },
   },
   focus: {
     ":focus-visible": {
@@ -159,7 +175,9 @@ const styles = stylex.create({
   codeContent: {
     inlineSize: "max-content",
     minInlineSize: "100%",
-    padding: "1rem",
+    paddingBlock: "1rem",
+    paddingInlineStart: "1rem",
+    paddingInlineEnd: "3.5rem",
   },
   code: {
     colorScheme: {
