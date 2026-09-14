@@ -49,8 +49,8 @@ export const Route = createFileRoute("/components/$name")({
 
 const toc = [
   { title: "Overview", url: "#overview", depth: 2 },
-  { title: "Examples", url: "#examples", depth: 2 },
   { title: "Installation", url: "#installation", depth: 2 },
+  { title: "Examples", url: "#examples", depth: 2 },
   { title: "Usage", url: "#usage", depth: 2 },
   { title: "API reference", url: "#api-reference", depth: 2 },
 ]
@@ -74,36 +74,6 @@ function ComponentPage() {
             Styles use local StyleX declarations and shared theme tokens. You
             can change the source without wrapping or replacing a package.
           </p>
-          <h2 {...stylex.props(docsStyles.h2)} id="examples">
-            Examples
-          </h2>
-          <p {...stylex.props(docsStyles.p)}>
-            Component-specific props and their available values. Each example
-            includes its source directly.
-          </p>
-          {data.examples.length ? (
-            <div {...stylex.props(catalogStyles.demoList)}>
-              {data.examples.map((group) => {
-                const examples = group.examples.flatMap((example) => {
-                  const demo = item.demos.find(
-                    (entry) => entry.name === example.name,
-                  )
-                  return demo ? [{ ...example, demo }] : []
-                })
-                return examples.length ? (
-                  <DemoPanel
-                    examples={examples}
-                    key={group.label}
-                    label={group.label}
-                  />
-                ) : null
-              })}
-            </div>
-          ) : (
-            <p {...stylex.props(docsStyles.p)}>
-              Use the composition in Usage below to start with {item.title}.
-            </p>
-          )}
           <h2 {...stylex.props(docsStyles.h2)} id="installation">
             Installation
           </h2>
@@ -155,6 +125,36 @@ function ComponentPage() {
               </details>
             ))}
           </div>
+          <h2 {...stylex.props(docsStyles.h2)} id="examples">
+            Examples
+          </h2>
+          <p {...stylex.props(docsStyles.p)}>
+            Component-specific props and their available values. Each example
+            includes its source directly.
+          </p>
+          {data.examples.length ? (
+            <div {...stylex.props(catalogStyles.demoList)}>
+              {data.examples.map((group) => {
+                const examples = group.examples.flatMap((example) => {
+                  const demo = item.demos.find(
+                    (entry) => entry.name === example.name,
+                  )
+                  return demo ? [{ ...example, demo }] : []
+                })
+                return examples.length ? (
+                  <DemoPanel
+                    examples={examples}
+                    key={group.label}
+                    label={group.label}
+                  />
+                ) : null
+              })}
+            </div>
+          ) : (
+            <p {...stylex.props(docsStyles.p)}>
+              Use the composition in Usage below to start with {item.title}.
+            </p>
+          )}
           <h2 {...stylex.props(docsStyles.h2)} id="usage">
             Usage
           </h2>
