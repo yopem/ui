@@ -1,4 +1,8 @@
-import stylex from "@stylexjs/unplugin"
+import type { Options as StyleXOptions } from "@stylexjs/babel-plugin"
+
+import babel from "@rolldown/plugin-babel"
+// @ts-expect-error @stylexjs/postcss-plugin does not publish declarations
+import styleXPostcss from "@stylexjs/postcss-plugin"
 import { devtools } from "@tanstack/devtools-vite"
 import { tanstackStart } from "@tanstack/react-start/plugin/vite"
 import viteReact from "@vitejs/plugin-react"
@@ -6,34 +10,46 @@ import { nitro } from "nitro/vite"
 import { resolve } from "node:path"
 import { defineConfig } from "vite"
 
-const config = defineConfig(({ command, mode }) => {
-  const isStyleXDevelopment = command === "serve" || mode === "test"
+const root = resolve(import.meta.dirname, "../..")
+const styleXOptions = {
+  aliases: {
+    "@registry/*": [resolve(root, "packages/registry/src/*")],
+  },
+  runtimeInjection: false,
+  treeshakeCompensation: true,
+  unstable_moduleResolution: { rootDir: root, type: "commonJS" },
+} satisfies Partial<StyleXOptions>
 
-  return {
-    // Shared CSS avoids mismatched stylesheet asset references in SSR and client builds.
-    build: { cssCodeSplit: false },
-    resolve: { tsconfigPaths: true },
-    plugins: [
-      stylex.vite({
-        aliases: {
-          "@registry/*": [
-            resolve(import.meta.dirname, "../../packages/registry/src/*"),
+const config = defineConfig({
+  build: { cssCodeSplit: false },
+  css: {
+    postcss: {
+      plugins: [
+        styleXPostcss({
+          babelConfig: {
+            babelrc: false,
+            configFile: false,
+            parserOpts: { plugins: ["typescript", "jsx"] },
+            plugins: [["@stylexjs/babel-plugin", styleXOptions]],
+          },
+          cwd: import.meta.dirname,
+          include: [
+            "src/**/*.{js,jsx,ts,tsx}",
+            "../../packages/registry/src/**/*.{js,jsx,ts,tsx}",
           ],
-        },
-        dev: isStyleXDevelopment,
-        devMode: isStyleXDevelopment ? "full" : "off",
-        devPersistToDisk: isStyleXDevelopment,
-        runtimeInjection: false,
-        treeshakeCompensation: true,
-        unstable_moduleResolution: { type: "commonJS" },
-        useCSSLayers: true,
-      }),
-      devtools(),
-      nitro({ rollupConfig: { external: [/^@sentry\//] } }),
-      tanstackStart(),
-      viteReact(),
-    ],
-  }
+          useCSSLayers: true,
+        }),
+      ],
+    },
+  },
+  resolve: { tsconfigPaths: true },
+  plugins: [
+    devtools({ injectSource: { enabled: false } }),
+    babel({ plugins: [["@stylexjs/babel-plugin", styleXOptions]] }),
+    nitro({ rollupConfig: { external: [/^@sentry\//] } }),
+    tanstackStart(),
+    viteReact(),
+  ],
 })
 
 export default config

@@ -39,11 +39,6 @@ for (const theme of ["light", "dark"] as const) {
           document.fonts.status === "loaded" &&
           !document.body.textContent?.includes("Loading demo…"),
       )
-      await page.waitForFunction(
-        () =>
-          (document.querySelector("#__stylex_virtual__")?.textContent?.length ??
-            0) > 0,
-      )
       const result = await new AxeBuilder({ page })
         .include("[data-demo-root]")
         .analyze()

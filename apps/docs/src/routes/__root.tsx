@@ -1,7 +1,8 @@
 import "@fontsource-variable/figtree"
 import "@fontsource-variable/jetbrains-mono"
 import { ToastProvider } from "@registry/components/ui/toast"
-import "@registry/styles/styles.css"
+
+import "@/styles.css"
 import { getRootThemeProps, ThemeScript } from "@registry/theme/theme"
 import { ThemeProvider } from "@registry/theme/theme-provider"
 import { TanStackDevtools } from "@tanstack/react-devtools"
@@ -25,7 +26,6 @@ export const Route = createRootRoute({
 
 function RootDocument({ children }: { children: React.ReactNode }) {
   const isTestMode = import.meta.env.MODE === "test"
-  const isStyleXDevelopment = import.meta.env.DEV || isTestMode
 
   return (
     <html
@@ -36,12 +36,6 @@ function RootDocument({ children }: { children: React.ReactNode }) {
     >
       <head>
         <ThemeScript />
-        {isStyleXDevelopment ? (
-          <>
-            <link href="/virtual:stylex.css" rel="stylesheet" />
-            <script src="/@id/virtual:stylex:runtime" type="module" />
-          </>
-        ) : null}
         <HeadContent />
       </head>
       <body>

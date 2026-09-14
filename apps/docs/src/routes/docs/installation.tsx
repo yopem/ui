@@ -70,25 +70,44 @@ document.documentElement.dataset.theme = "light"
 
 createRoot(document.getElementById("root")!).render(<App />)`
 
-const tanstackConfig = `import stylex from "@stylexjs/unplugin"
+const tanstackDependencies = `npm install --save-dev @babel/core @rolldown/plugin-babel @stylexjs/babel-plugin@^0.19.0 @stylexjs/postcss-plugin@^0.19.0`
+
+const tanstackConfig = `import babel from "@rolldown/plugin-babel"
+// @ts-expect-error @stylexjs/postcss-plugin does not publish declarations
+import stylexPostcss from "@stylexjs/postcss-plugin"
 import { tanstackStart } from "@tanstack/react-start/plugin/vite"
 import react from "@vitejs/plugin-react"
 import { fileURLToPath } from "node:url"
 import { defineConfig } from "vite"
 
+const root = fileURLToPath(new URL(".", import.meta.url))
 const source = fileURLToPath(new URL("./src", import.meta.url))
+const stylexOptions = {
+  aliases: { "@/*": [source + "/*"] },
+  runtimeInjection: false,
+  treeshakeCompensation: true,
+  unstable_moduleResolution: { rootDir: root, type: "commonJS" },
+}
 
 export default defineConfig({
   build: { cssCodeSplit: false },
+  css: {
+    postcss: {
+      plugins: [stylexPostcss({
+        babelConfig: {
+          babelrc: false,
+          configFile: false,
+          parserOpts: { plugins: ["typescript", "jsx"] },
+          plugins: [["@stylexjs/babel-plugin", stylexOptions]],
+        },
+        include: ["src/**/*.{js,jsx,ts,tsx}"],
+        useCSSLayers: true,
+      })],
+    },
+  },
   resolve: { alias: { "@": source } },
   plugins: [
-    stylex.vite({
-      aliases: { "@/*": [source + "/*"] },
-      runtimeInjection: false,
-      treeshakeCompensation: true,
-      unstable_moduleResolution: { type: "commonJS" },
-      useCSSLayers: true,
-    }),
+    babel({ plugins: [["@stylexjs/babel-plugin", stylexOptions]] }),
     tanstackStart(),
     react(),
   ],
@@ -281,12 +300,19 @@ function Installation() {
             TanStack Start
           </h2>
           <p {...stylex.props(docsStyles.p)}>
-            Install the Vite plugin, put StyleX before TanStack Start and React,
-            and keep one CSS asset for server and client builds. Merge existing
-            deployment and devtools plugins into this config.
+            Configure Babel transformation and PostCSS extraction in Vite. This
+            uses the normal root stylesheet in development and production, with
+            no virtual stylesheet or runtime injection.
           </p>
-          <CopyableCode code={viteDependencies} title="Install Vite plugin" />
+          <CopyableCode
+            code={tanstackDependencies}
+            title="Install TanStack Start build plugins"
+          />
           <CopyableCode code={tanstackConfig} title="vite.config.ts" />
+          <p {...stylex.props(docsStyles.p)}>
+            Append the extraction directive to src/styles/styles.css.
+          </p>
+          <CopyableCode code="@stylex;" title="src/styles/styles.css, append" />
           <CopyableCode code={tanstackRoot} title="src/routes/__root.tsx" />
           <h2 {...stylex.props(docsStyles.h2)} id="nextjs">
             Next.js
