@@ -1,5 +1,16 @@
 import { expect, test } from "@playwright/test"
 
+test("unknown routes show the docs not found page", async ({ page }) => {
+  const response = await page.goto("/missing-page")
+  expect(response?.status()).toBe(404)
+  await expect(
+    page.getByRole("heading", { name: "Page not found", level: 1 }),
+  ).toBeVisible()
+  await expect(
+    page.getByRole("link", { name: "Return to documentation home" }),
+  ).toBeVisible()
+})
+
 test("minimal setup and StyleX customization are documented", async ({
   page,
 }) => {
