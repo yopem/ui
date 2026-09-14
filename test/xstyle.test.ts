@@ -32,7 +32,7 @@ function evaluate(
   bindings: Record<string, unknown> = {},
 ) {
   const compiled = {
-    code: execFileSync("node", [resolve(root, "tests/stylex-compile.mjs")], {
+    code: execFileSync("node", [resolve(root, "test/stylex-compile.mjs")], {
       encoding: "utf8",
       input: JSON.stringify({
         source: transpiler.transformSync(
@@ -64,7 +64,7 @@ function evaluate(
 
 const overrides = evaluate(
   `import * as stylex from '@stylexjs/stylex'; export const overrides = stylex.create({ base: { color: 'red', opacity: 0.25 }, variant: { color: 'blue' }, button: { backgroundColor: 'tomato' }, dynamic: (value) => ({ opacity: value }) });`,
-  resolve(root, "tests/xstyle-fixture.tsx"),
+  resolve(root, "test/xstyle-fixture.tsx"),
   "overrides",
 )
 

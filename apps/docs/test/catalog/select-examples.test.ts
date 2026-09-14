@@ -1,6 +1,6 @@
 import { expect, test } from "bun:test"
 
-import { selectExamples } from "./select-examples"
+import { selectExamples } from "@/catalog/select-examples"
 
 test("selects shortest examples covering component props and values", () => {
   const examples = [

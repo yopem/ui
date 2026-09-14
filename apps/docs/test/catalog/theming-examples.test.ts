@@ -12,7 +12,7 @@ const plugin = compilerRequire("@stylexjs/babel-plugin")
 
 test("copyable theming examples compile with the installed StyleX transform", () => {
   const source = readFileSync(
-    resolve(import.meta.dir, "../routes/docs/theming.tsx"),
+    resolve(import.meta.dir, "../../src/routes/docs/theming.tsx"),
     "utf8",
   )
   const examples = Object.fromEntries(

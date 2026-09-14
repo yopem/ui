@@ -1,9 +1,9 @@
 import { sourceItems } from "@registry/items"
 import { expect, test } from "bun:test"
 
-import { compositionItems, getRequiredItems } from "./docs-data"
-import { getExampleDependencies } from "./example-dependencies"
-import { usageExamples } from "./usage"
+import { compositionItems, getRequiredItems } from "@/catalog/docs-data"
+import { getExampleDependencies } from "@/catalog/example-dependencies"
+import { usageExamples } from "@/catalog/usage"
 
 test("example dependencies distinguish local source from npm packages", () => {
   expect(

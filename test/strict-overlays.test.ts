@@ -30,7 +30,7 @@ const names = [
 const fixtures = JSON.parse(
   execFileSync(
     "node",
-    [resolve(root, "tests/strict-overlays-compiler.mjs"), ...names],
+    [resolve(root, "test/strict-overlays-compiler.mjs"), ...names],
     { encoding: "utf8" },
   ),
 ) as Record<string, { styles: Record<string, unknown>; css: string }>

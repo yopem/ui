@@ -37,7 +37,10 @@ Run `bun run lint && bun run fmt:check && bun run typecheck` after changes. Run 
   - `src/styles/styles.css` — reset, reduced motion and unavoidable upstream viewport rules.
   - `src/theme/` — ThemeProvider, theme root, theme script.
   - `src/build.ts` — generates `dist/`, then copies artifacts to `apps/docs/public/r` and `apps/docs/public/schema`.
-- `tests/` — release-readiness and Playwright tests.
+- `test/` — release-readiness and Playwright tests.
+
+Keep every test outside `src/` in a `test/` directory that mirrors its
+workspace's `src/` structure.
 
 Path aliases: `@registry/*` for registry source; `@/*` within docs. Generated registry artifacts are not source of truth.
 

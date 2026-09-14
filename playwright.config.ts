@@ -8,7 +8,7 @@ export default defineConfig({
   outputDir: `test-results/${port}`,
   grepInvert: process.env.FULL_A11Y ? undefined : /@full-a11y/,
   reporter: process.env.CI ? "github" : "list",
-  testDir: "tests/e2e",
+  testDir: "test/e2e",
   use: {
     baseURL: `http://localhost:${port}`,
     screenshot: "only-on-failure",
