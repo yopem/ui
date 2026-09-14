@@ -1,4 +1,4 @@
-import "@fontsource-variable/inter"
+import "@fontsource-variable/figtree"
 import "@registry/styles/styles.css"
 import { getRootThemeProps, ThemeScript } from "@registry/theme/theme"
 import { ThemeProvider } from "@registry/theme/theme-provider"

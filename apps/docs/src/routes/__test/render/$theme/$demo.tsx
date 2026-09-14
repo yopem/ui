@@ -90,7 +90,7 @@ const renderStyles = stylex.create({
     backgroundColor: "var(--background)",
     color: "var(--foreground)",
     display: "flex",
-    fontFamily: '"Inter Variable", "Inter", sans-serif',
+    fontFamily: '"Figtree Variable", Figtree, sans-serif',
     justifyContent: "center",
     lineHeight: 1.5,
     minBlockSize: "100vh",

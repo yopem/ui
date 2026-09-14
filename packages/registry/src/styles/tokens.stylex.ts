@@ -26,10 +26,10 @@ export const lightValues = {
   "--code-highlight": "color-mix(in oklab, #000 4%, transparent)",
   "--destructive": "oklch(63.7% 0.237 25.331)",
   "--destructive-foreground": "oklch(50.5% 0.213 27.518)",
-  "--font-heading": '"Inter Variable", "Inter", sans-serif',
+  "--font-heading": '"Figtree Variable", Figtree, sans-serif',
   "--font-mono":
     'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
-  "--font-sans": '"Inter Variable", "Inter", sans-serif',
+  "--font-sans": '"Figtree Variable", Figtree, sans-serif',
   "--foreground": "oklch(26.9% 0 none)",
   "--info": "oklch(62.3% 0.214 259.815)",
   "--info-foreground": "oklch(48.8% 0.243 264.376)",
