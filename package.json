@@ -25,11 +25,9 @@
     "@axe-core/playwright": "^4.11.1",
     "@playwright/test": "^1.58.2",
     "@types/node": "^26.5.1",
-    "@types/pngjs": "^6.0.5",
     "@yopem/typescript-config": "^0.2.2",
     "oxfmt": "^0.64.0",
     "oxlint": "^1.79.0",
-    "pngjs": "^7.0.0",
     "typescript": "^7.0.2"
   }
 }

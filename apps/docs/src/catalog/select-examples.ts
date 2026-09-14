@@ -13,7 +13,7 @@ export interface ExampleSource {
   source: string
 }
 
-export interface SelectedExample extends ExampleSource {
+interface SelectedExample extends ExampleSource {
   label: string
 }
 
