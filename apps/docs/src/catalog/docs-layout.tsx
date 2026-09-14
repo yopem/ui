@@ -15,7 +15,13 @@ import { tokens } from "@registry/styles/tokens.stylex"
 import { useTheme } from "@registry/theme/theme-provider"
 import * as stylex from "@stylexjs/stylex"
 import { Link, useLocation } from "@tanstack/react-router"
-import { MenuIcon, SearchIcon } from "lucide-react"
+import {
+  MenuIcon,
+  MonitorIcon,
+  MoonIcon,
+  SearchIcon,
+  SunIcon,
+} from "lucide-react"
 import { useEffect, useRef, useState, type ReactNode } from "react"
 
 import { catalog } from "./components"
@@ -146,30 +152,49 @@ const styles = stylex.create({
     fontWeight: 600,
   },
   theme: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "space-between",
-    gap: "1rem",
-    padding: "1rem 1.5rem",
+    borderWidth: 0,
     borderBlockStart: `1px solid ${tokens["--border"]}`,
-    color: tokens["--muted-foreground"],
-    fontSize: "0.8125rem",
+    margin: 0,
+    minInlineSize: 0,
+    padding: "0.5rem 1rem",
   },
-  select: {
-    backgroundColor: tokens["--background"],
-    color: tokens["--foreground"],
-    borderColor: tokens["--border"],
-    borderStyle: "solid",
-    borderWidth: 1,
+  themeOptions: {
+    backgroundColor: tokens["--muted"],
+    borderRadius: tokens["--radius-lg"],
+    display: "grid",
+    gap: "0.25rem",
+    gridTemplateColumns: "repeat(3, 1fr)",
+    inlineSize: "7rem",
+    marginInline: "auto",
+    padding: "0.1875rem",
+  },
+  themeOption: {
+    alignItems: "center",
+    backgroundColor: "transparent",
+    borderWidth: 0,
     borderRadius: tokens["--radius-md"],
-    padding: "0.5rem",
-    fontFamily: tokens["--font-sans"],
-    fontSize: "0.8125rem",
-    minBlockSize: "2.75rem",
+    color: tokens["--muted-foreground"],
+    cursor: "pointer",
+    display: "grid",
+    placeItems: "center",
+    minBlockSize: {
+      default: "2rem",
+      "@media (pointer: coarse)": "2.75rem",
+    },
+    padding: 0,
+    ":hover": {
+      color: tokens["--foreground"],
+    },
     ":focus-visible": {
       outline: `2px solid ${tokens["--ring"]}`,
-      outlineOffset: 2,
+      outlineOffset: 1,
     },
+  },
+  themeOptionActive: {
+    backgroundColor: tokens["--card"],
+    boxShadow: "0 1px 2px color-mix(in oklab, #000 12%, transparent)",
+    color: tokens["--foreground"],
+    fontWeight: 600,
   },
   main: { minInlineSize: 0, outline: "none" },
   skip: {
@@ -217,26 +242,34 @@ const styles = stylex.create({
   error: { color: tokens["--destructive"] },
 })
 
+const themeOptions = [
+  { icon: MonitorIcon, label: "Auto", value: "system" },
+  { icon: SunIcon, label: "Light", value: "light" },
+  { icon: MoonIcon, label: "Dark", value: "dark" },
+] as const
+
 function ThemeToggle() {
   const { theme, setTheme } = useTheme()
   return (
-    <label {...stylex.props(styles.theme)}>
-      Theme
-      <select
-        aria-label="Theme"
-        {...stylex.props(styles.select)}
-        value={theme}
-        onChange={(event) => {
-          const value = event.target.value
-          if (value === "light" || value === "dark" || value === "system")
-            setTheme(value)
-        }}
-      >
-        <option value="system">System</option>
-        <option value="light">Light</option>
-        <option value="dark">Dark</option>
-      </select>
-    </label>
+    <fieldset aria-label="Appearance" {...stylex.props(styles.theme)}>
+      <div {...stylex.props(styles.themeOptions)}>
+        {themeOptions.map(({ icon: Icon, label, value }) => (
+          <button
+            aria-label={label}
+            aria-pressed={theme === value}
+            key={value}
+            onClick={() => setTheme(value)}
+            type="button"
+            {...stylex.props(
+              styles.themeOption,
+              theme === value && styles.themeOptionActive,
+            )}
+          >
+            <Icon aria-hidden size={14} strokeWidth={1.75} />
+          </button>
+        ))}
+      </div>
+    </fieldset>
   )
 }
 
