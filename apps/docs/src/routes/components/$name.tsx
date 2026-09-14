@@ -1,6 +1,5 @@
 import * as stylex from "@stylexjs/stylex"
 import { Link, createFileRoute, notFound } from "@tanstack/react-router"
-import { Suspense } from "react"
 
 import { ApiReference } from "@/catalog/api-reference"
 import { DemoPanel, catalogStyles } from "@/catalog/catalog-ui"
@@ -49,8 +48,6 @@ function ComponentPage() {
   const { name } = Route.useParams()
   const item = getCatalogItem(name)
   if (!item) return <MissingComponent />
-  const Preview = item.demos[0]?.component
-
   return (
     <DocumentationLayout>
       <DocsPage toc={toc}>
@@ -68,32 +65,28 @@ function ComponentPage() {
           <h2 {...stylex.props(docsStyles.h2)} id="examples">
             Examples
           </h2>
-          {Preview ? (
-            <div {...stylex.props(docsStyles.preview)}>
-              <Suspense
-                fallback={
-                  <p {...stylex.props(docsStyles.p)}>Loading example…</p>
-                }
-              >
-                <Preview />
-              </Suspense>
-            </div>
-          ) : null}
           <p {...stylex.props(docsStyles.p)}>
-            Open an example to try it or copy its source. Examples use the same
-            StyleX components shown below.
+            Component-specific props and their available values. Each example
+            includes its source directly.
           </p>
-          {item.demos.length ? (
-            <details {...stylex.props(docsStyles.details)}>
-              <summary {...stylex.props(docsStyles.summary)}>
-                Browse all {item.demos.length} examples and source
-              </summary>
-              <div {...stylex.props(catalogStyles.demoList)}>
-                {item.demos.map((demo) => (
-                  <DemoPanel demo={demo} key={demo.name} />
-                ))}
-              </div>
-            </details>
+          {data.examples.length ? (
+            <div {...stylex.props(catalogStyles.demoList)}>
+              {data.examples.map((group) => {
+                const examples = group.examples.flatMap((example) => {
+                  const demo = item.demos.find(
+                    (entry) => entry.name === example.name,
+                  )
+                  return demo ? [{ ...example, demo }] : []
+                })
+                return examples.length ? (
+                  <DemoPanel
+                    examples={examples}
+                    key={group.label}
+                    label={group.label}
+                  />
+                ) : null
+              })}
+            </div>
           ) : (
             <p {...stylex.props(docsStyles.p)}>
               Use the composition in Usage below to start with {item.title}.
@@ -189,9 +182,8 @@ function ComponentPage() {
             API reference
           </h2>
           <p {...stylex.props(docsStyles.p)}>
-            Generated from the canonical TypeScript source and its dependency
-            types. Every exported part appears below, including inherited HTML
-            and Base UI props. Required marks a required property, not a
+            Generated from canonical TypeScript source. Only component and Base
+            UI props appear below. Required marks a required property, not a
             required component.
           </p>
           <ApiReference parts={data.api} />

@@ -84,7 +84,6 @@ function PartReference({
   part: ApiPart & { id: string }
   alias: string | null
 }) {
-  const [showInherited, setShowInherited] = useState(false)
   const [showVariants, setShowVariants] = useState(false)
   if (alias)
     return (
@@ -107,12 +106,7 @@ function PartReference({
         </p>
       </section>
     )
-  const inherited = part.props.filter((prop) =>
-    prop.source.startsWith("@types/react"),
-  )
-  const specific = part.props.filter(
-    (prop) => !prop.source.startsWith("@types/react"),
-  )
+  const specific = part.props
   return (
     <section
       {...stylex.props(styles.section)}
@@ -161,17 +155,6 @@ function PartReference({
             />
           ) : null}
         </>
-      ) : null}
-      {inherited.length ? (
-        <details
-          {...stylex.props(styles.details)}
-          onToggle={(event) => setShowInherited(event.currentTarget.open)}
-        >
-          <summary {...stylex.props(styles.summary, styles.focus)}>
-            {inherited.length} inherited React and HTML properties
-          </summary>
-          {showInherited ? <PropertiesTable properties={inherited} /> : null}
-        </details>
       ) : null}
       {part.propVariants.length ? (
         <details

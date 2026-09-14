@@ -2,10 +2,18 @@ import { componentDocs } from "@registry/docs"
 import { createServerFn } from "@tanstack/react-start"
 
 import { getDocumentationItems, getRequiredItems } from "./docs-data"
+import { selectExamples } from "./select-examples"
 import { usageExamples } from "./usage"
 
 const sources = import.meta.glob<string>(
   "../../../../packages/registry/src/**/*.{ts,tsx,css}",
+  {
+    query: "?raw",
+    import: "default",
+  },
+)
+const demoSources = import.meta.glob<string>(
+  "../components/demos/stylex/*.tsx",
   {
     query: "?raw",
     import: "default",
@@ -26,10 +34,53 @@ export const getDocumentation = createServerFn({ method: "GET" })
         allItems.flatMap((item) => item.files).map((file) => [file.path, file]),
       ).values(),
     ]
+    const api = items
+      .filter((item) => item.type === "registry:ui")
+      .flatMap((item) => {
+        const reference = componentDocs.find(
+          (entry) => entry.name === item.name,
+        )
+        if (!reference) throw new Error(`Missing API reference: ${item.name}`)
+        const names = new Set(reference.parts.map((part) => part.name))
+        return reference.parts.map((part) => ({
+          ...part,
+          ...(part.aliasOf && names.has(part.aliasOf)
+            ? { props: [], parameters: [], propVariants: [], signatures: [] }
+            : {}),
+          id: `${item.name}:${part.name}`,
+        }))
+      })
+    const examples = await Promise.all(
+      Object.entries(demoSources)
+        .filter(([path]) => path.includes(`/p-${slug}-`))
+        .map(async ([path, load]) => ({
+          name:
+            path
+              .split("/")
+              .at(-1)
+              ?.replace(/\.tsx$/, "") ?? path,
+          source: await load(),
+        })),
+    )
+    examples.sort(
+      (left, right) =>
+        Number(left.name.split("-").at(-1)) -
+        Number(right.name.split("-").at(-1)),
+    )
     return {
       title: items.map((item) => item.title).join(" + "),
       description: items.map((item) => item.description).join(" "),
       usage: usageExamples[slug] ?? "",
+      examples: selectExamples(api, examples).map((group) => ({
+        ...group,
+        examples: group.examples.map((example) => ({
+          ...example,
+          source: example.source
+            .replaceAll("@/components/ui/stylex/", "@registry/components/ui/")
+            .replaceAll("@/lib/table-wrapper", "@tanstack/react-table")
+            .replaceAll("@/hooks/", "@registry/hooks/"),
+        })),
+      })),
       notes: items.flatMap((item) => {
         const doc = componentDocs.find((entry) => entry.name === item.name)
         return doc ? [doc.usage, ...doc.notes] : []
@@ -58,19 +109,11 @@ export const getDocumentation = createServerFn({ method: "GET" })
           }
         }),
       ),
-      api: items
-        .filter((item) => item.type === "registry:ui")
-        .flatMap((item) => {
-          const api = componentDocs.find((entry) => entry.name === item.name)
-          if (!api) throw new Error(`Missing API reference: ${item.name}`)
-          const names = new Set(api.parts.map((part) => part.name))
-          return api.parts.map((part) => ({
-            ...part,
-            ...(part.aliasOf && names.has(part.aliasOf)
-              ? { props: [], parameters: [], propVariants: [], signatures: [] }
-              : {}),
-            id: `${item.name}:${part.name}`,
-          }))
-        }),
+      api: api.map((part) => ({
+        ...part,
+        props: part.props.filter(
+          (prop) => !prop.source.startsWith("@types/react"),
+        ),
+      })),
     }
   })

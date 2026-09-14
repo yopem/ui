@@ -8,12 +8,8 @@ import {
 interface DemoModule {
   default: ComponentType
 }
-type SourceLoader = () => Promise<string>
-
 export interface CatalogDemo {
   component: LazyExoticComponent<ComponentType>
-  file: string
-  loadSource: SourceLoader
   name: string
 }
 
@@ -25,22 +21,13 @@ export interface CatalogItem {
 }
 
 const modules = import.meta.glob<DemoModule>("../components/demos/stylex/*.tsx")
-const sources = import.meta.glob<string>("../components/demos/stylex/*.tsx", {
-  import: "default",
-  query: "?raw",
-})
-
 const demos = Object.entries(modules)
   .map(([path, load]) => {
     const file = path.split("/").at(-1) ?? path
     const match = /^p-(.+)-(\d+)\.tsx$/.exec(file)
     if (!match) return null
-    const loadSource = sources[path]
-    if (!loadSource) return null
     return {
-      file,
       load,
-      loadSource,
       name: file.slice(0, -4),
       order: Number(match[2]),
       slug: match[1],
@@ -82,25 +69,12 @@ export const catalog: CatalogItem[] = [...groups.values()]
     const override = compositionOverrides[slug]
     const name = override?.name ?? componentIdentifier(slug)
     return {
-      demos: componentDemos.map(
-        ({ file, load, loadSource, name: demoName }) => ({
-          component: lazy(() =>
-            load().catch(() => ({ default: UnavailableDemo })),
-          ),
-          file,
-          loadSource: () =>
-            loadSource().then((source) =>
-              source
-                .replaceAll(
-                  "@/components/ui/stylex/",
-                  "@registry/components/ui/",
-                )
-                .replaceAll("@/lib/table-wrapper", "@tanstack/react-table")
-                .replaceAll("@/hooks/", "@registry/hooks/"),
-            ),
-          name: demoName,
-        }),
-      ),
+      demos: componentDemos.map(({ load, name: demoName }) => ({
+        component: lazy(() =>
+          load().catch(() => ({ default: UnavailableDemo })),
+        ),
+        name: demoName,
+      })),
       name,
       slug,
       title: override?.title ?? titleCase(slug),

@@ -73,15 +73,19 @@ test("component docs cover setup, source files, and API", async ({ page }) => {
   await expect(api.getByRole("row").filter({ hasText: "onClick" })).toHaveCount(
     0,
   )
-  await api
-    .locator("summary")
-    .filter({ hasText: "inherited React and HTML properties" })
-    .click()
   await expect(
-    api
-      .getByRole("row")
-      .filter({ has: page.getByText("onClick", { exact: true }) }),
+    page.getByRole("heading", { name: "Default", exact: true }),
   ).toBeVisible()
+  await expect(
+    page.getByRole("heading", { name: "Button variant", exact: true }),
+  ).toBeVisible()
+  await expect(
+    page.getByRole("heading", { name: "Button size", exact: true }),
+  ).toBeVisible()
+  await expect(
+    page.getByText(/inherited React and HTML properties/i),
+  ).toHaveCount(0)
+  await expect(page.getByText(/Browse all \d+ examples/i)).toHaveCount(0)
 })
 
 test("copy buttons copy source, not installation commands", async ({
