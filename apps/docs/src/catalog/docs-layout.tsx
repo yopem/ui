@@ -473,7 +473,6 @@ export function DocumentationLayout({ children }: { children: ReactNode }) {
         <Link to="/" {...stylex.props(styles.brand)}>
           Yopem UI
         </Link>
-        <span {...stylex.props(styles.edition)}>STYLEX / REACT</span>
         <GlobalSearch />
       </header>
       <div {...stylex.props(styles.frame)}>
