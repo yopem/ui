@@ -5,7 +5,7 @@ Yopem UI is a Bun workspace for a source-owned **StyleX** React component librar
 ## Commands
 
 ```sh
-bun run dev             # docs app at :3000
+bun run dev             # docs app at :3100
 bun run registry:build  # build registry, copy artifacts into apps/docs/public
 bun run lint            # oxlint
 bun run fmt             # format with oxfmt

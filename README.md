@@ -37,14 +37,14 @@ Build and run the production server directly:
 
 ```sh
 bun run build
-HOST=0.0.0.0 PORT=3000 node apps/docs/.output/server/index.mjs
+HOST=0.0.0.0 PORT=3100 node apps/docs/.output/server/index.mjs
 ```
 
 Or build the container from the repository root:
 
 ```sh
 docker build -f apps/docs/Dockerfile -t yopem-ui .
-docker run --rm -p 3000:3000 yopem-ui
+docker run --rm -p 3100:3100 yopem-ui
 ```
 
 Tagged releases also produce self-hosted server and immutable registry archives.
