@@ -6,8 +6,8 @@ import { nitro } from "nitro/vite"
 import { resolve } from "node:path"
 import { defineConfig } from "vite"
 
-const config = defineConfig(({ mode }) => {
-  const isTestMode = mode === "test"
+const config = defineConfig(({ command, mode }) => {
+  const isStyleXDevelopment = command === "serve" || mode === "test"
 
   return {
     // Shared CSS avoids mismatched stylesheet asset references in SSR and client builds.
@@ -20,8 +20,8 @@ const config = defineConfig(({ mode }) => {
             resolve(import.meta.dirname, "../../packages/registry/src/*"),
           ],
         },
-        dev: isTestMode,
-        devMode: isTestMode ? "full" : "off",
+        dev: isStyleXDevelopment,
+        devMode: isStyleXDevelopment ? "full" : "off",
         runtimeInjection: false,
         treeshakeCompensation: true,
         unstable_moduleResolution: { type: "commonJS" },

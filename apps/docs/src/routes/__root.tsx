@@ -24,6 +24,7 @@ export const Route = createRootRoute({
 
 function RootDocument({ children }: { children: React.ReactNode }) {
   const isTestMode = import.meta.env.MODE === "test"
+  const isStyleXDevelopment = import.meta.env.DEV || isTestMode
 
   return (
     <html
@@ -34,14 +35,14 @@ function RootDocument({ children }: { children: React.ReactNode }) {
     >
       <head>
         <ThemeScript />
-        {isTestMode ? (
+        {isStyleXDevelopment ? (
           <link href="/virtual:stylex.css" rel="stylesheet" />
         ) : null}
         <HeadContent />
       </head>
       <body>
         <ThemeProvider>{children}</ThemeProvider>
-        {isTestMode ? <StyleXDevelopmentRuntime /> : null}
+        {isStyleXDevelopment ? <StyleXDevelopmentRuntime /> : null}
         {import.meta.env.DEV && !isTestMode ? (
           <TanStackDevtools
             config={{ position: "bottom-right" }}
