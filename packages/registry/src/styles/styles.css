@@ -1,4 +1,4 @@
-@layer yopem-reset, priority1, priority2, priority3, priority4, yopem-compat;
+@layer yopem-reset, yopem-base;
 
 @layer yopem-reset {
   *,
@@ -76,7 +76,7 @@
   }
 }
 
-@layer yopem-compat {
+@layer yopem-base {
   @media (prefers-reduced-motion: reduce) {
     [data-slot] {
       animation-duration: 0.01ms !important;
