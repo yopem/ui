@@ -3,7 +3,6 @@ import type { ApiPart, ApiProp } from "@registry/docs"
 import { ScrollArea } from "@registry/components/ui/scroll-area"
 import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
-import { useHydrated } from "@tanstack/react-router"
 import { useState } from "react"
 
 import { CopyableCode } from "./code-block"
@@ -88,7 +87,6 @@ function PartReference({
   part: ApiPart & { id: string }
   alias: string | null
 }) {
-  const hydrated = useHydrated()
   const [showVariants, setShowVariants] = useState(false)
   const [showSignatures, setShowSignatures] = useState(false)
   if (alias)
@@ -199,7 +197,7 @@ function PartReference({
         <summary {...stylex.props(styles.summary, styles.focus)}>
           Type signature
         </summary>
-        {!hydrated || showSignatures
+        {showSignatures
           ? part.signatures.map((signature) => (
               <CopyableCode
                 key={signature}

@@ -1,10 +1,5 @@
 import * as stylex from "@stylexjs/stylex"
-import {
-  Link,
-  createFileRoute,
-  notFound,
-  useHydrated,
-} from "@tanstack/react-router"
+import { Link, createFileRoute, notFound } from "@tanstack/react-router"
 import { useState } from "react"
 
 import { ApiReference } from "@/catalog/api-reference"
@@ -22,21 +17,9 @@ import { catalogStyles, docsStyles } from "@/catalog/docs-styles"
 import { getDocumentation } from "@/catalog/docs.functions"
 
 export const Route = createFileRoute("/components/$name")({
-  loader: async ({ params }) => {
-    const item = getCatalogItem(params.name)
-    if (!item) throw notFound()
-    const data = await getDocumentation({ data: params.name })
-    const exampleNames = new Set(
-      data.examples.flatMap((group) =>
-        group.examples.map((example) => example.name),
-      ),
-    )
-    await Promise.all(
-      item.demos
-        .filter((demo) => exampleNames.has(demo.name))
-        .map((demo) => demo.preload()),
-    )
-    return data
+  loader: ({ params }) => {
+    if (!getCatalogItem(params.name)) throw notFound()
+    return getDocumentation({ data: params.name })
   },
   head: ({ params }) => ({
     meta: [
@@ -121,7 +104,7 @@ function ComponentPage() {
           </p>
           <div {...stylex.props(docsStyles.section)}>
             {data.files.map((file) => (
-              <SourceFile file={file} key={file.path} />
+              <SourceFile file={file} key={`${name}:${file.path}`} />
             ))}
           </div>
           <h2 {...stylex.props(docsStyles.h2)} id="examples">
@@ -143,7 +126,7 @@ function ComponentPage() {
                 return examples.length ? (
                   <DemoPanel
                     examples={examples}
-                    key={group.label}
+                    key={`${name}:${group.label}`}
                     label={group.label}
                   />
                 ) : null
@@ -174,15 +157,33 @@ function ComponentPage() {
             UI props appear below. Required marks a required property, not a
             required component.
           </p>
-          <ApiReference parts={data.api} />
+          <ComponentApi key={name} parts={data.api} />
         </DocsBody>
       </DocsPage>
     </DocumentationLayout>
   )
 }
 
+function ComponentApi({
+  parts,
+}: {
+  parts: Parameters<typeof ApiReference>[0]["parts"]
+}) {
+  const [open, setOpen] = useState(false)
+  return (
+    <details
+      {...stylex.props(docsStyles.details)}
+      onToggle={(event) => setOpen(event.currentTarget.open)}
+    >
+      <summary {...stylex.props(docsStyles.summary)}>
+        View API reference
+      </summary>
+      {open ? <ApiReference parts={parts} /> : null}
+    </details>
+  )
+}
+
 function SourceFile({ file }: { file: { content: string; target: string } }) {
-  const hydrated = useHydrated()
   const [open, setOpen] = useState(false)
   return (
     <details
@@ -192,9 +193,7 @@ function SourceFile({ file }: { file: { content: string; target: string } }) {
       <summary {...stylex.props(docsStyles.summary)}>
         <code {...stylex.props(docsStyles.inlineCode)}>{file.target}</code>
       </summary>
-      {!hydrated || open ? (
-        <CopyableCode code={file.content} title={file.target} />
-      ) : null}
+      {open ? <CopyableCode code={file.content} title={file.target} /> : null}
     </details>
   )
 }

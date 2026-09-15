@@ -46,7 +46,7 @@ export function DemoPanel({
               <h4 {...stylex.props(localStyles.value)}>{example.label}</h4>
             ) : null}
             <ScrollArea
-              {...stylex.props(catalogStyles.preview)}
+              {...stylex.props(catalogStyles.preview, localStyles.preview)}
               aria-label={`${exampleName} live preview`}
               clampContentMinWidth={false}
               overscrollContain
@@ -57,19 +57,7 @@ export function DemoPanel({
                 </Suspense>
               </div>
             </ScrollArea>
-            <CopyableCode
-              code={example.source}
-              title={`${exampleName} example`}
-            />
-            {exampleHelpers.map((helper) =>
-              example.source.includes(helper.name) ? (
-                <CopyableCode
-                  key={helper.path}
-                  code={helper.content}
-                  title={helper.path}
-                />
-              ) : null,
-            )}
+            <ExampleSource name={exampleName} source={example.source} />
           </div>
         )
       })}
@@ -77,8 +65,30 @@ export function DemoPanel({
   )
 }
 
+function ExampleSource({ name, source }: { name: string; source: string }) {
+  return (
+    <>
+      <CopyableCode code={source} preview title={`${name} example`} />
+      {exampleHelpers.map((helper) =>
+        source.includes(helper.name) ? (
+          <CopyableCode
+            key={helper.path}
+            code={helper.content}
+            preview
+            title={helper.path}
+          />
+        ) : null,
+      )}
+    </>
+  )
+}
+
 const localStyles = stylex.create({
   example: { minInlineSize: 0 },
+  preview: {
+    borderEndStartRadius: 0,
+    borderEndEndRadius: 0,
+  },
   heading: {
     fontFamily: tokens["--font-heading"],
     fontSize: "1.125rem",

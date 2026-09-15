@@ -92,6 +92,10 @@ test("component docs cover setup, source files, and API", async ({ page }) => {
       exact: true,
     }),
   ).toBeEnabled()
+  await page
+    .locator("summary")
+    .filter({ hasText: "View API reference" })
+    .click()
   const api = page.getByRole("region", { name: "Button", exact: true })
   await api
     .locator("summary")
@@ -107,9 +111,20 @@ test("component docs cover setup, source files, and API", async ({ page }) => {
   await expect(api.getByRole("row").filter({ hasText: "onClick" })).toHaveCount(
     0,
   )
+  const defaultExample = page
+    .getByRole("heading", { name: "Default", exact: true })
+    .locator("..")
+  await expect(defaultExample).toBeVisible()
   await expect(
-    page.getByRole("heading", { name: "Default", exact: true }),
+    page.getByRole("button", { name: "Copy Default example", exact: true }),
   ).toBeVisible()
+  await expect(
+    defaultExample.getByRole("button", { name: "View code", exact: true }),
+  ).toHaveCount(0)
+  const viewCode = page.getByRole("button", { name: "View code", exact: true })
+  const collapsedCodeCount = await viewCode.count()
+  await viewCode.first().click()
+  await expect(viewCode).toHaveCount(collapsedCodeCount - 1)
   expect(
     await page.locator("html").getAttribute("data-loading-example-seen"),
   ).toBeNull()
@@ -131,6 +146,9 @@ test("copy buttons copy source, not installation commands", async ({
 }) => {
   await context.grantPermissions(["clipboard-read", "clipboard-write"])
   await page.goto("/components/button")
+  await expect(
+    page.getByRole("button", { name: "Copy Button usage", exact: true }),
+  ).toBeEnabled()
   await page
     .locator("summary")
     .filter({ hasText: "src/components/ui/button.tsx" })
