@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/stylex/button"
 import { Spinner } from "@/components/ui/stylex/spinner"
 import { anchoredToastManager } from "@/components/ui/stylex/toast"
 
-export default function Particle() {
+export default function Example() {
   const submitRef = useRef<HTMLButtonElement>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const toastIdRef = useRef<string | null>(null)

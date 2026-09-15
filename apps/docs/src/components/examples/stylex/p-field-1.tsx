@@ -5,7 +5,7 @@ import {
 } from "@/components/ui/stylex/field"
 import { Input } from "@/components/ui/stylex/input"
 
-export default function Particle() {
+export default function Example() {
   return (
     <Field>
       <FieldLabel>Name</FieldLabel>

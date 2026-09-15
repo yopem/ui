@@ -16,7 +16,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/stylex/tooltip"
 
-export default function Particle() {
+export default function Example() {
   const [inputValue, setInputValue] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)

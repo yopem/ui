@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/stylex/alert"
 import { Button } from "@/components/ui/stylex/button"
 
-export default function Particle() {
+export default function Example() {
   return (
     <Alert>
       <InfoIcon {...stylex.props(exampleStyles.icon)} />

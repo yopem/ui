@@ -99,7 +99,7 @@ function ProjectTableRow({ project }: { project: Project }) {
   )
 }
 
-export default function Particle() {
+export default function Example() {
   return (
     <CardFrame {...stylex.props(exampleStyles.example1)}>
       <Table variant="card">

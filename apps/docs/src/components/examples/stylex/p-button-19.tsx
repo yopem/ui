@@ -6,7 +6,7 @@ import { useState } from "react"
 
 import { Button } from "@/components/ui/stylex/button"
 
-export default function Particle() {
+export default function Example() {
   const [isExpanded, setIsExpanded] = useState<boolean>(false)
 
   const toggleExpand = () => {

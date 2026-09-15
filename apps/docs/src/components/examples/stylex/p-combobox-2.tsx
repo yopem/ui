@@ -22,7 +22,7 @@ const items = [
   { label: "Pear", value: "pear" },
 ]
 
-export default function Particle() {
+export default function Example() {
   return (
     <Combobox defaultValue={items[2]} disabled items={items}>
       <ComboboxInput

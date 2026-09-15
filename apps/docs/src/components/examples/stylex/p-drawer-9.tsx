@@ -14,7 +14,7 @@ import {
   DrawerTrigger,
 } from "@/components/ui/stylex/drawer"
 
-export default function Particle() {
+export default function Example() {
   const snapPoints = ["300px", 1] as const
   const [snapPoint, setSnapPoint] = useState<
     (typeof snapPoints)[number] | null

@@ -37,7 +37,7 @@ function AutocompleteOptions() {
   )
 }
 
-export default function Particle() {
+export default function Example() {
   return (
     <Autocomplete items={items}>
       <AutocompleteInput

@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/stylex/alert-dialog"
 import { Button } from "@/components/ui/stylex/button"
 
-export default function Particle() {
+export default function Example() {
   return (
     <AlertDialog>
       <AlertDialogTrigger render={<Button variant="destructive-outline" />}>

@@ -10,7 +10,7 @@ import {
   ProgressValue,
 } from "@/components/ui/stylex/progress"
 
-export default function Particle() {
+export default function Example() {
   return (
     <Progress max={512} value={502}>
       <div {...stylex.props(exampleStyles.example1)}>

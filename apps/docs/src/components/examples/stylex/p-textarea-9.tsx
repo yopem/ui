@@ -2,7 +2,7 @@ import * as stylex from "@stylexjs/stylex"
 
 import { Textarea } from "@/components/ui/stylex/textarea"
 
-export default function Particle() {
+export default function Example() {
   return (
     <Textarea
       aria-label="Message"

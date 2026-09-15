@@ -2,7 +2,7 @@ import * as stylex from "@stylexjs/stylex"
 
 import { Button } from "@/components/ui/stylex/button"
 
-export default function Particle() {
+export default function Example() {
   return (
     <Button variant="outline">
       <span aria-hidden="true" {...stylex.props(exampleStyles.report1)} />

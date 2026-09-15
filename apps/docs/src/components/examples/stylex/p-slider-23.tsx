@@ -11,7 +11,7 @@ import { Fieldset, FieldsetLegend } from "@/components/ui/stylex/fieldset"
 import { Form } from "@/components/ui/stylex/form"
 import { Slider, SliderValue } from "@/components/ui/stylex/slider"
 
-export default function Particle() {
+export default function Example() {
   const [loading, setLoading] = useState<boolean>(false)
   const [value, setValue] = useState<number | readonly number[]>([25, 75])
 

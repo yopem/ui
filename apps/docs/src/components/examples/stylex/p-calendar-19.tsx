@@ -9,7 +9,7 @@ import { ScrollArea } from "@/components/ui/stylex/scroll-area"
 import { Toggle } from "@/components/ui/stylex/toggle"
 import { ToggleGroup } from "@/components/ui/stylex/toggle-group"
 
-export default function Particle() {
+export default function Example() {
   const today = new Date()
   const [date, setDate] = useState<Date>(today)
   const [time, setTime] = useState<string | null>(null)

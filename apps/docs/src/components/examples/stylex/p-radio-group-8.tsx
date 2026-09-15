@@ -7,7 +7,7 @@ import {
   RadioPrimitive,
 } from "@/components/ui/stylex/radio-group"
 
-export default function Particle() {
+export default function Example() {
   return (
     <RadioGroupPrimitive
       aria-label="Billing period"

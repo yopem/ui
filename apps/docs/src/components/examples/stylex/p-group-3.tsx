@@ -29,7 +29,7 @@ const menuItems = [
   { icon: TrashIcon, label: "Delete", variant: "destructive" },
 ] as const
 
-export default function Particle() {
+export default function Example() {
   return (
     <Group aria-label="File actions">
       <Button size="sm" variant="outline" xstyle={groupItemStyles.item}>

@@ -17,7 +17,7 @@ const items = [
   { label: "Go", value: "go" },
 ]
 
-export default function Particle() {
+export default function Example() {
   return (
     <Select
       aria-label="Select language"

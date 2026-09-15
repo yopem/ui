@@ -6,7 +6,7 @@ import {
   MenuTrigger,
 } from "@/components/ui/stylex/menu"
 
-export default function Particle() {
+export default function Example() {
   return (
     <Menu>
       <MenuTrigger openOnHover render={<Button variant="outline" />}>

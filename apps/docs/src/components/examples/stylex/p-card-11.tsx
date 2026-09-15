@@ -19,7 +19,7 @@ import {
   EmptyTitle,
 } from "@/components/ui/stylex/empty"
 
-export default function Particle() {
+export default function Example() {
   return (
     <CardFrame {...stylex.props(exampleStyles.example1)}>
       <CardFrameHeader>

@@ -40,7 +40,7 @@ const items = [
   { label: "Times New Roman", value: "times-new-roman" },
 ]
 
-export default function Particle() {
+export default function Example() {
   return (
     <TooltipProvider>
       <Toolbar>

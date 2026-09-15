@@ -7,7 +7,7 @@ import { CheckboxGroup } from "@/components/ui/stylex/checkbox-group"
 import { Field, FieldItem, FieldLabel } from "@/components/ui/stylex/field"
 import { Fieldset, FieldsetLegend } from "@/components/ui/stylex/fieldset"
 
-export default function Particle() {
+export default function Example() {
   return (
     <Field
       {...stylex.props(exampleStyles.example1)}

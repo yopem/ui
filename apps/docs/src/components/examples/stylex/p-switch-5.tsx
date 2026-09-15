@@ -10,7 +10,7 @@ import { Field, FieldLabel } from "@/components/ui/stylex/field"
 import { Form } from "@/components/ui/stylex/form"
 import { Switch } from "@/components/ui/stylex/switch"
 
-export default function Particle() {
+export default function Example() {
   const [loading, setLoading] = useState(false)
 
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {

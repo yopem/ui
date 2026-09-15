@@ -4,7 +4,7 @@ import { useState } from "react"
 
 import { Button } from "@/components/ui/stylex/button"
 
-export default function Particle() {
+export default function Example() {
   const [isLoading, setIsLoading] = useState(false)
 
   const handleClick = () => {

@@ -9,7 +9,7 @@ import {
   InputGroupInput,
 } from "@/components/ui/stylex/input-group"
 
-export default function Particle() {
+export default function Example() {
   return (
     <Field>
       <FieldLabel>Subscribe</FieldLabel>

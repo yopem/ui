@@ -93,7 +93,7 @@ function MemberAvatar({
   )
 }
 
-export default function Particle() {
+export default function Example() {
   const [selectedMembers, setSelectedMembers] = useState<FilterOption[]>(() =>
     members.slice(0, 2),
   )

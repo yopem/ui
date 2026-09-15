@@ -3,7 +3,7 @@ import * as stylex from "@stylexjs/stylex"
 import { Button } from "@/components/ui/stylex/button"
 import { Input } from "@/components/ui/stylex/input"
 
-export default function Particle() {
+export default function Example() {
   return (
     <div {...stylex.props(exampleStyles.example1)}>
       <Input

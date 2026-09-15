@@ -20,7 +20,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/stylex/tooltip"
 
-export default function Particle() {
+export default function Example() {
   const [isDownloading, setIsDownloading] = useState(false)
   const [progress, setProgress] = useState(0)
   const abortControllerRef = useRef<AbortController | null>(null)

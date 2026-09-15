@@ -7,7 +7,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/stylex/accordion"
 
-export default function Particle() {
+export default function Example() {
   const items = [
     {
       content:

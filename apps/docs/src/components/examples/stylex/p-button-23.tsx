@@ -3,7 +3,7 @@ import { ThumbsUpIcon } from "lucide-react"
 
 import { Button } from "@/components/ui/stylex/button"
 
-export default function Particle() {
+export default function Example() {
   return (
     <Button {...stylex.props(exampleStyles.example1)} variant="outline">
       <ThumbsUpIcon {...stylex.props(exampleStyles.icon)} aria-hidden="true" />

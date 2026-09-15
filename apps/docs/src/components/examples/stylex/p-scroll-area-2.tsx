@@ -2,7 +2,7 @@ import * as stylex from "@stylexjs/stylex"
 
 import { ScrollArea } from "@/components/ui/stylex/scroll-area"
 
-export default function Particle() {
+export default function Example() {
   return (
     <ScrollArea {...stylex.props(exampleStyles.example1)}>
       <div {...stylex.props(exampleStyles.example2)}>

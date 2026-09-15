@@ -7,7 +7,7 @@ import {
 } from "@/components/ui/stylex/avatar"
 import { Badge } from "@/components/ui/stylex/badge"
 
-export default function Particle() {
+export default function Example() {
   return (
     <div {...stylex.props(exampleStyles.example1)}>
       <Avatar>

@@ -10,7 +10,7 @@ const bands = [
   { label: "16k", value: 2 },
 ]
 
-export default function Particle() {
+export default function Example() {
   return (
     <div {...stylex.props(exampleStyles.example1)}>
       {bands.map((band) => (

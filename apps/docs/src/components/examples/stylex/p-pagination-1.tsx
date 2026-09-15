@@ -8,7 +8,7 @@ import {
   PaginationPrevious,
 } from "@/components/ui/stylex/pagination"
 
-export default function Particle() {
+export default function Example() {
   return (
     <Pagination>
       <PaginationContent>

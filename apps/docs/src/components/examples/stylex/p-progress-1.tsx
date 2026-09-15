@@ -4,7 +4,7 @@ import { useEffect, useState } from "react"
 
 import { Progress } from "@/components/ui/stylex/progress"
 
-export default function Particle() {
+export default function Example() {
   const [value, setValue] = useState(20)
 
   useEffect(() => {

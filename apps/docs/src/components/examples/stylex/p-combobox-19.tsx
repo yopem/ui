@@ -101,7 +101,7 @@ function TeamMemberOptions() {
   )
 }
 
-export default function Particle() {
+export default function Example() {
   const [open, setOpen] = useState(false)
   const [selected, setSelected] = useState<TeamMember[]>(() =>
     teamMembers.slice(0, 2),

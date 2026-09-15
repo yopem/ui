@@ -5,7 +5,7 @@ import { toastManager } from "@/components/ui/stylex/toast"
 
 const ERROR_TOAST_ID = "coss-example-error-upsert"
 
-export default function Particle() {
+export default function Example() {
   return (
     <Button
       onClick={() => {

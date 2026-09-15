@@ -2,7 +2,7 @@ import * as stylex from "@stylexjs/stylex"
 
 import { Switch } from "@/components/ui/stylex/switch"
 
-export default function Particle() {
+export default function Example() {
   return <Switch {...stylex.props(exampleStyles.report1Manual)} />
 }
 

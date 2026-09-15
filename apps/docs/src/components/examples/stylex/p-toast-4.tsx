@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/stylex/button"
 import { toastManager } from "@/components/ui/stylex/toast"
 
-export default function Particle() {
+export default function Example() {
   return (
     <Button
       onClick={() => {

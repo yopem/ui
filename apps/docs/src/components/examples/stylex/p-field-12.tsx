@@ -1,7 +1,7 @@
 import { Checkbox } from "@/components/ui/stylex/checkbox"
 import { Field, FieldLabel } from "@/components/ui/stylex/field"
 
-export default function Particle() {
+export default function Example() {
   return (
     <Field>
       <FieldLabel>

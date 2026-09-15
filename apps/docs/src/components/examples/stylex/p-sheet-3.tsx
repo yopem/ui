@@ -11,7 +11,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/stylex/sheet"
 
-export default function Particle() {
+export default function Example() {
   return (
     <div {...stylex.props(exampleStyles.example1)}>
       <Sheet>

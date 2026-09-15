@@ -1,6 +1,6 @@
 import * as stylex from "@stylexjs/stylex"
 
-export default function Particle() {
+export default function Example() {
   return (
     <nav aria-label="Project sections">
       <div {...stylex.props(styles.root)}>

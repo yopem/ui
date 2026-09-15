@@ -8,7 +8,7 @@ import {
   GroupSeparator,
 } from "@/components/ui/stylex/group"
 
-export default function Particle() {
+export default function Example() {
   return (
     <Group>
       <Button xstyle={groupItemStyles.item} aria-label="QR code" size="icon">

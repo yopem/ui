@@ -9,7 +9,7 @@ import {
   InputGroupInput,
 } from "@/components/ui/stylex/input-group"
 
-export default function Particle() {
+export default function Example() {
   const maxLength = 14
   const [value, setValue] = useState("")
 

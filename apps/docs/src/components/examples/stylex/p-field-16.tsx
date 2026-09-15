@@ -7,7 +7,7 @@ import {
 } from "@/components/ui/stylex/field"
 import { Slider } from "@/components/ui/stylex/slider"
 
-export default function Particle() {
+export default function Example() {
   return (
     <Field {...stylex.props(exampleStyles.example1)}>
       <FieldLabel>Country</FieldLabel>

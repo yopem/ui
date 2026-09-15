@@ -63,7 +63,7 @@ function ProjectForm() {
   )
 }
 
-export default function Particle() {
+export default function Example() {
   return (
     <Card {...stylex.props(exampleStyles.example1)}>
       <CardHeader>

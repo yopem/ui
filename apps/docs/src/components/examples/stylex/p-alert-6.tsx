@@ -8,7 +8,7 @@ import {
   AlertTitle,
 } from "@/components/ui/stylex/alert"
 
-export default function Particle() {
+export default function Example() {
   return (
     <Alert variant="warning">
       <TriangleAlertIcon {...stylex.props(exampleStyles.icon)} />

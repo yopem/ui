@@ -19,7 +19,7 @@ const items = [
   { label: "Australia", value: "au" },
 ]
 
-export default function Particle() {
+export default function Example() {
   return (
     <Field>
       <FieldLabel>Country</FieldLabel>

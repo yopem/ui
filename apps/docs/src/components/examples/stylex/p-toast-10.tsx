@@ -5,7 +5,7 @@ import { toastManager } from "@/components/ui/stylex/toast"
 
 const DEDUP_ID = "coss-example-dedup-toast"
 
-export default function Particle() {
+export default function Example() {
   return (
     <Button
       onClick={() => {

@@ -8,7 +8,7 @@ import {
 import { Fieldset, FieldsetLegend } from "@/components/ui/stylex/fieldset"
 import { Input } from "@/components/ui/stylex/input"
 
-export default function Particle() {
+export default function Example() {
   return (
     <Fieldset {...stylex.props(exampleStyles.example1)}>
       <FieldsetLegend>Billing Details</FieldsetLegend>

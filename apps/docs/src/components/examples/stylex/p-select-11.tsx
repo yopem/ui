@@ -27,7 +27,7 @@ const items = [
   { label: "Astro", value: "astro" },
 ]
 
-export default function Particle() {
+export default function Example() {
   const [loading, setLoading] = useState(false)
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()

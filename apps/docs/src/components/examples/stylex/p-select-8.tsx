@@ -15,7 +15,7 @@ const items = [
   { label: "Astro", value: "astro" },
 ]
 
-export default function Particle() {
+export default function Example() {
   return (
     <Select
       aria-label="Select framework with icon"

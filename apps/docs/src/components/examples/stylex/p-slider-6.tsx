@@ -2,7 +2,7 @@ import * as stylex from "@stylexjs/stylex"
 
 import { Slider } from "@/components/ui/stylex/slider"
 
-export default function Particle() {
+export default function Example() {
   return (
     <div>
       <div aria-hidden="true" {...stylex.props(exampleStyles.example1)}>

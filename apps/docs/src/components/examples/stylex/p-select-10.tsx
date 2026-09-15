@@ -17,7 +17,7 @@ const items = [
   { description: "npx create-remix", label: "Remix", value: "remix" },
 ]
 
-export default function Particle() {
+export default function Example() {
   return (
     <Select
       aria-label="Select framework with command"

@@ -2,7 +2,7 @@ import * as stylex from "@stylexjs/stylex"
 
 import { Tabs, TabsList, TabsPanel, TabsTab } from "@/components/ui/stylex/tabs"
 
-export default function Particle() {
+export default function Example() {
   return (
     <Tabs defaultValue="tab-1">
       <TabsList size="lg">

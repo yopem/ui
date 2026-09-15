@@ -6,7 +6,7 @@ import { useState } from "react"
 
 import { Button } from "@/components/ui/stylex/button"
 
-export default function Particle() {
+export default function Example() {
   const [isStarred, setIsStarred] = useState(false)
   const count = isStarred ? 730 : 729
 

@@ -16,7 +16,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/stylex/popover"
 
-export default function Particle() {
+export default function Example() {
   return (
     <Group aria-label="Repository actions">
       <Button variant="outline" xstyle={groupItemStyles.item}>

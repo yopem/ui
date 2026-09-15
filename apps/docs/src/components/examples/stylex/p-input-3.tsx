@@ -1,6 +1,6 @@
 import { Input } from "@/components/ui/stylex/input"
 
-export default function Particle() {
+export default function Example() {
   return (
     <Input
       aria-label="Enter text"

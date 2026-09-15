@@ -3,7 +3,7 @@ import { BoldIcon, ItalicIcon, UnderlineIcon } from "lucide-react"
 
 import { Toggle } from "@/components/ui/stylex/toggle"
 
-export default function Particle() {
+export default function Example() {
   return (
     <div {...stylex.props(exampleStyles.example1)}>
       <Toggle aria-label="Toggle bold" variant="outline">

@@ -315,7 +315,7 @@ function NextPageButton({ table }: { table: FlightTableModel }) {
   )
 }
 
-export default function Particle() {
+export default function Example() {
   const pageSize = 10
 
   const [pagination, setPagination] = useState<PaginationState>({

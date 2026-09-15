@@ -152,7 +152,7 @@ const itemCounts = Array.from({ length: tickCount }, (_, tick) => {
 
 const maxCount = Math.max(...itemCounts)
 
-export default function Particle() {
+export default function Example() {
   const [values, setValues] = useState([200, 780])
 
   const updateValue = (index: number, newValue: number | null) => {

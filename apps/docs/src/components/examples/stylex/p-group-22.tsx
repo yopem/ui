@@ -12,7 +12,7 @@ import {
   NumberFieldInput,
 } from "@/components/ui/stylex/number-field"
 
-export default function Particle() {
+export default function Example() {
   return (
     <div {...stylex.props(exampleStyles.example1)}>
       <Label>Range</Label>

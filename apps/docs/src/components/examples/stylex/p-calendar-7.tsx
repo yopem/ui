@@ -4,7 +4,7 @@ import { addDays } from "date-fns"
 
 import { Calendar } from "@/components/ui/stylex/calendar"
 
-export default function Particle() {
+export default function Example() {
   const today = new Date()
 
   return (

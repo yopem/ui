@@ -18,7 +18,7 @@ import {
   MenuTrigger,
 } from "@/components/ui/stylex/menu"
 
-export default function Particle() {
+export default function Example() {
   return (
     <Breadcrumb>
       <BreadcrumbList>
@@ -43,13 +43,13 @@ export default function Particle() {
               <BreadcrumbEllipsis />
             </MenuTrigger>
             <MenuPopup align="start">
-              <MenuItem render={<a aria-label="Particles" href="/docs" />}>
+              <MenuItem render={<a aria-label="Examples" href="/docs" />}>
                 Docs
               </MenuItem>
               <MenuItem
                 render={<a aria-label="Components" href="/particles" />}
               >
-                Particles
+                Examples
               </MenuItem>
             </MenuPopup>
           </Menu>

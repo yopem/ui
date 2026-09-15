@@ -10,7 +10,7 @@ import {
   DrawerTrigger,
 } from "@/components/ui/stylex/drawer"
 
-export default function Particle() {
+export default function Example() {
   return (
     <div {...stylex.props(exampleStyles.example1)}>
       <Drawer position="right">

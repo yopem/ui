@@ -14,7 +14,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/stylex/popover"
 
-export default function Particle() {
+export default function Example() {
   return (
     <InputGroup
       {...stylex.props(exampleStyles.inputGroup, exampleStyles.outlined)}

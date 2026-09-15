@@ -4,7 +4,7 @@ import { PrinterIcon } from "lucide-react"
 import { Button } from "@/components/ui/stylex/button"
 import { Kbd, KbdGroup } from "@/components/ui/stylex/kbd"
 
-export default function Particle() {
+export default function Example() {
   return (
     <Button variant="outline">
       <PrinterIcon {...stylex.props(exampleStyles.icon)} aria-hidden="true" />

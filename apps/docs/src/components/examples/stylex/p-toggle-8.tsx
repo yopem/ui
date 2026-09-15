@@ -11,7 +11,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/stylex/tooltip"
 
-export default function Particle() {
+export default function Example() {
   const [bookmarked, setBookmarked] = useState(false)
   const toggleRef = useRef<HTMLDivElement>(null)
   const toastIdRef = useRef<string | null>(null)

@@ -13,7 +13,7 @@ interface PaginationProps {
   totalPages: number
 }
 
-export default function Particle({ currentPage, totalPages }: PaginationProps) {
+export default function Example({ currentPage, totalPages }: PaginationProps) {
   return (
     <Pagination>
       <PaginationContent {...stylex.props(exampleStyles.example1)}>

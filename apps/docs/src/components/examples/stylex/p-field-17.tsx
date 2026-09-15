@@ -18,7 +18,7 @@ function QuantityControls() {
   )
 }
 
-export default function Particle() {
+export default function Example() {
   return (
     <Field>
       <NumberField defaultValue={1} max={100} min={1}>

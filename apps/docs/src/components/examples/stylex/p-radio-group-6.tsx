@@ -13,7 +13,7 @@ const items = [
   { label: "Dark", value: "dark" },
 ] as const
 
-export default function Particle() {
+export default function Example() {
   const [value, setValue] = useState("system")
 
   return (

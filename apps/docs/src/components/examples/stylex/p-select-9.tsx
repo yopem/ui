@@ -18,7 +18,7 @@ const items = [
   { icon: Code2Icon, label: "Development", value: "development" },
 ]
 
-export default function Particle() {
+export default function Example() {
   return (
     <Select
       aria-label="Select category"

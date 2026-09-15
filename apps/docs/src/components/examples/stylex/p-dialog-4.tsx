@@ -28,7 +28,7 @@ import { Field } from "@/components/ui/stylex/field"
 import { Form } from "@/components/ui/stylex/form"
 import { Textarea } from "@/components/ui/stylex/textarea"
 
-export default function Particle() {
+export default function Example() {
   const [dialogOpen, setDialogOpen] = useState(false)
   const [confirmOpen, setConfirmOpen] = useState(false)
   const [value, setValue] = useState("")

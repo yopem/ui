@@ -195,7 +195,7 @@ function ProjectTableBody({
   )
 }
 
-export default function Particle() {
+export default function Example() {
   const [tableData] = useState<Project[]>(data)
   const [rowSelection, setRowSelection] = useState({})
 

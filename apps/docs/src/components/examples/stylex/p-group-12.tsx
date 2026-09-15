@@ -14,7 +14,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/stylex/tooltip"
 
-export default function Particle() {
+export default function Example() {
   return (
     <Group aria-label="Message composer" xstyle={exampleStyles.report1Manual}>
       <Group aria-label="Attachments">

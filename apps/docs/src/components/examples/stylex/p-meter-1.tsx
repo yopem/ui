@@ -8,7 +8,7 @@ import {
   MeterValue,
 } from "@/components/ui/stylex/meter"
 
-export default function Particle() {
+export default function Example() {
   return (
     <Meter aria-label="Storage usage" value={75}>
       <div {...stylex.props(exampleStyles.example1)}>

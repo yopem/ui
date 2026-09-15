@@ -8,7 +8,7 @@ import {
   ContextMenuTrigger,
 } from "@/components/ui/stylex/context-menu"
 
-export default function Particle() {
+export default function Example() {
   return (
     <ContextMenu>
       <ContextMenuTrigger {...stylex.props(exampleStyles.example1)}>

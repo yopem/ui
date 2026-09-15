@@ -3,7 +3,7 @@ import * as stylex from "@stylexjs/stylex"
 import { Button } from "@/components/ui/stylex/button"
 import { Spinner } from "@/components/ui/stylex/spinner"
 
-export default function Particle() {
+export default function Example() {
   return (
     <Button disabled>
       <Spinner {...stylex.props(exampleStyles.icon)} />

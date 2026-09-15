@@ -21,7 +21,7 @@ function normalizeTierCode(value: string) {
   return value.replace(/[^0-3]/g, "")
 }
 
-export default function Particle() {
+export default function Example() {
   const [focusedIndex, setFocusedIndex] = useState(0)
   const [invalidPulse, setInvalidPulse] = useState(0)
   const [statusMessage, setStatusMessage] = useState("")

@@ -2,7 +2,7 @@ import * as stylex from "@stylexjs/stylex"
 
 import { Badge } from "@/components/ui/stylex/badge"
 
-export default function Particle() {
+export default function Example() {
   return (
     <Badge variant="outline">
       <span aria-hidden="true" {...stylex.props(exampleStyles.example1)} />

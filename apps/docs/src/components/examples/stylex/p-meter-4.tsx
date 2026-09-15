@@ -10,7 +10,7 @@ import {
   MeterValue,
 } from "@/components/ui/stylex/meter"
 
-export default function Particle() {
+export default function Example() {
   return (
     <Meter max={1000} min={500} value={700}>
       <div {...stylex.props(exampleStyles.example1)}>

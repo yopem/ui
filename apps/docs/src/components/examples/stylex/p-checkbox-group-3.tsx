@@ -13,7 +13,7 @@ const frameworks = [
   { id: "astro", name: "Astro" },
 ]
 
-export default function Particle() {
+export default function Example() {
   const [value, setValue] = useState<string[]>([])
 
   return (

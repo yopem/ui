@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/stylex/input-group"
 import { Toggle } from "@/components/ui/stylex/toggle"
 
-export default function Particle() {
+export default function Example() {
   return (
     <InputGroup>
       <InputGroupTextarea placeholder="Tell us about yourself…" />

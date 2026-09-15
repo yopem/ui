@@ -31,7 +31,7 @@ const languages = [
   { label: "Rust", value: "rust" },
 ]
 
-export default function Particle() {
+export default function Example() {
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const [copied, setCopied] = useState(false)
 

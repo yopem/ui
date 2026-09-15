@@ -19,7 +19,7 @@ import {
   MenuTrigger,
 } from "@/components/ui/stylex/menu"
 
-export default function Particle() {
+export default function Example() {
   const [dialogOpen, setDialogOpen] = useState(false)
   return (
     <>

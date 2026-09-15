@@ -42,7 +42,7 @@ const currencies: Currency[] = [
   },
 ]
 
-export default function Particle() {
+export default function Example() {
   return (
     <Group aria-label="Payment amount">
       <Group aria-label="Amount input">

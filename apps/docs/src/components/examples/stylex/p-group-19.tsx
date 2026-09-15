@@ -20,7 +20,7 @@ const domains = [
   { label: ".net", value: "net" },
 ]
 
-export default function Particle() {
+export default function Example() {
   return (
     <Group aria-label="Domain input">
       <Input

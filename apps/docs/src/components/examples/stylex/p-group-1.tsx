@@ -28,7 +28,7 @@ const menuItems = [
   { Icon: ShareIcon, label: "Share" },
 ]
 
-export default function Particle() {
+export default function Example() {
   return (
     <Group aria-label="File actions">
       <Button variant="outline" xstyle={groupItemStyles.item}>

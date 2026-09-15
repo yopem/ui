@@ -1,7 +1,7 @@
 import { Field, FieldLabel } from "@/components/ui/stylex/field"
 import { Switch } from "@/components/ui/stylex/switch"
 
-export default function Particle() {
+export default function Example() {
   return (
     <Field>
       <FieldLabel>

@@ -10,7 +10,7 @@ import { Calendar } from "@/components/ui/stylex/calendar"
 
 const GOOD_PRICE_THRESHOLD = 100
 
-export default function Particle() {
+export default function Example() {
   const today = new Date()
   const [date, setDate] = useState<Date | undefined>(today)
 

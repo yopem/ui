@@ -9,7 +9,7 @@ import { Slider } from "@/components/ui/stylex/slider"
 const min = 5
 const max = 1240
 
-export default function Particle() {
+export default function Example() {
   const [values, setValues] = useState([min, max])
 
   const formatPrice = (price: number) =>

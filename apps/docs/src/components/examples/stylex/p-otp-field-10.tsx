@@ -14,7 +14,7 @@ const OTP_SLOT_KEYS = Array.from(
   (_, i) => `otp-slot-${i}`,
 )
 
-export default function Particle() {
+export default function Example() {
   return (
     <Field {...stylex.props(exampleStyles.example1)}>
       <FieldLabel>Access code</FieldLabel>

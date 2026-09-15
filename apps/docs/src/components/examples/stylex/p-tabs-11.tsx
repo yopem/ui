@@ -9,7 +9,7 @@ const tabs = [
   { Icon: SettingsIcon, label: "Settings", value: "tab-3" },
 ]
 
-export default function Particle() {
+export default function Example() {
   return (
     <Tabs
       {...stylex.props(exampleStyles.example1)}

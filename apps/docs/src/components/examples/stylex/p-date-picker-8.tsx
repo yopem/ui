@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/stylex/popover"
 import { SelectButton } from "@/components/ui/stylex/select"
 
-export default function Particle() {
+export default function Example() {
   const [date, setDate] = useState<Date | undefined>()
 
   return (

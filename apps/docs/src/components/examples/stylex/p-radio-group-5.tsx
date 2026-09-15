@@ -11,7 +11,7 @@ import { Fieldset, FieldsetLegend } from "@/components/ui/stylex/fieldset"
 import { Form } from "@/components/ui/stylex/form"
 import { Radio, RadioGroup } from "@/components/ui/stylex/radio-group"
 
-export default function Particle() {
+export default function Example() {
   const [loading, setLoading] = useState(false)
 
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {

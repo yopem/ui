@@ -13,7 +13,7 @@ import {
 
 const ANCHORED_SAVE_ERROR_TOAST_ID = "coss-example-anchored-save-error-toast"
 
-export default function Particle() {
+export default function Example() {
   const saveButtonRef = useRef<HTMLButtonElement>(null)
   const toastTimeout = 2000
 

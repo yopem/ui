@@ -15,7 +15,7 @@ import {
 import { Field, FieldLabel } from "@/components/ui/stylex/field"
 import { Input } from "@/components/ui/stylex/input"
 
-export default function Particle() {
+export default function Example() {
   return (
     <Dialog>
       <DialogTrigger render={<Button variant="outline" />}>

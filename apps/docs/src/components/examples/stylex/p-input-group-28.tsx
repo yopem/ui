@@ -16,7 +16,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/stylex/tooltip"
 
-export default function Particle() {
+export default function Example() {
   return (
     <InputGroup>
       <InputGroupTextarea placeholder="Compose your message…" rows={4} />

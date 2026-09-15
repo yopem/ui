@@ -16,7 +16,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/stylex/popover"
 
-export default function Particle() {
+export default function Example() {
   return (
     <InputGroup>
       <InputGroupInput id="email-1" placeholder="team@coss.com" type="email" />

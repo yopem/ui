@@ -7,7 +7,7 @@ import { useState } from "react"
 import { Button } from "@/components/ui/stylex/button"
 import { Calendar } from "@/components/ui/stylex/calendar"
 
-export default function Particle() {
+export default function Example() {
   const today = new Date()
   const selectedDay = addDays(today, -28)
   const [month, setMonth] = useState(selectedDay)

@@ -3,7 +3,7 @@ import { PlusIcon } from "lucide-react"
 
 import { Button } from "@/components/ui/stylex/button"
 
-export default function Particle() {
+export default function Example() {
   return (
     <Button aria-label="Add" size="icon-lg">
       <PlusIcon {...stylex.props(exampleStyles.icon)} aria-hidden="true" />

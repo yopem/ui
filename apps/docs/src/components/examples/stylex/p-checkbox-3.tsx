@@ -4,7 +4,7 @@ import { useId } from "react"
 import { Checkbox } from "@/components/ui/stylex/checkbox"
 import { Label } from "@/components/ui/stylex/label"
 
-export default function Particle() {
+export default function Example() {
   const id = useId()
 
   return (

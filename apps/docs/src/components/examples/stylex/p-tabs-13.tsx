@@ -9,7 +9,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/stylex/tooltip"
 
-export default function Particle() {
+export default function Example() {
   return (
     <TooltipProvider>
       <Tabs {...stylex.props(exampleStyles.example1)} defaultValue="tab-1">

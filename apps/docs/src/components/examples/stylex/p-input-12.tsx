@@ -7,7 +7,7 @@ import {
 } from "@/components/ui/stylex/input-group"
 import { Spinner } from "@/components/ui/stylex/spinner"
 
-export default function Particle() {
+export default function Example() {
   return (
     <InputGroup
       {...stylex.props(exampleStyles.inputGroup, exampleStyles.noShadow)}

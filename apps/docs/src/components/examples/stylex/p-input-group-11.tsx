@@ -5,7 +5,7 @@ import {
 } from "@/components/ui/stylex/input-group"
 import { Kbd } from "@/components/ui/stylex/kbd"
 
-export default function Particle() {
+export default function Example() {
   return (
     <InputGroup>
       <InputGroupInput placeholder="Search…" type="search" />

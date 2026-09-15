@@ -21,7 +21,7 @@ const protocols = [
   { label: "sftp://", value: "sftp" },
 ]
 
-export default function Particle() {
+export default function Example() {
   return (
     <Group aria-label="URL input">
       <Select defaultValue="https" items={protocols}>

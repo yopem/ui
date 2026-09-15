@@ -30,10 +30,8 @@ const UnderlineContent = () => {
   return <span>Underline text</span>
 }
 
-export default function Particle() {
-  const [tooltipHandle] = useState(() =>
-    TooltipCreateHandle<ComponentType>(),
-  )
+export default function Example() {
+  const [tooltipHandle] = useState(() => TooltipCreateHandle<ComponentType>())
 
   return (
     <TooltipProvider>

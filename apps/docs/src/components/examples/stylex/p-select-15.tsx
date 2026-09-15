@@ -14,7 +14,7 @@ const items = [
   { label: "Archived", value: "archived" },
 ]
 
-export default function Particle() {
+export default function Example() {
   return (
     <Select aria-label="Select filter" defaultValue="active" items={items}>
       <SelectTrigger {...stylex.props(exampleStyles.report1Manual)}>

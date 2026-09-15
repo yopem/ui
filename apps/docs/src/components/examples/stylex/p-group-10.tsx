@@ -8,7 +8,7 @@ import {
   groupItemStyles,
 } from "@/components/ui/stylex/group"
 
-export default function Particle() {
+export default function Example() {
   return (
     <Group aria-label="Pagination">
       <Group aria-label="Page numbers">

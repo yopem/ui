@@ -3,7 +3,7 @@ import { UserIcon } from "lucide-react"
 
 import { Avatar, AvatarFallback } from "@/components/ui/stylex/avatar"
 
-export default function Particle() {
+export default function Example() {
   return (
     <Avatar>
       <AvatarFallback>

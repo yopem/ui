@@ -10,7 +10,7 @@ import {
   NumberFieldInput,
 } from "@/components/ui/stylex/number-field"
 
-export default function Particle() {
+export default function Example() {
   return (
     <InputGroup>
       <NumberField aria-label="Enter the amount" defaultValue={10}>

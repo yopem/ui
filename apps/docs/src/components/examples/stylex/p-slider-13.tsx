@@ -13,7 +13,7 @@ import { Slider } from "@/components/ui/stylex/slider"
 const min = 0
 const max = 50
 
-export default function Particle() {
+export default function Example() {
   const [values, setValues] = useState([0, 20])
 
   const updateValue = (index: number, newValue: number | null) => {

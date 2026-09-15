@@ -7,7 +7,7 @@ import {
   InputGroupInput,
 } from "@/components/ui/stylex/input-group"
 
-export default function Particle() {
+export default function Example() {
   return (
     <InputGroup>
       <InputGroupInput aria-label="Email" placeholder="Email" type="email" />

@@ -61,10 +61,8 @@ const ProfileContent = () => {
   )
 }
 
-export default function Particle() {
-  const [popoverHandle] = useState(() =>
-    PopoverCreateHandle<ComponentType>(),
-  )
+export default function Example() {
+  const [popoverHandle] = useState(() => PopoverCreateHandle<ComponentType>())
 
   return (
     <div {...stylex.props(exampleStyles.example8)}>

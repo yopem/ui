@@ -1,6 +1,6 @@
 import { Slider } from "@/components/ui/stylex/slider"
 
-export default function Particle() {
+export default function Example() {
   return (
     <Slider
       aria-label="Dual thumb slider with collision behavior none"

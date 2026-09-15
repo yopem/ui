@@ -7,7 +7,7 @@ import {
 } from "@/components/ui/stylex/field"
 import { Textarea } from "@/components/ui/stylex/textarea"
 
-export default function Particle() {
+export default function Example() {
   return (
     <Field>
       <FieldLabel>Bio</FieldLabel>

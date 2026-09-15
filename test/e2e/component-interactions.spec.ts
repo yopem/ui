@@ -63,7 +63,9 @@ test("detached handles stay scoped to each example", async ({ page }) => {
   await expect(page.getByRole("button", { name: "Toggle bold" })).toHaveCount(3)
 
   expect(warnings).not.toContainEqual(
-    expect.stringContaining("A handle is attached to more than one mounted root"),
+    expect.stringContaining(
+      "A handle is attached to more than one mounted root",
+    ),
   )
 })
 

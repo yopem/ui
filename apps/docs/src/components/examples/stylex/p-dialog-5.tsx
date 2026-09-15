@@ -12,7 +12,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/stylex/dialog"
 
-export default function Particle() {
+export default function Example() {
   return (
     <Dialog>
       <DialogTrigger render={<Button variant="outline" />}>

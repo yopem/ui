@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/stylex/tooltip"
 import { useCopyToClipboard } from "@/hooks/use-copy-to-clipboard"
 
-export default function Particle() {
+export default function Example() {
   const copyButtonRef = useRef<HTMLButtonElement>(null)
   const toastTimeout = 2000
 

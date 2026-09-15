@@ -18,7 +18,7 @@ const OTP_SLOT_KEYS = Array.from(
   (_, i) => `otp-slot-${i}`,
 )
 
-export default function Particle() {
+export default function Example() {
   const [value, setValue] = useState("")
   const [invalid, setInvalid] = useState(false)
   const valid = value.length === OTP_LENGTH && value === "123456"

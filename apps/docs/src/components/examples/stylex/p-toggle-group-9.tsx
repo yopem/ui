@@ -18,7 +18,7 @@ const formats = [
   { Icon: UnderlineIcon, label: "Underline", value: "underline" },
 ]
 
-export default function Particle() {
+export default function Example() {
   return (
     <TooltipProvider>
       <ToggleGroup defaultValue={["bold"]} multiple>

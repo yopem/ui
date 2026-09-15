@@ -5,7 +5,7 @@ import { useState } from "react"
 
 import { Calendar } from "@/components/ui/stylex/calendar"
 
-export default function Particle() {
+export default function Example() {
   const today = new Date()
   const [date, setDate] = useState<Date[] | undefined>([
     subDays(today, 17),

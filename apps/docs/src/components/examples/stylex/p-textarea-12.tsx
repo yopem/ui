@@ -3,7 +3,7 @@ import * as stylex from "@stylexjs/stylex"
 import { Field, FieldError, FieldLabel } from "@/components/ui/stylex/field"
 import { Textarea } from "@/components/ui/stylex/textarea"
 
-export default function Particle() {
+export default function Example() {
   return (
     <Field>
       <FieldLabel>

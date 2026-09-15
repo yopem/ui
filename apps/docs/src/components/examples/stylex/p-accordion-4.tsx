@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/stylex/accordion"
 import { Button } from "@/components/ui/stylex/button"
 
-export default function Particle() {
+export default function Example() {
   const [value, setValue] = useState<string[]>([])
 
   return (

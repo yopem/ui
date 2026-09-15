@@ -2,7 +2,7 @@ import { Checkbox } from "@/components/ui/stylex/checkbox"
 import { CheckboxGroup } from "@/components/ui/stylex/checkbox-group"
 import { Label } from "@/components/ui/stylex/label"
 
-export default function Particle() {
+export default function Example() {
   return (
     <CheckboxGroup aria-label="Select frameworks" defaultValue={["next"]}>
       <Label>

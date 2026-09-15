@@ -6,7 +6,7 @@ import {
   NumberFieldInput,
 } from "@/components/ui/stylex/number-field"
 
-export default function Particle() {
+export default function Example() {
   return (
     <NumberField defaultValue={0}>
       <NumberFieldGroup>

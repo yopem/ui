@@ -46,7 +46,7 @@ async function searchMovies(
   )
 }
 
-export default function Particle() {
+export default function Example() {
   const [searchValue, setSearchValue] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const [searchResults, setSearchResults] = useState<Movie[]>([])

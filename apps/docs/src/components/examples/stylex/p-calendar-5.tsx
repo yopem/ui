@@ -58,7 +58,7 @@ function CalendarDropdown(props: DropdownProps) {
   )
 }
 
-export default function Particle() {
+export default function Example() {
   const [date, setDate] = React.useState<Date | undefined>(new Date())
   return (
     <Calendar

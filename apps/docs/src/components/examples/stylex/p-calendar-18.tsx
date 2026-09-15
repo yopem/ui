@@ -8,7 +8,7 @@ import { Calendar } from "@/components/ui/stylex/calendar"
 import { Field, FieldLabel } from "@/components/ui/stylex/field"
 import { InputGroup, InputGroupAddon } from "@/components/ui/stylex/input-group"
 
-export default function Particle() {
+export default function Example() {
   const [date, setDate] = useState<Date | undefined>(() => new Date())
   const [month, setMonth] = useState<Date>(() => new Date())
   const [timeValue, setTimeValue] = useState("12:00:00")

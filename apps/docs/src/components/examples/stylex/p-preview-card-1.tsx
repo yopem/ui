@@ -8,7 +8,7 @@ import {
   PreviewCardTrigger,
 } from "@/components/ui/stylex/preview-card"
 
-export default function Particle() {
+export default function Example() {
   return (
     <PreviewCard>
       <PreviewCardTrigger render={<Button variant="ghost" />}>

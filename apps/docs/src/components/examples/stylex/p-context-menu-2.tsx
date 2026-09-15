@@ -8,20 +8,20 @@ import {
   ContextMenuTrigger,
 } from "@/components/ui/stylex/context-menu"
 
-export default function Particle() {
+export default function Example() {
   return (
     <ContextMenu>
       <ContextMenuTrigger {...stylex.props(exampleStyles.example1)}>
         Right click here
       </ContextMenuTrigger>
       <ContextMenuPopup>
-        <ContextMenuLinkItem render={<a aria-label="Particles" href="/docs" />}>
+        <ContextMenuLinkItem render={<a aria-label="Examples" href="/docs" />}>
           Docs
         </ContextMenuLinkItem>
         <ContextMenuLinkItem
-          render={<a aria-label="Particles" href="/particles" />}
+          render={<a aria-label="Examples" href="/particles" />}
         >
-          Particles
+          Examples
         </ContextMenuLinkItem>
       </ContextMenuPopup>
     </ContextMenu>

@@ -7,16 +7,16 @@ import {
   MenuTrigger,
 } from "@/components/ui/stylex/menu"
 
-export default function Particle() {
+export default function Example() {
   return (
     <Menu>
       <MenuTrigger render={<Button variant="outline" />}>Open menu</MenuTrigger>
       <MenuPopup>
-        <MenuLinkItem render={<a aria-label="Particles" href="/docs" />}>
+        <MenuLinkItem render={<a aria-label="Examples" href="/docs" />}>
           Docs
         </MenuLinkItem>
-        <MenuLinkItem render={<a aria-label="Particles" href="/particles" />}>
-          Particles
+        <MenuLinkItem render={<a aria-label="Examples" href="/particles" />}>
+          Examples
         </MenuLinkItem>
       </MenuPopup>
     </Menu>

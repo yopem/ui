@@ -46,7 +46,7 @@ const manyTags: SimpleTag[] = [
   { id: "lang-fsharp", value: "F#" },
 ]
 
-export default function Particle() {
+export default function Example() {
   const [value, setValue] = useState("")
   const { contains } = useAutocompleteFilter({ sensitivity: "base" })
 

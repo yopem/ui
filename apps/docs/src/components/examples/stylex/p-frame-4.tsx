@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/stylex/frame"
 import { Separator } from "@/components/ui/stylex/separator"
 
-export default function Particle() {
+export default function Example() {
   return (
     <Frame {...stylex.props(exampleStyles.example1)}>
       <FrameHeader>

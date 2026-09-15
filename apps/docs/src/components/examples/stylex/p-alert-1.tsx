@@ -4,7 +4,7 @@ import {
   AlertTitle,
 } from "@/components/ui/stylex/alert"
 
-export default function Particle() {
+export default function Example() {
   return (
     <Alert>
       <AlertTitle>Heads up!</AlertTitle>

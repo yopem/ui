@@ -8,7 +8,7 @@ import {
   FrameTitle,
 } from "@/components/ui/stylex/frame"
 
-export default function Particle() {
+export default function Example() {
   return (
     <Frame {...stylex.props(exampleStyles.example1)}>
       <FrameHeader>

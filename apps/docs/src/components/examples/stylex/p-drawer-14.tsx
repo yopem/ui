@@ -11,7 +11,7 @@ import {
   DrawerTitle,
 } from "@/components/ui/stylex/drawer"
 
-export default function Particle() {
+export default function Example() {
   return (
     <div {...stylex.props(exampleStyles.example1)}>
       <Drawer modal={false} position="left">

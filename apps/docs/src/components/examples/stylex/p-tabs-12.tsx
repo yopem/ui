@@ -4,7 +4,7 @@ import { HouseIcon, InboxIcon, SettingsIcon } from "lucide-react"
 import { Badge } from "@/components/ui/stylex/badge"
 import { Tabs, TabsList, TabsPanel, TabsTab } from "@/components/ui/stylex/tabs"
 
-export default function Particle() {
+export default function Example() {
   return (
     <Tabs {...stylex.props(exampleStyles.example1)} defaultValue="tab-1">
       <TabsList>

@@ -6,7 +6,7 @@ import {
   ToggleGroupItem,
 } from "@/components/ui/stylex/toggle-group"
 
-export default function ParticleItem() {
+export default function ExampleItem() {
   return (
     <ToggleGroup defaultValue={["bold"]}>
       <ToggleGroupItem aria-label="Toggle bold" value="bold">

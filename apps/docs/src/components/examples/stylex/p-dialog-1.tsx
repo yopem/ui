@@ -21,7 +21,7 @@ const profileFields = [
   { defaultValue: "@maggie.welsh", label: "Username" },
 ]
 
-export default function Particle() {
+export default function Example() {
   return (
     <Dialog>
       <DialogTrigger render={<Button variant="outline" />}>

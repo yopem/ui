@@ -128,7 +128,7 @@ async function searchSampleAddresses(
   )
 }
 
-export default function Particle() {
+export default function Example() {
   const [searchValue, setSearchValue] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const [suggestions, setSuggestions] = useState<AddressSuggestion[]>([])

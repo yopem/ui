@@ -6,7 +6,7 @@ import {
 } from "@/components/ui/stylex/group"
 import { Input } from "@/components/ui/stylex/input"
 
-export default function Particle() {
+export default function Example() {
   return (
     <Group aria-label="Email subscription">
       <Input

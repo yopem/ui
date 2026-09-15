@@ -12,7 +12,7 @@ const min = 0
 const max = 200
 const step = 5
 
-export default function Particle() {
+export default function Example() {
   const [value, setValue] = useState(100)
 
   return (

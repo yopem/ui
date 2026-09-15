@@ -1,5 +1,5 @@
 import { Slider } from "@/components/ui/stylex/slider"
 
-export default function Particle() {
+export default function Example() {
   return <Slider defaultValue={50} orientation="vertical" />
 }

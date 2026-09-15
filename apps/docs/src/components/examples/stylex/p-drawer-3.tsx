@@ -11,7 +11,7 @@ import {
   DrawerTrigger,
 } from "@/components/ui/stylex/drawer"
 
-export default function Particle() {
+export default function Example() {
   return (
     <Drawer position="right">
       <DrawerTrigger render={<Button variant="outline" />}>

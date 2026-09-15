@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/stylex/tooltip"
 import { useCopyToClipboard } from "@/hooks/use-copy-to-clipboard"
 
-export default function Particle() {
+export default function Example() {
   const { copyToClipboard, isCopied } = useCopyToClipboard()
   const inputRef = useRef<HTMLInputElement>(null)
 

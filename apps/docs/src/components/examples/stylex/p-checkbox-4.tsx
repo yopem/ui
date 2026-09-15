@@ -3,7 +3,7 @@ import * as stylex from "@stylexjs/stylex"
 import { Checkbox } from "@/components/ui/stylex/checkbox"
 import { Label } from "@/components/ui/stylex/label"
 
-export default function Particle() {
+export default function Example() {
   return (
     <Label {...stylex.props(exampleStyles.report1)}>
       <Checkbox {...stylex.props(stylex.defaultMarker())} defaultChecked />

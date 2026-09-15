@@ -42,7 +42,7 @@ const countries = [
 
 const allItems = countries.flatMap((c) => c.items)
 
-export default function Particle() {
+export default function Example() {
   return (
     <Select
       aria-label="Select country"

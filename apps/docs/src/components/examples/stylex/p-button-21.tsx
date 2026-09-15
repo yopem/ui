@@ -3,7 +3,7 @@ import { ChevronRightIcon } from "lucide-react"
 
 import { Button } from "@/components/ui/stylex/button"
 
-export default function Particle() {
+export default function Example() {
   return (
     <Button
       {...stylex.props(stylex.defaultMarker(), exampleStyles.button)}

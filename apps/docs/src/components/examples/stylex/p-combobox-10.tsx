@@ -433,7 +433,7 @@ const countries: Country[] = [
   { code: "zw", continent: "Africa", label: "Zimbabwe", value: "zimbabwe" },
 ]
 
-export default function Particle() {
+export default function Example() {
   return (
     <Combobox defaultValue={countries[0]} items={countries}>
       <ComboboxTrigger

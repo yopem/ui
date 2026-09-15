@@ -36,7 +36,7 @@ function getStatusStyle(status: ProjectStatus) {
   }
 }
 
-export default function Particle() {
+export default function Example() {
   return (
     <Table {...stylex.props(exampleStyles.example1)} variant="card">
       <TableHeader>

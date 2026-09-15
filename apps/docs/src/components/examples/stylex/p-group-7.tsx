@@ -7,7 +7,7 @@ import {
 import { Input } from "@/components/ui/stylex/input"
 import { Label } from "@/components/ui/stylex/label"
 
-export default function Particle() {
+export default function Example() {
   return (
     <Group aria-label="Domain input">
       <GroupText render={<Label aria-label="Domain" htmlFor="domain" />}>

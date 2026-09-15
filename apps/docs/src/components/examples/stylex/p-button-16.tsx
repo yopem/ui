@@ -3,7 +3,7 @@ import { DownloadIcon } from "lucide-react"
 
 import { Button } from "@/components/ui/stylex/button"
 
-export default function Particle() {
+export default function Example() {
   return (
     <Button>
       <DownloadIcon {...stylex.props(exampleStyles.icon)} aria-hidden="true" />

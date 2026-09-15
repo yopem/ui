@@ -24,7 +24,7 @@ const items = [
   { label: "Pear", value: "pear" },
 ]
 
-export default function Particle() {
+export default function Example() {
   return (
     <Autocomplete items={items}>
       <AutocompleteInput

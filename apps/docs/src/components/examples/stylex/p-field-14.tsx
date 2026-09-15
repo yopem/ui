@@ -11,7 +11,7 @@ import {
 import { Fieldset, FieldsetLegend } from "@/components/ui/stylex/fieldset"
 import { Radio, RadioGroup } from "@/components/ui/stylex/radio-group"
 
-export default function Particle() {
+export default function Example() {
   return (
     <Field
       {...stylex.props(exampleStyles.example1)}

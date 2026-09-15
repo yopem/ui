@@ -36,7 +36,7 @@ function renderValue(value: Language[]) {
   return firstLanguage + additionalLanguages
 }
 
-export default function Particle() {
+export default function Example() {
   return (
     <Select
       aria-label="Select languages"

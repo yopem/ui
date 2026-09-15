@@ -7,7 +7,7 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/stylex/collapsible"
 
-export default function Particle() {
+export default function Example() {
   return (
     <Collapsible>
       <CollapsibleTrigger

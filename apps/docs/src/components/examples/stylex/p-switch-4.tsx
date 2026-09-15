@@ -4,7 +4,7 @@ import { useId } from "react"
 import { Label } from "@/components/ui/stylex/label"
 import { Switch } from "@/components/ui/stylex/switch"
 
-export default function Particle() {
+export default function Example() {
   const id = useId()
 
   return (

@@ -2,7 +2,7 @@ import * as stylex from "@stylexjs/stylex"
 
 import { Skeleton } from "@/components/ui/stylex/skeleton"
 
-export default function Particle() {
+export default function Example() {
   return (
     <div {...stylex.props(exampleStyles.example1)}>
       <Skeleton {...stylex.props(exampleStyles.example2)} />

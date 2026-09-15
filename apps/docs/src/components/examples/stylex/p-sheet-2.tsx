@@ -16,7 +16,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/stylex/sheet"
 
-export default function Particle() {
+export default function Example() {
   return (
     <Sheet>
       <SheetTrigger render={<Button variant="outline" />}>

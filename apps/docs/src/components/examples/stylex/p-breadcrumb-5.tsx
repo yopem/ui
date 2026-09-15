@@ -11,7 +11,7 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/stylex/breadcrumb"
 
-export default function Particle() {
+export default function Example() {
   return (
     <Breadcrumb>
       <BreadcrumbList>

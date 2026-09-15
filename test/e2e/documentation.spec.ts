@@ -29,7 +29,7 @@ test("examples page lists, filters, copies, and opens examples", async ({
   ).toBeVisible()
   await expect
     .poll(() => page.evaluate(() => navigator.clipboard.readText()))
-    .toContain("export default function Particle")
+    .toContain("export default function Example")
 
   await firstExample.click()
   await page.waitForURL(

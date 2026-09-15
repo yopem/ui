@@ -1,6 +1,6 @@
 import { Avatar, AvatarFallback } from "@/components/ui/stylex/avatar"
 
-export default function Particle() {
+export default function Example() {
   return (
     <Avatar>
       <AvatarFallback>LT</AvatarFallback>

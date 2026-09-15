@@ -3,7 +3,7 @@ import * as stylex from "@stylexjs/stylex"
 import { Field, FieldLabel } from "@/components/ui/stylex/field"
 import { Slider, SliderValue } from "@/components/ui/stylex/slider"
 
-export default function Particle() {
+export default function Example() {
   return (
     <Field>
       <Slider defaultValue={50}>

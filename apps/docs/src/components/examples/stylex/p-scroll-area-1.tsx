@@ -4,7 +4,7 @@ import { ScrollArea } from "@/components/ui/stylex/scroll-area"
 
 const tags = Array.from({ length: 50 }, (_, i) => `v1.0.0-alpha.${i}`)
 
-export default function Particle() {
+export default function Example() {
   return (
     <ScrollArea {...stylex.props(exampleStyles.example1)}>
       <div {...stylex.props(exampleStyles.example2)}>

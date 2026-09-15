@@ -21,7 +21,7 @@ function SaveTooltipPopup() {
   )
 }
 
-export default function Particle() {
+export default function Example() {
   const saveButtonRef = useRef<HTMLButtonElement>(null)
   const toastTimeout = 2000
 

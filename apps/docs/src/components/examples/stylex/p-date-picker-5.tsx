@@ -14,7 +14,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/stylex/popover"
 
-export default function Particle() {
+export default function Example() {
   const [date, setDate] = useState<Date | undefined>()
   const [inputValue, setInputValue] = useState("")
   const [month, setMonth] = useState<Date>(() => new Date())

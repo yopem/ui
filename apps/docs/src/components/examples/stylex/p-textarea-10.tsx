@@ -3,7 +3,7 @@ import { useId } from "react"
 
 import { Textarea } from "@/components/ui/stylex/textarea"
 
-export default function Particle() {
+export default function Example() {
   const id = useId()
   return (
     <Textarea

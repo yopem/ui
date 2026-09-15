@@ -18,7 +18,7 @@ const items = [
   { color: "red", label: "Failed", value: "failed" },
 ] as const
 
-export default function Particle() {
+export default function Example() {
   return (
     <Select
       aria-label="Select status"

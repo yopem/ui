@@ -7,7 +7,7 @@ import { useId, useState } from "react"
 import { Badge } from "@/components/ui/stylex/badge"
 import { Checkbox } from "@/components/ui/stylex/checkbox"
 
-export default function Particle() {
+export default function Example() {
   const id = useId()
   const [checked, setChecked] = useState(true)
   return (

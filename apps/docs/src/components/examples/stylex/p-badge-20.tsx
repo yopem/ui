@@ -6,7 +6,7 @@ import { useState } from "react"
 
 import { Badge } from "@/components/ui/stylex/badge"
 
-export default function Particle() {
+export default function Example() {
   const [isActive, setIsActive] = useState(true)
 
   if (!isActive) return null

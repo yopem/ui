@@ -13,7 +13,7 @@ import { Slider } from "@/components/ui/stylex/slider"
 const min = 0
 const max = 150
 
-export default function Particle() {
+export default function Example() {
   const [value, setValue] = useState(25)
 
   return (

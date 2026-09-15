@@ -23,7 +23,7 @@ const items = [
   { label: "Dorado", value: "dorado" },
 ]
 
-export default function Particle() {
+export default function Example() {
   return (
     <Breadcrumb>
       <BreadcrumbList>

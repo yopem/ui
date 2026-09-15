@@ -3,7 +3,7 @@ import * as stylex from "@stylexjs/stylex"
 import { Label } from "@/components/ui/stylex/label"
 import { Radio, RadioGroup } from "@/components/ui/stylex/radio-group"
 
-export default function Particle() {
+export default function Example() {
   return (
     <RadioGroup defaultValue="r-1">
       <div {...stylex.props(exampleStyles.example1)}>

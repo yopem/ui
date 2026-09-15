@@ -55,7 +55,7 @@ const rockPlaylists = [
   "Electronic",
 ]
 
-export default function Particle() {
+export default function Example() {
   const isMobile = useMediaQuery("max-md")
 
   if (isMobile) {

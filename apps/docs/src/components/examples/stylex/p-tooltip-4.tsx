@@ -32,10 +32,8 @@ const ShareSocialContent = () => {
   return <span>Share to social media</span>
 }
 
-export default function Particle() {
-  const [tooltipHandle] = useState(() =>
-    TooltipCreateHandle<ComponentType>(),
-  )
+export default function Example() {
+  const [tooltipHandle] = useState(() => TooltipCreateHandle<ComponentType>())
 
   return (
     <TooltipProvider>

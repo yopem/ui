@@ -1,7 +1,7 @@
 import { Label } from "@/components/ui/stylex/label"
 import { Radio, RadioGroup } from "@/components/ui/stylex/radio-group"
 
-export default function Particle() {
+export default function Example() {
   return (
     <RadioGroup aria-label="Framework" defaultValue="next">
       <Label>

@@ -3,7 +3,7 @@ import { CheckIcon } from "lucide-react"
 
 import { Badge } from "@/components/ui/stylex/badge"
 
-export default function Particle() {
+export default function Example() {
   return (
     <Badge variant="outline">
       <CheckIcon {...stylex.props(exampleStyles.icon)} aria-hidden="true" />

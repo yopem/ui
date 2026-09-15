@@ -6,7 +6,7 @@ import {
   AvatarImage,
 } from "@/components/ui/stylex/avatar"
 
-export default function Particle() {
+export default function Example() {
   return (
     <div {...stylex.props(exampleStyles.example1)}>
       <Avatar {...stylex.props(exampleStyles.example2)}>

@@ -14,7 +14,7 @@ const items = [
   { disabled: false, label: "Nuxt", value: "nuxt" },
 ]
 
-export default function Particle() {
+export default function Example() {
   return (
     <Select aria-label="Select framework" defaultValue="next" items={items}>
       <SelectTrigger>

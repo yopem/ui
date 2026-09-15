@@ -25,7 +25,7 @@ interface PaginationProps {
   resultsPerPage?: number
 }
 
-export default function Particle({
+export default function Example({
   currentPage: initialPage = 1,
   totalPages = 10,
   totalResults,

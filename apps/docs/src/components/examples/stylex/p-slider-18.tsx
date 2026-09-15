@@ -2,7 +2,7 @@ import * as stylex from "@stylexjs/stylex"
 
 import { Slider } from "@/components/ui/stylex/slider"
 
-export default function Particle() {
+export default function Example() {
   return (
     <div {...stylex.props(exampleStyles.example1)}>
       <Slider defaultValue={[25, 75]} orientation="vertical" />

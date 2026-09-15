@@ -12,7 +12,7 @@ import {
   TableRow,
 } from "@/components/ui/stylex/table"
 
-export default function Particle() {
+export default function Example() {
   return (
     <Table>
       <TableCaption>A list of current projects.</TableCaption>

@@ -90,7 +90,7 @@ function groupTags(tags: Tag[]): TagGroup[] {
 
 const groupedTags: TagGroup[] = groupTags(tagsData)
 
-export default function Particle() {
+export default function Example() {
   return (
     <Autocomplete items={groupedTags}>
       <div {...stylex.props(exampleStyles.example1)}>

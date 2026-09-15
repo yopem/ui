@@ -43,7 +43,7 @@ for (const timezone of Intl.supportedValuesOf("timeZone")) {
 }
 formattedTimezones.sort((a, b) => a.numericOffset - b.numericOffset)
 
-export default function Particle() {
+export default function Example() {
   return (
     <Combobox autoHighlight items={formattedTimezones}>
       <ComboboxTrigger render={<SelectButton />}>

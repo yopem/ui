@@ -4,7 +4,7 @@ import { useId } from "react"
 import { Input } from "@/components/ui/stylex/input"
 import { Label } from "@/components/ui/stylex/label"
 
-export default function Particle() {
+export default function Example() {
   const id = useId()
   return (
     <div {...stylex.props(exampleStyles.example1)}>
