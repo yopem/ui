@@ -42,7 +42,13 @@ export default function Example() {
             >
               <BreadcrumbEllipsis />
             </MenuTrigger>
-            <MenuPopup align="start">
+            <MenuPopup
+              align="start"
+              portalProps={{
+                "aria-label": "Breadcrumb overflow",
+                render: <section />,
+              }}
+            >
               <MenuItem render={<a aria-label="Examples" href="/docs" />}>
                 Docs
               </MenuItem>

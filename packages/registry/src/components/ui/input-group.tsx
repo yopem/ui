@@ -198,6 +198,7 @@ export function InputGroupInput({
     <Input
       className={className}
       controlXstyle={[styles.control, controlXstyle]}
+      data-slot="input-group-input"
       xstyle={xstyle}
       unstyled
       {...props}
@@ -214,6 +215,7 @@ export function InputGroupTextarea({
     <Textarea
       className={className}
       controlXstyle={[styles.control, controlXstyle]}
+      data-slot="input-group-textarea"
       xstyle={[styles.textarea, xstyle]}
       unstyled
       {...props}

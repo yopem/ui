@@ -1,6 +1,7 @@
 import { defineConfig, devices } from "@playwright/test"
 
 const port = process.env.PLAYWRIGHT_PORT ?? "3100"
+const production = process.env.PLAYWRIGHT_PRODUCTION === "1"
 
 export default defineConfig({
   expect: { timeout: 10_000 },
@@ -8,17 +9,25 @@ export default defineConfig({
   outputDir: `test-results/${port}`,
   grepInvert: process.env.FULL_A11Y ? undefined : /@full-a11y/,
   reporter: process.env.CI ? "github" : "list",
-  testDir: "test/e2e",
+  testDir: ".",
+  testMatch: [
+    "apps/*/test/**/*-e2e.spec.ts",
+    "apps/*/test/**/*-e2e.spec.tsx",
+    "packages/*/test/**/*-e2e.spec.ts",
+    "packages/*/test/**/*-e2e.spec.tsx",
+    "test/**/*-e2e.spec.ts",
+    "test/**/*-e2e.spec.tsx",
+  ],
   use: {
     baseURL: `http://localhost:${port}`,
     screenshot: "only-on-failure",
     trace: "retain-on-failure",
   },
   webServer: {
-    command: process.env.PLAYWRIGHT_PRODUCTION
+    command: production
       ? `PORT=${port} bun run start`
       : `bun run --cwd apps/docs dev -- --mode test --port ${port}`,
-    reuseExistingServer: !process.env.CI,
+    reuseExistingServer: !process.env.CI && !production,
     timeout: 120_000,
     url: `http://localhost:${port}/components`,
   },

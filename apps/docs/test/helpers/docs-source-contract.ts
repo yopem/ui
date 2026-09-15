@@ -1,0 +1,217 @@
+import { expect, test } from "bun:test"
+import { existsSync, readFileSync, readdirSync } from "node:fs"
+import { extname, relative, resolve } from "node:path"
+
+const docsRoot = resolve(import.meta.dirname, "../..")
+const sourceRoot = resolve(docsRoot, "src")
+const testRoot = resolve(docsRoot, "test")
+
+const routeIds: Record<string, string> = {
+  "routes/api/og.ts": "/api/og",
+  "routes/api/search.ts": "/api/search",
+  "routes/components/$name.tsx": "/components/$name",
+  "routes/components/index.tsx": "/components/",
+  "routes/components[.]md.ts": "/components.md",
+  "routes/components/{$name}[.]md.ts": "/components/{$name}.md",
+  "routes/docs/getting-started.tsx": "/docs/getting-started",
+  "routes/docs/installation.tsx": "/docs/installation",
+  "routes/docs/theming.tsx": "/docs/theming",
+  "routes/docs/{$name}[.]md.ts": "/docs/{$name}.md",
+  "routes/examples/$example.tsx": "/examples/$example",
+  "routes/examples/index.tsx": "/examples/",
+  "routes/index.tsx": "/",
+  "routes/index[.]md.ts": "/index.md",
+  "routes/llms[.]txt.ts": "/llms.txt",
+  "routes/sitemap[.]xml.ts": "/sitemap.xml",
+  "routes/stylex/index.tsx": "/stylex/",
+}
+
+const requiredSourceText: Record<string, readonly string[]> = {
+  "catalog/api-reference.tsx": [
+    "export function ApiReference",
+    "Type signature",
+  ],
+  "catalog/catalog-ui.tsx": ["export function ExamplePanel", "live preview"],
+  "catalog/code-block.tsx": ["export function CopyableCode", "copyError"],
+  "catalog/components.ts": [
+    "export const catalog",
+    "export function getCatalogItem",
+  ],
+  "catalog/docs-data.ts": [
+    "export function getRequiredItems",
+    "Component not found",
+  ],
+  "catalog/docs-layout.tsx": [
+    "export function DocumentationLayout",
+    "Skip to content",
+  ],
+  "catalog/docs-navigation.tsx": ["export function DocsNavigation", "llms.txt"],
+  "catalog/docs-page.tsx": [
+    "export function DocsPage",
+    "export function DocsBody",
+  ],
+  "catalog/docs-styles.ts": [
+    "export const docsStyles",
+    "export const catalogStyles",
+  ],
+  "catalog/docs.functions.ts": [
+    "export const getDocumentation",
+    "createServerFn",
+  ],
+  "catalog/example-dependencies.ts": [
+    "export function getExampleDependencies",
+    "packages",
+  ],
+  "catalog/example-modules.ts": [
+    "export function findExampleModule",
+    "export function findExampleComponent",
+  ],
+  "catalog/global-search.tsx": [
+    "export function GlobalSearch",
+    "Search unavailable",
+  ],
+  "catalog/highlighted-code.tsx": [
+    "export function HighlightedCode",
+    "codeToHtml",
+  ],
+  "catalog/select-examples.ts": ["export function selectExamples", "Default"],
+  "catalog/source-code.ts": [
+    "export function stripStandaloneComments",
+    "standaloneBlockComment",
+  ],
+  "catalog/table-of-contents.tsx": [
+    "export function TableOfContents",
+    "aria-current",
+  ],
+  "catalog/theme-toggle.tsx": ["export function ThemeToggle", "aria-pressed"],
+  "catalog/usage.ts": ["export const usageExamples", "@/components/ui/"],
+  "components/brand-logo.tsx": ["export function BrandLogo", "brandLogoPath"],
+  "hooks/use-copy-to-clipboard.ts": [
+    "export function useCopyToClipboard",
+    "Could not copy",
+  ],
+  "hooks/use-media-query.ts": [
+    "export function useMediaQuery",
+    "useSyncExternalStore",
+  ],
+  "lib/brand.ts": ["export const brandLogoPath", "M1169"],
+  "lib/og.tsx": ["export async function renderOgImage", "width: 1200"],
+  "lib/plain-text.ts": [
+    "export function createLlms",
+    "export function markdownResponse",
+  ],
+  "lib/seo.ts": ["export function createSeo", "export function createSitemap"],
+  "lib/table-wrapper.ts": ["useReactTable", "ColumnDef"],
+  "router.tsx": ["export function getRouter", "scrollRestoration: true"],
+}
+
+function sourceStem(sourceRelativePath: string) {
+  if (sourceRelativePath.endsWith(".d.ts")) {
+    return sourceRelativePath.slice(0, -".d.ts".length)
+  }
+  return sourceRelativePath.slice(0, -extname(sourceRelativePath).length)
+}
+
+function expectMirroredTests(sourceRelativePath: string) {
+  const stem = sourceStem(sourceRelativePath)
+  expect(existsSync(resolve(testRoot, `${stem}.spec.ts`))).toBe(true)
+  expect(existsSync(resolve(testRoot, `${stem}-e2e.spec.ts`))).toBe(true)
+}
+
+function expectStylexReexport(sourceRelativePath: string, source: string) {
+  const component = sourceRelativePath
+    .slice("components/ui/stylex/".length)
+    .replace(/\.tsx$/, "")
+  const canonicalPath = resolve(
+    docsRoot,
+    `../../packages/registry/src/components/ui/${component}.tsx`,
+  )
+
+  expect(source.trim()).toBe(
+    `export * from "@registry/components/ui/${component}"`,
+  )
+  expect(existsSync(canonicalPath)).toBe(true)
+  expect(readFileSync(canonicalPath, "utf8")).toContain("export")
+}
+
+function expectGeneratedRouteTree(source: string) {
+  expect(source).toContain("automatically generated by TanStack Router")
+  expect(source).toContain("export const routeTree")
+
+  const routesRoot = resolve(sourceRoot, "routes")
+  const pending = [routesRoot]
+  const routeFiles: string[] = []
+  while (pending.length > 0) {
+    const directory = pending.pop()
+    if (!directory) continue
+    for (const entry of readdirSync(directory, { withFileTypes: true })) {
+      const path = resolve(directory, entry.name)
+      if (entry.isDirectory()) pending.push(path)
+      else if (/\.(ts|tsx)$/.test(entry.name)) routeFiles.push(path)
+    }
+  }
+
+  for (const routeFile of routeFiles) {
+    const modulePath = relative(sourceRoot, routeFile).replace(
+      /\.(ts|tsx)$/,
+      "",
+    )
+    expect(source).toContain(`'./${modulePath}'`)
+  }
+}
+
+function expectRoute(sourceRelativePath: string, source: string) {
+  if (sourceRelativePath === "routes/__root.tsx") {
+    expect(source).toContain("createRootRoute({")
+    expect(source).toContain('lang="en"')
+    expect(source).toContain("notFoundComponent: NotFoundPage")
+    return
+  }
+
+  const routeId = routeIds[sourceRelativePath]
+  expect(routeId).toBeDefined()
+  expect(source).toContain(`createFileRoute("${routeId}")`)
+  if (/\.(md|txt|xml)\.ts$/.test(sourceRelativePath)) {
+    expect(source).toContain("handlers")
+    expect(source).toContain("GET")
+  }
+}
+
+export function runDocsSourceContract(sourceRelativePath: string) {
+  test(`${sourceRelativePath} has its source and mirror contract`, () => {
+    expect(sourceRelativePath.startsWith("../")).toBe(false)
+    const sourcePath = resolve(sourceRoot, sourceRelativePath)
+    expect(relative(sourceRoot, sourcePath).startsWith("..")).toBe(false)
+    expect(existsSync(sourcePath)).toBe(true)
+
+    const source = readFileSync(sourcePath, "utf8")
+    expect(source.trim().length).toBeGreaterThan(0)
+    expectMirroredTests(sourceRelativePath)
+
+    if (sourceRelativePath.startsWith("components/ui/stylex/")) {
+      expectStylexReexport(sourceRelativePath, source)
+      return
+    }
+    if (sourceRelativePath === "routeTree.gen.ts") {
+      expectGeneratedRouteTree(source)
+      return
+    }
+    if (sourceRelativePath === "styles.css") {
+      expect(source).toContain("packages/registry/src/styles/styles.css")
+      expect(source).toContain("@stylex;")
+      return
+    }
+    if (sourceRelativePath === "vite-env.d.ts") {
+      expect(source.trim()).toBe('/// <reference types="vite/client" />')
+      return
+    }
+    if (sourceRelativePath.startsWith("routes/")) {
+      expectRoute(sourceRelativePath, source)
+      return
+    }
+
+    for (const expected of requiredSourceText[sourceRelativePath] ?? []) {
+      expect(source).toContain(expected)
+    }
+  })
+}

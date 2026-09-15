@@ -4,7 +4,8 @@
   "private": true,
   "type": "module",
   "imports": {
-    "@registry/*": "./src/*"
+    "@registry/*": "./src/*",
+    "@test/*": "./test/*"
   },
   "exports": {
     "./*": "./src/*"

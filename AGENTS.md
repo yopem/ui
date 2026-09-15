@@ -68,15 +68,27 @@ Path aliases are `@registry/*` for registry source and `@/*` inside docs.
 - Apply these requirements to every project under `apps/*` and `packages/*`,
   including projects added later.
 - Keep tests outside `src/`. Every app and package must have a sibling `test/`
-  directory that mirrors its `src/` directory and file names. For example,
-  `packages/registry/src/lib/stylex.ts` maps to
-  `packages/registry/test/lib/stylex.test.ts`.
+  directory that mirrors its `src/` directory and file names. Each source file
+  requires both of these files:
+
+  ```text
+  apps/<app>/src/<path>/<file>.ts
+    → apps/<app>/test/<path>/<file>.spec.ts
+    → apps/<app>/test/<path>/<file>-e2e.spec.ts
+  packages/<package>/src/<path>/<file>.tsx
+    → packages/<package>/test/<path>/<file>.spec.ts
+    → packages/<package>/test/<path>/<file>-e2e.spec.ts
+  ```
+
 - Restructure all existing app and package tests that do not follow the mirrored
   layout instead of preserving a second test organization.
+- `bun test` must run normal `*.spec.ts` and `*.spec.tsx` files while ignoring
+  every `*-e2e.spec.ts` and `*-e2e.spec.tsx` file. Playwright must discover only
+  the `*-e2e.spec.ts` and `*-e2e.spec.tsx` files.
 - Every file under any `apps/*/src/` or `packages/*/src/` directory must have a
-  corresponding test file. A test may verify source contracts for files that
-  cannot execute independently, but empty,
-  placeholder, snapshot-only, and import-only tests do not satisfy this rule.
+  corresponding normal test and E2E test. Tests may verify source contracts for
+  files that cannot execute independently, but empty, placeholder,
+  snapshot-only, and import-only tests do not satisfy this rule.
 - Tests must cover realistic failure opportunities, not only required happy
   paths. Cover public behavior, variants, boundaries, invalid input, error and
   disabled states, keyboard and pointer interaction, state transitions,
@@ -91,8 +103,13 @@ Path aliases are `@registry/*` for registry source and `@/*` inside docs.
   accessible names and roles, and open/close or selection behavior where
   applicable. Run an accessibility scan for every rendered state that can
   expose different markup.
-- When source behavior changes, update its mirrored Bun test and relevant
-  Playwright and accessibility tests in the same change.
+- Every E2E test must run against a production build and cover the source file's
+  realistic browser impact, including relevant interactions, failure handling,
+  responsive states, keyboard behavior, console and page errors, failed local
+  assets, and accessibility. Static modules still require an E2E assertion of
+  their user-visible or served production output.
+- When source behavior changes, update both its mirrored normal test and E2E
+  test in the same change.
 - Before completing component work, run focused Bun and Playwright tests, the
   accessibility suite, and a production build. Do not claim production safety
   when any required check was skipped or failed; report exact gaps.

@@ -34,12 +34,8 @@ export default function Example() {
         </BreadcrumbItem>
         <BreadcrumbSeparator />
         <BreadcrumbItem>
-          <Select
-            aria-label="Select database"
-            defaultValue="orion"
-            items={items}
-          >
-            <SelectTrigger size="sm">
+          <Select defaultValue="orion" items={items}>
+            <SelectTrigger aria-label="Select database" size="sm">
               <DatabaseIcon {...stylex.props(exampleStyles.icon)} />
               <SelectValue />
             </SelectTrigger>

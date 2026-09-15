@@ -46,7 +46,7 @@ const ProfileContent = () => {
           <AvatarFallback>MA</AvatarFallback>
         </Avatar>
         <div {...stylex.props(exampleStyles.example4)}>
-          <h4 {...stylex.props(exampleStyles.example5)}>Mark Andersson</h4>
+          <h2 {...stylex.props(exampleStyles.example5)}>Mark Andersson</h2>
           <div {...stylex.props(exampleStyles.example6)}>Product Designer</div>
         </div>
       </div>

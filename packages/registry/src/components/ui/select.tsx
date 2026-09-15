@@ -391,7 +391,11 @@ export function SelectPopup({
   anchor?: SelectPrimitive.Positioner.Props["anchor"]
 } & StyleXProps) {
   return (
-    <SelectPrimitive.Portal {...portalProps}>
+    <SelectPrimitive.Portal
+      aria-label="Select options"
+      role="region"
+      {...portalProps}
+    >
       <SelectPrimitive.Positioner
         align={align}
         alignItemWithTrigger={alignItemWithTrigger}

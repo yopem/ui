@@ -14,10 +14,10 @@ export default function Example() {
       <PreviewCardTrigger render={<Button variant="ghost" />}>
         coss.com/ui
       </PreviewCardTrigger>
-      <PreviewCardPopup>
+      <PreviewCardPopup aria-label="coss.com/ui preview" render={<section />}>
         <div {...stylex.props(exampleStyles.example1)}>
           <div {...stylex.props(exampleStyles.example2)}>
-            <h4 {...stylex.props(exampleStyles.example3)}>coss.com/ui</h4>
+            <h2 {...stylex.props(exampleStyles.example3)}>coss.com/ui</h2>
             <p {...stylex.props(exampleStyles.example4)}>
               Beautifully designed components that you can copy and paste into
               your apps.

@@ -21,14 +21,14 @@ import {
 interface PaginationProps {
   currentPage?: number
   totalPages?: number
-  totalResults: number
+  totalResults?: number
   resultsPerPage?: number
 }
 
 export default function Example({
   currentPage: initialPage = 1,
   totalPages = 10,
-  totalResults,
+  totalResults = 100,
   resultsPerPage = 10,
 }: PaginationProps) {
   const [currentPage, setCurrentPage] = useState(initialPage)
@@ -78,7 +78,7 @@ export default function Example({
 
       {/* Pagination */}
       <div>
-        <Pagination>
+        <Pagination aria-label="Result pages">
           <PaginationContent {...stylex.props(exampleStyles.example5)}>
             <PaginationItem>
               <Button

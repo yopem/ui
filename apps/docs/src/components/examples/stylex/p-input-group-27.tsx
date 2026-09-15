@@ -55,7 +55,11 @@ export default function Example() {
         {...stylex.props(exampleStyles.example2)}
       >
         <Select defaultValue="javascript" items={languages}>
-          <SelectTrigger {...stylex.props(exampleStyles.example3)} size="sm">
+          <SelectTrigger
+            aria-label="Language"
+            {...stylex.props(exampleStyles.example3)}
+            size="sm"
+          >
             <SelectValue />
           </SelectTrigger>
           <SelectPopup>

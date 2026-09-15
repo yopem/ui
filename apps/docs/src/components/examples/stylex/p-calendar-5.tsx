@@ -35,12 +35,14 @@ function CalendarDropdown(props: DropdownProps) {
 
   return (
     <Select
-      aria-label={ariaLabel}
       items={items}
       onValueChange={handleValueChange}
       value={value?.toString()}
     >
-      <SelectTrigger {...stylex.props(exampleStyles.report1Manual)}>
+      <SelectTrigger
+        {...stylex.props(exampleStyles.report1Manual)}
+        aria-label={ariaLabel}
+      >
         <SelectValue />
       </SelectTrigger>
       <SelectPopup>

@@ -13,7 +13,7 @@ export default function Example() {
     <NumberField defaultValue={0}>
       <NumberFieldGroup {...stylex.props(exampleStyles.report1Manual)}>
         <NumberFieldDecrement />
-        <NumberFieldInput />
+        <NumberFieldInput aria-label="Quantity" />
         <NumberFieldIncrement />
       </NumberFieldGroup>
     </NumberField>

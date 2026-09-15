@@ -18,7 +18,12 @@ export default function Example() {
       <SelectTrigger aria-label="Select framework">
         <SelectValue />
       </SelectTrigger>
-      <SelectPopup>
+      <SelectPopup
+        portalProps={{
+          "aria-label": "Select framework options",
+          role: "region",
+        }}
+      >
         {items.map(({ label, value }) => (
           <SelectItem key={value} value={value}>
             {label}

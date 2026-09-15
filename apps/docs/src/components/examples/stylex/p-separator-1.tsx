@@ -6,7 +6,7 @@ export default function Example() {
   return (
     <div {...stylex.props(exampleStyles.example1)}>
       <div {...stylex.props(exampleStyles.example2)}>
-        <h4 {...stylex.props(exampleStyles.example3)}>coss ui</h4>
+        <h2 {...stylex.props(exampleStyles.example3)}>coss ui</h2>
         <p {...stylex.props(exampleStyles.example4)}>
           Unstyled, accessible primitives for fast product UI and design
           systems.

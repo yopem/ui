@@ -30,8 +30,12 @@ const styles = stylex.create({
     borderWidth: 1,
     boxShadow: "0 10px 15px -3px color-mix(in oklab, #000 5%, transparent)",
     display: "flex",
+    inlineSize: "100%",
+    maxBlockSize: "var(--available-height)",
     minInlineSize: "8rem",
     outline: "none",
+    overflowY: "auto",
+    padding: "0.25rem",
     position: "relative",
     transformOrigin: "var(--transform-origin)",
     "::before": {
@@ -47,12 +51,6 @@ const styles = stylex.create({
       position: "absolute",
     },
     ":focus": { outline: "none" },
-  },
-  popupViewport: {
-    inlineSize: "100%",
-    maxBlockSize: "var(--available-height)",
-    overflowY: "auto",
-    padding: "0.25rem",
   },
   item: {
     alignItems: "center",
@@ -177,8 +175,7 @@ const styles = stylex.create({
     marginInline: "0.5rem",
   },
   shortcut: {
-    color:
-      "color-mix(in oklab, var(--muted-foreground, currentColor) 72%, transparent)",
+    color: tokens["--muted-foreground"],
     fontFamily: tokens["--font-sans"],
     fontSize: "0.75rem",
     fontWeight: 500,
@@ -256,7 +253,7 @@ export function MenuPopup({
   portalProps?: MenuPrimitive.Portal.Props
 } & StyleXProps) {
   return (
-    <MenuPortal {...portalProps}>
+    <MenuPortal aria-label="Menu" render={<section />} {...portalProps}>
       <MenuPrimitive.Positioner
         align={align}
         alignOffset={alignOffset}
@@ -271,7 +268,7 @@ export function MenuPopup({
           data-slot="menu-popup"
           {...props}
         >
-          <div {...stylex.props(styles.popupViewport)}>{children}</div>
+          {children}
         </MenuPrimitive.Popup>
       </MenuPrimitive.Positioner>
     </MenuPortal>

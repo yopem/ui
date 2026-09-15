@@ -44,7 +44,11 @@ function ExamplePage() {
 
   return (
     <main {...themeStyle} data-example-root data-theme={theme}>
-      <h1 {...stylex.props(styles.heading)}>{example}</h1>
+      {/* Keep page title exposed while Base UI marks popup siblings inert. */}
+      <h1 {...stylex.props(styles.heading)} aria-live="off">
+        {example}
+      </h1>
+      <h2 {...stylex.props(styles.heading)}>Component preview</h2>
       <Suspense fallback={<span>Loading example…</span>}>
         {createElement(Example)}
       </Suspense>

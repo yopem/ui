@@ -35,6 +35,7 @@ export default function Example() {
           <PopoverTrigger
             render={
               <Button
+                aria-label="Connection security details"
                 size="icon-xs"
                 {...stylex.props(exampleStyles.innerButton)}
                 variant="secondary"
@@ -73,6 +74,8 @@ export default function Example() {
         {...stylex.props(exampleStyles.endAddon)}
       >
         <Button
+          aria-label="Favorite"
+          aria-pressed={isFavorite}
           onClick={() => setIsFavorite(!isFavorite)}
           size="icon-xs"
           {...stylex.props(exampleStyles.innerButton)}

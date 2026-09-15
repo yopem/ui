@@ -23,6 +23,7 @@ export function CheckboxGroup({
   return (
     <CheckboxGroupPrimitive
       {...stylexProps(className, styles.root, xstyle)}
+      data-slot="checkbox-group"
       {...props}
     />
   )

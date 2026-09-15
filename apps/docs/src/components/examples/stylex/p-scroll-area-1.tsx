@@ -6,9 +6,12 @@ const tags = Array.from({ length: 50 }, (_, i) => `v1.0.0-alpha.${i}`)
 
 export default function Example() {
   return (
-    <ScrollArea {...stylex.props(exampleStyles.example1)}>
+    <ScrollArea
+      {...stylex.props(exampleStyles.example1)}
+      aria-label="Release tags"
+    >
       <div {...stylex.props(exampleStyles.example2)}>
-        <h4 {...stylex.props(exampleStyles.example3)}>Tags</h4>
+        <h2 {...stylex.props(exampleStyles.example3)}>Tags</h2>
         <div {...stylex.props(exampleStyles.example4)}>
           {tags.map((tag) => (
             <div {...stylex.props(exampleStyles.example5)} key={tag}>

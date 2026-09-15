@@ -9,15 +9,15 @@ const OTP_SLOT_KEYS = Array.from(
 
 export default function Example() {
   return (
-    <OTPField aria-label="One-time password" length={OTP_LENGTH} size="lg">
-      {OTP_SLOT_KEYS.map((slotKey, index) => (
-        <OTPFieldInput
-          key={slotKey}
-          aria-label={
-            index === 0 ? undefined : `Character ${index + 1} of ${OTP_LENGTH}`
-          }
-        />
-      ))}
-    </OTPField>
+    <label aria-label="One-time password">
+      <OTPField length={OTP_LENGTH} size="lg">
+        {OTP_SLOT_KEYS.map((slotKey, index) => (
+          <OTPFieldInput
+            key={slotKey}
+            aria-label={`Character ${index + 1} of ${OTP_LENGTH}`}
+          />
+        ))}
+      </OTPField>
+    </label>
   )
 }

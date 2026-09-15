@@ -52,10 +52,14 @@ const styles = stylex.create({
   },
   panel: {
     blockSize: "var(--accordion-panel-height)",
+    borderWidth: 0,
     color: tokens["--muted-foreground"],
     fontSize: "0.875rem",
     lineHeight: "1.25rem",
+    margin: 0,
+    minInlineSize: 0,
     overflow: "hidden",
+    padding: 0,
     transitionDuration: "200ms",
     transitionProperty: "height",
     transitionTimingFunction: "ease-in-out",
@@ -110,6 +114,7 @@ export function AccordionPanel({
   xstyle,
   className,
   children,
+  render,
   ...props
 }: AccordionPrimitive.Panel.Props & StyleXProps) {
   return (
@@ -119,6 +124,13 @@ export function AccordionPanel({
         styles.panel,
       )}
       data-slot="accordion-panel"
+      render={
+        render ??
+        ((renderProps) => {
+          const { role: _role, ...fieldsetProps } = renderProps
+          return <fieldset {...fieldsetProps} />
+        })
+      }
       {...props}
     >
       <div

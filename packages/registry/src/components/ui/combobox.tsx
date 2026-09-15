@@ -475,7 +475,11 @@ export function ComboboxPopup({
   const { chipsRef } = React.useContext(ComboboxContext)
   const anchor = anchorProp ?? chipsRef
   return (
-    <ComboboxPrimitive.Portal {...portalProps}>
+    <ComboboxPrimitive.Portal
+      aria-label="Combobox options"
+      render={<section />}
+      {...portalProps}
+    >
       <ComboboxPrimitive.Positioner
         align={align}
         alignOffset={alignOffset}

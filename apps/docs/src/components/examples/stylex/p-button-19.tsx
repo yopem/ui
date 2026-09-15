@@ -14,26 +14,29 @@ export default function Example() {
   }
 
   return (
-    <Button
-      aria-controls="expandable-content"
-      aria-expanded={isExpanded}
-      onClick={toggleExpand}
-      {...stylex.props(exampleStyles.button)}
-      variant="ghost" // Use this ID on the element that this button controls
-    >
-      {isExpanded ? "Show less" : "Show more"}
-      {isExpanded ? (
-        <ChevronUpIcon
-          aria-hidden="true"
-          {...stylex.props(exampleStyles.icon, exampleStyles.example2)}
-        />
-      ) : (
-        <ChevronDownIcon
-          aria-hidden="true"
-          {...stylex.props(exampleStyles.icon, exampleStyles.example2)}
-        />
-      )}
-    </Button>
+    <>
+      <Button
+        aria-controls="expandable-content"
+        aria-expanded={isExpanded}
+        onClick={toggleExpand}
+        {...stylex.props(exampleStyles.button)}
+        variant="ghost"
+      >
+        {isExpanded ? "Show less" : "Show more"}
+        {isExpanded ? (
+          <ChevronUpIcon
+            aria-hidden="true"
+            {...stylex.props(exampleStyles.icon, exampleStyles.example2)}
+          />
+        ) : (
+          <ChevronDownIcon
+            aria-hidden="true"
+            {...stylex.props(exampleStyles.icon, exampleStyles.example2)}
+          />
+        )}
+      </Button>
+      {isExpanded && <p id="expandable-content">Additional content</p>}
+    </>
   )
 }
 

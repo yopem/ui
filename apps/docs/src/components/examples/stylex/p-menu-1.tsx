@@ -29,7 +29,12 @@ export default function Example() {
   return (
     <Menu>
       <MenuTrigger render={<Button variant="outline" />}>Open menu</MenuTrigger>
-      <MenuPopup>
+      <MenuPopup
+        portalProps={{
+          "aria-label": "Playback menu",
+          render: <section />,
+        }}
+      >
         <MenuGroup>
           <MenuGroupLabel>Playback</MenuGroupLabel>
           <MenuItem>

@@ -84,7 +84,7 @@ export default function Example() {
           <Kbd>J</Kbd>
         </KbdGroup>
       </CommandDialogTrigger>
-      <CommandDialogPopup>
+      <CommandDialogPopup aria-label="Command palette">
         <Command items={groupedItems}>
           <CommandInput placeholder="Search for apps and commands..." />
           <CommandPanel>
