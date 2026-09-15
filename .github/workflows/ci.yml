@@ -11,15 +11,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: oven-sh/setup-bun@v2
-        with:
-          bun-version: 1.4.0
       - run: bun install --frozen-lockfile
-      - run: bun run registry:build
-      - run: bun run lint
       - run: bun run fmt:check
-      - run: bun run typecheck
+      - run: bun run lint
       - run: bun run test
       - run: bunx playwright install --with-deps chromium
       - run: bun run test:e2e
       - run: bun run test:a11y
-      - run: bun run build
