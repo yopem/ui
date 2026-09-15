@@ -57,6 +57,16 @@ export function DocsNavigation({ onNavigate }: { onNavigate?: () => void }) {
               </li>
             ) : null,
           )}
+          <li {...stylex.props(styles.group)}>Resources</li>
+          <li>
+            <a
+              href="/llms.txt"
+              onClick={onNavigate}
+              {...stylex.props(styles.link)}
+            >
+              llms.txt
+            </a>
+          </li>
         </ul>
       </nav>
     </ScrollArea>

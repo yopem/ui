@@ -2,7 +2,14 @@ import { expect, test } from "bun:test"
 import { fileURLToPath } from "node:url"
 
 import { renderOgImage } from "@/lib/og"
-import { createSeo } from "@/lib/seo"
+import { createSeo, createSitemap } from "@/lib/seo"
+
+test("sitemap contains absolute canonical URLs", () => {
+  const sitemap = createSitemap(["/", "/components/button"])
+
+  expect(sitemap).toContain("https://ui.yopem.com/</loc>")
+  expect(sitemap).toContain("https://ui.yopem.com/components/button</loc>")
+})
 
 test("SEO metadata derives canonical, social image, and JSON-LD from page data", () => {
   const seo = createSeo({

@@ -1,5 +1,15 @@
 import { expect, test } from "@playwright/test"
 
+test("sidebar links to llms.txt", async ({ page }) => {
+  test.skip((page.viewportSize()?.width ?? 0) < 768, "Desktop navigation only")
+  await page.goto("/")
+
+  await expect(page.getByRole("link", { name: "llms.txt" })).toHaveAttribute(
+    "href",
+    "/llms.txt",
+  )
+})
+
 test("unknown routes show the docs not found page", async ({ page }) => {
   const response = await page.goto("/missing-page")
   expect(response?.status()).toBe(404)

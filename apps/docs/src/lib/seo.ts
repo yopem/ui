@@ -33,6 +33,14 @@ interface SeoOptions {
   title: string
 }
 
+export function createSitemap(paths: string[]) {
+  const urls = paths
+    .map((path) => `<url><loc>${new URL(path, siteOrigin).href}</loc></url>`)
+    .join("")
+
+  return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${urls}</urlset>`
+}
+
 export function createSeo({ description, path, title }: SeoOptions) {
   const url = new URL(path, siteOrigin).href
   const image = new URL("/api/og", siteOrigin)
@@ -62,6 +70,7 @@ export function createSeo({ description, path, title }: SeoOptions) {
       { content: title, name: "twitter:title" },
       { content: description, name: "twitter:description" },
       { content: image.href, name: "twitter:image" },
+      { content: `${title} — ${description}`, name: "twitter:image:alt" },
     ],
     scripts: [
       {

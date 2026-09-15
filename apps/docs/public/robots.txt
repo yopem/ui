@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /__test/
+
+Sitemap: https://ui.yopem.com/sitemap.xml
