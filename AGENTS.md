@@ -1,70 +1,110 @@
 # AGENTS.md
 
-Yopem UI is a Bun workspace for a source-owned **StyleX** React component library and registry. Components use React 19, Base UI, StyleX, and TypeScript. `apps/docs` uses Fumadocs core search with a StyleX UI on TanStack Start (Vite + Nitro) for documentation and source hosting. The first release distributes components by copy/paste only.
+Yopem UI is a Bun workspace for a source-owned StyleX React component library
+and static registry. Components use React 19, Base UI, StyleX, and TypeScript.
+`apps/docs` is a TanStack Start app (Vite + Nitro) that provides component
+catalogs, examples, guides, search, machine-readable docs, and registry hosting.
+The first release is copy/paste-only and does not publish an npm package.
 
 ## Commands
 
 ```sh
 bun run dev             # docs app at :3100
-bun run registry:build  # build registry, copy artifacts into apps/docs/public
+bun run generate-routes # regenerate TanStack Router route tree
+bun run registry:build  # generate docs, registry files, schemas, and public copies
 bun run lint            # oxlint
-bun run fmt             # format with oxfmt
-bun run fmt:check       # verify formatting
-bun run typecheck       # typecheck registry and docs
-bun run test            # registry and release-readiness tests
-bun run test:e2e        # Playwright end-to-end tests
-bun run test:a11y       # full Chromium accessibility suite
-bun run build           # registry and docs production build
+bun run fmt              # format with oxfmt
+bun run fmt:check        # verify formatting
+bun run typecheck        # typecheck registry and docs
+bun run test             # registry, docs, and release-readiness tests
+bun run test:e2e         # Playwright end-to-end tests
+bun run test:a11y        # full Chromium accessibility suite
+bun run build            # registry and docs production build
 ```
 
-Run `bun run lint && bun run fmt:check && bun run typecheck` after changes. Run focused test suites for affected behavior; use full release gate from `CONTRIBUTING.md` before release work.
+After changes, run `bun run lint && bun run fmt:check && bun run typecheck` plus
+focused tests for affected behavior. Before release work, run the full gate from
+`CONTRIBUTING.md`: registry build, lint, format check, typecheck, unit tests,
+e2e, accessibility, and production build.
 
 ## Workspace structure
 
-- `apps/docs/` — TanStack Start component catalog and static registry host.
-  - `src/components/ui/stylex/` — catalog-facing exports of canonical StyleX components.
-  - `src/components/examples/stylex/` — StyleX component examples.
-  - `src/catalog/usage.ts` — complete copyable usage examples, checked against component types.
-  - `src/catalog/docs.functions.ts` — server-only source and API loading.
-  - `src/routes/` — file-based routes. Run `bun run generate-routes` after route changes; never edit `routeTree.gen.ts`.
-- `packages/registry/` — canonical StyleX source and registry generator.
-  - `src/components/ui/` — copy/paste component source.
-  - `src/items/` — registry item metadata, dependencies, files, docs.
-  - `src/docs-extract.ts` — generates API data from canonical and dependency types.
-  - `src/docs-notes.ts` — human-written usage notes and reviewed defaults.
-  - `src/docs.generated.json` — ignored generated data; build, dev, and registry typecheck regenerate it.
-  - `src/styles/tokens.stylex.ts` — native tokens, theme values, marker and root styles.
-  - `src/styles/styles.css` — reset, reduced motion and unavoidable upstream viewport rules.
-  - `src/theme/` — ThemeProvider, theme root, theme script.
-  - `src/build.ts` — generates `dist/`, then copies artifacts to `apps/docs/public/r` and `apps/docs/public/schema`.
-- `test/` — release-readiness and Playwright tests.
+- `apps/docs/` — TanStack Start catalog and static registry host.
+  - `src/catalog/` — catalog data, source loading, API rendering, search,
+    navigation, code blocks, page layout, and usage examples.
+  - `src/components/ui/stylex/` — catalog-facing re-exports of canonical
+    registry components. Do not duplicate implementations here.
+  - `src/components/examples/stylex/` — searchable StyleX examples and preview
+    sources.
+  - `src/routes/` — catalog, example, guide, API, SEO, and machine-readable
+    routes. Run `bun run generate-routes` after route changes; never edit
+    `routeTree.gen.ts`.
+  - `src/styles.css` — docs application global styles only.
+- `packages/registry/` — canonical copyable source and registry generator.
+  - `src/components/ui/` — canonical component implementations.
+  - `src/items/` — registry metadata, dependencies, files, docs, and exports.
+  - `src/docs-extract.ts`, `src/docs.ts`, `src/docs-notes.ts` — generated API
+    extraction, assembled docs, and reviewed human notes.
+  - `src/source-files.ts` — rewrites internal `@registry/*` imports to consumer
+    `@/*` paths.
+  - `src/schema.ts` — registry and registry-item schemas.
+  - `src/styles/` — tokens, themes, root styles, reset, reduced motion, and
+    unavoidable upstream compatibility rules.
+  - `src/theme/` — optional theme config, script, provider, and hook.
+  - `src/build.ts` — writes unversioned and versioned registry items, docs, and
+    JSON schemas, then copies them into the docs public directory.
+- `apps/docs/test/` — docs catalog and utility tests.
+- `packages/registry/test/` — registry, generated docs, setup, and usage tests.
+- `test/` — cross-workspace release-readiness, compiler, e2e, and accessibility
+  tests.
 
-Keep every test outside `src/` in a `test/` directory that mirrors its
-workspace's `src/` structure.
+Path aliases are `@registry/*` for registry source and `@/*` inside docs. Keep
+tests outside `src/` in a sibling `test/` directory mirroring source structure.
 
-Path aliases: `@registry/*` for registry source; `@/*` within docs. Generated registry artifacts are not source of truth.
+## Source-of-truth and generated files
+
+Canonical sources live under `packages/registry/src/`. Never hand-edit
+`packages/registry/dist/`, `apps/docs/public/r/`,
+`apps/docs/public/schema/`, `packages/registry/src/docs.generated.json`, or
+TanStack-generated route files. `bun run registry:build` regenerates registry
+artifacts; docs dev, registry build, and registry typecheck regenerate API data.
 
 ## Component conventions
 
-- Canonical components live in `packages/registry/src/components/ui/`; preserve Base UI behavior, public exports, `className`, and `data-slot` values.
-- Use `"use client"` for client components and Base UI primitives from `@base-ui/react`.
-- Style with `@stylexjs/stylex`: keep styles in local `stylex.create` objects, compose with `stylex.props`, and use `stylexProps` from `@registry/lib/stylex` when merging consumer `className`.
-- Use semantic variables such as `tokens["--primary"]` from `@registry/styles/tokens.stylex.ts`, not raw palette values. The same module exports `themeMarker`, themes and root styles.
-- Merge consumer `xstyle` after defaults and variants. Input/Textarea expose `controlXstyle` for their outer wrappers and `xstyle` for native controls.
-- Keep variants as StyleX style objects. Do not add utility classes or `cva` to canonical StyleX components.
-- Docs and examples also use StyleX. No Tailwind/Fumadocs UI dependency, authored JSX `style` props, literal CSS class names, or embedded `<style>` blocks. Preserve consumer prop passthrough and upstream positioning; StyleX-generated runtime variables are allowed.
-- Prefer logical CSS properties (`paddingInline`, `blockSize`, etc.) and preserve accessible states, keyboard behavior, focus styles, and coarse-pointer targets.
-- Icons: `lucide-react`; use Remix Icon only where existing component already requires it.
-- Style owned elements with StyleX, using explicit slot styles for consumer children. Do not restore automatic SVG/group-child CSS. Only unavoidable upstream-generated viewport selectors belong in styles.css.
-- Base setup remains three files: tokens.stylex.ts, styles.css, lib/stylex.ts. Theme switching is an optional two-file addition.
+- Preserve Base UI behavior, public exports, consumer props, `className`, and
+  `data-slot` values.
+- Use `"use client"` for client components and Base UI primitives from
+  `@base-ui/react`.
+- Style with `@stylexjs/stylex`: define local `stylex.create` objects, compose
+  with `stylex.props`, and use `stylexProps` from `@registry/lib/stylex` when
+  merging consumer `className`.
+- Merge consumer `xstyle` after defaults and variants. Input and Textarea use
+  `controlXstyle` for outer wrappers and `xstyle` for native controls.
+- Use semantic tokens from `@registry/styles/tokens.stylex`; avoid raw palette
+  values when a token exists. Keep variants as StyleX style objects.
+- Do not add utility classes, Tailwind, `cva`, authored JSX `style` props,
+  literal CSS class names, embedded `<style>` blocks, or Fumadocs UI components.
+- Prefer logical CSS properties and preserve keyboard behavior, focus styles,
+  accessible states, reduced motion, and coarse-pointer targets.
+- Use Lucide icons. Keep Remix Icon only where an existing component or docs
+  feature already requires it.
+- Style owned elements through explicit slots. Do not restore broad automatic
+  SVG or descendant styling. Put only unavoidable upstream selectors in scoped
+  compatibility CSS.
+- Base installation remains `tokens.stylex.ts`, `styles.css`, and
+  `lib/stylex.ts`; theme switching adds `theme.tsx` and `theme-provider.tsx`.
 
 ## Registry workflow
 
 For component work:
 
-1. Update canonical StyleX source in `packages/registry/src/components/ui/`.
-2. Update or add metadata in `packages/registry/src/items/`, including files, dependencies, registry dependencies, docs, and exports.
-3. Add or update StyleX docs example under `apps/docs/src/components/examples/stylex/`.
-4. Run `bun run registry:build` to regenerate hosted artifacts.
-
-Never hand-edit `packages/registry/dist/` or `apps/docs/public/r/`.
+1. Update canonical source in `packages/registry/src/components/ui/`.
+2. Update metadata in `packages/registry/src/items/`, including files,
+   dependencies, registry dependencies, docs, and exports.
+3. Update `docs-notes.ts` and `apps/docs/src/catalog/usage.ts` when public API,
+   defaults, or usage changes.
+4. Add or update catalog re-exports and StyleX examples under
+   `apps/docs/src/components/`.
+5. Run `bun run registry:build`.
+6. Run focused registry, docs, interaction, and accessibility tests as needed,
+   then required checks.
