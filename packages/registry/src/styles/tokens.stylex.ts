@@ -24,7 +24,7 @@ export const lightValues = {
   "--code": "#fff",
   "--code-foreground": "oklch(26.9% 0 none)",
   "--code-highlight": "color-mix(in oklab, #000 4%, transparent)",
-  "--destructive": "oklch(63.7% 0.237 25.331)",
+  "--destructive": "oklch(57.7% 0.245 27.325)",
   "--destructive-foreground": "oklch(50.5% 0.213 27.518)",
   "--font-heading": '"Figtree Variable", Figtree, sans-serif',
   "--font-mono":
@@ -76,7 +76,7 @@ export const darkValues = {
     "color-mix( in srgb, color-mix(in srgb, oklch(14.5% 0 none) 96%, #fff) 98%, #fff )",
   "--code-foreground": "oklch(97% 0 none)",
   "--code-highlight": "color-mix(in oklab, #fff 4%, transparent)",
-  "--destructive": "color-mix(in srgb, oklch(63.7% 0.237 25.331) 90%, #fff)",
+  "--destructive": "oklch(57.7% 0.245 27.325)",
   "--destructive-foreground": "oklch(70.4% 0.191 22.216)",
   "--foreground": "oklch(97% 0 none)",
   "--info": "oklch(62.3% 0.214 259.815)",

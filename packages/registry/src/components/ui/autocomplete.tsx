@@ -292,7 +292,11 @@ export function AutocompletePopup({
   portalProps?: AutocompletePrimitive.Portal.Props
 } & StyleXProps) {
   return (
-    <AutocompletePrimitive.Portal {...portalProps}>
+    <AutocompletePrimitive.Portal
+      aria-label="Autocomplete suggestions"
+      render={<section />}
+      {...portalProps}
+    >
       <AutocompletePrimitive.Positioner
         align={align}
         alignOffset={alignOffset}
@@ -461,6 +465,7 @@ export function AutocompleteTrigger({
   return (
     <AutocompletePrimitive.Trigger
       {...stylexProps(className, styles.trigger, xstyle)}
+      aria-label={props["aria-label"] ?? "Toggle suggestions"}
       data-slot="autocomplete-trigger"
       {...props}
     >

@@ -159,6 +159,7 @@ export function Table({
     ...stylex.props(styles.container),
     "data-slot": "table-container",
     "data-variant": variant,
+    tabIndex: 0,
   }
   return useRender({
     defaultTagName: "div",

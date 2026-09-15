@@ -14,7 +14,7 @@ export default function Example() {
     >
       <NumberFieldGroup>
         <NumberFieldDecrement />
-        <NumberFieldInput />
+        <NumberFieldInput aria-label="Amount" />
         <NumberFieldIncrement />
       </NumberFieldGroup>
     </NumberField>

@@ -8,16 +8,18 @@ import { useState } from "react"
 import { CopyableCode } from "./code-block"
 
 function PropertiesTable({
+  name,
   properties,
   label = "Prop",
 }: {
+  name: string
   properties: ApiProp[]
   label?: string
 }) {
   return (
     <ScrollArea
       {...stylex.props(styles.tableWrapper)}
-      aria-label={`${label} reference`}
+      aria-label={`${name} ${label.toLowerCase()} reference`}
       clampContentMinWidth={false}
       overscrollContain
     >
@@ -125,6 +127,7 @@ function PartReference({
           <h4 {...stylex.props(styles.h4)}>Arguments</h4>
           <PropertiesTable
             label="Argument"
+            name={part.name}
             properties={part.parameters.map((parameter) => ({
               ...parameter,
               default: parameter.default ?? undefined,
@@ -136,14 +139,17 @@ function PartReference({
                 <h4 {...stylex.props(styles.h4)}>
                   {parameter.name} properties
                 </h4>
-                <PropertiesTable properties={parameter.properties} />
+                <PropertiesTable
+                  name={`${part.name} ${parameter.name}`}
+                  properties={parameter.properties}
+                />
               </div>
             ) : null,
           )}
         </>
       ) : null}
       {specific.length && part.kind !== "function" ? (
-        <PropertiesTable properties={specific} />
+        <PropertiesTable name={part.name} properties={specific} />
       ) : null}
       {part.returns ? (
         <>
@@ -155,6 +161,7 @@ function PartReference({
           {part.returns.properties.length ? (
             <PropertiesTable
               label="Member"
+              name={`${part.name} return`}
               properties={part.returns.properties}
             />
           ) : null}
@@ -176,6 +183,7 @@ function PartReference({
                     Required: {variant.required.join(", ") || "None"}.
                   </p>
                   <PropertiesTable
+                    name={`${part.name} combination ${index + 1}`}
                     properties={variant.props.map((prop) => ({
                       ...part.props.find((entry) => entry.name === prop.name),
                       ...prop,

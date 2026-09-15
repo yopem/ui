@@ -10,10 +10,11 @@
     "noUncheckedSideEffectImports": true,
     "target": "ES2022",
     "jsx": "react-jsx",
-    "types": ["vite/client"],
+    "types": ["bun", "vite/client"],
     "paths": {
       "@/*": ["./src/*"],
-      "@registry/*": ["../../packages/registry/src/*"]
+      "@registry/*": ["../../packages/registry/src/*"],
+      "@test/*": ["./test/*"]
     }
   },
   "include": ["**/*.ts", "**/*.tsx"],

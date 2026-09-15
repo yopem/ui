@@ -176,8 +176,7 @@ const styles = stylex.create({
     marginInline: "0.5rem",
   },
   shortcut: {
-    color:
-      "color-mix(in oklab, var(--muted-foreground, currentColor) 72%, transparent)",
+    color: tokens["--muted-foreground"],
     fontFamily: tokens["--font-sans"],
     fontSize: "0.75rem",
     fontWeight: 500,
@@ -255,7 +254,7 @@ export function ContextMenuPopup({
   portalProps?: ContextMenuPrimitive.Portal.Props
 } & StyleXProps) {
   return (
-    <ContextMenuPortal {...portalProps}>
+    <ContextMenuPortal aria-label="Context menu" role="region" {...portalProps}>
       <ContextMenuPrimitive.Positioner
         align={align}
         alignOffset={alignOffset}

@@ -13,8 +13,11 @@ import {
 export default function Example() {
   return (
     <InputGroup>
-      <NumberField aria-label="Enter the amount" defaultValue={10}>
-        <NumberFieldInput {...stylex.props(exampleStyles.example1)} />
+      <NumberField defaultValue={10}>
+        <NumberFieldInput
+          aria-label="Enter the amount"
+          {...stylex.props(exampleStyles.example1)}
+        />
       </NumberField>
       <InputGroupAddon>
         <InputGroupText>€</InputGroupText>

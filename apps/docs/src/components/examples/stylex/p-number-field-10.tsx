@@ -64,7 +64,7 @@ export default function Example() {
           <NumberFieldScrubArea label="Quantity" />
           <NumberFieldGroup>
             <NumberFieldDecrement />
-            <NumberFieldInput />
+            <NumberFieldInput aria-label="Quantity" />
             <NumberFieldIncrement />
           </NumberFieldGroup>
         </NumberField>

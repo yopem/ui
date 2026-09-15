@@ -32,6 +32,7 @@ const items = [
 
 export default function Example() {
   const [loading, setLoading] = useState(false)
+  const [autocompleteOpen, setAutocompleteOpen] = useState(false)
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     const formData = new FormData(e.currentTarget)
@@ -49,7 +50,11 @@ export default function Example() {
     <Form {...stylex.props(exampleStyles.example1)} onSubmit={onSubmit}>
       <Field name="item">
         <FieldLabel>Favorite item</FieldLabel>
-        <Autocomplete items={items} required>
+        <Autocomplete
+          items={items}
+          onOpenChange={setAutocompleteOpen}
+          required
+        >
           <AutocompleteInput placeholder="Search items…" />
           <AutocompletePopup>
             <AutocompleteEmpty>No items found.</AutocompleteEmpty>
@@ -64,7 +69,7 @@ export default function Example() {
         </Autocomplete>
         <FieldError>Please select a item.</FieldError>
       </Field>
-      <Button loading={loading} type="submit">
+      <Button disabled={autocompleteOpen} loading={loading} type="submit">
         Submit
       </Button>
     </Form>

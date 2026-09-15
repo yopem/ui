@@ -79,6 +79,7 @@ export function ScrollArea({
   fill = false,
   clampContentMinWidth = true,
   overscrollContain = false,
+  "aria-label": ariaLabel,
   ...props
 }: ScrollAreaPrimitive.Root.Props & {
   scrollFade?: boolean
@@ -87,7 +88,6 @@ export function ScrollArea({
   clampContentMinWidth?: boolean
   overscrollContain?: boolean
 } & StyleXProps) {
-  const label = props["aria-label"] ?? "Scrollable content"
   return (
     <ScrollAreaPrimitive.Root
       {...stylexProps(className, styles.root, xstyle)}
@@ -100,8 +100,15 @@ export function ScrollArea({
           scrollFade && styles.scrollFade,
           scrollbarGutter && styles.scrollbarGutter,
         )}
-        aria-label={label}
+        aria-label={ariaLabel}
         data-slot="scroll-area-viewport"
+        render={
+          ariaLabel
+            ? ({ role: _presentationRole, ...renderProps }) => (
+                <section {...renderProps} />
+              )
+            : undefined
+        }
         tabIndex={0}
       >
         <ScrollAreaPrimitive.Content

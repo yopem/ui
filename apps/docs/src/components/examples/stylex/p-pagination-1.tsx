@@ -10,7 +10,7 @@ import {
 
 export default function Example() {
   return (
-    <Pagination>
+    <Pagination aria-label="Basic pagination">
       <PaginationContent>
         <PaginationItem>
           <PaginationPrevious href="#" />

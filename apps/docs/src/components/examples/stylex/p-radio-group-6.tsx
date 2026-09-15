@@ -132,7 +132,7 @@ const exampleStyles = stylex.create({
     transitionDuration: "150ms",
   },
   report3: {
-    color: "color-mix(in oklab, var(--muted-foreground) 70%, transparent)",
+    color: "var(--muted-foreground)",
   },
   selectedPreview: {
     boxShadow:

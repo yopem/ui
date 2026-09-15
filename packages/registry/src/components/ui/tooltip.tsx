@@ -89,7 +89,11 @@ export function TooltipPopup({
   portalProps?: TooltipPrimitive.Portal.Props
 } & StyleXProps) {
   return (
-    <TooltipPrimitive.Portal {...portalProps}>
+    <TooltipPrimitive.Portal
+      aria-label="Tooltip"
+      role="region"
+      {...portalProps}
+    >
       <TooltipPrimitive.Positioner
         align={align}
         anchor={anchor}

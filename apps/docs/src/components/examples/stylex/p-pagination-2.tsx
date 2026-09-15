@@ -9,13 +9,16 @@ import {
 } from "@/components/ui/stylex/pagination"
 
 interface PaginationProps {
-  currentPage: number
-  totalPages: number
+  currentPage?: number
+  totalPages?: number
 }
 
-export default function Example({ currentPage, totalPages }: PaginationProps) {
+export default function Example({
+  currentPage = 1,
+  totalPages = 10,
+}: PaginationProps) {
   return (
-    <Pagination>
+    <Pagination aria-label="Compact pagination">
       <PaginationContent {...stylex.props(exampleStyles.example1)}>
         <PaginationItem>
           <Button

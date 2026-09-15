@@ -1,0 +1,461 @@
+{
+  "config": {
+    "argv": [
+      "/home/karyana/.local/share/mise/installs/node/24.21.0/bin/node",
+      "/home/karyana/Codes/projects/ui/node_modules/.bin/playwright",
+      "test",
+      "packages/registry/test/components/ui/accordion-e2e.spec.ts",
+      "packages/registry/test/components/ui/toolbar-e2e.spec.ts",
+      "packages/registry/test/components/ui/tooltip-e2e.spec.ts",
+      "--project=chromium",
+      "--workers=1",
+      "--reporter=json"
+    ],
+    "configFile": "/home/karyana/Codes/projects/ui/playwright.config.ts",
+    "rootDir": "/home/karyana/Codes/projects/ui",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": true,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/home/karyana/Codes/projects/ui/test-results/3114",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "/home/karyana/Codes/projects/ui",
+        "testIgnore": [],
+        "testMatch": [
+          "apps/*/test/**/*-e2e.spec.ts",
+          "apps/*/test/**/*-e2e.spec.tsx",
+          "packages/*/test/**/*-e2e.spec.ts",
+          "packages/*/test/**/*-e2e.spec.tsx",
+          "test/**/*-e2e.spec.ts",
+          "test/**/*-e2e.spec.tsx"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/home/karyana/Codes/projects/ui/test-results/3114",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "mobile-chromium",
+        "name": "mobile-chromium",
+        "testDir": "/home/karyana/Codes/projects/ui",
+        "testIgnore": [],
+        "testMatch": [
+          "apps/*/test/**/*-e2e.spec.ts",
+          "apps/*/test/**/*-e2e.spec.tsx",
+          "packages/*/test/**/*-e2e.spec.ts",
+          "packages/*/test/**/*-e2e.spec.tsx",
+          "test/**/*-e2e.spec.ts",
+          "test/**/*-e2e.spec.tsx"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.62.1",
+    "workers": 1,
+    "webServer": {
+      "command": "PORT=3114 bun run start",
+      "reuseExistingServer": false,
+      "timeout": 120000,
+      "url": "http://localhost:3114/components"
+    }
+  },
+  "suites": [
+    {
+      "title": "packages/registry/test/components/ui/accordion-e2e.spec.ts",
+      "file": "packages/registry/test/components/ui/accordion-e2e.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "accordion renders every documented example responsively and cleanly",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 360000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 7089,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-15T16:22:30.667Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "382a6c85be637e32e873-700be47ae9dfba2635ea",
+          "file": "packages/registry/test/components/ui/accordion-e2e.spec.ts",
+          "line": 64,
+          "column": 1
+        },
+        {
+          "title": "@full-a11y accordion examples and changed states have no violations",
+          "ok": false,
+          "tags": [
+            "full-a11y"
+          ],
+          "tests": [
+            {
+              "timeout": 600000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 3949,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  -  1\u001b[39m\n\u001b[31m+ Received  + 62\u001b[39m\n\n\u001b[32m- Array []\u001b[39m\n\u001b[31m+ Array [\u001b[39m\n\u001b[31m+   Object {\u001b[39m\n\u001b[31m+     \"description\": \"Ensure the order of headings is semantically correct\",\u001b[39m\n\u001b[31m+     \"help\": \"Heading levels should only increase by one\",\u001b[39m\n\u001b[31m+     \"helpUrl\": \"https://dequeuniversity.com/rules/axe/4.13/heading-order?application=playwright\",\u001b[39m\n\u001b[31m+     \"id\": \"heading-order\",\u001b[39m\n\u001b[31m+     \"impact\": \"moderate\",\u001b[39m\n\u001b[31m+     \"nodes\": Array [\u001b[39m\n\u001b[31m+       Object {\u001b[39m\n\u001b[31m+         \"all\": Array [],\u001b[39m\n\u001b[31m+         \"any\": Array [\u001b[39m\n\u001b[31m+           Object {\u001b[39m\n\u001b[31m+             \"data\": Object {\u001b[39m\n\u001b[31m+               \"headingOrder\": Array [\u001b[39m\n\u001b[31m+                 Object {\u001b[39m\n\u001b[31m+                   \"ancestry\": Array [\u001b[39m\n\u001b[31m+                     \"html > body > main:nth-child(3) > h1:nth-child(1)\",\u001b[39m\n\u001b[31m+                   ],\u001b[39m\n\u001b[31m+                   \"level\": 1,\u001b[39m\n\u001b[31m+                 },\u001b[39m\n\u001b[31m+                 Object {\u001b[39m\n\u001b[31m+                   \"ancestry\": Array [\u001b[39m\n\u001b[31m+                     \"html > body > main:nth-child(3) > div:nth-child(2) > div:nth-child(1) > h3\",\u001b[39m\n\u001b[31m+                   ],\u001b[39m\n\u001b[31m+                   \"level\": 3,\u001b[39m\n\u001b[31m+                 },\u001b[39m\n\u001b[31m+                 Object {\u001b[39m\n\u001b[31m+                   \"ancestry\": Array [\u001b[39m\n\u001b[31m+                     \"html > body > main:nth-child(3) > div:nth-child(2) > div:nth-child(2) > h3\",\u001b[39m\n\u001b[31m+                   ],\u001b[39m\n\u001b[31m+                   \"level\": 3,\u001b[39m\n\u001b[31m+                 },\u001b[39m\n\u001b[31m+                 Object {\u001b[39m\n\u001b[31m+                   \"ancestry\": Array [\u001b[39m\n\u001b[31m+                     \"html > body > main:nth-child(3) > div:nth-child(2) > div:nth-child(3) > h3:nth-child(1)\",\u001b[39m\n\u001b[31m+                   ],\u001b[39m\n\u001b[31m+                   \"level\": 3,\u001b[39m\n\u001b[31m+                 },\u001b[39m\n\u001b[31m+               ],\u001b[39m\n\u001b[31m+             },\u001b[39m\n\u001b[31m+             \"id\": \"heading-order\",\u001b[39m\n\u001b[31m+             \"impact\": \"moderate\",\u001b[39m\n\u001b[31m+             \"message\": \"Heading order invalid\",\u001b[39m\n\u001b[31m+             \"relatedNodes\": Array [],\u001b[39m\n\u001b[31m+           },\u001b[39m\n\u001b[31m+         ],\u001b[39m\n\u001b[31m+         \"failureSummary\": \"Fix any of the following:\u001b[39m\n\u001b[31m+   Heading order invalid\",\u001b[39m\n\u001b[31m+         \"html\": \"<h3 data-orientation=\\\"vertical\\\" data-hidden=\\\"\\\" data-index=\\\"0\\\" data-closed=\\\"\\\" class=\\\"x78zum5\\\">\",\u001b[39m\n\u001b[31m+         \"impact\": \"moderate\",\u001b[39m\n\u001b[31m+         \"none\": Array [],\u001b[39m\n\u001b[31m+         \"target\": Array [\u001b[39m\n\u001b[31m+           \"h3[data-index=\\\"0\\\"]\",\u001b[39m\n\u001b[31m+         ],\u001b[39m\n\u001b[31m+       },\u001b[39m\n\u001b[31m+     ],\u001b[39m\n\u001b[31m+     \"tags\": Array [\u001b[39m\n\u001b[31m+       \"cat.semantics\",\u001b[39m\n\u001b[31m+       \"best-practice\",\u001b[39m\n\u001b[31m+     ],\u001b[39m\n\u001b[31m+   },\u001b[39m\n\u001b[31m+ ]\u001b[39m",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  -  1\u001b[39m\n\u001b[31m+ Received  + 62\u001b[39m\n\n\u001b[32m- Array []\u001b[39m\n\u001b[31m+ Array [\u001b[39m\n\u001b[31m+   Object {\u001b[39m\n\u001b[31m+     \"description\": \"Ensure the order of headings is semantically correct\",\u001b[39m\n\u001b[31m+     \"help\": \"Heading levels should only increase by one\",\u001b[39m\n\u001b[31m+     \"helpUrl\": \"https://dequeuniversity.com/rules/axe/4.13/heading-order?application=playwright\",\u001b[39m\n\u001b[31m+     \"id\": \"heading-order\",\u001b[39m\n\u001b[31m+     \"impact\": \"moderate\",\u001b[39m\n\u001b[31m+     \"nodes\": Array [\u001b[39m\n\u001b[31m+       Object {\u001b[39m\n\u001b[31m+         \"all\": Array [],\u001b[39m\n\u001b[31m+         \"any\": Array [\u001b[39m\n\u001b[31m+           Object {\u001b[39m\n\u001b[31m+             \"data\": Object {\u001b[39m\n\u001b[31m+               \"headingOrder\": Array [\u001b[39m\n\u001b[31m+                 Object {\u001b[39m\n\u001b[31m+                   \"ancestry\": Array [\u001b[39m\n\u001b[31m+                     \"html > body > main:nth-child(3) > h1:nth-child(1)\",\u001b[39m\n\u001b[31m+                   ],\u001b[39m\n\u001b[31m+                   \"level\": 1,\u001b[39m\n\u001b[31m+                 },\u001b[39m\n\u001b[31m+                 Object {\u001b[39m\n\u001b[31m+                   \"ancestry\": Array [\u001b[39m\n\u001b[31m+                     \"html > body > main:nth-child(3) > div:nth-child(2) > div:nth-child(1) > h3\",\u001b[39m\n\u001b[31m+                   ],\u001b[39m\n\u001b[31m+                   \"level\": 3,\u001b[39m\n\u001b[31m+                 },\u001b[39m\n\u001b[31m+                 Object {\u001b[39m\n\u001b[31m+                   \"ancestry\": Array [\u001b[39m\n\u001b[31m+                     \"html > body > main:nth-child(3) > div:nth-child(2) > div:nth-child(2) > h3\",\u001b[39m\n\u001b[31m+                   ],\u001b[39m\n\u001b[31m+                   \"level\": 3,\u001b[39m\n\u001b[31m+                 },\u001b[39m\n\u001b[31m+                 Object {\u001b[39m\n\u001b[31m+                   \"ancestry\": Array [\u001b[39m\n\u001b[31m+                     \"html > body > main:nth-child(3) > div:nth-child(2) > div:nth-child(3) > h3:nth-child(1)\",\u001b[39m\n\u001b[31m+                   ],\u001b[39m\n\u001b[31m+                   \"level\": 3,\u001b[39m\n\u001b[31m+                 },\u001b[39m\n\u001b[31m+               ],\u001b[39m\n\u001b[31m+             },\u001b[39m\n\u001b[31m+             \"id\": \"heading-order\",\u001b[39m\n\u001b[31m+             \"impact\": \"moderate\",\u001b[39m\n\u001b[31m+             \"message\": \"Heading order invalid\",\u001b[39m\n\u001b[31m+             \"relatedNodes\": Array [],\u001b[39m\n\u001b[31m+           },\u001b[39m\n\u001b[31m+         ],\u001b[39m\n\u001b[31m+         \"failureSummary\": \"Fix any of the following:\u001b[39m\n\u001b[31m+   Heading order invalid\",\u001b[39m\n\u001b[31m+         \"html\": \"<h3 data-orientation=\\\"vertical\\\" data-hidden=\\\"\\\" data-index=\\\"0\\\" data-closed=\\\"\\\" class=\\\"x78zum5\\\">\",\u001b[39m\n\u001b[31m+         \"impact\": \"moderate\",\u001b[39m\n\u001b[31m+         \"none\": Array [],\u001b[39m\n\u001b[31m+         \"target\": Array [\u001b[39m\n\u001b[31m+           \"h3[data-index=\\\"0\\\"]\",\u001b[39m\n\u001b[31m+         ],\u001b[39m\n\u001b[31m+       },\u001b[39m\n\u001b[31m+     ],\u001b[39m\n\u001b[31m+     \"tags\": Array [\u001b[39m\n\u001b[31m+       \"cat.semantics\",\u001b[39m\n\u001b[31m+       \"best-practice\",\u001b[39m\n\u001b[31m+     ],\u001b[39m\n\u001b[31m+   },\u001b[39m\n\u001b[31m+ ]\u001b[39m\n    at expectNoAxeViolations (/home/karyana/Codes/projects/ui/packages/registry/test/components/ui/accordion-e2e.spec.ts:54:30)\n    at /home/karyana/Codes/projects/ui/packages/registry/test/components/ui/accordion-e2e.spec.ts:107:5",
+                    "location": {
+                      "file": "/home/karyana/Codes/projects/ui/packages/registry/test/components/ui/accordion-e2e.spec.ts",
+                      "column": 30,
+                      "line": 54
+                    },
+                    "snippet": "  52 |     .exclude(\"main[data-example-root] > h1\")\n  53 |     .analyze()\n> 54 |   expect(results.violations).toEqual([])\n     |                              ^\n  55 | }\n  56 |\n  57 | const examples = ["
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/home/karyana/Codes/projects/ui/packages/registry/test/components/ui/accordion-e2e.spec.ts",
+                        "column": 30,
+                        "line": 54
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  -  1\u001b[39m\n\u001b[31m+ Received  + 62\u001b[39m\n\n\u001b[32m- Array []\u001b[39m\n\u001b[31m+ Array [\u001b[39m\n\u001b[31m+   Object {\u001b[39m\n\u001b[31m+     \"description\": \"Ensure the order of headings is semantically correct\",\u001b[39m\n\u001b[31m+     \"help\": \"Heading levels should only increase by one\",\u001b[39m\n\u001b[31m+     \"helpUrl\": \"https://dequeuniversity.com/rules/axe/4.13/heading-order?application=playwright\",\u001b[39m\n\u001b[31m+     \"id\": \"heading-order\",\u001b[39m\n\u001b[31m+     \"impact\": \"moderate\",\u001b[39m\n\u001b[31m+     \"nodes\": Array [\u001b[39m\n\u001b[31m+       Object {\u001b[39m\n\u001b[31m+         \"all\": Array [],\u001b[39m\n\u001b[31m+         \"any\": Array [\u001b[39m\n\u001b[31m+           Object {\u001b[39m\n\u001b[31m+             \"data\": Object {\u001b[39m\n\u001b[31m+               \"headingOrder\": Array [\u001b[39m\n\u001b[31m+                 Object {\u001b[39m\n\u001b[31m+                   \"ancestry\": Array [\u001b[39m\n\u001b[31m+                     \"html > body > main:nth-child(3) > h1:nth-child(1)\",\u001b[39m\n\u001b[31m+                   ],\u001b[39m\n\u001b[31m+                   \"level\": 1,\u001b[39m\n\u001b[31m+                 },\u001b[39m\n\u001b[31m+                 Object {\u001b[39m\n\u001b[31m+                   \"ancestry\": Array [\u001b[39m\n\u001b[31m+                     \"html > body > main:nth-child(3) > div:nth-child(2) > div:nth-child(1) > h3\",\u001b[39m\n\u001b[31m+                   ],\u001b[39m\n\u001b[31m+                   \"level\": 3,\u001b[39m\n\u001b[31m+                 },\u001b[39m\n\u001b[31m+                 Object {\u001b[39m\n\u001b[31m+                   \"ancestry\": Array [\u001b[39m\n\u001b[31m+                     \"html > body > main:nth-child(3) > div:nth-child(2) > div:nth-child(2) > h3\",\u001b[39m\n\u001b[31m+                   ],\u001b[39m\n\u001b[31m+                   \"level\": 3,\u001b[39m\n\u001b[31m+                 },\u001b[39m\n\u001b[31m+                 Object {\u001b[39m\n\u001b[31m+                   \"ancestry\": Array [\u001b[39m\n\u001b[31m+                     \"html > body > main:nth-child(3) > div:nth-child(2) > div:nth-child(3) > h3:nth-child(1)\",\u001b[39m\n\u001b[31m+                   ],\u001b[39m\n\u001b[31m+                   \"level\": 3,\u001b[39m\n\u001b[31m+                 },\u001b[39m\n\u001b[31m+               ],\u001b[39m\n\u001b[31m+             },\u001b[39m\n\u001b[31m+             \"id\": \"heading-order\",\u001b[39m\n\u001b[31m+             \"impact\": \"moderate\",\u001b[39m\n\u001b[31m+             \"message\": \"Heading order invalid\",\u001b[39m\n\u001b[31m+             \"relatedNodes\": Array [],\u001b[39m\n\u001b[31m+           },\u001b[39m\n\u001b[31m+         ],\u001b[39m\n\u001b[31m+         \"failureSummary\": \"Fix any of the following:\u001b[39m\n\u001b[31m+   Heading order invalid\",\u001b[39m\n\u001b[31m+         \"html\": \"<h3 data-orientation=\\\"vertical\\\" data-hidden=\\\"\\\" data-index=\\\"0\\\" data-closed=\\\"\\\" class=\\\"x78zum5\\\">\",\u001b[39m\n\u001b[31m+         \"impact\": \"moderate\",\u001b[39m\n\u001b[31m+         \"none\": Array [],\u001b[39m\n\u001b[31m+         \"target\": Array [\u001b[39m\n\u001b[31m+           \"h3[data-index=\\\"0\\\"]\",\u001b[39m\n\u001b[31m+         ],\u001b[39m\n\u001b[31m+       },\u001b[39m\n\u001b[31m+     ],\u001b[39m\n\u001b[31m+     \"tags\": Array [\u001b[39m\n\u001b[31m+       \"cat.semantics\",\u001b[39m\n\u001b[31m+       \"best-practice\",\u001b[39m\n\u001b[31m+     ],\u001b[39m\n\u001b[31m+   },\u001b[39m\n\u001b[31m+ ]\u001b[39m\n\n  52 |     .exclude(\"main[data-example-root] > h1\")\n  53 |     .analyze()\n> 54 |   expect(results.violations).toEqual([])\n     |                              ^\n  55 | }\n  56 |\n  57 | const examples = [\n    at expectNoAxeViolations (/home/karyana/Codes/projects/ui/packages/registry/test/components/ui/accordion-e2e.spec.ts:54:30)\n    at /home/karyana/Codes/projects/ui/packages/registry/test/components/ui/accordion-e2e.spec.ts:107:5"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-15T16:22:38.064Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "/home/karyana/Codes/projects/ui/test-results/3114/packages-registry-test-com-467bb-d-states-have-no-violations-chromium/test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/home/karyana/Codes/projects/ui/test-results/3114/packages-registry-test-com-467bb-d-states-have-no-violations-chromium/error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "/home/karyana/Codes/projects/ui/test-results/3114/packages-registry-test-com-467bb-d-states-have-no-violations-chromium/trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/home/karyana/Codes/projects/ui/packages/registry/test/components/ui/accordion-e2e.spec.ts",
+                    "column": 30,
+                    "line": 54
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "382a6c85be637e32e873-d2717afe57cee819267e",
+          "file": "packages/registry/test/components/ui/accordion-e2e.spec.ts",
+          "line": 97,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "packages/registry/test/components/ui/toolbar-e2e.spec.ts",
+      "file": "packages/registry/test/components/ui/toolbar-e2e.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "toolbar supports roving focus, toggles, tooltips, select, and pointer actions",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3766,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-15T16:22:45.102Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "5e25dc077e569a8735ba-39cceec03c8536885e3a",
+          "file": "packages/registry/test/components/ui/toolbar-e2e.spec.ts",
+          "line": 68,
+          "column": 1
+        },
+        {
+          "title": "@full-a11y toolbar passes axe with tooltip and select popup open",
+          "ok": false,
+          "tags": [
+            "full-a11y"
+          ],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 8740,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  -  1\u001b[39m\n\u001b[31m+ Received  + 39\u001b[39m\n\n\u001b[32m- Array []\u001b[39m\n\u001b[31m+ Array [\u001b[39m\n\u001b[31m+   Object {\u001b[39m\n\u001b[31m+     \"description\": \"Ensure all page content is contained by landmarks\",\u001b[39m\n\u001b[31m+     \"help\": \"All page content should be contained by landmarks\",\u001b[39m\n\u001b[31m+     \"helpUrl\": \"https://dequeuniversity.com/rules/axe/4.13/region?application=playwright\",\u001b[39m\n\u001b[31m+     \"id\": \"region\",\u001b[39m\n\u001b[31m+     \"impact\": \"moderate\",\u001b[39m\n\u001b[31m+     \"nodes\": Array [\u001b[39m\n\u001b[31m+       Object {\u001b[39m\n\u001b[31m+         \"all\": Array [],\u001b[39m\n\u001b[31m+         \"any\": Array [\u001b[39m\n\u001b[31m+           Object {\u001b[39m\n\u001b[31m+             \"data\": Object {\u001b[39m\n\u001b[31m+               \"isIframe\": false,\u001b[39m\n\u001b[31m+             },\u001b[39m\n\u001b[31m+             \"id\": \"region\",\u001b[39m\n\u001b[31m+             \"impact\": \"moderate\",\u001b[39m\n\u001b[31m+             \"message\": \"Some page content is not contained by landmarks\",\u001b[39m\n\u001b[31m+             \"relatedNodes\": Array [],\u001b[39m\n\u001b[31m+           },\u001b[39m\n\u001b[31m+         ],\u001b[39m\n\u001b[31m+         \"failureSummary\": \"Fix any of the following:\u001b[39m\n\u001b[31m+   Some page content is not contained by landmarks\",\u001b[39m\n\u001b[31m+         \"html\": \"<div id=\\\"_r_i_\\\" data-base-ui-portal=\\\"\\\">\",\u001b[39m\n\u001b[31m+         \"impact\": \"moderate\",\u001b[39m\n\u001b[31m+         \"none\": Array [],\u001b[39m\n\u001b[31m+         \"target\": Array [\u001b[39m\n\u001b[31m+           \"#_r_i_\",\u001b[39m\n\u001b[31m+         ],\u001b[39m\n\u001b[31m+       },\u001b[39m\n\u001b[31m+     ],\u001b[39m\n\u001b[31m+     \"tags\": Array [\u001b[39m\n\u001b[31m+       \"cat.keyboard\",\u001b[39m\n\u001b[31m+       \"best-practice\",\u001b[39m\n\u001b[31m+       \"RGAAv4\",\u001b[39m\n\u001b[31m+       \"RGAA-9.2.1\",\u001b[39m\n\u001b[31m+     ],\u001b[39m\n\u001b[31m+   },\u001b[39m\n\u001b[31m+ ]\u001b[39m",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  -  1\u001b[39m\n\u001b[31m+ Received  + 39\u001b[39m\n\n\u001b[32m- Array []\u001b[39m\n\u001b[31m+ Array [\u001b[39m\n\u001b[31m+   Object {\u001b[39m\n\u001b[31m+     \"description\": \"Ensure all page content is contained by landmarks\",\u001b[39m\n\u001b[31m+     \"help\": \"All page content should be contained by landmarks\",\u001b[39m\n\u001b[31m+     \"helpUrl\": \"https://dequeuniversity.com/rules/axe/4.13/region?application=playwright\",\u001b[39m\n\u001b[31m+     \"id\": \"region\",\u001b[39m\n\u001b[31m+     \"impact\": \"moderate\",\u001b[39m\n\u001b[31m+     \"nodes\": Array [\u001b[39m\n\u001b[31m+       Object {\u001b[39m\n\u001b[31m+         \"all\": Array [],\u001b[39m\n\u001b[31m+         \"any\": Array [\u001b[39m\n\u001b[31m+           Object {\u001b[39m\n\u001b[31m+             \"data\": Object {\u001b[39m\n\u001b[31m+               \"isIframe\": false,\u001b[39m\n\u001b[31m+             },\u001b[39m\n\u001b[31m+             \"id\": \"region\",\u001b[39m\n\u001b[31m+             \"impact\": \"moderate\",\u001b[39m\n\u001b[31m+             \"message\": \"Some page content is not contained by landmarks\",\u001b[39m\n\u001b[31m+             \"relatedNodes\": Array [],\u001b[39m\n\u001b[31m+           },\u001b[39m\n\u001b[31m+         ],\u001b[39m\n\u001b[31m+         \"failureSummary\": \"Fix any of the following:\u001b[39m\n\u001b[31m+   Some page content is not contained by landmarks\",\u001b[39m\n\u001b[31m+         \"html\": \"<div id=\\\"_r_i_\\\" data-base-ui-portal=\\\"\\\">\",\u001b[39m\n\u001b[31m+         \"impact\": \"moderate\",\u001b[39m\n\u001b[31m+         \"none\": Array [],\u001b[39m\n\u001b[31m+         \"target\": Array [\u001b[39m\n\u001b[31m+           \"#_r_i_\",\u001b[39m\n\u001b[31m+         ],\u001b[39m\n\u001b[31m+       },\u001b[39m\n\u001b[31m+     ],\u001b[39m\n\u001b[31m+     \"tags\": Array [\u001b[39m\n\u001b[31m+       \"cat.keyboard\",\u001b[39m\n\u001b[31m+       \"best-practice\",\u001b[39m\n\u001b[31m+       \"RGAAv4\",\u001b[39m\n\u001b[31m+       \"RGAA-9.2.1\",\u001b[39m\n\u001b[31m+     ],\u001b[39m\n\u001b[31m+   },\u001b[39m\n\u001b[31m+ ]\u001b[39m\n    at expectNoAxeViolations (/home/karyana/Codes/projects/ui/packages/registry/test/components/ui/toolbar-e2e.spec.ts:65:30)\n    at /home/karyana/Codes/projects/ui/packages/registry/test/components/ui/toolbar-e2e.spec.ts:113:3",
+                    "location": {
+                      "file": "/home/karyana/Codes/projects/ui/packages/registry/test/components/ui/toolbar-e2e.spec.ts",
+                      "column": 30,
+                      "line": 65
+                    },
+                    "snippet": "  63 |     .exclude(\"main[data-example-root] > h1\")\n  64 |     .analyze()\n> 65 |   expect(results.violations).toEqual([])\n     |                              ^\n  66 | }\n  67 |\n  68 | test(\"toolbar supports roving focus, toggles, tooltips, select, and pointer actions\", async ({"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/home/karyana/Codes/projects/ui/packages/registry/test/components/ui/toolbar-e2e.spec.ts",
+                        "column": 30,
+                        "line": 65
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  -  1\u001b[39m\n\u001b[31m+ Received  + 39\u001b[39m\n\n\u001b[32m- Array []\u001b[39m\n\u001b[31m+ Array [\u001b[39m\n\u001b[31m+   Object {\u001b[39m\n\u001b[31m+     \"description\": \"Ensure all page content is contained by landmarks\",\u001b[39m\n\u001b[31m+     \"help\": \"All page content should be contained by landmarks\",\u001b[39m\n\u001b[31m+     \"helpUrl\": \"https://dequeuniversity.com/rules/axe/4.13/region?application=playwright\",\u001b[39m\n\u001b[31m+     \"id\": \"region\",\u001b[39m\n\u001b[31m+     \"impact\": \"moderate\",\u001b[39m\n\u001b[31m+     \"nodes\": Array [\u001b[39m\n\u001b[31m+       Object {\u001b[39m\n\u001b[31m+         \"all\": Array [],\u001b[39m\n\u001b[31m+         \"any\": Array [\u001b[39m\n\u001b[31m+           Object {\u001b[39m\n\u001b[31m+             \"data\": Object {\u001b[39m\n\u001b[31m+               \"isIframe\": false,\u001b[39m\n\u001b[31m+             },\u001b[39m\n\u001b[31m+             \"id\": \"region\",\u001b[39m\n\u001b[31m+             \"impact\": \"moderate\",\u001b[39m\n\u001b[31m+             \"message\": \"Some page content is not contained by landmarks\",\u001b[39m\n\u001b[31m+             \"relatedNodes\": Array [],\u001b[39m\n\u001b[31m+           },\u001b[39m\n\u001b[31m+         ],\u001b[39m\n\u001b[31m+         \"failureSummary\": \"Fix any of the following:\u001b[39m\n\u001b[31m+   Some page content is not contained by landmarks\",\u001b[39m\n\u001b[31m+         \"html\": \"<div id=\\\"_r_i_\\\" data-base-ui-portal=\\\"\\\">\",\u001b[39m\n\u001b[31m+         \"impact\": \"moderate\",\u001b[39m\n\u001b[31m+         \"none\": Array [],\u001b[39m\n\u001b[31m+         \"target\": Array [\u001b[39m\n\u001b[31m+           \"#_r_i_\",\u001b[39m\n\u001b[31m+         ],\u001b[39m\n\u001b[31m+       },\u001b[39m\n\u001b[31m+     ],\u001b[39m\n\u001b[31m+     \"tags\": Array [\u001b[39m\n\u001b[31m+       \"cat.keyboard\",\u001b[39m\n\u001b[31m+       \"best-practice\",\u001b[39m\n\u001b[31m+       \"RGAAv4\",\u001b[39m\n\u001b[31m+       \"RGAA-9.2.1\",\u001b[39m\n\u001b[31m+     ],\u001b[39m\n\u001b[31m+   },\u001b[39m\n\u001b[31m+ ]\u001b[39m\n\n  63 |     .exclude(\"main[data-example-root] > h1\")\n  64 |     .analyze()\n> 65 |   expect(results.violations).toEqual([])\n     |                              ^\n  66 | }\n  67 |\n  68 | test(\"toolbar supports roving focus, toggles, tooltips, select, and pointer actions\", async ({\n    at expectNoAxeViolations (/home/karyana/Codes/projects/ui/packages/registry/test/components/ui/toolbar-e2e.spec.ts:65:30)\n    at /home/karyana/Codes/projects/ui/packages/registry/test/components/ui/toolbar-e2e.spec.ts:113:3"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-15T16:22:49.262Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "/home/karyana/Codes/projects/ui/test-results/3114/packages-registry-test-com-69b40-oltip-and-select-popup-open-chromium/test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/home/karyana/Codes/projects/ui/test-results/3114/packages-registry-test-com-69b40-oltip-and-select-popup-open-chromium/error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "/home/karyana/Codes/projects/ui/test-results/3114/packages-registry-test-com-69b40-oltip-and-select-popup-open-chromium/trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/home/karyana/Codes/projects/ui/packages/registry/test/components/ui/toolbar-e2e.spec.ts",
+                    "column": 30,
+                    "line": 65
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "5e25dc077e569a8735ba-ecd6e8adfc38dffdf87d",
+          "file": "packages/registry/test/components/ui/toolbar-e2e.spec.ts",
+          "line": 105,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "packages/registry/test/components/ui/tooltip-e2e.spec.ts",
+      "file": "packages/registry/test/components/ui/tooltip-e2e.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "tooltip opens from pointer and keyboard, closes, and swaps shared content",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 7053,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-15T16:23:01.047Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "5e395945ee1d3472b19a-69063035fcdafacb53ff",
+          "file": "packages/registry/test/components/ui/tooltip-e2e.spec.ts",
+          "line": 68,
+          "column": 1
+        },
+        {
+          "title": "@full-a11y tooltip passes axe in hover and focus-open states",
+          "ok": false,
+          "tags": [
+            "full-a11y"
+          ],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 8023,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  -  1\u001b[39m\n\u001b[31m+ Received  + 39\u001b[39m\n\n\u001b[32m- Array []\u001b[39m\n\u001b[31m+ Array [\u001b[39m\n\u001b[31m+   Object {\u001b[39m\n\u001b[31m+     \"description\": \"Ensure all page content is contained by landmarks\",\u001b[39m\n\u001b[31m+     \"help\": \"All page content should be contained by landmarks\",\u001b[39m\n\u001b[31m+     \"helpUrl\": \"https://dequeuniversity.com/rules/axe/4.13/region?application=playwright\",\u001b[39m\n\u001b[31m+     \"id\": \"region\",\u001b[39m\n\u001b[31m+     \"impact\": \"moderate\",\u001b[39m\n\u001b[31m+     \"nodes\": Array [\u001b[39m\n\u001b[31m+       Object {\u001b[39m\n\u001b[31m+         \"all\": Array [],\u001b[39m\n\u001b[31m+         \"any\": Array [\u001b[39m\n\u001b[31m+           Object {\u001b[39m\n\u001b[31m+             \"data\": Object {\u001b[39m\n\u001b[31m+               \"isIframe\": false,\u001b[39m\n\u001b[31m+             },\u001b[39m\n\u001b[31m+             \"id\": \"region\",\u001b[39m\n\u001b[31m+             \"impact\": \"moderate\",\u001b[39m\n\u001b[31m+             \"message\": \"Some page content is not contained by landmarks\",\u001b[39m\n\u001b[31m+             \"relatedNodes\": Array [],\u001b[39m\n\u001b[31m+           },\u001b[39m\n\u001b[31m+         ],\u001b[39m\n\u001b[31m+         \"failureSummary\": \"Fix any of the following:\u001b[39m\n\u001b[31m+   Some page content is not contained by landmarks\",\u001b[39m\n\u001b[31m+         \"html\": \"<div id=\\\"_r_2_\\\" data-base-ui-portal=\\\"\\\">\",\u001b[39m\n\u001b[31m+         \"impact\": \"moderate\",\u001b[39m\n\u001b[31m+         \"none\": Array [],\u001b[39m\n\u001b[31m+         \"target\": Array [\u001b[39m\n\u001b[31m+           \"#_r_2_\",\u001b[39m\n\u001b[31m+         ],\u001b[39m\n\u001b[31m+       },\u001b[39m\n\u001b[31m+     ],\u001b[39m\n\u001b[31m+     \"tags\": Array [\u001b[39m\n\u001b[31m+       \"cat.keyboard\",\u001b[39m\n\u001b[31m+       \"best-practice\",\u001b[39m\n\u001b[31m+       \"RGAAv4\",\u001b[39m\n\u001b[31m+       \"RGAA-9.2.1\",\u001b[39m\n\u001b[31m+     ],\u001b[39m\n\u001b[31m+   },\u001b[39m\n\u001b[31m+ ]\u001b[39m",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  -  1\u001b[39m\n\u001b[31m+ Received  + 39\u001b[39m\n\n\u001b[32m- Array []\u001b[39m\n\u001b[31m+ Array [\u001b[39m\n\u001b[31m+   Object {\u001b[39m\n\u001b[31m+     \"description\": \"Ensure all page content is contained by landmarks\",\u001b[39m\n\u001b[31m+     \"help\": \"All page content should be contained by landmarks\",\u001b[39m\n\u001b[31m+     \"helpUrl\": \"https://dequeuniversity.com/rules/axe/4.13/region?application=playwright\",\u001b[39m\n\u001b[31m+     \"id\": \"region\",\u001b[39m\n\u001b[31m+     \"impact\": \"moderate\",\u001b[39m\n\u001b[31m+     \"nodes\": Array [\u001b[39m\n\u001b[31m+       Object {\u001b[39m\n\u001b[31m+         \"all\": Array [],\u001b[39m\n\u001b[31m+         \"any\": Array [\u001b[39m\n\u001b[31m+           Object {\u001b[39m\n\u001b[31m+             \"data\": Object {\u001b[39m\n\u001b[31m+               \"isIframe\": false,\u001b[39m\n\u001b[31m+             },\u001b[39m\n\u001b[31m+             \"id\": \"region\",\u001b[39m\n\u001b[31m+             \"impact\": \"moderate\",\u001b[39m\n\u001b[31m+             \"message\": \"Some page content is not contained by landmarks\",\u001b[39m\n\u001b[31m+             \"relatedNodes\": Array [],\u001b[39m\n\u001b[31m+           },\u001b[39m\n\u001b[31m+         ],\u001b[39m\n\u001b[31m+         \"failureSummary\": \"Fix any of the following:\u001b[39m\n\u001b[31m+   Some page content is not contained by landmarks\",\u001b[39m\n\u001b[31m+         \"html\": \"<div id=\\\"_r_2_\\\" data-base-ui-portal=\\\"\\\">\",\u001b[39m\n\u001b[31m+         \"impact\": \"moderate\",\u001b[39m\n\u001b[31m+         \"none\": Array [],\u001b[39m\n\u001b[31m+         \"target\": Array [\u001b[39m\n\u001b[31m+           \"#_r_2_\",\u001b[39m\n\u001b[31m+         ],\u001b[39m\n\u001b[31m+       },\u001b[39m\n\u001b[31m+     ],\u001b[39m\n\u001b[31m+     \"tags\": Array [\u001b[39m\n\u001b[31m+       \"cat.keyboard\",\u001b[39m\n\u001b[31m+       \"best-practice\",\u001b[39m\n\u001b[31m+       \"RGAAv4\",\u001b[39m\n\u001b[31m+       \"RGAA-9.2.1\",\u001b[39m\n\u001b[31m+     ],\u001b[39m\n\u001b[31m+   },\u001b[39m\n\u001b[31m+ ]\u001b[39m\n    at expectNoAxeViolations (/home/karyana/Codes/projects/ui/packages/registry/test/components/ui/tooltip-e2e.spec.ts:65:30)\n    at /home/karyana/Codes/projects/ui/packages/registry/test/components/ui/tooltip-e2e.spec.ts:115:3",
+                    "location": {
+                      "file": "/home/karyana/Codes/projects/ui/packages/registry/test/components/ui/tooltip-e2e.spec.ts",
+                      "column": 30,
+                      "line": 65
+                    },
+                    "snippet": "  63 |     .exclude(\"main[data-example-root] > h1\")\n  64 |     .analyze()\n> 65 |   expect(results.violations).toEqual([])\n     |                              ^\n  66 | }\n  67 |\n  68 | test(\"tooltip opens from pointer and keyboard, closes, and swaps shared content\", async ({"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/home/karyana/Codes/projects/ui/packages/registry/test/components/ui/tooltip-e2e.spec.ts",
+                        "column": 30,
+                        "line": 65
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  -  1\u001b[39m\n\u001b[31m+ Received  + 39\u001b[39m\n\n\u001b[32m- Array []\u001b[39m\n\u001b[31m+ Array [\u001b[39m\n\u001b[31m+   Object {\u001b[39m\n\u001b[31m+     \"description\": \"Ensure all page content is contained by landmarks\",\u001b[39m\n\u001b[31m+     \"help\": \"All page content should be contained by landmarks\",\u001b[39m\n\u001b[31m+     \"helpUrl\": \"https://dequeuniversity.com/rules/axe/4.13/region?application=playwright\",\u001b[39m\n\u001b[31m+     \"id\": \"region\",\u001b[39m\n\u001b[31m+     \"impact\": \"moderate\",\u001b[39m\n\u001b[31m+     \"nodes\": Array [\u001b[39m\n\u001b[31m+       Object {\u001b[39m\n\u001b[31m+         \"all\": Array [],\u001b[39m\n\u001b[31m+         \"any\": Array [\u001b[39m\n\u001b[31m+           Object {\u001b[39m\n\u001b[31m+             \"data\": Object {\u001b[39m\n\u001b[31m+               \"isIframe\": false,\u001b[39m\n\u001b[31m+             },\u001b[39m\n\u001b[31m+             \"id\": \"region\",\u001b[39m\n\u001b[31m+             \"impact\": \"moderate\",\u001b[39m\n\u001b[31m+             \"message\": \"Some page content is not contained by landmarks\",\u001b[39m\n\u001b[31m+             \"relatedNodes\": Array [],\u001b[39m\n\u001b[31m+           },\u001b[39m\n\u001b[31m+         ],\u001b[39m\n\u001b[31m+         \"failureSummary\": \"Fix any of the following:\u001b[39m\n\u001b[31m+   Some page content is not contained by landmarks\",\u001b[39m\n\u001b[31m+         \"html\": \"<div id=\\\"_r_2_\\\" data-base-ui-portal=\\\"\\\">\",\u001b[39m\n\u001b[31m+         \"impact\": \"moderate\",\u001b[39m\n\u001b[31m+         \"none\": Array [],\u001b[39m\n\u001b[31m+         \"target\": Array [\u001b[39m\n\u001b[31m+           \"#_r_2_\",\u001b[39m\n\u001b[31m+         ],\u001b[39m\n\u001b[31m+       },\u001b[39m\n\u001b[31m+     ],\u001b[39m\n\u001b[31m+     \"tags\": Array [\u001b[39m\n\u001b[31m+       \"cat.keyboard\",\u001b[39m\n\u001b[31m+       \"best-practice\",\u001b[39m\n\u001b[31m+       \"RGAAv4\",\u001b[39m\n\u001b[31m+       \"RGAA-9.2.1\",\u001b[39m\n\u001b[31m+     ],\u001b[39m\n\u001b[31m+   },\u001b[39m\n\u001b[31m+ ]\u001b[39m\n\n  63 |     .exclude(\"main[data-example-root] > h1\")\n  64 |     .analyze()\n> 65 |   expect(results.violations).toEqual([])\n     |                              ^\n  66 | }\n  67 |\n  68 | test(\"tooltip opens from pointer and keyboard, closes, and swaps shared content\", async ({\n    at expectNoAxeViolations (/home/karyana/Codes/projects/ui/packages/registry/test/components/ui/tooltip-e2e.spec.ts:65:30)\n    at /home/karyana/Codes/projects/ui/packages/registry/test/components/ui/tooltip-e2e.spec.ts:115:3"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-15T16:23:08.469Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "/home/karyana/Codes/projects/ui/test-results/3114/packages-registry-test-com-7bbb9-hover-and-focus-open-states-chromium/test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/home/karyana/Codes/projects/ui/test-results/3114/packages-registry-test-com-7bbb9-hover-and-focus-open-states-chromium/error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "/home/karyana/Codes/projects/ui/test-results/3114/packages-registry-test-com-7bbb9-hover-and-focus-open-states-chromium/trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/home/karyana/Codes/projects/ui/packages/registry/test/components/ui/tooltip-e2e.spec.ts",
+                    "column": 30,
+                    "line": 65
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "5e395945ee1d3472b19a-d8326677521d2a65ce16",
+          "file": "packages/registry/test/components/ui/tooltip-e2e.spec.ts",
+          "line": 106,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-09-15T16:22:23.604Z",
+    "duration": 55097.524,
+    "expected": 3,
+    "skipped": 0,
+    "unexpected": 3,
+    "flaky": 0
+  }
+}

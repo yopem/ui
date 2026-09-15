@@ -64,7 +64,9 @@ function CalendarDropdown(props: DropdownProps) {
     >
       <ComboboxInput
         {...stylex.props(exampleStyles.report1)}
+        aria-label={ariaLabel}
         onFocus={(e) => e.currentTarget.select()}
+        placeholder={ariaLabel}
       />
       <ComboboxPopup aria-label={ariaLabel}>
         <ComboboxEmpty>No items found.</ComboboxEmpty>

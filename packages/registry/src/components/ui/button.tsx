@@ -135,7 +135,7 @@ const styles = stylex.create({
       ":focus-visible[data-pressed]":
         "var(--button-solid-inset-pressed), 0 0 0 1px var(--background), 0 0 0 3px var(--ring)",
     },
-    color: "#fff",
+    color: "#000",
   },
   destructiveOutline: {
     backgroundClip: {
@@ -220,7 +220,7 @@ const styles = stylex.create({
     color: tokens["--primary-foreground"],
   },
   loadingIndicatorDestructive: {
-    color: "#fff",
+    color: "#000",
   },
   loadingIndicatorForeground: {
     color: tokens["--foreground"],

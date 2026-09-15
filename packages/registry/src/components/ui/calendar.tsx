@@ -3,7 +3,7 @@
 import type { StyleXProps } from "@registry/lib/stylex"
 import type * as React from "react"
 
-import { DayPicker } from "@daypicker/react"
+import { DayPicker, Nav } from "@daypicker/react"
 import { stylexProps } from "@registry/lib/stylex"
 import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
@@ -94,8 +94,10 @@ const styles = stylex.create({
     color: {
       default: null,
       ":is([data-selected] > button)": "var(--calendar-selected-color)",
-      ":is([data-disabled] > button, [data-outside] > button, [data-selected][data-disabled] > button, [data-selected][data-outside] > button)":
-        "color-mix(in oklab, var(--muted-foreground) 72%, transparent)",
+      ":is([data-disabled] > button, [data-outside] > button)":
+        tokens["--muted-foreground"],
+      ":is([data-selected][data-disabled] > button, [data-selected][data-outside] > button)":
+        "var(--calendar-selected-color)",
     },
     pointerEvents: {
       default: null,
@@ -187,8 +189,7 @@ const styles = stylex.create({
   outside: { color: tokens["--muted-foreground"] },
   weekCell: {
     blockSize: "var(--cell-size)",
-    color:
-      "color-mix(in oklab, var(--muted-foreground, currentColor) 72%, transparent)",
+    color: tokens["--muted-foreground"],
     fontSize: "0.75rem",
     fontWeight: 500,
     inlineSize: "var(--cell-size)",
@@ -197,6 +198,10 @@ const styles = stylex.create({
 })
 
 const buttonClassNames = stylex.props(styles.button).className
+
+function CalendarNav(props: React.ComponentProps<typeof Nav>) {
+  return <Nav {...props} role="toolbar" />
+}
 
 export function Calendar({
   xstyle,
@@ -240,6 +245,7 @@ export function Calendar({
   )
 
   const defaultComponents = {
+    Nav: CalendarNav,
     Chevron: ({
       className: iconClassName,
       orientation,

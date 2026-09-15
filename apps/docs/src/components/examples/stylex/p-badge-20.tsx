@@ -16,6 +16,7 @@ export default function Example() {
       Removable
       <button
         {...stylex.props(exampleStyles.report1, exampleStyles.report1Manual)}
+        aria-label="Remove badge"
         onClick={() => setIsActive(false)}
         type="button"
       >
