@@ -65,16 +65,12 @@ test("component docs cover setup, source files, and API", async ({ page }) => {
   await expect(
     page.getByRole("button", { name: "Copy Button usage", exact: true }),
   ).toBeEnabled()
-  await page
-    .locator("summary")
-    .filter({ hasText: "src/components/ui/button.tsx" })
-    .click()
-  await page
-    .locator("summary")
-    .filter({ hasText: "src/components/ui/spinner.tsx" })
-    .click()
+  const sourceHeader = page
+    .getByText("src/components/ui/button.tsx", { exact: true })
+    .locator("..")
+  await expect(sourceHeader).toBeVisible()
   await expect(
-    page.getByRole("button", {
+    sourceHeader.getByRole("button", {
       name: "Copy src/components/ui/button.tsx",
       exact: true,
     }),
@@ -150,10 +146,6 @@ test("copy buttons copy source, not installation commands", async ({
     page.getByRole("button", { name: "Copy Button usage", exact: true }),
   ).toBeEnabled()
   await page
-    .locator("summary")
-    .filter({ hasText: "src/components/ui/button.tsx" })
-    .click()
-  await page
     .getByRole("button", {
       name: "Copy src/components/ui/button.tsx",
       exact: true,
@@ -177,10 +169,6 @@ test("clipboard failures explain manual copying", async ({ page }) => {
   await expect(
     page.getByRole("button", { name: "Copy Button usage", exact: true }),
   ).toBeEnabled()
-  await page
-    .locator("summary")
-    .filter({ hasText: "src/components/ui/button.tsx" })
-    .click()
   await page
     .getByRole("button", {
       name: "Copy src/components/ui/button.tsx",

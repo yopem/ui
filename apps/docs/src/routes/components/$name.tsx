@@ -184,17 +184,13 @@ function ComponentApi({
 }
 
 function SourceFile({ file }: { file: { content: string; target: string } }) {
-  const [open, setOpen] = useState(false)
   return (
-    <details
-      {...stylex.props(docsStyles.details)}
-      onToggle={(event) => setOpen(event.currentTarget.open)}
-    >
-      <summary {...stylex.props(docsStyles.summary)}>
-        <code {...stylex.props(docsStyles.inlineCode)}>{file.target}</code>
-      </summary>
-      {open ? <CopyableCode code={file.content} title={file.target} /> : null}
-    </details>
+    <CopyableCode
+      code={file.content}
+      header={file.target}
+      preview
+      title={file.target}
+    />
   )
 }
 

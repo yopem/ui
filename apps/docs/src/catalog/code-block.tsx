@@ -15,10 +15,12 @@ const HighlightedCode = lazy(() =>
 
 export function CopyableCode({
   code,
+  header,
   preview = false,
   title = "Code",
 }: {
   code: string
+  header?: string
   preview?: boolean
   title?: string
 }) {
@@ -30,23 +32,14 @@ export function CopyableCode({
     collapsible && !expanded ? codeLines.slice(0, 5).join("\n") : code
   const { copyToClipboard, copyError, isCopied } = useCopyToClipboard()
   return (
-    <div {...stylex.props(styles.root, preview && styles.previewRoot)}>
-      <button
-        {...stylex.props(styles.copy, styles.focus)}
-        type="button"
-        disabled={!hydrated}
-        aria-label={isCopied ? `${title} copied` : `Copy ${title}`}
-        onClick={() => void copyToClipboard(code)}
-      >
-        {isCopied ? (
-          <CheckIcon
-            {...stylex.props(styles.icon, styles.copiedIcon)}
-            aria-hidden="true"
-          />
-        ) : (
-          <CopyIcon {...stylex.props(styles.icon)} aria-hidden="true" />
-        )}
-      </button>
+    <div {...stylex.props(styles.root, previewRoot(preview, header))}>
+      <CodeBlockControls
+        header={header}
+        hydrated={hydrated}
+        isCopied={isCopied}
+        title={title}
+        onCopy={() => void copyToClipboard(code)}
+      />
       <ScrollArea
         {...stylex.props(
           styles.pre,
@@ -89,6 +82,52 @@ export function CopyableCode({
   )
 }
 
+function previewRoot(preview: boolean, header?: string) {
+  return preview && !header ? styles.previewRoot : undefined
+}
+
+function CodeBlockControls({
+  header,
+  hydrated,
+  isCopied,
+  onCopy,
+  title,
+}: {
+  header?: string
+  hydrated: boolean
+  isCopied: boolean
+  onCopy: () => void
+  title: string
+}) {
+  return (
+    <div {...stylex.props(Boolean(header) && styles.header)}>
+      {header ? (
+        <code {...stylex.props(styles.headerTitle)}>{header}</code>
+      ) : null}
+      <button
+        {...stylex.props(
+          styles.copy,
+          Boolean(header) && styles.headerCopy,
+          styles.focus,
+        )}
+        type="button"
+        disabled={!hydrated}
+        aria-label={isCopied ? `${title} copied` : `Copy ${title}`}
+        onClick={onCopy}
+      >
+        {isCopied ? (
+          <CheckIcon
+            {...stylex.props(styles.icon, styles.copiedIcon)}
+            aria-hidden="true"
+          />
+        ) : (
+          <CopyIcon {...stylex.props(styles.icon)} aria-hidden="true" />
+        )}
+      </button>
+    </div>
+  )
+}
+
 const copied = stylex.keyframes({
   from: { opacity: 0.5, transform: "scale(0.9)" },
   to: { opacity: 1, transform: "scale(1)" },
@@ -117,6 +156,24 @@ const styles = stylex.create({
     borderStartEndRadius: 0,
     marginBlockStart: -1,
   },
+  header: {
+    alignItems: "center",
+    borderBlockEndColor: tokens["--border"],
+    borderBlockEndStyle: "solid",
+    borderBlockEndWidth: 1,
+    display: "flex",
+    gap: "0.75rem",
+    justifyContent: "space-between",
+    paddingBlock: "0.5rem",
+    paddingInline: "0.75rem",
+  },
+  headerTitle: {
+    fontFamily: tokens["--font-mono"],
+    fontSize: "0.8125rem",
+    fontWeight: 600,
+    overflowWrap: "anywhere",
+  },
+  headerCopy: { flexShrink: 0, position: "static" },
   preview: {
     maxBlockSize: "9rem",
     maskImage: "linear-gradient(to bottom, black 45%, transparent 100%)",
