@@ -5,6 +5,7 @@ import { useHydrated } from "@tanstack/react-router"
 import { CheckIcon, CopyIcon } from "lucide-react"
 import { lazy, Suspense, useState } from "react"
 
+import { stripStandaloneComments } from "@/catalog/source-code"
 import { useCopyToClipboard } from "@/hooks/use-copy-to-clipboard"
 
 const HighlightedCode = lazy(() =>
@@ -25,11 +26,12 @@ export function CopyableCode({
   title?: string
 }) {
   const hydrated = useHydrated()
-  const codeLines = code.trimEnd().split("\n")
+  const cleanCode = stripStandaloneComments(code)
+  const codeLines = cleanCode.trimEnd().split("\n")
   const collapsible = preview && codeLines.length > 5
   const [expanded, setExpanded] = useState(!preview)
   const visibleCode =
-    collapsible && !expanded ? codeLines.slice(0, 5).join("\n") : code
+    collapsible && !expanded ? codeLines.slice(0, 5).join("\n") : cleanCode
   const { copyToClipboard, copyError, isCopied } = useCopyToClipboard()
   return (
     <div {...stylex.props(styles.root, previewRoot(preview, header))}>
@@ -38,7 +40,7 @@ export function CopyableCode({
         hydrated={hydrated}
         isCopied={isCopied}
         title={title}
-        onCopy={() => void copyToClipboard(code)}
+        onCopy={() => void copyToClipboard(cleanCode)}
       />
       <ScrollArea
         {...stylex.props(
