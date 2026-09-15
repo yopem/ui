@@ -19,30 +19,12 @@ bun run build
 
 ## Workspace
 
-- `apps/docs` — Fumadocs documentation, component previews, and source hosting
-- `packages/registry` — canonical component source and static registry builder
+- `apps/docs` — TanStack Start documentation and component previews
+- `packages/registry` — canonical component source and registry tooling
 
-Registry artifacts are generated under `packages/registry/dist` and copied to
-`apps/docs/public/r` and `apps/docs/public/schema`. Generated API data stays out
-of version control and is rebuilt from source for development and builds.
+## Acknowledgements
 
-## Self-hosting
+Thanks to [shadcn/ui](https://ui.shadcn.com) for the inspiration and
+[coss ui](https://coss.com/ui) for the base styles and example files.
 
-Build and run the production server directly:
-
-```sh
-bun run build
-HOST=0.0.0.0 PORT=3100 node apps/docs/.output/server/index.mjs
-```
-
-Or build the container from the repository root:
-
-```sh
-docker build -f apps/docs/Dockerfile -t yopem-ui .
-docker run --rm -p 3100:3100 yopem-ui
-```
-
-Tagged releases also produce self-hosted server and immutable registry archives.
-
-See `CONTRIBUTING.md` for contributor workflow, `NOTICE` for attribution, and
-`LICENSE` for MIT terms.
+See `CONTRIBUTING.md` for contributor workflow and `LICENSE` for MIT terms.

@@ -36,6 +36,5 @@ Automated checks do not constitute VoiceOver or NVDA certification.
 
 ## Releases
 
-Push version tags such as `v0.1.0`. Tagged builds upload self-hosted application
-and registry archives as workflow artifacts after the full release gate passes.
-The first release is copy/paste-only and does not publish an npm package.
+Contributors should open a pull request and must not create or push version
+tags. Maintainers handle versioning and releases after changes merge.
