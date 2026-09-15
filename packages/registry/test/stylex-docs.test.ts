@@ -5,9 +5,9 @@ import ts from "typescript-api"
 
 const project = resolve(import.meta.dir, "../../..")
 
-test("docs and demos use StyleX rather than inline styles or CSS classes", () => {
+test("docs and examples use StyleX rather than inline styles or CSS classes", () => {
   const violations: string[] = []
-  for (const directory of ["catalog", "routes", "components/demos/stylex"]) {
+  for (const directory of ["catalog", "routes", "components/examples/stylex"]) {
     const root = resolve(project, "apps/docs/src", directory)
     for (const file of readdirSync(root, {
       recursive: true,

@@ -8,42 +8,45 @@ test.skip(
   "Set FULL_A11Y=1 to run the full component accessibility matrix",
 )
 
-const firstDemos = new Map<string, string>()
+const firstExamples = new Map<string, string>()
 for (const file of (
   await readdir(
-    resolve(import.meta.dirname, "../../apps/docs/src/components/demos/stylex"),
+    resolve(
+      import.meta.dirname,
+      "../../apps/docs/src/components/examples/stylex",
+    ),
   )
 ).sort()) {
   const match = /^p-(.+)-\d+\.tsx$/.exec(file)
-  if (match?.[1] && !firstDemos.has(match[1])) {
-    firstDemos.set(match[1], file.slice(0, -4))
+  if (match?.[1] && !firstExamples.has(match[1])) {
+    firstExamples.set(match[1], file.slice(0, -4))
   }
 }
 
-const demos = [...firstDemos.values()].slice(
+const examples = [...firstExamples.values()].slice(
   0,
   process.env.A11Y_LIMIT ? Number(process.env.A11Y_LIMIT) : undefined,
 )
 
 for (const theme of ["light", "dark"] as const) {
-  test(`@full-a11y ${theme} component demos have no axe violations`, async ({
+  test(`@full-a11y ${theme} component examples have no axe violations`, async ({
     page,
   }) => {
     test.setTimeout(20 * 60_000)
-    const violations: { demo: string; help: string; id: string }[] = []
-    for (const demo of demos) {
-      await page.goto(`/render/${theme}/${demo}`)
-      await page.locator("[data-demo-root]").waitFor()
+    const violations: { example: string; help: string; id: string }[] = []
+    for (const example of examples) {
+      await page.goto(`/examples/${example}?theme=${theme}`)
+      await page.locator("[data-example-root]").waitFor()
       await page.waitForFunction(
         () =>
           document.fonts.status === "loaded" &&
-          !document.body.textContent?.includes("Loading demo…"),
+          !document.body.textContent?.includes("Loading example…"),
       )
       const result = await new AxeBuilder({ page })
-        .include("[data-demo-root]")
+        .include("[data-example-root]")
         .analyze()
       violations.push(
-        ...result.violations.map(({ help, id }) => ({ demo, help, id })),
+        ...result.violations.map(({ help, id }) => ({ example, help, id })),
       )
     }
     expect(violations).toEqual([])

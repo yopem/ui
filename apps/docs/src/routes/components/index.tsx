@@ -66,8 +66,8 @@ function ComponentsPage() {
               >
                 <h2 {...stylex.props(catalogStyles.cardTitle)}>{item.title}</h2>
                 <span {...stylex.props(catalogStyles.cardCount)}>
-                  {item.demos.length}{" "}
-                  {item.demos.length === 1 ? "demo" : "demos"}
+                  {item.examples.length}{" "}
+                  {item.examples.length === 1 ? "example" : "examples"}
                 </span>
               </Link>
             ))}

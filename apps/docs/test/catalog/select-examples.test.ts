@@ -7,22 +7,22 @@ test("selects shortest examples covering component props and values", () => {
     {
       name: "p-button-1",
       source:
-        "export default function Demo() { return <Button>Button</Button> }",
+        "export default function Example() { return <Button>Button</Button> }",
     },
     {
       name: "p-button-2",
       source:
-        'export default function Demo() { return <Button variant="outline">Outline</Button> }',
+        'export default function Example() { return <Button variant="outline">Outline</Button> }',
     },
     {
       name: "p-button-3",
       source:
-        'export default function Demo() { return <Button size="sm">Small</Button> }',
+        'export default function Example() { return <Button size="sm">Small</Button> }',
     },
     {
       name: "p-button-4",
       source:
-        'export default function Demo() { return <Button onClick={() => undefined} variant="outline">Complex</Button> }',
+        'export default function Example() { return <Button onClick={() => undefined} variant="outline">Complex</Button> }',
     },
   ]
 

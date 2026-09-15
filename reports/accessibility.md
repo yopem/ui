@@ -5,7 +5,7 @@ certified
 
 ## Automated coverage
 
-- Axe scans for one canonical demo from each of 54 component families.
+- Axe scans for one canonical example from each of 54 component families.
 - Light and dark themes in Chromium, 108 full-matrix scans.
 - Desktop and mobile checks for Button focus visibility and 24 CSS pixel minimum
   targets.

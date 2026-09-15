@@ -216,8 +216,8 @@ export const catalogStyles = stylex.create({
     letterSpacing: "-0.01em",
     margin: 0,
   },
-  demo: { marginBlock: "2rem", minInlineSize: 0 },
-  demoList: { display: "grid", gap: "1rem" },
+  example: { marginBlock: "2rem", minInlineSize: 0 },
+  exampleList: { display: "grid", gap: "1rem" },
   empty: {
     borderColor: tokens["--border"],
     borderRadius: tokens["--radius-xl"],

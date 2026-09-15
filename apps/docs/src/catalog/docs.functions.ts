@@ -12,8 +12,8 @@ const sources = import.meta.glob<string>(
     import: "default",
   },
 )
-const demoSources = import.meta.glob<string>(
-  "../components/demos/stylex/*.tsx",
+const exampleSources = import.meta.glob<string>(
+  "../components/examples/stylex/*.tsx",
   {
     query: "?raw",
     import: "default",
@@ -66,7 +66,7 @@ export const getDocumentation = createServerFn({ method: "GET" })
         }))
       })
     const examples = await Promise.all(
-      Object.entries(demoSources)
+      Object.entries(exampleSources)
         .filter(([path]) => path.includes(`/p-${slug}-`))
         .map(async ([path, load]) => ({
           name:

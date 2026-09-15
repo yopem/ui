@@ -73,7 +73,10 @@ const styles = stylex.create({
     },
     minInlineSize: 0,
   },
-  full: { maxInlineSize: "90rem" },
+  full: {
+    gridTemplateColumns: "minmax(0, 1fr)",
+    maxInlineSize: "90rem",
+  },
   article: { minInlineSize: 0 },
   body: {
     color: tokens["--foreground"],

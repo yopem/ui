@@ -23,7 +23,7 @@ Run `bun run lint && bun run fmt:check && bun run typecheck` after changes. Run 
 
 - `apps/docs/` — TanStack Start component catalog and static registry host.
   - `src/components/ui/stylex/` — catalog-facing exports of canonical StyleX components.
-  - `src/components/demos/stylex/` — StyleX component demos.
+  - `src/components/examples/stylex/` — StyleX component examples.
   - `src/catalog/usage.ts` — complete copyable usage examples, checked against component types.
   - `src/catalog/docs.functions.ts` — server-only source and API loading.
   - `src/routes/` — file-based routes. Run `bun run generate-routes` after route changes; never edit `routeTree.gen.ts`.
@@ -64,7 +64,7 @@ For component work:
 
 1. Update canonical StyleX source in `packages/registry/src/components/ui/`.
 2. Update or add metadata in `packages/registry/src/items/`, including files, dependencies, registry dependencies, docs, and exports.
-3. Add or update StyleX docs demo under `apps/docs/src/components/demos/stylex/`.
+3. Add or update StyleX docs example under `apps/docs/src/components/examples/stylex/`.
 4. Run `bun run registry:build` to regenerate hosted artifacts.
 
 Never hand-edit `packages/registry/dist/` or `apps/docs/public/r/`.

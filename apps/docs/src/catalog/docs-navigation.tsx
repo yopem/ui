@@ -16,6 +16,7 @@ const tree: Root = {
     { type: "page", name: "Installation", url: "/docs/installation" },
     { type: "page", name: "Theming", url: "/docs/theming" },
     { type: "page", name: "Components", url: "/components" },
+    { type: "page", name: "Examples", url: "/examples" },
     { type: "separator", name: "Components" },
     ...catalog.map((item) => ({
       type: "page" as const,

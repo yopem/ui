@@ -1,5 +1,46 @@
 import { expect, test } from "@playwright/test"
 
+test("examples page lists, filters, copies, and opens examples", async ({
+  context,
+  page,
+}) => {
+  await context.grantPermissions(["clipboard-read", "clipboard-write"])
+  await page.goto("/examples")
+  await expect(
+    page.getByRole("heading", { name: "Browse examples", level: 1 }),
+  ).toBeVisible()
+  await expect(page.getByText("508 examples", { exact: true })).toBeVisible()
+
+  await page.getByRole("searchbox", { name: "Search examples" }).fill("button")
+  await expect(page.getByText("40 examples", { exact: true })).toBeVisible()
+  const firstExample = page.getByRole("link", {
+    name: "Button 1",
+    exact: true,
+  })
+  await expect(firstExample).toBeVisible()
+  await page
+    .getByRole("button", { name: "Copy Button 1 code", exact: true })
+    .click()
+  await expect(
+    page.getByRole("button", {
+      name: "Button 1 code copied",
+      exact: true,
+    }),
+  ).toBeVisible()
+  await expect
+    .poll(() => page.evaluate(() => navigator.clipboard.readText()))
+    .toContain("export default function Particle")
+
+  await firstExample.click()
+  await page.waitForURL(
+    (url) =>
+      url.pathname === "/examples/p-button-1" &&
+      (url.searchParams.get("theme") === "light" ||
+        url.searchParams.get("theme") === "dark"),
+  )
+  await expect(page.locator("[data-example-root]")).toBeVisible()
+})
+
 test("sidebar links to llms.txt", async ({ page }) => {
   test.skip((page.viewportSize()?.width ?? 0) < 768, "Desktop navigation only")
   await page.goto("/")

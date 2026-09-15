@@ -46,7 +46,9 @@ export function DocumentationLayout({ children }: { children: ReactNode }) {
             bottomStickOnMobile={false}
           >
             <DialogTitle>Documentation</DialogTitle>
-            <DialogDescription>Browse guides and components.</DialogDescription>
+            <DialogDescription>
+              Browse guides, components, and examples.
+            </DialogDescription>
             <DocsNavigation onNavigate={() => setMobileOpen(false)} />
             <ThemeToggle />
           </DialogPopup>

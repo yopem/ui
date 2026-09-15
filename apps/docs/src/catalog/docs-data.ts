@@ -35,6 +35,12 @@ export function getRequiredItems(slug: string) {
 
 export const guidePages = [
   {
+    title: "Examples",
+    url: "/examples",
+    content:
+      "Browse and search every live StyleX component example and pattern.",
+  },
+  {
     title: "Theming",
     url: "/docs/theming",
     content:

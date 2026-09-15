@@ -126,14 +126,14 @@ export function GlobalSearch() {
       >
         <DialogTitle>Search documentation</DialogTitle>
         <DialogDescription>
-          Find components, installation steps, and guides.
+          Find components, examples, installation steps, and guides.
         </DialogDescription>
         <Input
           ref={inputRef}
           aria-label="Search documentation"
           type="search"
           value={query}
-          placeholder="Search components and guides…"
+          placeholder="Search components, examples, and guides…"
           onChange={(event) => {
             const nextQuery = event.target.value
             setQuery(nextQuery)

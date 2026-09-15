@@ -5,47 +5,59 @@ import {
   type LazyExoticComponent,
 } from "react"
 
-interface DemoModule {
+interface ExampleModule {
   default: ComponentType
 }
-export interface CatalogDemo {
+export interface CatalogExample {
   component: LazyExoticComponent<ComponentType>
   name: string
-  preload: () => Promise<DemoModule>
+  preload: () => Promise<ExampleModule>
+  source: () => Promise<string>
 }
 
 export interface CatalogItem {
-  demos: CatalogDemo[]
+  examples: CatalogExample[]
   name: string
   slug: string
   title: string
 }
 
-const modules = import.meta.glob<DemoModule>("../components/demos/stylex/*.tsx")
-const demos = Object.entries(modules)
+const modules = import.meta.glob<ExampleModule>(
+  "../components/examples/stylex/*.tsx",
+)
+const sources = import.meta.glob<string>(
+  "../components/examples/stylex/*.tsx",
+  {
+    query: "?raw",
+    import: "default",
+  },
+)
+const examples = Object.entries(modules)
   .map(([path, load]) => {
     const file = path.split("/").at(-1) ?? path
     const match = /^p-(.+)-(\d+)\.tsx$/.exec(file)
-    if (!match) return null
+    const source = sources[path]
+    if (!match || !source) return null
     return {
       load,
       name: file.slice(0, -4),
       order: Number(match[2]),
       slug: match[1],
+      source,
     }
   })
-  .filter((demo) => demo !== null)
+  .filter((example) => example !== null)
   .sort((left, right) =>
     left.slug === right.slug
       ? left.order - right.order
       : left.slug.localeCompare(right.slug),
   )
 
-const groups = new Map<string, typeof demos>()
-for (const demo of demos) {
-  const group = groups.get(demo.slug) ?? []
-  group.push(demo)
-  groups.set(demo.slug, group)
+const groups = new Map<string, typeof examples>()
+for (const example of examples) {
+  const group = groups.get(example.slug) ?? []
+  group.push(example)
+  groups.set(example.slug, group)
 }
 
 const compositionOverrides: Record<
@@ -63,21 +75,22 @@ const compositionOverrides: Record<
 }
 
 export const catalog: CatalogItem[] = [...groups.values()]
-  .map((componentDemos) => {
-    const first = componentDemos[0]
-    if (!first) throw new Error("Empty demo group")
+  .map((componentExamples) => {
+    const first = componentExamples[0]
+    if (!first) throw new Error("Empty example group")
     const slug = first.slug
     const override = compositionOverrides[slug]
     const name = override?.name ?? componentIdentifier(slug)
     return {
-      demos: componentDemos.map(({ load, name: demoName }) => {
-        let promise: Promise<DemoModule> | undefined
+      examples: componentExamples.map(({ load, name: exampleName, source }) => {
+        let promise: Promise<ExampleModule> | undefined
         const preload = () =>
-          (promise ??= load().catch(() => ({ default: UnavailableDemo })))
+          (promise ??= load().catch(() => ({ default: UnavailableExample })))
         return {
           component: lazy(preload),
-          name: demoName,
+          name: exampleName,
           preload,
+          source,
         }
       }),
       name,
@@ -87,13 +100,13 @@ export const catalog: CatalogItem[] = [...groups.values()]
   })
   .concat(
     {
-      demos: [],
+      examples: [],
       name: "Label",
       slug: "label",
       title: "Label",
     },
     {
-      demos: [],
+      examples: [],
       name: "Sidebar",
       slug: "sidebar",
       title: "Sidebar",
@@ -115,7 +128,7 @@ function componentIdentifier(value: string) {
   return titleCase(value).replaceAll(" ", "")
 }
 
-function UnavailableDemo() {
+function UnavailableExample() {
   return createElement(
     "p",
     null,

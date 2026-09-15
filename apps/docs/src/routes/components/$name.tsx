@@ -3,7 +3,7 @@ import { Link, createFileRoute, notFound } from "@tanstack/react-router"
 import { useState } from "react"
 
 import { ApiReference } from "@/catalog/api-reference"
-import { DemoPanel } from "@/catalog/catalog-ui"
+import { ExamplePanel } from "@/catalog/catalog-ui"
 import { CopyableCode } from "@/catalog/code-block"
 import { getCatalogItem } from "@/catalog/components"
 import { DocumentationLayout } from "@/catalog/docs-layout"
@@ -113,16 +113,18 @@ function ComponentPage() {
             includes its source directly.
           </p>
           {data.examples.length ? (
-            <div {...stylex.props(catalogStyles.demoList)}>
+            <div {...stylex.props(catalogStyles.exampleList)}>
               {data.examples.map((group) => {
                 const examples = group.examples.flatMap((example) => {
-                  const demo = item.demos.find(
+                  const catalogExample = item.examples.find(
                     (entry) => entry.name === example.name,
                   )
-                  return demo ? [{ ...example, demo }] : []
+                  return catalogExample
+                    ? [{ ...example, example: catalogExample }]
+                    : []
                 })
                 return examples.length ? (
-                  <DemoPanel
+                  <ExamplePanel
                     examples={examples}
                     key={`${name}:${group.label}`}
                     label={group.label}

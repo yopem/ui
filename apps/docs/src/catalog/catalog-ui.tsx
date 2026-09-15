@@ -5,7 +5,7 @@ import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import { Suspense } from "react"
 
-import type { CatalogDemo } from "./components"
+import type { CatalogExample } from "./components"
 
 import { CopyableCode } from "./code-block"
 import { catalogStyles } from "./docs-styles"
@@ -22,26 +22,29 @@ const exampleHelpers = Object.entries(
   content,
 }))
 
-export function DemoPanel({
+export function ExamplePanel({
   examples,
   label,
 }: {
   examples: {
-    demo: CatalogDemo
+    example: CatalogExample
     label: string
     source: string
   }[]
   label: string
 }) {
   return (
-    <section {...stylex.props(catalogStyles.demo)}>
+    <section {...stylex.props(catalogStyles.example)}>
       <h3 {...stylex.props(localStyles.heading)}>{label}</h3>
       {examples.map((example) => {
-        const LazyDemo = example.demo.component
+        const LazyExample = example.example.component
         const exampleName =
           label === example.label ? label : `${label}: ${example.label}`
         return (
-          <div {...stylex.props(localStyles.example)} key={example.demo.name}>
+          <div
+            {...stylex.props(localStyles.example)}
+            key={example.example.name}
+          >
             {examples.length > 1 ? (
               <h4 {...stylex.props(localStyles.value)}>{example.label}</h4>
             ) : null}
@@ -53,7 +56,7 @@ export function DemoPanel({
             >
               <div {...stylex.props(catalogStyles.previewContent)}>
                 <Suspense fallback={null}>
-                  <LazyDemo />
+                  <LazyExample />
                 </Suspense>
               </div>
             </ScrollArea>
