@@ -62,6 +62,9 @@ test("component docs cover setup, source files, and API", async ({ page }) => {
   await expect(
     page.getByRole("heading", { name: "API reference", exact: true }),
   ).toBeVisible()
+  await expect(
+    page.getByRole("button", { name: "Copy Button usage", exact: true }),
+  ).toBeEnabled()
   await page
     .locator("summary")
     .filter({ hasText: "src/components/ui/button.tsx" })
@@ -90,6 +93,14 @@ test("component docs cover setup, source files, and API", async ({ page }) => {
     }),
   ).toBeEnabled()
   const api = page.getByRole("region", { name: "Button", exact: true })
+  await api
+    .locator("summary")
+    .filter({ hasText: "Type signature" })
+    .first()
+    .click()
+  await expect(
+    api.getByRole("button", { name: "Copy Button signature", exact: true }),
+  ).toBeVisible()
   await expect(
     api.getByRole("row").filter({ hasText: "loading" }),
   ).toContainText("false")

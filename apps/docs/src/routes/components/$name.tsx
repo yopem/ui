@@ -1,5 +1,11 @@
 import * as stylex from "@stylexjs/stylex"
-import { Link, createFileRoute, notFound } from "@tanstack/react-router"
+import {
+  Link,
+  createFileRoute,
+  notFound,
+  useHydrated,
+} from "@tanstack/react-router"
+import { useState } from "react"
 
 import { ApiReference } from "@/catalog/api-reference"
 import { DemoPanel } from "@/catalog/catalog-ui"
@@ -115,14 +121,7 @@ function ComponentPage() {
           </p>
           <div {...stylex.props(docsStyles.section)}>
             {data.files.map((file) => (
-              <details {...stylex.props(docsStyles.details)} key={file.path}>
-                <summary {...stylex.props(docsStyles.summary)}>
-                  <code {...stylex.props(docsStyles.inlineCode)}>
-                    {file.target}
-                  </code>
-                </summary>
-                <CopyableCode code={file.content} title={file.target} />
-              </details>
+              <SourceFile file={file} key={file.path} />
             ))}
           </div>
           <h2 {...stylex.props(docsStyles.h2)} id="examples">
@@ -179,6 +178,24 @@ function ComponentPage() {
         </DocsBody>
       </DocsPage>
     </DocumentationLayout>
+  )
+}
+
+function SourceFile({ file }: { file: { content: string; target: string } }) {
+  const hydrated = useHydrated()
+  const [open, setOpen] = useState(false)
+  return (
+    <details
+      {...stylex.props(docsStyles.details)}
+      onToggle={(event) => setOpen(event.currentTarget.open)}
+    >
+      <summary {...stylex.props(docsStyles.summary)}>
+        <code {...stylex.props(docsStyles.inlineCode)}>{file.target}</code>
+      </summary>
+      {!hydrated || open ? (
+        <CopyableCode code={file.content} title={file.target} />
+      ) : null}
+    </details>
   )
 }
 
