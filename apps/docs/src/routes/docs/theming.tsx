@@ -180,6 +180,7 @@ function Theming() {
     <DocumentationLayout>
       <DocsPage
         toc={[
+          { title: "Choose an approach", url: "#choose", depth: 2 },
           { title: "Native tokens", url: "#tokens", depth: 2 },
           { title: "Create a theme", url: "#create-theme", depth: 2 },
           { title: "Global and scoped themes", url: "#scope", depth: 2 },
@@ -192,10 +193,52 @@ function Theming() {
       >
         <DocsTitle>Theming</DocsTitle>
         <DocsDescription>
-          Define palettes in StyleX. Apply themes to the document or a subtree,
-          and use xstyle for component overrides. Mode switching is optional.
+          Start with semantic tokens for app-wide design choices. Use xstyle for
+          one component, scoped themes for one area, and runtime helpers only
+          when users need to switch color modes.
         </DocsDescription>
         <DocsBody>
+          <h2 {...stylex.props(docsStyles.h2)} id="choose">
+            Choose an approach
+          </h2>
+          <p {...stylex.props(docsStyles.p)}>
+            Pick the narrowest option that matches what you want to change.
+            These approaches can be combined.
+          </p>
+          <div {...stylex.props(docsStyles.grid)}>
+            <a {...stylex.props(docsStyles.card)} href="#create-theme">
+              <strong {...stylex.props(docsStyles.strong)}>
+                Change the whole app
+              </strong>
+              <p {...stylex.props(docsStyles.p, docsStyles.muted)}>
+                Create a theme for colors, fonts, and radii.
+              </p>
+            </a>
+            <a {...stylex.props(docsStyles.card)} href="#scope">
+              <strong {...stylex.props(docsStyles.strong)}>
+                Theme one section
+              </strong>
+              <p {...stylex.props(docsStyles.p, docsStyles.muted)}>
+                Apply the same token group to a subtree.
+              </p>
+            </a>
+            <a {...stylex.props(docsStyles.card)} href="#xstyle">
+              <strong {...stylex.props(docsStyles.strong)}>
+                Change one component
+              </strong>
+              <p {...stylex.props(docsStyles.p, docsStyles.muted)}>
+                Pass compiled styles through its xstyle prop.
+              </p>
+            </a>
+            <a {...stylex.props(docsStyles.card)} href="#runtime">
+              <strong {...stylex.props(docsStyles.strong)}>
+                Add light and dark modes
+              </strong>
+              <p {...stylex.props(docsStyles.p, docsStyles.muted)}>
+                Add provider and script only when users can switch modes.
+              </p>
+            </a>
+          </div>
           <h2 {...stylex.props(docsStyles.h2)} id="tokens">
             Native tokens
           </h2>

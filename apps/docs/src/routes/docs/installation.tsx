@@ -213,6 +213,7 @@ import { Button } from "@/components/ui/button"
 </html>`
 
 const toc = [
+  { title: "Choose your setup", url: "#choose", depth: 2 },
   { title: "Install packages", url: "#dependencies", depth: 2 },
   { title: "Configure imports", url: "#imports", depth: 2 },
   { title: "Copy shared files", url: "#shared-files", depth: 2 },
@@ -230,10 +231,52 @@ function Installation() {
       <DocsPage toc={toc}>
         <DocsTitle>Installation</DocsTitle>
         <DocsDescription>
-          Copy components to src/components/ui and import them through the
-          standard @ alias.
+          Configure StyleX once, copy the shared Yopem files, then follow the
+          setup for your framework. Finish by testing one component in a
+          production build.
         </DocsDescription>
         <DocsBody>
+          <h2 {...stylex.props(docsStyles.h2)} id="choose">
+            Choose your setup
+          </h2>
+          <p {...stylex.props(docsStyles.p)}>
+            Every project completes the first three sections: install shared
+            packages, configure the @ source alias, and copy shared files. Then
+            complete only the section for your framework.
+          </p>
+          <div {...stylex.props(docsStyles.grid)}>
+            <a {...stylex.props(docsStyles.card)} href="#react-router">
+              <strong {...stylex.props(docsStyles.strong)}>React Router</strong>
+              <p {...stylex.props(docsStyles.p, docsStyles.muted)}>
+                Choose this for a client-rendered React Router app using Vite.
+              </p>
+            </a>
+            <a {...stylex.props(docsStyles.card)} href="#tanstack-start">
+              <strong {...stylex.props(docsStyles.strong)}>
+                TanStack Start
+              </strong>
+              <p {...stylex.props(docsStyles.p, docsStyles.muted)}>
+                Choose this for TanStack Start with server rendering.
+              </p>
+            </a>
+            <a {...stylex.props(docsStyles.card)} href="#nextjs">
+              <strong {...stylex.props(docsStyles.strong)}>Next.js</strong>
+              <p {...stylex.props(docsStyles.p, docsStyles.muted)}>
+                Choose this for Next.js App Router using webpack.
+              </p>
+            </a>
+            <a {...stylex.props(docsStyles.card)} href="#astro">
+              <strong {...stylex.props(docsStyles.strong)}>Astro</strong>
+              <p {...stylex.props(docsStyles.p, docsStyles.muted)}>
+                Choose this for Astro with its React integration.
+              </p>
+            </a>
+          </div>
+          <p {...stylex.props(docsStyles.p)}>
+            Using another build tool? Follow its official StyleX setup, keep the
+            @ alias consistent, then return to Copy shared files and Check setup
+            below.
+          </p>
           <h2 {...stylex.props(docsStyles.h2)} id="dependencies">
             Install packages
           </h2>

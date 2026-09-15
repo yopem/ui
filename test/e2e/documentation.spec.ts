@@ -305,6 +305,9 @@ test("setup guide explains compiler and shared files", async ({ page }) => {
     page.getByText("@stylexjs/unplugin", { exact: false }).first(),
   ).toBeVisible()
   await expect(
-    page.getByRole("heading", { name: "Load styles and theme", exact: true }),
+    page.getByRole("heading", { name: "Choose your setup", exact: true }),
+  ).toBeVisible()
+  await expect(
+    page.getByRole("heading", { name: "Copy shared files", exact: true }),
   ).toBeVisible()
 })
