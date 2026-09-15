@@ -46,10 +46,3 @@ Tagged releases also produce self-hosted server and immutable registry archives.
 
 See `CONTRIBUTING.md` for contributor workflow, `NOTICE` for attribution, and
 `LICENSE` for MIT terms.
-
-## TODO:
-
-- [ ] add seo
-- [ ] add dynamic og image
-- [ ] add cli for installation, adding, updating componets
-- [ ] add reusable hooks
