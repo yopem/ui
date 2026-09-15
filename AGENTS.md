@@ -53,13 +53,49 @@ e2e, accessibility, and production build.
   - `src/theme/` — optional theme config, script, provider, and hook.
   - `src/build.ts` — writes unversioned and versioned registry items, docs, and
     JSON schemas, then copies them into the docs public directory.
-- `apps/docs/test/` — docs catalog and utility tests.
-- `packages/registry/test/` — registry, generated docs, setup, and usage tests.
-- `test/` — cross-workspace release-readiness, compiler, e2e, and accessibility
-  tests.
+- `apps/*/test/` — each app test directory mirrors that app's `src/`.
+- `packages/*/test/` — each package test directory mirrors that package's
+  `src/`.
+- `test/` — cross-workspace release-readiness, Playwright, and accessibility
+  tests that do not map to one workspace source file.
 
-Path aliases are `@registry/*` for registry source and `@/*` inside docs. Keep
-tests outside `src/` in a sibling `test/` directory mirroring source structure.
+Path aliases are `@registry/*` for registry source and `@/*` inside docs.
+
+## Testing requirements
+
+- Use `bun test` as the default test runner. Use Playwright only for real-browser
+  interaction, end-to-end, production-build, and accessibility coverage.
+- Apply these requirements to every project under `apps/*` and `packages/*`,
+  including projects added later.
+- Keep tests outside `src/`. Every app and package must have a sibling `test/`
+  directory that mirrors its `src/` directory and file names. For example,
+  `packages/registry/src/lib/stylex.ts` maps to
+  `packages/registry/test/lib/stylex.test.ts`.
+- Restructure all existing app and package tests that do not follow the mirrored
+  layout instead of preserving a second test organization.
+- Every file under any `apps/*/src/` or `packages/*/src/` directory must have a
+  corresponding test file. A test may verify source contracts for files that
+  cannot execute independently, but empty,
+  placeholder, snapshot-only, and import-only tests do not satisfy this rule.
+- Tests must cover realistic failure opportunities, not only required happy
+  paths. Cover public behavior, variants, boundaries, invalid input, error and
+  disabled states, keyboard and pointer interaction, state transitions,
+  accessibility semantics, consumer overrides, and regressions relevant to the
+  source under test.
+- Every component under `packages/registry/src/components/ui/` must have real
+  Playwright interaction coverage and automated accessibility coverage in a
+  production build. Exercise rendered components through user-visible behavior;
+  do not replace browser coverage with source inspection or mocked DOM tests.
+- Component browser tests must cover each supported state and variant, keyboard
+  navigation, focus management, pointer interaction, disabled behavior,
+  accessible names and roles, and open/close or selection behavior where
+  applicable. Run an accessibility scan for every rendered state that can
+  expose different markup.
+- When source behavior changes, update its mirrored Bun test and relevant
+  Playwright and accessibility tests in the same change.
+- Before completing component work, run focused Bun and Playwright tests, the
+  accessibility suite, and a production build. Do not claim production safety
+  when any required check was skipped or failed; report exact gaps.
 
 ## Source-of-truth and generated files
 
