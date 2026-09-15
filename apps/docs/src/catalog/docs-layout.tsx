@@ -1,47 +1,70 @@
-import type { Root } from "fumadocs-core/page-tree"
-import type { SortedResult } from "fumadocs-core/search"
+import type { ReactNode } from "react"
 
 import { Button } from "@registry/components/ui/button"
 import {
   Dialog,
+  DialogDescription,
   DialogPopup,
   DialogTitle,
-  DialogDescription,
   DialogTrigger,
 } from "@registry/components/ui/dialog"
-import { Input } from "@registry/components/ui/input"
-import { ScrollArea } from "@registry/components/ui/scroll-area"
 import { tokens } from "@registry/styles/tokens.stylex"
-import { useTheme } from "@registry/theme/theme-provider"
 import * as stylex from "@stylexjs/stylex"
-import { Link, useLocation } from "@tanstack/react-router"
-import {
-  MenuIcon,
-  MonitorIcon,
-  MoonIcon,
-  SearchIcon,
-  SunIcon,
-} from "lucide-react"
-import { useEffect, useRef, useState, type ReactNode } from "react"
+import { Link } from "@tanstack/react-router"
+import { MenuIcon } from "lucide-react"
+import { useState } from "react"
 
-import { catalog } from "./components"
+import { DocsNavigation } from "./docs-navigation"
+import { GlobalSearch } from "./global-search"
+import { ThemeToggle } from "./theme-toggle"
 
-const tree: Root = {
-  name: "Yopem UI",
-  children: [
-    { type: "separator", name: "Start here" },
-    { type: "page", name: "Introduction", url: "/" },
-    { type: "page", name: "Getting started", url: "/docs/getting-started" },
-    { type: "page", name: "Installation", url: "/docs/installation" },
-    { type: "page", name: "Theming", url: "/docs/theming" },
-    { type: "page", name: "Components", url: "/components" },
-    { type: "separator", name: "Components" },
-    ...catalog.map((item) => ({
-      type: "page" as const,
-      name: item.title,
-      url: `/components/${item.slug}`,
-    })),
-  ],
+export function DocumentationLayout({ children }: { children: ReactNode }) {
+  const [mobileOpen, setMobileOpen] = useState(false)
+  return (
+    <div {...stylex.props(styles.shell)}>
+      <a href="#docs-content" {...stylex.props(styles.skip)}>
+        Skip to content
+      </a>
+      <header {...stylex.props(styles.header)}>
+        <Dialog open={mobileOpen} onOpenChange={setMobileOpen}>
+          <DialogTrigger
+            render={
+              <Button
+                variant="ghost"
+                size="icon"
+                aria-label="Open navigation"
+                {...stylex.props(styles.mobile)}
+              />
+            }
+          >
+            <MenuIcon size={20} />
+          </DialogTrigger>
+          <DialogPopup
+            {...stylex.props(styles.popup)}
+            bottomStickOnMobile={false}
+          >
+            <DialogTitle>Documentation</DialogTitle>
+            <DialogDescription>Browse guides and components.</DialogDescription>
+            <DocsNavigation onNavigate={() => setMobileOpen(false)} />
+            <ThemeToggle />
+          </DialogPopup>
+        </Dialog>
+        <Link to="/" {...stylex.props(styles.brand)}>
+          Yopem UI
+        </Link>
+        <GlobalSearch />
+      </header>
+      <div {...stylex.props(styles.frame)}>
+        <aside {...stylex.props(styles.sidebar)}>
+          <DocsNavigation />
+          <ThemeToggle />
+        </aside>
+        <main id="docs-content" tabIndex={-1} {...stylex.props(styles.main)}>
+          {children}
+        </main>
+      </div>
+    </div>
+  )
 }
 
 const styles = stylex.create({
@@ -78,25 +101,6 @@ const styles = stylex.create({
       outlineOffset: 4,
     },
   },
-  edition: {
-    color: tokens["--muted-foreground"],
-    fontFamily: tokens["--font-mono"],
-    fontSize: "0.6875rem",
-    letterSpacing: "0.04em",
-    display: { default: "inline", "@media (max-width: 639px)": "none" },
-  },
-  search: {
-    marginInlineStart: "auto",
-    inlineSize: { default: "15rem", "@media (max-width: 639px)": "auto" },
-    justifyContent: "flex-start",
-    color: tokens["--muted-foreground"],
-  },
-  shortcut: {
-    marginInlineStart: "auto",
-    fontFamily: tokens["--font-mono"],
-    fontSize: "0.6875rem",
-    display: { default: "inline", "@media (max-width: 639px)": "none" },
-  },
   mobile: {
     display: { default: "none", "@media (max-width: 767px)": "inline-flex" },
   },
@@ -117,85 +121,6 @@ const styles = stylex.create({
     position: "sticky",
     insetBlockStart: "4rem",
   },
-  navScroll: { flex: 1, minBlockSize: 0 },
-  nav: { padding: "1.25rem" },
-  list: { listStyleType: "none", padding: 0, margin: 0 },
-  group: {
-    color: tokens["--muted-foreground"],
-    fontSize: "0.6875rem",
-    fontWeight: 600,
-    letterSpacing: "0.075em",
-    textTransform: "uppercase",
-    paddingInline: "0.75rem",
-    paddingBlock: "1.25rem 0.625rem",
-  },
-  navLink: {
-    display: "block",
-    color: tokens["--muted-foreground"],
-    paddingBlock: "0.5rem",
-    paddingInline: "0.75rem",
-    borderRadius: tokens["--radius-md"],
-    textDecoration: "none",
-    fontSize: "0.8125rem",
-    ":hover": {
-      backgroundColor: tokens["--sidebar-accent"],
-      color: tokens["--sidebar-accent-foreground"],
-    },
-    ":focus-visible": {
-      outline: `2px solid ${tokens["--ring"]}`,
-      outlineOffset: 2,
-    },
-  },
-  active: {
-    backgroundColor: tokens["--sidebar-accent"],
-    color: tokens["--sidebar-accent-foreground"],
-    fontWeight: 600,
-  },
-  theme: {
-    borderWidth: 0,
-    borderBlockStart: `1px solid ${tokens["--border"]}`,
-    margin: 0,
-    minInlineSize: 0,
-    padding: "0.5rem 1rem",
-  },
-  themeOptions: {
-    backgroundColor: tokens["--muted"],
-    borderRadius: tokens["--radius-lg"],
-    display: "grid",
-    gap: "0.25rem",
-    gridTemplateColumns: "repeat(3, 1fr)",
-    inlineSize: "7rem",
-    marginInline: "auto",
-    padding: "0.1875rem",
-  },
-  themeOption: {
-    alignItems: "center",
-    backgroundColor: "transparent",
-    borderWidth: 0,
-    borderRadius: tokens["--radius-md"],
-    color: tokens["--muted-foreground"],
-    cursor: "pointer",
-    display: "grid",
-    placeItems: "center",
-    minBlockSize: {
-      default: "2rem",
-      "@media (pointer: coarse)": "2.75rem",
-    },
-    padding: 0,
-    ":hover": {
-      color: tokens["--foreground"],
-    },
-    ":focus-visible": {
-      outline: `2px solid ${tokens["--ring"]}`,
-      outlineOffset: 1,
-    },
-  },
-  themeOptionActive: {
-    backgroundColor: tokens["--card"],
-    boxShadow: "0 1px 2px color-mix(in oklab, #000 12%, transparent)",
-    color: tokens["--foreground"],
-    fontWeight: 600,
-  },
   main: { minInlineSize: 0, outline: "none" },
   skip: {
     position: "fixed",
@@ -210,313 +135,4 @@ const styles = stylex.create({
     ":focus": { transform: "translateY(0)" },
   },
   popup: { padding: "1.5rem", gap: "1rem", maxBlockSize: "min(42rem, 85dvh)" },
-  resultsScroll: { minBlockSize: 0 },
-  results: {
-    listStyleType: "none",
-    margin: 0,
-    padding: 0,
-  },
-  result: {
-    display: "block",
-    padding: "0.875rem",
-    textDecoration: "none",
-    color: tokens["--foreground"],
-    borderRadius: tokens["--radius-md"],
-    ":hover": { backgroundColor: tokens["--accent"] },
-    ":focus-visible": {
-      outline: `2px solid ${tokens["--ring"]}`,
-      outlineOffset: -2,
-    },
-  },
-  breadcrumb: {
-    display: "block",
-    color: tokens["--muted-foreground"],
-    fontSize: "0.75rem",
-    marginBlockEnd: "0.25rem",
-  },
-  status: {
-    color: tokens["--muted-foreground"],
-    fontSize: "0.8125rem",
-    margin: 0,
-  },
-  error: { color: tokens["--destructive"] },
 })
-
-const themeOptions = [
-  { icon: MonitorIcon, label: "Auto", value: "system" },
-  { icon: SunIcon, label: "Light", value: "light" },
-  { icon: MoonIcon, label: "Dark", value: "dark" },
-] as const
-
-function ThemeToggle() {
-  const { theme, setTheme } = useTheme()
-  return (
-    <fieldset aria-label="Appearance" {...stylex.props(styles.theme)}>
-      <div {...stylex.props(styles.themeOptions)}>
-        {themeOptions.map(({ icon: Icon, label, value }) => (
-          <button
-            aria-label={label}
-            aria-pressed={theme === value}
-            key={value}
-            onClick={() => setTheme(value)}
-            type="button"
-            {...stylex.props(
-              styles.themeOption,
-              theme === value && styles.themeOptionActive,
-            )}
-          >
-            <Icon aria-hidden size={14} strokeWidth={1.75} />
-          </button>
-        ))}
-      </div>
-    </fieldset>
-  )
-}
-
-function Navigation({ onNavigate }: { onNavigate?: () => void }) {
-  const pathname = useLocation({ select: (location) => location.pathname })
-  return (
-    <ScrollArea
-      aria-label="Documentation navigation"
-      overscrollContain
-      scrollFade
-      xstyle={styles.navScroll}
-    >
-      <nav aria-label="Documentation" {...stylex.props(styles.nav)}>
-        <ul {...stylex.props(styles.list)}>
-          {tree.children.map((item) =>
-            item.type === "separator" ? (
-              <li key={String(item.name)} {...stylex.props(styles.group)}>
-                {item.name}
-              </li>
-            ) : item.type === "page" ? (
-              <li key={item.url}>
-                <Link
-                  to={item.url}
-                  aria-current={pathname === item.url ? "page" : undefined}
-                  onClick={onNavigate}
-                  {...stylex.props(
-                    styles.navLink,
-                    pathname === item.url && styles.active,
-                  )}
-                >
-                  {item.name}
-                </Link>
-              </li>
-            ) : null,
-          )}
-        </ul>
-      </nav>
-    </ScrollArea>
-  )
-}
-
-function GlobalSearch() {
-  const [open, setOpen] = useState(false)
-  const [query, setQuery] = useState("")
-  const [results, setResults] = useState<SortedResult[]>([])
-  const [status, setStatus] = useState<"idle" | "loading" | "ready" | "error">(
-    "idle",
-  )
-  const inputRef = useRef<HTMLInputElement>(null)
-  const triggerRef = useRef<HTMLButtonElement>(null)
-
-  useEffect(() => {
-    function onKeyDown(event: KeyboardEvent) {
-      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
-        event.preventDefault()
-        setOpen((value) => !value)
-      }
-    }
-    document.addEventListener("keydown", onKeyDown)
-    return () => document.removeEventListener("keydown", onKeyDown)
-  }, [])
-
-  useEffect(() => {
-    if (!open || !query.trim()) return
-    const controller = new AbortController()
-    const timeout = setTimeout(async () => {
-      try {
-        const response = await fetch(
-          `/api/search?query=${encodeURIComponent(query.trim())}`,
-          { signal: controller.signal },
-        )
-        if (!response.ok) throw new Error("Search unavailable")
-        const data: unknown = await response.json()
-        if (
-          !Array.isArray(data) ||
-          !data.every(
-            (item: unknown): item is SortedResult =>
-              typeof item === "object" &&
-              item !== null &&
-              "id" in item &&
-              typeof item.id === "string" &&
-              "url" in item &&
-              typeof item.url === "string" &&
-              item.url.startsWith("/") &&
-              !item.url.startsWith("//") &&
-              "content" in item &&
-              typeof item.content === "string" &&
-              "type" in item &&
-              (item.type === "page" ||
-                item.type === "heading" ||
-                item.type === "text") &&
-              (!("breadcrumbs" in item) ||
-                item.breadcrumbs === undefined ||
-                (Array.isArray(item.breadcrumbs) &&
-                  item.breadcrumbs.every(
-                    (crumb: unknown) => typeof crumb === "string",
-                  ))),
-          )
-        )
-          throw new Error("Invalid search response")
-        if (!controller.signal.aborted) {
-          setResults(data)
-          setStatus("ready")
-        }
-      } catch {
-        if (!controller.signal.aborted) setStatus("error")
-      }
-    }, 180)
-    return () => {
-      clearTimeout(timeout)
-      controller.abort()
-    }
-  }, [open, query])
-
-  return (
-    <Dialog
-      open={open}
-      onOpenChange={(value) => {
-        setOpen(value)
-        if (value && query.trim()) setStatus("loading")
-      }}
-    >
-      <DialogTrigger
-        render={
-          <Button
-            variant="outline"
-            ref={triggerRef}
-            {...stylex.props(styles.search)}
-          />
-        }
-      >
-        <SearchIcon size={16} />
-        Search docs<kbd {...stylex.props(styles.shortcut)}>⌘ / Ctrl K</kbd>
-      </DialogTrigger>
-      <DialogPopup
-        {...stylex.props(styles.popup)}
-        initialFocus={inputRef}
-        finalFocus={triggerRef}
-        bottomStickOnMobile={false}
-      >
-        <DialogTitle>Search documentation</DialogTitle>
-        <DialogDescription>
-          Find components, installation steps, and guides.
-        </DialogDescription>
-        <Input
-          ref={inputRef}
-          aria-label="Search documentation"
-          type="search"
-          value={query}
-          placeholder="Search components and guides…"
-          onChange={(event) => {
-            setQuery(event.target.value)
-            setResults([])
-            setStatus(event.target.value.trim() ? "loading" : "idle")
-          }}
-        />
-        <output
-          aria-live="polite"
-          {...stylex.props(styles.status, status === "error" && styles.error)}
-        >
-          {status === "error"
-            ? "Search unavailable. Change your query to try again."
-            : !query.trim()
-              ? "Type to search all documentation."
-              : status === "loading"
-                ? "Searching…"
-                : `${results.length} results`}
-        </output>
-        <ScrollArea
-          aria-label="Search results"
-          overscrollContain
-          scrollFade
-          xstyle={styles.resultsScroll}
-        >
-          <ul {...stylex.props(styles.results)}>
-            {status === "ready"
-              ? results.map((result) => (
-                  <li key={result.id}>
-                    <Link
-                      to={result.url}
-                      onClick={() => setOpen(false)}
-                      {...stylex.props(styles.result)}
-                    >
-                      {result.breadcrumbs?.length ? (
-                        <span {...stylex.props(styles.breadcrumb)}>
-                          {result.breadcrumbs
-                            .join(" / ")
-                            .replace(/<\/?mark>/g, "")}
-                        </span>
-                      ) : null}
-                      {result.content.replace(/<\/?mark>/g, "")}
-                    </Link>
-                  </li>
-                ))
-              : null}
-          </ul>
-        </ScrollArea>
-      </DialogPopup>
-    </Dialog>
-  )
-}
-
-export function DocumentationLayout({ children }: { children: ReactNode }) {
-  const [mobileOpen, setMobileOpen] = useState(false)
-  return (
-    <div {...stylex.props(styles.shell)}>
-      <a href="#docs-content" {...stylex.props(styles.skip)}>
-        Skip to content
-      </a>
-      <header {...stylex.props(styles.header)}>
-        <Dialog open={mobileOpen} onOpenChange={setMobileOpen}>
-          <DialogTrigger
-            render={
-              <Button
-                variant="ghost"
-                size="icon"
-                aria-label="Open navigation"
-                {...stylex.props(styles.mobile)}
-              />
-            }
-          >
-            <MenuIcon size={20} />
-          </DialogTrigger>
-          <DialogPopup
-            {...stylex.props(styles.popup)}
-            bottomStickOnMobile={false}
-          >
-            <DialogTitle>Documentation</DialogTitle>
-            <DialogDescription>Browse guides and components.</DialogDescription>
-            <Navigation onNavigate={() => setMobileOpen(false)} />
-            <ThemeToggle />
-          </DialogPopup>
-        </Dialog>
-        <Link to="/" {...stylex.props(styles.brand)}>
-          Yopem UI
-        </Link>
-        <GlobalSearch />
-      </header>
-      <div {...stylex.props(styles.frame)}>
-        <aside {...stylex.props(styles.sidebar)}>
-          <Navigation />
-          <ThemeToggle />
-        </aside>
-        <main id="docs-content" tabIndex={-1} {...stylex.props(styles.main)}>
-          {children}
-        </main>
-      </div>
-    </div>
-  )
-}

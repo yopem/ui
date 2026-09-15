@@ -2,11 +2,6 @@
 
 Source-owned React components built with StyleX and Base UI.
 
-First release is copy/paste-only. Docs use StyleX for UI and Fumadocs core for
-search. Pages include setup guides, examples, source files, dependencies, and
-API references generated from component types. Copy files into your project and
-install their dependencies. No Yopem CLI is needed.
-
 ## Commands
 
 ```sh
@@ -51,3 +46,10 @@ Tagged releases also produce self-hosted server and immutable registry archives.
 
 See `CONTRIBUTING.md` for contributor workflow, `NOTICE` for attribution, and
 `LICENSE` for MIT terms.
+
+## TODO:
+
+- [ ] add seo
+- [ ] add dynamic og image
+- [ ] add cli for installation, adding, updating componets
+- [ ] add reusable hooks
