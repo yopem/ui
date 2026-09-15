@@ -10,18 +10,16 @@ import {
   DocsTitle,
 } from "@/catalog/docs-page"
 import { docsStyles } from "@/catalog/docs-styles"
+import { createSeo } from "@/lib/seo"
 
 export const Route = createFileRoute("/docs/getting-started")({
-  head: () => ({
-    meta: [
-      { title: "Getting started · Yopem UI" },
-      {
-        name: "description",
-        content:
-          "Add your first Yopem UI component to a React and StyleX application.",
-      },
-    ],
-  }),
+  head: () =>
+    createSeo({
+      description:
+        "Add your first Yopem UI component to a React and StyleX application.",
+      path: "/docs/getting-started",
+      title: "Getting started · Yopem UI",
+    }),
   component: GettingStarted,
 })
 

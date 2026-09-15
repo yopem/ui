@@ -15,23 +15,21 @@ import {
 } from "@/catalog/docs-page"
 import { catalogStyles, docsStyles } from "@/catalog/docs-styles"
 import { getDocumentation } from "@/catalog/docs.functions"
+import { createSeo } from "@/lib/seo"
 
 export const Route = createFileRoute("/components/$name")({
   loader: ({ params }) => {
     if (!getCatalogItem(params.name)) throw notFound()
     return getDocumentation({ data: params.name })
   },
-  head: ({ params }) => ({
-    meta: [
-      {
-        name: "description",
-        content: `${getCatalogItem(params.name)?.title ?? "Component"} source, examples, usage, and API reference for React and StyleX.`,
-      },
-      {
-        title: `${getCatalogItem(params.name)?.title ?? "Component"} · Yopem UI`,
-      },
-    ],
-  }),
+  head: ({ params }) => {
+    const title = getCatalogItem(params.name)?.title ?? "Component"
+    return createSeo({
+      description: `${title} source, examples, usage, and API reference for React and StyleX.`,
+      path: `/components/${params.name}`,
+      title: `${title} · Yopem UI`,
+    })
+  },
   component: ComponentPage,
   notFoundComponent: MissingComponent,
 })

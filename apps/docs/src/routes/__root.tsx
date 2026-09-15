@@ -26,6 +26,7 @@ import {
   DocsTitle,
 } from "@/catalog/docs-page"
 import { docsStyles } from "@/catalog/docs-styles"
+import { siteJsonLd } from "@/lib/seo"
 
 export const Route = createRootRoute({
   head: () => ({
@@ -37,6 +38,12 @@ export const Route = createRootRoute({
         name: "viewport",
       },
       { title: "Yopem UI" },
+    ],
+    scripts: [
+      {
+        children: siteJsonLd,
+        type: "application/ld+json",
+      },
     ],
   }),
   errorComponent: ErrorPage,

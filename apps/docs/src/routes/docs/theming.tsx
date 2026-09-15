@@ -11,19 +11,17 @@ import {
 } from "@/catalog/docs-page"
 import { docsStyles } from "@/catalog/docs-styles"
 import { getDocumentation } from "@/catalog/docs.functions"
+import { createSeo } from "@/lib/seo"
 
 export const Route = createFileRoute("/docs/theming")({
   loader: () => getDocumentation({ data: "theme" }),
-  head: () => ({
-    meta: [
-      { title: "Theming · Yopem UI" },
-      {
-        name: "description",
-        content:
-          "Customize Yopem UI tokens, individual components, and optional light and dark modes.",
-      },
-    ],
-  }),
+  head: () =>
+    createSeo({
+      description:
+        "Customize Yopem UI tokens, individual components, and optional light and dark modes.",
+      path: "/docs/theming",
+      title: "Theming · Yopem UI",
+    }),
   component: Theming,
 })
 

@@ -11,19 +11,17 @@ import {
 } from "@/catalog/docs-page"
 import { docsStyles } from "@/catalog/docs-styles"
 import { getDocumentation } from "@/catalog/docs.functions"
+import { createSeo } from "@/lib/seo"
 
 export const Route = createFileRoute("/docs/installation")({
   loader: () => getDocumentation({ data: "base" }),
-  head: () => ({
-    meta: [
-      { title: "Installation · Yopem UI" },
-      {
-        name: "description",
-        content:
-          "Install Yopem UI with StyleX in Next.js, TanStack Start, React Router, or Astro.",
-      },
-    ],
-  }),
+  head: () =>
+    createSeo({
+      description:
+        "Install Yopem UI with StyleX in Next.js, TanStack Start, React Router, or Astro.",
+      path: "/docs/installation",
+      title: "Installation · Yopem UI",
+    }),
   component: Installation,
 })
 

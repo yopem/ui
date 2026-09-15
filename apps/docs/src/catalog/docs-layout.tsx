@@ -14,6 +14,8 @@ import { Link } from "@tanstack/react-router"
 import { MenuIcon } from "lucide-react"
 import { useState } from "react"
 
+import { BrandLogo } from "@/components/brand-logo"
+
 import { DocsNavigation } from "./docs-navigation"
 import { GlobalSearch } from "./global-search"
 import { ThemeToggle } from "./theme-toggle"
@@ -50,6 +52,7 @@ export function DocumentationLayout({ children }: { children: ReactNode }) {
           </DialogPopup>
         </Dialog>
         <Link to="/" {...stylex.props(styles.brand)}>
+          <BrandLogo />
           Yopem UI
         </Link>
         <GlobalSearch />
@@ -89,7 +92,10 @@ const styles = stylex.create({
     zIndex: 20,
   },
   brand: {
+    alignItems: "center",
     color: tokens["--foreground"],
+    display: "inline-flex",
+    gap: "0.5rem",
     fontFamily: tokens["--font-heading"],
     fontWeight: 700,
     fontSize: "1.125rem",

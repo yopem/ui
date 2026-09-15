@@ -12,18 +12,16 @@ import {
 } from "@/catalog/docs-page"
 import { catalogStyles } from "@/catalog/docs-styles"
 import { docsStyles } from "@/catalog/docs-styles"
+import { createSeo } from "@/lib/seo"
 
 export const Route = createFileRoute("/components/")({
-  head: () => ({
-    meta: [
-      {
-        content:
-          "Browse examples and copy complete Yopem UI StyleX component source.",
-        name: "description",
-      },
-      { title: "Components · Yopem UI" },
-    ],
-  }),
+  head: () =>
+    createSeo({
+      description:
+        "Browse examples and copy complete Yopem UI StyleX component source.",
+      path: "/components",
+      title: "Components · Yopem UI",
+    }),
   component: ComponentsPage,
 })
 

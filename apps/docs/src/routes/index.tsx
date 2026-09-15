@@ -10,18 +10,18 @@ import {
   DocsTitle,
 } from "@/catalog/docs-page"
 import { docsStyles } from "@/catalog/docs-styles"
+import { createSeo } from "@/lib/seo"
+
+const description =
+  "Accessible React components styled with StyleX. Copy complete source into your project, then customize it without package lock-in."
 
 export const Route = createFileRoute("/")({
-  head: () => ({
-    meta: [
-      { title: "Yopem UI · React components with StyleX" },
-      {
-        name: "description",
-        content:
-          "Accessible React components styled with StyleX. Copy complete source into your project, then customize it without package lock-in.",
-      },
-    ],
-  }),
+  head: () =>
+    createSeo({
+      description,
+      path: "/",
+      title: "Yopem UI · StyleX React UI Library",
+    }),
   component: Introduction,
 })
 
