@@ -303,14 +303,13 @@ function Installation() {
           </p>
           <div {...stylex.props(docsStyles.section)}>
             {data.files.map((file) => (
-              <details {...stylex.props(docsStyles.details)} key={file.path}>
-                <summary {...stylex.props(docsStyles.summary)}>
-                  <code {...stylex.props(docsStyles.inlineCode)}>
-                    {file.target}
-                  </code>
-                </summary>
-                <CopyableCode code={file.content} title={file.target} />
-              </details>
+              <CopyableCode
+                key={file.path}
+                code={file.content}
+                header={file.target}
+                preview
+                title={file.target}
+              />
             ))}
           </div>
           <h2 {...stylex.props(docsStyles.h2)} id="react-router">

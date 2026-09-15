@@ -4,6 +4,7 @@ import type { ComponentType } from "react"
 
 import * as stylex from "@stylexjs/stylex"
 import { BellIcon, UserIcon } from "lucide-react"
+import { useState } from "react"
 
 import {
   Avatar,
@@ -19,8 +20,6 @@ import {
   PopoverTitle,
   PopoverTrigger,
 } from "@/components/ui/stylex/popover"
-
-const popoverHandle = PopoverCreateHandle<ComponentType>()
 
 const NotificationsContent = () => {
   return (
@@ -63,6 +62,10 @@ const ProfileContent = () => {
 }
 
 export default function Particle() {
+  const [popoverHandle] = useState(() =>
+    PopoverCreateHandle<ComponentType>(),
+  )
+
   return (
     <div {...stylex.props(exampleStyles.example8)}>
       <PopoverTrigger

@@ -53,6 +53,20 @@ test("checkbox toggles with Space", async ({ page }) => {
   await expect(checkbox).not.toBeChecked()
 })
 
+test("detached handles stay scoped to each example", async ({ page }) => {
+  const warnings: string[] = []
+  page.on("console", (message) => {
+    if (message.type() === "warning") warnings.push(message.text())
+  })
+
+  await page.goto("/components/tooltip")
+  await expect(page.getByRole("button", { name: "Toggle bold" })).toHaveCount(3)
+
+  expect(warnings).not.toContainEqual(
+    expect.stringContaining("A handle is attached to more than one mounted root"),
+  )
+})
+
 test("toast appears after trigger click", async ({ page }) => {
   await page.goto("/render/light/p-toast-1")
   await page.getByRole("button", { name: "Default Toast" }).click()

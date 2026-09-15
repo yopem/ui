@@ -4,6 +4,7 @@ import type { ComponentType } from "react"
 
 import * as stylex from "@stylexjs/stylex"
 import { LinkIcon, MailIcon, Share2Icon } from "lucide-react"
+import { useState } from "react"
 
 import { Button } from "@/components/ui/stylex/button"
 import {
@@ -19,8 +20,6 @@ import {
   TooltipTrigger,
 } from "@/components/ui/stylex/tooltip"
 
-const tooltipHandle = TooltipCreateHandle<ComponentType>()
-
 const ShareLinkContent = () => {
   return <span>Copy shareable link</span>
 }
@@ -34,6 +33,10 @@ const ShareSocialContent = () => {
 }
 
 export default function Particle() {
+  const [tooltipHandle] = useState(() =>
+    TooltipCreateHandle<ComponentType>(),
+  )
+
   return (
     <TooltipProvider>
       <Group aria-label="Share options" orientation="vertical">

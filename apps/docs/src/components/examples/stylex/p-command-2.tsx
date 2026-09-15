@@ -139,9 +139,6 @@ const MOCK_REFERENCE_LINKS = [
   { title: "Project Settings", url: "/docs/projects/settings" },
 ]
 
-const commandHandle: ReturnType<typeof CommandCreateHandle> =
-  CommandCreateHandle()
-
 interface AIState {
   mode: boolean
   query: string
@@ -686,6 +683,7 @@ function AICommand({
 }
 
 export default function PCommand2() {
+  const [commandHandle] = useState(() => CommandCreateHandle())
   const example = useCommandExample()
 
   return (

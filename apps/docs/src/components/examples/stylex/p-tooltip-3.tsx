@@ -4,6 +4,7 @@ import type { ComponentType } from "react"
 
 import * as stylex from "@stylexjs/stylex"
 import { BoldIcon, ItalicIcon, UnderlineIcon } from "lucide-react"
+import { useState } from "react"
 
 import {
   ToggleGroup,
@@ -16,8 +17,6 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/stylex/tooltip"
-
-const tooltipHandle = TooltipCreateHandle<ComponentType>()
 
 const BoldContent = () => {
   return <span>Make text bold</span>
@@ -32,6 +31,10 @@ const UnderlineContent = () => {
 }
 
 export default function Particle() {
+  const [tooltipHandle] = useState(() =>
+    TooltipCreateHandle<ComponentType>(),
+  )
+
   return (
     <TooltipProvider>
       <ToggleGroup defaultValue={["bold"]} multiple>
