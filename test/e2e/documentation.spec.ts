@@ -23,10 +23,10 @@ test("minimal setup and StyleX customization are documented", async ({
     page.getByRole("heading", { name: "Component overrides", exact: true }),
   ).toBeVisible()
   await expect(
-    page.getByRole("heading", {
-      name: "Global and scoped themes",
-      exact: true,
-    }),
+    page.getByRole("heading", { name: "How theming works", exact: true }),
+  ).toBeVisible()
+  await expect(
+    page.getByRole("heading", { name: "Add dark mode", exact: true }),
   ).toBeVisible()
   await expect(
     page.locator("summary").filter({ hasText: "src/theme/" }),
