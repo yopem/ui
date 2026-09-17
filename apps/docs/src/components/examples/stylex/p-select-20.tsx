@@ -49,7 +49,10 @@ export default function Example() {
       defaultValue={users[0]}
       itemToStringValue={(item) => item.value}
     >
-      <SelectTrigger {...stylex.props(exampleStyles.example1)}>
+      <SelectTrigger
+        {...stylex.props(exampleStyles.example1)}
+        aria-label="Select user"
+      >
         <SelectValue>
           {(item) => (
             <span {...stylex.props(exampleStyles.example2)}>

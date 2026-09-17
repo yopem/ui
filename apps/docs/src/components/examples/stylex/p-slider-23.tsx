@@ -29,7 +29,12 @@ export default function Example() {
     <Form {...stylex.props(exampleStyles.example1)} onSubmit={onSubmit}>
       <Fieldset {...stylex.props(exampleStyles.example2)}>
         <Field>
-          <Slider name="volume" onValueChange={setValue} value={value}>
+          <Slider
+            aria-label="Volume"
+            name="volume"
+            onValueChange={setValue}
+            value={value}
+          >
             <div {...stylex.props(exampleStyles.example3)}>
               <FieldsetLegend>Volume</FieldsetLegend>
               <SliderValue />

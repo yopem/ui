@@ -36,7 +36,7 @@ export default function Example() {
         size="sm"
         value={value}
       >
-        <NumberFieldInput />
+        <NumberFieldInput aria-label="Slider value" />
       </NumberField>
     </div>
   )

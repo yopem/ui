@@ -7,6 +7,7 @@ export default function Example() {
   const id = useId()
   return (
     <Textarea
+      aria-label="Read-only textarea"
       {...stylex.props(exampleStyles.example1)}
       defaultValue="This is a read-only textarea"
       id={id}

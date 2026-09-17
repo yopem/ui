@@ -55,7 +55,9 @@ export default function Example() {
               size="sm"
               value={values[axis]}
             >
-              <NumberFieldInput />
+              <NumberFieldInput
+                aria-label={`${axis.toUpperCase()} position value`}
+              />
             </NumberField>
           </div>
         ))}

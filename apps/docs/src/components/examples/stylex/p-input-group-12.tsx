@@ -31,6 +31,7 @@ export default function Example() {
             render={
               <Button
                 {...stylex.props(exampleStyles.example3)}
+                aria-label="Notification information"
                 size="icon-xs"
                 variant="ghost"
               />

@@ -27,7 +27,7 @@ const backend = [
 export default function Example() {
   return (
     <Select aria-label="Select framework" items={[...frontend, ...backend]}>
-      <SelectTrigger>
+      <SelectTrigger aria-label="Select framework">
         <SelectValue placeholder="Select framework" />
       </SelectTrigger>
       <SelectPopup>

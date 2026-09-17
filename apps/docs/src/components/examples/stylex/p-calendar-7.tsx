@@ -1,5 +1,6 @@
 "use client"
 
+import * as stylex from "@stylexjs/stylex"
 import { addDays } from "date-fns"
 
 import { Calendar } from "@/components/ui/stylex/calendar"
@@ -24,6 +25,13 @@ export default function Example() {
       ]}
       excludeDisabled
       mode="range"
+      xstyle={exampleStyles.calendar}
     />
   )
 }
+
+const exampleStyles = stylex.create({
+  calendar: {
+    "--muted-foreground": "var(--foreground)",
+  },
+})

@@ -24,7 +24,7 @@ export default function Example() {
       defaultValue={items[0]}
       itemToStringValue={(item) => item.value}
     >
-      <SelectTrigger>
+      <SelectTrigger aria-label="Select language">
         <SelectValue>
           {(item) => (
             <span>

@@ -70,6 +70,7 @@ function YearDropdown(props: DropdownProps) {
       value={selectedItem}
     >
       <ComboboxInput
+        aria-label={ariaLabel}
         {...stylex.props(exampleStyles.report1)}
         onFocus={(e) => e.currentTarget.select()}
       />

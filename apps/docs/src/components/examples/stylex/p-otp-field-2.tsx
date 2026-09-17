@@ -1,3 +1,4 @@
+import { Label } from "@/components/ui/stylex/label"
 import { OTPField, OTPFieldInput } from "@/components/ui/stylex/otp-field"
 
 const OTP_LENGTH = 4
@@ -9,15 +10,20 @@ const OTP_SLOT_KEYS = Array.from(
 
 export default function Example() {
   return (
-    <OTPField aria-label="One-time password" length={OTP_LENGTH} size="lg">
-      {OTP_SLOT_KEYS.map((slotKey, index) => (
-        <OTPFieldInput
-          key={slotKey}
-          aria-label={
-            index === 0 ? undefined : `Character ${index + 1} of ${OTP_LENGTH}`
-          }
-        />
-      ))}
-    </OTPField>
+    <>
+      <Label htmlFor="one-time-password">One-time password</Label>
+      <OTPField id="one-time-password" length={OTP_LENGTH} size="lg">
+        {OTP_SLOT_KEYS.map((slotKey, index) => (
+          <OTPFieldInput
+            key={slotKey}
+            aria-label={
+              index === 0
+                ? undefined
+                : `Character ${index + 1} of ${OTP_LENGTH}`
+            }
+          />
+        ))}
+      </OTPField>
+    </>
   )
 }

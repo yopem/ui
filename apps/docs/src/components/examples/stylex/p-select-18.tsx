@@ -31,7 +31,7 @@ export default function Example() {
       defaultValue={items[1]}
       itemToStringValue={(item) => item.value}
     >
-      <SelectTrigger>
+      <SelectTrigger aria-label="Select plan">
         <SelectValue>
           {(item) => (
             <span {...stylex.props(exampleStyles.example1)}>{item.label}</span>

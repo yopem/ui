@@ -17,7 +17,10 @@ const items = [
 export default function Example() {
   return (
     <Select aria-label="Select filter" defaultValue="active" items={items}>
-      <SelectTrigger {...stylex.props(exampleStyles.report1Manual)}>
+      <SelectTrigger
+        {...stylex.props(exampleStyles.report1Manual)}
+        aria-label="Select filter"
+      >
         <SelectValue />
       </SelectTrigger>
       <SelectPopup>

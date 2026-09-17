@@ -1,3 +1,4 @@
+import { Label } from "@/components/ui/stylex/label"
 import {
   OTPField,
   OTPFieldInput,
@@ -14,22 +15,27 @@ const OTP_SLOT_KEYS = Array.from(
 
 export default function Example() {
   return (
-    <OTPField aria-label="Verification code" length={OTP_LENGTH}>
-      {OTP_SLOT_KEYS.slice(0, GROUP_LENGTH).map((slotKey, index) => (
-        <OTPFieldInput
-          key={slotKey}
-          aria-label={
-            index === 0 ? undefined : `Character ${index + 1} of ${OTP_LENGTH}`
-          }
-        />
-      ))}
-      <OTPFieldSeparator />
-      {OTP_SLOT_KEYS.slice(GROUP_LENGTH).map((slotKey, index) => (
-        <OTPFieldInput
-          key={slotKey}
-          aria-label={`Character ${index + GROUP_LENGTH + 1} of ${OTP_LENGTH}`}
-        />
-      ))}
-    </OTPField>
+    <>
+      <Label htmlFor="verification-code">Verification code</Label>
+      <OTPField id="verification-code" length={OTP_LENGTH}>
+        {OTP_SLOT_KEYS.slice(0, GROUP_LENGTH).map((slotKey, index) => (
+          <OTPFieldInput
+            key={slotKey}
+            aria-label={
+              index === 0
+                ? undefined
+                : `Character ${index + 1} of ${OTP_LENGTH}`
+            }
+          />
+        ))}
+        <OTPFieldSeparator />
+        {OTP_SLOT_KEYS.slice(GROUP_LENGTH).map((slotKey, index) => (
+          <OTPFieldInput
+            key={slotKey}
+            aria-label={`Character ${index + GROUP_LENGTH + 1} of ${OTP_LENGTH}`}
+          />
+        ))}
+      </OTPField>
+    </>
   )
 }

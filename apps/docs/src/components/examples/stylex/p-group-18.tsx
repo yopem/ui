@@ -26,6 +26,7 @@ export default function Example() {
     <Group aria-label="URL input">
       <Select defaultValue="https" items={protocols}>
         <SelectTrigger
+          aria-label="Select protocol"
           xstyle={[groupItemStyles.item, exampleStyles.selectTrigger]}
         >
           <SelectValue />

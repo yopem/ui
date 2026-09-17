@@ -14,7 +14,7 @@ export default function Example() {
     >
       <NumberFieldGroup>
         <NumberFieldDecrement />
-        <NumberFieldInput />
+        <NumberFieldInput aria-label="Amount in US dollars" />
         <NumberFieldIncrement />
       </NumberFieldGroup>
     </NumberField>

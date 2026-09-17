@@ -43,7 +43,7 @@ export default function Example() {
       defaultValue={["javascript", "typescript"]}
       multiple
     >
-      <SelectTrigger>
+      <SelectTrigger aria-label="Select languages">
         <SelectValue>{renderValue}</SelectValue>
       </SelectTrigger>
       <SelectPopup alignItemWithTrigger={false}>

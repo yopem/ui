@@ -893,7 +893,6 @@ const exampleStyles = stylex.create({
   },
   cancelledTime: {
     color: "var(--muted-foreground)",
-    opacity: 0.5,
     textDecorationLine: "line-through",
   },
   delayedTime: { color: "var(--warning-foreground)" },

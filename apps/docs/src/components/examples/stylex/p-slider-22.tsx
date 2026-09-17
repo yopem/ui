@@ -224,7 +224,10 @@ export default function Example() {
             onValueChange={(v) => updateValue(0, v)}
             value={values[0]}
           >
-            <NumberFieldInput {...stylex.props(exampleStyles.example6)} />
+            <NumberFieldInput
+              aria-label="Minimum price"
+              {...stylex.props(exampleStyles.example6)}
+            />
           </NumberField>
           <InputGroupAddon>
             <InputGroupText>$</InputGroupText>
@@ -238,7 +241,10 @@ export default function Example() {
             onValueChange={(v) => updateValue(1, v)}
             value={values[1]}
           >
-            <NumberFieldInput {...stylex.props(exampleStyles.example6)} />
+            <NumberFieldInput
+              aria-label="Maximum price"
+              {...stylex.props(exampleStyles.example6)}
+            />
           </NumberField>
           <InputGroupAddon>
             <InputGroupText>$</InputGroupText>

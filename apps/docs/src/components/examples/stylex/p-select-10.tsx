@@ -24,7 +24,10 @@ export default function Example() {
       defaultValue={items[0]}
       itemToStringValue={(item) => item.value}
     >
-      <SelectTrigger {...stylex.props(exampleStyles.example1)}>
+      <SelectTrigger
+        {...stylex.props(exampleStyles.example1)}
+        aria-label="Select framework with command"
+      >
         <SelectValue>
           {(item) => (
             <span {...stylex.props(exampleStyles.example2)}>

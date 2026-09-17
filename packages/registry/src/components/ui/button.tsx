@@ -116,12 +116,11 @@ const styles = stylex.create({
   },
   destructive: {
     backgroundColor: {
-      default: tokens["--destructive"],
-      ":hover": "color-mix(in oklab, var(--destructive) 90%, transparent)",
-      "[data-pressed]":
-        "color-mix(in oklab, var(--destructive) 90%, transparent)",
+      default: "color-mix(in oklab, var(--destructive) 78%, #000)",
+      ":hover": "color-mix(in oklab, var(--destructive) 72%, #000)",
+      "[data-pressed]": "color-mix(in oklab, var(--destructive) 72%, #000)",
     },
-    borderColor: tokens["--destructive"],
+    borderColor: "color-mix(in oklab, var(--destructive) 78%, #000)",
     boxShadow: {
       default:
         "var(--button-solid-inset-highlight), 0 1px 2px color-mix(in oklab, var(--destructive) 24%, transparent)",

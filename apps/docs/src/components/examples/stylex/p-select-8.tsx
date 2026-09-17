@@ -22,7 +22,7 @@ export default function Example() {
       defaultValue="next"
       items={items}
     >
-      <SelectTrigger>
+      <SelectTrigger aria-label="Select framework with icon">
         <CableIcon {...stylex.props(exampleStyles.icon)} aria-hidden="true" />
         <SelectValue />
       </SelectTrigger>

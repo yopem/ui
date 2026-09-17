@@ -51,6 +51,7 @@ export default function Example() {
           itemToStringValue={(currency) => currency.value}
         >
           <SelectTrigger
+            aria-label="Select currency"
             xstyle={[groupItemStyles.item, exampleStyles.selectTrigger]}
           >
             <SelectValue>{(currency: Currency) => currency.value}</SelectValue>
@@ -73,7 +74,10 @@ export default function Example() {
           render={<NumberFieldGroup xstyle={groupItemStyles.item} />}
           xstyle={exampleStyles.example3}
         >
-          <NumberFieldInput xstyle={exampleStyles.example4} />
+          <NumberFieldInput
+            aria-label="Amount"
+            xstyle={exampleStyles.example4}
+          />
         </NumberField>
       </Group>
       <Group aria-label="Submit">

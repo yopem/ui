@@ -49,7 +49,7 @@ export default function Example() {
       defaultValue={allItems.find((item) => item.value === "ca")}
       itemToStringValue={(item) => item.value}
     >
-      <SelectTrigger>
+      <SelectTrigger aria-label="Select country">
         <SelectValue>
           {(item) => (
             <span {...stylex.props(exampleStyles.example1)}>

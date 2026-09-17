@@ -32,6 +32,7 @@ export default function Example() {
       <GroupSeparator />
       <Select defaultValue="com" items={domains}>
         <SelectTrigger
+          aria-label="Select domain suffix"
           xstyle={[groupItemStyles.item, exampleStyles.selectTrigger]}
         >
           <SelectValue />

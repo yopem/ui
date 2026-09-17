@@ -39,7 +39,7 @@ export default function Example() {
             defaultValue="orion"
             items={items}
           >
-            <SelectTrigger size="sm">
+            <SelectTrigger aria-label="Select database" size="sm">
               <DatabaseIcon {...stylex.props(exampleStyles.icon)} />
               <SelectValue />
             </SelectTrigger>

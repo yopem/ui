@@ -17,7 +17,7 @@ const items = [
 export default function Example() {
   return (
     <Select aria-label="Select framework" defaultValue="next" items={items}>
-      <SelectTrigger>
+      <SelectTrigger aria-label="Select framework">
         <SelectValue />
       </SelectTrigger>
       <SelectPopup>

@@ -17,9 +17,13 @@ export default function FieldWithValidityExample() {
               <p {...stylex.props(exampleStyles.example2)}>{validity.error}</p>
             )}
             <div {...stylex.props(exampleStyles.example3)}>
-              <pre {...stylex.props(exampleStyles.example4)}>
-                {JSON.stringify(validity, null, 2)}
-              </pre>
+              <textarea
+                aria-label="Field validity details"
+                readOnly
+                rows={12}
+                value={JSON.stringify(validity, null, 2)}
+                {...stylex.props(exampleStyles.example4)}
+              />
             </div>
           </div>
         )}
@@ -47,9 +51,14 @@ const exampleStyles = stylex.create({
     padding: "calc(0.25rem * 2)",
   },
   example4: {
+    backgroundColor: "transparent",
+    borderWidth: 0,
+    color: "inherit",
+    inlineSize: "100%",
     maxBlockSize: "calc(0.25rem * 60)",
+    padding: 0,
+    resize: "none",
     scrollbarWidth: "none",
-    overflowY: "auto",
     fontFamily:
       'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
     fontSize: "0.75rem",

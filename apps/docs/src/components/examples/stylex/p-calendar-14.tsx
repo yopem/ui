@@ -53,7 +53,10 @@ export default function Example() {
               }}
               value={String(props.value)}
             >
-              <SelectTrigger {...stylex.props(exampleStyles.report1Manual)}>
+              <SelectTrigger
+                {...stylex.props(exampleStyles.report1Manual)}
+                aria-label={props["aria-label"]}
+              >
                 <SelectValue />
               </SelectTrigger>
               <SelectPopup>

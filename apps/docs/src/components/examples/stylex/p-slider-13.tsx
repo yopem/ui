@@ -43,7 +43,7 @@ export default function Example() {
         size="sm"
         value={values[0]}
       >
-        <NumberFieldInput />
+        <NumberFieldInput aria-label="Minimum value" />
       </NumberField>
       <Slider
         aria-label="Dual range slider"
@@ -63,7 +63,7 @@ export default function Example() {
         size="sm"
         value={values[1]}
       >
-        <NumberFieldInput />
+        <NumberFieldInput aria-label="Maximum value" />
       </NumberField>
     </div>
   )

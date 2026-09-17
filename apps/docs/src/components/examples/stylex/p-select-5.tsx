@@ -15,7 +15,7 @@ const items = [
 export default function Example() {
   return (
     <Select aria-label="Select framework" items={items}>
-      <SelectTrigger>
+      <SelectTrigger aria-label="Select framework">
         <SelectValue placeholder="Select framework" />
       </SelectTrigger>
       <SelectPopup alignItemWithTrigger={false}>

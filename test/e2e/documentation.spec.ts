@@ -66,9 +66,9 @@ test("minimal setup and StyleX customization are documented", async ({
   page,
 }) => {
   await page.goto("/docs/installation")
-  await expect(page.locator("summary").filter({ hasText: "src/" })).toHaveCount(
-    3,
-  )
+  await expect(
+    page.getByRole("button", { name: /^Copy src\/(styles|lib)\// }),
+  ).toHaveCount(3)
   await page.goto("/docs/theming")
   await expect(
     page.getByRole("heading", { name: "Component overrides", exact: true }),
@@ -80,7 +80,7 @@ test("minimal setup and StyleX customization are documented", async ({
     page.getByRole("heading", { name: "Add dark mode", exact: true }),
   ).toBeVisible()
   await expect(
-    page.locator("summary").filter({ hasText: "src/theme/" }),
+    page.getByRole("button", { name: /^Copy src\/theme\// }),
   ).toHaveCount(2)
 })
 
@@ -263,7 +263,7 @@ test("dark theme uses StyleX classes without inline color-scheme", async ({
   await expect(page.locator("html")).toHaveAttribute("data-theme", "dark")
   await expect(page.locator("html")).toHaveCSS("color-scheme", "dark")
   await expect(page.locator("html")).toHaveCSS("--foreground", /\S/)
-  await expect(page.getByRole("main")).toHaveCSS("font-family", /Inter/)
+  await expect(page.getByRole("main")).toHaveCSS("font-family", /Figtree/)
   await expect(page.getByRole("main")).not.toHaveCSS("color", "rgb(0, 0, 0)")
   await expect(page.locator("html")).not.toHaveAttribute(
     "style",
@@ -305,7 +305,7 @@ test("main document scrolls normally and restores position on back navigation", 
   await page.getByRole("link", { name: "Yopem UI", exact: true }).click()
   await page.waitForURL((url) => url.pathname === "/")
   await expect(page.getByRole("heading", { level: 1 })).toContainText(
-    "React components.",
+    "React components you copy, own, and change.",
   )
   await page.goBack()
   await page.waitForURL("**/components/sidebar")
@@ -339,7 +339,11 @@ test("search supports keyboard opening, empty results, errors, and focus restora
   page,
 }) => {
   await page.goto("/components/button")
-  await page.keyboard.press("Control+k")
+  await page.route("**/api/search?query=*", (route) =>
+    route.fulfill({ contentType: "application/json", body: "[]" }),
+  )
+  const trigger = page.getByRole("button", { name: /^Search docs/ })
+  await trigger.press("Control+KeyK")
   const dialog = page.getByRole("dialog", { name: "Search documentation" })
   const input = dialog.getByRole("searchbox", { name: "Search documentation" })
   await expect(dialog).toBeVisible()
@@ -348,12 +352,13 @@ test("search supports keyboard opening, empty results, errors, and focus restora
   await expect(dialog.getByRole("status")).toHaveText("0 results")
   await page.keyboard.press("Escape")
   await expect(dialog).toBeHidden()
-  await expect(page.getByRole("button", { name: /^Search docs/ })).toBeFocused()
+  await expect(trigger).toBeFocused()
 
+  await page.unroute("**/api/search?query=*")
   await page.route("**/api/search?query=*", (route) =>
     route.fulfill({ status: 503 }),
   )
-  await page.keyboard.press("Control+k")
+  await trigger.press("Control+KeyK")
   await input.fill("button")
   await expect(dialog.getByRole("status")).toContainText("Search unavailable")
 })
@@ -362,7 +367,7 @@ test("examples pagination resets when filtering and reports no matches", async (
   page,
 }) => {
   await page.goto("/examples")
-  const cards = page.locator("article")
+  const cards = page.getByRole("main").locator("article article")
   await expect(cards).toHaveCount(24)
   await page.getByRole("button", { name: "Show 24 more" }).click()
   await expect(cards).toHaveCount(48)
@@ -406,9 +411,15 @@ test("setup guide explains compiler and shared files", async ({ page }) => {
     page.getByText("@stylexjs/unplugin", { exact: false }).first(),
   ).toBeVisible()
   await expect(
-    page.getByRole("heading", { name: "Choose your setup", exact: true }),
+    page.getByRole("heading", {
+      name: "4. Configure your framework",
+      exact: true,
+    }),
   ).toBeVisible()
   await expect(
-    page.getByRole("heading", { name: "Copy shared files", exact: true }),
+    page.getByRole("heading", {
+      name: "3. Copy shared files",
+      exact: true,
+    }),
   ).toBeVisible()
 })

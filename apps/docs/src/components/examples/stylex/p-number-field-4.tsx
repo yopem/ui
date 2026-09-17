@@ -11,7 +11,7 @@ export default function Example() {
     <NumberField defaultValue={42} disabled>
       <NumberFieldGroup>
         <NumberFieldDecrement />
-        <NumberFieldInput />
+        <NumberFieldInput aria-label="Value" />
         <NumberFieldIncrement />
       </NumberFieldGroup>
     </NumberField>

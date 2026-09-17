@@ -21,6 +21,7 @@ export default function Example() {
         onMonthChange={setMonth}
         onSelect={setDate}
         selected={date}
+        xstyle={exampleStyles.calendar}
       />
       <Button
         onClick={() => {
@@ -37,6 +38,9 @@ export default function Example() {
 }
 
 const exampleStyles = stylex.create({
+  calendar: {
+    "--muted-foreground": "var(--foreground)",
+  },
   example1: {
     display: "flex",
     flexDirection: "column",

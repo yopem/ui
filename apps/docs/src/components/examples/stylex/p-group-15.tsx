@@ -36,6 +36,7 @@ export default function Example() {
     <Group aria-label="URL search">
       <Select defaultValue="both" items={protocols}>
         <SelectTrigger
+          aria-label="Select protocol"
           xstyle={[groupItemStyles.item, exampleStyles.selectTrigger]}
         >
           <SelectValue />
@@ -58,6 +59,7 @@ export default function Example() {
       <GroupSeparator />
       <Select defaultValue={null} items={subdomains}>
         <SelectTrigger
+          aria-label="Select subdomain"
           xstyle={[groupItemStyles.item, exampleStyles.selectTrigger]}
         >
           <SelectValue />

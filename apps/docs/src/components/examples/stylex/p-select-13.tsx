@@ -47,7 +47,7 @@ export default function Example() {
       )}
       itemToStringValue={(item) => item.value}
     >
-      <SelectTrigger>
+      <SelectTrigger aria-label="Select timezone">
         <SelectValue>
           {(item) => (
             <span {...stylex.props(exampleStyles.example1)}>{item.label}</span>

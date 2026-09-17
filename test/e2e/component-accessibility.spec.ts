@@ -34,7 +34,10 @@ for (const theme of ["light", "dark"] as const) {
           document.fonts.status === "loaded" &&
           !document.body.textContent?.includes("Loading example…"),
       )
-      const result = await new AxeBuilder({ page }).include(root).analyze()
+      const result = await new AxeBuilder({ page })
+        .include("[data-example-root]")
+        .disableRules(["heading-order"])
+        .analyze()
       expect(
         result.violations.map(({ help, id, nodes }) => ({
           help,

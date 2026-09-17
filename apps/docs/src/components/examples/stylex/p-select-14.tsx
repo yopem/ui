@@ -25,7 +25,7 @@ export default function Example() {
       defaultValue={items[0]}
       itemToStringValue={(item) => item.value}
     >
-      <SelectTrigger>
+      <SelectTrigger aria-label="Select status">
         <SelectValue>
           {(item) => (
             <span {...stylex.props(exampleStyles.example1)}>

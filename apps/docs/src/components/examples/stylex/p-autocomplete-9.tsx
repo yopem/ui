@@ -27,9 +27,11 @@ export default function Example() {
     <Autocomplete items={items}>
       <AutocompleteInput
         aria-label="Search items"
+        clearProps={{ "aria-label": "Clear search" }}
         placeholder="Search items…"
         showClear
         showTrigger
+        triggerProps={{ "aria-label": "Toggle suggestions" }}
       />
       <AutocompletePopup>
         <AutocompleteEmpty>No items found.</AutocompleteEmpty>

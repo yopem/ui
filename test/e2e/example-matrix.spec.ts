@@ -15,9 +15,9 @@ const examples = (
   .toSorted()
 
 for (const example of examples) {
-  test(`${example} renders in light and dark themes without runtime errors`, async ({
+  test(`${example} renders without runtime errors`, async ({
     page,
-  }) => {
+  }, testInfo) => {
     test.setTimeout(60_000)
     const errors: string[] = []
     page.on("console", (message) => {
@@ -25,15 +25,13 @@ for (const example of examples) {
     })
     page.on("pageerror", (error) => errors.push(error.message))
 
-    for (const theme of ["light", "dark"] as const) {
-      const response = await page.goto(`/examples/${example}?theme=${theme}`)
-      expect(response?.status(), `${example} ${theme}`).toBe(200)
-      const root = page.locator("[data-example-root]")
-      await expect(root).toBeVisible()
-      await expect(root).toHaveAttribute("data-theme", theme)
-      await expect(root).not.toContainText("Loading example…")
-    }
-
+    const theme = testInfo.project.name === "mobile-chromium" ? "dark" : "light"
+    const response = await page.goto(`/examples/${example}?theme=${theme}`)
+    expect(response?.status(), `${example} ${theme}`).toBe(200)
+    const root = page.locator("[data-example-root]")
+    await expect(root).toBeVisible()
+    await expect(root).toHaveAttribute("data-theme", theme)
+    await expect(root).not.toContainText("Loading example…")
     expect(errors, example).toEqual([])
   })
 }

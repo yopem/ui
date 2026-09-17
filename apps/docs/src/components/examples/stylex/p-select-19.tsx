@@ -48,12 +48,12 @@ export default function Example() {
       defaultValue={users[0]}
       itemToStringValue={(item) => item.value}
     >
-      <SelectTrigger>
+      <SelectTrigger aria-label="Select user">
         <SelectValue>
           {(item) => (
             <span {...stylex.props(exampleStyles.example1)}>
               <Avatar {...stylex.props(exampleStyles.example2)}>
-                <AvatarImage alt={item.label} src={item.avatar} />
+                <AvatarImage alt="" src={item.avatar} />
                 <AvatarFallback {...stylex.props(exampleStyles.example3)}>
                   {item.initials}
                 </AvatarFallback>
@@ -72,7 +72,7 @@ export default function Example() {
             <SelectItem key={item.value} value={item}>
               <span {...stylex.props(exampleStyles.example1)}>
                 <Avatar {...stylex.props(exampleStyles.example2)}>
-                  <AvatarImage alt={item.label} src={item.avatar} />
+                  <AvatarImage alt="" src={item.avatar} />
                   <AvatarFallback {...stylex.props(exampleStyles.example5)}>
                     {item.initials}
                   </AvatarFallback>
