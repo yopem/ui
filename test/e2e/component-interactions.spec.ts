@@ -7,7 +7,7 @@ test.beforeEach(async ({ page }) => {
 test("dialog opens from keyboard, closes with Escape, and restores focus", async ({
   page,
 }) => {
-  await page.goto("/render/light/p-dialog-1")
+  await page.goto("/examples/p-dialog-1?theme=light")
   const trigger = page.getByRole("button", { name: "Open Dialog" })
 
   await trigger.focus()
@@ -26,7 +26,7 @@ test("dialog opens from keyboard, closes with Escape, and restores focus", async
 })
 
 test("tabs support arrow-key navigation", async ({ page }) => {
-  await page.goto("/render/light/p-tabs-1")
+  await page.goto("/examples/p-tabs-1?theme=light")
   const firstTab = page.getByRole("tab", { name: "Tab 1" })
   const secondTab = page.getByRole("tab", { name: "Tab 2" })
 
@@ -40,7 +40,7 @@ test("tabs support arrow-key navigation", async ({ page }) => {
 })
 
 test("checkbox toggles with Space", async ({ page }) => {
-  await page.goto("/render/light/p-checkbox-1")
+  await page.goto("/examples/p-checkbox-1?theme=light")
   const checkbox = page.getByRole("checkbox", {
     name: "Accept terms and conditions",
   })
@@ -70,8 +70,64 @@ test("detached handles stay scoped to each example", async ({ page }) => {
 })
 
 test("toast appears after trigger click", async ({ page }) => {
-  await page.goto("/render/light/p-toast-1")
+  await page.goto("/examples/p-toast-1?theme=light")
   await page.getByRole("button", { name: "Default Toast" }).click()
 
   await expect(page.getByText("Event has been created")).toBeVisible()
+})
+
+test("accordion and collapsible expose expanded state", async ({ page }) => {
+  await page.goto("/examples/p-accordion-1?theme=light")
+  const accordion = page.getByRole("button", { name: "What is Base UI?" })
+  await accordion.focus()
+  await page.keyboard.press("Enter")
+  await expect(accordion).toHaveAttribute("aria-expanded", "true")
+  await expect(
+    page.getByText("Base UI is a library", { exact: false }),
+  ).toBeVisible()
+
+  await page.goto("/examples/p-collapsible-1?theme=light")
+  const collapsible = page.getByRole("button", { name: "Show recovery keys" })
+  await collapsible.focus()
+  await page.keyboard.press("Space")
+  await expect(collapsible).toHaveAttribute("aria-expanded", "true")
+  await expect(page.getByText("4829-1735-6621")).toBeVisible()
+})
+
+test("switch, toggle, and radio group support keyboard state changes", async ({
+  page,
+}) => {
+  await page.goto("/examples/p-switch-1?theme=light")
+  const switchControl = page.getByRole("switch", { name: "Marketing emails" })
+  await switchControl.focus()
+  await page.keyboard.press("Space")
+  await expect(switchControl).toBeChecked()
+
+  await page.goto("/examples/p-toggle-1?theme=light")
+  const toggle = page.getByRole("button", { name: "Toggle" })
+  await toggle.focus()
+  await page.keyboard.press("Space")
+  await expect(toggle).toHaveAttribute("aria-pressed", "true")
+
+  await page.goto("/examples/p-radio-group-1?theme=light")
+  const next = page.getByRole("radio", { name: "Next.js" })
+  const vite = page.getByRole("radio", { name: "Vite" })
+  await next.focus()
+  await page.keyboard.press("ArrowDown")
+  await expect(vite).toBeChecked()
+  await expect(vite).toBeFocused()
+})
+
+test("select supports keyboard selection and restores focus", async ({
+  page,
+}) => {
+  await page.goto("/examples/p-select-1?theme=light")
+  const trigger = page.getByRole("combobox", { name: "Select framework" })
+  await trigger.focus()
+  await page.keyboard.press("ArrowDown")
+  await expect(page.getByRole("listbox")).toBeVisible()
+  await page.keyboard.press("ArrowDown")
+  await page.keyboard.press("Enter")
+  await expect(trigger).toContainText("Vite")
+  await expect(trigger).toBeFocused()
 })

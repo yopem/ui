@@ -3,7 +3,7 @@ import { expect, test } from "@playwright/test"
 
 test.beforeEach(async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" })
-  await page.goto("/render/light/p-button-1")
+  await page.goto("/examples/p-button-1?theme=light")
   await expect(page.getByRole("button", { name: "Button" })).toBeVisible()
 })
 

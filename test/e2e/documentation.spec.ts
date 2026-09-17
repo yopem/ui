@@ -335,6 +335,68 @@ test("desktop table of contents stays fixed and tracks the section", async ({
     .toBeCloseTo(fixedTop ?? 0, 0)
 })
 
+test("search supports keyboard opening, empty results, errors, and focus restoration", async ({
+  page,
+}) => {
+  await page.goto("/components/button")
+  await page.keyboard.press("Control+k")
+  const dialog = page.getByRole("dialog", { name: "Search documentation" })
+  const input = dialog.getByRole("searchbox", { name: "Search documentation" })
+  await expect(dialog).toBeVisible()
+  await expect(input).toBeFocused()
+  await input.fill("no-such-documentation-result")
+  await expect(dialog.getByRole("status")).toHaveText("0 results")
+  await page.keyboard.press("Escape")
+  await expect(dialog).toBeHidden()
+  await expect(page.getByRole("button", { name: /^Search docs/ })).toBeFocused()
+
+  await page.route("**/api/search?query=*", (route) =>
+    route.fulfill({ status: 503 }),
+  )
+  await page.keyboard.press("Control+k")
+  await input.fill("button")
+  await expect(dialog.getByRole("status")).toContainText("Search unavailable")
+})
+
+test("examples pagination resets when filtering and reports no matches", async ({
+  page,
+}) => {
+  await page.goto("/examples")
+  const cards = page.locator("article")
+  await expect(cards).toHaveCount(24)
+  await page.getByRole("button", { name: "Show 24 more" }).click()
+  await expect(cards).toHaveCount(48)
+
+  const search = page.getByRole("searchbox", { name: "Search examples" })
+  await search.fill("button")
+  await expect(cards).toHaveCount(24)
+  await expect(page.getByRole("button", { name: "Show 16 more" })).toBeVisible()
+  await search.fill("no-such-example")
+  await expect(
+    page.getByText("No examples match “no-such-example”."),
+  ).toBeVisible()
+  await expect(cards).toHaveCount(0)
+})
+
+test("mobile navigation changes theme and restores trigger focus", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 })
+  await page.goto("/components/button")
+  const trigger = page.getByRole("button", { name: "Open navigation" })
+  await trigger.click()
+  const dialog = page.getByRole("dialog", { name: "Documentation" })
+  await expect(dialog).toBeVisible()
+  await dialog.getByRole("button", { name: "Dark" }).click()
+  await expect(page.locator("html")).toHaveAttribute("data-theme", "dark")
+  expect(
+    await page.evaluate(() => localStorage.getItem("yopem-ui-theme")),
+  ).toBe("dark")
+  await page.keyboard.press("Escape")
+  await expect(dialog).toBeHidden()
+  await expect(trigger).toBeFocused()
+})
+
 test("setup guide explains compiler and shared files", async ({ page }) => {
   await page.goto("/docs/installation")
   await expect(

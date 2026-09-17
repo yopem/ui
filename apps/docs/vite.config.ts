@@ -42,11 +42,21 @@ const config = defineConfig({
       ],
     },
   },
+  optimizeDeps: { exclude: ["@resvg/resvg-js"] },
   resolve: { tsconfigPaths: true },
   plugins: [
     devtools({ injectSource: { enabled: false } }),
     babel({ plugins: [["@stylexjs/babel-plugin", styleXOptions]] }),
-    nitro({ rollupConfig: { external: [/^@sentry\//] } }),
+    nitro({
+      rollupConfig: {
+        external: [
+          /^@resvg\/resvg-js/,
+          /^@sentry\//,
+          /^harfbuzzjs$/,
+          /^satori$/,
+        ],
+      },
+    }),
     tanstackStart(),
     viteReact(),
   ],

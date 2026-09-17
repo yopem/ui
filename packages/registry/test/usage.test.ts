@@ -17,7 +17,8 @@ test("every component has a type-safe, copyable usage example", () => {
       expect.arrayContaining([...names, "date-picker", "navigation"]),
     )
     const files = Object.entries(usageExamples).map(([name, code]) => {
-      expect(code, name).not.toContain("@/components/ui/")
+      expect(code, name).not.toContain("@registry/")
+      expect(code, name).not.toContain("@/components/ui/stylex/")
       expect(code, name).not.toMatch(/\bstyle\s*=/)
       expect(code, name).not.toMatch(/\bclassName\s*=\s*["']/)
       const required = getRequiredItems(name).map((item) => item.name)
@@ -41,7 +42,10 @@ test("every component has a type-safe, copyable usage example", () => {
       module: ts.ModuleKind.ESNext,
       moduleResolution: ts.ModuleResolutionKind.Bundler,
       esModuleInterop: true,
-      paths: { "@registry/*": [resolve(import.meta.dir, "../src/*")] },
+      paths: {
+        "@/*": [resolve(import.meta.dir, "../src/*")],
+        "@registry/*": [resolve(import.meta.dir, "../src/*")],
+      },
     })
     const diagnostics = ts.getPreEmitDiagnostics(program)
     expect(

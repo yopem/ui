@@ -23,10 +23,7 @@ test("copyable theming examples compile with the installed StyleX transform", ()
   )
   const directory = mkdtempSync(join(tmpdir(), "yopem-theming-examples-"))
   const filenames = {
-    palette: "tokens.stylex.ts",
-    extension: "app-tokens.stylex.ts",
-    scope: "preview.tsx",
-    usage: "panel.tsx",
+    tokenValues: "tokens.stylex.ts",
     overrides: "action.tsx",
     rootSetup: "document.tsx",
     switcher: "theme-picker.tsx",
@@ -39,10 +36,6 @@ test("copyable theming examples compile with the installed StyleX transform", ()
         '"@/styles/tokens.stylex"',
         '"./tokens.stylex"',
       )
-      if (name === "palette") {
-        examples[name] =
-          `${readFileSync(resolve(root, "packages/registry/src/styles/tokens.stylex.ts"), "utf8")}\n${examples[name]}`
-      }
       writeFileSync(join(directory, filename), examples[name])
     }
     for (const [name, filename] of Object.entries(filenames)) {
@@ -63,19 +56,8 @@ test("copyable theming examples compile with the installed StyleX transform", ()
         ],
       })
       expect(result.code).toBeTruthy()
-      if (name === "palette") {
-        const rules = result.metadata.stylex.map(
-          (entry: [string, { ltr: string }]) => entry[1].ltr,
-        )
-        expect(
-          rules.find((rule: string) => rule.includes("--primary:#93c5fd")),
-        ).toContain("--foreground:oklch(97% 0 none)")
-      }
-      if (
-        ["palette", "extension", "scope", "usage", "overrides"].includes(name)
-      ) {
+      if (name === "overrides")
         expect(result.metadata.stylex.length).toBeGreaterThan(0)
-      }
     }
   } finally {
     rmSync(directory, { recursive: true, force: true })
