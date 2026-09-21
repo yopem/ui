@@ -1,8 +1,9 @@
 import * as stylex from "@stylexjs/stylex"
 import { HouseIcon, PanelsTopLeftIcon, SettingsIcon } from "lucide-react"
 
+import { Box } from "@/components/ui/stylex/box"
+import { Paragraph } from "@/components/ui/stylex/paragraph"
 import { Tabs, TabsList, TabsPanel, TabsTab } from "@/components/ui/stylex/tabs"
-
 const tabs = [
   { Icon: HouseIcon, label: "Overview", value: "tab-1" },
   { Icon: PanelsTopLeftIcon, label: "Projects", value: "tab-2" },
@@ -16,7 +17,7 @@ export default function Example() {
       defaultValue="tab-1"
       orientation="vertical"
     >
-      <div {...stylex.props(exampleStyles.example2)}>
+      <Box {...stylex.props(exampleStyles.example2)}>
         <TabsList variant="underline">
           {tabs.map(({ Icon, label, value }) => (
             <TabsTab key={value} value={value}>
@@ -25,10 +26,12 @@ export default function Example() {
             </TabsTab>
           ))}
         </TabsList>
-      </div>
+      </Box>
       {tabs.map(({ label, value }) => (
         <TabsPanel key={value} value={value}>
-          <p {...stylex.props(exampleStyles.example3)}>{label} content</p>
+          <Paragraph {...stylex.props(exampleStyles.example3)}>
+            {label} content
+          </Paragraph>
         </TabsPanel>
       ))}
     </Tabs>

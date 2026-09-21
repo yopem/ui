@@ -1,7 +1,7 @@
 import * as stylex from "@stylexjs/stylex"
 
+import { Paragraph } from "@/components/ui/stylex/paragraph"
 import { Tabs, TabsList, TabsPanel, TabsTab } from "@/components/ui/stylex/tabs"
-
 export default function Example() {
   return (
     <Tabs
@@ -15,13 +15,19 @@ export default function Example() {
         <TabsTab value="tab-3">Tab 3</TabsTab>
       </TabsList>
       <TabsPanel value="tab-1">
-        <p {...stylex.props(exampleStyles.example2)}>Tab 1 content</p>
+        <Paragraph {...stylex.props(exampleStyles.example2)}>
+          Tab 1 content
+        </Paragraph>
       </TabsPanel>
       <TabsPanel value="tab-2">
-        <p {...stylex.props(exampleStyles.example2)}>Tab 2 content</p>
+        <Paragraph {...stylex.props(exampleStyles.example2)}>
+          Tab 2 content
+        </Paragraph>
       </TabsPanel>
       <TabsPanel value="tab-3">
-        <p {...stylex.props(exampleStyles.example2)}>Tab 3 content</p>
+        <Paragraph {...stylex.props(exampleStyles.example2)}>
+          Tab 3 content
+        </Paragraph>
       </TabsPanel>
     </Tabs>
   )

@@ -7,19 +7,19 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/stylex/breadcrumb"
-
+import { Link } from "@/components/ui/stylex/link"
 export default function Example() {
   return (
     <Breadcrumb>
       <BreadcrumbList>
         <BreadcrumbItem>
-          <BreadcrumbLink render={<a aria-label="Components" href="/" />}>
+          <BreadcrumbLink render={<Link aria-label="Components" href="/" />}>
             Home
           </BreadcrumbLink>
         </BreadcrumbItem>
         <BreadcrumbSeparator> / </BreadcrumbSeparator>
         <BreadcrumbItem>
-          <BreadcrumbLink render={<a aria-label="Docs" href="/docs/" />}>
+          <BreadcrumbLink render={<Link aria-label="Docs" href="/docs/" />}>
             Components
           </BreadcrumbLink>
         </BreadcrumbItem>

@@ -2,12 +2,12 @@
 import * as stylex from "@stylexjs/stylex"
 
 import { Button } from "@/components/ui/stylex/button"
+import { Link } from "@/components/ui/stylex/link"
 import {
   Pagination,
   PaginationContent,
   PaginationItem,
 } from "@/components/ui/stylex/pagination"
-
 interface PaginationProps {
   currentPage: number
   totalPages: number
@@ -22,7 +22,7 @@ export default function Example({ currentPage, totalPages }: PaginationProps) {
             disabled={currentPage === 1}
             render={
               currentPage === 1 ? undefined : (
-                <a
+                <Link
                   aria-label="Go to previous page"
                   href={`#/page/${currentPage - 1}`}
                 />
@@ -38,7 +38,7 @@ export default function Example({ currentPage, totalPages }: PaginationProps) {
             disabled={currentPage === totalPages}
             render={
               currentPage === totalPages ? undefined : (
-                <a
+                <Link
                   aria-label="Go to next page"
                   href={`#/page/${currentPage + 1}`}
                 />

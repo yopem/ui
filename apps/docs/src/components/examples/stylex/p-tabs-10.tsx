@@ -1,8 +1,8 @@
 import * as stylex from "@stylexjs/stylex"
 
 import { Badge } from "@/components/ui/stylex/badge"
+import { Paragraph } from "@/components/ui/stylex/paragraph"
 import { Tabs, TabsList, TabsPanel, TabsTab } from "@/components/ui/stylex/tabs"
-
 export default function Example() {
   return (
     <Tabs defaultValue="tab-1">
@@ -27,13 +27,19 @@ export default function Example() {
         </TabsTab>
       </TabsList>
       <TabsPanel value="tab-1">
-        <p {...stylex.props(exampleStyles.example1)}>All items content</p>
+        <Paragraph {...stylex.props(exampleStyles.example1)}>
+          All items content
+        </Paragraph>
       </TabsPanel>
       <TabsPanel value="tab-2">
-        <p {...stylex.props(exampleStyles.example1)}>Pending items content</p>
+        <Paragraph {...stylex.props(exampleStyles.example1)}>
+          Pending items content
+        </Paragraph>
       </TabsPanel>
       <TabsPanel value="tab-3">
-        <p {...stylex.props(exampleStyles.example1)}>Completed items content</p>
+        <Paragraph {...stylex.props(exampleStyles.example1)}>
+          Completed items content
+        </Paragraph>
       </TabsPanel>
     </Tabs>
   )

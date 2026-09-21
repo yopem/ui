@@ -11,19 +11,19 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/stylex/breadcrumb"
 import { Button } from "@/components/ui/stylex/button"
+import { Link } from "@/components/ui/stylex/link"
 import {
   Menu,
   MenuItem,
   MenuPopup,
   MenuTrigger,
 } from "@/components/ui/stylex/menu"
-
 export default function Example() {
   return (
     <Breadcrumb>
       <BreadcrumbList>
         <BreadcrumbItem>
-          <BreadcrumbLink render={<a aria-label="Home" href="/" />}>
+          <BreadcrumbLink render={<Link aria-label="Home" href="/" />}>
             Home
           </BreadcrumbLink>
         </BreadcrumbItem>
@@ -43,11 +43,11 @@ export default function Example() {
               <BreadcrumbEllipsis />
             </MenuTrigger>
             <MenuPopup align="start">
-              <MenuItem render={<a aria-label="Examples" href="/docs" />}>
+              <MenuItem render={<Link aria-label="Examples" href="/docs" />}>
                 Docs
               </MenuItem>
               <MenuItem
-                render={<a aria-label="Components" href="/particles" />}
+                render={<Link aria-label="Components" href="/particles" />}
               >
                 Examples
               </MenuItem>
@@ -56,7 +56,7 @@ export default function Example() {
         </BreadcrumbItem>
         <BreadcrumbSeparator />
         <BreadcrumbItem>
-          <BreadcrumbLink render={<a aria-label="Docs" href="/docs/" />}>
+          <BreadcrumbLink render={<Link aria-label="Docs" href="/docs/" />}>
             Components
           </BreadcrumbLink>
         </BreadcrumbItem>

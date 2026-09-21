@@ -9,10 +9,11 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/stylex/drawer"
-
+import { Flex } from "@/components/ui/stylex/flex"
+import { Paragraph } from "@/components/ui/stylex/paragraph"
 export default function Example() {
   return (
-    <div {...stylex.props(exampleStyles.example1)}>
+    <Flex {...stylex.props(exampleStyles.example1)}>
       <Drawer position="right">
         <DrawerTrigger render={<Button variant="outline" />}>
           Right
@@ -22,9 +23,9 @@ export default function Example() {
             <DrawerTitle>Right</DrawerTitle>
           </DrawerHeader>
           <DrawerPanel>
-            <p {...stylex.props(exampleStyles.example2)}>
+            <Paragraph {...stylex.props(exampleStyles.example2)}>
               Content from the right.
-            </p>
+            </Paragraph>
           </DrawerPanel>
         </DrawerPopup>
       </Drawer>
@@ -37,9 +38,9 @@ export default function Example() {
             <DrawerTitle>Left</DrawerTitle>
           </DrawerHeader>
           <DrawerPanel>
-            <p {...stylex.props(exampleStyles.example2)}>
+            <Paragraph {...stylex.props(exampleStyles.example2)}>
               Content from the left.
-            </p>
+            </Paragraph>
           </DrawerPanel>
         </DrawerPopup>
       </Drawer>
@@ -50,9 +51,9 @@ export default function Example() {
             <DrawerTitle>Top</DrawerTitle>
           </DrawerHeader>
           <DrawerPanel>
-            <p {...stylex.props(exampleStyles.example2)}>
+            <Paragraph {...stylex.props(exampleStyles.example2)}>
               Content from the top.
-            </p>
+            </Paragraph>
           </DrawerPanel>
         </DrawerPopup>
       </Drawer>
@@ -65,13 +66,13 @@ export default function Example() {
             <DrawerTitle>Bottom</DrawerTitle>
           </DrawerHeader>
           <DrawerPanel>
-            <p {...stylex.props(exampleStyles.example2)}>
+            <Paragraph {...stylex.props(exampleStyles.example2)}>
               Content from the bottom.
-            </p>
+            </Paragraph>
           </DrawerPanel>
         </DrawerPopup>
       </Drawer>
-    </div>
+    </Flex>
   )
 }
 

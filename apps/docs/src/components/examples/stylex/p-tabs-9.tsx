@@ -1,12 +1,13 @@
 import * as stylex from "@stylexjs/stylex"
 import { BoxIcon, HouseIcon, PanelsTopLeftIcon } from "lucide-react"
 
+import { Box } from "@/components/ui/stylex/box"
+import { Paragraph } from "@/components/ui/stylex/paragraph"
 import { Tabs, TabsList, TabsPanel, TabsTab } from "@/components/ui/stylex/tabs"
-
 export default function Example() {
   return (
     <Tabs {...stylex.props(exampleStyles.example1)} defaultValue="tab-1">
-      <div {...stylex.props(exampleStyles.example2)}>
+      <Box {...stylex.props(exampleStyles.example2)}>
         <TabsList variant="underline">
           <TabsTab {...stylex.props(exampleStyles.example3)} value="tab-1">
             <HouseIcon
@@ -33,15 +34,21 @@ export default function Example() {
             Packages
           </TabsTab>
         </TabsList>
-      </div>
+      </Box>
       <TabsPanel value="tab-1">
-        <p {...stylex.props(exampleStyles.example6)}>Overview content</p>
+        <Paragraph {...stylex.props(exampleStyles.example6)}>
+          Overview content
+        </Paragraph>
       </TabsPanel>
       <TabsPanel value="tab-2">
-        <p {...stylex.props(exampleStyles.example6)}>Projects content</p>
+        <Paragraph {...stylex.props(exampleStyles.example6)}>
+          Projects content
+        </Paragraph>
       </TabsPanel>
       <TabsPanel value="tab-3">
-        <p {...stylex.props(exampleStyles.example6)}>Packages content</p>
+        <Paragraph {...stylex.props(exampleStyles.example6)}>
+          Packages content
+        </Paragraph>
       </TabsPanel>
     </Tabs>
   )

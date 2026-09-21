@@ -1,6 +1,7 @@
 // next/link replaced -> anchor
 import * as stylex from "@stylexjs/stylex"
 
+import { Box } from "@/components/ui/stylex/box"
 import { Button } from "@/components/ui/stylex/button"
 import {
   Drawer,
@@ -11,7 +12,7 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/stylex/drawer"
-
+import { Link } from "@/components/ui/stylex/link"
 export default function Example() {
   return (
     <Drawer position="left">
@@ -23,13 +24,13 @@ export default function Example() {
           <DrawerTitle>Menu</DrawerTitle>
         </DrawerHeader>
         <DrawerPanel>
-          <nav {...stylex.props(exampleStyles.example1)}>
+          <Box as="nav" {...stylex.props(exampleStyles.example1)}>
             <DrawerClose
               nativeButton={false}
               render={
                 <Button
                   {...stylex.props(exampleStyles.example2)}
-                  render={<a aria-label="Home" href="/" />}
+                  render={<Link aria-label="Home" href="/" />}
                   variant="ghost"
                 />
               }
@@ -41,7 +42,7 @@ export default function Example() {
               render={
                 <Button
                   {...stylex.props(exampleStyles.example2)}
-                  render={<a aria-label="Home" href="/" />}
+                  render={<Link aria-label="Home" href="/" />}
                   variant="ghost"
                 />
               }
@@ -53,7 +54,7 @@ export default function Example() {
               render={
                 <Button
                   {...stylex.props(exampleStyles.example2)}
-                  render={<a aria-label="Home" href="/" />}
+                  render={<Link aria-label="Home" href="/" />}
                   variant="ghost"
                 />
               }
@@ -65,14 +66,14 @@ export default function Example() {
               render={
                 <Button
                   {...stylex.props(exampleStyles.example2)}
-                  render={<a aria-label="Home" href="/" />}
+                  render={<Link aria-label="Home" href="/" />}
                   variant="ghost"
                 />
               }
             >
               Sign out
             </DrawerClose>
-          </nav>
+          </Box>
         </DrawerPanel>
       </DrawerPopup>
     </Drawer>

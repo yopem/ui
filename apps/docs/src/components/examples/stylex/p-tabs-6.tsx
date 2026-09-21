@@ -1,8 +1,8 @@
 import * as stylex from "@stylexjs/stylex"
 import { HouseIcon, PanelsTopLeftIcon, SettingsIcon } from "lucide-react"
 
+import { Paragraph } from "@/components/ui/stylex/paragraph"
 import { Tabs, TabsList, TabsPanel, TabsTab } from "@/components/ui/stylex/tabs"
-
 export default function Example() {
   return (
     <Tabs defaultValue="tab-1">
@@ -27,13 +27,19 @@ export default function Example() {
         </TabsTab>
       </TabsList>
       <TabsPanel value="tab-1">
-        <p {...stylex.props(exampleStyles.example1)}>Overview content</p>
+        <Paragraph {...stylex.props(exampleStyles.example1)}>
+          Overview content
+        </Paragraph>
       </TabsPanel>
       <TabsPanel value="tab-2">
-        <p {...stylex.props(exampleStyles.example1)}>Projects content</p>
+        <Paragraph {...stylex.props(exampleStyles.example1)}>
+          Projects content
+        </Paragraph>
       </TabsPanel>
       <TabsPanel value="tab-3">
-        <p {...stylex.props(exampleStyles.example1)}>Settings content</p>
+        <Paragraph {...stylex.props(exampleStyles.example1)}>
+          Settings content
+        </Paragraph>
       </TabsPanel>
     </Tabs>
   )

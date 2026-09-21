@@ -10,12 +10,13 @@ import {
   AccordionTrigger,
 } from "@/components/ui/stylex/accordion"
 import { Button } from "@/components/ui/stylex/button"
-
+import { Flex } from "@/components/ui/stylex/flex"
+import { Paragraph } from "@/components/ui/stylex/paragraph"
 export default function Example() {
   const [value, setValue] = useState<string[]>([])
 
   return (
-    <div {...stylex.props(exampleStyles.example1)}>
+    <Flex {...stylex.props(exampleStyles.example1)}>
       <Accordion
         {...stylex.props(exampleStyles.example2)}
         onValueChange={setValue}
@@ -43,18 +44,18 @@ export default function Example() {
         </AccordionItem>
       </Accordion>
 
-      <div {...stylex.props(exampleStyles.example3)}>
+      <Flex {...stylex.props(exampleStyles.example3)}>
         <Button
           onClick={() => setValue(["item-1", "item-2"])}
           variant="outline"
         >
           Open First Two
         </Button>
-        <p {...stylex.props(exampleStyles.example4)}>
+        <Paragraph {...stylex.props(exampleStyles.example4)}>
           Open items: {value.length > 0 ? value.join(", ") : "None"}
-        </p>
-      </div>
-    </div>
+        </Paragraph>
+      </Flex>
+    </Flex>
   )
 }
 

@@ -10,8 +10,10 @@ const source = readFileSync(
 )
 
 test("preview card title follows the example page heading without skipping levels", () => {
-  expect(source).toMatch(/<h2[^>]*>coss\.com\/ui<\/h2>/)
-  expect(source).not.toMatch(/<h[3-6]\b/)
+  expect(source).toMatch(
+    /<Heading\s+as="h2"[^>]*>\s*coss\.com\/ui\s*<\/Heading>/,
+  )
+  expect(source).not.toMatch(/<Heading\s+as="h[3-6]"/)
   expect(new Bun.Transpiler({ loader: "tsx" }).transformSync(source)).toContain(
     "PreviewCardPopup",
   )

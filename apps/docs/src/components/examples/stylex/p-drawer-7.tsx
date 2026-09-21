@@ -1,5 +1,6 @@
 import * as stylex from "@stylexjs/stylex"
 
+import { Box } from "@/components/ui/stylex/box"
 import { Button } from "@/components/ui/stylex/button"
 import {
   Drawer,
@@ -12,7 +13,7 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/stylex/drawer"
-
+import { Flex } from "@/components/ui/stylex/flex"
 export default function Example() {
   return (
     <Drawer>
@@ -42,9 +43,9 @@ export default function Example() {
                 </DrawerDescription>
               </DrawerHeader>
               <DrawerPanel>
-                <div {...stylex.props(exampleStyles.example3)}>
-                  <div {...stylex.props(exampleStyles.example4)} />
-                </div>
+                <Flex {...stylex.props(exampleStyles.example3)}>
+                  <Box {...stylex.props(exampleStyles.example4)} />
+                </Flex>
               </DrawerPanel>
               <DrawerFooter
                 {...stylex.props(exampleStyles.example2)}
@@ -66,9 +67,9 @@ export default function Example() {
                       </DrawerDescription>
                     </DrawerHeader>
                     <DrawerPanel>
-                      <div {...stylex.props(exampleStyles.example3)}>
-                        <div {...stylex.props(exampleStyles.example5)} />
-                      </div>
+                      <Flex {...stylex.props(exampleStyles.example3)}>
+                        <Box {...stylex.props(exampleStyles.example5)} />
+                      </Flex>
                     </DrawerPanel>
                   </DrawerPopup>
                 </Drawer>

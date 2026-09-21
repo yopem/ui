@@ -11,7 +11,10 @@ import {
   AvatarFallback,
   AvatarImage,
 } from "@/components/ui/stylex/avatar"
+import { Box } from "@/components/ui/stylex/box"
 import { Button } from "@/components/ui/stylex/button"
+import { Flex } from "@/components/ui/stylex/flex"
+import { Heading } from "@/components/ui/stylex/heading"
 import {
   Popover,
   PopoverCreateHandle,
@@ -20,7 +23,6 @@ import {
   PopoverTitle,
   PopoverTrigger,
 } from "@/components/ui/stylex/popover"
-
 const NotificationsContent = () => {
   return (
     <>
@@ -36,8 +38,8 @@ const NotificationsContent = () => {
 
 const ProfileContent = () => {
   return (
-    <div {...stylex.props(exampleStyles.example2)}>
-      <div {...stylex.props(exampleStyles.example3)}>
+    <Box {...stylex.props(exampleStyles.example2)}>
+      <Flex {...stylex.props(exampleStyles.example3)}>
         <Avatar>
           <AvatarImage
             alt="Mark Andersson"
@@ -45,11 +47,15 @@ const ProfileContent = () => {
           />
           <AvatarFallback>MA</AvatarFallback>
         </Avatar>
-        <div {...stylex.props(exampleStyles.example4)}>
-          <h4 {...stylex.props(exampleStyles.example5)}>Mark Andersson</h4>
-          <div {...stylex.props(exampleStyles.example6)}>Product Designer</div>
-        </div>
-      </div>
+        <Box {...stylex.props(exampleStyles.example4)}>
+          <Heading as="h4" {...stylex.props(exampleStyles.example5)}>
+            Mark Andersson
+          </Heading>
+          <Flex {...stylex.props(exampleStyles.example6)}>
+            Product Designer
+          </Flex>
+        </Box>
+      </Flex>
       <Button
         {...stylex.props(exampleStyles.example7)}
         size="sm"
@@ -57,7 +63,7 @@ const ProfileContent = () => {
       >
         Log out
       </Button>
-    </div>
+    </Box>
   )
 }
 
@@ -65,7 +71,7 @@ export default function Example() {
   const [popoverHandle] = useState(() => PopoverCreateHandle<ComponentType>())
 
   return (
-    <div {...stylex.props(exampleStyles.example8)}>
+    <Flex {...stylex.props(exampleStyles.example8)}>
       <PopoverTrigger
         handle={popoverHandle}
         payload={NotificationsContent}
@@ -89,7 +95,7 @@ export default function Example() {
           </PopoverPopup>
         )}
       </Popover>
-    </div>
+    </Flex>
   )
 }
 

@@ -1,5 +1,6 @@
 import * as stylex from "@stylexjs/stylex"
 
+import { Box } from "@/components/ui/stylex/box"
 import { Button } from "@/components/ui/stylex/button"
 import {
   Drawer,
@@ -11,7 +12,7 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/stylex/drawer"
-
+import { Flex } from "@/components/ui/stylex/flex"
 export default function Example() {
   return (
     <Drawer>
@@ -23,11 +24,11 @@ export default function Example() {
           <DrawerTitle>Scrollable content</DrawerTitle>
         </DrawerHeader>
         <DrawerPanel>
-          <div {...stylex.props(exampleStyles.example1)}>
+          <Flex {...stylex.props(exampleStyles.example1)}>
             {Array.from({ length: 48 }, (_, i) => `box-${i}`).map((key) => (
-              <div {...stylex.props(exampleStyles.example2)} key={key} />
+              <Box {...stylex.props(exampleStyles.example2)} key={key} />
             ))}
-          </div>
+          </Flex>
         </DrawerPanel>
         <DrawerFooter>
           <DrawerClose render={<Button variant="outline" />}>Close</DrawerClose>

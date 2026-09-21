@@ -2,6 +2,7 @@
 
 import * as stylex from "@stylexjs/stylex"
 
+import { Box } from "@/components/ui/stylex/box"
 import { Button } from "@/components/ui/stylex/button"
 import { Field } from "@/components/ui/stylex/field"
 import { Form } from "@/components/ui/stylex/form"
@@ -13,7 +14,6 @@ import {
   PopoverTrigger,
 } from "@/components/ui/stylex/popover"
 import { Textarea } from "@/components/ui/stylex/textarea"
-
 export default function Example() {
   return (
     <Popover>
@@ -21,14 +21,14 @@ export default function Example() {
         Open Popover
       </PopoverTrigger>
       <PopoverPopup {...stylex.props(exampleStyles.example1)}>
-        <div {...stylex.props(exampleStyles.example2)}>
+        <Box {...stylex.props(exampleStyles.example2)}>
           <PopoverTitle {...stylex.props(exampleStyles.example3)}>
             Send us feedback
           </PopoverTitle>
           <PopoverDescription>
             Let us know how we can improve.
           </PopoverDescription>
-        </div>
+        </Box>
         <Form {...stylex.props(exampleStyles.example4)}>
           <Field>
             <Textarea

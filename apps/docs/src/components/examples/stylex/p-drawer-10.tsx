@@ -13,12 +13,12 @@ import {
   DrawerTrigger,
 } from "@/components/ui/stylex/drawer"
 import { Field, FieldLabel } from "@/components/ui/stylex/field"
+import { Flex } from "@/components/ui/stylex/flex"
 import { Form } from "@/components/ui/stylex/form"
 import { Input } from "@/components/ui/stylex/input"
-
 export default function Example() {
   return (
-    <div {...stylex.props(exampleStyles.example1)}>
+    <Flex {...stylex.props(exampleStyles.example1)}>
       <Drawer position="right">
         <DrawerTrigger render={<Button variant="outline" />}>
           Default footer
@@ -83,7 +83,7 @@ export default function Example() {
           </Form>
         </DrawerPopup>
       </Drawer>
-    </div>
+    </Flex>
   )
 }
 

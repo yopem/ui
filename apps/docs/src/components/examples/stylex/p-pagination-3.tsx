@@ -4,12 +4,15 @@ import * as stylex from "@stylexjs/stylex"
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react"
 import { useState } from "react"
 
+import { Box } from "@/components/ui/stylex/box"
 import { Button } from "@/components/ui/stylex/button"
+import { Flex } from "@/components/ui/stylex/flex"
 import {
   Pagination,
   PaginationContent,
   PaginationItem,
 } from "@/components/ui/stylex/pagination"
+import { Paragraph } from "@/components/ui/stylex/paragraph"
 import {
   Select,
   SelectItem,
@@ -17,7 +20,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/stylex/select"
-
 interface PaginationProps {
   currentPage?: number
   totalPages?: number
@@ -40,10 +42,10 @@ export default function Example({
   })
 
   return (
-    <div {...stylex.props(exampleStyles.example1)}>
+    <Flex {...stylex.props(exampleStyles.example1)}>
       {/* Results range selector */}
-      <div {...stylex.props(exampleStyles.example2)}>
-        <p {...stylex.props(exampleStyles.example3)}>Viewing</p>
+      <Flex {...stylex.props(exampleStyles.example2)}>
+        <Paragraph {...stylex.props(exampleStyles.example3)}>Viewing</Paragraph>
         <Select
           items={resultRanges}
           onValueChange={(value) => setCurrentPage(value as number)}
@@ -67,17 +69,17 @@ export default function Example({
             ))}
           </SelectPopup>
         </Select>
-        <p {...stylex.props(exampleStyles.example3)}>
+        <Paragraph {...stylex.props(exampleStyles.example3)}>
           of{" "}
-          <strong {...stylex.props(exampleStyles.example4)}>
+          <Box as="strong" {...stylex.props(exampleStyles.example4)}>
             {totalResults}
-          </strong>{" "}
+          </Box>{" "}
           results
-        </p>
-      </div>
+        </Paragraph>
+      </Flex>
 
       {/* Pagination */}
-      <div>
+      <Box>
         <Pagination>
           <PaginationContent {...stylex.props(exampleStyles.example5)}>
             <PaginationItem>
@@ -114,8 +116,8 @@ export default function Example({
             </PaginationItem>
           </PaginationContent>
         </Pagination>
-      </div>
-    </div>
+      </Box>
+    </Flex>
   )
 }
 

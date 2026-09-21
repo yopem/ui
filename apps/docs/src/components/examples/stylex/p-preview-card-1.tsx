@@ -1,13 +1,16 @@
 import * as stylex from "@stylexjs/stylex"
 import { CornerUpLeftIcon, StarIcon } from "lucide-react"
 
+import { Box } from "@/components/ui/stylex/box"
 import { Button } from "@/components/ui/stylex/button"
+import { Flex } from "@/components/ui/stylex/flex"
+import { Heading } from "@/components/ui/stylex/heading"
+import { Paragraph } from "@/components/ui/stylex/paragraph"
 import {
   PreviewCard,
   PreviewCardPopup,
   PreviewCardTrigger,
 } from "@/components/ui/stylex/preview-card"
-
 export default function Example() {
   return (
     <PreviewCard>
@@ -15,32 +18,35 @@ export default function Example() {
         coss.com/ui
       </PreviewCardTrigger>
       <PreviewCardPopup>
-        <div {...stylex.props(exampleStyles.example1)}>
-          <div {...stylex.props(exampleStyles.example2)}>
-            <h2 {...stylex.props(exampleStyles.example3)}>coss.com/ui</h2>
-            <p {...stylex.props(exampleStyles.example4)}>
+        <Flex {...stylex.props(exampleStyles.example1)}>
+          <Flex {...stylex.props(exampleStyles.example2)}>
+            <Heading as="h2" {...stylex.props(exampleStyles.example3)}>
+              coss.com/ui
+            </Heading>
+            <Paragraph {...stylex.props(exampleStyles.example4)}>
               Beautifully designed components that you can copy and paste into
               your apps.
-            </p>
-          </div>
-          <div {...stylex.props(exampleStyles.example5)}>
-            <div {...stylex.props(exampleStyles.example6)}>
-              <span
+            </Paragraph>
+          </Flex>
+          <Flex {...stylex.props(exampleStyles.example5)}>
+            <Flex {...stylex.props(exampleStyles.example6)}>
+              <Box
+                as="span"
                 aria-hidden="true"
                 {...stylex.props(exampleStyles.example7)}
               />
-              <span>TypeScript</span>
-            </div>
-            <div {...stylex.props(exampleStyles.example6)}>
+              <Box as="span">TypeScript</Box>
+            </Flex>
+            <Flex {...stylex.props(exampleStyles.example6)}>
               <StarIcon {...stylex.props(exampleStyles.example8)} />
-              <span>58.2k</span>
-            </div>
-            <div {...stylex.props(exampleStyles.example6)}>
+              <Box as="span">58.2k</Box>
+            </Flex>
+            <Flex {...stylex.props(exampleStyles.example6)}>
               <CornerUpLeftIcon {...stylex.props(exampleStyles.example8)} />
-              <span>5.1k</span>
-            </div>
-          </div>
-        </div>
+              <Box as="span">5.1k</Box>
+            </Flex>
+          </Flex>
+        </Flex>
       </PreviewCardPopup>
     </PreviewCard>
   )

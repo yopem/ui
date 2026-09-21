@@ -1,6 +1,7 @@
 // next/link replaced -> anchor
 import * as stylex from "@stylexjs/stylex"
 
+import { Box } from "@/components/ui/stylex/box"
 import { Button } from "@/components/ui/stylex/button"
 import {
   Drawer,
@@ -10,60 +11,64 @@ import {
   DrawerSwipeArea,
   DrawerTitle,
 } from "@/components/ui/stylex/drawer"
-
+import { Flex } from "@/components/ui/stylex/flex"
+import { Link } from "@/components/ui/stylex/link"
+import { Paragraph } from "@/components/ui/stylex/paragraph"
 export default function Example() {
   return (
-    <div {...stylex.props(exampleStyles.example1)}>
+    <Box {...stylex.props(exampleStyles.example1)}>
       <Drawer modal={false} position="left">
         <DrawerSwipeArea {...stylex.props(exampleStyles.example2)}>
-          <span {...stylex.props(exampleStyles.example3)}>Swipe area</span>
+          <Box as="span" {...stylex.props(exampleStyles.example3)}>
+            Swipe area
+          </Box>
         </DrawerSwipeArea>
 
-        <div {...stylex.props(exampleStyles.example4)}>
-          <p {...stylex.props(exampleStyles.example5)}>
+        <Flex {...stylex.props(exampleStyles.example4)}>
+          <Paragraph {...stylex.props(exampleStyles.example5)}>
             Swipe from the left edge to open the menu.
-          </p>
-        </div>
+          </Paragraph>
+        </Flex>
 
         <DrawerPopup position="left" showCloseButton variant="straight">
           <DrawerHeader>
             <DrawerTitle>Menu</DrawerTitle>
           </DrawerHeader>
           <DrawerPanel>
-            <nav {...stylex.props(exampleStyles.example6)}>
+            <Box as="nav" {...stylex.props(exampleStyles.example6)}>
               <Button
                 {...stylex.props(exampleStyles.example7)}
-                render={<a aria-label="Home" href="/" />}
+                render={<Link aria-label="Home" href="/" />}
                 variant="ghost"
               >
                 Home
               </Button>
               <Button
                 {...stylex.props(exampleStyles.example7)}
-                render={<a aria-label="Home" href="/" />}
+                render={<Link aria-label="Home" href="/" />}
                 variant="ghost"
               >
                 Profile
               </Button>
               <Button
                 {...stylex.props(exampleStyles.example7)}
-                render={<a aria-label="Home" href="/" />}
+                render={<Link aria-label="Home" href="/" />}
                 variant="ghost"
               >
                 Settings
               </Button>
               <Button
                 {...stylex.props(exampleStyles.example7)}
-                render={<a aria-label="Home" href="/" />}
+                render={<Link aria-label="Home" href="/" />}
                 variant="ghost"
               >
                 Sign out
               </Button>
-            </nav>
+            </Box>
           </DrawerPanel>
         </DrawerPopup>
       </Drawer>
-    </div>
+    </Box>
   )
 }
 

@@ -6,6 +6,7 @@ import * as stylex from "@stylexjs/stylex"
 import { LinkIcon, MailIcon, Share2Icon } from "lucide-react"
 import { useState } from "react"
 
+import { Box } from "@/components/ui/stylex/box"
 import { Button } from "@/components/ui/stylex/button"
 import {
   groupItemStyles,
@@ -19,17 +20,16 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/stylex/tooltip"
-
 const ShareLinkContent = () => {
-  return <span>Copy shareable link</span>
+  return <Box as="span">Copy shareable link</Box>
 }
 
 const ShareEmailContent = () => {
-  return <span>Share via email</span>
+  return <Box as="span">Share via email</Box>
 }
 
 const ShareSocialContent = () => {
-  return <span>Share to social media</span>
+  return <Box as="span">Share to social media</Box>
 }
 
 export default function Example() {

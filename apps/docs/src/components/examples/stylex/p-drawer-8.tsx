@@ -13,8 +13,9 @@ import {
   DrawerTrigger,
 } from "@/components/ui/stylex/drawer"
 import { Field, FieldLabel } from "@/components/ui/stylex/field"
+import { Grid } from "@/components/ui/stylex/grid"
 import { Input } from "@/components/ui/stylex/input"
-
+import { Paragraph } from "@/components/ui/stylex/paragraph"
 export default function Example() {
   return (
     <Drawer position="right">
@@ -29,14 +30,22 @@ export default function Example() {
           </DrawerDescription>
         </DrawerHeader>
         <DrawerPanel {...stylex.props(exampleStyles.example1)}>
-          <div {...stylex.props(exampleStyles.example2)}>
-            <p {...stylex.props(exampleStyles.example3)}>Name</p>
-            <p {...stylex.props(exampleStyles.example4)}>Bora Baloglu</p>
-          </div>
-          <div {...stylex.props(exampleStyles.example2)}>
-            <p {...stylex.props(exampleStyles.example3)}>Email</p>
-            <p {...stylex.props(exampleStyles.example4)}>bora@example.com</p>
-          </div>
+          <Grid {...stylex.props(exampleStyles.example2)}>
+            <Paragraph {...stylex.props(exampleStyles.example3)}>
+              Name
+            </Paragraph>
+            <Paragraph {...stylex.props(exampleStyles.example4)}>
+              Bora Baloglu
+            </Paragraph>
+          </Grid>
+          <Grid {...stylex.props(exampleStyles.example2)}>
+            <Paragraph {...stylex.props(exampleStyles.example3)}>
+              Email
+            </Paragraph>
+            <Paragraph {...stylex.props(exampleStyles.example4)}>
+              bora@example.com
+            </Paragraph>
+          </Grid>
         </DrawerPanel>
         <DrawerFooter>
           <Drawer position="right">

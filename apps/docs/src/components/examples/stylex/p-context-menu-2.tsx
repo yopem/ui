@@ -7,7 +7,7 @@ import {
   ContextMenuPopup,
   ContextMenuTrigger,
 } from "@/components/ui/stylex/context-menu"
-
+import { Link } from "@/components/ui/stylex/link"
 export default function Example() {
   return (
     <ContextMenu>
@@ -15,11 +15,13 @@ export default function Example() {
         Right click here
       </ContextMenuTrigger>
       <ContextMenuPopup>
-        <ContextMenuLinkItem render={<a aria-label="Examples" href="/docs" />}>
+        <ContextMenuLinkItem
+          render={<Link aria-label="Examples" href="/docs" />}
+        >
           Docs
         </ContextMenuLinkItem>
         <ContextMenuLinkItem
-          render={<a aria-label="Examples" href="/particles" />}
+          render={<Link aria-label="Examples" href="/particles" />}
         >
           Examples
         </ContextMenuLinkItem>

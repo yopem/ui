@@ -9,6 +9,7 @@ import {
   BreadcrumbList,
   BreadcrumbSeparator,
 } from "@/components/ui/stylex/breadcrumb"
+import { Link } from "@/components/ui/stylex/link"
 import {
   Select,
   SelectItem,
@@ -16,7 +17,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/stylex/select"
-
 const items = [
   { label: "Orion", value: "orion" },
   { label: "Sigma", value: "sigma" },
@@ -28,7 +28,7 @@ export default function Example() {
     <Breadcrumb>
       <BreadcrumbList>
         <BreadcrumbItem>
-          <BreadcrumbLink render={<a aria-label="Home" href="/" />}>
+          <BreadcrumbLink render={<Link aria-label="Home" href="/" />}>
             Databases
           </BreadcrumbLink>
         </BreadcrumbItem>

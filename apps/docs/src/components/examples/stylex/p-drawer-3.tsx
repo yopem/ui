@@ -10,7 +10,7 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/stylex/drawer"
-
+import { Paragraph } from "@/components/ui/stylex/paragraph"
 export default function Example() {
   return (
     <Drawer position="right">
@@ -25,11 +25,11 @@ export default function Example() {
           </DrawerDescription>
         </DrawerHeader>
         <DrawerPanel>
-          <p {...stylex.props(exampleStyles.example1)}>
+          <Paragraph {...stylex.props(exampleStyles.example1)}>
             Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
             eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
             ad minim veniam, quis nostrud exercitation ullamco laboris.
-          </p>
+          </Paragraph>
         </DrawerPanel>
       </DrawerPopup>
     </Drawer>

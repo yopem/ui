@@ -6,6 +6,7 @@ import * as stylex from "@stylexjs/stylex"
 import { BoldIcon, ItalicIcon, UnderlineIcon } from "lucide-react"
 import { useState } from "react"
 
+import { Box } from "@/components/ui/stylex/box"
 import {
   ToggleGroup,
   ToggleGroupItem,
@@ -17,17 +18,16 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/stylex/tooltip"
-
 const BoldContent = () => {
-  return <span>Make text bold</span>
+  return <Box as="span">Make text bold</Box>
 }
 
 const ItalicContent = () => {
-  return <span>Apply italic formatting to text</span>
+  return <Box as="span">Apply italic formatting to text</Box>
 }
 
 const UnderlineContent = () => {
-  return <span>Underline text</span>
+  return <Box as="span">Underline text</Box>
 }
 
 export default function Example() {

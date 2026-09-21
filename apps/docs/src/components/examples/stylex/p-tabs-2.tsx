@@ -1,25 +1,32 @@
 import * as stylex from "@stylexjs/stylex"
 
+import { Box } from "@/components/ui/stylex/box"
+import { Paragraph } from "@/components/ui/stylex/paragraph"
 import { Tabs, TabsList, TabsPanel, TabsTab } from "@/components/ui/stylex/tabs"
-
 export default function Example() {
   return (
     <Tabs defaultValue="tab-1">
-      <div {...stylex.props(exampleStyles.example1)}>
+      <Box {...stylex.props(exampleStyles.example1)}>
         <TabsList variant="underline">
           <TabsTab value="tab-1">Tab 1</TabsTab>
           <TabsTab value="tab-2">Tab 2</TabsTab>
           <TabsTab value="tab-3">Tab 3</TabsTab>
         </TabsList>
-      </div>
+      </Box>
       <TabsPanel value="tab-1">
-        <p {...stylex.props(exampleStyles.example2)}>Tab 1 content</p>
+        <Paragraph {...stylex.props(exampleStyles.example2)}>
+          Tab 1 content
+        </Paragraph>
       </TabsPanel>
       <TabsPanel value="tab-2">
-        <p {...stylex.props(exampleStyles.example2)}>Tab 2 content</p>
+        <Paragraph {...stylex.props(exampleStyles.example2)}>
+          Tab 2 content
+        </Paragraph>
       </TabsPanel>
       <TabsPanel value="tab-3">
-        <p {...stylex.props(exampleStyles.example2)}>Tab 3 content</p>
+        <Paragraph {...stylex.props(exampleStyles.example2)}>
+          Tab 3 content
+        </Paragraph>
       </TabsPanel>
     </Tabs>
   )

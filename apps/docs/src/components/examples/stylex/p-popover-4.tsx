@@ -5,9 +5,11 @@ import { ChevronDownIcon } from "lucide-react"
 import { useState } from "react"
 
 import { Badge } from "@/components/ui/stylex/badge"
+import { Box } from "@/components/ui/stylex/box"
 import { Button } from "@/components/ui/stylex/button"
 import { Checkbox } from "@/components/ui/stylex/checkbox"
 import { CheckboxGroup } from "@/components/ui/stylex/checkbox-group"
+import { Flex } from "@/components/ui/stylex/flex"
 import {
   groupItemStyles,
   Group,
@@ -22,7 +24,6 @@ import {
   PopoverTitle,
   PopoverTrigger,
 } from "@/components/ui/stylex/popover"
-
 const occurrences = [
   { date: "Wed, Jul 15", id: "occurrence-1", time: "9:00 – 9:30am" },
   { date: "Wed, Jul 15", id: "occurrence-2", time: "10:00 – 10:30am" },
@@ -35,7 +36,7 @@ export default function Example() {
   )
 
   return (
-    <div {...stylex.props(exampleStyles.example1)}>
+    <Flex {...stylex.props(exampleStyles.example1)}>
       <Button size="xs" variant="outline">
         Reject
       </Button>
@@ -60,14 +61,14 @@ export default function Example() {
             />
           </PopoverTrigger>
           <PopoverPopup align="end" {...stylex.props(exampleStyles.example3)}>
-            <div {...stylex.props(exampleStyles.example4)}>
+            <Box {...stylex.props(exampleStyles.example4)}>
               <PopoverTitle {...stylex.props(exampleStyles.example5)}>
                 Confirm occurrences
               </PopoverTitle>
               <PopoverDescription {...stylex.props(exampleStyles.example6)}>
                 {occurrences.length} pending for this booking
               </PopoverDescription>
-            </div>
+            </Box>
             <CheckboxGroup
               aria-label="Occurrences to confirm"
               {...stylex.props(exampleStyles.example7)}
@@ -80,16 +81,16 @@ export default function Example() {
                   key={occurrence.id}
                 >
                   <Checkbox value={occurrence.id} />
-                  <span {...stylex.props(exampleStyles.example9)}>
+                  <Box as="span" {...stylex.props(exampleStyles.example9)}>
                     {occurrence.time}
-                  </span>
-                  <span {...stylex.props(exampleStyles.example10)}>
+                  </Box>
+                  <Box as="span" {...stylex.props(exampleStyles.example10)}>
                     {occurrence.date}
-                  </span>
+                  </Box>
                 </Label>
               ))}
             </CheckboxGroup>
-            <div {...stylex.props(exampleStyles.example11)}>
+            <Flex {...stylex.props(exampleStyles.example11)}>
               <PopoverClose
                 disabled={selected.length === 0}
                 render={<Button size="xs" variant="ghost" />}
@@ -105,11 +106,11 @@ export default function Example() {
                   {selected.length}
                 </Badge>
               </PopoverClose>
-            </div>
+            </Flex>
           </PopoverPopup>
         </Popover>
       </Group>
-    </div>
+    </Flex>
   )
 }
 

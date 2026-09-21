@@ -3,6 +3,7 @@
 import * as stylex from "@stylexjs/stylex"
 import { XIcon } from "lucide-react"
 
+import { Box } from "@/components/ui/stylex/box"
 import { Button } from "@/components/ui/stylex/button"
 import {
   Popover,
@@ -12,7 +13,6 @@ import {
   PopoverTitle,
   PopoverTrigger,
 } from "@/components/ui/stylex/popover"
-
 export default function Example() {
   return (
     <Popover>
@@ -27,14 +27,14 @@ export default function Example() {
         >
           <XIcon {...stylex.props(exampleStyles.icon)} />
         </PopoverClose>
-        <div {...stylex.props(exampleStyles.example3)}>
+        <Box {...stylex.props(exampleStyles.example3)}>
           <PopoverTitle {...stylex.props(exampleStyles.example4)}>
             Notifications
           </PopoverTitle>
           <PopoverDescription>
             You are all caught up. Good job!
           </PopoverDescription>
-        </div>
+        </Box>
         <PopoverClose render={<Button variant="outline" />}>Close</PopoverClose>
       </PopoverPopup>
     </Popover>
