@@ -10,8 +10,12 @@ import {
   DocsTitle,
 } from "@/catalog/docs-page"
 import { docsStyles } from "@/catalog/docs-styles"
+import { Box } from "@/components/ui/stylex/box"
+import { Flex } from "@/components/ui/stylex/flex"
+import { Grid } from "@/components/ui/stylex/grid"
+import { Heading } from "@/components/ui/stylex/heading"
+import { Paragraph } from "@/components/ui/stylex/paragraph"
 import { createSeo } from "@/lib/seo"
-
 const description =
   "Accessible React components styled with StyleX. Copy complete source into your project, then customize it without package lock-in."
 
@@ -43,86 +47,98 @@ function Introduction() {
           no Yopem package between you and your UI.
         </DocsDescription>
         <DocsBody>
-          <div {...stylex.props(docsStyles.links)}>
+          <Flex {...stylex.props(docsStyles.links)}>
             <Link {...stylex.props(docsStyles.link)} to="/docs/getting-started">
               Build your first component
             </Link>
             <Link {...stylex.props(docsStyles.link)} to="/components">
               Browse components
             </Link>
-          </div>
+          </Flex>
 
-          <h2 {...stylex.props(docsStyles.h2)} id="what-is-yopem">
+          <Heading as="h2" {...stylex.props(docsStyles.h2)} id="what-is-yopem">
             What is Yopem UI?
-          </h2>
-          <p {...stylex.props(docsStyles.p)}>
+          </Heading>
+          <Paragraph {...stylex.props(docsStyles.p)}>
             Yopem is a component registry, not a component library dependency.
             Each component page contains a live example, install dependencies,
             complete TypeScript source, usage notes, and generated API details.
-          </p>
-          <div {...stylex.props(docsStyles.grid)}>
-            <div {...stylex.props(docsStyles.card)}>
-              <strong {...stylex.props(docsStyles.strong)}>React 19</strong>
-              <p {...stylex.props(docsStyles.p, docsStyles.muted)}>
+          </Paragraph>
+          <Grid {...stylex.props(docsStyles.grid)}>
+            <Box {...stylex.props(docsStyles.card)}>
+              <Box as="strong" {...stylex.props(docsStyles.strong)}>
+                React 19
+              </Box>
+              <Paragraph {...stylex.props(docsStyles.p, docsStyles.muted)}>
                 Typed components that stay inside your project.
-              </p>
-            </div>
-            <div {...stylex.props(docsStyles.card)}>
-              <strong {...stylex.props(docsStyles.strong)}>Base UI</strong>
-              <p {...stylex.props(docsStyles.p, docsStyles.muted)}>
+              </Paragraph>
+            </Box>
+            <Box {...stylex.props(docsStyles.card)}>
+              <Box as="strong" {...stylex.props(docsStyles.strong)}>
+                Base UI
+              </Box>
+              <Paragraph {...stylex.props(docsStyles.p, docsStyles.muted)}>
                 Keyboard and screen-reader behavior from accessible primitives.
-              </p>
-            </div>
-            <div {...stylex.props(docsStyles.card)}>
-              <strong {...stylex.props(docsStyles.strong)}>StyleX</strong>
-              <p {...stylex.props(docsStyles.p, docsStyles.muted)}>
+              </Paragraph>
+            </Box>
+            <Box {...stylex.props(docsStyles.card)}>
+              <Box as="strong" {...stylex.props(docsStyles.strong)}>
+                StyleX
+              </Box>
+              <Paragraph {...stylex.props(docsStyles.p, docsStyles.muted)}>
                 Colocated, typed styles compiled to atomic CSS.
-              </p>
-            </div>
-          </div>
+              </Paragraph>
+            </Box>
+          </Grid>
 
-          <h2 {...stylex.props(docsStyles.h2)} id="why-source-owned">
+          <Heading
+            as="h2"
+            {...stylex.props(docsStyles.h2)}
+            id="why-source-owned"
+          >
             Why source-owned?
-          </h2>
-          <ul {...stylex.props(docsStyles.ul)}>
-            <li {...stylex.props(docsStyles.li)}>
-              <strong {...stylex.props(docsStyles.strong)}>
+          </Heading>
+          <Box as="ul" {...stylex.props(docsStyles.ul)}>
+            <Box as="li" {...stylex.props(docsStyles.li)}>
+              <Box as="strong" {...stylex.props(docsStyles.strong)}>
                 Change anything.
-              </strong>{" "}
+              </Box>{" "}
               Edit markup, behavior, variants, and styles in the same file.
-            </li>
-            <li {...stylex.props(docsStyles.li)}>
-              <strong {...stylex.props(docsStyles.strong)}>Ship less.</strong>{" "}
+            </Box>
+            <Box as="li" {...stylex.props(docsStyles.li)}>
+              <Box as="strong" {...stylex.props(docsStyles.strong)}>
+                Ship less.
+              </Box>{" "}
               Copy the components you use instead of installing a full kit.
-            </li>
-            <li {...stylex.props(docsStyles.li)}>
-              <strong {...stylex.props(docsStyles.strong)}>
+            </Box>
+            <Box as="li" {...stylex.props(docsStyles.li)}>
+              <Box as="strong" {...stylex.props(docsStyles.strong)}>
                 Keep control.
-              </strong>{" "}
+              </Box>{" "}
               Updates never change your app until you choose to copy them.
-            </li>
-          </ul>
+            </Box>
+          </Box>
 
-          <h2 {...stylex.props(docsStyles.h2)} id="how-it-works">
+          <Heading as="h2" {...stylex.props(docsStyles.h2)} id="how-it-works">
             How it works
-          </h2>
-          <ol {...stylex.props(docsStyles.ol)}>
-            <li {...stylex.props(docsStyles.li)}>
+          </Heading>
+          <Box as="ol" {...stylex.props(docsStyles.ol)}>
+            <Box as="li" {...stylex.props(docsStyles.li)}>
               Configure the StyleX build transform and copy shared theme files
               once.
-            </li>
-            <li {...stylex.props(docsStyles.li)}>
+            </Box>
+            <Box as="li" {...stylex.props(docsStyles.li)}>
               Choose a component and install the dependencies shown on its page.
-            </li>
-            <li {...stylex.props(docsStyles.li)}>
+            </Box>
+            <Box as="li" {...stylex.props(docsStyles.li)}>
               Copy each required file to its displayed path under your source
               directory.
-            </li>
-            <li {...stylex.props(docsStyles.li)}>
+            </Box>
+            <Box as="li" {...stylex.props(docsStyles.li)}>
               Import the local component and customize its source or xstyle
               prop.
-            </li>
-          </ol>
+            </Box>
+          </Box>
           <CopyableCode
             title="Use your local component"
             code={
@@ -130,33 +146,35 @@ function Introduction() {
             }
           />
 
-          <h2 {...stylex.props(docsStyles.h2)} id="where-to-start">
+          <Heading as="h2" {...stylex.props(docsStyles.h2)} id="where-to-start">
             Where to start
-          </h2>
-          <div {...stylex.props(docsStyles.grid)}>
+          </Heading>
+          <Grid {...stylex.props(docsStyles.grid)}>
             <Link {...stylex.props(docsStyles.card)} to="/docs/getting-started">
-              <strong {...stylex.props(docsStyles.strong)}>Introduction</strong>
-              <p {...stylex.props(docsStyles.p, docsStyles.muted)}>
+              <Box as="strong" {...stylex.props(docsStyles.strong)}>
+                Introduction
+              </Box>
+              <Paragraph {...stylex.props(docsStyles.p, docsStyles.muted)}>
                 Learn the workflow by adding one Button from start to finish.
-              </p>
+              </Paragraph>
             </Link>
             <Link {...stylex.props(docsStyles.card)} to="/docs/installation">
-              <strong {...stylex.props(docsStyles.strong)}>
+              <Box as="strong" {...stylex.props(docsStyles.strong)}>
                 Ready to configure
-              </strong>
-              <p {...stylex.props(docsStyles.p, docsStyles.muted)}>
+              </Box>
+              <Paragraph {...stylex.props(docsStyles.p, docsStyles.muted)}>
                 Pick React Router, TanStack Start, Next.js, or Astro.
-              </p>
+              </Paragraph>
             </Link>
             <Link {...stylex.props(docsStyles.card)} to="/docs/theming">
-              <strong {...stylex.props(docsStyles.strong)}>
+              <Box as="strong" {...stylex.props(docsStyles.strong)}>
                 Styling your app
-              </strong>
-              <p {...stylex.props(docsStyles.p, docsStyles.muted)}>
+              </Box>
+              <Paragraph {...stylex.props(docsStyles.p, docsStyles.muted)}>
                 Change tokens, create themes, or override one component.
-              </p>
+              </Paragraph>
             </Link>
-          </div>
+          </Grid>
         </DocsBody>
       </DocsPage>
     </DocumentationLayout>

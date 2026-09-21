@@ -11,8 +11,12 @@ import {
 } from "@/catalog/docs-page"
 import { docsStyles } from "@/catalog/docs-styles"
 import { getDocumentation } from "@/catalog/docs.functions"
+import { Box } from "@/components/ui/stylex/box"
+import { Grid } from "@/components/ui/stylex/grid"
+import { Heading } from "@/components/ui/stylex/heading"
+import { Link as UiLink } from "@/components/ui/stylex/link"
+import { Paragraph } from "@/components/ui/stylex/paragraph"
 import { createSeo } from "@/lib/seo"
-
 export const Route = createFileRoute("/docs/installation")({
   loader: () => getDocumentation({ data: "base" }),
   head: () =>
@@ -233,41 +237,41 @@ function Installation() {
           first component.
         </DocsDescription>
         <DocsBody>
-          <h2 {...stylex.props(docsStyles.h2)} id="dependencies">
+          <Heading as="h2" {...stylex.props(docsStyles.h2)} id="dependencies">
             1. Install packages
-          </h2>
-          <p {...stylex.props(docsStyles.p)}>
+          </Heading>
+          <Paragraph {...stylex.props(docsStyles.p)}>
             Start with a React and TypeScript project. Install shared runtime
             packages once. Each component page gives one npm command for its
             extra dependencies.
-          </p>
+          </Paragraph>
           <CopyableCode
             code={dependencies}
             header="Terminal"
             title="Install dependencies"
           />
-          <h2 {...stylex.props(docsStyles.h2)} id="imports">
+          <Heading as="h2" {...stylex.props(docsStyles.h2)} id="imports">
             2. Configure imports
-          </h2>
-          <p {...stylex.props(docsStyles.p)}>
+          </Heading>
+          <Paragraph {...stylex.props(docsStyles.p)}>
             Map @ to src. Components then live in src/components/ui and import
             each other from @/components/ui. Keep the same alias in TypeScript,
             your bundler, and StyleX.
-          </p>
+          </Paragraph>
           <CopyableCode
             code={tsconfig}
             header="tsconfig.json"
             title="tsconfig.json"
           />
-          <h2 {...stylex.props(docsStyles.h2)} id="shared-files">
+          <Heading as="h2" {...stylex.props(docsStyles.h2)} id="shared-files">
             3. Copy shared files
-          </h2>
-          <p {...stylex.props(docsStyles.p)}>
+          </Heading>
+          <Paragraph {...stylex.props(docsStyles.p)}>
             Copy these files once. Keep their displayed paths. Component pages
             include them in required files, so later components need no second
             copy.
-          </p>
-          <div {...stylex.props(docsStyles.section)}>
+          </Paragraph>
+          <Box {...stylex.props(docsStyles.section)}>
             {data.files.map((file) => (
               <CopyableCode
                 key={file.path}
@@ -277,53 +281,59 @@ function Installation() {
                 title={file.target}
               />
             ))}
-          </div>
-          <h2 {...stylex.props(docsStyles.h2)} id="choose">
+          </Box>
+          <Heading as="h2" {...stylex.props(docsStyles.h2)} id="choose">
             4. Configure your framework
-          </h2>
-          <p {...stylex.props(docsStyles.p)}>
+          </Heading>
+          <Paragraph {...stylex.props(docsStyles.p)}>
             Choose one setup. The shared steps above apply to every framework.
-          </p>
-          <div {...stylex.props(docsStyles.grid)}>
-            <a {...stylex.props(docsStyles.card)} href="#react-router">
-              <strong {...stylex.props(docsStyles.strong)}>React Router</strong>
-              <p {...stylex.props(docsStyles.p, docsStyles.muted)}>
+          </Paragraph>
+          <Grid {...stylex.props(docsStyles.grid)}>
+            <UiLink {...stylex.props(docsStyles.card)} href="#react-router">
+              <Box as="strong" {...stylex.props(docsStyles.strong)}>
+                React Router
+              </Box>
+              <Paragraph {...stylex.props(docsStyles.p, docsStyles.muted)}>
                 Client-rendered React Router with Vite.
-              </p>
-            </a>
-            <a {...stylex.props(docsStyles.card)} href="#tanstack-start">
-              <strong {...stylex.props(docsStyles.strong)}>
+              </Paragraph>
+            </UiLink>
+            <UiLink {...stylex.props(docsStyles.card)} href="#tanstack-start">
+              <Box as="strong" {...stylex.props(docsStyles.strong)}>
                 TanStack Start
-              </strong>
-              <p {...stylex.props(docsStyles.p, docsStyles.muted)}>
+              </Box>
+              <Paragraph {...stylex.props(docsStyles.p, docsStyles.muted)}>
                 TanStack Start with server rendering.
-              </p>
-            </a>
-            <a {...stylex.props(docsStyles.card)} href="#nextjs">
-              <strong {...stylex.props(docsStyles.strong)}>Next.js</strong>
-              <p {...stylex.props(docsStyles.p, docsStyles.muted)}>
+              </Paragraph>
+            </UiLink>
+            <UiLink {...stylex.props(docsStyles.card)} href="#nextjs">
+              <Box as="strong" {...stylex.props(docsStyles.strong)}>
+                Next.js
+              </Box>
+              <Paragraph {...stylex.props(docsStyles.p, docsStyles.muted)}>
                 Next.js App Router using webpack.
-              </p>
-            </a>
-            <a {...stylex.props(docsStyles.card)} href="#astro">
-              <strong {...stylex.props(docsStyles.strong)}>Astro</strong>
-              <p {...stylex.props(docsStyles.p, docsStyles.muted)}>
+              </Paragraph>
+            </UiLink>
+            <UiLink {...stylex.props(docsStyles.card)} href="#astro">
+              <Box as="strong" {...stylex.props(docsStyles.strong)}>
+                Astro
+              </Box>
+              <Paragraph {...stylex.props(docsStyles.p, docsStyles.muted)}>
                 Astro with its React integration.
-              </p>
-            </a>
-          </div>
-          <p {...stylex.props(docsStyles.p)}>
+              </Paragraph>
+            </UiLink>
+          </Grid>
+          <Paragraph {...stylex.props(docsStyles.p)}>
             Using another build tool? Follow its official StyleX setup and keep
             the @ alias consistent.
-          </p>
-          <h3 {...stylex.props(docsStyles.h3)} id="react-router">
+          </Paragraph>
+          <Heading as="h3" {...stylex.props(docsStyles.h3)} id="react-router">
             React Router
-          </h3>
-          <p {...stylex.props(docsStyles.p)}>
+          </Heading>
+          <Paragraph {...stylex.props(docsStyles.p)}>
             React Router used as a Vite library needs the normal Vite setup.
             Keep StyleX before the React plugin, then load the shared CSS and
             root theme in your client entry.
-          </p>
+          </Paragraph>
           <CopyableCode
             code={viteDependencies}
             header="Terminal"
@@ -339,27 +349,27 @@ function Installation() {
             header="src/main.tsx"
             title="src/main.tsx"
           />
-          <p {...stylex.props(docsStyles.p)}>
+          <Paragraph {...stylex.props(docsStyles.p)}>
             React Router framework or RSC mode has a separate development CSS
             entry. Follow the{" "}
-            <a
+            <UiLink
               {...stylex.props(docsStyles.link)}
               href="https://stylexjs.com/docs/learn/installation/vite/react-router/"
               rel="noreferrer"
               target="_blank"
             >
               official StyleX React Router guide
-            </a>
+            </UiLink>
             . Keep the same @ alias and shared files shown here.
-          </p>
-          <h3 {...stylex.props(docsStyles.h3)} id="tanstack-start">
+          </Paragraph>
+          <Heading as="h3" {...stylex.props(docsStyles.h3)} id="tanstack-start">
             TanStack Start
-          </h3>
-          <p {...stylex.props(docsStyles.p)}>
+          </Heading>
+          <Paragraph {...stylex.props(docsStyles.p)}>
             Configure Babel transformation and PostCSS extraction in Vite. This
             uses the normal root stylesheet in development and production, with
             no virtual stylesheet or runtime injection.
-          </p>
+          </Paragraph>
           <CopyableCode
             code={tanstackDependencies}
             header="Terminal"
@@ -370,10 +380,10 @@ function Installation() {
             header="vite.config.ts"
             title="vite.config.ts"
           />
-          <p {...stylex.props(docsStyles.p)}>
+          <Paragraph {...stylex.props(docsStyles.p)}>
             Add this final line to the shared src/styles/styles.css file from
             step 3.
-          </p>
+          </Paragraph>
           <CopyableCode
             code="@stylex;"
             header="src/styles/styles.css"
@@ -384,14 +394,14 @@ function Installation() {
             header="src/routes/__root.tsx"
             title="src/routes/__root.tsx"
           />
-          <h3 {...stylex.props(docsStyles.h3)} id="nextjs">
+          <Heading as="h3" {...stylex.props(docsStyles.h3)} id="nextjs">
             Next.js
-          </h3>
-          <p {...stylex.props(docsStyles.p)}>
+          </Heading>
+          <Paragraph {...stylex.props(docsStyles.p)}>
             This App Router setup uses webpack. Run next dev --webpack and next
             build --webpack on Next versions that support those flags. Do not
             install the Vite plugin.
-          </p>
+          </Paragraph>
           <CopyableCode
             code={nextDependencies}
             header="Terminal"
@@ -407,10 +417,10 @@ function Installation() {
             header="postcss.config.cjs"
             title="postcss.config.cjs"
           />
-          <p {...stylex.props(docsStyles.p)}>
+          <Paragraph {...stylex.props(docsStyles.p)}>
             Add this final line to the shared src/styles/styles.css file from
             step 3.
-          </p>
+          </Paragraph>
           <CopyableCode
             code="@stylex;"
             header="src/styles/styles.css"
@@ -421,19 +431,19 @@ function Installation() {
             header="src/app/layout.tsx"
             title="src/app/layout.tsx"
           />
-          <p {...stylex.props(docsStyles.p)}>
+          <Paragraph {...stylex.props(docsStyles.p)}>
             Pages Router projects import the stylesheet in pages/_app.tsx and
             apply root theme classes to Html in pages/_document.tsx.
-          </p>
-          <h3 {...stylex.props(docsStyles.h3)} id="astro">
+          </Paragraph>
+          <Heading as="h3" {...stylex.props(docsStyles.h3)} id="astro">
             Astro
-          </h3>
-          <p {...stylex.props(docsStyles.p)}>
+          </Heading>
+          <Paragraph {...stylex.props(docsStyles.p)}>
             Astro uses its React integration and Vite config. Existing React
             projects need only the StyleX Vite plugin below. Import shared CSS
             from one Astro layout. Add client:load only when a component needs
             browser interaction.
-          </p>
+          </Paragraph>
           <CopyableCode
             code={astroDependencies}
             header="Terminal"
@@ -454,28 +464,28 @@ function Installation() {
             header="src/layouts/Layout.astro"
             title="src/layouts/Layout.astro"
           />
-          <h2 {...stylex.props(docsStyles.h2)} id="check">
+          <Heading as="h2" {...stylex.props(docsStyles.h2)} id="check">
             5. Verify and continue
-          </h2>
-          <p {...stylex.props(docsStyles.p)}>
+          </Heading>
+          <Paragraph {...stylex.props(docsStyles.p)}>
             Run your production build. It must finish without StyleX or CSS
             extraction errors.
-          </p>
-          <p {...stylex.props(docsStyles.p)}>
+          </Paragraph>
+          <Paragraph {...stylex.props(docsStyles.p)}>
             Then follow{" "}
             <Link {...stylex.props(docsStyles.link)} to="/docs/getting-started">
               Add your first component
             </Link>{" "}
             to copy, render, and verify Button.
-          </p>
-          <p {...stylex.props(docsStyles.p)}>
+          </Paragraph>
+          <Paragraph {...stylex.props(docsStyles.p)}>
             Static light mode needs no provider. Add switching only if needed.
             See the{" "}
             <Link {...stylex.props(docsStyles.link)} to="/docs/theming">
               theming guide
             </Link>{" "}
             for dark mode, custom themes, and CSP nonces.
-          </p>
+          </Paragraph>
         </DocsBody>
       </DocsPage>
     </DocumentationLayout>

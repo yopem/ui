@@ -1,9 +1,8 @@
-import {
-  createElement,
-  lazy,
-  type ComponentType,
-  type LazyExoticComponent,
-} from "react"
+import type { ComponentType, LazyExoticComponent } from "react"
+
+import { createElement, lazy } from "react"
+
+import { Paragraph } from "@/components/ui/stylex/paragraph"
 
 import type { ExampleModule } from "./example-modules"
 
@@ -124,6 +123,8 @@ export function getCatalogItem(slug: string) {
 }
 
 function titleCase(value: string) {
+  if (value === "hstack") return "HStack"
+  if (value === "vstack") return "VStack"
   return value
     .replaceAll("-", " ")
     .replace(/\b\w/g, (letter) => letter.toUpperCase())
@@ -133,9 +134,9 @@ function componentIdentifier(value: string) {
   return titleCase(value).replaceAll(" ", "")
 }
 
-function UnavailableExample() {
+export function UnavailableExample() {
   return createElement(
-    "p",
+    Paragraph,
     null,
     "Example could not load. Refresh the page and try again.",
   )

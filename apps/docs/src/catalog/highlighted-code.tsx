@@ -12,6 +12,7 @@ import githubLight from "@shikijs/themes/github-light"
 import { createHighlighterCoreSync } from "shiki/core"
 import { createJavaScriptRegexEngine } from "shiki/engine/javascript"
 
+import { Box } from "@/components/ui/stylex/box"
 const highlighter = createHighlighterCoreSync({
   engine: createJavaScriptRegexEngine(),
   langs: [astro, css, javascript, json, shellscript, tsx, typescript],
@@ -56,7 +57,7 @@ export function HighlightedCode({
   ...props
 }: ComponentProps<"div"> & { code: string; title: string }) {
   return (
-    <div
+    <Box
       {...props}
       dangerouslySetInnerHTML={{ __html: highlightCode(code, title) }}
     />

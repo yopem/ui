@@ -15,9 +15,12 @@ import {
   DocsTitle,
 } from "@/catalog/docs-page"
 import { catalogStyles } from "@/catalog/docs-styles"
+import { Box } from "@/components/ui/stylex/box"
+import { Flex } from "@/components/ui/stylex/flex"
+import { Grid } from "@/components/ui/stylex/grid"
+import { Paragraph } from "@/components/ui/stylex/paragraph"
 import { useCopyToClipboard } from "@/hooks/use-copy-to-clipboard"
 import { createSeo } from "@/lib/seo"
-
 const pageSize = 24
 const examples = catalog.flatMap((item) =>
   item.examples.map((example, index) => ({
@@ -59,13 +62,14 @@ function ExamplesPage() {
   return (
     <DocumentationLayout>
       <DocsPage full>
-        <header {...stylex.props(styles.hero)}>
+        <Box as="header" {...stylex.props(styles.hero)}>
           <DocsTitle>Browse examples</DocsTitle>
           <DocsDescription {...stylex.props(styles.description)}>
             Explore {examples.length} ready-to-use StyleX examples. Search by
             component, try each pattern, then open it on its own.
           </DocsDescription>
-          <input
+          <Box
+            as="input"
             {...stylex.props(catalogStyles.search, styles.search)}
             aria-label="Search examples"
             disabled={!hydrated}
@@ -77,25 +81,29 @@ function ExamplesPage() {
             type="search"
             value={query}
           />
-          <output aria-live="polite" {...stylex.props(styles.count)}>
+          <Box as="output" aria-live="polite" {...stylex.props(styles.count)}>
             {results.length} {results.length === 1 ? "example" : "examples"}
-          </output>
-        </header>
+          </Box>
+        </Box>
         <DocsBody>
-          <div {...stylex.props(styles.grid)}>
+          <Grid {...stylex.props(styles.grid)}>
             {visibleExamples.map((example) => {
               const LiveExample = example.component
               return (
-                <article {...stylex.props(styles.card)} key={example.name}>
-                  <div
+                <Box
+                  as="article"
+                  {...stylex.props(styles.card)}
+                  key={example.name}
+                >
+                  <Flex
                     {...stylex.props(styles.preview)}
                     aria-label={`${example.label} live preview`}
                   >
                     <Suspense fallback={null}>
                       {hydrated ? <LiveExample /> : null}
                     </Suspense>
-                  </div>
-                  <footer {...stylex.props(styles.footer)}>
+                  </Flex>
+                  <Box as="footer" {...stylex.props(styles.footer)}>
                     <Link
                       {...stylex.props(styles.link)}
                       params={{ example: example.name }}
@@ -104,7 +112,9 @@ function ExamplesPage() {
                     >
                       {example.label}
                     </Link>
-                    <span {...stylex.props(styles.name)}>{example.name}</span>
+                    <Box as="span" {...stylex.props(styles.name)}>
+                      {example.name}
+                    </Box>
                     <Button
                       aria-label={
                         isCopied && copiedExample === example.name
@@ -136,22 +146,22 @@ function ExamplesPage() {
                         : "Copy code"}
                     </Button>
                     {copyError && copiedExample === example.name ? (
-                      <output {...stylex.props(styles.copyError)}>
+                      <Box as="output" {...stylex.props(styles.copyError)}>
                         {copyError}
-                      </output>
+                      </Box>
                     ) : null}
-                  </footer>
-                </article>
+                  </Box>
+                </Box>
               )
             })}
             {results.length === 0 ? (
-              <p {...stylex.props(catalogStyles.empty)}>
+              <Paragraph {...stylex.props(catalogStyles.empty)}>
                 No examples match “{query}”.
-              </p>
+              </Paragraph>
             ) : null}
-          </div>
+          </Grid>
           {visibleExamples.length < results.length ? (
-            <div {...stylex.props(styles.more)}>
+            <Flex {...stylex.props(styles.more)}>
               <Button
                 onClick={() => setVisibleCount((count) => count + pageSize)}
                 type="button"
@@ -159,7 +169,7 @@ function ExamplesPage() {
               >
                 Show {Math.min(pageSize, results.length - visibleCount)} more
               </Button>
-            </div>
+            </Flex>
           ) : null}
         </DocsBody>
       </DocsPage>

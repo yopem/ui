@@ -14,7 +14,8 @@ import {
   stylexExampleComponents,
   stylexExampleModules,
 } from "@/catalog/example-modules"
-
+import { Box } from "@/components/ui/stylex/box"
+import { Heading } from "@/components/ui/stylex/heading"
 export const Route = createFileRoute("/examples/$example")({
   ssr: false,
   validateSearch: (search) => ({
@@ -43,12 +44,14 @@ function ExamplePage() {
   )
 
   return (
-    <main {...themeStyle} data-example-root data-theme={theme}>
-      <h1 {...stylex.props(styles.heading)}>{example}</h1>
-      <Suspense fallback={<span>Loading example…</span>}>
+    <Box as="main" {...themeStyle} data-example-root data-theme={theme}>
+      <Heading as="h1" {...stylex.props(styles.heading)}>
+        {example}
+      </Heading>
+      <Suspense fallback={<Box as="span">Loading example…</Box>}>
         {createElement(Example)}
       </Suspense>
-    </main>
+    </Box>
   )
 }
 

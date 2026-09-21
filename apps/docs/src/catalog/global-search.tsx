@@ -18,6 +18,7 @@ import { Link } from "@tanstack/react-router"
 import { SearchIcon } from "lucide-react"
 import { useCallback, useRef, useState } from "react"
 
+import { Box } from "@/components/ui/stylex/box"
 function isSearchResult(value: unknown): value is SortedResult {
   if (typeof value !== "object" || value === null) return false
   if (!("id" in value) || typeof value.id !== "string") return false
@@ -116,7 +117,10 @@ export function GlobalSearch() {
         }
       >
         <SearchIcon size={16} />
-        Search docs<kbd {...stylex.props(styles.shortcut)}>⌘ / Ctrl K</kbd>
+        Search docs
+        <Box as="kbd" {...stylex.props(styles.shortcut)}>
+          ⌘ / Ctrl K
+        </Box>
       </DialogTrigger>
       <DialogPopup
         {...stylex.props(styles.popup)}
@@ -140,7 +144,8 @@ export function GlobalSearch() {
             void search(nextQuery)
           }}
         />
-        <output
+        <Box
+          as="output"
           aria-live="polite"
           {...stylex.props(styles.status, status === "error" && styles.error)}
         >
@@ -151,35 +156,35 @@ export function GlobalSearch() {
               : status === "loading"
                 ? "Searching…"
                 : `${results.length} results`}
-        </output>
+        </Box>
         <ScrollArea
           aria-label="Search results"
           overscrollContain
           scrollFade
           xstyle={styles.resultsScroll}
         >
-          <ul {...stylex.props(styles.results)}>
+          <Box as="ul" {...stylex.props(styles.results)}>
             {status === "ready"
               ? results.map((result) => (
-                  <li key={result.id}>
+                  <Box as="li" key={result.id}>
                     <Link
                       to={result.url}
                       onClick={() => setOpen(false)}
                       {...stylex.props(styles.result)}
                     >
                       {result.breadcrumbs?.length ? (
-                        <span {...stylex.props(styles.breadcrumb)}>
+                        <Box as="span" {...stylex.props(styles.breadcrumb)}>
                           {result.breadcrumbs
                             .join(" / ")
                             .replace(/<\/?mark>/g, "")}
-                        </span>
+                        </Box>
                       ) : null}
                       {result.content.replace(/<\/?mark>/g, "")}
                     </Link>
-                  </li>
+                  </Box>
                 ))
               : null}
-          </ul>
+          </Box>
         </ScrollArea>
       </DialogPopup>
     </Dialog>

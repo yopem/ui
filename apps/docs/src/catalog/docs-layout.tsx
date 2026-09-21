@@ -15,19 +15,21 @@ import { MenuIcon } from "lucide-react"
 import { useState } from "react"
 
 import { BrandLogo } from "@/components/brand-logo"
+import { Box } from "@/components/ui/stylex/box"
+import { Grid } from "@/components/ui/stylex/grid"
+import { Link as UiLink } from "@/components/ui/stylex/link"
 
 import { DocsNavigation } from "./docs-navigation"
 import { GlobalSearch } from "./global-search"
 import { ThemeToggle } from "./theme-toggle"
-
 export function DocumentationLayout({ children }: { children: ReactNode }) {
   const [mobileOpen, setMobileOpen] = useState(false)
   return (
-    <div {...stylex.props(styles.shell)}>
-      <a href="#docs-content" {...stylex.props(styles.skip)}>
+    <Box xstyle={styles.shell}>
+      <UiLink href="#docs-content" {...stylex.props(styles.skip)}>
         Skip to content
-      </a>
-      <header {...stylex.props(styles.header)}>
+      </UiLink>
+      <Box as="header" {...stylex.props(styles.header)}>
         <Dialog open={mobileOpen} onOpenChange={setMobileOpen}>
           <DialogTrigger
             render={
@@ -58,17 +60,22 @@ export function DocumentationLayout({ children }: { children: ReactNode }) {
           Yopem UI
         </Link>
         <GlobalSearch />
-      </header>
-      <div {...stylex.props(styles.frame)}>
-        <aside {...stylex.props(styles.sidebar)}>
+      </Box>
+      <Grid xstyle={styles.frame}>
+        <Box as="aside" {...stylex.props(styles.sidebar)}>
           <DocsNavigation />
           <ThemeToggle />
-        </aside>
-        <main id="docs-content" tabIndex={-1} {...stylex.props(styles.main)}>
+        </Box>
+        <Box
+          as="main"
+          id="docs-content"
+          tabIndex={-1}
+          {...stylex.props(styles.main)}
+        >
           {children}
-        </main>
-      </div>
-    </div>
+        </Box>
+      </Grid>
+    </Box>
   )
 }
 

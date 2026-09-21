@@ -11,8 +11,10 @@ import {
 } from "@/catalog/docs-page"
 import { docsStyles } from "@/catalog/docs-styles"
 import { getDocumentation } from "@/catalog/docs.functions"
+import { Box } from "@/components/ui/stylex/box"
+import { Heading } from "@/components/ui/stylex/heading"
+import { Paragraph } from "@/components/ui/stylex/paragraph"
 import { createSeo } from "@/lib/seo"
-
 export const Route = createFileRoute("/docs/theming")({
   loader: () => getDocumentation({ data: "theme" }),
   head: () =>
@@ -125,67 +127,67 @@ function Theming() {
           light, dark, and system modes.
         </DocsDescription>
         <DocsBody>
-          <h2 {...stylex.props(docsStyles.h2)} id="how-it-works">
+          <Heading as="h2" {...stylex.props(docsStyles.h2)} id="how-it-works">
             How theming works
-          </h2>
-          <p {...stylex.props(docsStyles.p)}>
+          </Heading>
+          <Paragraph {...stylex.props(docsStyles.p)}>
             Yopem components read semantic values such as primary, background,
             foreground, font, and radius from{" "}
-            <code {...stylex.props(docsStyles.inlineCode)}>
+            <Box as="code" {...stylex.props(docsStyles.inlineCode)}>
               src/styles/tokens.stylex.ts
-            </code>
+            </Box>
             . Change that file once to update every component.
-          </p>
-          <h2 {...stylex.props(docsStyles.h2)} id="tokens">
+          </Paragraph>
+          <Heading as="h2" {...stylex.props(docsStyles.h2)} id="tokens">
             Change the whole app
-          </h2>
-          <p {...stylex.props(docsStyles.p)}>
+          </Heading>
+          <Paragraph {...stylex.props(docsStyles.p)}>
             Complete{" "}
             <Link {...stylex.props(docsStyles.link)} to="/docs/installation">
               Installation
             </Link>{" "}
             first. Then open the copied token file and replace the values you
             want. Keep all other existing values.
-          </p>
+          </Paragraph>
           <CopyableCode
             code={tokenValues}
             title="src/styles/tokens.stylex.ts"
           />
-          <p {...stylex.props(docsStyles.p)}>
+          <Paragraph {...stylex.props(docsStyles.p)}>
             Change background and foreground pairs together so text remains
             readable. Font tokens select a font family but do not download its
             files. Run a production build after editing tokens.
-          </p>
+          </Paragraph>
 
-          <h2 {...stylex.props(docsStyles.h2)} id="xstyle">
+          <Heading as="h2" {...stylex.props(docsStyles.h2)} id="xstyle">
             Component overrides
-          </h2>
-          <p {...stylex.props(docsStyles.p)}>
+          </Heading>
+          <Paragraph {...stylex.props(docsStyles.p)}>
             Use xstyle when one component should look different. Yopem applies
             it after default styles and variants.
-          </p>
+          </Paragraph>
           <CopyableCode
             code={overrides}
             title="src/components/save-button.tsx"
           />
-          <p {...stylex.props(docsStyles.p)}>
+          <Paragraph {...stylex.props(docsStyles.p)}>
             Use stylex.props for native HTML elements. Use xstyle for Yopem
             components. Preserve focus, hover, and disabled styles when
             overriding those states.
-          </p>
+          </Paragraph>
 
-          <h2 {...stylex.props(docsStyles.h2)} id="dark-mode">
+          <Heading as="h2" {...stylex.props(docsStyles.h2)} id="dark-mode">
             Add dark mode
-          </h2>
-          <p {...stylex.props(docsStyles.p)}>
+          </Heading>
+          <Paragraph {...stylex.props(docsStyles.p)}>
             Skip this section if your app has one fixed theme. A static light or
             dark theme needs no provider and no client script.
-          </p>
-          <p {...stylex.props(docsStyles.p)}>
+          </Paragraph>
+          <Paragraph {...stylex.props(docsStyles.p)}>
             For user-selectable light, dark, and system modes, copy these two
             files:
-          </p>
-          <div {...stylex.props(docsStyles.section)}>
+          </Paragraph>
+          <Box {...stylex.props(docsStyles.section)}>
             {themeFiles.map((file) => (
               <CopyableCode
                 key={file.path}
@@ -195,24 +197,24 @@ function Theming() {
                 title={file.target}
               />
             ))}
-          </div>
-          <p {...stylex.props(docsStyles.p)}>
+          </Box>
+          <Paragraph {...stylex.props(docsStyles.p)}>
             Add the script before hydration and wrap your app with the provider.
             This example keeps TanStack Start head and script components in
             place. Adapt only those framework-specific imports for another SSR
             framework.
-          </p>
+          </Paragraph>
           <CopyableCode code={rootSetup} title="src/routes/__root.tsx" />
-          <p {...stylex.props(docsStyles.p)}>
+          <Paragraph {...stylex.props(docsStyles.p)}>
             Add any control that calls useTheme. Use your existing Select or
             Segmented Control component in a real interface.
-          </p>
+          </Paragraph>
           <CopyableCode code={switcher} title="src/theme-picker.tsx" />
-          <p {...stylex.props(docsStyles.p)}>
+          <Paragraph {...stylex.props(docsStyles.p)}>
             ThemeScript and ThemeProvider must use matching defaults. If your
             Content Security Policy blocks inline scripts, pass the same
             per-request nonce allowed by your CSP to ThemeScript.
-          </p>
+          </Paragraph>
         </DocsBody>
       </DocsPage>
     </DocumentationLayout>

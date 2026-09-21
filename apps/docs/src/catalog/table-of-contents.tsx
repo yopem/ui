@@ -6,6 +6,9 @@ import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import { useCallback, useState } from "react"
 
+import { Box } from "@/components/ui/stylex/box"
+import { Link } from "@/components/ui/stylex/link"
+import { Paragraph } from "@/components/ui/stylex/paragraph"
 export interface TocItem {
   title: ReactNode
   url: string
@@ -50,17 +53,18 @@ export function TableOfContents({ items }: { items: TocItem[] }) {
   )
 
   return (
-    <aside
+    <Box
+      as="aside"
       aria-label="On this page"
       ref={trackSections}
       {...stylex.props(styles.root)}
     >
-      <nav aria-label="On this page">
-        <p {...stylex.props(styles.title)}>On this page</p>
-        <ul {...stylex.props(styles.list)}>
+      <Box as="nav" aria-label="On this page">
+        <Paragraph {...stylex.props(styles.title)}>On this page</Paragraph>
+        <Box as="ul" {...stylex.props(styles.list)}>
           {items.map((item) => (
-            <li key={item.url}>
-              <a
+            <Box as="li" key={item.url}>
+              <Link
                 aria-current={activeUrl === item.url ? "location" : undefined}
                 href={item.url}
                 {...stylex.props(
@@ -70,12 +74,12 @@ export function TableOfContents({ items }: { items: TocItem[] }) {
                 )}
               >
                 {item.title}
-              </a>
-            </li>
+              </Link>
+            </Box>
           ))}
-        </ul>
-      </nav>
-    </aside>
+        </Box>
+      </Box>
+    </Box>
   )
 }
 

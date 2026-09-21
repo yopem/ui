@@ -3,6 +3,8 @@ import { useTheme } from "@registry/theme/theme-provider"
 import * as stylex from "@stylexjs/stylex"
 import { MonitorIcon, MoonIcon, SunIcon } from "lucide-react"
 
+import { Box } from "@/components/ui/stylex/box"
+import { Grid } from "@/components/ui/stylex/grid"
 const themeOptions = [
   { icon: MonitorIcon, label: "Auto", value: "system" },
   { icon: SunIcon, label: "Light", value: "light" },
@@ -12,10 +14,11 @@ const themeOptions = [
 export function ThemeToggle() {
   const { theme, setTheme } = useTheme()
   return (
-    <fieldset aria-label="Appearance" {...stylex.props(styles.root)}>
-      <div {...stylex.props(styles.options)}>
+    <Box as="fieldset" aria-label="Appearance" {...stylex.props(styles.root)}>
+      <Grid {...stylex.props(styles.options)}>
         {themeOptions.map(({ icon: Icon, label, value }) => (
-          <button
+          <Box
+            as="button"
             aria-label={label}
             aria-pressed={theme === value}
             key={value}
@@ -24,10 +27,10 @@ export function ThemeToggle() {
             {...stylex.props(styles.option, theme === value && styles.active)}
           >
             <Icon aria-hidden size={14} strokeWidth={1.75} />
-          </button>
+          </Box>
         ))}
-      </div>
-    </fieldset>
+      </Grid>
+    </Box>
   )
 }
 

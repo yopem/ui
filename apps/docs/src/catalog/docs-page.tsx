@@ -4,10 +4,14 @@ import { stylexProps } from "@registry/lib/stylex"
 import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 
+import { Box } from "@/components/ui/stylex/box"
+import { Grid } from "@/components/ui/stylex/grid"
+import { Heading } from "@/components/ui/stylex/heading"
+import { Paragraph } from "@/components/ui/stylex/paragraph"
+
 import type { TocItem } from "./table-of-contents"
 
 import { TableOfContents } from "./table-of-contents"
-
 type ElementProps<T extends "div" | "h1" | "p"> = Omit<
   ComponentProps<T>,
   "style"
@@ -26,18 +30,21 @@ export function DocsPage({
   full?: boolean
 }) {
   return (
-    <div
-      {...stylexProps(className, styles.page, full && styles.full)}
+    <Grid
       {...props}
+      className={className}
+      xstyle={[styles.page, full && styles.full]}
     >
-      <article {...stylex.props(styles.article)}>{children}</article>
+      <Box as="article" {...stylex.props(styles.article)}>
+        {children}
+      </Box>
       {toc.length > 0 ? <TableOfContents items={toc} /> : null}
-    </div>
+    </Grid>
   )
 }
 
 export function DocsBody({ className, ...props }: ElementProps<"div">) {
-  return <div {...stylexProps(className, styles.body)} {...props} />
+  return <Box {...props} className={className} xstyle={styles.body} />
 }
 
 export function DocsTitle({
@@ -46,14 +53,16 @@ export function DocsTitle({
   ...props
 }: ElementProps<"h1">) {
   return (
-    <h1 {...stylexProps(className, styles.title)} {...props}>
+    <Heading as="h1" {...stylexProps(className, styles.title)} {...props}>
       {children}
-    </h1>
+    </Heading>
   )
 }
 
 export function DocsDescription({ className, ...props }: ElementProps<"p">) {
-  return <p {...stylexProps(className, styles.description)} {...props} />
+  return (
+    <Paragraph {...stylexProps(className, styles.description)} {...props} />
+  )
 }
 
 const styles = stylex.create({

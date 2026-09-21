@@ -26,8 +26,8 @@ import {
   DocsTitle,
 } from "@/catalog/docs-page"
 import { docsStyles } from "@/catalog/docs-styles"
+import { Paragraph } from "@/components/ui/stylex/paragraph"
 import { siteJsonLd } from "@/lib/seo"
-
 export const Route = createRootRoute({
   head: () => ({
     links: [{ rel: "icon", href: "/favicon.svg", type: "image/svg+xml" }],
@@ -61,11 +61,11 @@ function ErrorPage({ reset }: ErrorComponentProps) {
           <Button type="button" onClick={reset}>
             Try again
           </Button>
-          <p {...stylex.props(docsStyles.p)}>
+          <Paragraph {...stylex.props(docsStyles.p)}>
             <Link to="/" {...stylex.props(docsStyles.link)}>
               Return to documentation home
             </Link>
-          </p>
+          </Paragraph>
         </DocsBody>
       </DocsPage>
     </DocumentationLayout>

@@ -5,11 +5,14 @@ import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import { Suspense } from "react"
 
+import { Box } from "@/components/ui/stylex/box"
+import { Flex } from "@/components/ui/stylex/flex"
+import { Heading } from "@/components/ui/stylex/heading"
+
 import type { CatalogExample } from "./components"
 
 import { CopyableCode } from "./code-block"
 import { catalogStyles } from "./docs-styles"
-
 const exampleHelpers = Object.entries(
   import.meta.glob<string>("../hooks/*.ts", {
     query: "?raw",
@@ -34,19 +37,23 @@ export function ExamplePanel({
   label: string
 }) {
   return (
-    <section {...stylex.props(catalogStyles.example)}>
-      <h3 {...stylex.props(localStyles.heading)}>{label}</h3>
+    <Box as="section" {...stylex.props(catalogStyles.example)}>
+      <Heading as="h3" {...stylex.props(localStyles.heading)}>
+        {label}
+      </Heading>
       {examples.map((example) => {
         const LazyExample = example.example.component
         const exampleName =
           label === example.label ? label : `${label}: ${example.label}`
         return (
-          <div
+          <Box
             {...stylex.props(localStyles.example)}
             key={example.example.name}
           >
             {examples.length > 1 ? (
-              <h4 {...stylex.props(localStyles.value)}>{example.label}</h4>
+              <Heading as="h4" {...stylex.props(localStyles.value)}>
+                {example.label}
+              </Heading>
             ) : null}
             <ScrollArea
               {...stylex.props(catalogStyles.preview, localStyles.preview)}
@@ -54,17 +61,17 @@ export function ExamplePanel({
               clampContentMinWidth={false}
               overscrollContain
             >
-              <div {...stylex.props(catalogStyles.previewContent)}>
+              <Flex {...stylex.props(catalogStyles.previewContent)}>
                 <Suspense fallback={null}>
                   <LazyExample />
                 </Suspense>
-              </div>
+              </Flex>
             </ScrollArea>
             <ExampleSource name={exampleName} source={example.source} />
-          </div>
+          </Box>
         )
       })}
-    </section>
+    </Box>
   )
 }
 

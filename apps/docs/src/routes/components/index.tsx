@@ -12,8 +12,11 @@ import {
 } from "@/catalog/docs-page"
 import { catalogStyles } from "@/catalog/docs-styles"
 import { docsStyles } from "@/catalog/docs-styles"
+import { Box } from "@/components/ui/stylex/box"
+import { Grid } from "@/components/ui/stylex/grid"
+import { Heading } from "@/components/ui/stylex/heading"
+import { Paragraph } from "@/components/ui/stylex/paragraph"
 import { createSeo } from "@/lib/seo"
-
 export const Route = createFileRoute("/components/")({
   head: () =>
     createSeo({
@@ -45,8 +48,9 @@ function ComponentsPage() {
           the API, and copy the source into your project.
         </DocsDescription>
         <DocsBody>
-          <section {...stylex.props(docsStyles.section)}>
-            <input
+          <Box as="section" {...stylex.props(docsStyles.section)}>
+            <Box
+              as="input"
               {...stylex.props(catalogStyles.search)}
               aria-label="Search components"
               onChange={(event) => setQuery(event.target.value)}
@@ -54,8 +58,8 @@ function ComponentsPage() {
               type="search"
               value={query}
             />
-          </section>
-          <div {...stylex.props(catalogStyles.grid)}>
+          </Box>
+          <Grid {...stylex.props(catalogStyles.grid)}>
             {results.map((item) => (
               <Link
                 {...stylex.props(catalogStyles.card)}
@@ -64,19 +68,21 @@ function ComponentsPage() {
                 preload="intent"
                 to="/components/$name"
               >
-                <h2 {...stylex.props(catalogStyles.cardTitle)}>{item.title}</h2>
-                <span {...stylex.props(catalogStyles.cardCount)}>
+                <Heading as="h2" {...stylex.props(catalogStyles.cardTitle)}>
+                  {item.title}
+                </Heading>
+                <Box as="span" {...stylex.props(catalogStyles.cardCount)}>
                   {item.examples.length}{" "}
                   {item.examples.length === 1 ? "example" : "examples"}
-                </span>
+                </Box>
               </Link>
             ))}
             {results.length === 0 ? (
-              <p {...stylex.props(catalogStyles.empty)}>
+              <Paragraph {...stylex.props(catalogStyles.empty)}>
                 No components match “{query}”.
-              </p>
+              </Paragraph>
             ) : null}
-          </div>
+          </Grid>
         </DocsBody>
       </DocsPage>
     </DocumentationLayout>

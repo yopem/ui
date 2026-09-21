@@ -5,8 +5,12 @@ import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import { useState } from "react"
 
-import { CopyableCode } from "./code-block"
+import { Box } from "@/components/ui/stylex/box"
+import { Heading } from "@/components/ui/stylex/heading"
+import { Link } from "@/components/ui/stylex/link"
+import { Paragraph } from "@/components/ui/stylex/paragraph"
 
+import { CopyableCode } from "./code-block"
 function PropertiesTable({
   properties,
   label = "Prop",
@@ -21,61 +25,76 @@ function PropertiesTable({
       clampContentMinWidth={false}
       overscrollContain
     >
-      <table {...stylex.props(styles.table)}>
-        <thead>
-          <tr>
-            <th {...stylex.props(styles.th)} scope="col">
+      <Box as="table" {...stylex.props(styles.table)}>
+        <Box as="thead">
+          <Box as="tr">
+            <Box as="th" {...stylex.props(styles.th)} scope="col">
               {label}
-            </th>
-            <th {...stylex.props(styles.th)} scope="col">
+            </Box>
+            <Box as="th" {...stylex.props(styles.th)} scope="col">
               Type
-            </th>
-            <th {...stylex.props(styles.th)} scope="col">
+            </Box>
+            <Box as="th" {...stylex.props(styles.th)} scope="col">
               Default
-            </th>
-            <th {...stylex.props(styles.th)} scope="col">
+            </Box>
+            <Box as="th" {...stylex.props(styles.th)} scope="col">
               Required
-            </th>
-            <th {...stylex.props(styles.th)} scope="col">
+            </Box>
+            <Box as="th" {...stylex.props(styles.th)} scope="col">
               Description
-            </th>
-          </tr>
-        </thead>
-        <tbody>
+            </Box>
+          </Box>
+        </Box>
+        <Box as="tbody">
           {properties.map((prop) => (
-            <tr key={prop.name}>
-              <td {...stylex.props(styles.td)}>
-                <code {...stylex.props(styles.code)}>{prop.name}</code>
-              </td>
-              <td {...stylex.props(styles.td)} aria-label={`${prop.name} type`}>
+            <Box as="tr" key={prop.name}>
+              <Box as="td" {...stylex.props(styles.td)}>
+                <Box as="code" {...stylex.props(styles.code)}>
+                  {prop.name}
+                </Box>
+              </Box>
+              <Box
+                as="td"
+                {...stylex.props(styles.td)}
+                aria-label={`${prop.name} type`}
+              >
                 {prop.type.length > 140 ? (
-                  <details {...stylex.props(styles.details)}>
-                    <summary {...stylex.props(styles.summary, styles.focus)}>
-                      <code {...stylex.props(styles.code)}>
+                  <Box as="details" {...stylex.props(styles.details)}>
+                    <Box
+                      as="summary"
+                      {...stylex.props(styles.summary, styles.focus)}
+                    >
+                      <Box as="code" {...stylex.props(styles.code)}>
                         {prop.type.slice(0, 100)}…
-                      </code>
-                    </summary>
-                    <pre {...stylex.props(styles.pre)}>
-                      <code {...stylex.props(styles.code)}>{prop.type}</code>
-                    </pre>
-                  </details>
+                      </Box>
+                    </Box>
+                    <Box as="pre" {...stylex.props(styles.pre)}>
+                      <Box as="code" {...stylex.props(styles.code)}>
+                        {prop.type}
+                      </Box>
+                    </Box>
+                  </Box>
                 ) : (
-                  <code {...stylex.props(styles.code)}>{prop.type}</code>
+                  <Box as="code" {...stylex.props(styles.code)}>
+                    {prop.type}
+                  </Box>
                 )}
-              </td>
-              <td {...stylex.props(styles.td)}>
-                <code {...stylex.props(styles.code)}>
+              </Box>
+              <Box as="td" {...stylex.props(styles.td)}>
+                <Box as="code" {...stylex.props(styles.code)}>
                   {prop.default ?? "Not specified"}
-                </code>
-              </td>
-              <td {...stylex.props(styles.td)}>
+                </Box>
+              </Box>
+              <Box as="td" {...stylex.props(styles.td)}>
                 {prop.required ? "Yes" : "No"}
-              </td>
-              <td {...stylex.props(styles.td)}>{prop.description}</td>
-            </tr>
+              </Box>
+              <Box as="td" {...stylex.props(styles.td)}>
+                {prop.description}
+              </Box>
+            </Box>
           ))}
-        </tbody>
-      </table>
+        </Box>
+      </Box>
     </ScrollArea>
   )
 }
@@ -91,38 +110,42 @@ function PartReference({
   const [showSignatures, setShowSignatures] = useState(false)
   if (alias)
     return (
-      <section
+      <Box
+        as="section"
         {...stylex.props(styles.section)}
         aria-labelledby={`api-${part.name}`}
       >
-        <h3 {...stylex.props(styles.h3)} id={`api-${part.name}`}>
+        <Heading as="h3" {...stylex.props(styles.h3)} id={`api-${part.name}`}>
           {part.name}
-        </h3>
-        <p {...stylex.props(styles.p)}>
+        </Heading>
+        <Paragraph {...stylex.props(styles.p)}>
           Alias for{" "}
-          <a
+          <Link
             {...stylex.props(styles.link, styles.focus)}
             href={`#api-${alias}`}
           >
             {alias}
-          </a>
+          </Link>
           . Uses the same props and defaults.
-        </p>
-      </section>
+        </Paragraph>
+      </Box>
     )
   const specific = part.props
   return (
-    <section
+    <Box
+      as="section"
       {...stylex.props(styles.section)}
       aria-labelledby={`api-${part.name}`}
     >
-      <h3 {...stylex.props(styles.h3)} id={`api-${part.name}`}>
+      <Heading as="h3" {...stylex.props(styles.h3)} id={`api-${part.name}`}>
         {part.name}
-      </h3>
-      <p {...stylex.props(styles.p)}>{part.description}</p>
+      </Heading>
+      <Paragraph {...stylex.props(styles.p)}>{part.description}</Paragraph>
       {part.parameters.length ? (
         <>
-          <h4 {...stylex.props(styles.h4)}>Arguments</h4>
+          <Heading as="h4" {...stylex.props(styles.h4)}>
+            Arguments
+          </Heading>
           <PropertiesTable
             label="Argument"
             properties={part.parameters.map((parameter) => ({
@@ -132,12 +155,12 @@ function PartReference({
           />
           {part.parameters.map((parameter) =>
             parameter.properties.length ? (
-              <div key={parameter.name}>
-                <h4 {...stylex.props(styles.h4)}>
+              <Box key={parameter.name}>
+                <Heading as="h4" {...stylex.props(styles.h4)}>
                   {parameter.name} properties
-                </h4>
+                </Heading>
                 <PropertiesTable properties={parameter.properties} />
-              </div>
+              </Box>
             ) : null,
           )}
         </>
@@ -147,7 +170,9 @@ function PartReference({
       ) : null}
       {part.returns ? (
         <>
-          <h4 {...stylex.props(styles.h4)}>Returns</h4>
+          <Heading as="h4" {...stylex.props(styles.h4)}>
+            Returns
+          </Heading>
           <CopyableCode
             title={`${part.name} return type`}
             code={part.returns.type}
@@ -161,20 +186,23 @@ function PartReference({
         </>
       ) : null}
       {part.propVariants.length ? (
-        <details
+        <Box
+          as="details"
           {...stylex.props(styles.details)}
           onToggle={(event) => setShowVariants(event.currentTarget.open)}
         >
-          <summary {...stylex.props(styles.summary, styles.focus)}>
+          <Box as="summary" {...stylex.props(styles.summary, styles.focus)}>
             Accepted prop combinations
-          </summary>
+          </Box>
           {showVariants
             ? part.propVariants.map((variant, index) => (
-                <div key={variant.type + index}>
-                  <h4 {...stylex.props(styles.h4)}>Combination {index + 1}</h4>
-                  <p {...stylex.props(styles.p)}>
+                <Box key={variant.type + index}>
+                  <Heading as="h4" {...stylex.props(styles.h4)}>
+                    Combination {index + 1}
+                  </Heading>
+                  <Paragraph {...stylex.props(styles.p)}>
                     Required: {variant.required.join(", ") || "None"}.
-                  </p>
+                  </Paragraph>
                   <PropertiesTable
                     properties={variant.props.map((prop) => ({
                       ...part.props.find((entry) => entry.name === prop.name),
@@ -185,18 +213,19 @@ function PartReference({
                       source: part.source,
                     }))}
                   />
-                </div>
+                </Box>
               ))
             : null}
-        </details>
+        </Box>
       ) : null}
-      <details
+      <Box
+        as="details"
         {...stylex.props(styles.details)}
         onToggle={(event) => setShowSignatures(event.currentTarget.open)}
       >
-        <summary {...stylex.props(styles.summary, styles.focus)}>
+        <Box as="summary" {...stylex.props(styles.summary, styles.focus)}>
           Type signature
-        </summary>
+        </Box>
         {showSignatures
           ? part.signatures.map((signature) => (
               <CopyableCode
@@ -206,8 +235,8 @@ function PartReference({
               />
             ))
           : null}
-      </details>
-    </section>
+      </Box>
+    </Box>
   )
 }
 

@@ -6,8 +6,8 @@ import { CheckIcon, CopyIcon } from "lucide-react"
 import { lazy, Suspense, useState } from "react"
 
 import { stripStandaloneComments } from "@/catalog/source-code"
+import { Box } from "@/components/ui/stylex/box"
 import { useCopyToClipboard } from "@/hooks/use-copy-to-clipboard"
-
 const HighlightedCode = lazy(() =>
   import("./highlighted-code").then((module) => ({
     default: module.HighlightedCode,
@@ -34,7 +34,7 @@ export function CopyableCode({
     collapsible && !expanded ? codeLines.slice(0, 5).join("\n") : cleanCode
   const { copyToClipboard, copyError, isCopied } = useCopyToClipboard()
   return (
-    <div {...stylex.props(styles.root, previewRoot(preview, header))}>
+    <Box {...stylex.props(styles.root, previewRoot(preview, header))}>
       <CodeBlockControls
         header={header}
         hydrated={hydrated}
@@ -54,9 +54,9 @@ export function CopyableCode({
       >
         <Suspense
           fallback={
-            <div {...stylex.props(styles.codeContent)}>
-              <code>{visibleCode}</code>
-            </div>
+            <Box {...stylex.props(styles.codeContent)}>
+              <Box as="code">{visibleCode}</Box>
+            </Box>
           }
         >
           <HighlightedCode
@@ -67,20 +67,22 @@ export function CopyableCode({
         </Suspense>
       </ScrollArea>
       {collapsible && !expanded ? (
-        <button
+        <Box
+          as="button"
           {...stylex.props(styles.expand, styles.focus)}
           type="button"
           onClick={() => setExpanded(true)}
         >
           View code
-        </button>
+        </Box>
       ) : null}
-      <output
+      <Box
+        as="output"
         {...stylex.props(styles.status, Boolean(copyError) && styles.error)}
       >
         {copyError ?? ""}
-      </output>
-    </div>
+      </Box>
+    </Box>
   )
 }
 
@@ -102,11 +104,14 @@ function CodeBlockControls({
   title: string
 }) {
   return (
-    <div {...stylex.props(Boolean(header) && styles.header)}>
+    <Box {...stylex.props(Boolean(header) && styles.header)}>
       {header ? (
-        <code {...stylex.props(styles.headerTitle)}>{header}</code>
+        <Box as="code" {...stylex.props(styles.headerTitle)}>
+          {header}
+        </Box>
       ) : null}
-      <button
+      <Box
+        as="button"
         {...stylex.props(
           styles.copy,
           Boolean(header) && styles.headerCopy,
@@ -125,8 +130,8 @@ function CodeBlockControls({
         ) : (
           <CopyIcon {...stylex.props(styles.icon)} aria-hidden="true" />
         )}
-      </button>
-    </div>
+      </Box>
+    </Box>
   )
 }
 

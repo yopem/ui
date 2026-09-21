@@ -16,3 +16,10 @@ test("catalog discovers style props fixture and normalizes named exports before 
   expect(source).toContain(".catch(() => ({ default: UnavailableExample }))")
   expect(source).toContain('query: "?raw"')
 })
+
+test("catalog keeps public stack names and uses Paragraph for load failures", () => {
+  expect(source).toContain('if (value === "hstack") return "HStack"')
+  expect(source).toContain('if (value === "vstack") return "VStack"')
+  expect(source).toContain("Paragraph,")
+  expect(source).not.toMatch(/createElement\(\s*["']p["']/)
+})

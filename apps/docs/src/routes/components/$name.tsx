@@ -15,8 +15,11 @@ import {
 } from "@/catalog/docs-page"
 import { catalogStyles, docsStyles } from "@/catalog/docs-styles"
 import { getDocumentation } from "@/catalog/docs.functions"
+import { Box } from "@/components/ui/stylex/box"
+import { Grid } from "@/components/ui/stylex/grid"
+import { Heading } from "@/components/ui/stylex/heading"
+import { Paragraph } from "@/components/ui/stylex/paragraph"
 import { createSeo } from "@/lib/seo"
-
 export const Route = createFileRoute("/components/$name")({
   loader: ({ params }) => {
     if (!getCatalogItem(params.name)) throw notFound()
@@ -53,29 +56,36 @@ function ComponentPage() {
         <DocsTitle>{item.title}</DocsTitle>
         <DocsDescription>{data.description}</DocsDescription>
         <DocsBody>
-          <h2 {...stylex.props(docsStyles.h2)} id="overview">
+          <Heading as="h2" {...stylex.props(docsStyles.h2)} id="overview">
             Overview
-          </h2>
-          <p {...stylex.props(docsStyles.p)}>
+          </Heading>
+          <Paragraph {...stylex.props(docsStyles.p)}>
             Copy the source into your project, then import the parts you need.
             Styles use local StyleX declarations and shared theme tokens. You
             can change the source without wrapping or replacing a package.
-          </p>
-          <h2 {...stylex.props(docsStyles.h2)} id="installation">
+          </Paragraph>
+          <Heading as="h2" {...stylex.props(docsStyles.h2)} id="installation">
             Installation
-          </h2>
-          <p {...stylex.props(docsStyles.p)}>
+          </Heading>
+          <Paragraph {...stylex.props(docsStyles.p)}>
             Complete the{" "}
             <Link {...stylex.props(docsStyles.link)} to="/docs/installation">
               StyleX setup
             </Link>{" "}
             first. Copy each required file to its destination below. Shared
             files only need to be copied once. Keep the{" "}
-            <code {...stylex.props(docsStyles.inlineCode)}>@/*</code> alias
-            pointing to{" "}
-            <code {...stylex.props(docsStyles.inlineCode)}>src/*</code>.
-          </p>
-          <h3 {...stylex.props(docsStyles.h3)}>Dependencies</h3>
+            <Box as="code" {...stylex.props(docsStyles.inlineCode)}>
+              @/*
+            </Box>{" "}
+            alias pointing to{" "}
+            <Box as="code" {...stylex.props(docsStyles.inlineCode)}>
+              src/*
+            </Box>
+            .
+          </Paragraph>
+          <Heading as="h3" {...stylex.props(docsStyles.h3)}>
+            Dependencies
+          </Heading>
           <CopyableCode
             code={`npm install ${data.dependencies.join(" ")}`}
             title="Install dependencies"
@@ -86,34 +96,36 @@ function ComponentPage() {
               title="Install development dependencies"
             />
           ) : null}
-          <h4 {...stylex.props(docsStyles.h4)}>Peer dependencies</h4>
-          <ul {...stylex.props(docsStyles.ul)}>
+          <Heading as="h4" {...stylex.props(docsStyles.h4)}>
+            Peer dependencies
+          </Heading>
+          <Box as="ul" {...stylex.props(docsStyles.ul)}>
             {data.peerDependencies.map((dependency) => (
-              <li {...stylex.props(docsStyles.li)} key={dependency}>
-                <code {...stylex.props(docsStyles.inlineCode)}>
+              <Box as="li" {...stylex.props(docsStyles.li)} key={dependency}>
+                <Box as="code" {...stylex.props(docsStyles.inlineCode)}>
                   {dependency}
-                </code>
-              </li>
+                </Box>
+              </Box>
             ))}
-          </ul>
-          <p {...stylex.props(docsStyles.p)}>
+          </Box>
+          <Paragraph {...stylex.props(docsStyles.p)}>
             Included components and shared files:{" "}
             {data.requiredItems.map((entry) => entry.title).join(", ")}.
-          </p>
-          <div {...stylex.props(docsStyles.section)}>
+          </Paragraph>
+          <Box {...stylex.props(docsStyles.section)}>
             {data.files.map((file) => (
               <SourceFile file={file} key={`${name}:${file.path}`} />
             ))}
-          </div>
-          <h2 {...stylex.props(docsStyles.h2)} id="examples">
+          </Box>
+          <Heading as="h2" {...stylex.props(docsStyles.h2)} id="examples">
             Examples
-          </h2>
-          <p {...stylex.props(docsStyles.p)}>
+          </Heading>
+          <Paragraph {...stylex.props(docsStyles.p)}>
             Component-specific props and their available values. Each example
             includes its source directly.
-          </p>
+          </Paragraph>
           {data.examples.length ? (
-            <div {...stylex.props(catalogStyles.exampleList)}>
+            <Grid {...stylex.props(catalogStyles.exampleList)}>
               {data.examples.map((group) => {
                 const examples = group.examples.flatMap((example) => {
                   const catalogExample = item.examples.find(
@@ -131,32 +143,32 @@ function ComponentPage() {
                   />
                 ) : null
               })}
-            </div>
+            </Grid>
           ) : (
-            <p {...stylex.props(docsStyles.p)}>
+            <Paragraph {...stylex.props(docsStyles.p)}>
               Use the composition in Usage below to start with {item.title}.
-            </p>
+            </Paragraph>
           )}
-          <h2 {...stylex.props(docsStyles.h2)} id="usage">
+          <Heading as="h2" {...stylex.props(docsStyles.h2)} id="usage">
             Usage
-          </h2>
+          </Heading>
           {data.notes.map((note) => (
-            <p {...stylex.props(docsStyles.p)} key={note}>
+            <Paragraph {...stylex.props(docsStyles.p)} key={note}>
               {note}
-            </p>
+            </Paragraph>
           ))}
-          <p {...stylex.props(docsStyles.p)}>
+          <Paragraph {...stylex.props(docsStyles.p)}>
             Import from the destination you copied into your application.
-          </p>
+          </Paragraph>
           <CopyableCode code={data.usage} title={`${item.title} usage`} />
-          <h2 {...stylex.props(docsStyles.h2)} id="api-reference">
+          <Heading as="h2" {...stylex.props(docsStyles.h2)} id="api-reference">
             API reference
-          </h2>
-          <p {...stylex.props(docsStyles.p)}>
+          </Heading>
+          <Paragraph {...stylex.props(docsStyles.p)}>
             Generated from canonical TypeScript source. Only component and Base
             UI props appear below. Required marks a required property, not a
             required component.
-          </p>
+          </Paragraph>
           <ComponentApi key={name} parts={data.api} />
         </DocsBody>
       </DocsPage>
@@ -171,15 +183,16 @@ function ComponentApi({
 }) {
   const [open, setOpen] = useState(false)
   return (
-    <details
+    <Box
+      as="details"
       {...stylex.props(docsStyles.details)}
       onToggle={(event) => setOpen(event.currentTarget.open)}
     >
-      <summary {...stylex.props(docsStyles.summary)}>
+      <Box as="summary" {...stylex.props(docsStyles.summary)}>
         View API reference
-      </summary>
+      </Box>
       {open ? <ApiReference parts={parts} /> : null}
-    </details>
+    </Box>
   )
 }
 
