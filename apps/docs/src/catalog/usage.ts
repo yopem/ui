@@ -569,6 +569,120 @@ export default function Example() {
   )
 }
 `,
+  box: `"use client"
+
+import { Box } from "@/components/ui/box"
+
+export default function Example() {
+  return (
+    <Box as="section" p={4}>
+      Content inside a semantic Box.
+    </Box>
+  )
+}
+`,
+  flex: `"use client"
+
+import { Flex } from "@/components/ui/flex"
+
+export default function Example() {
+  return (
+    <Flex alignItems="center" gap={4}>
+      <span>First</span>
+      <span>Second</span>
+    </Flex>
+  )
+}
+`,
+  vstack: `"use client"
+
+import { VStack } from "@/components/ui/vstack"
+
+export default function Example() {
+  return (
+    <VStack>
+      <strong>Account ready</strong>
+      <span>Nothing else is needed.</span>
+    </VStack>
+  )
+}
+`,
+  hstack: `"use client"
+
+import { HStack } from "@/components/ui/hstack"
+
+export default function Example() {
+  return (
+    <HStack>
+      <span>Inbox</span>
+      <span aria-label="unread messages">3</span>
+    </HStack>
+  )
+}
+`,
+  stack: `"use client"
+
+import { Stack } from "@/components/ui/stack"
+
+export default function Example() {
+  return (
+    <Stack>
+      <strong>Project status</strong>
+      <span>All systems operational.</span>
+    </Stack>
+  )
+}
+`,
+  grid: `"use client"
+
+import { Grid } from "@/components/ui/grid"
+
+export default function Example() {
+  return (
+    <Grid gridTemplateColumns="repeat(2, minmax(0, 1fr))" gap={4}>
+      <span>Design</span>
+      <span>Engineering</span>
+    </Grid>
+  )
+}
+`,
+  center: `"use client"
+
+import { Center } from "@/components/ui/center"
+
+export default function Example() {
+  return <Center minBlockSize="8rem">Centered content</Center>
+}
+`,
+  link: `"use client"
+
+import { Link } from "@/components/ui/link"
+
+export default function Example() {
+  return <Link href="/docs">Read the documentation</Link>
+}
+`,
+  paragraph: `"use client"
+
+import { Paragraph } from "@/components/ui/paragraph"
+
+export default function Example() {
+  return <Paragraph>Keep body copy in a native paragraph.</Paragraph>
+}
+`,
+  heading: `"use client"
+
+import { Heading } from "@/components/ui/heading"
+
+export default function Example() {
+  return (
+    <>
+      <Heading as="h1">Page title</Heading>
+      <Heading>Section title</Heading>
+    </>
+  )
+}
+`,
   group: `"use client"
 
 import { Button } from "@/components/ui/button"
