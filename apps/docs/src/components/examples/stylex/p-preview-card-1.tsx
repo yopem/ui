@@ -17,7 +17,7 @@ export default function Example() {
       <PreviewCardPopup>
         <div {...stylex.props(exampleStyles.example1)}>
           <div {...stylex.props(exampleStyles.example2)}>
-            <h4 {...stylex.props(exampleStyles.example3)}>coss.com/ui</h4>
+            <h2 {...stylex.props(exampleStyles.example3)}>coss.com/ui</h2>
             <p {...stylex.props(exampleStyles.example4)}>
               Beautifully designed components that you can copy and paste into
               your apps.
