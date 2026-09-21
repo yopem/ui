@@ -11,6 +11,12 @@
     "typescript",
     "unicorn"
   ],
+  "jsPlugins": [
+    {
+      "name": "yopem-ui",
+      "specifier": "./packages/oxlint-plugin/src/index.ts"
+    }
+  ],
   "categories": {
     "correctness": "error"
   },
@@ -123,5 +129,40 @@
     "typescript/restrict-plus-operands": "error",
     "typescript/triple-slash-reference": "error"
   },
+  "overrides": [
+    {
+      "files": ["apps/docs/src/**/*.{tsx,jsx}"],
+      "rules": {
+        "yopem-ui/prefer-ui-primitives": "error"
+      }
+    },
+    {
+      "files": ["apps/docs/src/routes/__root.tsx"],
+      "rules": {
+        "yopem-ui/prefer-ui-primitives": [
+          "error",
+          {
+            "allowElements": [
+              "base",
+              "body",
+              "head",
+              "html",
+              "link",
+              "meta",
+              "script",
+              "style",
+              "title"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "files": ["apps/docs/src/lib/og.tsx"],
+      "rules": {
+        "yopem-ui/prefer-ui-primitives": "off"
+      }
+    }
+  ],
   "ignorePatterns": ["**/bun.lock", "**/AGENTS.md"]
 }

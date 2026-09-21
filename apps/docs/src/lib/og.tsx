@@ -3,6 +3,7 @@ import satori from "satori"
 
 import { brandLogoPath } from "@/lib/brand"
 
+// Satori needs intrinsic JSX and inline styles, not React components or CSS classes.
 export async function renderOgImage(
   title: string,
   description: string,

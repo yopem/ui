@@ -55,6 +55,19 @@
         "vite": "^8.2.2",
       },
     },
+    "packages/oxlint-plugin": {
+      "name": "@yopem/oxlint-plugin",
+      "devDependencies": {
+        "@types/bun": "^1.3.11",
+        "@types/node": "^26.5.1",
+        "@yopem/typescript-config": "^0.2.2",
+        "oxlint": "^1.79.0",
+        "typescript": "^7.0.2",
+      },
+      "peerDependencies": {
+        "oxlint": "^1.79.0",
+      },
+    },
     "packages/registry": {
       "name": "@yopem/registry",
       "version": "0.1.0",
@@ -534,6 +547,8 @@
     "@vitejs/plugin-react": ["@vitejs/plugin-react@6.1.0", "", { "dependencies": { "@rolldown/pluginutils": "^1.0.1" }, "peerDependencies": { "@rolldown/plugin-babel": "^0.1.7 || ^0.2.0", "babel-plugin-react-compiler": "^1.0.0", "oxc-transform-react": "^0.145.0", "vite": "^8.0.0" }, "optionalPeers": ["@rolldown/plugin-babel", "babel-plugin-react-compiler", "oxc-transform-react"] }, "sha512-qd2BzUBehkov86WFhg0JkEFEYyCLG9uPCe6qWTY/kRlss9OvJrOF2UbIWT7p+8IzZHkEu0DNGHc4HSv+JdDLsw=="],
 
     "@yopem/docs": ["@yopem/docs@workspace:apps/docs"],
+
+    "@yopem/oxlint-plugin": ["@yopem/oxlint-plugin@workspace:packages/oxlint-plugin"],
 
     "@yopem/registry": ["@yopem/registry@workspace:packages/registry"],
 
