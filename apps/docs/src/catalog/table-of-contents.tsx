@@ -15,39 +15,46 @@ export interface TocItem {
   depth: number
 }
 
+function listenForActiveSection(
+  items: TocItem[],
+  onActiveUrlChange: (url: string) => void,
+) {
+  const headings = items
+    .map((item) => document.getElementById(item.url.slice(1)))
+    .filter((heading) => heading !== null)
+  if (headings.length === 0) return
+  let frame = 0
+
+  function updateActiveSection() {
+    let activeHeading = headings[0]
+    for (const heading of headings) {
+      if (heading.getBoundingClientRect().top > 112) break
+      activeHeading = heading
+    }
+    onActiveUrlChange(`#${activeHeading.id}`)
+  }
+
+  function scheduleUpdate() {
+    cancelAnimationFrame(frame)
+    frame = requestAnimationFrame(updateActiveSection)
+  }
+
+  updateActiveSection()
+  window.addEventListener("scroll", scheduleUpdate, { passive: true })
+  window.addEventListener("resize", scheduleUpdate)
+  return () => {
+    cancelAnimationFrame(frame)
+    window.removeEventListener("scroll", scheduleUpdate)
+    window.removeEventListener("resize", scheduleUpdate)
+  }
+}
+
 export function TableOfContents({ items }: { items: TocItem[] }) {
   const [activeUrl, setActiveUrl] = useState<string>()
   const trackSections = useCallback(
     (node: HTMLElement | null) => {
       if (!node) return
-      const headings = items
-        .map((item) => document.getElementById(item.url.slice(1)))
-        .filter((heading) => heading !== null)
-      if (headings.length === 0) return
-      let frame = 0
-
-      function updateActiveSection() {
-        let activeHeading = headings[0]
-        for (const heading of headings) {
-          if (heading.getBoundingClientRect().top > 112) break
-          activeHeading = heading
-        }
-        setActiveUrl(`#${activeHeading.id}`)
-      }
-
-      function scheduleUpdate() {
-        cancelAnimationFrame(frame)
-        frame = requestAnimationFrame(updateActiveSection)
-      }
-
-      updateActiveSection()
-      window.addEventListener("scroll", scheduleUpdate, { passive: true })
-      window.addEventListener("resize", scheduleUpdate)
-      return () => {
-        cancelAnimationFrame(frame)
-        window.removeEventListener("scroll", scheduleUpdate)
-        window.removeEventListener("resize", scheduleUpdate)
-      }
+      return listenForActiveSection(items, setActiveUrl)
     },
     [items],
   )

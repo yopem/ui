@@ -19,6 +19,19 @@ import { SearchIcon } from "lucide-react"
 import { useCallback, useRef, useState } from "react"
 
 import { Box } from "@/components/ui/stylex/box"
+
+function listenForSearchShortcut(onShortcut: () => void) {
+  function onKeyDown(event: KeyboardEvent) {
+    if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
+      event.preventDefault()
+      onShortcut()
+    }
+  }
+
+  document.addEventListener("keydown", onKeyDown)
+  return () => document.removeEventListener("keydown", onKeyDown)
+}
+
 function isSearchResult(value: unknown): value is SortedResult {
   if (typeof value !== "object" || value === null) return false
   if (!("id" in value) || typeof value.id !== "string") return false
@@ -53,17 +66,12 @@ export function GlobalSearch() {
     triggerRef.current = node
     if (!node) return
 
-    function onKeyDown(event: KeyboardEvent) {
-      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
-        event.preventDefault()
-        setOpen((value) => !value)
-      }
-    }
-
-    document.addEventListener("keydown", onKeyDown)
+    const stopListening = listenForSearchShortcut(() => {
+      setOpen((value) => !value)
+    })
     return () => {
       controllerRef.current?.abort()
-      document.removeEventListener("keydown", onKeyDown)
+      stopListening()
     }
   }, [])
 

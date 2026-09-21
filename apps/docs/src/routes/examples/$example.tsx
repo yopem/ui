@@ -17,10 +17,10 @@ import {
 import { Box } from "@/components/ui/stylex/box"
 import { Heading } from "@/components/ui/stylex/heading"
 export const Route = createFileRoute("/examples/$example")({
-  ssr: false,
   validateSearch: (search) => ({
     theme: search.theme === "dark" ? ("dark" as const) : ("light" as const),
   }),
+  ssr: false,
   beforeLoad: ({ params }) => {
     if (!findExampleModule(stylexExampleModules, params.example))
       throw notFound()

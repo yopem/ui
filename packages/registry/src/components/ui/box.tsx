@@ -21,18 +21,18 @@ export type BoxProps<Tag extends BoxElement = "div"> = StyleComponentProps<
 > &
   NativeCollisionProps<Tag>
 
-export function Box<Tag extends BoxElement = "div">({
-  as,
-  xstyle: consumerXstyle,
-  className,
-  ...restProps
-}: BoxProps<Tag>) {
-  const native: {
-    size?: number
-    width?: string | number
-    height?: string | number
-    content?: string
-  } = {}
+interface NativeProps {
+  size?: number
+  width?: string | number
+  height?: string | number
+  content?: string
+}
+
+function extractNativeProps<Tag extends BoxElement>(
+  as: Tag | undefined,
+  restProps: Omit<BoxProps<Tag>, "as" | "className" | "xstyle">,
+) {
+  const native: NativeProps = {}
   if (as === "input" && "size" in restProps) {
     native.size =
       typeof restProps.size === "number" ? restProps.size : undefined
@@ -51,7 +51,16 @@ export function Box<Tag extends BoxElement = "div">({
       typeof restProps.content === "string" ? restProps.content : undefined
   }
   for (const key of Object.keys(native)) Reflect.deleteProperty(restProps, key)
+  return native
+}
 
+export function Box<Tag extends BoxElement = "div">({
+  as,
+  xstyle: consumerXstyle,
+  className,
+  ...restProps
+}: BoxProps<Tag>) {
+  const native = extractNativeProps(as, restProps)
   const { domProps, xstyle: styleProps } = splitStyleProps(restProps)
   const xstyle = [styleProps, consumerXstyle]
   const Component: React.ElementType = as ?? "div"
