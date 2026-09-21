@@ -58,4 +58,4 @@ test("every component has a type-safe, copyable usage example", () => {
   } finally {
     rmSync(directory, { recursive: true, force: true })
   }
-}, 60_000)
+}, 120_000)

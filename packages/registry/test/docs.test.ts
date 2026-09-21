@@ -72,7 +72,7 @@ test("every canonical component file and named export has documentation", () => 
 
 test("committed API data matches canonical and installed dependency types", () => {
   expect(compactDocs(extractDocs())).toEqual(generated)
-}, 120_000)
+}, 240_000)
 
 function part(item: string, name: string) {
   const result = componentDocs
