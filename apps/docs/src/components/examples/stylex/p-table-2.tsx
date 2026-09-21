@@ -1,6 +1,7 @@
 import * as stylex from "@stylexjs/stylex"
 
 import { Badge } from "@/components/ui/stylex/badge"
+import { Box } from "@/components/ui/stylex/box"
 import { Frame } from "@/components/ui/stylex/frame"
 import {
   Table,
@@ -11,7 +12,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/stylex/table"
-
 type ProjectStatus = "Paid" | "Unpaid" | "Pending" | "Failed"
 
 interface Project {
@@ -101,7 +101,8 @@ export default function Example() {
               </TableCell>
               <TableCell>
                 <Badge variant="outline">
-                  <span
+                  <Box
+                    as="span"
                     aria-hidden="true"
                     {...stylex.props(getStatusStyle(project.status))}
                   />

@@ -4,6 +4,7 @@ import * as stylex from "@stylexjs/stylex"
 import { useMemo, useState } from "react"
 
 import { Badge } from "@/components/ui/stylex/badge"
+import { Box } from "@/components/ui/stylex/box"
 import { CardFrame } from "@/components/ui/stylex/card"
 import { Checkbox } from "@/components/ui/stylex/checkbox"
 import {
@@ -21,7 +22,6 @@ import {
   getCoreRowModel,
   useReactTable,
 } from "@/lib/table-wrapper"
-
 interface Project {
   id: string
   project: string
@@ -123,9 +123,9 @@ const getColumns = (): ColumnDef<Project>[] => [
   {
     accessorKey: "project",
     cell: ({ row }) => (
-      <div {...stylex.props(exampleStyles.example1)}>
-        {row.getValue("project")}
-      </div>
+      <Box {...stylex.props(exampleStyles.example1)}>
+        {row.original.project}
+      </Box>
     ),
     header: "Project",
   },
@@ -135,7 +135,8 @@ const getColumns = (): ColumnDef<Project>[] => [
       const status = row.original.status
       return (
         <Badge variant="outline">
-          <span
+          <Box
+            as="span"
             aria-hidden="true"
             {...stylex.props(exampleStyles.statusDot, getStatusStyle(status))}
           />
@@ -154,9 +155,9 @@ const getColumns = (): ColumnDef<Project>[] => [
     cell: ({ row }) => {
       const amount = Number.parseFloat(row.getValue("budget"))
       const formatted = currencyFormatter.format(amount)
-      return <div {...stylex.props(exampleStyles.example2)}>{formatted}</div>
+      return <Box {...stylex.props(exampleStyles.example2)}>{formatted}</Box>
     },
-    header: () => <div {...stylex.props(exampleStyles.example2)}>Budget</div>,
+    header: () => <Box {...stylex.props(exampleStyles.example2)}>Budget</Box>,
   },
 ]
 

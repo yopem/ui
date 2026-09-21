@@ -11,14 +11,17 @@ import {
 import { useState } from "react"
 
 import { Badge } from "@/components/ui/stylex/badge"
+import { Box } from "@/components/ui/stylex/box"
 import { Button } from "@/components/ui/stylex/button"
 import { Checkbox } from "@/components/ui/stylex/checkbox"
+import { Flex } from "@/components/ui/stylex/flex"
 import { Frame, FrameFooter } from "@/components/ui/stylex/frame"
 import {
   Pagination,
   PaginationContent,
   PaginationItem,
 } from "@/components/ui/stylex/pagination"
+import { Paragraph } from "@/components/ui/stylex/paragraph"
 import {
   Select,
   SelectItem,
@@ -44,7 +47,6 @@ import {
   type SortingState,
   useReactTable,
 } from "@/lib/table-wrapper"
-
 interface Flight {
   id: string
   flightCode: string
@@ -100,9 +102,9 @@ const columns: ColumnDef<Flight>[] = [
   {
     accessorKey: "flightCode",
     cell: ({ row }) => (
-      <div {...stylex.props(exampleStyles.example1)}>
-        {row.getValue("flightCode")}
-      </div>
+      <Box {...stylex.props(exampleStyles.example1)}>
+        {row.original.flightCode}
+      </Box>
     ),
     header: "Flight",
     size: 80,
@@ -113,27 +115,27 @@ const columns: ColumnDef<Flight>[] = [
       const isCancelled = row.original.status === "Cancelled"
       const isDelayed = row.original.status === "Delayed"
       return (
-        <div
+        <Flex
           {...stylex.props(
             exampleStyles.time,
             isCancelled && exampleStyles.cancelledTime,
           )}
         >
-          <div {...stylex.props(isDelayed && exampleStyles.delayedTime)}>
+          <Box {...stylex.props(isDelayed && exampleStyles.delayedTime)}>
             {row.original.departureTime}
-          </div>
-          <div aria-hidden="true" {...stylex.props(exampleStyles.example2)} />
-          <div
+          </Box>
+          <Flex aria-hidden="true" {...stylex.props(exampleStyles.example2)} />
+          <Box
             {...stylex.props(
               exampleStyles.duration,
               isCancelled && exampleStyles.struck,
             )}
           >
             {row.original.duration}
-          </div>
-          <div aria-hidden="true" {...stylex.props(exampleStyles.example3)} />
-          <div>{row.original.arrivalTime}</div>
-        </div>
+          </Box>
+          <Flex aria-hidden="true" {...stylex.props(exampleStyles.example3)} />
+          <Box>{row.original.arrivalTime}</Box>
+        </Flex>
       )
     },
     header: "Time",
@@ -142,9 +144,9 @@ const columns: ColumnDef<Flight>[] = [
   {
     accessorKey: "destination",
     cell: ({ row }) => (
-      <div {...stylex.props(exampleStyles.example4)}>
-        {row.getValue("destination")}
-      </div>
+      <Box {...stylex.props(exampleStyles.example4)}>
+        {row.original.destination}
+      </Box>
     ),
     header: "Destination",
     size: 180,
@@ -155,7 +157,8 @@ const columns: ColumnDef<Flight>[] = [
       const status = row.original.status
       return (
         <Badge variant="outline">
-          <span
+          <Box
+            as="span"
             aria-hidden="true"
             {...stylex.props(exampleStyles.statusDot, getStatusStyle(status))}
           />
@@ -175,7 +178,7 @@ const columns: ColumnDef<Flight>[] = [
         variant="outline"
       >
         <PlaneTakeoffIcon {...stylex.props(exampleStyles.icon)} />
-        <span>{row.getValue("terminal")}</span>
+        <Box as="span">{row.original.terminal}</Box>
       </Badge>
     ),
     header: "Terminal",
@@ -202,7 +205,8 @@ function FlightTableHead({ header }: { header: FlightHeader }) {
         : {})}
     >
       {header.isPlaceholder ? null : header.column.getCanSort() ? (
-        <button
+        <Box
+          as="button"
           {...stylex.props(exampleStyles.example9)}
           onClick={header.column.getToggleSortingHandler()}
           onKeyDown={(event) => {
@@ -225,7 +229,7 @@ function FlightTableHead({ header }: { header: FlightHeader }) {
               {...stylex.props(exampleStyles.example10)}
             />
           ) : null}
-        </button>
+        </Box>
       ) : (
         flexRender(header.column.columnDef.header, header.getContext())
       )}
@@ -387,19 +391,21 @@ export default function Example() {
         </TableBody>
       </Table>
       <FrameFooter {...stylex.props(exampleStyles.example12)}>
-        <div {...stylex.props(exampleStyles.example13)}>
+        <Flex {...stylex.props(exampleStyles.example13)}>
           {/* Results range selector */}
-          <div {...stylex.props(exampleStyles.example14)}>
-            <p {...stylex.props(exampleStyles.example15)}>Viewing</p>
+          <Flex {...stylex.props(exampleStyles.example14)}>
+            <Paragraph {...stylex.props(exampleStyles.example15)}>
+              Viewing
+            </Paragraph>
             <PageRangeSelect table={table} />
-            <p {...stylex.props(exampleStyles.example15)}>
+            <Paragraph {...stylex.props(exampleStyles.example15)}>
               of{" "}
-              <strong {...stylex.props(exampleStyles.example16)}>
+              <Box as="strong" {...stylex.props(exampleStyles.example16)}>
                 {table.getRowCount()}
-              </strong>{" "}
+              </Box>{" "}
               results
-            </p>
-          </div>
+            </Paragraph>
+          </Flex>
 
           {/* Pagination */}
           <Pagination {...stylex.props(exampleStyles.example17)}>
@@ -408,7 +414,7 @@ export default function Example() {
               <NextPageButton table={table} />
             </PaginationContent>
           </Pagination>
-        </div>
+        </Flex>
       </FrameFooter>
     </Frame>
   )
