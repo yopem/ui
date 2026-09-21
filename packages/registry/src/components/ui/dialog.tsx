@@ -1,13 +1,14 @@
 "use client"
 
-import type { StyleXProps } from "@registry/lib/stylex"
+import type { StyleComponentProps } from "@registry/lib/style-props"
 
 import { Dialog as DialogPrimitive } from "@base-ui/react/dialog"
 import { mergeProps } from "@base-ui/react/merge-props"
 import { useRender } from "@base-ui/react/use-render"
 import { Button } from "@registry/components/ui/button"
 import { ScrollArea } from "@registry/components/ui/scroll-area"
-import { stylexProps } from "@registry/lib/stylex"
+import { splitStyleProps } from "@registry/lib/style-props"
+import { mergeStyleProps, stylexProps } from "@registry/lib/stylex"
 import { themeMarker, tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import { XIcon } from "lucide-react"
@@ -177,54 +178,94 @@ export const Dialog: typeof DialogPrimitive.Root = DialogPrimitive.Root
 export const DialogPortal: typeof DialogPrimitive.Portal =
   DialogPrimitive.Portal
 
-export function DialogTrigger(props: DialogPrimitive.Trigger.Props) {
-  return <DialogPrimitive.Trigger data-slot="dialog-trigger" {...props} />
+export function DialogTrigger({
+  xstyle: consumerXstyle,
+  className,
+  ...restProps
+}: StyleComponentProps<DialogPrimitive.Trigger.Props>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
+  return (
+    <DialogPrimitive.Trigger
+      data-slot="dialog-trigger"
+      {...mergeStyleProps(stylexProps(className, xstyle), props)}
+    />
+  )
 }
-export function DialogClose(props: DialogPrimitive.Close.Props) {
-  return <DialogPrimitive.Close data-slot="dialog-close" {...props} />
+export function DialogClose({
+  xstyle: consumerXstyle,
+  className,
+  ...restProps
+}: StyleComponentProps<DialogPrimitive.Close.Props>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
+  return (
+    <DialogPrimitive.Close
+      data-slot="dialog-close"
+      {...mergeStyleProps(stylexProps(className, xstyle), props)}
+    />
+  )
 }
 export function DialogBackdrop({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
-  ...props
-}: DialogPrimitive.Backdrop.Props & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<DialogPrimitive.Backdrop.Props>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <DialogPrimitive.Backdrop
-      {...stylexProps(className, styles.backdrop, xstyle)}
       data-slot="dialog-backdrop"
-      {...props}
+      {...mergeStyleProps(
+        stylexProps(className, styles.backdrop, xstyle),
+        props,
+      )}
     />
   )
 }
 export function DialogViewport({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
-  ...props
-}: DialogPrimitive.Viewport.Props & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<DialogPrimitive.Viewport.Props>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <DialogPrimitive.Viewport
-      {...stylexProps(className, styles.viewport, xstyle)}
       data-slot="dialog-viewport"
-      {...props}
+      {...mergeStyleProps(
+        stylexProps(className, styles.viewport, xstyle),
+        props,
+      )}
     />
   )
 }
 
 export function DialogPopup({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
   children,
   showCloseButton = true,
   bottomStickOnMobile = true,
   closeProps,
   portalProps,
-  ...props
-}: DialogPrimitive.Popup.Props & {
-  showCloseButton?: boolean
-  bottomStickOnMobile?: boolean
-  closeProps?: DialogPrimitive.Close.Props
-  portalProps?: DialogPrimitive.Portal.Props
-} & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<
+  DialogPrimitive.Popup.Props,
+  {
+    showCloseButton?: boolean
+    bottomStickOnMobile?: boolean
+    closeProps?: DialogPrimitive.Close.Props
+    portalProps?: DialogPrimitive.Portal.Props
+  }
+>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <DialogPortal {...portalProps}>
       <DialogBackdrop />
@@ -235,14 +276,16 @@ export function DialogPopup({
         }
       >
         <DialogPrimitive.Popup
-          {...stylexProps(
-            className,
-            styles.popup,
-            bottomStickOnMobile && styles.popupBottomMobile,
-            xstyle,
-          )}
           data-slot="dialog-popup"
-          {...props}
+          {...mergeStyleProps(
+            stylexProps(
+              className,
+              styles.popup,
+              bottomStickOnMobile && styles.popupBottomMobile,
+              xstyle,
+            ),
+            props,
+          )}
         >
           {children}
           {showCloseButton ? (
@@ -263,11 +306,14 @@ export function DialogPopup({
 }
 
 export function DialogHeader({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
   render,
-  ...props
-}: useRender.ComponentProps<"div"> & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<useRender.ComponentProps<"div">>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   const defaultProps = {
     ...stylexProps(className, styles.header, xstyle),
     "data-slot": "dialog-header",
@@ -280,14 +326,20 @@ export function DialogHeader({
 }
 
 export function DialogFooter({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
   variant = "default",
   render,
-  ...props
-}: useRender.ComponentProps<"div"> & {
-  variant?: "default" | "bare"
-} & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<
+  useRender.ComponentProps<"div">,
+  {
+    variant?: "default" | "bare"
+  }
+>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   const defaultProps = {
     ...stylexProps(
       className,
@@ -306,39 +358,52 @@ export function DialogFooter({
 }
 
 export function DialogTitle({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
-  ...props
-}: DialogPrimitive.Title.Props & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<DialogPrimitive.Title.Props>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <DialogPrimitive.Title
-      {...stylexProps(className, styles.title, xstyle)}
       data-slot="dialog-title"
-      {...props}
+      {...mergeStyleProps(stylexProps(className, styles.title, xstyle), props)}
     />
   )
 }
 export function DialogDescription({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
-  ...props
-}: DialogPrimitive.Description.Props & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<DialogPrimitive.Description.Props>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <DialogPrimitive.Description
-      {...stylexProps(className, styles.description, xstyle)}
       data-slot="dialog-description"
-      {...props}
+      {...mergeStyleProps(
+        stylexProps(className, styles.description, xstyle),
+        props,
+      )}
     />
   )
 }
 
 export function DialogPanel({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
   scrollFade = true,
   render,
-  ...props
-}: useRender.ComponentProps<"div"> & { scrollFade?: boolean } & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<
+  useRender.ComponentProps<"div">,
+  { scrollFade?: boolean }
+>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   const defaultProps = {
     ...stylexProps(className, styles.panel, xstyle),
     "data-slot": "dialog-panel",

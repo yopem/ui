@@ -1,9 +1,10 @@
 "use client"
 
-import type { StyleXProps } from "@registry/lib/stylex"
+import type { StyleComponentProps } from "@registry/lib/style-props"
 
 import { Slider as SliderPrimitive } from "@base-ui/react/slider"
-import { stylexProps } from "@registry/lib/stylex"
+import { splitStyleProps } from "@registry/lib/style-props"
+import { mergeStyleProps, stylexProps } from "@registry/lib/stylex"
 import { themeMarker, tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import * as React from "react"
@@ -123,15 +124,18 @@ const styles = stylex.create({
 })
 
 export function Slider({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
   children,
   defaultValue,
   value,
   min = 0,
   max = 100,
-  ...props
-}: SliderPrimitive.Root.Props & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<SliderPrimitive.Root.Props>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   const values = React.useMemo(() => {
     if (value !== undefined) return Array.isArray(value) ? value : [value]
     if (defaultValue !== undefined)
@@ -141,13 +145,12 @@ export function Slider({
   const label = props["aria-label"]
   return (
     <SliderPrimitive.Root
-      {...stylexProps(className, styles.root, xstyle)}
       defaultValue={defaultValue}
       max={max}
       min={min}
       thumbAlignment="edge"
       value={value}
-      {...props}
+      {...mergeStyleProps(stylexProps(className, styles.root, xstyle), props)}
     >
       {children}
       <SliderPrimitive.Control
@@ -179,15 +182,17 @@ export function Slider({
   )
 }
 export function SliderValue({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
-  ...props
-}: SliderPrimitive.Value.Props & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<SliderPrimitive.Value.Props>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <SliderPrimitive.Value
-      {...stylexProps(className, styles.value, xstyle)}
       data-slot="slider-value"
-      {...props}
+      {...mergeStyleProps(stylexProps(className, styles.value, xstyle), props)}
     />
   )
 }

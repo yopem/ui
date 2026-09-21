@@ -1,12 +1,13 @@
 "use client"
 
-import type { StyleXProps } from "@registry/lib/stylex"
+import type { StyleComponentProps } from "@registry/lib/style-props"
 import type * as React from "react"
 
 import { mergeProps } from "@base-ui/react/merge-props"
 import { useRender } from "@base-ui/react/use-render"
 import { type Button, buttonVariants } from "@registry/components/ui/button"
-import { stylexProps } from "@registry/lib/stylex"
+import { splitStyleProps } from "@registry/lib/style-props"
+import { mergeStyleProps, stylexProps } from "@registry/lib/stylex"
 import * as stylex from "@stylexjs/stylex"
 import { clsx } from "clsx"
 import {
@@ -63,51 +64,77 @@ const styles = stylex.create({
 })
 
 export function Pagination({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
-  ...props
-}: React.ComponentProps<"nav"> & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<React.ComponentProps<"nav">>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <nav
       aria-label="pagination"
-      {...stylexProps(className, styles.root, xstyle)}
+
       data-slot="pagination"
-      {...props}
+      {...mergeStyleProps(stylexProps(className, styles.root, xstyle), props)}
     />
   )
 }
 
 export function PaginationContent({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
-  ...props
-}: React.ComponentProps<"ul"> & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<React.ComponentProps<"ul">>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <ul
-      {...stylexProps(className, styles.content, xstyle)}
       data-slot="pagination-content"
-      {...props}
+      {...mergeStyleProps(
+        stylexProps(className, styles.content, xstyle),
+        props,
+      )}
     />
   )
 }
 
-export function PaginationItem(props: React.ComponentProps<"li">) {
-  return <li data-slot="pagination-item" {...props} />
+export function PaginationItem({
+  xstyle: consumerXstyle,
+  className,
+  ...restProps
+}: StyleComponentProps<React.ComponentProps<"li">>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
+  return (
+    <li
+      data-slot="pagination-item"
+      {...mergeStyleProps(stylexProps(className, xstyle), props)}
+    />
+  )
 }
 
-export type PaginationLinkProps = StyleXProps & {
-  isActive?: boolean
-  size?: React.ComponentProps<typeof Button>["size"]
-} & useRender.ComponentProps<"a">
+export type PaginationLinkProps = StyleComponentProps<
+  useRender.ComponentProps<"a">,
+  {
+    isActive?: boolean
+    size?: React.ComponentProps<typeof Button>["size"]
+  }
+>
 
 export function PaginationLink({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
   isActive,
   size = "icon",
   render,
-  ...props
+  ...restProps
 }: PaginationLinkProps) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   const defaultProps = {
     "aria-current": isActive ? ("page" as const) : undefined,
     ...stylexProps(undefined, xstyle),
@@ -133,10 +160,13 @@ export function PaginationLink({
 }
 
 export function PaginationPrevious({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
-  ...props
-}: React.ComponentProps<typeof PaginationLink> & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<React.ComponentProps<typeof PaginationLink>>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <PaginationLink
       aria-label="Go to previous page"
@@ -152,10 +182,13 @@ export function PaginationPrevious({
 }
 
 export function PaginationNext({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
-  ...props
-}: React.ComponentProps<typeof PaginationLink> & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<React.ComponentProps<typeof PaginationLink>>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <PaginationLink
       aria-label="Go to next page"
@@ -171,16 +204,22 @@ export function PaginationNext({
 }
 
 export function PaginationEllipsis({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
-  ...props
-}: React.ComponentProps<"span"> & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<React.ComponentProps<"span">>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <span
       aria-hidden
-      {...stylexProps(className, styles.ellipsis, xstyle)}
+
       data-slot="pagination-ellipsis"
-      {...props}
+      {...mergeStyleProps(
+        stylexProps(className, styles.ellipsis, xstyle),
+        props,
+      )}
     >
       <MoreHorizontalIcon {...stylex.props(styles.ellipsisIcon)} />
       <span {...stylex.props(styles.visuallyHidden)}>More pages</span>

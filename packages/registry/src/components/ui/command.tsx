@@ -1,6 +1,6 @@
 "use client"
 
-import type { StyleXProps } from "@registry/lib/stylex"
+import type { StyleComponentProps } from "@registry/lib/style-props"
 import type * as React from "react"
 
 import { Dialog as CommandDialogPrimitive } from "@base-ui/react/dialog"
@@ -15,7 +15,8 @@ import {
   AutocompleteList,
   AutocompleteSeparator,
 } from "@registry/components/ui/autocomplete"
-import { stylexProps } from "@registry/lib/stylex"
+import { splitStyleProps } from "@registry/lib/style-props"
+import { mergeStyleProps, stylexProps } from "@registry/lib/stylex"
 import { themeMarker, tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import { SearchIcon } from "lucide-react"
@@ -156,59 +157,82 @@ export const CommandDialogPortal: typeof CommandDialogPrimitive.Portal =
   CommandDialogPrimitive.Portal
 export const CommandCreateHandle: typeof CommandDialogPrimitive.createHandle =
   CommandDialogPrimitive.createHandle
-export function CommandDialogTrigger(
-  props: CommandDialogPrimitive.Trigger.Props,
-) {
+export function CommandDialogTrigger({
+  xstyle: consumerXstyle,
+  className,
+  ...restProps
+}: StyleComponentProps<CommandDialogPrimitive.Trigger.Props>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <CommandDialogPrimitive.Trigger
       data-slot="command-dialog-trigger"
-      {...props}
+      {...mergeStyleProps(stylexProps(className, xstyle), props)}
     />
   )
 }
 export function CommandDialogBackdrop({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
-  ...props
-}: CommandDialogPrimitive.Backdrop.Props & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<CommandDialogPrimitive.Backdrop.Props>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <CommandDialogPrimitive.Backdrop
-      {...stylexProps(className, styles.backdrop, xstyle)}
       data-slot="command-dialog-backdrop"
-      {...props}
+      {...mergeStyleProps(
+        stylexProps(className, styles.backdrop, xstyle),
+        props,
+      )}
     />
   )
 }
 export function CommandDialogViewport({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
-  ...props
-}: CommandDialogPrimitive.Viewport.Props & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<CommandDialogPrimitive.Viewport.Props>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <CommandDialogPrimitive.Viewport
-      {...stylexProps(className, styles.viewport, xstyle)}
       data-slot="command-dialog-viewport"
-      {...props}
+      {...mergeStyleProps(
+        stylexProps(className, styles.viewport, xstyle),
+        props,
+      )}
     />
   )
 }
 export function CommandDialogPopup({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
   children,
   portalProps,
-  ...props
-}: CommandDialogPrimitive.Popup.Props & {
-  portalProps?: CommandDialogPrimitive.Portal.Props
-} & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<
+  CommandDialogPrimitive.Popup.Props,
+  {
+    portalProps?: CommandDialogPrimitive.Portal.Props
+  }
+>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <CommandDialogPortal {...portalProps}>
       <CommandDialogBackdrop />
       <CommandDialogViewport>
         <CommandDialogPrimitive.Popup
-          {...stylexProps(className, styles.popup, xstyle)}
           data-slot="command-dialog-popup"
-          {...props}
+          {...mergeStyleProps(
+            stylexProps(className, styles.popup, xstyle),
+            props,
+          )}
         >
           {children}
         </CommandDialogPrimitive.Popup>
@@ -232,11 +256,14 @@ export function Command({
   )
 }
 export function CommandInput({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
   placeholder,
-  ...props
-}: React.ComponentProps<typeof AutocompleteInput> & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<React.ComponentProps<typeof AutocompleteInput>>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <div {...stylex.props(styles.inputWrap)}>
       <AutocompleteInput
@@ -253,10 +280,13 @@ export function CommandInput({
   )
 }
 export function CommandList({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
-  ...props
-}: React.ComponentProps<typeof AutocompleteList> & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<React.ComponentProps<typeof AutocompleteList>>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <AutocompleteList
       className={className}
@@ -267,10 +297,13 @@ export function CommandList({
   )
 }
 export function CommandEmpty({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
-  ...props
-}: React.ComponentProps<typeof AutocompleteEmpty> & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<React.ComponentProps<typeof AutocompleteEmpty>>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <AutocompleteEmpty
       className={className}
@@ -281,23 +314,28 @@ export function CommandEmpty({
   )
 }
 export function CommandPanel({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
-  ...props
-}: React.ComponentProps<"div"> & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<React.ComponentProps<"div">>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <div
-      {...stylexProps(className, styles.panel, xstyle)}
       data-slot="command-panel"
-      {...props}
+      {...mergeStyleProps(stylexProps(className, styles.panel, xstyle), props)}
     />
   )
 }
 export function CommandGroup({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
-  ...props
-}: React.ComponentProps<typeof AutocompleteGroup> & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<React.ComponentProps<typeof AutocompleteGroup>>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <AutocompleteGroup
       className={className}
@@ -308,10 +346,13 @@ export function CommandGroup({
   )
 }
 export function CommandGroupLabel({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
-  ...props
-}: React.ComponentProps<typeof AutocompleteGroupLabel> & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<React.ComponentProps<typeof AutocompleteGroupLabel>>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <AutocompleteGroupLabel
       className={className}
@@ -323,10 +364,13 @@ export function CommandGroupLabel({
 }
 export const CommandCollection = AutocompleteCollection
 export function CommandItem({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
-  ...props
-}: React.ComponentProps<typeof AutocompleteItem> & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<React.ComponentProps<typeof AutocompleteItem>>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <AutocompleteItem
       className={className}
@@ -337,10 +381,13 @@ export function CommandItem({
   )
 }
 export function CommandSeparator({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
-  ...props
-}: React.ComponentProps<typeof AutocompleteSeparator> & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<React.ComponentProps<typeof AutocompleteSeparator>>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <AutocompleteSeparator
       className={className}
@@ -351,28 +398,35 @@ export function CommandSeparator({
   )
 }
 export function CommandShortcut({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
-  ...props
-}: React.ComponentProps<"kbd"> & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<React.ComponentProps<"kbd">>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <kbd
-      {...stylexProps(className, styles.shortcut, xstyle)}
       data-slot="command-shortcut"
-      {...props}
+      {...mergeStyleProps(
+        stylexProps(className, styles.shortcut, xstyle),
+        props,
+      )}
     />
   )
 }
 export function CommandFooter({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
-  ...props
-}: React.ComponentProps<"div"> & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<React.ComponentProps<"div">>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <div
-      {...stylexProps(className, styles.footer, xstyle)}
       data-slot="command-footer"
-      {...props}
+      {...mergeStyleProps(stylexProps(className, styles.footer, xstyle), props)}
     />
   )
 }

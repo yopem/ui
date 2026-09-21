@@ -1,9 +1,10 @@
 "use client"
 
-import type { StyleXProps } from "@registry/lib/stylex"
+import type { StyleComponentProps } from "@registry/lib/style-props"
 
 import { Tabs as TabsPrimitive } from "@base-ui/react/tabs"
-import { stylexProps } from "@registry/lib/stylex"
+import { splitStyleProps } from "@registry/lib/style-props"
+import { mergeStyleProps, stylexProps } from "@registry/lib/stylex"
 import { themeMarker, tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import * as React from "react"
@@ -162,41 +163,51 @@ const sizeStyles = {
 } as const
 
 export function Tabs({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
-  ...props
-}: TabsPrimitive.Root.Props & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<TabsPrimitive.Root.Props>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <TabsPrimitive.Root
-      {...stylexProps(className, styles.root, xstyle)}
       data-slot="tabs"
-      {...props}
+      {...mergeStyleProps(stylexProps(className, styles.root, xstyle), props)}
     />
   )
 }
 
 export function TabsList({
-  xstyle,
+  xstyle: consumerXstyle,
   variant = "default",
   size = "default",
   className,
   children,
-  ...props
-}: TabsPrimitive.List.Props & {
-  size?: TabsSize
-  variant?: TabsVariant
-} & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<
+  TabsPrimitive.List.Props,
+  {
+    size?: TabsSize
+    variant?: TabsVariant
+  }
+>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <TabsPrimitive.List
-      {...stylexProps(
-        className,
-        styles.list,
-        variant === "default" ? styles.listDefault : styles.listUnderline,
-        xstyle,
-      )}
       data-size={size}
       data-slot="tabs-list"
-      {...props}
+      {...mergeStyleProps(
+        stylexProps(
+          className,
+          styles.list,
+          variant === "default" ? styles.listDefault : styles.listUnderline,
+          xstyle,
+        ),
+        props,
+      )}
     >
       <TabsListContext.Provider value={size}>
         {children}
@@ -215,34 +226,41 @@ export function TabsList({
 }
 
 export function TabsTab({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
   size,
-  ...props
-}: TabsPrimitive.Tab.Props & { size?: TabsSize } & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<TabsPrimitive.Tab.Props, { size?: TabsSize }>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   const contextSize = React.useContext(TabsListContext)
   const resolvedSize = size ?? contextSize
 
   return (
     <TabsPrimitive.Tab
-      {...stylexProps(className, styles.tab, sizeStyles[resolvedSize], xstyle)}
       data-size={resolvedSize}
       data-slot="tabs-tab"
-      {...props}
+      {...mergeStyleProps(
+        stylexProps(className, styles.tab, sizeStyles[resolvedSize], xstyle),
+        props,
+      )}
     />
   )
 }
 
 export function TabsPanel({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
-  ...props
-}: TabsPrimitive.Panel.Props & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<TabsPrimitive.Panel.Props>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <TabsPrimitive.Panel
-      {...stylexProps(className, styles.panel, xstyle)}
       data-slot="tabs-content"
-      {...props}
+      {...mergeStyleProps(stylexProps(className, styles.panel, xstyle), props)}
     />
   )
 }

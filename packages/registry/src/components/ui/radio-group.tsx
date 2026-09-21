@@ -1,10 +1,11 @@
 "use client"
 
-import type { StyleXProps } from "@registry/lib/stylex"
+import type { StyleComponentProps } from "@registry/lib/style-props"
 
 import { Radio as RadioPrimitive } from "@base-ui/react/radio"
 import { RadioGroup as RadioGroupPrimitive } from "@base-ui/react/radio-group"
-import { stylexProps } from "@registry/lib/stylex"
+import { splitStyleProps } from "@registry/lib/style-props"
+import { mergeStyleProps, stylexProps } from "@registry/lib/stylex"
 import { themeMarker, tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 
@@ -67,28 +68,32 @@ const styles = stylex.create({
 })
 
 export function RadioGroup({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
-  ...props
-}: RadioGroupPrimitive.Props & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<RadioGroupPrimitive.Props>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <RadioGroupPrimitive
-      {...stylexProps(className, styles.group, xstyle)}
       data-slot="radio-group"
-      {...props}
+      {...mergeStyleProps(stylexProps(className, styles.group, xstyle), props)}
     />
   )
 }
 export function Radio({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
-  ...props
-}: RadioPrimitive.Root.Props & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<RadioPrimitive.Root.Props>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <RadioPrimitive.Root
-      {...stylexProps(className, styles.radio, xstyle)}
       data-slot="radio"
-      {...props}
+      {...mergeStyleProps(stylexProps(className, styles.radio, xstyle), props)}
     >
       <RadioPrimitive.Indicator
         {...stylex.props(styles.indicator)}

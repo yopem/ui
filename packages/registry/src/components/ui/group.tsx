@@ -2,13 +2,14 @@
 
 // oxlint-disable jsx-a11y/prefer-tag-over-role -- Button group uses div+role=group for styling; fieldset not appropriate
 
-import type { StyleXProps } from "@registry/lib/stylex"
+import type { StyleComponentProps } from "@registry/lib/style-props"
 import type * as React from "react"
 
 import { mergeProps } from "@base-ui/react/merge-props"
 import { useRender } from "@base-ui/react/use-render"
 import { Separator } from "@registry/components/ui/separator"
-import { stylexProps } from "@registry/lib/stylex"
+import { splitStyleProps } from "@registry/lib/style-props"
+import { mergeStyleProps, stylexProps } from "@registry/lib/stylex"
 import { themeMarker, tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import { clsx } from "clsx"
@@ -342,29 +343,36 @@ export function groupVariants({
 }
 
 export function Group({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
   orientation = "horizontal",
   children,
-  ...props
-}: {
-  className?: string
-  orientation?: keyof typeof orientationStyles
-  children: React.ReactNode
-} & React.ComponentProps<"div"> &
-  StyleXProps) {
+  ...restProps
+}: StyleComponentProps<
+  React.ComponentProps<"div">,
+  {
+    className?: string
+    orientation?: keyof typeof orientationStyles
+    children: React.ReactNode
+  }
+>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <div
-      {...stylexProps(
-        className,
-        styles.root,
-        orientationStyles[orientation],
-        xstyle,
-      )}
       data-orientation={orientation}
       data-slot="group"
       role="group"
-      {...props}
+      {...mergeStyleProps(
+        stylexProps(
+          className,
+          styles.root,
+          orientationStyles[orientation],
+          xstyle,
+        ),
+        props,
+      )}
     >
       {children}
     </div>
@@ -372,11 +380,14 @@ export function Group({
 }
 
 export function GroupText({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
   render,
-  ...props
-}: useRender.ComponentProps<"div"> & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<useRender.ComponentProps<"div">>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   const defaultProps = {
     ...stylexProps(className, styles.text, groupItemStyles.item, xstyle),
     "data-slot": "group-text",
@@ -389,11 +400,14 @@ export function GroupText({
 }
 
 export function GroupSeparator({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
   orientation = "vertical",
-  ...props
-}: React.ComponentProps<typeof Separator> & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<React.ComponentProps<typeof Separator>>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <Separator
       className={className}

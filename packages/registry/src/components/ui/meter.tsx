@@ -1,9 +1,10 @@
 "use client"
 
-import type { StyleXProps } from "@registry/lib/stylex"
+import type { StyleComponentProps } from "@registry/lib/style-props"
 
 import { Meter as MeterPrimitive } from "@base-ui/react/meter"
-import { stylexProps } from "@registry/lib/stylex"
+import { splitStyleProps } from "@registry/lib/style-props"
+import { mergeStyleProps, stylexProps } from "@registry/lib/stylex"
 import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 
@@ -39,15 +40,17 @@ const styles = stylex.create({
 })
 
 export function Meter({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
   children,
-  ...props
-}: MeterPrimitive.Root.Props & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<MeterPrimitive.Root.Props>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <MeterPrimitive.Root
-      {...stylexProps(className, styles.root, xstyle)}
-      {...props}
+      {...mergeStyleProps(stylexProps(className, styles.root, xstyle), props)}
     >
       {children ?? (
         <MeterTrack>
@@ -58,54 +61,65 @@ export function Meter({
   )
 }
 export function MeterLabel({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
-  ...props
-}: MeterPrimitive.Label.Props & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<MeterPrimitive.Label.Props>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <MeterPrimitive.Label
-      {...stylexProps(className, styles.label, xstyle)}
       data-slot="meter-label"
-      {...props}
+      {...mergeStyleProps(stylexProps(className, styles.label, xstyle), props)}
     />
   )
 }
 export function MeterTrack({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
-  ...props
-}: MeterPrimitive.Track.Props & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<MeterPrimitive.Track.Props>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <MeterPrimitive.Track
-      {...stylexProps(className, styles.track, xstyle)}
       data-slot="meter-track"
-      {...props}
+      {...mergeStyleProps(stylexProps(className, styles.track, xstyle), props)}
     />
   )
 }
 export function MeterIndicator({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
-  ...props
-}: MeterPrimitive.Indicator.Props & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<MeterPrimitive.Indicator.Props>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <MeterPrimitive.Indicator
-      {...stylexProps(className, styles.indicator, xstyle)}
       data-slot="meter-indicator"
-      {...props}
+      {...mergeStyleProps(
+        stylexProps(className, styles.indicator, xstyle),
+        props,
+      )}
     />
   )
 }
 export function MeterValue({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
-  ...props
-}: MeterPrimitive.Value.Props & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<MeterPrimitive.Value.Props>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <MeterPrimitive.Value
-      {...stylexProps(className, styles.value, xstyle)}
       data-slot="meter-value"
-      {...props}
+      {...mergeStyleProps(stylexProps(className, styles.value, xstyle), props)}
     />
   )
 }

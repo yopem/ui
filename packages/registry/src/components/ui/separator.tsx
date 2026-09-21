@@ -1,7 +1,8 @@
-import type { StyleXProps } from "@registry/lib/stylex"
+import type { StyleComponentProps } from "@registry/lib/style-props"
 
 import { Separator as SeparatorPrimitive } from "@base-ui/react/separator"
-import { stylexProps } from "@registry/lib/stylex"
+import { splitStyleProps } from "@registry/lib/style-props"
+import { mergeStyleProps, stylexProps } from "@registry/lib/stylex"
 import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 
@@ -15,22 +16,27 @@ const styles = stylex.create({
 })
 
 export function Separator({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
   orientation = "horizontal",
-  ...props
-}: SeparatorPrimitive.Props & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<SeparatorPrimitive.Props>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <SeparatorPrimitive
-      {...stylexProps(
-        className,
-        styles.root,
-        orientation === "horizontal" ? styles.horizontal : styles.vertical,
-        xstyle,
-      )}
       data-slot="separator"
       orientation={orientation}
-      {...props}
+      {...mergeStyleProps(
+        stylexProps(
+          className,
+          styles.root,
+          orientation === "horizontal" ? styles.horizontal : styles.vertical,
+          xstyle,
+        ),
+        props,
+      )}
     />
   )
 }

@@ -1,9 +1,10 @@
 "use client"
 
-import type { StyleXProps } from "@registry/lib/stylex"
+import type { StyleComponentProps } from "@registry/lib/style-props"
 
 import { mergeProps } from "@base-ui/react/merge-props"
 import { useRender } from "@base-ui/react/use-render"
+import { splitStyleProps } from "@registry/lib/style-props"
 import { stylexProps } from "@registry/lib/stylex"
 import { themeMarker, tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
@@ -171,11 +172,14 @@ const styles = stylex.create({
 })
 
 export function Card({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
   render,
-  ...props
-}: useRender.ComponentProps<"div"> & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<useRender.ComponentProps<"div">>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   const defaultProps = {
     ...stylexProps(className, styles.card, xstyle),
     "data-slot": "card",
@@ -187,11 +191,14 @@ export function Card({
   })
 }
 export function CardFrame({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
   render,
-  ...props
-}: useRender.ComponentProps<"div"> & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<useRender.ComponentProps<"div">>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   const defaultProps = {
     ...stylexProps(className, styles.frame, xstyle),
     "data-slot": "card-frame",
@@ -203,11 +210,14 @@ export function CardFrame({
   })
 }
 export function CardFrameHeader({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
   render,
-  ...props
-}: useRender.ComponentProps<"div"> & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<useRender.ComponentProps<"div">>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   const defaultProps = {
     ...stylexProps(className, styles.frameHeader, xstyle),
     "data-slot": "card-frame-header",
@@ -219,11 +229,14 @@ export function CardFrameHeader({
   })
 }
 export function CardFrameTitle({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
   render,
-  ...props
-}: useRender.ComponentProps<"div"> & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<useRender.ComponentProps<"div">>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   const defaultProps = {
     ...stylexProps(className, styles.frameTitle, xstyle),
     "data-slot": "card-frame-title",
@@ -235,11 +248,14 @@ export function CardFrameTitle({
   })
 }
 export function CardFrameDescription({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
   render,
-  ...props
-}: useRender.ComponentProps<"div"> & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<useRender.ComponentProps<"div">>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   const defaultProps = {
     ...stylexProps(className, styles.frameDescription, xstyle),
     "data-slot": "card-frame-description",
@@ -251,11 +267,14 @@ export function CardFrameDescription({
   })
 }
 export function CardFrameAction({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
   render,
-  ...props
-}: useRender.ComponentProps<"div"> & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<useRender.ComponentProps<"div">>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   const defaultProps = {
     ...stylexProps(className, styles.frameAction, xstyle),
     "data-slot": "card-frame-action",
@@ -267,11 +286,14 @@ export function CardFrameAction({
   })
 }
 export function CardFrameFooter({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
   render,
-  ...props
-}: useRender.ComponentProps<"div"> & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<useRender.ComponentProps<"div">>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   const defaultProps = {
     ...stylexProps(className, styles.frameFooter, xstyle),
     "data-slot": "card-frame-footer",
@@ -283,12 +305,18 @@ export function CardFrameFooter({
   })
 }
 export function CardHeader({
-  xstyle,
+  xstyle: consumerXstyle,
   separator = false,
   className,
   render,
-  ...props
-}: useRender.ComponentProps<"div"> & StyleXProps & { separator?: boolean }) {
+  ...restProps
+}: StyleComponentProps<
+  useRender.ComponentProps<"div">,
+  { separator?: boolean }
+>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   const defaultProps = {
     ...stylexProps(
       className,
@@ -306,11 +334,14 @@ export function CardHeader({
   })
 }
 export function CardTitle({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
   render,
-  ...props
-}: useRender.ComponentProps<"div"> & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<useRender.ComponentProps<"div">>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   const defaultProps = {
     ...stylexProps(className, styles.title, xstyle),
     "data-slot": "card-title",
@@ -322,11 +353,14 @@ export function CardTitle({
   })
 }
 export function CardDescription({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
   render,
-  ...props
-}: useRender.ComponentProps<"div"> & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<useRender.ComponentProps<"div">>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   const defaultProps = {
     ...stylexProps(className, styles.description, xstyle),
     "data-slot": "card-description",
@@ -338,11 +372,14 @@ export function CardDescription({
   })
 }
 export function CardAction({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
   render,
-  ...props
-}: useRender.ComponentProps<"div"> & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<useRender.ComponentProps<"div">>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   const defaultProps = {
     ...stylexProps(className, styles.action, xstyle),
     "data-slot": "card-action",
@@ -354,11 +391,14 @@ export function CardAction({
   })
 }
 export function CardPanel({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
   render,
-  ...props
-}: useRender.ComponentProps<"div"> & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<useRender.ComponentProps<"div">>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   const defaultProps = {
     ...stylexProps(className, styles.panel, xstyle),
     "data-slot": "card-panel",
@@ -370,12 +410,18 @@ export function CardPanel({
   })
 }
 export function CardFooter({
-  xstyle,
+  xstyle: consumerXstyle,
   separator = false,
   className,
   render,
-  ...props
-}: useRender.ComponentProps<"div"> & StyleXProps & { separator?: boolean }) {
+  ...restProps
+}: StyleComponentProps<
+  useRender.ComponentProps<"div">,
+  { separator?: boolean }
+>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   const defaultProps = {
     ...stylexProps(
       className,

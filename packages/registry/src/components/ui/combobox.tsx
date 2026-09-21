@@ -1,11 +1,12 @@
 "use client"
 
-import type { StyleXProps } from "@registry/lib/stylex"
+import type { StyleComponentProps } from "@registry/lib/style-props"
 
 import { Combobox as ComboboxPrimitive } from "@base-ui/react/combobox"
 import { Input } from "@registry/components/ui/input"
 import { ScrollArea } from "@registry/components/ui/scroll-area"
-import { stylexProps } from "@registry/lib/stylex"
+import { splitStyleProps } from "@registry/lib/style-props"
+import { mergeStyleProps, stylexProps } from "@registry/lib/stylex"
 import { themeMarker, tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import { ChevronsUpDownIcon, XIcon } from "lucide-react"
@@ -326,29 +327,41 @@ export function Combobox<Value, Multiple extends boolean | undefined = false>(
   )
 }
 
-type ComboboxInputProps = StyleXProps &
-  Omit<ComboboxPrimitive.Input.Props, "ref" | "size"> & {
+type ComboboxInputProps = StyleComponentProps<
+  Omit<ComboboxPrimitive.Input.Props, "ref" | "size">,
+  {
     size?: "sm" | "default" | "lg" | number
   }
+>
 
 export const ComboboxChipsInput = React.forwardRef<
   HTMLInputElement,
   ComboboxInputProps
->(function ComboboxChipsInput({ xstyle, className, size, ...props }, ref) {
+>(function ComboboxChipsInput(
+  { xstyle: consumerXstyle, className, size, ...restProps },
+  ref,
+) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   const sizeValue = size ?? "default"
   return (
     <ComboboxPrimitive.Input
-      {...stylexProps(
-        className,
-        styles.chipsInput,
-        sizeValue === "sm" ? styles.chipsInputSmall : styles.chipsInputDefault,
-        xstyle,
-      )}
       data-size={typeof sizeValue === "string" ? sizeValue : undefined}
       data-slot="combobox-chips-input"
       ref={ref}
       size={typeof sizeValue === "number" ? sizeValue : undefined}
-      {...props}
+      {...mergeStyleProps(
+        stylexProps(
+          className,
+          styles.chipsInput,
+          sizeValue === "sm"
+            ? styles.chipsInputSmall
+            : styles.chipsInputDefault,
+          xstyle,
+        ),
+        props,
+      )}
     />
   )
 })
@@ -366,7 +379,7 @@ export const ComboboxInput = React.forwardRef<
   ComboboxControlInputProps
 >(function ComboboxInput(
   {
-    xstyle,
+    xstyle: consumerXstyle,
     className,
     showTrigger = true,
     showClear = false,
@@ -374,10 +387,13 @@ export const ComboboxInput = React.forwardRef<
     size,
     triggerProps,
     clearProps,
-    ...props
+    ...restProps
   },
   ref,
 ) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   const sizeValue = size ?? "default"
   return (
     <ComboboxPrimitive.InputGroup
@@ -436,17 +452,23 @@ export const ComboboxInput = React.forwardRef<
   )
 })
 export function ComboboxTrigger({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
   children,
-  ...props
-}: ComboboxPrimitive.Trigger.Props & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<ComboboxPrimitive.Trigger.Props>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <ComboboxPrimitive.Trigger
       aria-label={props["aria-label"] ?? "Toggle suggestions"}
-      {...stylexProps(className, styles.trigger, xstyle)}
+
       data-slot="combobox-trigger"
-      {...props}
+      {...mergeStyleProps(
+        stylexProps(className, styles.trigger, xstyle),
+        props,
+      )}
     >
       {children}
     </ComboboxPrimitive.Trigger>
@@ -454,7 +476,7 @@ export function ComboboxTrigger({
 }
 
 export function ComboboxPopup({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
   children,
   side = "bottom",
@@ -463,15 +485,21 @@ export function ComboboxPopup({
   align = "start",
   anchor: anchorProp,
   portalProps,
-  ...props
-}: ComboboxPrimitive.Popup.Props & {
-  align?: ComboboxPrimitive.Positioner.Props["align"]
-  sideOffset?: ComboboxPrimitive.Positioner.Props["sideOffset"]
-  alignOffset?: ComboboxPrimitive.Positioner.Props["alignOffset"]
-  side?: ComboboxPrimitive.Positioner.Props["side"]
-  anchor?: ComboboxPrimitive.Positioner.Props["anchor"]
-  portalProps?: ComboboxPrimitive.Portal.Props
-} & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<
+  ComboboxPrimitive.Popup.Props,
+  {
+    align?: ComboboxPrimitive.Positioner.Props["align"]
+    sideOffset?: ComboboxPrimitive.Positioner.Props["sideOffset"]
+    alignOffset?: ComboboxPrimitive.Positioner.Props["alignOffset"]
+    side?: ComboboxPrimitive.Positioner.Props["side"]
+    anchor?: ComboboxPrimitive.Positioner.Props["anchor"]
+    portalProps?: ComboboxPrimitive.Portal.Props
+  }
+>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   const { chipsRef } = React.useContext(ComboboxContext)
   const anchor = anchorProp ?? chipsRef
   return (
@@ -492,13 +520,15 @@ export function ComboboxPopup({
           )}
         >
           <ComboboxPrimitive.Popup
-            {...stylexProps(
-              typeof className === "function" ? className : undefined,
-              styles.popup,
-              xstyle,
-            )}
             data-slot="combobox-popup"
-            {...props}
+            {...mergeStyleProps(
+              stylexProps(
+                typeof className === "function" ? className : undefined,
+                styles.popup,
+                xstyle,
+              ),
+              props,
+            )}
           >
             {children}
           </ComboboxPrimitive.Popup>
@@ -508,16 +538,18 @@ export function ComboboxPopup({
   )
 }
 export function ComboboxItem({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
   children,
-  ...props
-}: ComboboxPrimitive.Item.Props & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<ComboboxPrimitive.Item.Props>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <ComboboxPrimitive.Item
-      {...stylexProps(className, styles.item, xstyle)}
       data-slot="combobox-item"
-      {...props}
+      {...mergeStyleProps(stylexProps(className, styles.item, xstyle), props)}
     >
       <ComboboxPrimitive.ItemIndicator {...stylex.props(styles.firstColumn)}>
         <svg
@@ -541,110 +573,132 @@ export function ComboboxItem({
   )
 }
 export function ComboboxSeparator({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
-  ...props
-}: ComboboxPrimitive.Separator.Props & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<ComboboxPrimitive.Separator.Props>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <ComboboxPrimitive.Separator
-      {...stylexProps(className, styles.separator, xstyle)}
       data-slot="combobox-separator"
-      {...props}
+      {...mergeStyleProps(
+        stylexProps(className, styles.separator, xstyle),
+        props,
+      )}
     />
   )
 }
 export function ComboboxGroup({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
-  ...props
-}: ComboboxPrimitive.Group.Props & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<ComboboxPrimitive.Group.Props>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <ComboboxPrimitive.Group
-      {...stylexProps(className, styles.group, xstyle)}
       data-slot="combobox-group"
-      {...props}
+      {...mergeStyleProps(stylexProps(className, styles.group, xstyle), props)}
     />
   )
 }
 export function ComboboxGroupLabel({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
-  ...props
-}: ComboboxPrimitive.GroupLabel.Props & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<ComboboxPrimitive.GroupLabel.Props>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <ComboboxPrimitive.GroupLabel
-      {...stylexProps(className, styles.groupLabel, xstyle)}
       data-slot="combobox-group-label"
-      {...props}
+      {...mergeStyleProps(
+        stylexProps(className, styles.groupLabel, xstyle),
+        props,
+      )}
     />
   )
 }
 export function ComboboxEmpty({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
-  ...props
-}: ComboboxPrimitive.Empty.Props & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<ComboboxPrimitive.Empty.Props>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <ComboboxPrimitive.Empty
-      {...stylexProps(className, styles.empty, xstyle)}
       data-slot="combobox-empty"
-      {...props}
+      {...mergeStyleProps(stylexProps(className, styles.empty, xstyle), props)}
     />
   )
 }
 export function ComboboxRow({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
-  ...props
-}: ComboboxPrimitive.Row.Props & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<ComboboxPrimitive.Row.Props>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <ComboboxPrimitive.Row
-      {...stylexProps(className, xstyle)}
       data-slot="combobox-row"
-      {...props}
+      {...mergeStyleProps(stylexProps(className, xstyle), props)}
     />
   )
 }
 export const ComboboxValue: typeof ComboboxPrimitive.Value =
   ComboboxPrimitive.Value
 export function ComboboxList({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
-  ...props
-}: ComboboxPrimitive.List.Props & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<ComboboxPrimitive.List.Props>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <ScrollArea overscrollContain scrollbarGutter scrollFade>
       <ComboboxPrimitive.List
-        {...stylexProps(className, styles.list, xstyle)}
         data-slot="combobox-list"
-        {...props}
+        {...mergeStyleProps(stylexProps(className, styles.list, xstyle), props)}
       />
     </ScrollArea>
   )
 }
 export function ComboboxClear({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
-  ...props
-}: ComboboxPrimitive.Clear.Props & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<ComboboxPrimitive.Clear.Props>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <ComboboxPrimitive.Clear
-      {...stylexProps(className, xstyle)}
       data-slot="combobox-clear"
-      {...props}
+      {...mergeStyleProps(stylexProps(className, xstyle), props)}
     />
   )
 }
 export function ComboboxStatus({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
-  ...props
-}: ComboboxPrimitive.Status.Props & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<ComboboxPrimitive.Status.Props>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <ComboboxPrimitive.Status
-      {...stylexProps(className, styles.status, xstyle)}
       data-slot="combobox-status"
-      {...props}
+      {...mergeStyleProps(stylexProps(className, styles.status, xstyle), props)}
     />
   )
 }
@@ -652,21 +706,26 @@ export const ComboboxCollection: typeof ComboboxPrimitive.Collection =
   ComboboxPrimitive.Collection
 
 export function ComboboxChips({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
   children,
   startAddon,
-  ...props
-}: ComboboxPrimitive.Chips.Props & {
-  startAddon?: React.ReactNode
-} & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<
+  ComboboxPrimitive.Chips.Props,
+  {
+    startAddon?: React.ReactNode
+  }
+>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   const { chipsRef } = React.useContext(ComboboxContext)
   return (
     <ComboboxPrimitive.Chips
-      {...stylexProps(className, styles.chips, xstyle)}
       data-slot="combobox-chips"
       ref={chipsRef as React.Ref<HTMLDivElement> | null}
-      {...props}
+      {...mergeStyleProps(stylexProps(className, styles.chips, xstyle), props)}
     >
       {startAddon ? (
         <div
@@ -683,18 +742,23 @@ export function ComboboxChips({
 }
 export function ComboboxChip({
   className,
-  xstyle,
+  xstyle: consumerXstyle,
   children,
   removeProps,
-  ...props
-}: ComboboxPrimitive.Chip.Props & {
-  removeProps?: ComboboxPrimitive.ChipRemove.Props
-} & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<
+  ComboboxPrimitive.Chip.Props,
+  {
+    removeProps?: ComboboxPrimitive.ChipRemove.Props
+  }
+>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <ComboboxPrimitive.Chip
-      {...stylexProps(className, styles.chip, xstyle)}
       data-slot="combobox-chip"
-      {...props}
+      {...mergeStyleProps(stylexProps(className, styles.chip, xstyle), props)}
     >
       {children}
       <ComboboxChipRemove {...removeProps} />
@@ -703,15 +767,21 @@ export function ComboboxChip({
 }
 export function ComboboxChipRemove({
   className,
-  xstyle,
-  ...props
-}: ComboboxPrimitive.ChipRemove.Props & StyleXProps) {
+  xstyle: consumerXstyle,
+  ...restProps
+}: StyleComponentProps<ComboboxPrimitive.ChipRemove.Props>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <ComboboxPrimitive.ChipRemove
       aria-label="Remove"
-      {...stylexProps(className, styles.chipRemove, xstyle)}
+
       data-slot="combobox-chip-remove"
-      {...props}
+      {...mergeStyleProps(
+        stylexProps(className, styles.chipRemove, xstyle),
+        props,
+      )}
     >
       <XIcon {...stylex.props(comboboxSlotStyles.icon)} />
     </ComboboxPrimitive.ChipRemove>

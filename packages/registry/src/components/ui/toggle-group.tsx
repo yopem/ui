@@ -1,7 +1,7 @@
 "use client"
 
 import type { Toggle as TogglePrimitive } from "@base-ui/react/toggle"
-import type { StyleXProps } from "@registry/lib/stylex"
+import type { StyleComponentProps } from "@registry/lib/style-props"
 
 import { ToggleGroup as ToggleGroupPrimitive } from "@base-ui/react/toggle-group"
 import { Separator } from "@registry/components/ui/separator"
@@ -9,7 +9,8 @@ import {
   Toggle as ToggleComponent,
   type ToggleVariantProps,
 } from "@registry/components/ui/toggle"
-import { stylexProps } from "@registry/lib/stylex"
+import { splitStyleProps } from "@registry/lib/style-props"
+import { mergeStyleProps, stylexProps } from "@registry/lib/stylex"
 import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import * as React from "react"
@@ -34,31 +35,36 @@ export const ToggleGroupContext: React.Context<ToggleVariantProps> =
   })
 
 export function ToggleGroup({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
   variant = "default",
   size = "default",
   orientation = "horizontal",
   children,
-  ...props
-}: ToggleGroupPrimitive.Props &
-  Omit<ToggleVariantProps, "className"> &
-  StyleXProps) {
+  ...restProps
+}: StyleComponentProps<
+  ToggleGroupPrimitive.Props & Omit<ToggleVariantProps, "className">
+>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   const contextValue = React.useMemo(() => ({ size, variant }), [size, variant])
   return (
     <ToggleGroupPrimitive
-      {...stylexProps(
-        className,
-        styles.root,
-        orientation === "horizontal" ? styles.horizontal : styles.vertical,
-        variant === "default" ? styles.default : styles.outline,
-        xstyle,
-      )}
       data-size={size}
       data-slot="toggle-group"
       data-variant={variant}
       orientation={orientation}
-      {...props}
+      {...mergeStyleProps(
+        stylexProps(
+          className,
+          styles.root,
+          orientation === "horizontal" ? styles.horizontal : styles.vertical,
+          variant === "default" ? styles.default : styles.outline,
+          xstyle,
+        ),
+        props,
+      )}
     >
       <ToggleGroupContext.Provider value={contextValue}>
         {children}
@@ -68,15 +74,18 @@ export function ToggleGroup({
 }
 
 export function ToggleGroupItem({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
   children,
   variant,
   size,
-  ...props
-}: TogglePrimitive.Props &
-  Omit<ToggleVariantProps, "className"> &
-  StyleXProps) {
+  ...restProps
+}: StyleComponentProps<
+  TogglePrimitive.Props & Omit<ToggleVariantProps, "className">
+>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   const context = React.useContext(ToggleGroupContext)
   const resolvedVariant = context.variant || variant
   const resolvedSize = context.size || size
@@ -96,11 +105,14 @@ export function ToggleGroupItem({
 }
 
 export function ToggleGroupSeparator({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
   orientation = "vertical",
-  ...props
-}: React.ComponentProps<typeof Separator> & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<React.ComponentProps<typeof Separator>>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <Separator
       className={className}

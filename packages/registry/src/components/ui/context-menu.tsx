@@ -1,10 +1,11 @@
 "use client"
 
-import type { StyleXProps } from "@registry/lib/stylex"
+import type { StyleComponentProps } from "@registry/lib/style-props"
 import type * as React from "react"
 
 import { ContextMenu as ContextMenuPrimitive } from "@base-ui/react/context-menu"
-import { stylexProps } from "@registry/lib/stylex"
+import { splitStyleProps } from "@registry/lib/style-props"
+import { mergeStyleProps, stylexProps } from "@registry/lib/stylex"
 import { themeMarker, tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import { ChevronRightIcon } from "lucide-react"
@@ -218,17 +219,19 @@ export const ContextMenuPortal: typeof ContextMenuPrimitive.Portal =
   ContextMenuPrimitive.Portal
 
 export function ContextMenuTrigger({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
   children,
-  ...props
-}: ContextMenuPrimitive.Trigger.Props & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<ContextMenuPrimitive.Trigger.Props>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <ContextMenuPrimitive.Trigger
-      {...stylexProps(className, xstyle)}
       data-slot="context-menu-trigger"
       tabIndex={0}
-      {...props}
+      {...mergeStyleProps(stylexProps(className, xstyle), props)}
     >
       {children}
     </ContextMenuPrimitive.Trigger>
@@ -236,7 +239,7 @@ export function ContextMenuTrigger({
 }
 
 export function ContextMenuPopup({
-  xstyle,
+  xstyle: consumerXstyle,
   children,
   className,
   sideOffset = 4,
@@ -245,15 +248,21 @@ export function ContextMenuPopup({
   side = "bottom",
   anchor,
   portalProps,
-  ...props
-}: ContextMenuPrimitive.Popup.Props & {
-  align?: ContextMenuPrimitive.Positioner.Props["align"]
-  sideOffset?: ContextMenuPrimitive.Positioner.Props["sideOffset"]
-  alignOffset?: ContextMenuPrimitive.Positioner.Props["alignOffset"]
-  side?: ContextMenuPrimitive.Positioner.Props["side"]
-  anchor?: ContextMenuPrimitive.Positioner.Props["anchor"]
-  portalProps?: ContextMenuPrimitive.Portal.Props
-} & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<
+  ContextMenuPrimitive.Popup.Props,
+  {
+    align?: ContextMenuPrimitive.Positioner.Props["align"]
+    sideOffset?: ContextMenuPrimitive.Positioner.Props["sideOffset"]
+    alignOffset?: ContextMenuPrimitive.Positioner.Props["alignOffset"]
+    side?: ContextMenuPrimitive.Positioner.Props["side"]
+    anchor?: ContextMenuPrimitive.Positioner.Props["anchor"]
+    portalProps?: ContextMenuPrimitive.Portal.Props
+  }
+>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <ContextMenuPortal {...portalProps}>
       <ContextMenuPrimitive.Positioner
@@ -266,9 +275,11 @@ export function ContextMenuPopup({
         sideOffset={sideOffset}
       >
         <ContextMenuPrimitive.Popup
-          {...stylexProps(className, styles.popup, xstyle)}
           data-slot="context-menu-popup"
-          {...props}
+          {...mergeStyleProps(
+            stylexProps(className, styles.popup, xstyle),
+            props,
+          )}
         >
           <div {...stylex.props(styles.popupViewport)}>{children}</div>
         </ContextMenuPrimitive.Popup>
@@ -277,78 +288,107 @@ export function ContextMenuPopup({
   )
 }
 
-export function ContextMenuGroup(props: ContextMenuPrimitive.Group.Props) {
+export function ContextMenuGroup({
+  xstyle: consumerXstyle,
+  className,
+  ...restProps
+}: StyleComponentProps<ContextMenuPrimitive.Group.Props>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
-    <ContextMenuPrimitive.Group data-slot="context-menu-group" {...props} />
+    <ContextMenuPrimitive.Group
+      data-slot="context-menu-group"
+      {...mergeStyleProps(stylexProps(className, xstyle), props)}
+    />
   )
 }
 
 export function ContextMenuItem({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
   inset,
   variant = "default",
-  ...props
-}: ContextMenuPrimitive.Item.Props & {
-  inset?: boolean
-  variant?: "default" | "destructive"
-} & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<
+  ContextMenuPrimitive.Item.Props,
+  {
+    inset?: boolean
+    variant?: "default" | "destructive"
+  }
+>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <ContextMenuPrimitive.Item
-      {...stylexProps(className, styles.item, xstyle)}
       data-inset={inset}
       data-slot="context-menu-item"
       data-variant={variant}
-      {...props}
+      {...mergeStyleProps(stylexProps(className, styles.item, xstyle), props)}
     />
   )
 }
 
 export function ContextMenuLinkItem({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
   inset,
   variant = "default",
   closeOnClick = true,
-  ...props
-}: ContextMenuPrimitive.LinkItem.Props & {
-  inset?: boolean
-  variant?: "default" | "destructive"
-} & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<
+  ContextMenuPrimitive.LinkItem.Props,
+  {
+    inset?: boolean
+    variant?: "default" | "destructive"
+  }
+>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <ContextMenuPrimitive.LinkItem
-      {...stylexProps(className, styles.item, xstyle)}
       closeOnClick={closeOnClick}
       data-inset={inset}
       data-slot="context-menu-link-item"
       data-variant={variant}
-      {...props}
+      {...mergeStyleProps(stylexProps(className, styles.item, xstyle), props)}
     />
   )
 }
 
 export function ContextMenuCheckboxItem({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
   children,
   checked,
   variant = "default",
-  ...props
-}: ContextMenuPrimitive.CheckboxItem.Props & {
-  variant?: "default" | "switch"
-} & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<
+  ContextMenuPrimitive.CheckboxItem.Props,
+  {
+    variant?: "default" | "switch"
+  }
+>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <ContextMenuPrimitive.CheckboxItem
       checked={checked}
-      {...stylexProps(
-        className,
-        styles.choiceItem,
-        variant === "switch" ? styles.choiceSwitch : styles.choiceDefault,
-        xstyle,
-      )}
+
       data-slot="context-menu-checkbox-item"
       data-variant={variant}
-      {...props}
+      {...mergeStyleProps(
+        stylexProps(
+          className,
+          styles.choiceItem,
+          variant === "switch" ? styles.choiceSwitch : styles.choiceDefault,
+          xstyle,
+        ),
+        props,
+      )}
     >
       {variant === "switch" ? (
         <>
@@ -391,33 +431,38 @@ export function ContextMenuCheckboxItem({
   )
 }
 
-export function ContextMenuRadioGroup(
-  props: ContextMenuPrimitive.RadioGroup.Props,
-) {
+export function ContextMenuRadioGroup({
+  xstyle: consumerXstyle,
+  className,
+  ...restProps
+}: StyleComponentProps<ContextMenuPrimitive.RadioGroup.Props>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <ContextMenuPrimitive.RadioGroup
       data-slot="context-menu-radio-group"
-      {...props}
+      {...mergeStyleProps(stylexProps(className, xstyle), props)}
     />
   )
 }
 
 export function ContextMenuRadioItem({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
   children,
-  ...props
-}: ContextMenuPrimitive.RadioItem.Props & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<ContextMenuPrimitive.RadioItem.Props>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <ContextMenuPrimitive.RadioItem
-      {...stylexProps(
-        className,
-        styles.choiceItem,
-        styles.choiceDefault,
-        xstyle,
-      )}
       data-slot="context-menu-radio-item"
-      {...props}
+      {...mergeStyleProps(
+        stylexProps(className, styles.choiceItem, styles.choiceDefault, xstyle),
+        props,
+      )}
     >
       <ContextMenuPrimitive.RadioItemIndicator
         {...stylex.props(styles.indicator)}
@@ -444,43 +489,58 @@ export function ContextMenuRadioItem({
 }
 
 export function ContextMenuGroupLabel({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
   inset,
-  ...props
-}: ContextMenuPrimitive.GroupLabel.Props & { inset?: boolean } & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<
+  ContextMenuPrimitive.GroupLabel.Props,
+  { inset?: boolean }
+>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <ContextMenuPrimitive.GroupLabel
-      {...stylexProps(className, styles.label, xstyle)}
       data-inset={inset}
       data-slot="context-menu-label"
-      {...props}
+      {...mergeStyleProps(stylexProps(className, styles.label, xstyle), props)}
     />
   )
 }
 export function ContextMenuSeparator({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
-  ...props
-}: ContextMenuPrimitive.Separator.Props & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<ContextMenuPrimitive.Separator.Props>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <ContextMenuPrimitive.Separator
-      {...stylexProps(className, styles.separator, xstyle)}
       data-slot="context-menu-separator"
-      {...props}
+      {...mergeStyleProps(
+        stylexProps(className, styles.separator, xstyle),
+        props,
+      )}
     />
   )
 }
 export function ContextMenuShortcut({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
-  ...props
-}: React.ComponentProps<"kbd"> & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<React.ComponentProps<"kbd">>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <kbd
-      {...stylexProps(className, styles.shortcut, xstyle)}
       data-slot="context-menu-shortcut"
-      {...props}
+      {...mergeStyleProps(
+        stylexProps(className, styles.shortcut, xstyle),
+        props,
+      )}
     />
   )
 }
@@ -490,20 +550,28 @@ export function ContextMenuSub(props: ContextMenuPrimitive.SubmenuRoot.Props) {
   )
 }
 export function ContextMenuSubTrigger({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
   inset,
   children,
-  ...props
-}: ContextMenuPrimitive.SubmenuTrigger.Props & {
-  inset?: boolean
-} & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<
+  ContextMenuPrimitive.SubmenuTrigger.Props,
+  {
+    inset?: boolean
+  }
+>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <ContextMenuPrimitive.SubmenuTrigger
-      {...stylexProps(className, styles.subTrigger, xstyle)}
       data-inset={inset}
       data-slot="context-menu-sub-trigger"
-      {...props}
+      {...mergeStyleProps(
+        stylexProps(className, styles.subTrigger, xstyle),
+        props,
+      )}
     >
       {children}
       <ChevronRightIcon
@@ -513,17 +581,23 @@ export function ContextMenuSubTrigger({
   )
 }
 export function ContextMenuSubPopup({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
   sideOffset = 0,
   alignOffset,
   align = "start",
-  ...props
-}: ContextMenuPrimitive.Popup.Props & {
-  align?: ContextMenuPrimitive.Positioner.Props["align"]
-  sideOffset?: ContextMenuPrimitive.Positioner.Props["sideOffset"]
-  alignOffset?: ContextMenuPrimitive.Positioner.Props["alignOffset"]
-} & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<
+  ContextMenuPrimitive.Popup.Props,
+  {
+    align?: ContextMenuPrimitive.Positioner.Props["align"]
+    sideOffset?: ContextMenuPrimitive.Positioner.Props["sideOffset"]
+    alignOffset?: ContextMenuPrimitive.Positioner.Props["alignOffset"]
+  }
+>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   const defaultAlignOffset = align !== "center" ? -5 : undefined
   return (
     <ContextMenuPopup

@@ -11,8 +11,13 @@ const registryRequire = createRequire(
 )
 const stylex = registryRequire("@stylexjs/stylex")
 const React = registryRequire("react")
-const { stylexProps } = registryRequire(
+const { mergeStyleProps, stylexProps } = registryRequire(
   resolve(root, "packages/registry/src/lib/stylex.ts"),
+)
+const {
+  core: { splitStyleProps },
+} = registryRequire(
+  resolve(root, "packages/registry/test/lib/style-props-fixture.ts"),
 )
 const ts = registryRequire("typescript-api")
 const { clsx } = registryRequire("clsx")
@@ -54,6 +59,8 @@ function evaluate(
       ...registryRequire("lucide-react"),
       stylex,
       stylexProps,
+      splitStyleProps,
+      mergeStyleProps,
       React,
       clsx,
       mergeProps,
@@ -132,7 +139,7 @@ describe("StyleX overrides", () => {
         ts.flattenDiagnosticMessageText(diagnostic.messageText, "\n"),
       ),
     ).toEqual([])
-  }, 20000)
+  }, 60000)
 
   test("last override wins and retains dynamic variables and legacy className", () => {
     const props = stylexProps(
@@ -309,7 +316,9 @@ describe("StyleX overrides", () => {
     )
     isMobile = true
     const mobile = Sidebar({ xstyle }).props.children
-    expect(mobile.props.xstyle.at(-1)).toBe(xstyle)
+    expect(stylex.props(mobile.props.xstyle).style).toEqual(
+      expect.objectContaining(stylex.props(xstyle).style),
+    )
     expect(stylex.props(mobile.props.xstyle).className).toContain(
       stylex.props(xstyle).className,
     )

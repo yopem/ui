@@ -1,9 +1,10 @@
 "use client"
 
-import type { StyleXProps } from "@registry/lib/stylex"
+import type { StyleComponentProps } from "@registry/lib/style-props"
 
 import { mergeProps } from "@base-ui/react/merge-props"
 import { useRender } from "@base-ui/react/use-render"
+import { splitStyleProps } from "@registry/lib/style-props"
 import { stylexProps } from "@registry/lib/stylex"
 import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
@@ -21,11 +22,14 @@ const styles = stylex.create({
 })
 
 export function Label({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
   render,
-  ...props
-}: useRender.ComponentProps<"label"> & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<useRender.ComponentProps<"label">>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   const defaultProps = {
     ...stylexProps(className, styles.root, xstyle),
     "data-slot": "label",

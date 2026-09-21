@@ -1,9 +1,10 @@
 "use client"
 
-import type { StyleXProps } from "@registry/lib/stylex"
+import type { StyleComponentProps } from "@registry/lib/style-props"
 
 import { Progress as ProgressPrimitive } from "@base-ui/react/progress"
-import { stylexProps } from "@registry/lib/stylex"
+import { splitStyleProps } from "@registry/lib/style-props"
+import { mergeStyleProps, stylexProps } from "@registry/lib/stylex"
 import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 
@@ -32,16 +33,18 @@ const styles = stylex.create({
 })
 
 export function Progress({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
   children,
-  ...props
-}: ProgressPrimitive.Root.Props & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<ProgressPrimitive.Root.Props>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <ProgressPrimitive.Root
-      {...stylexProps(className, styles.root, xstyle)}
       data-slot="progress"
-      {...props}
+      {...mergeStyleProps(stylexProps(className, styles.root, xstyle), props)}
     >
       {children ?? (
         <ProgressTrack>
@@ -52,54 +55,65 @@ export function Progress({
   )
 }
 export function ProgressLabel({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
-  ...props
-}: ProgressPrimitive.Label.Props & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<ProgressPrimitive.Label.Props>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <ProgressPrimitive.Label
-      {...stylexProps(className, styles.label, xstyle)}
       data-slot="progress-label"
-      {...props}
+      {...mergeStyleProps(stylexProps(className, styles.label, xstyle), props)}
     />
   )
 }
 export function ProgressTrack({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
-  ...props
-}: ProgressPrimitive.Track.Props & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<ProgressPrimitive.Track.Props>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <ProgressPrimitive.Track
-      {...stylexProps(className, styles.track, xstyle)}
       data-slot="progress-track"
-      {...props}
+      {...mergeStyleProps(stylexProps(className, styles.track, xstyle), props)}
     />
   )
 }
 export function ProgressIndicator({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
-  ...props
-}: ProgressPrimitive.Indicator.Props & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<ProgressPrimitive.Indicator.Props>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <ProgressPrimitive.Indicator
-      {...stylexProps(className, styles.indicator, xstyle)}
       data-slot="progress-indicator"
-      {...props}
+      {...mergeStyleProps(
+        stylexProps(className, styles.indicator, xstyle),
+        props,
+      )}
     />
   )
 }
 export function ProgressValue({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
-  ...props
-}: ProgressPrimitive.Value.Props & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<ProgressPrimitive.Value.Props>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <ProgressPrimitive.Value
-      {...stylexProps(className, styles.value, xstyle)}
       data-slot="progress-value"
-      {...props}
+      {...mergeStyleProps(stylexProps(className, styles.value, xstyle), props)}
     />
   )
 }

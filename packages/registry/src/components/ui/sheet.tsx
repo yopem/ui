@@ -1,13 +1,14 @@
 "use client"
 
-import type { StyleXProps } from "@registry/lib/stylex"
+import type { StyleComponentProps } from "@registry/lib/style-props"
 
 import { Dialog as SheetPrimitive } from "@base-ui/react/dialog"
 import { mergeProps } from "@base-ui/react/merge-props"
 import { useRender } from "@base-ui/react/use-render"
 import { Button } from "@registry/components/ui/button"
 import { ScrollArea } from "@registry/components/ui/scroll-area"
-import { stylexProps } from "@registry/lib/stylex"
+import { splitStyleProps } from "@registry/lib/style-props"
+import { mergeStyleProps, stylexProps } from "@registry/lib/stylex"
 import { themeMarker, tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import { XIcon } from "lucide-react"
@@ -213,53 +214,90 @@ const popupSideStyles = {
 
 export const Sheet: typeof SheetPrimitive.Root = SheetPrimitive.Root
 export const SheetPortal: typeof SheetPrimitive.Portal = SheetPrimitive.Portal
-export function SheetTrigger(props: SheetPrimitive.Trigger.Props) {
-  return <SheetPrimitive.Trigger data-slot="sheet-trigger" {...props} />
+export function SheetTrigger({
+  xstyle: consumerXstyle,
+  className,
+  ...restProps
+}: StyleComponentProps<SheetPrimitive.Trigger.Props>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
+  return (
+    <SheetPrimitive.Trigger
+      data-slot="sheet-trigger"
+      {...mergeStyleProps(stylexProps(className, xstyle), props)}
+    />
+  )
 }
-export function SheetClose(props: SheetPrimitive.Close.Props) {
-  return <SheetPrimitive.Close data-slot="sheet-close" {...props} />
+export function SheetClose({
+  xstyle: consumerXstyle,
+  className,
+  ...restProps
+}: StyleComponentProps<SheetPrimitive.Close.Props>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
+  return (
+    <SheetPrimitive.Close
+      data-slot="sheet-close"
+      {...mergeStyleProps(stylexProps(className, xstyle), props)}
+    />
+  )
 }
 export function SheetBackdrop({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
-  ...props
-}: SheetPrimitive.Backdrop.Props & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<SheetPrimitive.Backdrop.Props>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <SheetPrimitive.Backdrop
-      {...stylexProps(className, styles.backdrop, xstyle)}
       data-slot="sheet-backdrop"
-      {...props}
+      {...mergeStyleProps(
+        stylexProps(className, styles.backdrop, xstyle),
+        props,
+      )}
     />
   )
 }
 
 export function SheetViewport({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
   side = "right",
   variant = "default",
-  ...props
-}: SheetPrimitive.Viewport.Props & {
-  side?: SheetSide
-  variant?: SheetVariant
-} & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<
+  SheetPrimitive.Viewport.Props,
+  {
+    side?: SheetSide
+    variant?: SheetVariant
+  }
+>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <SheetPrimitive.Viewport
-      {...stylexProps(
-        className,
-        styles.viewport,
-        viewportSideStyles[side],
-        variant === "inset" && styles.viewportInset,
-        xstyle,
-      )}
       data-slot="sheet-viewport"
-      {...props}
+      {...mergeStyleProps(
+        stylexProps(
+          className,
+          styles.viewport,
+          viewportSideStyles[side],
+          variant === "inset" && styles.viewportInset,
+          xstyle,
+        ),
+        props,
+      )}
     />
   )
 }
 
 export function SheetPopup({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
   children,
   showCloseButton = true,
@@ -267,30 +305,38 @@ export function SheetPopup({
   variant = "default",
   closeProps,
   portalProps,
-  ...props
-}: SheetPrimitive.Popup.Props & {
-  showCloseButton?: boolean
-  side?: SheetSide
-  variant?: SheetVariant
-  closeProps?: SheetPrimitive.Close.Props
-  portalProps?: SheetPrimitive.Portal.Props
-} & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<
+  SheetPrimitive.Popup.Props,
+  {
+    showCloseButton?: boolean
+    side?: SheetSide
+    variant?: SheetVariant
+    closeProps?: SheetPrimitive.Close.Props
+    portalProps?: SheetPrimitive.Portal.Props
+  }
+>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <SheetPortal {...portalProps}>
       <SheetBackdrop />
       <SheetViewport side={side} variant={variant}>
         <SheetPrimitive.Popup
-          {...stylexProps(
-            className,
-            styles.popup,
-            popupSideStyles[side],
-            variant === "inset" && styles.popupInset,
-            xstyle,
-          )}
           data-side={side}
           data-slot="sheet-popup"
           data-variant={variant}
-          {...props}
+          {...mergeStyleProps(
+            stylexProps(
+              className,
+              styles.popup,
+              popupSideStyles[side],
+              variant === "inset" && styles.popupInset,
+              xstyle,
+            ),
+            props,
+          )}
         >
           {children}
           {showCloseButton ? (
@@ -310,11 +356,14 @@ export function SheetPopup({
 }
 
 export function SheetHeader({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
   render,
-  ...props
-}: useRender.ComponentProps<"div"> & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<useRender.ComponentProps<"div">>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   const defaultProps = {
     ...stylexProps(className, styles.header, xstyle),
     "data-slot": "sheet-header",
@@ -326,14 +375,20 @@ export function SheetHeader({
   })
 }
 export function SheetFooter({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
   variant = "default",
   render,
-  ...props
-}: useRender.ComponentProps<"div"> & {
-  variant?: "default" | "bare"
-} & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<
+  useRender.ComponentProps<"div">,
+  {
+    variant?: "default" | "bare"
+  }
+>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   const defaultProps = {
     ...stylexProps(
       className,
@@ -351,38 +406,51 @@ export function SheetFooter({
   })
 }
 export function SheetTitle({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
-  ...props
-}: SheetPrimitive.Title.Props & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<SheetPrimitive.Title.Props>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <SheetPrimitive.Title
-      {...stylexProps(className, styles.title, xstyle)}
       data-slot="sheet-title"
-      {...props}
+      {...mergeStyleProps(stylexProps(className, styles.title, xstyle), props)}
     />
   )
 }
 export function SheetDescription({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
-  ...props
-}: SheetPrimitive.Description.Props & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<SheetPrimitive.Description.Props>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <SheetPrimitive.Description
-      {...stylexProps(className, styles.description, xstyle)}
       data-slot="sheet-description"
-      {...props}
+      {...mergeStyleProps(
+        stylexProps(className, styles.description, xstyle),
+        props,
+      )}
     />
   )
 }
 export function SheetPanel({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
   scrollFade = true,
   render,
-  ...props
-}: useRender.ComponentProps<"div"> & { scrollFade?: boolean } & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<
+  useRender.ComponentProps<"div">,
+  { scrollFade?: boolean }
+>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   const defaultProps = {
     ...stylexProps(className, styles.panel, xstyle),
     "data-slot": "sheet-panel",

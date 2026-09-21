@@ -1,10 +1,13 @@
 "use client"
 
+import type { StyleComponentProps } from "@registry/lib/style-props"
 import type { StyleXProps } from "@registry/lib/stylex"
 import type React from "react"
 
 import { Toast } from "@base-ui/react/toast"
 import { buttonVariants } from "@registry/components/ui/button"
+import { splitStyleProps } from "@registry/lib/style-props"
+import { mergeStyleProps } from "@registry/lib/stylex"
 import { themeMarker, tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import {
@@ -280,11 +283,12 @@ const TOAST_ICONS = {
 } as const
 type SwipeDirection = "up" | "down" | "left" | "right"
 interface ToastData {
-  rootProps?: StyleXProps &
+  rootProps?: StyleComponentProps<
     Omit<
       React.ComponentProps<typeof Toast.Root>,
       "children" | "className" | "swipeDirection" | "toast"
     >
+  >
   tooltipStyle?: boolean
 }
 
@@ -365,19 +369,24 @@ function Toasts({
       >
         {toasts.map((toast) => {
           const toastData = toast.data as ToastData | undefined
-          const { xstyle: rootXstyle, ...rootProps } =
+          const { xstyle: rootXstyle, ...rootRestProps } =
             toastData?.rootProps ?? {}
+          const { domProps: rootProps, xstyle: rootStyleProps } =
+            splitStyleProps(rootRestProps)
           return (
             <Toast.Root
               key={toast.id}
-              {...stylex.props(
-                styles.root,
-                styles.expanded,
-                getReplayStyle(toast),
-                xstyle,
-                rootXstyle,
+              {...mergeStyleProps(
+                stylex.props(
+                  styles.root,
+                  styles.expanded,
+                  getReplayStyle(toast),
+                  rootStyleProps,
+                  xstyle,
+                  rootXstyle,
+                ),
+                rootProps,
               )}
-              {...rootProps}
               data-position={position}
               data-slot="toast-root"
               swipeDirection={swipeDirection}
@@ -407,8 +416,10 @@ function AnchoredToasts({
       >
         {toasts.map((toast) => {
           const toastData = toast.data as ToastData | undefined
-          const { xstyle: rootXstyle, ...rootProps } =
+          const { xstyle: rootXstyle, ...rootRestProps } =
             toastData?.rootProps ?? {}
+          const { domProps: rootProps, xstyle: rootStyleProps } =
+            splitStyleProps(rootRestProps)
           const positionerProps = toast.positionerProps
           if (!positionerProps?.anchor) return null
           const tooltipStyle = toastData?.tooltipStyle ?? false
@@ -421,16 +432,19 @@ function AnchoredToasts({
               toast={toast}
             >
               <Toast.Root
-                {...stylex.props(
-                  styles.anchoredRoot,
-                  tooltipStyle
-                    ? styles.anchoredTooltip
-                    : styles.anchoredDefault,
-                  getReplayStyle(toast),
-                  xstyle,
-                  rootXstyle,
+                {...mergeStyleProps(
+                  stylex.props(
+                    styles.anchoredRoot,
+                    tooltipStyle
+                      ? styles.anchoredTooltip
+                      : styles.anchoredDefault,
+                    getReplayStyle(toast),
+                    rootStyleProps,
+                    xstyle,
+                    rootXstyle,
+                  ),
+                  rootProps,
                 )}
-                {...rootProps}
                 data-slot="toast-popup"
                 toast={toast}
               >
@@ -462,17 +476,23 @@ export type ToastPosition =
   | "bottom-left"
   | "bottom-center"
   | "bottom-right"
-export interface ToastProviderProps extends Toast.Provider.Props, StyleXProps {
-  position?: ToastPosition
-  portalProps?: React.ComponentProps<typeof Toast.Portal>
-}
+export type ToastProviderProps = StyleComponentProps<
+  Toast.Provider.Props,
+  {
+    position?: ToastPosition
+    portalProps?: React.ComponentProps<typeof Toast.Portal>
+  }
+>
 export function ToastProvider({
-  xstyle,
+  xstyle: consumerXstyle,
   children,
   position = "bottom-right",
   portalProps,
-  ...props
+  ...restProps
 }: ToastProviderProps) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <Toast.Provider toastManager={toastManager} {...props}>
       {children}
@@ -480,16 +500,21 @@ export function ToastProvider({
     </Toast.Provider>
   )
 }
-export interface AnchoredToastProviderProps
-  extends Toast.Provider.Props, StyleXProps {
-  portalProps?: React.ComponentProps<typeof Toast.Portal>
-}
+export type AnchoredToastProviderProps = StyleComponentProps<
+  Toast.Provider.Props,
+  {
+    portalProps?: React.ComponentProps<typeof Toast.Portal>
+  }
+>
 export function AnchoredToastProvider({
-  xstyle,
+  xstyle: consumerXstyle,
   children,
   portalProps,
-  ...props
+  ...restProps
 }: AnchoredToastProviderProps) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <Toast.Provider toastManager={anchoredToastManager} {...props}>
       {children}

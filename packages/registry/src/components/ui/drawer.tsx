@@ -1,6 +1,6 @@
 "use client"
 
-import type { StyleXProps } from "@registry/lib/stylex"
+import type { StyleComponentProps } from "@registry/lib/style-props"
 import type React from "react"
 
 import { Checkbox as CheckboxPrimitive } from "@base-ui/react/checkbox"
@@ -11,7 +11,8 @@ import { RadioGroup as RadioGroupPrimitive } from "@base-ui/react/radio-group"
 import { useRender } from "@base-ui/react/use-render"
 import { Button } from "@registry/components/ui/button"
 import { ScrollArea } from "@registry/components/ui/scroll-area"
-import { stylexProps } from "@registry/lib/stylex"
+import { splitStyleProps } from "@registry/lib/style-props"
+import { mergeStyleProps, stylexProps } from "@registry/lib/stylex"
 import { themeMarker, tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import { ChevronRightIcon, XIcon } from "lucide-react"
@@ -578,80 +579,122 @@ export function Drawer({
 }
 export const DrawerPortal: typeof DrawerPrimitive.Portal =
   DrawerPrimitive.Portal
-export function DrawerTrigger(props: DrawerPrimitive.Trigger.Props) {
-  return <DrawerPrimitive.Trigger data-slot="drawer-trigger" {...props} />
+export function DrawerTrigger({
+  xstyle: consumerXstyle,
+  className,
+  ...restProps
+}: StyleComponentProps<DrawerPrimitive.Trigger.Props>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
+  return (
+    <DrawerPrimitive.Trigger
+      data-slot="drawer-trigger"
+      {...mergeStyleProps(stylexProps(className, xstyle), props)}
+    />
+  )
 }
-export function DrawerClose(props: DrawerPrimitive.Close.Props) {
-  return <DrawerPrimitive.Close data-slot="drawer-close" {...props} />
+export function DrawerClose({
+  xstyle: consumerXstyle,
+  className,
+  ...restProps
+}: StyleComponentProps<DrawerPrimitive.Close.Props>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
+  return (
+    <DrawerPrimitive.Close
+      data-slot="drawer-close"
+      {...mergeStyleProps(stylexProps(className, xstyle), props)}
+    />
+  )
 }
 
 export function DrawerSwipeArea({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
   position: positionProp,
-  ...props
-}: DrawerPrimitive.SwipeArea.Props & {
-  position?: DrawerPosition
-} & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<
+  DrawerPrimitive.SwipeArea.Props,
+  {
+    position?: DrawerPosition
+  }
+>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   const { position: contextPosition } = useContext(DrawerContext)
   const position = positionProp ?? contextPosition
   return (
     <DrawerPrimitive.SwipeArea
-      {...stylexProps(
-        className,
-        styles.swipeArea,
-        swipeStyles[position],
-        xstyle,
-      )}
       data-slot="drawer-swipe-area"
-      {...props}
+      {...mergeStyleProps(
+        stylexProps(className, styles.swipeArea, swipeStyles[position], xstyle),
+        props,
+      )}
     />
   )
 }
 export function DrawerBackdrop({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
-  ...props
-}: DrawerPrimitive.Backdrop.Props & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<DrawerPrimitive.Backdrop.Props>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <DrawerPrimitive.Backdrop
-      {...stylexProps(className, styles.backdrop, xstyle)}
       data-slot="drawer-backdrop"
-      {...props}
+      {...mergeStyleProps(
+        stylexProps(className, styles.backdrop, xstyle),
+        props,
+      )}
     />
   )
 }
 export function DrawerViewport({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
   position = "bottom",
   variant = "default",
-  ...props
-}: DrawerPrimitive.Viewport.Props & {
-  position?: DrawerPosition
-  variant?: DrawerVariant
-} & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<
+  DrawerPrimitive.Viewport.Props,
+  {
+    position?: DrawerPosition
+    variant?: DrawerVariant
+  }
+>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <DrawerPrimitive.Viewport
-      {...stylexProps(
-        className,
-        styles.viewport,
-        viewportStyles[position],
-        variant === "inset" && styles.viewportInset,
-        variant === "inset" &&
-          position !== "bottom" &&
-          styles.viewportInsetNotBottom,
-        variant === "inset" && position !== "top" && styles.viewportInsetNotTop,
-        xstyle,
-      )}
       data-slot="drawer-viewport"
-      {...props}
+      {...mergeStyleProps(
+        stylexProps(
+          className,
+          styles.viewport,
+          viewportStyles[position],
+          variant === "inset" && styles.viewportInset,
+          variant === "inset" &&
+            position !== "bottom" &&
+            styles.viewportInsetNotBottom,
+          variant === "inset" &&
+            position !== "top" &&
+            styles.viewportInsetNotTop,
+          xstyle,
+        ),
+        props,
+      )}
     />
   )
 }
 
 export function DrawerPopup({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
   children,
   showCloseButton = false,
@@ -659,14 +702,20 @@ export function DrawerPopup({
   variant = "default",
   showBar = false,
   portalProps,
-  ...props
-}: DrawerPrimitive.Popup.Props & {
-  showCloseButton?: boolean
-  position?: DrawerPosition
-  variant?: DrawerVariant
-  showBar?: boolean
-  portalProps?: DrawerPrimitive.Portal.Props
-} & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<
+  DrawerPrimitive.Popup.Props,
+  {
+    showCloseButton?: boolean
+    position?: DrawerPosition
+    variant?: DrawerVariant
+    showBar?: boolean
+    portalProps?: DrawerPrimitive.Portal.Props
+  }
+>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   const { position: contextPosition } = useContext(DrawerContext)
   const position = positionProp ?? contextPosition
   return (
@@ -674,21 +723,23 @@ export function DrawerPopup({
       <DrawerBackdrop />
       <DrawerViewport position={position} variant={variant}>
         <DrawerPrimitive.Popup
-          {...stylexProps(
-            className,
-            styles.popup,
-            popupStyles[position],
-            (position === "bottom" || position === "top") &&
-              styles.verticalPopup,
-            variant !== "straight" && roundedStyles[position],
-            variant === "inset" && styles.insetPopup,
-            variant === "straight" && styles.straightPopup,
-            xstyle,
-          )}
           data-position={position}
           data-slot="drawer-popup"
           data-variant={variant}
-          {...props}
+          {...mergeStyleProps(
+            stylexProps(
+              className,
+              styles.popup,
+              popupStyles[position],
+              (position === "bottom" || position === "top") &&
+                styles.verticalPopup,
+              variant !== "straight" && roundedStyles[position],
+              variant === "inset" && styles.insetPopup,
+              variant === "straight" && styles.straightPopup,
+              xstyle,
+            ),
+            props,
+          )}
         >
           {children}
           {showCloseButton ? (
@@ -708,14 +759,20 @@ export function DrawerPopup({
 }
 
 export function DrawerHeader({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
   allowSelection = false,
   render,
-  ...props
-}: useRender.ComponentProps<"div"> & {
-  allowSelection?: boolean
-} & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<
+  useRender.ComponentProps<"div">,
+  {
+    allowSelection?: boolean
+  }
+>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   const defaultProps = {
     ...stylexProps(
       className,
@@ -732,16 +789,22 @@ export function DrawerHeader({
   })
 }
 export function DrawerFooter({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
   variant = "default",
   allowSelection = true,
   render,
-  ...props
-}: useRender.ComponentProps<"div"> & {
-  variant?: "default" | "bare"
-  allowSelection?: boolean
-} & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<
+  useRender.ComponentProps<"div">,
+  {
+    variant?: "default" | "bare"
+    allowSelection?: boolean
+  }
+>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   const defaultProps = {
     ...stylexProps(
       className,
@@ -760,45 +823,58 @@ export function DrawerFooter({
   })
 }
 export function DrawerTitle({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
-  ...props
-}: DrawerPrimitive.Title.Props & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<DrawerPrimitive.Title.Props>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <DrawerPrimitive.Title
-      {...stylexProps(className, styles.title, xstyle)}
       data-slot="drawer-title"
-      {...props}
+      {...mergeStyleProps(stylexProps(className, styles.title, xstyle), props)}
     />
   )
 }
 export function DrawerDescription({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
-  ...props
-}: DrawerPrimitive.Description.Props & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<DrawerPrimitive.Description.Props>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <DrawerPrimitive.Description
-      {...stylexProps(className, styles.description, xstyle)}
       data-slot="drawer-description"
-      {...props}
+      {...mergeStyleProps(
+        stylexProps(className, styles.description, xstyle),
+        props,
+      )}
     />
   )
 }
 
 export function DrawerPanel({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
   scrollFade = true,
   scrollable = true,
   allowSelection = true,
   render,
-  ...props
-}: useRender.ComponentProps<"div"> & {
-  scrollFade?: boolean
-  scrollable?: boolean
-  allowSelection?: boolean
-} & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<
+  useRender.ComponentProps<"div">,
+  {
+    scrollFade?: boolean
+    scrollable?: boolean
+    allowSelection?: boolean
+  }
+>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   const defaultProps = {
     ...stylexProps(
       className,
@@ -827,14 +903,20 @@ export function DrawerPanel({
 }
 
 export function DrawerBar({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
   position: positionProp,
   render,
-  ...props
-}: useRender.ComponentProps<"div"> & {
-  position?: DrawerPosition
-} & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<
+  useRender.ComponentProps<"div">,
+  {
+    position?: DrawerPosition
+  }
+>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   const { position: contextPosition } = useContext(DrawerContext)
   const position = positionProp ?? contextPosition
   const horizontal = position === "left" || position === "right"
@@ -856,14 +938,29 @@ export function DrawerBar({
   })
 }
 
-export const DrawerContent: typeof DrawerPrimitive.Content =
-  DrawerPrimitive.Content
+export function DrawerContent({
+  xstyle: consumerXstyle,
+  className,
+  ...restProps
+}: StyleComponentProps<React.ComponentProps<typeof DrawerPrimitive.Content>>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
+  return (
+    <DrawerPrimitive.Content
+      {...mergeStyleProps(stylexProps(className, xstyle), props)}
+    />
+  )
+}
 export function DrawerMenu({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
   render,
-  ...props
-}: useRender.ComponentProps<"nav"> & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<useRender.ComponentProps<"nav">>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   const defaultProps = {
     ...stylexProps(className, styles.menu, xstyle),
     "data-slot": "drawer-menu",
@@ -875,15 +972,21 @@ export function DrawerMenu({
   })
 }
 export function DrawerMenuItem({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
   variant = "default",
   render,
   disabled,
-  ...props
-}: useRender.ComponentProps<"button"> & {
-  variant?: "default" | "destructive"
-} & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<
+  useRender.ComponentProps<"button">,
+  {
+    variant?: "default" | "destructive"
+  }
+>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   const defaultProps = {
     ...stylexProps(className, styles.menuItem, xstyle),
     "data-slot": "drawer-menu-item",
@@ -898,11 +1001,14 @@ export function DrawerMenuItem({
   })
 }
 export function DrawerMenuSeparator({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
   render,
-  ...props
-}: useRender.ComponentProps<"div"> & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<useRender.ComponentProps<"div">>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   const defaultProps = {
     ...stylexProps(className, styles.menuSeparator, xstyle),
     "data-slot": "drawer-menu-separator",
@@ -914,11 +1020,14 @@ export function DrawerMenuSeparator({
   })
 }
 export function DrawerMenuGroup({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
   render,
-  ...props
-}: useRender.ComponentProps<"div"> & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<useRender.ComponentProps<"div">>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   const defaultProps = {
     ...stylexProps(className, styles.menuGroup, xstyle),
     "data-slot": "drawer-menu-group",
@@ -930,11 +1039,14 @@ export function DrawerMenuGroup({
   })
 }
 export function DrawerMenuGroupLabel({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
   render,
-  ...props
-}: useRender.ComponentProps<"div"> & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<useRender.ComponentProps<"div">>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   const defaultProps = {
     ...stylexProps(className, styles.menuGroupLabel, xstyle),
     "data-slot": "drawer-menu-group-label",
@@ -947,16 +1059,21 @@ export function DrawerMenuGroupLabel({
 }
 
 export function DrawerMenuTrigger({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
   children,
-  ...props
-}: DrawerPrimitive.Trigger.Props & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<DrawerPrimitive.Trigger.Props>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <DrawerTrigger
-      {...stylexProps(className, styles.menuItem, xstyle)}
       data-slot="drawer-menu-trigger"
-      {...props}
+      {...mergeStyleProps(
+        stylexProps(className, styles.menuItem, xstyle),
+        props,
+      )}
     >
       {children}
       <ChevronRightIcon
@@ -967,7 +1084,7 @@ export function DrawerMenuTrigger({
 }
 
 export function DrawerMenuCheckboxItem({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
   children,
   checked,
@@ -976,27 +1093,36 @@ export function DrawerMenuCheckboxItem({
   variant = "default",
   disabled,
   render,
-  ...props
-}: CheckboxPrimitive.Root.Props & {
-  variant?: "default" | "switch"
-  render?: React.ReactElement
-} & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<
+  CheckboxPrimitive.Root.Props,
+  {
+    variant?: "default" | "switch"
+    render?: React.ReactElement
+  }
+>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <CheckboxPrimitive.Root
       checked={checked}
-      {...stylexProps(
-        className,
-        styles.choiceItem,
-        variant === "switch" ? styles.choiceSwitch : styles.choiceDefault,
-        xstyle,
-      )}
+
       data-slot="drawer-menu-checkbox-item"
       data-variant={variant}
       defaultChecked={defaultChecked}
       disabled={disabled}
       onCheckedChange={onCheckedChange}
       render={render}
-      {...props}
+      {...mergeStyleProps(
+        stylexProps(
+          className,
+          styles.choiceItem,
+          variant === "switch" ? styles.choiceSwitch : styles.choiceDefault,
+          xstyle,
+        ),
+        props,
+      )}
     >
       {variant === "switch" ? (
         <>
@@ -1036,43 +1162,51 @@ export function DrawerMenuCheckboxItem({
   )
 }
 export function DrawerMenuRadioGroup({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
-  ...props
-}: RadioGroupPrimitive.Props & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<RadioGroupPrimitive.Props>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <RadioGroupPrimitive
-      {...stylexProps(className, styles.menuGroup, xstyle)}
       data-slot="drawer-menu-radio-group"
-      {...props}
+      {...mergeStyleProps(
+        stylexProps(className, styles.menuGroup, xstyle),
+        props,
+      )}
     />
   )
 }
 export function DrawerMenuRadioItem({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
   children,
   value,
   disabled,
   render,
-  ...props
-}: RadioPrimitive.Root.Props & {
-  value: string
-  render?: React.ReactElement
-} & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<
+  RadioPrimitive.Root.Props,
+  {
+    value: string
+    render?: React.ReactElement
+  }
+>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <RadioPrimitive.Root
-      {...stylexProps(
-        className,
-        styles.choiceItem,
-        styles.choiceDefault,
-        xstyle,
-      )}
       data-slot="drawer-menu-radio-item"
       disabled={disabled}
       render={render}
       value={value}
-      {...props}
+      {...mergeStyleProps(
+        stylexProps(className, styles.choiceItem, styles.choiceDefault, xstyle),
+        props,
+      )}
     >
       <RadioPrimitive.Indicator {...stylex.props(styles.choiceFirst)}>
         <svg

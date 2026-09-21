@@ -1,9 +1,11 @@
 "use client"
 
-import type { StyleXProps } from "@registry/lib/stylex"
+import type { StyleComponentProps } from "@registry/lib/style-props"
+import type { ComponentProps } from "react"
 
 import { Field as FieldPrimitive } from "@base-ui/react/field"
-import { stylexProps } from "@registry/lib/stylex"
+import { splitStyleProps } from "@registry/lib/style-props"
+import { mergeStyleProps, stylexProps } from "@registry/lib/stylex"
 import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 
@@ -39,73 +41,98 @@ const styles = stylex.create({
 })
 
 export function Field({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
-  ...props
-}: FieldPrimitive.Root.Props & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<FieldPrimitive.Root.Props>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <FieldPrimitive.Root
-      {...stylexProps(className, styles.root, xstyle)}
       data-slot="field"
-      {...props}
+      {...mergeStyleProps(stylexProps(className, styles.root, xstyle), props)}
     />
   )
 }
 export function FieldLabel({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
-  ...props
-}: FieldPrimitive.Label.Props & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<FieldPrimitive.Label.Props>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <FieldPrimitive.Label
-      {...stylexProps(className, styles.label, xstyle)}
       data-slot="field-label"
-      {...props}
+      {...mergeStyleProps(stylexProps(className, styles.label, xstyle), props)}
     />
   )
 }
 export function FieldItem({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
-  ...props
-}: FieldPrimitive.Item.Props & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<FieldPrimitive.Item.Props>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <FieldPrimitive.Item
-      {...stylexProps(className, styles.item, xstyle)}
       data-slot="field-item"
-      {...props}
+      {...mergeStyleProps(stylexProps(className, styles.item, xstyle), props)}
     />
   )
 }
 export function FieldDescription({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
-  ...props
-}: FieldPrimitive.Description.Props & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<FieldPrimitive.Description.Props>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <FieldPrimitive.Description
-      {...stylexProps(className, styles.description, xstyle)}
       data-slot="field-description"
-      {...props}
+      {...mergeStyleProps(
+        stylexProps(className, styles.description, xstyle),
+        props,
+      )}
     />
   )
 }
 export function FieldError({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
-  ...props
-}: FieldPrimitive.Error.Props & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<FieldPrimitive.Error.Props>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <FieldPrimitive.Error
-      {...stylexProps(className, styles.error, xstyle)}
       data-slot="field-error"
-      {...props}
+      {...mergeStyleProps(stylexProps(className, styles.error, xstyle), props)}
     />
   )
 }
 
-export const FieldControl: typeof FieldPrimitive.Control =
-  FieldPrimitive.Control
+export function FieldControl({
+  xstyle: consumerXstyle,
+  className,
+  ...restProps
+}: StyleComponentProps<ComponentProps<typeof FieldPrimitive.Control>>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
+  return (
+    <FieldPrimitive.Control
+      {...mergeStyleProps(stylexProps(className, xstyle), props)}
+    />
+  )
+}
 export const FieldValidity: typeof FieldPrimitive.Validity =
   FieldPrimitive.Validity
 export { FieldPrimitive }

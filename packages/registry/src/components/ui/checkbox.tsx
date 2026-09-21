@@ -1,10 +1,11 @@
 "use client"
 
-import type { StyleXProps } from "@registry/lib/stylex"
+import type { StyleComponentProps } from "@registry/lib/style-props"
 import type React from "react"
 
 import { Checkbox as CheckboxPrimitive } from "@base-ui/react/checkbox"
-import { stylexProps } from "@registry/lib/stylex"
+import { splitStyleProps } from "@registry/lib/style-props"
+import { mergeStyleProps, stylexProps } from "@registry/lib/stylex"
 import { themeMarker, tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 
@@ -62,15 +63,17 @@ const styles = stylex.create({
 })
 
 export function Checkbox({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
-  ...props
-}: CheckboxPrimitive.Root.Props & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<CheckboxPrimitive.Root.Props>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <CheckboxPrimitive.Root
-      {...stylexProps(className, styles.root, xstyle)}
       data-slot="checkbox"
-      {...props}
+      {...mergeStyleProps(stylexProps(className, styles.root, xstyle), props)}
     >
       <CheckboxPrimitive.Indicator
         {...stylex.props(styles.indicator)}

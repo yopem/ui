@@ -1,11 +1,13 @@
 "use client"
 
+import type { StyleComponentProps } from "@registry/lib/style-props"
 import type { StyleXProps } from "@registry/lib/stylex"
 import type * as React from "react"
 
 import { mergeProps } from "@base-ui/react/merge-props"
 import { useRender } from "@base-ui/react/use-render"
 import { Spinner } from "@registry/components/ui/spinner"
+import { splitStyleProps } from "@registry/lib/style-props"
 import { stylexProps } from "@registry/lib/stylex"
 import { themeMarker, tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
@@ -450,15 +452,17 @@ export function buttonVariants({
   )
 }
 
-export interface ButtonProps
-  extends StyleXProps, useRender.ComponentProps<"button"> {
-  variant?: ButtonVariantProps["variant"]
-  size?: ButtonVariantProps["size"]
-  loading?: boolean
-}
+export type ButtonProps = StyleComponentProps<
+  useRender.ComponentProps<"button">,
+  {
+    variant?: ButtonVariantProps["variant"]
+    size?: ButtonVariantProps["size"]
+    loading?: boolean
+  }
+>
 
 export function Button({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
   variant,
   size,
@@ -466,8 +470,11 @@ export function Button({
   children,
   loading = false,
   disabled: disabledProp,
-  ...props
+  ...restProps
 }: ButtonProps) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   const isDisabled = Boolean(loading || disabledProp)
   const typeValue: React.ButtonHTMLAttributes<HTMLButtonElement>["type"] =
     render ? undefined : "button"

@@ -1,10 +1,11 @@
 "use client"
 
-import type { StyleXProps } from "@registry/lib/stylex"
+import type { StyleComponentProps } from "@registry/lib/style-props"
 import type React from "react"
 
 import { AlertDialog as AlertDialogPrimitive } from "@base-ui/react/alert-dialog"
-import { stylexProps } from "@registry/lib/stylex"
+import { splitStyleProps } from "@registry/lib/style-props"
+import { mergeStyleProps, stylexProps } from "@registry/lib/stylex"
 import { themeMarker, tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 
@@ -138,50 +139,76 @@ export const AlertDialog: typeof AlertDialogPrimitive.Root =
 export const AlertDialogPortal: typeof AlertDialogPrimitive.Portal =
   AlertDialogPrimitive.Portal
 
-export function AlertDialogTrigger(props: AlertDialogPrimitive.Trigger.Props) {
+export function AlertDialogTrigger({
+  xstyle: consumerXstyle,
+  className,
+  ...restProps
+}: StyleComponentProps<AlertDialogPrimitive.Trigger.Props>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
-    <AlertDialogPrimitive.Trigger data-slot="alert-dialog-trigger" {...props} />
+    <AlertDialogPrimitive.Trigger
+      data-slot="alert-dialog-trigger"
+      {...mergeStyleProps(stylexProps(className, xstyle), props)}
+    />
   )
 }
 
 export function AlertDialogBackdrop({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
-  ...props
-}: AlertDialogPrimitive.Backdrop.Props & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<AlertDialogPrimitive.Backdrop.Props>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <AlertDialogPrimitive.Backdrop
-      {...stylexProps(className, styles.backdrop, xstyle)}
       data-slot="alert-dialog-backdrop"
-      {...props}
+      {...mergeStyleProps(
+        stylexProps(className, styles.backdrop, xstyle),
+        props,
+      )}
     />
   )
 }
 
 export function AlertDialogViewport({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
-  ...props
-}: AlertDialogPrimitive.Viewport.Props & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<AlertDialogPrimitive.Viewport.Props>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <AlertDialogPrimitive.Viewport
-      {...stylexProps(className, styles.viewport, xstyle)}
       data-slot="alert-dialog-viewport"
-      {...props}
+      {...mergeStyleProps(
+        stylexProps(className, styles.viewport, xstyle),
+        props,
+      )}
     />
   )
 }
 
 export function AlertDialogPopup({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
   bottomStickOnMobile = true,
   portalProps,
-  ...props
-}: AlertDialogPrimitive.Popup.Props & {
-  bottomStickOnMobile?: boolean
-  portalProps?: AlertDialogPrimitive.Portal.Props
-} & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<
+  AlertDialogPrimitive.Popup.Props,
+  {
+    bottomStickOnMobile?: boolean
+    portalProps?: AlertDialogPrimitive.Portal.Props
+  }
+>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <AlertDialogPortal {...portalProps}>
       <AlertDialogBackdrop />
@@ -192,14 +219,16 @@ export function AlertDialogPopup({
         }
       >
         <AlertDialogPrimitive.Popup
-          {...stylexProps(
-            className,
-            styles.popup,
-            bottomStickOnMobile && styles.popupBottomMobile,
-            xstyle,
-          )}
           data-slot="alert-dialog-popup"
-          {...props}
+          {...mergeStyleProps(
+            stylexProps(
+              className,
+              styles.popup,
+              bottomStickOnMobile && styles.popupBottomMobile,
+              xstyle,
+            ),
+            props,
+          )}
         />
       </AlertDialogViewport>
     </AlertDialogPortal>
@@ -207,72 +236,99 @@ export function AlertDialogPopup({
 }
 
 export function AlertDialogHeader({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
-  ...props
-}: React.ComponentProps<"div"> & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<React.ComponentProps<"div">>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <div
-      {...stylexProps(className, styles.header, xstyle)}
       data-slot="alert-dialog-header"
-      {...props}
+      {...mergeStyleProps(stylexProps(className, styles.header, xstyle), props)}
     />
   )
 }
 
 export function AlertDialogFooter({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
   variant = "default",
-  ...props
-}: React.ComponentProps<"div"> & {
-  variant?: "default" | "bare"
-} & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<
+  React.ComponentProps<"div">,
+  {
+    variant?: "default" | "bare"
+  }
+>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <div
-      {...stylexProps(
-        className,
-        styles.footer,
-        variant === "default" ? styles.footerDefault : styles.footerBare,
-        xstyle,
-      )}
       data-slot="alert-dialog-footer"
-      {...props}
+      {...mergeStyleProps(
+        stylexProps(
+          className,
+          styles.footer,
+          variant === "default" ? styles.footerDefault : styles.footerBare,
+          xstyle,
+        ),
+        props,
+      )}
     />
   )
 }
 
 export function AlertDialogTitle({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
-  ...props
-}: AlertDialogPrimitive.Title.Props & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<AlertDialogPrimitive.Title.Props>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <AlertDialogPrimitive.Title
-      {...stylexProps(className, styles.title, xstyle)}
       data-slot="alert-dialog-title"
-      {...props}
+      {...mergeStyleProps(stylexProps(className, styles.title, xstyle), props)}
     />
   )
 }
 
 export function AlertDialogDescription({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
-  ...props
-}: AlertDialogPrimitive.Description.Props & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<AlertDialogPrimitive.Description.Props>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <AlertDialogPrimitive.Description
-      {...stylexProps(className, styles.description, xstyle)}
       data-slot="alert-dialog-description"
-      {...props}
+      {...mergeStyleProps(
+        stylexProps(className, styles.description, xstyle),
+        props,
+      )}
     />
   )
 }
 
-export function AlertDialogClose(props: AlertDialogPrimitive.Close.Props) {
+export function AlertDialogClose({
+  xstyle: consumerXstyle,
+  className,
+  ...restProps
+}: StyleComponentProps<AlertDialogPrimitive.Close.Props>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
-    <AlertDialogPrimitive.Close data-slot="alert-dialog-close" {...props} />
+    <AlertDialogPrimitive.Close
+      data-slot="alert-dialog-close"
+      {...mergeStyleProps(stylexProps(className, xstyle), props)}
+    />
   )
 }
 

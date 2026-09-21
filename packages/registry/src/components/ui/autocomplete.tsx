@@ -1,11 +1,12 @@
 "use client"
 
-import type { StyleXProps } from "@registry/lib/stylex"
+import type { StyleComponentProps } from "@registry/lib/style-props"
 
 import { Autocomplete as AutocompletePrimitive } from "@base-ui/react/autocomplete"
 import { Input } from "@registry/components/ui/input"
 import { ScrollArea } from "@registry/components/ui/scroll-area"
-import { stylexProps } from "@registry/lib/stylex"
+import { splitStyleProps } from "@registry/lib/style-props"
+import { mergeStyleProps, stylexProps } from "@registry/lib/stylex"
 import { themeMarker, tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import { ChevronsUpDownIcon, XIcon } from "lucide-react"
@@ -185,8 +186,9 @@ const styles = stylex.create({
 export const Autocomplete: typeof AutocompletePrimitive.Root =
   AutocompletePrimitive.Root
 
-type AutocompleteInputProps = StyleXProps &
-  Omit<AutocompletePrimitive.Input.Props, "ref" | "size"> & {
+type AutocompleteInputProps = StyleComponentProps<
+  Omit<AutocompletePrimitive.Input.Props, "ref" | "size">,
+  {
     showTrigger?: boolean
     showClear?: boolean
     startAddon?: React.ReactNode
@@ -194,13 +196,14 @@ type AutocompleteInputProps = StyleXProps &
     triggerProps?: AutocompletePrimitive.Trigger.Props
     clearProps?: AutocompletePrimitive.Clear.Props
   }
+>
 
 export const AutocompleteInput = React.forwardRef<
   HTMLInputElement,
   AutocompleteInputProps
 >(function AutocompleteInput(
   {
-    xstyle,
+    xstyle: consumerXstyle,
     className,
     showTrigger = false,
     showClear = false,
@@ -208,10 +211,13 @@ export const AutocompleteInput = React.forwardRef<
     size,
     triggerProps,
     clearProps,
-    ...props
+    ...restProps
   },
   ref,
 ) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   const sizeValue = size ?? "default"
   return (
     <AutocompletePrimitive.InputGroup
@@ -273,7 +279,7 @@ export const AutocompleteInput = React.forwardRef<
 })
 
 export function AutocompletePopup({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
   children,
   side = "bottom",
@@ -282,15 +288,21 @@ export function AutocompletePopup({
   align = "start",
   anchor,
   portalProps,
-  ...props
-}: AutocompletePrimitive.Popup.Props & {
-  align?: AutocompletePrimitive.Positioner.Props["align"]
-  sideOffset?: AutocompletePrimitive.Positioner.Props["sideOffset"]
-  alignOffset?: AutocompletePrimitive.Positioner.Props["alignOffset"]
-  side?: AutocompletePrimitive.Positioner.Props["side"]
-  anchor?: AutocompletePrimitive.Positioner.Props["anchor"]
-  portalProps?: AutocompletePrimitive.Portal.Props
-} & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<
+  AutocompletePrimitive.Popup.Props,
+  {
+    align?: AutocompletePrimitive.Positioner.Props["align"]
+    sideOffset?: AutocompletePrimitive.Positioner.Props["sideOffset"]
+    alignOffset?: AutocompletePrimitive.Positioner.Props["alignOffset"]
+    side?: AutocompletePrimitive.Positioner.Props["side"]
+    anchor?: AutocompletePrimitive.Positioner.Props["anchor"]
+    portalProps?: AutocompletePrimitive.Portal.Props
+  }
+>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <AutocompletePrimitive.Portal {...portalProps}>
       <AutocompletePrimitive.Positioner
@@ -309,13 +321,15 @@ export function AutocompletePopup({
           )}
         >
           <AutocompletePrimitive.Popup
-            {...stylexProps(
-              typeof className === "function" ? className : undefined,
-              styles.popup,
-              xstyle,
-            )}
             data-slot="autocomplete-popup"
-            {...props}
+            {...mergeStyleProps(
+              stylexProps(
+                typeof className === "function" ? className : undefined,
+                styles.popup,
+                xstyle,
+              ),
+              props,
+            )}
           >
             {children}
           </AutocompletePrimitive.Popup>
@@ -325,144 +339,176 @@ export function AutocompletePopup({
   )
 }
 export function AutocompleteItem({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
   children,
-  ...props
-}: AutocompletePrimitive.Item.Props & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<AutocompletePrimitive.Item.Props>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <AutocompletePrimitive.Item
-      {...stylexProps(className, styles.item, xstyle)}
       data-slot="autocomplete-item"
-      {...props}
+      {...mergeStyleProps(stylexProps(className, styles.item, xstyle), props)}
     >
       {children}
     </AutocompletePrimitive.Item>
   )
 }
 export function AutocompleteSeparator({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
-  ...props
-}: AutocompletePrimitive.Separator.Props & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<AutocompletePrimitive.Separator.Props>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <AutocompletePrimitive.Separator
-      {...stylexProps(className, styles.separator, xstyle)}
       data-slot="autocomplete-separator"
-      {...props}
+      {...mergeStyleProps(
+        stylexProps(className, styles.separator, xstyle),
+        props,
+      )}
     />
   )
 }
 export function AutocompleteGroup({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
-  ...props
-}: AutocompletePrimitive.Group.Props & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<AutocompletePrimitive.Group.Props>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <AutocompletePrimitive.Group
-      {...stylexProps(className, styles.group, xstyle)}
       data-slot="autocomplete-group"
-      {...props}
+      {...mergeStyleProps(stylexProps(className, styles.group, xstyle), props)}
     />
   )
 }
 export function AutocompleteGroupLabel({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
-  ...props
-}: AutocompletePrimitive.GroupLabel.Props & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<AutocompletePrimitive.GroupLabel.Props>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <AutocompletePrimitive.GroupLabel
-      {...stylexProps(className, styles.groupLabel, xstyle)}
       data-slot="autocomplete-group-label"
-      {...props}
+      {...mergeStyleProps(
+        stylexProps(className, styles.groupLabel, xstyle),
+        props,
+      )}
     />
   )
 }
 export function AutocompleteEmpty({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
-  ...props
-}: AutocompletePrimitive.Empty.Props & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<AutocompletePrimitive.Empty.Props>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <AutocompletePrimitive.Empty
-      {...stylexProps(className, styles.empty, xstyle)}
       data-slot="autocomplete-empty"
-      {...props}
+      {...mergeStyleProps(stylexProps(className, styles.empty, xstyle), props)}
     />
   )
 }
 export function AutocompleteRow({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
-  ...props
-}: AutocompletePrimitive.Row.Props & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<AutocompletePrimitive.Row.Props>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <AutocompletePrimitive.Row
-      {...stylexProps(className, xstyle)}
       data-slot="autocomplete-row"
-      {...props}
+      {...mergeStyleProps(stylexProps(className, xstyle), props)}
     />
   )
 }
 export const AutocompleteValue: typeof AutocompletePrimitive.Value =
   AutocompletePrimitive.Value
 export function AutocompleteList({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
-  ...props
-}: AutocompletePrimitive.List.Props & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<AutocompletePrimitive.List.Props>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <ScrollArea overscrollContain scrollbarGutter scrollFade>
       <AutocompletePrimitive.List
-        {...stylexProps(className, styles.list, xstyle)}
         data-slot="autocomplete-list"
-        {...props}
+        {...mergeStyleProps(stylexProps(className, styles.list, xstyle), props)}
       />
     </ScrollArea>
   )
 }
 export function AutocompleteClear({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
-  ...props
-}: AutocompletePrimitive.Clear.Props & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<AutocompletePrimitive.Clear.Props>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <AutocompletePrimitive.Clear
-      {...stylexProps(className, styles.control, xstyle)}
       data-slot="autocomplete-clear"
-      {...props}
+      {...mergeStyleProps(
+        stylexProps(className, styles.control, xstyle),
+        props,
+      )}
     >
       <XIcon {...stylex.props(autocompleteSlotStyles.icon)} />
     </AutocompletePrimitive.Clear>
   )
 }
 export function AutocompleteStatus({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
-  ...props
-}: AutocompletePrimitive.Status.Props & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<AutocompletePrimitive.Status.Props>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <AutocompletePrimitive.Status
-      {...stylexProps(className, styles.status, xstyle)}
       data-slot="autocomplete-status"
-      {...props}
+      {...mergeStyleProps(stylexProps(className, styles.status, xstyle), props)}
     />
   )
 }
 export const AutocompleteCollection: typeof AutocompletePrimitive.Collection =
   AutocompletePrimitive.Collection
 export function AutocompleteTrigger({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
   children,
-  ...props
-}: AutocompletePrimitive.Trigger.Props & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<AutocompletePrimitive.Trigger.Props>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <AutocompletePrimitive.Trigger
-      {...stylexProps(className, styles.trigger, xstyle)}
       data-slot="autocomplete-trigger"
-      {...props}
+      {...mergeStyleProps(
+        stylexProps(className, styles.trigger, xstyle),
+        props,
+      )}
     >
       {children}
     </AutocompletePrimitive.Trigger>

@@ -1,9 +1,10 @@
 "use client"
 
-import type { StyleXProps } from "@registry/lib/stylex"
+import type { StyleComponentProps } from "@registry/lib/style-props"
 
 import { Tooltip as TooltipPrimitive } from "@base-ui/react/tooltip"
-import { stylexProps } from "@registry/lib/stylex"
+import { splitStyleProps } from "@registry/lib/style-props"
+import { mergeStyleProps, stylexProps } from "@registry/lib/stylex"
 import { themeMarker, tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 
@@ -67,12 +68,24 @@ export const TooltipProvider: typeof TooltipPrimitive.Provider =
   TooltipPrimitive.Provider
 export const Tooltip: typeof TooltipPrimitive.Root = TooltipPrimitive.Root
 
-export function TooltipTrigger(props: TooltipPrimitive.Trigger.Props) {
-  return <TooltipPrimitive.Trigger data-slot="tooltip-trigger" {...props} />
+export function TooltipTrigger({
+  xstyle: consumerXstyle,
+  className,
+  ...restProps
+}: StyleComponentProps<TooltipPrimitive.Trigger.Props>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
+  return (
+    <TooltipPrimitive.Trigger
+      data-slot="tooltip-trigger"
+      {...mergeStyleProps(stylexProps(className, xstyle), props)}
+    />
+  )
 }
 
 export function TooltipPopup({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
   align = "center",
   sideOffset = 4,
@@ -80,14 +93,20 @@ export function TooltipPopup({
   anchor,
   children,
   portalProps,
-  ...props
-}: TooltipPrimitive.Popup.Props & {
-  align?: TooltipPrimitive.Positioner.Props["align"]
-  side?: TooltipPrimitive.Positioner.Props["side"]
-  sideOffset?: TooltipPrimitive.Positioner.Props["sideOffset"]
-  anchor?: TooltipPrimitive.Positioner.Props["anchor"]
-  portalProps?: TooltipPrimitive.Portal.Props
-} & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<
+  TooltipPrimitive.Popup.Props,
+  {
+    align?: TooltipPrimitive.Positioner.Props["align"]
+    side?: TooltipPrimitive.Positioner.Props["side"]
+    sideOffset?: TooltipPrimitive.Positioner.Props["sideOffset"]
+    anchor?: TooltipPrimitive.Positioner.Props["anchor"]
+    portalProps?: TooltipPrimitive.Portal.Props
+  }
+>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <TooltipPrimitive.Portal {...portalProps}>
       <TooltipPrimitive.Positioner
@@ -99,9 +118,11 @@ export function TooltipPopup({
         sideOffset={sideOffset}
       >
         <TooltipPrimitive.Popup
-          {...stylexProps(className, styles.popup, xstyle)}
           data-slot="tooltip-popup"
-          {...props}
+          {...mergeStyleProps(
+            stylexProps(className, styles.popup, xstyle),
+            props,
+          )}
         >
           <TooltipPrimitive.Viewport
             {...stylex.props(styles.viewport)}

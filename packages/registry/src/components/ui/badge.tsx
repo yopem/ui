@@ -1,9 +1,10 @@
 "use client"
 
-import type { StyleXProps } from "@registry/lib/stylex"
+import type { StyleComponentProps } from "@registry/lib/style-props"
 
 import { mergeProps } from "@base-ui/react/merge-props"
 import { useRender } from "@base-ui/react/use-render"
+import { splitStyleProps } from "@registry/lib/style-props"
 import { stylexProps } from "@registry/lib/stylex"
 import { themeMarker, tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
@@ -242,20 +243,25 @@ export function badgeVariants({
   )
 }
 
-export interface BadgeProps
-  extends StyleXProps, useRender.ComponentProps<"span"> {
-  variant?: BadgeVariantProps["variant"]
-  size?: BadgeVariantProps["size"]
-}
+export type BadgeProps = StyleComponentProps<
+  useRender.ComponentProps<"span">,
+  {
+    variant?: BadgeVariantProps["variant"]
+    size?: BadgeVariantProps["size"]
+  }
+>
 
 export function Badge({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
   variant,
   size,
   render,
-  ...props
+  ...restProps
 }: BadgeProps) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   const defaultProps = {
     ...stylexProps(
       className,

@@ -1,7 +1,8 @@
-import type { StyleXProps } from "@registry/lib/stylex"
+import type { StyleComponentProps } from "@registry/lib/style-props"
 import type * as React from "react"
 
-import { stylexProps } from "@registry/lib/stylex"
+import { splitStyleProps } from "@registry/lib/style-props"
+import { mergeStyleProps, stylexProps } from "@registry/lib/stylex"
 import { themeMarker, tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 
@@ -114,65 +115,82 @@ const variantStyles = {
 type AlertVariant = keyof typeof variantStyles
 
 export function Alert({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
   variant,
-  ...props
-}: React.ComponentProps<"div"> & { variant?: AlertVariant } & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<
+  React.ComponentProps<"div">,
+  { variant?: AlertVariant }
+>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <div
-      {...stylexProps(
-        className,
-        styles.root,
-        variantStyles[variant ?? "default"],
-        xstyle,
-      )}
       data-slot="alert"
       data-variant={variant ?? "default"}
       role="alert"
-      {...props}
+      {...mergeStyleProps(
+        stylexProps(
+          className,
+          styles.root,
+          variantStyles[variant ?? "default"],
+          xstyle,
+        ),
+        props,
+      )}
     />
   )
 }
 
 export function AlertTitle({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
-  ...props
-}: React.ComponentProps<"div"> & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<React.ComponentProps<"div">>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <div
-      {...stylexProps(className, styles.title, xstyle)}
       data-slot="alert-title"
-      {...props}
+      {...mergeStyleProps(stylexProps(className, styles.title, xstyle), props)}
     />
   )
 }
 
 export function AlertDescription({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
-  ...props
-}: React.ComponentProps<"div"> & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<React.ComponentProps<"div">>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <div
-      {...stylexProps(className, styles.description, xstyle)}
       data-slot="alert-description"
-      {...props}
+      {...mergeStyleProps(
+        stylexProps(className, styles.description, xstyle),
+        props,
+      )}
     />
   )
 }
 
 export function AlertAction({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
-  ...props
-}: React.ComponentProps<"div"> & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<React.ComponentProps<"div">>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <div
-      {...stylexProps(className, styles.action, xstyle)}
       data-slot="alert-action"
-      {...props}
+      {...mergeStyleProps(stylexProps(className, styles.action, xstyle), props)}
     />
   )
 }

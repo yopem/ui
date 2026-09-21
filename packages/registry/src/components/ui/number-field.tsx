@@ -1,10 +1,11 @@
 "use client"
 
-import type { StyleXProps } from "@registry/lib/stylex"
+import type { StyleComponentProps } from "@registry/lib/style-props"
 
 import { NumberField as NumberFieldPrimitive } from "@base-ui/react/number-field"
 import { Label } from "@registry/components/ui/label"
-import { stylexProps } from "@registry/lib/stylex"
+import { splitStyleProps } from "@registry/lib/style-props"
+import { mergeStyleProps, stylexProps } from "@registry/lib/stylex"
 import { themeMarker, tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import { MinusIcon, PlusIcon } from "lucide-react"
@@ -186,91 +187,116 @@ export const NumberFieldContext: React.Context<{ fieldId: string } | null> =
   React.createContext<{ fieldId: string } | null>(null)
 
 export function NumberField({
-  xstyle,
+  xstyle: consumerXstyle,
   id,
   className,
   size = "default",
-  ...props
-}: NumberFieldPrimitive.Root.Props & {
-  size?: "sm" | "default" | "lg"
-} & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<
+  NumberFieldPrimitive.Root.Props,
+  {
+    size?: "sm" | "default" | "lg"
+  }
+>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   const generatedId = React.useId()
   const fieldId = id ?? generatedId
   const contextValue = React.useMemo(() => ({ fieldId }), [fieldId])
   return (
     <NumberFieldContext.Provider value={contextValue}>
       <NumberFieldPrimitive.Root
-        {...stylexProps(className, styles.root, xstyle)}
         data-size={size}
         data-slot="number-field"
         id={fieldId}
-        {...props}
+        {...mergeStyleProps(stylexProps(className, styles.root, xstyle), props)}
       />
     </NumberFieldContext.Provider>
   )
 }
 export function NumberFieldGroup({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
-  ...props
-}: NumberFieldPrimitive.Group.Props & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<NumberFieldPrimitive.Group.Props>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <NumberFieldPrimitive.Group
-      {...stylexProps(className, styles.group, xstyle)}
       data-slot="number-field-group"
-      {...props}
+      {...mergeStyleProps(stylexProps(className, styles.group, xstyle), props)}
     />
   )
 }
 export function NumberFieldDecrement({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
-  ...props
-}: NumberFieldPrimitive.Decrement.Props & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<NumberFieldPrimitive.Decrement.Props>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <NumberFieldPrimitive.Decrement
-      {...stylexProps(className, styles.stepper, styles.decrement, xstyle)}
       data-slot="number-field-decrement"
-      {...props}
+      {...mergeStyleProps(
+        stylexProps(className, styles.stepper, styles.decrement, xstyle),
+        props,
+      )}
     >
       <MinusIcon {...stylex.props(styles.icon)} />
     </NumberFieldPrimitive.Decrement>
   )
 }
 export function NumberFieldIncrement({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
-  ...props
-}: NumberFieldPrimitive.Increment.Props & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<NumberFieldPrimitive.Increment.Props>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <NumberFieldPrimitive.Increment
-      {...stylexProps(className, styles.stepper, styles.increment, xstyle)}
       data-slot="number-field-increment"
-      {...props}
+      {...mergeStyleProps(
+        stylexProps(className, styles.stepper, styles.increment, xstyle),
+        props,
+      )}
     >
       <PlusIcon {...stylex.props(styles.icon)} />
     </NumberFieldPrimitive.Increment>
   )
 }
 export function NumberFieldInput({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
-  ...props
-}: NumberFieldPrimitive.Input.Props & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<NumberFieldPrimitive.Input.Props>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <NumberFieldPrimitive.Input
-      {...stylexProps(className, styles.input, xstyle)}
       data-slot="number-field-input"
-      {...props}
+      {...mergeStyleProps(stylexProps(className, styles.input, xstyle), props)}
     />
   )
 }
 export function NumberFieldScrubArea({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
   label,
-  ...props
-}: NumberFieldPrimitive.ScrubArea.Props & { label: string } & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<
+  NumberFieldPrimitive.ScrubArea.Props,
+  { label: string }
+>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   const context = React.useContext(NumberFieldContext)
   if (!context)
     throw new Error(
@@ -278,9 +304,11 @@ export function NumberFieldScrubArea({
     )
   return (
     <NumberFieldPrimitive.ScrubArea
-      {...stylexProps(className, styles.scrubArea, xstyle)}
       data-slot="number-field-scrub-area"
-      {...props}
+      {...mergeStyleProps(
+        stylexProps(className, styles.scrubArea, xstyle),
+        props,
+      )}
     >
       <Label {...stylex.props(styles.scrubLabel)} htmlFor={context.fieldId}>
         {label}
@@ -291,7 +319,14 @@ export function NumberFieldScrubArea({
     </NumberFieldPrimitive.ScrubArea>
   )
 }
-export function CursorGrowIcon(props: React.ComponentProps<"svg">) {
+export function CursorGrowIcon({
+  xstyle: consumerXstyle,
+  className,
+  ...restProps
+}: StyleComponentProps<React.ComponentProps<"svg">>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <svg
       aria-hidden="true"
@@ -301,7 +336,7 @@ export function CursorGrowIcon(props: React.ComponentProps<"svg">) {
       viewBox="0 0 24 14"
       width="26"
       xmlns="http://www.w3.org/2000/svg"
-      {...props}
+      {...mergeStyleProps(stylexProps(className, xstyle), props)}
     >
       <path d="M19.5 5.5L6.49737 5.51844V2L1 6.9999L6.5 12L6.49737 8.5L19.5 8.5V12L25 6.9999L19.5 2V5.5Z" />
     </svg>

@@ -1,9 +1,10 @@
 "use client"
 
-import type { StyleXProps } from "@registry/lib/stylex"
+import type { StyleComponentProps } from "@registry/lib/style-props"
 
 import { Toggle as TogglePrimitive } from "@base-ui/react/toggle"
-import { stylexProps } from "@registry/lib/stylex"
+import { splitStyleProps } from "@registry/lib/style-props"
+import { mergeStyleProps, stylexProps } from "@registry/lib/stylex"
 import { themeMarker, tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import { clsx } from "clsx"
@@ -178,25 +179,30 @@ export function toggleVariants({
   )
 }
 export function Toggle({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
   variant,
   size,
-  ...props
-}: TogglePrimitive.Props &
-  Omit<ToggleVariantProps, "className"> &
-  StyleXProps) {
+  ...restProps
+}: StyleComponentProps<
+  TogglePrimitive.Props & Omit<ToggleVariantProps, "className">
+>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <TogglePrimitive
-      {...stylexProps(
-        className,
-        styles.root,
-        sizeStyles[size ?? "default"],
-        variantStyles[variant ?? "default"],
-        xstyle,
-      )}
       data-slot="toggle"
-      {...props}
+      {...mergeStyleProps(
+        stylexProps(
+          className,
+          styles.root,
+          sizeStyles[size ?? "default"],
+          variantStyles[variant ?? "default"],
+          xstyle,
+        ),
+        props,
+      )}
     />
   )
 }

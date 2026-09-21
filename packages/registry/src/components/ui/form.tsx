@@ -1,20 +1,23 @@
 "use client"
 
-import type { StyleXProps } from "@registry/lib/stylex"
+import type { StyleComponentProps } from "@registry/lib/style-props"
 
 import { Form as FormPrimitive } from "@base-ui/react/form"
-import { stylexProps } from "@registry/lib/stylex"
+import { splitStyleProps } from "@registry/lib/style-props"
+import { mergeStyleProps, stylexProps } from "@registry/lib/stylex"
 
 export function Form({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
-  ...props
-}: FormPrimitive.Props & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<FormPrimitive.Props>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <FormPrimitive
-      {...stylexProps(className, xstyle)}
       data-slot="form"
-      {...props}
+      {...mergeStyleProps(stylexProps(className, xstyle), props)}
     />
   )
 }

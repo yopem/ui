@@ -1,9 +1,10 @@
 "use client"
 
-import type { StyleXProps } from "@registry/lib/stylex"
+import type { StyleComponentProps } from "@registry/lib/style-props"
 
 import { CheckboxGroup as CheckboxGroupPrimitive } from "@base-ui/react/checkbox-group"
-import { stylexProps } from "@registry/lib/stylex"
+import { splitStyleProps } from "@registry/lib/style-props"
+import { mergeStyleProps, stylexProps } from "@registry/lib/stylex"
 import * as stylex from "@stylexjs/stylex"
 
 const styles = stylex.create({
@@ -16,14 +17,16 @@ const styles = stylex.create({
 })
 
 export function CheckboxGroup({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
-  ...props
-}: CheckboxGroupPrimitive.Props & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<CheckboxGroupPrimitive.Props>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <CheckboxGroupPrimitive
-      {...stylexProps(className, styles.root, xstyle)}
-      {...props}
+      {...mergeStyleProps(stylexProps(className, styles.root, xstyle), props)}
     />
   )
 }

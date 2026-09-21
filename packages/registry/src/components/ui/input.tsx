@@ -1,9 +1,11 @@
 "use client"
 
+import type { StyleComponentProps } from "@registry/lib/style-props"
 import type { StyleXProps } from "@registry/lib/stylex"
 import type * as React from "react"
 
 import { Input as InputPrimitive } from "@base-ui/react/input"
+import { splitStyleProps } from "@registry/lib/style-props"
 import { stylexProps } from "@registry/lib/stylex"
 import { themeMarker, tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
@@ -170,14 +172,16 @@ const styles = stylex.create({
   },
 })
 
-export type InputProps = StyleXProps &
-  Omit<InputPrimitive.Props & React.RefAttributes<HTMLInputElement>, "size"> & {
+export type InputProps = StyleComponentProps<
+  Omit<InputPrimitive.Props & React.RefAttributes<HTMLInputElement>, "size">,
+  {
     size?: "sm" | "default" | "lg" | number
     unstyled?: boolean
     nativeInput?: boolean
     /** StyleX styles for the decorative wrapper, including Group item geometry. */
     controlXstyle?: StyleXProps["xstyle"]
   }
+>
 
 function getInputSizeStyle(size: InputProps["size"]) {
   if (size === "sm") return styles.small
@@ -212,15 +216,18 @@ function mergeNativeInputStyle(
 }
 
 export function Input({
-  xstyle,
+  xstyle: consumerXstyle,
   controlXstyle,
   className,
   size = "default",
   unstyled = false,
   nativeInput = false,
   style,
-  ...props
+  ...restProps
 }: InputProps) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   const sizeStyle = getInputSizeStyle(size)
   const inputProps = stylexProps(
     undefined,

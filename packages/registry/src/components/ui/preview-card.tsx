@@ -1,9 +1,10 @@
 "use client"
 
-import type { StyleXProps } from "@registry/lib/stylex"
+import type { StyleComponentProps } from "@registry/lib/style-props"
 
 import { PreviewCard as PreviewCardPrimitive } from "@base-ui/react/preview-card"
-import { stylexProps } from "@registry/lib/stylex"
+import { splitStyleProps } from "@registry/lib/style-props"
+import { mergeStyleProps, stylexProps } from "@registry/lib/stylex"
 import { themeMarker, tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 
@@ -46,27 +47,43 @@ const styles = stylex.create({
 export const PreviewCard: typeof PreviewCardPrimitive.Root =
   PreviewCardPrimitive.Root
 
-export function PreviewCardTrigger(props: PreviewCardPrimitive.Trigger.Props) {
+export function PreviewCardTrigger({
+  xstyle: consumerXstyle,
+  className,
+  ...restProps
+}: StyleComponentProps<PreviewCardPrimitive.Trigger.Props>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
-    <PreviewCardPrimitive.Trigger data-slot="preview-card-trigger" {...props} />
+    <PreviewCardPrimitive.Trigger
+      data-slot="preview-card-trigger"
+      {...mergeStyleProps(stylexProps(className, xstyle), props)}
+    />
   )
 }
 
 export function PreviewCardPopup({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
   children,
   align = "center",
   sideOffset = 4,
   anchor,
   portalProps,
-  ...props
-}: PreviewCardPrimitive.Popup.Props & {
-  align?: PreviewCardPrimitive.Positioner.Props["align"]
-  sideOffset?: PreviewCardPrimitive.Positioner.Props["sideOffset"]
-  anchor?: PreviewCardPrimitive.Positioner.Props["anchor"]
-  portalProps?: PreviewCardPrimitive.Portal.Props
-} & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<
+  PreviewCardPrimitive.Popup.Props,
+  {
+    align?: PreviewCardPrimitive.Positioner.Props["align"]
+    sideOffset?: PreviewCardPrimitive.Positioner.Props["sideOffset"]
+    anchor?: PreviewCardPrimitive.Positioner.Props["anchor"]
+    portalProps?: PreviewCardPrimitive.Portal.Props
+  }
+>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <PreviewCardPrimitive.Portal {...portalProps}>
       <PreviewCardPrimitive.Positioner
@@ -77,9 +94,11 @@ export function PreviewCardPopup({
         sideOffset={sideOffset}
       >
         <PreviewCardPrimitive.Popup
-          {...stylexProps(className, styles.popup, xstyle)}
           data-slot="preview-card-content"
-          {...props}
+          {...mergeStyleProps(
+            stylexProps(className, styles.popup, xstyle),
+            props,
+          )}
         >
           {children}
         </PreviewCardPrimitive.Popup>

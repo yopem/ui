@@ -1,9 +1,10 @@
 "use client"
 
-import type { StyleXProps } from "@registry/lib/stylex"
+import type { StyleComponentProps } from "@registry/lib/style-props"
 
 import { Popover as PopoverPrimitive } from "@base-ui/react/popover"
-import { stylexProps } from "@registry/lib/stylex"
+import { splitStyleProps } from "@registry/lib/style-props"
+import { mergeStyleProps, stylexProps } from "@registry/lib/stylex"
 import { themeMarker, tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 
@@ -123,16 +124,18 @@ export const PopoverCreateHandle: typeof PopoverPrimitive.createHandle =
 export const Popover: typeof PopoverPrimitive.Root = PopoverPrimitive.Root
 
 export function PopoverTrigger({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
   children,
-  ...props
-}: PopoverPrimitive.Trigger.Props & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<PopoverPrimitive.Trigger.Props>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <PopoverPrimitive.Trigger
-      {...stylexProps(className, xstyle)}
       data-slot="popover-trigger"
-      {...props}
+      {...mergeStyleProps(stylexProps(className, xstyle), props)}
     >
       {children}
     </PopoverPrimitive.Trigger>
@@ -140,7 +143,7 @@ export function PopoverTrigger({
 }
 
 export function PopoverPopup({
-  xstyle,
+  xstyle: consumerXstyle,
   children,
   className,
   side = "bottom",
@@ -151,17 +154,23 @@ export function PopoverPopup({
   anchor,
   portalProps,
   instant = false,
-  ...props
-}: PopoverPrimitive.Popup.Props & {
-  portalProps?: PopoverPrimitive.Portal.Props
-  side?: PopoverPrimitive.Positioner.Props["side"]
-  align?: PopoverPrimitive.Positioner.Props["align"]
-  sideOffset?: PopoverPrimitive.Positioner.Props["sideOffset"]
-  alignOffset?: PopoverPrimitive.Positioner.Props["alignOffset"]
-  tooltipStyle?: boolean
-  anchor?: PopoverPrimitive.Positioner.Props["anchor"]
-  instant?: boolean
-} & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<
+  PopoverPrimitive.Popup.Props,
+  {
+    portalProps?: PopoverPrimitive.Portal.Props
+    side?: PopoverPrimitive.Positioner.Props["side"]
+    align?: PopoverPrimitive.Positioner.Props["align"]
+    sideOffset?: PopoverPrimitive.Positioner.Props["sideOffset"]
+    alignOffset?: PopoverPrimitive.Positioner.Props["alignOffset"]
+    tooltipStyle?: boolean
+    anchor?: PopoverPrimitive.Positioner.Props["anchor"]
+    instant?: boolean
+  }
+>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <PopoverPrimitive.Portal {...portalProps}>
       <PopoverPrimitive.Positioner
@@ -175,14 +184,16 @@ export function PopoverPopup({
         sideOffset={sideOffset}
       >
         <PopoverPrimitive.Popup
-          {...stylexProps(
-            className,
-            styles.popup,
-            tooltipStyle && styles.tooltipPopup,
-            xstyle,
-          )}
           data-slot="popover-popup"
-          {...props}
+          {...mergeStyleProps(
+            stylexProps(
+              className,
+              styles.popup,
+              tooltipStyle && styles.tooltipPopup,
+              xstyle,
+            ),
+            props,
+          )}
         >
           <PopoverPrimitive.Viewport
             {...stylex.props(
@@ -200,32 +211,51 @@ export function PopoverPopup({
   )
 }
 
-export function PopoverClose(props: PopoverPrimitive.Close.Props) {
-  return <PopoverPrimitive.Close data-slot="popover-close" {...props} />
+export function PopoverClose({
+  xstyle: consumerXstyle,
+  className,
+  ...restProps
+}: StyleComponentProps<PopoverPrimitive.Close.Props>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
+  return (
+    <PopoverPrimitive.Close
+      data-slot="popover-close"
+      {...mergeStyleProps(stylexProps(className, xstyle), props)}
+    />
+  )
 }
 export function PopoverTitle({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
-  ...props
-}: PopoverPrimitive.Title.Props & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<PopoverPrimitive.Title.Props>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <PopoverPrimitive.Title
-      {...stylexProps(className, styles.title, xstyle)}
       data-slot="popover-title"
-      {...props}
+      {...mergeStyleProps(stylexProps(className, styles.title, xstyle), props)}
     />
   )
 }
 export function PopoverDescription({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
-  ...props
-}: PopoverPrimitive.Description.Props & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<PopoverPrimitive.Description.Props>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <PopoverPrimitive.Description
-      {...stylexProps(className, styles.description, xstyle)}
       data-slot="popover-description"
-      {...props}
+      {...mergeStyleProps(
+        stylexProps(className, styles.description, xstyle),
+        props,
+      )}
     />
   )
 }

@@ -1,10 +1,11 @@
 "use client"
 
-import type { StyleXProps } from "@registry/lib/stylex"
+import type { StyleComponentProps } from "@registry/lib/style-props"
 import type * as React from "react"
 
 import { DayPicker } from "@daypicker/react"
-import { stylexProps } from "@registry/lib/stylex"
+import { splitStyleProps } from "@registry/lib/style-props"
+import { mergeStyleProps, stylexProps } from "@registry/lib/stylex"
 import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import { clsx } from "clsx"
@@ -199,14 +200,17 @@ const styles = stylex.create({
 const buttonClassNames = stylex.props(styles.button).className
 
 export function Calendar({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
   classNames,
   showOutsideDays = true,
   components: userComponents,
   mode = "single",
-  ...props
-}: React.ComponentProps<typeof DayPicker> & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<React.ComponentProps<typeof DayPicker>>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   const defaultClassNames = {
     button_next: buttonClassNames,
     button_previous: buttonClassNames,
@@ -277,7 +281,6 @@ export function Calendar({
   }
 
   const dayPickerProps = {
-    ...stylexProps(className, styles.root, xstyle),
     classNames: mergedClassNames,
     components: { ...defaultComponents, ...userComponents },
     "data-slot": "calendar",
@@ -287,7 +290,7 @@ export function Calendar({
     } as React.ComponentProps<typeof DayPicker>["formatters"],
     mode,
     showOutsideDays,
-    ...props,
+    ...mergeStyleProps(stylexProps(className, styles.root, xstyle), props),
   }
 
   return (

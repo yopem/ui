@@ -1,12 +1,13 @@
 "use client"
 
-import type { StyleXProps } from "@registry/lib/stylex"
+import type { StyleComponentProps } from "@registry/lib/style-props"
 import type * as React from "react"
 
 import { mergeProps } from "@base-ui/react/merge-props"
 import { Select as SelectPrimitive } from "@base-ui/react/select"
 import { useRender } from "@base-ui/react/use-render"
-import { stylexProps } from "@registry/lib/stylex"
+import { splitStyleProps } from "@registry/lib/style-props"
+import { mergeStyleProps, stylexProps } from "@registry/lib/stylex"
 import { themeMarker, tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import { clsx } from "clsx"
@@ -291,19 +292,24 @@ export const selectTriggerIconClassName = stylex.props(
   styles.triggerIcon,
 ).className
 
-export interface SelectButtonProps
-  extends StyleXProps, useRender.ComponentProps<"button"> {
-  size?: SelectSize | null
-}
+export type SelectButtonProps = StyleComponentProps<
+  useRender.ComponentProps<"button">,
+  {
+    size?: SelectSize | null
+  }
+>
 
 export function SelectButton({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
   size,
   render,
   children,
-  ...props
-}: SelectButtonProps & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<SelectButtonProps>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   const typeValue: React.ButtonHTMLAttributes<HTMLButtonElement>["type"] =
     render ? undefined : "button"
   const defaultProps = {
@@ -331,22 +337,30 @@ export function SelectButton({
 }
 
 export function SelectTrigger({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
   size = "default",
   children,
-  ...props
-}: SelectPrimitive.Trigger.Props & { size?: SelectSize | null } & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<
+  SelectPrimitive.Trigger.Props,
+  { size?: SelectSize | null }
+>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <SelectPrimitive.Trigger
-      {...stylexProps(
-        className,
-        styles.trigger,
-        sizeStyles[size ?? "default"],
-        xstyle,
-      )}
       data-slot="select-trigger"
-      {...props}
+      {...mergeStyleProps(
+        stylexProps(
+          className,
+          styles.trigger,
+          sizeStyles[size ?? "default"],
+          xstyle,
+        ),
+        props,
+      )}
     >
       {children}
       <SelectPrimitive.Icon data-slot="select-icon">
@@ -356,21 +370,23 @@ export function SelectTrigger({
   )
 }
 export function SelectValue({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
-  ...props
-}: SelectPrimitive.Value.Props & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<SelectPrimitive.Value.Props>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <SelectPrimitive.Value
-      {...stylexProps(className, styles.value, xstyle)}
       data-slot="select-value"
-      {...props}
+      {...mergeStyleProps(stylexProps(className, styles.value, xstyle), props)}
     />
   )
 }
 
 export function SelectPopup({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
   children,
   side = "bottom",
@@ -380,16 +396,22 @@ export function SelectPopup({
   alignItemWithTrigger = true,
   anchor,
   portalProps,
-  ...props
-}: SelectPrimitive.Popup.Props & {
-  portalProps?: SelectPrimitive.Portal.Props
-  side?: SelectPrimitive.Positioner.Props["side"]
-  sideOffset?: SelectPrimitive.Positioner.Props["sideOffset"]
-  align?: SelectPrimitive.Positioner.Props["align"]
-  alignOffset?: SelectPrimitive.Positioner.Props["alignOffset"]
-  alignItemWithTrigger?: SelectPrimitive.Positioner.Props["alignItemWithTrigger"]
-  anchor?: SelectPrimitive.Positioner.Props["anchor"]
-} & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<
+  SelectPrimitive.Popup.Props,
+  {
+    portalProps?: SelectPrimitive.Portal.Props
+    side?: SelectPrimitive.Positioner.Props["side"]
+    sideOffset?: SelectPrimitive.Positioner.Props["sideOffset"]
+    align?: SelectPrimitive.Positioner.Props["align"]
+    alignOffset?: SelectPrimitive.Positioner.Props["alignOffset"]
+    alignItemWithTrigger?: SelectPrimitive.Positioner.Props["alignItemWithTrigger"]
+    anchor?: SelectPrimitive.Positioner.Props["anchor"]
+  }
+>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <SelectPrimitive.Portal {...portalProps}>
       <SelectPrimitive.Positioner
@@ -403,13 +425,15 @@ export function SelectPopup({
         sideOffset={sideOffset}
       >
         <SelectPrimitive.Popup
-          {...stylexProps(
-            typeof className === "function" ? className : undefined,
-            styles.popup,
-            xstyle,
-          )}
           data-slot="select-popup"
-          {...props}
+          {...mergeStyleProps(
+            stylexProps(
+              typeof className === "function" ? className : undefined,
+              styles.popup,
+              xstyle,
+            ),
+            props,
+          )}
         >
           <SelectPrimitive.ScrollUpArrow
             {...stylex.props(styles.scrollArrow, styles.scrollUp)}
@@ -441,16 +465,18 @@ export function SelectPopup({
 }
 
 export function SelectItem({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
   children,
-  ...props
-}: SelectPrimitive.Item.Props & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<SelectPrimitive.Item.Props>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <SelectPrimitive.Item
-      {...stylexProps(className, styles.item, xstyle)}
       data-slot="select-item"
-      {...props}
+      {...mergeStyleProps(stylexProps(className, styles.item, xstyle), props)}
     >
       <SelectPrimitive.ItemIndicator {...stylex.props(styles.itemIndicator)}>
         <svg
@@ -476,44 +502,68 @@ export function SelectItem({
   )
 }
 export function SelectSeparator({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
-  ...props
-}: SelectPrimitive.Separator.Props & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<SelectPrimitive.Separator.Props>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <SelectPrimitive.Separator
-      {...stylexProps(className, styles.separator, xstyle)}
       data-slot="select-separator"
-      {...props}
+      {...mergeStyleProps(
+        stylexProps(className, styles.separator, xstyle),
+        props,
+      )}
     />
   )
 }
-export function SelectGroup(props: SelectPrimitive.Group.Props) {
-  return <SelectPrimitive.Group data-slot="select-group" {...props} />
+export function SelectGroup({
+  xstyle: consumerXstyle,
+  className,
+  ...restProps
+}: StyleComponentProps<SelectPrimitive.Group.Props>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
+  return (
+    <SelectPrimitive.Group
+      data-slot="select-group"
+      {...mergeStyleProps(stylexProps(className, xstyle), props)}
+    />
+  )
 }
 export function SelectLabel({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
-  ...props
-}: SelectPrimitive.Label.Props & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<SelectPrimitive.Label.Props>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <SelectPrimitive.Label
-      {...stylexProps(className, styles.label, xstyle)}
       data-slot="select-label"
-      {...props}
+      {...mergeStyleProps(stylexProps(className, styles.label, xstyle), props)}
     />
   )
 }
 export function SelectGroupLabel({
   className,
-  xstyle,
-  ...props
-}: SelectPrimitive.GroupLabel.Props & StyleXProps) {
+  xstyle: consumerXstyle,
+  ...restProps
+}: StyleComponentProps<SelectPrimitive.GroupLabel.Props>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <SelectPrimitive.GroupLabel
-      {...stylexProps(className, styles.groupLabel, xstyle)}
       data-slot="select-group-label"
-      {...props}
+      {...mergeStyleProps(
+        stylexProps(className, styles.groupLabel, xstyle),
+        props,
+      )}
     />
   )
 }

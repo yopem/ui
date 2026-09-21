@@ -1,9 +1,10 @@
 "use client"
 
-import type { StyleXProps } from "@registry/lib/stylex"
+import type { StyleComponentProps } from "@registry/lib/style-props"
 
 import { Toolbar as ToolbarPrimitive } from "@base-ui/react/toolbar"
-import { stylexProps } from "@registry/lib/stylex"
+import { splitStyleProps } from "@registry/lib/style-props"
+import { mergeStyleProps, stylexProps } from "@registry/lib/stylex"
 import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 
@@ -27,87 +28,102 @@ const styles = stylex.create({
 })
 
 export function Toolbar({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
-  ...props
-}: ToolbarPrimitive.Root.Props & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<ToolbarPrimitive.Root.Props>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <ToolbarPrimitive.Root
-      {...stylexProps(className, styles.root, xstyle)}
       data-slot="toolbar"
-      {...props}
+      {...mergeStyleProps(stylexProps(className, styles.root, xstyle), props)}
     />
   )
 }
 export function ToolbarButton({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
-  ...props
-}: ToolbarPrimitive.Button.Props & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<ToolbarPrimitive.Button.Props>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <ToolbarPrimitive.Button
-      {...stylexProps(className, xstyle)}
       data-slot="toolbar-button"
-      {...props}
+      {...mergeStyleProps(stylexProps(className, xstyle), props)}
     />
   )
 }
 export function ToolbarLink({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
-  ...props
-}: ToolbarPrimitive.Link.Props & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<ToolbarPrimitive.Link.Props>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <ToolbarPrimitive.Link
-      {...stylexProps(className, xstyle)}
       data-slot="toolbar-link"
-      {...props}
+      {...mergeStyleProps(stylexProps(className, xstyle), props)}
     />
   )
 }
 export function ToolbarInput({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
-  ...props
-}: ToolbarPrimitive.Input.Props & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<ToolbarPrimitive.Input.Props>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <ToolbarPrimitive.Input
-      {...stylexProps(className, xstyle)}
       data-slot="toolbar-input"
-      {...props}
+      {...mergeStyleProps(stylexProps(className, xstyle), props)}
     />
   )
 }
 export function ToolbarGroup({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
-  ...props
-}: ToolbarPrimitive.Group.Props & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<ToolbarPrimitive.Group.Props>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <ToolbarPrimitive.Group
-      {...stylexProps(className, styles.group, xstyle)}
       data-slot="toolbar-group"
-      {...props}
+      {...mergeStyleProps(stylexProps(className, styles.group, xstyle), props)}
     />
   )
 }
 export function ToolbarSeparator({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
   orientation = "vertical",
-  ...props
-}: ToolbarPrimitive.Separator.Props & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<ToolbarPrimitive.Separator.Props>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <ToolbarPrimitive.Separator
-      {...stylexProps(
-        className,
-        styles.separator,
-        orientation === "horizontal" ? styles.horizontal : styles.vertical,
-        xstyle,
-      )}
       data-slot="toolbar-separator"
       orientation={orientation}
-      {...props}
+      {...mergeStyleProps(
+        stylexProps(
+          className,
+          styles.separator,
+          orientation === "horizontal" ? styles.horizontal : styles.vertical,
+          xstyle,
+        ),
+        props,
+      )}
     />
   )
 }

@@ -1,11 +1,12 @@
 "use client"
 
-import type { StyleXProps } from "@registry/lib/stylex"
+import type { StyleComponentProps } from "@registry/lib/style-props"
 import type * as React from "react"
 
 import { OTPField as OTPFieldPrimitive } from "@base-ui/react/otp-field"
 import { Separator } from "@registry/components/ui/separator"
-import { stylexProps } from "@registry/lib/stylex"
+import { splitStyleProps } from "@registry/lib/style-props"
+import { mergeStyleProps, stylexProps } from "@registry/lib/stylex"
 import { themeMarker, tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 
@@ -120,46 +121,62 @@ const styles = stylex.create({
 })
 
 export function OTPField({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
   size = "default",
-  ...props
-}: React.ComponentProps<typeof OTPFieldPrimitive.Root> & {
-  size?: "default" | "lg"
-} & StyleXProps) {
+  mask,
+  ...restProps
+}: StyleComponentProps<
+  React.ComponentProps<typeof OTPFieldPrimitive.Root>,
+  {
+    size?: "default" | "lg"
+    mask?: React.ComponentProps<typeof OTPFieldPrimitive.Root>["mask"]
+  }
+>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <OTPFieldPrimitive.Root
-      {...stylexProps(
-        className,
-        styles.root,
-        size === "lg" ? styles.largeSize : styles.defaultSize,
-        xstyle,
-      )}
       data-size={size}
       data-slot="otp-field"
-      {...props}
+      mask={mask}
+      {...mergeStyleProps(
+        stylexProps(
+          className,
+          styles.root,
+          size === "lg" ? styles.largeSize : styles.defaultSize,
+          xstyle,
+        ),
+        props,
+      )}
     />
   )
 }
 export function OTPFieldInput({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
-  ...props
-}: React.ComponentProps<typeof OTPFieldPrimitive.Input> & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<React.ComponentProps<typeof OTPFieldPrimitive.Input>>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <OTPFieldPrimitive.Input
-      {...stylexProps(className, styles.input, xstyle)}
       data-slot="otp-field-input"
       spellCheck={false}
-      {...props}
+      {...mergeStyleProps(stylexProps(className, styles.input, xstyle), props)}
     />
   )
 }
 export function OTPFieldSeparator({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
-  ...props
-}: React.ComponentProps<typeof Separator> & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<React.ComponentProps<typeof Separator>>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <OTPFieldPrimitive.Separator
       render={

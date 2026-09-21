@@ -1,9 +1,10 @@
 "use client"
 
-import type { StyleXProps } from "@registry/lib/stylex"
+import type { StyleComponentProps } from "@registry/lib/style-props"
 
 import { ScrollArea as ScrollAreaPrimitive } from "@base-ui/react/scroll-area"
-import { stylexProps } from "@registry/lib/stylex"
+import { splitStyleProps } from "@registry/lib/style-props"
+import { mergeStyleProps, stylexProps } from "@registry/lib/stylex"
 import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 
@@ -71,7 +72,7 @@ const styles = stylex.create({
 })
 
 export function ScrollArea({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
   children,
   scrollFade = false,
@@ -79,19 +80,24 @@ export function ScrollArea({
   fill = false,
   clampContentMinWidth = true,
   overscrollContain = false,
-  ...props
-}: ScrollAreaPrimitive.Root.Props & {
-  scrollFade?: boolean
-  scrollbarGutter?: boolean
-  fill?: boolean
-  clampContentMinWidth?: boolean
-  overscrollContain?: boolean
-} & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<
+  ScrollAreaPrimitive.Root.Props,
+  {
+    scrollFade?: boolean
+    scrollbarGutter?: boolean
+    fill?: boolean
+    clampContentMinWidth?: boolean
+    overscrollContain?: boolean
+  }
+>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   const label = props["aria-label"] ?? "Scrollable content"
   return (
     <ScrollAreaPrimitive.Root
-      {...stylexProps(className, styles.root, xstyle)}
-      {...props}
+      {...mergeStyleProps(stylexProps(className, styles.root, xstyle), props)}
     >
       <ScrollAreaPrimitive.Viewport
         {...stylex.props(
@@ -122,17 +128,22 @@ export function ScrollArea({
 }
 
 export function ScrollBar({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
   orientation = "vertical",
-  ...props
-}: ScrollAreaPrimitive.Scrollbar.Props & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<ScrollAreaPrimitive.Scrollbar.Props>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <ScrollAreaPrimitive.Scrollbar
-      {...stylexProps(className, styles.scrollbar, xstyle)}
       data-slot="scroll-area-scrollbar"
       orientation={orientation}
-      {...props}
+      {...mergeStyleProps(
+        stylexProps(className, styles.scrollbar, xstyle),
+        props,
+      )}
     >
       <ScrollAreaPrimitive.Thumb
         {...stylex.props(styles.thumb)}

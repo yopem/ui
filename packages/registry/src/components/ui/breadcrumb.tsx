@@ -1,11 +1,12 @@
 "use client"
 
-import type { StyleXProps } from "@registry/lib/stylex"
+import type { StyleComponentProps } from "@registry/lib/style-props"
 import type * as React from "react"
 
 import { mergeProps } from "@base-ui/react/merge-props"
 import { useRender } from "@base-ui/react/use-render"
-import { stylexProps } from "@registry/lib/stylex"
+import { splitStyleProps } from "@registry/lib/style-props"
+import { mergeStyleProps, stylexProps } from "@registry/lib/stylex"
 import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import { ChevronRight, MoreHorizontal } from "lucide-react"
@@ -40,44 +41,69 @@ const styles = stylex.create({
   },
 })
 
-export function Breadcrumb(props: React.ComponentProps<"nav">) {
-  return <nav aria-label="breadcrumb" data-slot="breadcrumb" {...props} />
+export function Breadcrumb({
+  xstyle: consumerXstyle,
+  className,
+  ...restProps
+}: StyleComponentProps<React.ComponentProps<"nav">>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
+  return (
+    <nav
+      aria-label="breadcrumb"
+      data-slot="breadcrumb"
+      {...mergeStyleProps(stylexProps(className, xstyle), props)}
+    />
+  )
 }
 
 export function BreadcrumbList({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
-  ...props
-}: React.ComponentProps<"ol"> & StyleXProps) {
+  start,
+  ...restProps
+}: StyleComponentProps<
+  React.ComponentProps<"ol">,
+  Pick<React.ComponentProps<"ol">, "start">
+>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <ol
-      {...stylexProps(className, styles.list, xstyle)}
+      start={start}
       data-slot="breadcrumb-list"
-      {...props}
+      {...mergeStyleProps(stylexProps(className, styles.list, xstyle), props)}
     />
   )
 }
 
 export function BreadcrumbItem({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
-  ...props
-}: React.ComponentProps<"li"> & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<React.ComponentProps<"li">>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <li
-      {...stylexProps(className, styles.item, xstyle)}
       data-slot="breadcrumb-item"
-      {...props}
+      {...mergeStyleProps(stylexProps(className, styles.item, xstyle), props)}
     />
   )
 }
 
 export function BreadcrumbLink({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
   render,
-  ...props
-}: useRender.ComponentProps<"a"> & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<useRender.ComponentProps<"a">>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   const defaultProps = {
     ...stylexProps(className, styles.link, xstyle),
     "data-slot": "breadcrumb-link",
@@ -90,33 +116,42 @@ export function BreadcrumbLink({
 }
 
 export function BreadcrumbPage({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
-  ...props
-}: React.ComponentProps<"span"> & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<React.ComponentProps<"span">>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <span
       aria-current="page"
-      {...stylexProps(className, styles.page, xstyle)}
+
       data-slot="breadcrumb-page"
-      {...props}
+      {...mergeStyleProps(stylexProps(className, styles.page, xstyle), props)}
     />
   )
 }
 
 export function BreadcrumbSeparator({
-  xstyle,
+  xstyle: consumerXstyle,
   children,
   className,
-  ...props
-}: React.ComponentProps<"li"> & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<React.ComponentProps<"li">>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <li
       aria-hidden="true"
-      {...stylexProps(className, styles.separator, xstyle)}
+
       data-slot="breadcrumb-separator"
       role="presentation"
-      {...props}
+      {...mergeStyleProps(
+        stylexProps(className, styles.separator, xstyle),
+        props,
+      )}
     >
       {children ?? <ChevronRight {...stylex.props(styles.icon)} />}
     </li>
@@ -124,17 +159,20 @@ export function BreadcrumbSeparator({
 }
 
 export function BreadcrumbEllipsis({
-  xstyle,
+  xstyle: consumerXstyle,
   className,
-  ...props
-}: React.ComponentProps<"span"> & StyleXProps) {
+  ...restProps
+}: StyleComponentProps<React.ComponentProps<"span">>) {
+  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
+  const xstyle = [styleProps, consumerXstyle]
+
   return (
     <span
       aria-hidden="true"
-      {...stylexProps(className, xstyle)}
+
       data-slot="breadcrumb-ellipsis"
       role="presentation"
-      {...props}
+      {...mergeStyleProps(stylexProps(className, xstyle), props)}
     >
       <MoreHorizontal {...stylex.props(styles.icon)} />
       <span {...stylex.props(styles.srOnly)}>More</span>
