@@ -48,6 +48,10 @@ const config = defineConfig({
     devtools({ injectSource: { enabled: false } }),
     babel({ plugins: [["@stylexjs/babel-plugin", styleXOptions]] }),
     nitro({
+      rolldownConfig: {
+        // Nitro rechunks SSR modules; preserve token initialization before themes.
+        output: { strictExecutionOrder: true },
+      },
       rollupConfig: {
         external: [
           /^@resvg\/resvg-js/,
