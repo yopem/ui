@@ -3,10 +3,13 @@ import { expect, test } from "bun:test"
 import { readFileSync, readdirSync } from "node:fs"
 import { resolve } from "node:path"
 
-test("first setup has three shared files and optional theme runtime", () => {
+test("first setup includes style props and optional theme runtime", () => {
   const base = foundationItems.find((item) => item.name === "base")!
   const theme = foundationItems.find((item) => item.name === "theme")!
   expect(base.files.map((file) => file.path).sort()).toEqual([
+    "lib/style-props-config.ts",
+    "lib/style-props-styles.ts",
+    "lib/style-props.ts",
     "lib/stylex.ts",
     "styles/styles.css",
     "styles/tokens.stylex.ts",

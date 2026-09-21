@@ -4,6 +4,14 @@ export const usageNotes: Record<string, [string, ...string[]]> = {
     "Copy the base files, configure StyleX in your bundler, and import styles/styles.css once. Native StyleX tokens provide light defaults; no provider, script, or font package is required.",
     "Customize tokens and create complete light/dark themes in tokens.stylex.ts. The optional theme item adds saved light/dark/system switching. styles.css contains reset, reduced-motion policy, and unavoidable upstream viewport rules, not theme values.",
     "The documentation copies components into src/components/ui and uses the standard @/* alias for src. Keep this alias in TypeScript, your bundler, and StyleX.",
+    "Copy style-props.ts, style-props-config.ts, and style-props-styles.ts with base and compile the generated declarations with your existing StyleX build. No new runtime dependency or application transform is needed. The declaration generator is repository tooling, not consumer source.",
+    "Provide an explicit base value when conditionally overriding component defaults, for example p={{ base: 2, md: 4 }}. Conditional-only declarations fall back to unset outside matching conditions, not the component's earlier StyleX default.",
+    'Numeric spacing and dimensions multiply the StyleX --spacing theme token (default 0.25rem): p={4} is 1rem, while p="4px" is literal CSS. Strings are not theme-token lookups. Negative numeric margins are allowed; negative padding is rejected. Unitless CSS properties keep their numeric meaning.',
+    "Precedence is defaults, variants, style props, xstyle, then explicit inline style. External className uses the CSS cascade and is not guaranteed to win last. Direct style props override matching css entries. Component-specific props retain their original meaning.",
+    "Responsive arrays map to base, sm, md, lg, xl, 2xl; null and undefined skip entries. Objects use named breakpoints starting at 480, 768, 1024, 1280, and 1536 CSS pixels. mdOnly ends before lg, mdDown is below md, and mdToXl includes the xl interval. Reversed ranges are rejected.",
+    "Nested conditions combine supported state, direction, theme, and media keys such as _hover, _focusVisible, _disabled, _rtl, _dark, and _motionReduce. Conditions style existing state; they do not implement behavior. Consult style-props-config.ts for supported keys.",
+    "Typed css accepts supported properties, aliases, custom properties, conditions, or statically compiled StyleX styles. Use css={styles.custom} for selectors outside the prop vocabulary, subject to StyleX compiler rules. Raw objects do not accept arbitrary selectors, raw at-rules, keyframes, or Chakra theme-token paths. Unknown properties and conditions throw. Pseudo-elements cannot nest or define custom properties.",
+    "For custom wrappers, splitStyleProps returns domProps and xstyle. Spread only domProps onto the element and compose resolved xstyle after defaults and variants but before consumer xstyle. resolveStyleProps accepts an explicit style object.",
   ],
   theme: [
     "Copy the two optional theme runtime files after base. Pass the same configuration to ThemeProvider, ThemeScript, and getRootThemeProps.",
@@ -238,12 +246,12 @@ export const usageNotes: Record<string, [string, ...string[]]> = {
 
 export const ownPropNotes: Record<string, string> = {
   xstyle:
-    "StyleX styles merged after this part's defaults and variants. Accepts style objects, conditional arrays, themes and dynamic styles.",
+    "StyleX styles merged after this part's defaults, variants, and style props. Explicit inline style wins last. Accepts style objects, conditional arrays, themes and dynamic styles.",
   controlXstyle:
     "StyleX overrides and scoped themes for the decorative control wrapper. xstyle targets the native input or textarea.",
   children: "Content rendered inside this part.",
   className:
-    "Additional CSS class names. When the type accepts a callback, it receives the Base UI part state.",
+    "Additional CSS class names use the external CSS cascade and are not guaranteed to win last. When the type accepts a callback, it receives the Base UI part state.",
   render:
     "Replaces the default element with an element or render callback while merging the part's props and behavior.",
   orientation: "Chooses horizontal or vertical layout.",

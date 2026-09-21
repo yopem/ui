@@ -46,6 +46,26 @@ export function extractDocs() {
     )
   const checker = program.getTypeChecker()
   const flags = ts.TypeFormatFlags.NoTruncation
+  const styleModule = program.getSourceFile(resolve(root, "lib/style-props.ts"))
+  const styleSymbol = styleModule && checker.getSymbolAtLocation(styleModule)
+  const styleProps =
+    styleSymbol &&
+    checker
+      .getExportsOfModule(styleSymbol)
+      .find((symbol) => symbol.name === "StyleProps")
+  const sharedProperties = new Map(
+    styleProps
+      ? checker
+          .getPropertiesOfType(checker.getDeclaredTypeOfSymbol(styleProps))
+          .map(
+            (symbol) =>
+              [
+                symbol.name,
+                { symbol, declarations: new Set(symbol.declarations) },
+              ] as const,
+          )
+      : [],
+  )
   const text = (type: ts.Type, node: ts.Node) => {
     const externalAlias = type.aliasSymbol?.declarations?.some((d) =>
       d.getSourceFile().fileName.includes("node_modules"),
@@ -176,7 +196,26 @@ export function extractDocs() {
           ),
       )
     const branchProperties = branches.map(
-      (t) => new Map(checker.getPropertiesOfType(t).map((p) => [p.name, p])),
+      (t) =>
+        new Map(
+          checker
+            .getPropertiesOfType(t)
+            .filter((property) => {
+              if (node.getSourceFile() === styleModule) return true
+              const shared = sharedProperties.get(property.name)
+              // Compare declarations, not names: own and native overrides remain documented.
+              if (!shared) return true
+              if (property.declarations?.length)
+                return !property.declarations.every((declaration) =>
+                  shared.declarations.has(declaration),
+                )
+              return (
+                checker.getTypeOfSymbolAtLocation(property, node) !==
+                checker.getTypeOfSymbolAtLocation(shared.symbol, node)
+              )
+            })
+            .map((p) => [p.name, p]),
+        ),
     )
     const names = new Set(
       branchProperties.flatMap((props) => [...props.keys()]),
