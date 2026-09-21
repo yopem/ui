@@ -1,4 +1,13 @@
 import { expect, test } from "@playwright/test"
+import { readdirSync } from "node:fs"
+import { resolve } from "node:path"
+
+const exampleCount = readdirSync(
+  resolve(
+    import.meta.dirname,
+    "../../apps/docs/src/components/examples/stylex",
+  ),
+).filter((file) => file.endsWith(".tsx")).length
 
 test("examples page lists, filters, copies, and opens examples", async ({
   context,
@@ -9,7 +18,9 @@ test("examples page lists, filters, copies, and opens examples", async ({
   await expect(
     page.getByRole("heading", { name: "Browse examples", level: 1 }),
   ).toBeVisible()
-  await expect(page.getByText("509 examples", { exact: true })).toBeVisible()
+  await expect(
+    page.getByText(`${exampleCount} examples`, { exact: true }),
+  ).toBeVisible()
 
   await page.getByRole("searchbox", { name: "Search examples" }).fill("button")
   await expect(page.getByText("40 examples", { exact: true })).toBeVisible()
