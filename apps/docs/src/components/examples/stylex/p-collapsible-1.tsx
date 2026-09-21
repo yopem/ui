@@ -1,12 +1,12 @@
 import * as stylex from "@stylexjs/stylex"
 import { ChevronDownIcon } from "lucide-react"
 
+import { Box } from "@/components/ui/stylex/box"
 import {
   Collapsible,
   CollapsiblePanel,
   CollapsibleTrigger,
 } from "@/components/ui/stylex/collapsible"
-
 export default function Example() {
   return (
     <Collapsible>
@@ -19,11 +19,17 @@ export default function Example() {
         />
       </CollapsibleTrigger>
       <CollapsiblePanel>
-        <ul {...stylex.props(exampleStyles.example2)}>
-          <li {...stylex.props(exampleStyles.example3)}>4829-1735-6621</li>
-          <li {...stylex.props(exampleStyles.example3)}>9182-6407-5532</li>
-          <li {...stylex.props(exampleStyles.example3)}>3051-7924-9018</li>
-        </ul>
+        <Box as="ul" {...stylex.props(exampleStyles.example2)}>
+          <Box as="li" {...stylex.props(exampleStyles.example3)}>
+            4829-1735-6621
+          </Box>
+          <Box as="li" {...stylex.props(exampleStyles.example3)}>
+            9182-6407-5532
+          </Box>
+          <Box as="li" {...stylex.props(exampleStyles.example3)}>
+            3051-7924-9018
+          </Box>
+        </Box>
       </CollapsiblePanel>
     </Collapsible>
   )

@@ -1,17 +1,20 @@
 import * as stylex from "@stylexjs/stylex"
 
+import { Box } from "@/components/ui/stylex/box"
+import { Flex } from "@/components/ui/stylex/flex"
 import { ScrollArea } from "@/components/ui/stylex/scroll-area"
-
 export default function Example() {
   return (
     <ScrollArea {...stylex.props(exampleStyles.example1)} scrollbarGutter>
-      <div {...stylex.props(exampleStyles.example2)}>
+      <Flex {...stylex.props(exampleStyles.example2)}>
         {Array.from({ length: 20 }).map((_, i) => (
-          <div {...stylex.props(exampleStyles.example3)} key={String(i)}>
-            <span {...stylex.props(exampleStyles.example4)}>Item {i + 1}</span>
-          </div>
+          <Flex {...stylex.props(exampleStyles.example3)} key={String(i)}>
+            <Box as="span" {...stylex.props(exampleStyles.example4)}>
+              Item {i + 1}
+            </Box>
+          </Flex>
         ))}
-      </div>
+      </Flex>
     </ScrollArea>
   )
 }

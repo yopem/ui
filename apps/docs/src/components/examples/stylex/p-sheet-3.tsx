@@ -1,6 +1,8 @@
 import * as stylex from "@stylexjs/stylex"
 
 import { Button } from "@/components/ui/stylex/button"
+import { Flex } from "@/components/ui/stylex/flex"
+import { Paragraph } from "@/components/ui/stylex/paragraph"
 import {
   Sheet,
   SheetDescription,
@@ -10,10 +12,9 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/stylex/sheet"
-
 export default function Example() {
   return (
-    <div {...stylex.props(exampleStyles.example1)}>
+    <Flex {...stylex.props(exampleStyles.example1)}>
       <Sheet>
         <SheetTrigger render={<Button variant="outline" />}>
           Open Right
@@ -24,7 +25,7 @@ export default function Example() {
             <SheetDescription>Right side of the screen.</SheetDescription>
           </SheetHeader>
           <SheetPanel>
-            <p>
+            <Paragraph>
               Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
               eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
               enim ad minim veniam, quis nostrud exercitation ullamco laboris
@@ -32,7 +33,7 @@ export default function Example() {
               reprehenderit in voluptate velit esse cillum dolore eu fugiat
               nulla pariatur. Excepteur sint occaecat cupidatat non proident,
               sunt in culpa qui officia deserunt mollit anim id est laborum.
-            </p>
+            </Paragraph>
           </SheetPanel>
         </SheetPopup>
       </Sheet>
@@ -46,7 +47,7 @@ export default function Example() {
             <SheetDescription>Left side of the screen.</SheetDescription>
           </SheetHeader>
           <SheetPanel>
-            <p>
+            <Paragraph>
               Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
               eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
               enim ad minim veniam, quis nostrud exercitation ullamco laboris
@@ -54,7 +55,7 @@ export default function Example() {
               reprehenderit in voluptate velit esse cillum dolore eu fugiat
               nulla pariatur. Excepteur sint occaecat cupidatat non proident,
               sunt in culpa qui officia deserunt mollit anim id est laborum.
-            </p>
+            </Paragraph>
           </SheetPanel>
         </SheetPopup>
       </Sheet>
@@ -68,7 +69,7 @@ export default function Example() {
             <SheetDescription>Top of the screen.</SheetDescription>
           </SheetHeader>
           <SheetPanel>
-            <p>
+            <Paragraph>
               Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
               eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
               enim ad minim veniam, quis nostrud exercitation ullamco laboris
@@ -76,7 +77,7 @@ export default function Example() {
               reprehenderit in voluptate velit esse cillum dolore eu fugiat
               nulla pariatur. Excepteur sint occaecat cupidatat non proident,
               sunt in culpa qui officia deserunt mollit anim id est laborum.
-            </p>
+            </Paragraph>
           </SheetPanel>
         </SheetPopup>
       </Sheet>
@@ -90,7 +91,7 @@ export default function Example() {
             <SheetDescription>Bottom of the screen.</SheetDescription>
           </SheetHeader>
           <SheetPanel>
-            <p>
+            <Paragraph>
               Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
               eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
               enim ad minim veniam, quis nostrud exercitation ullamco laboris
@@ -98,11 +99,11 @@ export default function Example() {
               reprehenderit in voluptate velit esse cillum dolore eu fugiat
               nulla pariatur. Excepteur sint occaecat cupidatat non proident,
               sunt in culpa qui officia deserunt mollit anim id est laborum.
-            </p>
+            </Paragraph>
           </SheetPanel>
         </SheetPopup>
       </Sheet>
-    </div>
+    </Flex>
   )
 }
 

@@ -9,9 +9,11 @@ import {
   AvatarFallback,
   AvatarImage,
 } from "@/components/ui/stylex/avatar"
+import { Box } from "@/components/ui/stylex/box"
 import { Button } from "@/components/ui/stylex/button"
+import { Flex } from "@/components/ui/stylex/flex"
+import { Heading } from "@/components/ui/stylex/heading"
 import { Skeleton } from "@/components/ui/stylex/skeleton"
-
 const users = [
   {
     delay: 3000,
@@ -63,19 +65,26 @@ function UserCard({ delay, user }: { delay: number; user: (typeof users)[0] }) {
         <AvatarImage alt={user.name} src={user.image} />
         <AvatarFallback>{user.fallback}</AvatarFallback>
       </Avatar>
-      <div {...stylex.props(exampleStyles.example2)}>
-        <h4 {...stylex.props(exampleStyles.example3)}>{user.name}</h4>
-        <div {...stylex.props(exampleStyles.example4)}>
-          <span {...stylex.props(exampleStyles.example5)}>{user.role}</span>
-          <div {...stylex.props(exampleStyles.example6)}>
+      <Flex {...stylex.props(exampleStyles.example2)}>
+        <Heading as="h4" {...stylex.props(exampleStyles.example3)}>
+          {user.name}
+        </Heading>
+        <Flex {...stylex.props(exampleStyles.example4)}>
+          <Box as="span" {...stylex.props(exampleStyles.example5)}>
+            {user.role}
+          </Box>
+          <Flex {...stylex.props(exampleStyles.example6)}>
             <UsersRoundIcon {...stylex.props(exampleStyles.example7)} />
-            <span {...stylex.props(exampleStyles.example5)}>
+            <Box as="span" {...stylex.props(exampleStyles.example5)}>
               {user.followers}
-              <span {...stylex.props(exampleStyles.example8)}> followers</span>
-            </span>
-          </div>
-        </div>
-      </div>
+              <Box as="span" {...stylex.props(exampleStyles.example8)}>
+                {" "}
+                followers
+              </Box>
+            </Box>
+          </Flex>
+        </Flex>
+      </Flex>
       <Button size="xs">
         <UserRoundPlusIcon {...stylex.props(exampleStyles.icon)} />
         Follow
@@ -88,13 +97,13 @@ function UserCardSkeleton() {
   return (
     <>
       <Skeleton {...stylex.props(exampleStyles.example9)} />
-      <div {...stylex.props(exampleStyles.example10)}>
+      <Flex {...stylex.props(exampleStyles.example10)}>
         <Skeleton {...stylex.props(exampleStyles.example11)} />
-        <div {...stylex.props(exampleStyles.example12)}>
+        <Flex {...stylex.props(exampleStyles.example12)}>
           <Skeleton {...stylex.props(exampleStyles.example13)} />
           <Skeleton {...stylex.props(exampleStyles.example13)} />
-        </div>
-      </div>
+        </Flex>
+      </Flex>
       <Skeleton {...stylex.props(exampleStyles.example14)} />
     </>
   )
@@ -102,13 +111,13 @@ function UserCardSkeleton() {
 
 export default function Example() {
   return (
-    <div {...stylex.props(exampleStyles.example15)}>
+    <Flex {...stylex.props(exampleStyles.example15)}>
       {users.map((user) => (
-        <div {...stylex.props(exampleStyles.example16)} key={user.fallback}>
+        <Flex {...stylex.props(exampleStyles.example16)} key={user.fallback}>
           <UserCard delay={user.delay} user={user} />
-        </div>
+        </Flex>
       ))}
-    </div>
+    </Flex>
   )
 }
 

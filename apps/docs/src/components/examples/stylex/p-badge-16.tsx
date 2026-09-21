@@ -1,11 +1,15 @@
 import * as stylex from "@stylexjs/stylex"
 
 import { Badge } from "@/components/ui/stylex/badge"
-
+import { Box } from "@/components/ui/stylex/box"
 export default function Example() {
   return (
     <Badge variant="outline">
-      <span aria-hidden="true" {...stylex.props(exampleStyles.example1)} />
+      <Box
+        as="span"
+        aria-hidden="true"
+        {...stylex.props(exampleStyles.example1)}
+      />
       Paid
     </Badge>
   )

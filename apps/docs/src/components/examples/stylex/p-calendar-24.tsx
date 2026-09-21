@@ -6,8 +6,8 @@ import * as stylex from "@stylexjs/stylex"
 import { format } from "date-fns"
 import { useState } from "react"
 
+import { Box } from "@/components/ui/stylex/box"
 import { Calendar } from "@/components/ui/stylex/calendar"
-
 const GOOD_PRICE_THRESHOLD = 100
 
 export default function Example() {
@@ -63,11 +63,12 @@ function DayButton(props: DayButtonProps & { prices: Record<string, number> }) {
   const isGoodPrice = price !== undefined && price < GOOD_PRICE_THRESHOLD
 
   return (
-    <button {...buttonProps}>
-      <span {...stylex.props(exampleStyles.example1)}>
+    <Box as="button" {...buttonProps}>
+      <Box as="span" {...stylex.props(exampleStyles.example1)}>
         {props.children}
         {price && (
-          <span
+          <Box
+            as="span"
             {...stylex.props(
               exampleStyles.price,
               isGoodPrice
@@ -78,10 +79,10 @@ function DayButton(props: DayButtonProps & { prices: Record<string, number> }) {
             )}
           >
             ${price}
-          </span>
+          </Box>
         )}
-      </span>
-    </button>
+      </Box>
+    </Box>
   )
 }
 

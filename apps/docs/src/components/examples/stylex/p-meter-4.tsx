@@ -2,6 +2,7 @@
 
 import * as stylex from "@stylexjs/stylex"
 
+import { Flex } from "@/components/ui/stylex/flex"
 import {
   Meter,
   MeterIndicator,
@@ -9,14 +10,13 @@ import {
   MeterTrack,
   MeterValue,
 } from "@/components/ui/stylex/meter"
-
 export default function Example() {
   return (
     <Meter max={1000} min={500} value={700}>
-      <div {...stylex.props(exampleStyles.example1)}>
+      <Flex {...stylex.props(exampleStyles.example1)}>
         <MeterLabel>Bandwidth (Mbps)</MeterLabel>
         <MeterValue>{(_formatted, value) => value}</MeterValue>
-      </div>
+      </Flex>
       <MeterTrack>
         <MeterIndicator />
       </MeterTrack>

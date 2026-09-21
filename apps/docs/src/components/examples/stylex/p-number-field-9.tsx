@@ -1,5 +1,6 @@
 import * as stylex from "@stylexjs/stylex"
 
+import { Flex } from "@/components/ui/stylex/flex"
 import {
   NumberField,
   NumberFieldDecrement,
@@ -8,10 +9,9 @@ import {
   NumberFieldInput,
   NumberFieldScrubArea,
 } from "@/components/ui/stylex/number-field"
-
 export default function Example() {
   return (
-    <div {...stylex.props(exampleStyles.example1)}>
+    <Flex {...stylex.props(exampleStyles.example1)}>
       <NumberField defaultValue={0} step={10}>
         <NumberFieldScrubArea label="Step 10" />
         <NumberFieldGroup>
@@ -28,7 +28,7 @@ export default function Example() {
           <NumberFieldIncrement />
         </NumberFieldGroup>
       </NumberField>
-    </div>
+    </Flex>
   )
 }
 

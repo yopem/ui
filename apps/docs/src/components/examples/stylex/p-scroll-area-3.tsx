@@ -1,11 +1,11 @@
 import * as stylex from "@stylexjs/stylex"
 
+import { Paragraph } from "@/components/ui/stylex/paragraph"
 import { ScrollArea } from "@/components/ui/stylex/scroll-area"
-
 export default function Example() {
   return (
     <ScrollArea {...stylex.props(exampleStyles.example1)}>
-      <p {...stylex.props(exampleStyles.example2)}>
+      <Paragraph {...stylex.props(exampleStyles.example2)}>
         Just as suddenly as it had begun, the sensation stopped, leaving Alice
         feeling slightly disoriented. She looked around and realized that the
         room hadn't changed at all - it was she who had grown smaller, shrinking
@@ -20,7 +20,7 @@ export default function Example() {
         be topsy-turvy and nothing was quite as it seemed. It's no use going
         back to yesterday, because I was a different person then, reflected
         Alice.
-      </p>
+      </Paragraph>
     </ScrollArea>
   )
 }

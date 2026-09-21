@@ -6,6 +6,7 @@ import * as stylex from "@stylexjs/stylex"
 import { useState } from "react"
 
 import { Calendar } from "@/components/ui/stylex/calendar"
+import { Flex } from "@/components/ui/stylex/flex"
 import {
   Select,
   SelectItem,
@@ -13,7 +14,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/stylex/select"
-
 export default function Example() {
   const [date, setDate] = useState<Date | undefined>(new Date())
 
@@ -71,9 +71,9 @@ export default function Example() {
         },
         DropdownNav: (props: DropdownNavProps) => {
           return (
-            <div {...stylex.props(exampleStyles.example1)}>
+            <Flex {...stylex.props(exampleStyles.example1)}>
               {props.children}
-            </div>
+            </Flex>
           )
         },
       }}

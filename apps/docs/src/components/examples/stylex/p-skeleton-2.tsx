@@ -1,20 +1,20 @@
 import * as stylex from "@stylexjs/stylex"
 
+import { Flex } from "@/components/ui/stylex/flex"
 import { Skeleton } from "@/components/ui/stylex/skeleton"
-
 export default function Example() {
   return (
-    <div {...stylex.props(exampleStyles.example1)}>
+    <Flex {...stylex.props(exampleStyles.example1)}>
       <Skeleton {...stylex.props(exampleStyles.example2)} />
-      <div {...stylex.props(exampleStyles.example3)}>
+      <Flex {...stylex.props(exampleStyles.example3)}>
         <Skeleton {...stylex.props(exampleStyles.example4)} />
-        <div {...stylex.props(exampleStyles.example5)}>
+        <Flex {...stylex.props(exampleStyles.example5)}>
           <Skeleton {...stylex.props(exampleStyles.example6)} />
           <Skeleton {...stylex.props(exampleStyles.example6)} />
-        </div>
-      </div>
+        </Flex>
+      </Flex>
       <Skeleton {...stylex.props(exampleStyles.example7)} />
-    </div>
+    </Flex>
   )
 }
 

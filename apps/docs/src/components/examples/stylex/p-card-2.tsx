@@ -12,7 +12,7 @@ import {
 import { Field, FieldLabel } from "@/components/ui/stylex/field"
 import { Form } from "@/components/ui/stylex/form"
 import { Input } from "@/components/ui/stylex/input"
-
+import { Link } from "@/components/ui/stylex/link"
 function LoginFields() {
   return (
     <>
@@ -34,9 +34,9 @@ export default function Example() {
       <CardHeader>
         <CardTitle>Login to your account</CardTitle>
         <CardAction>
-          <a {...stylex.props(exampleStyles.example2)} href="/">
+          <Link {...stylex.props(exampleStyles.example2)} href="/">
             Sign up
-          </a>
+          </Link>
         </CardAction>
       </CardHeader>
       <CardPanel>

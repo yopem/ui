@@ -4,9 +4,9 @@ import * as stylex from "@stylexjs/stylex"
 import { DownloadIcon } from "lucide-react"
 import { useEffect, useRef, useState } from "react"
 
+import { Box } from "@/components/ui/stylex/box"
 import { Button } from "@/components/ui/stylex/button"
 import { toastManager } from "@/components/ui/stylex/toast"
-
 export default function Example() {
   const [isGenerating, setIsGenerating] = useState(false)
   const [progress, setProgress] = useState(0)
@@ -91,9 +91,9 @@ export default function Example() {
       {isGenerating ? (
         <>
           Loading…{" "}
-          <span {...stylex.props(exampleStyles.example1)}>
+          <Box as="span" {...stylex.props(exampleStyles.example1)}>
             {progress.toString().padStart(2, "\u2007")}%
-          </span>
+          </Box>
         </>
       ) : (
         <>

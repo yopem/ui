@@ -10,6 +10,7 @@ import {
   AvatarImage,
 } from "@/components/ui/stylex/avatar"
 import { Badge } from "@/components/ui/stylex/badge"
+import { Box } from "@/components/ui/stylex/box"
 import { Button } from "@/components/ui/stylex/button"
 import {
   Combobox,
@@ -20,13 +21,13 @@ import {
   ComboboxPopup,
   ComboboxTrigger,
 } from "@/components/ui/stylex/combobox"
+import { Flex } from "@/components/ui/stylex/flex"
 import {
   Group,
   GroupSeparator,
   GroupText,
   groupItemStyles,
 } from "@/components/ui/stylex/group"
-
 interface FilterOption {
   id: string
   label: string
@@ -104,20 +105,20 @@ export default function Example() {
     const remainingCount = selectedMembers.length - 1
 
     return (
-      <div {...stylex.props(exampleStyles.example2)}>
+      <Flex {...stylex.props(exampleStyles.example2)}>
         <MemberAvatar
           avatarUrl={firstMember?.avatar}
           name={firstMember?.label ?? ""}
         />
-        <span {...stylex.props(exampleStyles.example3)}>
+        <Box as="span" {...stylex.props(exampleStyles.example3)}>
           {firstMember?.label}
-        </span>
+        </Box>
         {remainingCount > 0 && (
           <Badge variant="secondary" xstyle={exampleStyles.example4}>
             +{remainingCount}
           </Badge>
         )}
-      </div>
+      </Flex>
     )
   }
 
@@ -159,22 +160,22 @@ export default function Example() {
           )}
         </ComboboxTrigger>
         <ComboboxPopup aria-label="Select member">
-          <div {...stylex.props(exampleStyles.example6)}>
+          <Box {...stylex.props(exampleStyles.example6)}>
             <ComboboxInput
               placeholder="Search members..."
               showTrigger={false}
               startAddon={<SearchIcon {...stylex.props(exampleStyles.icon)} />}
               xstyle={exampleStyles.example7}
             />
-          </div>
+          </Box>
           <ComboboxEmpty>No members found.</ComboboxEmpty>
           <ComboboxList>
             {(option: FilterOption) => (
               <ComboboxItem key={option.id} value={option}>
-                <div {...stylex.props(exampleStyles.example2)}>
+                <Flex {...stylex.props(exampleStyles.example2)}>
                   <MemberAvatar avatarUrl={option.avatar} name={option.label} />
-                  <span>{option.label}</span>
-                </div>
+                  <Box as="span">{option.label}</Box>
+                </Flex>
               </ComboboxItem>
             )}
           </ComboboxList>

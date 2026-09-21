@@ -1,12 +1,14 @@
 import * as stylex from "@stylexjs/stylex"
 
 import { Badge } from "@/components/ui/stylex/badge"
-
+import { Box } from "@/components/ui/stylex/box"
 export default function Example() {
   return (
     <Badge variant="outline">
       Notifications
-      <span {...stylex.props(exampleStyles.example1)}>5</span>
+      <Box as="span" {...stylex.props(exampleStyles.example1)}>
+        5
+      </Box>
     </Badge>
   )
 }

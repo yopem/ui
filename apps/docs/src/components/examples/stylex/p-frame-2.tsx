@@ -8,7 +8,8 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/stylex/collapsible"
 import { Frame, FrameHeader, FramePanel } from "@/components/ui/stylex/frame"
-
+import { Heading } from "@/components/ui/stylex/heading"
+import { Paragraph } from "@/components/ui/stylex/paragraph"
 export default function Example() {
   return (
     <Frame {...stylex.props(exampleStyles.example1)}>
@@ -33,8 +34,12 @@ export default function Example() {
         </FrameHeader>
         <CollapsiblePanel>
           <FramePanel>
-            <h2 {...stylex.props(exampleStyles.example4)}>Section title</h2>
-            <p {...stylex.props(exampleStyles.example5)}>Section description</p>
+            <Heading as="h2" {...stylex.props(exampleStyles.example4)}>
+              Section title
+            </Heading>
+            <Paragraph {...stylex.props(exampleStyles.example5)}>
+              Section description
+            </Paragraph>
           </FramePanel>
         </CollapsiblePanel>
       </Collapsible>

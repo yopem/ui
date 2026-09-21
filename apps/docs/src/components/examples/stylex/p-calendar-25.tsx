@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/stylex/autocomplete"
 import { Calendar } from "@/components/ui/stylex/calendar"
 import { Field, FieldLabel } from "@/components/ui/stylex/field"
-
+import { Flex } from "@/components/ui/stylex/flex"
 const times = Array.from({ length: 96 }, (_, i) => {
   const hours = String(Math.floor(i / 4)).padStart(2, "0")
   const minutes = String((i % 4) * 15).padStart(2, "0")
@@ -199,7 +199,7 @@ export default function Example() {
   const matchingTimes = times.filter((item) => filterTime(item, filterQuery))
 
   return (
-    <div {...stylex.props(exampleStyles.example1)}>
+    <Flex {...stylex.props(exampleStyles.example1)}>
       <Calendar
         mode="single"
         month={month}
@@ -251,7 +251,7 @@ export default function Example() {
           </AutocompletePopup>
         </Autocomplete>
       </Field>
-    </div>
+    </Flex>
   )
 }
 

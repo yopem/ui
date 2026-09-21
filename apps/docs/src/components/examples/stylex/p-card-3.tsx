@@ -11,9 +11,10 @@ import {
   CardTitle,
 } from "@/components/ui/stylex/card"
 import { Field, FieldLabel } from "@/components/ui/stylex/field"
+import { Flex } from "@/components/ui/stylex/flex"
 import { Form } from "@/components/ui/stylex/form"
 import { Input } from "@/components/ui/stylex/input"
-
+import { Paragraph } from "@/components/ui/stylex/paragraph"
 export default function Example() {
   return (
     <Card {...stylex.props(exampleStyles.example1)}>
@@ -37,10 +38,12 @@ export default function Example() {
         </Form>
       </CardPanel>
       <CardFooter {...stylex.props(exampleStyles.example5)}>
-        <div {...stylex.props(exampleStyles.example6)}>
+        <Flex {...stylex.props(exampleStyles.example6)}>
           <ShieldAlertIcon {...stylex.props(exampleStyles.example7)} />
-          <p>The information you enter is encrypted and stored securely.</p>
-        </div>
+          <Paragraph>
+            The information you enter is encrypted and stored securely.
+          </Paragraph>
+        </Flex>
       </CardFooter>
     </Card>
   )

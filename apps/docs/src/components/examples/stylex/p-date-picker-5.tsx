@@ -5,6 +5,7 @@ import { format, isValid, parse } from "date-fns"
 import { CalendarIcon } from "lucide-react"
 import { useState } from "react"
 
+import { Box } from "@/components/ui/stylex/box"
 import { Button } from "@/components/ui/stylex/button"
 import { Calendar } from "@/components/ui/stylex/calendar"
 import { InputGroup, InputGroupAddon } from "@/components/ui/stylex/input-group"
@@ -13,7 +14,6 @@ import {
   PopoverPopup,
   PopoverTrigger,
 } from "@/components/ui/stylex/popover"
-
 export default function Example() {
   const [date, setDate] = useState<Date | undefined>()
   const [inputValue, setInputValue] = useState("")
@@ -47,7 +47,8 @@ export default function Example() {
   return (
     <Popover>
       <InputGroup>
-        <input
+        <Box
+          as="input"
           data-slot="input"
           aria-label="Select date"
           {...stylex.props(exampleStyles.nativeInput, exampleStyles.report1)}

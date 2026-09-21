@@ -1,22 +1,28 @@
 import * as stylex from "@stylexjs/stylex"
 
+import { Box } from "@/components/ui/stylex/box"
+import { Flex } from "@/components/ui/stylex/flex"
 import { Kbd, KbdGroup } from "@/components/ui/stylex/kbd"
-
+import { Paragraph } from "@/components/ui/stylex/paragraph"
 export default function Example() {
   return (
-    <div {...stylex.props(exampleStyles.example1)}>
-      <div>
-        <p {...stylex.props(exampleStyles.example2)}>Single keys:</p>
-        <div {...stylex.props(exampleStyles.example3)}>
+    <Flex {...stylex.props(exampleStyles.example1)}>
+      <Box>
+        <Paragraph {...stylex.props(exampleStyles.example2)}>
+          Single keys:
+        </Paragraph>
+        <Flex {...stylex.props(exampleStyles.example3)}>
           <Kbd>K</Kbd>
           <Kbd>⌘</Kbd>
           <Kbd>⌃</Kbd>
           <Kbd>⇧</Kbd>
-        </div>
-      </div>
-      <div>
-        <p {...stylex.props(exampleStyles.example2)}>Key combinations:</p>
-        <div {...stylex.props(exampleStyles.example3)}>
+        </Flex>
+      </Box>
+      <Box>
+        <Paragraph {...stylex.props(exampleStyles.example2)}>
+          Key combinations:
+        </Paragraph>
+        <Flex {...stylex.props(exampleStyles.example3)}>
           <KbdGroup>
             <Kbd>⌘</Kbd>
             <Kbd>K</Kbd>
@@ -31,9 +37,9 @@ export default function Example() {
             <Kbd>Alt</Kbd>
             <Kbd>Delete</Kbd>
           </KbdGroup>
-        </div>
-      </div>
-    </div>
+        </Flex>
+      </Box>
+    </Flex>
   )
 }
 

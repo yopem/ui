@@ -10,7 +10,7 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "@/components/ui/stylex/empty"
-
+import { Flex } from "@/components/ui/stylex/flex"
 export default function Example() {
   return (
     <Empty>
@@ -22,13 +22,13 @@ export default function Example() {
         <EmptyDescription>Create a meeting to get started.</EmptyDescription>
       </EmptyHeader>
       <EmptyContent>
-        <div {...stylex.props(exampleStyles.example1)}>
+        <Flex {...stylex.props(exampleStyles.example1)}>
           <Button size="sm">Create meeting</Button>
           <Button size="sm" variant="outline">
             <BookIcon {...stylex.props(exampleStyles.icon2)} />
             View docs
           </Button>
-        </div>
+        </Flex>
       </EmptyContent>
     </Empty>
   )

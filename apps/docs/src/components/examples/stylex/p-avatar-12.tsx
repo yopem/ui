@@ -5,10 +5,10 @@ import {
   AvatarFallback,
   AvatarImage,
 } from "@/components/ui/stylex/avatar"
-
+import { Box } from "@/components/ui/stylex/box"
 export default function Example() {
   return (
-    <div {...stylex.props(exampleStyles.example1)}>
+    <Box {...stylex.props(exampleStyles.example1)}>
       <Avatar>
         <AvatarImage
           alt="User"
@@ -16,8 +16,10 @@ export default function Example() {
         />
         <AvatarFallback>LT</AvatarFallback>
       </Avatar>
-      <span {...stylex.props(exampleStyles.example2)}>
-        <span {...stylex.props(exampleStyles.example3)}>Verified</span>
+      <Box as="span" {...stylex.props(exampleStyles.example2)}>
+        <Box as="span" {...stylex.props(exampleStyles.example3)}>
+          Verified
+        </Box>
         <svg
           aria-hidden="true"
           height="20"
@@ -38,8 +40,8 @@ export default function Example() {
             d="M15.707 9.293a1 1 0 0 1 0 1.414l-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 1 1 1.414-1.414L11 12.586l3.293-3.293a1 1 0 0 1 1.414 0Z"
           />
         </svg>
-      </span>
-    </div>
+      </Box>
+    </Box>
   )
 }
 

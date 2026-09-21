@@ -3,6 +3,7 @@
 import * as stylex from "@stylexjs/stylex"
 import { ArrowRightIcon } from "lucide-react"
 
+import { Box } from "@/components/ui/stylex/box"
 import { Button } from "@/components/ui/stylex/button"
 import {
   Group,
@@ -21,7 +22,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/stylex/select"
-
 interface Currency {
   value: string
   label: string
@@ -60,9 +60,9 @@ export default function Example() {
             {currencies.map((curr) => (
               <SelectItem key={curr.value} value={curr}>
                 {curr.value}{" "}
-                <span {...stylex.props(exampleStyles.example2)}>
+                <Box as="span" {...stylex.props(exampleStyles.example2)}>
                   {curr.label}
-                </span>
+                </Box>
               </SelectItem>
             ))}
           </SelectPopup>

@@ -5,7 +5,7 @@ import { XIcon } from "lucide-react"
 import { useState } from "react"
 
 import { Badge } from "@/components/ui/stylex/badge"
-
+import { Box } from "@/components/ui/stylex/box"
 export default function Example() {
   const [isActive, setIsActive] = useState(true)
 
@@ -14,14 +14,15 @@ export default function Example() {
   return (
     <Badge {...stylex.props(exampleStyles.example1)}>
       Removable
-      <button
+      <Box
+        as="button"
         {...stylex.props(exampleStyles.report1, exampleStyles.report1Manual)}
         aria-label="Remove badge"
         onClick={() => setIsActive(false)}
         type="button"
       >
         <XIcon {...stylex.props(exampleStyles.icon)} aria-hidden="true" />
-      </button>
+      </Box>
     </Badge>
   )
 }

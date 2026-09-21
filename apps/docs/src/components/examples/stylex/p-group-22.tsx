@@ -1,5 +1,6 @@
 import * as stylex from "@stylexjs/stylex"
 
+import { Flex } from "@/components/ui/stylex/flex"
 import {
   Group,
   GroupSeparator,
@@ -11,10 +12,9 @@ import {
   NumberFieldGroup,
   NumberFieldInput,
 } from "@/components/ui/stylex/number-field"
-
 export default function Example() {
   return (
-    <div {...stylex.props(exampleStyles.example1)}>
+    <Flex {...stylex.props(exampleStyles.example1)}>
       <Label>Range</Label>
       <Group aria-label="Range input">
         <NumberField
@@ -34,7 +34,7 @@ export default function Example() {
           <NumberFieldInput placeholder="To" xstyle={exampleStyles.example2} />
         </NumberField>
       </Group>
-    </div>
+    </Flex>
   )
 }
 

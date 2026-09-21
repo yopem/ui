@@ -12,8 +12,10 @@ import {
   CardTitle,
 } from "@/components/ui/stylex/card"
 import { Field, FieldLabel } from "@/components/ui/stylex/field"
+import { Flex } from "@/components/ui/stylex/flex"
 import { Form } from "@/components/ui/stylex/form"
 import { Input } from "@/components/ui/stylex/input"
+import { Paragraph } from "@/components/ui/stylex/paragraph"
 import {
   Select,
   SelectItem,
@@ -21,7 +23,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/stylex/select"
-
 const frameworkOptions = [
   { label: "Next.js", value: "next" },
   { label: "Vite", value: "vite" },
@@ -79,10 +80,10 @@ export default function Example() {
         </CardPanel>
       </Card>
       <CardFrameFooter>
-        <div {...stylex.props(exampleStyles.example4)}>
+        <Flex {...stylex.props(exampleStyles.example4)}>
           <CircleAlertIcon {...stylex.props(exampleStyles.example5)} />
-          <p>This will take a few seconds to complete.</p>
-        </div>
+          <Paragraph>This will take a few seconds to complete.</Paragraph>
+        </Flex>
       </CardFrameFooter>
     </CardFrame>
   )

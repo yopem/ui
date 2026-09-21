@@ -1,5 +1,6 @@
 import * as stylex from "@stylexjs/stylex"
 
+import { Flex } from "@/components/ui/stylex/flex"
 import {
   Progress,
   ProgressIndicator,
@@ -7,14 +8,13 @@ import {
   ProgressTrack,
   ProgressValue,
 } from "@/components/ui/stylex/progress"
-
 export default function Example() {
   return (
     <Progress value={60}>
-      <div {...stylex.props(exampleStyles.example1)}>
+      <Flex {...stylex.props(exampleStyles.example1)}>
         <ProgressLabel>Export data</ProgressLabel>
         <ProgressValue />
-      </div>
+      </Flex>
       <ProgressTrack>
         <ProgressIndicator />
       </ProgressTrack>

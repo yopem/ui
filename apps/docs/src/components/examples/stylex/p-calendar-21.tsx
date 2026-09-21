@@ -14,9 +14,10 @@ import {
 } from "date-fns"
 import { useState } from "react"
 
+import { Box } from "@/components/ui/stylex/box"
 import { Button } from "@/components/ui/stylex/button"
 import { Calendar } from "@/components/ui/stylex/calendar"
-
+import { Flex } from "@/components/ui/stylex/flex"
 export default function Example() {
   const today = new Date()
   const yesterday = {
@@ -51,9 +52,9 @@ export default function Example() {
   const [date, setDate] = useState<DateRange | undefined>(last7Days)
 
   return (
-    <div {...stylex.props(exampleStyles.example1)}>
-      <div {...stylex.props(exampleStyles.example2)}>
-        <div {...stylex.props(exampleStyles.example3)}>
+    <Flex {...stylex.props(exampleStyles.example1)}>
+      <Box {...stylex.props(exampleStyles.example2)}>
+        <Flex {...stylex.props(exampleStyles.example3)}>
           <Button
             {...stylex.props(exampleStyles.example4)}
             onClick={() => {
@@ -145,8 +146,8 @@ export default function Example() {
           >
             Last year
           </Button>
-        </div>
-      </div>
+        </Flex>
+      </Box>
       <Calendar
         {...stylex.props(exampleStyles.example5)}
         disabled={[{ after: today }]}
@@ -160,7 +161,7 @@ export default function Example() {
         }}
         selected={date}
       />
-    </div>
+    </Flex>
   )
 }
 

@@ -6,6 +6,7 @@ import { CalendarIcon } from "lucide-react"
 import { useState } from "react"
 
 import { Badge } from "@/components/ui/stylex/badge"
+import { Box } from "@/components/ui/stylex/box"
 import { Button } from "@/components/ui/stylex/button"
 import { Calendar } from "@/components/ui/stylex/calendar"
 import {
@@ -13,7 +14,6 @@ import {
   PopoverPopup,
   PopoverTrigger,
 } from "@/components/ui/stylex/popover"
-
 export default function Example() {
   const [dates, setDates] = useState<Date[] | undefined>()
 
@@ -27,7 +27,7 @@ export default function Example() {
         <CalendarIcon
           {...stylex.props(exampleStyles.icon, exampleStyles.example2)}
         />
-        <span {...stylex.props(exampleStyles.example3)}>
+        <Box as="span" {...stylex.props(exampleStyles.example3)}>
           {dates && dates.length > 0 ? (
             <>
               {dates.slice(0, 3).map((date) => (
@@ -40,9 +40,9 @@ export default function Example() {
               )}
             </>
           ) : (
-            <span>Pick dates</span>
+            <Box as="span">Pick dates</Box>
           )}
-        </span>
+        </Box>
       </PopoverTrigger>
       <PopoverPopup>
         <Calendar mode="multiple" onSelect={setDates} selected={dates} />

@@ -4,11 +4,12 @@ import * as stylex from "@stylexjs/stylex"
 import { format } from "date-fns"
 import { useState } from "react"
 
+import { Box } from "@/components/ui/stylex/box"
 import { Calendar } from "@/components/ui/stylex/calendar"
+import { Flex } from "@/components/ui/stylex/flex"
 import { ScrollArea } from "@/components/ui/stylex/scroll-area"
 import { Toggle } from "@/components/ui/stylex/toggle"
 import { ToggleGroup } from "@/components/ui/stylex/toggle-group"
-
 export default function Example() {
   const today = new Date()
   const [date, setDate] = useState<Date>(today)
@@ -36,7 +37,7 @@ export default function Example() {
   ]
 
   return (
-    <div {...stylex.props(exampleStyles.example1)}>
+    <Flex {...stylex.props(exampleStyles.example1)}>
       <Calendar
         {...stylex.props(exampleStyles.example2)}
         disabled={[{ before: today }]}
@@ -49,18 +50,18 @@ export default function Example() {
         }}
         selected={date}
       />
-      <div {...stylex.props(exampleStyles.example3)}>
-        <div {...stylex.props(exampleStyles.example4)}>
+      <Box {...stylex.props(exampleStyles.example3)}>
+        <Box {...stylex.props(exampleStyles.example4)}>
           <ScrollArea
             {...stylex.props(exampleStyles.example5)}
             overscrollContain
             scrollbarGutter
             scrollFade
           >
-            <div {...stylex.props(exampleStyles.example6)}>
-              <div {...stylex.props(exampleStyles.example7)}>
+            <Flex {...stylex.props(exampleStyles.example6)}>
+              <Flex {...stylex.props(exampleStyles.example7)}>
                 {format(date, "EEEE, d")}
-              </div>
+              </Flex>
               <ToggleGroup
                 {...stylex.props(exampleStyles.example8)}
                 onValueChange={(values) => setTime(values[0] || null)}
@@ -78,11 +79,11 @@ export default function Example() {
                   </Toggle>
                 ))}
               </ToggleGroup>
-            </div>
+            </Flex>
           </ScrollArea>
-        </div>
-      </div>
-    </div>
+        </Box>
+      </Box>
+    </Flex>
   )
 }
 

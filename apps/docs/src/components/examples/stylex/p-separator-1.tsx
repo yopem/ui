@@ -1,28 +1,33 @@
 import * as stylex from "@stylexjs/stylex"
 
+import { Box } from "@/components/ui/stylex/box"
+import { Flex } from "@/components/ui/stylex/flex"
+import { Heading } from "@/components/ui/stylex/heading"
+import { Paragraph } from "@/components/ui/stylex/paragraph"
 import { Separator } from "@/components/ui/stylex/separator"
-
 export default function Example() {
   return (
-    <div {...stylex.props(exampleStyles.example1)}>
-      <div {...stylex.props(exampleStyles.example2)}>
-        <h4 {...stylex.props(exampleStyles.example3)}>coss ui</h4>
-        <p {...stylex.props(exampleStyles.example4)}>
+    <Box {...stylex.props(exampleStyles.example1)}>
+      <Flex {...stylex.props(exampleStyles.example2)}>
+        <Heading as="h4" {...stylex.props(exampleStyles.example3)}>
+          coss ui
+        </Heading>
+        <Paragraph {...stylex.props(exampleStyles.example4)}>
           Unstyled, accessible primitives for fast product UI and design
           systems.
-        </p>
-      </div>
+        </Paragraph>
+      </Flex>
       <Separator {...stylex.props(exampleStyles.example5)} />
-      <div {...stylex.props(exampleStyles.example6)}>
-        <div>Blog</div>
+      <Flex {...stylex.props(exampleStyles.example6)}>
+        <Box>Blog</Box>
         <Separator orientation="vertical" />
-        <div>Docs</div>
+        <Box>Docs</Box>
         <Separator orientation="vertical" />
-        <div>Source</div>
+        <Box>Source</Box>
         <Separator orientation="vertical" />
-        <div>Releases</div>
-      </div>
-    </div>
+        <Box>Releases</Box>
+      </Flex>
+    </Box>
   )
 }
 

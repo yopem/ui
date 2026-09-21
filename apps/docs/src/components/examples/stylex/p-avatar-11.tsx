@@ -6,10 +6,10 @@ import {
   AvatarImage,
 } from "@/components/ui/stylex/avatar"
 import { Badge } from "@/components/ui/stylex/badge"
-
+import { Box } from "@/components/ui/stylex/box"
 export default function Example() {
   return (
-    <div {...stylex.props(exampleStyles.example1)}>
+    <Box {...stylex.props(exampleStyles.example1)}>
       <Avatar {...stylex.props(exampleStyles.example2)}>
         <AvatarImage
           alt="User"
@@ -22,7 +22,7 @@ export default function Example() {
       <Badge {...stylex.props(exampleStyles.example3)} size="sm">
         6
       </Badge>
-    </div>
+    </Box>
   )
 }
 

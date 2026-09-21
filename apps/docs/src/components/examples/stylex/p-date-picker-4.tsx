@@ -5,14 +5,15 @@ import { addDays, format } from "date-fns"
 import { CalendarIcon } from "lucide-react"
 import { useState } from "react"
 
+import { Box } from "@/components/ui/stylex/box"
 import { Button } from "@/components/ui/stylex/button"
 import { Calendar } from "@/components/ui/stylex/calendar"
+import { Flex } from "@/components/ui/stylex/flex"
 import {
   Popover,
   PopoverPopup,
   PopoverTrigger,
 } from "@/components/ui/stylex/popover"
-
 export default function Example() {
   const today = new Date()
   const [month, setMonth] = useState(today)
@@ -32,9 +33,9 @@ export default function Example() {
         {date ? format(date, "PPP") : "Pick a date"}
       </PopoverTrigger>
       <PopoverPopup>
-        <div {...stylex.props(exampleStyles.example2)}>
-          <div {...stylex.props(exampleStyles.example3)}>
-            <div {...stylex.props(exampleStyles.example4)}>
+        <Flex {...stylex.props(exampleStyles.example2)}>
+          <Box {...stylex.props(exampleStyles.example3)}>
+            <Flex {...stylex.props(exampleStyles.example4)}>
               <Button
                 {...stylex.props(exampleStyles.example1)}
                 onClick={() => {
@@ -82,8 +83,8 @@ export default function Example() {
               >
                 In a week
               </Button>
-            </div>
-          </div>
+            </Flex>
+          </Box>
           <Calendar
             {...stylex.props(exampleStyles.example5)}
             mode="single"
@@ -92,7 +93,7 @@ export default function Example() {
             onSelect={setDate}
             selected={date}
           />
-        </div>
+        </Flex>
       </PopoverPopup>
     </Popover>
   )

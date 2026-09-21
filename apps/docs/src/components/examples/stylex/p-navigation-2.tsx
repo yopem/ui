@@ -1,20 +1,27 @@
 import * as stylex from "@stylexjs/stylex"
 
+import { Box } from "@/components/ui/stylex/box"
+import { Flex } from "@/components/ui/stylex/flex"
+import { Link } from "@/components/ui/stylex/link"
 export default function Example() {
   return (
-    <nav aria-label="Project sections">
-      <div {...stylex.props(styles.root)}>
-        <a aria-current="page" {...stylex.props(styles.item)} href="#overview">
+    <Box as="nav" aria-label="Project sections">
+      <Flex {...stylex.props(styles.root)}>
+        <Link
+          aria-current="page"
+          {...stylex.props(styles.item)}
+          href="#overview"
+        >
           Overview
-        </a>
-        <a {...stylex.props(styles.item)} href="#activity">
+        </Link>
+        <Link {...stylex.props(styles.item)} href="#activity">
           Activity
-        </a>
-        <a {...stylex.props(styles.item)} href="#settings">
+        </Link>
+        <Link {...stylex.props(styles.item)} href="#settings">
           Settings
-        </a>
-      </div>
-    </nav>
+        </Link>
+      </Flex>
+    </Box>
   )
 }
 

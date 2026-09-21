@@ -6,7 +6,7 @@ import { useState } from "react"
 
 import { Button } from "@/components/ui/stylex/button"
 import { Calendar } from "@/components/ui/stylex/calendar"
-
+import { Flex } from "@/components/ui/stylex/flex"
 export default function Example() {
   const today = new Date()
   const selectedDay = addDays(today, -28)
@@ -14,7 +14,7 @@ export default function Example() {
   const [date, setDate] = useState<Date | undefined>(selectedDay)
 
   return (
-    <div {...stylex.props(exampleStyles.example1)}>
+    <Flex {...stylex.props(exampleStyles.example1)}>
       <Calendar
         mode="single"
         month={month}
@@ -26,7 +26,7 @@ export default function Example() {
       <Button onClick={() => setMonth(today)} size="sm" variant="outline">
         Current month
       </Button>
-    </div>
+    </Flex>
   )
 }
 

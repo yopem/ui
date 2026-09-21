@@ -1,22 +1,26 @@
 import * as stylex from "@stylexjs/stylex"
 
+import { Box } from "@/components/ui/stylex/box"
+import { Flex } from "@/components/ui/stylex/flex"
+import { Heading } from "@/components/ui/stylex/heading"
 import { ScrollArea } from "@/components/ui/stylex/scroll-area"
-
 const tags = Array.from({ length: 50 }, (_, i) => `v1.0.0-alpha.${i}`)
 
 export default function Example() {
   return (
     <ScrollArea {...stylex.props(exampleStyles.example1)}>
-      <div {...stylex.props(exampleStyles.example2)}>
-        <h4 {...stylex.props(exampleStyles.example3)}>Tags</h4>
-        <div {...stylex.props(exampleStyles.example4)}>
+      <Box {...stylex.props(exampleStyles.example2)}>
+        <Heading as="h4" {...stylex.props(exampleStyles.example3)}>
+          Tags
+        </Heading>
+        <Flex {...stylex.props(exampleStyles.example4)}>
           {tags.map((tag) => (
-            <div {...stylex.props(exampleStyles.example5)} key={tag}>
+            <Box {...stylex.props(exampleStyles.example5)} key={tag}>
               {tag}
-            </div>
+            </Box>
           ))}
-        </div>
-      </div>
+        </Flex>
+      </Box>
     </ScrollArea>
   )
 }

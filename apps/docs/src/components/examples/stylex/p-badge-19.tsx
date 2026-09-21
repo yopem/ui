@@ -5,8 +5,8 @@ import { CheckIcon } from "lucide-react"
 import { useId, useState } from "react"
 
 import { Badge } from "@/components/ui/stylex/badge"
+import { Box } from "@/components/ui/stylex/box"
 import { Checkbox } from "@/components/ui/stylex/checkbox"
-
 export default function Example() {
   const id = useId()
   const [checked, setChecked] = useState(true)
@@ -31,9 +31,9 @@ export default function Example() {
           checked && exampleStyles.checkedIcon,
         )}
       />
-      <label {...stylex.props(exampleStyles.example1)} htmlFor={id}>
+      <Box as="label" {...stylex.props(exampleStyles.example1)} htmlFor={id}>
         Selectable
-      </label>
+      </Box>
     </Badge>
   )
 }

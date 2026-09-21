@@ -7,6 +7,7 @@ import { format } from "date-fns"
 import { CalendarIcon } from "lucide-react"
 import { useState } from "react"
 
+import { Box } from "@/components/ui/stylex/box"
 import { Button } from "@/components/ui/stylex/button"
 import { Calendar } from "@/components/ui/stylex/calendar"
 import {
@@ -14,7 +15,6 @@ import {
   PopoverPopup,
   PopoverTrigger,
 } from "@/components/ui/stylex/popover"
-
 export default function Example() {
   const [date, setDate] = useState<DateRange | undefined>()
 
@@ -38,7 +38,7 @@ export default function Example() {
             format(date.from, "LLL dd, y")
           )
         ) : (
-          <span>Pick a date range</span>
+          <Box as="span">Pick a date range</Box>
         )}
       </PopoverTrigger>
       <PopoverPopup>

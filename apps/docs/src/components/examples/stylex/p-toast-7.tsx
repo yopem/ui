@@ -5,6 +5,7 @@ import { CheckIcon, CopyIcon } from "lucide-react"
 import { useRef } from "react"
 
 import { Button } from "@/components/ui/stylex/button"
+import { Paragraph } from "@/components/ui/stylex/paragraph"
 import { anchoredToastManager } from "@/components/ui/stylex/toast"
 import {
   Tooltip,
@@ -12,7 +13,6 @@ import {
   TooltipTrigger,
 } from "@/components/ui/stylex/tooltip"
 import { useCopyToClipboard } from "@/hooks/use-copy-to-clipboard"
-
 export default function Example() {
   const copyButtonRef = useRef<HTMLButtonElement>(null)
   const toastTimeout = 2000
@@ -65,7 +65,7 @@ export default function Example() {
         )}
       </TooltipTrigger>
       <TooltipPopup>
-        <p>Copy to clipboard</p>
+        <Paragraph>Copy to clipboard</Paragraph>
       </TooltipPopup>
     </Tooltip>
   )

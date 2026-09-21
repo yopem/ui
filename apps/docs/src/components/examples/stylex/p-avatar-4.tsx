@@ -5,10 +5,10 @@ import {
   AvatarFallback,
   AvatarImage,
 } from "@/components/ui/stylex/avatar"
-
+import { Flex } from "@/components/ui/stylex/flex"
 export default function Example() {
   return (
-    <div {...stylex.props(exampleStyles.example1)}>
+    <Flex {...stylex.props(exampleStyles.example1)}>
       <Avatar {...stylex.props(exampleStyles.example2)}>
         <AvatarImage
           alt="User"
@@ -30,7 +30,7 @@ export default function Example() {
         />
         <AvatarFallback>AV</AvatarFallback>
       </Avatar>
-    </div>
+    </Flex>
   )
 }
 

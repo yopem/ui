@@ -23,6 +23,7 @@ import {
 } from "react"
 
 import { useAutocompleteFilter } from "@/components/ui/stylex/autocomplete"
+import { Box } from "@/components/ui/stylex/box"
 import { Button } from "@/components/ui/stylex/button"
 import {
   Command,
@@ -42,12 +43,14 @@ import {
   CommandShortcut,
 } from "@/components/ui/stylex/command"
 import { EmptyMedia } from "@/components/ui/stylex/empty"
+import { Flex } from "@/components/ui/stylex/flex"
 import { Input } from "@/components/ui/stylex/input"
 import { Kbd, KbdGroup } from "@/components/ui/stylex/kbd"
+import { Link } from "@/components/ui/stylex/link"
+import { Paragraph } from "@/components/ui/stylex/paragraph"
 import { ScrollArea } from "@/components/ui/stylex/scroll-area"
 import { Skeleton } from "@/components/ui/stylex/skeleton"
 import { Spinner } from "@/components/ui/stylex/spinner"
-
 interface Item {
   value: string
   label: string
@@ -403,7 +406,7 @@ function SearchCommand({
 }: SearchCommandProps) {
   return (
     <Command filter={filterItem} items={commandGroups} key={commandResetKey}>
-      <div {...stylex.props(exampleStyles.report1)}>
+      <Flex {...stylex.props(exampleStyles.report1)}>
         <CommandInput
           {...stylex.props(exampleStyles.commandInput)}
           onChange={(event) => onSearchQueryChange(event.target.value)}
@@ -433,23 +436,23 @@ function SearchCommand({
           Ask AI
           <Kbd {...stylex.props(exampleStyles.example3)}>Tab</Kbd>
         </Button>
-      </div>
+      </Flex>
       <CommandPanel>
         <CommandEmpty {...stylex.props(exampleStyles.example4)}>
           {searchQuery.trim() && (
-            <div {...stylex.props(exampleStyles.example5)}>
+            <Flex {...stylex.props(exampleStyles.example5)}>
               <EmptyMedia variant="icon">
                 <SearchIcon {...stylex.props(exampleStyles.icon2)} />
               </EmptyMedia>
-              <p>No results found.</p>
-              <p>
+              <Paragraph>No results found.</Paragraph>
+              <Paragraph>
                 Press <Kbd>Enter</Kbd> to ask AI about:
-                <br />{" "}
-                <strong {...stylex.props(exampleStyles.example6)}>
+                <Box as="br" />{" "}
+                <Box as="strong" {...stylex.props(exampleStyles.example6)}>
                   {searchQuery}
-                </strong>
-              </p>
-            </div>
+                </Box>
+              </Paragraph>
+            </Flex>
           )}
         </CommandEmpty>
         <CommandList>
@@ -464,9 +467,9 @@ function SearchCommand({
                       onClick={onItemClick}
                       value={item}
                     >
-                      <span {...stylex.props(exampleStyles.example7)}>
+                      <Box as="span" {...stylex.props(exampleStyles.example7)}>
                         {item.label}
-                      </span>
+                      </Box>
                       {item.shortcut && (
                         <CommandShortcut>{item.shortcut}</CommandShortcut>
                       )}
@@ -482,8 +485,8 @@ function SearchCommand({
       <CommandFooter>
         {hasResults ? (
           <>
-            <div {...stylex.props(exampleStyles.example8)}>
-              <div {...stylex.props(exampleStyles.example9)}>
+            <Flex {...stylex.props(exampleStyles.example8)}>
+              <Flex {...stylex.props(exampleStyles.example9)}>
                 <KbdGroup>
                   <Kbd>
                     <ArrowUpIcon {...stylex.props(exampleStyles.icon3)} />
@@ -492,25 +495,25 @@ function SearchCommand({
                     <ArrowDownIcon {...stylex.props(exampleStyles.icon3)} />
                   </Kbd>
                 </KbdGroup>
-                <span>Navigate</span>
-              </div>
-              <div {...stylex.props(exampleStyles.example9)}>
+                <Box as="span">Navigate</Box>
+              </Flex>
+              <Flex {...stylex.props(exampleStyles.example9)}>
                 <Kbd>
                   <CornerDownLeftIcon {...stylex.props(exampleStyles.icon3)} />
                 </Kbd>
-                <span>Open</span>
-              </div>
-            </div>
-            <div {...stylex.props(exampleStyles.example9)}>
+                <Box as="span">Open</Box>
+              </Flex>
+            </Flex>
+            <Flex {...stylex.props(exampleStyles.example9)}>
               <Kbd>Esc</Kbd>
-              <span>Close</span>
-            </div>
+              <Box as="span">Close</Box>
+            </Flex>
           </>
         ) : (
-          <div {...stylex.props(exampleStyles.example10)}>
+          <Flex {...stylex.props(exampleStyles.example10)}>
             <Kbd>Esc</Kbd>
-            <span>Close</span>
-          </div>
+            <Box as="span">Close</Box>
+          </Flex>
         )}
       </CommandFooter>
     </Command>
@@ -534,16 +537,16 @@ function AICommand({
 }: AICommandProps) {
   return (
     <Command>
-      <div {...stylex.props(exampleStyles.report2)}>
-        <div {...stylex.props(exampleStyles.example11)}>
-          <div {...stylex.props(exampleStyles.example12)}>
-            <div
+      <Flex {...stylex.props(exampleStyles.report2)}>
+        <Box {...stylex.props(exampleStyles.example11)}>
+          <Box {...stylex.props(exampleStyles.example12)}>
+            <Flex
               aria-hidden="true"
               {...stylex.props(exampleStyles.report3)}
               data-slot="autocomplete-start-addon"
             >
               <SparklesIcon {...stylex.props(exampleStyles.addonIcon)} />
-            </div>
+            </Flex>
             <Input
               aria-label="AI query input"
               {...stylex.props(exampleStyles.report4)}
@@ -563,8 +566,8 @@ function AICommand({
               size="lg"
               value={aiState.query}
             />
-          </div>
-        </div>
+          </Box>
+        </Box>
         <Button
           {...stylex.props(exampleStyles.example1)}
           onClick={onBackToSearch}
@@ -577,53 +580,53 @@ function AICommand({
           Back to search
           <Kbd {...stylex.props(exampleStyles.example3)}>Esc</Kbd>
         </Button>
-      </div>
+      </Flex>
       <CommandPanel>
         <ScrollArea overscrollContain scrollbarGutter scrollFade>
-          <div {...stylex.props(exampleStyles.example13)}>
+          <Box {...stylex.props(exampleStyles.example13)}>
             {!aiState.isGenerating && !aiState.response && !aiState.error && (
-              <div {...stylex.props(exampleStyles.example14)}>
-                <p {...stylex.props(exampleStyles.example15)}>
+              <Flex {...stylex.props(exampleStyles.example14)}>
+                <Paragraph {...stylex.props(exampleStyles.example15)}>
                   Ask AI anything and press <Kbd>Enter</Kbd> to get started.
-                </p>
-              </div>
+                </Paragraph>
+              </Flex>
             )}
 
             {aiState.error && (
-              <div
+              <Box
                 aria-live="polite"
                 {...stylex.props(exampleStyles.example16)}
                 role="alert"
               >
                 {aiState.error}
-              </div>
+              </Box>
             )}
 
             {aiState.isGenerating && (
-              <div {...stylex.props(exampleStyles.example17)}>
-                <div {...stylex.props(exampleStyles.example18)}>
+              <Flex {...stylex.props(exampleStyles.example17)}>
+                <Flex {...stylex.props(exampleStyles.example18)}>
                   <Skeleton {...stylex.props(exampleStyles.example19)} />
                   <Skeleton {...stylex.props(exampleStyles.example19)} />
                   <Skeleton {...stylex.props(exampleStyles.example19)} />
                   <Skeleton {...stylex.props(exampleStyles.example20)} />
-                </div>
-                <div {...stylex.props(exampleStyles.example18)}>
+                </Flex>
+                <Flex {...stylex.props(exampleStyles.example18)}>
                   <Skeleton {...stylex.props(exampleStyles.example19)} />
                   <Skeleton {...stylex.props(exampleStyles.example19)} />
                   <Skeleton {...stylex.props(exampleStyles.example21)} />
-                </div>
-                <div {...stylex.props(exampleStyles.example18)}>
+                </Flex>
+                <Flex {...stylex.props(exampleStyles.example18)}>
                   <Skeleton {...stylex.props(exampleStyles.example19)} />
                   <Skeleton {...stylex.props(exampleStyles.example19)} />
                   <Skeleton {...stylex.props(exampleStyles.example19)} />
                   <Skeleton {...stylex.props(exampleStyles.example22)} />
-                </div>
-              </div>
+                </Flex>
+              </Flex>
             )}
 
             {aiState.response && !aiState.isGenerating && (
               <>
-                <div
+                <Box
                   aria-live="polite"
                   {...stylex.props(exampleStyles.report5)}
                   dangerouslySetInnerHTML={{
@@ -631,51 +634,53 @@ function AICommand({
                   }}
                 />
                 {aiState.referenceLinks.length > 0 && (
-                  <div {...stylex.props(exampleStyles.example23)}>
+                  <Flex {...stylex.props(exampleStyles.example23)}>
                     {aiState.referenceLinks.map((link) => (
                       <Button
                         key={link.url}
-                        render={<a aria-label={link.title} href={link.url} />}
+                        render={
+                          <Link aria-label={link.title} href={link.url} />
+                        }
                         size="sm"
                         variant="secondary"
                       >
                         {link.title}
                       </Button>
                     ))}
-                  </div>
+                  </Flex>
                 )}
               </>
             )}
-          </div>
+          </Box>
         </ScrollArea>
       </CommandPanel>
 
       <CommandFooter>
         {aiState.isGenerating ? (
-          <div aria-live="polite" {...stylex.props(exampleStyles.example9)}>
-            <div {...stylex.props(exampleStyles.example24)}>
+          <Flex aria-live="polite" {...stylex.props(exampleStyles.example9)}>
+            <Flex {...stylex.props(exampleStyles.example24)}>
               <Spinner {...stylex.props(exampleStyles.example25)} />
-            </div>
-            <span {...stylex.props(exampleStyles.report6)}>
+            </Flex>
+            <Box as="span" {...stylex.props(exampleStyles.report6)}>
               Generating response…
-            </span>
-          </div>
+            </Box>
+          </Flex>
         ) : aiState.response ? (
-          <div {...stylex.props(exampleStyles.example9)}>
-            <div {...stylex.props(exampleStyles.example24)}>
+          <Flex {...stylex.props(exampleStyles.example9)}>
+            <Flex {...stylex.props(exampleStyles.example24)}>
               <CircleQuestionMarkIcon
                 {...stylex.props(exampleStyles.example25)}
               />
-            </div>
-            You asked: <span>&quot;{aiState.submittedQuery}&quot;</span>
-          </div>
+            </Flex>
+            You asked: <Box as="span">&quot;{aiState.submittedQuery}&quot;</Box>
+          </Flex>
         ) : (
-          <div {...stylex.props(exampleStyles.example9)}>
+          <Flex {...stylex.props(exampleStyles.example9)}>
             <Kbd>
               <CornerDownLeftIcon {...stylex.props(exampleStyles.icon3)} />
             </Kbd>
-            <span>Ask AI</span>
-          </div>
+            <Box as="span">Ask AI</Box>
+          </Flex>
         )}
       </CommandFooter>
     </Command>

@@ -3,11 +3,11 @@
 import * as stylex from "@stylexjs/stylex"
 
 import { Button } from "@/components/ui/stylex/button"
+import { Flex } from "@/components/ui/stylex/flex"
 import { toastManager } from "@/components/ui/stylex/toast"
-
 export default function Example() {
   return (
-    <div {...stylex.props(exampleStyles.example1)}>
+    <Flex {...stylex.props(exampleStyles.example1)}>
       <Button
         onClick={() => {
           toastManager.add({
@@ -56,7 +56,7 @@ export default function Example() {
       >
         Warning Toast
       </Button>
-    </div>
+    </Flex>
   )
 }
 

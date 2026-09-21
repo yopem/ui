@@ -4,6 +4,7 @@ import * as stylex from "@stylexjs/stylex"
 import { ArrowDownIcon, ArrowUpIcon, CornerDownLeftIcon } from "lucide-react"
 import { Fragment, useEffect, useState } from "react"
 
+import { Box } from "@/components/ui/stylex/box"
 import { Button } from "@/components/ui/stylex/button"
 import {
   Command,
@@ -22,8 +23,8 @@ import {
   CommandSeparator,
   CommandShortcut,
 } from "@/components/ui/stylex/command"
+import { Flex } from "@/components/ui/stylex/flex"
 import { Kbd, KbdGroup } from "@/components/ui/stylex/kbd"
-
 export interface Item {
   value: string
   label: string
@@ -101,9 +102,12 @@ export default function Example() {
                           onClick={() => handleItemClick(item)}
                           value={item.value}
                         >
-                          <span {...stylex.props(exampleStyles.example1)}>
+                          <Box
+                            as="span"
+                            {...stylex.props(exampleStyles.example1)}
+                          >
                             {item.label}
-                          </span>
+                          </Box>
                           {item.shortcut && (
                             <CommandShortcut>{item.shortcut}</CommandShortcut>
                           )}
@@ -117,8 +121,8 @@ export default function Example() {
             </CommandList>
           </CommandPanel>
           <CommandFooter>
-            <div {...stylex.props(exampleStyles.example2)}>
-              <div {...stylex.props(exampleStyles.example3)}>
+            <Flex {...stylex.props(exampleStyles.example2)}>
+              <Flex {...stylex.props(exampleStyles.example3)}>
                 <KbdGroup>
                   <Kbd>
                     <ArrowUpIcon {...stylex.props(exampleStyles.icon)} />
@@ -127,19 +131,19 @@ export default function Example() {
                     <ArrowDownIcon {...stylex.props(exampleStyles.icon)} />
                   </Kbd>
                 </KbdGroup>
-                <span>Navigate</span>
-              </div>
-              <div {...stylex.props(exampleStyles.example3)}>
+                <Box as="span">Navigate</Box>
+              </Flex>
+              <Flex {...stylex.props(exampleStyles.example3)}>
                 <Kbd>
                   <CornerDownLeftIcon {...stylex.props(exampleStyles.icon)} />
                 </Kbd>
-                <span>Open</span>
-              </div>
-            </div>
-            <div {...stylex.props(exampleStyles.example3)}>
+                <Box as="span">Open</Box>
+              </Flex>
+            </Flex>
+            <Flex {...stylex.props(exampleStyles.example3)}>
               <Kbd>Esc</Kbd>
-              <span>Close</span>
-            </div>
+              <Box as="span">Close</Box>
+            </Flex>
           </CommandFooter>
         </Command>
       </CommandDialogPopup>

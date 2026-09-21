@@ -2,6 +2,7 @@
 
 import * as stylex from "@stylexjs/stylex"
 
+import { Flex } from "@/components/ui/stylex/flex"
 import {
   Progress,
   ProgressIndicator,
@@ -9,14 +10,13 @@ import {
   ProgressTrack,
   ProgressValue,
 } from "@/components/ui/stylex/progress"
-
 export default function Example() {
   return (
     <Progress max={512} value={502}>
-      <div {...stylex.props(exampleStyles.example1)}>
+      <Flex {...stylex.props(exampleStyles.example1)}>
         <ProgressLabel>Upload</ProgressLabel>
         <ProgressValue>{(_formatted, value) => `${value} / 512`}</ProgressValue>
-      </div>
+      </Flex>
       <ProgressTrack>
         <ProgressIndicator />
       </ProgressTrack>

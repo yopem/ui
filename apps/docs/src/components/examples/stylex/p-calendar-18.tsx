@@ -4,10 +4,11 @@ import * as stylex from "@stylexjs/stylex"
 import { ClockIcon } from "lucide-react"
 import { useState } from "react"
 
+import { Box } from "@/components/ui/stylex/box"
 import { Calendar } from "@/components/ui/stylex/calendar"
 import { Field, FieldLabel } from "@/components/ui/stylex/field"
+import { Flex } from "@/components/ui/stylex/flex"
 import { InputGroup, InputGroupAddon } from "@/components/ui/stylex/input-group"
-
 export default function Example() {
   const [date, setDate] = useState<Date | undefined>(() => new Date())
   const [month, setMonth] = useState<Date>(() => new Date())
@@ -25,7 +26,7 @@ export default function Example() {
   }
 
   return (
-    <div {...stylex.props(exampleStyles.example1)}>
+    <Flex {...stylex.props(exampleStyles.example1)}>
       <Calendar
         mode="single"
         month={month}
@@ -38,7 +39,8 @@ export default function Example() {
           Enter time
         </FieldLabel>
         <InputGroup {...stylex.props(exampleStyles.example4)}>
-          <input
+          <Box
+            as="input"
             data-slot="input"
             aria-label="Select time"
             {...stylex.props(exampleStyles.nativeInput, exampleStyles.report1)}
@@ -55,7 +57,7 @@ export default function Example() {
           </InputGroupAddon>
         </InputGroup>
       </Field>
-    </div>
+    </Flex>
   )
 }
 

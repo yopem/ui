@@ -5,8 +5,8 @@ import type { WeekNumberProps } from "@daypicker/react"
 import * as stylex from "@stylexjs/stylex"
 import { useState } from "react"
 
+import { Box } from "@/components/ui/stylex/box"
 import { Calendar } from "@/components/ui/stylex/calendar"
-
 export default function Example() {
   const [date, setDate] = useState<Date | undefined>(new Date())
 
@@ -15,11 +15,11 @@ export default function Example() {
       components={{
         WeekNumber: ({ week, ...props }: WeekNumberProps) => {
           return (
-            <th {...props}>
-              <span {...stylex.props(exampleStyles.example1)}>
+            <Box as="th" {...props}>
+              <Box as="span" {...stylex.props(exampleStyles.example1)}>
                 {week.weekNumber}
-              </span>
-            </th>
+              </Box>
+            </Box>
           )
         },
       }}

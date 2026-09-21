@@ -3,45 +3,60 @@
 import * as stylex from "@stylexjs/stylex"
 import { useState } from "react"
 
+import { Box } from "@/components/ui/stylex/box"
 import { Button } from "@/components/ui/stylex/button"
-
+import { Flex } from "@/components/ui/stylex/flex"
+import { Heading } from "@/components/ui/stylex/heading"
+import { Paragraph } from "@/components/ui/stylex/paragraph"
 export function Example() {
   const [activations, setActivations] = useState(0)
 
   return (
-    <section aria-label="Style props playground" {...stylex.props(styles.root)}>
-      <h2>Style props</h2>
-      <p>Numbers use the spacing scale; CSS strings keep their units.</p>
-      <div {...stylex.props(styles.row)}>
+    <Box
+      as="section"
+      aria-label="Style props playground"
+      {...stylex.props(styles.root)}
+    >
+      <Heading as="h2">Style props</Heading>
+      <Paragraph>
+        Numbers use the spacing scale; CSS strings keep their units.
+      </Paragraph>
+      <Flex {...stylex.props(styles.row)}>
         <Button p={4}>Numeric padding</Button>
         <Button p="13px">Raw padding</Button>
         <Button p={[2, null, 6]}>Responsive array</Button>
         <Button p={{ base: 2, md: 4, lg: 6 }}>Responsive object</Button>
         <Button p={{ base: 2, mdToLg: 5 }}>Responsive range</Button>
-      </div>
-      <p>
+      </Flex>
+      <Paragraph>
         Logical spacing follows writing direction, including negative margins.
-      </p>
-      <div dir="ltr" {...stylex.props(styles.row)}>
+      </Paragraph>
+      <Flex dir="ltr" {...stylex.props(styles.row)}>
         <Button ps={6} pe={2} ms={-2}>
           Logical LTR
         </Button>
-      </div>
-      <div dir="rtl" {...stylex.props(styles.row)}>
+      </Flex>
+      <Flex dir="rtl" {...stylex.props(styles.row)}>
         <Button ps={6} pe={2} ms={-2}>
           Logical RTL
         </Button>
-      </div>
+      </Flex>
       <Button gap={3}>
-        <span>Scaled</span>
-        <span>space</span>
+        <Box as="span">Scaled</Box>
+        <Box as="span">space</Box>
       </Button>
       <Button gap={0} spaceX={-2}>
-        <span {...stylex.props(styles.spaceItem)}>Negative</span>
-        <span {...stylex.props(styles.spaceItem)}>space</span>
+        <Box as="span" {...stylex.props(styles.spaceItem)}>
+          Negative
+        </Box>
+        <Box as="span" {...stylex.props(styles.spaceItem)}>
+          space
+        </Box>
       </Button>
-      <p>Hover, keyboard focus, and disabled states keep native behavior.</p>
-      <div {...stylex.props(styles.row)}>
+      <Paragraph>
+        Hover, keyboard focus, and disabled states keep native behavior.
+      </Paragraph>
+      <Flex {...stylex.props(styles.row)}>
         <Button
           p={4}
           _hover={{ p: 6 }}
@@ -58,13 +73,15 @@ export function Example() {
           Disabled styles
         </Button>
         <Button>After disabled</Button>
-      </div>
-      <output aria-live="polite">Activations: {activations}</output>
-      <p>
+      </Flex>
+      <Box as="output" aria-live="polite">
+        Activations: {activations}
+      </Box>
+      <Paragraph>
         Explicit xstyle overrides style props. Inline CSS keeps native
         precedence; className is preserved.
-      </p>
-      <div {...stylex.props(styles.row)}>
+      </Paragraph>
+      <Flex {...stylex.props(styles.row)}>
         <Button p={4} xstyle={styles.override}>
           Xstyle precedence
         </Button>
@@ -78,8 +95,8 @@ export function Example() {
         >
           Consumer class
         </Button>
-      </div>
-    </section>
+      </Flex>
+    </Box>
   )
 }
 

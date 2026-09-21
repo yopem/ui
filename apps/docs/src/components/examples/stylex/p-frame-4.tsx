@@ -1,5 +1,6 @@
 import * as stylex from "@stylexjs/stylex"
 
+import { Box } from "@/components/ui/stylex/box"
 import {
   Frame,
   FrameDescription,
@@ -7,8 +8,9 @@ import {
   FramePanel,
   FrameTitle,
 } from "@/components/ui/stylex/frame"
+import { Heading } from "@/components/ui/stylex/heading"
+import { Paragraph } from "@/components/ui/stylex/paragraph"
 import { Separator } from "@/components/ui/stylex/separator"
-
 export default function Example() {
   return (
     <Frame {...stylex.props(exampleStyles.example1)}>
@@ -17,15 +19,23 @@ export default function Example() {
         <FrameDescription>Brief description about the section</FrameDescription>
       </FrameHeader>
       <FramePanel {...stylex.props(exampleStyles.example2)}>
-        <div {...stylex.props(exampleStyles.example3)}>
-          <h2 {...stylex.props(exampleStyles.example4)}>Stacked panel</h2>
-          <p {...stylex.props(exampleStyles.example5)}>Section description</p>
-        </div>
+        <Box {...stylex.props(exampleStyles.example3)}>
+          <Heading as="h2" {...stylex.props(exampleStyles.example4)}>
+            Stacked panel
+          </Heading>
+          <Paragraph {...stylex.props(exampleStyles.example5)}>
+            Section description
+          </Paragraph>
+        </Box>
         <Separator />
-        <div {...stylex.props(exampleStyles.example3)}>
-          <h2 {...stylex.props(exampleStyles.example4)}>Stacked panel</h2>
-          <p {...stylex.props(exampleStyles.example5)}>Section description</p>
-        </div>
+        <Box {...stylex.props(exampleStyles.example3)}>
+          <Heading as="h2" {...stylex.props(exampleStyles.example4)}>
+            Stacked panel
+          </Heading>
+          <Paragraph {...stylex.props(exampleStyles.example5)}>
+            Section description
+          </Paragraph>
+        </Box>
       </FramePanel>
     </Frame>
   )

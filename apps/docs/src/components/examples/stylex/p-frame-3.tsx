@@ -7,7 +7,8 @@ import {
   FramePanel,
   FrameTitle,
 } from "@/components/ui/stylex/frame"
-
+import { Heading } from "@/components/ui/stylex/heading"
+import { Paragraph } from "@/components/ui/stylex/paragraph"
 export default function Example() {
   return (
     <Frame {...stylex.props(exampleStyles.example1)}>
@@ -16,12 +17,20 @@ export default function Example() {
         <FrameDescription>Brief description about the section</FrameDescription>
       </FrameHeader>
       <FramePanel>
-        <h2 {...stylex.props(exampleStyles.example2)}>Separated panel</h2>
-        <p {...stylex.props(exampleStyles.example3)}>Section description</p>
+        <Heading as="h2" {...stylex.props(exampleStyles.example2)}>
+          Separated panel
+        </Heading>
+        <Paragraph {...stylex.props(exampleStyles.example3)}>
+          Section description
+        </Paragraph>
       </FramePanel>
       <FramePanel>
-        <h2 {...stylex.props(exampleStyles.example2)}>Separated panel</h2>
-        <p {...stylex.props(exampleStyles.example3)}>Section description</p>
+        <Heading as="h2" {...stylex.props(exampleStyles.example2)}>
+          Separated panel
+        </Heading>
+        <Paragraph {...stylex.props(exampleStyles.example3)}>
+          Section description
+        </Paragraph>
       </FramePanel>
     </Frame>
   )
