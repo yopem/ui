@@ -44,6 +44,23 @@ test("copy lists include every transitive dependency exactly once", () => {
   expect(getRequiredItems("style-props").map((item) => item.name)).toContain(
     "button",
   )
+  expect(getRequiredItems("layout").map((item) => item.name)).toEqual(
+    expect.arrayContaining([
+      "box",
+      "flex",
+      "stack",
+      "hstack",
+      "vstack",
+      "grid",
+      "center",
+      "link",
+      "paragraph",
+      "heading",
+      "button",
+      "label",
+      "base",
+    ]),
+  )
   expect(() => getRequiredItems("missing-component")).toThrow(
     "Component not found",
   )

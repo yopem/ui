@@ -53,6 +53,60 @@ after defaults/variants but before consumer `xstyle`. Alternatively,
 `resolveStyleProps(styleProps)` resolves an explicit style object. Import
 `StyleProps`, `StyleObject`, and `ResponsiveValue` from `@/lib/style-props`.
 
+## Layout primitives
+
+Use `Box`, `Flex`, `Stack`, `HStack`, `VStack`, `Grid`, and `Center` for layout.
+They share the style props above, including responsive values and StyleX
+`xstyle` overrides. Use `Link` for anchors, `Paragraph` for paragraphs, and
+`Heading` for heading levels. `Box` covers generic containers and other semantic
+elements through `as`. There is no HTML component or factory.
+
+```tsx
+import { Heading } from "@/components/ui/heading"
+import { HStack } from "@/components/ui/hstack"
+import { Link } from "@/components/ui/link"
+import { Paragraph } from "@/components/ui/paragraph"
+import { VStack } from "@/components/ui/vstack"
+
+export function Profile() {
+  return (
+    <VStack alignItems="stretch" gap={4}>
+      <Heading>Profile</Heading>
+      <HStack justifyContent="space-between">
+        <Paragraph>Account settings</Paragraph>
+        <Link href="/settings">Edit</Link>
+      </HStack>
+    </VStack>
+  )
+}
+```
+
+Docs use these primitives as a consumer application. The local Oxlint plugin
+checks docs JSX for native HTML elements and recommends UI primitives. Registry
+implementations and test fixtures may use native HTML. Document-shell tags
+remain native, as does the non-DOM JSX passed to the social-image renderer.
+
+## Docs JSX linting
+
+Root `.oxlintrc.json` loads local plugin through Oxlint's `jsPlugins`:
+
+```json
+{
+  "jsPlugins": [
+    {
+      "name": "yopem-ui",
+      "specifier": "./packages/oxlint-plugin/src/index.ts"
+    }
+  ]
+}
+```
+
+`yopem-ui/prefer-ui-primitives` applies to `apps/docs/src/**/*.{tsx,jsx}`. The
+root-shell override allows `base`, `body`, `head`, `html`, `link`, `meta`,
+`script`, `style`, and `title`. `apps/docs/src/lib/og.tsx` is excluded because
+Satori renders non-DOM JSX. Rule reports diagnostics only and has no autofix.
+Run `bun run lint` from repo root.
+
 ## Commands
 
 ```sh
@@ -72,6 +126,7 @@ bun run build
 
 - `apps/docs` — TanStack Start documentation and component previews
 - `packages/registry` — canonical component source and registry tooling
+- `packages/oxlint-plugin` — reusable UI primitive lint rule and CLI tests
 
 ## Acknowledgements
 

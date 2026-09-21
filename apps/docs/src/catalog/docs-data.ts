@@ -6,6 +6,20 @@ import { usageExamples } from "./usage"
 export const compositionItems: Record<string, string[]> = {
   "date-picker": ["calendar", "popover", "button"],
   navigation: ["radio-group", "tabs"],
+  layout: [
+    "box",
+    "flex",
+    "stack",
+    "hstack",
+    "vstack",
+    "grid",
+    "center",
+    "link",
+    "paragraph",
+    "heading",
+    "button",
+    "label",
+  ],
   "style-props": ["button"],
 }
 
@@ -35,6 +49,12 @@ export function getRequiredItems(slug: string) {
 }
 
 export const guidePages = [
+  {
+    title: "Layout and typography",
+    url: "/docs/primitives",
+    content:
+      "Box Flex Stack HStack VStack Grid Center Link Paragraph Heading as native refs style props responsive css xstyle spacing precedence Oxlint prefer-ui-primitives allowElements",
+  },
   {
     title: "Examples",
     url: "/examples",

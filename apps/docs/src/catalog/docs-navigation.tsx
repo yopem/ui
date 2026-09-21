@@ -5,8 +5,10 @@ import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import { Link, useLocation } from "@tanstack/react-router"
 
-import { catalog } from "./components"
+import { Box } from "@/components/ui/stylex/box"
+import { Link as UiLink } from "@/components/ui/stylex/link"
 
+import { catalog } from "./components"
 const tree: Root = {
   name: "Yopem UI",
   children: [
@@ -15,6 +17,7 @@ const tree: Root = {
     { type: "page", name: "Getting started", url: "/docs/getting-started" },
     { type: "page", name: "Installation", url: "/docs/installation" },
     { type: "page", name: "Theming", url: "/docs/theming" },
+    { type: "page", name: "Layout and typography", url: "/docs/primitives" },
     { type: "page", name: "Components", url: "/components" },
     { type: "page", name: "Examples", url: "/examples" },
     { type: "separator", name: "Components" },
@@ -35,15 +38,19 @@ export function DocsNavigation({ onNavigate }: { onNavigate?: () => void }) {
       scrollFade
       xstyle={styles.scroll}
     >
-      <nav aria-label="Documentation" {...stylex.props(styles.nav)}>
-        <ul {...stylex.props(styles.list)}>
+      <Box as="nav" aria-label="Documentation" {...stylex.props(styles.nav)}>
+        <Box as="ul" {...stylex.props(styles.list)}>
           {tree.children.map((item) =>
             item.type === "separator" ? (
-              <li key={String(item.name)} {...stylex.props(styles.group)}>
+              <Box
+                as="li"
+                key={String(item.name)}
+                {...stylex.props(styles.group)}
+              >
                 {item.name}
-              </li>
+              </Box>
             ) : item.type === "page" ? (
-              <li key={item.url}>
+              <Box as="li" key={item.url}>
                 <Link
                   to={item.url}
                   aria-current={pathname === item.url ? "page" : undefined}
@@ -55,21 +62,23 @@ export function DocsNavigation({ onNavigate }: { onNavigate?: () => void }) {
                 >
                   {item.name}
                 </Link>
-              </li>
+              </Box>
             ) : null,
           )}
-          <li {...stylex.props(styles.group)}>Resources</li>
-          <li>
-            <a
+          <Box as="li" {...stylex.props(styles.group)}>
+            Resources
+          </Box>
+          <Box as="li">
+            <UiLink
               href="/llms.txt"
               onClick={onNavigate}
               {...stylex.props(styles.link)}
             >
               llms.txt
-            </a>
-          </li>
-        </ul>
-      </nav>
+            </UiLink>
+          </Box>
+        </Box>
+      </Box>
     </ScrollArea>
   )
 }
