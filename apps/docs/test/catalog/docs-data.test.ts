@@ -41,6 +41,9 @@ test("copy lists include every transitive dependency exactly once", () => {
   expect(getRequiredItems("date-picker").map((item) => item.name)).toContain(
     "popover",
   )
+  expect(getRequiredItems("style-props").map((item) => item.name)).toContain(
+    "button",
+  )
   expect(() => getRequiredItems("missing-component")).toThrow(
     "Component not found",
   )

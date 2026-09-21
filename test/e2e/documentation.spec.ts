@@ -9,7 +9,7 @@ test("examples page lists, filters, copies, and opens examples", async ({
   await expect(
     page.getByRole("heading", { name: "Browse examples", level: 1 }),
   ).toBeVisible()
-  await expect(page.getByText("508 examples", { exact: true })).toBeVisible()
+  await expect(page.getByText("509 examples", { exact: true })).toBeVisible()
 
   await page.getByRole("searchbox", { name: "Search examples" }).fill("button")
   await expect(page.getByText("40 examples", { exact: true })).toBeVisible()
@@ -68,7 +68,7 @@ test("minimal setup and StyleX customization are documented", async ({
   await page.goto("/docs/installation")
   await expect(
     page.getByRole("button", { name: /^Copy src\/(styles|lib)\// }),
-  ).toHaveCount(3)
+  ).toHaveCount(6)
   await page.goto("/docs/theming")
   await expect(
     page.getByRole("heading", { name: "Component overrides", exact: true }),

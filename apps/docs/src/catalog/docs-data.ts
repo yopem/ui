@@ -6,6 +6,7 @@ import { usageExamples } from "./usage"
 export const compositionItems: Record<string, string[]> = {
   "date-picker": ["calendar", "popover", "button"],
   navigation: ["radio-group", "tabs"],
+  "style-props": ["button"],
 }
 
 export function getDocumentationItems(slug: string) {

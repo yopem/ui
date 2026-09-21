@@ -5,13 +5,14 @@ import {
   type LazyExoticComponent,
 } from "react"
 
-interface ExampleModule {
-  default: ComponentType
-}
+import type { ExampleModule } from "./example-modules"
+
+import { resolveExampleModule } from "./example-modules"
+
 export interface CatalogExample {
   component: LazyExoticComponent<ComponentType>
   name: string
-  preload: () => Promise<ExampleModule>
+  preload: () => Promise<ReturnType<typeof resolveExampleModule>>
   source: () => Promise<string>
 }
 
@@ -83,9 +84,13 @@ export const catalog: CatalogItem[] = [...groups.values()]
     const name = override?.name ?? componentIdentifier(slug)
     return {
       examples: componentExamples.map(({ load, name: exampleName, source }) => {
-        let promise: Promise<ExampleModule> | undefined
+        let promise:
+          | Promise<ReturnType<typeof resolveExampleModule>>
+          | undefined
         const preload = () =>
-          (promise ??= load().catch(() => ({ default: UnavailableExample })))
+          (promise ??= load()
+            .then(resolveExampleModule)
+            .catch(() => ({ default: UnavailableExample })))
         return {
           component: lazy(preload),
           name: exampleName,

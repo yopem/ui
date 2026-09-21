@@ -1,7 +1,11 @@
 import { lazy, type ComponentType, type LazyExoticComponent } from "react"
 
-export interface ExampleModule {
-  default: ComponentType
+export type ExampleModule =
+  | { default: ComponentType; Example?: never }
+  | { Example: ComponentType; default?: never }
+
+export function resolveExampleModule(module: ExampleModule) {
+  return { default: module.default ?? module.Example }
 }
 
 type ExampleLoader = () => Promise<ExampleModule>
@@ -30,6 +34,9 @@ export function findExampleComponent(
 
 function createComponents(modules: Record<string, ExampleLoader>) {
   return new Map(
-    Object.entries(modules).map(([path, load]) => [path, lazy(load)] as const),
+    Object.entries(modules).map(
+      ([path, load]) =>
+        [path, lazy(() => load().then(resolveExampleModule))] as const,
+    ),
   )
 }
