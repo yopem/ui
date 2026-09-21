@@ -53,6 +53,46 @@ export const usageNotes: Record<string, [string, ...string[]]> = {
     "Use Frame to group FramePanel sections with a shared FrameHeader and FrameFooter.",
     "FrameTitle and FrameDescription label the group. Keep interactive controls inside the panels rather than making the entire frame clickable.",
   ],
+  box: [
+    "Use Box as the generic wrapper. It renders a div by default, accepts shared style props and xstyle, and supports any intrinsic tag through as.",
+    "Native props and refs pass through, including img width and height strings or numbers, meta content, and input size. Use css or xstyle for overrides; conditional responsive values need a base value.",
+  ],
+  flex: [
+    "Use Flex for one-dimensional layouts. It renders a div with display:flex and accepts shared style props, xstyle, native div props, and ref.",
+    "Flex has no as prop; set flexDirection, gap, and alignment through style props. Conditional responsive values need a base value.",
+  ],
+  vstack: [
+    "Use VStack for vertically stacked content. It renders a div with centered items, column direction, and a default gap of calc(var(--spacing) * 4).",
+    "VStack is div-only and accepts shared style props, xstyle, native div props, and ref. Conditional responsive values need a base value.",
+  ],
+  hstack: [
+    "Use HStack for horizontally arranged content. It renders a div with centered items, row direction, and a default gap of calc(var(--spacing) * 4).",
+    "HStack is div-only and accepts shared style props, xstyle, native div props, and ref. Conditional responsive values need a base value.",
+  ],
+  stack: [
+    "Use Stack for vertical content. It renders a div with column direction and a default gap of calc(var(--spacing) * 4).",
+    "Stack is div-only and accepts shared style props, xstyle, native div props, and ref. Conditional responsive values need a base value.",
+  ],
+  grid: [
+    "Use Grid for two-dimensional layouts. It renders a div with display:grid and no other layout default.",
+    "Grid is div-only and accepts shared style props, xstyle, native div props, and ref. Set gridTemplateColumns or other grid properties explicitly; conditional responsive values need a base value.",
+  ],
+  center: [
+    "Use Center for content that should be centered on both axes. It renders a div with display:flex, alignItems:center, and justifyContent:center.",
+    "Center is div-only and accepts shared style props, xstyle, native div props, and ref. Conditional responsive values need a base value.",
+  ],
+  link: [
+    "Use Link for navigation. It renders a native a element, accepts anchor props, shared style props, xstyle, and ref, with no component visual defaults.",
+    "Link does not add router navigation or router-specific behavior. Preserve native href, events, and keyboard behavior; use css or xstyle for visual styling. Conditional responsive values need a base value.",
+  ],
+  paragraph: [
+    "Use Paragraph for body copy. It renders a native p element and accepts native paragraph props, shared style props, xstyle, and ref.",
+    "Paragraph adds no component visual defaults. Conditional responsive values need a base value.",
+  ],
+  heading: [
+    "Use Heading for document headings. It renders h2 by default and accepts only h1 through h6 through as.",
+    "Heading accepts native heading props, shared style props, xstyle, and ref; it adds no component visual defaults. Conditional responsive values need a base value.",
+  ],
   group: [
     "Wrap adjacent controls in Group. Apply groupItemStyles.item through each direct control's xstyle, or controlXstyle for Input and Textarea wrappers. GroupText and GroupSeparator apply joining styles themselves.",
     "orientation switches between horizontal and vertical layouts. ButtonGroup, ButtonGroupText and ButtonGroupSeparator are aliases.",

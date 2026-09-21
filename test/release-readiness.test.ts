@@ -10,10 +10,12 @@ const expectedComponents = [
   "autocomplete",
   "avatar",
   "badge",
+  "box",
   "breadcrumb",
   "button",
   "calendar",
   "card",
+  "center",
   "checkbox-group",
   "checkbox",
   "collapsible",
@@ -25,18 +27,24 @@ const expectedComponents = [
   "empty",
   "field",
   "fieldset",
+  "flex",
   "form",
   "frame",
+  "grid",
   "group",
+  "heading",
+  "hstack",
   "input-group",
   "input",
   "kbd",
   "label",
+  "link",
   "menu",
   "meter",
   "number-field",
   "otp-field",
   "pagination",
+  "paragraph",
   "popover",
   "preview-card",
   "progress",
@@ -49,6 +57,7 @@ const expectedComponents = [
   "skeleton",
   "slider",
   "spinner",
+  "stack",
   "switch",
   "table",
   "tabs",
@@ -58,6 +67,7 @@ const expectedComponents = [
   "toggle",
   "toolbar",
   "tooltip",
+  "vstack",
 ].toSorted()
 
 async function tsxNames(directory: string) {
@@ -68,7 +78,7 @@ async function tsxNames(directory: string) {
 }
 
 describe("v1 release readiness", () => {
-  test("all 54 canonical components and wrappers exist", async () => {
+  test("all canonical components and wrappers exist", async () => {
     expect(
       await tsxNames(resolve(root, "packages/registry/src/components/ui")),
     ).toEqual(expectedComponents)
