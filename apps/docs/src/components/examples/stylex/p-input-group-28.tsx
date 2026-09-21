@@ -4,6 +4,7 @@ import * as stylex from "@stylexjs/stylex"
 import { ImageIcon, PaperclipIcon } from "lucide-react"
 
 import { Button } from "@/components/ui/stylex/button"
+import { Flex } from "@/components/ui/stylex/flex"
 import {
   InputGroup,
   InputGroupAddon,
@@ -15,7 +16,6 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/stylex/tooltip"
-
 export default function Example() {
   return (
     <InputGroup>
@@ -25,7 +25,7 @@ export default function Example() {
         {...stylex.props(exampleStyles.example1)}
       >
         <TooltipProvider>
-          <div {...stylex.props(exampleStyles.example2)}>
+          <Flex {...stylex.props(exampleStyles.example2)}>
             <Tooltip>
               <TooltipTrigger
                 render={
@@ -54,7 +54,7 @@ export default function Example() {
               </TooltipTrigger>
               <TooltipPopup>Insert image</TooltipPopup>
             </Tooltip>
-          </div>
+          </Flex>
         </TooltipProvider>
         <Button size="sm">Send</Button>
       </InputGroupAddon>

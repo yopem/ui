@@ -7,6 +7,7 @@ import {
   AvatarFallback,
   AvatarImage,
 } from "@/components/ui/stylex/avatar"
+import { Box } from "@/components/ui/stylex/box"
 import {
   Select,
   SelectItem,
@@ -14,7 +15,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/stylex/select"
-
 const users = [
   {
     avatar:
@@ -55,20 +55,20 @@ export default function Example() {
       >
         <SelectValue>
           {(item) => (
-            <span {...stylex.props(exampleStyles.example2)}>
+            <Box as="span" {...stylex.props(exampleStyles.example2)}>
               <Avatar {...stylex.props(exampleStyles.example3)}>
                 <AvatarImage alt={item.label} src={item.avatar} />
                 <AvatarFallback>{item.initials}</AvatarFallback>
               </Avatar>
-              <span {...stylex.props(exampleStyles.example4)}>
-                <span {...stylex.props(exampleStyles.example5)}>
+              <Box as="span" {...stylex.props(exampleStyles.example4)}>
+                <Box as="span" {...stylex.props(exampleStyles.example5)}>
                   {item.label}
-                </span>
-                <span {...stylex.props(exampleStyles.example6)}>
+                </Box>
+                <Box as="span" {...stylex.props(exampleStyles.example6)}>
                   {item.username}
-                </span>
-              </span>
-            </span>
+                </Box>
+              </Box>
+            </Box>
           )}
         </SelectValue>
       </SelectTrigger>
@@ -79,20 +79,20 @@ export default function Example() {
             key={item.value}
             value={item}
           >
-            <span {...stylex.props(exampleStyles.example2)}>
+            <Box as="span" {...stylex.props(exampleStyles.example2)}>
               <Avatar {...stylex.props(exampleStyles.example3)}>
                 <AvatarImage alt={item.label} src={item.avatar} />
                 <AvatarFallback>{item.initials}</AvatarFallback>
               </Avatar>
-              <span {...stylex.props(exampleStyles.example8)}>
-                <span {...stylex.props(exampleStyles.example5)}>
+              <Box as="span" {...stylex.props(exampleStyles.example8)}>
+                <Box as="span" {...stylex.props(exampleStyles.example5)}>
                   {item.label}
-                </span>
-                <span {...stylex.props(exampleStyles.example6)}>
+                </Box>
+                <Box as="span" {...stylex.props(exampleStyles.example6)}>
                   {item.username}
-                </span>
-              </span>
-            </span>
+                </Box>
+              </Box>
+            </Box>
           </SelectItem>
         ))}
       </SelectPopup>

@@ -1,33 +1,40 @@
 import { RiGithubFill, RiGoogleFill, RiTwitterXFill } from "@remixicon/react"
 import * as stylex from "@stylexjs/stylex"
 
+import { Box } from "@/components/ui/stylex/box"
 import { Button } from "@/components/ui/stylex/button"
-
+import { Flex } from "@/components/ui/stylex/flex"
 export default function Example() {
   return (
-    <div {...stylex.props(exampleStyles.example1)}>
+    <Flex {...stylex.props(exampleStyles.example1)}>
       <Button variant="outline">
         <RiGoogleFill
           {...stylex.props(exampleStyles.icon)}
           aria-hidden="true"
         />
-        <span {...stylex.props(exampleStyles.example2)}>Login with Google</span>
+        <Box as="span" {...stylex.props(exampleStyles.example2)}>
+          Login with Google
+        </Box>
       </Button>
       <Button variant="outline">
         <RiTwitterXFill
           {...stylex.props(exampleStyles.icon)}
           aria-hidden="true"
         />
-        <span {...stylex.props(exampleStyles.example2)}>Login with X</span>
+        <Box as="span" {...stylex.props(exampleStyles.example2)}>
+          Login with X
+        </Box>
       </Button>
       <Button variant="outline">
         <RiGithubFill
           {...stylex.props(exampleStyles.icon)}
           aria-hidden="true"
         />
-        <span {...stylex.props(exampleStyles.example2)}>Login with GitHub</span>
+        <Box as="span" {...stylex.props(exampleStyles.example2)}>
+          Login with GitHub
+        </Box>
       </Button>
-    </div>
+    </Flex>
   )
 }
 

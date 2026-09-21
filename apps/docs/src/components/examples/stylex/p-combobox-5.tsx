@@ -11,8 +11,8 @@ import {
   ComboboxList,
   ComboboxPopup,
 } from "@/components/ui/stylex/combobox"
+import { Flex } from "@/components/ui/stylex/flex"
 import { Label } from "@/components/ui/stylex/label"
-
 const items = [
   { label: "Apple", value: "apple" },
   { label: "Banana", value: "banana" },
@@ -30,14 +30,14 @@ export default function Example() {
   const id = useId()
   return (
     <Combobox items={items}>
-      <div {...stylex.props(exampleStyles.example1)}>
+      <Flex {...stylex.props(exampleStyles.example1)}>
         <Label htmlFor={id}>Fruits</Label>
         <ComboboxInput
           aria-label="Select an item"
           id={id}
           placeholder="Select an item..."
         />
-      </div>
+      </Flex>
       <ComboboxPopup>
         <ComboboxEmpty>No results found.</ComboboxEmpty>
         <ComboboxList>

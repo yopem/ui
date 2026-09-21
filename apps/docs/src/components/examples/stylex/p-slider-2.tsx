@@ -1,18 +1,18 @@
 import * as stylex from "@stylexjs/stylex"
 
 import { Field, FieldLabel } from "@/components/ui/stylex/field"
+import { Flex } from "@/components/ui/stylex/flex"
 import { Slider, SliderValue } from "@/components/ui/stylex/slider"
-
 export default function Example() {
   return (
     <Field>
       <Slider defaultValue={50}>
-        <div {...stylex.props(exampleStyles.example1)}>
+        <Flex {...stylex.props(exampleStyles.example1)}>
           <FieldLabel {...stylex.props(exampleStyles.example2)}>
             Opacity
           </FieldLabel>
           <SliderValue />
-        </div>
+        </Flex>
       </Slider>
     </Field>
   )

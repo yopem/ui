@@ -1,28 +1,29 @@
 import * as stylex from "@stylexjs/stylex"
 
+import { Flex } from "@/components/ui/stylex/flex"
 import { Label } from "@/components/ui/stylex/label"
+import { Paragraph } from "@/components/ui/stylex/paragraph"
 import { Radio, RadioGroup } from "@/components/ui/stylex/radio-group"
-
 export default function Example() {
   return (
     <RadioGroup defaultValue="r-1">
       <Label {...stylex.props(exampleStyles.report1)}>
         <Radio {...stylex.props(stylex.defaultMarker())} value="r-1" />
-        <div {...stylex.props(exampleStyles.example1)}>
-          <p>Email</p>
-          <p {...stylex.props(exampleStyles.example2)}>
+        <Flex {...stylex.props(exampleStyles.example1)}>
+          <Paragraph>Email</Paragraph>
+          <Paragraph {...stylex.props(exampleStyles.example2)}>
             Receive notifications via email.
-          </p>
-        </div>
+          </Paragraph>
+        </Flex>
       </Label>
       <Label {...stylex.props(exampleStyles.report2)}>
         <Radio {...stylex.props(stylex.defaultMarker())} value="r-2" />
-        <div {...stylex.props(exampleStyles.example1)}>
-          <p>SMS</p>
-          <p {...stylex.props(exampleStyles.example2)}>
+        <Flex {...stylex.props(exampleStyles.example1)}>
+          <Paragraph>SMS</Paragraph>
+          <Paragraph {...stylex.props(exampleStyles.example2)}>
             Receive notifications via text message.
-          </p>
-        </div>
+          </Paragraph>
+        </Flex>
       </Label>
     </RadioGroup>
   )

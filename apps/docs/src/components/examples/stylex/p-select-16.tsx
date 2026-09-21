@@ -2,6 +2,7 @@
 
 import * as stylex from "@stylexjs/stylex"
 
+import { Box } from "@/components/ui/stylex/box"
 import {
   Select,
   SelectItem,
@@ -9,7 +10,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/stylex/select"
-
 const items = [
   { label: "JavaScript", value: "javascript" },
   { label: "TypeScript", value: "typescript" },
@@ -27,10 +27,12 @@ export default function Example() {
       <SelectTrigger aria-label="Select language">
         <SelectValue>
           {(item) => (
-            <span>
-              <span {...stylex.props(exampleStyles.example1)}>Language:</span>{" "}
+            <Box as="span">
+              <Box as="span" {...stylex.props(exampleStyles.example1)}>
+                Language:
+              </Box>{" "}
               {item.label}
-            </span>
+            </Box>
           )}
         </SelectValue>
       </SelectTrigger>

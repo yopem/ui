@@ -14,8 +14,8 @@ import {
   AutocompletePopup,
   AutocompleteStatus,
 } from "@/components/ui/stylex/autocomplete"
+import { Box } from "@/components/ui/stylex/box"
 import { Spinner } from "@/components/ui/stylex/spinner"
-
 // Set NEXT_PUBLIC_GOOGLE_MAPS_API_KEY with the Places API (New) enabled to fetch
 // live suggestions. Without a key, the example falls back to sample addresses.
 const GOOGLE_MAPS_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY ?? ""
@@ -193,18 +193,22 @@ export default function Example() {
   let status: ReactNode = `${suggestions.length} suggestion${suggestions.length === 1 ? "" : "s"} found`
   if (isLoading) {
     status = (
-      <span {...stylex.props(exampleStyles.example1)}>
+      <Box as="span" {...stylex.props(exampleStyles.example1)}>
         Searching addresses...
         <Spinner {...stylex.props(exampleStyles.example2)} />
-      </span>
+      </Box>
     )
   } else if (error) {
-    status = <span {...stylex.props(exampleStyles.example3)}>{error}</span>
+    status = (
+      <Box as="span" {...stylex.props(exampleStyles.example3)}>
+        {error}
+      </Box>
+    )
   } else if (suggestions.length === 0 && searchValue) {
     status = (
-      <span {...stylex.props(exampleStyles.example4)}>
+      <Box as="span" {...stylex.props(exampleStyles.example4)}>
         No addresses found for "{searchValue}"
-      </span>
+      </Box>
     )
   }
 
@@ -237,14 +241,14 @@ export default function Example() {
           <AutocompleteList>
             {(suggestion: AddressSuggestion) => (
               <AutocompleteItem key={suggestion.placeId} value={suggestion}>
-                <span {...stylex.props(exampleStyles.example6)}>
-                  <span {...stylex.props(exampleStyles.example7)}>
+                <Box as="span" {...stylex.props(exampleStyles.example6)}>
+                  <Box as="span" {...stylex.props(exampleStyles.example7)}>
                     {suggestion.mainText}
-                  </span>
-                  <span {...stylex.props(exampleStyles.example8)}>
+                  </Box>
+                  <Box as="span" {...stylex.props(exampleStyles.example8)}>
                     {suggestion.secondaryText}
-                  </span>
-                </span>
+                  </Box>
+                </Box>
               </AutocompleteItem>
             )}
           </AutocompleteList>

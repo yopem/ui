@@ -4,6 +4,7 @@ import * as stylex from "@stylexjs/stylex"
 import { LoaderCircleIcon, MicIcon, SearchIcon } from "lucide-react"
 import { useEffect, useRef, useState } from "react"
 
+import { Box } from "@/components/ui/stylex/box"
 import { Button } from "@/components/ui/stylex/button"
 import {
   InputGroup,
@@ -15,7 +16,6 @@ import {
   TooltipPopup,
   TooltipTrigger,
 } from "@/components/ui/stylex/tooltip"
-
 export default function Example() {
   const [inputValue, setInputValue] = useState("")
   const [isLoading, setIsLoading] = useState(false)
@@ -43,12 +43,12 @@ export default function Example() {
     <InputGroup>
       <InputGroupAddon>
         {isLoading ? (
-          <output aria-label="Loading...">
+          <Box as="output" aria-label="Loading...">
             <LoaderCircleIcon
               aria-hidden="true"
               {...stylex.props(exampleStyles.icon, exampleStyles.report1)}
             />
-          </output>
+          </Box>
         ) : (
           <SearchIcon
             {...stylex.props(exampleStyles.icon)}

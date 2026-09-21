@@ -3,6 +3,8 @@ import * as stylex from "@stylexjs/stylex"
 import { BookmarkIcon } from "lucide-react"
 import { useRef, useState } from "react"
 
+import { Box } from "@/components/ui/stylex/box"
+import { Paragraph } from "@/components/ui/stylex/paragraph"
 import { anchoredToastManager } from "@/components/ui/stylex/toast"
 import { Toggle } from "@/components/ui/stylex/toggle"
 import {
@@ -10,7 +12,6 @@ import {
   TooltipPopup,
   TooltipTrigger,
 } from "@/components/ui/stylex/tooltip"
-
 export default function Example() {
   const [bookmarked, setBookmarked] = useState(false)
   const toggleRef = useRef<HTMLDivElement>(null)
@@ -44,7 +45,7 @@ export default function Example() {
     <Tooltip>
       <TooltipTrigger
         render={
-          <div ref={toggleRef}>
+          <Box ref={toggleRef}>
             <Toggle
               aria-label={bookmarked ? "Remove bookmark" : "Bookmark this"}
               onPressedChange={handleToggleChange}
@@ -55,11 +56,13 @@ export default function Example() {
                 aria-hidden="true"
               />
             </Toggle>
-          </div>
+          </Box>
         }
       />
       <TooltipPopup>
-        <p>{bookmarked ? "Remove bookmark" : "Bookmark this"}</p>
+        <Paragraph>
+          {bookmarked ? "Remove bookmark" : "Bookmark this"}
+        </Paragraph>
       </TooltipPopup>
     </Tooltip>
   )

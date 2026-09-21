@@ -7,6 +7,7 @@ import {
   AvatarFallback,
   AvatarImage,
 } from "@/components/ui/stylex/avatar"
+import { Box } from "@/components/ui/stylex/box"
 import {
   Select,
   SelectGroup,
@@ -16,7 +17,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/stylex/select"
-
 const users = [
   {
     avatar:
@@ -51,17 +51,17 @@ export default function Example() {
       <SelectTrigger aria-label="Select user">
         <SelectValue>
           {(item) => (
-            <span {...stylex.props(exampleStyles.example1)}>
+            <Box as="span" {...stylex.props(exampleStyles.example1)}>
               <Avatar {...stylex.props(exampleStyles.example2)}>
                 <AvatarImage alt="" src={item.avatar} />
                 <AvatarFallback {...stylex.props(exampleStyles.example3)}>
                   {item.initials}
                 </AvatarFallback>
               </Avatar>
-              <span {...stylex.props(exampleStyles.example4)}>
+              <Box as="span" {...stylex.props(exampleStyles.example4)}>
                 {item.label}
-              </span>
-            </span>
+              </Box>
+            </Box>
           )}
         </SelectValue>
       </SelectTrigger>
@@ -70,17 +70,17 @@ export default function Example() {
           <SelectGroupLabel>Impersonate user</SelectGroupLabel>
           {users.map((item) => (
             <SelectItem key={item.value} value={item}>
-              <span {...stylex.props(exampleStyles.example1)}>
+              <Box as="span" {...stylex.props(exampleStyles.example1)}>
                 <Avatar {...stylex.props(exampleStyles.example2)}>
                   <AvatarImage alt="" src={item.avatar} />
                   <AvatarFallback {...stylex.props(exampleStyles.example5)}>
                     {item.initials}
                   </AvatarFallback>
                 </Avatar>
-                <span {...stylex.props(exampleStyles.example4)}>
+                <Box as="span" {...stylex.props(exampleStyles.example4)}>
                   {item.label}
-                </span>
-              </span>
+                </Box>
+              </Box>
             </SelectItem>
           ))}
         </SelectGroup>

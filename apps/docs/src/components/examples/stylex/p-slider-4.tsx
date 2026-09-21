@@ -1,25 +1,26 @@
 import * as stylex from "@stylexjs/stylex"
 
+import { Box } from "@/components/ui/stylex/box"
 import { Slider } from "@/components/ui/stylex/slider"
-
 export default function Example() {
   return (
-    <div>
+    <Box>
       <Slider
         aria-label="Storage size in GB"
         defaultValue={15}
         max={35}
         min={5}
       />
-      <fieldset
+      <Box
+        as="fieldset"
         aria-label="Storage size reference values"
         {...stylex.props(exampleStyles.example1)}
       >
-        <span>5 GB</span>
-        <span>20 GB</span>
-        <span>35 GB</span>
-      </fieldset>
-    </div>
+        <Box as="span">5 GB</Box>
+        <Box as="span">20 GB</Box>
+        <Box as="span">35 GB</Box>
+      </Box>
+    </Box>
   )
 }
 

@@ -1,15 +1,16 @@
 import * as stylex from "@stylexjs/stylex"
 
+import { Box } from "@/components/ui/stylex/box"
 import {
   InputGroup,
   InputGroupAddon,
   InputGroupText,
 } from "@/components/ui/stylex/input-group"
-
 export default function Example() {
   return (
     <InputGroup>
-      <input
+      <Box
+        as="input"
         data-slot="input"
         aria-label="Enter your domain"
         {...stylex.props(exampleStyles.nativeInput, exampleStyles.report1)}

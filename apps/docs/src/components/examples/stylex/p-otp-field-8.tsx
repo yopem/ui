@@ -1,12 +1,12 @@
 import * as stylex from "@stylexjs/stylex"
 
+import { Box } from "@/components/ui/stylex/box"
 import {
   Field,
   FieldDescription,
   FieldLabel,
 } from "@/components/ui/stylex/field"
 import { OTPField, OTPFieldInput } from "@/components/ui/stylex/otp-field"
-
 const OTP_LENGTH = 6
 
 const OTP_SLOT_KEYS = Array.from(
@@ -28,7 +28,10 @@ export default function Example() {
       </OTPField>
       <FieldDescription>
         Accept letters and numbers for backup codes such as{" "}
-        <code {...stylex.props(exampleStyles.example2)}>A7C9XZ</code>.
+        <Box as="code" {...stylex.props(exampleStyles.example2)}>
+          A7C9XZ
+        </Box>
+        .
       </FieldDescription>
     </Field>
   )

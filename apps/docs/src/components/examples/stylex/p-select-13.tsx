@@ -2,6 +2,7 @@
 
 import * as stylex from "@stylexjs/stylex"
 
+import { Box } from "@/components/ui/stylex/box"
 import {
   Select,
   SelectItem,
@@ -9,7 +10,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/stylex/select"
-
 const formattedTimezones: {
   label: string
   numericOffset: number
@@ -50,7 +50,9 @@ export default function Example() {
       <SelectTrigger aria-label="Select timezone">
         <SelectValue>
           {(item) => (
-            <span {...stylex.props(exampleStyles.example1)}>{item.label}</span>
+            <Box as="span" {...stylex.props(exampleStyles.example1)}>
+              {item.label}
+            </Box>
           )}
         </SelectValue>
       </SelectTrigger>

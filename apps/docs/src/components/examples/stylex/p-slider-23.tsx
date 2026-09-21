@@ -8,9 +8,9 @@ import { useState } from "react"
 import { Button } from "@/components/ui/stylex/button"
 import { Field, FieldDescription } from "@/components/ui/stylex/field"
 import { Fieldset, FieldsetLegend } from "@/components/ui/stylex/fieldset"
+import { Flex } from "@/components/ui/stylex/flex"
 import { Form } from "@/components/ui/stylex/form"
 import { Slider, SliderValue } from "@/components/ui/stylex/slider"
-
 export default function Example() {
   const [loading, setLoading] = useState<boolean>(false)
   const [value, setValue] = useState<number | readonly number[]>([25, 75])
@@ -35,10 +35,10 @@ export default function Example() {
             onValueChange={setValue}
             value={value}
           >
-            <div {...stylex.props(exampleStyles.example3)}>
+            <Flex {...stylex.props(exampleStyles.example3)}>
               <FieldsetLegend>Volume</FieldsetLegend>
               <SliderValue />
-            </div>
+            </Flex>
           </Slider>
           <FieldDescription>Choose a value between 0 and 100</FieldDescription>
         </Field>

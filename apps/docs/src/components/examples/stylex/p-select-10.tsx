@@ -2,6 +2,7 @@
 
 import * as stylex from "@stylexjs/stylex"
 
+import { Box } from "@/components/ui/stylex/box"
 import {
   Select,
   SelectItem,
@@ -9,7 +10,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/stylex/select"
-
 const items = [
   { description: "npx create-next-app", label: "Next.js", value: "next" },
   { description: "npm create vite@latest", label: "Vite", value: "vite" },
@@ -30,28 +30,28 @@ export default function Example() {
       >
         <SelectValue>
           {(item) => (
-            <span {...stylex.props(exampleStyles.example2)}>
-              <span {...stylex.props(exampleStyles.example3)}>
+            <Box as="span" {...stylex.props(exampleStyles.example2)}>
+              <Box as="span" {...stylex.props(exampleStyles.example3)}>
                 {item.label}
-              </span>
-              <span {...stylex.props(exampleStyles.example4)}>
+              </Box>
+              <Box as="span" {...stylex.props(exampleStyles.example4)}>
                 {item.description}
-              </span>
-            </span>
+              </Box>
+            </Box>
           )}
         </SelectValue>
       </SelectTrigger>
       <SelectPopup>
         {items.map((item) => (
           <SelectItem key={item.value} value={item}>
-            <span {...stylex.props(exampleStyles.example2)}>
-              <span {...stylex.props(exampleStyles.example3)}>
+            <Box as="span" {...stylex.props(exampleStyles.example2)}>
+              <Box as="span" {...stylex.props(exampleStyles.example3)}>
                 {item.label}
-              </span>
-              <span {...stylex.props(exampleStyles.example4)}>
+              </Box>
+              <Box as="span" {...stylex.props(exampleStyles.example4)}>
                 {item.description}
-              </span>
-            </span>
+              </Box>
+            </Box>
           </SelectItem>
         ))}
       </SelectPopup>

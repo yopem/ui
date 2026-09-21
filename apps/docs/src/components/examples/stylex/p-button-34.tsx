@@ -1,11 +1,15 @@
 import * as stylex from "@stylexjs/stylex"
 
+import { Box } from "@/components/ui/stylex/box"
 import { Button } from "@/components/ui/stylex/button"
-
 export default function Example() {
   return (
     <Button variant="outline">
-      <span aria-hidden="true" {...stylex.props(exampleStyles.report1)} />
+      <Box
+        as="span"
+        aria-hidden="true"
+        {...stylex.props(exampleStyles.report1)}
+      />
       Online
     </Button>
   )

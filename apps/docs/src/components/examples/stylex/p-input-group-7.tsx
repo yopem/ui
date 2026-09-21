@@ -8,12 +8,12 @@ import {
   InputGroupAddon,
   InputGroupInput,
 } from "@/components/ui/stylex/input-group"
+import { Paragraph } from "@/components/ui/stylex/paragraph"
 import {
   Popover,
   PopoverPopup,
   PopoverTrigger,
 } from "@/components/ui/stylex/popover"
-
 export default function Example() {
   return (
     <InputGroup>
@@ -37,7 +37,7 @@ export default function Example() {
             <InfoIcon {...stylex.props(exampleStyles.icon)} />
           </PopoverTrigger>
           <PopoverPopup side="top" tooltipStyle>
-            <p>Min. 8 characters</p>
+            <Paragraph>Min. 8 characters</Paragraph>
           </PopoverPopup>
         </Popover>
       </InputGroupAddon>

@@ -3,9 +3,10 @@
 import * as stylex from "@stylexjs/stylex"
 import { useState } from "react"
 
+import { Box } from "@/components/ui/stylex/box"
 import { Field, FieldLabel } from "@/components/ui/stylex/field"
+import { Flex } from "@/components/ui/stylex/flex"
 import { Slider } from "@/components/ui/stylex/slider"
-
 const labels = ["Awful", "Poor", "Okay", "Good", "Amazing"]
 
 export default function Example() {
@@ -23,18 +24,26 @@ export default function Example() {
         onValueChange={setValue}
         value={value}
       >
-        <div {...stylex.props(exampleStyles.example1)}>
+        <Flex {...stylex.props(exampleStyles.example1)}>
           <FieldLabel>Rate your experience</FieldLabel>
-          <span {...stylex.props(exampleStyles.example2)}>
+          <Box as="span" {...stylex.props(exampleStyles.example2)}>
             {labels[currentValue - 1]}
-          </span>
-        </div>
-        <span aria-hidden="true" {...stylex.props(exampleStyles.example3)}>
+          </Box>
+        </Flex>
+        <Box
+          as="span"
+          aria-hidden="true"
+          {...stylex.props(exampleStyles.example3)}
+        >
           😡
-        </span>
-        <span aria-hidden="true" {...stylex.props(exampleStyles.example4)}>
+        </Box>
+        <Box
+          as="span"
+          aria-hidden="true"
+          {...stylex.props(exampleStyles.example4)}
+        >
           😍
-        </span>
+        </Box>
       </Slider>
     </Field>
   )

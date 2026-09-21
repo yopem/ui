@@ -1,14 +1,16 @@
 import * as stylex from "@stylexjs/stylex"
 import { ThumbsUpIcon } from "lucide-react"
 
+import { Box } from "@/components/ui/stylex/box"
 import { Button } from "@/components/ui/stylex/button"
-
 export default function Example() {
   return (
     <Button {...stylex.props(exampleStyles.example1)} variant="outline">
       <ThumbsUpIcon {...stylex.props(exampleStyles.icon)} aria-hidden="true" />
       Like
-      <span {...stylex.props(exampleStyles.example2)}>86</span>
+      <Box as="span" {...stylex.props(exampleStyles.example2)}>
+        86
+      </Box>
     </Button>
   )
 }

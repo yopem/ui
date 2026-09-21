@@ -2,21 +2,22 @@ import * as stylex from "@stylexjs/stylex"
 import { useId } from "react"
 
 import { Checkbox } from "@/components/ui/stylex/checkbox"
+import { Flex } from "@/components/ui/stylex/flex"
 import { Label } from "@/components/ui/stylex/label"
-
+import { Paragraph } from "@/components/ui/stylex/paragraph"
 export default function Example() {
   const id = useId()
 
   return (
-    <div {...stylex.props(exampleStyles.example1)}>
+    <Flex {...stylex.props(exampleStyles.example1)}>
       <Checkbox defaultChecked id={id} />
-      <div {...stylex.props(exampleStyles.example2)}>
+      <Flex {...stylex.props(exampleStyles.example2)}>
         <Label htmlFor={id}>Accept terms and conditions</Label>
-        <p {...stylex.props(exampleStyles.example3)}>
+        <Paragraph {...stylex.props(exampleStyles.example3)}>
           By clicking this checkbox, you agree to the terms and conditions.
-        </p>
-      </div>
-    </div>
+        </Paragraph>
+      </Flex>
+    </Flex>
   )
 }
 

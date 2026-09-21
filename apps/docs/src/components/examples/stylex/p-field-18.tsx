@@ -5,6 +5,7 @@ import type { FormEvent } from "react"
 import * as stylex from "@stylexjs/stylex"
 import { useState } from "react"
 
+import { Box } from "@/components/ui/stylex/box"
 import { Button } from "@/components/ui/stylex/button"
 import { Checkbox } from "@/components/ui/stylex/checkbox"
 import {
@@ -13,6 +14,7 @@ import {
   FieldError,
   FieldLabel,
 } from "@/components/ui/stylex/field"
+import { Flex } from "@/components/ui/stylex/flex"
 import { Form } from "@/components/ui/stylex/form"
 import { Input } from "@/components/ui/stylex/input"
 import {
@@ -22,7 +24,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/stylex/select"
-
 export default function Example() {
   const [loading, setLoading] = useState(false)
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
@@ -47,7 +48,10 @@ export default function Example() {
     <Form {...stylex.props(exampleStyles.example1)} onSubmit={onSubmit}>
       <Field name="fullName">
         <FieldLabel>
-          Full Name <span {...stylex.props(exampleStyles.example2)}>*</span>
+          Full Name{" "}
+          <Box as="span" {...stylex.props(exampleStyles.example2)}>
+            *
+          </Box>
         </FieldLabel>
         <Input placeholder="John Doe" required type="text" />
         <FieldError>Please enter a valid name.</FieldError>
@@ -55,7 +59,10 @@ export default function Example() {
 
       <Field name="email">
         <FieldLabel>
-          Email <span {...stylex.props(exampleStyles.example2)}>*</span>
+          Email{" "}
+          <Box as="span" {...stylex.props(exampleStyles.example2)}>
+            *
+          </Box>
         </FieldLabel>
         <Input placeholder="john@example.com" required type="email" />
         <FieldError>Please enter a valid email.</FieldError>
@@ -86,12 +93,12 @@ export default function Example() {
       </Field>
 
       <Field name="newsletter">
-        <div {...stylex.props(exampleStyles.example3)}>
+        <Flex {...stylex.props(exampleStyles.example3)}>
           <Checkbox />
           <FieldLabel {...stylex.props(exampleStyles.example4)}>
             Subscribe to newsletter
           </FieldLabel>
-        </div>
+        </Flex>
       </Field>
 
       <Button loading={loading} type="submit">

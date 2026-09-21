@@ -7,10 +7,10 @@ import {
 import * as stylex from "@stylexjs/stylex"
 
 import { Button } from "@/components/ui/stylex/button"
-
+import { Flex } from "@/components/ui/stylex/flex"
 export default function Example() {
   return (
-    <div {...stylex.props(exampleStyles.example1)}>
+    <Flex xstyle={exampleStyles.example1}>
       <Button aria-label="Login with Google" size="icon" variant="outline">
         <RiGoogleFill
           {...stylex.props(exampleStyles.icon)}
@@ -35,7 +35,7 @@ export default function Example() {
           aria-hidden="true"
         />
       </Button>
-    </div>
+    </Flex>
   )
 }
 

@@ -2,6 +2,7 @@
 
 import * as stylex from "@stylexjs/stylex"
 
+import { Box } from "@/components/ui/stylex/box"
 import {
   Select,
   SelectItem,
@@ -9,7 +10,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/stylex/select"
-
 const items = [
   { color: "emerald", label: "Completed", value: "completed" },
   { color: "blue", label: "In Progress", value: "in-progress" },
@@ -28,30 +28,32 @@ export default function Example() {
       <SelectTrigger aria-label="Select status">
         <SelectValue>
           {(item) => (
-            <span {...stylex.props(exampleStyles.example1)}>
-              <span
+            <Box as="span" {...stylex.props(exampleStyles.example1)}>
+              <Box
+                as="span"
                 aria-hidden="true"
                 {...stylex.props(exampleStyles.dot, getColorStyle(item.color))}
               />
-              <span {...stylex.props(exampleStyles.example2)}>
+              <Box as="span" {...stylex.props(exampleStyles.example2)}>
                 {item.label}
-              </span>
-            </span>
+              </Box>
+            </Box>
           )}
         </SelectValue>
       </SelectTrigger>
       <SelectPopup>
         {items.map((item) => (
           <SelectItem key={item.value} value={item}>
-            <span {...stylex.props(exampleStyles.example1)}>
-              <span
+            <Box as="span" {...stylex.props(exampleStyles.example1)}>
+              <Box
+                as="span"
                 aria-hidden="true"
                 {...stylex.props(exampleStyles.dot, getColorStyle(item.color))}
               />
-              <span {...stylex.props(exampleStyles.example2)}>
+              <Box as="span" {...stylex.props(exampleStyles.example2)}>
                 {item.label}
-              </span>
-            </span>
+              </Box>
+            </Box>
           </SelectItem>
         ))}
       </SelectPopup>

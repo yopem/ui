@@ -2,6 +2,7 @@
 
 import * as stylex from "@stylexjs/stylex"
 
+import { Box } from "@/components/ui/stylex/box"
 import {
   Select,
   SelectItem,
@@ -9,7 +10,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/stylex/select"
-
 const items = [
   {
     description: "Ideal for individuals",
@@ -34,21 +34,23 @@ export default function Example() {
       <SelectTrigger aria-label="Select plan">
         <SelectValue>
           {(item) => (
-            <span {...stylex.props(exampleStyles.example1)}>{item.label}</span>
+            <Box as="span" {...stylex.props(exampleStyles.example1)}>
+              {item.label}
+            </Box>
           )}
         </SelectValue>
       </SelectTrigger>
       <SelectPopup alignItemWithTrigger={false}>
         {items.map((item) => (
           <SelectItem key={item.value} value={item}>
-            <span {...stylex.props(exampleStyles.example2)}>
-              <span {...stylex.props(exampleStyles.example1)}>
+            <Box as="span" {...stylex.props(exampleStyles.example2)}>
+              <Box as="span" {...stylex.props(exampleStyles.example1)}>
                 {item.label}
-              </span>
-              <span {...stylex.props(exampleStyles.example3)}>
+              </Box>
+              <Box as="span" {...stylex.props(exampleStyles.example3)}>
                 {item.description}
-              </span>
-            </span>
+              </Box>
+            </Box>
           </SelectItem>
         ))}
       </SelectPopup>

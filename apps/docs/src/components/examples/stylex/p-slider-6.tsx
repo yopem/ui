@@ -1,20 +1,21 @@
 import * as stylex from "@stylexjs/stylex"
 
+import { Box } from "@/components/ui/stylex/box"
+import { Flex } from "@/components/ui/stylex/flex"
 import { Slider } from "@/components/ui/stylex/slider"
-
 export default function Example() {
   return (
-    <div>
-      <div aria-hidden="true" {...stylex.props(exampleStyles.example1)}>
-        <span>Low</span>
-        <span>High</span>
-      </div>
+    <Box>
+      <Flex aria-hidden="true" {...stylex.props(exampleStyles.example1)}>
+        <Box as="span">Low</Box>
+        <Box as="span">High</Box>
+      </Flex>
       <Slider
         aria-label="Intensity level from low to high"
         defaultValue={50}
         step={10}
       />
-    </div>
+    </Box>
   )
 }
 

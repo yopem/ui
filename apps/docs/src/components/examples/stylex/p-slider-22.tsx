@@ -3,7 +3,9 @@
 import * as stylex from "@stylexjs/stylex"
 import { useState } from "react"
 
+import { Box } from "@/components/ui/stylex/box"
 import { Button } from "@/components/ui/stylex/button"
+import { Flex } from "@/components/ui/stylex/flex"
 import {
   InputGroup,
   InputGroupAddon,
@@ -14,7 +16,6 @@ import {
   NumberFieldInput,
 } from "@/components/ui/stylex/number-field"
 import { Slider } from "@/components/ui/stylex/slider"
-
 const items = [
   { id: 1, price: 80 },
   { id: 2, price: 95 },
@@ -187,24 +188,25 @@ export default function Example() {
   }
 
   return (
-    <div {...stylex.props(exampleStyles.example1)}>
-      <div>
-        <div aria-hidden="true" {...stylex.props(exampleStyles.example2)}>
+    <Flex {...stylex.props(exampleStyles.example1)}>
+      <Box>
+        <Flex aria-hidden="true" {...stylex.props(exampleStyles.example2)}>
           {itemCounts.map((count, i) => (
-            <div
+            <Flex
               {...stylex.props(
                 exampleStyles.example3,
                 exampleStyles.barHeight(`${(count / maxCount) * 100}%`),
               )}
               key={String(i)}
             >
-              <span
+              <Box
+                as="span"
                 {...stylex.props(exampleStyles.example4)}
                 data-selected={isBarInSelectedRange(i)}
               />
-            </div>
+            </Flex>
           ))}
-        </div>
+        </Flex>
         <Slider
           aria-label="Price range"
           {...stylex.props(exampleStyles.report1)}
@@ -213,9 +215,9 @@ export default function Example() {
           onValueChange={(v) => setValues(Array.isArray(v) ? [...v] : [v])}
           value={values}
         />
-      </div>
+      </Box>
 
-      <div {...stylex.props(exampleStyles.example5)}>
+      <Flex {...stylex.props(exampleStyles.example5)}>
         <InputGroup>
           <NumberField
             aria-label="Minimum price"
@@ -250,12 +252,12 @@ export default function Example() {
             <InputGroupText>$</InputGroupText>
           </InputGroupAddon>
         </InputGroup>
-      </div>
+      </Flex>
 
       <Button {...stylex.props(exampleStyles.example7)} variant="outline">
         Show {countItemsInRange()} items
       </Button>
-    </div>
+    </Flex>
   )
 }
 

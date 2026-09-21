@@ -3,6 +3,7 @@
 import * as stylex from "@stylexjs/stylex"
 import { ChevronsUpDownIcon, SearchIcon } from "lucide-react"
 
+import { Box } from "@/components/ui/stylex/box"
 import { Button } from "@/components/ui/stylex/button"
 import {
   Combobox,
@@ -14,7 +15,6 @@ import {
   ComboboxTrigger,
   ComboboxValue,
 } from "@/components/ui/stylex/combobox"
-
 interface Country {
   code: string
   value: string | null
@@ -447,14 +447,14 @@ export default function Example() {
         />
       </ComboboxTrigger>
       <ComboboxPopup aria-label="Select country">
-        <div {...stylex.props(exampleStyles.example3)}>
+        <Box {...stylex.props(exampleStyles.example3)}>
           <ComboboxInput
             {...stylex.props(exampleStyles.example4)}
             placeholder="e.g. United Kingdom"
             showTrigger={false}
             startAddon={<SearchIcon {...stylex.props(exampleStyles.icon2)} />}
           />
-        </div>
+        </Box>
         <ComboboxEmpty>No countries found.</ComboboxEmpty>
         <ComboboxList>
           {(country: Country) => (

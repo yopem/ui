@@ -1,12 +1,12 @@
 import * as stylex from "@stylexjs/stylex"
 
+import { Box } from "@/components/ui/stylex/box"
 import {
   Field,
   FieldDescription,
   FieldLabel,
 } from "@/components/ui/stylex/field"
 import { OTPField, OTPFieldInput } from "@/components/ui/stylex/otp-field"
-
 const OTP_LENGTH = 6
 
 const OTP_SLOT_KEYS = Array.from(
@@ -27,8 +27,11 @@ export default function Example() {
         ))}
       </OTPField>
       <FieldDescription>
-        Use <code {...stylex.props(exampleStyles.example2)}>mask</code> to
-        obscure the code on shared screens.
+        Use{" "}
+        <Box as="code" {...stylex.props(exampleStyles.example2)}>
+          mask
+        </Box>{" "}
+        to obscure the code on shared screens.
       </FieldDescription>
     </Field>
   )

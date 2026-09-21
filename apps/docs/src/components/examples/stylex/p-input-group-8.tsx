@@ -9,13 +9,13 @@ import {
   InputGroupAddon,
   InputGroupInput,
 } from "@/components/ui/stylex/input-group"
+import { Paragraph } from "@/components/ui/stylex/paragraph"
 import {
   Tooltip,
   TooltipPopup,
   TooltipTrigger,
 } from "@/components/ui/stylex/tooltip"
 import { useCopyToClipboard } from "@/hooks/use-copy-to-clipboard"
-
 export default function Example() {
   const { copyToClipboard, isCopied } = useCopyToClipboard()
   const inputRef = useRef<HTMLInputElement>(null)
@@ -51,7 +51,7 @@ export default function Example() {
             )}
           </TooltipTrigger>
           <TooltipPopup>
-            <p>Copy to clipboard</p>
+            <Paragraph>Copy to clipboard</Paragraph>
           </TooltipPopup>
         </Tooltip>
       </InputGroupAddon>

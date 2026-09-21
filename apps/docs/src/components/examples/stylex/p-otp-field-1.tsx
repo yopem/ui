@@ -1,5 +1,5 @@
+import { Box } from "@/components/ui/stylex/box"
 import { OTPField, OTPFieldInput } from "@/components/ui/stylex/otp-field"
-
 const OTP_LENGTH = 6
 
 const OTP_SLOT_KEYS = Array.from(
@@ -9,7 +9,7 @@ const OTP_SLOT_KEYS = Array.from(
 
 export default function Example() {
   return (
-    <label aria-label="One-time password">
+    <Box as="label" aria-label="One-time password">
       <OTPField length={OTP_LENGTH}>
         {OTP_SLOT_KEYS.map((slotKey, index) => (
           <OTPFieldInput
@@ -18,6 +18,6 @@ export default function Example() {
           />
         ))}
       </OTPField>
-    </label>
+    </Box>
   )
 }

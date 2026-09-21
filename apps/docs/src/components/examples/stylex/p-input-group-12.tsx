@@ -10,12 +10,12 @@ import {
   InputGroupInput,
 } from "@/components/ui/stylex/input-group"
 import { Label } from "@/components/ui/stylex/label"
+import { Paragraph } from "@/components/ui/stylex/paragraph"
 import {
   Popover,
   PopoverPopup,
   PopoverTrigger,
 } from "@/components/ui/stylex/popover"
-
 export default function Example() {
   return (
     <InputGroup>
@@ -40,7 +40,7 @@ export default function Example() {
             <InfoIcon {...stylex.props(exampleStyles.icon)} />
           </PopoverTrigger>
           <PopoverPopup side="top" tooltipStyle>
-            <p>We&apos;ll use this to send you notifications</p>
+            <Paragraph>We&apos;ll use this to send you notifications</Paragraph>
           </PopoverPopup>
         </Popover>
       </InputGroupAddon>

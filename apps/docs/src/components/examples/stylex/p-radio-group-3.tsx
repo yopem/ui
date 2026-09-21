@@ -1,29 +1,30 @@
 import * as stylex from "@stylexjs/stylex"
 
+import { Flex } from "@/components/ui/stylex/flex"
 import { Label } from "@/components/ui/stylex/label"
+import { Paragraph } from "@/components/ui/stylex/paragraph"
 import { Radio, RadioGroup } from "@/components/ui/stylex/radio-group"
-
 export default function Example() {
   return (
     <RadioGroup defaultValue="r-1">
-      <div {...stylex.props(exampleStyles.example1)}>
+      <Flex {...stylex.props(exampleStyles.example1)}>
         <Radio id="r-1" value="r-1" />
-        <div {...stylex.props(exampleStyles.example2)}>
+        <Flex {...stylex.props(exampleStyles.example2)}>
           <Label htmlFor="r-1">Free</Label>
-          <p {...stylex.props(exampleStyles.example3)}>
+          <Paragraph {...stylex.props(exampleStyles.example3)}>
             Basic features for personal use.
-          </p>
-        </div>
-      </div>
-      <div {...stylex.props(exampleStyles.example1)}>
+          </Paragraph>
+        </Flex>
+      </Flex>
+      <Flex {...stylex.props(exampleStyles.example1)}>
         <Radio id="r-2" value="r-2" />
-        <div {...stylex.props(exampleStyles.example2)}>
+        <Flex {...stylex.props(exampleStyles.example2)}>
           <Label htmlFor="r-2">Pro</Label>
-          <p {...stylex.props(exampleStyles.example3)}>
+          <Paragraph {...stylex.props(exampleStyles.example3)}>
             Advanced tools for professionals.
-          </p>
-        </div>
-      </div>
+          </Paragraph>
+        </Flex>
+      </Flex>
     </RadioGroup>
   )
 }

@@ -3,6 +3,7 @@
 import * as stylex from "@stylexjs/stylex"
 import { Code2Icon, GlobeIcon, LayersIcon, ZapIcon } from "lucide-react"
 
+import { Box } from "@/components/ui/stylex/box"
 import {
   Select,
   SelectItem,
@@ -10,7 +11,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/stylex/select"
-
 const items = [
   { icon: LayersIcon, label: "Components", value: "components" },
   { icon: ZapIcon, label: "Performance", value: "performance" },
@@ -28,24 +28,24 @@ export default function Example() {
       <SelectTrigger aria-label="Select category">
         <SelectValue>
           {(item) => (
-            <span {...stylex.props(exampleStyles.example1)}>
+            <Box as="span" {...stylex.props(exampleStyles.example1)}>
               <item.icon {...stylex.props(exampleStyles.icon)} />
-              <span {...stylex.props(exampleStyles.example2)}>
+              <Box as="span" {...stylex.props(exampleStyles.example2)}>
                 {item.label}
-              </span>
-            </span>
+              </Box>
+            </Box>
           )}
         </SelectValue>
       </SelectTrigger>
       <SelectPopup>
         {items.map((item) => (
           <SelectItem key={item.value} value={item}>
-            <span {...stylex.props(exampleStyles.example1)}>
+            <Box as="span" {...stylex.props(exampleStyles.example1)}>
               <item.icon {...stylex.props(exampleStyles.icon)} />
-              <span {...stylex.props(exampleStyles.example2)}>
+              <Box as="span" {...stylex.props(exampleStyles.example2)}>
                 {item.label}
-              </span>
-            </span>
+              </Box>
+            </Box>
           </SelectItem>
         ))}
       </SelectPopup>

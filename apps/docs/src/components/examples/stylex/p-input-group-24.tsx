@@ -3,12 +3,12 @@
 import * as stylex from "@stylexjs/stylex"
 import { useState } from "react"
 
+import { Box } from "@/components/ui/stylex/box"
 import {
   InputGroup,
   InputGroupAddon,
   InputGroupInput,
 } from "@/components/ui/stylex/input-group"
-
 export default function Example() {
   const maxLength = 14
   const [value, setValue] = useState("")
@@ -24,9 +24,13 @@ export default function Example() {
         value={value}
       />
       <InputGroupAddon align="inline-end">
-        <output aria-live="polite" {...stylex.props(exampleStyles.report1)}>
+        <Box
+          as="output"
+          aria-live="polite"
+          {...stylex.props(exampleStyles.report1)}
+        >
           {value.length}/{maxLength}
-        </output>
+        </Box>
       </InputGroupAddon>
     </InputGroup>
   )

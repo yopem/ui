@@ -1,21 +1,22 @@
 import * as stylex from "@stylexjs/stylex"
 
+import { Box } from "@/components/ui/stylex/box"
 import { Button } from "@/components/ui/stylex/button"
+import { Flex } from "@/components/ui/stylex/flex"
 import { Input } from "@/components/ui/stylex/input"
-
 export default function Example() {
   return (
-    <div {...stylex.props(exampleStyles.example1)}>
+    <Flex {...stylex.props(exampleStyles.example1)}>
       <Input
         aria-label="Email"
         {...stylex.props(exampleStyles.example2)}
         placeholder="you@example.com"
         type="email"
       />
-      <div>
+      <Box>
         <Button variant="outline">Send</Button>
-      </div>
-    </div>
+      </Box>
+    </Flex>
   )
 }
 

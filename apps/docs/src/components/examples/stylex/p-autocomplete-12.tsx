@@ -14,8 +14,9 @@ import {
   AutocompleteStatus,
   useAutocompleteFilter,
 } from "@/components/ui/stylex/autocomplete"
+import { Box } from "@/components/ui/stylex/box"
+import { Flex } from "@/components/ui/stylex/flex"
 import { Spinner } from "@/components/ui/stylex/spinner"
-
 interface Movie {
   id: string
   title: string
@@ -93,18 +94,22 @@ export default function Example() {
   let status: ReactNode = `${searchResults.length} result${searchResults.length === 1 ? "" : "s"} found`
   if (isLoading) {
     status = (
-      <span {...stylex.props(exampleStyles.example1)}>
+      <Box as="span" {...stylex.props(exampleStyles.example1)}>
         Searching...
         <Spinner {...stylex.props(exampleStyles.example2)} />
-      </span>
+      </Box>
     )
   } else if (error) {
-    status = <span {...stylex.props(exampleStyles.example3)}>{error}</span>
+    status = (
+      <Box as="span" {...stylex.props(exampleStyles.example3)}>
+        {error}
+      </Box>
+    )
   } else if (searchResults.length === 0 && searchValue) {
     status = (
-      <span {...stylex.props(exampleStyles.example4)}>
+      <Box as="span" {...stylex.props(exampleStyles.example4)}>
         Movie or year "{searchValue}" does not exist in the Top 100 IMDb movies
-      </span>
+      </Box>
     )
   }
 
@@ -127,14 +132,14 @@ export default function Example() {
           <AutocompleteList>
             {(movie: Movie) => (
               <AutocompleteItem key={movie.id} value={movie}>
-                <div {...stylex.props(exampleStyles.example6)}>
-                  <div {...stylex.props(exampleStyles.example7)}>
+                <Flex {...stylex.props(exampleStyles.example6)}>
+                  <Box {...stylex.props(exampleStyles.example7)}>
                     {movie.title}
-                  </div>
-                  <div {...stylex.props(exampleStyles.example8)}>
+                  </Box>
+                  <Box {...stylex.props(exampleStyles.example8)}>
                     {movie.year}
-                  </div>
-                </div>
+                  </Box>
+                </Flex>
               </AutocompleteItem>
             )}
           </AutocompleteList>

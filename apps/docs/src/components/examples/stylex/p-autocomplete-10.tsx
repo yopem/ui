@@ -15,7 +15,7 @@ import {
   AutocompletePopup,
   AutocompleteSeparator,
 } from "@/components/ui/stylex/autocomplete"
-
+import { Flex } from "@/components/ui/stylex/flex"
 // Grouped items example
 interface Tag {
   id: string
@@ -93,12 +93,12 @@ const groupedTags: TagGroup[] = groupTags(tagsData)
 export default function Example() {
   return (
     <Autocomplete items={groupedTags}>
-      <div {...stylex.props(exampleStyles.example1)}>
+      <Flex {...stylex.props(exampleStyles.example1)}>
         <AutocompleteInput
           aria-label="Search tags"
           placeholder="e.g. feature"
         />
-      </div>
+      </Flex>
       <AutocompletePopup>
         <AutocompleteEmpty>No tags found.</AutocompleteEmpty>
         <AutocompleteList>

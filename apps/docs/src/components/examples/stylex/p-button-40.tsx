@@ -4,6 +4,7 @@ import * as stylex from "@stylexjs/stylex"
 import { DownloadIcon, XIcon } from "lucide-react"
 import { useEffect, useRef, useState } from "react"
 
+import { Box } from "@/components/ui/stylex/box"
 import { Button } from "@/components/ui/stylex/button"
 import {
   groupItemStyles,
@@ -19,7 +20,6 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/stylex/tooltip"
-
 export default function Example() {
   const [isDownloading, setIsDownloading] = useState(false)
   const [progress, setProgress] = useState(0)
@@ -108,15 +108,19 @@ export default function Example() {
           <GroupText
             aria-live="polite"
             {...stylex.props(exampleStyles.example1)}
-            render={<output />}
+            render={<Box as="output" />}
           >
             <Spinner {...stylex.props(exampleStyles.icon)} />
-            <span aria-hidden="true" {...stylex.props(exampleStyles.example2)}>
+            <Box
+              as="span"
+              aria-hidden="true"
+              {...stylex.props(exampleStyles.example2)}
+            >
               {progress.toString().padStart(2, "\u2007")}%
-            </span>
-            <span {...stylex.props(exampleStyles.example3)}>
+            </Box>
+            <Box as="span" {...stylex.props(exampleStyles.example3)}>
               Generating report, {progress}% complete
-            </span>
+            </Box>
           </GroupText>
           <GroupSeparator />
           <Tooltip>

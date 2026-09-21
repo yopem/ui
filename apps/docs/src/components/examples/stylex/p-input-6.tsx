@@ -1,13 +1,13 @@
 import * as stylex from "@stylexjs/stylex"
 import { useId } from "react"
 
+import { Flex } from "@/components/ui/stylex/flex"
 import { Input } from "@/components/ui/stylex/input"
 import { Label } from "@/components/ui/stylex/label"
-
 export default function Example() {
   const id = useId()
   return (
-    <div {...stylex.props(exampleStyles.example1)}>
+    <Flex {...stylex.props(exampleStyles.example1)}>
       <Label htmlFor={id}>Email</Label>
       <Input
         aria-label="Email"
@@ -15,7 +15,7 @@ export default function Example() {
         placeholder="you@example.com"
         type="email"
       />
-    </div>
+    </Flex>
   )
 }
 

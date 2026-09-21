@@ -3,13 +3,13 @@
 import * as stylex from "@stylexjs/stylex"
 import { useState } from "react"
 
+import { Flex } from "@/components/ui/stylex/flex"
 import {
   NumberField,
   NumberFieldGroup,
   NumberFieldInput,
 } from "@/components/ui/stylex/number-field"
 import { Slider } from "@/components/ui/stylex/slider"
-
 const min = 0
 const max = 100
 
@@ -17,7 +17,7 @@ export default function Example() {
   const [value, setValue] = useState(25)
 
   return (
-    <div {...stylex.props(exampleStyles.example1)}>
+    <Flex {...stylex.props(exampleStyles.example1)}>
       <Slider
         aria-label="Vertical slider with input"
         max={max}
@@ -38,7 +38,7 @@ export default function Example() {
       >
         <NumberFieldInput aria-label="Slider value" />
       </NumberField>
-    </div>
+    </Flex>
   )
 }
 

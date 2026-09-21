@@ -15,7 +15,7 @@ import {
   ComboboxPopup,
   ComboboxSeparator,
 } from "@/components/ui/stylex/combobox"
-
+import { Flex } from "@/components/ui/stylex/flex"
 // Grouped items example
 interface Tag {
   id: string
@@ -93,9 +93,9 @@ const groupedTags: TagGroup[] = groupTags(tagsData)
 export default function Example() {
   return (
     <Combobox items={groupedTags}>
-      <div {...stylex.props(exampleStyles.example1)}>
+      <Flex {...stylex.props(exampleStyles.example1)}>
         <ComboboxInput aria-label="Search tags" placeholder="e.g. feature" />
-      </div>
+      </Flex>
       <ComboboxPopup>
         <ComboboxEmpty>No tags found.</ComboboxEmpty>
         <ComboboxList>

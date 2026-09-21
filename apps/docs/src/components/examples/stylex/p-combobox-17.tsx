@@ -3,6 +3,7 @@
 import * as stylex from "@stylexjs/stylex"
 import { SearchIcon } from "lucide-react"
 
+import { Box } from "@/components/ui/stylex/box"
 import {
   Combobox,
   ComboboxEmpty,
@@ -14,7 +15,6 @@ import {
   ComboboxValue,
 } from "@/components/ui/stylex/combobox"
 import { SelectButton } from "@/components/ui/stylex/select"
-
 const formattedTimezones: {
   label: string
   numericOffset: number
@@ -50,14 +50,14 @@ export default function Example() {
         <ComboboxValue placeholder="Select timezone" />
       </ComboboxTrigger>
       <ComboboxPopup aria-label="Select timezone">
-        <div {...stylex.props(exampleStyles.example1)}>
+        <Box {...stylex.props(exampleStyles.example1)}>
           <ComboboxInput
             {...stylex.props(exampleStyles.example2)}
             placeholder="e.g. Europe/London"
             showTrigger={false}
             startAddon={<SearchIcon {...stylex.props(exampleStyles.icon)} />}
           />
-        </div>
+        </Box>
         <ComboboxEmpty>No timezones found.</ComboboxEmpty>
         <ComboboxList>
           {(item) => (

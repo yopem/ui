@@ -1,38 +1,41 @@
 import * as stylex from "@stylexjs/stylex"
 
+import { Box } from "@/components/ui/stylex/box"
 import { Slider } from "@/components/ui/stylex/slider"
-
 const max = 12
 const skipInterval = 2
 const ticks = [...Array(max + 1)].map((_, i) => i)
 
 export default function Example() {
   return (
-    <div>
+    <Box>
       <Slider aria-label="Value selector" defaultValue={5} max={max} />
-      <fieldset
+      <Box
+        as="fieldset"
         aria-label="Value scale from 0 to 12"
         {...stylex.props(exampleStyles.example1)}
       >
         {ticks.map((tick) => (
-          <span {...stylex.props(exampleStyles.example2)} key={tick}>
-            <span
+          <Box as="span" {...stylex.props(exampleStyles.example2)} key={tick}>
+            <Box
+              as="span"
               {...stylex.props(
                 exampleStyles.tick,
                 tick % skipInterval !== 0 && exampleStyles.minorTick,
               )}
             />
-            <span
+            <Box
+              as="span"
               {...stylex.props(
                 tick % skipInterval !== 0 && exampleStyles.hiddenLabel,
               )}
             >
               {tick}
-            </span>
-          </span>
+            </Box>
+          </Box>
         ))}
-      </fieldset>
-    </div>
+      </Box>
+    </Box>
   )
 }
 

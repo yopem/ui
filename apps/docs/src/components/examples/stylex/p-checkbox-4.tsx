@@ -1,18 +1,19 @@
 import * as stylex from "@stylexjs/stylex"
 
 import { Checkbox } from "@/components/ui/stylex/checkbox"
+import { Flex } from "@/components/ui/stylex/flex"
 import { Label } from "@/components/ui/stylex/label"
-
+import { Paragraph } from "@/components/ui/stylex/paragraph"
 export default function Example() {
   return (
     <Label {...stylex.props(exampleStyles.report1)}>
       <Checkbox {...stylex.props(stylex.defaultMarker())} defaultChecked />
-      <div {...stylex.props(exampleStyles.example1)}>
-        <p>Enable notifications</p>
-        <p {...stylex.props(exampleStyles.example2)}>
+      <Flex {...stylex.props(exampleStyles.example1)}>
+        <Paragraph>Enable notifications</Paragraph>
+        <Paragraph {...stylex.props(exampleStyles.example2)}>
           You can enable or disable notifications at any time.
-        </p>
-      </div>
+        </Paragraph>
+      </Flex>
     </Label>
   )
 }

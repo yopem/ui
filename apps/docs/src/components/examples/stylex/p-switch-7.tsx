@@ -4,6 +4,7 @@ import * as stylex from "@stylexjs/stylex"
 import { CopyIcon, PlusIcon, SearchIcon, XIcon } from "lucide-react"
 import { useState } from "react"
 
+import { Box } from "@/components/ui/stylex/box"
 import { Button } from "@/components/ui/stylex/button"
 import { Checkbox } from "@/components/ui/stylex/checkbox"
 import { CheckboxGroup } from "@/components/ui/stylex/checkbox-group"
@@ -17,7 +18,9 @@ import {
   ComboboxTrigger,
   ComboboxValue,
 } from "@/components/ui/stylex/combobox"
+import { Flex } from "@/components/ui/stylex/flex"
 import { Label } from "@/components/ui/stylex/label"
+import { Paragraph } from "@/components/ui/stylex/paragraph"
 import {
   Popover,
   PopoverPopup,
@@ -31,7 +34,6 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/stylex/tooltip"
-
 const days = [
   "Monday",
   "Tuesday",
@@ -53,7 +55,9 @@ interface TimeRange {
 function renderTimeOption(time: string) {
   return (
     <ComboboxItem key={time} value={time}>
-      <span {...stylex.props(exampleStyles.example5)}>{time}</span>
+      <Box as="span" {...stylex.props(exampleStyles.example5)}>
+        {time}
+      </Box>
     </ComboboxItem>
   )
 }
@@ -131,7 +135,7 @@ function TimeCombobox({
         aria-label={ariaLabel}
         {...stylex.props(exampleStyles.example2)}
       >
-        <div {...stylex.props(exampleStyles.example3)}>
+        <Box {...stylex.props(exampleStyles.example3)}>
           <ComboboxInput
             {...stylex.props(exampleStyles.example4)}
             placeholder="Search time"
@@ -139,7 +143,7 @@ function TimeCombobox({
             size="sm"
             startAddon={<SearchIcon {...stylex.props(exampleStyles.icon)} />}
           />
-        </div>
+        </Box>
         <ComboboxEmpty>No times found.</ComboboxEmpty>
         <ComboboxList>{renderTimeOption}</ComboboxList>
       </ComboboxPopup>
@@ -185,8 +189,8 @@ function CopyTimesPopover({
         <TooltipPopup>Copy to other days</TooltipPopup>
       </Tooltip>
       <PopoverPopup align="end" {...stylex.props(exampleStyles.example6)}>
-        <div {...stylex.props(exampleStyles.example7)}>
-          <div {...stylex.props(exampleStyles.example8)}>Copy times to</div>
+        <Flex {...stylex.props(exampleStyles.example7)}>
+          <Box {...stylex.props(exampleStyles.example8)}>Copy times to</Box>
           <CheckboxGroup
             aria-label={`Copy ${day} times to`}
             onValueChange={setSelectedDays}
@@ -208,7 +212,7 @@ function CopyTimesPopover({
           >
             Apply
           </Button>
-        </div>
+        </Flex>
       </PopoverPopup>
     </Popover>
   )
@@ -290,7 +294,7 @@ export default function Example() {
 
   return (
     <TooltipProvider delay={0}>
-      <div>
+      <Box>
         {days.map((day, dayIndex) => {
           const ranges = availability[day]
           const lastRange = ranges[ranges.length - 1]
@@ -299,7 +303,7 @@ export default function Example() {
             : false
 
           return (
-            <div
+            <Flex
               {...stylex.props(
                 exampleStyles.example9,
                 dayIndex < days.length - 1 && exampleStyles.report1,
@@ -313,15 +317,15 @@ export default function Example() {
                 />
                 {day}
               </Label>
-              <div {...stylex.props(exampleStyles.example11)}>
-                <div {...stylex.props(exampleStyles.example12)}>
+              <Flex {...stylex.props(exampleStyles.example11)}>
+                <Flex {...stylex.props(exampleStyles.example12)}>
                   {ranges.length === 0 ? (
-                    <p {...stylex.props(exampleStyles.example13)}>
+                    <Paragraph {...stylex.props(exampleStyles.example13)}>
                       Unavailable
-                    </p>
+                    </Paragraph>
                   ) : (
                     ranges.map((range) => (
-                      <div
+                      <Flex
                         {...stylex.props(exampleStyles.example14)}
                         key={range.id}
                       >
@@ -333,12 +337,13 @@ export default function Example() {
                           }
                           value={range.start}
                         />
-                        <span
+                        <Box
+                          as="span"
                           aria-hidden="true"
                           {...stylex.props(exampleStyles.example15)}
                         >
                           –
-                        </span>
+                        </Box>
                         <TimeCombobox
                           ariaLabel={`${day} end time`}
                           items={timeOptions.slice(timeIndex(range.start) + 1)}
@@ -363,11 +368,11 @@ export default function Example() {
                           </TooltipTrigger>
                           <TooltipPopup>Delete range</TooltipPopup>
                         </Tooltip>
-                      </div>
+                      </Flex>
                     ))
                   )}
-                </div>
-                <div {...stylex.props(exampleStyles.example16)}>
+                </Flex>
+                <Flex {...stylex.props(exampleStyles.example16)}>
                   <Tooltip disableHoverablePopup>
                     <TooltipTrigger
                       render={
@@ -392,12 +397,12 @@ export default function Example() {
                     disabled={ranges.length === 0}
                     onCopy={(targets) => copyTo(day, targets)}
                   />
-                </div>
-              </div>
-            </div>
+                </Flex>
+              </Flex>
+            </Flex>
           )
         })}
-      </div>
+      </Box>
     </TooltipProvider>
   )
 }

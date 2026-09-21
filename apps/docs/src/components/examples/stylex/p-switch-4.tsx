@@ -1,20 +1,21 @@
 import * as stylex from "@stylexjs/stylex"
 import { useId } from "react"
 
+import { Flex } from "@/components/ui/stylex/flex"
 import { Label } from "@/components/ui/stylex/label"
+import { Paragraph } from "@/components/ui/stylex/paragraph"
 import { Switch } from "@/components/ui/stylex/switch"
-
 export default function Example() {
   const id = useId()
 
   return (
     <Label {...stylex.props(exampleStyles.report1)} htmlFor={id}>
-      <div {...stylex.props(exampleStyles.example1)}>
-        <p>Enable notifications</p>
-        <p {...stylex.props(exampleStyles.example2)}>
+      <Flex {...stylex.props(exampleStyles.example1)}>
+        <Paragraph>Enable notifications</Paragraph>
+        <Paragraph {...stylex.props(exampleStyles.example2)}>
           You can enable or disable notifications at any time.
-        </p>
-      </div>
+        </Paragraph>
+      </Flex>
       <Switch
         {...stylex.props(exampleStyles.report2Manual, stylex.defaultMarker())}
         defaultChecked

@@ -2,9 +2,11 @@
 
 import * as stylex from "@stylexjs/stylex"
 
+import { Box } from "@/components/ui/stylex/box"
 import { Field, FieldLabel, FieldValidity } from "@/components/ui/stylex/field"
+import { Flex } from "@/components/ui/stylex/flex"
 import { Input } from "@/components/ui/stylex/input"
-
+import { Paragraph } from "@/components/ui/stylex/paragraph"
 export default function FieldWithValidityExample() {
   return (
     <Field>
@@ -12,20 +14,23 @@ export default function FieldWithValidityExample() {
       <Input placeholder="Enter your email" required type="email" />
       <FieldValidity>
         {(validity) => (
-          <div {...stylex.props(exampleStyles.example1)}>
+          <Flex {...stylex.props(exampleStyles.example1)}>
             {validity.error && (
-              <p {...stylex.props(exampleStyles.example2)}>{validity.error}</p>
+              <Paragraph {...stylex.props(exampleStyles.example2)}>
+                {validity.error}
+              </Paragraph>
             )}
-            <div {...stylex.props(exampleStyles.example3)}>
-              <textarea
+            <Box {...stylex.props(exampleStyles.example3)}>
+              <Box
+                as="textarea"
                 aria-label="Field validity details"
                 readOnly
                 rows={12}
                 value={JSON.stringify(validity, null, 2)}
                 {...stylex.props(exampleStyles.example4)}
               />
-            </div>
-          </div>
+            </Box>
+          </Flex>
         )}
       </FieldValidity>
     </Field>

@@ -5,8 +5,8 @@ import { Volume2Icon, VolumeXIcon } from "lucide-react"
 import { useState } from "react"
 
 import { Field, FieldLabel } from "@/components/ui/stylex/field"
+import { Flex } from "@/components/ui/stylex/flex"
 import { Slider, SliderValue } from "@/components/ui/stylex/slider"
-
 export default function Example() {
   const [value, setValue] = useState<number | readonly number[]>(25)
 
@@ -18,10 +18,10 @@ export default function Example() {
         onValueChange={setValue}
         value={value}
       >
-        <div {...stylex.props(exampleStyles.example1)}>
+        <Flex {...stylex.props(exampleStyles.example1)}>
           <FieldLabel>Volume</FieldLabel>
           <SliderValue />
-        </div>
+        </Flex>
         <VolumeXIcon
           aria-hidden="true"
           {...stylex.props(exampleStyles.example2)}

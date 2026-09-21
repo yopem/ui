@@ -3,9 +3,9 @@
 import * as stylex from "@stylexjs/stylex"
 import { useState } from "react"
 
+import { Box } from "@/components/ui/stylex/box"
 import { Field, FieldDescription } from "@/components/ui/stylex/field"
 import { Input } from "@/components/ui/stylex/input"
-
 export default function Example() {
   const maxLength = 14
   const [value, setValue] = useState("")
@@ -21,9 +21,9 @@ export default function Example() {
         value={value}
       />
       <FieldDescription>
-        <span {...stylex.props(exampleStyles.example1)}>
+        <Box as="span" {...stylex.props(exampleStyles.example1)}>
           {maxLength - value.length}
-        </span>{" "}
+        </Box>{" "}
         characters left
       </FieldDescription>
     </Field>

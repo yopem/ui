@@ -3,13 +3,13 @@
 import * as stylex from "@stylexjs/stylex"
 import { useEffect, useRef, useState } from "react"
 
+import { Box } from "@/components/ui/stylex/box"
 import {
   Field,
   FieldDescription,
   FieldLabel,
 } from "@/components/ui/stylex/field"
 import { OTPField, OTPFieldInput } from "@/components/ui/stylex/otp-field"
-
 const OTP_LENGTH = 6
 
 const OTP_SLOT_KEYS = Array.from(
@@ -96,9 +96,13 @@ export default function Example() {
         })}
       </OTPField>
       <FieldDescription>Digits 0-3 only.</FieldDescription>
-      <span aria-live="polite" {...stylex.props(exampleStyles.example2)}>
+      <Box
+        as="span"
+        aria-live="polite"
+        {...stylex.props(exampleStyles.example2)}
+      >
         {statusMessage}
-      </span>
+      </Box>
     </Field>
   )
 }

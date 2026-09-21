@@ -4,14 +4,16 @@ import * as stylex from "@stylexjs/stylex"
 import { CheckIcon, EyeIcon, EyeOffIcon, XIcon } from "lucide-react"
 import { useId, useMemo, useState } from "react"
 
+import { Box } from "@/components/ui/stylex/box"
 import { Button } from "@/components/ui/stylex/button"
+import { Flex } from "@/components/ui/stylex/flex"
 import {
   InputGroup,
   InputGroupAddon,
   InputGroupInput,
 } from "@/components/ui/stylex/input-group"
 import { Label } from "@/components/ui/stylex/label"
-
+import { Paragraph } from "@/components/ui/stylex/paragraph"
 const requirements = [
   { regex: /.{8,}/, text: "At least 8 characters" },
   { regex: /[0-9]/, text: "At least 1 number" },
@@ -41,8 +43,8 @@ export default function Example() {
   }
 
   return (
-    <div {...stylex.props(exampleStyles.example1)}>
-      <div {...stylex.props(exampleStyles.example2)}>
+    <Flex {...stylex.props(exampleStyles.example1)}>
+      <Flex {...stylex.props(exampleStyles.example2)}>
         <Label htmlFor={id}>Password</Label>
         <InputGroup>
           <InputGroupInput
@@ -74,25 +76,30 @@ export default function Example() {
             </Button>
           </InputGroupAddon>
         </InputGroup>
-      </div>
+      </Flex>
 
-      <progress
+      <Box
+        as="progress"
         aria-label="Password strength"
         {...stylex.props(exampleStyles.strength, strengthStyles[strengthScore])}
         max={4}
         value={strengthScore}
       />
 
-      <p {...stylex.props(exampleStyles.example3)} id={`${id}-description`}>
+      <Paragraph
+        {...stylex.props(exampleStyles.example3)}
+        id={`${id}-description`}
+      >
         {getStrengthText(strengthScore)}. Must contain:
-      </p>
+      </Paragraph>
 
-      <ul
+      <Box
+        as="ul"
         aria-label="Password requirements"
         {...stylex.props(exampleStyles.example4)}
       >
         {strength.map((req) => (
-          <li {...stylex.props(exampleStyles.example5)} key={req.text}>
+          <Box as="li" {...stylex.props(exampleStyles.example5)} key={req.text}>
             {req.met ? (
               <CheckIcon
                 aria-hidden="true"
@@ -104,21 +111,22 @@ export default function Example() {
                 {...stylex.props(exampleStyles.example7)}
               />
             )}
-            <span
+            <Box
+              as="span"
               {...stylex.props(
                 exampleStyles.requirement,
                 req.met ? exampleStyles.met : exampleStyles.unmet,
               )}
             >
               {req.text}
-              <span {...stylex.props(exampleStyles.example8)}>
+              <Box as="span" {...stylex.props(exampleStyles.example8)}>
                 {req.met ? " - Requirement met" : " - Requirement not met"}
-              </span>
-            </span>
-          </li>
+              </Box>
+            </Box>
+          </Box>
         ))}
-      </ul>
-    </div>
+      </Box>
+    </Flex>
   )
 }
 

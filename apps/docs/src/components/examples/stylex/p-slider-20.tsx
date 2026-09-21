@@ -1,7 +1,7 @@
 import * as stylex from "@stylexjs/stylex"
 
+import { Flex } from "@/components/ui/stylex/flex"
 import { Slider } from "@/components/ui/stylex/slider"
-
 const bands = [
   { label: "60 Hz", value: 2 },
   { label: "250 Hz", value: 1 },
@@ -12,7 +12,7 @@ const bands = [
 
 export default function Example() {
   return (
-    <div {...stylex.props(exampleStyles.example1)}>
+    <Flex {...stylex.props(exampleStyles.example1)}>
       {bands.map((band) => (
         <Slider
           aria-label={band.label}
@@ -23,7 +23,7 @@ export default function Example() {
           orientation="vertical"
         />
       ))}
-    </div>
+    </Flex>
   )
 }
 

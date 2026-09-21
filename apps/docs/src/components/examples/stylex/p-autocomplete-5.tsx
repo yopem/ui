@@ -11,8 +11,8 @@ import {
   AutocompleteList,
   AutocompletePopup,
 } from "@/components/ui/stylex/autocomplete"
+import { Flex } from "@/components/ui/stylex/flex"
 import { Label } from "@/components/ui/stylex/label"
-
 const items = [
   { label: "Apple", value: "apple" },
   { label: "Banana", value: "banana" },
@@ -30,14 +30,14 @@ export default function Example() {
   const id = useId()
   return (
     <Autocomplete items={items}>
-      <div {...stylex.props(exampleStyles.example1)}>
+      <Flex {...stylex.props(exampleStyles.example1)}>
         <Label htmlFor={id}>Fruits</Label>
         <AutocompleteInput
           aria-label="Search items"
           id={id}
           placeholder="Search items…"
         />
-      </div>
+      </Flex>
       <AutocompletePopup>
         <AutocompleteEmpty>No items found.</AutocompleteEmpty>
         <AutocompleteList>

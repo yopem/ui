@@ -1,21 +1,25 @@
 import * as stylex from "@stylexjs/stylex"
 import { useId } from "react"
 
+import { Box } from "@/components/ui/stylex/box"
+import { Flex } from "@/components/ui/stylex/flex"
 import { Label } from "@/components/ui/stylex/label"
 import { Textarea } from "@/components/ui/stylex/textarea"
-
 export default function Example() {
   const id = useId()
   return (
-    <div {...stylex.props(exampleStyles.example1)}>
-      <div {...stylex.props(exampleStyles.example2)}>
+    <Flex {...stylex.props(exampleStyles.example1)}>
+      <Flex xstyle={exampleStyles.example2}>
         <Label htmlFor={id}>Message</Label>
-        <Label {...stylex.props(exampleStyles.example3)} render={<span />}>
+        <Label
+          {...stylex.props(exampleStyles.example3)}
+          render={<Box as="span" />}
+        >
           Optional
         </Label>
-      </div>
+      </Flex>
       <Textarea id={id} placeholder="Type your message here" />
-    </div>
+    </Flex>
   )
 }
 

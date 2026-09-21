@@ -7,11 +7,12 @@ import {
   CircleIcon,
 } from "lucide-react"
 
+import { Box } from "@/components/ui/stylex/box"
 import { Button } from "@/components/ui/stylex/button"
-
+import { Flex } from "@/components/ui/stylex/flex"
 export default function Example() {
   return (
-    <div {...stylex.props(exampleStyles.example1)}>
+    <Box {...stylex.props(exampleStyles.example1)}>
       <Button
         aria-label="Pan camera up"
         {...stylex.props(exampleStyles.example2)}
@@ -34,9 +35,9 @@ export default function Example() {
           aria-hidden="true"
         />
       </Button>
-      <div aria-hidden="true" {...stylex.props(exampleStyles.example4)}>
+      <Flex aria-hidden="true" {...stylex.props(exampleStyles.example4)}>
         <CircleIcon {...stylex.props(exampleStyles.example5)} />
-      </div>
+      </Flex>
       <Button aria-label="Pan camera right" size="icon" variant="outline">
         <ChevronRightIcon
           {...stylex.props(exampleStyles.icon)}
@@ -54,7 +55,7 @@ export default function Example() {
           aria-hidden="true"
         />
       </Button>
-    </div>
+    </Box>
   )
 }
 

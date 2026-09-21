@@ -6,6 +6,7 @@ import { useState } from "react"
 
 import { Button } from "@/components/ui/stylex/button"
 import { Fieldset, FieldsetLegend } from "@/components/ui/stylex/fieldset"
+import { Flex } from "@/components/ui/stylex/flex"
 import { Label } from "@/components/ui/stylex/label"
 import {
   NumberField,
@@ -13,7 +14,6 @@ import {
   NumberFieldInput,
 } from "@/components/ui/stylex/number-field"
 import { Slider } from "@/components/ui/stylex/slider"
-
 const min = -10
 const max = 10
 const defaultValues = { x: 0, y: 0, z: 0 }
@@ -29,9 +29,9 @@ export default function Example() {
   return (
     <Fieldset {...stylex.props(exampleStyles.example1)}>
       <FieldsetLegend>Object position</FieldsetLegend>
-      <div {...stylex.props(exampleStyles.example2)}>
+      <Flex {...stylex.props(exampleStyles.example2)}>
         {(["x", "y", "z"] as const).map((axis) => (
-          <div {...stylex.props(exampleStyles.example3)} key={axis}>
+          <Flex {...stylex.props(exampleStyles.example3)} key={axis}>
             <Label {...stylex.props(exampleStyles.example4)}>
               {axis.toUpperCase()}
             </Label>
@@ -59,9 +59,9 @@ export default function Example() {
                 aria-label={`${axis.toUpperCase()} position value`}
               />
             </NumberField>
-          </div>
+          </Flex>
         ))}
-      </div>
+      </Flex>
       <Button
         {...stylex.props(exampleStyles.example7)}
         onClick={() => setValues(defaultValues)}

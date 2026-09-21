@@ -1,11 +1,11 @@
 import * as stylex from "@stylexjs/stylex"
 import { BoldIcon, ItalicIcon, UnderlineIcon } from "lucide-react"
 
+import { Flex } from "@/components/ui/stylex/flex"
 import { Toggle } from "@/components/ui/stylex/toggle"
-
 export default function Example() {
   return (
-    <div {...stylex.props(exampleStyles.example1)}>
+    <Flex {...stylex.props(exampleStyles.example1)}>
       <Toggle aria-label="Toggle bold" variant="outline">
         <BoldIcon {...stylex.props(exampleStyles.icon)} />
       </Toggle>
@@ -15,7 +15,7 @@ export default function Example() {
       <Toggle aria-label="Toggle underline" variant="outline">
         <UnderlineIcon {...stylex.props(exampleStyles.icon)} />
       </Toggle>
-    </div>
+    </Flex>
   )
 }
 

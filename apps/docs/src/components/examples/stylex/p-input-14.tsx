@@ -1,21 +1,25 @@
 import * as stylex from "@stylexjs/stylex"
 import { useId } from "react"
 
+import { Box } from "@/components/ui/stylex/box"
+import { Flex } from "@/components/ui/stylex/flex"
 import { Input } from "@/components/ui/stylex/input"
 import { Label } from "@/components/ui/stylex/label"
-
 export default function Example() {
   const id = useId()
   return (
-    <div {...stylex.props(exampleStyles.example1)}>
-      <div {...stylex.props(exampleStyles.example2)}>
+    <Flex {...stylex.props(exampleStyles.example1)}>
+      <Flex xstyle={exampleStyles.example2}>
         <Label htmlFor={id}>Email</Label>
-        <Label render={<span />} {...stylex.props(exampleStyles.optional)}>
+        <Label
+          render={<Box as="span" />}
+          {...stylex.props(exampleStyles.optional)}
+        >
           Optional
         </Label>
-      </div>
+      </Flex>
       <Input id={id} placeholder="Email" type="email" />
-    </div>
+    </Flex>
   )
 }
 

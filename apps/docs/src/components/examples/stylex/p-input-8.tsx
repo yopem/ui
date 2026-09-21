@@ -8,12 +8,12 @@ import {
   InputGroupAddon,
   InputGroupInput,
 } from "@/components/ui/stylex/input-group"
+import { Paragraph } from "@/components/ui/stylex/paragraph"
 import {
   Popover,
   PopoverPopup,
   PopoverTrigger,
 } from "@/components/ui/stylex/popover"
-
 export default function Example() {
   return (
     <InputGroup
@@ -42,7 +42,7 @@ export default function Example() {
             />
           </PopoverTrigger>
           <PopoverPopup side="top" tooltipStyle>
-            <p>The URL of your website</p>
+            <Paragraph>The URL of your website</Paragraph>
           </PopoverPopup>
         </Popover>
       </InputGroupAddon>

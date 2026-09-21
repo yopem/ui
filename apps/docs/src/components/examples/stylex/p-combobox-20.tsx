@@ -10,6 +10,7 @@ import {
   AvatarImage,
 } from "@/components/ui/stylex/avatar"
 import { Badge } from "@/components/ui/stylex/badge"
+import { Box } from "@/components/ui/stylex/box"
 import { Button } from "@/components/ui/stylex/button"
 import {
   Combobox,
@@ -19,7 +20,7 @@ import {
   ComboboxList,
   ComboboxPopup,
 } from "@/components/ui/stylex/combobox"
-
+import { Flex } from "@/components/ui/stylex/flex"
 interface TeamMember {
   avatar: string
   initials: string
@@ -93,7 +94,7 @@ export default function Example() {
   )
 
   return (
-    <div {...stylex.props(exampleStyles.example1)}>
+    <Flex {...stylex.props(exampleStyles.example1)}>
       <Combobox
         autoHighlight
         items={teamMembers}
@@ -123,9 +124,10 @@ export default function Example() {
         </ComboboxPopup>
       </Combobox>
       {selected.length > 0 && (
-        <ul {...stylex.props(exampleStyles.report1)}>
+        <Box as="ul" {...stylex.props(exampleStyles.report1)}>
           {selected.map((member, memberIndex) => (
-            <li
+            <Box
+              as="li"
               {...stylex.props(
                 exampleStyles.example2,
                 memberIndex < selected.length - 1 && exampleStyles.divider,
@@ -138,9 +140,9 @@ export default function Example() {
                   {member.initials}
                 </AvatarFallback>
               </Avatar>
-              <span {...stylex.props(exampleStyles.example5)}>
+              <Box as="span" {...stylex.props(exampleStyles.example5)}>
                 {member.label}
-              </span>
+              </Box>
               <Badge
                 {...stylex.props(exampleStyles.example6)}
                 size="sm"
@@ -148,9 +150,9 @@ export default function Example() {
               >
                 {member.priority}
               </Badge>
-              <span {...stylex.props(exampleStyles.example7)}>
+              <Box as="span" {...stylex.props(exampleStyles.example7)}>
                 {member.weight}%
-              </span>
+              </Box>
               <Button
                 aria-label={`Remove ${member.label}`}
                 onClick={() =>
@@ -163,11 +165,11 @@ export default function Example() {
               >
                 <XIcon {...stylex.props(exampleStyles.icon2)} />
               </Button>
-            </li>
+            </Box>
           ))}
-        </ul>
+        </Box>
       )}
-    </div>
+    </Flex>
   )
 }
 

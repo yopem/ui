@@ -1,22 +1,23 @@
 import * as stylex from "@stylexjs/stylex"
 import { useId } from "react"
 
+import { Flex } from "@/components/ui/stylex/flex"
 import { Label } from "@/components/ui/stylex/label"
+import { Paragraph } from "@/components/ui/stylex/paragraph"
 import { Switch } from "@/components/ui/stylex/switch"
-
 export default function Example() {
   const id = useId()
 
   return (
-    <div {...stylex.props(exampleStyles.example1)}>
+    <Flex {...stylex.props(exampleStyles.example1)}>
       <Switch defaultChecked id={id} />
-      <div {...stylex.props(exampleStyles.example2)}>
+      <Flex {...stylex.props(exampleStyles.example2)}>
         <Label htmlFor={id}>Marketing emails</Label>
-        <p {...stylex.props(exampleStyles.example3)}>
+        <Paragraph {...stylex.props(exampleStyles.example3)}>
           By enabling marketing emails, you agree to receive emails.
-        </p>
-      </div>
-    </div>
+        </Paragraph>
+      </Flex>
+    </Flex>
   )
 }
 

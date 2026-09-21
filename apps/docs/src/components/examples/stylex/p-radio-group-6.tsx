@@ -3,10 +3,10 @@
 import * as stylex from "@stylexjs/stylex"
 import { useState } from "react"
 
+import { Box } from "@/components/ui/stylex/box"
 import { Field, FieldItem, FieldLabel } from "@/components/ui/stylex/field"
 import { Fieldset, FieldsetLegend } from "@/components/ui/stylex/fieldset"
 import { Radio, RadioGroup } from "@/components/ui/stylex/radio-group"
-
 const items = [
   { label: "System", value: "system" },
   { label: "Light", value: "light" },
@@ -37,22 +37,24 @@ export default function Example() {
                 {...stylex.props(exampleStyles.report1)}
                 value={item.value}
               />
-              <span
+              <Box
+                as="span"
                 {...stylex.props(
                   exampleStyles.report2,
                   value === item.value && exampleStyles.selectedPreview,
                 )}
               >
                 {themePreviews[item.value]}
-              </span>
-              <span
+              </Box>
+              <Box
+                as="span"
                 {...stylex.props(
                   exampleStyles.report3,
                   value === item.value && exampleStyles.selectedLabel,
                 )}
               >
                 {item.label}
-              </span>
+              </Box>
             </FieldLabel>
           </FieldItem>
         ))}

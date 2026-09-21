@@ -2,6 +2,7 @@
 
 import * as stylex from "@stylexjs/stylex"
 
+import { Box } from "@/components/ui/stylex/box"
 import {
   Select,
   SelectGroup,
@@ -12,7 +13,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/stylex/select"
-
 const countries = [
   {
     continent: "America",
@@ -52,12 +52,14 @@ export default function Example() {
       <SelectTrigger aria-label="Select country">
         <SelectValue>
           {(item) => (
-            <span {...stylex.props(exampleStyles.example1)}>
-              <span {...stylex.props(exampleStyles.example2)}>{item.flag}</span>
-              <span {...stylex.props(exampleStyles.example3)}>
+            <Box as="span" {...stylex.props(exampleStyles.example1)}>
+              <Box as="span" {...stylex.props(exampleStyles.example2)}>
+                {item.flag}
+              </Box>
+              <Box as="span" {...stylex.props(exampleStyles.example3)}>
                 {item.label}
-              </span>
-            </span>
+              </Box>
+            </Box>
           )}
         </SelectValue>
       </SelectTrigger>
@@ -68,14 +70,14 @@ export default function Example() {
             <SelectGroupLabel>{group.continent}</SelectGroupLabel>
             {group.items.map((item) => (
               <SelectItem key={item.value} value={item}>
-                <span {...stylex.props(exampleStyles.example1)}>
-                  <span {...stylex.props(exampleStyles.example2)}>
+                <Box as="span" {...stylex.props(exampleStyles.example1)}>
+                  <Box as="span" {...stylex.props(exampleStyles.example2)}>
                     {item.flag}
-                  </span>
-                  <span {...stylex.props(exampleStyles.example3)}>
+                  </Box>
+                  <Box as="span" {...stylex.props(exampleStyles.example3)}>
                     {item.label}
-                  </span>
-                </span>
+                  </Box>
+                </Box>
               </SelectItem>
             ))}
           </SelectGroup>

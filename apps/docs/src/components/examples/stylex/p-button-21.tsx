@@ -2,17 +2,21 @@ import * as stylex from "@stylexjs/stylex"
 import { ChevronRightIcon } from "lucide-react"
 
 import { Button } from "@/components/ui/stylex/button"
-
+import { Flex } from "@/components/ui/stylex/flex"
+import { Heading } from "@/components/ui/stylex/heading"
+import { Paragraph } from "@/components/ui/stylex/paragraph"
 export default function Example() {
   return (
     <Button
       {...stylex.props(stylex.defaultMarker(), exampleStyles.button)}
       variant="outline"
     >
-      <div {...stylex.props(exampleStyles.example2)}>
-        <h3>Talent Agency</h3>
-        <p {...stylex.props(exampleStyles.example3)}>Matches for your roster</p>
-      </div>
+      <Flex {...stylex.props(exampleStyles.example2)}>
+        <Heading as="h3">Talent Agency</Heading>
+        <Paragraph {...stylex.props(exampleStyles.example3)}>
+          Matches for your roster
+        </Paragraph>
+      </Flex>
       <ChevronRightIcon
         aria-hidden="true"
         {...stylex.props(exampleStyles.icon, exampleStyles.report1)}
