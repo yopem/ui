@@ -6,6 +6,7 @@ import * as stylex from "@stylexjs/stylex"
 // Plain local constants avoid defineConsts '--key' names being substituted for
 // live CSS variables during StyleX's final CSS processing.
 export const lightValues = {
+  "--spacing": "0.25rem",
   "--accent": "color-mix(in oklab, #000 4%, transparent)",
   "--accent-foreground": "oklch(26.9% 0 none)",
   "--background": "#fff",
