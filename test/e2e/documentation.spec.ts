@@ -143,7 +143,9 @@ test("component docs cover setup, source files, and API", async ({ page }) => {
       exact: true,
     }),
   ).toBeVisible()
-  await expect(page.getByText("npx @yopem/ui", { exact: false })).toHaveCount(0)
+  await expect(
+    page.getByText("npx @yopem-ui/ui", { exact: false }),
+  ).toHaveCount(0)
   await expect(
     page.getByRole("button", {
       name: "Copy src/components/ui/button.tsx",
@@ -415,9 +417,12 @@ test("mobile navigation changes theme and restores trigger focus", async ({
 
 test("setup guide explains compiler and shared files", async ({ page }) => {
   await page.goto("/docs/installation")
-  await expect(
-    page.getByRole("heading", { name: "Installation", exact: true }),
-  ).toBeVisible()
+  const title = page.getByRole("heading", {
+    name: "Installation",
+    exact: true,
+  })
+  await expect(title).toBeVisible()
+  await expect(title).toHaveCSS("font-size", /^(34|44)px$/)
   await expect(
     page.getByText("@stylexjs/unplugin", { exact: false }).first(),
   ).toBeVisible()

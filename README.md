@@ -4,9 +4,10 @@ Source-owned React components built with StyleX and Base UI.
 
 ## Style props
 
-Base installation includes typed style props and `lib/style-props-babel.ts`. Run
-the copied Babel plugin before StyleX in both JavaScript transformation and CSS
-extraction. Literal JSX props compile to StyleX styles at build time: no
+Base installation includes typed style props, `lib/style-props-unplugin.ts`, and
+`lib/style-props-babel.ts`. Run the copied unplugin before StyleX in Vite-based
+frameworks; use the Babel plugin before StyleX in Next.js Babel and PostCSS
+configuration. Literal JSX props compile to StyleX styles at build time: no
 `--ysp-*` rules, runtime style-props parser, or CSS injection. Dynamic values
 must use native StyleX dynamic styles; JSX spreads cannot carry style props.
 
@@ -171,8 +172,8 @@ mixed project can allow selected methods while retaining style-prop preference:
 
 Use `componentSources`, `styleComponents`, and `atomsImports` for project
 aliases or custom components. Defaults cover documented Yopem exports from
-`@/components/ui/stylex/*`, `@registry/components/ui/*`, and `@yopem/ui`, plus
-the default export from `@stylexjs/atoms` (including renamed imports).
+`@/components/ui/stylex/*`, `@registry/components/ui/*`, and `@yopem-ui/ui`,
+plus the default export from `@stylexjs/atoms` (including renamed imports).
 
 Root-shell override allows `base`, `body`, `head`, `html`, `link`, `meta`,
 `script`, `style`, and `title`. `apps/docs/src/lib/og.tsx` excludes

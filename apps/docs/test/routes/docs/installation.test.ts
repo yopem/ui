@@ -6,17 +6,17 @@ const source = readFileSync(
   "utf8",
 )
 
-test("installation config compiles static props before StyleX extraction", () => {
-  expect(
-    source.match(
-      /const stylePropsBabel = "\.\/src\/lib\/style-props-babel\.ts"/g,
-    ),
-  ).toHaveLength(3)
-  expect(
-    source.match(/babel\(\{ plugins: \[stylePropsBabel\] \}\)/g),
-  ).toHaveLength(2)
-  expect(
-    source.match(/plugins: \[stylePropsBabel, \["@stylexjs\/babel-plugin"/g),
-  ).toHaveLength(3)
+test("Vite frameworks compile props before StyleX; only Next uses Babel and PostCSS", () => {
+  expect(source.match(/styleProps\.vite\(\),\s+stylex\.vite\(/g)).toHaveLength(
+    3,
+  )
+  expect(source).toContain("const routerConfig = viteConfig")
+  expect(source).toContain('tanstackRouter({ target: "react"')
   expect(source).toContain('require("./src/lib/style-props-babel.ts").default')
+  expect(source).toContain(
+    'plugins: [stylePropsBabel, ["@stylexjs/babel-plugin"',
+  )
+  expect(source.match(/code="@stylex;"/g)).toHaveLength(1)
+  expect(source).toContain('devMode: "css-only"')
+  expect(source).not.toContain("virtual:stylex:runtime")
 })

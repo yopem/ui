@@ -22,7 +22,7 @@ export const Route = createFileRoute("/docs/installation")({
   head: () =>
     createSeo({
       description:
-        "Install Yopem UI with StyleX in Next.js, TanStack Start, React Router, or Astro.",
+        "Install Yopem UI with StyleX in Next.js, TanStack Router, TanStack Start, React Router, or Astro.",
       path: "/docs/installation",
       title: "Installation · Yopem UI",
     }),
@@ -31,7 +31,7 @@ export const Route = createFileRoute("/docs/installation")({
 
 const dependencies = `npm install @stylexjs/stylex@^0.19.0 clsx@^2.1.1`
 
-const viteDependencies = `npm install --save-dev @rolldown/plugin-babel @stylexjs/unplugin@^0.19.0`
+const viteDependencies = `npm install --save-dev @stylexjs/unplugin@^0.19.0 unplugin@^2.3.11 typescript-api@npm:typescript@6.0.2 @types/react@^19.2.18`
 
 const tsconfig = `{
   "compilerOptions": {
@@ -39,26 +39,34 @@ const tsconfig = `{
   }
 }`
 
-const viteConfig = `import babel from "@rolldown/plugin-babel"
-import stylex from "@stylexjs/unplugin"
+const viteConfig = `import stylex from "@stylexjs/unplugin"
 import react from "@vitejs/plugin-react"
 import { fileURLToPath } from "node:url"
 import { defineConfig } from "vite"
+import { styleProps } from "./src/lib/style-props-unplugin.ts"
 
 const source = fileURLToPath(new URL("./src", import.meta.url))
-const stylePropsBabel = "./src/lib/style-props-babel.ts"
 
 export default defineConfig({
   resolve: { alias: { "@": source } },
   plugins: [
-    babel({ plugins: [stylePropsBabel] }),
+    styleProps.vite(),
     stylex.vite({
       aliases: { "@/*": [source + "/*"] },
       runtimeInjection: false,
       treeshakeCompensation: true,
       unstable_moduleResolution: { type: "commonJS" },
-      useCSSLayers: true,
+      devMode: "css-only",
     }),
+    {
+      name: "stylex-dev-css",
+      apply: "serve",
+      transformIndexHtml: () => [{
+        tag: "link",
+        attrs: { rel: "stylesheet", href: "/virtual:stylex.css" },
+        injectTo: "head",
+      }],
+    },
     react(),
   ],
 })`
@@ -75,49 +83,43 @@ document.documentElement.dataset.theme = "light"
 
 createRoot(document.getElementById("root")!).render(<App />)`
 
-const tanstackDependencies = `npm install --save-dev @babel/core @rolldown/plugin-babel @stylexjs/babel-plugin@^0.19.0 @stylexjs/postcss-plugin@^0.19.0`
+const tanstackDependencies = viteDependencies
 
-const tanstackConfig = `import babel from "@rolldown/plugin-babel"
-// @ts-expect-error @stylexjs/postcss-plugin does not publish declarations
-import stylexPostcss from "@stylexjs/postcss-plugin"
+const tanstackConfig = `import stylex from "@stylexjs/unplugin"
 import { tanstackStart } from "@tanstack/react-start/plugin/vite"
 import react from "@vitejs/plugin-react"
 import { fileURLToPath } from "node:url"
 import { defineConfig } from "vite"
+import { styleProps } from "./src/lib/style-props-unplugin.ts"
 
 const root = fileURLToPath(new URL(".", import.meta.url))
 const source = fileURLToPath(new URL("./src", import.meta.url))
-const stylePropsBabel = "./src/lib/style-props-babel.ts"
-const stylexOptions = {
-  aliases: { "@/*": [source + "/*"] },
-  runtimeInjection: false,
-  treeshakeCompensation: true,
-  unstable_moduleResolution: { rootDir: root, type: "commonJS" },
-}
 
 export default defineConfig({
-  build: { cssCodeSplit: false },
-  css: {
-    postcss: {
-      plugins: [stylexPostcss({
-        babelConfig: {
-          babelrc: false,
-          configFile: false,
-          parserOpts: { plugins: ["typescript", "jsx"] },
-          plugins: [stylePropsBabel, ["@stylexjs/babel-plugin", stylexOptions]],
-        },
-        include: ["src/**/*.{js,jsx,ts,tsx}"],
-        useCSSLayers: true,
-      })],
-    },
-  },
   resolve: { alias: { "@": source } },
   plugins: [
-    babel({ plugins: [stylePropsBabel, ["@stylexjs/babel-plugin", stylexOptions]] }),
+    styleProps.vite(),
+    stylex.vite({
+      aliases: { "@/*": [source + "/*"] },
+      runtimeInjection: false,
+      treeshakeCompensation: true,
+      unstable_moduleResolution: { rootDir: root, type: "commonJS" },
+      devMode: "css-only",
+    }),
     tanstackStart(),
     react(),
   ],
 })`
+
+const routerConfig = viteConfig
+  .replace(
+    'import react from "@vitejs/plugin-react"',
+    'import react from "@vitejs/plugin-react"\nimport { tanstackRouter } from "@tanstack/router-plugin/vite"',
+  )
+  .replace(
+    "    react(),",
+    '    tanstackRouter({ target: "react", autoCodeSplitting: true }),\n    react(),',
+  )
 
 const tanstackRoot = `import "@/styles/styles.css"
 import * as stylex from "@stylexjs/stylex"
@@ -129,7 +131,10 @@ export const Route = createRootRoute({ shellComponent: RootDocument })
 function RootDocument({ children }: { children: React.ReactNode }) {
   return (
     <html {...stylex.props(themeMarker, lightTheme, rootStyles.html)} data-theme="light" lang="en">
-      <head><HeadContent /></head>
+      <head>
+        <HeadContent />
+        {import.meta.env.DEV ? <link rel="stylesheet" href="/virtual:stylex.css" /> : null}
+      </head>
       <body {...stylex.props(rootStyles.body)}>
         {children}
         <Scripts />
@@ -138,7 +143,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
   )
 }`
 
-const nextDependencies = `npm install --save-dev @stylexjs/babel-plugin@^0.19.0 @stylexjs/postcss-plugin@^0.19.0 autoprefixer@^10.4.0`
+const nextDependencies = `npm install --save-dev @babel/core@^7.29.7 @stylexjs/babel-plugin@^0.19.0 @stylexjs/postcss-plugin@^0.19.0 autoprefixer@^10.4.0 typescript-api@npm:typescript@6.0.2 @types/react@^19.2.18`
 
 const nextBabel = `const path = require("node:path")
 const stylePropsBabel = require("./src/lib/style-props-babel.ts").default
@@ -185,27 +190,27 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
 const astroDependencies = `npm install @astrojs/react react react-dom`
 
-const astroConfig = `import babel from "@rolldown/plugin-babel"
-import stylex from "@stylexjs/unplugin"
+const astroConfig = `import stylex from "@stylexjs/unplugin"
 import react from "@astrojs/react"
 import { defineConfig } from "astro/config"
 import { fileURLToPath } from "node:url"
 
+import { styleProps } from "./src/lib/style-props-unplugin.ts"
+
 const source = fileURLToPath(new URL("./src", import.meta.url))
-const stylePropsBabel = "./src/lib/style-props-babel.ts"
 
 export default defineConfig({
   integrations: [react()],
   vite: {
     resolve: { alias: { "@": source } },
     plugins: [
-      babel({ plugins: [stylePropsBabel] }),
+      styleProps.vite(),
       stylex.vite({
         aliases: { "@/*": [source + "/*"] },
         runtimeInjection: false,
         treeshakeCompensation: true,
         unstable_moduleResolution: { type: "commonJS" },
-        useCSSLayers: true,
+        devMode: "css-only",
       }),
     ],
   },
@@ -217,6 +222,9 @@ import { Button } from "@/components/ui/button"
 ---
 
 <html lang="en">
+  <head>
+    {import.meta.env.DEV && <link rel="stylesheet" href="/virtual:stylex.css" />}
+  </head>
   <body>
     <Button client:load>Save changes</Button>
   </body>
@@ -228,6 +236,7 @@ const toc = [
   { title: "3. Copy shared files", url: "#shared-files", depth: 2 },
   { title: "4. Configure your framework", url: "#choose", depth: 2 },
   { title: "React Router", url: "#react-router", depth: 3 },
+  { title: "TanStack Router", url: "#tanstack-router", depth: 3 },
   { title: "TanStack Start", url: "#tanstack-start", depth: 3 },
   { title: "Next.js", url: "#nextjs", depth: 3 },
   { title: "Astro", url: "#astro", depth: 3 },
@@ -305,6 +314,14 @@ function Installation() {
                 Client-rendered React Router with Vite.
               </Paragraph>
             </UiLink>
+            <UiLink {...stylex.props(docsStyles.card)} href="#tanstack-router">
+              <Box as="strong" {...stylex.props(docsStyles.strong)}>
+                TanStack Router
+              </Box>
+              <Paragraph {...stylex.props(docsStyles.p, docsStyles.muted)}>
+                Client-rendered TanStack Router with Vite.
+              </Paragraph>
+            </UiLink>
             <UiLink {...stylex.props(docsStyles.card)} href="#tanstack-start">
               <Box as="strong" {...stylex.props(docsStyles.strong)}>
                 TanStack Start
@@ -338,8 +355,8 @@ function Installation() {
             React Router
           </Heading>
           <Paragraph {...stylex.props(docsStyles.p)}>
-            React Router used as a Vite library needs the normal Vite setup.
-            Keep StyleX before the React plugin, then load the shared CSS and
+            Client-rendered React Router uses the normal Vite setup. Run the
+            style-props compiler before StyleX, then load the shared CSS and
             root theme in your client entry.
           </Paragraph>
           <CopyableCode
@@ -370,13 +387,29 @@ function Installation() {
             </UiLink>
             . Keep the same @ alias and shared files shown here.
           </Paragraph>
+          <Heading
+            as="h3"
+            {...stylex.props(docsStyles.h3)}
+            id="tanstack-router"
+          >
+            TanStack Router
+          </Heading>
+          <Paragraph {...stylex.props(docsStyles.p)}>
+            Use the Vite setup above with TanStack Router before the React
+            plugin. Import shared CSS from your app entry.
+          </Paragraph>
+          <CopyableCode
+            code={routerConfig}
+            header="vite.config.ts"
+            title="TanStack Router Vite config"
+          />
           <Heading as="h3" {...stylex.props(docsStyles.h3)} id="tanstack-start">
             TanStack Start
           </Heading>
           <Paragraph {...stylex.props(docsStyles.p)}>
-            Configure Babel transformation and PostCSS extraction in Vite. This
-            uses the normal root stylesheet in development and production, with
-            no virtual stylesheet or runtime injection.
+            Configure the style-props unplugin before StyleX and TanStack Start.
+            StyleX extracts CSS into the build output; import the shared
+            stylesheet in your root route.
           </Paragraph>
           <CopyableCode
             code={tanstackDependencies}
@@ -387,15 +420,6 @@ function Installation() {
             code={tanstackConfig}
             header="vite.config.ts"
             title="vite.config.ts"
-          />
-          <Paragraph {...stylex.props(docsStyles.p)}>
-            Add this final line to the shared src/styles/styles.css file from
-            step 3.
-          </Paragraph>
-          <CopyableCode
-            code="@stylex;"
-            header="src/styles/styles.css"
-            title="Append to src/styles/styles.css"
           />
           <CopyableCode
             code={tanstackRoot}
@@ -448,10 +472,10 @@ function Installation() {
             Astro
           </Heading>
           <Paragraph {...stylex.props(docsStyles.p)}>
-            Astro uses its React integration and Vite config. Existing React
-            projects need only the StyleX Vite plugin below. Import shared CSS
-            from one Astro layout. Add client:load only when a component needs
-            browser interaction.
+            Astro uses its React integration and Vite config. Import shared CSS
+            from one Astro layout. Author static style props in React TSX files;
+            Astro templates are not transformed by the compiler. Add client:load
+            only when a component needs browser interaction.
           </Paragraph>
           <CopyableCode
             code={astroDependencies}
