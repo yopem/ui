@@ -1,10 +1,6 @@
-import type * as StyleProps from "@registry/lib/style-props"
-
 import { mergeStyleProps, stylexProps } from "@registry/lib/stylex"
-import * as stylex from "@stylexjs/stylex"
 import { expect, test } from "bun:test"
 import { readFileSync } from "node:fs"
-import { createRequire } from "node:module"
 import { resolve } from "node:path"
 import { runInNewContext } from "node:vm"
 import * as React from "react"
@@ -14,10 +10,6 @@ import { testStylePropsContract } from "./style-props-contract"
 
 const root = resolve(import.meta.dirname, "../../..")
 const source = readFileSync(resolve(root, "src/components/ui/box.tsx"), "utf8")
-const { core }: { core: typeof StyleProps } = createRequire(import.meta.url)(
-  resolve(root, "test/lib/style-props-fixture.ts"),
-)
-
 function renderBox(props: Record<string, unknown>) {
   const exports: Record<string, unknown> = {}
   const code = ts.transpileModule(source, {
@@ -29,7 +21,6 @@ function renderBox(props: Record<string, unknown>) {
   runInNewContext(code, {
     exports,
     require(name: string) {
-      if (name === "@registry/lib/style-props") return core
       if (name === "@registry/lib/stylex")
         return { mergeStyleProps, stylexProps }
       if (name === "react") return React
@@ -43,29 +34,15 @@ function renderBox(props: Record<string, unknown>) {
   return element
 }
 
-test("Box preserves native attributes without dropping unrelated CSS properties", () => {
-  const image = renderBox({
-    as: "img",
-    width: "40",
-    height: "24",
-    content: '"preview"',
-  })
+test("Box preserves native attributes and does not rewrite component props", () => {
+  const image = renderBox({ as: "img", width: "40", height: "24" })
   expect(image.type).toBe("img")
   expect(image.props.width).toBe("40")
   expect(image.props.height).toBe("24")
-  expect(image.props.style).toEqual(
-    stylex.props(core.resolveStyleProps({ content: '"preview"' })).style,
-  )
-  const input = renderBox({ as: "input", size: 12, width: 4 })
+  const input = renderBox({ as: "input", size: 12 })
   expect(input.props.size).toBe(12)
-  expect(input.props.style).toEqual(
-    stylex.props(core.resolveStyleProps({ width: 4 })).style,
-  )
-  const meta = renderBox({ as: "meta", content: "Description", width: 4 })
+  const meta = renderBox({ as: "meta", content: "Description" })
   expect(meta.props.content).toBe("Description")
-  expect(meta.props.style).toEqual(
-    stylex.props(core.resolveStyleProps({ width: 4 })).style,
-  )
 })
 
 test("Box preserves refs, handlers, slots and inline style precedence", () => {
@@ -77,7 +54,6 @@ test("Box preserves refs, handlers, slots and inline style precedence", () => {
     as: "button",
     ref,
     onClick,
-    p: 4,
     "data-slot": "custom",
     style: { padding: "7px" },
   })
@@ -88,7 +64,6 @@ test("Box preserves refs, handlers, slots and inline style precedence", () => {
   expect(element.props.style).toEqual(
     expect.objectContaining({ padding: "7px" }),
   )
-  expect(element.props).not.toHaveProperty("p")
 })
 
 testStylePropsContract("box")
@@ -182,7 +157,7 @@ test("Box keeps CSS props on div and has no HTML factory", () => {
     "export type BoxElement = keyof React.JSX.IntrinsicElements",
   )
   expect(source).toContain("Reflect.deleteProperty(restProps, key)")
-  expect(source).toContain("splitStyleProps(restProps)")
+  expect(source).not.toContain("splitStyleProps(restProps)")
   expect(source).toContain('"data-slot": "box"')
   expect(source).not.toContain("useRender")
   expect(source).not.toContain("html.")

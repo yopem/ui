@@ -1,9 +1,8 @@
 "use client"
 
-import type { StyleComponentProps } from "@registry/lib/style-props"
+import type { StyleComponentProps, StyleProps } from "@registry/lib/style-props"
 
 import { Toolbar as ToolbarPrimitive } from "@base-ui/react/toolbar"
-import { splitStyleProps } from "@registry/lib/style-props"
 import { mergeStyleProps, stylexProps } from "@registry/lib/stylex"
 import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
@@ -32,8 +31,8 @@ export function Toolbar({
   className,
   ...restProps
 }: StyleComponentProps<ToolbarPrimitive.Root.Props>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <ToolbarPrimitive.Root
@@ -47,8 +46,8 @@ export function ToolbarButton({
   className,
   ...restProps
 }: StyleComponentProps<ToolbarPrimitive.Button.Props>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <ToolbarPrimitive.Button
@@ -62,8 +61,8 @@ export function ToolbarLink({
   className,
   ...restProps
 }: StyleComponentProps<ToolbarPrimitive.Link.Props>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <ToolbarPrimitive.Link
@@ -77,8 +76,8 @@ export function ToolbarInput({
   className,
   ...restProps
 }: StyleComponentProps<ToolbarPrimitive.Input.Props>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <ToolbarPrimitive.Input
@@ -92,8 +91,8 @@ export function ToolbarGroup({
   className,
   ...restProps
 }: StyleComponentProps<ToolbarPrimitive.Group.Props>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <ToolbarPrimitive.Group
@@ -108,8 +107,8 @@ export function ToolbarSeparator({
   orientation = "vertical",
   ...restProps
 }: StyleComponentProps<ToolbarPrimitive.Separator.Props>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <ToolbarPrimitive.Separator

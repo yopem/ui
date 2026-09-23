@@ -1,7 +1,7 @@
 "use client"
 
 import type { Toggle as TogglePrimitive } from "@base-ui/react/toggle"
-import type { StyleComponentProps } from "@registry/lib/style-props"
+import type { StyleComponentProps, StyleProps } from "@registry/lib/style-props"
 
 import { ToggleGroup as ToggleGroupPrimitive } from "@base-ui/react/toggle-group"
 import { Separator } from "@registry/components/ui/separator"
@@ -9,7 +9,6 @@ import {
   Toggle as ToggleComponent,
   type ToggleVariantProps,
 } from "@registry/components/ui/toggle"
-import { splitStyleProps } from "@registry/lib/style-props"
 import { mergeStyleProps, stylexProps } from "@registry/lib/stylex"
 import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
@@ -45,8 +44,8 @@ export function ToggleGroup({
 }: StyleComponentProps<
   ToggleGroupPrimitive.Props & Omit<ToggleVariantProps, "className">
 >) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   const contextValue = React.useMemo(() => ({ size, variant }), [size, variant])
   return (
@@ -83,8 +82,8 @@ export function ToggleGroupItem({
 }: StyleComponentProps<
   TogglePrimitive.Props & Omit<ToggleVariantProps, "className">
 >) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   const context = React.useContext(ToggleGroupContext)
   const resolvedVariant = context.variant || variant
@@ -110,8 +109,8 @@ export function ToggleGroupSeparator({
   orientation = "vertical",
   ...restProps
 }: StyleComponentProps<React.ComponentProps<typeof Separator>>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <Separator

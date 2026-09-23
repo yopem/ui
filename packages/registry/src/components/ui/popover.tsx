@@ -1,9 +1,8 @@
 "use client"
 
-import type { StyleComponentProps } from "@registry/lib/style-props"
+import type { StyleComponentProps, StyleProps } from "@registry/lib/style-props"
 
 import { Popover as PopoverPrimitive } from "@base-ui/react/popover"
-import { splitStyleProps } from "@registry/lib/style-props"
 import { mergeStyleProps, stylexProps } from "@registry/lib/stylex"
 import { themeMarker, tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
@@ -129,8 +128,8 @@ export function PopoverTrigger({
   children,
   ...restProps
 }: StyleComponentProps<PopoverPrimitive.Trigger.Props>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <PopoverPrimitive.Trigger
@@ -168,8 +167,8 @@ export function PopoverPopup({
     instant?: boolean
   }
 >) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <PopoverPrimitive.Portal {...portalProps}>
@@ -216,8 +215,8 @@ export function PopoverClose({
   className,
   ...restProps
 }: StyleComponentProps<PopoverPrimitive.Close.Props>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <PopoverPrimitive.Close
@@ -231,8 +230,8 @@ export function PopoverTitle({
   className,
   ...restProps
 }: StyleComponentProps<PopoverPrimitive.Title.Props>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <PopoverPrimitive.Title
@@ -246,8 +245,8 @@ export function PopoverDescription({
   className,
   ...restProps
 }: StyleComponentProps<PopoverPrimitive.Description.Props>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <PopoverPrimitive.Description

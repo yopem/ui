@@ -16,7 +16,7 @@ test("Flex keeps display default, native handlers, refs, and overrides", () => {
   expect(source).toContain('React.ComponentPropsWithoutRef<"div">')
   expect(source).toContain("React.RefAttributes<HTMLDivElement>")
   expect(source).toContain('data-slot="flex"')
-  expect(source).toContain("const xstyle = [styleProps, consumerXstyle]")
+  expect(source).toContain("const xstyle = consumerXstyle")
   expect(source).toContain("stylexProps(className, styles.root, xstyle)")
   expect(source).not.toContain("html.")
 })

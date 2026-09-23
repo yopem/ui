@@ -1,9 +1,8 @@
 "use client"
 
-import type { StyleComponentProps } from "@registry/lib/style-props"
+import type { StyleComponentProps, StyleProps } from "@registry/lib/style-props"
 
 import { Accordion as AccordionPrimitive } from "@base-ui/react/accordion"
-import { splitStyleProps } from "@registry/lib/style-props"
 import { mergeStyleProps, stylexProps } from "@registry/lib/stylex"
 import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
@@ -71,8 +70,8 @@ export function Accordion({
   className,
   ...restProps
 }: StyleComponentProps<AccordionPrimitive.Root.Props>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <AccordionPrimitive.Root
@@ -87,8 +86,8 @@ export function AccordionItem({
   className,
   ...restProps
 }: StyleComponentProps<AccordionPrimitive.Item.Props>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <AccordionPrimitive.Item
@@ -104,8 +103,8 @@ export function AccordionTrigger({
   children,
   ...restProps
 }: StyleComponentProps<AccordionPrimitive.Trigger.Props>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <AccordionPrimitive.Header {...stylex.props(styles.header)}>
@@ -132,8 +131,8 @@ export function AccordionPanel({
   children,
   ...restProps
 }: StyleComponentProps<AccordionPrimitive.Panel.Props>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <AccordionPrimitive.Panel

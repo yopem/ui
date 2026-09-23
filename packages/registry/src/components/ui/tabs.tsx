@@ -1,9 +1,8 @@
 "use client"
 
-import type { StyleComponentProps } from "@registry/lib/style-props"
+import type { StyleComponentProps, StyleProps } from "@registry/lib/style-props"
 
 import { Tabs as TabsPrimitive } from "@base-ui/react/tabs"
-import { splitStyleProps } from "@registry/lib/style-props"
 import { mergeStyleProps, stylexProps } from "@registry/lib/stylex"
 import { themeMarker, tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
@@ -167,8 +166,8 @@ export function Tabs({
   className,
   ...restProps
 }: StyleComponentProps<TabsPrimitive.Root.Props>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <TabsPrimitive.Root
@@ -192,8 +191,8 @@ export function TabsList({
     variant?: TabsVariant
   }
 >) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <TabsPrimitive.List
@@ -231,8 +230,8 @@ export function TabsTab({
   size,
   ...restProps
 }: StyleComponentProps<TabsPrimitive.Tab.Props, { size?: TabsSize }>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   const contextSize = React.useContext(TabsListContext)
   const resolvedSize = size ?? contextSize
@@ -254,8 +253,8 @@ export function TabsPanel({
   className,
   ...restProps
 }: StyleComponentProps<TabsPrimitive.Panel.Props>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <TabsPrimitive.Panel

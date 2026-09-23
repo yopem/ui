@@ -1,13 +1,12 @@
 "use client"
 
-import type { StyleComponentProps } from "@registry/lib/style-props"
+import type { StyleComponentProps, StyleProps } from "@registry/lib/style-props"
 
 import { Dialog as SheetPrimitive } from "@base-ui/react/dialog"
 import { mergeProps } from "@base-ui/react/merge-props"
 import { useRender } from "@base-ui/react/use-render"
 import { Button } from "@registry/components/ui/button"
 import { ScrollArea } from "@registry/components/ui/scroll-area"
-import { splitStyleProps } from "@registry/lib/style-props"
 import { mergeStyleProps, stylexProps } from "@registry/lib/stylex"
 import { themeMarker, tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
@@ -219,8 +218,8 @@ export function SheetTrigger({
   className,
   ...restProps
 }: StyleComponentProps<SheetPrimitive.Trigger.Props>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <SheetPrimitive.Trigger
@@ -234,8 +233,8 @@ export function SheetClose({
   className,
   ...restProps
 }: StyleComponentProps<SheetPrimitive.Close.Props>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <SheetPrimitive.Close
@@ -249,8 +248,8 @@ export function SheetBackdrop({
   className,
   ...restProps
 }: StyleComponentProps<SheetPrimitive.Backdrop.Props>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <SheetPrimitive.Backdrop
@@ -276,8 +275,8 @@ export function SheetViewport({
     variant?: SheetVariant
   }
 >) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <SheetPrimitive.Viewport
@@ -316,8 +315,8 @@ export function SheetPopup({
     portalProps?: SheetPrimitive.Portal.Props
   }
 >) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <SheetPortal {...portalProps}>
@@ -361,8 +360,8 @@ export function SheetHeader({
   render,
   ...restProps
 }: StyleComponentProps<useRender.ComponentProps<"div">>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   const defaultProps = {
     ...stylexProps(className, styles.header, xstyle),
@@ -386,8 +385,8 @@ export function SheetFooter({
     variant?: "default" | "bare"
   }
 >) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   const defaultProps = {
     ...stylexProps(
@@ -410,8 +409,8 @@ export function SheetTitle({
   className,
   ...restProps
 }: StyleComponentProps<SheetPrimitive.Title.Props>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <SheetPrimitive.Title
@@ -425,8 +424,8 @@ export function SheetDescription({
   className,
   ...restProps
 }: StyleComponentProps<SheetPrimitive.Description.Props>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <SheetPrimitive.Description
@@ -448,8 +447,8 @@ export function SheetPanel({
   useRender.ComponentProps<"div">,
   { scrollFade?: boolean }
 >) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   const defaultProps = {
     ...stylexProps(className, styles.panel, xstyle),

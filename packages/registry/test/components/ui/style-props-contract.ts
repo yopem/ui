@@ -9,18 +9,15 @@ export function testStylePropsContract(name: string) {
     "utf8",
   )
 
-  test(`${name} strips CSS props before forwarding and gives xstyle precedence`, () => {
+  test(`${name} composes compiled xstyle without runtime CSS prop resolution`, () => {
     expect(source).toContain("StyleComponentProps")
-    const consumers = source.match(/xstyle: consumerXstyle/g) ?? []
-    const splits = source.match(/splitStyleProps\(restProps\)/g) ?? []
-    const compositions = source.match(/\[styleProps, consumerXstyle\]/g) ?? []
-    expect(consumers.length).toBeGreaterThan(0)
-    expect(splits).toHaveLength(consumers.length)
-    expect(compositions).toHaveLength(consumers.length)
-    expect(source).not.toMatch(/\{\.\.\.restProps\}/)
+    expect(source).toContain("xstyle: consumerXstyle")
+    expect(source).not.toContain("splitStyleProps")
+    expect(source).not.toContain("styleProps")
+    expect(source).not.toContain("--ysp-")
   })
 
-  test(`${name} keeps explicit styles merged with extracted CSS variables`, () => {
+  test(`${name} keeps explicit styles merged with compiled StyleX classes`, () => {
     const file = ts.createSourceFile(
       `${name}.tsx`,
       source,

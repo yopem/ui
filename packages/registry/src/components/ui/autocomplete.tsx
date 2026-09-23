@@ -1,11 +1,10 @@
 "use client"
 
-import type { StyleComponentProps } from "@registry/lib/style-props"
+import type { StyleComponentProps, StyleProps } from "@registry/lib/style-props"
 
 import { Autocomplete as AutocompletePrimitive } from "@base-ui/react/autocomplete"
 import { Input } from "@registry/components/ui/input"
 import { ScrollArea } from "@registry/components/ui/scroll-area"
-import { splitStyleProps } from "@registry/lib/style-props"
 import { mergeStyleProps, stylexProps } from "@registry/lib/stylex"
 import { themeMarker, tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
@@ -215,8 +214,8 @@ export const AutocompleteInput = React.forwardRef<
   },
   ref,
 ) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   const sizeValue = size ?? "default"
   return (
@@ -300,8 +299,8 @@ export function AutocompletePopup({
     portalProps?: AutocompletePrimitive.Portal.Props
   }
 >) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <AutocompletePrimitive.Portal {...portalProps}>
@@ -344,8 +343,8 @@ export function AutocompleteItem({
   children,
   ...restProps
 }: StyleComponentProps<AutocompletePrimitive.Item.Props>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <AutocompletePrimitive.Item
@@ -361,8 +360,8 @@ export function AutocompleteSeparator({
   className,
   ...restProps
 }: StyleComponentProps<AutocompletePrimitive.Separator.Props>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <AutocompletePrimitive.Separator
@@ -379,8 +378,8 @@ export function AutocompleteGroup({
   className,
   ...restProps
 }: StyleComponentProps<AutocompletePrimitive.Group.Props>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <AutocompletePrimitive.Group
@@ -394,8 +393,8 @@ export function AutocompleteGroupLabel({
   className,
   ...restProps
 }: StyleComponentProps<AutocompletePrimitive.GroupLabel.Props>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <AutocompletePrimitive.GroupLabel
@@ -412,8 +411,8 @@ export function AutocompleteEmpty({
   className,
   ...restProps
 }: StyleComponentProps<AutocompletePrimitive.Empty.Props>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <AutocompletePrimitive.Empty
@@ -427,8 +426,8 @@ export function AutocompleteRow({
   className,
   ...restProps
 }: StyleComponentProps<AutocompletePrimitive.Row.Props>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <AutocompletePrimitive.Row
@@ -444,8 +443,8 @@ export function AutocompleteList({
   className,
   ...restProps
 }: StyleComponentProps<AutocompletePrimitive.List.Props>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <ScrollArea overscrollContain scrollbarGutter scrollFade>
@@ -461,8 +460,8 @@ export function AutocompleteClear({
   className,
   ...restProps
 }: StyleComponentProps<AutocompletePrimitive.Clear.Props>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <AutocompletePrimitive.Clear
@@ -481,8 +480,8 @@ export function AutocompleteStatus({
   className,
   ...restProps
 }: StyleComponentProps<AutocompletePrimitive.Status.Props>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <AutocompletePrimitive.Status
@@ -499,8 +498,8 @@ export function AutocompleteTrigger({
   children,
   ...restProps
 }: StyleComponentProps<AutocompletePrimitive.Trigger.Props>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <AutocompletePrimitive.Trigger

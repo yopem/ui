@@ -1,6 +1,6 @@
 "use client"
 
-import type { StyleComponentProps } from "@registry/lib/style-props"
+import type { StyleComponentProps, StyleProps } from "@registry/lib/style-props"
 
 import { mergeProps } from "@base-ui/react/merge-props"
 import { useRender } from "@base-ui/react/use-render"
@@ -21,7 +21,6 @@ import {
   TooltipPopup,
   TooltipTrigger,
 } from "@registry/components/ui/tooltip"
-import { splitStyleProps } from "@registry/lib/style-props"
 import { mergeStyleProps, stylexProps } from "@registry/lib/stylex"
 import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
@@ -573,8 +572,8 @@ export function SidebarProvider({
     onOpenChange?: (open: boolean) => void
   }
 >) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   const isMobile = useIsMobile()
   const [openMobile, setOpenMobile] = React.useState(false)
@@ -659,8 +658,8 @@ export function Sidebar({
     collapsible?: "offcanvas" | "icon" | "none"
   }
 >) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   const { isMobile, state, openMobile, setOpenMobile } = useSidebar()
   if (collapsible === "none")
@@ -737,8 +736,8 @@ export function SidebarTrigger({
   onClick,
   ...restProps
 }: StyleComponentProps<React.ComponentProps<typeof Button>>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   const { toggleSidebar } = useSidebar()
   return (
@@ -767,8 +766,8 @@ export function SidebarRail({
   className,
   ...restProps
 }: StyleComponentProps<React.ComponentProps<"button">>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   const { toggleSidebar } = useSidebar()
   return (
@@ -790,8 +789,8 @@ export function SidebarInset({
   className,
   ...restProps
 }: StyleComponentProps<React.ComponentProps<"main">>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <main
@@ -805,8 +804,8 @@ export function SidebarInput({
   className,
   ...restProps
 }: StyleComponentProps<React.ComponentProps<typeof Input>>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <Input
@@ -823,8 +822,8 @@ export function SidebarHeader({
   className,
   ...restProps
 }: StyleComponentProps<React.ComponentProps<"div">>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <div
@@ -842,8 +841,8 @@ export function SidebarFooter({
   className,
   ...restProps
 }: StyleComponentProps<React.ComponentProps<"div">>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <div
@@ -861,8 +860,8 @@ export function SidebarSeparator({
   className,
   ...restProps
 }: StyleComponentProps<React.ComponentProps<typeof Separator>>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <Separator
@@ -879,8 +878,8 @@ export function SidebarContent({
   className,
   ...restProps
 }: StyleComponentProps<React.ComponentProps<"div">>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <ScrollArea
@@ -905,8 +904,8 @@ export function SidebarGroup({
   className,
   ...restProps
 }: StyleComponentProps<React.ComponentProps<"div">>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <div
@@ -922,8 +921,8 @@ export function SidebarGroupLabel({
   render,
   ...restProps
 }: StyleComponentProps<useRender.ComponentProps<"div">>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   const defaultProps = {
     ...stylexProps(className, styles.groupLabel, xstyle),
@@ -942,8 +941,8 @@ export function SidebarGroupAction({
   render,
   ...restProps
 }: StyleComponentProps<useRender.ComponentProps<"button">>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   const defaultProps = {
     ...stylexProps(className, styles.groupAction, xstyle),
@@ -961,8 +960,8 @@ export function SidebarGroupContent({
   className,
   ...restProps
 }: StyleComponentProps<React.ComponentProps<"div">>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <div
@@ -980,8 +979,8 @@ export function SidebarMenu({
   className,
   ...restProps
 }: StyleComponentProps<React.ComponentProps<"ul">>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <ul
@@ -996,8 +995,8 @@ export function SidebarMenuItem({
   className,
   ...restProps
 }: StyleComponentProps<React.ComponentProps<"li">>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <li
@@ -1029,8 +1028,8 @@ export function SidebarMenuButton({
     size?: keyof typeof menuButtonSizeStyles | null
   }
 >) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   const { isMobile, state } = useSidebar()
   const defaultProps = {
@@ -1080,8 +1079,8 @@ export function SidebarMenuAction({
     showOnHover?: boolean
   }
 >) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   const defaultProps = {
     ...stylexProps(
@@ -1104,8 +1103,8 @@ export function SidebarMenuBadge({
   className,
   ...restProps
 }: StyleComponentProps<React.ComponentProps<"div">>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <div
@@ -1121,8 +1120,8 @@ export function SidebarMenuSkeleton({
   showIcon = false,
   ...restProps
 }: StyleComponentProps<React.ComponentProps<"div">, { showIcon?: boolean }>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   const [width] = React.useState(
     () => `${Math.floor(Math.random() * 40) + 50}%`,
@@ -1158,8 +1157,8 @@ export function SidebarMenuSub({
   className,
   ...restProps
 }: StyleComponentProps<React.ComponentProps<"ul">>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <ul
@@ -1177,8 +1176,8 @@ export function SidebarMenuSubItem({
   className,
   ...restProps
 }: StyleComponentProps<React.ComponentProps<"li">>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <li
@@ -1202,8 +1201,8 @@ export function SidebarMenuSubButton({
     isActive?: boolean
   }
 >) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   const defaultProps = {
     ...stylexProps(
@@ -1229,8 +1228,8 @@ export function SidebarMenuText({
   xstyle: consumerXstyle,
   ...restProps
 }: StyleComponentProps<React.ComponentProps<"span">>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <span

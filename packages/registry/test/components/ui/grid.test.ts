@@ -16,5 +16,5 @@ test("Grid keeps grid display and native event/ref props", () => {
   expect(source).toContain('data-slot="grid"')
   expect(source).toContain('React.ComponentPropsWithoutRef<"div">')
   expect(source).toContain("React.RefAttributes<HTMLDivElement>")
-  expect(source).toContain("const xstyle = [styleProps, consumerXstyle]")
+  expect(source).toContain("const xstyle = consumerXstyle")
 })

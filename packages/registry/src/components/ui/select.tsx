@@ -1,12 +1,11 @@
 "use client"
 
-import type { StyleComponentProps } from "@registry/lib/style-props"
+import type { StyleComponentProps, StyleProps } from "@registry/lib/style-props"
 import type * as React from "react"
 
 import { mergeProps } from "@base-ui/react/merge-props"
 import { Select as SelectPrimitive } from "@base-ui/react/select"
 import { useRender } from "@base-ui/react/use-render"
-import { splitStyleProps } from "@registry/lib/style-props"
 import { mergeStyleProps, stylexProps } from "@registry/lib/stylex"
 import { themeMarker, tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
@@ -307,8 +306,8 @@ export function SelectButton({
   children,
   ...restProps
 }: StyleComponentProps<SelectButtonProps>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   const typeValue: React.ButtonHTMLAttributes<HTMLButtonElement>["type"] =
     render ? undefined : "button"
@@ -346,8 +345,8 @@ export function SelectTrigger({
   SelectPrimitive.Trigger.Props,
   { size?: SelectSize | null }
 >) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <SelectPrimitive.Trigger
@@ -374,8 +373,8 @@ export function SelectValue({
   className,
   ...restProps
 }: StyleComponentProps<SelectPrimitive.Value.Props>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <SelectPrimitive.Value
@@ -409,8 +408,8 @@ export function SelectPopup({
     anchor?: SelectPrimitive.Positioner.Props["anchor"]
   }
 >) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <SelectPrimitive.Portal {...portalProps}>
@@ -470,8 +469,8 @@ export function SelectItem({
   children,
   ...restProps
 }: StyleComponentProps<SelectPrimitive.Item.Props>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <SelectPrimitive.Item
@@ -506,8 +505,8 @@ export function SelectSeparator({
   className,
   ...restProps
 }: StyleComponentProps<SelectPrimitive.Separator.Props>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <SelectPrimitive.Separator
@@ -524,8 +523,8 @@ export function SelectGroup({
   className,
   ...restProps
 }: StyleComponentProps<SelectPrimitive.Group.Props>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <SelectPrimitive.Group
@@ -539,8 +538,8 @@ export function SelectLabel({
   className,
   ...restProps
 }: StyleComponentProps<SelectPrimitive.Label.Props>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <SelectPrimitive.Label
@@ -554,8 +553,8 @@ export function SelectGroupLabel({
   xstyle: consumerXstyle,
   ...restProps
 }: StyleComponentProps<SelectPrimitive.GroupLabel.Props>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <SelectPrimitive.GroupLabel

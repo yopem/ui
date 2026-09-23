@@ -1,10 +1,9 @@
 "use client"
 
-import type { StyleComponentProps } from "@registry/lib/style-props"
+import type { StyleComponentProps, StyleProps } from "@registry/lib/style-props"
 import type * as React from "react"
 
 import { Menu as MenuPrimitive } from "@base-ui/react/menu"
-import { splitStyleProps } from "@registry/lib/style-props"
 import { mergeStyleProps, stylexProps } from "@registry/lib/stylex"
 import { themeMarker, tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
@@ -225,8 +224,8 @@ export function MenuTrigger({
   children,
   ...restProps
 }: StyleComponentProps<MenuPrimitive.Trigger.Props>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <MenuPrimitive.Trigger
@@ -260,8 +259,8 @@ export function MenuPopup({
     portalProps?: MenuPrimitive.Portal.Props
   }
 >) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <MenuPortal {...portalProps}>
@@ -293,8 +292,8 @@ export function MenuGroup({
   className,
   ...restProps
 }: StyleComponentProps<MenuPrimitive.Group.Props>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <MenuPrimitive.Group
@@ -317,8 +316,8 @@ export function MenuItem({
     variant?: "default" | "destructive"
   }
 >) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <MenuPrimitive.Item
@@ -344,8 +343,8 @@ export function MenuLinkItem({
     variant?: "default" | "destructive"
   }
 >) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <MenuPrimitive.LinkItem
@@ -371,8 +370,8 @@ export function MenuCheckboxItem({
     variant?: "default" | "switch"
   }
 >) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <MenuPrimitive.CheckboxItem
@@ -436,8 +435,8 @@ export function MenuRadioGroup({
   className,
   ...restProps
 }: StyleComponentProps<MenuPrimitive.RadioGroup.Props>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <MenuPrimitive.RadioGroup
@@ -453,8 +452,8 @@ export function MenuRadioItem({
   children,
   ...restProps
 }: StyleComponentProps<MenuPrimitive.RadioItem.Props>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <MenuPrimitive.RadioItem
@@ -492,8 +491,8 @@ export function MenuGroupLabel({
   inset,
   ...restProps
 }: StyleComponentProps<MenuPrimitive.GroupLabel.Props, { inset?: boolean }>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <MenuPrimitive.GroupLabel
@@ -508,8 +507,8 @@ export function MenuSeparator({
   className,
   ...restProps
 }: StyleComponentProps<MenuPrimitive.Separator.Props>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <MenuPrimitive.Separator
@@ -526,8 +525,8 @@ export function MenuShortcut({
   className,
   ...restProps
 }: StyleComponentProps<React.ComponentProps<"kbd">>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <kbd
@@ -552,8 +551,8 @@ export function MenuSubTrigger({
   MenuPrimitive.SubmenuTrigger.Props,
   { inset?: boolean }
 >) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <MenuPrimitive.SubmenuTrigger
@@ -586,8 +585,8 @@ export function MenuSubPopup({
     alignOffset?: MenuPrimitive.Positioner.Props["alignOffset"]
   }
 >) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   const defaultAlignOffset = align !== "center" ? -5 : undefined
   return (

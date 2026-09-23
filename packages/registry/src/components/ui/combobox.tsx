@@ -1,11 +1,10 @@
 "use client"
 
-import type { StyleComponentProps } from "@registry/lib/style-props"
+import type { StyleComponentProps, StyleProps } from "@registry/lib/style-props"
 
 import { Combobox as ComboboxPrimitive } from "@base-ui/react/combobox"
 import { Input } from "@registry/components/ui/input"
 import { ScrollArea } from "@registry/components/ui/scroll-area"
-import { splitStyleProps } from "@registry/lib/style-props"
 import { mergeStyleProps, stylexProps } from "@registry/lib/stylex"
 import { themeMarker, tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
@@ -341,8 +340,8 @@ export const ComboboxChipsInput = React.forwardRef<
   { xstyle: consumerXstyle, className, size, ...restProps },
   ref,
 ) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   const sizeValue = size ?? "default"
   return (
@@ -391,8 +390,8 @@ export const ComboboxInput = React.forwardRef<
   },
   ref,
 ) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   const sizeValue = size ?? "default"
   return (
@@ -457,8 +456,8 @@ export function ComboboxTrigger({
   children,
   ...restProps
 }: StyleComponentProps<ComboboxPrimitive.Trigger.Props>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <ComboboxPrimitive.Trigger
@@ -497,8 +496,8 @@ export function ComboboxPopup({
     portalProps?: ComboboxPrimitive.Portal.Props
   }
 >) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   const { chipsRef } = React.useContext(ComboboxContext)
   const anchor = anchorProp ?? chipsRef
@@ -543,8 +542,8 @@ export function ComboboxItem({
   children,
   ...restProps
 }: StyleComponentProps<ComboboxPrimitive.Item.Props>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <ComboboxPrimitive.Item
@@ -577,8 +576,8 @@ export function ComboboxSeparator({
   className,
   ...restProps
 }: StyleComponentProps<ComboboxPrimitive.Separator.Props>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <ComboboxPrimitive.Separator
@@ -595,8 +594,8 @@ export function ComboboxGroup({
   className,
   ...restProps
 }: StyleComponentProps<ComboboxPrimitive.Group.Props>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <ComboboxPrimitive.Group
@@ -610,8 +609,8 @@ export function ComboboxGroupLabel({
   className,
   ...restProps
 }: StyleComponentProps<ComboboxPrimitive.GroupLabel.Props>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <ComboboxPrimitive.GroupLabel
@@ -628,8 +627,8 @@ export function ComboboxEmpty({
   className,
   ...restProps
 }: StyleComponentProps<ComboboxPrimitive.Empty.Props>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <ComboboxPrimitive.Empty
@@ -643,8 +642,8 @@ export function ComboboxRow({
   className,
   ...restProps
 }: StyleComponentProps<ComboboxPrimitive.Row.Props>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <ComboboxPrimitive.Row
@@ -660,8 +659,8 @@ export function ComboboxList({
   className,
   ...restProps
 }: StyleComponentProps<ComboboxPrimitive.List.Props>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <ScrollArea overscrollContain scrollbarGutter scrollFade>
@@ -677,8 +676,8 @@ export function ComboboxClear({
   className,
   ...restProps
 }: StyleComponentProps<ComboboxPrimitive.Clear.Props>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <ComboboxPrimitive.Clear
@@ -692,8 +691,8 @@ export function ComboboxStatus({
   className,
   ...restProps
 }: StyleComponentProps<ComboboxPrimitive.Status.Props>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <ComboboxPrimitive.Status
@@ -717,8 +716,8 @@ export function ComboboxChips({
     startAddon?: React.ReactNode
   }
 >) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   const { chipsRef } = React.useContext(ComboboxContext)
   return (
@@ -752,8 +751,8 @@ export function ComboboxChip({
     removeProps?: ComboboxPrimitive.ChipRemove.Props
   }
 >) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <ComboboxPrimitive.Chip
@@ -770,8 +769,8 @@ export function ComboboxChipRemove({
   xstyle: consumerXstyle,
   ...restProps
 }: StyleComponentProps<ComboboxPrimitive.ChipRemove.Props>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <ComboboxPrimitive.ChipRemove

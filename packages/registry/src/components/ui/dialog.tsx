@@ -1,13 +1,12 @@
 "use client"
 
-import type { StyleComponentProps } from "@registry/lib/style-props"
+import type { StyleComponentProps, StyleProps } from "@registry/lib/style-props"
 
 import { Dialog as DialogPrimitive } from "@base-ui/react/dialog"
 import { mergeProps } from "@base-ui/react/merge-props"
 import { useRender } from "@base-ui/react/use-render"
 import { Button } from "@registry/components/ui/button"
 import { ScrollArea } from "@registry/components/ui/scroll-area"
-import { splitStyleProps } from "@registry/lib/style-props"
 import { mergeStyleProps, stylexProps } from "@registry/lib/stylex"
 import { themeMarker, tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
@@ -183,8 +182,8 @@ export function DialogTrigger({
   className,
   ...restProps
 }: StyleComponentProps<DialogPrimitive.Trigger.Props>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <DialogPrimitive.Trigger
@@ -198,8 +197,8 @@ export function DialogClose({
   className,
   ...restProps
 }: StyleComponentProps<DialogPrimitive.Close.Props>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <DialogPrimitive.Close
@@ -213,8 +212,8 @@ export function DialogBackdrop({
   className,
   ...restProps
 }: StyleComponentProps<DialogPrimitive.Backdrop.Props>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <DialogPrimitive.Backdrop
@@ -231,8 +230,8 @@ export function DialogViewport({
   className,
   ...restProps
 }: StyleComponentProps<DialogPrimitive.Viewport.Props>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <DialogPrimitive.Viewport
@@ -263,8 +262,8 @@ export function DialogPopup({
     portalProps?: DialogPrimitive.Portal.Props
   }
 >) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <DialogPortal {...portalProps}>
@@ -311,8 +310,8 @@ export function DialogHeader({
   render,
   ...restProps
 }: StyleComponentProps<useRender.ComponentProps<"div">>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   const defaultProps = {
     ...stylexProps(className, styles.header, xstyle),
@@ -337,8 +336,8 @@ export function DialogFooter({
     variant?: "default" | "bare"
   }
 >) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   const defaultProps = {
     ...stylexProps(
@@ -362,8 +361,8 @@ export function DialogTitle({
   className,
   ...restProps
 }: StyleComponentProps<DialogPrimitive.Title.Props>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <DialogPrimitive.Title
@@ -377,8 +376,8 @@ export function DialogDescription({
   className,
   ...restProps
 }: StyleComponentProps<DialogPrimitive.Description.Props>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <DialogPrimitive.Description
@@ -401,8 +400,8 @@ export function DialogPanel({
   useRender.ComponentProps<"div">,
   { scrollFade?: boolean }
 >) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   const defaultProps = {
     ...stylexProps(className, styles.panel, xstyle),

@@ -1,9 +1,8 @@
 "use client"
 
-import type { StyleComponentProps } from "@registry/lib/style-props"
+import type { StyleComponentProps, StyleProps } from "@registry/lib/style-props"
 
 import { Slider as SliderPrimitive } from "@base-ui/react/slider"
-import { splitStyleProps } from "@registry/lib/style-props"
 import { mergeStyleProps, stylexProps } from "@registry/lib/stylex"
 import { themeMarker, tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
@@ -133,8 +132,8 @@ export function Slider({
   max = 100,
   ...restProps
 }: StyleComponentProps<SliderPrimitive.Root.Props>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   const values = React.useMemo(() => {
     if (value !== undefined) return Array.isArray(value) ? value : [value]
@@ -186,8 +185,8 @@ export function SliderValue({
   className,
   ...restProps
 }: StyleComponentProps<SliderPrimitive.Value.Props>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <SliderPrimitive.Value

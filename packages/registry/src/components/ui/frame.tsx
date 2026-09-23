@@ -1,7 +1,6 @@
-import type { StyleComponentProps } from "@registry/lib/style-props"
+import type { StyleComponentProps, StyleProps } from "@registry/lib/style-props"
 import type * as React from "react"
 
-import { splitStyleProps } from "@registry/lib/style-props"
 import { mergeStyleProps, stylexProps } from "@registry/lib/stylex"
 import { themeMarker, tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
@@ -61,8 +60,8 @@ export function Frame({
   className,
   ...restProps
 }: StyleComponentProps<React.ComponentProps<"div">>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <div
@@ -76,8 +75,8 @@ export function FramePanel({
   className,
   ...restProps
 }: StyleComponentProps<React.ComponentProps<"div">>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <div
@@ -91,8 +90,8 @@ export function FrameHeader({
   className,
   ...restProps
 }: StyleComponentProps<React.ComponentProps<"header">>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <header
@@ -106,8 +105,8 @@ export function FrameTitle({
   className,
   ...restProps
 }: StyleComponentProps<React.ComponentProps<"div">>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <div
@@ -121,8 +120,8 @@ export function FrameDescription({
   className,
   ...restProps
 }: StyleComponentProps<React.ComponentProps<"div">>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <div
@@ -139,8 +138,8 @@ export function FrameFooter({
   className,
   ...restProps
 }: StyleComponentProps<React.ComponentProps<"footer">>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <footer

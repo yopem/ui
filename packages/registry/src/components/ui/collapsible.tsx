@@ -1,9 +1,8 @@
 "use client"
 
-import type { StyleComponentProps } from "@registry/lib/style-props"
+import type { StyleComponentProps, StyleProps } from "@registry/lib/style-props"
 
 import { Collapsible as CollapsiblePrimitive } from "@base-ui/react/collapsible"
-import { splitStyleProps } from "@registry/lib/style-props"
 import { mergeStyleProps, stylexProps } from "@registry/lib/stylex"
 import * as stylex from "@stylexjs/stylex"
 
@@ -23,8 +22,8 @@ export function Collapsible({
   className,
   ...restProps
 }: StyleComponentProps<CollapsiblePrimitive.Root.Props>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <CollapsiblePrimitive.Root
@@ -39,8 +38,8 @@ export function CollapsibleTrigger({
   className,
   ...restProps
 }: StyleComponentProps<CollapsiblePrimitive.Trigger.Props>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <CollapsiblePrimitive.Trigger
@@ -55,8 +54,8 @@ export function CollapsiblePanel({
   className,
   ...restProps
 }: StyleComponentProps<CollapsiblePrimitive.Panel.Props>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <CollapsiblePrimitive.Panel

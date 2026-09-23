@@ -1,10 +1,9 @@
 "use client"
 
-import type { StyleComponentProps } from "@registry/lib/style-props"
+import type { StyleComponentProps, StyleProps } from "@registry/lib/style-props"
 import type * as React from "react"
 
 import { DayPicker } from "@daypicker/react"
-import { splitStyleProps } from "@registry/lib/style-props"
 import { mergeStyleProps, stylexProps } from "@registry/lib/stylex"
 import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
@@ -208,8 +207,11 @@ export function Calendar({
   mode = "single",
   ...restProps
 }: StyleComponentProps<React.ComponentProps<typeof DayPicker>>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props = restProps as Omit<
+    React.ComponentProps<typeof DayPicker>,
+    keyof StyleProps
+  >
+  const xstyle = consumerXstyle
 
   const defaultClassNames = {
     button_next: buttonClassNames,

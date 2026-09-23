@@ -2,13 +2,12 @@
 
 // oxlint-disable jsx-a11y/prefer-tag-over-role -- Button group uses div+role=group for styling; fieldset not appropriate
 
-import type { StyleComponentProps } from "@registry/lib/style-props"
+import type { StyleComponentProps, StyleProps } from "@registry/lib/style-props"
 import type * as React from "react"
 
 import { mergeProps } from "@base-ui/react/merge-props"
 import { useRender } from "@base-ui/react/use-render"
 import { Separator } from "@registry/components/ui/separator"
-import { splitStyleProps } from "@registry/lib/style-props"
 import { mergeStyleProps, stylexProps } from "@registry/lib/stylex"
 import { themeMarker, tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
@@ -356,8 +355,8 @@ export function Group({
     children: React.ReactNode
   }
 >) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <div
@@ -385,8 +384,8 @@ export function GroupText({
   render,
   ...restProps
 }: StyleComponentProps<useRender.ComponentProps<"div">>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   const defaultProps = {
     ...stylexProps(className, styles.text, groupItemStyles.item, xstyle),
@@ -405,8 +404,8 @@ export function GroupSeparator({
   orientation = "vertical",
   ...restProps
 }: StyleComponentProps<React.ComponentProps<typeof Separator>>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <Separator

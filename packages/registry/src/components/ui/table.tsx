@@ -1,11 +1,10 @@
 "use client"
 
-import type { StyleComponentProps } from "@registry/lib/style-props"
+import type { StyleComponentProps, StyleProps } from "@registry/lib/style-props"
 import type React from "react"
 
 import { mergeProps } from "@base-ui/react/merge-props"
 import { useRender } from "@base-ui/react/use-render"
-import { splitStyleProps } from "@registry/lib/style-props"
 import { mergeStyleProps, stylexProps } from "@registry/lib/stylex"
 import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
@@ -151,8 +150,8 @@ export function Table({
   render,
   ...restProps
 }: StyleComponentProps<TableProps>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   const defaultProps = {
     children: (
@@ -180,8 +179,8 @@ export function TableHeader({
   className,
   ...restProps
 }: StyleComponentProps<React.ComponentProps<"thead">>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <thead
@@ -195,8 +194,8 @@ export function TableBody({
   className,
   ...restProps
 }: StyleComponentProps<React.ComponentProps<"tbody">>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <tbody
@@ -210,8 +209,8 @@ export function TableFooter({
   className,
   ...restProps
 }: StyleComponentProps<React.ComponentProps<"tfoot">>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <tfoot
@@ -225,8 +224,8 @@ export function TableRow({
   className,
   ...restProps
 }: StyleComponentProps<React.ComponentProps<"tr">>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <tr
@@ -240,8 +239,8 @@ export function TableHead({
   className,
   ...restProps
 }: StyleComponentProps<React.ComponentProps<"th">>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <th
@@ -255,8 +254,8 @@ export function TableCell({
   className,
   ...restProps
 }: StyleComponentProps<React.ComponentProps<"td">>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <td
@@ -270,8 +269,8 @@ export function TableCaption({
   className,
   ...restProps
 }: StyleComponentProps<React.ComponentProps<"caption">>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <caption

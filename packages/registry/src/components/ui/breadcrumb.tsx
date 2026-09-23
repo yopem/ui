@@ -1,11 +1,10 @@
 "use client"
 
-import type { StyleComponentProps } from "@registry/lib/style-props"
+import type { StyleComponentProps, StyleProps } from "@registry/lib/style-props"
 import type * as React from "react"
 
 import { mergeProps } from "@base-ui/react/merge-props"
 import { useRender } from "@base-ui/react/use-render"
-import { splitStyleProps } from "@registry/lib/style-props"
 import { mergeStyleProps, stylexProps } from "@registry/lib/stylex"
 import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
@@ -46,8 +45,8 @@ export function Breadcrumb({
   className,
   ...restProps
 }: StyleComponentProps<React.ComponentProps<"nav">>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <nav
@@ -67,8 +66,8 @@ export function BreadcrumbList({
   React.ComponentProps<"ol">,
   Pick<React.ComponentProps<"ol">, "start">
 >) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <ol
@@ -84,8 +83,8 @@ export function BreadcrumbItem({
   className,
   ...restProps
 }: StyleComponentProps<React.ComponentProps<"li">>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <li
@@ -101,8 +100,8 @@ export function BreadcrumbLink({
   render,
   ...restProps
 }: StyleComponentProps<useRender.ComponentProps<"a">>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   const defaultProps = {
     ...stylexProps(className, styles.link, xstyle),
@@ -120,8 +119,8 @@ export function BreadcrumbPage({
   className,
   ...restProps
 }: StyleComponentProps<React.ComponentProps<"span">>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <span
@@ -139,8 +138,8 @@ export function BreadcrumbSeparator({
   className,
   ...restProps
 }: StyleComponentProps<React.ComponentProps<"li">>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <li
@@ -163,8 +162,8 @@ export function BreadcrumbEllipsis({
   className,
   ...restProps
 }: StyleComponentProps<React.ComponentProps<"span">>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <span

@@ -1,7 +1,6 @@
 import type { StyleComponentProps } from "@registry/lib/style-props"
 import type * as React from "react"
 
-import { splitStyleProps } from "@registry/lib/style-props"
 import { mergeStyleProps, stylexProps } from "@registry/lib/stylex"
 import { createElement } from "react"
 
@@ -61,14 +60,13 @@ export function Box<Tag extends BoxElement = "div">({
   ...restProps
 }: BoxProps<Tag>) {
   const native = extractNativeProps(as, restProps)
-  const { domProps, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const xstyle = consumerXstyle
   const Component: React.ElementType = as ?? "div"
   return createElement(
     Component,
     mergeStyleProps(
       { ...stylexProps(className, xstyle), "data-slot": "box" },
-      { ...domProps, ...native },
+      { ...restProps, ...native },
     ),
   )
 }

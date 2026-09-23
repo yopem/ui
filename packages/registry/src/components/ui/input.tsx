@@ -1,11 +1,10 @@
 "use client"
 
-import type { StyleComponentProps } from "@registry/lib/style-props"
+import type { StyleComponentProps, StyleProps } from "@registry/lib/style-props"
 import type { StyleXProps } from "@registry/lib/stylex"
 import type * as React from "react"
 
 import { Input as InputPrimitive } from "@base-ui/react/input"
-import { splitStyleProps } from "@registry/lib/style-props"
 import { stylexProps } from "@registry/lib/stylex"
 import { themeMarker, tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
@@ -225,8 +224,8 @@ export function Input({
   style,
   ...restProps
 }: InputProps) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   const sizeStyle = getInputSizeStyle(size)
   const inputProps = stylexProps(

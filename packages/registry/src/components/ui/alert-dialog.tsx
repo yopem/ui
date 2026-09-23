@@ -1,10 +1,9 @@
 "use client"
 
-import type { StyleComponentProps } from "@registry/lib/style-props"
+import type { StyleComponentProps, StyleProps } from "@registry/lib/style-props"
 import type React from "react"
 
 import { AlertDialog as AlertDialogPrimitive } from "@base-ui/react/alert-dialog"
-import { splitStyleProps } from "@registry/lib/style-props"
 import { mergeStyleProps, stylexProps } from "@registry/lib/stylex"
 import { themeMarker, tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
@@ -144,8 +143,8 @@ export function AlertDialogTrigger({
   className,
   ...restProps
 }: StyleComponentProps<AlertDialogPrimitive.Trigger.Props>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <AlertDialogPrimitive.Trigger
@@ -160,8 +159,8 @@ export function AlertDialogBackdrop({
   className,
   ...restProps
 }: StyleComponentProps<AlertDialogPrimitive.Backdrop.Props>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <AlertDialogPrimitive.Backdrop
@@ -179,8 +178,8 @@ export function AlertDialogViewport({
   className,
   ...restProps
 }: StyleComponentProps<AlertDialogPrimitive.Viewport.Props>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <AlertDialogPrimitive.Viewport
@@ -206,8 +205,8 @@ export function AlertDialogPopup({
     portalProps?: AlertDialogPrimitive.Portal.Props
   }
 >) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <AlertDialogPortal {...portalProps}>
@@ -240,8 +239,8 @@ export function AlertDialogHeader({
   className,
   ...restProps
 }: StyleComponentProps<React.ComponentProps<"div">>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <div
@@ -262,8 +261,8 @@ export function AlertDialogFooter({
     variant?: "default" | "bare"
   }
 >) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <div
@@ -286,8 +285,8 @@ export function AlertDialogTitle({
   className,
   ...restProps
 }: StyleComponentProps<AlertDialogPrimitive.Title.Props>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <AlertDialogPrimitive.Title
@@ -302,8 +301,8 @@ export function AlertDialogDescription({
   className,
   ...restProps
 }: StyleComponentProps<AlertDialogPrimitive.Description.Props>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <AlertDialogPrimitive.Description
@@ -321,8 +320,8 @@ export function AlertDialogClose({
   className,
   ...restProps
 }: StyleComponentProps<AlertDialogPrimitive.Close.Props>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <AlertDialogPrimitive.Close

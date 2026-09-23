@@ -1,12 +1,11 @@
 "use client"
 
-import type { StyleComponentProps } from "@registry/lib/style-props"
+import type { StyleComponentProps, StyleProps } from "@registry/lib/style-props"
 import type { StyleXProps } from "@registry/lib/stylex"
 import type React from "react"
 
 import { Toast } from "@base-ui/react/toast"
 import { buttonVariants } from "@registry/components/ui/button"
-import { splitStyleProps } from "@registry/lib/style-props"
 import { mergeStyleProps } from "@registry/lib/stylex"
 import { themeMarker, tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
@@ -371,8 +370,8 @@ function Toasts({
           const toastData = toast.data as ToastData | undefined
           const { xstyle: rootXstyle, ...rootRestProps } =
             toastData?.rootProps ?? {}
-          const { domProps: rootProps, xstyle: rootStyleProps } =
-            splitStyleProps(rootRestProps)
+          const rootProps: Omit<typeof rootRestProps, keyof StyleProps> =
+            rootRestProps
           return (
             <Toast.Root
               key={toast.id}
@@ -381,7 +380,6 @@ function Toasts({
                   styles.root,
                   styles.expanded,
                   getReplayStyle(toast),
-                  rootStyleProps,
                   xstyle,
                   rootXstyle,
                 ),
@@ -418,8 +416,8 @@ function AnchoredToasts({
           const toastData = toast.data as ToastData | undefined
           const { xstyle: rootXstyle, ...rootRestProps } =
             toastData?.rootProps ?? {}
-          const { domProps: rootProps, xstyle: rootStyleProps } =
-            splitStyleProps(rootRestProps)
+          const rootProps: Omit<typeof rootRestProps, keyof StyleProps> =
+            rootRestProps
           const positionerProps = toast.positionerProps
           if (!positionerProps?.anchor) return null
           const tooltipStyle = toastData?.tooltipStyle ?? false
@@ -439,7 +437,6 @@ function AnchoredToasts({
                       ? styles.anchoredTooltip
                       : styles.anchoredDefault,
                     getReplayStyle(toast),
-                    rootStyleProps,
                     xstyle,
                     rootXstyle,
                   ),
@@ -490,8 +487,8 @@ export function ToastProvider({
   portalProps,
   ...restProps
 }: ToastProviderProps) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <Toast.Provider toastManager={toastManager} {...props}>
@@ -512,8 +509,8 @@ export function AnchoredToastProvider({
   portalProps,
   ...restProps
 }: AnchoredToastProviderProps) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <Toast.Provider toastManager={anchoredToastManager} {...props}>

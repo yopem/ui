@@ -1,6 +1,6 @@
 "use client"
 
-import type { StyleComponentProps } from "@registry/lib/style-props"
+import type { StyleComponentProps, StyleProps } from "@registry/lib/style-props"
 import type * as React from "react"
 
 import { Dialog as CommandDialogPrimitive } from "@base-ui/react/dialog"
@@ -15,7 +15,6 @@ import {
   AutocompleteList,
   AutocompleteSeparator,
 } from "@registry/components/ui/autocomplete"
-import { splitStyleProps } from "@registry/lib/style-props"
 import { mergeStyleProps, stylexProps } from "@registry/lib/stylex"
 import { themeMarker, tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
@@ -162,8 +161,8 @@ export function CommandDialogTrigger({
   className,
   ...restProps
 }: StyleComponentProps<CommandDialogPrimitive.Trigger.Props>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <CommandDialogPrimitive.Trigger
@@ -177,8 +176,8 @@ export function CommandDialogBackdrop({
   className,
   ...restProps
 }: StyleComponentProps<CommandDialogPrimitive.Backdrop.Props>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <CommandDialogPrimitive.Backdrop
@@ -195,8 +194,8 @@ export function CommandDialogViewport({
   className,
   ...restProps
 }: StyleComponentProps<CommandDialogPrimitive.Viewport.Props>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <CommandDialogPrimitive.Viewport
@@ -220,8 +219,8 @@ export function CommandDialogPopup({
     portalProps?: CommandDialogPrimitive.Portal.Props
   }
 >) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <CommandDialogPortal {...portalProps}>
@@ -261,8 +260,8 @@ export function CommandInput({
   placeholder,
   ...restProps
 }: StyleComponentProps<React.ComponentProps<typeof AutocompleteInput>>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <div {...stylex.props(styles.inputWrap)}>
@@ -284,8 +283,8 @@ export function CommandList({
   className,
   ...restProps
 }: StyleComponentProps<React.ComponentProps<typeof AutocompleteList>>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <AutocompleteList
@@ -301,8 +300,8 @@ export function CommandEmpty({
   className,
   ...restProps
 }: StyleComponentProps<React.ComponentProps<typeof AutocompleteEmpty>>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <AutocompleteEmpty
@@ -318,8 +317,8 @@ export function CommandPanel({
   className,
   ...restProps
 }: StyleComponentProps<React.ComponentProps<"div">>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <div
@@ -333,8 +332,8 @@ export function CommandGroup({
   className,
   ...restProps
 }: StyleComponentProps<React.ComponentProps<typeof AutocompleteGroup>>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <AutocompleteGroup
@@ -350,8 +349,8 @@ export function CommandGroupLabel({
   className,
   ...restProps
 }: StyleComponentProps<React.ComponentProps<typeof AutocompleteGroupLabel>>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <AutocompleteGroupLabel
@@ -368,8 +367,8 @@ export function CommandItem({
   className,
   ...restProps
 }: StyleComponentProps<React.ComponentProps<typeof AutocompleteItem>>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <AutocompleteItem
@@ -385,8 +384,8 @@ export function CommandSeparator({
   className,
   ...restProps
 }: StyleComponentProps<React.ComponentProps<typeof AutocompleteSeparator>>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <AutocompleteSeparator
@@ -402,8 +401,8 @@ export function CommandShortcut({
   className,
   ...restProps
 }: StyleComponentProps<React.ComponentProps<"kbd">>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <kbd
@@ -420,8 +419,8 @@ export function CommandFooter({
   className,
   ...restProps
 }: StyleComponentProps<React.ComponentProps<"div">>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <div

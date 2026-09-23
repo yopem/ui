@@ -1,10 +1,9 @@
 "use client"
 
-import type { StyleComponentProps } from "@registry/lib/style-props"
+import type { StyleComponentProps, StyleProps } from "@registry/lib/style-props"
 import type { ComponentProps } from "react"
 
 import { Field as FieldPrimitive } from "@base-ui/react/field"
-import { splitStyleProps } from "@registry/lib/style-props"
 import { mergeStyleProps, stylexProps } from "@registry/lib/stylex"
 import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
@@ -45,8 +44,8 @@ export function Field({
   className,
   ...restProps
 }: StyleComponentProps<FieldPrimitive.Root.Props>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <FieldPrimitive.Root
@@ -60,8 +59,8 @@ export function FieldLabel({
   className,
   ...restProps
 }: StyleComponentProps<FieldPrimitive.Label.Props>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <FieldPrimitive.Label
@@ -75,8 +74,8 @@ export function FieldItem({
   className,
   ...restProps
 }: StyleComponentProps<FieldPrimitive.Item.Props>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <FieldPrimitive.Item
@@ -90,8 +89,8 @@ export function FieldDescription({
   className,
   ...restProps
 }: StyleComponentProps<FieldPrimitive.Description.Props>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <FieldPrimitive.Description
@@ -108,8 +107,8 @@ export function FieldError({
   className,
   ...restProps
 }: StyleComponentProps<FieldPrimitive.Error.Props>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <FieldPrimitive.Error
@@ -124,8 +123,8 @@ export function FieldControl({
   className,
   ...restProps
 }: StyleComponentProps<ComponentProps<typeof FieldPrimitive.Control>>) {
-  const { domProps: props, xstyle: styleProps } = splitStyleProps(restProps)
-  const xstyle = [styleProps, consumerXstyle]
+  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const xstyle = consumerXstyle
 
   return (
     <FieldPrimitive.Control
