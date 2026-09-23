@@ -51,6 +51,8 @@ test("base delivers compiler without runtime style-props CSS tables", () => {
       "StyleComponentProps",
       "Condition",
       "breakpoints",
+      "default",
+      "styleProps",
     ]),
   )
 })

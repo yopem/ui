@@ -22,6 +22,8 @@ export const foundationItems: SourceItem[] = [
         "rootStyles",
         "stylexProps",
         "mergeStyleProps",
+        "default",
+        "styleProps",
         "StyleXStyle",
         "StyleXProps",
         "StyleProps",

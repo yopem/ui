@@ -13,7 +13,7 @@ test("base notes distinguish spacing tokens, cascade order, and css limits", () 
     "do not accept arbitrary selectors, raw at-rules, keyframes",
     "css={styles.custom}",
     "StyleX --spacing theme token",
-    "before the StyleX Babel plugin",
+    "Babel plugin before StyleX",
     "dynamic style values are build errors",
     "JSX spreads are not a supported way to pass style props",
     "runtime style prop objects are unsupported",

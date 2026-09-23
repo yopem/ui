@@ -4,6 +4,7 @@ import generated from "@registry/docs.generated.json"
 import { sourceItems } from "@registry/items/index"
 import {
   rewriteImports,
+  sourceFilePath,
   sourceImportReplacements,
 } from "@registry/source-files"
 import { expect, test } from "bun:test"
@@ -170,7 +171,7 @@ test("metadata export lists and copyable source aliases agree with documentation
         .sort(),
     )
     for (const file of item.files) {
-      const source = readFileSync(resolve(root, "../..", file.path), "utf8")
+      const source = readFileSync(sourceFilePath(file.path), "utf8")
       const rewritten = rewriteImports(source)
       expect(rewritten).not.toContain("@registry/")
       expect(file.target).toBeTruthy()
