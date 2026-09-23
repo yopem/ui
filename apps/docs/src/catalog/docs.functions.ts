@@ -98,6 +98,7 @@ export const getDocumentation = createServerFn({ method: "GET" })
       peerDependencies: [
         ...new Set(allItems.flatMap((item) => item.peerDependencies)),
       ].sort(),
+      installNames: items.map((item) => item.name),
       requiredItems: allItems.map((item) => ({
         name: item.name,
         title: item.title,

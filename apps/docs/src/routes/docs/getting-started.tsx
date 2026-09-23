@@ -61,8 +61,8 @@ function GettingStarted() {
             </Box>
           </Box>
           <Paragraph {...stylex.props(docsStyles.p)}>
-            Yopem has no runtime package. You configure StyleX once, then copy
-            component source into your project.
+            Yopem has no runtime package. Configure StyleX once, then add
+            component source with the CLI or copy it manually.
           </Paragraph>
 
           <Heading as="h2" {...stylex.props(docsStyles.h2)} id="setup">
@@ -95,7 +95,8 @@ function GettingStarted() {
             >
               Button documentation
             </Link>
-            . Under Installation:
+            . Use the CLI tab to install Button and shared files, or use the
+            Manual tab:
           </Paragraph>
           <Box as="ol" {...stylex.props(docsStyles.ol)}>
             <Box as="li" {...stylex.props(docsStyles.li)}>

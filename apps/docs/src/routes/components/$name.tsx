@@ -19,6 +19,7 @@ import { Box } from "@/components/ui/stylex/box"
 import { Grid } from "@/components/ui/stylex/grid"
 import { Heading } from "@/components/ui/stylex/heading"
 import { Paragraph } from "@/components/ui/stylex/paragraph"
+import { Tabs, TabsList, TabsPanel, TabsTab } from "@/components/ui/stylex/tabs"
 import { createSeo } from "@/lib/seo"
 export const Route = createFileRoute("/components/$name")({
   loader: ({ params }) => {
@@ -72,51 +73,90 @@ function ComponentPage() {
             <Link {...stylex.props(docsStyles.link)} to="/docs/installation">
               StyleX setup
             </Link>{" "}
-            first. Copy each required file to its destination below. Shared
-            files only need to be copied once. Keep the{" "}
-            <Box as="code" {...stylex.props(docsStyles.inlineCode)}>
-              @/*
-            </Box>{" "}
-            alias pointing to{" "}
-            <Box as="code" {...stylex.props(docsStyles.inlineCode)}>
-              src/*
-            </Box>
-            .
+            first. The CLI copies source and installs component dependencies;
+            framework configuration still follows the setup guide.
           </Paragraph>
-          <Heading as="h3" {...stylex.props(docsStyles.h3)}>
-            Dependencies
-          </Heading>
-          <CopyableCode
-            code={`npm install ${data.dependencies.join(" ")}`}
-            title="Install dependencies"
-          />
-          {data.devDependencies.length ? (
-            <CopyableCode
-              code={`npm install --save-dev ${data.devDependencies.join(" ")}`}
-              title="Install development dependencies"
-            />
-          ) : null}
-          <Heading as="h4" {...stylex.props(docsStyles.h4)}>
-            Peer dependencies
-          </Heading>
-          <Box as="ul" {...stylex.props(docsStyles.ul)}>
-            {data.peerDependencies.map((dependency) => (
-              <Box as="li" {...stylex.props(docsStyles.li)} key={dependency}>
+          <Tabs defaultValue="cli">
+            <TabsList aria-label="Installation method">
+              <TabsTab value="cli">CLI</TabsTab>
+              <TabsTab value="manual">Manual</TabsTab>
+            </TabsList>
+            <TabsPanel value="cli">
+              <CopyableCode
+                code={data.installNames
+                  .map((installName) => `bunx @yopem-ui/cli add ${installName}`)
+                  .join("\n")}
+                title={`Install ${item.title} with CLI`}
+              />
+              <Paragraph {...stylex.props(docsStyles.p)}>
+                Run from your project root. The CLI installs required
+                components, shared files, and packages. Examples may need
+                additional components. Existing files are preserved. To refresh
+                installed source, use update; locally edited files need an
+                explicit --force to overwrite.
+              </Paragraph>
+              <CopyableCode
+                code={data.installNames
+                  .map(
+                    (installName) => `bunx @yopem-ui/cli update ${installName}`,
+                  )
+                  .join("\n")}
+                title={`Update ${item.title} with CLI`}
+              />
+            </TabsPanel>
+            <TabsPanel value="manual">
+              <Paragraph {...stylex.props(docsStyles.p)}>
+                Copy each required file to its destination below. Shared files
+                only need to be copied once. Keep the{" "}
                 <Box as="code" {...stylex.props(docsStyles.inlineCode)}>
-                  {dependency}
+                  @/*
+                </Box>{" "}
+                alias pointing to{" "}
+                <Box as="code" {...stylex.props(docsStyles.inlineCode)}>
+                  src/*
                 </Box>
+                .
+              </Paragraph>
+              <Heading as="h3" {...stylex.props(docsStyles.h3)}>
+                Dependencies
+              </Heading>
+              <CopyableCode
+                code={`npm install ${data.dependencies.join(" ")}`}
+                title="Install dependencies"
+              />
+              {data.devDependencies.length ? (
+                <CopyableCode
+                  code={`npm install --save-dev ${data.devDependencies.join(" ")}`}
+                  title="Install development dependencies"
+                />
+              ) : null}
+              <Heading as="h4" {...stylex.props(docsStyles.h4)}>
+                Peer dependencies
+              </Heading>
+              <Box as="ul" {...stylex.props(docsStyles.ul)}>
+                {data.peerDependencies.map((dependency) => (
+                  <Box
+                    as="li"
+                    {...stylex.props(docsStyles.li)}
+                    key={dependency}
+                  >
+                    <Box as="code" {...stylex.props(docsStyles.inlineCode)}>
+                      {dependency}
+                    </Box>
+                  </Box>
+                ))}
               </Box>
-            ))}
-          </Box>
-          <Paragraph {...stylex.props(docsStyles.p)}>
-            Included components and shared files:{" "}
-            {data.requiredItems.map((entry) => entry.title).join(", ")}.
-          </Paragraph>
-          <Box {...stylex.props(docsStyles.section)}>
-            {data.files.map((file) => (
-              <SourceFile file={file} key={`${name}:${file.path}`} />
-            ))}
-          </Box>
+              <Paragraph {...stylex.props(docsStyles.p)}>
+                Included components and shared files:{" "}
+                {data.requiredItems.map((entry) => entry.title).join(", ")}.
+              </Paragraph>
+              <Box {...stylex.props(docsStyles.section)}>
+                {data.files.map((file) => (
+                  <SourceFile file={file} key={`${name}:${file.path}`} />
+                ))}
+              </Box>
+            </TabsPanel>
+          </Tabs>
           <Heading as="h2" {...stylex.props(docsStyles.h2)} id="examples">
             Examples
           </Heading>

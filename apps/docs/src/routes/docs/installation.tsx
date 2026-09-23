@@ -16,6 +16,7 @@ import { Grid } from "@/components/ui/stylex/grid"
 import { Heading } from "@/components/ui/stylex/heading"
 import { Link as UiLink } from "@/components/ui/stylex/link"
 import { Paragraph } from "@/components/ui/stylex/paragraph"
+import { Tabs, TabsList, TabsPanel, TabsTab } from "@/components/ui/stylex/tabs"
 import { createSeo } from "@/lib/seo"
 export const Route = createFileRoute("/docs/installation")({
   loader: () => getDocumentation({ data: "base" }),
@@ -258,9 +259,9 @@ function Installation() {
             1. Install packages
           </Heading>
           <Paragraph {...stylex.props(docsStyles.p)}>
-            Start with a React and TypeScript project. Install shared runtime
-            packages once. Each component page gives one npm command for its
-            extra dependencies.
+            Start with a React and TypeScript project. For manual setup, install
+            shared runtime packages once. The CLI in step 3 installs them for
+            you. Each component page lists its extra dependencies.
           </Paragraph>
           <CopyableCode
             code={dependencies}
@@ -283,22 +284,46 @@ function Installation() {
           <Heading as="h2" {...stylex.props(docsStyles.h2)} id="shared-files">
             3. Copy shared files
           </Heading>
-          <Paragraph {...stylex.props(docsStyles.p)}>
-            Copy these files once. Keep their displayed paths. Component pages
-            include them in required files, so later components need no second
-            copy.
-          </Paragraph>
-          <Box {...stylex.props(docsStyles.section)}>
-            {data.files.map((file) => (
+          <Tabs defaultValue="cli">
+            <TabsList aria-label="Installation method">
+              <TabsTab value="cli">CLI</TabsTab>
+              <TabsTab value="manual">Manual</TabsTab>
+            </TabsList>
+            <TabsPanel value="cli">
+              <Paragraph {...stylex.props(docsStyles.p)}>
+                Run from your project root to copy shared files and install
+                their dependencies. Set up your framework in step 4 either way.
+                The CLI does not rewrite your build configuration.
+              </Paragraph>
               <CopyableCode
-                key={file.path}
-                code={file.content}
-                header={file.target}
-                preview
-                title={file.target}
+                code="bunx @yopem-ui/cli add base"
+                header="Terminal"
+                title="Install shared files with CLI"
               />
-            ))}
-          </Box>
+              <Paragraph {...stylex.props(docsStyles.p)}>
+                To refresh CLI-installed files later, run bunx @yopem-ui/cli
+                update base. Local edits are preserved unless you pass --force.
+              </Paragraph>
+            </TabsPanel>
+            <TabsPanel value="manual">
+              <Paragraph {...stylex.props(docsStyles.p)}>
+                Copy these files once. Keep their displayed paths. Component
+                pages include them in required files, so later components need
+                no second copy.
+              </Paragraph>
+              <Box {...stylex.props(docsStyles.section)}>
+                {data.files.map((file) => (
+                  <CopyableCode
+                    key={file.path}
+                    code={file.content}
+                    header={file.target}
+                    preview
+                    title={file.target}
+                  />
+                ))}
+              </Box>
+            </TabsPanel>
+          </Tabs>
           <Heading as="h2" {...stylex.props(docsStyles.h2)} id="choose">
             4. Configure your framework
           </Heading>

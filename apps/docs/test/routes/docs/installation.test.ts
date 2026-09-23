@@ -20,3 +20,10 @@ test("Vite frameworks compile props before StyleX; only Next uses Babel and Post
   expect(source).toContain('devMode: "css-only"')
   expect(source).not.toContain("virtual:stylex:runtime")
 })
+
+test("installation offers CLI and manual shared-file setup without changing framework steps", () => {
+  expect(source).toContain('code="bunx @yopem-ui/cli add base"')
+  expect(source).toContain('value="manual">Manual</TabsTab>')
+  expect(source).toContain("data.files.map((file) => (")
+  expect(source).toContain('id="choose"')
+})

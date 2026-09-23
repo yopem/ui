@@ -2,6 +2,22 @@
 
 Source-owned React components built with StyleX and Base UI.
 
+## Install source
+
+Configure StyleX for your framework using the
+[installation guide](https://ui.yopem.com/docs/installation). Then add a
+component from your project root:
+
+```sh
+bunx @yopem-ui/cli add button
+bunx @yopem-ui/cli update button
+```
+
+The CLI copies registry source and installs component dependencies. `update`
+preserves locally edited files unless you pass `--force`. The component docs
+also provide a Manual tab to copy source without the CLI. The CLI does not
+configure your framework's StyleX build pipeline.
+
 ## Style props
 
 Base installation includes typed style props, `lib/style-props-unplugin.ts`, and

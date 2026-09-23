@@ -77,9 +77,21 @@ test("minimal setup and StyleX customization are documented", async ({
   page,
 }) => {
   await page.goto("/docs/installation")
+  await expect(page.getByRole("tab", { name: "CLI" })).toBeVisible()
+  await expect(
+    page.getByRole("button", { name: "Copy Install shared files with CLI" }),
+  ).toBeEnabled()
+  await page.getByRole("tab", { name: "CLI" }).focus()
+  await page.keyboard.press("ArrowRight")
+  await expect(page.getByRole("tab", { name: "Manual" })).toBeFocused()
+  await page.keyboard.press("Enter")
+  await expect(page.getByRole("tab", { name: "Manual" })).toHaveAttribute(
+    "aria-selected",
+    "true",
+  )
   await expect(
     page.getByRole("button", { name: /^Copy src\/(styles|lib)\// }),
-  ).toHaveCount(6)
+  ).toHaveCount(7)
   await page.goto("/docs/theming")
   await expect(
     page.getByRole("heading", { name: "Component overrides", exact: true }),
@@ -127,6 +139,17 @@ test("component docs cover setup, source files, and API", async ({ page }) => {
   await expect(
     page.getByRole("button", { name: "Copy Button usage", exact: true }),
   ).toBeEnabled()
+  await expect(page.getByRole("tab", { name: "CLI" })).toHaveAttribute(
+    "aria-selected",
+    "true",
+  )
+  await expect(
+    page.getByRole("button", { name: "Copy Install Button with CLI" }),
+  ).toBeEnabled()
+  await expect(
+    page.getByRole("button", { name: "Copy Update Button with CLI" }),
+  ).toBeEnabled()
+  await page.getByRole("tab", { name: "Manual" }).click()
   const sourceHeader = page
     .getByText("src/components/ui/button.tsx", { exact: true })
     .locator("..")
@@ -143,15 +166,6 @@ test("component docs cover setup, source files, and API", async ({ page }) => {
       exact: true,
     }),
   ).toBeVisible()
-  await expect(
-    page.getByText("npx @yopem-ui/ui", { exact: false }),
-  ).toHaveCount(0)
-  await expect(
-    page.getByRole("button", {
-      name: "Copy src/components/ui/button.tsx",
-      exact: true,
-    }),
-  ).toBeEnabled()
   await page
     .locator("summary")
     .filter({ hasText: "View API reference" })
@@ -209,6 +223,7 @@ test("copy buttons copy source, not installation commands", async ({
   await expect(
     page.getByRole("button", { name: "Copy Button usage", exact: true }),
   ).toBeEnabled()
+  await page.getByRole("tab", { name: "Manual" }).click()
   await page
     .getByRole("button", {
       name: "Copy src/components/ui/button.tsx",
@@ -233,6 +248,7 @@ test("clipboard failures explain manual copying", async ({ page }) => {
   await expect(
     page.getByRole("button", { name: "Copy Button usage", exact: true }),
   ).toBeEnabled()
+  await page.getByRole("tab", { name: "Manual" }).click()
   await page
     .getByRole("button", {
       name: "Copy src/components/ui/button.tsx",
@@ -251,7 +267,7 @@ test("StyleX search opens, finds a component, and navigates", async ({
   await expect(
     page.getByRole("button", { name: "Copy Button usage", exact: true }),
   ).toBeEnabled()
-  await page.getByRole("button", { name: /^Search docs/ }).click()
+  await page.getByRole("button", { name: "Search documentation" }).click()
   const dialog = page.getByRole("dialog", { name: "Search documentation" })
   await expect(dialog).toBeVisible()
   await dialog
@@ -334,6 +350,7 @@ test("desktop table of contents stays fixed and tracks the section", async ({
   page,
 }) => {
   test.skip((page.viewportSize()?.width ?? 0) < 1280, "Desktop navigation only")
+  await page.setViewportSize({ width: 1600, height: 900 })
   await page.goto("/components/accordion")
   const contents = page.getByRole("complementary", { name: "On this page" })
   const examples = contents.getByRole("link", { name: "Examples", exact: true })
@@ -355,7 +372,7 @@ test("search supports keyboard opening, empty results, errors, and focus restora
   await page.route("**/api/search?query=*", (route) =>
     route.fulfill({ contentType: "application/json", body: "[]" }),
   )
-  const trigger = page.getByRole("button", { name: /^Search docs/ })
+  const trigger = page.getByRole("button", { name: "Search documentation" })
   await trigger.press("Control+KeyK")
   const dialog = page.getByRole("dialog", { name: "Search documentation" })
   const input = dialog.getByRole("searchbox", { name: "Search documentation" })

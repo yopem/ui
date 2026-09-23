@@ -15,6 +15,9 @@ test("search indexes dedicated layout, styling, and lint guides", () => {
   expect(
     guidePages.find((page) => page.url === "/docs/style-props")?.content,
   ).toContain("all components")
+  expect(
+    guidePages.find((page) => page.url === "/docs/installation")?.content,
+  ).toContain("CLI and manual")
 })
 
 test("example dependencies distinguish local source from npm packages", () => {

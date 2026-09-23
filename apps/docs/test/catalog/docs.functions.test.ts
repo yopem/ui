@@ -11,6 +11,7 @@ test("documentation loads moved compiler files and rewrites copyable imports", (
   expect(source).toContain('"../../../../packages/compiler/src/*.ts"')
   expect(source).toContain("compilerSources[")
   expect(source).toContain("rewriteImports(await load())")
+  expect(source).toContain("installNames: items.map((item) => item.name)")
   expect(
     rewriteImports(
       'import { scopes } from "@yopem-ui/registry/lib/style-props-config"',

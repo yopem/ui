@@ -20,6 +20,7 @@ test("llms index follows guide and component catalogs", () => {
   expect(llms).toContain(
     "[Pagination](http://localhost:3100/components/pagination.md)",
   )
+  expect(llms).toContain("Install source with the CLI or copy it manually")
 })
 
 test("Markdown pages contain content without interface controls", () => {
