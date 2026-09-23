@@ -51,9 +51,21 @@ export function getRequiredItems(slug: string) {
 export const guidePages = [
   {
     title: "Layout and typography",
-    url: "/docs/primitives",
+    url: "/docs/layout",
     content:
-      "Box Flex Stack HStack VStack Grid Center Link Paragraph Heading as native refs style props responsive css xstyle spacing precedence Oxlint prefer-ui-primitives allowElements",
+      "Box Flex Stack HStack VStack Grid Center Link Paragraph Heading semantic layout native elements refs typography",
+  },
+  {
+    title: "Style props",
+    url: "/docs/style-props",
+    content:
+      "Shared styling for all components including Button Input layout and typography: spacing responsive breakpoints states css xstyle aliases precedence",
+  },
+  {
+    title: "Lint rules",
+    url: "/docs/lint",
+    content:
+      "Oxlint rules enforce-styling-methods no-leaked-dom-style-props no-unsupported-style-props prefer-ui-primitives static-stylex valid-polymorphic-as configuration allowElements exceptions fixes",
   },
   {
     title: "Examples",

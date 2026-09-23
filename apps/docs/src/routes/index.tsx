@@ -166,12 +166,21 @@ function Introduction() {
                 Pick React Router, TanStack Start, Next.js, or Astro.
               </Paragraph>
             </Link>
-            <Link {...stylex.props(docsStyles.card)} to="/docs/primitives">
+            <Link {...stylex.props(docsStyles.card)} to="/docs/layout">
               <Box as="strong" {...stylex.props(docsStyles.strong)}>
                 Build a layout
               </Box>
               <Paragraph {...stylex.props(docsStyles.p, docsStyles.muted)}>
-                Choose layout components and learn style props by example.
+                Choose layout and typography components for your page.
+              </Paragraph>
+            </Link>
+            <Link {...stylex.props(docsStyles.card)} to="/docs/style-props">
+              <Box as="strong" {...stylex.props(docsStyles.strong)}>
+                Style components
+              </Box>
+              <Paragraph {...stylex.props(docsStyles.p, docsStyles.muted)}>
+                Use shared style props on layout, controls, and other
+                components.
               </Paragraph>
             </Link>
             <Link {...stylex.props(docsStyles.card)} to="/docs/theming">

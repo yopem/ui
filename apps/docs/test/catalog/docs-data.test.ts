@@ -1,9 +1,21 @@
 import { sourceItems } from "@registry/items"
 import { expect, test } from "bun:test"
 
-import { compositionItems, getRequiredItems } from "@/catalog/docs-data"
+import {
+  compositionItems,
+  getRequiredItems,
+  guidePages,
+} from "@/catalog/docs-data"
 import { getExampleDependencies } from "@/catalog/example-dependencies"
 import { usageExamples } from "@/catalog/usage"
+
+test("search indexes dedicated layout, styling, and lint guides", () => {
+  for (const path of ["/docs/layout", "/docs/style-props", "/docs/lint"])
+    expect(guidePages.some((page) => page.url === path)).toBe(true)
+  expect(
+    guidePages.find((page) => page.url === "/docs/style-props")?.content,
+  ).toContain("all components")
+})
 
 test("example dependencies distinguish local source from npm packages", () => {
   expect(

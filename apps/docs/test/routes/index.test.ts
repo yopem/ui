@@ -7,6 +7,7 @@ const source = readFileSync(
 )
 
 test("introduction offers a direct path to layout guidance", () => {
-  expect(source).toContain('to="/docs/primitives"')
-  expect(source).toContain("Choose layout components and learn style props")
+  expect(source).toContain('to="/docs/layout"')
+  expect(source).toContain('to="/docs/style-props"')
+  expect(source).toContain("Use shared style props on layout, controls")
 })
