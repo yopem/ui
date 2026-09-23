@@ -1,17 +1,17 @@
 import type { PluginItem, TransformOptions } from "@babel/core"
 
 import { transformSync } from "@babel/core"
-import plugin from "@registry/lib/style-props-babel"
+import plugin from "@yopem-ui/compiler/babel"
 import { describe, expect, test } from "bun:test"
 import { createRequire } from "node:module"
 import { resolve } from "node:path"
 
 const require = createRequire(
-  resolve(import.meta.dirname, "../../../../apps/docs/package.json"),
+  resolve(import.meta.dirname, "../../../apps/docs/package.json"),
 )
 const compilerRequire = createRequire(require.resolve("@stylexjs/unplugin"))
 const stylexPlugin = compilerRequire("@stylexjs/babel-plugin") as PluginItem
-const root = resolve(import.meta.dirname, "../../../..")
+const root = resolve(import.meta.dirname, "../../..")
 
 function compile(source: string) {
   const result = transformSync(source, {
@@ -202,6 +202,15 @@ describe("static style props compiler", () => {
       "const props = { p: 2 }; <Box {...props} />",
     ])
       expect(() => compile(importBox + source)).toThrow()
+  })
+
+  test("compiles workspace-scoped component imports", () => {
+    const result = compile(
+      'import { Box } from "@yopem-ui/registry/components/ui/box"; <Box p={2} />',
+    )
+    expect(result.stylex.map((rule) => rule[1].ltr).join(" ")).toContain(
+      "padding-block:calc(var(--spacing) * 2)",
+    )
   })
 
   test("leaves non-style JSX alone", () => {

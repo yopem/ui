@@ -9,6 +9,7 @@ test("first setup includes style props and optional theme runtime", () => {
   expect(base.files.map((file) => file.path).sort()).toEqual([
     "lib/style-props-babel.ts",
     "lib/style-props-config.ts",
+    "lib/style-props-unplugin.ts",
     "lib/style-props.ts",
     "lib/stylex.ts",
     "styles/styles.css",

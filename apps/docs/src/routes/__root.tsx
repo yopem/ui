@@ -103,6 +103,9 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       <head>
         <ThemeScript />
         <HeadContent />
+        {import.meta.env.DEV ? (
+          <link rel="stylesheet" href="/virtual:stylex.css" />
+        ) : null}
       </head>
       <body>
         <ThemeProvider>

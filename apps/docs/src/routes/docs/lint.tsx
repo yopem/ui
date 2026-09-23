@@ -53,7 +53,7 @@ function LintGuide() {
             Rules
           </Heading>
           <Paragraph xstyle={docsStyles.p}>
-            The @yopem/oxlint-plugin workspace provides six rules. Its
+            The @yopem-ui/oxlint-plugin workspace provides six rules. Its
             recommended configuration enables all of them:
           </Paragraph>
           <Box as="ul" xstyle={docsStyles.ul}>

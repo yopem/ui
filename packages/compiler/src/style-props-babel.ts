@@ -1,17 +1,15 @@
 import type { NodePath, PluginObj, PluginPass } from "@babel/core"
 import type * as BabelTypes from "@babel/types"
 
-import { createRequire } from "node:module"
-import { dirname, resolve } from "node:path"
-import ts from "typescript-api"
-
-// Node loads this build plugin directly from TypeScript in Next.js configs.
 import {
   aliases,
   breakpoints,
   getConditions,
   scopes,
-} from "./style-props-config.ts"
+} from "@yopem-ui/registry/lib/style-props-config"
+import { createRequire } from "node:module"
+import { dirname, resolve } from "node:path"
+import ts from "typescript-api"
 
 const conditions = getConditions()
 const responsiveOrder = ["base", ...Object.keys(breakpoints)]
@@ -401,7 +399,7 @@ export default function stylePropsBabel({
               const declaration = binding.path.parent
               if (declaration.type !== "ImportDeclaration") return
               if (
-                !/^(?:@registry|@yopem\/registry|@)\/components\/ui\/(?:stylex\/)?[a-z][a-z-]*$/.test(
+                !/^(?:@registry|@yopem-ui\/registry|@)\/components\/ui\/(?:stylex\/)?[a-z][a-z-]*$/.test(
                   declaration.source.value,
                 )
               )

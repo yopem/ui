@@ -1,5 +1,5 @@
 {
-  "name": "@yopem/registry",
+  "name": "@yopem-ui/registry",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -7,7 +7,7 @@
     "@registry/*": "./src/*"
   },
   "exports": {
-    "./lib/style-props-babel": "./src/lib/style-props-babel.ts",
+    "./lib/style-props-config": "./src/lib/style-props-config.ts",
     "./*": "./src/*"
   },
   "scripts": {

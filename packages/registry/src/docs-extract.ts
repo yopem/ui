@@ -4,6 +4,7 @@ import { format } from "oxfmt"
 import ts from "typescript-api"
 
 import { sourceItems } from "./items/index"
+import { sourceFilePath } from "./source-files"
 
 const root = dirname(fileURLToPath(import.meta.url))
 
@@ -32,7 +33,7 @@ export function extractDocs() {
   const files = sourceItems.flatMap((item) =>
     item.files
       .filter((file) => /\.tsx?$/.test(file.path))
-      .map((file) => resolve(root, file.path)),
+      .map((file) => sourceFilePath(file.path)),
   )
   const program = ts.createProgram([...new Set(files)], parsed.options)
   const diagnostics = ts.getPreEmitDiagnostics(program)
@@ -444,7 +445,7 @@ export function extractDocs() {
     parts: item.files
       .filter((file) => /\.tsx?$/.test(file.path))
       .flatMap((file) => {
-        const module = program.getSourceFile(resolve(root, file.path))
+        const module = program.getSourceFile(sourceFilePath(file.path))
         const symbol = module && checker.getSymbolAtLocation(module)
         if (!symbol) throw new Error(`Cannot extract ${file.path}`)
         return checker.getExportsOfModule(symbol).flatMap((exported) => {

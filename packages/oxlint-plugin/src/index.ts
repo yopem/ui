@@ -60,7 +60,7 @@ interface StylingOptions {
 const DEFAULT_COMPONENT_SOURCES = [
   "@/components/ui/stylex/",
   "@registry/components/ui/",
-  "@yopem/ui",
+  "@yopem-ui/ui",
 ]
 const DEFAULT_ATOMS_IMPORTS = ["@stylexjs/atoms"]
 export const styleComponentNames =

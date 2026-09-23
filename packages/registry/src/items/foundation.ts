@@ -7,9 +7,9 @@ export const foundationItems: SourceItem[] = [
     description:
       "Native StyleX tokens, themes, reset, and typed component style props for Yopem UI.",
     devDependencies: [
-      "@babel/core@^7.29.7",
       "@types/react@^19.2.18",
       "typescript-api@npm:typescript@6.0.2",
+      "unplugin@^2.3.11",
     ],
     docs: {
       api: [
@@ -70,6 +70,11 @@ export const foundationItems: SourceItem[] = [
       {
         path: "lib/style-props-babel.ts",
         target: "@/lib/style-props-babel.ts",
+        type: "registry:lib",
+      },
+      {
+        path: "lib/style-props-unplugin.ts",
+        target: "@/lib/style-props-unplugin.ts",
         type: "registry:lib",
       },
     ],

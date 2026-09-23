@@ -1,4 +1,5 @@
 import { componentDocs } from "@registry/docs"
+import { rewriteImports } from "@registry/source-files"
 import { createServerFn } from "@tanstack/react-start"
 
 import { getDocumentationItems, getRequiredItems } from "./docs-data"
@@ -12,6 +13,10 @@ const sources = import.meta.glob<string>(
     import: "default",
   },
 )
+const compilerSources = import.meta.glob<string>(
+  "../../../../packages/compiler/src/*.ts",
+  { query: "?raw", import: "default" },
+)
 const exampleSources = import.meta.glob<string>(
   "../components/examples/stylex/*.tsx",
   {
@@ -19,21 +24,6 @@ const exampleSources = import.meta.glob<string>(
     import: "default",
   },
 )
-
-const docsImportReplacements = [
-  ["@registry/components/ui/", "@/components/ui/"],
-  ["@registry/hooks/", "@/hooks/"],
-  ["@registry/lib/", "@/lib/"],
-  ["@registry/styles/", "@/styles/"],
-  ["@registry/theme/", "@/theme/"],
-] as const
-
-function prepareSource(content: string) {
-  return docsImportReplacements.reduce(
-    (source, [from, to]) => source.replaceAll(from, to),
-    content,
-  )
-}
 
 export const getDocumentation = createServerFn({ method: "GET" })
   .validator((slug: string) => {
@@ -114,12 +104,16 @@ export const getDocumentation = createServerFn({ method: "GET" })
       })),
       files: await Promise.all(
         files.map(async (file) => {
-          const load = sources[`../../../../packages/registry/src/${file.path}`]
+          const load =
+            sources[`../../../../packages/registry/src/${file.path}`] ??
+            compilerSources[
+              `../../../../packages/compiler/src/${file.path.slice(4)}`
+            ]
           if (!load) throw new Error(`Missing canonical source: ${file.path}`)
           return {
             path: file.path,
             target: `src/${file.path}`,
-            content: prepareSource(await load()),
+            content: rewriteImports(await load()),
           }
         }),
       ),
