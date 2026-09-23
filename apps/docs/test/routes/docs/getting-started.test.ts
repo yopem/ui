@@ -7,7 +7,8 @@ const source = readFileSync(
 )
 
 test("getting started keeps both component installation paths", () => {
-  expect(source).toContain("component source with the CLI or copy it manually")
+  expect(source).toContain("bunx @yopem-ui/cli init")
+  expect(source).toContain("component source with the CLI or copy it")
   expect(source).toContain("Manual tab:")
   expect(source).toContain('to="/components/$name"')
 })

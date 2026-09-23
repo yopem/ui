@@ -69,12 +69,11 @@ function ComponentPage() {
             Installation
           </Heading>
           <Paragraph {...stylex.props(docsStyles.p)}>
-            Complete the{" "}
+            Initialize StyleX with bunx @yopem-ui/cli init or follow the{" "}
             <Link {...stylex.props(docsStyles.link)} to="/docs/installation">
-              StyleX setup
+              manual setup guide
             </Link>{" "}
-            first. The CLI copies source and installs component dependencies;
-            framework configuration still follows the setup guide.
+            first. The CLI copies source and installs component dependencies.
           </Paragraph>
           <Tabs defaultValue="cli">
             <TabsList aria-label="Installation method">
@@ -82,6 +81,10 @@ function ComponentPage() {
               <TabsTab value="manual">Manual</TabsTab>
             </TabsList>
             <TabsPanel value="cli">
+              <CopyableCode
+                code="bunx @yopem-ui/cli init"
+                title="Initialize StyleX project with CLI"
+              />
               <CopyableCode
                 code={data.installNames
                   .map((installName) => `bunx @yopem-ui/cli add ${installName}`)

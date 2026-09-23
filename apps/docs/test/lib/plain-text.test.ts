@@ -2,6 +2,7 @@ import { expect, test } from "bun:test"
 
 import {
   createComponentIndexText,
+  createComponentText,
   createGuideText,
   createLlms,
 } from "@/lib/plain-text"
@@ -20,7 +21,31 @@ test("llms index follows guide and component catalogs", () => {
   expect(llms).toContain(
     "[Pagination](http://localhost:3100/components/pagination.md)",
   )
-  expect(llms).toContain("Install source with the CLI or copy it manually")
+  expect(llms).toContain("bunx @yopem-ui/cli init")
+  expect(llms).toContain("install source with the CLI or copy it manually")
+})
+
+test("component Markdown includes CLI initialization before add", () => {
+  const markdown = createComponentText("Button", {
+    title: "Button",
+    description: "Button description",
+    usage: "<Button />",
+    examples: [],
+    notes: [],
+    dependencies: [],
+    devDependencies: [],
+    peerDependencies: [],
+    installNames: ["button"],
+    requiredItems: [],
+    files: [],
+    api: [],
+  })
+
+  expect(markdown).toContain("bunx @yopem-ui/cli init")
+  expect(markdown.indexOf("cli init")).toBeLessThan(
+    markdown.indexOf("cli add <component>"),
+  )
+  expect(markdown).toContain("configure StyleX manually")
 })
 
 test("Markdown pages contain content without interface controls", () => {

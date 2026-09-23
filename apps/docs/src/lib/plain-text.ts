@@ -20,7 +20,7 @@ export function createLlms(
 
   return `# Yopem UI
 
-> Source-owned, accessible React components built with StyleX and Base UI. Install source with the CLI or copy it manually; customize it without package lock-in.
+> Source-owned, accessible React components built with StyleX and Base UI. Initialize supported projects with \`bunx @yopem-ui/cli init\`, then install source with the CLI or copy it manually; customize it without package lock-in.
 
 ## Documentation
 
@@ -72,7 +72,7 @@ export function createComponentText(
     })
     .join("\n\n")
 
-  return `# ${title}\n\n${data.description}\n\n## Installation\n\nCLI: \`bunx @yopem-ui/cli add <component>\` (update: \`bunx @yopem-ui/cli update <component>\`). Complete the StyleX framework setup first. Manual installation:\n\n${dependencies.map((dependency) => `- ${dependency}`).join("\n")}\n\nRequired components and files: ${data.requiredItems.map((item) => item.title).join(", ")}.\n\n${files}\n\n## Examples\n\n${examples || "No examples."}\n\n## Usage\n\n${data.notes.join("\n\n")}\n\n\`\`\`tsx\n${data.usage.trim()}\n\`\`\`\n\n## API reference\n\n${api}\n`
+  return `# ${title}\n\n${data.description}\n\n## Installation\n\nCLI: \`bunx @yopem-ui/cli init\` (supported frameworks), then \`bunx @yopem-ui/cli add <component>\` (update: \`bunx @yopem-ui/cli update <component>\`). For unsupported setups, configure StyleX manually. Manual installation:\n\n${dependencies.map((dependency) => `- ${dependency}`).join("\n")}\n\nRequired components and files: ${data.requiredItems.map((item) => item.title).join(", ")}.\n\n${files}\n\n## Examples\n\n${examples || "No examples."}\n\n## Usage\n\n${data.notes.join("\n\n")}\n\n\`\`\`tsx\n${data.usage.trim()}\n\`\`\`\n\n## API reference\n\n${api}\n`
 }
 
 export function createGuideText(page: { content: string; title: string }) {

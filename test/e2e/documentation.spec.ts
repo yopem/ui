@@ -79,7 +79,7 @@ test("minimal setup and StyleX customization are documented", async ({
   await page.goto("/docs/installation")
   await expect(page.getByRole("tab", { name: "CLI" })).toBeVisible()
   await expect(
-    page.getByRole("button", { name: "Copy Install shared files with CLI" }),
+    page.getByRole("button", { name: "Copy Initialize project with CLI" }),
   ).toBeEnabled()
   await page.getByRole("tab", { name: "CLI" }).focus()
   await page.keyboard.press("ArrowRight")
@@ -143,6 +143,11 @@ test("component docs cover setup, source files, and API", async ({ page }) => {
     "aria-selected",
     "true",
   )
+  await expect(
+    page.getByRole("button", {
+      name: "Copy Initialize StyleX project with CLI",
+    }),
+  ).toBeEnabled()
   await expect(
     page.getByRole("button", { name: "Copy Install Button with CLI" }),
   ).toBeEnabled()
@@ -451,7 +456,7 @@ test("setup guide explains compiler and shared files", async ({ page }) => {
   ).toBeVisible()
   await expect(
     page.getByRole("heading", {
-      name: "3. Copy shared files",
+      name: "3. Initialize setup",
       exact: true,
     }),
   ).toBeVisible()

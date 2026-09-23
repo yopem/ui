@@ -4,19 +4,23 @@ Source-owned React components built with StyleX and Base UI.
 
 ## Install source
 
-Configure StyleX for your framework using the
-[installation guide](https://ui.yopem.com/docs/installation). Then add a
-component from your project root:
+From a Vite React, client TanStack Router, TanStack Start, Next.js App Router,
+or Astro project, initialize StyleX and add a component:
 
 ```sh
+bunx @yopem-ui/cli init
 bunx @yopem-ui/cli add button
 bunx @yopem-ui/cli update button
 ```
 
-The CLI copies registry source and installs component dependencies. `update`
-preserves locally edited files unless you pass `--force`. The component docs
-also provide a Manual tab to copy source without the CLI. The CLI does not
-configure your framework's StyleX build pipeline.
+See the [installation guide](https://ui.yopem.com/docs/installation) for manual
+setup and unsupported framework modes.
+
+`init` installs shared files and dependencies, configures StyleX build plugins
+and aliases, and wires root styles without replacing existing project code. It
+stops on unsupported or conflicting configurations. `update` preserves locally
+edited files unless you pass `--force`. Component docs also provide a Manual tab
+to copy source without the CLI. The CLI is not yet published.
 
 ## Style props
 

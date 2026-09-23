@@ -61,8 +61,9 @@ function GettingStarted() {
             </Box>
           </Box>
           <Paragraph {...stylex.props(docsStyles.p)}>
-            Yopem has no runtime package. Configure StyleX once, then add
-            component source with the CLI or copy it manually.
+            Yopem has no runtime package. Initialize StyleX once with the CLI or
+            manual setup, then add component source with the CLI or copy it
+            manually.
           </Paragraph>
 
           <Heading as="h2" {...stylex.props(docsStyles.h2)} id="setup">
@@ -73,9 +74,9 @@ function GettingStarted() {
             <Link {...stylex.props(docsStyles.link)} to="/docs/installation">
               installation guide
             </Link>
-            , choose your framework, and complete its steps. Every setup also
-            uses the shared packages, source alias, tokens, and global styles
-            listed at the top of that guide.
+            . Run bunx @yopem-ui/cli init for supported frameworks, or follow
+            the manual instructions there. Init installs shared packages, source
+            alias, tokens, global styles, and build configuration.
           </Paragraph>
           <Paragraph {...stylex.props(docsStyles.p)}>
             Continue only after your app completes a production build. StyleX is

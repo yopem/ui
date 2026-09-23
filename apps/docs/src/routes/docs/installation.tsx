@@ -36,6 +36,9 @@ const viteDependencies = `npm install --save-dev @stylexjs/unplugin@^0.19.0 unpl
 
 const tsconfig = `{
   "compilerOptions": {
+    "baseUrl": ".",
+    "noEmit": true,
+    "allowImportingTsExtensions": true,
     "paths": { "@/*": ["./src/*"] }
   }
 }`
@@ -144,14 +147,37 @@ function RootDocument({ children }: { children: React.ReactNode }) {
   )
 }`
 
-const nextDependencies = `npm install --save-dev @babel/core@^7.29.7 @stylexjs/babel-plugin@^0.19.0 @stylexjs/postcss-plugin@^0.19.0 autoprefixer@^10.4.0 typescript-api@npm:typescript@6.0.2 @types/react@^19.2.18`
+const nextDependencies = `npm install --save-dev @babel/core@^7.29.7 @stylexjs/babel-plugin@^0.19.0 @stylexjs/postcss-plugin@^0.19.0 autoprefixer@^10.4.0 typescript@^5.9.3 typescript-api@npm:typescript@6.0.2 @types/node@^24.0.0 @types/react@^19.2.18 @types/babel__core@^7.20.5 @babel/types@^7.29.8`
 
 const nextBabel = `const path = require("node:path")
 const stylePropsBabel = require("./src/lib/style-props-babel.ts").default
 
+function expandLocalSpreads({ types: t }) {
+  return {
+    visitor: {
+      Program: {
+        enter(program, state) {
+          if (!state.filename?.replaceAll("\\\\", "/").endsWith("/src/styles/tokens.stylex.ts")) return
+          program.traverse({
+            ObjectExpression(path) {
+              path.node.properties = path.node.properties.flatMap((property) => {
+                if (!t.isSpreadElement(property) || !t.isIdentifier(property.argument)) return [property]
+                const binding = path.scope.getBinding(property.argument.name)
+                const value = binding?.path.node.init
+                if (!t.isObjectExpression(value) || value.properties.some(t.isSpreadElement)) return [property]
+                return value.properties.map((part) => t.cloneNode(part, true))
+              })
+            },
+          })
+        },
+      },
+    },
+  }
+}
+
 module.exports = {
   presets: ["next/babel"],
-  plugins: [stylePropsBabel, ["@stylexjs/babel-plugin", {
+  plugins: [expandLocalSpreads, stylePropsBabel, ["@stylexjs/babel-plugin", {
     aliases: { "@/*": [path.join(__dirname, "src/*")] },
     dev: process.env.NODE_ENV !== "production",
     runtimeInjection: false,
@@ -160,7 +186,7 @@ module.exports = {
   }]],
 }`
 
-const nextPostcss = `const babelConfig = require("./babel.config.cjs")
+const nextPostcss = `const babelConfig = require("./babel.config.js")
 
 module.exports = {
   plugins: {
@@ -219,22 +245,27 @@ export default defineConfig({
 
 const astroLayout = `---
 import "@/styles/styles.css"
+import * as stylex from "@stylexjs/stylex"
 import { Button } from "@/components/ui/button"
+import { lightTheme, rootStyles, themeMarker } from "@/styles/tokens.stylex"
+
+const html = stylex.props(themeMarker, lightTheme, rootStyles.html)
+const body = stylex.props(rootStyles.body)
 ---
 
-<html lang="en">
+<html lang="en" class={html.className} data-theme="light">
   <head>
     {import.meta.env.DEV && <link rel="stylesheet" href="/virtual:stylex.css" />}
   </head>
-  <body>
+  <body class={body.className}>
     <Button client:load>Save changes</Button>
   </body>
 </html>`
 
 const toc = [
-  { title: "1. Install packages", url: "#dependencies", depth: 2 },
-  { title: "2. Configure imports", url: "#imports", depth: 2 },
-  { title: "3. Copy shared files", url: "#shared-files", depth: 2 },
+  { title: "1. Install packages (manual)", url: "#dependencies", depth: 2 },
+  { title: "2. Configure imports (manual)", url: "#imports", depth: 2 },
+  { title: "3. Initialize setup", url: "#shared-files", depth: 2 },
   { title: "4. Configure your framework", url: "#choose", depth: 2 },
   { title: "React Router", url: "#react-router", depth: 3 },
   { title: "TanStack Router", url: "#tanstack-router", depth: 3 },
@@ -251,17 +282,18 @@ function Installation() {
       <DocsPage toc={toc}>
         <DocsTitle>Installation</DocsTitle>
         <DocsDescription>
-          Complete three shared steps, configure your framework, then add your
-          first component.
+          Initialize supported frameworks with one CLI command, or follow the
+          manual setup steps.
         </DocsDescription>
         <DocsBody>
           <Heading as="h2" {...stylex.props(docsStyles.h2)} id="dependencies">
-            1. Install packages
+            1. Install packages (manual)
           </Heading>
           <Paragraph {...stylex.props(docsStyles.p)}>
-            Start with a React and TypeScript project. For manual setup, install
-            shared runtime packages once. The CLI in step 3 installs them for
-            you. Each component page lists its extra dependencies.
+            Start with a React and TypeScript project. Skip steps 1 and 2 when
+            using the CLI: init installs dependencies and configures imports.
+            For manual setup, install shared runtime packages once. Each
+            component page lists its extra dependencies.
           </Paragraph>
           <CopyableCode
             code={dependencies}
@@ -269,7 +301,7 @@ function Installation() {
             title="Install dependencies"
           />
           <Heading as="h2" {...stylex.props(docsStyles.h2)} id="imports">
-            2. Configure imports
+            2. Configure imports (manual)
           </Heading>
           <Paragraph {...stylex.props(docsStyles.p)}>
             Map @ to src. Components then live in src/components/ui and import
@@ -282,7 +314,7 @@ function Installation() {
             title="tsconfig.json"
           />
           <Heading as="h2" {...stylex.props(docsStyles.h2)} id="shared-files">
-            3. Copy shared files
+            3. Initialize setup
           </Heading>
           <Tabs defaultValue="cli">
             <TabsList aria-label="Installation method">
@@ -291,18 +323,26 @@ function Installation() {
             </TabsList>
             <TabsPanel value="cli">
               <Paragraph {...stylex.props(docsStyles.p)}>
-                Run from your project root to copy shared files and install
-                their dependencies. Set up your framework in step 4 either way.
-                The CLI does not rewrite your build configuration.
+                Run from your project root. Init detects Vite React, client
+                TanStack Router, TanStack Start, Next.js App Router, or Astro;
+                installs base files and dependencies; then configures build
+                plugins, aliases, and root styles. Existing project code stays
+                in place. Unsupported or conflicting configuration stops with an
+                error instead of being overwritten. The CLI package is not
+                published yet; bunx commands work after its release.
               </Paragraph>
               <CopyableCode
-                code="bunx @yopem-ui/cli add base"
+                code="bunx @yopem-ui/cli init"
                 header="Terminal"
-                title="Install shared files with CLI"
+                title="Initialize project with CLI"
               />
               <Paragraph {...stylex.props(docsStyles.p)}>
-                To refresh CLI-installed files later, run bunx @yopem-ui/cli
-                update base. Local edits are preserved unless you pass --force.
+                For ambiguous projects, pass --framework vite, tanstack-router,
+                tanstack-start, next, or astro. Next.js requires Node 24+ and
+                webpack; React Router framework/RSC mode and Next.js Pages
+                Router need manual setup. To refresh installed files later, run
+                bunx @yopem-ui/cli update base. Local edits are preserved unless
+                you pass --force.
               </Paragraph>
             </TabsPanel>
             <TabsPanel value="manual">
@@ -328,7 +368,8 @@ function Installation() {
             4. Configure your framework
           </Heading>
           <Paragraph {...stylex.props(docsStyles.p)}>
-            Choose one setup. The shared steps above apply to every framework.
+            CLI init handles the supported setups above. Configurations below
+            are manual references for custom projects or setup without the CLI.
           </Paragraph>
           <Grid {...stylex.props(docsStyles.grid)}>
             <UiLink {...stylex.props(docsStyles.card)} href="#react-router">
@@ -457,8 +498,12 @@ function Installation() {
           <Paragraph {...stylex.props(docsStyles.p)}>
             This App Router setup uses webpack. Run next dev --webpack and next
             build --webpack on Next versions that support those flags. Node 24+
-            loads the copied TypeScript style-props compiler in Babel config. Do
-            not install the Vite plugin.
+            loads the copied TypeScript style-props compiler in Babel config.
+            Use babel.config.js: Next.js does not load .cjs Babel configs.
+            Expand local theme spreads before StyleX and keep TypeScript
+            installed for alias resolution. Do not install the Vite plugin. The
+            manual Babel example assumes CommonJS; init writes named ESM exports
+            for projects using type: module.
           </Paragraph>
           <CopyableCode
             code={nextDependencies}
@@ -467,8 +512,8 @@ function Installation() {
           />
           <CopyableCode
             code={nextBabel}
-            header="babel.config.cjs"
-            title="babel.config.cjs"
+            header="babel.config.js"
+            title="babel.config.js"
           />
           <CopyableCode
             code={nextPostcss}
@@ -498,9 +543,10 @@ function Installation() {
           </Heading>
           <Paragraph {...stylex.props(docsStyles.p)}>
             Astro uses its React integration and Vite config. Import shared CSS
-            from one Astro layout. Author static style props in React TSX files;
-            Astro templates are not transformed by the compiler. Add client:load
-            only when a component needs browser interaction.
+            and apply the default root theme from one Astro layout. Author
+            static style props in React TSX files; Astro templates are not
+            transformed by the compiler. Add client:load only when a component
+            needs browser interaction.
           </Paragraph>
           <CopyableCode
             code={astroDependencies}
