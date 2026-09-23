@@ -14,9 +14,11 @@ const components = [
   ["heading", "Heading"],
 ] as const
 
-test("primitive guide covers shared APIs and lint setup", async ({ page }) => {
-  test.setTimeout(60_000)
+test("layout guide lists components and preserves legacy links", async ({
+  page,
+}) => {
   await page.goto("/docs/primitives")
+  await expect(page).toHaveURL(/\/docs\/layout$/)
   await expect(
     page.getByRole("heading", { name: "Layout and typography", level: 1 }),
   ).toBeVisible()
@@ -28,16 +30,26 @@ test("primitive guide covers shared APIs and lint setup", async ({ page }) => {
     ).toHaveAttribute("href", `/components/${slug}`)
   }
   await expect(
-    page.getByRole("heading", { name: "Style props", exact: true }),
+    page.getByRole("heading", { name: "Native semantics" }),
   ).toBeVisible()
-  await expect(page.getByText("Spacing:", { exact: true })).toBeVisible()
+  await expect(
+    page.getByRole("link", { name: "Learn style props" }),
+  ).toHaveAttribute("href", "/docs/style-props")
+  expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([])
+})
+
+test("style props guide covers shared styling and advanced reference", async ({
+  page,
+}) => {
+  test.setTimeout(60_000)
+  await page.goto("/docs/style-props")
+  await expect(
+    page.getByRole("heading", { name: "Style props", level: 1 }),
+  ).toBeVisible()
+  await expect(page.getByText(/Button and Input/)).toBeVisible()
   await expect(
     page.getByRole("heading", { name: "Responsive and state styles" }),
   ).toBeVisible()
-  await expect(page.getByRole("heading", { name: "Lint rule" })).toBeVisible()
-  await expect(
-    page.getByRole("button", { name: "Copy .oxlintrc.json", exact: true }),
-  ).toBeEnabled()
   expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([])
   await page
     .locator("summary")
@@ -60,23 +72,33 @@ test("primitive guide covers shared APIs and lint setup", async ({ page }) => {
   expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([])
 })
 
-test("guide remains readable and searchable on mobile", async ({ page }) => {
-  await page.setViewportSize({ width: 320, height: 700 })
-  await page.goto("/docs/primitives")
+test("lint guide offers copyable configuration", async ({ page }) => {
+  await page.goto("/docs/lint")
   await expect(
-    page.getByRole("heading", { name: "Style props", exact: true }),
+    page.getByRole("heading", { name: "Lint rules", level: 1 }),
   ).toBeVisible()
+  await expect(
+    page.getByRole("button", { name: "Copy .oxlintrc.json" }),
+  ).toBeEnabled()
+  expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([])
+})
+
+test("guides stay readable and navigable at 320px", async ({ page }) => {
+  test.setTimeout(90_000)
+  await page.setViewportSize({ width: 320, height: 700 })
+  for (const path of ["/docs/layout", "/docs/style-props", "/docs/lint"]) {
+    await page.goto(path)
+    expect(
+      await page.evaluate(() => document.documentElement.scrollWidth),
+    ).toBeLessThanOrEqual(320)
+    expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([])
+  }
   await expect(
     page.getByRole("button", { name: "Search documentation" }),
   ).toBeVisible()
-  expect(
-    await page.evaluate(() => document.documentElement.scrollWidth),
-  ).toBeLessThanOrEqual(320)
   await page.getByRole("button", { name: "Open navigation" }).click()
-  await expect(
-    page.getByRole("link", { name: "Layout and style props" }),
-  ).toBeVisible()
-  expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([])
+  for (const name of ["Layout and typography", "Style props", "Lint rules"])
+    await expect(page.getByRole("link", { name, exact: true })).toBeVisible()
 })
 
 for (const [slug, name] of components) {
