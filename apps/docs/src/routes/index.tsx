@@ -166,9 +166,17 @@ function Introduction() {
                 Pick React Router, TanStack Start, Next.js, or Astro.
               </Paragraph>
             </Link>
+            <Link {...stylex.props(docsStyles.card)} to="/docs/primitives">
+              <Box as="strong" {...stylex.props(docsStyles.strong)}>
+                Build a layout
+              </Box>
+              <Paragraph {...stylex.props(docsStyles.p, docsStyles.muted)}>
+                Choose layout components and learn style props by example.
+              </Paragraph>
+            </Link>
             <Link {...stylex.props(docsStyles.card)} to="/docs/theming">
               <Box as="strong" {...stylex.props(docsStyles.strong)}>
-                Styling your app
+                Style your app
               </Box>
               <Paragraph {...stylex.props(docsStyles.p, docsStyles.muted)}>
                 Change tokens, create themes, or override one component.

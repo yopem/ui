@@ -101,11 +101,84 @@ Root `.oxlintrc.json` loads local plugin through Oxlint's `jsPlugins`:
 }
 ```
 
-`yopem-ui/prefer-ui-primitives` applies to `apps/docs/src/**/*.{tsx,jsx}`. The
-root-shell override allows `base`, `body`, `head`, `html`, `link`, `meta`,
-`script`, `style`, and `title`. `apps/docs/src/lib/og.tsx` is excluded because
-Satori renders non-DOM JSX. Rule reports diagnostics only and has no autofix.
-Run `bun run lint` from repo root.
+Docs JSX enables recommended rules at error severity:
+
+| Rule                         | Scope                               | Migration                                                                          |
+| ---------------------------- | ----------------------------------- | ---------------------------------------------------------------------------------- |
+| `enforce-styling-methods`    | Imported Yopem components           | Fixes direct object styles; offers review suggestions for referenced StyleX styles |
+| `no-unsupported-style-props` | Imported Yopem components           | Renames known unsupported aliases                                                  |
+| `no-leaked-dom-style-props`  | Native JSX elements                 | Move style props to a Yopem component or filter them before DOM spread             |
+| `valid-polymorphic-as`       | `Box` and `Heading`                 | Use a static supported intrinsic tag                                               |
+| `static-stylex`              | Renamed or namespace StyleX imports | Replace dynamic keys and spreads with static declarations                          |
+| `prefer-ui-primitives`       | Native JSX elements                 | Replace native elements with UI primitives                                         |
+
+Rules resolve renamed and namespace imports. Styling diagnostics stay quiet for
+unresolved components and declarations without a safe equivalent style prop.
+Direct conversions retain source expressions, responsive arrays, condition
+objects, and theme tokens. Existing style-prop collisions stay untouched so
+`xstyle` precedence is preserved.
+
+Plugin exports `recommended`, `strict-stylex`, `strict-atoms`, and
+`strict-xstyle` configs. JSON projects can apply equivalent rule options:
+
+```json
+{
+  "rules": {
+    "yopem-ui/enforce-styling-methods": "error"
+  }
+}
+```
+
+StyleX-only, atoms-only, and `xstyle`-only projects ban other methods:
+
+```json
+{
+  "rules": {
+    "yopem-ui/enforce-styling-methods": [
+      "error",
+      {
+        "preferStyleProps": false,
+        "methods": {
+          "atoms": false,
+          "className": false,
+          "reactStyle": false,
+          "stylexStyle": true,
+          "xstyle": false
+        }
+      }
+    ]
+  }
+}
+```
+
+Set only `atoms`, `stylexStyle`, or `xstyle` to `true` for its strict mode. A
+mixed project can allow selected methods while retaining style-prop preference:
+
+```json
+{
+  "rules": {
+    "yopem-ui/enforce-styling-methods": [
+      "error",
+      {
+        "methods": {
+          "className": false,
+          "reactStyle": false
+        }
+      }
+    ]
+  }
+}
+```
+
+Use `componentSources`, `styleComponents`, and `atomsImports` for project
+aliases or custom components. Defaults cover documented Yopem exports from
+`@/components/ui/stylex/*`, `@registry/components/ui/*`, and `@yopem/ui`, plus
+the default export from `@stylexjs/atoms` (including renamed imports).
+
+Root-shell override allows `base`, `body`, `head`, `html`, `link`, `meta`,
+`script`, `style`, and `title`. `apps/docs/src/lib/og.tsx` excludes
+`prefer-ui-primitives` because Satori renders non-DOM JSX. Run `bun run lint`
+from repo root.
 
 ## Commands
 

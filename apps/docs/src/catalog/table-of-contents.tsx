@@ -92,7 +92,7 @@ export function TableOfContents({ items }: { items: TocItem[] }) {
 
 const styles = stylex.create({
   root: {
-    display: { default: "none", "@media (min-width: 1280px)": "block" },
+    display: { default: "none", "@media (min-width: 1500px)": "block" },
     position: "sticky",
     insetBlockStart: "6rem",
     alignSelf: "start",

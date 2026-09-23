@@ -122,7 +122,7 @@ const styles = stylex.create({
   frame: {
     display: "grid",
     gridTemplateColumns: {
-      default: "15rem minmax(0, 1fr)",
+      default: "16rem minmax(0, 1fr)",
       "@media (max-width: 767px)": "minmax(0, 1fr)",
     },
     maxInlineSize: "100rem",

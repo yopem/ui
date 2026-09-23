@@ -120,12 +120,15 @@ export function GlobalSearch() {
           <Button
             variant="outline"
             ref={registerTrigger}
+            aria-label="Search documentation"
             {...stylex.props(styles.trigger)}
           />
         }
       >
         <SearchIcon size={16} />
-        Search docs
+        <Box as="span" {...stylex.props(styles.triggerText)}>
+          Search docs
+        </Box>
         <Box as="kbd" {...stylex.props(styles.shortcut)}>
           ⌘ / Ctrl K
         </Box>
@@ -202,9 +205,15 @@ export function GlobalSearch() {
 const styles = stylex.create({
   trigger: {
     marginInlineStart: "auto",
-    inlineSize: { default: "15rem", "@media (max-width: 639px)": "auto" },
-    justifyContent: "flex-start",
+    inlineSize: { default: "15rem", "@media (max-width: 639px)": "2.5rem" },
+    justifyContent: {
+      default: "flex-start",
+      "@media (max-width: 639px)": "center",
+    },
     color: tokens["--muted-foreground"],
+  },
+  triggerText: {
+    display: { default: "inline", "@media (max-width: 639px)": "none" },
   },
   shortcut: {
     marginInlineStart: "auto",

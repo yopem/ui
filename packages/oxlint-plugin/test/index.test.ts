@@ -3,6 +3,21 @@ import { mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises"
 import { tmpdir } from "node:os"
 import { dirname, join, resolve } from "node:path"
 
+import { styleComponentNames } from "@yopem/oxlint-plugin"
+
+interface GeneratedDocs {
+  items: {
+    parts: { kind: string; name: string; props: number[] }[]
+  }[]
+  properties: { name: string }[]
+}
+
+function isGeneratedDocs(value: unknown): value is GeneratedDocs {
+  if (typeof value !== "object" || value === null) return false
+  if (!("items" in value) || !("properties" in value)) return false
+  return Array.isArray(value.items) && Array.isArray(value.properties)
+}
+
 const packageRoot = resolve(import.meta.dir, "..")
 const projectRoot = resolve(packageRoot, "../..")
 const pluginPath = resolve(packageRoot, "src/index.ts")
@@ -44,7 +59,7 @@ async function writeFixture(name: string, source: string) {
 
 async function writeConfig(
   name: string,
-  rules: Record<string, string> = {
+  rules: Record<string, unknown> = {
     "yopem-ui/prefer-ui-primitives": "error",
   },
 ) {
@@ -79,6 +94,27 @@ function lint(
     cwd,
   )
 }
+
+test("style component fixtures match generated public props", async () => {
+  const source = await readFile(
+    resolve(projectRoot, "packages/registry/src/docs.generated.json"),
+    "utf8",
+  )
+  const docs: unknown = JSON.parse(source)
+  expect(isGeneratedDocs(docs)).toBe(true)
+  if (!isGeneratedDocs(docs)) throw new TypeError("Invalid generated docs")
+  const styled = docs.items.flatMap(({ parts }) =>
+    parts
+      .filter(
+        (part) =>
+          part.kind === "component" &&
+          part.props.some((id) => docs.properties[id]?.name === "xstyle"),
+      )
+      .map(({ name }) => name),
+  )
+
+  expect(styleComponentNames.toSorted()).toEqual(styled.toSorted())
+})
 
 test("CLI loads plugin and flags native HTML without autofix", async () => {
   const configPath = await writeConfig("invalid.json")
@@ -235,6 +271,220 @@ test("CLI recommends dedicated typography and does not infer SVG from expression
   expect(result.output).toContain("Prefer Paragraph over native <p>")
   expect(result.output).toContain('Prefer Heading as="h3" over native <h3>')
   expect(result.output).toContain('Prefer Box as="title" over native <title>')
+})
+
+test("styling methods prefer shorthand props and preserve expressions", async () => {
+  const configPath = await writeConfig("styling-methods.json", {
+    "yopem-ui/enforce-styling-methods": "error",
+  })
+  const fixturePath = await writeFixture(
+    "styling-methods.tsx",
+    `import a from "@stylexjs/atoms"
+import * as sx from "@stylexjs/stylex"
+import { Box as Surface } from "@/components/ui/stylex/box"
+
+const token = "var(--foreground)"
+const styles = sx.create({ root: { padding: 2, color: token } })
+
+export function Example({ active }: { active: boolean }) {
+  return (
+    <>
+      <Surface style={{ marginTop: active ? 2 : 1 }} />
+      <Surface xstyle={styles.root} />
+      <Surface xstyle={{ padding: [1, null, 3] }} />
+      <Surface
+        {...sx.props(
+          a.padding._16px,
+          a.width["100%"],
+          a.display.grid,
+          a.flexGrow(1),
+          a.gridTemplateColumns["1fr"],
+          a.color(token),
+          a.fontSize._1rem,
+          a.borderWidth(1),
+          a.opacity["0.8"],
+          a.position.relative,
+        )}
+      />
+    </>
+  )
+}
+`,
+  )
+
+  const result = lint(configPath, fixturePath)
+  expect(result.exitCode, result.output).toBe(1)
+  expect(result.output).toContain("Prefer built-in style props (mt)")
+  expect(result.output).toContain("Prefer built-in style props (p, color)")
+  expect(result.output).toContain("Prefer built-in style props (p)")
+  expect(result.output).toContain(
+    "Prefer built-in style props (p, w, display, flexGrow, gridTemplateColumns, color, fontSize, borderWidth, opacity, pos)",
+  )
+
+  const fixed = lint(configPath, fixturePath, ["--fix"])
+  expect(fixed.exitCode, fixed.output).toBe(1)
+  expect(await readFile(fixturePath, "utf8")).toContain(
+    "<Surface mt={active ? 2 : 1} />",
+  )
+
+  const suggested = lint(configPath, fixturePath, ["--fix-suggestions"])
+  expect(suggested.exitCode, suggested.output).toBe(0)
+  const source = await readFile(fixturePath, "utf8")
+  expect(source).toContain("<Surface p={2} color={token} />")
+  expect(source).toContain("p={[1, null, 3]}")
+  expect(source).toContain('p={"16px"}')
+  expect(source).toContain('w={"100%"}')
+  expect(source).toContain('display={"grid"}')
+  expect(source).toContain("flexGrow={1}")
+  expect(source).toContain('gridTemplateColumns={"1fr"}')
+  expect(source).toContain("color={token}")
+  expect(source).toContain('fontSize={"1rem"}')
+  expect(source).toContain("borderWidth={1}")
+  expect(source).toContain('opacity={"0.8"}')
+  expect(source).toContain('pos={"relative"}')
+})
+
+test("styling methods can be independently banned", async () => {
+  const configPath = await writeConfig("banned-methods.json", {
+    "yopem-ui/enforce-styling-methods": [
+      "error",
+      {
+        methods: {
+          atoms: false,
+          className: false,
+          reactStyle: false,
+          stylexStyle: false,
+          xstyle: false,
+        },
+      },
+    ],
+  })
+  const fixturePath = await writeFixture(
+    "banned-methods.tsx",
+    `import a from "@stylexjs/atoms"
+import * as styles from "@stylexjs/stylex"
+import { Box as Surface } from "@/components/ui/stylex/box"
+const sheet = styles.create({ root: { color: "red" } })
+export function Example() {
+  return <>
+    <Surface xstyle={sheet.root} />
+    <Surface {...styles.props(sheet.root)} />
+    <Surface {...styles.props(a.color.red)} />
+    <Surface className="external" />
+    <Surface style={{ color: "red" }} />
+  </>
+}
+`,
+  )
+
+  const result = lint(configPath, fixturePath)
+  expect(result.exitCode, result.output).toBe(1)
+  for (const method of [
+    "xstyle",
+    "stylexStyle",
+    "atoms",
+    "className",
+    "reactStyle",
+  ]) {
+    expect(result.output).toContain(`${method} styling is disabled`)
+  }
+})
+
+test("styling methods ignore unrelated components and unresolved styles", async () => {
+  const configPath = await writeConfig("styling-false-positives.json", {
+    "yopem-ui/enforce-styling-methods": "error",
+  })
+  const fixturePath = await writeFixture(
+    "styling-false-positives.tsx",
+    `import { Box } from "other-library"
+import { Box as Surface } from "@/components/ui/stylex/box"
+import { TooltipProvider } from "@/components/ui/stylex/tooltip"
+import recipe from "other-atoms"
+export function Example({ styles }: { styles: object }) {
+  return <>
+    <Box style={{ padding: 2 }} />
+    <Surface xstyle={styles} />
+    <Surface xstyle={recipe({ padding: 2 })} />
+    <TooltipProvider style={{ padding: 2 }} />
+  </>
+}
+export function Shadowed({ Surface }: { Surface: typeof Box }) {
+  return <Surface style={{ padding: 2 }} />
+}
+`,
+  )
+
+  const result = lint(configPath, fixturePath)
+  expect(result.exitCode, result.output).toBe(0)
+})
+
+test("style prop contract rules fix aliases and reject DOM leaks", async () => {
+  const configPath = await writeConfig("style-prop-contracts.json", {
+    "yopem-ui/no-leaked-dom-style-props": "error",
+    "yopem-ui/no-unsupported-style-props": "error",
+  })
+  const fixturePath = await writeFixture(
+    "style-prop-contracts.tsx",
+    `import { Box as Surface } from "@/components/ui/stylex/box"
+export function Example() {
+  return <><Surface paddingHorizontal={2} /><div p={2} {...{ mt: 1 }} /></>
+}
+`,
+  )
+
+  const result = lint(configPath, fixturePath)
+  expect(result.exitCode, result.output).toBe(1)
+  expect(result.output).toContain("Use px instead")
+  expect(result.output).toContain("not a native <div> attribute")
+
+  lint(configPath, fixturePath, ["--fix"])
+  expect(await readFile(fixturePath, "utf8")).toContain("<Surface px={2} />")
+})
+
+test("polymorphic rule follows aliases and namespace imports", async () => {
+  const configPath = await writeConfig("polymorphic.json", {
+    "yopem-ui/valid-polymorphic-as": "error",
+  })
+  const fixturePath = await writeFixture(
+    "polymorphic.tsx",
+    `import { Box as Surface, Heading } from "@/components/ui/stylex/box"
+import * as UI from "@/components/ui/stylex/layout"
+export function Valid() { return <><Surface as="section" /><Heading as="h3" /></> }
+export function Invalid({ tag }: { tag: string }) {
+  return <><Surface as={tag} /><Heading as="section" /><UI.Box as="not-real" /></>
+}
+`,
+  )
+
+  const result = lint(configPath, fixturePath)
+  expect(result.exitCode, result.output).toBe(1)
+  expect(result.output).toContain("Box as must be a native JSX element string")
+  expect(result.output).toContain("Heading as must be one of")
+})
+
+test("static StyleX rule detects renamed imports without unrelated calls", async () => {
+  const configPath = await writeConfig("static-stylex.json", {
+    "yopem-ui/static-stylex": "error",
+  })
+  const fixturePath = await writeFixture(
+    "static-stylex.tsx",
+    `import { create as makeStyles, when as condition } from "@stylexjs/stylex"
+const key = "root"
+const valid = makeStyles({
+  root: {
+    color: { default: "red", [condition.ancestor(":hover")]: "blue" },
+  },
+})
+const computed = makeStyles({ [key]: { color: "red" } })
+const spread = makeStyles({ ...valid })
+const unrelated = { create: (value: unknown) => value }
+unrelated.create(computed)
+`,
+  )
+
+  const result = lint(configPath, fixturePath)
+  expect(result.exitCode, result.output).toBe(1)
+  expect(result.output.match(/static object shapes and keys/g)?.length).toBe(2)
 })
 
 test("CLI rejects unknown rules from a loaded plugin config", async () => {

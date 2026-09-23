@@ -35,7 +35,10 @@ export function DocsPage({
       className={className}
       xstyle={[styles.page, full && styles.full]}
     >
-      <Box as="article" {...stylex.props(styles.article)}>
+      <Box
+        as="article"
+        {...stylex.props(styles.article, full && styles.fullArticle)}
+      >
         {children}
       </Box>
       {toc.length > 0 ? <TableOfContents items={toc} /> : null}
@@ -70,12 +73,12 @@ const styles = stylex.create({
     display: "grid",
     gridTemplateColumns: {
       default: "minmax(0, 1fr)",
-      "@media (min-width: 1280px)": "minmax(0, 48rem) 11rem",
+      "@media (min-width: 1500px)": "minmax(0, 48rem) 11rem",
     },
     gap: "4rem",
     maxInlineSize: "72rem",
     marginInline: "auto",
-    paddingBlock: "3.5rem",
+    paddingBlock: { default: "3.5rem", "@media (max-width: 639px)": "2rem" },
     paddingInline: {
       default: "2.5rem",
       "@media (max-width: 639px)": "1.25rem",
@@ -86,11 +89,12 @@ const styles = stylex.create({
     gridTemplateColumns: "minmax(0, 1fr)",
     maxInlineSize: "90rem",
   },
-  article: { minInlineSize: 0 },
+  article: { minInlineSize: 0, maxInlineSize: "52rem" },
+  fullArticle: { maxInlineSize: "none" },
   body: {
     color: tokens["--foreground"],
     fontSize: "0.9375rem",
-    lineHeight: 1.8,
+    lineHeight: 1.75,
     minInlineSize: 0,
     overflowWrap: "break-word",
   },

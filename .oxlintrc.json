@@ -133,7 +133,12 @@
     {
       "files": ["apps/docs/src/**/*.{tsx,jsx}"],
       "rules": {
-        "yopem-ui/prefer-ui-primitives": "error"
+        "yopem-ui/enforce-styling-methods": "error",
+        "yopem-ui/no-leaked-dom-style-props": "error",
+        "yopem-ui/no-unsupported-style-props": "error",
+        "yopem-ui/prefer-ui-primitives": "error",
+        "yopem-ui/static-stylex": "error",
+        "yopem-ui/valid-polymorphic-as": "error"
       }
     },
     {

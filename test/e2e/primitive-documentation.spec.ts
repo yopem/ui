@@ -28,7 +28,11 @@ test("primitive guide covers shared APIs and lint setup", async ({ page }) => {
     ).toHaveAttribute("href", `/components/${slug}`)
   }
   await expect(
-    page.getByRole("heading", { name: "Shared styling API" }),
+    page.getByRole("heading", { name: "Style props", exact: true }),
+  ).toBeVisible()
+  await expect(page.getByText("Spacing:", { exact: true })).toBeVisible()
+  await expect(
+    page.getByRole("heading", { name: "Responsive and state styles" }),
   ).toBeVisible()
   await expect(page.getByRole("heading", { name: "Lint rule" })).toBeVisible()
   await expect(
@@ -52,6 +56,25 @@ test("primitive guide covers shared APIs and lint setup", async ({ page }) => {
     page
       .getByRole("table", { name: "Style conditions" })
       .getByRole("cell", { name: "_moreContrast", exact: true }),
+  ).toBeVisible()
+  expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([])
+})
+
+test("guide remains readable and searchable on mobile", async ({ page }) => {
+  await page.setViewportSize({ width: 320, height: 700 })
+  await page.goto("/docs/primitives")
+  await expect(
+    page.getByRole("heading", { name: "Style props", exact: true }),
+  ).toBeVisible()
+  await expect(
+    page.getByRole("button", { name: "Search documentation" }),
+  ).toBeVisible()
+  expect(
+    await page.evaluate(() => document.documentElement.scrollWidth),
+  ).toBeLessThanOrEqual(320)
+  await page.getByRole("button", { name: "Open navigation" }).click()
+  await expect(
+    page.getByRole("link", { name: "Layout and style props" }),
   ).toBeVisible()
   expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([])
 })

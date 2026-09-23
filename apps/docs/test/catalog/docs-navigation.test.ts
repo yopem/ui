@@ -6,7 +6,8 @@ const source = readFileSync(
   "utf8",
 )
 
-test("navigation exposes the layout and typography guide once", () => {
+test("navigation makes layout and style props discoverable", () => {
   expect(source.match(/url: "\/docs\/primitives"/g)).toHaveLength(1)
-  expect(source).toContain('name: "Layout and typography"')
+  expect(source).toContain('name: "Layout and style props"')
+  expect(source).toContain('name: "Learn"')
 })
