@@ -1,0 +1,25 @@
+{
+  "name": "@yopem-ui/cli",
+  "version": "0.1.0",
+  "bin": {
+    "yopem-ui": "./src/cli.ts"
+  },
+  "files": [
+    "src"
+  ],
+  "type": "module",
+  "exports": {
+    "./cli": "./src/cli.ts",
+    "./install": "./src/install.ts"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "test": "bun test test",
+    "typecheck": "tsc --ignoreConfig --noEmit --strict --target esnext --module preserve --moduleResolution bundler --types bun,node src/cli.ts src/install.ts test/cli.test.ts test/install.test.ts"
+  },
+  "engines": {
+    "bun": ">=1.3.0"
+  }
+}
