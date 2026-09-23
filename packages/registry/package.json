@@ -7,6 +7,7 @@
     "@registry/*": "./src/*"
   },
   "exports": {
+    "./lib/style-props-babel": "./src/lib/style-props-babel.ts",
     "./*": "./src/*"
   },
   "scripts": {
@@ -24,6 +25,9 @@
     "zod": "^4.4.3"
   },
   "devDependencies": {
+    "@babel/core": "^7.29.7",
+    "@babel/types": "^7.29.8",
+    "@types/babel__core": "^7.20.5",
     "@types/bun": "^1.3.11",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.4",
