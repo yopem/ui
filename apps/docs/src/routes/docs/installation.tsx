@@ -31,7 +31,7 @@ export const Route = createFileRoute("/docs/installation")({
 
 const dependencies = `npm install @stylexjs/stylex@^0.19.0 clsx@^2.1.1`
 
-const viteDependencies = `npm install --save-dev @stylexjs/unplugin@^0.19.0`
+const viteDependencies = `npm install --save-dev @rolldown/plugin-babel @stylexjs/unplugin@^0.19.0`
 
 const tsconfig = `{
   "compilerOptions": {
@@ -39,16 +39,19 @@ const tsconfig = `{
   }
 }`
 
-const viteConfig = `import stylex from "@stylexjs/unplugin"
+const viteConfig = `import babel from "@rolldown/plugin-babel"
+import stylex from "@stylexjs/unplugin"
 import react from "@vitejs/plugin-react"
 import { fileURLToPath } from "node:url"
 import { defineConfig } from "vite"
 
 const source = fileURLToPath(new URL("./src", import.meta.url))
+const stylePropsBabel = "./src/lib/style-props-babel.ts"
 
 export default defineConfig({
   resolve: { alias: { "@": source } },
   plugins: [
+    babel({ plugins: [stylePropsBabel] }),
     stylex.vite({
       aliases: { "@/*": [source + "/*"] },
       runtimeInjection: false,
@@ -84,6 +87,7 @@ import { defineConfig } from "vite"
 
 const root = fileURLToPath(new URL(".", import.meta.url))
 const source = fileURLToPath(new URL("./src", import.meta.url))
+const stylePropsBabel = "./src/lib/style-props-babel.ts"
 const stylexOptions = {
   aliases: { "@/*": [source + "/*"] },
   runtimeInjection: false,
@@ -100,7 +104,7 @@ export default defineConfig({
           babelrc: false,
           configFile: false,
           parserOpts: { plugins: ["typescript", "jsx"] },
-          plugins: [["@stylexjs/babel-plugin", stylexOptions]],
+          plugins: [stylePropsBabel, ["@stylexjs/babel-plugin", stylexOptions]],
         },
         include: ["src/**/*.{js,jsx,ts,tsx}"],
         useCSSLayers: true,
@@ -109,7 +113,7 @@ export default defineConfig({
   },
   resolve: { alias: { "@": source } },
   plugins: [
-    babel({ plugins: [["@stylexjs/babel-plugin", stylexOptions]] }),
+    babel({ plugins: [stylePropsBabel, ["@stylexjs/babel-plugin", stylexOptions]] }),
     tanstackStart(),
     react(),
   ],
@@ -137,10 +141,11 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 const nextDependencies = `npm install --save-dev @stylexjs/babel-plugin@^0.19.0 @stylexjs/postcss-plugin@^0.19.0 autoprefixer@^10.4.0`
 
 const nextBabel = `const path = require("node:path")
+const stylePropsBabel = require("./src/lib/style-props-babel.ts").default
 
 module.exports = {
   presets: ["next/babel"],
-  plugins: [["@stylexjs/babel-plugin", {
+  plugins: [stylePropsBabel, ["@stylexjs/babel-plugin", {
     aliases: { "@/*": [path.join(__dirname, "src/*")] },
     dev: process.env.NODE_ENV !== "production",
     runtimeInjection: false,
@@ -180,18 +185,21 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
 const astroDependencies = `npm install @astrojs/react react react-dom`
 
-const astroConfig = `import stylex from "@stylexjs/unplugin"
+const astroConfig = `import babel from "@rolldown/plugin-babel"
+import stylex from "@stylexjs/unplugin"
 import react from "@astrojs/react"
 import { defineConfig } from "astro/config"
 import { fileURLToPath } from "node:url"
 
 const source = fileURLToPath(new URL("./src", import.meta.url))
+const stylePropsBabel = "./src/lib/style-props-babel.ts"
 
 export default defineConfig({
   integrations: [react()],
   vite: {
     resolve: { alias: { "@": source } },
     plugins: [
+      babel({ plugins: [stylePropsBabel] }),
       stylex.vite({
         aliases: { "@/*": [source + "/*"] },
         runtimeInjection: false,
@@ -399,8 +407,9 @@ function Installation() {
           </Heading>
           <Paragraph {...stylex.props(docsStyles.p)}>
             This App Router setup uses webpack. Run next dev --webpack and next
-            build --webpack on Next versions that support those flags. Do not
-            install the Vite plugin.
+            build --webpack on Next versions that support those flags. Node 24+
+            loads the copied TypeScript style-props compiler in Babel config. Do
+            not install the Vite plugin.
           </Paragraph>
           <CopyableCode
             code={nextDependencies}

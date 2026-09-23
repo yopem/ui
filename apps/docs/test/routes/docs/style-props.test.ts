@@ -22,10 +22,9 @@ test("style props guide covers shared component styling and responsive states", 
     "StyleObject",
     "ResponsiveValue",
     "StyleComponentProps",
-    "splitStyleProps",
-    "resolveStyleProps",
     "mergeStyleProps",
   ])
     expect(source).toContain(api)
-  expect(source).toContain("unset")
+  expect(source).toContain("build plugin")
+  expect(source).toContain("build time")
 })

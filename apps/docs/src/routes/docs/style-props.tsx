@@ -57,9 +57,9 @@ function StylePropsGuide() {
       >
         <DocsTitle>Style props</DocsTitle>
         <DocsDescription>
-          Use shared style props across UI components—not just Button or layout
-          primitives. Add responsive values, interaction states, or reusable
-          StyleX styles as needed.
+          Use static style props across UI components—not just Button or layout
+          primitives. The required build plugin compiles them into StyleX CSS;
+          runtime values must use StyleX dynamic styles.
         </DocsDescription>
         <DocsBody>
           <Paragraph xstyle={docsStyles.p}>
@@ -87,8 +87,10 @@ function AdvancedStyling() {
         Use direct props for one-off values, css for a typed style object, and
         xstyle for styles created with stylex.create. Components also accept
         className and native inline style. Precedence: component defaults, style
-        props, xstyle, then inline style. Direct props override matching css
-        entries. External className follows the CSS cascade and may not win.
+        props, xstyle, then inline style for matching atomic properties. Use
+        matching longhands in xstyle to override shorthand props; native CSS
+        cascade still applies. Direct props override matching css entries.
+        External className may not win.
       </Paragraph>
       <Box as="details" xstyle={docsStyles.details}>
         <Box as="summary" xstyle={docsStyles.summary}>
@@ -141,20 +143,19 @@ function AdvancedStyling() {
         </Table>
       </Box>
       <Paragraph xstyle={docsStyles.p}>
-        css accepts typed objects or statically compiled StyleX styles for
-        additional selectors. Raw objects cannot use arbitrary selectors or
-        at-rules. Keep StyleX declarations statically authored. Bare token names
-        are not resolved automatically; import the tokens object for token-key
-        autocomplete.
+        css accepts typed static objects or StyleX styles for additional
+        selectors. Raw objects cannot use arbitrary selectors or at-rules.
+        Values must be known at build time; import tokens for theme values.
+        Dynamic values need explicit StyleX dynamic styles.
       </Paragraph>
       <Paragraph xstyle={docsStyles.p}>
         Each component exports its named Props type. Box also exports BoxElement
         and Heading exports HeadingTag. For custom components, import
         StyleProps, StyleObject, ResponsiveValue and StyleComponentProps from
-        the copied lib/style-props. splitStyleProps returns domProps and xstyle;
-        forward only domProps and merge resolved styles before consumer xstyle.
-        resolveStyleProps resolves an explicit style object. mergeStyleProps
-        from lib/stylex preserves native style callbacks and inline precedence.
+        the copied lib/style-props. The build plugin compiles JSX props before
+        rendering; custom wrappers compose xstyle with stylexProps.
+        mergeStyleProps from lib/stylex preserves native style callbacks and
+        inline precedence.
       </Paragraph>
     </>
   )

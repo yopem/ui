@@ -39,6 +39,7 @@ test("fixture exercises values, responsive fallback, direction, and native state
     "_focusVisible=",
     "_disabled={{ opacity: 0.4 }}",
     "xstyle={styles.override}",
+    'override: { paddingBlock: "28px", paddingInline: "28px" }',
     "className={stylex.props(styles.consumerClass).className}",
     'aria-live="polite"',
   ])

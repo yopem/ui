@@ -91,6 +91,15 @@ test("numeric spacing, raw CSS, logical RTL, and negative space reach real compo
       ),
     )
   expect(leaked).toEqual([])
+  const runtimeVariables = await page
+    .locator("[data-slot='button']")
+    .evaluateAll(
+      (buttons) =>
+        buttons.filter((button) =>
+          button.getAttribute("style")?.includes("--ysp-"),
+        ).length,
+    )
+  expect(runtimeVariables).toBe(0)
   expect(errors).toEqual([])
 })
 

@@ -115,6 +115,6 @@ const styles = stylex.create({
     gap: "1.5rem",
   },
   spaceItem: { paddingInline: "0.75rem" },
-  override: { padding: "28px" },
+  override: { paddingBlock: "28px", paddingInline: "28px" },
   consumerClass: { borderTopWidth: "5px" },
 })

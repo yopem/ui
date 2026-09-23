@@ -11,6 +11,7 @@ import { resolve } from "node:path"
 import { defineConfig } from "vite"
 
 const root = resolve(import.meta.dirname, "../..")
+const stylePropsBabel = "@yopem/registry/lib/style-props-babel"
 const styleXOptions = {
   aliases: {
     "@registry/*": [resolve(root, "packages/registry/src/*")],
@@ -30,7 +31,10 @@ const config = defineConfig({
             babelrc: false,
             configFile: false,
             parserOpts: { plugins: ["typescript", "jsx"] },
-            plugins: [["@stylexjs/babel-plugin", styleXOptions]],
+            plugins: [
+              stylePropsBabel,
+              ["@stylexjs/babel-plugin", styleXOptions],
+            ],
           },
           cwd: import.meta.dirname,
           include: [
@@ -46,7 +50,9 @@ const config = defineConfig({
   resolve: { tsconfigPaths: true },
   plugins: [
     devtools({ injectSource: { enabled: false } }),
-    babel({ plugins: [["@stylexjs/babel-plugin", styleXOptions]] }),
+    babel({
+      plugins: [stylePropsBabel, ["@stylexjs/babel-plugin", styleXOptions]],
+    }),
     nitro({
       rolldownConfig: {
         // Nitro rechunks SSR modules; preserve token initialization before themes.

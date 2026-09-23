@@ -4,11 +4,11 @@ Source-owned React components built with StyleX and Base UI.
 
 ## Style props
 
-Base installation includes `lib/style-props.ts`, its configuration, and
-generated StyleX declarations alongside tokens and `stylex.ts`. Keep these files
-together and process them with your existing StyleX build. No new runtime
-dependency, CSS injection, or application transform is required. The declaration
-generator is repository tooling, not part of consumer installation.
+Base installation includes typed style props and `lib/style-props-babel.ts`. Run
+the copied Babel plugin before StyleX in both JavaScript transformation and CSS
+extraction. Literal JSX props compile to StyleX styles at build time: no
+`--ysp-*` rules, runtime style-props parser, or CSS injection. Dynamic values
+must use native StyleX dynamic styles; JSX spreads cannot carry style props.
 
 Styled component parts accept typed CSS properties and Chakra-style aliases such
 as `p`, `px`, `m`, `w`, `bg`, and `rounded`. Component-specific props keep their
@@ -22,9 +22,10 @@ existing meaning; for example, `size` still selects a component size.
   rejected. Unitless properties such as `opacity` retain their CSS numeric
   meaning.
 - **Precedence:** defaults → variants → style props → `xstyle` → explicit inline
-  `style`. External `className` follows the CSS cascade; it is not guaranteed to
-  win last. `css` accepts a style object or compiled StyleX styles; direct style
-  props override matching entries from `css`.
+  `style` for matching atomic properties. For shorthand/longhand collisions, use
+  the matching longhands in `xstyle`; native CSS cascade still applies. External
+  `className` is not guaranteed to win last. Direct style props override
+  matching entries from `css`.
 - **Responsive values:** arrays map to `base`, `sm`, `md`, `lg`, `xl`, `2xl`;
   `null` or `undefined` skips an entry. Objects name these breakpoints, for
   example `p={{ base: 2, md: 4 }}`. Breakpoints start at 480, 768, 1024, 1280,
@@ -33,9 +34,8 @@ existing meaning; for example, `size` still selects a component size.
   `md`; `mdToXl` spans `md` through the `xl` interval. Reversed ranges are
   rejected. Nested conditions combine, rather than selecting a viewport in JS.
 - **Conditional defaults:** provide an explicit `base` value when overriding a
-  component default conditionally, for example `p={{ base: 2, md: 4 }}`.
-  Conditional-only declarations fall back to `unset`, not the component's
-  earlier StyleX default, outside matching conditions.
+  component default conditionally, for example `p={{ base: 2, md: 4 }}`. Earlier
+  StyleX component defaults remain outside a conditional-only rule.
 - **Conditions:** supported keys include `_hover`, `_focusVisible`, `_disabled`,
   `_checked`, `_dark`, `_rtl`, and `_motionReduce`. Use the exported types and
   `style-props-config.ts` for the complete supported set. State conditions style
@@ -47,11 +47,10 @@ existing meaning; for example, `size` still selects a component size.
   paths. Unknown properties and conditions throw. Pseudo-elements cannot nest;
   custom properties on pseudo-elements are unsupported.
 
-For custom wrappers, `splitStyleProps(props)` returns `{ domProps, xstyle }`.
-Spread only `domProps` onto the underlying element and compose returned `xstyle`
-after defaults/variants but before consumer `xstyle`. Alternatively,
-`resolveStyleProps(styleProps)` resolves an explicit style object. Import
-`StyleProps`, `StyleObject`, and `ResponsiveValue` from `@/lib/style-props`.
+For custom wrappers, compose `xstyle` with `stylexProps` after defaults and
+variants. Import `StyleProps`, `StyleObject`, and `ResponsiveValue` from
+`@/lib/style-props` for compile-time types. See installation guide for compiler
+setup; uncompiled JSX style props do not work.
 
 ## Layout primitives
 
