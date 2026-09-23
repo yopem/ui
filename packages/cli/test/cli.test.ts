@@ -7,9 +7,21 @@ test("rejects missing command, name, or unknown flags before network access", as
     ["add"],
     ["remove", "button"],
     ["update", "button", "--oops"],
+    ["init", "button"],
+    ["init", "--force"],
+    ["init", "--framework"],
+    ["init", "--framework", "unknown"],
   ]) {
     await expect(runCli(args)).rejects.toThrow("Usage: yopem-ui")
   }
+})
+
+test("init accepts framework selection and reaches project validation", async () => {
+  await expect(
+    runCli(["init", "--framework", "next"], {
+      cwd: new URL(".", import.meta.url).pathname,
+    }),
+  ).rejects.toThrow("package.json")
 })
 
 test("bin prints usage error and exits nonzero", () => {

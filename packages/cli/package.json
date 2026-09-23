@@ -10,6 +10,7 @@
   "type": "module",
   "exports": {
     "./cli": "./src/cli.ts",
+    "./init": "./src/init.ts",
     "./install": "./src/install.ts"
   },
   "publishConfig": {
@@ -17,7 +18,10 @@
   },
   "scripts": {
     "test": "bun test test",
-    "typecheck": "tsc --ignoreConfig --noEmit --strict --target esnext --module preserve --moduleResolution bundler --types bun,node src/cli.ts src/install.ts test/cli.test.ts test/install.test.ts"
+    "typecheck": "tsc --ignoreConfig --noEmit --strict --target esnext --module preserve --moduleResolution bundler --types bun,node src/cli.ts src/init.ts src/install.ts test/cli.test.ts test/init.test.ts test/install.test.ts"
+  },
+  "dependencies": {
+    "typescript-api": "npm:typescript@6.0.2"
   },
   "engines": {
     "bun": ">=1.3.0"

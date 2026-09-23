@@ -148,7 +148,7 @@ function parseItem(value: unknown, name: string): RegistryItem {
   }
 }
 
-async function existingFile(root: string, relative: string) {
+export async function existingFile(root: string, relative: string) {
   const parts = relative.split("/")
   let current = root
   for (const [index, part] of parts.entries()) {
@@ -196,7 +196,7 @@ async function readManifest(root: string): Promise<Manifest> {
   return { version: 1, files }
 }
 
-async function runBun(args: string[], cwd: string) {
+export async function runBun(args: string[], cwd: string) {
   const process = Bun.spawn(["bun", ...args], {
     cwd,
     stdout: "inherit",
