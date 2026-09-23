@@ -6,12 +6,11 @@ import { resolve } from "node:path"
 
 const root = resolve(import.meta.dir, "../../src")
 
-test("base distributes every runtime style-props module with consumer-safe imports", () => {
+test("base distributes TypeScript style-props compiler and types", () => {
   const base = foundationItems.find((item) => item.name === "base")!
   const paths = base.files.map((file) => file.path)
-  const modules = readdirSync(resolve(root, "lib")).filter(
-    (name) =>
-      name.startsWith("style-props") && name !== "style-props-generate.ts",
+  const modules = readdirSync(resolve(root, "lib")).filter((name) =>
+    name.startsWith("style-props"),
   )
   expect(modules.length).toBeGreaterThan(0)
   for (const name of modules) {
@@ -25,31 +24,27 @@ test("base distributes every runtime style-props module with consumer-safe impor
     expect(source).not.toContain("@registry/")
     for (const [, dependency] of source.matchAll(/from "\.\/(style[^"]+)"/g)) {
       expect(paths, `${name} -> ${dependency}`).toContain(
-        `lib/${dependency}.ts`,
+        `lib/${dependency.endsWith(".ts") ? dependency : `${dependency}.ts`}`,
       )
     }
   }
 })
 
-test("base delivers style-props API without development generator or compiler", () => {
+test("base delivers compiler without runtime style-props CSS tables", () => {
   const base = foundationItems.find((item) => item.name === "base")!
   expect(base.files.map((file) => file.path)).not.toContain(
     "lib/style-props-generate.ts",
   )
-  expect(base.devDependencies).toEqual([])
-  expect(base.dependencies.some((name) => name.startsWith("typescript"))).toBe(
-    false,
-  )
+  expect(base.devDependencies).toContain("@babel/core@^7.29.7")
+  expect(base.devDependencies).toContain("typescript-api@npm:typescript@6.0.2")
   expect(base.docs?.api).toEqual(
     expect.arrayContaining([
       "StyleProps",
       "StyleObject",
       "ResponsiveValue",
-      "splitStyleProps",
-      "resolveStyleProps",
+      "StyleComponentProps",
       "Condition",
       "breakpoints",
-      "propertyStyles",
     ]),
   )
 })

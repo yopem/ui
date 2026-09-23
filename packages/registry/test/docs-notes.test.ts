@@ -6,16 +6,17 @@ test("base notes distinguish spacing tokens, cascade order, and css limits", () 
   for (const contract of [
     'p={4} is 1rem, while p="4px" is literal CSS',
     "defaults, variants, style props, xstyle, then explicit inline style",
-    "className uses the CSS cascade and is not guaranteed to win last",
+    "External className is not guaranteed to win last",
     "base, sm, md, lg, xl, 2xl",
     "mdDown is below md",
     "Reversed ranges are rejected",
     "do not accept arbitrary selectors, raw at-rules, keyframes",
     "css={styles.custom}",
     "StyleX --spacing theme token",
-    "Spread only domProps",
-    "Conditional-only declarations fall back to unset",
-    "not consumer source",
+    "before the StyleX Babel plugin",
+    "dynamic style values are build errors",
+    "JSX spreads are not a supported way to pass style props",
+    "runtime style prop objects are unsupported",
   ]) {
     expect(notes).toContain(contract)
   }

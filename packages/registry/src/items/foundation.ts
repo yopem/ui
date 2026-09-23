@@ -6,7 +6,11 @@ export const foundationItems: SourceItem[] = [
     dependencies: ["@stylexjs/stylex@^0.19.0", "clsx@^2.1.1"],
     description:
       "Native StyleX tokens, themes, reset, and typed component style props for Yopem UI.",
-    devDependencies: [],
+    devDependencies: [
+      "@babel/core@^7.29.7",
+      "@types/react@^19.2.18",
+      "typescript-api@npm:typescript@6.0.2",
+    ],
     docs: {
       api: [
         "lightValues",
@@ -24,10 +28,6 @@ export const foundationItems: SourceItem[] = [
         "StyleObject",
         "ResponsiveValue",
         "StyleComponentProps",
-        "splitStyleProps",
-        "resolveStyleProps",
-        "normalizeStyleProps",
-        "isStyleProp",
         "Breakpoint",
         "Condition",
         "ResponsiveCondition",
@@ -37,10 +37,6 @@ export const foundationItems: SourceItem[] = [
         "mediaConditions",
         "scopes",
         "selectors",
-        "conditionStyles",
-        "propertyStyles",
-        "scopedPropertyStyles",
-        "variableStyles",
       ],
       usage:
         "Copy the base files, configure StyleX and import styles.css. Native tokens provide light defaults without a provider or script. Add the optional theme item for light/dark/system switching. Customize in the copied tokens.stylex.ts with stylex.createTheme(tokens, { ...lightValues, '--primary': '...' }); for dark use ...darkValues, not a partial theme layered over darkTheme. Keep these spreads in tokens.stylex.ts: StyleX 0.19 does not expand imported constant objects.",
@@ -72,8 +68,8 @@ export const foundationItems: SourceItem[] = [
         type: "registry:lib",
       },
       {
-        path: "lib/style-props-styles.ts",
-        target: "@/lib/style-props-styles.ts",
+        path: "lib/style-props-babel.ts",
+        target: "@/lib/style-props-babel.ts",
         type: "registry:lib",
       },
     ],

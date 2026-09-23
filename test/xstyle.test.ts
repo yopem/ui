@@ -14,11 +14,6 @@ const React = registryRequire("react")
 const { mergeStyleProps, stylexProps } = registryRequire(
   resolve(root, "packages/registry/src/lib/stylex.ts"),
 )
-const {
-  core: { splitStyleProps },
-} = registryRequire(
-  resolve(root, "packages/registry/test/lib/style-props-fixture.ts"),
-)
 const ts = registryRequire("typescript-api")
 const { clsx } = registryRequire("clsx")
 const { renderToStaticMarkup } = registryRequire("react-dom/server")
@@ -59,7 +54,6 @@ function evaluate(
       ...registryRequire("lucide-react"),
       stylex,
       stylexProps,
-      splitStyleProps,
       mergeStyleProps,
       React,
       clsx,
