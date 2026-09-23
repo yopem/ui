@@ -1,9 +1,9 @@
 import { RiGithubFill, RiGoogleFill, RiTwitterXFill } from "@remixicon/react"
 import * as stylex from "@stylexjs/stylex"
 
-import { Box } from "@/components/ui/stylex/box"
-import { Button } from "@/components/ui/stylex/button"
-import { Flex } from "@/components/ui/stylex/flex"
+import { Box } from "@/components/ui/box"
+import { Button } from "@/components/ui/button"
+import { Flex } from "@/components/ui/flex"
 export default function Example() {
   return (
     <Flex {...stylex.props(exampleStyles.example1)}>

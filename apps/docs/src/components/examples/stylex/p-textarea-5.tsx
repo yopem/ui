@@ -1,9 +1,9 @@
 import * as stylex from "@stylexjs/stylex"
 import { useId } from "react"
 
-import { Flex } from "@/components/ui/stylex/flex"
-import { Label } from "@/components/ui/stylex/label"
-import { Textarea } from "@/components/ui/stylex/textarea"
+import { Flex } from "@/components/ui/flex"
+import { Label } from "@/components/ui/label"
+import { Textarea } from "@/components/ui/textarea"
 export default function Example() {
   const id = useId()
   return (

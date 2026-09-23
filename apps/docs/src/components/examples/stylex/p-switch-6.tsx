@@ -1,6 +1,6 @@
 import * as stylex from "@stylexjs/stylex"
 
-import { Switch } from "@/components/ui/stylex/switch"
+import { Switch } from "@/components/ui/switch"
 
 export default function Example() {
   return (

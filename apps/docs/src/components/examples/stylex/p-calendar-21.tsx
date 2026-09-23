@@ -14,10 +14,10 @@ import {
 } from "date-fns"
 import { useState } from "react"
 
-import { Box } from "@/components/ui/stylex/box"
-import { Button } from "@/components/ui/stylex/button"
-import { Calendar } from "@/components/ui/stylex/calendar"
-import { Flex } from "@/components/ui/stylex/flex"
+import { Box } from "@/components/ui/box"
+import { Button } from "@/components/ui/button"
+import { Calendar } from "@/components/ui/calendar"
+import { Flex } from "@/components/ui/flex"
 export default function Example() {
   const today = new Date()
   const yesterday = {

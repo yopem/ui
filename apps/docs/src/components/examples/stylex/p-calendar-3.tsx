@@ -4,7 +4,7 @@ import type { DateRange } from "@daypicker/react"
 
 import * as React from "react"
 
-import { Calendar } from "@/components/ui/stylex/calendar"
+import { Calendar } from "@/components/ui/calendar"
 
 export default function Example() {
   const [range, setRange] = React.useState<DateRange | undefined>(() => ({

@@ -3,14 +3,10 @@ import * as stylex from "@stylexjs/stylex"
 import { SaveIcon } from "lucide-react"
 import { useRef } from "react"
 
-import { Button } from "@/components/ui/stylex/button"
-import { Paragraph } from "@/components/ui/stylex/paragraph"
-import { anchoredToastManager } from "@/components/ui/stylex/toast"
-import {
-  Tooltip,
-  TooltipPopup,
-  TooltipTrigger,
-} from "@/components/ui/stylex/tooltip"
+import { Button } from "@/components/ui/button"
+import { Paragraph } from "@/components/ui/paragraph"
+import { anchoredToastManager } from "@/components/ui/toast"
+import { Tooltip, TooltipPopup, TooltipTrigger } from "@/components/ui/tooltip"
 const ANCHORED_SAVE_TOAST_ID = "coss-example-anchored-save-toast"
 
 function SaveTooltipPopup() {

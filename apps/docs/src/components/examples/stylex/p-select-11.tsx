@@ -5,21 +5,21 @@ import type { FormEvent } from "react"
 import * as stylex from "@stylexjs/stylex"
 import { useState } from "react"
 
-import { Button } from "@/components/ui/stylex/button"
+import { Button } from "@/components/ui/button"
 import {
   Field,
   FieldDescription,
   FieldError,
   FieldLabel,
-} from "@/components/ui/stylex/field"
-import { Form } from "@/components/ui/stylex/form"
+} from "@/components/ui/field"
+import { Form } from "@/components/ui/form"
 import {
   Select,
   SelectItem,
   SelectPopup,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/stylex/select"
+} from "@/components/ui/select"
 
 const items = [
   { label: "Next.js", value: "next" },

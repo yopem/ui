@@ -5,9 +5,9 @@ import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import { Suspense } from "react"
 
-import { Box } from "@/components/ui/stylex/box"
-import { Flex } from "@/components/ui/stylex/flex"
-import { Heading } from "@/components/ui/stylex/heading"
+import { Box } from "@/components/ui/box"
+import { Flex } from "@/components/ui/flex"
+import { Heading } from "@/components/ui/heading"
 
 import type { CatalogExample } from "./components"
 

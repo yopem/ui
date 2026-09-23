@@ -1,15 +1,11 @@
-import {
-  Field,
-  FieldDescription,
-  FieldLabel,
-} from "@/components/ui/stylex/field"
+import { Field, FieldDescription, FieldLabel } from "@/components/ui/field"
 import {
   Select,
   SelectItem,
   SelectPopup,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/stylex/select"
+} from "@/components/ui/select"
 
 const items = [
   { label: "Select a country", value: null },

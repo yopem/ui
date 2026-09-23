@@ -4,8 +4,8 @@ import * as stylex from "@stylexjs/stylex"
 import { StarIcon } from "lucide-react"
 import { useState } from "react"
 
-import { Box } from "@/components/ui/stylex/box"
-import { Button } from "@/components/ui/stylex/button"
+import { Box } from "@/components/ui/box"
+import { Button } from "@/components/ui/button"
 export default function Example() {
   const [isStarred, setIsStarred] = useState(false)
   const count = isStarred ? 730 : 729

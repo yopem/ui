@@ -58,7 +58,7 @@ interface StylingOptions {
 }
 
 const DEFAULT_COMPONENT_SOURCES = [
-  "@/components/ui/stylex/",
+  "@/components/ui/",
   "@registry/components/ui/",
   "@yopem-ui/ui",
 ]

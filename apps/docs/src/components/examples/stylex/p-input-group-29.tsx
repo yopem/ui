@@ -3,18 +3,14 @@
 import * as stylex from "@stylexjs/stylex"
 import { ArrowRightIcon, MicIcon } from "lucide-react"
 
-import { Button } from "@/components/ui/stylex/button"
+import { Button } from "@/components/ui/button"
 import {
   InputGroup,
   InputGroupAddon,
   InputGroupText,
   InputGroupTextarea,
-} from "@/components/ui/stylex/input-group"
-import {
-  Tooltip,
-  TooltipPopup,
-  TooltipTrigger,
-} from "@/components/ui/stylex/tooltip"
+} from "@/components/ui/input-group"
+import { Tooltip, TooltipPopup, TooltipTrigger } from "@/components/ui/tooltip"
 
 export default function Example() {
   return (

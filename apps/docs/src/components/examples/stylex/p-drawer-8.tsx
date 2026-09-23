@@ -1,6 +1,6 @@
 import * as stylex from "@stylexjs/stylex"
 
-import { Button } from "@/components/ui/stylex/button"
+import { Button } from "@/components/ui/button"
 import {
   Drawer,
   DrawerClose,
@@ -11,11 +11,11 @@ import {
   DrawerPopup,
   DrawerTitle,
   DrawerTrigger,
-} from "@/components/ui/stylex/drawer"
-import { Field, FieldLabel } from "@/components/ui/stylex/field"
-import { Grid } from "@/components/ui/stylex/grid"
-import { Input } from "@/components/ui/stylex/input"
-import { Paragraph } from "@/components/ui/stylex/paragraph"
+} from "@/components/ui/drawer"
+import { Field, FieldLabel } from "@/components/ui/field"
+import { Grid } from "@/components/ui/grid"
+import { Input } from "@/components/ui/input"
+import { Paragraph } from "@/components/ui/paragraph"
 export default function Example() {
   return (
     <Drawer position="right">

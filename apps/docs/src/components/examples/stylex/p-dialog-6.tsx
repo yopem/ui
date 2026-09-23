@@ -1,6 +1,6 @@
 import * as stylex from "@stylexjs/stylex"
 
-import { Button } from "@/components/ui/stylex/button"
+import { Button } from "@/components/ui/button"
 import {
   Dialog,
   DialogClose,
@@ -11,10 +11,10 @@ import {
   DialogPopup,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/stylex/dialog"
-import { Field, FieldLabel } from "@/components/ui/stylex/field"
-import { Form } from "@/components/ui/stylex/form"
-import { Input } from "@/components/ui/stylex/input"
+} from "@/components/ui/dialog"
+import { Field, FieldLabel } from "@/components/ui/field"
+import { Form } from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
 
 export default function Example() {
   return (

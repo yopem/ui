@@ -3,19 +3,19 @@
 import * as stylex from "@stylexjs/stylex"
 import { ImageIcon, PaperclipIcon } from "lucide-react"
 
-import { Button } from "@/components/ui/stylex/button"
-import { Flex } from "@/components/ui/stylex/flex"
+import { Button } from "@/components/ui/button"
+import { Flex } from "@/components/ui/flex"
 import {
   InputGroup,
   InputGroupAddon,
   InputGroupTextarea,
-} from "@/components/ui/stylex/input-group"
+} from "@/components/ui/input-group"
 import {
   Tooltip,
   TooltipPopup,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/ui/stylex/tooltip"
+} from "@/components/ui/tooltip"
 export default function Example() {
   return (
     <InputGroup>

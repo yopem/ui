@@ -14,8 +14,8 @@ import {
   ComboboxList,
   ComboboxPopup,
   ComboboxSeparator,
-} from "@/components/ui/stylex/combobox"
-import { Flex } from "@/components/ui/stylex/flex"
+} from "@/components/ui/combobox"
+import { Flex } from "@/components/ui/flex"
 // Grouped items example
 interface Tag {
   id: string

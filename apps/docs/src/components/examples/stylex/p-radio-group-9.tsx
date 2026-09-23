@@ -5,7 +5,7 @@ import * as stylex from "@stylexjs/stylex"
 import {
   RadioGroupPrimitive,
   RadioPrimitive,
-} from "@/components/ui/stylex/radio-group"
+} from "@/components/ui/radio-group"
 
 export default function Example() {
   return (

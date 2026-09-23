@@ -3,8 +3,8 @@
 import * as stylex from "@stylexjs/stylex"
 import { ChevronsUpDownIcon, SearchIcon } from "lucide-react"
 
-import { Box } from "@/components/ui/stylex/box"
-import { Button } from "@/components/ui/stylex/button"
+import { Box } from "@/components/ui/box"
+import { Button } from "@/components/ui/button"
 import {
   Combobox,
   ComboboxEmpty,
@@ -14,7 +14,7 @@ import {
   ComboboxPopup,
   ComboboxTrigger,
   ComboboxValue,
-} from "@/components/ui/stylex/combobox"
+} from "@/components/ui/combobox"
 interface Country {
   code: string
   value: string | null

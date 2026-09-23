@@ -5,12 +5,12 @@ import type { FormEvent } from "react"
 import * as stylex from "@stylexjs/stylex"
 import { useState } from "react"
 
-import { Button } from "@/components/ui/stylex/button"
-import { Checkbox } from "@/components/ui/stylex/checkbox"
-import { CheckboxGroup } from "@/components/ui/stylex/checkbox-group"
-import { Field, FieldItem, FieldLabel } from "@/components/ui/stylex/field"
-import { Fieldset, FieldsetLegend } from "@/components/ui/stylex/fieldset"
-import { Form } from "@/components/ui/stylex/form"
+import { Button } from "@/components/ui/button"
+import { Checkbox } from "@/components/ui/checkbox"
+import { CheckboxGroup } from "@/components/ui/checkbox-group"
+import { Field, FieldItem, FieldLabel } from "@/components/ui/field"
+import { Fieldset, FieldsetLegend } from "@/components/ui/fieldset"
+import { Form } from "@/components/ui/form"
 
 export default function Example() {
   const [loading, setLoading] = useState(false)

@@ -4,18 +4,14 @@ import * as stylex from "@stylexjs/stylex"
 import { LoaderCircleIcon, MicIcon, SearchIcon } from "lucide-react"
 import { useEffect, useRef, useState } from "react"
 
-import { Box } from "@/components/ui/stylex/box"
-import { Button } from "@/components/ui/stylex/button"
+import { Box } from "@/components/ui/box"
+import { Button } from "@/components/ui/button"
 import {
   InputGroup,
   InputGroupAddon,
   InputGroupInput,
-} from "@/components/ui/stylex/input-group"
-import {
-  Tooltip,
-  TooltipPopup,
-  TooltipTrigger,
-} from "@/components/ui/stylex/tooltip"
+} from "@/components/ui/input-group"
+import { Tooltip, TooltipPopup, TooltipTrigger } from "@/components/ui/tooltip"
 export default function Example() {
   const [inputValue, setInputValue] = useState("")
   const [isLoading, setIsLoading] = useState(false)

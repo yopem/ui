@@ -1,6 +1,6 @@
 import * as stylex from "@stylexjs/stylex"
 
-import { Button } from "@/components/ui/stylex/button"
+import { Button } from "@/components/ui/button"
 import {
   Card,
   CardFrame,
@@ -8,17 +8,17 @@ import {
   CardFrameHeader,
   CardFrameTitle,
   CardPanel,
-} from "@/components/ui/stylex/card"
-import { Field, FieldLabel } from "@/components/ui/stylex/field"
-import { Form } from "@/components/ui/stylex/form"
-import { Input } from "@/components/ui/stylex/input"
+} from "@/components/ui/card"
+import { Field, FieldLabel } from "@/components/ui/field"
+import { Form } from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
 import {
   Select,
   SelectItem,
   SelectPopup,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/stylex/select"
+} from "@/components/ui/select"
 
 const frameworkOptions = [
   { label: "Next.js", value: "next" },

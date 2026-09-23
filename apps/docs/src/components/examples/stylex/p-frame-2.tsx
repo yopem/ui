@@ -1,15 +1,15 @@
 import * as stylex from "@stylexjs/stylex"
 import { ChevronDownIcon, TrashIcon } from "lucide-react"
 
-import { Button } from "@/components/ui/stylex/button"
+import { Button } from "@/components/ui/button"
 import {
   Collapsible,
   CollapsiblePanel,
   CollapsibleTrigger,
-} from "@/components/ui/stylex/collapsible"
-import { Frame, FrameHeader, FramePanel } from "@/components/ui/stylex/frame"
-import { Heading } from "@/components/ui/stylex/heading"
-import { Paragraph } from "@/components/ui/stylex/paragraph"
+} from "@/components/ui/collapsible"
+import { Frame, FrameHeader, FramePanel } from "@/components/ui/frame"
+import { Heading } from "@/components/ui/heading"
+import { Paragraph } from "@/components/ui/paragraph"
 export default function Example() {
   return (
     <Frame {...stylex.props(exampleStyles.example1)}>

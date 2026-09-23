@@ -3,15 +3,11 @@ import * as stylex from "@stylexjs/stylex"
 import { BookmarkIcon } from "lucide-react"
 import { useRef, useState } from "react"
 
-import { Box } from "@/components/ui/stylex/box"
-import { Paragraph } from "@/components/ui/stylex/paragraph"
-import { anchoredToastManager } from "@/components/ui/stylex/toast"
-import { Toggle } from "@/components/ui/stylex/toggle"
-import {
-  Tooltip,
-  TooltipPopup,
-  TooltipTrigger,
-} from "@/components/ui/stylex/tooltip"
+import { Box } from "@/components/ui/box"
+import { Paragraph } from "@/components/ui/paragraph"
+import { anchoredToastManager } from "@/components/ui/toast"
+import { Toggle } from "@/components/ui/toggle"
+import { Tooltip, TooltipPopup, TooltipTrigger } from "@/components/ui/tooltip"
 export default function Example() {
   const [bookmarked, setBookmarked] = useState(false)
   const toggleRef = useRef<HTMLDivElement>(null)

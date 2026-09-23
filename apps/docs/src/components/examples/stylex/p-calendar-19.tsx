@@ -4,12 +4,12 @@ import * as stylex from "@stylexjs/stylex"
 import { format } from "date-fns"
 import { useState } from "react"
 
-import { Box } from "@/components/ui/stylex/box"
-import { Calendar } from "@/components/ui/stylex/calendar"
-import { Flex } from "@/components/ui/stylex/flex"
-import { ScrollArea } from "@/components/ui/stylex/scroll-area"
-import { Toggle } from "@/components/ui/stylex/toggle"
-import { ToggleGroup } from "@/components/ui/stylex/toggle-group"
+import { Box } from "@/components/ui/box"
+import { Calendar } from "@/components/ui/calendar"
+import { Flex } from "@/components/ui/flex"
+import { ScrollArea } from "@/components/ui/scroll-area"
+import { Toggle } from "@/components/ui/toggle"
+import { ToggleGroup } from "@/components/ui/toggle-group"
 export default function Example() {
   const today = new Date()
   const [date, setDate] = useState<Date>(today)

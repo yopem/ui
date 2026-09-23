@@ -1,13 +1,13 @@
 import * as stylex from "@stylexjs/stylex"
 import { ArrowRightIcon } from "lucide-react"
 
-import { Button } from "@/components/ui/stylex/button"
-import { Field, FieldError, FieldLabel } from "@/components/ui/stylex/field"
+import { Button } from "@/components/ui/button"
+import { Field, FieldError, FieldLabel } from "@/components/ui/field"
 import {
   InputGroup,
   InputGroupAddon,
   InputGroupInput,
-} from "@/components/ui/stylex/input-group"
+} from "@/components/ui/input-group"
 
 export default function Example() {
   return (

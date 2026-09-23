@@ -1,12 +1,12 @@
 // next/link replaced -> anchor
-import { Button } from "@/components/ui/stylex/button"
-import { Link } from "@/components/ui/stylex/link"
+import { Button } from "@/components/ui/button"
+import { Link } from "@/components/ui/link"
 import {
   Menu,
   MenuLinkItem,
   MenuPopup,
   MenuTrigger,
-} from "@/components/ui/stylex/menu"
+} from "@/components/ui/menu"
 export default function Example() {
   return (
     <Menu>

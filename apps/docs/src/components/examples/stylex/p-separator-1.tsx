@@ -1,10 +1,10 @@
 import * as stylex from "@stylexjs/stylex"
 
-import { Box } from "@/components/ui/stylex/box"
-import { Flex } from "@/components/ui/stylex/flex"
-import { Heading } from "@/components/ui/stylex/heading"
-import { Paragraph } from "@/components/ui/stylex/paragraph"
-import { Separator } from "@/components/ui/stylex/separator"
+import { Box } from "@/components/ui/box"
+import { Flex } from "@/components/ui/flex"
+import { Heading } from "@/components/ui/heading"
+import { Paragraph } from "@/components/ui/paragraph"
+import { Separator } from "@/components/ui/separator"
 export default function Example() {
   return (
     <Box {...stylex.props(exampleStyles.example1)}>

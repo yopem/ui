@@ -1,18 +1,18 @@
 // next/link replaced -> anchor
 import * as stylex from "@stylexjs/stylex"
 
-import { Button } from "@/components/ui/stylex/button"
+import { Button } from "@/components/ui/button"
 import {
   Card,
   CardAction,
   CardHeader,
   CardPanel,
   CardTitle,
-} from "@/components/ui/stylex/card"
-import { Field, FieldLabel } from "@/components/ui/stylex/field"
-import { Form } from "@/components/ui/stylex/form"
-import { Input } from "@/components/ui/stylex/input"
-import { Link } from "@/components/ui/stylex/link"
+} from "@/components/ui/card"
+import { Field, FieldLabel } from "@/components/ui/field"
+import { Form } from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
+import { Link } from "@/components/ui/link"
 function LoginFields() {
   return (
     <>

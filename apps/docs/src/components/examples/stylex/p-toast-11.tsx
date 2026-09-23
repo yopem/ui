@@ -1,7 +1,7 @@
 "use client"
 
-import { Button } from "@/components/ui/stylex/button"
-import { toastManager } from "@/components/ui/stylex/toast"
+import { Button } from "@/components/ui/button"
+import { toastManager } from "@/components/ui/toast"
 
 const ERROR_TOAST_ID = "coss-example-error-upsert"
 

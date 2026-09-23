@@ -4,16 +4,16 @@ import * as stylex from "@stylexjs/stylex"
 import { RotateCcwIcon } from "lucide-react"
 import { useState } from "react"
 
-import { Button } from "@/components/ui/stylex/button"
-import { Fieldset, FieldsetLegend } from "@/components/ui/stylex/fieldset"
-import { Flex } from "@/components/ui/stylex/flex"
-import { Label } from "@/components/ui/stylex/label"
+import { Button } from "@/components/ui/button"
+import { Fieldset, FieldsetLegend } from "@/components/ui/fieldset"
+import { Flex } from "@/components/ui/flex"
+import { Label } from "@/components/ui/label"
 import {
   NumberField,
   NumberFieldGroup,
   NumberFieldInput,
-} from "@/components/ui/stylex/number-field"
-import { Slider } from "@/components/ui/stylex/slider"
+} from "@/components/ui/number-field"
+import { Slider } from "@/components/ui/slider"
 const min = -10
 const max = 10
 const defaultValues = { x: 0, y: 0, z: 0 }

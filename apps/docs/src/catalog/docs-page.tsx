@@ -4,10 +4,10 @@ import { stylexProps } from "@registry/lib/stylex"
 import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 
-import { Box } from "@/components/ui/stylex/box"
-import { Grid } from "@/components/ui/stylex/grid"
-import { Heading } from "@/components/ui/stylex/heading"
-import { Paragraph } from "@/components/ui/stylex/paragraph"
+import { Box } from "@/components/ui/box"
+import { Grid } from "@/components/ui/grid"
+import { Heading } from "@/components/ui/heading"
+import { Paragraph } from "@/components/ui/paragraph"
 
 import type { TocItem } from "./table-of-contents"
 

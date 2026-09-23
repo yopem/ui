@@ -1,11 +1,11 @@
 import * as stylex from "@stylexjs/stylex"
 
-import { Box } from "@/components/ui/stylex/box"
+import { Box } from "@/components/ui/box"
 import {
   InputGroup,
   InputGroupAddon,
   InputGroupText,
-} from "@/components/ui/stylex/input-group"
+} from "@/components/ui/input-group"
 export default function Example() {
   return (
     <InputGroup>

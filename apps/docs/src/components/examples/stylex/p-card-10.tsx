@@ -1,27 +1,27 @@
 import * as stylex from "@stylexjs/stylex"
 import { CircleAlertIcon } from "lucide-react"
 
-import { Button } from "@/components/ui/stylex/button"
-import { Card, CardPanel } from "@/components/ui/stylex/card"
-import { Field, FieldLabel } from "@/components/ui/stylex/field"
-import { Flex } from "@/components/ui/stylex/flex"
-import { Form } from "@/components/ui/stylex/form"
+import { Button } from "@/components/ui/button"
+import { Card, CardPanel } from "@/components/ui/card"
+import { Field, FieldLabel } from "@/components/ui/field"
+import { Flex } from "@/components/ui/flex"
+import { Form } from "@/components/ui/form"
 import {
   Frame,
   FrameDescription,
   FrameFooter,
   FrameHeader,
   FrameTitle,
-} from "@/components/ui/stylex/frame"
-import { Input } from "@/components/ui/stylex/input"
-import { Paragraph } from "@/components/ui/stylex/paragraph"
+} from "@/components/ui/frame"
+import { Input } from "@/components/ui/input"
+import { Paragraph } from "@/components/ui/paragraph"
 import {
   Select,
   SelectItem,
   SelectPopup,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/stylex/select"
+} from "@/components/ui/select"
 const frameworkOptions = [
   { label: "Next.js", value: "next" },
   { label: "Vite", value: "vite" },

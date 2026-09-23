@@ -5,14 +5,14 @@ import type { DropdownProps } from "@daypicker/react"
 import * as stylex from "@stylexjs/stylex"
 import * as React from "react"
 
-import { Calendar } from "@/components/ui/stylex/calendar"
+import { Calendar } from "@/components/ui/calendar"
 import {
   Select,
   SelectItem,
   SelectPopup,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/stylex/select"
+} from "@/components/ui/select"
 
 function CalendarDropdown(props: DropdownProps) {
   const { options, value, onChange, "aria-label": ariaLabel } = props

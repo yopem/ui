@@ -1,16 +1,16 @@
 import * as stylex from "@stylexjs/stylex"
 
-import { Box } from "@/components/ui/stylex/box"
+import { Box } from "@/components/ui/box"
 import {
   Frame,
   FrameDescription,
   FrameHeader,
   FramePanel,
   FrameTitle,
-} from "@/components/ui/stylex/frame"
-import { Heading } from "@/components/ui/stylex/heading"
-import { Paragraph } from "@/components/ui/stylex/paragraph"
-import { Separator } from "@/components/ui/stylex/separator"
+} from "@/components/ui/frame"
+import { Heading } from "@/components/ui/heading"
+import { Paragraph } from "@/components/ui/paragraph"
+import { Separator } from "@/components/ui/separator"
 export default function Example() {
   return (
     <Frame {...stylex.props(exampleStyles.example1)}>

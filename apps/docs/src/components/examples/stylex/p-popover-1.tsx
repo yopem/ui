@@ -2,18 +2,18 @@
 
 import * as stylex from "@stylexjs/stylex"
 
-import { Box } from "@/components/ui/stylex/box"
-import { Button } from "@/components/ui/stylex/button"
-import { Field } from "@/components/ui/stylex/field"
-import { Form } from "@/components/ui/stylex/form"
+import { Box } from "@/components/ui/box"
+import { Button } from "@/components/ui/button"
+import { Field } from "@/components/ui/field"
+import { Form } from "@/components/ui/form"
 import {
   Popover,
   PopoverDescription,
   PopoverPopup,
   PopoverTitle,
   PopoverTrigger,
-} from "@/components/ui/stylex/popover"
-import { Textarea } from "@/components/ui/stylex/textarea"
+} from "@/components/ui/popover"
+import { Textarea } from "@/components/ui/textarea"
 export default function Example() {
   return (
     <Popover>

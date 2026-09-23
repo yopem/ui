@@ -4,19 +4,11 @@ import * as stylex from "@stylexjs/stylex"
 import { CheckIcon, CopyIcon } from "lucide-react"
 import { useRef } from "react"
 
-import { Button } from "@/components/ui/stylex/button"
-import {
-  Group,
-  GroupSeparator,
-  groupItemStyles,
-} from "@/components/ui/stylex/group"
-import { Input } from "@/components/ui/stylex/input"
-import { Paragraph } from "@/components/ui/stylex/paragraph"
-import {
-  Tooltip,
-  TooltipPopup,
-  TooltipTrigger,
-} from "@/components/ui/stylex/tooltip"
+import { Button } from "@/components/ui/button"
+import { Group, GroupSeparator, groupItemStyles } from "@/components/ui/group"
+import { Input } from "@/components/ui/input"
+import { Paragraph } from "@/components/ui/paragraph"
+import { Tooltip, TooltipPopup, TooltipTrigger } from "@/components/ui/tooltip"
 import { useCopyToClipboard } from "@/hooks/use-copy-to-clipboard"
 export default function Example() {
   const { copyToClipboard, isCopied } = useCopyToClipboard()

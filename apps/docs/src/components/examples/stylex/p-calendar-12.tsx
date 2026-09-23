@@ -5,8 +5,8 @@ import type { WeekNumberProps } from "@daypicker/react"
 import * as stylex from "@stylexjs/stylex"
 import { useState } from "react"
 
-import { Box } from "@/components/ui/stylex/box"
-import { Calendar } from "@/components/ui/stylex/calendar"
+import { Box } from "@/components/ui/box"
+import { Calendar } from "@/components/ui/calendar"
 export default function Example() {
   const [date, setDate] = useState<Date | undefined>(new Date())
 

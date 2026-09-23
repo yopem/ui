@@ -6,8 +6,8 @@ import * as stylex from "@stylexjs/stylex"
 import { format } from "date-fns"
 import { useState } from "react"
 
-import { Box } from "@/components/ui/stylex/box"
-import { Calendar } from "@/components/ui/stylex/calendar"
+import { Box } from "@/components/ui/box"
+import { Calendar } from "@/components/ui/calendar"
 const GOOD_PRICE_THRESHOLD = 100
 
 export default function Example() {

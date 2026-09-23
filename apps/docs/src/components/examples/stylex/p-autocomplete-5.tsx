@@ -10,9 +10,9 @@ import {
   AutocompleteItem,
   AutocompleteList,
   AutocompletePopup,
-} from "@/components/ui/stylex/autocomplete"
-import { Flex } from "@/components/ui/stylex/flex"
-import { Label } from "@/components/ui/stylex/label"
+} from "@/components/ui/autocomplete"
+import { Flex } from "@/components/ui/flex"
+import { Label } from "@/components/ui/label"
 const items = [
   { label: "Apple", value: "apple" },
   { label: "Banana", value: "banana" },

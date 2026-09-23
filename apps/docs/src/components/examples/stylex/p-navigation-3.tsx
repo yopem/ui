@@ -1,8 +1,8 @@
 import * as stylex from "@stylexjs/stylex"
 
-import { Box } from "@/components/ui/stylex/box"
-import { Flex } from "@/components/ui/stylex/flex"
-import { Link } from "@/components/ui/stylex/link"
+import { Box } from "@/components/ui/box"
+import { Flex } from "@/components/ui/flex"
+import { Link } from "@/components/ui/link"
 export default function Example() {
   return (
     <Box as="nav" aria-label="Project sections">

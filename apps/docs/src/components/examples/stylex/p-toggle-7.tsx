@@ -1,8 +1,8 @@
 import * as stylex from "@stylexjs/stylex"
 import { BoldIcon, ItalicIcon, UnderlineIcon } from "lucide-react"
 
-import { Flex } from "@/components/ui/stylex/flex"
-import { Toggle } from "@/components/ui/stylex/toggle"
+import { Flex } from "@/components/ui/flex"
+import { Toggle } from "@/components/ui/toggle"
 export default function Example() {
   return (
     <Flex {...stylex.props(exampleStyles.example1)}>

@@ -4,11 +4,8 @@ import {
   InputGroup,
   InputGroupAddon,
   InputGroupText,
-} from "@/components/ui/stylex/input-group"
-import {
-  NumberField,
-  NumberFieldInput,
-} from "@/components/ui/stylex/number-field"
+} from "@/components/ui/input-group"
+import { NumberField, NumberFieldInput } from "@/components/ui/number-field"
 
 export default function Example() {
   return (

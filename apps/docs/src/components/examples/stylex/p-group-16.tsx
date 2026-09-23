@@ -1,13 +1,9 @@
 import * as stylex from "@stylexjs/stylex"
 import { PlusIcon } from "lucide-react"
 
-import { Button } from "@/components/ui/stylex/button"
-import {
-  Group,
-  GroupSeparator,
-  groupItemStyles,
-} from "@/components/ui/stylex/group"
-import { Input } from "@/components/ui/stylex/input"
+import { Button } from "@/components/ui/button"
+import { Group, GroupSeparator, groupItemStyles } from "@/components/ui/group"
+import { Input } from "@/components/ui/input"
 
 export default function Example() {
   return (

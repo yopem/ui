@@ -2,7 +2,7 @@ import type { ComponentType, LazyExoticComponent } from "react"
 
 import { createElement, lazy } from "react"
 
-import { Paragraph } from "@/components/ui/stylex/paragraph"
+import { Paragraph } from "@/components/ui/paragraph"
 
 import type { ExampleModule } from "./example-modules"
 

@@ -1,7 +1,7 @@
 import * as stylex from "@stylexjs/stylex"
 import { CheckIcon } from "lucide-react"
 
-import { Badge } from "@/components/ui/stylex/badge"
+import { Badge } from "@/components/ui/badge"
 
 export default function Example() {
   return (

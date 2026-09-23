@@ -4,18 +4,14 @@ import * as stylex from "@stylexjs/stylex"
 import { ChevronDownIcon } from "lucide-react"
 import { useState } from "react"
 
-import { Badge } from "@/components/ui/stylex/badge"
-import { Box } from "@/components/ui/stylex/box"
-import { Button } from "@/components/ui/stylex/button"
-import { Checkbox } from "@/components/ui/stylex/checkbox"
-import { CheckboxGroup } from "@/components/ui/stylex/checkbox-group"
-import { Flex } from "@/components/ui/stylex/flex"
-import {
-  groupItemStyles,
-  Group,
-  GroupSeparator,
-} from "@/components/ui/stylex/group"
-import { Label } from "@/components/ui/stylex/label"
+import { Badge } from "@/components/ui/badge"
+import { Box } from "@/components/ui/box"
+import { Button } from "@/components/ui/button"
+import { Checkbox } from "@/components/ui/checkbox"
+import { CheckboxGroup } from "@/components/ui/checkbox-group"
+import { Flex } from "@/components/ui/flex"
+import { groupItemStyles, Group, GroupSeparator } from "@/components/ui/group"
+import { Label } from "@/components/ui/label"
 import {
   Popover,
   PopoverClose,
@@ -23,7 +19,7 @@ import {
   PopoverPopup,
   PopoverTitle,
   PopoverTrigger,
-} from "@/components/ui/stylex/popover"
+} from "@/components/ui/popover"
 const occurrences = [
   { date: "Wed, Jul 15", id: "occurrence-1", time: "9:00 – 9:30am" },
   { date: "Wed, Jul 15", id: "occurrence-2", time: "10:00 – 10:30am" },

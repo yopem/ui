@@ -11,7 +11,7 @@ import {
   AutocompletePopup,
   AutocompleteStatus,
   useAutocompleteFilter,
-} from "@/components/ui/stylex/autocomplete"
+} from "@/components/ui/autocomplete"
 
 // Limit results example
 const limit = 7

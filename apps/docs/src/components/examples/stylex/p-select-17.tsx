@@ -2,7 +2,7 @@
 
 import * as stylex from "@stylexjs/stylex"
 
-import { Box } from "@/components/ui/stylex/box"
+import { Box } from "@/components/ui/box"
 import {
   Select,
   SelectGroup,
@@ -12,7 +12,7 @@ import {
   SelectSeparator,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/stylex/select"
+} from "@/components/ui/select"
 const countries = [
   {
     continent: "America",

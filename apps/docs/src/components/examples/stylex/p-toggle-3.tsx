@@ -1,7 +1,7 @@
 import * as stylex from "@stylexjs/stylex"
 import { BoldIcon } from "lucide-react"
 
-import { Toggle } from "@/components/ui/stylex/toggle"
+import { Toggle } from "@/components/ui/toggle"
 
 export default function Example() {
   return (

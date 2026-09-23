@@ -1,11 +1,7 @@
 "use client"
 
-import {
-  Field,
-  FieldDescription,
-  FieldLabel,
-} from "@/components/ui/stylex/field"
-import { Textarea } from "@/components/ui/stylex/textarea"
+import { Field, FieldDescription, FieldLabel } from "@/components/ui/field"
+import { Textarea } from "@/components/ui/textarea"
 
 export default function Example() {
   return (

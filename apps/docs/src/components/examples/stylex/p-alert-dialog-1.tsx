@@ -7,8 +7,8 @@ import {
   AlertDialogPopup,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/components/ui/stylex/alert-dialog"
-import { Button } from "@/components/ui/stylex/button"
+} from "@/components/ui/alert-dialog"
+import { Button } from "@/components/ui/button"
 
 export default function Example() {
   return (

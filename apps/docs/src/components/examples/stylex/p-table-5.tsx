@@ -1,7 +1,7 @@
 import * as stylex from "@stylexjs/stylex"
 
-import { Badge } from "@/components/ui/stylex/badge"
-import { Box } from "@/components/ui/stylex/box"
+import { Badge } from "@/components/ui/badge"
+import { Box } from "@/components/ui/box"
 import {
   Table,
   TableBody,
@@ -10,7 +10,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/stylex/table"
+} from "@/components/ui/table"
 type ProjectStatus = "Paid" | "Unpaid" | "Pending" | "Failed"
 type ProjectRow = [string, ProjectStatus, string, string]
 

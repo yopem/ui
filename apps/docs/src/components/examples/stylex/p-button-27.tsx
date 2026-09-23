@@ -1,12 +1,8 @@
 import * as stylex from "@stylexjs/stylex"
 import { QrCodeIcon } from "lucide-react"
 
-import { Button } from "@/components/ui/stylex/button"
-import {
-  groupItemStyles,
-  Group,
-  GroupSeparator,
-} from "@/components/ui/stylex/group"
+import { Button } from "@/components/ui/button"
+import { groupItemStyles, Group, GroupSeparator } from "@/components/ui/group"
 
 export default function Example() {
   return (

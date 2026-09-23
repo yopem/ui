@@ -4,8 +4,8 @@ import {
   InputGroup,
   InputGroupAddon,
   InputGroupInput,
-} from "@/components/ui/stylex/input-group"
-import { Spinner } from "@/components/ui/stylex/spinner"
+} from "@/components/ui/input-group"
+import { Spinner } from "@/components/ui/spinner"
 
 export default function Example() {
   return (

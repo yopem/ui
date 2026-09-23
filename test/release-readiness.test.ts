@@ -83,7 +83,7 @@ describe("v1 release readiness", () => {
       await tsxNames(resolve(root, "packages/registry/src/components/ui")),
     ).toEqual(expectedComponents)
     expect(
-      await tsxNames(resolve(root, "apps/docs/src/components/ui/stylex")),
+      await tsxNames(resolve(root, "apps/docs/src/components/ui")),
     ).toEqual(expectedComponents)
   })
 })

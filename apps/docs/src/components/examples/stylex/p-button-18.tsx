@@ -1,7 +1,7 @@
 import * as stylex from "@stylexjs/stylex"
 
-import { Button } from "@/components/ui/stylex/button"
-import { Spinner } from "@/components/ui/stylex/spinner"
+import { Button } from "@/components/ui/button"
+import { Spinner } from "@/components/ui/spinner"
 
 export default function Example() {
   return (

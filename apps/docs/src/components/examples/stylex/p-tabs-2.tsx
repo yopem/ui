@@ -1,8 +1,8 @@
 import * as stylex from "@stylexjs/stylex"
 
-import { Box } from "@/components/ui/stylex/box"
-import { Paragraph } from "@/components/ui/stylex/paragraph"
-import { Tabs, TabsList, TabsPanel, TabsTab } from "@/components/ui/stylex/tabs"
+import { Box } from "@/components/ui/box"
+import { Paragraph } from "@/components/ui/paragraph"
+import { Tabs, TabsList, TabsPanel, TabsTab } from "@/components/ui/tabs"
 export default function Example() {
   return (
     <Tabs defaultValue="tab-1">

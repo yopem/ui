@@ -1,7 +1,7 @@
 import * as stylex from "@stylexjs/stylex"
 import { UserIcon } from "lucide-react"
 
-import { Avatar, AvatarFallback } from "@/components/ui/stylex/avatar"
+import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 
 export default function Example() {
   return (

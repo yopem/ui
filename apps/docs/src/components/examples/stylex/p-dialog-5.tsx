@@ -1,7 +1,7 @@
 import * as stylex from "@stylexjs/stylex"
 
-import { Box } from "@/components/ui/stylex/box"
-import { Button } from "@/components/ui/stylex/button"
+import { Box } from "@/components/ui/box"
+import { Button } from "@/components/ui/button"
 import {
   Dialog,
   DialogClose,
@@ -11,9 +11,9 @@ import {
   DialogPopup,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/stylex/dialog"
-import { Flex } from "@/components/ui/stylex/flex"
-import { Paragraph } from "@/components/ui/stylex/paragraph"
+} from "@/components/ui/dialog"
+import { Flex } from "@/components/ui/flex"
+import { Paragraph } from "@/components/ui/paragraph"
 export default function Example() {
   return (
     <Dialog>

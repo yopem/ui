@@ -1,20 +1,16 @@
 import * as stylex from "@stylexjs/stylex"
 import { ChevronDownIcon, GitForkIcon } from "lucide-react"
 
-import { Badge } from "@/components/ui/stylex/badge"
-import { Button } from "@/components/ui/stylex/button"
-import {
-  Group,
-  GroupSeparator,
-  groupItemStyles,
-} from "@/components/ui/stylex/group"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { Group, GroupSeparator, groupItemStyles } from "@/components/ui/group"
 import {
   Popover,
   PopoverDescription,
   PopoverPopup,
   PopoverTitle,
   PopoverTrigger,
-} from "@/components/ui/stylex/popover"
+} from "@/components/ui/popover"
 
 export default function Example() {
   return (

@@ -3,7 +3,7 @@
 import * as stylex from "@stylexjs/stylex"
 import { addDays } from "date-fns"
 
-import { Calendar } from "@/components/ui/stylex/calendar"
+import { Calendar } from "@/components/ui/calendar"
 
 export default function Example() {
   const today = new Date()

@@ -1,9 +1,9 @@
 import * as stylex from "@stylexjs/stylex"
 import { HouseIcon, PanelsTopLeftIcon, SettingsIcon } from "lucide-react"
 
-import { Box } from "@/components/ui/stylex/box"
-import { Paragraph } from "@/components/ui/stylex/paragraph"
-import { Tabs, TabsList, TabsPanel, TabsTab } from "@/components/ui/stylex/tabs"
+import { Box } from "@/components/ui/box"
+import { Paragraph } from "@/components/ui/paragraph"
+import { Tabs, TabsList, TabsPanel, TabsTab } from "@/components/ui/tabs"
 const tabs = [
   { Icon: HouseIcon, label: "Overview", value: "tab-1" },
   { Icon: PanelsTopLeftIcon, label: "Projects", value: "tab-2" },

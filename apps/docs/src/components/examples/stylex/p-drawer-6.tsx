@@ -1,7 +1,7 @@
 import * as stylex from "@stylexjs/stylex"
 
-import { Box } from "@/components/ui/stylex/box"
-import { Button } from "@/components/ui/stylex/button"
+import { Box } from "@/components/ui/box"
+import { Button } from "@/components/ui/button"
 import {
   Drawer,
   DrawerClose,
@@ -11,8 +11,8 @@ import {
   DrawerPopup,
   DrawerTitle,
   DrawerTrigger,
-} from "@/components/ui/stylex/drawer"
-import { Flex } from "@/components/ui/stylex/flex"
+} from "@/components/ui/drawer"
+import { Flex } from "@/components/ui/flex"
 export default function Example() {
   return (
     <Drawer>

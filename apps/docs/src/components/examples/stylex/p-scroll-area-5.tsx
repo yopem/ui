@@ -1,8 +1,8 @@
 import * as stylex from "@stylexjs/stylex"
 
-import { Box } from "@/components/ui/stylex/box"
-import { Flex } from "@/components/ui/stylex/flex"
-import { ScrollArea } from "@/components/ui/stylex/scroll-area"
+import { Box } from "@/components/ui/box"
+import { Flex } from "@/components/ui/flex"
+import { ScrollArea } from "@/components/ui/scroll-area"
 export default function Example() {
   return (
     <ScrollArea {...stylex.props(exampleStyles.example1)} scrollbarGutter>

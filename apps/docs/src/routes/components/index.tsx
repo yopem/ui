@@ -12,10 +12,10 @@ import {
 } from "@/catalog/docs-page"
 import { catalogStyles } from "@/catalog/docs-styles"
 import { docsStyles } from "@/catalog/docs-styles"
-import { Box } from "@/components/ui/stylex/box"
-import { Grid } from "@/components/ui/stylex/grid"
-import { Heading } from "@/components/ui/stylex/heading"
-import { Paragraph } from "@/components/ui/stylex/paragraph"
+import { Box } from "@/components/ui/box"
+import { Grid } from "@/components/ui/grid"
+import { Heading } from "@/components/ui/heading"
+import { Paragraph } from "@/components/ui/paragraph"
 import { createSeo } from "@/lib/seo"
 export const Route = createFileRoute("/components/")({
   head: () =>

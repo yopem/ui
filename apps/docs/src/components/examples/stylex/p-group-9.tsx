@@ -1,12 +1,8 @@
 import * as stylex from "@stylexjs/stylex"
 import { ZoomInIcon, ZoomOutIcon } from "lucide-react"
 
-import { Button } from "@/components/ui/stylex/button"
-import {
-  Group,
-  GroupSeparator,
-  groupItemStyles,
-} from "@/components/ui/stylex/group"
+import { Button } from "@/components/ui/button"
+import { Group, GroupSeparator, groupItemStyles } from "@/components/ui/group"
 
 export default function Example() {
   return (

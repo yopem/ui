@@ -4,7 +4,7 @@ import {
   NumberFieldGroup,
   NumberFieldIncrement,
   NumberFieldInput,
-} from "@/components/ui/stylex/number-field"
+} from "@/components/ui/number-field"
 
 export default function Example() {
   return (

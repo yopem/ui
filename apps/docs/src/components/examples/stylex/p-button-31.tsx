@@ -1,8 +1,8 @@
 import * as stylex from "@stylexjs/stylex"
 import { PrinterIcon } from "lucide-react"
 
-import { Button } from "@/components/ui/stylex/button"
-import { Kbd, KbdGroup } from "@/components/ui/stylex/kbd"
+import { Button } from "@/components/ui/button"
+import { Kbd, KbdGroup } from "@/components/ui/kbd"
 
 export default function Example() {
   return (

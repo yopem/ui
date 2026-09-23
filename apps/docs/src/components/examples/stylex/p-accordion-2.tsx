@@ -5,7 +5,7 @@ import {
   AccordionItem,
   AccordionPanel,
   AccordionTrigger,
-} from "@/components/ui/stylex/accordion"
+} from "@/components/ui/accordion"
 
 export default function Example() {
   return (

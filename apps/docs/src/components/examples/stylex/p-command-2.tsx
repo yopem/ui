@@ -22,9 +22,9 @@ import {
   useState,
 } from "react"
 
-import { useAutocompleteFilter } from "@/components/ui/stylex/autocomplete"
-import { Box } from "@/components/ui/stylex/box"
-import { Button } from "@/components/ui/stylex/button"
+import { useAutocompleteFilter } from "@/components/ui/autocomplete"
+import { Box } from "@/components/ui/box"
+import { Button } from "@/components/ui/button"
 import {
   Command,
   CommandCollection,
@@ -41,16 +41,16 @@ import {
   CommandPanel,
   CommandSeparator,
   CommandShortcut,
-} from "@/components/ui/stylex/command"
-import { EmptyMedia } from "@/components/ui/stylex/empty"
-import { Flex } from "@/components/ui/stylex/flex"
-import { Input } from "@/components/ui/stylex/input"
-import { Kbd, KbdGroup } from "@/components/ui/stylex/kbd"
-import { Link } from "@/components/ui/stylex/link"
-import { Paragraph } from "@/components/ui/stylex/paragraph"
-import { ScrollArea } from "@/components/ui/stylex/scroll-area"
-import { Skeleton } from "@/components/ui/stylex/skeleton"
-import { Spinner } from "@/components/ui/stylex/spinner"
+} from "@/components/ui/command"
+import { EmptyMedia } from "@/components/ui/empty"
+import { Flex } from "@/components/ui/flex"
+import { Input } from "@/components/ui/input"
+import { Kbd, KbdGroup } from "@/components/ui/kbd"
+import { Link } from "@/components/ui/link"
+import { Paragraph } from "@/components/ui/paragraph"
+import { ScrollArea } from "@/components/ui/scroll-area"
+import { Skeleton } from "@/components/ui/skeleton"
+import { Spinner } from "@/components/ui/spinner"
 interface Item {
   value: string
   label: string

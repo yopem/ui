@@ -1,10 +1,10 @@
 import * as stylex from "@stylexjs/stylex"
 import { useId } from "react"
 
-import { Flex } from "@/components/ui/stylex/flex"
-import { Label } from "@/components/ui/stylex/label"
-import { Paragraph } from "@/components/ui/stylex/paragraph"
-import { Switch } from "@/components/ui/stylex/switch"
+import { Flex } from "@/components/ui/flex"
+import { Label } from "@/components/ui/label"
+import { Paragraph } from "@/components/ui/paragraph"
+import { Switch } from "@/components/ui/switch"
 export default function Example() {
   const id = useId()
 

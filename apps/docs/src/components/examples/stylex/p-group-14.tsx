@@ -3,25 +3,21 @@
 import * as stylex from "@stylexjs/stylex"
 import { ArrowRightIcon } from "lucide-react"
 
-import { Box } from "@/components/ui/stylex/box"
-import { Button } from "@/components/ui/stylex/button"
-import {
-  Group,
-  GroupSeparator,
-  groupItemStyles,
-} from "@/components/ui/stylex/group"
+import { Box } from "@/components/ui/box"
+import { Button } from "@/components/ui/button"
+import { Group, GroupSeparator, groupItemStyles } from "@/components/ui/group"
 import {
   NumberField,
   NumberFieldGroup,
   NumberFieldInput,
-} from "@/components/ui/stylex/number-field"
+} from "@/components/ui/number-field"
 import {
   Select,
   SelectItem,
   SelectPopup,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/stylex/select"
+} from "@/components/ui/select"
 interface Currency {
   value: string
   label: string

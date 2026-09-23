@@ -1,6 +1,6 @@
 import * as stylex from "@stylexjs/stylex"
 
-import { Button } from "@/components/ui/stylex/button"
+import { Button } from "@/components/ui/button"
 import {
   Drawer,
   DrawerClose,
@@ -11,11 +11,11 @@ import {
   DrawerPopup,
   DrawerTitle,
   DrawerTrigger,
-} from "@/components/ui/stylex/drawer"
-import { Field, FieldLabel } from "@/components/ui/stylex/field"
-import { Flex } from "@/components/ui/stylex/flex"
-import { Form } from "@/components/ui/stylex/form"
-import { Input } from "@/components/ui/stylex/input"
+} from "@/components/ui/drawer"
+import { Field, FieldLabel } from "@/components/ui/field"
+import { Flex } from "@/components/ui/flex"
+import { Form } from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
 export default function Example() {
   return (
     <Flex {...stylex.props(exampleStyles.example1)}>

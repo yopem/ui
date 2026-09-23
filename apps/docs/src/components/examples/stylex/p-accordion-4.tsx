@@ -8,10 +8,10 @@ import {
   AccordionItem,
   AccordionPanel,
   AccordionTrigger,
-} from "@/components/ui/stylex/accordion"
-import { Button } from "@/components/ui/stylex/button"
-import { Flex } from "@/components/ui/stylex/flex"
-import { Paragraph } from "@/components/ui/stylex/paragraph"
+} from "@/components/ui/accordion"
+import { Button } from "@/components/ui/button"
+import { Flex } from "@/components/ui/flex"
+import { Paragraph } from "@/components/ui/paragraph"
 export default function Example() {
   const [value, setValue] = useState<string[]>([])
 

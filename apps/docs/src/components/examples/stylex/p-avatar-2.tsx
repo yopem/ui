@@ -1,4 +1,4 @@
-import { Avatar, AvatarFallback } from "@/components/ui/stylex/avatar"
+import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 
 export default function Example() {
   return (

@@ -1,5 +1,5 @@
-import { Label } from "@/components/ui/stylex/label"
-import { Radio, RadioGroup } from "@/components/ui/stylex/radio-group"
+import { Label } from "@/components/ui/label"
+import { Radio, RadioGroup } from "@/components/ui/radio-group"
 
 export default function Example() {
   return (

@@ -1,6 +1,6 @@
 import * as stylex from "@stylexjs/stylex"
 
-import { Button } from "@/components/ui/stylex/button"
+import { Button } from "@/components/ui/button"
 import {
   Drawer,
   DrawerClose,
@@ -10,7 +10,7 @@ import {
   DrawerPopup,
   DrawerTitle,
   DrawerTrigger,
-} from "@/components/ui/stylex/drawer"
+} from "@/components/ui/drawer"
 
 export default function Example() {
   return (

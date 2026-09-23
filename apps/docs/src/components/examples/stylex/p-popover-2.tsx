@@ -3,8 +3,8 @@
 import * as stylex from "@stylexjs/stylex"
 import { XIcon } from "lucide-react"
 
-import { Box } from "@/components/ui/stylex/box"
-import { Button } from "@/components/ui/stylex/button"
+import { Box } from "@/components/ui/box"
+import { Button } from "@/components/ui/button"
 import {
   Popover,
   PopoverClose,
@@ -12,7 +12,7 @@ import {
   PopoverPopup,
   PopoverTitle,
   PopoverTrigger,
-} from "@/components/ui/stylex/popover"
+} from "@/components/ui/popover"
 export default function Example() {
   return (
     <Popover>

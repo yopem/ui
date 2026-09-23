@@ -1,13 +1,13 @@
 import * as stylex from "@stylexjs/stylex"
 
-import { Flex } from "@/components/ui/stylex/flex"
+import { Flex } from "@/components/ui/flex"
 import {
   Meter,
   MeterIndicator,
   MeterLabel,
   MeterTrack,
   MeterValue,
-} from "@/components/ui/stylex/meter"
+} from "@/components/ui/meter"
 export default function Example() {
   return (
     <Meter aria-label="Storage usage" value={75}>

@@ -2,9 +2,9 @@
 
 import * as stylex from "@stylexjs/stylex"
 
-import { Button } from "@/components/ui/stylex/button"
-import { Flex } from "@/components/ui/stylex/flex"
-import { toastManager } from "@/components/ui/stylex/toast"
+import { Button } from "@/components/ui/button"
+import { Flex } from "@/components/ui/flex"
+import { toastManager } from "@/components/ui/toast"
 export default function Example() {
   return (
     <Flex {...stylex.props(exampleStyles.example1)}>

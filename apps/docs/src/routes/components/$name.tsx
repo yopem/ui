@@ -15,11 +15,11 @@ import {
 } from "@/catalog/docs-page"
 import { catalogStyles, docsStyles } from "@/catalog/docs-styles"
 import { getDocumentation } from "@/catalog/docs.functions"
-import { Box } from "@/components/ui/stylex/box"
-import { Grid } from "@/components/ui/stylex/grid"
-import { Heading } from "@/components/ui/stylex/heading"
-import { Paragraph } from "@/components/ui/stylex/paragraph"
-import { Tabs, TabsList, TabsPanel, TabsTab } from "@/components/ui/stylex/tabs"
+import { Box } from "@/components/ui/box"
+import { Grid } from "@/components/ui/grid"
+import { Heading } from "@/components/ui/heading"
+import { Paragraph } from "@/components/ui/paragraph"
+import { Tabs, TabsList, TabsPanel, TabsTab } from "@/components/ui/tabs"
 import { createSeo } from "@/lib/seo"
 export const Route = createFileRoute("/components/$name")({
   loader: ({ params }) => {

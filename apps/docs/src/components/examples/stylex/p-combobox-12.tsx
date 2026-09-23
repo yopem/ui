@@ -5,7 +5,7 @@ import type { FormEvent } from "react"
 import * as stylex from "@stylexjs/stylex"
 import { useState } from "react"
 
-import { Button } from "@/components/ui/stylex/button"
+import { Button } from "@/components/ui/button"
 import {
   Combobox,
   ComboboxChip,
@@ -16,9 +16,9 @@ import {
   ComboboxList,
   ComboboxPopup,
   ComboboxValue,
-} from "@/components/ui/stylex/combobox"
-import { Field, FieldError, FieldLabel } from "@/components/ui/stylex/field"
-import { Form } from "@/components/ui/stylex/form"
+} from "@/components/ui/combobox"
+import { Field, FieldError, FieldLabel } from "@/components/ui/field"
+import { Form } from "@/components/ui/form"
 
 const items = [
   { label: "Apple", value: "apple" },

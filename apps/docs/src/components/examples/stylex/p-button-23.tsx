@@ -1,8 +1,8 @@
 import * as stylex from "@stylexjs/stylex"
 import { ThumbsUpIcon } from "lucide-react"
 
-import { Box } from "@/components/ui/stylex/box"
-import { Button } from "@/components/ui/stylex/button"
+import { Box } from "@/components/ui/box"
+import { Button } from "@/components/ui/button"
 export default function Example() {
   return (
     <Button {...stylex.props(exampleStyles.example1)} variant="outline">

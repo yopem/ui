@@ -1,11 +1,7 @@
 import * as stylex from "@stylexjs/stylex"
 
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "@/components/ui/stylex/avatar"
-import { Flex } from "@/components/ui/stylex/flex"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Flex } from "@/components/ui/flex"
 export default function Example() {
   return (
     <Flex {...stylex.props(exampleStyles.example1)}>

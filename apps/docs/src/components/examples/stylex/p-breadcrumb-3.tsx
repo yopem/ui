@@ -9,8 +9,8 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from "@/components/ui/stylex/breadcrumb"
-import { Link } from "@/components/ui/stylex/link"
+} from "@/components/ui/breadcrumb"
+import { Link } from "@/components/ui/link"
 export default function Example() {
   return (
     <Breadcrumb>

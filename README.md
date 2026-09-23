@@ -188,8 +188,8 @@ mixed project can allow selected methods while retaining style-prop preference:
 
 Use `componentSources`, `styleComponents`, and `atomsImports` for project
 aliases or custom components. Defaults cover documented Yopem exports from
-`@/components/ui/stylex/*`, `@registry/components/ui/*`, and `@yopem-ui/ui`,
-plus the default export from `@stylexjs/atoms` (including renamed imports).
+`@/components/ui/*`, `@registry/components/ui/*`, and `@yopem-ui/ui`, plus the
+default export from `@stylexjs/atoms` (including renamed imports).
 
 Root-shell override allows `base`, `body`, `head`, `html`, `link`, `meta`,
 `script`, `style`, and `title`. `apps/docs/src/lib/og.tsx` excludes

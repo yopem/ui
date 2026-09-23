@@ -14,8 +14,8 @@ import {
   stylexExampleComponents,
   stylexExampleModules,
 } from "@/catalog/example-modules"
-import { Box } from "@/components/ui/stylex/box"
-import { Heading } from "@/components/ui/stylex/heading"
+import { Box } from "@/components/ui/box"
+import { Heading } from "@/components/ui/heading"
 export const Route = createFileRoute("/examples/$example")({
   validateSearch: (search) => ({
     theme: search.theme === "dark" ? ("dark" as const) : ("light" as const),

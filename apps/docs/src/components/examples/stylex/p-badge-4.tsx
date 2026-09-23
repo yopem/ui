@@ -1,6 +1,6 @@
 import * as stylex from "@stylexjs/stylex"
 
-import { Badge } from "@/components/ui/stylex/badge"
+import { Badge } from "@/components/ui/badge"
 
 export default function Example() {
   return (

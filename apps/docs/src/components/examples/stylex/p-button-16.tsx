@@ -1,7 +1,7 @@
 import * as stylex from "@stylexjs/stylex"
 import { DownloadIcon } from "lucide-react"
 
-import { Button } from "@/components/ui/stylex/button"
+import { Button } from "@/components/ui/button"
 
 export default function Example() {
   return (

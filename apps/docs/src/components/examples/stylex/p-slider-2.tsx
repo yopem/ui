@@ -1,8 +1,8 @@
 import * as stylex from "@stylexjs/stylex"
 
-import { Field, FieldLabel } from "@/components/ui/stylex/field"
-import { Flex } from "@/components/ui/stylex/flex"
-import { Slider, SliderValue } from "@/components/ui/stylex/slider"
+import { Field, FieldLabel } from "@/components/ui/field"
+import { Flex } from "@/components/ui/flex"
+import { Slider, SliderValue } from "@/components/ui/slider"
 export default function Example() {
   return (
     <Field>

@@ -4,14 +4,10 @@ import * as stylex from "@stylexjs/stylex"
 import { ChevronsUpDownIcon, FunnelIcon, SearchIcon, XIcon } from "lucide-react"
 import { useState } from "react"
 
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "@/components/ui/stylex/avatar"
-import { Badge } from "@/components/ui/stylex/badge"
-import { Box } from "@/components/ui/stylex/box"
-import { Button } from "@/components/ui/stylex/button"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Badge } from "@/components/ui/badge"
+import { Box } from "@/components/ui/box"
+import { Button } from "@/components/ui/button"
 import {
   Combobox,
   ComboboxEmpty,
@@ -20,14 +16,14 @@ import {
   ComboboxList,
   ComboboxPopup,
   ComboboxTrigger,
-} from "@/components/ui/stylex/combobox"
-import { Flex } from "@/components/ui/stylex/flex"
+} from "@/components/ui/combobox"
+import { Flex } from "@/components/ui/flex"
 import {
   Group,
   GroupSeparator,
   GroupText,
   groupItemStyles,
-} from "@/components/ui/stylex/group"
+} from "@/components/ui/group"
 interface FilterOption {
   id: string
   label: string

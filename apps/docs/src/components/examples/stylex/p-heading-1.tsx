@@ -1,4 +1,4 @@
-import { Heading } from "@/components/ui/stylex/heading"
+import { Heading } from "@/components/ui/heading"
 
 export function Example() {
   return (

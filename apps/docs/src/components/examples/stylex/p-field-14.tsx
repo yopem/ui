@@ -7,9 +7,9 @@ import {
   FieldDescription,
   FieldItem,
   FieldLabel,
-} from "@/components/ui/stylex/field"
-import { Fieldset, FieldsetLegend } from "@/components/ui/stylex/fieldset"
-import { Radio, RadioGroup } from "@/components/ui/stylex/radio-group"
+} from "@/components/ui/field"
+import { Fieldset, FieldsetLegend } from "@/components/ui/fieldset"
+import { Radio, RadioGroup } from "@/components/ui/radio-group"
 
 export default function Example() {
   return (

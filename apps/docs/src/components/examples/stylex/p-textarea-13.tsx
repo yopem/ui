@@ -1,6 +1,6 @@
 import * as stylex from "@stylexjs/stylex"
 
-import { Textarea } from "@/components/ui/stylex/textarea"
+import { Textarea } from "@/components/ui/textarea"
 
 export default function Example() {
   return (

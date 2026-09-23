@@ -3,13 +3,13 @@
 import * as stylex from "@stylexjs/stylex"
 import { useState } from "react"
 
-import { Flex } from "@/components/ui/stylex/flex"
+import { Flex } from "@/components/ui/flex"
 import {
   NumberField,
   NumberFieldGroup,
   NumberFieldInput,
-} from "@/components/ui/stylex/number-field"
-import { Slider } from "@/components/ui/stylex/slider"
+} from "@/components/ui/number-field"
+import { Slider } from "@/components/ui/slider"
 const min = 0
 const max = 100
 

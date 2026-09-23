@@ -1,10 +1,10 @@
 import * as stylex from "@stylexjs/stylex"
 import { ChevronRightIcon } from "lucide-react"
 
-import { Button } from "@/components/ui/stylex/button"
-import { Flex } from "@/components/ui/stylex/flex"
-import { Heading } from "@/components/ui/stylex/heading"
-import { Paragraph } from "@/components/ui/stylex/paragraph"
+import { Button } from "@/components/ui/button"
+import { Flex } from "@/components/ui/flex"
+import { Heading } from "@/components/ui/heading"
+import { Paragraph } from "@/components/ui/paragraph"
 export default function Example() {
   return (
     <Button

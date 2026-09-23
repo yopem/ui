@@ -1,7 +1,7 @@
 import * as stylex from "@stylexjs/stylex"
 import { useId } from "react"
 
-import { Input } from "@/components/ui/stylex/input"
+import { Input } from "@/components/ui/input"
 
 export default function Example() {
   const id = useId()

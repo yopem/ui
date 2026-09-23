@@ -1,7 +1,7 @@
 import * as stylex from "@stylexjs/stylex"
 
-import { Box } from "@/components/ui/stylex/box"
-import { Slider } from "@/components/ui/stylex/slider"
+import { Box } from "@/components/ui/box"
+import { Slider } from "@/components/ui/slider"
 const max = 12
 const skipInterval = 2
 const ticks = [...Array(max + 1)].map((_, i) => i)

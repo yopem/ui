@@ -15,9 +15,9 @@ import { MenuIcon } from "lucide-react"
 import { useState } from "react"
 
 import { BrandLogo } from "@/components/brand-logo"
-import { Box } from "@/components/ui/stylex/box"
-import { Grid } from "@/components/ui/stylex/grid"
-import { Link as UiLink } from "@/components/ui/stylex/link"
+import { Box } from "@/components/ui/box"
+import { Grid } from "@/components/ui/grid"
+import { Link as UiLink } from "@/components/ui/link"
 
 import { DocsNavigation } from "./docs-navigation"
 import { GlobalSearch } from "./global-search"

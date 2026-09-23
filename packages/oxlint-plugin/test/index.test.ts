@@ -280,7 +280,7 @@ test("styling methods prefer shorthand props and preserve expressions", async ()
     "styling-methods.tsx",
     `import a from "@stylexjs/atoms"
 import * as sx from "@stylexjs/stylex"
-import { Box as Surface } from "@/components/ui/stylex/box"
+import { Box as Surface } from "@/components/ui/box"
 
 const token = "var(--foreground)"
 const styles = sx.create({ root: { padding: 2, color: token } })
@@ -362,7 +362,7 @@ test("styling methods can be independently banned", async () => {
     "banned-methods.tsx",
     `import a from "@stylexjs/atoms"
 import * as styles from "@stylexjs/stylex"
-import { Box as Surface } from "@/components/ui/stylex/box"
+import { Box as Surface } from "@/components/ui/box"
 const sheet = styles.create({ root: { color: "red" } })
 export function Example() {
   return <>
@@ -396,8 +396,8 @@ test("styling methods ignore unrelated components and unresolved styles", async 
   const fixturePath = await writeFixture(
     "styling-false-positives.tsx",
     `import { Box } from "other-library"
-import { Box as Surface } from "@/components/ui/stylex/box"
-import { TooltipProvider } from "@/components/ui/stylex/tooltip"
+import { Box as Surface } from "@/components/ui/box"
+import { TooltipProvider } from "@/components/ui/tooltip"
 import recipe from "other-atoms"
 export function Example({ styles }: { styles: object }) {
   return <>
@@ -424,7 +424,7 @@ test("style prop contract rules fix aliases and reject DOM leaks", async () => {
   })
   const fixturePath = await writeFixture(
     "style-prop-contracts.tsx",
-    `import { Box as Surface } from "@/components/ui/stylex/box"
+    `import { Box as Surface } from "@/components/ui/box"
 export function Example() {
   return <><Surface paddingHorizontal={2} /><div p={2} {...{ mt: 1 }} /></>
 }
@@ -446,8 +446,8 @@ test("polymorphic rule follows aliases and namespace imports", async () => {
   })
   const fixturePath = await writeFixture(
     "polymorphic.tsx",
-    `import { Box as Surface, Heading } from "@/components/ui/stylex/box"
-import * as UI from "@/components/ui/stylex/layout"
+    `import { Box as Surface, Heading } from "@/components/ui/box"
+import * as UI from "@/components/ui/layout"
 export function Valid() { return <><Surface as="section" /><Heading as="h3" /></> }
 export function Invalid({ tag }: { tag: string }) {
   return <><Surface as={tag} /><Heading as="section" /><UI.Box as="not-real" /></>

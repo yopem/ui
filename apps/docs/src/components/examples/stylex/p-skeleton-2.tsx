@@ -1,7 +1,7 @@
 import * as stylex from "@stylexjs/stylex"
 
-import { Flex } from "@/components/ui/stylex/flex"
-import { Skeleton } from "@/components/ui/stylex/skeleton"
+import { Flex } from "@/components/ui/flex"
+import { Skeleton } from "@/components/ui/skeleton"
 export default function Example() {
   return (
     <Flex {...stylex.props(exampleStyles.example1)}>

@@ -5,12 +5,12 @@ import type { FormEvent } from "react"
 import * as stylex from "@stylexjs/stylex"
 import { useState } from "react"
 
-import { Button } from "@/components/ui/stylex/button"
-import { Field, FieldDescription } from "@/components/ui/stylex/field"
-import { Fieldset, FieldsetLegend } from "@/components/ui/stylex/fieldset"
-import { Flex } from "@/components/ui/stylex/flex"
-import { Form } from "@/components/ui/stylex/form"
-import { Slider, SliderValue } from "@/components/ui/stylex/slider"
+import { Button } from "@/components/ui/button"
+import { Field, FieldDescription } from "@/components/ui/field"
+import { Fieldset, FieldsetLegend } from "@/components/ui/fieldset"
+import { Flex } from "@/components/ui/flex"
+import { Form } from "@/components/ui/form"
+import { Slider, SliderValue } from "@/components/ui/slider"
 export default function Example() {
   const [loading, setLoading] = useState<boolean>(false)
   const [value, setValue] = useState<number | readonly number[]>([25, 75])

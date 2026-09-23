@@ -7,12 +7,8 @@ import {
   AutocompleteItem,
   AutocompleteList,
   AutocompletePopup,
-} from "@/components/ui/stylex/autocomplete"
-import {
-  Field,
-  FieldDescription,
-  FieldLabel,
-} from "@/components/ui/stylex/field"
+} from "@/components/ui/autocomplete"
+import { Field, FieldDescription, FieldLabel } from "@/components/ui/field"
 
 const items = [
   { label: "Apple", value: "apple" },

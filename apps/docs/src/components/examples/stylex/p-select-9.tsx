@@ -3,14 +3,14 @@
 import * as stylex from "@stylexjs/stylex"
 import { Code2Icon, GlobeIcon, LayersIcon, ZapIcon } from "lucide-react"
 
-import { Box } from "@/components/ui/stylex/box"
+import { Box } from "@/components/ui/box"
 import {
   Select,
   SelectItem,
   SelectPopup,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/stylex/select"
+} from "@/components/ui/select"
 const items = [
   { icon: LayersIcon, label: "Components", value: "components" },
   { icon: ZapIcon, label: "Performance", value: "performance" },

@@ -6,9 +6,9 @@ import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import { useCallback, useState } from "react"
 
-import { Box } from "@/components/ui/stylex/box"
-import { Link } from "@/components/ui/stylex/link"
-import { Paragraph } from "@/components/ui/stylex/paragraph"
+import { Box } from "@/components/ui/box"
+import { Link } from "@/components/ui/link"
+import { Paragraph } from "@/components/ui/paragraph"
 export interface TocItem {
   title: ReactNode
   url: string

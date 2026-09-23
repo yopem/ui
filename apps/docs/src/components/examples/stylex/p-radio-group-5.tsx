@@ -5,11 +5,11 @@ import type { FormEvent } from "react"
 import * as stylex from "@stylexjs/stylex"
 import { useState } from "react"
 
-import { Button } from "@/components/ui/stylex/button"
-import { Field, FieldItem, FieldLabel } from "@/components/ui/stylex/field"
-import { Fieldset, FieldsetLegend } from "@/components/ui/stylex/fieldset"
-import { Form } from "@/components/ui/stylex/form"
-import { Radio, RadioGroup } from "@/components/ui/stylex/radio-group"
+import { Button } from "@/components/ui/button"
+import { Field, FieldItem, FieldLabel } from "@/components/ui/field"
+import { Fieldset, FieldsetLegend } from "@/components/ui/fieldset"
+import { Form } from "@/components/ui/form"
+import { Radio, RadioGroup } from "@/components/ui/radio-group"
 
 export default function Example() {
   const [loading, setLoading] = useState(false)

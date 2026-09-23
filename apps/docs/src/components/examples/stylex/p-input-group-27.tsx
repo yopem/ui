@@ -4,24 +4,20 @@ import * as stylex from "@stylexjs/stylex"
 import { CheckIcon, CopyIcon } from "lucide-react"
 import { useRef, useState } from "react"
 
-import { Button } from "@/components/ui/stylex/button"
+import { Button } from "@/components/ui/button"
 import {
   InputGroup,
   InputGroupAddon,
   InputGroupTextarea,
-} from "@/components/ui/stylex/input-group"
+} from "@/components/ui/input-group"
 import {
   Select,
   SelectItem,
   SelectPopup,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/stylex/select"
-import {
-  Tooltip,
-  TooltipPopup,
-  TooltipTrigger,
-} from "@/components/ui/stylex/tooltip"
+} from "@/components/ui/select"
+import { Tooltip, TooltipPopup, TooltipTrigger } from "@/components/ui/tooltip"
 
 const languages = [
   { label: "JavaScript", value: "javascript" },

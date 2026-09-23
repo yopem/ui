@@ -1,7 +1,7 @@
 import * as stylex from "@stylexjs/stylex"
 import { useId } from "react"
 
-import { Textarea } from "@/components/ui/stylex/textarea"
+import { Textarea } from "@/components/ui/textarea"
 
 export default function Example() {
   const id = useId()

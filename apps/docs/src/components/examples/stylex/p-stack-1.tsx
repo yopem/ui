@@ -1,5 +1,5 @@
-import { Box } from "@/components/ui/stylex/box"
-import { Stack } from "@/components/ui/stylex/stack"
+import { Box } from "@/components/ui/box"
+import { Stack } from "@/components/ui/stack"
 
 export function Example() {
   return (

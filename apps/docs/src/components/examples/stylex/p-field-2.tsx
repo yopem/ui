@@ -1,8 +1,8 @@
 import * as stylex from "@stylexjs/stylex"
 
-import { Box } from "@/components/ui/stylex/box"
-import { Field, FieldError, FieldLabel } from "@/components/ui/stylex/field"
-import { Input } from "@/components/ui/stylex/input"
+import { Box } from "@/components/ui/box"
+import { Field, FieldError, FieldLabel } from "@/components/ui/field"
+import { Input } from "@/components/ui/input"
 export default function Example() {
   return (
     <Field>

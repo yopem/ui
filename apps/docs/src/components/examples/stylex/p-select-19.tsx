@@ -2,12 +2,8 @@
 
 import * as stylex from "@stylexjs/stylex"
 
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "@/components/ui/stylex/avatar"
-import { Box } from "@/components/ui/stylex/box"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Box } from "@/components/ui/box"
 import {
   Select,
   SelectGroup,
@@ -16,7 +12,7 @@ import {
   SelectPopup,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/stylex/select"
+} from "@/components/ui/select"
 const users = [
   {
     avatar:

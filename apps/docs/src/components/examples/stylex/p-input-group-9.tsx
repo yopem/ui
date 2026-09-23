@@ -1,9 +1,9 @@
-import { Button } from "@/components/ui/stylex/button"
+import { Button } from "@/components/ui/button"
 import {
   InputGroup,
   InputGroupAddon,
   InputGroupInput,
-} from "@/components/ui/stylex/input-group"
+} from "@/components/ui/input-group"
 
 export default function Example() {
   return (

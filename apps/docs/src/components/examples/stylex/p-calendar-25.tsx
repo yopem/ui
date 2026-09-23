@@ -11,10 +11,10 @@ import {
   AutocompleteItem,
   AutocompleteList,
   AutocompletePopup,
-} from "@/components/ui/stylex/autocomplete"
-import { Calendar } from "@/components/ui/stylex/calendar"
-import { Field, FieldLabel } from "@/components/ui/stylex/field"
-import { Flex } from "@/components/ui/stylex/flex"
+} from "@/components/ui/autocomplete"
+import { Calendar } from "@/components/ui/calendar"
+import { Field, FieldLabel } from "@/components/ui/field"
+import { Flex } from "@/components/ui/flex"
 const times = Array.from({ length: 96 }, (_, i) => {
   const hours = String(Math.floor(i / 4)).padStart(2, "0")
   const minutes = String((i % 4) * 15).padStart(2, "0")

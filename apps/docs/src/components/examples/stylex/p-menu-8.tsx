@@ -1,10 +1,5 @@
-import { Button } from "@/components/ui/stylex/button"
-import {
-  Menu,
-  MenuItem,
-  MenuPopup,
-  MenuTrigger,
-} from "@/components/ui/stylex/menu"
+import { Button } from "@/components/ui/button"
+import { Menu, MenuItem, MenuPopup, MenuTrigger } from "@/components/ui/menu"
 
 export default function Example() {
   return (

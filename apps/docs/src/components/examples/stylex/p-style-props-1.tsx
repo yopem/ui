@@ -3,11 +3,11 @@
 import * as stylex from "@stylexjs/stylex"
 import { useState } from "react"
 
-import { Box } from "@/components/ui/stylex/box"
-import { Button } from "@/components/ui/stylex/button"
-import { Flex } from "@/components/ui/stylex/flex"
-import { Heading } from "@/components/ui/stylex/heading"
-import { Paragraph } from "@/components/ui/stylex/paragraph"
+import { Box } from "@/components/ui/box"
+import { Button } from "@/components/ui/button"
+import { Flex } from "@/components/ui/flex"
+import { Heading } from "@/components/ui/heading"
+import { Paragraph } from "@/components/ui/paragraph"
 export function Example() {
   const [activations, setActivations] = useState(0)
 

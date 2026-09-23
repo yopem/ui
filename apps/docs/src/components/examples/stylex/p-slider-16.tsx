@@ -3,10 +3,10 @@
 import * as stylex from "@stylexjs/stylex"
 import { useState } from "react"
 
-import { Box } from "@/components/ui/stylex/box"
-import { Field, FieldLabel } from "@/components/ui/stylex/field"
-import { Flex } from "@/components/ui/stylex/flex"
-import { Slider } from "@/components/ui/stylex/slider"
+import { Box } from "@/components/ui/box"
+import { Field, FieldLabel } from "@/components/ui/field"
+import { Flex } from "@/components/ui/flex"
+import { Slider } from "@/components/ui/slider"
 const labels = ["Awful", "Poor", "Okay", "Good", "Amazing"]
 
 export default function Example() {

@@ -5,25 +5,25 @@ import type { FormEvent } from "react"
 import * as stylex from "@stylexjs/stylex"
 import { useState } from "react"
 
-import { Box } from "@/components/ui/stylex/box"
-import { Button } from "@/components/ui/stylex/button"
-import { Checkbox } from "@/components/ui/stylex/checkbox"
+import { Box } from "@/components/ui/box"
+import { Button } from "@/components/ui/button"
+import { Checkbox } from "@/components/ui/checkbox"
 import {
   Field,
   FieldDescription,
   FieldError,
   FieldLabel,
-} from "@/components/ui/stylex/field"
-import { Flex } from "@/components/ui/stylex/flex"
-import { Form } from "@/components/ui/stylex/form"
-import { Input } from "@/components/ui/stylex/input"
+} from "@/components/ui/field"
+import { Flex } from "@/components/ui/flex"
+import { Form } from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
 import {
   Select,
   SelectItem,
   SelectPopup,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/stylex/select"
+} from "@/components/ui/select"
 export default function Example() {
   const [loading, setLoading] = useState(false)
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {

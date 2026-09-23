@@ -15,10 +15,10 @@ import {
   DocsTitle,
 } from "@/catalog/docs-page"
 import { catalogStyles } from "@/catalog/docs-styles"
-import { Box } from "@/components/ui/stylex/box"
-import { Flex } from "@/components/ui/stylex/flex"
-import { Grid } from "@/components/ui/stylex/grid"
-import { Paragraph } from "@/components/ui/stylex/paragraph"
+import { Box } from "@/components/ui/box"
+import { Flex } from "@/components/ui/flex"
+import { Grid } from "@/components/ui/grid"
+import { Paragraph } from "@/components/ui/paragraph"
 import { useCopyToClipboard } from "@/hooks/use-copy-to-clipboard"
 import { createSeo } from "@/lib/seo"
 const pageSize = 24

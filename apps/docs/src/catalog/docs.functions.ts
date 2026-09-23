@@ -80,9 +80,10 @@ export const getDocumentation = createServerFn({ method: "GET" })
         ...group,
         examples: group.examples.map((example) => ({
           ...example,
-          source: example.source
-            .replaceAll("@/components/ui/stylex/", "@/components/ui/")
-            .replaceAll("@/lib/table-wrapper", "@tanstack/react-table"),
+          source: example.source.replaceAll(
+            "@/lib/table-wrapper",
+            "@tanstack/react-table",
+          ),
         })),
       })),
       notes: items.flatMap((item) => {

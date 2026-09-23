@@ -14,7 +14,7 @@ test("style props fixture uses the canonical Button and named example export", (
   const scan = transpiler.scan(source)
   expect(scan.exports).toEqual(["Example"])
   expect(scan.imports.map(({ path }) => path)).toContain(
-    "@/components/ui/stylex/button",
+    "@/components/ui/button",
   )
   expect(source).not.toContain("resolveStyleProps")
   expect(source).not.toContain("splitStyleProps")

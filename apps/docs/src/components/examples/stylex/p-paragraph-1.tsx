@@ -1,4 +1,4 @@
-import { Paragraph } from "@/components/ui/stylex/paragraph"
+import { Paragraph } from "@/components/ui/paragraph"
 
 export function Example() {
   return (

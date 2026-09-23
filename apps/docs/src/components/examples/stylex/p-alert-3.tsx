@@ -7,8 +7,8 @@ import {
   AlertAction,
   AlertDescription,
   AlertTitle,
-} from "@/components/ui/stylex/alert"
-import { Button } from "@/components/ui/stylex/button"
+} from "@/components/ui/alert"
+import { Button } from "@/components/ui/button"
 
 export default function Example() {
   return (

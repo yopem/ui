@@ -3,9 +3,9 @@
 import * as stylex from "@stylexjs/stylex"
 import { useState } from "react"
 
-import { Checkbox } from "@/components/ui/stylex/checkbox"
-import { CheckboxGroup } from "@/components/ui/stylex/checkbox-group"
-import { Label } from "@/components/ui/stylex/label"
+import { Checkbox } from "@/components/ui/checkbox"
+import { CheckboxGroup } from "@/components/ui/checkbox-group"
+import { Label } from "@/components/ui/label"
 
 const frameworks = [
   { id: "next", name: "Next.js" },

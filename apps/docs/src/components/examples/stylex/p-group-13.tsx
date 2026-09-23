@@ -6,18 +6,9 @@ import {
   ShareIcon,
 } from "lucide-react"
 
-import { Button } from "@/components/ui/stylex/button"
-import {
-  Group,
-  GroupSeparator,
-  groupItemStyles,
-} from "@/components/ui/stylex/group"
-import {
-  Menu,
-  MenuItem,
-  MenuPopup,
-  MenuTrigger,
-} from "@/components/ui/stylex/menu"
+import { Button } from "@/components/ui/button"
+import { Group, GroupSeparator, groupItemStyles } from "@/components/ui/group"
+import { Menu, MenuItem, MenuPopup, MenuTrigger } from "@/components/ui/menu"
 
 export default function Example() {
   return (

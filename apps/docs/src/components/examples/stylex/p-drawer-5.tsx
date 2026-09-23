@@ -1,6 +1,6 @@
 import * as stylex from "@stylexjs/stylex"
 
-import { Button } from "@/components/ui/stylex/button"
+import { Button } from "@/components/ui/button"
 import {
   Drawer,
   DrawerHeader,
@@ -8,9 +8,9 @@ import {
   DrawerPopup,
   DrawerTitle,
   DrawerTrigger,
-} from "@/components/ui/stylex/drawer"
-import { Flex } from "@/components/ui/stylex/flex"
-import { Paragraph } from "@/components/ui/stylex/paragraph"
+} from "@/components/ui/drawer"
+import { Flex } from "@/components/ui/flex"
+import { Paragraph } from "@/components/ui/paragraph"
 export default function Example() {
   return (
     <Flex {...stylex.props(exampleStyles.example1)}>

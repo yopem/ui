@@ -1,5 +1,5 @@
-import { Field, FieldError, FieldLabel } from "@/components/ui/stylex/field"
-import { Input } from "@/components/ui/stylex/input"
+import { Field, FieldError, FieldLabel } from "@/components/ui/field"
+import { Input } from "@/components/ui/input"
 
 export default function FieldWithErrorExample() {
   return (

@@ -2,10 +2,10 @@
 
 import * as stylex from "@stylexjs/stylex"
 
-import { Checkbox } from "@/components/ui/stylex/checkbox"
-import { CheckboxGroup } from "@/components/ui/stylex/checkbox-group"
-import { Field, FieldItem, FieldLabel } from "@/components/ui/stylex/field"
-import { Fieldset, FieldsetLegend } from "@/components/ui/stylex/fieldset"
+import { Checkbox } from "@/components/ui/checkbox"
+import { CheckboxGroup } from "@/components/ui/checkbox-group"
+import { Field, FieldItem, FieldLabel } from "@/components/ui/field"
+import { Fieldset, FieldsetLegend } from "@/components/ui/fieldset"
 
 export default function Example() {
   return (

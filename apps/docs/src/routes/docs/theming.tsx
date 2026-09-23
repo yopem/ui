@@ -11,9 +11,9 @@ import {
 } from "@/catalog/docs-page"
 import { docsStyles } from "@/catalog/docs-styles"
 import { getDocumentation } from "@/catalog/docs.functions"
-import { Box } from "@/components/ui/stylex/box"
-import { Heading } from "@/components/ui/stylex/heading"
-import { Paragraph } from "@/components/ui/stylex/paragraph"
+import { Box } from "@/components/ui/box"
+import { Heading } from "@/components/ui/heading"
+import { Paragraph } from "@/components/ui/paragraph"
 import { createSeo } from "@/lib/seo"
 export const Route = createFileRoute("/docs/theming")({
   loader: () => getDocumentation({ data: "theme" }),

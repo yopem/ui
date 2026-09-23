@@ -6,15 +6,11 @@ import * as stylex from "@stylexjs/stylex"
 import { BellIcon, UserIcon } from "lucide-react"
 import { useState } from "react"
 
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "@/components/ui/stylex/avatar"
-import { Box } from "@/components/ui/stylex/box"
-import { Button } from "@/components/ui/stylex/button"
-import { Flex } from "@/components/ui/stylex/flex"
-import { Heading } from "@/components/ui/stylex/heading"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Box } from "@/components/ui/box"
+import { Button } from "@/components/ui/button"
+import { Flex } from "@/components/ui/flex"
+import { Heading } from "@/components/ui/heading"
 import {
   Popover,
   PopoverCreateHandle,
@@ -22,7 +18,7 @@ import {
   PopoverPopup,
   PopoverTitle,
   PopoverTrigger,
-} from "@/components/ui/stylex/popover"
+} from "@/components/ui/popover"
 const NotificationsContent = () => {
   return (
     <>

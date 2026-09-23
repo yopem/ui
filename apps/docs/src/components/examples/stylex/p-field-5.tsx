@@ -2,11 +2,11 @@
 
 import * as stylex from "@stylexjs/stylex"
 
-import { Box } from "@/components/ui/stylex/box"
-import { Field, FieldLabel, FieldValidity } from "@/components/ui/stylex/field"
-import { Flex } from "@/components/ui/stylex/flex"
-import { Input } from "@/components/ui/stylex/input"
-import { Paragraph } from "@/components/ui/stylex/paragraph"
+import { Box } from "@/components/ui/box"
+import { Field, FieldLabel, FieldValidity } from "@/components/ui/field"
+import { Flex } from "@/components/ui/flex"
+import { Input } from "@/components/ui/input"
+import { Paragraph } from "@/components/ui/paragraph"
 export default function FieldWithValidityExample() {
   return (
     <Field>

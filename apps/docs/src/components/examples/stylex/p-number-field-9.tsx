@@ -1,6 +1,6 @@
 import * as stylex from "@stylexjs/stylex"
 
-import { Flex } from "@/components/ui/stylex/flex"
+import { Flex } from "@/components/ui/flex"
 import {
   NumberField,
   NumberFieldDecrement,
@@ -8,7 +8,7 @@ import {
   NumberFieldIncrement,
   NumberFieldInput,
   NumberFieldScrubArea,
-} from "@/components/ui/stylex/number-field"
+} from "@/components/ui/number-field"
 export default function Example() {
   return (
     <Flex {...stylex.props(exampleStyles.example1)}>

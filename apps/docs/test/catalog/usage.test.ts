@@ -37,7 +37,7 @@ test("layout primitives have usage and public catalog examples", () => {
     )
     expect(existsSync(path), name).toBe(true)
     const source = readFileSync(path, "utf8")
-    expect(source, name).toContain(`@/components/ui/stylex/${name}`)
+    expect(source, name).toContain(`@/components/ui/${name}`)
     expect(source, name).toContain(`<${component}`)
   }
 })

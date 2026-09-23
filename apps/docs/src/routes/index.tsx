@@ -10,11 +10,11 @@ import {
   DocsTitle,
 } from "@/catalog/docs-page"
 import { docsStyles } from "@/catalog/docs-styles"
-import { Box } from "@/components/ui/stylex/box"
-import { Flex } from "@/components/ui/stylex/flex"
-import { Grid } from "@/components/ui/stylex/grid"
-import { Heading } from "@/components/ui/stylex/heading"
-import { Paragraph } from "@/components/ui/stylex/paragraph"
+import { Box } from "@/components/ui/box"
+import { Flex } from "@/components/ui/flex"
+import { Grid } from "@/components/ui/grid"
+import { Heading } from "@/components/ui/heading"
+import { Paragraph } from "@/components/ui/paragraph"
 import { createSeo } from "@/lib/seo"
 const description =
   "Accessible React components styled with StyleX. Copy complete source into your project, then customize it without package lock-in."

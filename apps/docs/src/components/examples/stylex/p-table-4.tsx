@@ -10,25 +10,25 @@ import {
 } from "lucide-react"
 import { useState } from "react"
 
-import { Badge } from "@/components/ui/stylex/badge"
-import { Box } from "@/components/ui/stylex/box"
-import { Button } from "@/components/ui/stylex/button"
-import { Checkbox } from "@/components/ui/stylex/checkbox"
-import { Flex } from "@/components/ui/stylex/flex"
-import { Frame, FrameFooter } from "@/components/ui/stylex/frame"
+import { Badge } from "@/components/ui/badge"
+import { Box } from "@/components/ui/box"
+import { Button } from "@/components/ui/button"
+import { Checkbox } from "@/components/ui/checkbox"
+import { Flex } from "@/components/ui/flex"
+import { Frame, FrameFooter } from "@/components/ui/frame"
 import {
   Pagination,
   PaginationContent,
   PaginationItem,
-} from "@/components/ui/stylex/pagination"
-import { Paragraph } from "@/components/ui/stylex/paragraph"
+} from "@/components/ui/pagination"
+import { Paragraph } from "@/components/ui/paragraph"
 import {
   Select,
   SelectItem,
   SelectPopup,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/stylex/select"
+} from "@/components/ui/select"
 import {
   Table,
   TableBody,
@@ -36,7 +36,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/stylex/table"
+} from "@/components/ui/table"
 import {
   type ColumnDef,
   flexRender,

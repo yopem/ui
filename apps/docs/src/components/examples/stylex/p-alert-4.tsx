@@ -2,11 +2,7 @@ import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import { InfoIcon } from "lucide-react"
 
-import {
-  Alert,
-  AlertDescription,
-  AlertTitle,
-} from "@/components/ui/stylex/alert"
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 
 export default function Example() {
   return (

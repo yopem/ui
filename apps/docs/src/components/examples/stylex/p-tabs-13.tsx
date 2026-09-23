@@ -1,14 +1,14 @@
 import * as stylex from "@stylexjs/stylex"
 import { HouseIcon, PanelsTopLeftIcon, SettingsIcon } from "lucide-react"
 
-import { Paragraph } from "@/components/ui/stylex/paragraph"
-import { Tabs, TabsList, TabsPanel, TabsTab } from "@/components/ui/stylex/tabs"
+import { Paragraph } from "@/components/ui/paragraph"
+import { Tabs, TabsList, TabsPanel, TabsTab } from "@/components/ui/tabs"
 import {
   Tooltip,
   TooltipPopup,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/ui/stylex/tooltip"
+} from "@/components/ui/tooltip"
 export default function Example() {
   return (
     <TooltipProvider>

@@ -5,8 +5,8 @@ import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import { Link, useLocation } from "@tanstack/react-router"
 
-import { Box } from "@/components/ui/stylex/box"
-import { Link as UiLink } from "@/components/ui/stylex/link"
+import { Box } from "@/components/ui/box"
+import { Link as UiLink } from "@/components/ui/link"
 
 import { catalog } from "./components"
 const tree: Root = {

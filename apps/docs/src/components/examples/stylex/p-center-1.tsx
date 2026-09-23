@@ -1,5 +1,5 @@
-import { Box } from "@/components/ui/stylex/box"
-import { Center } from "@/components/ui/stylex/center"
+import { Box } from "@/components/ui/box"
+import { Center } from "@/components/ui/center"
 
 export function Example() {
   return (

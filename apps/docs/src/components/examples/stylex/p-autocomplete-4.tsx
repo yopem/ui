@@ -7,7 +7,7 @@ import {
   AutocompleteItem,
   AutocompleteList,
   AutocompletePopup,
-} from "@/components/ui/stylex/autocomplete"
+} from "@/components/ui/autocomplete"
 
 const items = [
   { label: "Apple", value: "apple" },

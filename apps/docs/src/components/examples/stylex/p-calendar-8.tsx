@@ -3,7 +3,7 @@
 import { addDays, subDays } from "date-fns"
 import { useState } from "react"
 
-import { Calendar } from "@/components/ui/stylex/calendar"
+import { Calendar } from "@/components/ui/calendar"
 
 export default function Example() {
   const today = new Date()

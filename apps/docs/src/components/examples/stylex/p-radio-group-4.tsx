@@ -1,9 +1,9 @@
 import * as stylex from "@stylexjs/stylex"
 
-import { Flex } from "@/components/ui/stylex/flex"
-import { Label } from "@/components/ui/stylex/label"
-import { Paragraph } from "@/components/ui/stylex/paragraph"
-import { Radio, RadioGroup } from "@/components/ui/stylex/radio-group"
+import { Flex } from "@/components/ui/flex"
+import { Label } from "@/components/ui/label"
+import { Paragraph } from "@/components/ui/paragraph"
+import { Radio, RadioGroup } from "@/components/ui/radio-group"
 export default function Example() {
   return (
     <RadioGroup defaultValue="r-1">

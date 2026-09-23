@@ -3,24 +3,15 @@
 import * as stylex from "@stylexjs/stylex"
 import { ArrowUpIcon, PlusIcon } from "lucide-react"
 
-import { Button } from "@/components/ui/stylex/button"
+import { Button } from "@/components/ui/button"
 import {
   InputGroup,
   InputGroupAddon,
   InputGroupText,
   InputGroupTextarea,
-} from "@/components/ui/stylex/input-group"
-import {
-  Menu,
-  MenuItem,
-  MenuPopup,
-  MenuTrigger,
-} from "@/components/ui/stylex/menu"
-import {
-  Tooltip,
-  TooltipPopup,
-  TooltipTrigger,
-} from "@/components/ui/stylex/tooltip"
+} from "@/components/ui/input-group"
+import { Menu, MenuItem, MenuPopup, MenuTrigger } from "@/components/ui/menu"
+import { Tooltip, TooltipPopup, TooltipTrigger } from "@/components/ui/tooltip"
 
 export default function Example() {
   return (

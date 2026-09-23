@@ -1,7 +1,7 @@
 import * as stylex from "@stylexjs/stylex"
 import { BookIcon, RouteIcon } from "lucide-react"
 
-import { Button } from "@/components/ui/stylex/button"
+import { Button } from "@/components/ui/button"
 import {
   Empty,
   EmptyContent,
@@ -9,8 +9,8 @@ import {
   EmptyHeader,
   EmptyMedia,
   EmptyTitle,
-} from "@/components/ui/stylex/empty"
-import { Flex } from "@/components/ui/stylex/flex"
+} from "@/components/ui/empty"
+import { Flex } from "@/components/ui/flex"
 export default function Example() {
   return (
     <Empty>

@@ -12,10 +12,10 @@ import {
   AutocompleteItem,
   AutocompleteList,
   AutocompletePopup,
-} from "@/components/ui/stylex/autocomplete"
-import { Button } from "@/components/ui/stylex/button"
-import { Field, FieldError, FieldLabel } from "@/components/ui/stylex/field"
-import { Form } from "@/components/ui/stylex/form"
+} from "@/components/ui/autocomplete"
+import { Button } from "@/components/ui/button"
+import { Field, FieldError, FieldLabel } from "@/components/ui/field"
+import { Form } from "@/components/ui/form"
 
 const items = [
   { label: "Apple", value: "apple" },

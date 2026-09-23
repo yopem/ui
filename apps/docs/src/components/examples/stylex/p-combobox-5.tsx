@@ -10,9 +10,9 @@ import {
   ComboboxItem,
   ComboboxList,
   ComboboxPopup,
-} from "@/components/ui/stylex/combobox"
-import { Flex } from "@/components/ui/stylex/flex"
-import { Label } from "@/components/ui/stylex/label"
+} from "@/components/ui/combobox"
+import { Flex } from "@/components/ui/flex"
+import { Label } from "@/components/ui/label"
 const items = [
   { label: "Apple", value: "apple" },
   { label: "Banana", value: "banana" },

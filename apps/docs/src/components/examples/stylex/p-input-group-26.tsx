@@ -4,16 +4,16 @@ import * as stylex from "@stylexjs/stylex"
 import { CheckIcon, EyeIcon, EyeOffIcon, XIcon } from "lucide-react"
 import { useId, useMemo, useState } from "react"
 
-import { Box } from "@/components/ui/stylex/box"
-import { Button } from "@/components/ui/stylex/button"
-import { Flex } from "@/components/ui/stylex/flex"
+import { Box } from "@/components/ui/box"
+import { Button } from "@/components/ui/button"
+import { Flex } from "@/components/ui/flex"
 import {
   InputGroup,
   InputGroupAddon,
   InputGroupInput,
-} from "@/components/ui/stylex/input-group"
-import { Label } from "@/components/ui/stylex/label"
-import { Paragraph } from "@/components/ui/stylex/paragraph"
+} from "@/components/ui/input-group"
+import { Label } from "@/components/ui/label"
+import { Paragraph } from "@/components/ui/paragraph"
 const requirements = [
   { regex: /.{8,}/, text: "At least 8 characters" },
   { regex: /[0-9]/, text: "At least 1 number" },

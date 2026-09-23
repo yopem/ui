@@ -8,7 +8,7 @@ import {
   ContextMenuSeparator,
   ContextMenuShortcut,
   ContextMenuTrigger,
-} from "@/components/ui/stylex/context-menu"
+} from "@/components/ui/context-menu"
 
 export default function Example() {
   return (

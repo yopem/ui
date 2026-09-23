@@ -4,10 +4,10 @@ import * as stylex from "@stylexjs/stylex"
 import { MinusIcon, PlusIcon } from "lucide-react"
 import { useState } from "react"
 
-import { Button } from "@/components/ui/stylex/button"
-import { Field, FieldLabel } from "@/components/ui/stylex/field"
-import { Flex } from "@/components/ui/stylex/flex"
-import { Slider } from "@/components/ui/stylex/slider"
+import { Button } from "@/components/ui/button"
+import { Field, FieldLabel } from "@/components/ui/field"
+import { Flex } from "@/components/ui/flex"
+import { Slider } from "@/components/ui/slider"
 const min = 0
 const max = 200
 const step = 5

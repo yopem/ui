@@ -1,9 +1,5 @@
-import {
-  Alert,
-  AlertDescription,
-  AlertTitle,
-} from "@/components/ui/stylex/alert"
-import { Paragraph } from "@/components/ui/stylex/paragraph"
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import { Paragraph } from "@/components/ui/paragraph"
 export default function Example() {
   return (
     <Alert>

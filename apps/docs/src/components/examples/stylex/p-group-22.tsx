@@ -1,17 +1,13 @@
 import * as stylex from "@stylexjs/stylex"
 
-import { Flex } from "@/components/ui/stylex/flex"
-import {
-  Group,
-  GroupSeparator,
-  groupItemStyles,
-} from "@/components/ui/stylex/group"
-import { Label } from "@/components/ui/stylex/label"
+import { Flex } from "@/components/ui/flex"
+import { Group, GroupSeparator, groupItemStyles } from "@/components/ui/group"
+import { Label } from "@/components/ui/label"
 import {
   NumberField,
   NumberFieldGroup,
   NumberFieldInput,
-} from "@/components/ui/stylex/number-field"
+} from "@/components/ui/number-field"
 export default function Example() {
   return (
     <Flex {...stylex.props(exampleStyles.example1)}>

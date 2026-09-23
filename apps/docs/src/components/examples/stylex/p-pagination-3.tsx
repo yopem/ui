@@ -4,22 +4,22 @@ import * as stylex from "@stylexjs/stylex"
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react"
 import { useState } from "react"
 
-import { Box } from "@/components/ui/stylex/box"
-import { Button } from "@/components/ui/stylex/button"
-import { Flex } from "@/components/ui/stylex/flex"
+import { Box } from "@/components/ui/box"
+import { Button } from "@/components/ui/button"
+import { Flex } from "@/components/ui/flex"
 import {
   Pagination,
   PaginationContent,
   PaginationItem,
-} from "@/components/ui/stylex/pagination"
-import { Paragraph } from "@/components/ui/stylex/paragraph"
+} from "@/components/ui/pagination"
+import { Paragraph } from "@/components/ui/paragraph"
 import {
   Select,
   SelectItem,
   SelectPopup,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/stylex/select"
+} from "@/components/ui/select"
 interface PaginationProps {
   currentPage?: number
   totalPages?: number

@@ -5,11 +5,11 @@ import { format, isValid, parse } from "date-fns"
 import { CalendarIcon } from "lucide-react"
 import { useState } from "react"
 
-import { Box } from "@/components/ui/stylex/box"
-import { Calendar } from "@/components/ui/stylex/calendar"
-import { Field, FieldLabel } from "@/components/ui/stylex/field"
-import { Flex } from "@/components/ui/stylex/flex"
-import { InputGroup, InputGroupAddon } from "@/components/ui/stylex/input-group"
+import { Box } from "@/components/ui/box"
+import { Calendar } from "@/components/ui/calendar"
+import { Field, FieldLabel } from "@/components/ui/field"
+import { Flex } from "@/components/ui/flex"
+import { InputGroup, InputGroupAddon } from "@/components/ui/input-group"
 export default function Example() {
   const [date, setDate] = useState<Date | undefined>(() => new Date())
   const [month, setMonth] = useState<Date>(() => new Date())

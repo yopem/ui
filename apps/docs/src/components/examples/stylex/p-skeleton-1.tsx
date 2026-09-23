@@ -4,16 +4,12 @@ import * as stylex from "@stylexjs/stylex"
 import { UserRoundPlusIcon, UsersRoundIcon } from "lucide-react"
 import { useEffect, useState } from "react"
 
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "@/components/ui/stylex/avatar"
-import { Box } from "@/components/ui/stylex/box"
-import { Button } from "@/components/ui/stylex/button"
-import { Flex } from "@/components/ui/stylex/flex"
-import { Heading } from "@/components/ui/stylex/heading"
-import { Skeleton } from "@/components/ui/stylex/skeleton"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Box } from "@/components/ui/box"
+import { Button } from "@/components/ui/button"
+import { Flex } from "@/components/ui/flex"
+import { Heading } from "@/components/ui/heading"
+import { Skeleton } from "@/components/ui/skeleton"
 const users = [
   {
     delay: 3000,

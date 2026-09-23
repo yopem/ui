@@ -16,10 +16,10 @@ import {
   DocsTitle,
 } from "@/catalog/docs-page"
 import { docsStyles } from "@/catalog/docs-styles"
-import { Box } from "@/components/ui/stylex/box"
-import { Heading } from "@/components/ui/stylex/heading"
-import { Link } from "@/components/ui/stylex/link"
-import { Paragraph } from "@/components/ui/stylex/paragraph"
+import { Box } from "@/components/ui/box"
+import { Heading } from "@/components/ui/heading"
+import { Link } from "@/components/ui/link"
+import { Paragraph } from "@/components/ui/paragraph"
 import {
   Table,
   TableBody,
@@ -27,7 +27,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/stylex/table"
+} from "@/components/ui/table"
 import { createSeo } from "@/lib/seo"
 
 export const Route = createFileRoute("/docs/style-props")({
@@ -271,19 +271,18 @@ export function Summary() {
       </Paragraph>
       <CopyableCode
         title="Interaction states"
-        code={`import { Box } from "@/components/ui/box"
+        code={`import { Link } from "@/components/ui/link"
 import { tokens } from "@/styles/tokens.stylex"
 
 export function Highlight() {
   return (
-    <Box
-      as="a"
+    <Link
       href="/docs/installation"
       bgColor={{ base: tokens["--background"], _hover: tokens["--accent"] }}
       color={tokens["--foreground"]}
     >
       Installation
-    </Box>
+    </Link>
   )
 }`}
       />

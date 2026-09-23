@@ -10,12 +10,8 @@ import {
   ComboboxList,
   ComboboxPopup,
   ComboboxValue,
-} from "@/components/ui/stylex/combobox"
-import {
-  Field,
-  FieldDescription,
-  FieldLabel,
-} from "@/components/ui/stylex/field"
+} from "@/components/ui/combobox"
+import { Field, FieldDescription, FieldLabel } from "@/components/ui/field"
 
 const items = [
   { label: "Apple", value: "apple" },

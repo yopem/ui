@@ -1,5 +1,5 @@
-import { Box } from "@/components/ui/stylex/box"
-import { Grid } from "@/components/ui/stylex/grid"
+import { Box } from "@/components/ui/box"
+import { Grid } from "@/components/ui/grid"
 
 export function Example() {
   return (

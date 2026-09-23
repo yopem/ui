@@ -1,10 +1,7 @@
 import * as stylex from "@stylexjs/stylex"
 import { BoldIcon, ItalicIcon, UnderlineIcon } from "lucide-react"
 
-import {
-  ToggleGroup,
-  ToggleGroupItem,
-} from "@/components/ui/stylex/toggle-group"
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 
 export default function Example() {
   return (

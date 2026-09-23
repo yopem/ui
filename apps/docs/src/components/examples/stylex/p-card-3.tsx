@@ -1,7 +1,7 @@
 import * as stylex from "@stylexjs/stylex"
 import { ShieldAlertIcon } from "lucide-react"
 
-import { Button } from "@/components/ui/stylex/button"
+import { Button } from "@/components/ui/button"
 import {
   Card,
   CardDescription,
@@ -9,12 +9,12 @@ import {
   CardHeader,
   CardPanel,
   CardTitle,
-} from "@/components/ui/stylex/card"
-import { Field, FieldLabel } from "@/components/ui/stylex/field"
-import { Flex } from "@/components/ui/stylex/flex"
-import { Form } from "@/components/ui/stylex/form"
-import { Input } from "@/components/ui/stylex/input"
-import { Paragraph } from "@/components/ui/stylex/paragraph"
+} from "@/components/ui/card"
+import { Field, FieldLabel } from "@/components/ui/field"
+import { Flex } from "@/components/ui/flex"
+import { Form } from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
+import { Paragraph } from "@/components/ui/paragraph"
 export default function Example() {
   return (
     <Card {...stylex.props(exampleStyles.example1)}>

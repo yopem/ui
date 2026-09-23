@@ -8,15 +8,15 @@ import {
   BreadcrumbLink,
   BreadcrumbList,
   BreadcrumbSeparator,
-} from "@/components/ui/stylex/breadcrumb"
-import { Link } from "@/components/ui/stylex/link"
+} from "@/components/ui/breadcrumb"
+import { Link } from "@/components/ui/link"
 import {
   Select,
   SelectItem,
   SelectPopup,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/stylex/select"
+} from "@/components/ui/select"
 const items = [
   { label: "Orion", value: "orion" },
   { label: "Sigma", value: "sigma" },

@@ -6,9 +6,9 @@ import {
   FrameHeader,
   FramePanel,
   FrameTitle,
-} from "@/components/ui/stylex/frame"
-import { Heading } from "@/components/ui/stylex/heading"
-import { Paragraph } from "@/components/ui/stylex/paragraph"
+} from "@/components/ui/frame"
+import { Heading } from "@/components/ui/heading"
+import { Paragraph } from "@/components/ui/paragraph"
 export default function Example() {
   return (
     <Frame {...stylex.props(exampleStyles.example1)}>

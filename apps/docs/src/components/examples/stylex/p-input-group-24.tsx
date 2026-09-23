@@ -3,12 +3,12 @@
 import * as stylex from "@stylexjs/stylex"
 import { useState } from "react"
 
-import { Box } from "@/components/ui/stylex/box"
+import { Box } from "@/components/ui/box"
 import {
   InputGroup,
   InputGroupAddon,
   InputGroupInput,
-} from "@/components/ui/stylex/input-group"
+} from "@/components/ui/input-group"
 export default function Example() {
   const maxLength = 14
   const [value, setValue] = useState("")

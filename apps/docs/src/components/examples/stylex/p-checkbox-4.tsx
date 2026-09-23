@@ -1,9 +1,9 @@
 import * as stylex from "@stylexjs/stylex"
 
-import { Checkbox } from "@/components/ui/stylex/checkbox"
-import { Flex } from "@/components/ui/stylex/flex"
-import { Label } from "@/components/ui/stylex/label"
-import { Paragraph } from "@/components/ui/stylex/paragraph"
+import { Checkbox } from "@/components/ui/checkbox"
+import { Flex } from "@/components/ui/flex"
+import { Label } from "@/components/ui/label"
+import { Paragraph } from "@/components/ui/paragraph"
 export default function Example() {
   return (
     <Label {...stylex.props(exampleStyles.report1)}>

@@ -6,8 +6,8 @@ import {
   ContextMenuLinkItem,
   ContextMenuPopup,
   ContextMenuTrigger,
-} from "@/components/ui/stylex/context-menu"
-import { Link } from "@/components/ui/stylex/link"
+} from "@/components/ui/context-menu"
+import { Link } from "@/components/ui/link"
 export default function Example() {
   return (
     <ContextMenu>

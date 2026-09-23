@@ -7,8 +7,8 @@ import { format } from "date-fns"
 import { CalendarIcon } from "lucide-react"
 import * as React from "react"
 
-import { Button } from "@/components/ui/stylex/button"
-import { Calendar } from "@/components/ui/stylex/calendar"
+import { Button } from "@/components/ui/button"
+import { Calendar } from "@/components/ui/calendar"
 import {
   Combobox,
   ComboboxEmpty,
@@ -16,13 +16,9 @@ import {
   ComboboxItem,
   ComboboxList,
   ComboboxPopup,
-} from "@/components/ui/stylex/combobox"
-import { Field, FieldLabel } from "@/components/ui/stylex/field"
-import {
-  Popover,
-  PopoverPopup,
-  PopoverTrigger,
-} from "@/components/ui/stylex/popover"
+} from "@/components/ui/combobox"
+import { Field, FieldLabel } from "@/components/ui/field"
+import { Popover, PopoverPopup, PopoverTrigger } from "@/components/ui/popover"
 
 interface DropdownItem {
   disabled?: boolean

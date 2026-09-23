@@ -6,9 +6,9 @@ import * as stylex from "@stylexjs/stylex"
 import { useState } from "react"
 import { z } from "zod"
 
-import { Button } from "@/components/ui/stylex/button"
-import { Field } from "@/components/ui/stylex/field"
-import { Form } from "@/components/ui/stylex/form"
+import { Button } from "@/components/ui/button"
+import { Field } from "@/components/ui/field"
+import { Form } from "@/components/ui/form"
 import {
   NumberField,
   NumberFieldDecrement,
@@ -16,7 +16,7 @@ import {
   NumberFieldIncrement,
   NumberFieldInput,
   NumberFieldScrubArea,
-} from "@/components/ui/stylex/number-field"
+} from "@/components/ui/number-field"
 
 const schema = z.object({
   quantity: z.coerce

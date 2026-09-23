@@ -6,7 +6,7 @@ import {
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
-} from "@/components/ui/stylex/pagination"
+} from "@/components/ui/pagination"
 
 export default function Example() {
   return (

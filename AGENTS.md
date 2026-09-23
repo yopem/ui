@@ -32,8 +32,8 @@ e2e, accessibility, and production build.
 - `apps/docs/` — TanStack Start catalog and static registry host.
   - `src/catalog/` — catalog data, source loading, API rendering, search,
     navigation, code blocks, page layout, and usage examples.
-  - `src/components/ui/stylex/` — catalog-facing re-exports of canonical
-    registry components. Do not duplicate implementations here.
+  - `src/components/ui/` — catalog-facing re-exports of canonical registry
+    components. Do not duplicate implementations here.
   - `src/components/examples/stylex/` — searchable StyleX examples and preview
     sources.
   - `src/routes/` — catalog, example, guide, API, SEO, and machine-readable

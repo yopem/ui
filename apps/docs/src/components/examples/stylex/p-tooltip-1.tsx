@@ -1,9 +1,5 @@
-import { Button } from "@/components/ui/stylex/button"
-import {
-  Tooltip,
-  TooltipPopup,
-  TooltipTrigger,
-} from "@/components/ui/stylex/tooltip"
+import { Button } from "@/components/ui/button"
+import { Tooltip, TooltipPopup, TooltipTrigger } from "@/components/ui/tooltip"
 
 export default function Example() {
   return (

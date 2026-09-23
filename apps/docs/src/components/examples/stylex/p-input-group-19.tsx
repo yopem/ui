@@ -3,13 +3,13 @@
 import * as stylex from "@stylexjs/stylex"
 import { BoldIcon, ItalicIcon, LinkIcon } from "lucide-react"
 
-import { Button } from "@/components/ui/stylex/button"
+import { Button } from "@/components/ui/button"
 import {
   InputGroup,
   InputGroupAddon,
   InputGroupTextarea,
-} from "@/components/ui/stylex/input-group"
-import { Toggle } from "@/components/ui/stylex/toggle"
+} from "@/components/ui/input-group"
+import { Toggle } from "@/components/ui/toggle"
 
 export default function Example() {
   return (

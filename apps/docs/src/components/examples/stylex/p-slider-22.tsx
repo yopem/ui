@@ -3,19 +3,16 @@
 import * as stylex from "@stylexjs/stylex"
 import { useState } from "react"
 
-import { Box } from "@/components/ui/stylex/box"
-import { Button } from "@/components/ui/stylex/button"
-import { Flex } from "@/components/ui/stylex/flex"
+import { Box } from "@/components/ui/box"
+import { Button } from "@/components/ui/button"
+import { Flex } from "@/components/ui/flex"
 import {
   InputGroup,
   InputGroupAddon,
   InputGroupText,
-} from "@/components/ui/stylex/input-group"
-import {
-  NumberField,
-  NumberFieldInput,
-} from "@/components/ui/stylex/number-field"
-import { Slider } from "@/components/ui/stylex/slider"
+} from "@/components/ui/input-group"
+import { NumberField, NumberFieldInput } from "@/components/ui/number-field"
+import { Slider } from "@/components/ui/slider"
 const items = [
   { id: 1, price: 80 },
   { id: 2, price: 95 },

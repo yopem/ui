@@ -2,18 +2,14 @@
 import * as stylex from "@stylexjs/stylex"
 import { InfoIcon } from "lucide-react"
 
-import { Button } from "@/components/ui/stylex/button"
+import { Button } from "@/components/ui/button"
 import {
   InputGroup,
   InputGroupAddon,
   InputGroupInput,
-} from "@/components/ui/stylex/input-group"
-import { Paragraph } from "@/components/ui/stylex/paragraph"
-import {
-  Popover,
-  PopoverPopup,
-  PopoverTrigger,
-} from "@/components/ui/stylex/popover"
+} from "@/components/ui/input-group"
+import { Paragraph } from "@/components/ui/paragraph"
+import { Popover, PopoverPopup, PopoverTrigger } from "@/components/ui/popover"
 export default function Example() {
   return (
     <InputGroup>

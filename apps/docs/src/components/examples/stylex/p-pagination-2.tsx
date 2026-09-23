@@ -1,13 +1,13 @@
 // next/link replaced -> anchor
 import * as stylex from "@stylexjs/stylex"
 
-import { Button } from "@/components/ui/stylex/button"
-import { Link } from "@/components/ui/stylex/link"
+import { Button } from "@/components/ui/button"
+import { Link } from "@/components/ui/link"
 import {
   Pagination,
   PaginationContent,
   PaginationItem,
-} from "@/components/ui/stylex/pagination"
+} from "@/components/ui/pagination"
 interface PaginationProps {
   currentPage: number
   totalPages: number

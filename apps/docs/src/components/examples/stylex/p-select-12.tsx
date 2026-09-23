@@ -4,7 +4,7 @@ import {
   SelectPopup,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/stylex/select"
+} from "@/components/ui/select"
 
 const items = [
   { disabled: false, label: "Next.js", value: "next" },

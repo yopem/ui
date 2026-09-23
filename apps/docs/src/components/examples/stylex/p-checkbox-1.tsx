@@ -1,5 +1,5 @@
-import { Checkbox } from "@/components/ui/stylex/checkbox"
-import { Label } from "@/components/ui/stylex/label"
+import { Checkbox } from "@/components/ui/checkbox"
+import { Label } from "@/components/ui/label"
 
 export default function Example() {
   return (

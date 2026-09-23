@@ -3,7 +3,7 @@ import * as stylex from "@stylexjs/stylex"
 import { CheckIcon, CopyIcon } from "lucide-react"
 import { useState } from "react"
 
-import { Button } from "@/components/ui/stylex/button"
+import { Button } from "@/components/ui/button"
 
 export default function Example() {
   const [copied, setCopied] = useState(false)

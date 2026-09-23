@@ -12,7 +12,7 @@ import githubLight from "@shikijs/themes/github-light"
 import { createHighlighterCoreSync } from "shiki/core"
 import { createJavaScriptRegexEngine } from "shiki/engine/javascript"
 
-import { Box } from "@/components/ui/stylex/box"
+import { Box } from "@/components/ui/box"
 const highlighter = createHighlighterCoreSync({
   engine: createJavaScriptRegexEngine(),
   langs: [astro, css, javascript, json, shellscript, tsx, typescript],

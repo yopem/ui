@@ -1,19 +1,14 @@
 import * as stylex from "@stylexjs/stylex"
 import { EllipsisIcon } from "lucide-react"
 
-import { Badge } from "@/components/ui/stylex/badge"
-import { Button } from "@/components/ui/stylex/button"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 import {
   InputGroup,
   InputGroupAddon,
   InputGroupInput,
-} from "@/components/ui/stylex/input-group"
-import {
-  Menu,
-  MenuItem,
-  MenuPopup,
-  MenuTrigger,
-} from "@/components/ui/stylex/menu"
+} from "@/components/ui/input-group"
+import { Menu, MenuItem, MenuPopup, MenuTrigger } from "@/components/ui/menu"
 
 export default function Example() {
   return (

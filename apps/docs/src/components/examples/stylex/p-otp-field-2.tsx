@@ -1,5 +1,5 @@
-import { Label } from "@/components/ui/stylex/label"
-import { OTPField, OTPFieldInput } from "@/components/ui/stylex/otp-field"
+import { Label } from "@/components/ui/label"
+import { OTPField, OTPFieldInput } from "@/components/ui/otp-field"
 
 const OTP_LENGTH = 4
 

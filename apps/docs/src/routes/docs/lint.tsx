@@ -9,10 +9,10 @@ import {
   DocsTitle,
 } from "@/catalog/docs-page"
 import { docsStyles } from "@/catalog/docs-styles"
-import { Box } from "@/components/ui/stylex/box"
-import { Heading } from "@/components/ui/stylex/heading"
-import { Link } from "@/components/ui/stylex/link"
-import { Paragraph } from "@/components/ui/stylex/paragraph"
+import { Box } from "@/components/ui/box"
+import { Heading } from "@/components/ui/heading"
+import { Link } from "@/components/ui/link"
+import { Paragraph } from "@/components/ui/paragraph"
 import { createSeo } from "@/lib/seo"
 
 export const Route = createFileRoute("/docs/lint")({

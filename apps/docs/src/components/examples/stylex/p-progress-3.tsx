@@ -2,14 +2,14 @@
 
 import * as stylex from "@stylexjs/stylex"
 
-import { Flex } from "@/components/ui/stylex/flex"
+import { Flex } from "@/components/ui/flex"
 import {
   Progress,
   ProgressIndicator,
   ProgressLabel,
   ProgressTrack,
   ProgressValue,
-} from "@/components/ui/stylex/progress"
+} from "@/components/ui/progress"
 export default function Example() {
   return (
     <Progress max={512} value={502}>

@@ -1,8 +1,8 @@
 import * as stylex from "@stylexjs/stylex"
 
-import { Button } from "@/components/ui/stylex/button"
-import { Flex } from "@/components/ui/stylex/flex"
-import { Textarea } from "@/components/ui/stylex/textarea"
+import { Button } from "@/components/ui/button"
+import { Flex } from "@/components/ui/flex"
+import { Textarea } from "@/components/ui/textarea"
 export default function Example() {
   return (
     <Flex {...stylex.props(exampleStyles.example1)}>

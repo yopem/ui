@@ -1,7 +1,7 @@
 import * as stylex from "@stylexjs/stylex"
 
-import { Flex } from "@/components/ui/stylex/flex"
-import { Slider } from "@/components/ui/stylex/slider"
+import { Flex } from "@/components/ui/flex"
+import { Slider } from "@/components/ui/slider"
 const bands = [
   { label: "60 Hz", value: 2 },
   { label: "250 Hz", value: 1 },

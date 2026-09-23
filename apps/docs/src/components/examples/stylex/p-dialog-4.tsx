@@ -11,8 +11,8 @@ import {
   AlertDialogHeader,
   AlertDialogPopup,
   AlertDialogTitle,
-} from "@/components/ui/stylex/alert-dialog"
-import { Button } from "@/components/ui/stylex/button"
+} from "@/components/ui/alert-dialog"
+import { Button } from "@/components/ui/button"
 import {
   Dialog,
   DialogClose,
@@ -23,10 +23,10 @@ import {
   DialogPopup,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/stylex/dialog"
-import { Field } from "@/components/ui/stylex/field"
-import { Form } from "@/components/ui/stylex/form"
-import { Textarea } from "@/components/ui/stylex/textarea"
+} from "@/components/ui/dialog"
+import { Field } from "@/components/ui/field"
+import { Form } from "@/components/ui/form"
+import { Textarea } from "@/components/ui/textarea"
 
 export default function Example() {
   const [dialogOpen, setDialogOpen] = useState(false)

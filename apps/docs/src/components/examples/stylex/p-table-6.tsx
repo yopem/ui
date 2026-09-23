@@ -3,10 +3,10 @@
 import * as stylex from "@stylexjs/stylex"
 import { useMemo, useState } from "react"
 
-import { Badge } from "@/components/ui/stylex/badge"
-import { Box } from "@/components/ui/stylex/box"
-import { CardFrame } from "@/components/ui/stylex/card"
-import { Checkbox } from "@/components/ui/stylex/checkbox"
+import { Badge } from "@/components/ui/badge"
+import { Box } from "@/components/ui/box"
+import { CardFrame } from "@/components/ui/card"
+import { Checkbox } from "@/components/ui/checkbox"
 import {
   Table,
   TableBody,
@@ -15,7 +15,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/stylex/table"
+} from "@/components/ui/table"
 import {
   type ColumnDef,
   flexRender,

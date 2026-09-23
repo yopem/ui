@@ -1,12 +1,8 @@
 import * as stylex from "@stylexjs/stylex"
 
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "@/components/ui/stylex/avatar"
-import { Badge } from "@/components/ui/stylex/badge"
-import { Box } from "@/components/ui/stylex/box"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Badge } from "@/components/ui/badge"
+import { Box } from "@/components/ui/box"
 export default function Example() {
   return (
     <Box {...stylex.props(exampleStyles.example1)}>

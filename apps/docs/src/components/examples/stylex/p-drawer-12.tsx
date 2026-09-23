@@ -2,7 +2,7 @@
 
 import * as stylex from "@stylexjs/stylex"
 
-import { Button } from "@/components/ui/stylex/button"
+import { Button } from "@/components/ui/button"
 import {
   Dialog,
   DialogClose,
@@ -13,7 +13,7 @@ import {
   DialogPopup,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/stylex/dialog"
+} from "@/components/ui/dialog"
 import {
   Drawer,
   DrawerClose,
@@ -24,10 +24,10 @@ import {
   DrawerPopup,
   DrawerTitle,
   DrawerTrigger,
-} from "@/components/ui/stylex/drawer"
-import { Field, FieldLabel } from "@/components/ui/stylex/field"
-import { Form } from "@/components/ui/stylex/form"
-import { Input } from "@/components/ui/stylex/input"
+} from "@/components/ui/drawer"
+import { Field, FieldLabel } from "@/components/ui/field"
+import { Form } from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
 import { useMediaQuery } from "@/hooks/use-media-query"
 
 const FORM_TITLE = "Edit profile"

@@ -2,8 +2,8 @@ import {
   InputGroup,
   InputGroupAddon,
   InputGroupInput,
-} from "@/components/ui/stylex/input-group"
-import { Kbd } from "@/components/ui/stylex/kbd"
+} from "@/components/ui/input-group"
+import { Kbd } from "@/components/ui/kbd"
 
 export default function Example() {
   return (

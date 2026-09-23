@@ -1,7 +1,7 @@
 import * as stylex from "@stylexjs/stylex"
 import { FolderIcon, PlusIcon } from "lucide-react"
 
-import { Button } from "@/components/ui/stylex/button"
+import { Button } from "@/components/ui/button"
 import {
   Card,
   CardFrame,
@@ -10,14 +10,14 @@ import {
   CardFrameHeader,
   CardFrameTitle,
   CardPanel,
-} from "@/components/ui/stylex/card"
+} from "@/components/ui/card"
 import {
   Empty,
   EmptyDescription,
   EmptyHeader,
   EmptyMedia,
   EmptyTitle,
-} from "@/components/ui/stylex/empty"
+} from "@/components/ui/empty"
 
 export default function Example() {
   return (

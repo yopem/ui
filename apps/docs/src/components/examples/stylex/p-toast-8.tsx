@@ -2,9 +2,9 @@
 import * as stylex from "@stylexjs/stylex"
 import { useRef, useState } from "react"
 
-import { Button } from "@/components/ui/stylex/button"
-import { Spinner } from "@/components/ui/stylex/spinner"
-import { anchoredToastManager } from "@/components/ui/stylex/toast"
+import { Button } from "@/components/ui/button"
+import { Spinner } from "@/components/ui/spinner"
+import { anchoredToastManager } from "@/components/ui/toast"
 
 export default function Example() {
   const submitRef = useRef<HTMLButtonElement>(null)

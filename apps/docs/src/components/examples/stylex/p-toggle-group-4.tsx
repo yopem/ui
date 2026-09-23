@@ -5,7 +5,7 @@ import {
   ToggleGroup,
   ToggleGroupItem,
   ToggleGroupSeparator,
-} from "@/components/ui/stylex/toggle-group"
+} from "@/components/ui/toggle-group"
 
 export default function Example() {
   return (

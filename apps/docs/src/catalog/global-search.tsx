@@ -18,7 +18,7 @@ import { Link } from "@tanstack/react-router"
 import { SearchIcon } from "lucide-react"
 import { useCallback, useRef, useState } from "react"
 
-import { Box } from "@/components/ui/stylex/box"
+import { Box } from "@/components/ui/box"
 
 function listenForSearchShortcut(onShortcut: () => void) {
   function onKeyDown(event: KeyboardEvent) {

@@ -3,10 +3,10 @@
 import * as stylex from "@stylexjs/stylex"
 import { useState } from "react"
 
-import { Box } from "@/components/ui/stylex/box"
-import { Field, FieldItem, FieldLabel } from "@/components/ui/stylex/field"
-import { Fieldset, FieldsetLegend } from "@/components/ui/stylex/fieldset"
-import { Radio, RadioGroup } from "@/components/ui/stylex/radio-group"
+import { Box } from "@/components/ui/box"
+import { Field, FieldItem, FieldLabel } from "@/components/ui/field"
+import { Fieldset, FieldsetLegend } from "@/components/ui/fieldset"
+import { Radio, RadioGroup } from "@/components/ui/radio-group"
 const items = [
   { label: "System", value: "system" },
   { label: "Light", value: "light" },

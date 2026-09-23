@@ -1,9 +1,9 @@
 import * as stylex from "@stylexjs/stylex"
 
-import { Button } from "@/components/ui/stylex/button"
-import { Field, FieldLabel } from "@/components/ui/stylex/field"
-import { Form } from "@/components/ui/stylex/form"
-import { Input } from "@/components/ui/stylex/input"
+import { Button } from "@/components/ui/button"
+import { Field, FieldLabel } from "@/components/ui/field"
+import { Form } from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
 import {
   Sheet,
   SheetClose,
@@ -14,7 +14,7 @@ import {
   SheetPopup,
   SheetTitle,
   SheetTrigger,
-} from "@/components/ui/stylex/sheet"
+} from "@/components/ui/sheet"
 
 const profileFields = [
   { defaultValue: "Margaret Welsh", label: "Name" },

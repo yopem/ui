@@ -3,8 +3,8 @@ import { useTheme } from "@registry/theme/theme-provider"
 import * as stylex from "@stylexjs/stylex"
 import { MonitorIcon, MoonIcon, SunIcon } from "lucide-react"
 
-import { Box } from "@/components/ui/stylex/box"
-import { Grid } from "@/components/ui/stylex/grid"
+import { Box } from "@/components/ui/box"
+import { Grid } from "@/components/ui/grid"
 const themeOptions = [
   { icon: MonitorIcon, label: "Auto", value: "system" },
   { icon: SunIcon, label: "Light", value: "light" },

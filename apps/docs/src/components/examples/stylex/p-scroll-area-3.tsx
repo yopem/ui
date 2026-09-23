@@ -1,7 +1,7 @@
 import * as stylex from "@stylexjs/stylex"
 
-import { Paragraph } from "@/components/ui/stylex/paragraph"
-import { ScrollArea } from "@/components/ui/stylex/scroll-area"
+import { Paragraph } from "@/components/ui/paragraph"
+import { ScrollArea } from "@/components/ui/scroll-area"
 export default function Example() {
   return (
     <ScrollArea {...stylex.props(exampleStyles.example1)}>

@@ -4,8 +4,8 @@ import * as stylex from "@stylexjs/stylex"
 import { ArrowDownIcon, ArrowUpIcon, CornerDownLeftIcon } from "lucide-react"
 import { Fragment, useEffect, useState } from "react"
 
-import { Box } from "@/components/ui/stylex/box"
-import { Button } from "@/components/ui/stylex/button"
+import { Box } from "@/components/ui/box"
+import { Button } from "@/components/ui/button"
 import {
   Command,
   CommandCollection,
@@ -22,9 +22,9 @@ import {
   CommandPanel,
   CommandSeparator,
   CommandShortcut,
-} from "@/components/ui/stylex/command"
-import { Flex } from "@/components/ui/stylex/flex"
-import { Kbd, KbdGroup } from "@/components/ui/stylex/kbd"
+} from "@/components/ui/command"
+import { Flex } from "@/components/ui/flex"
+import { Kbd, KbdGroup } from "@/components/ui/kbd"
 export interface Item {
   value: string
   label: string

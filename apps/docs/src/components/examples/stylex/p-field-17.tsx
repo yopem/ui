@@ -1,4 +1,4 @@
-import { Field, FieldDescription } from "@/components/ui/stylex/field"
+import { Field, FieldDescription } from "@/components/ui/field"
 import {
   NumberField,
   NumberFieldDecrement,
@@ -6,7 +6,7 @@ import {
   NumberFieldIncrement,
   NumberFieldInput,
   NumberFieldScrubArea,
-} from "@/components/ui/stylex/number-field"
+} from "@/components/ui/number-field"
 
 function QuantityControls() {
   return (

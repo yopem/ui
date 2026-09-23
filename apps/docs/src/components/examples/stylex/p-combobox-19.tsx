@@ -4,14 +4,10 @@ import * as stylex from "@stylexjs/stylex"
 import { SearchIcon, XIcon } from "lucide-react"
 import { useState } from "react"
 
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "@/components/ui/stylex/avatar"
-import { Badge } from "@/components/ui/stylex/badge"
-import { Box } from "@/components/ui/stylex/box"
-import { Button } from "@/components/ui/stylex/button"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Badge } from "@/components/ui/badge"
+import { Box } from "@/components/ui/box"
+import { Button } from "@/components/ui/button"
 import {
   Combobox,
   ComboboxEmpty,
@@ -19,8 +15,8 @@ import {
   ComboboxItem,
   ComboboxList,
   ComboboxPopup,
-} from "@/components/ui/stylex/combobox"
-import { Flex } from "@/components/ui/stylex/flex"
+} from "@/components/ui/combobox"
+import { Flex } from "@/components/ui/flex"
 interface TeamMember {
   avatar: string
   initials: string

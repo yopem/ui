@@ -2,14 +2,14 @@
 
 import * as stylex from "@stylexjs/stylex"
 
-import { Box } from "@/components/ui/stylex/box"
+import { Box } from "@/components/ui/box"
 import {
   Select,
   SelectItem,
   SelectPopup,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/stylex/select"
+} from "@/components/ui/select"
 const items = [
   { color: "emerald", label: "Completed", value: "completed" },
   { color: "blue", label: "In Progress", value: "in-progress" },

@@ -1,4 +1,4 @@
-import { Box } from "@/components/ui/stylex/box"
+import { Box } from "@/components/ui/box"
 
 export function Example() {
   return (

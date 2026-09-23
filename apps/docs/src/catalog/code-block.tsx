@@ -6,7 +6,7 @@ import { CheckIcon, CopyIcon } from "lucide-react"
 import { lazy, Suspense, useState } from "react"
 
 import { stripStandaloneComments } from "@/catalog/source-code"
-import { Box } from "@/components/ui/stylex/box"
+import { Box } from "@/components/ui/box"
 import { useCopyToClipboard } from "@/hooks/use-copy-to-clipboard"
 const HighlightedCode = lazy(() =>
   import("./highlighted-code").then((module) => ({

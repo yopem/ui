@@ -1,11 +1,7 @@
 import * as stylex from "@stylexjs/stylex"
 
-import {
-  Field,
-  FieldDescription,
-  FieldLabel,
-} from "@/components/ui/stylex/field"
-import { OTPField, OTPFieldInput } from "@/components/ui/stylex/otp-field"
+import { Field, FieldDescription, FieldLabel } from "@/components/ui/field"
+import { OTPField, OTPFieldInput } from "@/components/ui/otp-field"
 
 const OTP_LENGTH = 6
 

@@ -1,9 +1,9 @@
 import * as stylex from "@stylexjs/stylex"
 import { HouseIcon, InboxIcon, SettingsIcon } from "lucide-react"
 
-import { Badge } from "@/components/ui/stylex/badge"
-import { Paragraph } from "@/components/ui/stylex/paragraph"
-import { Tabs, TabsList, TabsPanel, TabsTab } from "@/components/ui/stylex/tabs"
+import { Badge } from "@/components/ui/badge"
+import { Paragraph } from "@/components/ui/paragraph"
+import { Tabs, TabsList, TabsPanel, TabsTab } from "@/components/ui/tabs"
 export default function Example() {
   return (
     <Tabs {...stylex.props(exampleStyles.example1)} defaultValue="tab-1">

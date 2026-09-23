@@ -5,15 +5,15 @@ import type { DropdownNavProps, DropdownProps } from "@daypicker/react"
 import * as stylex from "@stylexjs/stylex"
 import { useState } from "react"
 
-import { Calendar } from "@/components/ui/stylex/calendar"
-import { Flex } from "@/components/ui/stylex/flex"
+import { Calendar } from "@/components/ui/calendar"
+import { Flex } from "@/components/ui/flex"
 import {
   Select,
   SelectItem,
   SelectPopup,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/stylex/select"
+} from "@/components/ui/select"
 export default function Example() {
   const [date, setDate] = useState<Date | undefined>(new Date())
 

@@ -3,7 +3,7 @@
 import * as stylex from "@stylexjs/stylex"
 import { SearchIcon } from "lucide-react"
 
-import { Box } from "@/components/ui/stylex/box"
+import { Box } from "@/components/ui/box"
 import {
   Combobox,
   ComboboxEmpty,
@@ -13,8 +13,8 @@ import {
   ComboboxPopup,
   ComboboxTrigger,
   ComboboxValue,
-} from "@/components/ui/stylex/combobox"
-import { SelectButton } from "@/components/ui/stylex/select"
+} from "@/components/ui/combobox"
+import { SelectButton } from "@/components/ui/select"
 const items = [
   { label: "Apple", value: "apple" },
   { label: "Banana", value: "banana" },

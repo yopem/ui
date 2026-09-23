@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 
-import { Progress } from "@/components/ui/stylex/progress"
+import { Progress } from "@/components/ui/progress"
 
 export default function Example() {
   const [value, setValue] = useState(20)

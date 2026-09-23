@@ -1,5 +1,5 @@
-import { Label } from "@/components/ui/stylex/label"
-import { Switch } from "@/components/ui/stylex/switch"
+import { Label } from "@/components/ui/label"
+import { Switch } from "@/components/ui/switch"
 
 export default function Example() {
   return (

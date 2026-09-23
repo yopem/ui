@@ -10,10 +10,10 @@ import {
 } from "lucide-react"
 import { useState } from "react"
 
-import { Box } from "@/components/ui/stylex/box"
-import { Button } from "@/components/ui/stylex/button"
-import { Checkbox } from "@/components/ui/stylex/checkbox"
-import { CheckboxGroup } from "@/components/ui/stylex/checkbox-group"
+import { Box } from "@/components/ui/box"
+import { Button } from "@/components/ui/button"
+import { Checkbox } from "@/components/ui/checkbox"
+import { CheckboxGroup } from "@/components/ui/checkbox-group"
 import {
   Combobox,
   ComboboxEmpty,
@@ -23,28 +23,24 @@ import {
   ComboboxPopup,
   ComboboxTrigger,
   ComboboxValue,
-} from "@/components/ui/stylex/combobox"
-import { Flex } from "@/components/ui/stylex/flex"
+} from "@/components/ui/combobox"
+import { Flex } from "@/components/ui/flex"
 import {
   groupItemStyles,
   Group,
   GroupSeparator,
   GroupText,
-} from "@/components/ui/stylex/group"
-import { Label } from "@/components/ui/stylex/label"
-import { Paragraph } from "@/components/ui/stylex/paragraph"
-import {
-  Popover,
-  PopoverPopup,
-  PopoverTrigger,
-} from "@/components/ui/stylex/popover"
-import { Switch } from "@/components/ui/stylex/switch"
+} from "@/components/ui/group"
+import { Label } from "@/components/ui/label"
+import { Paragraph } from "@/components/ui/paragraph"
+import { Popover, PopoverPopup, PopoverTrigger } from "@/components/ui/popover"
+import { Switch } from "@/components/ui/switch"
 import {
   Tooltip,
   TooltipPopup,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/ui/stylex/tooltip"
+} from "@/components/ui/tooltip"
 const days = [
   "Monday",
   "Tuesday",

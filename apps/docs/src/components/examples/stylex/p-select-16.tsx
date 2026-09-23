@@ -2,14 +2,14 @@
 
 import * as stylex from "@stylexjs/stylex"
 
-import { Box } from "@/components/ui/stylex/box"
+import { Box } from "@/components/ui/box"
 import {
   Select,
   SelectItem,
   SelectPopup,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/stylex/select"
+} from "@/components/ui/select"
 const items = [
   { label: "JavaScript", value: "javascript" },
   { label: "TypeScript", value: "typescript" },

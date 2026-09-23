@@ -1,18 +1,18 @@
 import * as stylex from "@stylexjs/stylex"
 import { MicIcon, PaperclipIcon } from "lucide-react"
 
-import { Button } from "@/components/ui/stylex/button"
-import { Group, groupItemStyles } from "@/components/ui/stylex/group"
+import { Button } from "@/components/ui/button"
+import { Group, groupItemStyles } from "@/components/ui/group"
 import {
   InputGroup,
   InputGroupAddon,
   InputGroupInput,
-} from "@/components/ui/stylex/input-group"
+} from "@/components/ui/input-group"
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from "@/components/ui/stylex/tooltip"
+} from "@/components/ui/tooltip"
 
 export default function Example() {
   return (

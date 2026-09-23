@@ -12,7 +12,7 @@ import {
   ComboboxList,
   ComboboxPopup,
   ComboboxValue,
-} from "@/components/ui/stylex/combobox"
+} from "@/components/ui/combobox"
 
 const items = [
   { label: "Apple", value: "apple" },

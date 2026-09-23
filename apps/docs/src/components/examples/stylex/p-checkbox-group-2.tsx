@@ -1,6 +1,6 @@
-import { Checkbox } from "@/components/ui/stylex/checkbox"
-import { CheckboxGroup } from "@/components/ui/stylex/checkbox-group"
-import { Label } from "@/components/ui/stylex/label"
+import { Checkbox } from "@/components/ui/checkbox"
+import { CheckboxGroup } from "@/components/ui/checkbox-group"
+import { Label } from "@/components/ui/label"
 
 export default function Example() {
   return (

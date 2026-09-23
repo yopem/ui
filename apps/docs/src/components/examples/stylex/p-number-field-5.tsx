@@ -1,15 +1,15 @@
 import * as stylex from "@stylexjs/stylex"
 import { useId } from "react"
 
-import { Flex } from "@/components/ui/stylex/flex"
-import { Label } from "@/components/ui/stylex/label"
+import { Flex } from "@/components/ui/flex"
+import { Label } from "@/components/ui/label"
 import {
   NumberField,
   NumberFieldDecrement,
   NumberFieldGroup,
   NumberFieldIncrement,
   NumberFieldInput,
-} from "@/components/ui/stylex/number-field"
+} from "@/components/ui/number-field"
 export default function Example() {
   const id = useId()
   return (

@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 
-import { Button } from "@/components/ui/stylex/button"
+import { Button } from "@/components/ui/button"
 
 export default function Example() {
   const [isLoading, setIsLoading] = useState(false)

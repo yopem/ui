@@ -1,8 +1,8 @@
 import * as stylex from "@stylexjs/stylex"
 
-import { Box } from "@/components/ui/stylex/box"
-import { Flex } from "@/components/ui/stylex/flex"
-import { Slider } from "@/components/ui/stylex/slider"
+import { Box } from "@/components/ui/box"
+import { Flex } from "@/components/ui/flex"
+import { Slider } from "@/components/ui/slider"
 export default function Example() {
   return (
     <Box>

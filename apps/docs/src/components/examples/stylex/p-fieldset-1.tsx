@@ -1,12 +1,8 @@
 import * as stylex from "@stylexjs/stylex"
 
-import {
-  Field,
-  FieldDescription,
-  FieldLabel,
-} from "@/components/ui/stylex/field"
-import { Fieldset, FieldsetLegend } from "@/components/ui/stylex/fieldset"
-import { Input } from "@/components/ui/stylex/input"
+import { Field, FieldDescription, FieldLabel } from "@/components/ui/field"
+import { Fieldset, FieldsetLegend } from "@/components/ui/fieldset"
+import { Input } from "@/components/ui/input"
 
 export default function Example() {
   return (

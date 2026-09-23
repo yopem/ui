@@ -26,7 +26,7 @@ import {
   DocsTitle,
 } from "@/catalog/docs-page"
 import { docsStyles } from "@/catalog/docs-styles"
-import { Paragraph } from "@/components/ui/stylex/paragraph"
+import { Paragraph } from "@/components/ui/paragraph"
 import { siteJsonLd } from "@/lib/seo"
 export const Route = createRootRoute({
   head: () => ({

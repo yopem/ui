@@ -1,8 +1,8 @@
 import * as stylex from "@stylexjs/stylex"
 
-import { Button } from "@/components/ui/stylex/button"
-import { Flex } from "@/components/ui/stylex/flex"
-import { Paragraph } from "@/components/ui/stylex/paragraph"
+import { Button } from "@/components/ui/button"
+import { Flex } from "@/components/ui/flex"
+import { Paragraph } from "@/components/ui/paragraph"
 import {
   Sheet,
   SheetDescription,
@@ -11,7 +11,7 @@ import {
   SheetPopup,
   SheetTitle,
   SheetTrigger,
-} from "@/components/ui/stylex/sheet"
+} from "@/components/ui/sheet"
 export default function Example() {
   return (
     <Flex {...stylex.props(exampleStyles.example1)}>

@@ -13,6 +13,8 @@ test("style props guide covers shared component styling and responsive states", 
   expect(source).toContain("<Input aria-label=")
   expect(source).toContain('title="Everyday style props"')
   expect(source).toContain('title="Interaction states"')
+  expect(source).toContain('import { Link } from "@/components/ui/link"')
+  expect(source).not.toContain('<Box\n      as="a"')
   expect(source).toContain('id="responsive"')
   expect(source).toContain('id="advanced"')
   for (const api of [

@@ -1,9 +1,9 @@
-import { Label } from "@/components/ui/stylex/label"
+import { Label } from "@/components/ui/label"
 import {
   OTPField,
   OTPFieldInput,
   OTPFieldSeparator,
-} from "@/components/ui/stylex/otp-field"
+} from "@/components/ui/otp-field"
 
 const OTP_LENGTH = 6
 const GROUP_LENGTH = 3

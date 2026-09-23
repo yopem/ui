@@ -13,10 +13,10 @@ import {
   AutocompletePopup,
   AutocompleteStatus,
   useAutocompleteFilter,
-} from "@/components/ui/stylex/autocomplete"
-import { Box } from "@/components/ui/stylex/box"
-import { Flex } from "@/components/ui/stylex/flex"
-import { Spinner } from "@/components/ui/stylex/spinner"
+} from "@/components/ui/autocomplete"
+import { Box } from "@/components/ui/box"
+import { Flex } from "@/components/ui/flex"
+import { Spinner } from "@/components/ui/spinner"
 interface Movie {
   id: string
   title: string

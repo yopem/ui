@@ -4,22 +4,22 @@ import * as stylex from "@stylexjs/stylex"
 import { DownloadIcon, XIcon } from "lucide-react"
 import { useEffect, useRef, useState } from "react"
 
-import { Box } from "@/components/ui/stylex/box"
-import { Button } from "@/components/ui/stylex/button"
+import { Box } from "@/components/ui/box"
+import { Button } from "@/components/ui/button"
 import {
   groupItemStyles,
   Group,
   GroupSeparator,
   GroupText,
-} from "@/components/ui/stylex/group"
-import { Spinner } from "@/components/ui/stylex/spinner"
-import { toastManager } from "@/components/ui/stylex/toast"
+} from "@/components/ui/group"
+import { Spinner } from "@/components/ui/spinner"
+import { toastManager } from "@/components/ui/toast"
 import {
   Tooltip,
   TooltipPopup,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/ui/stylex/tooltip"
+} from "@/components/ui/tooltip"
 export default function Example() {
   const [isDownloading, setIsDownloading] = useState(false)
   const [progress, setProgress] = useState(0)

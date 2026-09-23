@@ -4,7 +4,7 @@ import * as stylex from "@stylexjs/stylex"
 import { ChevronDownIcon, ChevronUpIcon } from "lucide-react"
 import { useState } from "react"
 
-import { Button } from "@/components/ui/stylex/button"
+import { Button } from "@/components/ui/button"
 
 export default function Example() {
   const [isExpanded, setIsExpanded] = useState<boolean>(false)

@@ -13,9 +13,9 @@ import {
   AutocompleteList,
   AutocompletePopup,
   AutocompleteStatus,
-} from "@/components/ui/stylex/autocomplete"
-import { Box } from "@/components/ui/stylex/box"
-import { Spinner } from "@/components/ui/stylex/spinner"
+} from "@/components/ui/autocomplete"
+import { Box } from "@/components/ui/box"
+import { Spinner } from "@/components/ui/spinner"
 // Set NEXT_PUBLIC_GOOGLE_MAPS_API_KEY with the Places API (New) enabled to fetch
 // live suggestions. Without a key, the example falls back to sample addresses.
 const GOOGLE_MAPS_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY ?? ""

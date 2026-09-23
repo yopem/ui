@@ -1,8 +1,8 @@
 // next/link replaced -> anchor
 import * as stylex from "@stylexjs/stylex"
 
-import { Box } from "@/components/ui/stylex/box"
-import { Button } from "@/components/ui/stylex/button"
+import { Box } from "@/components/ui/box"
+import { Button } from "@/components/ui/button"
 import {
   Drawer,
   DrawerHeader,
@@ -10,10 +10,10 @@ import {
   DrawerPopup,
   DrawerSwipeArea,
   DrawerTitle,
-} from "@/components/ui/stylex/drawer"
-import { Flex } from "@/components/ui/stylex/flex"
-import { Link } from "@/components/ui/stylex/link"
-import { Paragraph } from "@/components/ui/stylex/paragraph"
+} from "@/components/ui/drawer"
+import { Flex } from "@/components/ui/flex"
+import { Link } from "@/components/ui/link"
+import { Paragraph } from "@/components/ui/paragraph"
 export default function Example() {
   return (
     <Box {...stylex.props(exampleStyles.example1)}>

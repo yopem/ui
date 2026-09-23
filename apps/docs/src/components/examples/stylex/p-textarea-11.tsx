@@ -3,9 +3,9 @@
 import * as stylex from "@stylexjs/stylex"
 import { useState } from "react"
 
-import { Box } from "@/components/ui/stylex/box"
-import { Field, FieldDescription } from "@/components/ui/stylex/field"
-import { Textarea } from "@/components/ui/stylex/textarea"
+import { Box } from "@/components/ui/box"
+import { Field, FieldDescription } from "@/components/ui/field"
+import { Textarea } from "@/components/ui/textarea"
 export default function Example() {
   const maxLength = 280
   const [value, setValue] = useState("")

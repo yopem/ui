@@ -1,11 +1,7 @@
 import * as stylex from "@stylexjs/stylex"
 
-import {
-  Field,
-  FieldDescription,
-  FieldLabel,
-} from "@/components/ui/stylex/field"
-import { Slider } from "@/components/ui/stylex/slider"
+import { Field, FieldDescription, FieldLabel } from "@/components/ui/field"
+import { Slider } from "@/components/ui/slider"
 
 export default function Example() {
   return (

@@ -6,18 +6,15 @@ import * as stylex from "@stylexjs/stylex"
 import { BoldIcon, ItalicIcon, UnderlineIcon } from "lucide-react"
 import { useState } from "react"
 
-import { Box } from "@/components/ui/stylex/box"
-import {
-  ToggleGroup,
-  ToggleGroupItem,
-} from "@/components/ui/stylex/toggle-group"
+import { Box } from "@/components/ui/box"
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 import {
   Tooltip,
   TooltipCreateHandle,
   TooltipPopup,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/ui/stylex/tooltip"
+} from "@/components/ui/tooltip"
 const BoldContent = () => {
   return <Box as="span">Make text bold</Box>
 }

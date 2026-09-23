@@ -5,10 +5,10 @@ import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import { useState } from "react"
 
-import { Box } from "@/components/ui/stylex/box"
-import { Heading } from "@/components/ui/stylex/heading"
-import { Link } from "@/components/ui/stylex/link"
-import { Paragraph } from "@/components/ui/stylex/paragraph"
+import { Box } from "@/components/ui/box"
+import { Heading } from "@/components/ui/heading"
+import { Link } from "@/components/ui/link"
+import { Paragraph } from "@/components/ui/paragraph"
 
 import { CopyableCode } from "./code-block"
 function PropertiesTable({

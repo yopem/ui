@@ -5,7 +5,7 @@ import type { DropdownProps } from "@daypicker/react"
 import * as stylex from "@stylexjs/stylex"
 import * as React from "react"
 
-import { Calendar } from "@/components/ui/stylex/calendar"
+import { Calendar } from "@/components/ui/calendar"
 import {
   Combobox,
   ComboboxEmpty,
@@ -13,7 +13,7 @@ import {
   ComboboxItem,
   ComboboxList,
   ComboboxPopup,
-} from "@/components/ui/stylex/combobox"
+} from "@/components/ui/combobox"
 
 interface DropdownItem {
   disabled?: boolean

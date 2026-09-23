@@ -8,8 +8,8 @@ import {
   FieldDescription,
   FieldError,
   FieldLabel,
-} from "@/components/ui/stylex/field"
-import { OTPField, OTPFieldInput } from "@/components/ui/stylex/otp-field"
+} from "@/components/ui/field"
+import { OTPField, OTPFieldInput } from "@/components/ui/otp-field"
 
 const OTP_LENGTH = 6
 

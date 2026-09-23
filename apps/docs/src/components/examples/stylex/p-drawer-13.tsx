@@ -8,7 +8,7 @@ import {
   TrashIcon,
 } from "lucide-react"
 
-import { Button } from "@/components/ui/stylex/button"
+import { Button } from "@/components/ui/button"
 import {
   Drawer,
   DrawerClose,
@@ -24,7 +24,7 @@ import {
   DrawerPanel,
   DrawerPopup,
   DrawerTrigger,
-} from "@/components/ui/stylex/drawer"
+} from "@/components/ui/drawer"
 import {
   Menu,
   MenuCheckboxItem,
@@ -39,7 +39,7 @@ import {
   MenuSubPopup,
   MenuSubTrigger,
   MenuTrigger,
-} from "@/components/ui/stylex/menu"
+} from "@/components/ui/menu"
 import { useMediaQuery } from "@/hooks/use-media-query"
 
 const TRIGGER_ARIA_LABEL = "Open menu"

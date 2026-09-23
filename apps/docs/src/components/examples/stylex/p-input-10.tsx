@@ -5,19 +5,19 @@ import * as stylex from "@stylexjs/stylex"
 import { InfoIcon, StarIcon } from "lucide-react"
 import { useState } from "react"
 
-import { Button } from "@/components/ui/stylex/button"
+import { Button } from "@/components/ui/button"
 import {
   InputGroup,
   InputGroupAddon,
   InputGroupInput,
-} from "@/components/ui/stylex/input-group"
+} from "@/components/ui/input-group"
 import {
   Popover,
   PopoverDescription,
   PopoverPopup,
   PopoverTitle,
   PopoverTrigger,
-} from "@/components/ui/stylex/popover"
+} from "@/components/ui/popover"
 
 export default function Example() {
   const [isFavorite, setIsFavorite] = useState(false)

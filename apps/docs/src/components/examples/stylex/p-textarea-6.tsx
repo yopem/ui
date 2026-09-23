@@ -5,10 +5,10 @@ import type { FormEvent } from "react"
 import * as stylex from "@stylexjs/stylex"
 import { useState } from "react"
 
-import { Button } from "@/components/ui/stylex/button"
-import { Field, FieldError, FieldLabel } from "@/components/ui/stylex/field"
-import { Form } from "@/components/ui/stylex/form"
-import { Textarea } from "@/components/ui/stylex/textarea"
+import { Button } from "@/components/ui/button"
+import { Field, FieldError, FieldLabel } from "@/components/ui/field"
+import { Form } from "@/components/ui/form"
+import { Textarea } from "@/components/ui/textarea"
 
 export default function Example() {
   const [loading, setLoading] = useState(false)

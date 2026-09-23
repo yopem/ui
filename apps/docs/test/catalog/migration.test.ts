@@ -21,6 +21,7 @@ function readSources() {
 test("docs source has no html component namespace", () => {
   for (const source of readSources()) {
     expect(source).not.toContain("@/components/ui/stylex/html")
+    expect(source).not.toContain("@/components/ui/html")
     expect(source).not.toContain("@registry/components/ui/html")
     expect(source).not.toContain("<html.")
     expect(source).not.toMatch(/<Box\b[^>]*\bas="(?:a|p|h[1-6])"/)
@@ -49,7 +50,7 @@ test("docs migration keeps semantic and layout primitive contracts", () => {
   expect(docsPage).toContain("<Grid")
   expect(docsPage).toContain('<Heading as="h1"')
   expect(docsPage).toContain("<Paragraph")
-  expect(docsPage).toContain('<Box as="article"')
+  expect(docsPage).toMatch(/<Box\s+as="article"/)
   expect(docsLayout).toContain("<Grid xstyle={styles.frame}")
   expect(docsLayout).toContain("<UiLink href=")
   expect(docsLayout).toContain('<Link to="/"')

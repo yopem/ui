@@ -9,30 +9,27 @@ import {
   PercentIcon,
 } from "lucide-react"
 
-import { Button } from "@/components/ui/stylex/button"
+import { Button } from "@/components/ui/button"
 import {
   Select,
   SelectItem,
   SelectPopup,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/stylex/select"
-import {
-  ToggleGroup,
-  ToggleGroupItem,
-} from "@/components/ui/stylex/toggle-group"
+} from "@/components/ui/select"
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 import {
   Toolbar,
   ToolbarButton,
   ToolbarGroup,
   ToolbarSeparator,
-} from "@/components/ui/stylex/toolbar"
+} from "@/components/ui/toolbar"
 import {
   Tooltip,
   TooltipPopup,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/ui/stylex/tooltip"
+} from "@/components/ui/tooltip"
 
 const items = [
   { label: "Helvetica", value: "helvetica" },

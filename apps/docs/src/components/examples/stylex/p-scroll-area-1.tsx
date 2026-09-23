@@ -1,9 +1,9 @@
 import * as stylex from "@stylexjs/stylex"
 
-import { Box } from "@/components/ui/stylex/box"
-import { Flex } from "@/components/ui/stylex/flex"
-import { Heading } from "@/components/ui/stylex/heading"
-import { ScrollArea } from "@/components/ui/stylex/scroll-area"
+import { Box } from "@/components/ui/box"
+import { Flex } from "@/components/ui/flex"
+import { Heading } from "@/components/ui/heading"
+import { ScrollArea } from "@/components/ui/scroll-area"
 const tags = Array.from({ length: 50 }, (_, i) => `v1.0.0-alpha.${i}`)
 
 export default function Example() {

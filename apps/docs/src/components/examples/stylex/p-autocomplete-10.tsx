@@ -14,8 +14,8 @@ import {
   AutocompleteList,
   AutocompletePopup,
   AutocompleteSeparator,
-} from "@/components/ui/stylex/autocomplete"
-import { Flex } from "@/components/ui/stylex/flex"
+} from "@/components/ui/autocomplete"
+import { Flex } from "@/components/ui/flex"
 // Grouped items example
 interface Tag {
   id: string

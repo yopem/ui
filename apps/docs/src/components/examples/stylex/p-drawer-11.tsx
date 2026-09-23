@@ -1,8 +1,8 @@
 // next/link replaced -> anchor
 import * as stylex from "@stylexjs/stylex"
 
-import { Box } from "@/components/ui/stylex/box"
-import { Button } from "@/components/ui/stylex/button"
+import { Box } from "@/components/ui/box"
+import { Button } from "@/components/ui/button"
 import {
   Drawer,
   DrawerClose,
@@ -11,8 +11,8 @@ import {
   DrawerPopup,
   DrawerTitle,
   DrawerTrigger,
-} from "@/components/ui/stylex/drawer"
-import { Link } from "@/components/ui/stylex/link"
+} from "@/components/ui/drawer"
+import { Link } from "@/components/ui/link"
 export default function Example() {
   return (
     <Drawer position="left">

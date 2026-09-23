@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 
-import { Button } from "@/components/ui/stylex/button"
+import { Button } from "@/components/ui/button"
 import {
   Dialog,
   DialogClose,
@@ -11,13 +11,8 @@ import {
   DialogHeader,
   DialogPopup,
   DialogTitle,
-} from "@/components/ui/stylex/dialog"
-import {
-  Menu,
-  MenuItem,
-  MenuPopup,
-  MenuTrigger,
-} from "@/components/ui/stylex/menu"
+} from "@/components/ui/dialog"
+import { Menu, MenuItem, MenuPopup, MenuTrigger } from "@/components/ui/menu"
 
 export default function Example() {
   const [dialogOpen, setDialogOpen] = useState(false)

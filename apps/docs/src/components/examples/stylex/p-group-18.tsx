@@ -1,18 +1,14 @@
 import * as stylex from "@stylexjs/stylex"
 
-import {
-  Group,
-  GroupSeparator,
-  groupItemStyles,
-} from "@/components/ui/stylex/group"
-import { Input } from "@/components/ui/stylex/input"
+import { Group, GroupSeparator, groupItemStyles } from "@/components/ui/group"
+import { Input } from "@/components/ui/input"
 import {
   Select,
   SelectItem,
   SelectPopup,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/stylex/select"
+} from "@/components/ui/select"
 
 const protocols = [
   { label: "https://", value: "https" },

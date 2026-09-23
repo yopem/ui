@@ -1,9 +1,9 @@
 import * as stylex from "@stylexjs/stylex"
 
-import { Box } from "@/components/ui/stylex/box"
-import { Button } from "@/components/ui/stylex/button"
-import { Flex } from "@/components/ui/stylex/flex"
-import { Input } from "@/components/ui/stylex/input"
+import { Box } from "@/components/ui/box"
+import { Button } from "@/components/ui/button"
+import { Flex } from "@/components/ui/flex"
+import { Input } from "@/components/ui/input"
 export default function Example() {
   return (
     <Flex {...stylex.props(exampleStyles.example1)}>

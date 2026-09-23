@@ -3,8 +3,8 @@
 import * as stylex from "@stylexjs/stylex"
 import { useState } from "react"
 
-import { Fieldset, FieldsetLegend } from "@/components/ui/stylex/fieldset"
-import { Slider } from "@/components/ui/stylex/slider"
+import { Fieldset, FieldsetLegend } from "@/components/ui/fieldset"
+import { Slider } from "@/components/ui/slider"
 
 const min = 5
 const max = 1240

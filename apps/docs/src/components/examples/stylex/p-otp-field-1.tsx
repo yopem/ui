@@ -1,5 +1,5 @@
-import { Box } from "@/components/ui/stylex/box"
-import { OTPField, OTPFieldInput } from "@/components/ui/stylex/otp-field"
+import { Box } from "@/components/ui/box"
+import { OTPField, OTPFieldInput } from "@/components/ui/otp-field"
 const OTP_LENGTH = 6
 
 const OTP_SLOT_KEYS = Array.from(

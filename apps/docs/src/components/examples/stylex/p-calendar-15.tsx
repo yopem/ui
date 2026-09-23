@@ -4,9 +4,9 @@ import * as stylex from "@stylexjs/stylex"
 import { addDays } from "date-fns"
 import { useState } from "react"
 
-import { Button } from "@/components/ui/stylex/button"
-import { Calendar } from "@/components/ui/stylex/calendar"
-import { Flex } from "@/components/ui/stylex/flex"
+import { Button } from "@/components/ui/button"
+import { Calendar } from "@/components/ui/calendar"
+import { Flex } from "@/components/ui/flex"
 export default function Example() {
   const today = new Date()
   const selectedDay = addDays(today, -28)

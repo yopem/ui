@@ -1,11 +1,7 @@
 import * as stylex from "@stylexjs/stylex"
 
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "@/components/ui/stylex/avatar"
-import { Button } from "@/components/ui/stylex/button"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Button } from "@/components/ui/button"
 
 export default function Example() {
   return (

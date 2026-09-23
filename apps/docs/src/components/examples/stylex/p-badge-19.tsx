@@ -4,9 +4,9 @@ import * as stylex from "@stylexjs/stylex"
 import { CheckIcon } from "lucide-react"
 import { useId, useState } from "react"
 
-import { Badge } from "@/components/ui/stylex/badge"
-import { Box } from "@/components/ui/stylex/box"
-import { Checkbox } from "@/components/ui/stylex/checkbox"
+import { Badge } from "@/components/ui/badge"
+import { Box } from "@/components/ui/box"
+import { Checkbox } from "@/components/ui/checkbox"
 export default function Example() {
   const id = useId()
   const [checked, setChecked] = useState(true)
