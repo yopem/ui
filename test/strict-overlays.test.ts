@@ -197,7 +197,7 @@ describe("strict overlay StyleX contracts", () => {
       `<td ${attrs} class="${classes("calendar", "day", ...modifiers)}"><button id="${id}" class="${classes("calendar", "button", "dayButton")}">${id}</button></td>`
     const page = await pageFor(
       "calendar",
-      `<div dir="rtl" class="${classes("calendar", "root")}"><svg id="chevron" class="${classes("calendar", "icon", "directionIcon")}"></svg><table><tr>${day("start", ["rangeStart"], "data-selected")}${day("middle", ["rangeMiddle"], "data-selected")}${day("end", ["rangeEnd"], "data-selected")}${day("single", ["rangeStart", "rangeEnd", "today"], "data-selected")}${day("outside", [], "data-selected data-outside")}${day("disabled", [], "data-disabled")}</tr></table></div>`,
+      `<div dir="rtl" class="${classes("calendar", "root")}"><svg id="chevron" class="${classes("calendar", "icon", "directionIcon")}"></svg><table><tr>${day("start", ["rangeStart"], "data-selected")}${day("middle", ["rangeMiddle"], "data-selected")}${day("end", ["rangeEnd"], "data-selected")}${day("single", ["rangeStart", "rangeEnd", "today"], "data-selected")}${day("outside", [], "data-selected data-outside")}${day("outside-only", [], "data-outside")}${day("disabled", [], "data-disabled")}</tr></table></div>`,
     )
     const computed = (id: string) =>
       page.locator(`#${id}`).evaluate((el) => {
@@ -231,7 +231,8 @@ describe("strict overlay StyleX contracts", () => {
       pointer: "none",
       decoration: "line-through",
     })
-    expect((await computed("outside")).color).not.toBe("rgb(255, 255, 255)")
+    expect((await computed("outside")).color).toBe("rgb(255, 255, 255)")
+    expect((await computed("outside-only")).color).toBe("rgb(100, 100, 100)")
     expect(
       await page
         .locator("#single")

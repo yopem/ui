@@ -15,3 +15,15 @@ test("Calendar does not wrap selection callbacks as DOM event handlers", () => {
   )
   expect(source).not.toContain('"@base-ui/react/merge-props"')
 })
+
+test("Calendar keeps readable weekday and outside-day text", () => {
+  const source = readFileSync(
+    new URL("../../../src/components/ui/calendar.tsx", import.meta.url),
+    "utf8",
+  )
+  expect(source).toContain('color: tokens["--muted-foreground"]')
+  expect(source).toContain(
+    '":is([data-outside] > button)": tokens["--muted-foreground"]',
+  )
+  expect(source).toContain('":is([data-selected][data-outside] > button)":')
+})

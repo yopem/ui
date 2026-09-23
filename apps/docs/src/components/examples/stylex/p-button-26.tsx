@@ -50,10 +50,6 @@ const exampleStyles = stylex.create({
   example2: {
     fontSize: "0.75rem",
     lineHeight: "calc(1 / 0.75)",
-    color: {
-      default: "var(--primary-foreground)",
-      "@supports (color: color-mix(in lab, red, red))":
-        "color-mix(in oklab, var(--primary-foreground) 60%, transparent)",
-    },
+    color: "var(--primary-foreground)",
   },
 })

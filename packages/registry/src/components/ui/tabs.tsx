@@ -44,8 +44,7 @@ const styles = stylex.create({
     backgroundColor: tokens["--muted"],
     borderRadius: tokens["--radius-lg"],
     columnGap: "0.125rem",
-    color:
-      "color-mix(in oklab, var(--muted-foreground, currentColor) 72%, transparent)",
+    color: tokens["--muted-foreground"],
     padding: "0.125rem",
   },
   listUnderline: {

@@ -56,7 +56,7 @@ const styles = stylex.create({
       "[data-checked]": "0 1px 2px rgb(0 0 0 / 0.05)",
     },
     color: {
-      default: "color-mix(in oklab, var(--muted-foreground) 72%, transparent)",
+      default: "var(--muted-foreground)",
       ":hover": "var(--muted-foreground)",
       "[data-checked]": "var(--foreground)",
     },

@@ -71,10 +71,10 @@ function DayButton(props: DayButtonProps & { prices: Record<string, number> }) {
             as="span"
             {...stylex.props(
               exampleStyles.price,
-              isGoodPrice
-                ? exampleStyles.goodPrice
-                : modifiers.selected
-                  ? exampleStyles.selectedPrice
+              modifiers.selected
+                ? exampleStyles.selectedPrice
+                : isGoodPrice
+                  ? exampleStyles.goodPrice
                   : exampleStyles.regularPrice,
             )}
           >
@@ -131,9 +131,7 @@ const exampleStyles = stylex.create({
     fontWeight: 400,
     lineHeight: "1rem",
   },
-  goodPrice: { color: "oklch(69.6% 0.17 162.48)" },
+  goodPrice: { color: "var(--success-foreground)" },
   regularPrice: { color: "var(--muted-foreground)" },
-  selectedPrice: {
-    color: "color-mix(in oklab, var(--primary-foreground) 70%, transparent)",
-  },
+  selectedPrice: { color: "var(--primary-foreground)" },
 })
