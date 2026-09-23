@@ -132,6 +132,10 @@ artifacts; docs dev, registry build, and registry typecheck regenerate API data.
 
 ## Registry workflow
 
+- Whenever adding a new registry item or rule, update its documentation,
+  corresponding tests, sitemap, and `llms.txt` in the same change. Update the
+  source data that generates the sitemap and `llms.txt`, not generated output.
+
 For component work:
 
 1. Update canonical source in `packages/registry/src/components/ui/`.
