@@ -1,0 +1,84 @@
+## What you need
+
+- A React application using TypeScript.
+- React Router with Vite, TanStack Start, Next.js, or Astro.
+- Permission to add packages and files to the project.
+
+Yopem has no runtime package. Initialize StyleX once with the CLI or manual
+setup, then add component source with the CLI or copy it manually.
+
+<span id="setup" />
+
+## 1. Set up StyleX
+
+Open the [installation guide](/docs/installation). Run `bunx @yopem-ui/cli init`
+for supported frameworks, or follow the manual instructions there. Init installs
+shared packages, source alias, tokens, global styles, and build configuration.
+
+Continue only after your app completes a production build. StyleX is a
+build-time compiler, so installing its runtime package alone is not enough.
+
+<span id="copy-button" />
+
+## 2. Copy Button
+
+Open the [Button documentation](/components/button). Use the CLI tab to install
+Button and shared files, or use the Manual tab:
+
+1. Run the dependency command.
+2. Expand each required file.
+3. Copy its complete source to the displayed path.
+
+Shared files appear again so each component page is complete. Skip any shared
+file already present and unchanged in your project.
+
+<span id="use-button" />
+
+## 3. Use Button
+
+Import Button from the local file you copied. The standard setup maps `@/*` to
+`src/*`.
+
+**src/components/save-button.tsx**
+
+```tsx
+import { Button } from "@/components/ui/button"
+
+export function SaveButton() {
+  return <Button variant="outline">Save changes</Button>
+}
+```
+
+Render SaveButton. Setup is working when it has padding, a border, a hover
+state, and a visible keyboard focus ring.
+
+<span id="customize" />
+
+## 4. Customize it
+
+Use variants for supported visual choices. Use xstyle for a local override,
+tokens for app-wide design changes, or edit the copied source when behavior
+should change.
+
+**src/components/save-button.tsx**
+
+```tsx
+import * as stylex from "@stylexjs/stylex"
+import { Button } from "@/components/ui/button"
+
+const styles = stylex.create({ button: { borderRadius: "999px" } })
+
+export function SaveButton() {
+  return <Button xstyle={styles.button}>Save changes</Button>
+}
+```
+
+Preserve accessible names, keyboard behavior, disabled states, and focus
+indicators when editing component source.
+
+## Next steps
+
+- [**Add another component**](/components): Browse live examples and copy only
+  what your app needs.
+- [**Customize your theme**](/docs/theming): Change colors, fonts, radii, dark
+  mode, or scoped themes.

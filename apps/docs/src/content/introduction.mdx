@@ -1,0 +1,49 @@
+[Build your first component](/docs/getting-started) ·
+[Browse components](/components)
+
+## What is Yopem UI?
+
+Yopem is a component registry, not a component library dependency. Each
+component page contains a live example, install dependencies, complete
+TypeScript source, usage notes, and generated API details.
+
+- **React 19:** Typed components that stay inside your project.
+- **Base UI:** Keyboard and screen-reader behavior from accessible primitives.
+- **StyleX:** Colocated, typed styles compiled to atomic CSS.
+
+## Why source-owned?
+
+- **Change anything.** Edit markup, behavior, variants, and styles in the same
+  file.
+- **Ship less.** Copy the components you use instead of installing a full kit.
+- **Keep control.** Updates never change your app until you choose to copy them.
+
+## How it works
+
+1. Configure the StyleX build transform and copy shared theme files once.
+2. Choose a component and install the dependencies shown on its page.
+3. Copy each required file to its displayed path under your source directory.
+4. Import the local component and customize its source or xstyle prop.
+
+**Use your local component**
+
+```tsx
+import { Button } from "@/components/ui/button"
+
+export function SaveButton() {
+  return <Button variant="outline">Save changes</Button>
+}
+```
+
+## Where to start
+
+- [**Introduction**](/docs/getting-started): Learn the workflow by adding one
+  Button from start to finish.
+- [**Ready to configure**](/docs/installation): Pick React Router, TanStack
+  Start, Next.js, or Astro.
+- [**Build a layout**](/docs/layout): Choose layout and typography components
+  for your page.
+- [**Style components**](/docs/style-props): Use shared style props on layout,
+  controls, and other components.
+- [**Style your app**](/docs/theming): Change tokens, create themes, or override
+  one component.

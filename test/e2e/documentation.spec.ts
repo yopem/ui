@@ -1,3 +1,4 @@
+import AxeBuilder from "@axe-core/playwright"
 import { expect, test } from "@playwright/test"
 import { readdirSync } from "node:fs"
 import { resolve } from "node:path"
@@ -71,6 +72,24 @@ test("unknown routes show the docs not found page", async ({ page }) => {
   await expect(
     page.getByRole("link", { name: "Return to documentation home" }),
   ).toBeVisible()
+})
+
+test("MDX guides render sections, anchors, and copyable examples", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1600, height: 900 })
+  await page.goto("/docs/getting-started")
+  await expect(
+    page.getByRole("heading", { name: "What you need" }),
+  ).toBeVisible()
+  await expect(
+    page.getByRole("link", { name: "2. Copy Button" }),
+  ).toHaveAttribute("href", "#2-copy-button")
+  await expect(
+    page.getByRole("button", { name: "Copy Code" }).first(),
+  ).toBeEnabled()
+  await expect(page.locator("#copy-button")).toHaveCount(1)
+  expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([])
 })
 
 test("minimal setup and StyleX customization are documented", async ({
