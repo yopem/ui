@@ -56,18 +56,79 @@ references for custom projects or setup without the CLI.
 Using another build tool? Follow its official StyleX setup and keep the @ alias
 consistent.
 
-### React Router
+### Vite and Rolldown setup
 
-Client-rendered React Router uses the normal Vite setup. Load shared CSS and the
-root theme in your client entry.
+React Router, TanStack Router, TanStack Start, and Astro use the same StyleX
+Babel and PostCSS configuration. Use Vite 8 (Rolldown); no unplugin or Rollup
+adapter is needed. Install the build dependencies:
 
 ```sh
-npm install --save-dev @stylexjs/unplugin@^0.19.0 @types/react@^19.2.18
+npm install --save-dev @rolldown/plugin-babel@^0.2.4 @babel/core@^7.29.7 @stylexjs/babel-plugin@^0.19.0 @stylexjs/postcss-plugin@^0.19.0
 ```
 
+Create `babel.config.cjs` using the `expandLocalSpreads` function from the
+[Next.js Babel example](#nextjs) below. Keep the same plugin options, but omit
+the `next/babel` preset:
+
+```js
+const path = require("node:path")
+
+// Copy expandLocalSpreads from the Next.js example below.
+module.exports = {
+  plugins: [
+    expandLocalSpreads,
+    [
+      "@stylexjs/babel-plugin",
+      {
+        aliases: { "@/*": [path.join(__dirname, "src/*")] },
+        dev: process.env.NODE_ENV !== "production",
+        runtimeInjection: false,
+        treeshakeCompensation: true,
+        unstable_moduleResolution: { type: "commonJS" },
+      },
+    ],
+  ],
+}
+```
+
+Create `postcss.config.cjs` so CSS extraction uses those exact Babel plugins:
+
+```js
+const babelConfig = require("./babel.config.cjs")
+
+module.exports = {
+  plugins: {
+    "@stylexjs/postcss-plugin": {
+      include: ["src/**/*.{js,jsx,ts,tsx}", "app/**/*.{js,jsx,ts,tsx}"],
+      babelConfig: {
+        babelrc: false,
+        parserOpts: { plugins: ["typescript", "jsx"] },
+        plugins: babelConfig.plugins,
+      },
+      useCSSLayers: true,
+    },
+  },
+}
+```
+
+The shared `src/styles/styles.css` already contains `@stylex;`. Import this
+single stylesheet in your application entry or document root. The CLI also adds
+root theme classes automatically.
+
+### React Router
+
+For client-rendered React Router, replace `reactRouter()` below with `react()`
+from `@vitejs/plugin-react` and import `@/styles/styles.css` in `src/main.tsx`.
+For React Router **framework mode**, keep `reactRouter()` in the plugin list and
+import the same stylesheet in `app/root.tsx` (or `src/root.tsx`). Apply
+`themeMarker`, `lightTheme`, and `rootStyles.html` to its `<html>` element and
+`rootStyles.body` to `<body>`. The CLI configures both client and framework
+mode; RSC mode requires manual setup.
+
 ```tsx
-import stylex from "@stylexjs/unplugin"
-import react from "@vitejs/plugin-react"
+import babel from "@rolldown/plugin-babel"
+import babelConfig from "./babel.config.cjs"
+import { reactRouter } from "@react-router/dev/vite" // framework mode only
 import { fileURLToPath } from "node:url"
 import { defineConfig } from "vite"
 
@@ -76,95 +137,30 @@ const source = fileURLToPath(new URL("./src", import.meta.url))
 export default defineConfig({
   resolve: { alias: { "@": source } },
   plugins: [
-    stylex.vite({
-      aliases: { "@/*": [source + "/*"] },
-      runtimeInjection: false,
-      treeshakeCompensation: true,
-      unstable_moduleResolution: { type: "commonJS" },
-      devMode: "css-only",
-    }),
-    {
-      name: "stylex-dev-css",
-      apply: "serve",
-      transformIndexHtml: () => [
-        {
-          tag: "link",
-          attrs: { rel: "stylesheet", href: "/virtual:stylex.css" },
-          injectTo: "head",
-        },
-        {
-          tag: "script",
-          attrs: { type: "module", src: "/@id/virtual:stylex:css-only" },
-          injectTo: "head",
-        },
-      ],
-    },
-    react(),
+    babel({ plugins: babelConfig.plugins }),
+    reactRouter(), // omit for client mode; keep your React Vite plugin
   ],
 })
 ```
 
-```tsx
-import "@/styles/styles.css"
-import * as stylex from "@stylexjs/stylex"
-import { createRoot } from "react-dom/client"
-import { lightTheme, rootStyles, themeMarker } from "@/styles/tokens.stylex"
-import { App } from "./app"
-
-const root = stylex.props(themeMarker, lightTheme, rootStyles.html)
-document.documentElement.classList.add(
-  ...(root.className ?? "").split(" ").filter(Boolean),
-)
-document.documentElement.dataset.theme = "light"
-
-createRoot(document.getElementById("root")!).render(<App />)
-```
-
-React Router framework or RSC mode has a separate development CSS entry. Follow
-the
-[official StyleX React Router guide](https://stylexjs.com/docs/learn/installation/vite/react-router/).
-Keep the same @ alias and shared files shown here.
-
 ### TanStack Router
 
-Use the Vite setup above with TanStack Router before the React plugin. Import
-shared CSS from your app entry.
+Client-rendered TanStack Router uses the same Vite config, with its router and
+React plugins after Babel. Import `@/styles/styles.css` in `src/main.tsx`.
 
 ```tsx
-import stylex from "@stylexjs/unplugin"
+import babel from "@rolldown/plugin-babel"
+import babelConfig from "./babel.config.cjs"
 import react from "@vitejs/plugin-react"
 import { tanstackRouter } from "@tanstack/router-plugin/vite"
 import { fileURLToPath } from "node:url"
 import { defineConfig } from "vite"
 
 const source = fileURLToPath(new URL("./src", import.meta.url))
-
 export default defineConfig({
   resolve: { alias: { "@": source } },
   plugins: [
-    stylex.vite({
-      aliases: { "@/*": [source + "/*"] },
-      runtimeInjection: false,
-      treeshakeCompensation: true,
-      unstable_moduleResolution: { type: "commonJS" },
-      devMode: "css-only",
-    }),
-    {
-      name: "stylex-dev-css",
-      apply: "serve",
-      transformIndexHtml: () => [
-        {
-          tag: "link",
-          attrs: { rel: "stylesheet", href: "/virtual:stylex.css" },
-          injectTo: "head",
-        },
-        {
-          tag: "script",
-          attrs: { type: "module", src: "/@id/virtual:stylex:css-only" },
-          injectTo: "head",
-        },
-      ],
-    },
+    babel({ plugins: babelConfig.plugins }),
     tanstackRouter({ target: "react", autoCodeSplitting: true }),
     react(),
   ],
@@ -173,79 +169,23 @@ export default defineConfig({
 
 ### TanStack Start
 
-Configure StyleX with TanStack Start. StyleX extracts CSS into the build output;
-import the shared stylesheet in your root route.
-
-```sh
-npm install --save-dev @stylexjs/unplugin@^0.19.0 @types/react@^19.2.18
-```
+Keep your TanStack Start plugin after Babel. Import `@/styles/styles.css` in
+`src/routes/__root.tsx` and apply the root theme classes to `<html>` and
+`<body>` (as shown in the [Next.js example](#nextjs)).
 
 ```tsx
-import stylex from "@stylexjs/unplugin"
+import babel from "@rolldown/plugin-babel"
+import babelConfig from "./babel.config.cjs"
 import { tanstackStart } from "@tanstack/react-start/plugin/vite"
 import react from "@vitejs/plugin-react"
 import { fileURLToPath } from "node:url"
 import { defineConfig } from "vite"
 
-const root = fileURLToPath(new URL(".", import.meta.url))
 const source = fileURLToPath(new URL("./src", import.meta.url))
-
 export default defineConfig({
   resolve: { alias: { "@": source } },
-  plugins: [
-    stylex.vite({
-      aliases: { "@/*": [source + "/*"] },
-      runtimeInjection: false,
-      treeshakeCompensation: true,
-      unstable_moduleResolution: { rootDir: root, type: "commonJS" },
-      devMode: "css-only",
-    }),
-    tanstackStart(),
-    react(),
-  ],
+  plugins: [babel({ plugins: babelConfig.plugins }), tanstackStart(), react()],
 })
-```
-
-```tsx
-import "@/styles/styles.css"
-import * as stylex from "@stylexjs/stylex"
-import { createRootRoute, HeadContent, Scripts } from "@tanstack/react-router"
-import { lightTheme, rootStyles, themeMarker } from "@/styles/tokens.stylex"
-
-export const Route = createRootRoute({ shellComponent: RootDocument })
-
-function RootDocument({ children }: { children: React.ReactNode }) {
-  return (
-    <html
-      {...stylex.props(themeMarker, lightTheme, rootStyles.html)}
-      data-theme="light"
-      lang="en"
-    >
-      <head>
-        <HeadContent />
-        {import.meta.env.DEV ? (
-          <link
-            rel="stylesheet"
-            href="/virtual:stylex.css"
-            ref={(link) => {
-              if (!link) return
-              const refresh = () => {
-                link.href = `/virtual:stylex.css?t=${Date.now()}`
-              }
-              refresh()
-              import.meta.hot?.on("stylex:css-update", refresh)
-              return () => import.meta.hot?.off("stylex:css-update", refresh)
-            }}
-          />
-        ) : null}
-      </head>
-      <body {...stylex.props(rootStyles.body)}>
-        {children}
-        <Scripts />
-      </body>
-    </html>
-  )
-}
 ```
 
 ### Next.js
@@ -342,11 +282,8 @@ module.exports = {
 }
 ```
 
-Add this final line to the shared src/styles/styles.css file from step 3.
-
-```css
-@stylex;
-```
+The shared `src/styles/styles.css` already contains `@stylex;`. Import it in
+your root layout.
 
 ```tsx
 import "@/styles/styles.css"
@@ -375,64 +312,30 @@ theme classes to Html in pages/\_document.tsx.
 
 ### Astro
 
-Astro uses its React integration and Vite config. Import shared CSS and apply
-the default root theme from one Astro layout. Author StyleX styles in React TSX
-files. Add client:load only when a component needs browser interaction.
-
-```sh
-npm install @astrojs/react react react-dom
-```
-
-```sh
-npm install --save-dev @stylexjs/unplugin@^0.19.0 @types/react@^19.2.18
-```
+Install `@astrojs/react`, `react`, and `react-dom` if absent. Author StyleX
+styles in React TSX components; use `client:load` only for interactive islands.
+Configure Astro's nested Vite plugin list with Rolldown Babel:
 
 ```js
-import stylex from "@stylexjs/unplugin"
+import babel from "@rolldown/plugin-babel"
+import babelConfig from "./babel.config.cjs"
 import react from "@astrojs/react"
 import { defineConfig } from "astro/config"
 import { fileURLToPath } from "node:url"
 
 const source = fileURLToPath(new URL("./src", import.meta.url))
-
 export default defineConfig({
   integrations: [react()],
   vite: {
     resolve: { alias: { "@": source } },
-    plugins: [
-      stylex.vite({
-        aliases: { "@/*": [source + "/*"] },
-        runtimeInjection: false,
-        treeshakeCompensation: true,
-        unstable_moduleResolution: { type: "commonJS" },
-        devMode: "css-only",
-      }),
-    ],
+    plugins: [babel({ plugins: babelConfig.plugins })],
   },
 })
 ```
 
-```astro
----
-import "@/styles/styles.css"
-import * as stylex from "@stylexjs/stylex"
-import { Button } from "@/components/ui/button"
-import { lightTheme, rootStyles, themeMarker } from "@/styles/tokens.stylex"
-
-const html = stylex.props(themeMarker, lightTheme, rootStyles.html)
-const body = stylex.props(rootStyles.body)
----
-
-<html lang="en" class={html.className} data-theme="light">
-  <head>
-    {import.meta.env.DEV && <link rel="stylesheet" href="/virtual:stylex.css" />}
-    {import.meta.env.DEV && <script type="module" src="/@id/virtual:stylex:css-only" />}
-  </head>
-  <body class={body.className}>
-    <Button client:load>Save changes</Button>
-  </body>
-</html>
-```
+Import `@/styles/styles.css` in `src/layouts/Layout.astro` frontmatter and apply
+`stylex.props(themeMarker, lightTheme, rootStyles.html).className` to `<html>`
+and `stylex.props(rootStyles.body).className` to `<body>`.
 
 <span id="check" />
 

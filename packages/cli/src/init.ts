@@ -10,6 +10,7 @@ type Framework =
   | "vite"
   | "tanstack-router"
   | "tanstack-start"
+  | "react-router"
   | "next"
   | "astro"
 type PackageManager = "bun" | "npm" | "pnpm" | "yarn"
@@ -196,42 +197,20 @@ function addAlias(
   }
 }
 
-function stylexPlugin(framework: Framework) {
-  const moduleResolution =
-    framework === "tanstack-start"
-      ? 'rootDir: yopemRoot, type: "commonJS"'
-      : 'type: "commonJS"'
-  return `stylex.vite({
-      aliases: { "@/*": [yopemSource + "/*"] },
-      runtimeInjection: false,
-      treeshakeCompensation: true,
-      unstable_moduleResolution: { ${moduleResolution} },
-      devMode: "css-only",
-    })`
+function babelPlugin() {
+  return "babel({ plugins: yopemBabelConfig.plugins })"
 }
 
 function hasYopemStylexConfig(content: string) {
-  return (
-    content.includes("yopemSource +") &&
-    content.includes('"@/*"') &&
-    content.includes("runtimeInjection: false") &&
-    content.includes("treeshakeCompensation: true") &&
-    content.includes("unstable_moduleResolution:") &&
-    content.includes('devMode: "css-only"')
-  )
+  return content.includes(babelPlugin())
 }
 
-function viteConfig(content: string, path: string, framework: Framework) {
-  if (content.includes("stylex.vite(")) {
+function viteConfig(content: string, path: string) {
+  if (content.includes("stylex.vite(") || hasYopemStylexConfig(content)) {
     if (!content.includes('"@":') && !content.includes("'@':")) {
       throw new Error(`Existing StyleX configuration lacks @ alias in ${path}`)
     }
-    if (
-      !hasYopemStylexConfig(content) ||
-      ((framework === "vite" || framework === "tanstack-router") &&
-        !content.includes("yopem-stylex-dev-css")) ||
-      (framework === "tanstack-start" && !content.includes("yopemRoot"))
-    ) {
+    if (!hasYopemStylexConfig(content)) {
       throw new Error(`Incomplete Yopem build configuration in ${path}`)
     }
     return content
@@ -239,22 +218,7 @@ function viteConfig(content: string, path: string, framework: Framework) {
   const source = parsed(path, content)
   const config = configObject(source, path)
   const plugins = property(config, "plugins")
-  const entries = [stylexPlugin(framework)]
-  if (framework === "vite" || framework === "tanstack-router") {
-    entries.push(`{
-      name: "yopem-stylex-dev-css",
-      apply: "serve",
-      transformIndexHtml: () => [{
-        tag: "link",
-        attrs: { rel: "stylesheet", href: "/virtual:stylex.css" },
-        injectTo: "head",
-      }, {
-        tag: "script",
-        attrs: { type: "module", src: "/@id/virtual:stylex:css-only" },
-        injectTo: "head",
-      }],
-    }`)
-  }
+  const entries = [babelPlugin()]
   const edits: Edit[] = []
   if (plugins) {
     if (!ts.isArrayLiteralExpression(plugins.initializer)) {
@@ -265,7 +229,7 @@ function viteConfig(content: string, path: string, framework: Framework) {
     addProperty(source, config, `plugins: [${entries.join(", ")}]`, edits)
   }
   addAlias(source, config, path, edits)
-  const imports = `import stylex from "@stylexjs/unplugin"\nimport { fileURLToPath as yopemFileURLToPath } from "node:url"\n\nconst yopemSource = yopemFileURLToPath(new URL("./src", import.meta.url))\n${framework === "tanstack-start" ? 'const yopemRoot = yopemFileURLToPath(new URL(".", import.meta.url))\n' : ""}\n`
+  const imports = `import babel from "@rolldown/plugin-babel"\nimport yopemBabelConfig from "./babel.config.cjs"\nimport { fileURLToPath as yopemFileURLToPath } from "node:url"\n\nconst yopemSource = yopemFileURLToPath(new URL("./src", import.meta.url))\n`
   edits.push({ start: 0, end: 0, text: imports })
   return applyEdits(content, edits)
 }
@@ -286,7 +250,7 @@ function astroConfig(content: string, path: string) {
     throw new Error(`Unknown react() integration in ${path}`)
   }
   const alreadyConfigured =
-    content.includes("stylex.vite(") && content.includes(`${reactName}()`)
+    hasYopemStylexConfig(content) && content.includes(`${reactName}()`)
   if (alreadyConfigured) {
     if (!content.includes('"@":') && !content.includes("'@':")) {
       throw new Error(`Existing StyleX configuration lacks @ alias in ${path}`)
@@ -322,7 +286,7 @@ function astroConfig(content: string, path: string) {
     addProperty(
       source,
       config,
-      `vite: { resolve: { alias: { "@": yopemSource } }, plugins: [${stylexPlugin("astro")}] }`,
+      `vite: { resolve: { alias: { "@": yopemSource } }, plugins: [${babelPlugin()}] }`,
       edits,
     )
   } else {
@@ -333,20 +297,15 @@ function astroConfig(content: string, path: string) {
       if (!ts.isArrayLiteralExpression(plugins.initializer)) {
         throw new Error(`Unsupported Vite plugins in ${path}`)
       }
-      addArrayEntries(
-        source,
-        plugins.initializer,
-        [stylexPlugin("astro")],
-        edits,
-      )
+      addArrayEntries(source, plugins.initializer, [babelPlugin()], edits)
     } else {
-      addProperty(source, nested, `plugins: [${stylexPlugin("astro")}]`, edits)
+      addProperty(source, nested, `plugins: [${babelPlugin()}]`, edits)
     }
   }
   edits.push({
     start: 0,
     end: 0,
-    text: `import stylex from "@stylexjs/unplugin"\n${reactImport ? "" : 'import react from "@astrojs/react"\n'}import { fileURLToPath as yopemFileURLToPath } from "node:url"\n\nconst yopemSource = yopemFileURLToPath(new URL("./src", import.meta.url))\n`,
+    text: `import babel from "@rolldown/plugin-babel"\nimport yopemBabelConfig from "./babel.config.cjs"\n${reactImport ? "" : 'import react from "@astrojs/react"\n'}import { fileURLToPath as yopemFileURLToPath } from "node:url"\n\nconst yopemSource = yopemFileURLToPath(new URL("./src", import.meta.url))\n`,
   })
   return applyEdits(content, edits)
 }
@@ -447,16 +406,13 @@ function reactEntry(content: string, path: string) {
 function jsxLayout(
   content: string,
   path: string,
-  framework: "next" | "tanstack-start",
+  framework: "next" | "tanstack-start" | "react-router",
 ) {
   if (content.includes("stylexProps(") || content.includes("rootStyles.html")) {
     if (
       !content.includes('"@/styles/styles.css"') ||
       !content.includes("rootStyles.html") ||
-      !content.includes("rootStyles.body") ||
-      (framework === "next" && !content.includes('"@/styles/stylex.css"')) ||
-      (framework === "tanstack-start" &&
-        !content.includes("/virtual:stylex.css"))
+      !content.includes("rootStyles.body")
     ) {
       throw new Error(`Incomplete Yopem layout in ${path}`)
     }
@@ -533,21 +489,7 @@ function jsxLayout(
       text: next,
     })
   }
-  if (
-    framework === "tanstack-start" &&
-    !content.includes("/virtual:stylex.css")
-  ) {
-    const head = elements.head[0]!
-    edits.push({
-      start: head.getEnd(),
-      end: head.getEnd(),
-      text: '\n        {import.meta.env.DEV ? <link rel="stylesheet" href="/virtual:stylex.css" ref={(link) => {\n          if (!link) return\n          const refresh = () => {\n            link.href = `/virtual:stylex.css?t=${Date.now()}`\n          }\n          refresh()\n          import.meta.hot?.on("stylex:css-update", refresh)\n          return () => import.meta.hot?.off("stylex:css-update", refresh)\n        }} /> : null}',
-    })
-  }
-  const css =
-    framework === "next"
-      ? 'import "@/styles/styles.css"\nimport "@/styles/stylex.css"\n'
-      : 'import "@/styles/styles.css"\n'
+  const css = 'import "@/styles/styles.css"\n'
   edits.push({
     start: 0,
     end: 0,
@@ -560,7 +502,6 @@ function astroLayout(content: string, path: string) {
   if (content.includes("yopemHtml.className")) {
     if (
       !content.includes('"@/styles/styles.css"') ||
-      !content.includes("/virtual:stylex.css") ||
       !content.includes("yopemBody.className")
     ) {
       throw new Error(`Incomplete Yopem layout in ${path}`)
@@ -633,13 +574,6 @@ function astroLayout(content: string, path: string) {
       text: opening,
     })
   }
-  if (!content.includes("/virtual:stylex.css")) {
-    edits.push({
-      start: head[0]!.index! + head[0]![0].length,
-      end: head[0]!.index! + head[0]![0].length,
-      text: '\n    {import.meta.env.DEV && <link rel="stylesheet" href="/virtual:stylex.css" />}\n    {import.meta.env.DEV && <script type="module" src="/@id/virtual:stylex:css-only" />}',
-    })
-  }
   return applyEdits(content, edits)
 }
 
@@ -687,6 +621,17 @@ ${esm ? 'export const presets = ["next/babel"]\nexport const plugins = [' : 'mod
 `
 }
 
+function viteBabel() {
+  return nextBabel(false).replace('  presets: ["next/babel"],\n', "")
+}
+
+function vitePostcss() {
+  return nextPostcss()
+    .replaceAll("./babel.config.js", "./babel.config.cjs")
+    .replace("    autoprefixer: {},\n", "")
+    .replace(', "pages/**/*.{js,jsx,ts,tsx}"', "")
+}
+
 function nextPostcss() {
   return `const babelConfig = require("./babel.config.js")
 
@@ -707,7 +652,12 @@ module.exports = {
 `
 }
 
-function postcss(content: string, path: string, esm: boolean) {
+function postcss(
+  content: string,
+  path: string,
+  esm: boolean,
+  babelPath = "./babel.config.js",
+) {
   if (content.includes('"@stylexjs/postcss-plugin"')) return content
   const source = parsed(path, content)
   let config: ts.ObjectLiteralExpression | undefined
@@ -744,8 +694,8 @@ function postcss(content: string, path: string, esm: boolean) {
     start: 0,
     end: 0,
     text: esm
-      ? 'import { createRequire } from "node:module"\nconst yopemBabelConfig = createRequire(import.meta.url)("./babel.config.js")\n'
-      : 'const yopemBabelConfig = require("./babel.config.js")\n',
+      ? `import { createRequire } from "node:module"\nconst yopemBabelConfig = createRequire(import.meta.url)("${babelPath}")\n`
+      : `const yopemBabelConfig = require("${babelPath}")\n`,
   })
   return applyEdits(content, edits)
 }
@@ -792,10 +742,8 @@ function detectFramework(
   if (present("astro")) detected.push("astro")
   if (present("@tanstack/react-start")) detected.push("tanstack-start")
   else if (present("@tanstack/react-router")) detected.push("tanstack-router")
+  else if (present("@react-router/dev")) detected.push("react-router")
   else if (present("vite") && present("react")) detected.push("vite")
-  if (present("@react-router/dev")) {
-    throw new Error("React Router framework/RSC mode is not supported by init")
-  }
   if (chosen && detected.includes(chosen)) return chosen
   if (detected.length !== 1 || chosen) {
     throw new Error(
@@ -877,7 +825,12 @@ export async function initProject(options: InitOptions = {}) {
       ? "tsconfig.app.json"
       : "tsconfig.json"
   await plan(tsPath, (content) => tsconfig(content, tsPath, framework))
-  const devDependencies = ["@stylexjs/unplugin@^0.19.0"]
+  const devDependencies = [
+    "@rolldown/plugin-babel@^0.2.4",
+    "@babel/core@^7.29.7",
+    "@stylexjs/babel-plugin@^0.19.0",
+    "@stylexjs/postcss-plugin@^0.19.0",
+  ]
   const runtimeDependencies: string[] = []
   if (framework === "astro") {
     const config = await chooseFile(root, [
@@ -946,15 +899,6 @@ export async function initProject(options: InitOptions = {}) {
             ),
       nextPostcss(),
     )
-    await plan(
-      "src/styles/stylex.css",
-      (content) => {
-        if (content.trim() !== "@stylex;")
-          throw new Error("Existing src/styles/stylex.css conflicts with init")
-        return content
-      },
-      "@stylex;\n",
-    )
     devDependencies.splice(
       0,
       devDependencies.length,
@@ -970,12 +914,15 @@ export async function initProject(options: InitOptions = {}) {
       "vite.config.js",
       "vite.config.mjs",
     ])
-    await plan(config, (content) => viteConfig(content, config, framework))
-    if (framework === "tanstack-start") {
-      const layout = await chooseFile(root, ["src/routes/__root.tsx"])
-      await plan(layout, (content) =>
-        jsxLayout(content, layout, "tanstack-start"),
+    await plan(config, (content) => viteConfig(content, config))
+    if (framework === "tanstack-start" || framework === "react-router") {
+      const layout = await chooseFile(
+        root,
+        framework === "tanstack-start"
+          ? ["src/routes/__root.tsx"]
+          : ["app/root.tsx", "src/root.tsx"],
       )
+      await plan(layout, (content) => jsxLayout(content, layout, framework))
     } else {
       const entry = await chooseFile(root, [
         "src/main.tsx",
@@ -985,6 +932,39 @@ export async function initProject(options: InitOptions = {}) {
       ])
       await plan(entry, (content) => reactEntry(content, entry))
     }
+  }
+  if (framework !== "next") {
+    const babel = viteBabel()
+    await plan(
+      "babel.config.cjs",
+      (content) => {
+        if (content !== babel)
+          throw new Error("Existing Babel config requires manual review")
+        return content
+      },
+      babel,
+    )
+    const postcssConfig = vitePostcss()
+    const postcssPath = await chooseFile(
+      root,
+      ["postcss.config.cjs", "postcss.config.js", "postcss.config.mjs"],
+      "postcss.config.cjs",
+    )
+    await plan(
+      postcssPath,
+      (content) =>
+        content === postcssConfig ||
+        content.includes('"@stylexjs/postcss-plugin"')
+          ? content
+          : postcss(
+              content,
+              postcssPath,
+              postcssPath.endsWith(".mjs") ||
+                (postcssPath.endsWith(".js") && manifest.type === "module"),
+              "./babel.config.cjs",
+            ),
+      postcssConfig,
+    )
   }
   const packageRun =
     options.run ??
@@ -1005,6 +985,15 @@ export async function initProject(options: InitOptions = {}) {
             throw new Error(`${manager} ${command} failed`)
         })
   await installItem("base", { ...options, cwd: root, run: packageRun })
+  if (
+    !(await readFile(join(root, "src/styles/styles.css"), "utf8")).includes(
+      "@stylex;",
+    )
+  ) {
+    throw new Error(
+      "Add @stylex; to src/styles/styles.css before configuring StyleX",
+    )
+  }
   const packages = await readFile(join(root, "package.json"), "utf8")
   const installed: unknown = JSON.parse(packages)
   if (!object(installed))

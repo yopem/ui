@@ -45,13 +45,13 @@ function InstallationMethods() {
       </TabsList>
       <TabsPanel value="cli">
         <Paragraph xstyle={styles.paragraph}>
-          Run from your project root. Init detects Vite React, client TanStack
-          Router, TanStack Start, Next.js App Router, or Astro; installs base
-          files and dependencies; then configures build plugins, aliases, and
-          root styles. Existing project code stays in place. Unsupported or
-          conflicting configuration stops with an error instead of being
-          overwritten. The CLI package is not published yet; bunx commands work
-          after its release.
+          Run from your project root. Init detects Vite React, React Router
+          (client or framework), TanStack Router, TanStack Start, Next.js App
+          Router, or Astro; installs base files and dependencies; then
+          configures build plugins, aliases, and root styles. Existing project
+          code stays in place. Unsupported or conflicting configuration stops
+          with an error instead of being overwritten. The CLI package is not
+          published yet; bunx commands work after its release.
         </Paragraph>
         <CopyableCode
           code="bunx @yopem-ui/cli init"
@@ -59,11 +59,12 @@ function InstallationMethods() {
           title="Initialize project with CLI"
         />
         <Paragraph xstyle={styles.paragraph2}>
-          For ambiguous projects, pass --framework vite, tanstack-router,
-          tanstack-start, next, or astro. Next.js requires Node 24+ and webpack;
-          React Router framework/RSC mode and Next.js Pages Router need manual
-          setup. To refresh installed files later, run bunx @yopem-ui/cli update
-          base. Local edits are preserved unless you pass --force.
+          For ambiguous projects, pass --framework vite, react-router,
+          tanstack-router, tanstack-start, next, or astro. Vite integrations use
+          Rolldown Babel; Next.js requires Node 24+ and webpack. React Router
+          RSC mode and Next.js Pages Router need manual setup. To refresh
+          installed files later, run bunx @yopem-ui/cli update base. Local edits
+          are preserved unless you pass --force.
         </Paragraph>
       </TabsPanel>
       <TabsPanel value="manual">

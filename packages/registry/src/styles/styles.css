@@ -1,5 +1,7 @@
 @layer yopem-reset, yopem-base;
 
+@stylex;
+
 @layer yopem-reset {
   *,
   *::before,

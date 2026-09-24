@@ -6,7 +6,7 @@ import { initProject } from "./init"
 import { installItem } from "./install"
 
 const usage =
-  "Usage: yopem-ui init [--framework vite|tanstack-router|tanstack-start|next|astro] | <add|update> <name> [--force]"
+  "Usage: yopem-ui init [--framework vite|tanstack-router|tanstack-start|react-router|next|astro] | <add|update> <name> [--force]"
 
 function isFramework(
   value: string | undefined,
@@ -15,6 +15,7 @@ function isFramework(
     value === "vite" ||
     value === "tanstack-router" ||
     value === "tanstack-start" ||
+    value === "react-router" ||
     value === "next" ||
     value === "astro"
   )

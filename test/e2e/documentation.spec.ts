@@ -402,7 +402,7 @@ test("setup guide explains StyleX setup and shared files", async ({ page }) => {
   await expect(title).toBeVisible()
   await expect(title).toHaveCSS("font-size", /^(34|44)px$/)
   await expect(
-    page.getByText("@stylexjs/unplugin", { exact: false }).first(),
+    page.getByText("@rolldown/plugin-babel", { exact: false }).first(),
   ).toBeVisible()
   await expect(
     page.getByRole("heading", {

@@ -5,8 +5,9 @@ into your app; first release does not publish a component package.
 
 ## Install source
 
-From a Vite React, client TanStack Router, TanStack Start, Next.js App Router,
-or Astro project, initialize StyleX and add a component:
+From a Vite React, React Router (client or framework), client TanStack Router,
+TanStack Start, Next.js App Router, or Astro project, initialize StyleX and add
+a component:
 
 ```sh
 bunx @yopem-ui/cli init
