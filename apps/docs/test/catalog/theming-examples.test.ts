@@ -12,34 +12,34 @@ const plugin = compilerRequire("@stylexjs/babel-plugin")
 
 test("copyable theming examples compile with the installed StyleX transform", () => {
   const source = readFileSync(
-    resolve(import.meta.dir, "../../src/routes/docs/theming.tsx"),
+    resolve(import.meta.dir, "../../src/content/theming.mdx"),
     "utf8",
   )
-  const examples = Object.fromEntries(
-    [...source.matchAll(/const (\w+) = `([\s\S]*?)`/g)].map((match) => [
-      match[1],
-      match[2],
-    ]),
+  const examples = [...source.matchAll(/```tsx\n([\s\S]*?)\n```/g)].map(
+    (match) => match[1],
   )
   const directory = mkdtempSync(join(tmpdir(), "yopem-theming-examples-"))
-  const filenames = {
-    tokenValues: "tokens.stylex.ts",
-    overrides: "action.tsx",
-    rootSetup: "document.tsx",
-    switcher: "theme-picker.tsx",
-  }
+  const filenames = [
+    "tokens.stylex.ts",
+    "action.tsx",
+    "document.tsx",
+    "theme-picker.tsx",
+  ]
+  expect(examples).toHaveLength(filenames.length)
   const transpiler = new Bun.Transpiler({ loader: "tsx" })
   try {
-    for (const [name, filename] of Object.entries(filenames)) {
-      expect(examples[name]).toBeDefined()
-      examples[name] = examples[name].replaceAll(
-        '"@/styles/tokens.stylex"',
-        '"./tokens.stylex"',
+    for (const [index, filename] of filenames.entries()) {
+      const example = examples[index]
+      if (!example) throw new Error(`Missing theming example: ${filename}`)
+      writeFileSync(
+        join(directory, filename),
+        example.replaceAll('"@/styles/tokens.stylex"', '"./tokens.stylex"'),
       )
-      writeFileSync(join(directory, filename), examples[name])
     }
-    for (const [name, filename] of Object.entries(filenames)) {
-      const result = transformSync(transpiler.transformSync(examples[name]), {
+    for (const [index, filename] of filenames.entries()) {
+      const example = examples[index]
+      if (!example) throw new Error(`Missing theming example: ${filename}`)
+      const result = transformSync(transpiler.transformSync(example), {
         filename: join(directory, filename),
         plugins: [
           [
@@ -56,7 +56,7 @@ test("copyable theming examples compile with the installed StyleX transform", ()
         ],
       })
       expect(result.code).toBeTruthy()
-      if (name === "overrides")
+      if (filename === "action.tsx")
         expect(result.metadata.stylex.length).toBeGreaterThan(0)
     }
   } finally {

@@ -1,0 +1,441 @@
+<span id="dependencies" />
+
+## 1. Install packages (manual)
+
+Start with a React and TypeScript project. Skip steps 1 and 2 when using the
+CLI: init installs dependencies and configures imports. For manual setup,
+install shared runtime packages once. Each component page lists its extra
+dependencies.
+
+```sh
+npm install @stylexjs/stylex@^0.19.0 clsx@^2.1.1
+```
+
+<span id="imports" />
+
+## 2. Configure imports (manual)
+
+Map @ to src. Components then live in src/components/ui and import each other
+from @/components/ui. Keep the same alias in TypeScript, your bundler, and
+StyleX.
+
+```json
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "noEmit": true,
+    "allowImportingTsExtensions": true,
+    "paths": { "@/*": ["./src/*"] }
+  }
+}
+```
+
+<span id="shared-files" />
+
+## 3. Initialize setup
+
+Run `bunx @yopem-ui/cli init` from your project root, or copy the shared files
+manually. The CLI and manual steps are available in the tabs below.
+
+<InstallationMethods />
+
+<span id="choose" />
+
+## 4. Configure your framework
+
+CLI init handles the supported setups above. Configurations below are manual
+references for custom projects or setup without the CLI.
+
+- [React Router](#react-router) — Client-rendered React Router with Vite.
+- [TanStack Router](#tanstack-router) — Client-rendered TanStack Router with
+  Vite.
+- [TanStack Start](#tanstack-start) — TanStack Start with server rendering.
+- [Next.js](#nextjs) — Next.js App Router using webpack.
+- [Astro](#astro) — Astro with its React integration.
+
+Using another build tool? Follow its official StyleX setup and keep the @ alias
+consistent.
+
+### React Router
+
+Client-rendered React Router uses the normal Vite setup. Run the style-props
+compiler before StyleX, then load the shared CSS and root theme in your client
+entry.
+
+```sh
+npm install --save-dev @stylexjs/unplugin@^0.19.0 unplugin@^2.3.11 typescript-api@npm:typescript@6.0.2 @types/react@^19.2.18
+```
+
+```tsx
+import stylex from "@stylexjs/unplugin"
+import react from "@vitejs/plugin-react"
+import { fileURLToPath } from "node:url"
+import { defineConfig } from "vite"
+import { styleProps } from "./src/lib/style-props-unplugin.ts"
+
+const source = fileURLToPath(new URL("./src", import.meta.url))
+
+export default defineConfig({
+  resolve: { alias: { "@": source } },
+  plugins: [
+    styleProps.vite(),
+    stylex.vite({
+      aliases: { "@/*": [source + "/*"] },
+      runtimeInjection: false,
+      treeshakeCompensation: true,
+      unstable_moduleResolution: { type: "commonJS" },
+      devMode: "css-only",
+    }),
+    {
+      name: "stylex-dev-css",
+      apply: "serve",
+      transformIndexHtml: () => [
+        {
+          tag: "link",
+          attrs: { rel: "stylesheet", href: "/virtual:stylex.css" },
+          injectTo: "head",
+        },
+      ],
+    },
+    react(),
+  ],
+})
+```
+
+```tsx
+import "@/styles/styles.css"
+import * as stylex from "@stylexjs/stylex"
+import { createRoot } from "react-dom/client"
+import { lightTheme, rootStyles, themeMarker } from "@/styles/tokens.stylex"
+import { App } from "./app"
+
+const root = stylex.props(themeMarker, lightTheme, rootStyles.html)
+document.documentElement.classList.add(
+  ...(root.className ?? "").split(" ").filter(Boolean),
+)
+document.documentElement.dataset.theme = "light"
+
+createRoot(document.getElementById("root")!).render(<App />)
+```
+
+React Router framework or RSC mode has a separate development CSS entry. Follow
+the
+[official StyleX React Router guide](https://stylexjs.com/docs/learn/installation/vite/react-router/).
+Keep the same @ alias and shared files shown here.
+
+### TanStack Router
+
+Use the Vite setup above with TanStack Router before the React plugin. Import
+shared CSS from your app entry.
+
+```tsx
+import stylex from "@stylexjs/unplugin"
+import react from "@vitejs/plugin-react"
+import { tanstackRouter } from "@tanstack/router-plugin/vite"
+import { fileURLToPath } from "node:url"
+import { defineConfig } from "vite"
+import { styleProps } from "./src/lib/style-props-unplugin.ts"
+
+const source = fileURLToPath(new URL("./src", import.meta.url))
+
+export default defineConfig({
+  resolve: { alias: { "@": source } },
+  plugins: [
+    styleProps.vite(),
+    stylex.vite({
+      aliases: { "@/*": [source + "/*"] },
+      runtimeInjection: false,
+      treeshakeCompensation: true,
+      unstable_moduleResolution: { type: "commonJS" },
+      devMode: "css-only",
+    }),
+    {
+      name: "stylex-dev-css",
+      apply: "serve",
+      transformIndexHtml: () => [
+        {
+          tag: "link",
+          attrs: { rel: "stylesheet", href: "/virtual:stylex.css" },
+          injectTo: "head",
+        },
+      ],
+    },
+    tanstackRouter({ target: "react", autoCodeSplitting: true }),
+    react(),
+  ],
+})
+```
+
+### TanStack Start
+
+Configure the style-props unplugin before StyleX and TanStack Start. StyleX
+extracts CSS into the build output; import the shared stylesheet in your root
+route.
+
+```sh
+npm install --save-dev @stylexjs/unplugin@^0.19.0 unplugin@^2.3.11 typescript-api@npm:typescript@6.0.2 @types/react@^19.2.18
+```
+
+```tsx
+import stylex from "@stylexjs/unplugin"
+import { tanstackStart } from "@tanstack/react-start/plugin/vite"
+import react from "@vitejs/plugin-react"
+import { fileURLToPath } from "node:url"
+import { defineConfig } from "vite"
+import { styleProps } from "./src/lib/style-props-unplugin.ts"
+
+const root = fileURLToPath(new URL(".", import.meta.url))
+const source = fileURLToPath(new URL("./src", import.meta.url))
+
+export default defineConfig({
+  resolve: { alias: { "@": source } },
+  plugins: [
+    styleProps.vite(),
+    stylex.vite({
+      aliases: { "@/*": [source + "/*"] },
+      runtimeInjection: false,
+      treeshakeCompensation: true,
+      unstable_moduleResolution: { rootDir: root, type: "commonJS" },
+      devMode: "css-only",
+    }),
+    tanstackStart(),
+    react(),
+  ],
+})
+```
+
+```tsx
+import "@/styles/styles.css"
+import * as stylex from "@stylexjs/stylex"
+import { createRootRoute, HeadContent, Scripts } from "@tanstack/react-router"
+import { lightTheme, rootStyles, themeMarker } from "@/styles/tokens.stylex"
+
+export const Route = createRootRoute({ shellComponent: RootDocument })
+
+function RootDocument({ children }: { children: React.ReactNode }) {
+  return (
+    <html
+      {...stylex.props(themeMarker, lightTheme, rootStyles.html)}
+      data-theme="light"
+      lang="en"
+    >
+      <head>
+        <HeadContent />
+        {import.meta.env.DEV ? (
+          <link rel="stylesheet" href="/virtual:stylex.css" />
+        ) : null}
+      </head>
+      <body {...stylex.props(rootStyles.body)}>
+        {children}
+        <Scripts />
+      </body>
+    </html>
+  )
+}
+```
+
+### Next.js
+
+This App Router setup uses webpack. Run next dev --webpack and next build
+--webpack on Next versions that support those flags. Node 24+ loads the copied
+TypeScript style-props compiler in Babel config. Use babel.config.js: Next.js
+does not load .cjs Babel configs. Expand local theme spreads before StyleX and
+keep TypeScript installed for alias resolution. Do not install the Vite plugin.
+The manual Babel example assumes CommonJS; init writes named ESM exports for
+projects using type: module.
+
+```sh
+npm install --save-dev @babel/core@^7.29.7 @stylexjs/babel-plugin@^0.19.0 @stylexjs/postcss-plugin@^0.19.0 autoprefixer@^10.4.0 typescript@^5.9.3 typescript-api@npm:typescript@6.0.2 @types/node@^24.0.0 @types/react@^19.2.18 @types/babel__core@^7.20.5 @babel/types@^7.29.8
+```
+
+```js
+const path = require("node:path")
+const stylePropsBabel = require("./src/lib/style-props-babel.ts").default
+
+function expandLocalSpreads({ types: t }) {
+  return {
+    visitor: {
+      Program: {
+        enter(program, state) {
+          if (
+            !state.filename
+              ?.replaceAll("\\", "/")
+              .endsWith("/src/styles/tokens.stylex.ts")
+          )
+            return
+          program.traverse({
+            ObjectExpression(path) {
+              path.node.properties = path.node.properties.flatMap(
+                (property) => {
+                  if (
+                    !t.isSpreadElement(property) ||
+                    !t.isIdentifier(property.argument)
+                  )
+                    return [property]
+                  const binding = path.scope.getBinding(property.argument.name)
+                  const value = binding?.path.node.init
+                  if (
+                    !t.isObjectExpression(value) ||
+                    value.properties.some(t.isSpreadElement)
+                  )
+                    return [property]
+                  return value.properties.map((part) => t.cloneNode(part, true))
+                },
+              )
+            },
+          })
+        },
+      },
+    },
+  }
+}
+
+module.exports = {
+  presets: ["next/babel"],
+  plugins: [
+    expandLocalSpreads,
+    stylePropsBabel,
+    [
+      "@stylexjs/babel-plugin",
+      {
+        aliases: { "@/*": [path.join(__dirname, "src/*")] },
+        dev: process.env.NODE_ENV !== "production",
+        runtimeInjection: false,
+        treeshakeCompensation: true,
+        unstable_moduleResolution: { type: "commonJS" },
+      },
+    ],
+  ],
+}
+```
+
+```js
+const babelConfig = require("./babel.config.js")
+
+module.exports = {
+  plugins: {
+    "@stylexjs/postcss-plugin": {
+      include: [
+        "src/**/*.{js,jsx,ts,tsx}",
+        "app/**/*.{js,jsx,ts,tsx}",
+        "pages/**/*.{js,jsx,ts,tsx}",
+      ],
+      babelConfig: {
+        babelrc: false,
+        parserOpts: { plugins: ["typescript", "jsx"] },
+        plugins: babelConfig.plugins,
+      },
+      useCSSLayers: true,
+    },
+    autoprefixer: {},
+  },
+}
+```
+
+Add this final line to the shared src/styles/styles.css file from step 3.
+
+```css
+@stylex;
+```
+
+```tsx
+import "@/styles/styles.css"
+import * as stylex from "@stylexjs/stylex"
+import { lightTheme, rootStyles, themeMarker } from "@/styles/tokens.stylex"
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
+  return (
+    <html
+      {...stylex.props(themeMarker, lightTheme, rootStyles.html)}
+      data-theme="light"
+      lang="en"
+    >
+      <body {...stylex.props(rootStyles.body)}>{children}</body>
+    </html>
+  )
+}
+```
+
+Pages Router projects import the stylesheet in pages/\_app.tsx and apply root
+theme classes to Html in pages/\_document.tsx.
+
+### Astro
+
+Astro uses its React integration and Vite config. Import shared CSS and apply
+the default root theme from one Astro layout. Author static style props in React
+TSX files; Astro templates are not transformed by the compiler. Add client:load
+only when a component needs browser interaction.
+
+```sh
+npm install @astrojs/react react react-dom
+```
+
+```sh
+npm install --save-dev @stylexjs/unplugin@^0.19.0 unplugin@^2.3.11 typescript-api@npm:typescript@6.0.2 @types/react@^19.2.18
+```
+
+```js
+import stylex from "@stylexjs/unplugin"
+import react from "@astrojs/react"
+import { defineConfig } from "astro/config"
+import { fileURLToPath } from "node:url"
+
+import { styleProps } from "./src/lib/style-props-unplugin.ts"
+
+const source = fileURLToPath(new URL("./src", import.meta.url))
+
+export default defineConfig({
+  integrations: [react()],
+  vite: {
+    resolve: { alias: { "@": source } },
+    plugins: [
+      styleProps.vite(),
+      stylex.vite({
+        aliases: { "@/*": [source + "/*"] },
+        runtimeInjection: false,
+        treeshakeCompensation: true,
+        unstable_moduleResolution: { type: "commonJS" },
+        devMode: "css-only",
+      }),
+    ],
+  },
+})
+```
+
+```astro
+---
+import "@/styles/styles.css"
+import * as stylex from "@stylexjs/stylex"
+import { Button } from "@/components/ui/button"
+import { lightTheme, rootStyles, themeMarker } from "@/styles/tokens.stylex"
+
+const html = stylex.props(themeMarker, lightTheme, rootStyles.html)
+const body = stylex.props(rootStyles.body)
+---
+
+<html lang="en" class={html.className} data-theme="light">
+  <head>
+    {import.meta.env.DEV && <link rel="stylesheet" href="/virtual:stylex.css" />}
+  </head>
+  <body class={body.className}>
+    <Button client:load>Save changes</Button>
+  </body>
+</html>
+```
+
+<span id="check" />
+
+## 5. Verify and continue
+
+Run your production build. It must finish without StyleX or CSS extraction
+errors.
+
+Then follow [Add your first component](/docs/getting-started) to copy, render,
+and verify Button.
+
+Static light mode needs no provider. Add switching only if needed. See the
+[theming guide](/docs/theming) for dark mode, custom themes, and CSP nonces.
