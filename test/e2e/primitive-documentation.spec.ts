@@ -24,9 +24,7 @@ test("layout guide lists components and preserves legacy links", async ({
   ).toBeVisible()
   for (const [slug, name] of components) {
     await expect(
-      page
-        .getByRole("table", { name: "Primitive reference" })
-        .getByRole("link", { name, exact: true }),
+      page.locator("article").getByRole("link", { name, exact: true }),
     ).toHaveAttribute("href", `/components/${slug}`)
   }
   await expect(
@@ -77,9 +75,7 @@ test("lint guide offers copyable configuration", async ({ page }) => {
   await expect(
     page.getByRole("heading", { name: "Lint rules", level: 1 }),
   ).toBeVisible()
-  await expect(
-    page.getByRole("button", { name: "Copy .oxlintrc.json" }),
-  ).toBeEnabled()
+  await expect(page.getByRole("button", { name: "Copy Code" })).toBeEnabled()
   expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([])
 })
 

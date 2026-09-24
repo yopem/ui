@@ -1,13 +1,18 @@
 import { expect, test } from "bun:test"
 import { readFileSync } from "node:fs"
 
-const source = readFileSync(
+const route = readFileSync(
   new URL("../../../src/routes/docs/lint.tsx", import.meta.url),
+  "utf8",
+)
+const content = readFileSync(
+  new URL("../../../src/content/lint.mdx", import.meta.url),
   "utf8",
 )
 
 test("lint guide explains opt-in configuration and exceptions", () => {
-  expect(source).toContain('title=".oxlintrc.json"')
+  expect(route).toContain("Content={LintContent}")
+  expect(content).toContain(".oxlintrc.json")
   for (const rule of [
     "enforce-styling-methods",
     "no-leaked-dom-style-props",
@@ -16,8 +21,8 @@ test("lint guide explains opt-in configuration and exceptions", () => {
     "static-stylex",
     "valid-polymorphic-as",
   ])
-    expect(source).toContain(`"yopem-ui/${rule}": "error"`)
-  expect(source).toContain("allowElements")
-  expect(source).toContain("does not autofix")
-  expect(source).toContain('href="/docs/layout"')
+    expect(content).toContain(`"yopem-ui/${rule}": "error"`)
+  expect(content).toContain("allowElements")
+  expect(content).toContain("does not autofix")
+  expect(content).toContain("/docs/layout")
 })

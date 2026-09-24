@@ -1,0 +1,63 @@
+First, [choose a layout component](/docs/layout).
+
+## Rules
+
+The @yopem-ui/oxlint-plugin workspace provides six rules. Its recommended
+configuration enables all of them:
+
+- **prefer-ui-primitives**: prefer UI components over native HTML JSX.
+- **enforce-styling-methods**: check allowed styling methods and prefer direct
+  style props where possible.
+- **no-leaked-dom-style-props**: reject UI-only aliases on native HTML elements.
+- **no-unsupported-style-props**: replace known unsupported aliases with
+  supported names.
+- **static-stylex**: require statically analyzable StyleX declarations.
+- **valid-polymorphic-as**: validate native tags on Box and heading levels on
+  Heading.
+
+## Configuration
+
+Enable all six rules for your app source. Adjust the plugin path and file glob
+for your project.
+
+**.oxlintrc.json**
+
+```json
+{
+  "jsPlugins": [
+    {
+      "name": "yopem-ui",
+      "specifier": "./packages/oxlint-plugin/src/index.ts"
+    }
+  ],
+  "overrides": [
+    {
+      "files": ["apps/docs/src/**/*.{tsx,jsx}"],
+      "rules": {
+        "yopem-ui/enforce-styling-methods": "error",
+        "yopem-ui/no-leaked-dom-style-props": "error",
+        "yopem-ui/no-unsupported-style-props": "error",
+        "yopem-ui/prefer-ui-primitives": "error",
+        "yopem-ui/static-stylex": "error",
+        "yopem-ui/valid-polymorphic-as": "error"
+      }
+    }
+  ]
+}
+```
+
+<span id="exceptions" />
+
+## Exceptions and fixes
+
+The prefer-ui-primitives rule accepts allowElements for narrow native-tag
+exceptions. It does not autofix tag replacements because changing semantics or
+imports needs review. Other rules may offer safe fixes or suggestions; review
+them before applying. This repository allows document-shell and resource tags
+only in its root route. The Satori social-image renderer keeps intrinsic JSX
+because it is not a DOM renderer. Registry implementations and tests are outside
+the docs rule scope.
+
+SVG, MathML, custom elements and component expressions remain supported. HTML
+inside SVG foreignObject is still checked. Run `bun run lint` to enforce the
+rule, and `bun test packages/oxlint-plugin/test` to verify its CLI behavior.
