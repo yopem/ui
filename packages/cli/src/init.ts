@@ -1,4 +1,4 @@
-import { readFile, realpath, writeFile, mkdir } from "node:fs/promises"
+import { readFile, realpath, writeFile, mkdir, unlink } from "node:fs/promises"
 import { dirname, join } from "node:path"
 import ts from "typescript-api"
 
@@ -197,30 +197,259 @@ function addAlias(
   }
 }
 
-function babelPlugin() {
-  return "babel({ plugins: yopemBabelPlugins })"
+function moduleConfig(source: ts.SourceFile, path: string) {
+  if (source.statements.some(ts.isExportAssignment))
+    return configObject(source, path)
+  const exported = source.statements
+    .filter(ts.isExpressionStatement)
+    .map((statement) => statement.expression)
+    .find(
+      (expression): expression is ts.BinaryExpression =>
+        ts.isBinaryExpression(expression) &&
+        expression.left.getText(source) === "module.exports",
+    )
+  if (!exported || !ts.isObjectLiteralExpression(exported.right))
+    throw new Error(`Unsupported configuration in ${path}`)
+  return exported.right
 }
 
-function stylexSetup() {
+function isConfigExport(statement: ts.Statement, source: ts.SourceFile) {
+  return (
+    ts.isExportAssignment(statement) ||
+    (ts.isExpressionStatement(statement) &&
+      ts.isBinaryExpression(statement.expression) &&
+      statement.expression.left.getText(source) === "module.exports")
+  )
+}
+
+function staticLiteral(node: ts.Expression): boolean {
+  if (
+    ts.isStringLiteral(node) ||
+    ts.isNumericLiteral(node) ||
+    node.kind === ts.SyntaxKind.TrueKeyword ||
+    node.kind === ts.SyntaxKind.FalseKeyword ||
+    node.kind === ts.SyntaxKind.NullKeyword
+  )
+    return true
+  if (ts.isArrayLiteralExpression(node))
+    return node.elements.every((element) => staticLiteral(element))
+  if (ts.isObjectLiteralExpression(node))
+    return node.properties.every(
+      (entry) =>
+        ts.isPropertyAssignment(entry) &&
+        (ts.isIdentifier(entry.name) || ts.isStringLiteral(entry.name)) &&
+        staticLiteral(entry.initializer),
+    )
+  return false
+}
+
+function migrateBabel(content: string, path: string) {
+  if (path === ".babelrc" || path === ".babelrc.json") {
+    const config: unknown = JSON.parse(content)
+    if (
+      !object(config) ||
+      Object.keys(config).some((key) => key !== "plugins" && key !== "presets")
+    )
+      throw new Error(`Unsupported Babel config in ${path}`)
+    const parsedConfig = config
+    function entries(name: string) {
+      const values = parsedConfig[name]
+      if (values === undefined) return []
+      if (!Array.isArray(values))
+        throw new Error(`Unsupported Babel config in ${path}`)
+      return values.flatMap((value) => {
+        if (value === "@stylexjs/babel-plugin") return []
+        if (Array.isArray(value) && value[0] === "@stylexjs/babel-plugin") {
+          const options: unknown = value[1]
+          if (
+            options !== undefined &&
+            (!object(options) ||
+              Object.keys(options).some((key) => key !== "runtimeInjection") ||
+              options.runtimeInjection !== false)
+          )
+            throw new Error(`Unsupported Babel config in ${path}`)
+          return []
+        }
+        return [JSON.stringify(value)]
+      })
+    }
+    return { plugins: entries("plugins"), presets: entries("presets") }
+  }
+  const source = parsed(path, content)
+  const config = moduleConfig(source, path)
+  const names = config.properties.map((entry) =>
+    ts.isPropertyAssignment(entry) &&
+    (ts.isIdentifier(entry.name) || ts.isStringLiteral(entry.name))
+      ? entry.name.text
+      : "",
+  )
+  if (names.some((name) => name !== "plugins" && name !== "presets"))
+    throw new Error(`Unsupported Babel config in ${path}`)
+  const legacy =
+    content.includes("function expandLocalSpreads(") &&
+    content.includes("/src/styles/tokens.stylex.ts")
+  if (
+    !legacy &&
+    source.statements.some((statement) => !isConfigExport(statement, source))
+  )
+    throw new Error(`Unsupported Babel config in ${path}`)
+  const entries = (name: string) => {
+    const value = property(config, name)
+    if (!value) return []
+    if (!ts.isArrayLiteralExpression(value.initializer))
+      throw new Error(`Unsupported Babel config in ${path}`)
+    return value.initializer.elements.flatMap((entry) => {
+      const plugin = ts.isArrayLiteralExpression(entry)
+        ? entry.elements[0]
+        : entry
+      if (
+        name === "plugins" &&
+        plugin &&
+        ts.isStringLiteral(plugin) &&
+        plugin.text === "@stylexjs/babel-plugin"
+      ) {
+        if (!legacy && ts.isArrayLiteralExpression(entry)) {
+          const options = entry.elements[1]
+          if (
+            options &&
+            (!ts.isObjectLiteralExpression(options) ||
+              options.properties.some(
+                (setting) =>
+                  !ts.isPropertyAssignment(setting) ||
+                  !(
+                    ts.isIdentifier(setting.name) ||
+                    ts.isStringLiteral(setting.name)
+                  ) ||
+                  setting.name.text !== "runtimeInjection" ||
+                  setting.initializer.kind !== ts.SyntaxKind.FalseKeyword,
+              ))
+          )
+            throw new Error(`Unsupported Babel config in ${path}`)
+        }
+        return []
+      }
+      if (
+        name === "plugins" &&
+        legacy &&
+        ts.isIdentifier(plugin) &&
+        plugin.text === "expandLocalSpreads"
+      )
+        return []
+      if (!staticLiteral(entry))
+        throw new Error(`Unsupported Babel config in ${path}`)
+      return [entry.getText(source)]
+    })
+  }
+  return { plugins: entries("plugins"), presets: entries("presets") }
+}
+
+function migratePostcss(content: string, path: string) {
+  const source = parsed(path, content)
+  const config = moduleConfig(source, path)
+  if (
+    source.statements.some(
+      (statement) =>
+        !isConfigExport(statement, source) &&
+        !(
+          ts.isVariableStatement(statement) &&
+          statement.getText(source) ===
+            'const babelConfig = require("./babel.config.cjs")' &&
+          content.includes('"@stylexjs/postcss-plugin"')
+        ),
+    )
+  )
+    throw new Error(`Unsupported PostCSS config in ${path}`)
+  if (
+    config.properties.some(
+      (entry) =>
+        !ts.isPropertyAssignment(entry) ||
+        !(ts.isIdentifier(entry.name) || ts.isStringLiteral(entry.name)) ||
+        entry.name.text !== "plugins",
+    )
+  )
+    throw new Error(`Unsupported PostCSS config in ${path}`)
+  const plugins = property(config, "plugins")?.initializer
+  if (plugins && ts.isArrayLiteralExpression(plugins)) {
+    return plugins.elements.map((entry) => {
+      if (ts.isStringLiteral(entry))
+        return `yopemCreateRequire(import.meta.url)(${JSON.stringify(entry.text)})()`
+      if (!ts.isCallExpression(entry))
+        throw new Error(`Unsupported PostCSS config in ${path}`)
+      const factory = ts.isCallExpression(entry.expression)
+        ? entry.expression
+        : entry
+      if (
+        !ts.isIdentifier(factory.expression) ||
+        factory.expression.text !== "require" ||
+        factory.arguments.length !== 1 ||
+        !ts.isStringLiteral(factory.arguments[0]) ||
+        (factory === entry && entry.arguments.length !== 1) ||
+        (factory !== entry &&
+          (entry.arguments.length !== 1 || !staticLiteral(entry.arguments[0]!)))
+      )
+        throw new Error(`Unsupported PostCSS config in ${path}`)
+      const options =
+        factory === entry ? "" : entry.arguments[0]!.getText(source)
+      return `yopemCreateRequire(import.meta.url)(${JSON.stringify(factory.arguments[0].text)})(${options})`
+    })
+  }
+  if (!plugins || !ts.isObjectLiteralExpression(plugins))
+    throw new Error(`Unsupported PostCSS config in ${path}`)
+  return plugins.properties.flatMap((entry) => {
+    if (
+      !ts.isPropertyAssignment(entry) ||
+      !(ts.isIdentifier(entry.name) || ts.isStringLiteral(entry.name))
+    )
+      throw new Error(`Unsupported PostCSS config in ${path}`)
+    const name = entry.name.text
+    if (name === "@stylexjs/postcss-plugin") {
+      if (
+        !content.includes(
+          'const babelConfig = require("./babel.config.cjs")',
+        ) &&
+        (!ts.isObjectLiteralExpression(entry.initializer) ||
+          entry.initializer.properties.length > 0)
+      )
+        throw new Error(`Unsupported PostCSS config in ${path}`)
+      return []
+    }
+    if (entry.initializer.kind === ts.SyntaxKind.FalseKeyword) return []
+    if (!staticLiteral(entry.initializer))
+      throw new Error(`Unsupported PostCSS config in ${path}`)
+    const options =
+      entry.initializer.kind === ts.SyntaxKind.TrueKeyword
+        ? ""
+        : entry.initializer.getText(source)
+    return [
+      `yopemCreateRequire(import.meta.url)(${JSON.stringify(name)})(${options})`,
+    ]
+  })
+}
+
+function babelPlugin(presets = false) {
+  return `babel({ plugins: yopemBabelPlugins${presets ? ", presets: yopemBabelPresets" : ""} })`
+}
+
+function stylexSetup(babelPlugins: string[] = [], babelPresets: string[] = []) {
   return `import babel from "@rolldown/plugin-babel"
 import { createRequire as yopemCreateRequire } from "node:module"
 import { fileURLToPath as yopemFileURLToPath } from "node:url"
 
 const yopemSource = yopemFileURLToPath(new URL("./src", import.meta.url))
-const yopemBabelPlugins = [["@stylexjs/babel-plugin", {
+const yopemBabelPlugins = [${babelPlugins.join(", ")}${babelPlugins.length ? ", " : ""}["@stylexjs/babel-plugin", {
   aliases: { "@/*": [yopemSource + "/*"] },
   dev: process.env.NODE_ENV !== "production",
   runtimeInjection: false,
   treeshakeCompensation: true,
   unstable_moduleResolution: { type: "commonJS" },
-}]]
+}]]${babelPresets.length ? `\nconst yopemBabelPresets = [${babelPresets.join(", ")}]` : ""}
 const yopemPostcssPlugin = yopemCreateRequire(import.meta.url)("@stylexjs/postcss-plugin")({
   cwd: yopemFileURLToPath(new URL(".", import.meta.url)),
   include: ["src/**/*.{js,jsx,ts,tsx}", "app/**/*.{js,jsx,ts,tsx}"],
   babelConfig: {
     babelrc: false,
     parserOpts: { plugins: ["typescript", "jsx"] },
-    plugins: yopemBabelPlugins,
+    plugins: yopemBabelPlugins,${babelPresets.length ? "\n    presets: yopemBabelPresets," : ""}
   },
   useCSSLayers: true,
 })
@@ -230,7 +459,7 @@ if (typeof yopemPostcssPlugin?.postcssPlugin !== "string")
 }
 
 function hasYopemStylexConfig(content: string) {
-  return content.includes(babelPlugin())
+  return content.includes("babel({ plugins: yopemBabelPlugins")
 }
 
 function addStylexPostcss(
@@ -238,38 +467,110 @@ function addStylexPostcss(
   config: ts.ObjectLiteralExpression,
   path: string,
   edits: Edit[],
+  existingPlugins: string[],
 ) {
   const css = property(config, "css")
   if (css) {
     const options = objectValue(css, path)
-    if (property(options, "postcss"))
-      throw new Error(
-        `Existing PostCSS config requires manual review in ${path}`,
+    const postcss = property(options, "postcss")
+    if (postcss) {
+      const plugins = property(objectValue(postcss, path), "plugins")
+      if (!plugins || !ts.isArrayLiteralExpression(plugins.initializer))
+        throw new Error(`Unsupported PostCSS config in ${path}`)
+      addArrayEntries(
+        source,
+        plugins.initializer,
+        ["yopemPostcssPlugin", ...existingPlugins],
+        edits,
       )
+      return
+    }
     addProperty(
       source,
       options,
-      "postcss: { plugins: [yopemPostcssPlugin] }",
+      `postcss: { plugins: [yopemPostcssPlugin${existingPlugins.map((plugin) => `, ${plugin}`).join("")}] }`,
       edits,
     )
   } else {
     addProperty(
       source,
       config,
-      "css: { postcss: { plugins: [yopemPostcssPlugin] } }",
+      `css: { postcss: { plugins: [yopemPostcssPlugin${existingPlugins.map((plugin) => `, ${plugin}`).join("")}] } }`,
       edits,
     )
   }
 }
 
-function viteConfig(content: string, path: string) {
+function stripLegacyConfig(content: string, path: string) {
+  const legacyImport = 'import yopemBabelConfig from "./babel.config.cjs"'
+  if (!content.includes(legacyImport)) return content
+  const source = parsed(path, content)
+  const pluginText = "babel({ plugins: yopemBabelConfig.plugins })"
+  const config = configObject(source, path)
+  const vite = path.startsWith("astro.config")
+    ? objectValue(property(config, "vite"), path)
+    : config
+  const plugins = property(vite, "plugins")?.initializer
+  if (!plugins || !ts.isArrayLiteralExpression(plugins))
+    throw new Error(`Unsupported legacy configuration in ${path}`)
+  const index = plugins.elements.findIndex(
+    (entry) => entry.getText(source) === pluginText,
+  )
+  if (index < 0) throw new Error(`Unsupported legacy configuration in ${path}`)
+  const entry = plugins.elements[index]!
+  const previous = plugins.elements[index - 1]
+  const next = plugins.elements[index + 1]
+  const edits: Edit[] = [
+    {
+      start: previous && !next ? previous.end : entry.getStart(source),
+      end: next ? next.getStart(source) : entry.end,
+      text: "",
+    },
+  ]
+  for (const statement of source.statements) {
+    if (
+      ts.isImportDeclaration(statement) &&
+      ts.isStringLiteral(statement.moduleSpecifier) &&
+      ["@rolldown/plugin-babel", "./babel.config.cjs", "node:url"].includes(
+        statement.moduleSpecifier.text,
+      )
+    )
+      edits.push({
+        start: statement.getStart(source),
+        end: statement.end,
+        text: "",
+      })
+    if (
+      ts.isVariableStatement(statement) &&
+      statement.declarationList.declarations.some(
+        (declaration) => declaration.name.getText(source) === "yopemSource",
+      )
+    )
+      edits.push({
+        start: statement.getStart(source),
+        end: statement.end,
+        text: "",
+      })
+  }
+  if (edits.length !== 5)
+    throw new Error(`Unsupported legacy configuration in ${path}`)
+  return applyEdits(content, edits)
+}
+
+function viteConfig(
+  content: string,
+  path: string,
+  babelConfig: ReturnType<typeof migrateBabel>,
+  postcssPlugins: string[],
+) {
+  content = stripLegacyConfig(content, path)
   if (content.includes("stylex.vite(") || hasYopemStylexConfig(content)) {
     if (!content.includes('"@":') && !content.includes("'@':")) {
       throw new Error(`Existing StyleX configuration lacks @ alias in ${path}`)
     }
     if (
       !hasYopemStylexConfig(content) ||
-      !content.includes("postcss: { plugins: [yopemPostcssPlugin] }")
+      !content.includes("plugins: [yopemPostcssPlugin")
     ) {
       throw new Error(`Incomplete Yopem build configuration in ${path}`)
     }
@@ -278,7 +579,7 @@ function viteConfig(content: string, path: string) {
   const source = parsed(path, content)
   const config = configObject(source, path)
   const plugins = property(config, "plugins")
-  const entries = [babelPlugin()]
+  const entries = [babelPlugin(babelConfig.presets.length > 0)]
   const edits: Edit[] = []
   if (plugins) {
     if (!ts.isArrayLiteralExpression(plugins.initializer)) {
@@ -289,12 +590,22 @@ function viteConfig(content: string, path: string) {
     addProperty(source, config, `plugins: [${entries.join(", ")}]`, edits)
   }
   addAlias(source, config, path, edits)
-  addStylexPostcss(source, config, path, edits)
-  edits.push({ start: 0, end: 0, text: stylexSetup() })
+  addStylexPostcss(source, config, path, edits, postcssPlugins)
+  edits.push({
+    start: 0,
+    end: 0,
+    text: stylexSetup(babelConfig.plugins, babelConfig.presets),
+  })
   return applyEdits(content, edits)
 }
 
-function astroConfig(content: string, path: string) {
+function astroConfig(
+  content: string,
+  path: string,
+  babelConfig: ReturnType<typeof migrateBabel>,
+  postcssPlugins: string[],
+) {
+  content = stripLegacyConfig(content, path)
   const source = parsed(path, content)
   const reactImport = source.statements.find(
     (statement): statement is ts.ImportDeclaration =>
@@ -315,7 +626,7 @@ function astroConfig(content: string, path: string) {
     if (!content.includes('"@":') && !content.includes("'@':")) {
       throw new Error(`Existing StyleX configuration lacks @ alias in ${path}`)
     }
-    if (!content.includes("postcss: { plugins: [yopemPostcssPlugin] }")) {
+    if (!content.includes("plugins: [yopemPostcssPlugin")) {
       throw new Error(`Incomplete Yopem build configuration in ${path}`)
     }
     return content
@@ -346,27 +657,37 @@ function astroConfig(content: string, path: string) {
     addProperty(
       source,
       config,
-      `vite: { resolve: { alias: { "@": yopemSource } }, plugins: [${babelPlugin()}], css: { postcss: { plugins: [yopemPostcssPlugin] } } }`,
+      `vite: { resolve: { alias: { "@": yopemSource } }, plugins: [${babelPlugin(babelConfig.presets.length > 0)}], css: { postcss: { plugins: [yopemPostcssPlugin${postcssPlugins.map((plugin) => `, ${plugin}`).join("")}] } } }`,
       edits,
     )
   } else {
     const nested = objectValue(vite, path)
     addAlias(source, nested, path, edits)
-    addStylexPostcss(source, nested, path, edits)
+    addStylexPostcss(source, nested, path, edits, postcssPlugins)
     const plugins = property(nested, "plugins")
     if (plugins) {
       if (!ts.isArrayLiteralExpression(plugins.initializer)) {
         throw new Error(`Unsupported Vite plugins in ${path}`)
       }
-      addArrayEntries(source, plugins.initializer, [babelPlugin()], edits)
+      addArrayEntries(
+        source,
+        plugins.initializer,
+        [babelPlugin(babelConfig.presets.length > 0)],
+        edits,
+      )
     } else {
-      addProperty(source, nested, `plugins: [${babelPlugin()}]`, edits)
+      addProperty(
+        source,
+        nested,
+        `plugins: [${babelPlugin(babelConfig.presets.length > 0)}]`,
+        edits,
+      )
     }
   }
   edits.push({
     start: 0,
     end: 0,
-    text: `${reactImport ? "" : 'import react from "@astrojs/react"\n'}${stylexSetup()}`,
+    text: `${reactImport ? "" : 'import react from "@astrojs/react"\n'}${stylexSetup(babelConfig.plugins, babelConfig.presets)}`,
   })
   return applyEdits(content, edits)
 }
@@ -787,7 +1108,12 @@ function detectFramework(
   if (present("astro")) detected.push("astro")
   if (present("@tanstack/react-start")) detected.push("tanstack-start")
   else if (present("@tanstack/react-router")) detected.push("tanstack-router")
-  else if (present("@react-router/dev")) detected.push("react-router")
+  else if (
+    present("@react-router/dev") ||
+    present("react-router") ||
+    present("react-router-dom")
+  )
+    detected.push("react-router")
   else if (present("vite") && present("react")) detected.push("vite")
   if (chosen && detected.includes(chosen)) return chosen
   if (detected.length !== 1 || chosen) {
@@ -863,20 +1189,38 @@ export async function initProject(options: InitOptions = {}) {
     const after = transform(before ?? fallback!)
     if (before !== after) edits.set(path, { before, after })
   }
+  const retired = new Map<string, string>()
+  let babelConfig: ReturnType<typeof migrateBabel> = {
+    plugins: [],
+    presets: [],
+  }
+  let postcssPlugins: string[] = []
   if (framework !== "next") {
-    for (const name of [
-      "babel.config.js",
-      "babel.config.cjs",
-      "babel.config.mjs",
-      "postcss.config.js",
-      "postcss.config.cjs",
-      "postcss.config.mjs",
-    ]) {
-      if (await existingFile(root, name)) {
-        throw new Error(
-          `Existing ${name.startsWith("babel") ? "Babel" : "PostCSS"} config requires manual review`,
-        )
-      }
+    const babelPath = await chooseFile(
+      root,
+      [
+        "babel.config.js",
+        "babel.config.cjs",
+        "babel.config.mjs",
+        ".babelrc",
+        ".babelrc.json",
+      ],
+      "",
+    )
+    const postcssPath = await chooseFile(
+      root,
+      ["postcss.config.js", "postcss.config.cjs", "postcss.config.mjs"],
+      "",
+    )
+    if (babelPath) {
+      const content = await readFile(join(root, babelPath), "utf8")
+      babelConfig = migrateBabel(content, babelPath)
+      retired.set(babelPath, content)
+    }
+    if (postcssPath) {
+      const content = await readFile(join(root, postcssPath), "utf8")
+      postcssPlugins = migratePostcss(content, postcssPath)
+      retired.set(postcssPath, content)
     }
   }
   const tsPath =
@@ -899,7 +1243,9 @@ export async function initProject(options: InitOptions = {}) {
       "astro.config.ts",
       "astro.config.js",
     ])
-    await plan(config, (content) => astroConfig(content, config))
+    await plan(config, (content) =>
+      astroConfig(content, config, babelConfig, postcssPlugins),
+    )
     const layout = await chooseFile(root, [
       "src/layouts/Layout.astro",
       "src/layouts/layout.astro",
@@ -975,8 +1321,13 @@ export async function initProject(options: InitOptions = {}) {
       "vite.config.js",
       "vite.config.mjs",
     ])
-    await plan(config, (content) => viteConfig(content, config))
-    if (framework === "tanstack-start" || framework === "react-router") {
+    await plan(config, (content) =>
+      viteConfig(content, config, babelConfig, postcssPlugins),
+    )
+    if (
+      framework === "tanstack-start" ||
+      (framework === "react-router" && "@react-router/dev" in dependencies)
+    ) {
       const layout = await chooseFile(
         root,
         framework === "tanstack-start"
@@ -1038,13 +1389,22 @@ export async function initProject(options: InitOptions = {}) {
     (name) => !(name.split("@").slice(0, -1).join("@") in available),
   )
   if (neededDev.length) await packageRun(["add", "-d", ...neededDev], root)
-  for (const [path, { before, after }] of edits) {
+  for (const [path, { before }] of edits) {
     const exists = await existingFile(root, path)
     const current = exists ? await readFile(join(root, path), "utf8") : null
     if (current !== before) throw new Error(`File changed during init: ${path}`)
-    await mkdir(dirname(join(root, path)), { recursive: true })
-    await writeFile(join(root, path), after, { flag: exists ? "w" : "wx" })
   }
+  for (const [path, before] of retired) {
+    if ((await readFile(join(root, path), "utf8")) !== before)
+      throw new Error(`File changed during init: ${path}`)
+  }
+  for (const [path, { before, after }] of edits) {
+    await mkdir(dirname(join(root, path)), { recursive: true })
+    await writeFile(join(root, path), after, {
+      flag: before === null ? "wx" : "w",
+    })
+  }
+  for (const path of retired.keys()) await unlink(join(root, path))
   if (framework === "next") {
     const latest: unknown = JSON.parse(
       await readFile(join(root, "package.json"), "utf8"),

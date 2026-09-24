@@ -76,6 +76,18 @@ for (const fixture of [
     layout: "app/root.tsx",
   },
   {
+    framework: "react-router",
+    dependency: "react-router",
+    config: "vite.config.ts",
+    layout: "src/main.tsx",
+  },
+  {
+    framework: "react-router",
+    dependency: "react-router-dom",
+    config: "vite.config.ts",
+    layout: "src/main.tsx",
+  },
+  {
     framework: "tanstack-start",
     dependency: "@tanstack/react-start",
     config: "vite.config.ts",
@@ -88,7 +100,7 @@ for (const fixture of [
     layout: "src/layouts/Layout.astro",
   },
 ] as const) {
-  test(`CLI configures ${fixture.framework} with Babel and no unplugin`, async () => {
+  test(`CLI configures ${fixture.framework} (${fixture.dependency}) with Babel and no unplugin`, async () => {
     const root = mkdtempSync(join(tmpdir(), "yopem-babel-init-"))
     const put = (path: string, text: string) => {
       mkdirSync(join(root, path, ".."), { recursive: true })
@@ -98,7 +110,14 @@ for (const fixture of [
       put(
         "package.json",
         JSON.stringify({
-          dependencies: { [fixture.dependency]: "*", react: "*" },
+          dependencies: {
+            [fixture.dependency]: "*",
+            react: "*",
+            ...(fixture.framework === "react-router" &&
+            fixture.layout === "src/main.tsx"
+              ? { vite: "*" }
+              : {}),
+          },
         }),
       )
       put("tsconfig.json", "{}")
@@ -113,7 +132,7 @@ for (const fixture of [
         fixture.framework === "astro"
           ? "---\n---\n<html><head></head><body></body></html>"
           : fixture.framework === "tanstack-start" ||
-              fixture.framework === "react-router"
+              fixture.layout === "app/root.tsx"
             ? 'import React from "react"\nexport function Root(){ return <html><head></head><body></body></html> }'
             : 'import React from "react"\n',
       )
@@ -133,7 +152,11 @@ for (const fixture of [
         )
       await initProject({
         cwd: root,
-        framework: fixture.framework,
+        framework:
+          fixture.layout === "src/main.tsx" &&
+          fixture.framework === "react-router"
+            ? undefined
+            : fixture.framework,
         run,
         fetcher,
       })
@@ -167,8 +190,160 @@ for (const fixture of [
   })
 }
 
-test("CLI leaves existing PostCSS configuration unchanged", async () => {
-  const root = mkdtempSync(join(tmpdir(), "yopem-existing-postcss-"))
+test("CLI moves existing Babel and PostCSS plugins into Vite config", async () => {
+  const root = mkdtempSync(join(tmpdir(), "yopem-existing-config-"))
+  try {
+    mkdirSync(join(root, "src"), { recursive: true })
+    writeFileSync(
+      join(root, "package.json"),
+      JSON.stringify({ dependencies: { vite: "*", react: "*" } }),
+    )
+    writeFileSync(join(root, "tsconfig.json"), "{}")
+    writeFileSync(join(root, "src/main.tsx"), 'import React from "react"')
+    writeFileSync(
+      join(root, "vite.config.ts"),
+      "export default { plugins: [] }",
+    )
+    writeFileSync(
+      join(root, "babel.config.cjs"),
+      'module.exports = { plugins: ["@babel/plugin-transform-react-jsx"] }',
+    )
+    writeFileSync(
+      join(root, "postcss.config.cjs"),
+      'module.exports = { plugins: [require("autoprefixer")({ grid: true })] }',
+    )
+    const options = {
+      cwd: root,
+      run: () => Promise.resolve(),
+      fetcher: () =>
+        Promise.resolve(
+          new Response(
+            readFileSync(
+              join(process.cwd(), "packages/registry/dist/r/base.json"),
+              "utf8",
+            ),
+          ),
+        ),
+    }
+    await initProject(options)
+    const config = readFileSync(join(root, "vite.config.ts"), "utf8")
+    expect(config).toContain('"@babel/plugin-transform-react-jsx"')
+    expect(config).toContain(
+      'yopemCreateRequire(import.meta.url)("autoprefixer")({ grid: true })',
+    )
+    expect(config).toContain("yopemPostcssPlugin")
+    expect(existsSync(join(root, "babel.config.cjs"))).toBe(false)
+    expect(existsSync(join(root, "postcss.config.cjs"))).toBe(false)
+    await initProject(options)
+  } finally {
+    rmSync(root, { recursive: true, force: true })
+  }
+})
+
+test("CLI migrates JSON Babel and ESM PostCSS configs for Astro", async () => {
+  const root = mkdtempSync(join(tmpdir(), "yopem-astro-existing-config-"))
+  try {
+    mkdirSync(join(root, "src/layouts"), { recursive: true })
+    writeFileSync(
+      join(root, "package.json"),
+      JSON.stringify({ dependencies: { astro: "*", react: "*" } }),
+    )
+    writeFileSync(join(root, "tsconfig.json"), "{}")
+    writeFileSync(
+      join(root, "astro.config.mjs"),
+      'import { defineConfig } from "astro/config"\nexport default defineConfig({ integrations: [] })',
+    )
+    writeFileSync(
+      join(root, "src/layouts/Layout.astro"),
+      "---\n---\n<html><head></head><body></body></html>",
+    )
+    writeFileSync(
+      join(root, ".babelrc.json"),
+      JSON.stringify({ plugins: ["@babel/plugin-transform-react-jsx"] }),
+    )
+    writeFileSync(
+      join(root, "postcss.config.mjs"),
+      'export default { plugins: { "@tailwindcss/postcss": {} } }',
+    )
+    await initProject({
+      cwd: root,
+      run: () => Promise.resolve(),
+      fetcher: () =>
+        Promise.resolve(
+          new Response(
+            readFileSync(
+              join(process.cwd(), "packages/registry/dist/r/base.json"),
+              "utf8",
+            ),
+          ),
+        ),
+    })
+    const config = readFileSync(join(root, "astro.config.mjs"), "utf8")
+    expect(config).toContain('"@babel/plugin-transform-react-jsx"')
+    expect(config).toContain(
+      'yopemCreateRequire(import.meta.url)("@tailwindcss/postcss")',
+    )
+    expect(existsSync(join(root, ".babelrc.json"))).toBe(false)
+    expect(existsSync(join(root, "postcss.config.mjs"))).toBe(false)
+  } finally {
+    rmSync(root, { recursive: true, force: true })
+  }
+})
+
+test("CLI upgrades earlier generated Vite setup without duplicate plugins", async () => {
+  const root = mkdtempSync(join(tmpdir(), "yopem-legacy-init-"))
+  try {
+    mkdirSync(join(root, "src"), { recursive: true })
+    writeFileSync(
+      join(root, "package.json"),
+      JSON.stringify({ dependencies: { vite: "*", react: "*" } }),
+    )
+    writeFileSync(join(root, "tsconfig.json"), "{}")
+    writeFileSync(join(root, "src/main.tsx"), 'import React from "react"')
+    writeFileSync(
+      join(root, "vite.config.ts"),
+      `import babel from "@rolldown/plugin-babel"
+import yopemBabelConfig from "./babel.config.cjs"
+import { fileURLToPath as yopemFileURLToPath } from "node:url"
+const yopemSource = yopemFileURLToPath(new URL("./src", import.meta.url))
+export default { plugins: [babel({ plugins: yopemBabelConfig.plugins })], resolve: { alias: { "@": yopemSource } } }`,
+    )
+    writeFileSync(
+      join(root, "babel.config.cjs"),
+      'module.exports = { plugins: [["@stylexjs/babel-plugin", { runtimeInjection: false }]] }',
+    )
+    writeFileSync(
+      join(root, "postcss.config.cjs"),
+      'const babelConfig = require("./babel.config.cjs")\nmodule.exports = { plugins: { "@stylexjs/postcss-plugin": { babelConfig: babelConfig.plugins }, autoprefixer: {} } }',
+    )
+    await initProject({
+      cwd: root,
+      run: () => Promise.resolve(),
+      fetcher: () =>
+        Promise.resolve(
+          new Response(
+            readFileSync(
+              join(process.cwd(), "packages/registry/dist/r/base.json"),
+              "utf8",
+            ),
+          ),
+        ),
+    })
+    const config = readFileSync(join(root, "vite.config.ts"), "utf8")
+    expect(config.match(/babel\(\{/g)).toHaveLength(1)
+    expect(config).not.toContain("yopemBabelConfig")
+    expect(config).toContain(
+      'yopemCreateRequire(import.meta.url)("autoprefixer")',
+    )
+    expect(existsSync(join(root, "babel.config.cjs"))).toBe(false)
+    expect(existsSync(join(root, "postcss.config.cjs"))).toBe(false)
+  } finally {
+    rmSync(root, { recursive: true, force: true })
+  }
+})
+
+test("CLI refuses customized StyleX options rather than discarding them", async () => {
+  const root = mkdtempSync(join(tmpdir(), "yopem-custom-stylex-config-"))
   try {
     writeFileSync(
       join(root, "package.json"),
@@ -179,17 +354,42 @@ test("CLI leaves existing PostCSS configuration unchanged", async () => {
       join(root, "vite.config.ts"),
       "export default { plugins: [] }",
     )
-    writeFileSync(
-      join(root, "postcss.config.cjs"),
-      "module.exports = { plugins: { autoprefixer: {} } }",
-    )
+    const custom =
+      'module.exports = { plugins: [["@stylexjs/babel-plugin", { aliases: { "~/*": ["./src/*"] } }]] }'
+    writeFileSync(join(root, "babel.config.cjs"), custom)
     await expect(initProject({ cwd: root })).rejects.toThrow(
-      "Existing PostCSS config requires manual review",
+      "Unsupported Babel config in babel.config.cjs",
     )
-    expect(existsSync(join(root, "babel.config.cjs"))).toBe(false)
-    expect(readFileSync(join(root, "postcss.config.cjs"), "utf8")).toContain(
-      "autoprefixer",
+    expect(readFileSync(join(root, "babel.config.cjs"), "utf8")).toBe(custom)
+    expect(readFileSync(join(root, "vite.config.ts"), "utf8")).toBe(
+      "export default { plugins: [] }",
     )
+  } finally {
+    rmSync(root, { recursive: true, force: true })
+  }
+})
+
+test("CLI preserves unsupported dynamic configuration without changes", async () => {
+  const root = mkdtempSync(join(tmpdir(), "yopem-dynamic-postcss-"))
+  try {
+    writeFileSync(
+      join(root, "package.json"),
+      JSON.stringify({ dependencies: { vite: "*", react: "*" } }),
+    )
+    writeFileSync(join(root, "tsconfig.json"), "{}")
+    writeFileSync(
+      join(root, "vite.config.ts"),
+      "export default { plugins: [] }",
+    )
+    const custom = "module.exports = { plugins: makePlugins() }"
+    writeFileSync(join(root, "postcss.config.cjs"), custom)
+    await expect(initProject({ cwd: root })).rejects.toThrow(
+      "Unsupported PostCSS config in postcss.config.cjs",
+    )
+    expect(readFileSync(join(root, "vite.config.ts"), "utf8")).toBe(
+      "export default { plugins: [] }",
+    )
+    expect(readFileSync(join(root, "postcss.config.cjs"), "utf8")).toBe(custom)
   } finally {
     rmSync(root, { recursive: true, force: true })
   }
