@@ -61,6 +61,25 @@ mdxPlugin.transform = function (code, id) {
 const config = defineConfig({
   build: { cssCodeSplit: false },
   css: { postcss: { plugins: [stylexPostcssPlugin] } },
+  environments: {
+    client: {
+      build: {
+        rolldownOptions: {
+          output: {
+            codeSplitting: {
+              groups: [
+                {
+                  name: "shiki-languages",
+                  test: /[\\/]@shikijs[\\/]langs[\\/]/,
+                  maxSize: 300_000,
+                },
+              ],
+            },
+          },
+        },
+      },
+    },
+  },
   optimizeDeps: { exclude: ["@resvg/resvg-js"] },
   resolve: { tsconfigPaths: true },
   plugins: [
