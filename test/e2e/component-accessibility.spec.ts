@@ -8,12 +8,9 @@ test.skip(
   "Set FULL_A11Y=1 to run the full component accessibility matrix",
 )
 
-const examples = (
+const previews = (
   await readdir(
-    resolve(
-      import.meta.dirname,
-      "../../apps/docs/src/components/examples/stylex",
-    ),
+    resolve(import.meta.dirname, "../../apps/docs/src/catalog/previews"),
   )
 )
   .filter((file) => file.endsWith(".tsx"))
@@ -22,20 +19,20 @@ const examples = (
   .slice(0, process.env.A11Y_LIMIT ? Number(process.env.A11Y_LIMIT) : undefined)
 
 for (const theme of ["light", "dark"] as const) {
-  for (const example of examples) {
-    test(`@full-a11y ${example} has no ${theme} theme violations`, async ({
+  for (const slug of previews) {
+    test(`@full-a11y ${slug} preview has no ${theme} theme violations`, async ({
       page,
     }) => {
-      await page.goto(`/examples/${example}?theme=${theme}`)
-      const root = page.locator("[data-example-root]")
-      await root.waitFor()
-      await page.waitForFunction(
-        () =>
-          document.fonts.status === "loaded" &&
-          !document.body.textContent?.includes("Loading example…"),
+      await page.addInitScript(
+        (value) => localStorage.setItem("yopem-ui-theme", value),
+        theme,
       )
+      await page.goto(`/components/${slug}`)
+      const preview = page.locator('[aria-label$="live preview"]')
+      await preview.waitFor()
+      await page.waitForFunction(() => document.fonts.status === "loaded")
       const result = await new AxeBuilder({ page })
-        .include("[data-example-root]")
+        .include('[aria-label$="live preview"]')
         .disableRules(["heading-order"])
         .analyze()
       expect(

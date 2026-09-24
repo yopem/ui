@@ -1,7 +1,7 @@
 import { sourceItems } from "@registry/items"
 
-import { getExampleDependencies } from "./example-dependencies"
-import { usageExamples } from "./usage"
+import { getSnippetDependencies } from "./snippet-dependencies"
+import { usageSnippets } from "./usage"
 
 export const compositionItems: Record<string, string[]> = {
   "date-picker": ["calendar", "popover", "button"],
@@ -30,7 +30,7 @@ export function getDocumentationItems(slug: string) {
     .filter((item) => item !== undefined)
 }
 
-export function getRequiredItems(slug: string) {
+export function getRequiredItems(slug: string, previewSource = "") {
   const required = new Map<string, (typeof sourceItems)[number]>()
   const visit = (name: string) => {
     if (required.has(name)) return
@@ -42,8 +42,9 @@ export function getRequiredItems(slug: string) {
   const items = getDocumentationItems(slug)
   if (items.length === 0) throw new Error("Component not found")
   for (const item of items) visit(item.name)
-  for (const name of getExampleDependencies(usageExamples[slug] ?? "")
-    .components)
+  for (const name of getSnippetDependencies(
+    `${usageSnippets[slug] ?? ""}\n${previewSource}`,
+  ).components)
     visit(name)
   return [...required.values()]
 }
@@ -66,12 +67,6 @@ export const guidePages = [
     url: "/docs/lint",
     content:
       "Oxlint rules enforce-styling-methods no-leaked-dom-style-props no-unsupported-style-props prefer-ui-primitives static-stylex valid-polymorphic-as configuration allowElements exceptions fixes",
-  },
-  {
-    title: "Examples",
-    url: "/examples",
-    content:
-      "Browse and search every live StyleX component example and pattern.",
   },
   {
     title: "Theming",

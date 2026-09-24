@@ -21,7 +21,7 @@ export const Route = createFileRoute("/components/")({
   head: () =>
     createSeo({
       description:
-        "Browse examples and copy complete Yopem UI StyleX component source.",
+        "Browse live component previews and copy complete Yopem UI StyleX source.",
       path: "/components",
       title: "Components · Yopem UI",
     }),
@@ -44,7 +44,7 @@ function ComponentsPage() {
       <DocsPage full>
         <DocsTitle>Components</DocsTitle>
         <DocsDescription>
-          Browse {catalog.length} components and patterns. Try an example, read
+          Browse {catalog.length} components and patterns. Try a preview, read
           the API, and copy the source into your project.
         </DocsDescription>
         <DocsBody>
@@ -72,8 +72,7 @@ function ComponentsPage() {
                   {item.title}
                 </Heading>
                 <Box as="span" {...stylex.props(catalogStyles.cardCount)}>
-                  {item.examples.length}{" "}
-                  {item.examples.length === 1 ? "example" : "examples"}
+                  {item.preview ? "Live preview" : "Usage and API"}
                 </Box>
               </Link>
             ))}

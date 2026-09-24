@@ -1,65 +1,20 @@
 import type { ComponentType, LazyExoticComponent } from "react"
 
-import { createElement, lazy } from "react"
+import { lazy } from "react"
 
-import { Paragraph } from "@/components/ui/paragraph"
-
-import type { ExampleModule } from "./example-modules"
-
-import { resolveExampleModule } from "./example-modules"
-
-export interface CatalogExample {
+export interface CatalogPreview {
   component: LazyExoticComponent<ComponentType>
-  name: string
-  preload: () => Promise<ReturnType<typeof resolveExampleModule>>
-  source: () => Promise<string>
+  title: string
 }
 
 export interface CatalogItem {
-  examples: CatalogExample[]
   name: string
+  preview?: CatalogPreview
   slug: string
   title: string
 }
 
-const modules = import.meta.glob<ExampleModule>(
-  "../components/examples/stylex/*.tsx",
-)
-const sources = import.meta.glob<string>(
-  "../components/examples/stylex/*.tsx",
-  {
-    query: "?raw",
-    import: "default",
-  },
-)
-const examples = Object.entries(modules)
-  .map(([path, load]) => {
-    const file = path.split("/").at(-1) ?? path
-    const match = /^p-(.+)-(\d+)\.tsx$/.exec(file)
-    const source = sources[path]
-    if (!match || !source) return null
-    return {
-      load,
-      name: file.slice(0, -4),
-      order: Number(match[2]),
-      slug: match[1],
-      source,
-    }
-  })
-  .filter((example) => example !== null)
-  .sort((left, right) =>
-    left.slug === right.slug
-      ? left.order - right.order
-      : left.slug.localeCompare(right.slug),
-  )
-
-const groups = new Map<string, typeof examples>()
-for (const example of examples) {
-  const group = groups.get(example.slug) ?? []
-  group.push(example)
-  groups.set(example.slug, group)
-}
-
+const modules = import.meta.glob<{ Preview: ComponentType }>("./previews/*.tsx")
 const compositionOverrides: Record<
   string,
   Pick<CatalogItem, "name" | "title">
@@ -74,47 +29,99 @@ const compositionOverrides: Record<
   },
 }
 
-export const catalog: CatalogItem[] = [...groups.values()]
-  .map((componentExamples) => {
-    const first = componentExamples[0]
-    if (!first) throw new Error("Empty example group")
-    const slug = first.slug
+const previewDescriptions: Record<string, string> = {
+  accordion: "Expandable sections",
+  alert: "Informational alert with guidance",
+  "alert-dialog": "Confirmation dialog",
+  autocomplete: "Searchable fruit selection",
+  avatar: "Profile image with initials fallback",
+  badge: "Compact status badge",
+  box: "Padded semantic section",
+  breadcrumb: "Page trail with overflow menu",
+  button: "Clickable default action",
+  calendar: "Date selection",
+  card: "Project creation card",
+  center: "Centered content block",
+  checkbox: "Checkbox with label",
+  "checkbox-group": "Multiple choice selection",
+  collapsible: "Expandable details list",
+  combobox: "Searchable options",
+  command: "Keyboard command menu",
+  "context-menu": "Right-click actions",
+  "date-picker": "Popover calendar selection",
+  dialog: "Edit profile form",
+  drawer: "Notification drawer",
+  empty: "Empty meetings state",
+  field: "Profile name field with help text",
+  fieldset: "Billing details fields",
+  flex: "Aligned items with spacing",
+  form: "Email validation form",
+  frame: "Section header and content frame",
+  grid: "Two-column team grid",
+  group: "Separated file action buttons",
+  heading: "Hierarchical page headings",
+  hstack: "Inbox with unread count",
+  input: "Single-line text entry",
+  "input-group": "Search field with icon addon",
+  kbd: "Keyboard shortcut keycaps",
+  layout: "Composable layout primitives",
+  link: "Link to component catalog",
+  menu: "Playback actions menu",
+  meter: "Storage usage meter",
+  navigation: "Segmented navigation",
+  "number-field": "Quantity stepper",
+  "otp-field": "One-time password entry",
+  pagination: "Page navigation",
+  paragraph: "Constrained reading-width text",
+  popover: "Feedback form popover",
+  "preview-card": "Link preview card",
+  progress: "Upload progress indicator",
+  "radio-group": "Single choice selection",
+  "scroll-area": "Scrollable content list",
+  select: "Dropdown selection",
+  separator: "Section heading and divider",
+  sheet: "Edit profile sheet",
+  skeleton: "Loading profile cards",
+  slider: "Adjustable range",
+  spinner: "Indeterminate loading spinner",
+  stack: "Vertically stacked status",
+  "style-props": "Responsive style props playground",
+  switch: "Labeled on/off switch",
+  table: "Projects data table",
+  tabs: "Switchable content panels",
+  textarea: "Multiline message input",
+  toast: "Notification toast",
+  toggle: "Toggleable button state",
+  "toggle-group": "Rich-text formatting toggles",
+  toolbar: "Formatting controls",
+  tooltip: "Helpful hint on hover",
+  vstack: "Vertical account status",
+}
+
+export const catalog: CatalogItem[] = Object.entries(modules)
+  .map(([path, load]): CatalogItem => {
+    const slug =
+      path
+        .split("/")
+        .at(-1)
+        ?.replace(/\.tsx$/, "") ?? path
     const override = compositionOverrides[slug]
-    const name = override?.name ?? componentIdentifier(slug)
+    const title = override?.title ?? titleCase(slug)
     return {
-      examples: componentExamples.map(({ load, name: exampleName, source }) => {
-        let promise:
-          | Promise<ReturnType<typeof resolveExampleModule>>
-          | undefined
-        const preload = () =>
-          (promise ??= load()
-            .then(resolveExampleModule)
-            .catch(() => ({ default: UnavailableExample })))
-        return {
-          component: lazy(preload),
-          name: exampleName,
-          preload,
-          source,
-        }
-      }),
-      name,
+      name: override?.name ?? componentIdentifier(slug),
+      preview: {
+        component: lazy(() =>
+          load().then((module) => ({ default: module.Preview })),
+        ),
+        title: previewDescriptions[slug] ?? `${title} in use`,
+      },
       slug,
-      title: override?.title ?? titleCase(slug),
+      title,
     }
   })
   .concat(
-    {
-      examples: [],
-      name: "Label",
-      slug: "label",
-      title: "Label",
-    },
-    {
-      examples: [],
-      name: "Sidebar",
-      slug: "sidebar",
-      title: "Sidebar",
-    },
+    { name: "Label", slug: "label", title: "Label" },
+    { name: "Sidebar", slug: "sidebar", title: "Sidebar" },
   )
   .toSorted((left, right) => left.title.localeCompare(right.title))
 
@@ -132,12 +139,4 @@ function titleCase(value: string) {
 
 function componentIdentifier(value: string) {
   return titleCase(value).replaceAll(" ", "")
-}
-
-export function UnavailableExample() {
-  return createElement(
-    Paragraph,
-    null,
-    "Example could not load. Refresh the page and try again.",
-  )
 }

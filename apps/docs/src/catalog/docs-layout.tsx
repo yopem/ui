@@ -49,7 +49,7 @@ export function DocumentationLayout({ children }: { children: ReactNode }) {
           >
             <DialogTitle>Documentation</DialogTitle>
             <DialogDescription>
-              Browse guides, components, and examples.
+              Browse guides, components, and previews.
             </DialogDescription>
             <DocsNavigation onNavigate={() => setMobileOpen(false)} />
             <ThemeToggle />

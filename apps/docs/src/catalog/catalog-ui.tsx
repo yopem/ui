@@ -1,7 +1,6 @@
 "use client"
 
 import { ScrollArea } from "@registry/components/ui/scroll-area"
-import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import { Suspense } from "react"
 
@@ -9,11 +8,11 @@ import { Box } from "@/components/ui/box"
 import { Flex } from "@/components/ui/flex"
 import { Heading } from "@/components/ui/heading"
 
-import type { CatalogExample } from "./components"
+import type { CatalogPreview } from "./components"
 
 import { CopyableCode } from "./code-block"
 import { catalogStyles } from "./docs-styles"
-const exampleHelpers = Object.entries(
+const previewHelpers = Object.entries(
   import.meta.glob<string>("../hooks/*.ts", {
     query: "?raw",
     import: "default",
@@ -25,61 +24,41 @@ const exampleHelpers = Object.entries(
   content,
 }))
 
-export function ExamplePanel({
-  examples,
-  label,
+export function PreviewPanel({
+  preview,
+  source,
 }: {
-  examples: {
-    example: CatalogExample
-    label: string
-    source: string
-  }[]
-  label: string
+  preview: CatalogPreview
+  source: string
 }) {
+  const Preview = preview.component
   return (
-    <Box as="section" {...stylex.props(catalogStyles.example)}>
+    <Box as="section" {...stylex.props(catalogStyles.previewSection)}>
       <Heading as="h3" {...stylex.props(localStyles.heading)}>
-        {label}
+        {preview.title}
       </Heading>
-      {examples.map((example) => {
-        const LazyExample = example.example.component
-        const exampleName =
-          label === example.label ? label : `${label}: ${example.label}`
-        return (
-          <Box
-            {...stylex.props(localStyles.example)}
-            key={example.example.name}
-          >
-            {examples.length > 1 ? (
-              <Heading as="h4" {...stylex.props(localStyles.value)}>
-                {example.label}
-              </Heading>
-            ) : null}
-            <ScrollArea
-              {...stylex.props(catalogStyles.preview, localStyles.preview)}
-              aria-label={`${exampleName} live preview`}
-              clampContentMinWidth={false}
-              overscrollContain
-            >
-              <Flex {...stylex.props(catalogStyles.previewContent)}>
-                <Suspense fallback={null}>
-                  <LazyExample />
-                </Suspense>
-              </Flex>
-            </ScrollArea>
-            <ExampleSource name={exampleName} source={example.source} />
-          </Box>
-        )
-      })}
+      <ScrollArea
+        {...stylex.props(catalogStyles.preview, localStyles.preview)}
+        aria-label={`${preview.title} live preview`}
+        clampContentMinWidth={false}
+        overscrollContain
+      >
+        <Flex {...stylex.props(catalogStyles.previewContent)}>
+          <Suspense fallback={null}>
+            <Preview />
+          </Suspense>
+        </Flex>
+      </ScrollArea>
+      <PreviewSource name={preview.title} source={source} />
     </Box>
   )
 }
 
-function ExampleSource({ name, source }: { name: string; source: string }) {
+function PreviewSource({ name, source }: { name: string; source: string }) {
   return (
     <>
-      <CopyableCode code={source} preview title={`${name} example`} />
-      {exampleHelpers.map((helper) =>
+      <CopyableCode code={source} preview title={`${name} source`} />
+      {previewHelpers.map((helper) =>
         source.includes(helper.name) ? (
           <CopyableCode
             key={helper.path}
@@ -94,22 +73,9 @@ function ExampleSource({ name, source }: { name: string; source: string }) {
 }
 
 const localStyles = stylex.create({
-  example: { minInlineSize: 0 },
+  heading: { marginBlock: "0 0.75rem" },
   preview: {
     borderEndStartRadius: 0,
     borderEndEndRadius: 0,
-  },
-  heading: {
-    fontFamily: tokens["--font-heading"],
-    fontSize: "1.125rem",
-    fontWeight: 600,
-    marginBlock: "0 0.75rem",
-    scrollMarginBlockStart: "6rem",
-  },
-  value: {
-    color: tokens["--muted-foreground"],
-    fontSize: "0.875rem",
-    fontWeight: 600,
-    marginBlock: "1.5rem 0.5rem",
   },
 })

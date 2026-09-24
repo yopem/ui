@@ -9,7 +9,7 @@ test("machine-readable documentation endpoints expose correct formats", async ({
     ["/docs/installation.md", "text/markdown", "# Installation"],
     ["/index.md", "text/markdown", "# Introduction"],
     ["/llms.txt", "text/plain", "/components/button.md"],
-    ["/sitemap.xml", "application/xml", "/examples/p-button-1"],
+    ["/sitemap.xml", "application/xml", "/components/button"],
   ] as const
 
   for (const [url, contentType, text] of cases) {
@@ -31,20 +31,22 @@ test("dynamic documentation routes return real 404 responses", async ({
     "/components/missing.md",
     "/docs/missing.md",
     "/components/missing",
+    "/examples",
+    "/examples/p-button-1",
   ]) {
     const response = await request.get(url)
     expect(response.status(), url).toBe(404)
   }
 })
 
-test("missing examples show the not found page", async ({ page }) => {
-  await page.goto("/examples/missing")
+test("missing components show the not found page", async ({ page }) => {
+  await page.goto("/components/missing")
   await expect(
-    page.getByRole("heading", { name: "Page not found", level: 1 }),
+    page.getByText("Component not found", { exact: true }),
   ).toBeVisible()
 })
 
-test("legacy StyleX route redirects and invalid themes normalize to light", async ({
+test("legacy StyleX route redirects and stored theme applies to docs", async ({
   page,
   request,
 }) => {
@@ -53,11 +55,8 @@ test("legacy StyleX route redirects and invalid themes normalize to light", asyn
   expect(redirect.status()).toBeLessThan(400)
   expect(redirect.headers().location).toBe("/components")
 
-  await page.goto("/examples/p-button-1?theme=invalid")
-  await expect(page.locator("[data-example-root]")).toHaveAttribute(
-    "data-theme",
-    "light",
-  )
+  await page.goto("/components/button")
+  await expect(page.locator("html")).toHaveAttribute("data-theme", "light")
 })
 
 test("Open Graph endpoint returns a cacheable PNG", async ({ request }) => {

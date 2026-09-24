@@ -22,7 +22,6 @@ const tree: Root = {
     { type: "page", name: "Style props", url: "/docs/style-props" },
     { type: "page", name: "Lint rules", url: "/docs/lint" },
     { type: "page", name: "Components", url: "/components" },
-    { type: "page", name: "Examples", url: "/examples" },
     { type: "separator", name: "Components" },
     ...catalog.map((item) => ({
       type: "page" as const,

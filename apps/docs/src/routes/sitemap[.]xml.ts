@@ -11,12 +11,8 @@ export const Route = createFileRoute("/sitemap.xml")({
         new Response(
           createSitemap([
             "/components",
-            "/examples",
             ...guidePages.map((page) => page.url),
             ...catalog.map((item) => `/components/${item.slug}`),
-            ...catalog.flatMap((item) =>
-              item.examples.map((example) => `/examples/${example.name}`),
-            ),
           ]),
           {
             headers: {

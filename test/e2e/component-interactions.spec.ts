@@ -1,4 +1,13 @@
+import type { Page } from "@playwright/test"
+
 import { expect, test } from "@playwright/test"
+
+async function openPreview(page: Page, slug: string) {
+  await page.goto(`/components/${slug}`)
+  await expect(
+    page.getByRole("button", { name: /^Copy .* usage$/ }).first(),
+  ).toBeEnabled()
+}
 
 test.beforeEach(async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" })
@@ -7,7 +16,7 @@ test.beforeEach(async ({ page }) => {
 test("dialog opens from keyboard, closes with Escape, and restores focus", async ({
   page,
 }) => {
-  await page.goto("/examples/p-dialog-1?theme=light")
+  await openPreview(page, "dialog")
   const trigger = page.getByRole("button", { name: "Open Dialog" })
 
   await trigger.focus()
@@ -26,7 +35,7 @@ test("dialog opens from keyboard, closes with Escape, and restores focus", async
 })
 
 test("tabs support arrow-key navigation", async ({ page }) => {
-  await page.goto("/examples/p-tabs-1?theme=light")
+  await openPreview(page, "tabs")
   const firstTab = page.getByRole("tab", { name: "Tab 1" })
   const secondTab = page.getByRole("tab", { name: "Tab 2" })
 
@@ -40,7 +49,7 @@ test("tabs support arrow-key navigation", async ({ page }) => {
 })
 
 test("checkbox toggles with Space", async ({ page }) => {
-  await page.goto("/examples/p-checkbox-1?theme=light")
+  await openPreview(page, "checkbox")
   const checkbox = page.getByRole("checkbox", {
     name: "Accept terms and conditions",
   })
@@ -53,14 +62,14 @@ test("checkbox toggles with Space", async ({ page }) => {
   await expect(checkbox).not.toBeChecked()
 })
 
-test("detached handles stay scoped to each example", async ({ page }) => {
+test("detached handles stay scoped to each preview", async ({ page }) => {
   const warnings: string[] = []
   page.on("console", (message) => {
     if (message.type() === "warning") warnings.push(message.text())
   })
 
-  await page.goto("/components/tooltip")
-  await expect(page.getByRole("button", { name: "Toggle bold" })).toHaveCount(3)
+  await openPreview(page, "tooltip")
+  await expect(page.getByRole("button", { name: "Hover me" })).toBeVisible()
 
   expect(warnings).not.toContainEqual(
     expect.stringContaining(
@@ -70,14 +79,14 @@ test("detached handles stay scoped to each example", async ({ page }) => {
 })
 
 test("toast appears after trigger click", async ({ page }) => {
-  await page.goto("/examples/p-toast-1?theme=light")
+  await openPreview(page, "toast")
   await page.getByRole("button", { name: "Default Toast" }).click()
 
   await expect(page.getByText("Event has been created")).toBeVisible()
 })
 
 test("accordion and collapsible expose expanded state", async ({ page }) => {
-  await page.goto("/examples/p-accordion-1?theme=light")
+  await openPreview(page, "accordion")
   const accordion = page.getByRole("button", { name: "What is Base UI?" })
   await accordion.focus()
   await page.keyboard.press("Enter")
@@ -86,7 +95,7 @@ test("accordion and collapsible expose expanded state", async ({ page }) => {
     page.getByText("Base UI is a library", { exact: false }),
   ).toBeVisible()
 
-  await page.goto("/examples/p-collapsible-1?theme=light")
+  await openPreview(page, "collapsible")
   const collapsible = page.getByRole("button", { name: "Show recovery keys" })
   await collapsible.focus()
   await page.keyboard.press("Space")
@@ -97,19 +106,19 @@ test("accordion and collapsible expose expanded state", async ({ page }) => {
 test("switch, toggle, and radio group support keyboard state changes", async ({
   page,
 }) => {
-  await page.goto("/examples/p-switch-1?theme=light")
+  await openPreview(page, "switch")
   const switchControl = page.getByRole("switch", { name: "Marketing emails" })
   await switchControl.focus()
   await page.keyboard.press("Space")
   await expect(switchControl).toBeChecked()
 
-  await page.goto("/examples/p-toggle-1?theme=light")
-  const toggle = page.getByRole("button", { name: "Toggle" })
+  await openPreview(page, "toggle")
+  const toggle = page.getByRole("button", { name: "Toggle", exact: true })
   await toggle.focus()
   await page.keyboard.press("Space")
   await expect(toggle).toHaveAttribute("aria-pressed", "true")
 
-  await page.goto("/examples/p-radio-group-1?theme=light")
+  await openPreview(page, "radio-group")
   const next = page.getByRole("radio", { name: "Next.js" })
   const vite = page.getByRole("radio", { name: "Vite" })
   await next.focus()
@@ -121,7 +130,7 @@ test("switch, toggle, and radio group support keyboard state changes", async ({
 test("select supports keyboard selection and restores focus", async ({
   page,
 }) => {
-  await page.goto("/examples/p-select-1?theme=light")
+  await openPreview(page, "select")
   const trigger = page.getByRole("combobox", { name: "Select framework" })
   await trigger.focus()
   await page.keyboard.press("ArrowDown")

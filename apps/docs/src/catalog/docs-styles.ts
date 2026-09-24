@@ -216,8 +216,7 @@ export const catalogStyles = stylex.create({
     letterSpacing: "-0.01em",
     margin: 0,
   },
-  example: { marginBlock: "2rem", minInlineSize: 0 },
-  exampleList: { display: "grid", gap: "1rem" },
+  previewSection: { marginBlock: "2rem", minInlineSize: 0 },
   empty: {
     borderColor: tokens["--border"],
     borderRadius: tokens["--radius-xl"],

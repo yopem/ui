@@ -1,56 +1,20 @@
 import AxeBuilder from "@axe-core/playwright"
 import { expect, test } from "@playwright/test"
-import { readdirSync } from "node:fs"
-import { resolve } from "node:path"
-
-const exampleCount = readdirSync(
-  resolve(
-    import.meta.dirname,
-    "../../apps/docs/src/components/examples/stylex",
-  ),
-).filter((file) => file.endsWith(".tsx")).length
-
-test("examples page lists, filters, copies, and opens examples", async ({
+test("component docs show live preview and copyable source", async ({
   context,
   page,
 }) => {
   await context.grantPermissions(["clipboard-read", "clipboard-write"])
-  await page.goto("/examples")
+  await page.goto("/components/button")
   await expect(
-    page.getByRole("heading", { name: "Browse examples", level: 1 }),
+    page.getByRole("button", { name: "Button", exact: true }),
   ).toBeVisible()
-  await expect(
-    page.getByText(`${exampleCount} examples`, { exact: true }),
-  ).toBeVisible()
-
-  await page.getByRole("searchbox", { name: "Search examples" }).fill("button")
-  await expect(page.getByText("40 examples", { exact: true })).toBeVisible()
-  const firstExample = page.getByRole("link", {
-    name: "Button 1",
-    exact: true,
-  })
-  await expect(firstExample).toBeVisible()
   await page
-    .getByRole("button", { name: "Copy Button 1 code", exact: true })
+    .getByRole("button", { name: "Copy Clickable default action source" })
     .click()
-  await expect(
-    page.getByRole("button", {
-      name: "Button 1 code copied",
-      exact: true,
-    }),
-  ).toBeVisible()
   await expect
     .poll(() => page.evaluate(() => navigator.clipboard.readText()))
-    .toContain("export default function Example")
-
-  await firstExample.click()
-  await page.waitForURL(
-    (url) =>
-      url.pathname === "/examples/p-button-1" &&
-      (url.searchParams.get("theme") === "light" ||
-        url.searchParams.get("theme") === "dark"),
-  )
-  await expect(page.locator("[data-example-root]")).toBeVisible()
+    .toContain("function Preview")
 })
 
 test("sidebar links to llms.txt", async ({ page }) => {
@@ -74,7 +38,7 @@ test("unknown routes show the docs not found page", async ({ page }) => {
   ).toBeVisible()
 })
 
-test("MDX guides render sections, anchors, and copyable examples", async ({
+test("MDX guides render sections, anchors, and copyable snippets", async ({
   page,
 }) => {
   await page.setViewportSize({ width: 1600, height: 900 })
@@ -127,18 +91,6 @@ test("minimal setup and StyleX customization are documented", async ({
 })
 
 test("component docs cover setup, source files, and API", async ({ page }) => {
-  await page.addInitScript(() => {
-    new MutationObserver((records) => {
-      if (
-        records.some((record) =>
-          [...record.addedNodes].some((node) =>
-            node.textContent?.includes("Loading example"),
-          ),
-        )
-      )
-        document.documentElement.dataset.loadingExampleSeen = "true"
-    }).observe(document, { childList: true, subtree: true })
-  })
   const missingStyles: string[] = []
   page.on("response", (response) => {
     if (
@@ -209,33 +161,22 @@ test("component docs cover setup, source files, and API", async ({ page }) => {
   await expect(api.getByRole("row").filter({ hasText: "onClick" })).toHaveCount(
     0,
   )
-  const defaultExample = page
-    .getByRole("heading", { name: "Default", exact: true })
-    .locator("..")
-  await expect(defaultExample).toBeVisible()
   await expect(
-    page.getByRole("button", { name: "Copy Default example", exact: true }),
+    page.getByRole("heading", {
+      name: "Clickable default action",
+      exact: true,
+    }),
   ).toBeVisible()
   await expect(
-    defaultExample.getByRole("button", { name: "View code", exact: true }),
-  ).toHaveCount(0)
+    page.getByRole("button", { name: "Copy Clickable default action source" }),
+  ).toBeVisible()
   const viewCode = page.getByRole("button", { name: "View code", exact: true })
   const collapsedCodeCount = await viewCode.count()
   await viewCode.first().click()
   await expect(viewCode).toHaveCount(collapsedCodeCount - 1)
-  expect(
-    await page.locator("html").getAttribute("data-loading-example-seen"),
-  ).toBeNull()
-  await expect(
-    page.getByRole("heading", { name: "Button variant", exact: true }),
-  ).toBeVisible()
-  await expect(
-    page.getByRole("heading", { name: "Button size", exact: true }),
-  ).toBeVisible()
   await expect(
     page.getByText(/inherited React and HTML properties/i),
   ).toHaveCount(0)
-  await expect(page.getByText(/Browse all \d+ examples/i)).toHaveCount(0)
 })
 
 test("copy buttons copy source, not installation commands", async ({
@@ -377,11 +318,11 @@ test("desktop table of contents stays fixed and tracks the section", async ({
   await page.setViewportSize({ width: 1600, height: 900 })
   await page.goto("/components/accordion")
   const contents = page.getByRole("complementary", { name: "On this page" })
-  const examples = contents.getByRole("link", { name: "Examples", exact: true })
+  const preview = contents.getByRole("link", { name: "Preview", exact: true })
   await expect(contents).toBeVisible()
 
-  await examples.click()
-  await expect(examples).toHaveAttribute("aria-current", "location")
+  await preview.click()
+  await expect(preview).toHaveAttribute("aria-current", "location")
   const fixedTop = (await contents.boundingBox())?.y
   await page.mouse.wheel(0, 300)
   await expect
@@ -415,26 +356,6 @@ test("search supports keyboard opening, empty results, errors, and focus restora
   await trigger.press("Control+KeyK")
   await input.fill("button")
   await expect(dialog.getByRole("status")).toContainText("Search unavailable")
-})
-
-test("examples pagination resets when filtering and reports no matches", async ({
-  page,
-}) => {
-  await page.goto("/examples")
-  const cards = page.getByRole("main").locator("article article")
-  await expect(cards).toHaveCount(24)
-  await page.getByRole("button", { name: "Show 24 more" }).click()
-  await expect(cards).toHaveCount(48)
-
-  const search = page.getByRole("searchbox", { name: "Search examples" })
-  await search.fill("button")
-  await expect(cards).toHaveCount(24)
-  await expect(page.getByRole("button", { name: "Show 16 more" })).toBeVisible()
-  await search.fill("no-such-example")
-  await expect(
-    page.getByText("No examples match “no-such-example”."),
-  ).toBeVisible()
-  await expect(cards).toHaveCount(0)
 })
 
 test("mobile navigation changes theme and restores trigger focus", async ({

@@ -3,7 +3,7 @@ import { Link, createFileRoute, notFound } from "@tanstack/react-router"
 import { useState } from "react"
 
 import { ApiReference } from "@/catalog/api-reference"
-import { ExamplePanel } from "@/catalog/catalog-ui"
+import { PreviewPanel } from "@/catalog/catalog-ui"
 import { CopyableCode } from "@/catalog/code-block"
 import { getCatalogItem } from "@/catalog/components"
 import { DocumentationLayout } from "@/catalog/docs-layout"
@@ -13,10 +13,9 @@ import {
   DocsPage,
   DocsTitle,
 } from "@/catalog/docs-page"
-import { catalogStyles, docsStyles } from "@/catalog/docs-styles"
+import { docsStyles } from "@/catalog/docs-styles"
 import { getDocumentation } from "@/catalog/docs.functions"
 import { Box } from "@/components/ui/box"
-import { Grid } from "@/components/ui/grid"
 import { Heading } from "@/components/ui/heading"
 import { Paragraph } from "@/components/ui/paragraph"
 import { Tabs, TabsList, TabsPanel, TabsTab } from "@/components/ui/tabs"
@@ -29,7 +28,7 @@ export const Route = createFileRoute("/components/$name")({
   head: ({ params }) => {
     const title = getCatalogItem(params.name)?.title ?? "Component"
     return createSeo({
-      description: `${title} source, examples, usage, and API reference for React and StyleX.`,
+      description: `${title} source, preview, usage, and API reference for React and StyleX.`,
       path: `/components/${params.name}`,
       title: `${title} · Yopem UI`,
     })
@@ -41,7 +40,7 @@ export const Route = createFileRoute("/components/$name")({
 const toc = [
   { title: "Overview", url: "#overview", depth: 2 },
   { title: "Installation", url: "#installation", depth: 2 },
-  { title: "Examples", url: "#examples", depth: 2 },
+  { title: "Preview", url: "#preview", depth: 2 },
   { title: "Usage", url: "#usage", depth: 2 },
   { title: "API reference", url: "#api-reference", depth: 2 },
 ]
@@ -93,7 +92,7 @@ function ComponentPage() {
               />
               <Paragraph {...stylex.props(docsStyles.p)}>
                 Run from your project root. The CLI installs required
-                components, shared files, and packages. Examples may need
+                components, shared files, and packages. Previews may need
                 additional components. Existing files are preserved. To refresh
                 installed source, use update; locally edited files need an
                 explicit --force to overwrite.
@@ -160,33 +159,11 @@ function ComponentPage() {
               </Box>
             </TabsPanel>
           </Tabs>
-          <Heading as="h2" {...stylex.props(docsStyles.h2)} id="examples">
-            Examples
+          <Heading as="h2" {...stylex.props(docsStyles.h2)} id="preview">
+            Preview
           </Heading>
-          <Paragraph {...stylex.props(docsStyles.p)}>
-            Component-specific props and their available values. Each example
-            includes its source directly.
-          </Paragraph>
-          {data.examples.length ? (
-            <Grid {...stylex.props(catalogStyles.exampleList)}>
-              {data.examples.map((group) => {
-                const examples = group.examples.flatMap((example) => {
-                  const catalogExample = item.examples.find(
-                    (entry) => entry.name === example.name,
-                  )
-                  return catalogExample
-                    ? [{ ...example, example: catalogExample }]
-                    : []
-                })
-                return examples.length ? (
-                  <ExamplePanel
-                    examples={examples}
-                    key={`${name}:${group.label}`}
-                    label={group.label}
-                  />
-                ) : null
-              })}
-            </Grid>
+          {item.preview && data.previewSource ? (
+            <PreviewPanel preview={item.preview} source={data.previewSource} />
           ) : (
             <Paragraph {...stylex.props(docsStyles.p)}>
               Use the composition in Usage below to start with {item.title}.

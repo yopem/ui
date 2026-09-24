@@ -3,19 +3,23 @@ import type { Page } from "@playwright/test"
 import AxeBuilder from "@axe-core/playwright"
 import { expect, test } from "@playwright/test"
 
-async function openLayoutExample(
+async function openLayoutPreview(
   page: Page,
   theme: "light" | "dark" = "light",
 ) {
-  await page.goto(`/examples/p-layout-1?theme=${theme}`)
-  await expect(page.locator("[data-example-root]")).toBeVisible()
+  await page.addInitScript(
+    (value) => localStorage.setItem("yopem-ui-theme", value),
+    theme,
+  )
+  await page.goto("/components/layout")
+  await expect(page.getByTestId("layout-root")).toBeVisible()
 }
 
 test.describe("layout and typography primitives", () => {
   test("renders all ten primitives with semantic native elements", async ({
     page,
   }) => {
-    await openLayoutExample(page)
+    await openLayoutPreview(page)
 
     for (const testId of [
       "box",
@@ -60,7 +64,7 @@ test.describe("layout and typography primitives", () => {
   test("preserves layout geometry, gap, direction, and RTL", async ({
     page,
   }) => {
-    await openLayoutExample(page)
+    await openLayoutPreview(page)
 
     await expect(page.getByTestId("flex")).toHaveCSS("flex-direction", "row")
     await expect(page.getByTestId("flex")).toHaveCSS("gap", "12px")
@@ -126,7 +130,7 @@ test.describe("layout and typography primitives", () => {
   test("respects spacing tokens and xstyle over layout defaults and props", async ({
     page,
   }) => {
-    await openLayoutExample(page)
+    await openLayoutPreview(page)
     await page
       .getByTestId("layout-root")
       .evaluate((element) => element.style.setProperty("--spacing", "8px"))
@@ -144,7 +148,7 @@ test.describe("layout and typography primitives", () => {
   test("keeps responsive overrides on the same native tag", async ({
     page,
   }) => {
-    await openLayoutExample(page)
+    await openLayoutPreview(page)
     const responsive = page.getByTestId("responsive-tag")
 
     await page.setViewportSize({ height: 800, width: 500 })
@@ -159,7 +163,7 @@ test.describe("layout and typography primitives", () => {
   test("keeps native navigation, keyboard focus, refs, and form names", async ({
     page,
   }) => {
-    await openLayoutExample(page)
+    await openLayoutPreview(page)
 
     const name = page.getByLabel("Name")
     await expect(name).toHaveAttribute("name", "name")
@@ -185,7 +189,7 @@ test.describe("layout and typography primitives", () => {
     test(`has no detectable accessibility violations in ${theme} theme`, async ({
       page,
     }) => {
-      await openLayoutExample(page, theme)
+      await openLayoutPreview(page, theme)
       const results = await new AxeBuilder({ page }).analyze()
       expect(
         results.violations.map(({ help, id, nodes }) => ({

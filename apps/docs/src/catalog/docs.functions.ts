@@ -3,8 +3,7 @@ import { rewriteImports } from "@registry/source-files"
 import { createServerFn } from "@tanstack/react-start"
 
 import { getDocumentationItems, getRequiredItems } from "./docs-data"
-import { selectExamples } from "./select-examples"
-import { usageExamples } from "./usage"
+import { usageSnippets } from "./usage"
 
 const sources = import.meta.glob<string>(
   "../../../../packages/registry/src/**/*.{ts,tsx,css}",
@@ -17,13 +16,10 @@ const compilerSources = import.meta.glob<string>(
   "../../../../packages/compiler/src/*.ts",
   { query: "?raw", import: "default" },
 )
-const exampleSources = import.meta.glob<string>(
-  "../components/examples/stylex/*.tsx",
-  {
-    query: "?raw",
-    import: "default",
-  },
-)
+const previewSources = import.meta.glob<string>("./previews/*.tsx", {
+  query: "?raw",
+  import: "default",
+})
 
 export const getDocumentation = createServerFn({ method: "GET" })
   .validator((slug: string) => {
@@ -33,7 +29,14 @@ export const getDocumentation = createServerFn({ method: "GET" })
   })
   .handler(async ({ data: slug }) => {
     const items = getDocumentationItems(slug)
-    const allItems = getRequiredItems(slug)
+    const previewLoader = previewSources[`./previews/${slug}.tsx`]
+    const previewSource = previewLoader
+      ? (await previewLoader()).replaceAll(
+          "@/lib/table-wrapper",
+          "@tanstack/react-table",
+        )
+      : null
+    const allItems = getRequiredItems(slug, previewSource ?? "")
     const files = [
       ...new Map(
         allItems.flatMap((item) => item.files).map((file) => [file.path, file]),
@@ -55,37 +58,11 @@ export const getDocumentation = createServerFn({ method: "GET" })
           id: `${item.name}:${part.name}`,
         }))
       })
-    const examples = await Promise.all(
-      Object.entries(exampleSources)
-        .filter(([path]) => path.includes(`/p-${slug}-`))
-        .map(async ([path, load]) => ({
-          name:
-            path
-              .split("/")
-              .at(-1)
-              ?.replace(/\.tsx$/, "") ?? path,
-          source: await load(),
-        })),
-    )
-    examples.sort(
-      (left, right) =>
-        Number(left.name.split("-").at(-1)) -
-        Number(right.name.split("-").at(-1)),
-    )
     return {
       title: items.map((item) => item.title).join(" + "),
       description: items.map((item) => item.description).join(" "),
-      usage: usageExamples[slug] ?? "",
-      examples: selectExamples(api, examples).map((group) => ({
-        ...group,
-        examples: group.examples.map((example) => ({
-          ...example,
-          source: example.source.replaceAll(
-            "@/lib/table-wrapper",
-            "@tanstack/react-table",
-          ),
-        })),
-      })),
+      usage: usageSnippets[slug] ?? "",
+      previewSource,
       notes: items.flatMap((item) => {
         const doc = componentDocs.find((entry) => entry.name === item.name)
         return doc ? [doc.usage, ...doc.notes] : []

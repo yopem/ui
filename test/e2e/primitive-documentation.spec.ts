@@ -98,7 +98,7 @@ test("guides stay readable and navigable at 320px", async ({ page }) => {
 })
 
 for (const [slug, name] of components) {
-  test(`${name} has usage, a live example and an API reference`, async ({
+  test(`${name} has usage, a live preview and an API reference`, async ({
     page,
   }) => {
     await page.goto(`/components/${slug}`)

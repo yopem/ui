@@ -52,14 +52,9 @@ export function createComponentText(
       (file) => `### ${file.target}\n\n\`\`\`\n${file.content.trim()}\n\`\`\``,
     )
     .join("\n\n")
-  const examples = data.examples
-    .flatMap((group) =>
-      group.examples.map(
-        (example) =>
-          `### ${group.label}: ${example.label}\n\n\`\`\`tsx\n${example.source.trim()}\n\`\`\``,
-      ),
-    )
-    .join("\n\n")
+  const preview = data.previewSource
+    ? `\`\`\`tsx\n${data.previewSource.trim()}\n\`\`\``
+    : "No preview. See Usage below."
   const api = data.api
     .map((part) => {
       const properties = [...part.parameters, ...part.props]
@@ -72,7 +67,7 @@ export function createComponentText(
     })
     .join("\n\n")
 
-  return `# ${title}\n\n${data.description}\n\n## Installation\n\nCLI: \`bunx @yopem-ui/cli init\` (supported frameworks), then \`bunx @yopem-ui/cli add <component>\` (update: \`bunx @yopem-ui/cli update <component>\`). For unsupported setups, configure StyleX manually. Manual installation:\n\n${dependencies.map((dependency) => `- ${dependency}`).join("\n")}\n\nRequired components and files: ${data.requiredItems.map((item) => item.title).join(", ")}.\n\n${files}\n\n## Examples\n\n${examples || "No examples."}\n\n## Usage\n\n${data.notes.join("\n\n")}\n\n\`\`\`tsx\n${data.usage.trim()}\n\`\`\`\n\n## API reference\n\n${api}\n`
+  return `# ${title}\n\n${data.description}\n\n## Installation\n\nCLI: \`bunx @yopem-ui/cli init\` (supported frameworks), then \`bunx @yopem-ui/cli add <component>\` (update: \`bunx @yopem-ui/cli update <component>\`). For unsupported setups, configure StyleX manually. Manual installation:\n\n${dependencies.map((dependency) => `- ${dependency}`).join("\n")}\n\nRequired components and files: ${data.requiredItems.map((item) => item.title).join(", ")}.\n\n${files}\n\n## Preview\n\n${preview}\n\n## Usage\n\n${data.notes.join("\n\n")}\n\n\`\`\`tsx\n${data.usage.trim()}\n\`\`\`\n\n## API reference\n\n${api}\n`
 }
 
 export function createGuideText(page: { content: string; title: string }) {

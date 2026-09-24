@@ -79,6 +79,7 @@ export function ScrollArea({
   fill = false,
   clampContentMinWidth = true,
   overscrollContain = false,
+  "aria-label": ariaLabel,
   ...restProps
 }: StyleComponentProps<
   ScrollAreaPrimitive.Root.Props,
@@ -93,7 +94,7 @@ export function ScrollArea({
   const props: Omit<typeof restProps, keyof StyleProps> = restProps
   const xstyle = consumerXstyle
 
-  const label = props["aria-label"] ?? "Scrollable content"
+  const label = ariaLabel ?? "Scrollable content"
   return (
     <ScrollAreaPrimitive.Root
       {...mergeStyleProps(stylexProps(className, styles.root, xstyle), props)}
@@ -107,6 +108,9 @@ export function ScrollArea({
         )}
         aria-label={label}
         data-slot="scroll-area-viewport"
+        // Base UI sets role="presentation"; a labeled scroll viewport needs a non-landmark role.
+        // oxlint-disable-next-line jsx-a11y/prefer-tag-over-role
+        render={<div role="group" />}
         tabIndex={0}
       >
         <ScrollAreaPrimitive.Content

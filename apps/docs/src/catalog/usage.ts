@@ -1,5 +1,5 @@
 // Standalone TSX files use the standard @ alias for src.
-export const usageExamples: Record<string, string> = {
+export const usageSnippets: Record<string, string> = {
   accordion: `"use client"
 
 import {
@@ -9,7 +9,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion"
 
-export default function Example() {
+export function Preview() {
   return (
     <Accordion defaultValue={["shipping"]}>
       <AccordionItem value="shipping">
@@ -30,7 +30,7 @@ import {
   AlertTitle,
 } from "@/components/ui/alert"
 
-export default function Example() {
+export function Preview() {
   return (
     <Alert>
       <AlertTitle>Backup complete</AlertTitle>
@@ -53,7 +53,7 @@ import {
 } from "@/components/ui/alert-dialog"
 import { Button } from "@/components/ui/button"
 
-export default function Example() {
+export function Preview() {
   return (
     <AlertDialog>
       <AlertDialogTrigger render={<Button variant="outline" />}>
@@ -85,7 +85,7 @@ import {
   AutocompletePopup,
 } from "@/components/ui/autocomplete"
 
-export default function Example() {
+export function Preview() {
   const items = [
     { label: "Apple", value: "apple" },
     { label: "Banana", value: "banana" },
@@ -116,7 +116,7 @@ import {
   AvatarImage,
 } from "@/components/ui/avatar"
 
-export default function Example() {
+export function Preview() {
   return (
     <Avatar>
       <AvatarImage src="/avatar.jpg" alt="Alex Rivera" />
@@ -129,7 +129,7 @@ export default function Example() {
 
 import { Badge } from "@/components/ui/badge"
 
-export default function Example() {
+export function Preview() {
   return <Badge>Published</Badge>
 }
 `,
@@ -144,7 +144,7 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
 
-export default function Example() {
+export function Preview() {
   return (
     <Breadcrumb>
       <BreadcrumbList>
@@ -164,7 +164,7 @@ export default function Example() {
 
 import { Button } from "@/components/ui/button"
 
-export default function Example() {
+export function Preview() {
   return (
     <Button type="button" onClick={() => window.alert("Hello!")}>
       Say hello
@@ -177,7 +177,7 @@ export default function Example() {
 import { Calendar } from "@/components/ui/calendar"
 import { useState } from "react"
 
-export default function Example() {
+export function Preview() {
   const [date, setDate] = useState<Date | undefined>()
 
   return <Calendar mode="single" selected={date} onSelect={setDate} />
@@ -194,7 +194,7 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 
-export default function Example() {
+export function Preview() {
   return (
     <Card>
       <CardHeader>
@@ -212,7 +212,7 @@ export default function Example() {
 import { Checkbox } from "@/components/ui/checkbox"
 import { Label } from "@/components/ui/label"
 
-export default function Example() {
+export function Preview() {
   return (
     <Label>
       <Checkbox name="terms" />
@@ -227,7 +227,7 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { CheckboxGroup } from "@/components/ui/checkbox-group"
 import { Label } from "@/components/ui/label"
 
-export default function Example() {
+export function Preview() {
   return (
     <CheckboxGroup aria-label="Email topics" defaultValue={["releases"]}>
       <Label>
@@ -248,7 +248,7 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible"
 
-export default function Example() {
+export function Preview() {
   return (
     <Collapsible>
       <CollapsibleTrigger>Show shipping details</CollapsibleTrigger>
@@ -268,7 +268,7 @@ import {
   ComboboxPopup,
 } from "@/components/ui/combobox"
 
-export default function Example() {
+export function Preview() {
   const items = [
     { label: "Apple", value: "apple" },
     { label: "Banana", value: "banana" },
@@ -302,7 +302,7 @@ import {
   CommandPanel,
 } from "@/components/ui/command"
 
-export default function Example() {
+export function Preview() {
   const items = [
     { label: "New project", value: "new-project" },
     { label: "Open settings", value: "settings" },
@@ -345,7 +345,7 @@ import * as stylex from "@stylexjs/stylex"
 
 const styles = stylex.create({ trigger: { padding: "2rem" } })
 
-export default function Example() {
+export function Preview() {
   return (
     <ContextMenu>
       <ContextMenuTrigger tabIndex={0} {...stylex.props(styles.trigger)}>
@@ -374,7 +374,7 @@ import {
 } from "@/components/ui/popover"
 import { useState } from "react"
 
-export default function Example() {
+export function Preview() {
   const [date, setDate] = useState<Date | undefined>()
 
   return (
@@ -404,7 +404,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 
-export default function Example() {
+export function Preview() {
   return (
     <Dialog>
       <DialogTrigger render={<Button variant="outline" />}>
@@ -439,7 +439,7 @@ import {
   DrawerTrigger,
 } from "@/components/ui/drawer"
 
-export default function Example() {
+export function Preview() {
   return (
     <Drawer>
       <DrawerTrigger render={<Button variant="outline" />}>
@@ -469,7 +469,7 @@ import {
   EmptyTitle,
 } from "@/components/ui/empty"
 
-export default function Example() {
+export function Preview() {
   return (
     <Empty>
       <EmptyHeader>
@@ -491,7 +491,7 @@ import {
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 
-export default function Example() {
+export function Preview() {
   return (
     <Field name="name">
       <FieldLabel>Name</FieldLabel>
@@ -507,7 +507,7 @@ import { Field, FieldLabel } from "@/components/ui/field"
 import { Fieldset, FieldsetLegend } from "@/components/ui/fieldset"
 import { Input } from "@/components/ui/input"
 
-export default function Example() {
+export function Preview() {
   return (
     <Fieldset>
       <FieldsetLegend>Billing details</FieldsetLegend>
@@ -526,7 +526,7 @@ import { Field, FieldError, FieldLabel } from "@/components/ui/field"
 import { Form } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 
-export default function Example() {
+export function Preview() {
   return (
     <Form
       onSubmit={(event) => {
@@ -556,7 +556,7 @@ import {
   FrameTitle,
 } from "@/components/ui/frame"
 
-export default function Example() {
+export function Preview() {
   return (
     <Frame>
       <FrameHeader>
@@ -573,7 +573,7 @@ export default function Example() {
 
 import { Box } from "@/components/ui/box"
 
-export default function Example() {
+export function Preview() {
   return (
     <Box as="section" p={4}>
       Content inside a semantic Box.
@@ -585,7 +585,7 @@ export default function Example() {
 
 import { Flex } from "@/components/ui/flex"
 
-export default function Example() {
+export function Preview() {
   return (
     <Flex alignItems="center" gap={4}>
       <span>First</span>
@@ -598,7 +598,7 @@ export default function Example() {
 
 import { VStack } from "@/components/ui/vstack"
 
-export default function Example() {
+export function Preview() {
   return (
     <VStack>
       <strong>Account ready</strong>
@@ -611,7 +611,7 @@ export default function Example() {
 
 import { HStack } from "@/components/ui/hstack"
 
-export default function Example() {
+export function Preview() {
   return (
     <HStack>
       <span>Inbox</span>
@@ -624,7 +624,7 @@ export default function Example() {
 
 import { Stack } from "@/components/ui/stack"
 
-export default function Example() {
+export function Preview() {
   return (
     <Stack>
       <strong>Project status</strong>
@@ -637,7 +637,7 @@ export default function Example() {
 
 import { Grid } from "@/components/ui/grid"
 
-export default function Example() {
+export function Preview() {
   return (
     <Grid gridTemplateColumns="repeat(2, minmax(0, 1fr))" gap={4}>
       <span>Design</span>
@@ -650,7 +650,7 @@ export default function Example() {
 
 import { Center } from "@/components/ui/center"
 
-export default function Example() {
+export function Preview() {
   return <Center minBlockSize="8rem">Centered content</Center>
 }
 `,
@@ -658,7 +658,7 @@ export default function Example() {
 
 import { Link } from "@/components/ui/link"
 
-export default function Example() {
+export function Preview() {
   return <Link href="/docs">Read the documentation</Link>
 }
 `,
@@ -666,7 +666,7 @@ export default function Example() {
 
 import { Paragraph } from "@/components/ui/paragraph"
 
-export default function Example() {
+export function Preview() {
   return <Paragraph>Keep body copy in a native paragraph.</Paragraph>
 }
 `,
@@ -674,7 +674,7 @@ export default function Example() {
 
 import { Heading } from "@/components/ui/heading"
 
-export default function Example() {
+export function Preview() {
   return (
     <>
       <Heading as="h1">Page title</Heading>
@@ -688,7 +688,7 @@ export default function Example() {
 import { Button } from "@/components/ui/button"
 import { Group, GroupSeparator, groupItemStyles } from "@/components/ui/group"
 
-export default function Example() {
+export function Preview() {
   return (
     <Group aria-label="History">
       <Button xstyle={groupItemStyles.item} variant="outline" onClick={() => window.alert("Undo")}>
@@ -707,7 +707,7 @@ export default function Example() {
 import { Field, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 
-export default function Example() {
+export function Preview() {
   return (
     <Field>
       <FieldLabel>Email</FieldLabel>
@@ -725,7 +725,7 @@ import {
   InputGroupText,
 } from "@/components/ui/input-group"
 
-export default function Example() {
+export function Preview() {
   return (
     <InputGroup>
       <InputGroupInput aria-label="Website address" placeholder="example.com" />
@@ -740,7 +740,7 @@ export default function Example() {
 
 import { Kbd } from "@/components/ui/kbd"
 
-export default function Example() {
+export function Preview() {
   return (
     <p>
       Press <Kbd>Escape</Kbd> to close.
@@ -753,7 +753,7 @@ export default function Example() {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 
-export default function Example() {
+export function Preview() {
   return (
     <>
       <Label htmlFor="display-name">Display name</Label>
@@ -773,7 +773,7 @@ import {
   MenuTrigger,
 } from "@/components/ui/menu"
 
-export default function Example() {
+export function Preview() {
   return (
     <Menu>
       <MenuTrigger render={<Button variant="outline" />}>Actions</MenuTrigger>
@@ -801,7 +801,7 @@ import {
   MeterValue,
 } from "@/components/ui/meter"
 
-export default function Example() {
+export function Preview() {
   return (
     <Meter value={75}>
       <MeterLabel>Storage used</MeterLabel>
@@ -815,7 +815,7 @@ export default function Example() {
 `,
   navigation: `"use client"
 
-export default function Example() {
+export function Preview() {
   return (
     <nav aria-label="Main navigation">
       <ul>
@@ -845,7 +845,7 @@ import {
   NumberFieldInput,
 } from "@/components/ui/number-field"
 
-export default function Example() {
+export function Preview() {
   return (
     <NumberField defaultValue={1} min={1}>
       <NumberFieldGroup>
@@ -861,7 +861,7 @@ export default function Example() {
 
 import { OTPField, OTPFieldInput } from "@/components/ui/otp-field"
 
-export default function Example() {
+export function Preview() {
   return (
     <fieldset>
       <legend>Verification code</legend>
@@ -888,7 +888,7 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination"
 
-export default function Example() {
+export function Preview() {
   return (
     <Pagination>
       <PaginationContent>
@@ -923,7 +923,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 
-export default function Example() {
+export function Preview() {
   return (
     <Popover>
       <PopoverTrigger render={<Button variant="outline" />}>
@@ -948,7 +948,7 @@ import {
   PreviewCardTrigger,
 } from "@/components/ui/preview-card"
 
-export default function Example() {
+export function Preview() {
   return (
     <PreviewCard>
       <PreviewCardTrigger href="https://example.com">
@@ -966,7 +966,7 @@ export default function Example() {
 
 import { Progress } from "@/components/ui/progress"
 
-export default function Example() {
+export function Preview() {
   return <Progress aria-label="Upload progress" value={60} />
 }
 `,
@@ -975,7 +975,7 @@ export default function Example() {
 import { Label } from "@/components/ui/label"
 import { Radio, RadioGroup } from "@/components/ui/radio-group"
 
-export default function Example() {
+export function Preview() {
   return (
     <RadioGroup aria-label="Delivery speed" defaultValue="standard">
       <Label>
@@ -995,7 +995,7 @@ import * as stylex from "@stylexjs/stylex"
 
 const styles = stylex.create({ viewport: { blockSize: "12rem" } })
 
-export default function Example() {
+export function Preview() {
   return (
     <ScrollArea {...stylex.props(styles.viewport)}>
       <ul aria-label="Versions">
@@ -1018,7 +1018,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 
-export default function Example() {
+export function Preview() {
   const items = [
     { label: "Vite", value: "vite" },
     { label: "Astro", value: "astro" },
@@ -1046,7 +1046,7 @@ export default function Example() {
 
 import { Separator } from "@/components/ui/separator"
 
-export default function Example() {
+export function Preview() {
   return (
     <>
       <p>Account settings</p>
@@ -1070,7 +1070,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet"
 
-export default function Example() {
+export function Preview() {
   return (
     <Sheet>
       <SheetTrigger render={<Button variant="outline" />}>
@@ -1108,7 +1108,7 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar"
 
-export default function Example() {
+export function Preview() {
   return (
     <SidebarProvider>
       <Sidebar>
@@ -1150,7 +1150,7 @@ import * as stylex from "@stylexjs/stylex"
 
 const styles = stylex.create({ placeholder: { blockSize: "1rem", inlineSize: "12rem" } })
 
-export default function Example() {
+export function Preview() {
   return (
     <div role="status" aria-label="Loading profile">
       <Skeleton
@@ -1165,7 +1165,7 @@ export default function Example() {
 
 import { Slider } from "@/components/ui/slider"
 
-export default function Example() {
+export function Preview() {
   return <Slider aria-label="Volume" defaultValue={50} />
 }
 `,
@@ -1173,7 +1173,7 @@ export default function Example() {
 
 import { Spinner } from "@/components/ui/spinner"
 
-export default function Example() {
+export function Preview() {
   return <Spinner aria-label="Loading" />
 }
 `,
@@ -1182,7 +1182,7 @@ export default function Example() {
 import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
 
-export default function Example() {
+export function Preview() {
   return (
     <Label>
       <Switch name="notifications" /> Enable notifications
@@ -1202,7 +1202,7 @@ import {
   TableRow,
 } from "@/components/ui/table"
 
-export default function Example() {
+export function Preview() {
   return (
     <Table>
       <TableCaption>Current projects</TableCaption>
@@ -1231,7 +1231,7 @@ import {
   TabsTab,
 } from "@/components/ui/tabs"
 
-export default function Example() {
+export function Preview() {
   return (
     <Tabs defaultValue="account">
       <TabsList aria-label="Settings">
@@ -1251,7 +1251,7 @@ export default function Example() {
 import { Field, FieldLabel } from "@/components/ui/field"
 import { Textarea } from "@/components/ui/textarea"
 
-export default function Example() {
+export function Preview() {
   return (
     <Field>
       <FieldLabel>Message</FieldLabel>
@@ -1295,7 +1295,7 @@ function ShowToastButton() {
 
 import { Toggle } from "@/components/ui/toggle"
 
-export default function Example() {
+export function Preview() {
   return <Toggle aria-label="Bold">Bold</Toggle>
 }
 `,
@@ -1306,7 +1306,7 @@ import {
   ToggleGroupItem,
 } from "@/components/ui/toggle-group"
 
-export default function Example() {
+export function Preview() {
   return (
     <ToggleGroup aria-label="Text formatting" defaultValue={["bold"]} multiple>
       <ToggleGroupItem value="bold" aria-label="Bold">
@@ -1328,7 +1328,7 @@ import {
   ToolbarGroup,
 } from "@/components/ui/toolbar"
 
-export default function Example() {
+export function Preview() {
   return (
     <Toolbar aria-label="Document actions">
       <ToolbarGroup>
@@ -1359,7 +1359,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 
-export default function Example() {
+export function Preview() {
   return (
     <TooltipProvider>
       <Tooltip>

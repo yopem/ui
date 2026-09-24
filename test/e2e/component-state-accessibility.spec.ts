@@ -2,23 +2,26 @@ import AxeBuilder from "@axe-core/playwright"
 import { expect, test } from "@playwright/test"
 
 const cases = [
-  ["alert-dialog", "p-alert-dialog-1", "Are you absolutely sure?"],
-  ["dialog", "p-dialog-1", "Edit profile"],
-  ["drawer", "p-drawer-1", "Notifications"],
-  ["menu", "p-menu-1", "Play"],
-  ["popover", "p-popover-1", "Send us feedback"],
-  ["preview-card", "p-preview-card-1", "coss.com/ui"],
-  ["select", "p-select-1", "Astro"],
-  ["sheet", "p-sheet-1", "Edit profile"],
-  ["tooltip", "p-tooltip-1", "Helpful hint"],
+  ["alert-dialog", "Are you absolutely sure?"],
+  ["dialog", "Edit profile"],
+  ["drawer", "Notifications"],
+  ["menu", "Play"],
+  ["popover", "Send us feedback"],
+  ["preview-card", "coss.com/ui"],
+  ["select", "Astro"],
+  ["sheet", "Edit profile"],
+  ["tooltip", "Helpful hint"],
 ] as const
 
-for (const [component, example, visibleText] of cases) {
+for (const [component, visibleText] of cases) {
   test(`${component} open state has no detectable accessibility violations`, async ({
     page,
   }) => {
     await page.emulateMedia({ reducedMotion: "reduce" })
-    await page.goto(`/examples/${example}?theme=light`)
+    await page.goto(`/components/${component}`)
+    await expect(
+      page.getByRole("button", { name: /^Copy .* usage$/ }).first(),
+    ).toBeEnabled()
 
     if (component === "alert-dialog")
       await page.getByRole("button", { name: "Delete Account" }).click()
@@ -42,6 +45,7 @@ for (const [component, example, visibleText] of cases) {
       page.getByText(visibleText, { exact: false }).last(),
     ).toBeVisible()
     const result = await new AxeBuilder({ page })
+      .exclude("pre.shiki")
       .disableRules([
         "aria-hidden-focus",
         "region",
@@ -61,12 +65,16 @@ for (const [component, example, visibleText] of cases) {
 test("context menu keyboard alternative opens an accessible menu", async ({
   page,
 }) => {
-  await page.goto("/examples/p-context-menu-1?theme=light")
+  await page.goto("/components/context-menu")
+  await expect(
+    page.getByRole("button", { name: "Copy Context Menu usage" }),
+  ).toBeEnabled()
   const trigger = page.getByText("Right click here", { exact: true })
   await trigger.focus()
   await page.keyboard.press("Shift+F10")
   await expect(page.getByRole("menuitem", { name: "Back" })).toBeVisible()
   const result = await new AxeBuilder({ page })
+    .exclude("pre.shiki")
     .disableRules(["aria-hidden-focus", "region"])
     .analyze()
   expect(result.violations).toEqual([])

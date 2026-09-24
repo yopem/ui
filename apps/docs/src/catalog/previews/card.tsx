@@ -1,0 +1,113 @@
+import * as stylex from "@stylexjs/stylex"
+import { CircleAlertIcon } from "lucide-react"
+
+import { Button } from "@/components/ui/button"
+import {
+  Card,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardPanel,
+  CardTitle,
+} from "@/components/ui/card"
+import { Field, FieldLabel } from "@/components/ui/field"
+import { Flex } from "@/components/ui/flex"
+import { Form } from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
+import { Paragraph } from "@/components/ui/paragraph"
+import {
+  Select,
+  SelectItem,
+  SelectPopup,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+const frameworkOptions = [
+  { label: "Next.js", value: "next" },
+  { label: "Vite", value: "vite" },
+  { label: "Remix", value: "remix" },
+  { label: "Astro", value: "astro" },
+]
+
+function FrameworkSelect() {
+  return (
+    <Select defaultValue="next" items={frameworkOptions}>
+      <SelectTrigger>
+        <SelectValue />
+      </SelectTrigger>
+      <SelectPopup>
+        {frameworkOptions.map(({ label, value }) => (
+          <SelectItem key={value} value={value}>
+            {label}
+          </SelectItem>
+        ))}
+      </SelectPopup>
+    </Select>
+  )
+}
+
+function ProjectForm() {
+  return (
+    <Form {...stylex.props(previewStyles.preview2)}>
+      <Field>
+        <FieldLabel>Name</FieldLabel>
+        <Input placeholder="Name of your project" type="text" />
+      </Field>
+      <Field>
+        <FieldLabel>Framework</FieldLabel>
+        <FrameworkSelect />
+      </Field>
+      <Button {...stylex.props(previewStyles.preview3)} type="submit">
+        Deploy
+      </Button>
+    </Form>
+  )
+}
+
+export function Preview() {
+  return (
+    <Card {...stylex.props(previewStyles.preview1)}>
+      <CardHeader>
+        <CardTitle>Create project</CardTitle>
+        <CardDescription>Deploy your new project in one-click.</CardDescription>
+      </CardHeader>
+      <CardPanel>
+        <ProjectForm />
+      </CardPanel>
+      <CardFooter>
+        <Flex {...stylex.props(previewStyles.preview4)}>
+          <CircleAlertIcon {...stylex.props(previewStyles.preview5)} />
+          <Paragraph>This will take a few seconds to complete.</Paragraph>
+        </Flex>
+      </CardFooter>
+    </Card>
+  )
+}
+
+const previewStyles = stylex.create({
+  preview1: {
+    inlineSize: "100%",
+    maxInlineSize: "20rem",
+  },
+  preview2: {
+    display: "flex",
+    inlineSize: "100%",
+    flexDirection: "column",
+    gap: "calc(0.25rem * 4)",
+  },
+  preview3: {
+    inlineSize: "100%",
+  },
+  preview4: {
+    display: "flex",
+    gap: "0.25rem",
+    fontSize: "0.75rem",
+    lineHeight: "calc(1 / 0.75)",
+    color: "var(--muted-foreground)",
+  },
+  preview5: {
+    inlineSize: "calc(0.25rem * 3)",
+    blockSize: "1lh",
+    flexShrink: "0",
+  },
+})

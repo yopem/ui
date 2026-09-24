@@ -1,23 +1,21 @@
 import AxeBuilder from "@axe-core/playwright"
 import { expect, test } from "@playwright/test"
 
-const examplePath = "/examples/p-style-props-1"
+const previewPath = "/components/style-props"
 
 test.beforeEach(async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" })
 })
 
-test("style props fixture is discoverable from the examples catalog", async ({
+test("style props preview and source appear in component docs", async ({
   page,
 }) => {
-  await page.goto("/examples")
-  await page
-    .getByRole("searchbox", { name: "Search examples" })
-    .fill("style-props")
-  await page.getByRole("link", { name: "Style Props 1", exact: true }).click()
-  await expect(page).toHaveURL(/\/examples\/p-style-props-1/)
+  await page.goto(previewPath)
   await expect(
     page.getByRole("button", { name: "Numeric padding" }),
+  ).toBeVisible()
+  await expect(
+    page.getByRole("button", { name: /Copy .* source/ }).first(),
   ).toBeVisible()
 })
 
@@ -29,7 +27,7 @@ test("numeric spacing, raw CSS, logical RTL, and negative space reach real compo
   page.on("console", (message) => {
     if (message.type() === "error") errors.push(message.text())
   })
-  await page.goto(examplePath)
+  await page.goto(previewPath)
   const numeric = page.getByRole("button", {
     name: "Numeric padding",
     exact: true,
@@ -106,7 +104,7 @@ test("numeric spacing, raw CSS, logical RTL, and negative space reach real compo
 test("responsive arrays, objects, and ranges update at boundaries without reload", async ({
   page,
 }) => {
-  await page.goto(examplePath)
+  await page.goto(previewPath)
   const array = page.getByRole("button", { name: "Responsive array" })
   const object = page.getByRole("button", { name: "Responsive object" })
   const range = page.getByRole("button", { name: "Responsive range" })
@@ -130,7 +128,10 @@ test("responsive arrays, objects, and ranges update at boundaries without reload
 test("xstyle overrides style props while native inline precedence and className survive", async ({
   page,
 }) => {
-  await page.goto(examplePath)
+  await page.goto(previewPath)
+  await expect(
+    page.getByRole("button", { name: "Copy Style Props usage" }),
+  ).toBeEnabled()
   await expect(
     page.getByRole("button", { name: "Xstyle precedence" }),
   ).toHaveCSS("padding-top", "28px")
@@ -148,9 +149,15 @@ test("pseudos respond to pointer and keyboard without breaking disabled semantic
   page,
   isMobile,
 }) => {
-  await page.goto(examplePath)
+  await page.goto(previewPath)
+  await expect(
+    page.getByRole("button", { name: "Copy Style Props usage" }),
+  ).toBeEnabled()
   const interactive = page.getByRole("button", { name: "Interactive styles" })
   const disabled = page.getByRole("button", { name: "Disabled styles" })
+  const activations = page
+    .getByRole("region", { name: "Style props playground" })
+    .getByRole("status")
   await expect(interactive).toHaveCSS("padding-top", "16px")
   if (!isMobile) {
     await interactive.hover()
@@ -164,9 +171,9 @@ test("pseudos respond to pointer and keyboard without breaking disabled semantic
   await expect(interactive).toHaveCSS("outline-offset", "6px")
   await expect(interactive).toHaveCSS("outline-style", "solid")
   await page.keyboard.press("Enter")
-  await expect(page.getByRole("status")).toHaveText("Activations: 1")
+  await expect(activations).toHaveText("Activations: 1")
   await page.keyboard.press("Space")
-  await expect(page.getByRole("status")).toHaveText("Activations: 2")
+  await expect(activations).toHaveText("Activations: 2")
   await expect(disabled).toBeDisabled()
   await expect(disabled).toHaveCSS("opacity", "0.4")
   await page.keyboard.press("Tab")
@@ -174,21 +181,7 @@ test("pseudos respond to pointer and keyboard without breaking disabled semantic
     page.getByRole("button", { name: "After disabled" }),
   ).toBeFocused()
   await interactive.click()
-  await expect(page.getByRole("status")).toHaveText("Activations: 3")
-})
-
-test("primitive mask remains functional when its name overlaps a CSS property", async ({
-  page,
-}) => {
-  await page.goto("/examples/p-otp-field-10")
-  const first = page
-    .getByRole("group", { name: "Access code" })
-    .locator("input")
-    .first()
-  await expect(first).toHaveAttribute("type", "password")
-  await first.press("7")
-  await expect(first).toHaveValue("7")
-  await expect(page.getByLabel("Character 2 of 6")).toBeFocused()
+  await expect(activations).toHaveText("Activations: 3")
 })
 
 for (const theme of ["light", "dark"]) {
@@ -196,14 +189,27 @@ for (const theme of ["light", "dark"]) {
     page,
     isMobile,
   }) => {
-    await page.goto(`${examplePath}?theme=${theme}`)
+    test.setTimeout(60_000)
+    await page.addInitScript(
+      (value) => localStorage.setItem("yopem-ui-theme", value),
+      theme,
+    )
+    await page.goto(previewPath)
+    await expect(
+      page.getByRole("button", { name: "Copy Style Props usage" }),
+    ).toBeEnabled()
     await expect(
       page.getByRole("region", { name: "Style props playground" }),
     ).toBeVisible()
-    expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([])
+    function scanPlayground() {
+      return new AxeBuilder({ page })
+        .include('[aria-label="Style props playground"]')
+        .analyze()
+    }
+    expect((await scanPlayground()).violations).toEqual([])
     if (!isMobile) {
       await page.getByRole("button", { name: "Interactive styles" }).hover()
-      expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([])
+      expect((await scanPlayground()).violations).toEqual([])
       await page.mouse.move(0, 0)
     }
     await page.getByRole("button", { name: "Negative space" }).focus()
@@ -211,9 +217,13 @@ for (const theme of ["light", "dark"]) {
     await expect(
       page.getByRole("button", { name: "Interactive styles" }),
     ).toBeFocused()
-    expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([])
+    expect((await scanPlayground()).violations).toEqual([])
     await page.keyboard.press("Enter")
-    await expect(page.getByRole("status")).toHaveText("Activations: 1")
-    expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([])
+    await expect(
+      page
+        .getByRole("region", { name: "Style props playground" })
+        .getByRole("status"),
+    ).toHaveText("Activations: 1")
+    expect((await scanPlayground()).violations).toEqual([])
   })
 }

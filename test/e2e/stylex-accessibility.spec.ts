@@ -3,8 +3,13 @@ import { expect, test } from "@playwright/test"
 
 test.beforeEach(async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" })
-  await page.goto("/examples/p-button-1?theme=light")
-  await expect(page.getByRole("button", { name: "Button" })).toBeVisible()
+  await page.goto("/components/button")
+  await expect(
+    page.getByRole("button", { name: "Copy Button usage" }),
+  ).toBeEnabled()
+  await expect(
+    page.getByRole("button", { name: "Button", exact: true }),
+  ).toBeVisible()
 })
 
 test("Button vertical slice has no detectable accessibility violations", async ({
@@ -21,12 +26,13 @@ test("Button vertical slice has no detectable accessibility violations", async (
 })
 
 test("buttons expose keyboard focus and minimum targets", async ({ page }) => {
-  const buttons = page.locator('[data-slot="button"]')
+  const buttons = page.getByRole("button", { name: "Button", exact: true })
   const count = await buttons.count()
   expect(count).toBeGreaterThan(0)
 
   for (let index = 0; index < count; index += 1) {
     const button = buttons.nth(index)
+    await expect(button).toBeVisible()
     const box = await button.boundingBox()
     expect(box?.height).toBeGreaterThanOrEqual(24)
     expect(box?.width).toBeGreaterThanOrEqual(24)

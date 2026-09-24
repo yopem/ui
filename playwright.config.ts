@@ -8,7 +8,12 @@ export default defineConfig({
   fullyParallel: true,
   outputDir: `test-results/${port}`,
   grepInvert: process.env.FULL_A11Y ? undefined : /@full-a11y/,
-  reporter: process.env.CI ? "github" : "list",
+  reporter: process.env.CI
+    ? "github"
+    : [
+        ["list"],
+        ["html", { open: "never", outputFolder: "test-results/report" }],
+      ],
   testDir: "test/e2e",
   use: {
     baseURL: `http://localhost:${port}`,
