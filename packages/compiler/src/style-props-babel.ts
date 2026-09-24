@@ -43,6 +43,9 @@ const spacing =
 const negativeSpacing =
   /^(margin|inset|space[XY]$|top$|right$|bottom$|left$|textIndent$|scrollMargin)/
 const childSelector = ":where(*) > :not([hidden]) ~ :not([hidden])"
+const adapterImport =
+  /^(?:@registry|@yopem-ui\/registry|@)\/lib\/style-props(?:\.tsx?)?$/
+const preservedExternalProps = new Set(["size", "color", "width", "height"])
 
 type StaticValue =
   | string
@@ -395,31 +398,94 @@ export default function stylePropsBabel({
               const tag = element.node.name
               if (tag.type !== "JSXIdentifier") return
               const binding = element.scope.getBinding(tag.name)
-              if (!binding?.path.isImportSpecifier()) return
-              const declaration = binding.path.parent
-              if (declaration.type !== "ImportDeclaration") return
+              const external =
+                binding?.path.isVariableDeclarator() &&
+                binding.path.node.init?.type === "CallExpression" &&
+                binding.path.node.init.callee.type === "Identifier" &&
+                element.scope
+                  .getBinding(binding.path.node.init.callee.name)
+                  ?.path.isImportSpecifier() &&
+                (() => {
+                  const adapter = element.scope.getBinding(
+                    binding.path.node.init.callee.name,
+                  )!.path
+                  return (
+                    adapter.isImportSpecifier() &&
+                    adapter.node.imported.type === "Identifier" &&
+                    adapter.node.imported.name === "createStyleProps" &&
+                    adapter.parent.type === "ImportDeclaration" &&
+                    adapterImport.test(adapter.parent.source.value)
+                  )
+                })()
+              const preserved = new Set(preservedExternalProps)
+              if (external && binding?.path.isVariableDeclarator()) {
+                const options =
+                  binding.path.node.init?.type === "CallExpression"
+                    ? binding.path.node.init.arguments[1]
+                    : undefined
+                if (options) {
+                  if (options.type !== "ObjectExpression")
+                    throw element.buildCodeFrameError(
+                      "createStyleProps options must be static literals",
+                    )
+                  for (const property of options.properties) {
+                    if (
+                      property.type !== "ObjectProperty" ||
+                      property.key.type !== "Identifier" ||
+                      property.key.name !== "preserve" ||
+                      property.value.type !== "ArrayExpression"
+                    )
+                      throw element.buildCodeFrameError(
+                        "createStyleProps preserve must be a string array",
+                      )
+                    for (const item of property.value.elements) {
+                      if (item?.type !== "StringLiteral")
+                        throw element.buildCodeFrameError(
+                          "createStyleProps preserve must be a string array",
+                        )
+                      preserved.add(item.value)
+                    }
+                  }
+                }
+              }
+              let componentName: string | undefined
+              if (!external) {
+                if (!binding?.path.isImportSpecifier()) return
+                const declaration = binding.path.parent
+                if (
+                  declaration.type !== "ImportDeclaration" ||
+                  !/^(?:@registry|@yopem-ui\/registry|@)\/components\/ui\/(?:stylex\/)?[a-z][a-z-]*$/.test(
+                    declaration.source.value,
+                  )
+                )
+                  return
+                const component = binding.path.node.imported
+                if (
+                  component.type !== "Identifier" ||
+                  !/^[A-Z]/.test(component.name)
+                )
+                  return
+                const moduleName = declaration.source.value.split("/").at(-1)
+                componentName = component.name
+                  .replace(/([a-z0-9])([A-Z])/g, "$1-$2")
+                  .toLowerCase()
+                if (
+                  moduleName !== componentName &&
+                  !componentName.startsWith(`${moduleName}-`)
+                )
+                  return
+                componentName = component.name
+              }
+              const attributes = element.node.attributes
               if (
-                !/^(?:@registry|@yopem-ui\/registry|@)\/components\/ui\/(?:stylex\/)?[a-z][a-z-]*$/.test(
-                  declaration.source.value,
+                external &&
+                attributes.some(
+                  (attribute) => attribute.type === "JSXSpreadAttribute",
                 )
               )
-                return
-              const component = binding.path.node.imported
-              if (
-                component.type !== "Identifier" ||
-                !/^[A-Z]/.test(component.name)
-              )
-                return
-              const moduleName = declaration.source.value.split("/").at(-1)
-              const componentName = component.name
-                .replace(/([a-z0-9])([A-Z])/g, "$1-$2")
-                .toLowerCase()
-              if (
-                moduleName !== componentName &&
-                !componentName.startsWith(`${moduleName}-`)
-              )
-                return
-              const attributes = element.node.attributes
+                throw element.buildCodeFrameError(
+                  "Static style props cannot be combined with JSX spreads",
+                )
               const as = attributes.find(
                 (attribute) =>
                   attribute.type === "JSXAttribute" &&
@@ -453,15 +519,15 @@ export default function stylePropsBabel({
                   continue
                 }
                 if (
-                  (component.name === "Box" &&
+                  (componentName === "Box" &&
                     ((nativeTag === "img" &&
                       (name === "width" || name === "height")) ||
                       (nativeTag === "input" && name === "size") ||
                       (nativeTag === "meta" && name === "content"))) ||
-                  ((component.name === "Autocomplete" ||
-                    component.name === "Command") &&
+                  ((componentName === "Autocomplete" ||
+                    componentName === "Command") &&
                     name === "filter") ||
-                  (component.name === "ScrollArea" &&
+                  (componentName === "ScrollArea" &&
                     (name === "overscrollContain" ||
                       name === "scrollbarGutter" ||
                       name === "fill"))
@@ -470,15 +536,16 @@ export default function stylePropsBabel({
                   continue
                 }
                 if (
-                  name === "css" ||
-                  name === "base" ||
-                  Object.hasOwn(conditions, name) ||
-                  Object.hasOwn(scopes, name) ||
-                  Object.hasOwn(aliases, name) ||
-                  properties.has(name) ||
-                  name.startsWith("--") ||
-                  name.startsWith("_") ||
-                  /^(sm|md|lg|xl|2xl)(Only|Down|To)/.test(name)
+                  (!external || !preserved.has(name)) &&
+                  (name === "css" ||
+                    name === "base" ||
+                    Object.hasOwn(conditions, name) ||
+                    Object.hasOwn(scopes, name) ||
+                    Object.hasOwn(aliases, name) ||
+                    properties.has(name) ||
+                    name.startsWith("--") ||
+                    name.startsWith("_") ||
+                    /^(sm|md|lg|xl|2xl)(Only|Down|To)/.test(name))
                 ) {
                   if (
                     name === "css" &&

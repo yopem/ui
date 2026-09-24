@@ -30,6 +30,7 @@ export const foundationItems: SourceItem[] = [
         "StyleObject",
         "ResponsiveValue",
         "StyleComponentProps",
+        "createStyleProps",
         "Breakpoint",
         "Condition",
         "ResponsiveCondition",

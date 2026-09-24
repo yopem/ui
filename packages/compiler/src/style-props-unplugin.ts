@@ -43,6 +43,9 @@ const negativeSpacing =
 const childSelector = ":where(*) > :not([hidden]) ~ :not([hidden])"
 const componentImport =
   /^(?:@registry|@yopem-ui\/registry|@)\/components\/ui\/(?:stylex\/)?[a-z][a-z-]*$/
+const adapterImport =
+  /^(?:@registry|@yopem-ui\/registry|@)\/lib\/style-props(?:\.tsx?)?$/
+const preservedExternalProps = new Set(["size", "color", "width", "height"])
 
 type StaticValue =
   | string
@@ -364,6 +367,8 @@ function compile(code: string, id: string) {
     ts.ScriptKind.TSX,
   )
   const components = new Map<string, string>()
+  const adapters = new Set<string>()
+  const external = new Map<string, Set<string>>()
   const tokens = new Set<string>()
   const stylex = new Set<string>()
   const compiled = new Map<string, Set<string>>()
@@ -376,6 +381,17 @@ function compile(code: string, id: string) {
       continue
     lastImport = statement.end
     const specifier = statement.moduleSpecifier.text
+    if (
+      adapterImport.test(specifier) &&
+      statement.importClause?.namedBindings &&
+      ts.isNamedImports(statement.importClause.namedBindings)
+    )
+      for (const element of statement.importClause.namedBindings.elements)
+        if (
+          (element.propertyName?.text ?? element.name.text) ===
+          "createStyleProps"
+        )
+          adapters.add(element.name.text)
     if (
       componentImport.test(specifier) &&
       statement.importClause?.namedBindings &&
@@ -407,7 +423,43 @@ function compile(code: string, id: string) {
     )
       stylex.add(statement.importClause.namedBindings.name.text)
   }
-  if (!components.size) return null
+  for (const statement of source.statements) {
+    if (!ts.isVariableStatement(statement)) continue
+    for (const declaration of statement.declarationList.declarations) {
+      if (
+        !ts.isIdentifier(declaration.name) ||
+        !declaration.initializer ||
+        !ts.isCallExpression(declaration.initializer) ||
+        !ts.isIdentifier(declaration.initializer.expression) ||
+        !adapters.has(declaration.initializer.expression.text) ||
+        isShadowed(declaration.initializer.expression.text, declaration)
+      )
+        continue
+      const preserved = new Set(preservedExternalProps)
+      const options = declaration.initializer.arguments[1]
+      if (options) {
+        if (!ts.isObjectLiteralExpression(options))
+          throw new Error("createStyleProps options must be static literals")
+        for (const property of options.properties) {
+          if (
+            !ts.isPropertyAssignment(property) ||
+            propertyName(property.name) !== "preserve" ||
+            !ts.isArrayLiteralExpression(property.initializer)
+          )
+            throw new Error("createStyleProps preserve must be a string array")
+          for (const item of property.initializer.elements) {
+            if (!ts.isStringLiteral(item))
+              throw new Error(
+                "createStyleProps preserve must be a string array",
+              )
+            preserved.add(item.text)
+          }
+        }
+      }
+      external.set(declaration.name.text, preserved)
+    }
+  }
+  if (!components.size && !external.size) return null
   function scanStyles(node: ts.Node) {
     if (
       ts.isVariableDeclaration(node) &&
@@ -475,8 +527,13 @@ function compile(code: string, id: string) {
     if (ts.isJsxOpeningElement(node) || ts.isJsxSelfClosingElement(node)) {
       if (ts.isIdentifier(node.tagName)) {
         const component = components.get(node.tagName.text)
-        if (component && !isShadowed(node.tagName.text, node)) {
+        const preserved = external.get(node.tagName.text)
+        if ((component || preserved) && !isShadowed(node.tagName.text, node)) {
           const attributes = node.attributes.properties
+          if (preserved && attributes.some(ts.isJsxSpreadAttribute))
+            throw new Error(
+              "Static style props cannot be combined with JSX spreads",
+            )
           const as = attributes.find(
             (entry) =>
               ts.isJsxAttribute(entry) &&
@@ -522,7 +579,7 @@ function compile(code: string, id: string) {
                   name === "fill"))
             )
               continue
-            if (!isStyleName(name)) continue
+            if (preserved?.has(name) || !isStyleName(name)) continue
             const value = expression(attribute)
             if (name === "css" && compiledCss(value))
               cssRef = value.getText(source)
@@ -634,7 +691,11 @@ export const styleProps = createUnplugin(() => ({
     return /\.[cm]?[jt]sx?(?:\?.*)?$/.test(id)
   },
   transform(code, id) {
-    if (!/["'](?:@registry|@yopem-ui\/registry|@)\/components\/ui\//.test(code))
+    if (
+      !/["'](?:@registry|@yopem-ui\/registry|@)\/(?:components\/ui\/|lib\/style-props)/.test(
+        code,
+      )
+    )
       return null
     return compile(code, id.split("?", 1)[0]!)
   },
