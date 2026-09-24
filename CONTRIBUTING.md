@@ -15,7 +15,7 @@ and concrete feature proposals.
 
 1. Preserve Base UI behavior, exports, `className`, and `data-slot` values.
 2. Keep canonical source in `packages/registry/src/components/ui`.
-3. Add registry metadata and a StyleX example.
+3. Add registry metadata and a curated component preview.
 4. Add unsupported descendant selectors only to scoped compatibility CSS.
 5. Run all checks before opening a pull request.
 
@@ -25,7 +25,6 @@ bun run lint
 bun run fmt:check
 bun run typecheck
 bun run test
-bun run test:e2e
 bun run test:a11y
 bun run build
 ```
