@@ -1,14 +1,35 @@
 "use client"
 
-import { useState } from "react"
+import type { ComponentPropsWithRef } from "react"
+
+import { createStyleProps } from "@registry/lib/style-props"
+import { tokens } from "@registry/styles/tokens.stylex"
+import * as stylex from "@stylexjs/stylex"
+import { useRef, useState } from "react"
 
 import { Box } from "@/components/ui/box"
 import { Button } from "@/components/ui/button"
 import { Flex } from "@/components/ui/flex"
 import { Heading } from "@/components/ui/heading"
 import { Paragraph } from "@/components/ui/paragraph"
+function ExternalButton({
+  color,
+  ...props
+}: ComponentPropsWithRef<"button"> & { color?: string }) {
+  // oxlint-disable-next-line yopem-ui/prefer-ui-primitives -- Demonstrates an unstyled external component.
+  return <button {...props} data-color={color} />
+}
+
+const StyledExternalButton = createStyleProps(ExternalButton, {
+  preserve: ["color"],
+})
+const externalStyles = stylex.create({ frame: { opacity: 0.85 } })
+
 export function Preview() {
   const [activations, setActivations] = useState(0)
+  const [externalClicks, setExternalClicks] = useState(0)
+  const [refReady, setRefReady] = useState(false)
+  const externalRef = useRef<HTMLButtonElement>(null)
 
   return (
     <Box
@@ -80,6 +101,29 @@ export function Preview() {
       </Flex>
       <Box as="output" aria-live="polite">
         Activations: {activations}
+      </Box>
+      <Flex gap={2}>
+        <StyledExternalButton
+          p={{ base: 4, md: 6 }}
+          _hover={{ m: 2 }}
+          css={{ color: tokens["--foreground"] }}
+          color="original"
+          className="external-button"
+          xstyle={externalStyles.frame}
+          style={{ borderBlockStart: "5px solid transparent" }}
+          title="Native title"
+          ref={externalRef}
+          onClick={() => {
+            setExternalClicks((count) => count + 1)
+            setRefReady(externalRef.current !== null)
+          }}
+        >
+          External styled
+        </StyledExternalButton>
+        <ExternalButton>External plain</ExternalButton>
+      </Flex>
+      <Box as="output" aria-live="polite">
+        External clicks: {externalClicks}; ref ready: {String(refReady)}
       </Box>
       <Paragraph>
         Direct style props override base spacing and compose with responsive and

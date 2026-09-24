@@ -101,6 +101,35 @@ test("numeric spacing, raw CSS, logical RTL, and negative space reach real compo
   expect(errors).toEqual([])
 })
 
+test("external adapter preserves native props, refs, and isolated styles", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 600, height: 900 })
+  await page.goto(previewPath)
+  const adapted = page.getByRole("button", { name: "External styled" })
+  const plain = page.getByRole("button", { name: "External plain" })
+  await expect(adapted).toHaveCSS("padding-top", "16px")
+  await expect(adapted).toHaveCSS("color", /^(lab|rgb)\(/)
+  await expect(adapted).toHaveAttribute("title", "Native title")
+  await expect(adapted).toHaveClass(/external-button/)
+  await expect(adapted).toHaveCSS("opacity", "0.85")
+  await expect(adapted).toHaveCSS("border-top-width", "5px")
+  await expect(adapted).not.toHaveAttribute("p")
+  await expect(adapted).not.toHaveAttribute("xstyle")
+  await expect(plain).toHaveCSS("padding-top", "0px")
+  await adapted.click()
+  await expect(
+    page
+      .getByRole("region", { name: "Style props playground" })
+      .getByRole("status")
+      .last(),
+  ).toHaveText("External clicks: 1; ref ready: true")
+  await page.setViewportSize({ width: 800, height: 900 })
+  await expect(adapted).toHaveCSS("padding-top", "24px")
+  await adapted.hover()
+  await expect(adapted).toHaveCSS("margin-top", "8px")
+})
+
 test("responsive arrays, objects, and ranges update at boundaries without reload", async ({
   page,
 }) => {
@@ -158,6 +187,7 @@ test("pseudos respond to pointer and keyboard without breaking disabled semantic
   const activations = page
     .getByRole("region", { name: "Style props playground" })
     .getByRole("status")
+    .first()
   await expect(interactive).toHaveCSS("padding-top", "16px")
   if (!isMobile) {
     await interactive.hover()
@@ -222,7 +252,8 @@ for (const theme of ["light", "dark"]) {
     await expect(
       page
         .getByRole("region", { name: "Style props playground" })
-        .getByRole("status"),
+        .getByRole("status")
+        .first(),
     ).toHaveText("Activations: 1")
     expect((await scanPlayground()).violations).toEqual([])
   })
