@@ -55,9 +55,9 @@ exceptions. It does not autofix tag replacements because changing semantics or
 imports needs review. Other rules may offer safe fixes or suggestions; review
 them before applying. This repository allows document-shell and resource tags
 only in its root route. The Satori social-image renderer keeps intrinsic JSX
-because it is not a DOM renderer. Registry implementations and tests are outside
-the docs rule scope.
+because it is not a DOM renderer. Registry implementations are outside the docs
+rule scope.
 
 SVG, MathML, custom elements and component expressions remain supported. HTML
 inside SVG foreignObject is still checked. Run `bun run lint` to enforce the
-rule, and `bun test packages/oxlint-plugin/test` to verify its CLI behavior.
+rule.

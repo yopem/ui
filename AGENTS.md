@@ -3,7 +3,7 @@
 Yopem UI is a Bun workspace for a source-owned StyleX React component library
 and static registry. Components use React 19, Base UI, StyleX, and TypeScript.
 `apps/docs` is a TanStack Start app (Vite + Nitro) that provides component
-catalogs, examples, guides, search, machine-readable docs, and registry hosting.
+catalogs, inline previews, guides, search, machine-readable docs, and registry hosting.
 The first release is copy/paste-only and does not publish an npm package.
 
 ## Commands
@@ -16,27 +16,25 @@ bun run lint            # oxlint
 bun run fmt              # format with oxfmt
 bun run fmt:check        # verify formatting
 bun run typecheck        # typecheck registry and docs
-bun run test             # registry, docs, and release-readiness tests
-bun run test:e2e         # Playwright end-to-end tests
+bun run test             # Playwright end-to-end tests
 bun run test:a11y        # full Chromium accessibility suite
 bun run build            # registry and docs production build
 ```
 
 After changes, run `bun run lint && bun run fmt:check && bun run typecheck` plus
-focused tests for affected behavior. Before release work, run the full gate from
-`CONTRIBUTING.md`: registry build, lint, format check, typecheck, unit tests,
-e2e, accessibility, and production build.
+focused E2E tests for affected behavior. Before release work, run the full gate
+from `CONTRIBUTING.md`: registry build, lint, format check, typecheck, E2E,
+accessibility, and production build.
 
 ## Workspace structure
 
 - `apps/docs/` — TanStack Start catalog and static registry host.
   - `src/catalog/` — catalog data, source loading, API rendering, search,
-    navigation, code blocks, page layout, and usage examples.
+    navigation, code blocks, page layout, and usage snippets.
   - `src/components/ui/` — catalog-facing re-exports of canonical registry
     components. Do not duplicate implementations here.
-  - `src/components/examples/stylex/` — searchable StyleX examples and preview
-    sources.
-  - `src/routes/` — catalog, example, guide, API, SEO, and machine-readable
+  - `src/catalog/previews/` — curated live previews shown in component docs.
+  - `src/routes/` — catalog, guide, API, SEO, and machine-readable
     routes. Run `bun run generate-routes` after route changes; never edit
     `routeTree.gen.ts`.
   - `src/styles.css` — docs application global styles only.
@@ -53,47 +51,35 @@ e2e, accessibility, and production build.
   - `src/theme/` — optional theme config, script, provider, and hook.
   - `src/build.ts` — writes unversioned and versioned registry items, docs, and
     JSON schemas, then copies them into the docs public directory.
-- `apps/*/test/` — each app test directory mirrors that app's `src/`.
-- `packages/*/test/` — each package test directory mirrors that package's
-  `src/`.
-- `test/` — cross-workspace release-readiness, Playwright, and accessibility
-  tests that do not map to one workspace source file.
+- `test/e2e/` — Playwright interaction, accessibility, and production checks.
 
 Path aliases are `@registry/*` for registry source and `@/*` inside docs.
 
 ## Testing requirements
 
-- Use `bun test` as the default test runner. Use Playwright only for real-browser
-  interaction, end-to-end, production-build, and accessibility coverage.
-- Apply these requirements to every project under `apps/*` and `packages/*`,
-  including projects added later.
-- Keep tests outside `src/`. Every app and package must have a sibling `test/`
-  directory that mirrors its `src/` directory and file names. For example,
-  `packages/registry/src/lib/stylex.ts` maps to
-  `packages/registry/test/lib/stylex.test.ts`.
-- Restructure all existing app and package tests that do not follow the mirrored
-  layout instead of preserving a second test organization.
-- Every file under any `apps/*/src/` or `packages/*/src/` directory must have a
-  corresponding test file. A test may verify source contracts for files that
-  cannot execute independently, but empty,
-  placeholder, snapshot-only, and import-only tests do not satisfy this rule.
-- Tests must cover realistic failure opportunities, not only required happy
-  paths. Cover public behavior, variants, boundaries, invalid input, error and
-  disabled states, keyboard and pointer interaction, state transitions,
-  accessibility semantics, consumer overrides, and regressions relevant to the
-  source under test.
-- Every component under `packages/registry/src/components/ui/` must have real
-  Playwright interaction coverage and automated accessibility coverage in a
-  production build. Exercise rendered components through user-visible behavior;
-  do not replace browser coverage with source inspection or mocked DOM tests.
-- Component browser tests must cover each supported state and variant, keyboard
-  navigation, focus management, pointer interaction, disabled behavior,
-  accessible names and roles, and open/close or selection behavior where
-  applicable. Run an accessibility scan for every rendered state that can
-  expose different markup.
-- When source behavior changes, update its mirrored Bun test and relevant
-  Playwright and accessibility tests in the same change.
-- Before completing component work, run focused Bun and Playwright tests, the
+- Never write unit tests after writing implementation code. If unit tests are
+  necessary, define them before implementation, not as a retrospective check.
+- Strongly prefer end-to-end (E2E) tests as the sole testing mechanism. Exercise
+  complex features through real user workflows and observable outcomes rather
+  than testing internal functions or mocked interactions in isolation.
+- Make E2E runs reproducible: state prerequisites, use repeatable setup and
+  inputs, and leave a verifiable artifact at the end (such as a test report,
+  trace, screenshot, or saved output) with enough context to confirm the result
+  and rerun the same scenario. Do not claim success without checking the
+  artifact.
+- If isolation testing is unavoidable, first enumerate the expected behavior and
+  all plausible failure modes and edge cases; write the corresponding tests
+  before implementation code. Do not add isolated tests afterward merely to
+  mirror code already written.
+- Every documented component preview must have automated accessibility
+  coverage in a production build. Test interactive previews through real
+  Playwright workflows, not source inspection or mocked DOM interactions.
+- Cover applicable keyboard and pointer behavior, focus management, disabled
+  states, accessible names and roles, and open/close or selection behavior.
+  Scan rendered states that expose different accessibility markup.
+- When source behavior changes, update relevant Playwright and accessibility
+  tests in the same change.
+- Before completing component work, run focused Playwright tests, the
   accessibility suite, and a production build. Do not claim production safety
   when any required check was skipped or failed; report exact gaps.
 
@@ -143,8 +129,8 @@ For component work:
    dependencies, registry dependencies, docs, and exports.
 3. Update `docs-notes.ts` and `apps/docs/src/catalog/usage.ts` when public API,
    defaults, or usage changes.
-4. Add or update catalog re-exports and StyleX examples under
-   `apps/docs/src/components/`.
+4. Add or update catalog re-exports and the component's curated preview under
+   `apps/docs/src/catalog/previews/`.
 5. Run `bun run registry:build`.
 6. Run focused registry, docs, interaction, and accessibility tests as needed,
    then required checks.

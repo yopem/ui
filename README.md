@@ -210,7 +210,6 @@ bun run lint
 bun run fmt:check
 bun run typecheck
 bun run test
-bun run test:e2e
 bun run test:a11y
 bun run build
 ```
@@ -219,11 +218,11 @@ bun run build
 
 - `apps/docs` — TanStack Start documentation and component previews
 - `packages/registry` — canonical component source and registry tooling
-- `packages/oxlint-plugin` — reusable UI primitive lint rule and CLI tests
+- `packages/oxlint-plugin` — reusable UI primitive lint rules
 
 ## Acknowledgements
 
 Thanks to [shadcn/ui](https://ui.shadcn.com) for the inspiration and
-[coss ui](https://coss.com/ui) for the base styles and example files.
+[coss ui](https://coss.com/ui) for the base styles and preview patterns.
 
 See `CONTRIBUTING.md` for contributor workflow and `LICENSE` for MIT terms.

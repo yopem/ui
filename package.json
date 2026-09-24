@@ -14,9 +14,8 @@
     "start": "bun run --cwd apps/docs start",
     "preview": "bun run --cwd apps/docs preview",
     "typecheck": "bun run --filter '*' typecheck",
-    "test": "bun run registry:build && bun test packages/cli/test packages/compiler/test packages/registry/test packages/oxlint-plugin/test apps/docs/test test/release-readiness.test.ts test/xstyle.test.ts test/strict-forms.test.ts test/strict-overlays.test.ts",
+    "test": "bun run build && PLAYWRIGHT_PRODUCTION=1 playwright test",
     "test:a11y": "bun run build && FULL_A11Y=1 PLAYWRIGHT_PRODUCTION=1 playwright test --project=chromium --grep @full-a11y",
-    "test:e2e": "bun run build && PLAYWRIGHT_PRODUCTION=1 playwright test",
     "lint": "oxlint lint .",
     "fmt": "oxfmt fmt .",
     "fmt:check": "oxfmt --check ."

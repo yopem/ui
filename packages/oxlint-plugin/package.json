@@ -9,7 +9,6 @@
     }
   },
   "scripts": {
-    "test": "bun test test",
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
