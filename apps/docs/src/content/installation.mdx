@@ -43,15 +43,20 @@ manually. The CLI and manual steps are available in the tabs below.
 
 ## 4. Configure your framework
 
-CLI init handles the supported setups above. Configurations below are manual
-references for custom projects or setup without the CLI.
+CLI init handles each setup below. For manual setup, use the linked build
+configuration and import the shared stylesheet in the indicated entry:
 
-- [React Router](#react-router) — Client-rendered React Router with Vite.
-- [TanStack Router](#tanstack-router) — Client-rendered TanStack Router with
-  Vite.
-- [TanStack Start](#tanstack-start) — TanStack Start with server rendering.
-- [Next.js](#nextjs) — Next.js App Router using webpack.
-- [Astro](#astro) — Astro with its React integration.
+- [Vite React](#vite-and-rolldown-setup) — `vite`; `src/main.tsx`.
+- [React Router](#react-router) — client mode (`react-router` or
+  `react-router-dom`): `src/main.tsx`; framework mode (`@react-router/dev`):
+  `app/root.tsx` or `src/root.tsx`.
+- [TanStack Router](#tanstack-router) — `@tanstack/react-router`;
+  `src/main.tsx`.
+- [TanStack Start](#tanstack-start) — `@tanstack/react-start`;
+  `src/routes/__root.tsx`.
+- [Next.js](#nextjs) — App Router (`next`); `app/layout.tsx` or
+  `src/app/layout.tsx`.
+- [Astro](#astro) — `astro` with React integration; `src/layouts/Layout.astro`.
 
 Using another build tool? Follow its official StyleX setup and keep the @ alias
 consistent.
@@ -120,17 +125,19 @@ export default defineConfig({
 
 The shared stylesheet already contains `@stylex;`. Import only
 `@/styles/styles.css` in your application entry or document root. If you have an
-existing PostCSS config, merge its plugins into this inline configuration
-manually before running init.
+existing declarative Babel or PostCSS config, init moves its plugins into
+`vite.config.*` (or `astro.config.*`) and removes the old file. Dynamic configs
+that cannot be migrated safely remain untouched; simplify them first.
 
 ### React Router
 
-For client-rendered React Router, keep `react()` from `@vitejs/plugin-react`
-after Babel and import the stylesheet in `src/main.tsx`. For **framework mode**,
-keep `reactRouter()` from `@react-router/dev/vite` after Babel and import it in
-`app/root.tsx` (or `src/root.tsx`). Apply `themeMarker`, `lightTheme`, and
-`rootStyles.html` to `<html>`, and `rootStyles.body` to `<body>`. RSC mode
-requires manual setup.
+CLI init detects client mode from `react-router` or `react-router-dom` and
+framework mode from `@react-router/dev`. For client-rendered React Router, keep
+`react()` from `@vitejs/plugin-react` after Babel and import the stylesheet in
+`src/main.tsx`. For **framework mode**, keep `reactRouter()` from
+`@react-router/dev/vite` after Babel and import it in `app/root.tsx` (or
+`src/root.tsx`). Apply `themeMarker`, `lightTheme`, and `rootStyles.html` to
+`<html>`, and `rootStyles.body` to `<body>`. RSC mode requires manual setup.
 
 ### TanStack Router
 

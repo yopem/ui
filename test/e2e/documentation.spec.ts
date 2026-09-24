@@ -77,6 +77,12 @@ test("minimal setup and StyleX customization are documented", async ({
   await expect(
     page.getByRole("button", { name: "Copy Initialize project with CLI" }),
   ).toBeEnabled()
+  await expect(
+    page.getByRole("button", { name: "Copy Select framework with CLI" }),
+  ).toBeEnabled()
+  await expect(
+    page.getByText(/React Router client mode.*react-router-dom/),
+  ).toBeVisible()
   await page.getByRole("tab", { name: "CLI" }).focus()
   await page.keyboard.press("ArrowRight")
   await expect(page.getByRole("tab", { name: "Manual" })).toBeFocused()
@@ -88,6 +94,7 @@ test("minimal setup and StyleX customization are documented", async ({
   await expect(
     page.getByRole("button", { name: /^Copy src\/(styles|lib)\// }),
   ).toHaveCount(3)
+  await expect(page.getByText(/Follow steps 1 and 2 above/)).toBeVisible()
   await page.goto("/docs/theming")
   await expect(
     page.getByRole("heading", { name: "Component overrides", exact: true }),

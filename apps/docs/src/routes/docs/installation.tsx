@@ -59,19 +59,28 @@ function InstallationMethods() {
           title="Initialize project with CLI"
         />
         <Paragraph xstyle={styles.paragraph2}>
-          For ambiguous projects, pass --framework vite, react-router,
-          tanstack-router, tanstack-start, next, or astro. Vite integrations use
-          Rolldown Babel; Next.js requires Node 24+ and webpack. React Router
-          RSC mode and Next.js Pages Router need manual setup. To refresh
-          installed files later, run bunx @yopem-ui/cli update base. Local edits
-          are preserved unless you pass --force.
+          For mixed-framework projects, pass --framework with vite,
+          react-router, tanstack-router, tanstack-start, next, or astro. React
+          Router client mode detects react-router or react-router-dom; framework
+          mode detects @react-router/dev.
+        </Paragraph>
+        <CopyableCode
+          code="bunx @yopem-ui/cli init --framework react-router"
+          header="Terminal"
+          title="Select framework with CLI"
+        />
+        <Paragraph xstyle={styles.paragraph2}>
+          Vite integrations use Rolldown Babel; Next.js requires Node 24+ and
+          webpack. React Router RSC mode and Next.js Pages Router need manual
+          setup. To refresh installed files later, run bunx @yopem-ui/cli update
+          base. Local edits are preserved unless you pass --force.
         </Paragraph>
       </TabsPanel>
       <TabsPanel value="manual">
         <Paragraph xstyle={styles.paragraph3}>
-          Copy these files once. Keep their displayed paths. Component pages
-          include them in required files, so later components need no second
-          copy.
+          Follow steps 1 and 2 above for packages and imports, then step 4 below
+          for framework build configuration and root styles. Copy these files
+          once at their displayed paths; later components need no second copy.
         </Paragraph>
         <Box xstyle={styles.box}>
           {data.files.map((file) => (
