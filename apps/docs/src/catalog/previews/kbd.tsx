@@ -1,17 +1,20 @@
-import * as stylex from "@stylexjs/stylex"
-
 import { Box } from "@/components/ui/box"
 import { Flex } from "@/components/ui/flex"
 import { Kbd, KbdGroup } from "@/components/ui/kbd"
 import { Paragraph } from "@/components/ui/paragraph"
 export function Preview() {
   return (
-    <Flex {...stylex.props(previewStyles.preview1)}>
+    <Flex flexDirection={"column"} gap={"calc(0.25rem * 4)"}>
       <Box>
-        <Paragraph {...stylex.props(previewStyles.preview2)}>
+        <Paragraph
+          marginBlockEnd={"calc(0.25rem * 2)"}
+          fontSize={"0.875rem"}
+          lineHeight={"calc(1.25 / 0.875)"}
+          color={"var(--muted-foreground)"}
+        >
           Single keys:
         </Paragraph>
-        <Flex {...stylex.props(previewStyles.preview3)}>
+        <Flex gap={"calc(0.25rem * 2)"}>
           <Kbd>K</Kbd>
           <Kbd>⌘</Kbd>
           <Kbd>⌃</Kbd>
@@ -19,10 +22,15 @@ export function Preview() {
         </Flex>
       </Box>
       <Box>
-        <Paragraph {...stylex.props(previewStyles.preview2)}>
+        <Paragraph
+          marginBlockEnd={"calc(0.25rem * 2)"}
+          fontSize={"0.875rem"}
+          lineHeight={"calc(1.25 / 0.875)"}
+          color={"var(--muted-foreground)"}
+        >
           Key combinations:
         </Paragraph>
-        <Flex {...stylex.props(previewStyles.preview3)}>
+        <Flex gap={"calc(0.25rem * 2)"}>
           <KbdGroup>
             <Kbd>⌘</Kbd>
             <Kbd>K</Kbd>
@@ -42,21 +50,3 @@ export function Preview() {
     </Flex>
   )
 }
-
-const previewStyles = stylex.create({
-  preview1: {
-    display: "flex",
-    flexDirection: "column",
-    gap: "calc(0.25rem * 4)",
-  },
-  preview2: {
-    marginBlockEnd: "calc(0.25rem * 2)",
-    fontSize: "0.875rem",
-    lineHeight: "calc(1.25 / 0.875)",
-    color: "var(--muted-foreground)",
-  },
-  preview3: {
-    display: "flex",
-    gap: "calc(0.25rem * 2)",
-  },
-})

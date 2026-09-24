@@ -38,16 +38,23 @@ export function DocsNavigation({ onNavigate }: { onNavigate?: () => void }) {
       aria-label="Documentation navigation"
       overscrollContain
       scrollFade
-      xstyle={styles.scroll}
+      flex={1}
+      minBlockSize={0}
     >
-      <Box as="nav" aria-label="Documentation" {...stylex.props(styles.nav)}>
-        <Box as="ul" {...stylex.props(styles.list)}>
+      <Box as="nav" aria-label="Documentation" padding={"1.25rem"}>
+        <Box as="ul" listStyleType={"none"} padding={0} margin={0}>
           {tree.children.map((item) =>
             item.type === "separator" ? (
               <Box
                 as="li"
                 key={String(item.name)}
-                {...stylex.props(styles.group)}
+                color={tokens["--muted-foreground"]}
+                fontSize={"0.6875rem"}
+                fontWeight={600}
+                letterSpacing={"0.075em"}
+                textTransform={"uppercase"}
+                paddingInline={"0.75rem"}
+                paddingBlock={"1.25rem 0.625rem"}
               >
                 {item.name}
               </Box>
@@ -67,14 +74,40 @@ export function DocsNavigation({ onNavigate }: { onNavigate?: () => void }) {
               </Box>
             ) : null,
           )}
-          <Box as="li" {...stylex.props(styles.group)}>
+          <Box
+            as="li"
+            color={tokens["--muted-foreground"]}
+            fontSize={"0.6875rem"}
+            fontWeight={600}
+            letterSpacing={"0.075em"}
+            textTransform={"uppercase"}
+            paddingInline={"0.75rem"}
+            paddingBlock={"1.25rem 0.625rem"}
+          >
             Resources
           </Box>
           <Box as="li">
             <UiLink
               href="/llms.txt"
               onClick={onNavigate}
-              {...stylex.props(styles.link)}
+              display="block"
+              color={tokens["--muted-foreground"]}
+              paddingBlock="0.5rem"
+              paddingInline="0.75rem"
+              borderRadius={tokens["--radius-md"]}
+              textDecoration="none"
+              fontSize="0.875rem"
+              lineHeight={1.4}
+              _hover={{
+                backgroundColor: tokens["--sidebar-accent"],
+                color: tokens["--sidebar-accent-foreground"],
+              }}
+              _focusVisible={{
+                outlineColor: tokens["--ring"],
+                outlineStyle: "solid",
+                outlineWidth: 2,
+                outlineOffset: 2,
+              }}
             >
               llms.txt
             </UiLink>
@@ -112,7 +145,9 @@ const styles = stylex.create({
       color: tokens["--sidebar-accent-foreground"],
     },
     ":focus-visible": {
-      outline: `2px solid ${tokens["--ring"]}`,
+      outlineColor: tokens["--ring"],
+      outlineStyle: "solid",
+      outlineWidth: 2,
       outlineOffset: 2,
     },
   },

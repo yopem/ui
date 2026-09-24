@@ -1,6 +1,5 @@
 import { tokens } from "@registry/styles/tokens.stylex"
 import { useTheme } from "@registry/theme/theme-provider"
-import * as stylex from "@stylexjs/stylex"
 import { MonitorIcon, MoonIcon, SunIcon } from "lucide-react"
 
 import { Box } from "@/components/ui/box"
@@ -14,8 +13,24 @@ const themeOptions = [
 export function ThemeToggle() {
   const { theme, setTheme } = useTheme()
   return (
-    <Box as="fieldset" aria-label="Appearance" {...stylex.props(styles.root)}>
-      <Grid {...stylex.props(styles.options)}>
+    <Box
+      as="fieldset"
+      aria-label="Appearance"
+      borderWidth={0}
+      margin={0}
+      minInlineSize={0}
+      padding={"0.5rem 1rem"}
+    >
+      <Grid
+        backgroundColor={tokens["--muted"]}
+        borderRadius={tokens["--radius-lg"]}
+        display={"grid"}
+        gap={"0.25rem"}
+        gridTemplateColumns={"repeat(3, 1fr)"}
+        inlineSize={"7rem"}
+        marginInline={"auto"}
+        padding={"0.1875rem"}
+      >
         {themeOptions.map(({ icon: Icon, label, value }) => (
           <Box
             as="button"
@@ -24,7 +39,29 @@ export function ThemeToggle() {
             key={value}
             onClick={() => setTheme(value)}
             type="button"
-            {...stylex.props(styles.option, theme === value && styles.active)}
+            alignItems="center"
+            backgroundColor="transparent"
+            borderWidth={0}
+            borderRadius={tokens["--radius-md"]}
+            color={tokens["--muted-foreground"]}
+            cursor="pointer"
+            display="grid"
+            placeItems="center"
+            minBlockSize="2.75rem"
+            padding={0}
+            _hover={{ color: tokens["--foreground"] }}
+            _focusVisible={{
+              outlineColor: tokens["--ring"],
+              outlineStyle: "solid",
+              outlineWidth: 2,
+              outlineOffset: 1,
+            }}
+            _pressed={{
+              backgroundColor: tokens["--card"],
+              boxShadow: "0 1px 2px color-mix(in oklab, #000 12%, transparent)",
+              color: tokens["--foreground"],
+              fontWeight: 600,
+            }}
           >
             <Icon aria-hidden size={14} strokeWidth={1.75} />
           </Box>
@@ -33,49 +70,3 @@ export function ThemeToggle() {
     </Box>
   )
 }
-
-const styles = stylex.create({
-  root: {
-    borderWidth: 0,
-    borderBlockStart: `1px solid ${tokens["--border"]}`,
-    margin: 0,
-    minInlineSize: 0,
-    padding: "0.5rem 1rem",
-  },
-  options: {
-    backgroundColor: tokens["--muted"],
-    borderRadius: tokens["--radius-lg"],
-    display: "grid",
-    gap: "0.25rem",
-    gridTemplateColumns: "repeat(3, 1fr)",
-    inlineSize: "7rem",
-    marginInline: "auto",
-    padding: "0.1875rem",
-  },
-  option: {
-    alignItems: "center",
-    backgroundColor: "transparent",
-    borderWidth: 0,
-    borderRadius: tokens["--radius-md"],
-    color: tokens["--muted-foreground"],
-    cursor: "pointer",
-    display: "grid",
-    placeItems: "center",
-    minBlockSize: {
-      default: "2rem",
-      "@media (pointer: coarse)": "2.75rem",
-    },
-    padding: 0,
-    ":hover": { color: tokens["--foreground"] },
-    ":focus-visible": {
-      outline: `2px solid ${tokens["--ring"]}`,
-      outlineOffset: 1,
-    },
-  },
-  active: {
-    backgroundColor: tokens["--card"],
-    boxShadow: "0 1px 2px color-mix(in oklab, #000 12%, transparent)",
-    color: tokens["--foreground"],
-    fontWeight: 600,
-  },
-})

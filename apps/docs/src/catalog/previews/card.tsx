@@ -48,7 +48,12 @@ function FrameworkSelect() {
 
 function ProjectForm() {
   return (
-    <Form {...stylex.props(previewStyles.preview2)}>
+    <Form
+      display={"flex"}
+      inlineSize={"100%"}
+      flexDirection={"column"}
+      gap={"calc(0.25rem * 4)"}
+    >
       <Field>
         <FieldLabel>Name</FieldLabel>
         <Input placeholder="Name of your project" type="text" />
@@ -57,7 +62,7 @@ function ProjectForm() {
         <FieldLabel>Framework</FieldLabel>
         <FrameworkSelect />
       </Field>
-      <Button {...stylex.props(previewStyles.preview3)} type="submit">
+      <Button inlineSize={"100%"} type="submit">
         Deploy
       </Button>
     </Form>
@@ -66,7 +71,7 @@ function ProjectForm() {
 
 export function Preview() {
   return (
-    <Card {...stylex.props(previewStyles.preview1)}>
+    <Card inlineSize={"100%"} maxInlineSize={"20rem"}>
       <CardHeader>
         <CardTitle>Create project</CardTitle>
         <CardDescription>Deploy your new project in one-click.</CardDescription>
@@ -75,7 +80,12 @@ export function Preview() {
         <ProjectForm />
       </CardPanel>
       <CardFooter>
-        <Flex {...stylex.props(previewStyles.preview4)}>
+        <Flex
+          gap={"0.25rem"}
+          fontSize={"0.75rem"}
+          lineHeight={"calc(1 / 0.75)"}
+          color={"var(--muted-foreground)"}
+        >
           <CircleAlertIcon {...stylex.props(previewStyles.preview5)} />
           <Paragraph>This will take a few seconds to complete.</Paragraph>
         </Flex>
@@ -85,26 +95,6 @@ export function Preview() {
 }
 
 const previewStyles = stylex.create({
-  preview1: {
-    inlineSize: "100%",
-    maxInlineSize: "20rem",
-  },
-  preview2: {
-    display: "flex",
-    inlineSize: "100%",
-    flexDirection: "column",
-    gap: "calc(0.25rem * 4)",
-  },
-  preview3: {
-    inlineSize: "100%",
-  },
-  preview4: {
-    display: "flex",
-    gap: "0.25rem",
-    fontSize: "0.75rem",
-    lineHeight: "calc(1 / 0.75)",
-    color: "var(--muted-foreground)",
-  },
   preview5: {
     inlineSize: "calc(0.25rem * 3)",
     blockSize: "1lh",

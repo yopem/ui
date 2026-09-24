@@ -5,15 +5,17 @@ First, [choose a layout component](/docs/layout).
 The @yopem-ui/oxlint-plugin workspace provides six rules. Its recommended
 configuration enables all of them:
 
-- **prefer-ui-primitives**: prefer UI components over native HTML JSX.
-- **enforce-styling-methods**: check allowed styling methods and prefer direct
-  style props where possible.
-- **no-leaked-dom-style-props**: reject UI-only aliases on native HTML elements.
-- **no-unsupported-style-props**: replace known unsupported aliases with
-  supported names.
-- **static-stylex**: require statically analyzable StyleX declarations.
-- **valid-polymorphic-as**: validate native tags on Box and heading levels on
-  Heading.
+- **yopem-ui/prefer-ui-primitives**: prefer UI components over native HTML JSX.
+- **yopem-ui/enforce-styling-methods**: control which styling methods are
+  permitted on UI primitives. All methods are allowed by default; set
+  `preferStyleProps: true` to suggest direct style props where possible.
+- **yopem-ui/no-leaked-dom-style-props**: reject UI-only aliases on native HTML
+  elements.
+- **yopem-ui/no-unsupported-style-props**: replace known unsupported aliases
+  with supported names.
+- **yopem-ui/static-stylex**: require statically analyzable StyleX declarations.
+- **yopem-ui/valid-polymorphic-as**: validate native tags on Box and heading
+  levels on Heading.
 
 ## Configuration
 
@@ -45,6 +47,45 @@ for your project.
   ]
 }
 ```
+
+The recommended rule leaves styling choice to each project. Direct style props
+are always allowed. All six optional methods are also allowed by default:
+
+| Method        | JSX styling syntax                                            |
+| ------------- | ------------------------------------------------------------- |
+| `atoms`       | StyleX atoms from `@stylexjs/atoms`                           |
+| `className`   | `className={...}`                                             |
+| `css`         | `css={{ ... }}`                                               |
+| `reactStyle`  | `style={{ ... }}`                                             |
+| `stylexStyle` | `{...stylex.props(...)}` or `style={stylex.props(...).style}` |
+| `xstyle`      | `xstyle={...}`                                                |
+
+Set any method to `false` to disallow it on imported UI components. Set
+`preferStyleProps: true` to suggest direct style props when a styling method can
+be converted. To enforce **direct style props only**, this docs app disables all
+six methods in `.oxlintrc.json`:
+
+```json
+"yopem-ui/enforce-styling-methods": [
+  "error",
+  {
+    "methods": {
+      "atoms": false,
+      "className": false,
+      "css": false,
+      "reactStyle": false,
+      "stylexStyle": false,
+      "xstyle": false
+    }
+  }
+]
+```
+
+Copy that override only if your app wants the same policy. Otherwise keep the
+permissive default or configure individual methods to fit your styling system.
+The styling-method rule only checks imported Yopem UI components. TanStack
+Router's `Link` is not a Yopem UI primitive; router links in this docs app still
+use `stylex.props` for navigation styling.
 
 <span id="exceptions" />
 

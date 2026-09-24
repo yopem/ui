@@ -29,6 +29,7 @@ type Namespace = "svg" | "math" | null
 type StylingMethod =
   | "atoms"
   | "className"
+  | "css"
   | "reactStyle"
   | "stylexStyle"
   | "xstyle"
@@ -71,6 +72,7 @@ const DEFAULT_STYLE_COMPONENTS = new Set(styleComponentNames)
 const STYLE_METHODS: readonly StylingMethod[] = [
   "atoms",
   "className",
+  "css",
   "reactStyle",
   "stylexStyle",
   "xstyle",
@@ -207,7 +209,7 @@ function getStylingOptions(context: RuleContext): StylingOptions {
       DEFAULT_COMPONENT_SOURCES,
     ),
     methods,
-    preferStyleProps: getProperty(record, "preferStyleProps") !== false,
+    preferStyleProps: getProperty(record, "preferStyleProps") === true,
     styleComponents: new Set(
       getStringArray(
         getProperty(record, "styleComponents"),
@@ -557,6 +559,7 @@ function classifyMethod(
   if (hasAtom(expression, isAtomsRoot)) return "atoms"
   if (name === "xstyle") return "xstyle"
   if (name === "className") return "className"
+  if (name === "css") return "css"
   if (name === "style") {
     if (
       isNode(expression, "MemberExpression") &&
@@ -1165,6 +1168,7 @@ const plugin: Plugin = {
           {
             methods: {
               className: false,
+              css: false,
               reactStyle: false,
               stylexStyle: false,
               xstyle: false,
@@ -1183,6 +1187,7 @@ const plugin: Plugin = {
             methods: {
               atoms: false,
               className: false,
+              css: false,
               reactStyle: false,
               xstyle: false,
             },
@@ -1200,6 +1205,7 @@ const plugin: Plugin = {
             methods: {
               atoms: false,
               className: false,
+              css: false,
               reactStyle: false,
               stylexStyle: false,
             },

@@ -1,5 +1,3 @@
-import * as stylex from "@stylexjs/stylex"
-
 import { Flex } from "@/components/ui/flex"
 import {
   Meter,
@@ -11,7 +9,11 @@ import {
 export function Preview() {
   return (
     <Meter aria-label="Storage usage" value={75}>
-      <Flex {...stylex.props(previewStyles.preview1)}>
+      <Flex
+        alignItems={"center"}
+        justifyContent={"space-between"}
+        gap={"calc(0.25rem * 2)"}
+      >
         <MeterLabel>Storage usage</MeterLabel>
         <MeterValue />
       </Flex>
@@ -21,12 +23,3 @@ export function Preview() {
     </Meter>
   )
 }
-
-const previewStyles = stylex.create({
-  preview1: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "space-between",
-    gap: "calc(0.25rem * 2)",
-  },
-})

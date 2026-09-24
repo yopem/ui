@@ -1,5 +1,3 @@
-import * as stylex from "@stylexjs/stylex"
-
 import {
   ContextMenu,
   ContextMenuItem,
@@ -11,7 +9,20 @@ import {
 export function Preview() {
   return (
     <ContextMenu>
-      <ContextMenuTrigger {...stylex.props(previewStyles.preview1)}>
+      <ContextMenuTrigger
+        display={"flex"}
+        blockSize={"calc(0.25rem * 32)"}
+        inlineSize={"100%"}
+        maxInlineSize={"24rem"}
+        alignItems={"center"}
+        justifyContent={"center"}
+        borderRadius={"var(--radius)"}
+        borderStyle={"dashed"}
+        borderWidth={"1px"}
+        fontSize={"0.875rem"}
+        lineHeight={"calc(1.25 / 0.875)"}
+        color={"var(--muted-foreground)"}
+      >
         Right click here
       </ContextMenuTrigger>
       <ContextMenuPopup>
@@ -23,20 +34,3 @@ export function Preview() {
     </ContextMenu>
   )
 }
-
-const previewStyles = stylex.create({
-  preview1: {
-    display: "flex",
-    blockSize: "calc(0.25rem * 32)",
-    inlineSize: "100%",
-    maxInlineSize: "24rem",
-    alignItems: "center",
-    justifyContent: "center",
-    borderRadius: "var(--radius)",
-    borderStyle: "dashed",
-    borderWidth: "1px",
-    fontSize: "0.875rem",
-    lineHeight: "calc(1.25 / 0.875)",
-    color: "var(--muted-foreground)",
-  },
-})

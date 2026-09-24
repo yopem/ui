@@ -1,5 +1,3 @@
-import * as stylex from "@stylexjs/stylex"
-
 import { Button } from "@/components/ui/button"
 import { Field, FieldLabel } from "@/components/ui/field"
 import { Form } from "@/components/ui/form"
@@ -34,8 +32,8 @@ export function Preview() {
             Make changes to your profile here. Click save when you&apos;re done.
           </SheetDescription>
         </SheetHeader>
-        <Form {...stylex.props(previewStyles.preview1)}>
-          <SheetPanel {...stylex.props(previewStyles.preview2)}>
+        <Form display={"contents"}>
+          <SheetPanel display={"grid"} gap={"calc(0.25rem * 4)"}>
             {profileFields.map(({ defaultValue, label }) => (
               <Field key={label}>
                 <FieldLabel>{label}</FieldLabel>
@@ -52,13 +50,3 @@ export function Preview() {
     </Sheet>
   )
 }
-
-const previewStyles = stylex.create({
-  preview1: {
-    display: "contents",
-  },
-  preview2: {
-    display: "grid",
-    gap: "calc(0.25rem * 4)",
-  },
-})

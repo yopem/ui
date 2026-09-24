@@ -57,23 +57,56 @@ function UserCard({ delay, user }: { delay: number; user: (typeof users)[0] }) {
 
   return (
     <>
-      <Avatar {...stylex.props(previewStyles.preview1)}>
+      <Avatar
+        inlineSize={"calc(0.25rem * 10)"}
+        blockSize={"calc(0.25rem * 10)"}
+      >
         <AvatarImage alt={user.name} src={user.image} />
         <AvatarFallback>{user.fallback}</AvatarFallback>
       </Avatar>
-      <Flex {...stylex.props(previewStyles.preview2)}>
-        <Heading as="h4" {...stylex.props(previewStyles.preview3)}>
+      <Flex
+        minInlineSize={"0px"}
+        flex={"1"}
+        flexDirection={"column"}
+        gap={"0.25rem"}
+      >
+        <Heading
+          as="h4"
+          overflow={"hidden"}
+          display={"-webkit-box"}
+          WebkitBoxOrient={"vertical"}
+          WebkitLineClamp={"1"}
+          fontSize={"0.875rem"}
+          lineHeight={"calc(1.25 / 0.875)"}
+          fontWeight={"500"}
+        >
           {user.name}
         </Heading>
-        <Flex {...stylex.props(previewStyles.preview4)}>
-          <Box as="span" {...stylex.props(previewStyles.preview5)}>
+        <Flex
+          alignItems={"center"}
+          gap={"calc(0.25rem * 3)"}
+          fontSize={"0.75rem"}
+          lineHeight={"calc(1 / 0.75)"}
+          color={"var(--muted-foreground)"}
+        >
+          <Box
+            as="span"
+            overflow={"hidden"}
+            textOverflow={"ellipsis"}
+            whiteSpace={"nowrap"}
+          >
             {user.role}
           </Box>
-          <Flex {...stylex.props(previewStyles.preview6)}>
+          <Flex minInlineSize={"0px"} alignItems={"center"} gap={"0.25rem"}>
             <UsersRoundIcon {...stylex.props(previewStyles.preview7)} />
-            <Box as="span" {...stylex.props(previewStyles.preview5)}>
+            <Box
+              as="span"
+              overflow={"hidden"}
+              textOverflow={"ellipsis"}
+              whiteSpace={"nowrap"}
+            >
               {user.followers}
-              <Box as="span" {...stylex.props(previewStyles.preview8)}>
+              <Box as="span" mdDown={{ display: "none" }}>
                 {" "}
                 followers
               </Box>
@@ -92,24 +125,60 @@ function UserCard({ delay, user }: { delay: number; user: (typeof users)[0] }) {
 function UserCardSkeleton() {
   return (
     <>
-      <Skeleton {...stylex.props(previewStyles.preview9)} />
-      <Flex {...stylex.props(previewStyles.preview10)}>
-        <Skeleton {...stylex.props(previewStyles.preview11)} />
-        <Flex {...stylex.props(previewStyles.preview12)}>
-          <Skeleton {...stylex.props(previewStyles.preview13)} />
-          <Skeleton {...stylex.props(previewStyles.preview13)} />
+      <Skeleton
+        inlineSize={"calc(0.25rem * 10)"}
+        blockSize={"calc(0.25rem * 10)"}
+        borderRadius={"calc(infinity * 1px)"}
+      />
+      <Flex flex={"1"} flexDirection={"column"}>
+        <Skeleton
+          marginBlock={"calc(0.25rem * 0.5)"}
+          blockSize={"calc(0.25rem * 4)"}
+          maxInlineSize={"calc(0.25rem * 54)"}
+        />
+        <Flex
+          maxInlineSize={"calc(0.25rem * 54)"}
+          alignItems={"center"}
+          gap={"0.25rem"}
+        >
+          <Skeleton
+            marginBlock={"calc(0.25rem * 0.5)"}
+            blockSize={"calc(0.25rem * 4)"}
+            inlineSize={"calc(1 / 2 * 100%)"}
+          />
+          <Skeleton
+            marginBlock={"calc(0.25rem * 0.5)"}
+            blockSize={"calc(0.25rem * 4)"}
+            inlineSize={"calc(1 / 2 * 100%)"}
+          />
         </Flex>
       </Flex>
-      <Skeleton {...stylex.props(previewStyles.preview14)} />
+      <Skeleton
+        blockSize={"calc(0.25rem * 7)"}
+        inlineSize={"calc(0.25rem * 19)"}
+        md={{
+          blockSize: "calc(0.25rem * 6)",
+          inlineSize: "calc(0.25rem * 17)",
+        }}
+      />
     </>
   )
 }
 
 export function Preview() {
   return (
-    <Flex {...stylex.props(previewStyles.preview15)}>
+    <Flex
+      inlineSize={"100%"}
+      maxInlineSize={"calc(0.25rem * 92)"}
+      flexDirection={"column"}
+      gap={"calc(0.25rem * 6)"}
+    >
       {users.map((user) => (
-        <Flex {...stylex.props(previewStyles.preview16)} key={user.fallback}>
+        <Flex
+          alignItems={"center"}
+          gap={"calc(0.25rem * 4)"}
+          key={user.fallback}
+        >
           <UserCard delay={user.delay} user={user} />
         </Flex>
       ))}
@@ -126,102 +195,9 @@ const previewStyles = stylex.create({
     opacity: 0.8,
     marginInline: "-0.125rem",
   },
-  preview1: {
-    inlineSize: "calc(0.25rem * 10)",
-    blockSize: "calc(0.25rem * 10)",
-  },
-  preview2: {
-    display: "flex",
-    minInlineSize: "0px",
-    flex: "1",
-    flexDirection: "column",
-    gap: "0.25rem",
-  },
-  preview3: {
-    overflow: "hidden",
-    display: "-webkit-box",
-    WebkitBoxOrient: "vertical",
-    WebkitLineClamp: "1",
-    fontSize: "0.875rem",
-    lineHeight: "calc(1.25 / 0.875)",
-    fontWeight: "500",
-  },
-  preview4: {
-    display: "flex",
-    alignItems: "center",
-    gap: "calc(0.25rem * 3)",
-    fontSize: "0.75rem",
-    lineHeight: "calc(1 / 0.75)",
-    color: "var(--muted-foreground)",
-  },
-  preview5: {
-    overflow: "hidden",
-    textOverflow: "ellipsis",
-    whiteSpace: "nowrap",
-  },
-  preview6: {
-    display: "flex",
-    minInlineSize: "0px",
-    alignItems: "center",
-    gap: "0.25rem",
-  },
   preview7: {
     inlineSize: "calc(0.25rem * 3)",
     blockSize: "calc(0.25rem * 3)",
     flexShrink: "0",
-  },
-  preview8: {
-    display: {
-      default: null,
-      "@media (max-width: 39.999rem)": "none",
-    },
-  },
-  preview9: {
-    inlineSize: "calc(0.25rem * 10)",
-    blockSize: "calc(0.25rem * 10)",
-    borderRadius: "calc(infinity * 1px)",
-  },
-  preview10: {
-    display: "flex",
-    flex: "1",
-    flexDirection: "column",
-  },
-  preview11: {
-    marginBlock: "calc(0.25rem * 0.5)",
-    blockSize: "calc(0.25rem * 4)",
-    maxInlineSize: "calc(0.25rem * 54)",
-  },
-  preview12: {
-    display: "flex",
-    maxInlineSize: "calc(0.25rem * 54)",
-    alignItems: "center",
-    gap: "0.25rem",
-  },
-  preview13: {
-    marginBlock: "calc(0.25rem * 0.5)",
-    blockSize: "calc(0.25rem * 4)",
-    inlineSize: "calc(1 / 2 * 100%)",
-  },
-  preview14: {
-    blockSize: {
-      default: "calc(0.25rem * 7)",
-      "@media (min-width: 40rem)": "calc(0.25rem * 6)",
-    },
-    inlineSize: {
-      default: "calc(0.25rem * 19)",
-      "@media (min-width: 40rem)": "calc(0.25rem * 17)",
-    },
-  },
-  preview15: {
-    display: "flex",
-    inlineSize: "100%",
-    maxInlineSize: "calc(0.25rem * 92)",
-    flexDirection: "column",
-    gap: "calc(0.25rem * 6)",
-  },
-  preview16: {
-    display: "flex",
-    alignItems: "center",
-    gap: "calc(0.25rem * 4)",
   },
 })

@@ -125,7 +125,7 @@ test("responsive arrays, objects, and ranges update at boundaries without reload
   }
 })
 
-test("xstyle overrides style props while native inline precedence and className survive", async ({
+test("direct style props and native inline styles retain precedence", async ({
   page,
 }) => {
   await page.goto(previewPath)
@@ -133,14 +133,14 @@ test("xstyle overrides style props while native inline precedence and className 
     page.getByRole("button", { name: "Copy Style Props usage" }),
   ).toBeEnabled()
   await expect(
-    page.getByRole("button", { name: "Xstyle precedence" }),
+    page.getByRole("button", { name: "Direct prop precedence" }),
   ).toHaveCSS("padding-top", "28px")
   const inline = page.getByRole("button", { name: "Inline precedence" })
   await inline.evaluate((element) => {
     element.style.padding = "7px"
   })
   await expect(inline).toHaveCSS("padding-top", "7px")
-  const consumer = page.getByRole("button", { name: "Consumer class" })
+  const consumer = page.getByRole("button", { name: "Border width" })
   await expect(consumer).toHaveCSS("padding-top", "28px")
   await expect(consumer).toHaveCSS("border-top-width", "5px")
 })

@@ -102,10 +102,7 @@ export function Preview() {
                           onClick={() => handleItemClick(item)}
                           value={item.value}
                         >
-                          <Box
-                            as="span"
-                            {...stylex.props(previewStyles.preview1)}
-                          >
+                          <Box as="span" flex={"1"}>
                             {item.label}
                           </Box>
                           {item.shortcut && (
@@ -121,8 +118,8 @@ export function Preview() {
             </CommandList>
           </CommandPanel>
           <CommandFooter>
-            <Flex {...stylex.props(previewStyles.preview2)}>
-              <Flex {...stylex.props(previewStyles.preview3)}>
+            <Flex alignItems={"center"} gap={"calc(0.25rem * 4)"}>
+              <Flex alignItems={"center"} gap={"calc(0.25rem * 2)"}>
                 <KbdGroup>
                   <Kbd>
                     <ArrowUpIcon {...stylex.props(previewStyles.icon)} />
@@ -133,14 +130,14 @@ export function Preview() {
                 </KbdGroup>
                 <Box as="span">Navigate</Box>
               </Flex>
-              <Flex {...stylex.props(previewStyles.preview3)}>
+              <Flex alignItems={"center"} gap={"calc(0.25rem * 2)"}>
                 <Kbd>
                   <CornerDownLeftIcon {...stylex.props(previewStyles.icon)} />
                 </Kbd>
                 <Box as="span">Open</Box>
               </Flex>
             </Flex>
-            <Flex {...stylex.props(previewStyles.preview3)}>
+            <Flex alignItems={"center"} gap={"calc(0.25rem * 2)"}>
               <Kbd>Esc</Kbd>
               <Box as="span">Close</Box>
             </Flex>
@@ -157,18 +154,5 @@ const previewStyles = stylex.create({
     inlineSize: "0.75rem",
     flexShrink: 0,
     pointerEvents: "none",
-  },
-  preview1: {
-    flex: "1",
-  },
-  preview2: {
-    display: "flex",
-    alignItems: "center",
-    gap: "calc(0.25rem * 4)",
-  },
-  preview3: {
-    display: "flex",
-    alignItems: "center",
-    gap: "calc(0.25rem * 2)",
   },
 })

@@ -11,7 +11,12 @@ export function Preview() {
   return (
     <Collapsible>
       <CollapsibleTrigger
-        {...stylex.props(previewStyles.report1, stylex.defaultMarker())}
+        display="inline-flex"
+        alignItems="center"
+        gap="calc(0.25rem * 2)"
+        fontSize="0.875rem"
+        lineHeight="calc(1.25 / 0.875)"
+        fontWeight={500}
       >
         Show recovery keys
         <ChevronDownIcon
@@ -19,14 +24,44 @@ export function Preview() {
         />
       </CollapsibleTrigger>
       <CollapsiblePanel>
-        <Box as="ul" {...stylex.props(previewStyles.preview2)}>
-          <Box as="li" {...stylex.props(previewStyles.preview3)}>
+        <Box
+          as="ul"
+          display={"flex"}
+          flexDirection={"column"}
+          gap={"0.25rem"}
+          paddingBlock={"calc(0.25rem * 2)"}
+          fontSize={"0.875rem"}
+          lineHeight={"calc(1.25 / 0.875)"}
+          color={"var(--muted-foreground)"}
+        >
+          <Box
+            as="li"
+            borderRadius={"calc(var(--radius) - 4px)"}
+            backgroundColor={"var(--muted)"}
+            paddingInline={"calc(0.25rem * 2)"}
+            paddingBlock={"0.25rem"}
+            fontFamily={'"Geist Mono", ui-monospace, monospace'}
+          >
             4829-1735-6621
           </Box>
-          <Box as="li" {...stylex.props(previewStyles.preview3)}>
+          <Box
+            as="li"
+            borderRadius={"calc(var(--radius) - 4px)"}
+            backgroundColor={"var(--muted)"}
+            paddingInline={"calc(0.25rem * 2)"}
+            paddingBlock={"0.25rem"}
+            fontFamily={'"Geist Mono", ui-monospace, monospace'}
+          >
             9182-6407-5532
           </Box>
-          <Box as="li" {...stylex.props(previewStyles.preview3)}>
+          <Box
+            as="li"
+            borderRadius={"calc(var(--radius) - 4px)"}
+            backgroundColor={"var(--muted)"}
+            paddingInline={"calc(0.25rem * 2)"}
+            paddingBlock={"0.25rem"}
+            fontFamily={'"Geist Mono", ui-monospace, monospace'}
+          >
             3051-7924-9018
           </Box>
         </Box>
@@ -46,29 +81,5 @@ const previewStyles = stylex.create({
       [stylex.when.ancestor("[data-panel-open]")]: "rotate(180deg)",
     },
     transition: "transform 150ms",
-  },
-  preview2: {
-    display: "flex",
-    flexDirection: "column",
-    gap: "0.25rem",
-    paddingBlock: "calc(0.25rem * 2)",
-    fontSize: "0.875rem",
-    lineHeight: "calc(1.25 / 0.875)",
-    color: "var(--muted-foreground)",
-  },
-  preview3: {
-    borderRadius: "calc(var(--radius) - 4px)",
-    backgroundColor: "var(--muted)",
-    paddingInline: "calc(0.25rem * 2)",
-    paddingBlock: "0.25rem",
-    fontFamily: '"Geist Mono", ui-monospace, monospace',
-  },
-  report1: {
-    display: "inline-flex",
-    alignItems: "center",
-    gap: "calc(0.25rem * 2)",
-    fontSize: "0.875rem",
-    lineHeight: "calc(1.25 / 0.875)",
-    fontWeight: "500",
   },
 })

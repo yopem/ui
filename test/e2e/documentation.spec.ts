@@ -27,6 +27,19 @@ test("sidebar links to llms.txt", async ({ page }) => {
   )
 })
 
+test("documentation navigation has no separator borders", async ({ page }) => {
+  test.skip((page.viewportSize()?.width ?? 0) < 768, "Desktop sidebar only")
+  await page.goto("/")
+  await expect(page.getByRole("banner")).toHaveCSS("border-bottom-width", "0px")
+  await expect(page.getByRole("complementary")).toHaveCSS(
+    "border-inline-end-width",
+    "0px",
+  )
+  await expect(
+    page.getByRole("group", { name: "Appearance" }).last(),
+  ).toHaveCSS("border-top-width", "0px")
+})
+
 test("unknown routes show the docs not found page", async ({ page }) => {
   const response = await page.goto("/missing-page")
   expect(response?.status()).toBe(404)

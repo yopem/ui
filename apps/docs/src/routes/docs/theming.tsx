@@ -1,8 +1,6 @@
-import * as stylex from "@stylexjs/stylex"
 import { createFileRoute } from "@tanstack/react-router"
 
 import { CopyableCode } from "@/catalog/code-block"
-import { docsStyles } from "@/catalog/docs-styles"
 import { getDocumentation } from "@/catalog/docs.functions"
 import { GuidePage } from "@/catalog/guide-content"
 import { Box } from "@/components/ui/box"
@@ -27,7 +25,7 @@ function ThemeFiles() {
   const themeFiles = data.files.filter((file) => file.path.startsWith("theme/"))
 
   return (
-    <Box {...stylex.props(docsStyles.section)}>
+    <Box marginBlock="2rem" minInlineSize={0}>
       {themeFiles.map((file) => (
         <CopyableCode
           key={file.path}

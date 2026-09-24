@@ -1,6 +1,5 @@
 "use client"
 
-import * as stylex from "@stylexjs/stylex"
 import { useRef, useState } from "react"
 
 import { Box } from "@/components/ui/box"
@@ -15,10 +14,6 @@ import { Link } from "@/components/ui/link"
 import { Paragraph } from "@/components/ui/paragraph"
 import { Stack } from "@/components/ui/stack"
 import { VStack } from "@/components/ui/vstack"
-
-const styles = stylex.create({
-  override: { gap: "5px", justifyContent: "flex-end" },
-})
 
 export function Preview() {
   const linkRef = useRef<HTMLAnchorElement>(null)
@@ -75,7 +70,7 @@ export function Preview() {
         <Box as="span">Horizontal one</Box>
         <Box as="span">Horizontal two</Box>
       </HStack>
-      <HStack data-testid="override-hstack" gap={8} xstyle={styles.override}>
+      <HStack data-testid="override-hstack" gap="5px" justifyContent="flex-end">
         <Box as="span">Overridden layout</Box>
       </HStack>
       <Stack data-testid="stack">

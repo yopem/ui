@@ -33,8 +33,63 @@ export function CopyableCode({
   const visibleCode =
     collapsible && !expanded ? codeLines.slice(0, 5).join("\n") : cleanCode
   const { copyToClipboard, copyError, isCopied } = useCopyToClipboard()
-  return (
-    <Box {...stylex.props(styles.root, previewRoot(preview, header))}>
+  const codeContent = (
+    <Suspense
+      fallback={
+        <Box
+          inlineSize="max-content"
+          minInlineSize="100%"
+          paddingBlock="1rem"
+          paddingInlineStart="1rem"
+          paddingInlineEnd="3.5rem"
+        >
+          <Box as="code">{visibleCode}</Box>
+        </Box>
+      }
+    >
+      <HighlightedCode
+        {...stylex.props(styles.codeContent)}
+        code={visibleCode}
+        title={title}
+      />
+    </Suspense>
+  )
+  const scrollArea =
+    collapsible && !expanded ? (
+      <ScrollArea
+        margin={0}
+        maxBlockSize="9rem"
+        fontSize="0.8125rem"
+        lineHeight={1.65}
+        tabSize={2}
+        whiteSpace="pre"
+        fontFamily={tokens["--font-mono"]}
+        maskImage="linear-gradient(to bottom, black 45%, transparent 100%)"
+        overflow="hidden"
+        aria-label={title}
+        clampContentMinWidth={false}
+        overscrollContain
+      >
+        {codeContent}
+      </ScrollArea>
+    ) : (
+      <ScrollArea
+        margin={0}
+        maxBlockSize="36rem"
+        fontSize="0.8125rem"
+        lineHeight={1.65}
+        tabSize={2}
+        whiteSpace="pre"
+        fontFamily={tokens["--font-mono"]}
+        aria-label={title}
+        clampContentMinWidth={false}
+        overscrollContain
+      >
+        {codeContent}
+      </ScrollArea>
+    )
+  const contents = (
+    <>
       <CodeBlockControls
         header={header}
         hydrated={hydrated}
@@ -42,34 +97,32 @@ export function CopyableCode({
         title={title}
         onCopy={() => void copyToClipboard(cleanCode)}
       />
-      <ScrollArea
-        {...stylex.props(
-          styles.pre,
-          styles.code,
-          collapsible && !expanded && styles.preview,
-        )}
-        aria-label={title}
-        clampContentMinWidth={false}
-        overscrollContain
-      >
-        <Suspense
-          fallback={
-            <Box {...stylex.props(styles.codeContent)}>
-              <Box as="code">{visibleCode}</Box>
-            </Box>
-          }
-        >
-          <HighlightedCode
-            {...stylex.props(styles.codeContent)}
-            code={visibleCode}
-            title={title}
-          />
-        </Suspense>
-      </ScrollArea>
+      {scrollArea}
       {collapsible && !expanded ? (
         <Box
           as="button"
-          {...stylex.props(styles.expand, styles.focus)}
+          backgroundColor={tokens["--accent"]}
+          borderColor={tokens["--border"]}
+          borderStyle="solid"
+          borderWidth={1}
+          borderRadius={tokens["--radius-sm"]}
+          color={tokens["--accent-foreground"]}
+          cursor="pointer"
+          fontSize="0.75rem"
+          fontWeight={600}
+          insetBlockEnd="0.75rem"
+          insetInlineStart="50%"
+          paddingBlock="0.375rem"
+          paddingInline="0.625rem"
+          position="absolute"
+          transform="translateX(-50%)"
+          zIndex={1}
+          _focusVisible={{
+            outlineColor: tokens["--ring"],
+            outlineStyle: "solid",
+            outlineWidth: 2,
+            outlineOffset: -2,
+          }}
           type="button"
           onClick={() => setExpanded(true)}
         >
@@ -78,16 +131,56 @@ export function CopyableCode({
       ) : null}
       <Box
         as="output"
-        {...stylex.props(styles.status, Boolean(copyError) && styles.error)}
+        display="block"
+        paddingInline="1rem"
+        fontSize="0.8125rem"
+        overflowWrap="anywhere"
       >
-        {copyError ?? ""}
+        {copyError ? (
+          <Box as="span" color={tokens["--destructive"]}>
+            {copyError}
+          </Box>
+        ) : null}
       </Box>
+    </>
+  )
+  if (preview && !header) {
+    return (
+      <Box
+        backgroundColor={tokens["--code"]}
+        color={tokens["--code-foreground"]}
+        borderColor={tokens["--border"]}
+        borderStyle="solid"
+        borderWidth={1}
+        borderRadius={tokens["--radius-lg"]}
+        marginBlock="1.5rem"
+        minInlineSize={0}
+        overflow="hidden"
+        position="relative"
+        borderStartStartRadius={0}
+        borderStartEndRadius={0}
+        marginBlockStart={-1}
+      >
+        {contents}
+      </Box>
+    )
+  }
+  return (
+    <Box
+      backgroundColor={tokens["--code"]}
+      color={tokens["--code-foreground"]}
+      borderColor={tokens["--border"]}
+      borderStyle="solid"
+      borderWidth={1}
+      borderRadius={tokens["--radius-lg"]}
+      marginBlock="1.5rem"
+      minInlineSize={0}
+      overflow="hidden"
+      position="relative"
+    >
+      {contents}
     </Box>
   )
-}
-
-function previewRoot(preview: boolean, header?: string) {
-  return preview && !header ? styles.previewRoot : undefined
 }
 
 function CodeBlockControls({
@@ -103,35 +196,76 @@ function CodeBlockControls({
   onCopy: () => void
   title: string
 }) {
-  return (
-    <Box {...stylex.props(Boolean(header) && styles.header)}>
-      {header ? (
-        <Box as="code" {...stylex.props(styles.headerTitle)}>
-          {header}
-        </Box>
-      ) : null}
-      <Box
-        as="button"
-        {...stylex.props(
-          styles.copy,
-          Boolean(header) && styles.headerCopy,
-          styles.focus,
-        )}
-        type="button"
-        disabled={!hydrated}
-        aria-label={isCopied ? `${title} copied` : `Copy ${title}`}
-        onClick={onCopy}
-      >
-        {isCopied ? (
-          <CheckIcon
-            {...stylex.props(styles.icon, styles.copiedIcon)}
-            aria-hidden="true"
-          />
-        ) : (
-          <CopyIcon {...stylex.props(styles.icon)} aria-hidden="true" />
-        )}
-      </Box>
+  const button = (
+    <Box
+      as="button"
+      alignItems="center"
+      backgroundColor="transparent"
+      _hover={{ backgroundColor: tokens["--accent"] }}
+      blockSize="2rem"
+      borderColor={tokens["--border"]}
+      borderStyle="solid"
+      borderWidth={1}
+      borderRadius={tokens["--radius-sm"]}
+      color={tokens["--foreground"]}
+      cursor="pointer"
+      _disabled={{ cursor: "wait", opacity: 0.5 }}
+      display="flex"
+      inlineSize="2rem"
+      insetBlockStart="0.75rem"
+      insetInlineEnd="0.75rem"
+      justifyContent="center"
+      opacity={1}
+      padding={0}
+      position="absolute"
+      zIndex={1}
+      _focusVisible={{
+        outlineColor: tokens["--ring"],
+        outlineStyle: "solid",
+        outlineWidth: 2,
+        outlineOffset: -2,
+      }}
+      type="button"
+      disabled={!hydrated}
+      aria-label={isCopied ? `${title} copied` : `Copy ${title}`}
+      onClick={onCopy}
+    >
+      {isCopied ? (
+        <CheckIcon
+          {...stylex.props(styles.icon, styles.copiedIcon)}
+          aria-hidden="true"
+        />
+      ) : (
+        <CopyIcon {...stylex.props(styles.icon)} aria-hidden="true" />
+      )}
     </Box>
+  )
+  return header ? (
+    <Box
+      alignItems="center"
+      borderBlockEndColor={tokens["--border"]}
+      borderBlockEndStyle="solid"
+      borderBlockEndWidth={1}
+      display="flex"
+      gap="0.75rem"
+      justifyContent="space-between"
+      paddingBlock="0.5rem"
+      paddingInline="0.75rem"
+      paddingInlineEnd="3.5rem"
+    >
+      <Box
+        as="code"
+        fontFamily={tokens["--font-mono"]}
+        fontSize="0.8125rem"
+        fontWeight={600}
+        overflowWrap="anywhere"
+      >
+        {header}
+      </Box>
+      {button}
+    </Box>
+  ) : (
+    button
   )
 }
 

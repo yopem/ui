@@ -18,30 +18,48 @@ export function Preview() {
         coss.com/ui
       </PreviewCardTrigger>
       <PreviewCardPopup>
-        <Flex {...stylex.props(previewStyles.preview1)}>
-          <Flex {...stylex.props(previewStyles.preview2)}>
-            <Heading as="h2" {...stylex.props(previewStyles.preview3)}>
+        <Flex flexDirection={"column"} gap={"calc(0.25rem * 4)"}>
+          <Flex flexDirection={"column"} gap={"0.25rem"}>
+            <Heading
+              as="h2"
+              fontSize={"0.875rem"}
+              lineHeight={"calc(1.25 / 0.875)"}
+              fontWeight={"500"}
+            >
               coss.com/ui
             </Heading>
-            <Paragraph {...stylex.props(previewStyles.preview4)}>
+            <Paragraph
+              fontSize={"0.875rem"}
+              lineHeight={"calc(1.25 / 0.875)"}
+              color={"var(--muted-foreground)"}
+            >
               Beautifully designed components that you can copy and paste into
               your apps.
             </Paragraph>
           </Flex>
-          <Flex {...stylex.props(previewStyles.preview5)}>
-            <Flex {...stylex.props(previewStyles.preview6)}>
+          <Flex
+            alignItems={"center"}
+            gap={"calc(0.25rem * 4)"}
+            fontSize={"0.75rem"}
+            lineHeight={"calc(1 / 0.75)"}
+            color={"var(--muted-foreground)"}
+          >
+            <Flex alignItems={"center"} gap={"0.25rem"}>
               <Box
                 as="span"
                 aria-hidden="true"
-                {...stylex.props(previewStyles.preview7)}
+                inlineSize={"calc(0.25rem * 2)"}
+                blockSize={"calc(0.25rem * 2)"}
+                borderRadius={"calc(infinity * 1px)"}
+                backgroundColor={"oklch(62.3% 0.214 259.815)"}
               />
               <Box as="span">TypeScript</Box>
             </Flex>
-            <Flex {...stylex.props(previewStyles.preview6)}>
+            <Flex alignItems={"center"} gap={"0.25rem"}>
               <StarIcon {...stylex.props(previewStyles.preview8)} />
               <Box as="span">58.2k</Box>
             </Flex>
-            <Flex {...stylex.props(previewStyles.preview6)}>
+            <Flex alignItems={"center"} gap={"0.25rem"}>
               <CornerUpLeftIcon {...stylex.props(previewStyles.preview8)} />
               <Box as="span">5.1k</Box>
             </Flex>
@@ -53,45 +71,6 @@ export function Preview() {
 }
 
 const previewStyles = stylex.create({
-  preview1: {
-    display: "flex",
-    flexDirection: "column",
-    gap: "calc(0.25rem * 4)",
-  },
-  preview2: {
-    display: "flex",
-    flexDirection: "column",
-    gap: "0.25rem",
-  },
-  preview3: {
-    fontSize: "0.875rem",
-    lineHeight: "calc(1.25 / 0.875)",
-    fontWeight: "500",
-  },
-  preview4: {
-    fontSize: "0.875rem",
-    lineHeight: "calc(1.25 / 0.875)",
-    color: "var(--muted-foreground)",
-  },
-  preview5: {
-    display: "flex",
-    alignItems: "center",
-    gap: "calc(0.25rem * 4)",
-    fontSize: "0.75rem",
-    lineHeight: "calc(1 / 0.75)",
-    color: "var(--muted-foreground)",
-  },
-  preview6: {
-    display: "flex",
-    alignItems: "center",
-    gap: "0.25rem",
-  },
-  preview7: {
-    inlineSize: "calc(0.25rem * 2)",
-    blockSize: "calc(0.25rem * 2)",
-    borderRadius: "calc(infinity * 1px)",
-    backgroundColor: "oklch(62.3% 0.214 259.815)",
-  },
   preview8: {
     inlineSize: "calc(0.25rem * 3)",
     blockSize: "calc(0.25rem * 3)",

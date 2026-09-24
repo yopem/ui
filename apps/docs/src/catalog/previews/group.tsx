@@ -10,7 +10,7 @@ import {
 } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
-import { Group, GroupSeparator, groupItemStyles } from "@/components/ui/group"
+import { Group, GroupSeparator } from "@/components/ui/group"
 import { Menu, MenuItem, MenuPopup, MenuTrigger } from "@/components/ui/menu"
 
 const menuItems = [
@@ -22,12 +22,12 @@ const menuItems = [
 export function Preview() {
   return (
     <Group aria-label="File actions">
-      <Button variant="outline" xstyle={groupItemStyles.item}>
+      <Button variant="outline" borderStartEndRadius={0} borderEndEndRadius={0}>
         <FilesIcon aria-hidden="true" {...stylex.props(previewStyles.icon)} />
         Files
       </Button>
       <GroupSeparator />
-      <Button variant="outline" xstyle={groupItemStyles.item}>
+      <Button variant="outline" borderRadius={0}>
         <FilmIcon aria-hidden="true" {...stylex.props(previewStyles.icon)} />
         Media
       </Button>
@@ -39,7 +39,8 @@ export function Preview() {
               aria-label="Menu"
               size="icon"
               variant="outline"
-              xstyle={groupItemStyles.item}
+              borderStartStartRadius={0}
+              borderEndStartRadius={0}
             />
           }
         >

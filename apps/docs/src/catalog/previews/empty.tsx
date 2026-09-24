@@ -22,7 +22,7 @@ export function Preview() {
         <EmptyDescription>Create a meeting to get started.</EmptyDescription>
       </EmptyHeader>
       <EmptyContent>
-        <Flex {...stylex.props(previewStyles.preview1)}>
+        <Flex gap={"calc(0.25rem * 2)"}>
           <Button size="sm">Create meeting</Button>
           <Button size="sm" variant="outline">
             <BookIcon {...stylex.props(previewStyles.icon2)} />
@@ -48,9 +48,5 @@ const previewStyles = stylex.create({
     pointerEvents: "none",
     opacity: 0.8,
     marginInline: "-0.125rem",
-  },
-  preview1: {
-    display: "flex",
-    gap: "calc(0.25rem * 2)",
   },
 })

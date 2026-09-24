@@ -1,5 +1,3 @@
-import * as stylex from "@stylexjs/stylex"
-
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -27,15 +25,15 @@ export function Preview() {
       <DialogTrigger render={<Button variant="outline" />}>
         Open Dialog
       </DialogTrigger>
-      <DialogPopup {...stylex.props(previewStyles.preview1)}>
+      <DialogPopup md={{ maxInlineSize: "24rem" }}>
         <DialogHeader>
           <DialogTitle>Edit profile</DialogTitle>
           <DialogDescription>
             Make changes to your profile here. Click save when you&apos;re done.
           </DialogDescription>
         </DialogHeader>
-        <Form {...stylex.props(previewStyles.preview2)}>
-          <DialogPanel {...stylex.props(previewStyles.preview3)}>
+        <Form display={"contents"}>
+          <DialogPanel display={"grid"} gap={"calc(0.25rem * 4)"}>
             {profileFields.map((field) => (
               <Field key={field.label}>
                 <FieldLabel>{field.label}</FieldLabel>
@@ -54,19 +52,3 @@ export function Preview() {
     </Dialog>
   )
 }
-
-const previewStyles = stylex.create({
-  preview1: {
-    maxInlineSize: {
-      default: null,
-      "@media (min-width: 40rem)": "24rem",
-    },
-  },
-  preview2: {
-    display: "contents",
-  },
-  preview3: {
-    display: "grid",
-    gap: "calc(0.25rem * 4)",
-  },
-})

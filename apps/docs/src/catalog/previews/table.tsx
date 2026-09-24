@@ -1,5 +1,3 @@
-import * as stylex from "@stylexjs/stylex"
-
 import { Badge } from "@/components/ui/badge"
 import { Box } from "@/components/ui/box"
 import {
@@ -21,172 +19,125 @@ export function Preview() {
           <TableHead>Project</TableHead>
           <TableHead>Status</TableHead>
           <TableHead>Team</TableHead>
-          <TableHead {...stylex.props(previewStyles.preview1)}>
-            Budget
-          </TableHead>
+          <TableHead textAlign={"right"}>Budget</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
         <TableRow>
-          <TableCell {...stylex.props(previewStyles.preview2)}>
-            Website Redesign
-          </TableCell>
+          <TableCell fontWeight={"500"}>Website Redesign</TableCell>
           <TableCell>
             <Badge variant="outline">
               <Box
                 as="span"
                 aria-hidden="true"
-                {...stylex.props(previewStyles.preview3)}
+                inlineSize={"calc(0.25rem * 1.5)"}
+                blockSize={"calc(0.25rem * 1.5)"}
+                borderRadius={"calc(infinity * 1px)"}
+                backgroundColor={"oklch(69.6% 0.17 162.48)"}
               />
               Paid
             </Badge>
           </TableCell>
           <TableCell>Frontend Team</TableCell>
-          <TableCell {...stylex.props(previewStyles.preview1)}>
-            $12,500
-          </TableCell>
+          <TableCell textAlign={"right"}>$12,500</TableCell>
         </TableRow>
         <TableRow>
-          <TableCell {...stylex.props(previewStyles.preview2)}>
-            Mobile App
-          </TableCell>
+          <TableCell fontWeight={"500"}>Mobile App</TableCell>
           <TableCell>
             <Badge variant="outline">
               <Box
                 as="span"
                 aria-hidden="true"
-                {...stylex.props(previewStyles.preview4)}
+                inlineSize={"calc(0.25rem * 1.5)"}
+                blockSize={"calc(0.25rem * 1.5)"}
+                borderRadius={"calc(infinity * 1px)"}
+                backgroundColor="color-mix(in oklab, var(--muted-foreground) 64%, transparent)"
               />
               Unpaid
             </Badge>
           </TableCell>
           <TableCell>Mobile Team</TableCell>
-          <TableCell {...stylex.props(previewStyles.preview1)}>
-            $8,750
-          </TableCell>
+          <TableCell textAlign={"right"}>$8,750</TableCell>
         </TableRow>
         <TableRow>
-          <TableCell {...stylex.props(previewStyles.preview2)}>
-            API Integration
-          </TableCell>
+          <TableCell fontWeight={"500"}>API Integration</TableCell>
           <TableCell>
             <Badge variant="outline">
               <Box
                 as="span"
                 aria-hidden="true"
-                {...stylex.props(previewStyles.preview5)}
+                inlineSize={"calc(0.25rem * 1.5)"}
+                blockSize={"calc(0.25rem * 1.5)"}
+                borderRadius={"calc(infinity * 1px)"}
+                backgroundColor={"oklch(76.9% 0.188 70.08)"}
               />
               Pending
             </Badge>
           </TableCell>
           <TableCell>Backend Team</TableCell>
-          <TableCell {...stylex.props(previewStyles.preview1)}>
-            $5,200
-          </TableCell>
+          <TableCell textAlign={"right"}>$5,200</TableCell>
         </TableRow>
         <TableRow>
-          <TableCell {...stylex.props(previewStyles.preview2)}>
-            Database Migration
-          </TableCell>
+          <TableCell fontWeight={"500"}>Database Migration</TableCell>
           <TableCell>
             <Badge variant="outline">
               <Box
                 as="span"
                 aria-hidden="true"
-                {...stylex.props(previewStyles.preview3)}
+                inlineSize={"calc(0.25rem * 1.5)"}
+                blockSize={"calc(0.25rem * 1.5)"}
+                borderRadius={"calc(infinity * 1px)"}
+                backgroundColor={"oklch(69.6% 0.17 162.48)"}
               />
               Paid
             </Badge>
           </TableCell>
           <TableCell>DevOps Team</TableCell>
-          <TableCell {...stylex.props(previewStyles.preview1)}>
-            $3,800
-          </TableCell>
+          <TableCell textAlign={"right"}>$3,800</TableCell>
         </TableRow>
         <TableRow>
-          <TableCell {...stylex.props(previewStyles.preview2)}>
-            User Dashboard
-          </TableCell>
+          <TableCell fontWeight={"500"}>User Dashboard</TableCell>
           <TableCell>
             <Badge variant="outline">
               <Box
                 as="span"
                 aria-hidden="true"
-                {...stylex.props(previewStyles.preview3)}
+                inlineSize={"calc(0.25rem * 1.5)"}
+                blockSize={"calc(0.25rem * 1.5)"}
+                borderRadius={"calc(infinity * 1px)"}
+                backgroundColor={"oklch(69.6% 0.17 162.48)"}
               />
               Paid
             </Badge>
           </TableCell>
           <TableCell>UX Team</TableCell>
-          <TableCell {...stylex.props(previewStyles.preview1)}>
-            $7,200
-          </TableCell>
+          <TableCell textAlign={"right"}>$7,200</TableCell>
         </TableRow>
         <TableRow>
-          <TableCell {...stylex.props(previewStyles.preview2)}>
-            Security Audit
-          </TableCell>
+          <TableCell fontWeight={"500"}>Security Audit</TableCell>
           <TableCell>
             <Badge variant="outline">
               <Box
                 as="span"
                 aria-hidden="true"
-                {...stylex.props(previewStyles.preview6)}
+                inlineSize={"calc(0.25rem * 1.5)"}
+                blockSize={"calc(0.25rem * 1.5)"}
+                borderRadius={"calc(infinity * 1px)"}
+                backgroundColor={"oklch(63.7% 0.237 25.331)"}
               />
               Failed
             </Badge>
           </TableCell>
           <TableCell>Security Team</TableCell>
-          <TableCell {...stylex.props(previewStyles.preview1)}>
-            $2,100
-          </TableCell>
+          <TableCell textAlign={"right"}>$2,100</TableCell>
         </TableRow>
       </TableBody>
       <TableFooter>
         <TableRow>
           <TableCell colSpan={3}>Total Budget</TableCell>
-          <TableCell {...stylex.props(previewStyles.preview1)}>
-            $39,550
-          </TableCell>
+          <TableCell textAlign={"right"}>$39,550</TableCell>
         </TableRow>
       </TableFooter>
     </Table>
   )
 }
-
-const previewStyles = stylex.create({
-  preview1: {
-    textAlign: "right",
-  },
-  preview2: {
-    fontWeight: "500",
-  },
-  preview3: {
-    inlineSize: "calc(0.25rem * 1.5)",
-    blockSize: "calc(0.25rem * 1.5)",
-    borderRadius: "calc(infinity * 1px)",
-    backgroundColor: "oklch(69.6% 0.17 162.48)",
-  },
-  preview4: {
-    inlineSize: "calc(0.25rem * 1.5)",
-    blockSize: "calc(0.25rem * 1.5)",
-    borderRadius: "calc(infinity * 1px)",
-    backgroundColor: {
-      default: "var(--muted-foreground)",
-      "@supports (color: color-mix(in lab, red, red))":
-        "color-mix(in oklab, var(--muted-foreground) 64%, transparent)",
-    },
-  },
-  preview5: {
-    inlineSize: "calc(0.25rem * 1.5)",
-    blockSize: "calc(0.25rem * 1.5)",
-    borderRadius: "calc(infinity * 1px)",
-    backgroundColor: "oklch(76.9% 0.188 70.08)",
-  },
-  preview6: {
-    inlineSize: "calc(0.25rem * 1.5)",
-    blockSize: "calc(0.25rem * 1.5)",
-    borderRadius: "calc(infinity * 1px)",
-    backgroundColor: "oklch(63.7% 0.237 25.331)",
-  },
-})

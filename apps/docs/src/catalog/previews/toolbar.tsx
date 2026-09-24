@@ -42,7 +42,8 @@ export function Preview() {
     <TooltipProvider>
       <Toolbar>
         <ToggleGroup
-          {...stylex.props(previewStyles.preview1)}
+          borderStyle={"none"}
+          padding={"0px"}
           defaultValue={["left"]}
         >
           <Tooltip>
@@ -173,9 +174,5 @@ const previewStyles = stylex.create({
     pointerEvents: "none",
     opacity: 0.8,
     marginInline: "-0.125rem",
-  },
-  preview1: {
-    borderStyle: "none",
-    padding: "0px",
   },
 })

@@ -1,8 +1,6 @@
-import * as stylex from "@stylexjs/stylex"
 import { createFileRoute } from "@tanstack/react-router"
 
 import { CopyableCode } from "@/catalog/code-block"
-import { docsStyles } from "@/catalog/docs-styles"
 import { getDocumentation } from "@/catalog/docs.functions"
 import { GuidePage } from "@/catalog/guide-content"
 import { Box } from "@/components/ui/box"
@@ -34,7 +32,7 @@ function InstallationMethods() {
         <TabsTab value="manual">Manual</TabsTab>
       </TabsList>
       <TabsPanel value="cli">
-        <Paragraph {...stylex.props(docsStyles.p)}>
+        <Paragraph marginBlock="1rem" lineHeight={1.8}>
           Run from your project root. Init detects Vite React, client TanStack
           Router, TanStack Start, Next.js App Router, or Astro; installs base
           files and dependencies; then configures build plugins, aliases, and
@@ -48,7 +46,7 @@ function InstallationMethods() {
           header="Terminal"
           title="Initialize project with CLI"
         />
-        <Paragraph {...stylex.props(docsStyles.p)}>
+        <Paragraph marginBlock="1rem" lineHeight={1.8}>
           For ambiguous projects, pass --framework vite, tanstack-router,
           tanstack-start, next, or astro. Next.js requires Node 24+ and webpack;
           React Router framework/RSC mode and Next.js Pages Router need manual
@@ -57,12 +55,12 @@ function InstallationMethods() {
         </Paragraph>
       </TabsPanel>
       <TabsPanel value="manual">
-        <Paragraph {...stylex.props(docsStyles.p)}>
+        <Paragraph marginBlock="1rem" lineHeight={1.8}>
           Copy these files once. Keep their displayed paths. Component pages
           include them in required files, so later components need no second
           copy.
         </Paragraph>
-        <Box {...stylex.props(docsStyles.section)}>
+        <Box marginBlock="2rem" minInlineSize={0}>
           {data.files.map((file) => (
             <CopyableCode
               key={file.path}

@@ -1,5 +1,3 @@
-import * as stylex from "@stylexjs/stylex"
-
 import {
   Accordion,
   AccordionItem,
@@ -29,7 +27,7 @@ export function Preview() {
   ]
 
   return (
-    <Accordion {...stylex.props(previewStyles.preview1)} defaultValue={["3"]}>
+    <Accordion inlineSize={"100%"} defaultValue={["3"]}>
       {items.map((item) => (
         <AccordionItem key={item.id} value={item.id}>
           <AccordionTrigger>{item.title}</AccordionTrigger>
@@ -39,9 +37,3 @@ export function Preview() {
     </Accordion>
   )
 }
-
-const previewStyles = stylex.create({
-  preview1: {
-    inlineSize: "100%",
-  },
-})

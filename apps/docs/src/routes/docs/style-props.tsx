@@ -5,9 +5,9 @@ import {
   scopes,
   selectors,
 } from "@registry/lib/style-props-config"
+import { tokens } from "@registry/styles/tokens.stylex"
 import { createFileRoute } from "@tanstack/react-router"
 
-import { docsStyles } from "@/catalog/docs-styles"
 import { GuidePage } from "@/catalog/guide-content"
 import { Box } from "@/components/ui/box"
 import {
@@ -47,8 +47,27 @@ function StylePropsGuide() {
 
 function StylingAliases() {
   return (
-    <Box as="details" xstyle={docsStyles.details}>
-      <Box as="summary" xstyle={docsStyles.summary}>
+    <Box
+      as="details"
+      borderColor={tokens["--border"]}
+      borderStyle="solid"
+      borderWidth={1}
+      borderRadius={tokens["--radius-lg"]}
+      padding="1rem"
+      marginBlock="1rem"
+    >
+      <Box
+        as="summary"
+        cursor="pointer"
+        fontWeight={600}
+        borderRadius={tokens["--radius-sm"]}
+        _focusVisible={{
+          outlineColor: tokens["--ring"],
+          outlineStyle: "solid",
+          outlineWidth: 2,
+          outlineOffset: 4,
+        }}
+      >
         All styling aliases
       </Box>
       <Table aria-label="Styling aliases" render={<Box tabIndex={0} />}>
@@ -75,8 +94,27 @@ function StylingAliases() {
 
 function StylingConditions() {
   return (
-    <Box as="details" xstyle={docsStyles.details}>
-      <Box as="summary" xstyle={docsStyles.summary}>
+    <Box
+      as="details"
+      borderColor={tokens["--border"]}
+      borderStyle="solid"
+      borderWidth={1}
+      borderRadius={tokens["--radius-lg"]}
+      padding="1rem"
+      marginBlock="1rem"
+    >
+      <Box
+        as="summary"
+        cursor="pointer"
+        fontWeight={600}
+        borderRadius={tokens["--radius-sm"]}
+        _focusVisible={{
+          outlineColor: tokens["--ring"],
+          outlineStyle: "solid",
+          outlineWidth: 2,
+          outlineOffset: 4,
+        }}
+      >
         All state and media conditions
       </Box>
       <Table aria-label="Style conditions" render={<Box tabIndex={0} />}>

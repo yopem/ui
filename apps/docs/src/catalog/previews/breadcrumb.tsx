@@ -1,5 +1,4 @@
 // next/link replaced -> anchor
-import * as stylex from "@stylexjs/stylex"
 
 import {
   Breadcrumb,
@@ -28,7 +27,8 @@ export function Preview() {
             <MenuTrigger
               render={
                 <Button
-                  {...stylex.props(previewStyles.preview1)}
+                  margin={"calc(0.25rem * -1.5)"}
+                  color={"var(--muted-foreground)"}
                   aria-label="More pages"
                   size="icon-sm"
                   variant="ghost"
@@ -63,10 +63,3 @@ export function Preview() {
     </Breadcrumb>
   )
 }
-
-const previewStyles = stylex.create({
-  preview1: {
-    margin: "calc(0.25rem * -1.5)",
-    color: "var(--muted-foreground)",
-  },
-})

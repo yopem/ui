@@ -1,6 +1,5 @@
 "use client"
 
-import * as stylex from "@stylexjs/stylex"
 import { useState } from "react"
 
 import { Box } from "@/components/ui/box"
@@ -15,13 +14,18 @@ export function Preview() {
     <Box
       as="section"
       aria-label="Style props playground"
-      {...stylex.props(styles.root)}
+      display={"flex"}
+      flexDirection={"column"}
+      gap={"1.5rem"}
+      maxInlineSize={"64rem"}
+      minInlineSize={0}
+      padding={"1rem"}
     >
       <Heading as="h2">Style props</Heading>
       <Paragraph>
         Numbers use the spacing scale; CSS strings keep their units.
       </Paragraph>
-      <Flex {...stylex.props(styles.row)}>
+      <Flex flexWrap={"wrap"} gap={"1.5rem"}>
         <Button p={4}>Numeric padding</Button>
         <Button p="13px">Raw padding</Button>
         <Button p={[2, null, 6]}>Responsive array</Button>
@@ -31,12 +35,12 @@ export function Preview() {
       <Paragraph>
         Logical spacing follows writing direction, including negative margins.
       </Paragraph>
-      <Flex dir="ltr" {...stylex.props(styles.row)}>
+      <Flex dir="ltr" flexWrap={"wrap"} gap={"1.5rem"}>
         <Button ps={6} pe={2} ms={-2}>
           Logical LTR
         </Button>
       </Flex>
-      <Flex dir="rtl" {...stylex.props(styles.row)}>
+      <Flex dir="rtl" flexWrap={"wrap"} gap={"1.5rem"}>
         <Button ps={6} pe={2} ms={-2}>
           Logical RTL
         </Button>
@@ -46,17 +50,17 @@ export function Preview() {
         <Box as="span">space</Box>
       </Button>
       <Button gap={0} spaceX={-2}>
-        <Box as="span" {...stylex.props(styles.spaceItem)}>
+        <Box as="span" paddingInline={"0.75rem"}>
           Negative
         </Box>
-        <Box as="span" {...stylex.props(styles.spaceItem)}>
+        <Box as="span" paddingInline={"0.75rem"}>
           space
         </Box>
       </Button>
       <Paragraph>
         Hover, keyboard focus, and disabled states keep native behavior.
       </Paragraph>
-      <Flex {...stylex.props(styles.row)}>
+      <Flex flexWrap={"wrap"} gap={"1.5rem"}>
         <Button
           p={4}
           _hover={{ p: 6 }}
@@ -78,43 +82,25 @@ export function Preview() {
         Activations: {activations}
       </Box>
       <Paragraph>
-        Explicit xstyle overrides style props. Inline CSS keeps native
-        precedence; className is preserved.
+        Direct style props override base spacing and compose with responsive and
+        state styles.
       </Paragraph>
-      <Flex {...stylex.props(styles.row)}>
-        <Button p={4} xstyle={styles.override}>
-          Xstyle precedence
+      <Flex flexWrap={"wrap"} gap={"1.5rem"}>
+        <Button p={4} paddingBlock="28px" paddingInline="28px">
+          Direct prop precedence
         </Button>
-        <Button p={4} xstyle={styles.override}>
+        <Button p={4} paddingBlock="28px" paddingInline="28px">
           Inline precedence
         </Button>
         <Button
           p={4}
-          xstyle={styles.override}
-          className={stylex.props(styles.consumerClass).className}
+          paddingBlock="28px"
+          paddingInline="28px"
+          borderTopWidth="5px"
         >
-          Consumer class
+          Border width
         </Button>
       </Flex>
     </Box>
   )
 }
-
-const styles = stylex.create({
-  root: {
-    display: "flex",
-    flexDirection: "column",
-    gap: "1.5rem",
-    maxInlineSize: "64rem",
-    minInlineSize: 0,
-    padding: "1rem",
-  },
-  row: {
-    display: "flex",
-    flexWrap: "wrap",
-    gap: "1.5rem",
-  },
-  spaceItem: { paddingInline: "0.75rem" },
-  override: { paddingBlock: "28px", paddingInline: "28px" },
-  consumerClass: { borderTopWidth: "5px" },
-})

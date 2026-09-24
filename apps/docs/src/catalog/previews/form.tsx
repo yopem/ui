@@ -2,7 +2,6 @@
 
 import type { FormEvent } from "react"
 
-import * as stylex from "@stylexjs/stylex"
 import { useState } from "react"
 
 import { Button } from "@/components/ui/button"
@@ -22,7 +21,14 @@ export function Preview() {
   }
 
   return (
-    <Form {...stylex.props(previewStyles.preview1)} onSubmit={onSubmit}>
+    <Form
+      display={"flex"}
+      inlineSize={"100%"}
+      maxInlineSize={"calc(0.25rem * 64)"}
+      flexDirection={"column"}
+      gap={"calc(0.25rem * 4)"}
+      onSubmit={onSubmit}
+    >
       <Field name="email">
         <FieldLabel>Email</FieldLabel>
         <Input placeholder="you@example.com" required type="email" />
@@ -34,13 +40,3 @@ export function Preview() {
     </Form>
   )
 }
-
-const previewStyles = stylex.create({
-  preview1: {
-    display: "flex",
-    inlineSize: "100%",
-    maxInlineSize: "calc(0.25rem * 64)",
-    flexDirection: "column",
-    gap: "calc(0.25rem * 4)",
-  },
-})

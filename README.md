@@ -121,22 +121,24 @@ Root `.oxlintrc.json` loads local plugin through Oxlint's `jsPlugins`:
 }
 ```
 
-Docs JSX enables recommended rules at error severity:
+Docs JSX enables all six rules at error severity and restricts styling to direct
+style props on Yopem primitives. Recommended defaults leave all styling methods
+enabled; consumers choose which methods to disable.
 
-| Rule                         | Scope                               | Migration                                                                          |
-| ---------------------------- | ----------------------------------- | ---------------------------------------------------------------------------------- |
-| `enforce-styling-methods`    | Imported Yopem components           | Fixes direct object styles; offers review suggestions for referenced StyleX styles |
-| `no-unsupported-style-props` | Imported Yopem components           | Renames known unsupported aliases                                                  |
-| `no-leaked-dom-style-props`  | Native JSX elements                 | Move style props to a Yopem component or filter them before DOM spread             |
-| `valid-polymorphic-as`       | `Box` and `Heading`                 | Use a static supported intrinsic tag                                               |
-| `static-stylex`              | Renamed or namespace StyleX imports | Replace dynamic keys and spreads with static declarations                          |
-| `prefer-ui-primitives`       | Native JSX elements                 | Replace native elements with UI primitives                                         |
+| Rule                         | Scope                               | Migration                                                                      |
+| ---------------------------- | ----------------------------------- | ------------------------------------------------------------------------------ |
+| `enforce-styling-methods`    | Imported Yopem components           | Configurable methods; opt in to style-prop suggestions with `preferStyleProps` |
+| `no-unsupported-style-props` | Imported Yopem components           | Renames known unsupported aliases                                              |
+| `no-leaked-dom-style-props`  | Native JSX elements                 | Move style props to a Yopem component or filter them before DOM spread         |
+| `valid-polymorphic-as`       | `Box` and `Heading`                 | Use a static supported intrinsic tag                                           |
+| `static-stylex`              | Renamed or namespace StyleX imports | Replace dynamic keys and spreads with static declarations                      |
+| `prefer-ui-primitives`       | Native JSX elements                 | Replace native elements with UI primitives                                     |
 
 Rules resolve renamed and namespace imports. Styling diagnostics stay quiet for
-unresolved components and declarations without a safe equivalent style prop.
-Direct conversions retain source expressions, responsive arrays, condition
-objects, and theme tokens. Existing style-prop collisions stay untouched so
-`xstyle` precedence is preserved.
+unresolved components. All methods (`atoms`, `className`, `css`, `reactStyle`,
+`stylexStyle`, `xstyle`) are permitted by default; direct style props are always
+permitted. The docs-specific override disables all six. TanStack Router links
+are outside the Yopem primitive rule and may use `stylex.props`.
 
 Plugin exports `recommended`, `strict-stylex`, `strict-atoms`, and
 `strict-xstyle` configs. JSON projects can apply equivalent rule options:
@@ -161,6 +163,7 @@ StyleX-only, atoms-only, and `xstyle`-only projects ban other methods:
         "methods": {
           "atoms": false,
           "className": false,
+          "css": false,
           "reactStyle": false,
           "stylexStyle": true,
           "xstyle": false
@@ -172,7 +175,7 @@ StyleX-only, atoms-only, and `xstyle`-only projects ban other methods:
 ```
 
 Set only `atoms`, `stylexStyle`, or `xstyle` to `true` for its strict mode. A
-mixed project can allow selected methods while retaining style-prop preference:
+mixed project can allow selected methods and opt in to style-prop preference:
 
 ```json
 {
@@ -180,6 +183,7 @@ mixed project can allow selected methods while retaining style-prop preference:
     "yopem-ui/enforce-styling-methods": [
       "error",
       {
+        "preferStyleProps": true,
         "methods": {
           "className": false,
           "reactStyle": false

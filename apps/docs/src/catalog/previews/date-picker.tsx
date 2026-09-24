@@ -16,7 +16,11 @@ export function Preview() {
     <Popover>
       <PopoverTrigger
         render={
-          <Button {...stylex.props(previewStyles.preview1)} variant="outline" />
+          <Button
+            inlineSize={"100%"}
+            justifyContent={"flex-start"}
+            variant="outline"
+          />
         }
       >
         <CalendarIcon
@@ -45,9 +49,5 @@ const previewStyles = stylex.create({
     pointerEvents: "none",
     opacity: 0.8,
     marginInline: "-0.125rem",
-  },
-  preview1: {
-    inlineSize: "100%",
-    justifyContent: "flex-start",
   },
 })

@@ -61,7 +61,7 @@ function ErrorPage({ reset }: ErrorComponentProps) {
           <Button type="button" onClick={reset}>
             Try again
           </Button>
-          <Paragraph {...stylex.props(docsStyles.p)}>
+          <Paragraph marginBlock="1rem" lineHeight={1.8}>
             <Link to="/" {...stylex.props(docsStyles.link)}>
               Return to documentation home
             </Link>

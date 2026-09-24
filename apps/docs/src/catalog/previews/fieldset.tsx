@@ -1,12 +1,15 @@
-import * as stylex from "@stylexjs/stylex"
-
 import { Field, FieldDescription, FieldLabel } from "@/components/ui/field"
 import { Fieldset, FieldsetLegend } from "@/components/ui/fieldset"
 import { Input } from "@/components/ui/input"
 
 export function Preview() {
   return (
-    <Fieldset {...stylex.props(previewStyles.preview1)}>
+    <Fieldset
+      display={"flex"}
+      inlineSize={"100%"}
+      flexDirection={"column"}
+      gap={"calc(0.25rem * 6)"}
+    >
       <FieldsetLegend>Billing Details</FieldsetLegend>
       <Field>
         <FieldLabel>Company</FieldLabel>
@@ -26,12 +29,3 @@ export function Preview() {
     </Fieldset>
   )
 }
-
-const previewStyles = stylex.create({
-  preview1: {
-    display: "flex",
-    inlineSize: "100%",
-    flexDirection: "column",
-    gap: "calc(0.25rem * 6)",
-  },
-})

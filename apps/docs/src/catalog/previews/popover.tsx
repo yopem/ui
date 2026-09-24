@@ -1,7 +1,5 @@
 "use client"
 
-import * as stylex from "@stylexjs/stylex"
-
 import { Box } from "@/components/ui/box"
 import { Button } from "@/components/ui/button"
 import { Field } from "@/components/ui/field"
@@ -20,16 +18,21 @@ export function Preview() {
       <PopoverTrigger render={<Button variant="outline" />}>
         Open Popover
       </PopoverTrigger>
-      <PopoverPopup {...stylex.props(previewStyles.preview1)}>
-        <Box {...stylex.props(previewStyles.preview2)}>
-          <PopoverTitle {...stylex.props(previewStyles.preview3)}>
+      <PopoverPopup inlineSize={"calc(0.25rem * 80)"}>
+        <Box marginBlockEnd={"calc(0.25rem * 4)"}>
+          <PopoverTitle fontSize={"1rem"} lineHeight={"calc(1.5 / 1)"}>
             Send us feedback
           </PopoverTitle>
           <PopoverDescription>
             Let us know how we can improve.
           </PopoverDescription>
         </Box>
-        <Form {...stylex.props(previewStyles.preview4)}>
+        <Form
+          display={"flex"}
+          inlineSize={"100%"}
+          flexDirection={"column"}
+          gap={"calc(0.25rem * 4)"}
+        >
           <Field>
             <Textarea
               aria-label="Send feedback"
@@ -43,22 +46,3 @@ export function Preview() {
     </Popover>
   )
 }
-
-const previewStyles = stylex.create({
-  preview1: {
-    inlineSize: "calc(0.25rem * 80)",
-  },
-  preview2: {
-    marginBlockEnd: "calc(0.25rem * 4)",
-  },
-  preview3: {
-    fontSize: "1rem",
-    lineHeight: "calc(1.5 / 1)",
-  },
-  preview4: {
-    display: "flex",
-    inlineSize: "100%",
-    flexDirection: "column",
-    gap: "calc(0.25rem * 4)",
-  },
-})

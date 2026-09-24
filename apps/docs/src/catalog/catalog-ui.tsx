@@ -1,7 +1,7 @@
 "use client"
 
 import { ScrollArea } from "@registry/components/ui/scroll-area"
-import * as stylex from "@stylexjs/stylex"
+import { tokens } from "@registry/styles/tokens.stylex"
 import { Suspense } from "react"
 
 import { Box } from "@/components/ui/box"
@@ -11,7 +11,6 @@ import { Heading } from "@/components/ui/heading"
 import type { CatalogPreview } from "./components"
 
 import { CopyableCode } from "./code-block"
-import { catalogStyles } from "./docs-styles"
 const previewHelpers = Object.entries(
   import.meta.glob<string>("../hooks/*.ts", {
     query: "?raw",
@@ -33,17 +32,31 @@ export function PreviewPanel({
 }) {
   const Preview = preview.component
   return (
-    <Box as="section" {...stylex.props(catalogStyles.previewSection)}>
-      <Heading as="h3" {...stylex.props(localStyles.heading)}>
+    <Box as="section" marginBlock={"2rem"} minInlineSize={0}>
+      <Heading as="h3" marginBlock={"0 0.75rem"}>
         {preview.title}
       </Heading>
       <ScrollArea
-        {...stylex.props(catalogStyles.preview, localStyles.preview)}
+        backgroundColor={tokens["--background"]}
+        borderColor={tokens["--border"]}
+        borderRadius={tokens["--radius-lg"]}
+        borderStyle={"solid"}
+        borderWidth={1}
+        minBlockSize={"12rem"}
+        borderEndStartRadius={0}
+        borderEndEndRadius={0}
         aria-label={`${preview.title} live preview`}
         clampContentMinWidth={false}
         overscrollContain
       >
-        <Flex {...stylex.props(catalogStyles.previewContent)}>
+        <Flex
+          alignItems={"center"}
+          display={"flex"}
+          gap={"1rem"}
+          justifyContent={"center"}
+          minBlockSize={"12rem"}
+          padding={"1.5rem"}
+        >
           <Suspense fallback={null}>
             <Preview />
           </Suspense>
@@ -71,11 +84,3 @@ function PreviewSource({ name, source }: { name: string; source: string }) {
     </>
   )
 }
-
-const localStyles = stylex.create({
-  heading: { marginBlock: "0 0.75rem" },
-  preview: {
-    borderEndStartRadius: 0,
-    borderEndEndRadius: 0,
-  },
-})

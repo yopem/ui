@@ -1,5 +1,3 @@
-import * as stylex from "@stylexjs/stylex"
-
 import { Button } from "@/components/ui/button"
 import {
   Drawer,
@@ -19,28 +17,20 @@ export function Preview() {
         Open drawer
       </DrawerTrigger>
       <DrawerPopup showBar>
-        <DrawerHeader {...stylex.props(previewStyles.preview1)}>
+        <DrawerHeader textAlign={"center"}>
           <DrawerTitle>Notifications</DrawerTitle>
           <DrawerDescription>
             This is the description of the drawer.
           </DrawerDescription>
         </DrawerHeader>
-        <DrawerFooter {...stylex.props(previewStyles.preview2)} variant="bare">
+        <DrawerFooter
+          justifyContent={"center"}
+          md={{ justifyContent: "center" }}
+          variant="bare"
+        >
           <DrawerClose render={<Button variant="outline" />}>Close</DrawerClose>
         </DrawerFooter>
       </DrawerPopup>
     </Drawer>
   )
 }
-
-const previewStyles = stylex.create({
-  preview1: {
-    textAlign: "center",
-  },
-  preview2: {
-    justifyContent: {
-      default: "center",
-      "@media (min-width: 40rem)": "center",
-    },
-  },
-})

@@ -1,3 +1,4 @@
+import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import { Link, createFileRoute, notFound } from "@tanstack/react-router"
 import { useState } from "react"
@@ -56,18 +57,40 @@ function ComponentPage() {
         <DocsTitle>{item.title}</DocsTitle>
         <DocsDescription>{data.description}</DocsDescription>
         <DocsBody>
-          <Heading as="h2" {...stylex.props(docsStyles.h2)} id="overview">
+          <Heading
+            as="h2"
+            fontFamily={tokens["--font-heading"]}
+            fontSize="1.5rem"
+            fontWeight={650}
+            letterSpacing="-0.025em"
+            lineHeight={1.3}
+            marginBlockStart="3rem"
+            marginBlockEnd="1rem"
+            scrollMarginBlockStart="6rem"
+            id="overview"
+          >
             Overview
           </Heading>
-          <Paragraph {...stylex.props(docsStyles.p)}>
+          <Paragraph marginBlock="1rem" lineHeight={1.8}>
             Copy the source into your project, then import the parts you need.
             Styles use local StyleX declarations and shared theme tokens. You
             can change the source without wrapping or replacing a package.
           </Paragraph>
-          <Heading as="h2" {...stylex.props(docsStyles.h2)} id="installation">
+          <Heading
+            as="h2"
+            fontFamily={tokens["--font-heading"]}
+            fontSize="1.5rem"
+            fontWeight={650}
+            letterSpacing="-0.025em"
+            lineHeight={1.3}
+            marginBlockStart="3rem"
+            marginBlockEnd="1rem"
+            scrollMarginBlockStart="6rem"
+            id="installation"
+          >
             Installation
           </Heading>
-          <Paragraph {...stylex.props(docsStyles.p)}>
+          <Paragraph marginBlock="1rem" lineHeight={1.8}>
             Initialize StyleX with bunx @yopem-ui/cli init or follow the{" "}
             <Link {...stylex.props(docsStyles.link)} to="/docs/installation">
               manual setup guide
@@ -90,7 +113,7 @@ function ComponentPage() {
                   .join("\n")}
                 title={`Install ${item.title} with CLI`}
               />
-              <Paragraph {...stylex.props(docsStyles.p)}>
+              <Paragraph marginBlock="1rem" lineHeight={1.8}>
                 Run from your project root. The CLI installs required
                 components, shared files, and packages. Previews may need
                 additional components. Existing files are preserved. To refresh
@@ -107,19 +130,48 @@ function ComponentPage() {
               />
             </TabsPanel>
             <TabsPanel value="manual">
-              <Paragraph {...stylex.props(docsStyles.p)}>
+              <Paragraph marginBlock="1rem" lineHeight={1.8}>
                 Copy each required file to its destination below. Shared files
                 only need to be copied once. Keep the{" "}
-                <Box as="code" {...stylex.props(docsStyles.inlineCode)}>
+                <Box
+                  as="code"
+                  fontFamily={tokens["--font-mono"]}
+                  fontSize="0.875em"
+                  backgroundColor={tokens["--code"]}
+                  color={tokens["--code-foreground"]}
+                  borderRadius={tokens["--radius-sm"]}
+                  paddingBlock="0.15rem"
+                  paddingInline="0.35rem"
+                  overflowWrap="anywhere"
+                >
                   @/*
                 </Box>{" "}
                 alias pointing to{" "}
-                <Box as="code" {...stylex.props(docsStyles.inlineCode)}>
+                <Box
+                  as="code"
+                  fontFamily={tokens["--font-mono"]}
+                  fontSize="0.875em"
+                  backgroundColor={tokens["--code"]}
+                  color={tokens["--code-foreground"]}
+                  borderRadius={tokens["--radius-sm"]}
+                  paddingBlock="0.15rem"
+                  paddingInline="0.35rem"
+                  overflowWrap="anywhere"
+                >
                   src/*
                 </Box>
                 .
               </Paragraph>
-              <Heading as="h3" {...stylex.props(docsStyles.h3)}>
+              <Heading
+                as="h3"
+                fontFamily={tokens["--font-heading"]}
+                fontSize="1.2rem"
+                fontWeight={600}
+                lineHeight={1.4}
+                marginBlockStart="2rem"
+                marginBlockEnd="0.75rem"
+                scrollMarginBlockStart="6rem"
+              >
                 Dependencies
               </Heading>
               <CopyableCode
@@ -132,59 +184,116 @@ function ComponentPage() {
                   title="Install development dependencies"
                 />
               ) : null}
-              <Heading as="h4" {...stylex.props(docsStyles.h4)}>
+              <Heading
+                as="h4"
+                fontSize="1rem"
+                fontWeight={600}
+                marginBlockStart="1.5rem"
+                marginBlockEnd="0.5rem"
+                scrollMarginBlockStart="6rem"
+              >
                 Peer dependencies
               </Heading>
-              <Box as="ul" {...stylex.props(docsStyles.ul)}>
+              <Box
+                as="ul"
+                listStyleType="disc"
+                paddingInlineStart="1.5rem"
+                marginBlock="1rem"
+              >
                 {data.peerDependencies.map((dependency) => (
                   <Box
                     as="li"
-                    {...stylex.props(docsStyles.li)}
+                    paddingInlineStart="0.25rem"
+                    marginBlock="0.5rem"
+                    lineHeight={1.75}
                     key={dependency}
                   >
-                    <Box as="code" {...stylex.props(docsStyles.inlineCode)}>
+                    <Box
+                      as="code"
+                      fontFamily={tokens["--font-mono"]}
+                      fontSize="0.875em"
+                      backgroundColor={tokens["--code"]}
+                      color={tokens["--code-foreground"]}
+                      borderRadius={tokens["--radius-sm"]}
+                      paddingBlock="0.15rem"
+                      paddingInline="0.35rem"
+                      overflowWrap="anywhere"
+                    >
                       {dependency}
                     </Box>
                   </Box>
                 ))}
               </Box>
-              <Paragraph {...stylex.props(docsStyles.p)}>
+              <Paragraph marginBlock="1rem" lineHeight={1.8}>
                 Included components and shared files:{" "}
                 {data.requiredItems.map((entry) => entry.title).join(", ")}.
               </Paragraph>
-              <Box {...stylex.props(docsStyles.section)}>
+              <Box marginBlock="2rem" minInlineSize={0}>
                 {data.files.map((file) => (
                   <SourceFile file={file} key={`${name}:${file.path}`} />
                 ))}
               </Box>
             </TabsPanel>
           </Tabs>
-          <Heading as="h2" {...stylex.props(docsStyles.h2)} id="preview">
+          <Heading
+            as="h2"
+            fontFamily={tokens["--font-heading"]}
+            fontSize="1.5rem"
+            fontWeight={650}
+            letterSpacing="-0.025em"
+            lineHeight={1.3}
+            marginBlockStart="3rem"
+            marginBlockEnd="1rem"
+            scrollMarginBlockStart="6rem"
+            id="preview"
+          >
             Preview
           </Heading>
           {item.preview && data.previewSource ? (
             <PreviewPanel preview={item.preview} source={data.previewSource} />
           ) : (
-            <Paragraph {...stylex.props(docsStyles.p)}>
+            <Paragraph marginBlock="1rem" lineHeight={1.8}>
               Use the composition in Usage below to start with {item.title}.
             </Paragraph>
           )}
-          <Heading as="h2" {...stylex.props(docsStyles.h2)} id="usage">
+          <Heading
+            as="h2"
+            fontFamily={tokens["--font-heading"]}
+            fontSize="1.5rem"
+            fontWeight={650}
+            letterSpacing="-0.025em"
+            lineHeight={1.3}
+            marginBlockStart="3rem"
+            marginBlockEnd="1rem"
+            scrollMarginBlockStart="6rem"
+            id="usage"
+          >
             Usage
           </Heading>
           {data.notes.map((note) => (
-            <Paragraph {...stylex.props(docsStyles.p)} key={note}>
+            <Paragraph marginBlock="1rem" lineHeight={1.8} key={note}>
               {note}
             </Paragraph>
           ))}
-          <Paragraph {...stylex.props(docsStyles.p)}>
+          <Paragraph marginBlock="1rem" lineHeight={1.8}>
             Import from the destination you copied into your application.
           </Paragraph>
           <CopyableCode code={data.usage} title={`${item.title} usage`} />
-          <Heading as="h2" {...stylex.props(docsStyles.h2)} id="api-reference">
+          <Heading
+            as="h2"
+            fontFamily={tokens["--font-heading"]}
+            fontSize="1.5rem"
+            fontWeight={650}
+            letterSpacing="-0.025em"
+            lineHeight={1.3}
+            marginBlockStart="3rem"
+            marginBlockEnd="1rem"
+            scrollMarginBlockStart="6rem"
+            id="api-reference"
+          >
             API reference
           </Heading>
-          <Paragraph {...stylex.props(docsStyles.p)}>
+          <Paragraph marginBlock="1rem" lineHeight={1.8}>
             Generated from canonical TypeScript source. Only component and Base
             UI props appear below. Required marks a required property, not a
             required component.
@@ -205,10 +314,26 @@ function ComponentApi({
   return (
     <Box
       as="details"
-      {...stylex.props(docsStyles.details)}
+      borderColor={tokens["--border"]}
+      borderStyle="solid"
+      borderWidth={1}
+      borderRadius={tokens["--radius-lg"]}
+      padding="1rem"
+      marginBlock="1rem"
       onToggle={(event) => setOpen(event.currentTarget.open)}
     >
-      <Box as="summary" {...stylex.props(docsStyles.summary)}>
+      <Box
+        as="summary"
+        cursor="pointer"
+        fontWeight={600}
+        borderRadius={tokens["--radius-sm"]}
+        _focusVisible={{
+          outlineColor: tokens["--ring"],
+          outlineStyle: "solid",
+          outlineWidth: 2,
+          outlineOffset: 4,
+        }}
+      >
         View API reference
       </Box>
       {open ? <ApiReference parts={parts} /> : null}

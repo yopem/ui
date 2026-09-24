@@ -25,11 +25,41 @@ import { ThemeToggle } from "./theme-toggle"
 export function DocumentationLayout({ children }: { children: ReactNode }) {
   const [mobileOpen, setMobileOpen] = useState(false)
   return (
-    <Box xstyle={styles.shell}>
-      <UiLink href="#docs-content" {...stylex.props(styles.skip)}>
+    <Box
+      backgroundColor={tokens["--background"]}
+      color={tokens["--foreground"]}
+      fontFamily={tokens["--font-sans"]}
+      minBlockSize={"100dvh"}
+      fontSize={"0.875rem"}
+      lineHeight={1.5}
+    >
+      <UiLink
+        href="#docs-content"
+        position="fixed"
+        insetBlockStart="0.5rem"
+        insetInlineStart="1rem"
+        zIndex={60}
+        padding="0.75rem 1rem"
+        backgroundColor={tokens["--primary"]}
+        color={tokens["--primary-foreground"]}
+        borderRadius={tokens["--radius-md"]}
+        transform="translateY(-200%)"
+        _focus={{ transform: "translateY(0)" }}
+      >
         Skip to content
       </UiLink>
-      <Box as="header" {...stylex.props(styles.header)}>
+      <Box
+        as="header"
+        display={"flex"}
+        alignItems={"center"}
+        gap={"1rem"}
+        blockSize={"4rem"}
+        paddingInline={{ base: "2rem", mdDown: "1rem" }}
+        backgroundColor={tokens["--background"]}
+        position={"sticky"}
+        insetBlockStart={0}
+        zIndex={20}
+      >
         <Dialog open={mobileOpen} onOpenChange={setMobileOpen}>
           <DialogTrigger
             render={
@@ -37,14 +67,16 @@ export function DocumentationLayout({ children }: { children: ReactNode }) {
                 variant="ghost"
                 size="icon"
                 aria-label="Open navigation"
-                {...stylex.props(styles.mobile)}
+                display={{ base: "none", mdDown: "inline-flex" }}
               />
             }
           >
             <MenuIcon size={20} />
           </DialogTrigger>
           <DialogPopup
-            {...stylex.props(styles.popup)}
+            padding="1.5rem"
+            gap="1rem"
+            maxBlockSize="min(42rem, 85dvh)"
             bottomStickOnMobile={false}
           >
             <DialogTitle>Documentation</DialogTitle>
@@ -61,8 +93,23 @@ export function DocumentationLayout({ children }: { children: ReactNode }) {
         </Link>
         <GlobalSearch />
       </Box>
-      <Grid xstyle={styles.frame}>
-        <Box as="aside" {...stylex.props(styles.sidebar)}>
+      <Grid
+        display={"grid"}
+        gridTemplateColumns={{
+          base: "16rem minmax(0, 1fr)",
+          mdDown: "minmax(0, 1fr)",
+        }}
+        maxInlineSize={"100rem"}
+        marginInline={"auto"}
+      >
+        <Box
+          as="aside"
+          display={{ base: "flex", mdDown: "none" }}
+          flexDirection={"column"}
+          blockSize={"calc(100dvh - 4rem)"}
+          position={"sticky"}
+          insetBlockStart={"4rem"}
+        >
           <DocsNavigation />
           <ThemeToggle />
         </Box>
@@ -70,7 +117,8 @@ export function DocumentationLayout({ children }: { children: ReactNode }) {
           as="main"
           id="docs-content"
           tabIndex={-1}
-          {...stylex.props(styles.main)}
+          minInlineSize={0}
+          outline={"none"}
         >
           {children}
         </Box>
@@ -80,26 +128,6 @@ export function DocumentationLayout({ children }: { children: ReactNode }) {
 }
 
 const styles = stylex.create({
-  shell: {
-    backgroundColor: tokens["--background"],
-    color: tokens["--foreground"],
-    fontFamily: tokens["--font-sans"],
-    minBlockSize: "100dvh",
-    fontSize: "0.875rem",
-    lineHeight: 1.5,
-  },
-  header: {
-    display: "flex",
-    alignItems: "center",
-    gap: "1rem",
-    blockSize: "4rem",
-    paddingInline: { default: "2rem", "@media (max-width: 767px)": "1rem" },
-    borderBlockEnd: `1px solid ${tokens["--border"]}`,
-    backgroundColor: tokens["--background"],
-    position: "sticky",
-    insetBlockStart: 0,
-    zIndex: 20,
-  },
   brand: {
     alignItems: "center",
     color: tokens["--foreground"],
@@ -112,42 +140,10 @@ const styles = stylex.create({
     textDecoration: "none",
     whiteSpace: "nowrap",
     ":focus-visible": {
-      outline: `2px solid ${tokens["--ring"]}`,
+      outlineColor: tokens["--ring"],
+      outlineStyle: "solid",
+      outlineWidth: 2,
       outlineOffset: 4,
     },
   },
-  mobile: {
-    display: { default: "none", "@media (max-width: 767px)": "inline-flex" },
-  },
-  frame: {
-    display: "grid",
-    gridTemplateColumns: {
-      default: "16rem minmax(0, 1fr)",
-      "@media (max-width: 767px)": "minmax(0, 1fr)",
-    },
-    maxInlineSize: "100rem",
-    marginInline: "auto",
-  },
-  sidebar: {
-    display: { default: "flex", "@media (max-width: 767px)": "none" },
-    flexDirection: "column",
-    borderInlineEnd: `1px solid ${tokens["--border"]}`,
-    blockSize: "calc(100dvh - 4rem)",
-    position: "sticky",
-    insetBlockStart: "4rem",
-  },
-  main: { minInlineSize: 0, outline: "none" },
-  skip: {
-    position: "fixed",
-    insetBlockStart: "0.5rem",
-    insetInlineStart: "1rem",
-    zIndex: 60,
-    padding: "0.75rem 1rem",
-    backgroundColor: tokens["--primary"],
-    color: tokens["--primary-foreground"],
-    borderRadius: tokens["--radius-md"],
-    transform: "translateY(-200%)",
-    ":focus": { transform: "translateY(0)" },
-  },
-  popup: { padding: "1.5rem", gap: "1rem", maxBlockSize: "min(42rem, 85dvh)" },
 })

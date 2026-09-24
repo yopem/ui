@@ -121,20 +121,31 @@ export function GlobalSearch() {
             variant="outline"
             ref={registerTrigger}
             aria-label="Search documentation"
-            {...stylex.props(styles.trigger)}
+            marginInlineStart={"auto"}
+            inlineSize={{ base: "15rem", mdDown: "2.5rem" }}
+            justifyContent={{ base: "flex-start", mdDown: "center" }}
+            color={tokens["--muted-foreground"]}
           />
         }
       >
         <SearchIcon size={16} />
-        <Box as="span" {...stylex.props(styles.triggerText)}>
+        <Box as="span" display={{ base: "inline", mdDown: "none" }}>
           Search docs
         </Box>
-        <Box as="kbd" {...stylex.props(styles.shortcut)}>
+        <Box
+          as="kbd"
+          marginInlineStart={"auto"}
+          fontFamily={tokens["--font-mono"]}
+          fontSize={"0.6875rem"}
+          display={{ base: "inline", mdDown: "none" }}
+        >
           ⌘ / Ctrl K
         </Box>
       </DialogTrigger>
       <DialogPopup
-        {...stylex.props(styles.popup)}
+        padding="1.5rem"
+        gap="1rem"
+        maxBlockSize="min(42rem, 85dvh)"
         initialFocus={inputRef}
         finalFocus={triggerRef}
         bottomStickOnMobile={false}
@@ -158,23 +169,29 @@ export function GlobalSearch() {
         <Box
           as="output"
           aria-live="polite"
-          {...stylex.props(styles.status, status === "error" && styles.error)}
+          color={tokens["--muted-foreground"]}
+          fontSize="0.8125rem"
+          margin={0}
         >
-          {status === "error"
-            ? "Search unavailable. Change your query to try again."
-            : !query.trim()
-              ? "Type to search all documentation."
-              : status === "loading"
-                ? "Searching…"
-                : `${results.length} results`}
+          {status === "error" ? (
+            <Box as="span" color={tokens["--destructive"]}>
+              Search unavailable. Change your query to try again.
+            </Box>
+          ) : !query.trim() ? (
+            "Type to search all documentation."
+          ) : status === "loading" ? (
+            "Searching…"
+          ) : (
+            `${results.length} results`
+          )}
         </Box>
         <ScrollArea
           aria-label="Search results"
           overscrollContain
           scrollFade
-          xstyle={styles.resultsScroll}
+          minBlockSize={0}
         >
-          <Box as="ul" {...stylex.props(styles.results)}>
+          <Box as="ul" listStyleType={"none"} margin={0} padding={0}>
             {status === "ready"
               ? results.map((result) => (
                   <Box as="li" key={result.id}>
@@ -184,7 +201,13 @@ export function GlobalSearch() {
                       {...stylex.props(styles.result)}
                     >
                       {result.breadcrumbs?.length ? (
-                        <Box as="span" {...stylex.props(styles.breadcrumb)}>
+                        <Box
+                          as="span"
+                          display={"block"}
+                          color={tokens["--muted-foreground"]}
+                          fontSize={"0.75rem"}
+                          marginBlockEnd={"0.25rem"}
+                        >
                           {result.breadcrumbs
                             .join(" / ")
                             .replace(/<\/?mark>/g, "")}
@@ -232,7 +255,9 @@ const styles = stylex.create({
     borderRadius: tokens["--radius-md"],
     ":hover": { backgroundColor: tokens["--accent"] },
     ":focus-visible": {
-      outline: `2px solid ${tokens["--ring"]}`,
+      outlineColor: tokens["--ring"],
+      outlineStyle: "solid",
+      outlineWidth: 2,
       outlineOffset: -2,
     },
   },
