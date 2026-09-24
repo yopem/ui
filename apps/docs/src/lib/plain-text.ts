@@ -76,7 +76,16 @@ export function createComponentText(
 }
 
 export function createGuideText(page: { content: string; title: string }) {
-  return `# ${page.title}\n\n${page.content}\n`
+  let fenced = false
+  const content = page.content
+    .split("\n")
+    .filter((line) => {
+      if (/^(```|~~~)/.test(line)) fenced = !fenced
+      return fenced || !/^<[A-Z][\w]*(?:\s[^>]*)?\s*\/>$/.test(line.trim())
+    })
+    .join("\n")
+    .trim()
+  return `# ${page.title}\n\n${content}\n`
 }
 
 export function createComponentIndexText(

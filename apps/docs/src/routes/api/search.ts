@@ -3,10 +3,14 @@ import { createFileRoute } from "@tanstack/react-router"
 import { createSearchAPI } from "fumadocs-core/search/server"
 
 import { guidePages } from "@/catalog/docs-data"
+import { getGuideSource } from "@/catalog/guide-sources"
 
 const search = createSearchAPI("simple", {
   indexes: [
-    ...guidePages,
+    ...guidePages.map((page) => ({
+      ...page,
+      content: `${page.content}\n${getGuideSource(page.url === "/" ? "introduction" : page.url.replace("/docs/", "")) ?? ""}`,
+    })),
     ...sourceItems
       .filter((item) => item.type === "registry:ui")
       .map((item) => ({
