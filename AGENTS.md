@@ -31,8 +31,9 @@ accessibility, and production build.
 - `apps/docs/` — TanStack Start catalog and static registry host.
   - `src/catalog/` — catalog data, source loading, API rendering, search,
     navigation, code blocks, page layout, and usage snippets.
-  - `src/components/ui/` — catalog-facing re-exports of canonical registry
-    components. Do not duplicate implementations here.
+  - Catalog and preview runtime code imports components directly from
+    `@registry/components/ui/*`. Public usage snippets and manual guide examples
+    import copied components from `@/components/ui/*`.
   - `src/catalog/previews/` — curated live previews shown in component docs.
   - `src/routes/` — catalog, guide, API, SEO, and machine-readable
     routes. Run `bun run generate-routes` after route changes; never edit

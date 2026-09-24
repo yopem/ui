@@ -198,9 +198,12 @@ test("copy buttons copy source, not installation commands", async ({
 }) => {
   await context.grantPermissions(["clipboard-read", "clipboard-write"])
   await page.goto("/components/button")
-  await expect(
-    page.getByRole("button", { name: "Copy Button usage", exact: true }),
-  ).toBeEnabled()
+  await page
+    .getByRole("button", { name: "Copy Button usage", exact: true })
+    .click()
+  await expect
+    .poll(() => page.evaluate(() => navigator.clipboard.readText()))
+    .toContain('from "@/components/ui/button"')
   await page.getByRole("tab", { name: "Manual" }).click()
   await page
     .getByRole("button", {
