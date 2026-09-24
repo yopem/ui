@@ -95,6 +95,11 @@ export default defineConfig({
           attrs: { rel: "stylesheet", href: "/virtual:stylex.css" },
           injectTo: "head",
         },
+        {
+          tag: "script",
+          attrs: { type: "module", src: "/@id/virtual:stylex:css-only" },
+          injectTo: "head",
+        },
       ],
     },
     react(),
@@ -156,6 +161,11 @@ export default defineConfig({
         {
           tag: "link",
           attrs: { rel: "stylesheet", href: "/virtual:stylex.css" },
+          injectTo: "head",
+        },
+        {
+          tag: "script",
+          attrs: { type: "module", src: "/@id/virtual:stylex:css-only" },
           injectTo: "head",
         },
       ],
@@ -222,7 +232,19 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       <head>
         <HeadContent />
         {import.meta.env.DEV ? (
-          <link rel="stylesheet" href="/virtual:stylex.css" />
+          <link
+            rel="stylesheet"
+            href="/virtual:stylex.css"
+            ref={(link) => {
+              if (!link) return
+              const refresh = () => {
+                link.href = `/virtual:stylex.css?t=${Date.now()}`
+              }
+              refresh()
+              import.meta.hot?.on("stylex:css-update", refresh)
+              return () => import.meta.hot?.off("stylex:css-update", refresh)
+            }}
+          />
         ) : null}
       </head>
       <body {...stylex.props(rootStyles.body)}>
@@ -420,6 +442,7 @@ const body = stylex.props(rootStyles.body)
 <html lang="en" class={html.className} data-theme="light">
   <head>
     {import.meta.env.DEV && <link rel="stylesheet" href="/virtual:stylex.css" />}
+    {import.meta.env.DEV && <script type="module" src="/@id/virtual:stylex:css-only" />}
   </head>
   <body class={body.className}>
     <Button client:load>Save changes</Button>

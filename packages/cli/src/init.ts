@@ -237,6 +237,10 @@ function viteConfig(content: string, path: string, framework: Framework) {
         tag: "link",
         attrs: { rel: "stylesheet", href: "/virtual:stylex.css" },
         injectTo: "head",
+      }, {
+        tag: "script",
+        attrs: { type: "module", src: "/@id/virtual:stylex:css-only" },
+        injectTo: "head",
       }],
     }`)
   }
@@ -533,7 +537,7 @@ function jsxLayout(
     edits.push({
       start: head.getEnd(),
       end: head.getEnd(),
-      text: '\n        {import.meta.env.DEV ? <link rel="stylesheet" href="/virtual:stylex.css" /> : null}',
+      text: '\n        {import.meta.env.DEV ? <link rel="stylesheet" href="/virtual:stylex.css" ref={(link) => {\n          if (!link) return\n          const refresh = () => {\n            link.href = `/virtual:stylex.css?t=${Date.now()}`\n          }\n          refresh()\n          import.meta.hot?.on("stylex:css-update", refresh)\n          return () => import.meta.hot?.off("stylex:css-update", refresh)\n        }} /> : null}',
     })
   }
   const css =
@@ -629,7 +633,7 @@ function astroLayout(content: string, path: string) {
     edits.push({
       start: head[0]!.index! + head[0]![0].length,
       end: head[0]!.index! + head[0]![0].length,
-      text: '\n    {import.meta.env.DEV && <link rel="stylesheet" href="/virtual:stylex.css" />}',
+      text: '\n    {import.meta.env.DEV && <link rel="stylesheet" href="/virtual:stylex.css" />}\n    {import.meta.env.DEV && <script type="module" src="/@id/virtual:stylex:css-only" />}',
     })
   }
   return applyEdits(content, edits)

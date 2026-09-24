@@ -115,6 +115,8 @@ test("Vite React configures plugins, alias, root styles and active TS paths with
   expect(vite).toContain("server: { port: 3456 }")
   expect(vite).toContain('"@": yopemSource')
   expect(vite).toContain("/virtual:stylex.css")
+  expect(vite).toContain("/@id/virtual:stylex:css-only")
+  expect(vite).not.toContain("/@id/virtual:stylex:runtime")
   expect(await text(cwd, "src/main.tsx")).toContain("rootStyles.html")
   const appOptions = JSON.parse(
     await text(cwd, "tsconfig.app.json"),
@@ -220,6 +222,8 @@ test("TanStack Router retains router plugin order and Start configures SSR root"
   const root = await text(start, "src/routes/__root.tsx")
   expect(root).toContain('stylexProps("custom", rootStyles.body)')
   expect(root).toContain("/virtual:stylex.css")
+  expect(root).toContain("stylex:css-update")
+  expect(root).not.toContain("/@id/virtual:stylex:css-only")
   expect(parses("__root.tsx", root)).toBe(true)
 })
 
@@ -323,6 +327,7 @@ test("Astro configures React integration and existing layout without overwriting
   const layout = await text(cwd, "src/layouts/Layout.astro")
   expect(layout).toContain('import "@/styles/styles.css"')
   expect(layout).toContain("/virtual:stylex.css")
+  expect(layout).toContain("/@id/virtual:stylex:css-only")
   expect(layout).toContain(
     "stylex.props(themeMarker, lightTheme, rootStyles.html)",
   )

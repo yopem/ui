@@ -6,8 +6,10 @@ const source = readFileSync(
   "utf8",
 )
 
-test("dev stylesheet blocks first paint without a virtual runtime", () => {
+test("dev stylesheet refreshes without runtime CSS injection", () => {
   expect(source).toContain('href="/virtual:stylex.css"')
+  expect(source).toContain('import.meta.hot?.on("stylex:css-update", refresh)')
   expect(source).toContain("import.meta.env.DEV")
-  expect(source).not.toContain("virtual:stylex:runtime")
+  expect(source).not.toContain('src="/@id/virtual:stylex:css-only"')
+  expect(source).not.toContain('src="/@id/virtual:stylex:runtime"')
 })
