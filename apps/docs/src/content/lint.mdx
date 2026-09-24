@@ -1,26 +1,25 @@
-First, [choose a layout component](/docs/layout).
+First, [choose a layout component](/docs/layout) and
+[style with StyleX](/docs/styling).
 
 ## Rules
 
-The @yopem-ui/oxlint-plugin workspace provides six rules. Its recommended
-configuration enables all of them:
+The local Oxlint plugin provides four rules:
 
-- **yopem-ui/prefer-ui-primitives**: prefer UI components over native HTML JSX.
-- **yopem-ui/enforce-styling-methods**: control which styling methods are
-  permitted on UI primitives. All methods are allowed by default; set
-  `preferStyleProps: true` to suggest direct style props where possible.
-- **yopem-ui/no-leaked-dom-style-props**: reject UI-only aliases on native HTML
-  elements.
-- **yopem-ui/no-unsupported-style-props**: replace known unsupported aliases
-  with supported names.
+- **yopem-ui/prefer-ui-primitives**: prefer `Box` over native `div`, `Link` over
+  `a`, and semantic UI components where available.
+- **yopem-ui/enforce-styling-methods**: allow `xstyle` and consumer `className`
+  on imported UI components; reject `css`, inline React style, and direct
+  `stylex.props` spreads on those components. Set `className: false` for apps
+  styled exclusively with StyleX, as this docs app does.
 - **yopem-ui/static-stylex**: require statically analyzable StyleX declarations.
 - **yopem-ui/valid-polymorphic-as**: validate native tags on Box and heading
   levels on Heading.
 
 ## Configuration
 
-Enable all six rules for your app source. Adjust the plugin path and file glob
-for your project.
+Configure the plugin for your app source. The following policy allows `xstyle`,
+but disallows `className` inside the docs app. The copied components still
+expose `className` for external integration.
 
 **.oxlintrc.json**
 
@@ -36,9 +35,10 @@ for your project.
     {
       "files": ["apps/docs/src/**/*.{tsx,jsx}"],
       "rules": {
-        "yopem-ui/enforce-styling-methods": "error",
-        "yopem-ui/no-leaked-dom-style-props": "error",
-        "yopem-ui/no-unsupported-style-props": "error",
+        "yopem-ui/enforce-styling-methods": [
+          "error",
+          { "methods": { "className": false } }
+        ],
         "yopem-ui/prefer-ui-primitives": "error",
         "yopem-ui/static-stylex": "error",
         "yopem-ui/valid-polymorphic-as": "error"
@@ -48,57 +48,17 @@ for your project.
 }
 ```
 
-The recommended rule leaves styling choice to each project. Direct style props
-are always allowed. All six optional methods are also allowed by default:
-
-| Method        | JSX styling syntax                                            |
-| ------------- | ------------------------------------------------------------- |
-| `atoms`       | StyleX atoms from `@stylexjs/atoms`                           |
-| `className`   | `className={...}`                                             |
-| `css`         | `css={{ ... }}`                                               |
-| `reactStyle`  | `style={{ ... }}`                                             |
-| `stylexStyle` | `{...stylex.props(...)}` or `style={stylex.props(...).style}` |
-| `xstyle`      | `xstyle={...}`                                                |
-
-Set any method to `false` to disallow it on imported UI components. Set
-`preferStyleProps: true` to suggest direct style props when a styling method can
-be converted. To enforce **direct style props only**, this docs app disables all
-six methods in `.oxlintrc.json`:
-
-```json
-"yopem-ui/enforce-styling-methods": [
-  "error",
-  {
-    "methods": {
-      "atoms": false,
-      "className": false,
-      "css": false,
-      "reactStyle": false,
-      "stylexStyle": false,
-      "xstyle": false
-    }
-  }
-]
-```
-
-Copy that override only if your app wants the same policy. Otherwise keep the
-permissive default or configure individual methods to fit your styling system.
-The styling-method rule only checks imported Yopem UI components. TanStack
-Router's `Link` is not a Yopem UI primitive; router links in this docs app still
-use `stylex.props` for navigation styling.
+Native framework elements (for example TanStack Router links) can use
+`stylex.props(...)`. Imported UI components should use `xstyle` instead of a
+StyleX prop spread, so component defaults and consumer styles compose in order.
 
 <span id="exceptions" />
 
-## Exceptions and fixes
+## Exceptions
 
-The prefer-ui-primitives rule accepts allowElements for narrow native-tag
-exceptions. It does not autofix tag replacements because changing semantics or
-imports needs review. Other rules may offer safe fixes or suggestions; review
-them before applying. This repository allows document-shell and resource tags
-only in its root route. The Satori social-image renderer keeps intrinsic JSX
-because it is not a DOM renderer. Registry implementations are outside the docs
-rule scope.
-
-SVG, MathML, custom elements and component expressions remain supported. HTML
-inside SVG foreignObject is still checked. Run `bun run lint` to enforce the
-rule.
+`prefer-ui-primitives` accepts `allowElements` for document-shell and resource
+tags. Tag replacements are not autofixed: semantics and imports need review.
+Registry implementations and non-DOM JSX renderers are outside the docs rule
+scope. SVG, MathML, custom elements, and component expressions remain supported;
+HTML inside SVG `foreignObject` is still checked. Run `bun run lint` from the
+repository root.

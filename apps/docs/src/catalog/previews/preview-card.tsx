@@ -11,6 +11,37 @@ import {
   PreviewCardPopup,
   PreviewCardTrigger,
 } from "@/components/ui/preview-card"
+
+const styles = stylex.create({
+  flex: { flexDirection: "column", gap: "calc(0.25rem * 4)" },
+  flex2: { flexDirection: "column", gap: "0.25rem" },
+  h2: {
+    fontSize: "0.875rem",
+    lineHeight: "calc(1.25 / 0.875)",
+    fontWeight: "500",
+  },
+  paragraph: {
+    fontSize: "0.875rem",
+    lineHeight: "calc(1.25 / 0.875)",
+    color: "var(--muted-foreground)",
+  },
+  flex3: {
+    alignItems: "center",
+    gap: "calc(0.25rem * 4)",
+    fontSize: "0.75rem",
+    lineHeight: "calc(1 / 0.75)",
+    color: "var(--muted-foreground)",
+  },
+  flex4: { alignItems: "center", gap: "0.25rem" },
+  span: {
+    inlineSize: "calc(0.25rem * 2)",
+    blockSize: "calc(0.25rem * 2)",
+    borderRadius: "calc(infinity * 1px)",
+    backgroundColor: "oklch(62.3% 0.214 259.815)",
+  },
+  flex5: { alignItems: "center", gap: "0.25rem" },
+  flex6: { alignItems: "center", gap: "0.25rem" },
+})
 export function Preview() {
   return (
     <PreviewCard>
@@ -18,48 +49,26 @@ export function Preview() {
         coss.com/ui
       </PreviewCardTrigger>
       <PreviewCardPopup>
-        <Flex flexDirection={"column"} gap={"calc(0.25rem * 4)"}>
-          <Flex flexDirection={"column"} gap={"0.25rem"}>
-            <Heading
-              as="h2"
-              fontSize={"0.875rem"}
-              lineHeight={"calc(1.25 / 0.875)"}
-              fontWeight={"500"}
-            >
+        <Flex xstyle={styles.flex}>
+          <Flex xstyle={styles.flex2}>
+            <Heading as="h2" xstyle={styles.h2}>
               coss.com/ui
             </Heading>
-            <Paragraph
-              fontSize={"0.875rem"}
-              lineHeight={"calc(1.25 / 0.875)"}
-              color={"var(--muted-foreground)"}
-            >
+            <Paragraph xstyle={styles.paragraph}>
               Beautifully designed components that you can copy and paste into
               your apps.
             </Paragraph>
           </Flex>
-          <Flex
-            alignItems={"center"}
-            gap={"calc(0.25rem * 4)"}
-            fontSize={"0.75rem"}
-            lineHeight={"calc(1 / 0.75)"}
-            color={"var(--muted-foreground)"}
-          >
-            <Flex alignItems={"center"} gap={"0.25rem"}>
-              <Box
-                as="span"
-                aria-hidden="true"
-                inlineSize={"calc(0.25rem * 2)"}
-                blockSize={"calc(0.25rem * 2)"}
-                borderRadius={"calc(infinity * 1px)"}
-                backgroundColor={"oklch(62.3% 0.214 259.815)"}
-              />
+          <Flex xstyle={styles.flex3}>
+            <Flex xstyle={styles.flex4}>
+              <Box as="span" aria-hidden="true" xstyle={styles.span} />
               <Box as="span">TypeScript</Box>
             </Flex>
-            <Flex alignItems={"center"} gap={"0.25rem"}>
+            <Flex xstyle={styles.flex5}>
               <StarIcon {...stylex.props(previewStyles.preview8)} />
               <Box as="span">58.2k</Box>
             </Flex>
-            <Flex alignItems={"center"} gap={"0.25rem"}>
+            <Flex xstyle={styles.flex6}>
               <CornerUpLeftIcon {...stylex.props(previewStyles.preview8)} />
               <Box as="span">5.1k</Box>
             </Flex>

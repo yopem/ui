@@ -127,17 +127,12 @@ test.describe("layout and typography primitives", () => {
     }
   })
 
-  test("respects spacing tokens and xstyle over layout defaults and props", async ({
-    page,
-  }) => {
+  test("composes xstyle with layout defaults", async ({ page }) => {
     await openLayoutPreview(page)
-    await page
-      .getByTestId("layout-root")
-      .evaluate((element) => element.style.setProperty("--spacing", "8px"))
-    await expect(page.getByTestId("stack")).toHaveCSS("gap", "32px")
-    await expect(page.getByTestId("vstack")).toHaveCSS("gap", "32px")
-    await expect(page.getByTestId("hstack")).toHaveCSS("gap", "32px")
-    await expect(page.getByTestId("flex")).toHaveCSS("gap", "24px")
+    await expect(page.getByTestId("stack")).toHaveCSS("gap", "16px")
+    await expect(page.getByTestId("vstack")).toHaveCSS("gap", "16px")
+    await expect(page.getByTestId("hstack")).toHaveCSS("gap", "16px")
+    await expect(page.getByTestId("flex")).toHaveCSS("gap", "12px")
     await expect(page.getByTestId("override-hstack")).toHaveCSS("gap", "5px")
     await expect(page.getByTestId("override-hstack")).toHaveCSS(
       "justify-content",
@@ -145,7 +140,17 @@ test.describe("layout and typography primitives", () => {
     )
   })
 
-  test("keeps responsive overrides on the same native tag", async ({
+  test("Box applies defaults and composes xstyle", async ({ page }) => {
+    await openLayoutPreview(page)
+    const box = page.getByTestId("box")
+    await expect(box).toHaveAttribute("data-slot", "box")
+    await expect(box).toHaveCSS("box-sizing", "border-box")
+    await expect(box).toHaveCSS("min-inline-size", "0px")
+    await expect(box).toHaveCSS("padding-top", "8px")
+    await expect(box).not.toHaveAttribute("p")
+  })
+
+  test("keeps responsive StyleX overrides on the same native tag", async ({
     page,
   }) => {
     await openLayoutPreview(page)

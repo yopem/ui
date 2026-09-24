@@ -18,10 +18,17 @@ export type StyleXStyle = StyleXArray<
 
 type InlineStyle = CSSProperties | ((state: never) => CSSProperties | undefined)
 type ClassName = string | ((state: never) => string | undefined)
-interface StyleProps {
+interface MergeableProps {
   style?: InlineStyle
   className?: ClassName
 }
+
+export type StyleXComponentProps<
+  Props,
+  Own extends object = object,
+> = Props extends object
+  ? Omit<Props, "style" | keyof Own | keyof StyleXProps> & StyleXProps & Own
+  : never
 
 type PropValue<Props, Key extends PropertyKey> = Key extends keyof Props
   ? Props[Key]
@@ -37,12 +44,12 @@ type MergedStyle<Style> = Style extends (state: infer State) => unknown
   ? (state: State) => CSSProperties
   : CSSProperties
 
-export function mergeStyleProps<
+export function mergeStylexProps<
   Generated extends { style?: CSSProperties; className?: ClassName },
   Props extends object,
 >(
   generated: Generated,
-  props: Props & StyleProps,
+  props: Props & MergeableProps,
 ): Omit<Generated, keyof Props | "style" | "className"> &
   Omit<Props, "style" | "className"> & {
     style: MergedStyle<PropValue<Props, "style">>
@@ -51,9 +58,9 @@ export function mergeStyleProps<
       | Extract<PropValue<Props, "className">, ClassName>
     >
   }
-export function mergeStyleProps(
+export function mergeStylexProps(
   generated: { style?: CSSProperties; className?: ClassName },
-  props: StyleProps,
+  props: MergeableProps,
 ) {
   const { style, className } = props
   const generatedClassName = generated.className

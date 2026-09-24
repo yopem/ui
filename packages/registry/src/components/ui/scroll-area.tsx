@@ -1,9 +1,9 @@
 "use client"
 
-import type { StyleComponentProps, StyleProps } from "@registry/lib/style-props"
+import type { StyleXComponentProps } from "@registry/lib/stylex"
 
 import { ScrollArea as ScrollAreaPrimitive } from "@base-ui/react/scroll-area"
-import { mergeStyleProps, stylexProps } from "@registry/lib/stylex"
+import { mergeStylexProps, stylexProps } from "@registry/lib/stylex"
 import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 
@@ -81,7 +81,7 @@ export function ScrollArea({
   overscrollContain = false,
   "aria-label": ariaLabel,
   ...restProps
-}: StyleComponentProps<
+}: StyleXComponentProps<
   ScrollAreaPrimitive.Root.Props,
   {
     scrollFade?: boolean
@@ -91,13 +91,13 @@ export function ScrollArea({
     overscrollContain?: boolean
   }
 >) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const props = restProps
   const xstyle = consumerXstyle
 
   const label = ariaLabel ?? "Scrollable content"
   return (
     <ScrollAreaPrimitive.Root
-      {...mergeStyleProps(stylexProps(className, styles.root, xstyle), props)}
+      {...mergeStylexProps(stylexProps(className, styles.root, xstyle), props)}
     >
       <ScrollAreaPrimitive.Viewport
         {...stylex.props(
@@ -135,15 +135,15 @@ export function ScrollBar({
   className,
   orientation = "vertical",
   ...restProps
-}: StyleComponentProps<ScrollAreaPrimitive.Scrollbar.Props>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<ScrollAreaPrimitive.Scrollbar.Props>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
     <ScrollAreaPrimitive.Scrollbar
       data-slot="scroll-area-scrollbar"
       orientation={orientation}
-      {...mergeStyleProps(
+      {...mergeStylexProps(
         stylexProps(className, styles.scrollbar, xstyle),
         props,
       )}

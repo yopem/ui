@@ -31,6 +31,14 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 
+const styles = stylex.create({
+  toggleGroup: {
+    borderStyle: "none",
+    paddingBlock: "0px",
+    paddingInline: "0px",
+  },
+})
+
 const items = [
   { label: "Helvetica", value: "helvetica" },
   { label: "Arial", value: "arial" },
@@ -41,11 +49,7 @@ export function Preview() {
   return (
     <TooltipProvider>
       <Toolbar>
-        <ToggleGroup
-          borderStyle={"none"}
-          padding={"0px"}
-          defaultValue={["left"]}
-        >
+        <ToggleGroup xstyle={styles.toggleGroup} defaultValue={["left"]}>
           <Tooltip>
             <TooltipTrigger
               render={

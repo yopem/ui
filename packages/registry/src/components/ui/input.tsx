@@ -1,6 +1,6 @@
 "use client"
 
-import type { StyleComponentProps, StyleProps } from "@registry/lib/style-props"
+import type { StyleXComponentProps } from "@registry/lib/stylex"
 import type { StyleXProps } from "@registry/lib/stylex"
 import type * as React from "react"
 
@@ -171,7 +171,7 @@ const styles = stylex.create({
   },
 })
 
-export type InputProps = StyleComponentProps<
+export type InputProps = StyleXComponentProps<
   Omit<InputPrimitive.Props & React.RefAttributes<HTMLInputElement>, "size">,
   {
     size?: "sm" | "default" | "lg" | number
@@ -196,24 +196,6 @@ function mergeInputClassName(
   return (state: InputPrimitive.State) => clsx(inputClassName, className(state))
 }
 
-function mergeInputStyle(
-  inputStyle: ReturnType<typeof stylexProps>["style"],
-  style: InputProps["style"],
-) {
-  if (typeof style !== "function") return { ...inputStyle, ...style }
-  return (state: InputPrimitive.State) => ({
-    ...inputStyle,
-    ...style(state),
-  })
-}
-
-function mergeNativeInputStyle(
-  inputStyle: ReturnType<typeof stylexProps>["style"],
-  style: InputProps["style"],
-) {
-  return typeof style === "function" ? inputStyle : { ...inputStyle, ...style }
-}
-
 export function Input({
   xstyle: consumerXstyle,
   controlXstyle,
@@ -221,10 +203,9 @@ export function Input({
   size = "default",
   unstyled = false,
   nativeInput = false,
-  style,
   ...restProps
 }: InputProps) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const props = restProps
   const xstyle = consumerXstyle
 
   const sizeStyle = getInputSizeStyle(size)
@@ -254,7 +235,7 @@ export function Input({
           {...inputProps}
           data-slot="input"
           size={typeof size === "number" ? size : undefined}
-          style={mergeNativeInputStyle(inputProps.style, style)}
+          style={inputProps.style}
           {...props}
         />
       ) : (
@@ -263,7 +244,7 @@ export function Input({
           className={mergeInputClassName(inputProps.className, className)}
           data-slot="input"
           size={typeof size === "number" ? size : undefined}
-          style={mergeInputStyle(inputProps.style, style)}
+          style={inputProps.style}
           {...props}
         />
       )}

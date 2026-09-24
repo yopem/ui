@@ -1,9 +1,9 @@
 "use client"
 
-import type { StyleComponentProps, StyleProps } from "@registry/lib/style-props"
+import type { StyleXComponentProps } from "@registry/lib/stylex"
 
 import { PreviewCard as PreviewCardPrimitive } from "@base-ui/react/preview-card"
-import { mergeStyleProps, stylexProps } from "@registry/lib/stylex"
+import { mergeStylexProps, stylexProps } from "@registry/lib/stylex"
 import { themeMarker, tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 
@@ -50,14 +50,14 @@ export function PreviewCardTrigger({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleComponentProps<PreviewCardPrimitive.Trigger.Props>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<PreviewCardPrimitive.Trigger.Props>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
     <PreviewCardPrimitive.Trigger
       data-slot="preview-card-trigger"
-      {...mergeStyleProps(stylexProps(className, xstyle), props)}
+      {...mergeStylexProps(stylexProps(className, xstyle), props)}
     />
   )
 }
@@ -71,7 +71,7 @@ export function PreviewCardPopup({
   anchor,
   portalProps,
   ...restProps
-}: StyleComponentProps<
+}: StyleXComponentProps<
   PreviewCardPrimitive.Popup.Props,
   {
     align?: PreviewCardPrimitive.Positioner.Props["align"]
@@ -80,7 +80,7 @@ export function PreviewCardPopup({
     portalProps?: PreviewCardPrimitive.Portal.Props
   }
 >) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
@@ -94,7 +94,7 @@ export function PreviewCardPopup({
       >
         <PreviewCardPrimitive.Popup
           data-slot="preview-card-content"
-          {...mergeStyleProps(
+          {...mergeStylexProps(
             stylexProps(className, styles.popup, xstyle),
             props,
           )}

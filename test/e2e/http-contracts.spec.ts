@@ -7,6 +7,7 @@ test("machine-readable documentation endpoints expose correct formats", async ({
     ["/components.md", "text/markdown", "# Components"],
     ["/components/button.md", "text/markdown", "# Button"],
     ["/docs/installation.md", "text/markdown", "# Installation"],
+    ["/docs/styling.md", "text/markdown", "# Styling with StyleX"],
     ["/index.md", "text/markdown", "# Introduction"],
     ["/llms.txt", "text/plain", "/components/button.md"],
     ["/sitemap.xml", "application/xml", "/components/button"],

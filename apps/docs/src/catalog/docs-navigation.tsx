@@ -9,6 +9,59 @@ import { Box } from "@/components/ui/box"
 import { Link as UiLink } from "@/components/ui/link"
 
 import { catalog } from "./components"
+
+const primitiveStyles = stylex.create({
+  documentationNavigation: { flex: 1, minBlockSize: 0 },
+  documentation: { paddingBlock: "1.25rem", paddingInline: "1.25rem" },
+  ul: {
+    listStyleType: "none",
+    paddingBlock: "calc(var(--spacing) * 0)",
+    paddingInline: "calc(var(--spacing) * 0)",
+    margin: "calc(var(--spacing) * 0)",
+  },
+  li: {
+    color: tokens["--muted-foreground"],
+    fontSize: "0.6875rem",
+    fontWeight: 600,
+    letterSpacing: "0.075em",
+    textTransform: "uppercase",
+    paddingInline: "0.75rem",
+    paddingBlock: "1.25rem 0.625rem",
+  },
+  li2: {
+    color: tokens["--muted-foreground"],
+    fontSize: "0.6875rem",
+    fontWeight: 600,
+    letterSpacing: "0.075em",
+    textTransform: "uppercase",
+    paddingInline: "0.75rem",
+    paddingBlock: "1.25rem 0.625rem",
+  },
+  uiLink: {
+    display: "block",
+    color: {
+      default: tokens["--muted-foreground"],
+      ":is(:hover, [data-hover]):not(:disabled, [disabled], [aria-disabled=true], [data-disabled])":
+        tokens["--sidebar-accent-foreground"],
+    },
+    paddingBlock: "0.5rem",
+    paddingInline: "0.75rem",
+    borderRadius: tokens["--radius-md"],
+    textDecoration: "none",
+    fontSize: "0.875rem",
+    lineHeight: 1.4,
+    backgroundColor: {
+      ":is(:hover, [data-hover]):not(:disabled, [disabled], [aria-disabled=true], [data-disabled])":
+        tokens["--sidebar-accent"],
+    },
+    outlineColor: {
+      ":is(:focus-visible, [data-focus-visible])": tokens["--ring"],
+    },
+    outlineStyle: { ":is(:focus-visible, [data-focus-visible])": "solid" },
+    outlineWidth: { ":is(:focus-visible, [data-focus-visible])": 2 },
+    outlineOffset: { ":is(:focus-visible, [data-focus-visible])": 2 },
+  },
+})
 const tree: Root = {
   name: "Yopem UI",
   children: [
@@ -19,7 +72,7 @@ const tree: Root = {
     { type: "separator", name: "Learn" },
     { type: "page", name: "Theming", url: "/docs/theming" },
     { type: "page", name: "Layout and typography", url: "/docs/layout" },
-    { type: "page", name: "Style props", url: "/docs/style-props" },
+    { type: "page", name: "Styling with StyleX", url: "/docs/styling" },
     { type: "page", name: "Lint rules", url: "/docs/lint" },
     { type: "page", name: "Components", url: "/components" },
     { type: "separator", name: "Components" },
@@ -38,24 +91,17 @@ export function DocsNavigation({ onNavigate }: { onNavigate?: () => void }) {
       aria-label="Documentation navigation"
       overscrollContain
       scrollFade
-      flex={1}
-      minBlockSize={0}
+      xstyle={primitiveStyles.documentationNavigation}
     >
-      <Box as="nav" aria-label="Documentation" padding={"1.25rem"}>
-        <Box as="ul" listStyleType={"none"} padding={0} margin={0}>
+      <Box
+        as="nav"
+        aria-label="Documentation"
+        xstyle={primitiveStyles.documentation}
+      >
+        <Box as="ul" xstyle={primitiveStyles.ul}>
           {tree.children.map((item) =>
             item.type === "separator" ? (
-              <Box
-                as="li"
-                key={String(item.name)}
-                color={tokens["--muted-foreground"]}
-                fontSize={"0.6875rem"}
-                fontWeight={600}
-                letterSpacing={"0.075em"}
-                textTransform={"uppercase"}
-                paddingInline={"0.75rem"}
-                paddingBlock={"1.25rem 0.625rem"}
-              >
+              <Box as="li" key={String(item.name)} xstyle={primitiveStyles.li}>
                 {item.name}
               </Box>
             ) : item.type === "page" ? (
@@ -74,40 +120,14 @@ export function DocsNavigation({ onNavigate }: { onNavigate?: () => void }) {
               </Box>
             ) : null,
           )}
-          <Box
-            as="li"
-            color={tokens["--muted-foreground"]}
-            fontSize={"0.6875rem"}
-            fontWeight={600}
-            letterSpacing={"0.075em"}
-            textTransform={"uppercase"}
-            paddingInline={"0.75rem"}
-            paddingBlock={"1.25rem 0.625rem"}
-          >
+          <Box as="li" xstyle={primitiveStyles.li2}>
             Resources
           </Box>
           <Box as="li">
             <UiLink
               href="/llms.txt"
               onClick={onNavigate}
-              display="block"
-              color={tokens["--muted-foreground"]}
-              paddingBlock="0.5rem"
-              paddingInline="0.75rem"
-              borderRadius={tokens["--radius-md"]}
-              textDecoration="none"
-              fontSize="0.875rem"
-              lineHeight={1.4}
-              _hover={{
-                backgroundColor: tokens["--sidebar-accent"],
-                color: tokens["--sidebar-accent-foreground"],
-              }}
-              _focusVisible={{
-                outlineColor: tokens["--ring"],
-                outlineStyle: "solid",
-                outlineWidth: 2,
-                outlineOffset: 2,
-              }}
+              xstyle={primitiveStyles.uiLink}
             >
               llms.txt
             </UiLink>

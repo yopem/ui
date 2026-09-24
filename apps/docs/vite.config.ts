@@ -3,7 +3,6 @@ import stylex from "@stylexjs/unplugin"
 import { devtools } from "@tanstack/devtools-vite"
 import { tanstackStart } from "@tanstack/react-start/plugin/vite"
 import viteReact from "@vitejs/plugin-react"
-import { styleProps } from "@yopem-ui/compiler/unplugin"
 import { nitro } from "nitro/vite"
 import { resolve } from "node:path"
 import { defineConfig } from "vite"
@@ -36,7 +35,6 @@ const config = defineConfig({
   resolve: { tsconfigPaths: true },
   plugins: [
     devtools({ injectSource: { enabled: false } }),
-    styleProps.vite(),
     stylex.vite(styleXOptions),
     nitro({
       rolldownConfig: {

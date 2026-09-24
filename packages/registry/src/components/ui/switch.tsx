@@ -1,9 +1,9 @@
 "use client"
 
-import type { StyleComponentProps, StyleProps } from "@registry/lib/style-props"
+import type { StyleXComponentProps } from "@registry/lib/stylex"
 
 import { Switch as SwitchPrimitive } from "@base-ui/react/switch"
-import { mergeStyleProps, stylexProps } from "@registry/lib/stylex"
+import { mergeStylexProps, stylexProps } from "@registry/lib/stylex"
 import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 
@@ -71,14 +71,14 @@ export function Switch({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleComponentProps<SwitchPrimitive.Root.Props>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<SwitchPrimitive.Root.Props>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
     <SwitchPrimitive.Root
       data-slot="switch"
-      {...mergeStyleProps(stylexProps(className, styles.root, xstyle), props)}
+      {...mergeStylexProps(stylexProps(className, styles.root, xstyle), props)}
     >
       <SwitchPrimitive.Thumb
         {...stylex.props(styles.thumb)}

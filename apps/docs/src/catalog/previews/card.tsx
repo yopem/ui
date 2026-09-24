@@ -22,6 +22,23 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+
+const styles = stylex.create({
+  form: {
+    display: "flex",
+    inlineSize: "100%",
+    flexDirection: "column",
+    gap: "calc(0.25rem * 4)",
+  },
+  button: { inlineSize: "100%" },
+  card: { inlineSize: "100%", maxInlineSize: "20rem" },
+  flex: {
+    gap: "0.25rem",
+    fontSize: "0.75rem",
+    lineHeight: "calc(1 / 0.75)",
+    color: "var(--muted-foreground)",
+  },
+})
 const frameworkOptions = [
   { label: "Next.js", value: "next" },
   { label: "Vite", value: "vite" },
@@ -48,12 +65,7 @@ function FrameworkSelect() {
 
 function ProjectForm() {
   return (
-    <Form
-      display={"flex"}
-      inlineSize={"100%"}
-      flexDirection={"column"}
-      gap={"calc(0.25rem * 4)"}
-    >
+    <Form xstyle={styles.form}>
       <Field>
         <FieldLabel>Name</FieldLabel>
         <Input placeholder="Name of your project" type="text" />
@@ -62,7 +74,7 @@ function ProjectForm() {
         <FieldLabel>Framework</FieldLabel>
         <FrameworkSelect />
       </Field>
-      <Button inlineSize={"100%"} type="submit">
+      <Button xstyle={styles.button} type="submit">
         Deploy
       </Button>
     </Form>
@@ -71,7 +83,7 @@ function ProjectForm() {
 
 export function Preview() {
   return (
-    <Card inlineSize={"100%"} maxInlineSize={"20rem"}>
+    <Card xstyle={styles.card}>
       <CardHeader>
         <CardTitle>Create project</CardTitle>
         <CardDescription>Deploy your new project in one-click.</CardDescription>
@@ -80,12 +92,7 @@ export function Preview() {
         <ProjectForm />
       </CardPanel>
       <CardFooter>
-        <Flex
-          gap={"0.25rem"}
-          fontSize={"0.75rem"}
-          lineHeight={"calc(1 / 0.75)"}
-          color={"var(--muted-foreground)"}
-        >
+        <Flex xstyle={styles.flex}>
           <CircleAlertIcon {...stylex.props(previewStyles.preview5)} />
           <Paragraph>This will take a few seconds to complete.</Paragraph>
         </Flex>

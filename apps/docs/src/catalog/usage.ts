@@ -572,10 +572,13 @@ export function Preview() {
   box: `"use client"
 
 import { Box } from "@/components/ui/box"
+import * as stylex from "@stylexjs/stylex"
+
+const styles = stylex.create({ section: { padding: "1rem" } })
 
 export function Preview() {
   return (
-    <Box as="section" p={4}>
+    <Box as="section" xstyle={styles.section}>
       Content inside a semantic Box.
     </Box>
   )
@@ -584,10 +587,13 @@ export function Preview() {
   flex: `"use client"
 
 import { Flex } from "@/components/ui/flex"
+import * as stylex from "@stylexjs/stylex"
+
+const styles = stylex.create({ row: { alignItems: "center", gap: "1rem" } })
 
 export function Preview() {
   return (
-    <Flex alignItems="center" gap={4}>
+    <Flex xstyle={styles.row}>
       <span>First</span>
       <span>Second</span>
     </Flex>
@@ -636,10 +642,13 @@ export function Preview() {
   grid: `"use client"
 
 import { Grid } from "@/components/ui/grid"
+import * as stylex from "@stylexjs/stylex"
+
+const styles = stylex.create({ columns: { gridTemplateColumns: "repeat(2, minmax(0, 1fr))", gap: "1rem" } })
 
 export function Preview() {
   return (
-    <Grid gridTemplateColumns="repeat(2, minmax(0, 1fr))" gap={4}>
+    <Grid xstyle={styles.columns}>
       <span>Design</span>
       <span>Engineering</span>
     </Grid>
@@ -649,9 +658,12 @@ export function Preview() {
   center: `"use client"
 
 import { Center } from "@/components/ui/center"
+import * as stylex from "@stylexjs/stylex"
+
+const styles = stylex.create({ root: { minBlockSize: "8rem" } })
 
 export function Preview() {
-  return <Center minBlockSize="8rem">Centered content</Center>
+  return <Center xstyle={styles.root}>Centered content</Center>
 }
 `,
   link: `"use client"

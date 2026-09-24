@@ -2,13 +2,13 @@
 
 // oxlint-disable jsx-a11y/prefer-tag-over-role -- Button group uses div+role=group for styling; fieldset not appropriate
 
-import type { StyleComponentProps, StyleProps } from "@registry/lib/style-props"
+import type { StyleXComponentProps } from "@registry/lib/stylex"
 import type * as React from "react"
 
 import { mergeProps } from "@base-ui/react/merge-props"
 import { useRender } from "@base-ui/react/use-render"
 import { Separator } from "@registry/components/ui/separator"
-import { mergeStyleProps, stylexProps } from "@registry/lib/stylex"
+import { mergeStylexProps, stylexProps } from "@registry/lib/stylex"
 import { themeMarker, tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import { clsx } from "clsx"
@@ -347,7 +347,7 @@ export function Group({
   orientation = "horizontal",
   children,
   ...restProps
-}: StyleComponentProps<
+}: StyleXComponentProps<
   React.ComponentProps<"div">,
   {
     className?: string
@@ -355,7 +355,7 @@ export function Group({
     children: React.ReactNode
   }
 >) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
@@ -363,7 +363,7 @@ export function Group({
       data-orientation={orientation}
       data-slot="group"
       role="group"
-      {...mergeStyleProps(
+      {...mergeStylexProps(
         stylexProps(
           className,
           styles.root,
@@ -383,8 +383,8 @@ export function GroupText({
   className,
   render,
   ...restProps
-}: StyleComponentProps<useRender.ComponentProps<"div">>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<useRender.ComponentProps<"div">>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   const defaultProps = {
@@ -403,8 +403,8 @@ export function GroupSeparator({
   className,
   orientation = "vertical",
   ...restProps
-}: StyleComponentProps<React.ComponentProps<typeof Separator>>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<React.ComponentProps<typeof Separator>>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (

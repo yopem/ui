@@ -85,7 +85,6 @@ const previewDescriptions: Record<string, string> = {
   slider: "Adjustable range",
   spinner: "Indeterminate loading spinner",
   stack: "Vertically stacked status",
-  "style-props": "Responsive style props playground",
   switch: "Labeled on/off switch",
   table: "Projects data table",
   tabs: "Switchable content panels",

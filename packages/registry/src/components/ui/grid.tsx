@@ -1,9 +1,9 @@
 "use client"
 
-import type { StyleComponentProps, StyleProps } from "@registry/lib/style-props"
+import type { StyleXComponentProps } from "@registry/lib/stylex"
 import type * as React from "react"
 
-import { mergeStyleProps, stylexProps } from "@registry/lib/stylex"
+import { mergeStylexProps, stylexProps } from "@registry/lib/stylex"
 import * as stylex from "@stylexjs/stylex"
 
 const styles = stylex.create({
@@ -13,7 +13,7 @@ const styles = stylex.create({
 type GridElementProps = React.ComponentPropsWithoutRef<"div"> &
   React.RefAttributes<HTMLDivElement>
 
-export type GridProps = StyleComponentProps<GridElementProps>
+export type GridProps = StyleXComponentProps<GridElementProps>
 
 export function Grid({
   xstyle: consumerXstyle,
@@ -21,13 +21,13 @@ export function Grid({
   ref,
   ...restProps
 }: GridProps) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
     <div
       data-slot="grid"
-      {...mergeStyleProps(stylexProps(className, styles.root, xstyle), props)}
+      {...mergeStylexProps(stylexProps(className, styles.root, xstyle), props)}
       ref={ref}
     />
   )

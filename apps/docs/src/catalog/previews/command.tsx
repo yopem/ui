@@ -25,6 +25,14 @@ import {
 } from "@/components/ui/command"
 import { Flex } from "@/components/ui/flex"
 import { Kbd, KbdGroup } from "@/components/ui/kbd"
+
+const styles = stylex.create({
+  span: { flex: "1" },
+  flex: { alignItems: "center", gap: "calc(0.25rem * 4)" },
+  flex2: { alignItems: "center", gap: "calc(0.25rem * 2)" },
+  flex3: { alignItems: "center", gap: "calc(0.25rem * 2)" },
+  flex4: { alignItems: "center", gap: "calc(0.25rem * 2)" },
+})
 export interface Item {
   value: string
   label: string
@@ -102,7 +110,7 @@ export function Preview() {
                           onClick={() => handleItemClick(item)}
                           value={item.value}
                         >
-                          <Box as="span" flex={"1"}>
+                          <Box as="span" xstyle={styles.span}>
                             {item.label}
                           </Box>
                           {item.shortcut && (
@@ -118,8 +126,8 @@ export function Preview() {
             </CommandList>
           </CommandPanel>
           <CommandFooter>
-            <Flex alignItems={"center"} gap={"calc(0.25rem * 4)"}>
-              <Flex alignItems={"center"} gap={"calc(0.25rem * 2)"}>
+            <Flex xstyle={styles.flex}>
+              <Flex xstyle={styles.flex2}>
                 <KbdGroup>
                   <Kbd>
                     <ArrowUpIcon {...stylex.props(previewStyles.icon)} />
@@ -130,14 +138,14 @@ export function Preview() {
                 </KbdGroup>
                 <Box as="span">Navigate</Box>
               </Flex>
-              <Flex alignItems={"center"} gap={"calc(0.25rem * 2)"}>
+              <Flex xstyle={styles.flex3}>
                 <Kbd>
                   <CornerDownLeftIcon {...stylex.props(previewStyles.icon)} />
                 </Kbd>
                 <Box as="span">Open</Box>
               </Flex>
             </Flex>
-            <Flex alignItems={"center"} gap={"calc(0.25rem * 2)"}>
+            <Flex xstyle={styles.flex4}>
               <Kbd>Esc</Kbd>
               <Box as="span">Close</Box>
             </Flex>

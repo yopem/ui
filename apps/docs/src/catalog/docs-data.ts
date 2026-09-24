@@ -20,7 +20,6 @@ export const compositionItems: Record<string, string[]> = {
     "button",
     "label",
   ],
-  "style-props": ["button"],
 }
 
 export function getDocumentationItems(slug: string) {
@@ -57,16 +56,16 @@ export const guidePages = [
       "Box Flex Stack HStack VStack Grid Center Link Paragraph Heading semantic layout native elements refs typography",
   },
   {
-    title: "Style props",
-    url: "/docs/style-props",
+    title: "Styling with StyleX",
+    url: "/docs/styling",
     content:
-      "Shared styling for all components including Button Input layout and typography: spacing responsive breakpoints states css xstyle aliases precedence",
+      "StyleX create props xstyle semantic tokens responsive styles defaults components className integration",
   },
   {
     title: "Lint rules",
     url: "/docs/lint",
     content:
-      "Oxlint rules enforce-styling-methods no-leaked-dom-style-props no-unsupported-style-props prefer-ui-primitives static-stylex valid-polymorphic-as configuration allowElements exceptions fixes",
+      "Oxlint rules enforce-styling-methods prefer-ui-primitives static-stylex valid-polymorphic-as configuration allowElements",
   },
   {
     title: "Theming",

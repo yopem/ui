@@ -13,15 +13,14 @@ const definitions: Definition[] = [
     api: ["BoxElement", "BoxProps", "Box"],
     categories: ["layout"],
     description:
-      "Generic intrinsic-element wrapper with shared style props and xstyle.",
+      "Generic intrinsic-element wrapper with StyleX defaults and xstyle.",
     name: "box",
     title: "Box",
   },
   {
     api: ["FlexProps", "Flex"],
     categories: ["layout"],
-    description:
-      "Div-only flex layout with display:flex and shared style props.",
+    description: "Div-only flex layout with display:flex and xstyle.",
     name: "flex",
     title: "Flex",
   },
@@ -65,15 +64,14 @@ const definitions: Definition[] = [
   {
     api: ["LinkProps", "Link"],
     categories: ["navigation"],
-    description:
-      "Native anchor with shared style props and no component visual defaults.",
+    description: "Native anchor with xstyle and no component visual defaults.",
     name: "link",
     title: "Link",
   },
   {
     api: ["ParagraphProps", "Paragraph"],
     categories: ["typography"],
-    description: "Native paragraph with shared style props and xstyle.",
+    description: "Native paragraph with xstyle.",
     name: "paragraph",
     title: "Paragraph",
   },
@@ -81,7 +79,7 @@ const definitions: Definition[] = [
     api: ["HeadingTag", "HeadingProps", "Heading"],
     categories: ["typography"],
     description:
-      "Native h2-by-default heading with h1-h6 selection and shared style props.",
+      "Native h2-by-default heading with h1-h6 selection and xstyle.",
     name: "heading",
     title: "Heading",
   },

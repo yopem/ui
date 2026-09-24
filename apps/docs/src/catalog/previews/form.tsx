@@ -2,12 +2,22 @@
 
 import type { FormEvent } from "react"
 
+import * as stylex from "@stylexjs/stylex"
 import { useState } from "react"
 
 import { Button } from "@/components/ui/button"
 import { Field, FieldError, FieldLabel } from "@/components/ui/field"
 import { Form } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
+const styles = stylex.create({
+  form: {
+    display: "flex",
+    inlineSize: "100%",
+    maxInlineSize: "calc(0.25rem * 64)",
+    flexDirection: "column",
+    gap: "calc(0.25rem * 4)",
+  },
+})
 
 export function Preview() {
   const [loading, setLoading] = useState(false)
@@ -21,14 +31,7 @@ export function Preview() {
   }
 
   return (
-    <Form
-      display={"flex"}
-      inlineSize={"100%"}
-      maxInlineSize={"calc(0.25rem * 64)"}
-      flexDirection={"column"}
-      gap={"calc(0.25rem * 4)"}
-      onSubmit={onSubmit}
-    >
+    <Form xstyle={styles.form} onSubmit={onSubmit}>
       <Field name="email">
         <FieldLabel>Email</FieldLabel>
         <Input placeholder="you@example.com" required type="email" />

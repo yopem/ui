@@ -1,6 +1,6 @@
 "use client"
 
-import type { StyleComponentProps, StyleProps } from "@registry/lib/style-props"
+import type { StyleXComponentProps } from "@registry/lib/stylex"
 import type { StyleXProps } from "@registry/lib/stylex"
 import type * as React from "react"
 
@@ -451,7 +451,7 @@ export function buttonVariants({
   )
 }
 
-export type ButtonProps = StyleComponentProps<
+export type ButtonProps = StyleXComponentProps<
   useRender.ComponentProps<"button">,
   {
     variant?: ButtonVariantProps["variant"]
@@ -471,7 +471,7 @@ export function Button({
   disabled: disabledProp,
   ...restProps
 }: ButtonProps) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const props = restProps
   const xstyle = consumerXstyle
 
   const isDisabled = Boolean(loading || disabledProp)

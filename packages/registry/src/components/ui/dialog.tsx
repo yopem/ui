@@ -1,13 +1,13 @@
 "use client"
 
-import type { StyleComponentProps, StyleProps } from "@registry/lib/style-props"
+import type { StyleXComponentProps } from "@registry/lib/stylex"
 
 import { Dialog as DialogPrimitive } from "@base-ui/react/dialog"
 import { mergeProps } from "@base-ui/react/merge-props"
 import { useRender } from "@base-ui/react/use-render"
 import { Button } from "@registry/components/ui/button"
 import { ScrollArea } from "@registry/components/ui/scroll-area"
-import { mergeStyleProps, stylexProps } from "@registry/lib/stylex"
+import { mergeStylexProps, stylexProps } from "@registry/lib/stylex"
 import { themeMarker, tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import { XIcon } from "lucide-react"
@@ -181,14 +181,14 @@ export function DialogTrigger({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleComponentProps<DialogPrimitive.Trigger.Props>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<DialogPrimitive.Trigger.Props>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
     <DialogPrimitive.Trigger
       data-slot="dialog-trigger"
-      {...mergeStyleProps(stylexProps(className, xstyle), props)}
+      {...mergeStylexProps(stylexProps(className, xstyle), props)}
     />
   )
 }
@@ -196,14 +196,14 @@ export function DialogClose({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleComponentProps<DialogPrimitive.Close.Props>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<DialogPrimitive.Close.Props>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
     <DialogPrimitive.Close
       data-slot="dialog-close"
-      {...mergeStyleProps(stylexProps(className, xstyle), props)}
+      {...mergeStylexProps(stylexProps(className, xstyle), props)}
     />
   )
 }
@@ -211,14 +211,14 @@ export function DialogBackdrop({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleComponentProps<DialogPrimitive.Backdrop.Props>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<DialogPrimitive.Backdrop.Props>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
     <DialogPrimitive.Backdrop
       data-slot="dialog-backdrop"
-      {...mergeStyleProps(
+      {...mergeStylexProps(
         stylexProps(className, styles.backdrop, xstyle),
         props,
       )}
@@ -229,14 +229,14 @@ export function DialogViewport({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleComponentProps<DialogPrimitive.Viewport.Props>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<DialogPrimitive.Viewport.Props>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
     <DialogPrimitive.Viewport
       data-slot="dialog-viewport"
-      {...mergeStyleProps(
+      {...mergeStylexProps(
         stylexProps(className, styles.viewport, xstyle),
         props,
       )}
@@ -253,7 +253,7 @@ export function DialogPopup({
   closeProps,
   portalProps,
   ...restProps
-}: StyleComponentProps<
+}: StyleXComponentProps<
   DialogPrimitive.Popup.Props,
   {
     showCloseButton?: boolean
@@ -262,7 +262,7 @@ export function DialogPopup({
     portalProps?: DialogPrimitive.Portal.Props
   }
 >) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
@@ -276,7 +276,7 @@ export function DialogPopup({
       >
         <DialogPrimitive.Popup
           data-slot="dialog-popup"
-          {...mergeStyleProps(
+          {...mergeStylexProps(
             stylexProps(
               className,
               styles.popup,
@@ -309,8 +309,8 @@ export function DialogHeader({
   className,
   render,
   ...restProps
-}: StyleComponentProps<useRender.ComponentProps<"div">>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<useRender.ComponentProps<"div">>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   const defaultProps = {
@@ -330,13 +330,13 @@ export function DialogFooter({
   variant = "default",
   render,
   ...restProps
-}: StyleComponentProps<
+}: StyleXComponentProps<
   useRender.ComponentProps<"div">,
   {
     variant?: "default" | "bare"
   }
 >) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const props = restProps
   const xstyle = consumerXstyle
 
   const defaultProps = {
@@ -360,14 +360,14 @@ export function DialogTitle({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleComponentProps<DialogPrimitive.Title.Props>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<DialogPrimitive.Title.Props>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
     <DialogPrimitive.Title
       data-slot="dialog-title"
-      {...mergeStyleProps(stylexProps(className, styles.title, xstyle), props)}
+      {...mergeStylexProps(stylexProps(className, styles.title, xstyle), props)}
     />
   )
 }
@@ -375,14 +375,14 @@ export function DialogDescription({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleComponentProps<DialogPrimitive.Description.Props>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<DialogPrimitive.Description.Props>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
     <DialogPrimitive.Description
       data-slot="dialog-description"
-      {...mergeStyleProps(
+      {...mergeStylexProps(
         stylexProps(className, styles.description, xstyle),
         props,
       )}
@@ -396,11 +396,11 @@ export function DialogPanel({
   scrollFade = true,
   render,
   ...restProps
-}: StyleComponentProps<
+}: StyleXComponentProps<
   useRender.ComponentProps<"div">,
   { scrollFade?: boolean }
 >) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const props = restProps
   const xstyle = consumerXstyle
 
   const defaultProps = {

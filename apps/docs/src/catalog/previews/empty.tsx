@@ -11,6 +11,8 @@ import {
   EmptyTitle,
 } from "@/components/ui/empty"
 import { Flex } from "@/components/ui/flex"
+
+const styles = stylex.create({ flex: { gap: "calc(0.25rem * 2)" } })
 export function Preview() {
   return (
     <Empty>
@@ -22,7 +24,7 @@ export function Preview() {
         <EmptyDescription>Create a meeting to get started.</EmptyDescription>
       </EmptyHeader>
       <EmptyContent>
-        <Flex gap={"calc(0.25rem * 2)"}>
+        <Flex xstyle={styles.flex}>
           <Button size="sm">Create meeting</Button>
           <Button size="sm" variant="outline">
             <BookIcon {...stylex.props(previewStyles.icon2)} />

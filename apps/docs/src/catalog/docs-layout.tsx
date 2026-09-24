@@ -22,44 +22,76 @@ import { Link as UiLink } from "@/components/ui/link"
 import { DocsNavigation } from "./docs-navigation"
 import { GlobalSearch } from "./global-search"
 import { ThemeToggle } from "./theme-toggle"
+
+const primitiveStyles = stylex.create({
+  box: {
+    backgroundColor: tokens["--background"],
+    color: tokens["--foreground"],
+    fontFamily: tokens["--font-sans"],
+    minBlockSize: "100dvh",
+    fontSize: "0.875rem",
+    lineHeight: 1.5,
+  },
+  uiLink: {
+    position: "fixed",
+    insetBlockStart: "0.5rem",
+    insetInlineStart: "1rem",
+    zIndex: 60,
+    padding: "0.75rem 1rem",
+    backgroundColor: tokens["--primary"],
+    color: tokens["--primary-foreground"],
+    borderRadius: tokens["--radius-md"],
+    transform: {
+      default: "translateY(-200%)",
+      ":is(:focus, [data-focus])": "translateY(0)",
+    },
+  },
+  header: {
+    display: "flex",
+    alignItems: "center",
+    gap: "1rem",
+    blockSize: "4rem",
+    paddingInline: { default: "2rem", "@media (max-width: 767.98px)": "1rem" },
+    backgroundColor: tokens["--background"],
+    position: "sticky",
+    insetBlockStart: "calc(var(--spacing) * 0)",
+    zIndex: 20,
+  },
+  openNavigation: {
+    display: { default: "none", "@media (max-width: 767.98px)": "inline-flex" },
+  },
+  dialogPopup: {
+    paddingBlock: "1.5rem",
+    paddingInline: "1.5rem",
+    gap: "1rem",
+    maxBlockSize: "min(42rem, 85dvh)",
+  },
+  grid: {
+    display: "grid",
+    gridTemplateColumns: {
+      default: "16rem minmax(0, 1fr)",
+      "@media (max-width: 767.98px)": "minmax(0, 1fr)",
+    },
+    maxInlineSize: "100rem",
+    marginInline: "auto",
+  },
+  aside: {
+    display: { default: "flex", "@media (max-width: 767.98px)": "none" },
+    flexDirection: "column",
+    blockSize: "calc(100dvh - 4rem)",
+    position: "sticky",
+    insetBlockStart: "4rem",
+  },
+  main: { minInlineSize: "calc(var(--spacing) * 0)", outline: "none" },
+})
 export function DocumentationLayout({ children }: { children: ReactNode }) {
   const [mobileOpen, setMobileOpen] = useState(false)
   return (
-    <Box
-      backgroundColor={tokens["--background"]}
-      color={tokens["--foreground"]}
-      fontFamily={tokens["--font-sans"]}
-      minBlockSize={"100dvh"}
-      fontSize={"0.875rem"}
-      lineHeight={1.5}
-    >
-      <UiLink
-        href="#docs-content"
-        position="fixed"
-        insetBlockStart="0.5rem"
-        insetInlineStart="1rem"
-        zIndex={60}
-        padding="0.75rem 1rem"
-        backgroundColor={tokens["--primary"]}
-        color={tokens["--primary-foreground"]}
-        borderRadius={tokens["--radius-md"]}
-        transform="translateY(-200%)"
-        _focus={{ transform: "translateY(0)" }}
-      >
+    <Box xstyle={primitiveStyles.box}>
+      <UiLink href="#docs-content" xstyle={primitiveStyles.uiLink}>
         Skip to content
       </UiLink>
-      <Box
-        as="header"
-        display={"flex"}
-        alignItems={"center"}
-        gap={"1rem"}
-        blockSize={"4rem"}
-        paddingInline={{ base: "2rem", mdDown: "1rem" }}
-        backgroundColor={tokens["--background"]}
-        position={"sticky"}
-        insetBlockStart={0}
-        zIndex={20}
-      >
+      <Box as="header" xstyle={primitiveStyles.header}>
         <Dialog open={mobileOpen} onOpenChange={setMobileOpen}>
           <DialogTrigger
             render={
@@ -67,16 +99,14 @@ export function DocumentationLayout({ children }: { children: ReactNode }) {
                 variant="ghost"
                 size="icon"
                 aria-label="Open navigation"
-                display={{ base: "none", mdDown: "inline-flex" }}
+                xstyle={primitiveStyles.openNavigation}
               />
             }
           >
             <MenuIcon size={20} />
           </DialogTrigger>
           <DialogPopup
-            padding="1.5rem"
-            gap="1rem"
-            maxBlockSize="min(42rem, 85dvh)"
+            xstyle={primitiveStyles.dialogPopup}
             bottomStickOnMobile={false}
           >
             <DialogTitle>Documentation</DialogTitle>
@@ -93,23 +123,8 @@ export function DocumentationLayout({ children }: { children: ReactNode }) {
         </Link>
         <GlobalSearch />
       </Box>
-      <Grid
-        display={"grid"}
-        gridTemplateColumns={{
-          base: "16rem minmax(0, 1fr)",
-          mdDown: "minmax(0, 1fr)",
-        }}
-        maxInlineSize={"100rem"}
-        marginInline={"auto"}
-      >
-        <Box
-          as="aside"
-          display={{ base: "flex", mdDown: "none" }}
-          flexDirection={"column"}
-          blockSize={"calc(100dvh - 4rem)"}
-          position={"sticky"}
-          insetBlockStart={"4rem"}
-        >
+      <Grid xstyle={primitiveStyles.grid}>
+        <Box as="aside" xstyle={primitiveStyles.aside}>
           <DocsNavigation />
           <ThemeToggle />
         </Box>
@@ -117,8 +132,7 @@ export function DocumentationLayout({ children }: { children: ReactNode }) {
           as="main"
           id="docs-content"
           tabIndex={-1}
-          minInlineSize={0}
-          outline={"none"}
+          xstyle={primitiveStyles.main}
         >
           {children}
         </Box>

@@ -28,6 +28,10 @@ import {
 import { docsStyles } from "@/catalog/docs-styles"
 import { Paragraph } from "@/components/ui/paragraph"
 import { siteJsonLd } from "@/lib/seo"
+
+const styles = stylex.create({
+  paragraph: { marginBlock: "1rem", lineHeight: 1.8 },
+})
 export const Route = createRootRoute({
   head: () => ({
     links: [{ rel: "icon", href: "/favicon.svg", type: "image/svg+xml" }],
@@ -61,7 +65,7 @@ function ErrorPage({ reset }: ErrorComponentProps) {
           <Button type="button" onClick={reset}>
             Try again
           </Button>
-          <Paragraph marginBlock="1rem" lineHeight={1.8}>
+          <Paragraph xstyle={styles.paragraph}>
             <Link to="/" {...stylex.props(docsStyles.link)}>
               Return to documentation home
             </Link>

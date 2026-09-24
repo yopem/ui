@@ -1,6 +1,6 @@
 "use client"
 
-import type { StyleComponentProps, StyleProps } from "@registry/lib/style-props"
+import type { StyleXComponentProps } from "@registry/lib/stylex"
 
 import { mergeProps } from "@base-ui/react/merge-props"
 import { useRender } from "@base-ui/react/use-render"
@@ -175,8 +175,8 @@ export function Card({
   className,
   render,
   ...restProps
-}: StyleComponentProps<useRender.ComponentProps<"div">>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<useRender.ComponentProps<"div">>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   const defaultProps = {
@@ -194,8 +194,8 @@ export function CardFrame({
   className,
   render,
   ...restProps
-}: StyleComponentProps<useRender.ComponentProps<"div">>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<useRender.ComponentProps<"div">>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   const defaultProps = {
@@ -213,8 +213,8 @@ export function CardFrameHeader({
   className,
   render,
   ...restProps
-}: StyleComponentProps<useRender.ComponentProps<"div">>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<useRender.ComponentProps<"div">>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   const defaultProps = {
@@ -232,8 +232,8 @@ export function CardFrameTitle({
   className,
   render,
   ...restProps
-}: StyleComponentProps<useRender.ComponentProps<"div">>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<useRender.ComponentProps<"div">>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   const defaultProps = {
@@ -251,8 +251,8 @@ export function CardFrameDescription({
   className,
   render,
   ...restProps
-}: StyleComponentProps<useRender.ComponentProps<"div">>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<useRender.ComponentProps<"div">>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   const defaultProps = {
@@ -270,8 +270,8 @@ export function CardFrameAction({
   className,
   render,
   ...restProps
-}: StyleComponentProps<useRender.ComponentProps<"div">>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<useRender.ComponentProps<"div">>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   const defaultProps = {
@@ -289,8 +289,8 @@ export function CardFrameFooter({
   className,
   render,
   ...restProps
-}: StyleComponentProps<useRender.ComponentProps<"div">>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<useRender.ComponentProps<"div">>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   const defaultProps = {
@@ -309,11 +309,11 @@ export function CardHeader({
   className,
   render,
   ...restProps
-}: StyleComponentProps<
+}: StyleXComponentProps<
   useRender.ComponentProps<"div">,
   { separator?: boolean }
 >) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const props = restProps
   const xstyle = consumerXstyle
 
   const defaultProps = {
@@ -337,8 +337,8 @@ export function CardTitle({
   className,
   render,
   ...restProps
-}: StyleComponentProps<useRender.ComponentProps<"div">>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<useRender.ComponentProps<"div">>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   const defaultProps = {
@@ -356,8 +356,8 @@ export function CardDescription({
   className,
   render,
   ...restProps
-}: StyleComponentProps<useRender.ComponentProps<"div">>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<useRender.ComponentProps<"div">>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   const defaultProps = {
@@ -375,8 +375,8 @@ export function CardAction({
   className,
   render,
   ...restProps
-}: StyleComponentProps<useRender.ComponentProps<"div">>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<useRender.ComponentProps<"div">>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   const defaultProps = {
@@ -394,8 +394,8 @@ export function CardPanel({
   className,
   render,
   ...restProps
-}: StyleComponentProps<useRender.ComponentProps<"div">>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<useRender.ComponentProps<"div">>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   const defaultProps = {
@@ -414,11 +414,11 @@ export function CardFooter({
   className,
   render,
   ...restProps
-}: StyleComponentProps<
+}: StyleXComponentProps<
   useRender.ComponentProps<"div">,
   { separator?: boolean }
 >) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const props = restProps
   const xstyle = consumerXstyle
 
   const defaultProps = {

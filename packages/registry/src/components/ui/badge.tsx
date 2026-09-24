@@ -1,6 +1,6 @@
 "use client"
 
-import type { StyleComponentProps, StyleProps } from "@registry/lib/style-props"
+import type { StyleXComponentProps } from "@registry/lib/stylex"
 
 import { mergeProps } from "@base-ui/react/merge-props"
 import { useRender } from "@base-ui/react/use-render"
@@ -242,7 +242,7 @@ export function badgeVariants({
   )
 }
 
-export type BadgeProps = StyleComponentProps<
+export type BadgeProps = StyleXComponentProps<
   useRender.ComponentProps<"span">,
   {
     variant?: BadgeVariantProps["variant"]
@@ -258,7 +258,7 @@ export function Badge({
   render,
   ...restProps
 }: BadgeProps) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const props = restProps
   const xstyle = consumerXstyle
 
   const defaultProps = {

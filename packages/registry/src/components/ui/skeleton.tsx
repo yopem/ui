@@ -1,7 +1,7 @@
-import type { StyleComponentProps, StyleProps } from "@registry/lib/style-props"
+import type { StyleXComponentProps } from "@registry/lib/stylex"
 import type React from "react"
 
-import { mergeStyleProps, stylexProps } from "@registry/lib/stylex"
+import { mergeStylexProps, stylexProps } from "@registry/lib/stylex"
 import { themeMarker, tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 
@@ -33,14 +33,14 @@ export function Skeleton({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleComponentProps<React.ComponentProps<"div">>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<React.ComponentProps<"div">>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
     <div
       data-slot="skeleton"
-      {...mergeStyleProps(stylexProps(className, styles.root, xstyle), props)}
+      {...mergeStylexProps(stylexProps(className, styles.root, xstyle), props)}
     />
   )
 }

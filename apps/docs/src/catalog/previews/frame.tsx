@@ -1,3 +1,5 @@
+import * as stylex from "@stylexjs/stylex"
+
 import {
   Frame,
   FrameDescription,
@@ -8,38 +10,39 @@ import {
 } from "@/components/ui/frame"
 import { Heading } from "@/components/ui/heading"
 import { Paragraph } from "@/components/ui/paragraph"
+const styles = stylex.create({
+  frame: { inlineSize: "100%" },
+  h2: {
+    fontSize: "0.875rem",
+    lineHeight: "calc(1.25 / 0.875)",
+    fontWeight: "600",
+  },
+  paragraph: {
+    fontSize: "0.875rem",
+    lineHeight: "calc(1.25 / 0.875)",
+    color: "var(--muted-foreground)",
+  },
+  paragraph2: {
+    fontSize: "0.875rem",
+    lineHeight: "calc(1.25 / 0.875)",
+    color: "var(--muted-foreground)",
+  },
+})
 export function Preview() {
   return (
-    <Frame inlineSize={"100%"}>
+    <Frame xstyle={styles.frame}>
       <FrameHeader>
         <FrameTitle>Section header</FrameTitle>
         <FrameDescription>Brief description about the section</FrameDescription>
       </FrameHeader>
       <FramePanel>
-        <Heading
-          as="h2"
-          fontSize={"0.875rem"}
-          lineHeight={"calc(1.25 / 0.875)"}
-          fontWeight={"600"}
-        >
+        <Heading as="h2" xstyle={styles.h2}>
           Section title
         </Heading>
-        <Paragraph
-          fontSize={"0.875rem"}
-          lineHeight={"calc(1.25 / 0.875)"}
-          color={"var(--muted-foreground)"}
-        >
-          Section description
-        </Paragraph>
+        <Paragraph xstyle={styles.paragraph}>Section description</Paragraph>
       </FramePanel>
       <FrameFooter>
-        <Paragraph
-          fontSize={"0.875rem"}
-          lineHeight={"calc(1.25 / 0.875)"}
-          color={"var(--muted-foreground)"}
-        >
-          Footer
-        </Paragraph>
+        <Paragraph xstyle={styles.paragraph2}>Footer</Paragraph>
       </FrameFooter>
     </Frame>
   )

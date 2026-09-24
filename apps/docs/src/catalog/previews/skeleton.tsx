@@ -10,6 +10,79 @@ import { Button } from "@/components/ui/button"
 import { Flex } from "@/components/ui/flex"
 import { Heading } from "@/components/ui/heading"
 import { Skeleton } from "@/components/ui/skeleton"
+
+const styles = stylex.create({
+  avatar: { inlineSize: "calc(0.25rem * 10)", blockSize: "calc(0.25rem * 10)" },
+  flex: {
+    minInlineSize: "0px",
+    flex: "1",
+    flexDirection: "column",
+    gap: "0.25rem",
+  },
+  h4: {
+    overflow: "hidden",
+    display: "-webkit-box",
+    WebkitBoxOrient: "vertical",
+    WebkitLineClamp: "1",
+    fontSize: "0.875rem",
+    lineHeight: "calc(1.25 / 0.875)",
+    fontWeight: "500",
+  },
+  flex2: {
+    alignItems: "center",
+    gap: "calc(0.25rem * 3)",
+    fontSize: "0.75rem",
+    lineHeight: "calc(1 / 0.75)",
+    color: "var(--muted-foreground)",
+  },
+  span: { overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" },
+  flex3: { minInlineSize: "0px", alignItems: "center", gap: "0.25rem" },
+  span2: { overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" },
+  span3: { display: { "@media (max-width: 767.98px)": "none" } },
+  skeleton: {
+    inlineSize: "calc(0.25rem * 10)",
+    blockSize: "calc(0.25rem * 10)",
+    borderRadius: "calc(infinity * 1px)",
+  },
+  flex4: { flex: "1", flexDirection: "column" },
+  skeleton2: {
+    marginBlock: "calc(0.25rem * 0.5)",
+    blockSize: "calc(0.25rem * 4)",
+    maxInlineSize: "calc(0.25rem * 54)",
+  },
+  flex5: {
+    maxInlineSize: "calc(0.25rem * 54)",
+    alignItems: "center",
+    gap: "0.25rem",
+  },
+  skeleton3: {
+    marginBlock: "calc(0.25rem * 0.5)",
+    blockSize: "calc(0.25rem * 4)",
+    inlineSize: "calc(1 / 2 * 100%)",
+  },
+  skeleton4: {
+    marginBlock: "calc(0.25rem * 0.5)",
+    blockSize: "calc(0.25rem * 4)",
+    inlineSize: "calc(1 / 2 * 100%)",
+  },
+  skeleton5: {
+    blockSize: {
+      default: "calc(0.25rem * 7)",
+      "@media (min-width: 768px)": "calc(0.25rem * 6)",
+    },
+    inlineSize: {
+      default: "calc(0.25rem * 19)",
+      "@media (min-width: 768px)": "calc(0.25rem * 17)",
+    },
+  },
+  flex6: {
+    inlineSize: "100%",
+    maxInlineSize: "calc(0.25rem * 92)",
+    flexDirection: "column",
+    gap: "calc(0.25rem * 6)",
+  },
+  flex7: { alignItems: "center", gap: "calc(0.25rem * 4)" },
+})
 const users = [
   {
     delay: 3000,
@@ -57,56 +130,23 @@ function UserCard({ delay, user }: { delay: number; user: (typeof users)[0] }) {
 
   return (
     <>
-      <Avatar
-        inlineSize={"calc(0.25rem * 10)"}
-        blockSize={"calc(0.25rem * 10)"}
-      >
+      <Avatar xstyle={styles.avatar}>
         <AvatarImage alt={user.name} src={user.image} />
         <AvatarFallback>{user.fallback}</AvatarFallback>
       </Avatar>
-      <Flex
-        minInlineSize={"0px"}
-        flex={"1"}
-        flexDirection={"column"}
-        gap={"0.25rem"}
-      >
-        <Heading
-          as="h4"
-          overflow={"hidden"}
-          display={"-webkit-box"}
-          WebkitBoxOrient={"vertical"}
-          WebkitLineClamp={"1"}
-          fontSize={"0.875rem"}
-          lineHeight={"calc(1.25 / 0.875)"}
-          fontWeight={"500"}
-        >
+      <Flex xstyle={styles.flex}>
+        <Heading as="h4" xstyle={styles.h4}>
           {user.name}
         </Heading>
-        <Flex
-          alignItems={"center"}
-          gap={"calc(0.25rem * 3)"}
-          fontSize={"0.75rem"}
-          lineHeight={"calc(1 / 0.75)"}
-          color={"var(--muted-foreground)"}
-        >
-          <Box
-            as="span"
-            overflow={"hidden"}
-            textOverflow={"ellipsis"}
-            whiteSpace={"nowrap"}
-          >
+        <Flex xstyle={styles.flex2}>
+          <Box as="span" xstyle={styles.span}>
             {user.role}
           </Box>
-          <Flex minInlineSize={"0px"} alignItems={"center"} gap={"0.25rem"}>
+          <Flex xstyle={styles.flex3}>
             <UsersRoundIcon {...stylex.props(previewStyles.preview7)} />
-            <Box
-              as="span"
-              overflow={"hidden"}
-              textOverflow={"ellipsis"}
-              whiteSpace={"nowrap"}
-            >
+            <Box as="span" xstyle={styles.span2}>
               {user.followers}
-              <Box as="span" mdDown={{ display: "none" }}>
+              <Box as="span" xstyle={styles.span3}>
                 {" "}
                 followers
               </Box>
@@ -125,60 +165,24 @@ function UserCard({ delay, user }: { delay: number; user: (typeof users)[0] }) {
 function UserCardSkeleton() {
   return (
     <>
-      <Skeleton
-        inlineSize={"calc(0.25rem * 10)"}
-        blockSize={"calc(0.25rem * 10)"}
-        borderRadius={"calc(infinity * 1px)"}
-      />
-      <Flex flex={"1"} flexDirection={"column"}>
-        <Skeleton
-          marginBlock={"calc(0.25rem * 0.5)"}
-          blockSize={"calc(0.25rem * 4)"}
-          maxInlineSize={"calc(0.25rem * 54)"}
-        />
-        <Flex
-          maxInlineSize={"calc(0.25rem * 54)"}
-          alignItems={"center"}
-          gap={"0.25rem"}
-        >
-          <Skeleton
-            marginBlock={"calc(0.25rem * 0.5)"}
-            blockSize={"calc(0.25rem * 4)"}
-            inlineSize={"calc(1 / 2 * 100%)"}
-          />
-          <Skeleton
-            marginBlock={"calc(0.25rem * 0.5)"}
-            blockSize={"calc(0.25rem * 4)"}
-            inlineSize={"calc(1 / 2 * 100%)"}
-          />
+      <Skeleton xstyle={styles.skeleton} />
+      <Flex xstyle={styles.flex4}>
+        <Skeleton xstyle={styles.skeleton2} />
+        <Flex xstyle={styles.flex5}>
+          <Skeleton xstyle={styles.skeleton3} />
+          <Skeleton xstyle={styles.skeleton4} />
         </Flex>
       </Flex>
-      <Skeleton
-        blockSize={"calc(0.25rem * 7)"}
-        inlineSize={"calc(0.25rem * 19)"}
-        md={{
-          blockSize: "calc(0.25rem * 6)",
-          inlineSize: "calc(0.25rem * 17)",
-        }}
-      />
+      <Skeleton xstyle={styles.skeleton5} />
     </>
   )
 }
 
 export function Preview() {
   return (
-    <Flex
-      inlineSize={"100%"}
-      maxInlineSize={"calc(0.25rem * 92)"}
-      flexDirection={"column"}
-      gap={"calc(0.25rem * 6)"}
-    >
+    <Flex xstyle={styles.flex6}>
       {users.map((user) => (
-        <Flex
-          alignItems={"center"}
-          gap={"calc(0.25rem * 4)"}
-          key={user.fallback}
-        >
+        <Flex xstyle={styles.flex7} key={user.fallback}>
           <UserCard delay={user.delay} user={user} />
         </Flex>
       ))}

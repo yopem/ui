@@ -1,3 +1,5 @@
+import * as stylex from "@stylexjs/stylex"
+
 import {
   ContextMenu,
   ContextMenuItem,
@@ -5,24 +7,27 @@ import {
   ContextMenuSeparator,
   ContextMenuTrigger,
 } from "@/components/ui/context-menu"
+const styles = stylex.create({
+  contextMenuTrigger: {
+    display: "flex",
+    blockSize: "calc(0.25rem * 32)",
+    inlineSize: "100%",
+    maxInlineSize: "24rem",
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: "var(--radius)",
+    borderStyle: "dashed",
+    borderWidth: "1px",
+    fontSize: "0.875rem",
+    lineHeight: "calc(1.25 / 0.875)",
+    color: "var(--muted-foreground)",
+  },
+})
 
 export function Preview() {
   return (
     <ContextMenu>
-      <ContextMenuTrigger
-        display={"flex"}
-        blockSize={"calc(0.25rem * 32)"}
-        inlineSize={"100%"}
-        maxInlineSize={"24rem"}
-        alignItems={"center"}
-        justifyContent={"center"}
-        borderRadius={"var(--radius)"}
-        borderStyle={"dashed"}
-        borderWidth={"1px"}
-        fontSize={"0.875rem"}
-        lineHeight={"calc(1.25 / 0.875)"}
-        color={"var(--muted-foreground)"}
-      >
+      <ContextMenuTrigger xstyle={styles.contextMenuTrigger}>
         Right click here
       </ContextMenuTrigger>
       <ContextMenuPopup>

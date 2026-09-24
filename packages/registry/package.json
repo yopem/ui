@@ -7,7 +7,6 @@
     "@registry/*": "./src/*"
   },
   "exports": {
-    "./lib/style-props-config": "./src/lib/style-props-config.ts",
     "./*": "./src/*"
   },
   "scripts": {

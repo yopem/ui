@@ -1,9 +1,9 @@
 "use client"
 
-import type { StyleComponentProps, StyleProps } from "@registry/lib/style-props"
+import type { StyleXComponentProps } from "@registry/lib/stylex"
 import type * as React from "react"
 
-import { mergeStyleProps, stylexProps } from "@registry/lib/stylex"
+import { mergeStylexProps, stylexProps } from "@registry/lib/stylex"
 import * as stylex from "@stylexjs/stylex"
 
 const styles = stylex.create({
@@ -17,7 +17,7 @@ const styles = stylex.create({
 type CenterElementProps = React.ComponentPropsWithoutRef<"div"> &
   React.RefAttributes<HTMLDivElement>
 
-export type CenterProps = StyleComponentProps<CenterElementProps>
+export type CenterProps = StyleXComponentProps<CenterElementProps>
 
 export function Center({
   xstyle: consumerXstyle,
@@ -25,13 +25,13 @@ export function Center({
   ref,
   ...restProps
 }: CenterProps) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
     <div
       data-slot="center"
-      {...mergeStyleProps(stylexProps(className, styles.root, xstyle), props)}
+      {...mergeStylexProps(stylexProps(className, styles.root, xstyle), props)}
       ref={ref}
     />
   )

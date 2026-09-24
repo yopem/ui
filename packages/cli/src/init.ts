@@ -210,25 +210,36 @@ function stylexPlugin(framework: Framework) {
     })`
 }
 
+function hasYopemStylexConfig(content: string) {
+  return (
+    content.includes("yopemSource +") &&
+    content.includes('"@/*"') &&
+    content.includes("runtimeInjection: false") &&
+    content.includes("treeshakeCompensation: true") &&
+    content.includes("unstable_moduleResolution:") &&
+    content.includes('devMode: "css-only"')
+  )
+}
+
 function viteConfig(content: string, path: string, framework: Framework) {
-  const alreadyConfigured =
-    content.includes("styleProps.vite()") && content.includes("stylex.vite(")
-  if (alreadyConfigured) {
+  if (content.includes("stylex.vite(")) {
     if (!content.includes('"@":') && !content.includes("'@':")) {
       throw new Error(`Existing StyleX configuration lacks @ alias in ${path}`)
     }
+    if (
+      !hasYopemStylexConfig(content) ||
+      ((framework === "vite" || framework === "tanstack-router") &&
+        !content.includes("yopem-stylex-dev-css")) ||
+      (framework === "tanstack-start" && !content.includes("yopemRoot"))
+    ) {
+      throw new Error(`Incomplete Yopem build configuration in ${path}`)
+    }
     return content
-  }
-  if (
-    content.includes("styleProps.vite()") ||
-    content.includes("stylex.vite(")
-  ) {
-    throw new Error(`Incomplete Yopem build configuration in ${path}`)
   }
   const source = parsed(path, content)
   const config = configObject(source, path)
   const plugins = property(config, "plugins")
-  const entries = ["styleProps.vite()", stylexPlugin(framework)]
+  const entries = [stylexPlugin(framework)]
   if (framework === "vite" || framework === "tanstack-router") {
     entries.push(`{
       name: "yopem-stylex-dev-css",
@@ -254,7 +265,7 @@ function viteConfig(content: string, path: string, framework: Framework) {
     addProperty(source, config, `plugins: [${entries.join(", ")}]`, edits)
   }
   addAlias(source, config, path, edits)
-  const imports = `import stylex from "@stylexjs/unplugin"\nimport { fileURLToPath as yopemFileURLToPath } from "node:url"\nimport { styleProps } from "./src/lib/style-props-unplugin.ts"\n\nconst yopemSource = yopemFileURLToPath(new URL("./src", import.meta.url))\n${framework === "tanstack-start" ? 'const yopemRoot = yopemFileURLToPath(new URL(".", import.meta.url))\n' : ""}\n`
+  const imports = `import stylex from "@stylexjs/unplugin"\nimport { fileURLToPath as yopemFileURLToPath } from "node:url"\n\nconst yopemSource = yopemFileURLToPath(new URL("./src", import.meta.url))\n${framework === "tanstack-start" ? 'const yopemRoot = yopemFileURLToPath(new URL(".", import.meta.url))\n' : ""}\n`
   edits.push({ start: 0, end: 0, text: imports })
   return applyEdits(content, edits)
 }
@@ -275,19 +286,17 @@ function astroConfig(content: string, path: string) {
     throw new Error(`Unknown react() integration in ${path}`)
   }
   const alreadyConfigured =
-    content.includes("styleProps.vite()") &&
-    content.includes("stylex.vite(") &&
-    content.includes(`${reactName}()`)
+    content.includes("stylex.vite(") && content.includes(`${reactName}()`)
   if (alreadyConfigured) {
     if (!content.includes('"@":') && !content.includes("'@':")) {
       throw new Error(`Existing StyleX configuration lacks @ alias in ${path}`)
     }
+    if (!hasYopemStylexConfig(content)) {
+      throw new Error(`Incomplete Yopem build configuration in ${path}`)
+    }
     return content
   }
-  if (
-    content.includes("styleProps.vite()") ||
-    content.includes("stylex.vite(")
-  ) {
+  if (content.includes("stylex.vite(")) {
     throw new Error(`Incomplete Yopem build configuration in ${path}`)
   }
   const config = configObject(source, path)
@@ -313,7 +322,7 @@ function astroConfig(content: string, path: string) {
     addProperty(
       source,
       config,
-      `vite: { resolve: { alias: { "@": yopemSource } }, plugins: [styleProps.vite(), ${stylexPlugin("astro")}] }`,
+      `vite: { resolve: { alias: { "@": yopemSource } }, plugins: [${stylexPlugin("astro")}] }`,
       edits,
     )
   } else {
@@ -327,22 +336,17 @@ function astroConfig(content: string, path: string) {
       addArrayEntries(
         source,
         plugins.initializer,
-        ["styleProps.vite()", stylexPlugin("astro")],
+        [stylexPlugin("astro")],
         edits,
       )
     } else {
-      addProperty(
-        source,
-        nested,
-        `plugins: [styleProps.vite(), ${stylexPlugin("astro")}]`,
-        edits,
-      )
+      addProperty(source, nested, `plugins: [${stylexPlugin("astro")}]`, edits)
     }
   }
   edits.push({
     start: 0,
     end: 0,
-    text: `import stylex from "@stylexjs/unplugin"\n${reactImport ? "" : 'import react from "@astrojs/react"\n'}import { fileURLToPath as yopemFileURLToPath } from "node:url"\nimport { styleProps } from "./src/lib/style-props-unplugin.ts"\n\nconst yopemSource = yopemFileURLToPath(new URL("./src", import.meta.url))\n`,
+    text: `import stylex from "@stylexjs/unplugin"\n${reactImport ? "" : 'import react from "@astrojs/react"\n'}import { fileURLToPath as yopemFileURLToPath } from "node:url"\n\nconst yopemSource = yopemFileURLToPath(new URL("./src", import.meta.url))\n`,
   })
   return applyEdits(content, edits)
 }
@@ -649,7 +653,6 @@ const __dirname = dirname(fileURLToPath(import.meta.url))`
     : ""
   return `${header}
 const path = require("node:path")
-const stylePropsBabel = require("./src/lib/style-props-babel.ts").default
 
 function expandLocalSpreads({ types: t }) {
   return {
@@ -674,7 +677,7 @@ function expandLocalSpreads({ types: t }) {
   }
 }
 
-${esm ? 'export const presets = ["next/babel"]\nexport const plugins = [' : 'module.exports = {\n  presets: ["next/babel"],\n  plugins: ['}expandLocalSpreads, stylePropsBabel, ["@stylexjs/babel-plugin", {
+${esm ? 'export const presets = ["next/babel"]\nexport const plugins = [' : 'module.exports = {\n  presets: ["next/babel"],\n  plugins: ['}expandLocalSpreads, ["@stylexjs/babel-plugin", {
   aliases: { "@/*": [path.join(__dirname, "src/*")] },
   dev: process.env.NODE_ENV !== "production",
   runtimeInjection: false,
@@ -745,19 +748,6 @@ function postcss(content: string, path: string, esm: boolean) {
       : 'const yopemBabelConfig = require("./babel.config.js")\n',
   })
   return applyEdits(content, edits)
-}
-
-function requireNextNode() {
-  const result = Bun.spawnSync(["node", "--version"], {
-    stdout: "pipe",
-    stderr: "pipe",
-  })
-  const version = new TextDecoder().decode(result.stdout).match(/^v(\d+)/)
-  if (result.exitCode !== 0 || !version || Number(version[1]) < 24) {
-    throw new Error(
-      "Next.js init requires Node 24+ for the copied TypeScript Babel plugin",
-    )
-  }
 }
 
 function nextScripts(value: unknown) {
@@ -905,7 +895,6 @@ export async function initProject(options: InitOptions = {}) {
       if (!(name in dependencies)) runtimeDependencies.push(name)
     }
   } else if (framework === "next") {
-    requireNextNode()
     if (!object(manifest.scripts))
       throw new Error("Next.js scripts are missing")
     nextScripts(manifest.scripts)
@@ -973,10 +962,6 @@ export async function initProject(options: InitOptions = {}) {
       "@stylexjs/babel-plugin@^0.19.0",
       "@stylexjs/postcss-plugin@^0.19.0",
       "autoprefixer@^10.4.0",
-      "typescript@^5.9.3",
-      "@types/node@^24.0.0",
-      "@types/babel__core@^7.20.5",
-      "@babel/types@^7.29.8",
     )
   } else {
     const config = await chooseFile(root, [

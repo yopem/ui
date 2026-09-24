@@ -2,6 +2,7 @@ import type { MDXComponents } from "mdx/types"
 import type { ComponentProps, ReactNode } from "react"
 
 import { tokens } from "@registry/styles/tokens.stylex"
+import * as stylex from "@stylexjs/stylex"
 import { isValidElement } from "react"
 
 import { Box } from "@/components/ui/box"
@@ -13,6 +14,83 @@ import { CopyableCode } from "./code-block"
 import { DocumentationLayout } from "./docs-layout"
 import { DocsBody, DocsDescription, DocsPage, DocsTitle } from "./docs-page"
 import { guideToc, headingId } from "./guide-toc"
+const styles = stylex.create({
+  h2: {
+    fontFamily: tokens["--font-heading"],
+    fontSize: "1.5rem",
+    fontWeight: 650,
+    letterSpacing: "-0.025em",
+    lineHeight: 1.3,
+    marginBlockStart: "3rem",
+    marginBlockEnd: "1rem",
+    scrollMarginBlockStart: "6rem",
+  },
+  h3: {
+    fontFamily: tokens["--font-heading"],
+    fontSize: "1.2rem",
+    fontWeight: 600,
+    lineHeight: 1.4,
+    marginBlockStart: "2rem",
+    marginBlockEnd: "0.75rem",
+    scrollMarginBlockStart: "6rem",
+  },
+  pre: {
+    backgroundColor: tokens["--code"],
+    color: tokens["--code-foreground"],
+    paddingBlock: "1.25rem",
+    paddingInline: "1.25rem",
+    borderRadius: tokens["--radius-lg"],
+    overflowX: "auto",
+    fontFamily: tokens["--font-mono"],
+    fontSize: "0.8125rem",
+    lineHeight: 1.75,
+    marginBlock: "1.5rem",
+  },
+  paragraph: { marginBlock: "1rem", lineHeight: 1.8 },
+  link: {
+    color: tokens["--foreground"],
+    textDecoration: "underline",
+    textDecorationColor: {
+      default: tokens["--border"],
+      ":is(:hover, [data-hover]):not(:disabled, [disabled], [aria-disabled=true], [data-disabled])":
+        tokens["--foreground"],
+    },
+    textUnderlineOffset: "0.25em",
+    borderRadius: tokens["--radius-sm"],
+    outlineColor: {
+      ":is(:focus-visible, [data-focus-visible])": tokens["--ring"],
+    },
+    outlineStyle: { ":is(:focus-visible, [data-focus-visible])": "solid" },
+    outlineWidth: { ":is(:focus-visible, [data-focus-visible])": 2 },
+    outlineOffset: { ":is(:focus-visible, [data-focus-visible])": 4 },
+  },
+  ul: {
+    listStyleType: "disc",
+    paddingInlineStart: "1.5rem",
+    marginBlock: "1rem",
+  },
+  ol: {
+    listStyleType: "decimal",
+    paddingInlineStart: "1.5rem",
+    marginBlock: "1rem",
+  },
+  li: {
+    paddingInlineStart: "0.25rem",
+    marginBlock: "0.5rem",
+    lineHeight: 1.75,
+  },
+  strong: { fontWeight: 600, color: tokens["--foreground"] },
+  code: {
+    fontFamily: tokens["--font-mono"],
+    fontSize: "0.875em",
+    backgroundColor: tokens["--code"],
+    color: tokens["--code-foreground"],
+    borderRadius: tokens["--radius-sm"],
+    paddingBlock: "0.15rem",
+    paddingInline: "0.35rem",
+    overflowWrap: "anywhere",
+  },
+})
 
 function GuideH2({ children, id }: ComponentProps<"h2">) {
   return (
@@ -21,14 +99,7 @@ function GuideH2({ children, id }: ComponentProps<"h2">) {
       id={
         id ?? (typeof children === "string" ? headingId(children) : undefined)
       }
-      fontFamily={tokens["--font-heading"]}
-      fontSize={"1.5rem"}
-      fontWeight={650}
-      letterSpacing={"-0.025em"}
-      lineHeight={1.3}
-      marginBlockStart={"3rem"}
-      marginBlockEnd={"1rem"}
-      scrollMarginBlockStart={"6rem"}
+      xstyle={styles.h2}
     >
       {children}
     </Heading>
@@ -42,13 +113,7 @@ function GuideH3({ children, id }: ComponentProps<"h3">) {
       id={
         id ?? (typeof children === "string" ? headingId(children) : undefined)
       }
-      fontFamily={tokens["--font-heading"]}
-      fontSize={"1.2rem"}
-      fontWeight={600}
-      lineHeight={1.4}
-      marginBlockStart={"2rem"}
-      marginBlockEnd={"0.75rem"}
-      scrollMarginBlockStart={"6rem"}
+      xstyle={styles.h3}
     >
       {children}
     </Heading>
@@ -61,18 +126,7 @@ function GuideCode({ children }: { children?: ReactNode }) {
     if (typeof code === "string") return <CopyableCode code={code} />
   }
   return (
-    <Box
-      as="pre"
-      backgroundColor={tokens["--code"]}
-      color={tokens["--code-foreground"]}
-      padding={"1.25rem"}
-      borderRadius={tokens["--radius-lg"]}
-      overflowX={"auto"}
-      fontFamily={tokens["--font-mono"]}
-      fontSize={"0.8125rem"}
-      lineHeight={1.75}
-      marginBlock={"1.5rem"}
-    >
+    <Box as="pre" xstyle={styles.pre}>
       {children}
     </Box>
   )
@@ -82,24 +136,11 @@ const guideComponents: MDXComponents = {
   h2: GuideH2,
   h3: GuideH3,
   p: ({ children }) => (
-    <Paragraph marginBlock="1rem" lineHeight={1.8}>
-      {children}
-    </Paragraph>
+    <Paragraph xstyle={styles.paragraph}>{children}</Paragraph>
   ),
   a: ({ children, href, title, target, rel }) => (
     <Link
-      color={tokens["--foreground"]}
-      textDecoration={"underline"}
-      textDecorationColor={tokens["--border"]}
-      textUnderlineOffset={"0.25em"}
-      borderRadius={tokens["--radius-sm"]}
-      _hover={{ textDecorationColor: tokens["--foreground"] }}
-      _focusVisible={{
-        outlineColor: tokens["--ring"],
-        outlineStyle: "solid",
-        outlineWidth: 2,
-        outlineOffset: 4,
-      }}
+      xstyle={styles.link}
       href={href}
       title={title}
       target={target}
@@ -109,52 +150,27 @@ const guideComponents: MDXComponents = {
     </Link>
   ),
   ul: ({ children }) => (
-    <Box
-      as="ul"
-      listStyleType={"disc"}
-      paddingInlineStart={"1.5rem"}
-      marginBlock={"1rem"}
-    >
+    <Box as="ul" xstyle={styles.ul}>
       {children}
     </Box>
   ),
   ol: ({ children }) => (
-    <Box
-      as="ol"
-      listStyleType={"decimal"}
-      paddingInlineStart={"1.5rem"}
-      marginBlock={"1rem"}
-    >
+    <Box as="ol" xstyle={styles.ol}>
       {children}
     </Box>
   ),
   li: ({ children }) => (
-    <Box
-      as="li"
-      paddingInlineStart={"0.25rem"}
-      marginBlock={"0.5rem"}
-      lineHeight={1.75}
-    >
+    <Box as="li" xstyle={styles.li}>
       {children}
     </Box>
   ),
   strong: ({ children }) => (
-    <Box as="strong" fontWeight={600} color={tokens["--foreground"]}>
+    <Box as="strong" xstyle={styles.strong}>
       {children}
     </Box>
   ),
   code: ({ children }) => (
-    <Box
-      as="code"
-      fontFamily={tokens["--font-mono"]}
-      fontSize={"0.875em"}
-      backgroundColor={tokens["--code"]}
-      color={tokens["--code-foreground"]}
-      borderRadius={tokens["--radius-sm"]}
-      paddingBlock={"0.15rem"}
-      paddingInline={"0.35rem"}
-      overflowWrap={"anywhere"}
-    >
+    <Box as="code" xstyle={styles.code}>
       {children}
     </Box>
   ),

@@ -1,3 +1,4 @@
+import * as stylex from "@stylexjs/stylex"
 import { createFileRoute } from "@tanstack/react-router"
 
 import { CopyableCode } from "@/catalog/code-block"
@@ -9,6 +10,12 @@ import { Tabs, TabsList, TabsPanel, TabsTab } from "@/components/ui/tabs"
 import Content from "@/content/installation.mdx"
 import source from "@/content/installation.mdx?raw"
 import { createSeo } from "@/lib/seo"
+const styles = stylex.create({
+  paragraph: { marginBlock: "1rem", lineHeight: 1.8 },
+  paragraph2: { marginBlock: "1rem", lineHeight: 1.8 },
+  paragraph3: { marginBlock: "1rem", lineHeight: 1.8 },
+  box: { marginBlock: "2rem", minInlineSize: "calc(var(--spacing) * 0)" },
+})
 
 export const Route = createFileRoute("/docs/installation")({
   loader: () => getDocumentation({ data: "base" }),
@@ -32,7 +39,7 @@ function InstallationMethods() {
         <TabsTab value="manual">Manual</TabsTab>
       </TabsList>
       <TabsPanel value="cli">
-        <Paragraph marginBlock="1rem" lineHeight={1.8}>
+        <Paragraph xstyle={styles.paragraph}>
           Run from your project root. Init detects Vite React, client TanStack
           Router, TanStack Start, Next.js App Router, or Astro; installs base
           files and dependencies; then configures build plugins, aliases, and
@@ -46,7 +53,7 @@ function InstallationMethods() {
           header="Terminal"
           title="Initialize project with CLI"
         />
-        <Paragraph marginBlock="1rem" lineHeight={1.8}>
+        <Paragraph xstyle={styles.paragraph2}>
           For ambiguous projects, pass --framework vite, tanstack-router,
           tanstack-start, next, or astro. Next.js requires Node 24+ and webpack;
           React Router framework/RSC mode and Next.js Pages Router need manual
@@ -55,12 +62,12 @@ function InstallationMethods() {
         </Paragraph>
       </TabsPanel>
       <TabsPanel value="manual">
-        <Paragraph marginBlock="1rem" lineHeight={1.8}>
+        <Paragraph xstyle={styles.paragraph3}>
           Copy these files once. Keep their displayed paths. Component pages
           include them in required files, so later components need no second
           copy.
         </Paragraph>
-        <Box marginBlock="2rem" minInlineSize={0}>
+        <Box xstyle={styles.box}>
           {data.files.map((file) => (
             <CopyableCode
               key={file.path}

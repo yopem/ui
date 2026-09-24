@@ -1,7 +1,7 @@
-import type { StyleComponentProps, StyleProps } from "@registry/lib/style-props"
+import type { StyleXComponentProps } from "@registry/lib/stylex"
 import type * as React from "react"
 
-import { mergeStyleProps, stylexProps } from "@registry/lib/stylex"
+import { mergeStylexProps, stylexProps } from "@registry/lib/stylex"
 import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 
@@ -30,14 +30,14 @@ export function Kbd({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleComponentProps<React.ComponentProps<"kbd">>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<React.ComponentProps<"kbd">>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
     <kbd
       data-slot="kbd"
-      {...mergeStyleProps(stylexProps(className, styles.root, xstyle), props)}
+      {...mergeStylexProps(stylexProps(className, styles.root, xstyle), props)}
     />
   )
 }
@@ -46,14 +46,14 @@ export function KbdGroup({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleComponentProps<React.ComponentProps<"kbd">>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<React.ComponentProps<"kbd">>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
     <kbd
       data-slot="kbd-group"
-      {...mergeStyleProps(stylexProps(className, styles.group, xstyle), props)}
+      {...mergeStylexProps(stylexProps(className, styles.group, xstyle), props)}
     />
   )
 }

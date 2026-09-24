@@ -1,7 +1,7 @@
-import type { StyleComponentProps, StyleProps } from "@registry/lib/style-props"
+import type { StyleXComponentProps } from "@registry/lib/stylex"
 import type React from "react"
 
-import { mergeStyleProps, stylexProps } from "@registry/lib/stylex"
+import { mergeStylexProps, stylexProps } from "@registry/lib/stylex"
 import { themeMarker, tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import { clsx } from "clsx"
@@ -106,14 +106,14 @@ export function Empty({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleComponentProps<React.ComponentProps<"div">>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<React.ComponentProps<"div">>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
     <div
       data-slot="empty"
-      {...mergeStyleProps(stylexProps(className, styles.root, xstyle), props)}
+      {...mergeStylexProps(stylexProps(className, styles.root, xstyle), props)}
     />
   )
 }
@@ -121,14 +121,17 @@ export function EmptyHeader({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleComponentProps<React.ComponentProps<"div">>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<React.ComponentProps<"div">>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
     <div
       data-slot="empty-header"
-      {...mergeStyleProps(stylexProps(className, styles.header, xstyle), props)}
+      {...mergeStylexProps(
+        stylexProps(className, styles.header, xstyle),
+        props,
+      )}
     />
   )
 }
@@ -137,13 +140,13 @@ export function EmptyMedia({
   className,
   variant = "default",
   ...restProps
-}: StyleComponentProps<
+}: StyleXComponentProps<
   React.ComponentProps<"div">,
   {
     variant?: keyof typeof mediaVariantStyles
   }
 >) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const props = restProps
   const xstyle = consumerXstyle
 
   const mediaClassName = emptyMediaVariants({ className, variant })
@@ -151,7 +154,7 @@ export function EmptyMedia({
     <div
       data-slot="empty-media"
       data-variant={variant}
-      {...mergeStyleProps(
+      {...mergeStylexProps(
         stylexProps(className, styles.mediaRoot, xstyle),
         props,
       )}
@@ -182,14 +185,14 @@ export function EmptyTitle({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleComponentProps<React.ComponentProps<"div">>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<React.ComponentProps<"div">>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
     <div
       data-slot="empty-title"
-      {...mergeStyleProps(stylexProps(className, styles.title, xstyle), props)}
+      {...mergeStylexProps(stylexProps(className, styles.title, xstyle), props)}
     />
   )
 }
@@ -197,14 +200,14 @@ export function EmptyDescription({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleComponentProps<React.ComponentProps<"p">>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<React.ComponentProps<"p">>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
     <div
       data-slot="empty-description"
-      {...mergeStyleProps(
+      {...mergeStylexProps(
         stylexProps(className, styles.description, xstyle),
         props,
       )}
@@ -215,14 +218,14 @@ export function EmptyContent({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleComponentProps<React.ComponentProps<"div">>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<React.ComponentProps<"div">>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
     <div
       data-slot="empty-content"
-      {...mergeStyleProps(
+      {...mergeStylexProps(
         stylexProps(className, styles.content, xstyle),
         props,
       )}

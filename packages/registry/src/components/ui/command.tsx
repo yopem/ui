@@ -1,6 +1,6 @@
 "use client"
 
-import type { StyleComponentProps, StyleProps } from "@registry/lib/style-props"
+import type { StyleXComponentProps } from "@registry/lib/stylex"
 import type * as React from "react"
 
 import { Dialog as CommandDialogPrimitive } from "@base-ui/react/dialog"
@@ -15,7 +15,7 @@ import {
   AutocompleteList,
   AutocompleteSeparator,
 } from "@registry/components/ui/autocomplete"
-import { mergeStyleProps, stylexProps } from "@registry/lib/stylex"
+import { mergeStylexProps, stylexProps } from "@registry/lib/stylex"
 import { themeMarker, tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import { SearchIcon } from "lucide-react"
@@ -160,14 +160,14 @@ export function CommandDialogTrigger({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleComponentProps<CommandDialogPrimitive.Trigger.Props>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<CommandDialogPrimitive.Trigger.Props>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
     <CommandDialogPrimitive.Trigger
       data-slot="command-dialog-trigger"
-      {...mergeStyleProps(stylexProps(className, xstyle), props)}
+      {...mergeStylexProps(stylexProps(className, xstyle), props)}
     />
   )
 }
@@ -175,14 +175,14 @@ export function CommandDialogBackdrop({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleComponentProps<CommandDialogPrimitive.Backdrop.Props>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<CommandDialogPrimitive.Backdrop.Props>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
     <CommandDialogPrimitive.Backdrop
       data-slot="command-dialog-backdrop"
-      {...mergeStyleProps(
+      {...mergeStylexProps(
         stylexProps(className, styles.backdrop, xstyle),
         props,
       )}
@@ -193,14 +193,14 @@ export function CommandDialogViewport({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleComponentProps<CommandDialogPrimitive.Viewport.Props>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<CommandDialogPrimitive.Viewport.Props>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
     <CommandDialogPrimitive.Viewport
       data-slot="command-dialog-viewport"
-      {...mergeStyleProps(
+      {...mergeStylexProps(
         stylexProps(className, styles.viewport, xstyle),
         props,
       )}
@@ -213,13 +213,13 @@ export function CommandDialogPopup({
   children,
   portalProps,
   ...restProps
-}: StyleComponentProps<
+}: StyleXComponentProps<
   CommandDialogPrimitive.Popup.Props,
   {
     portalProps?: CommandDialogPrimitive.Portal.Props
   }
 >) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
@@ -228,7 +228,7 @@ export function CommandDialogPopup({
       <CommandDialogViewport>
         <CommandDialogPrimitive.Popup
           data-slot="command-dialog-popup"
-          {...mergeStyleProps(
+          {...mergeStylexProps(
             stylexProps(className, styles.popup, xstyle),
             props,
           )}
@@ -259,8 +259,8 @@ export function CommandInput({
   className,
   placeholder,
   ...restProps
-}: StyleComponentProps<React.ComponentProps<typeof AutocompleteInput>>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<React.ComponentProps<typeof AutocompleteInput>>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
@@ -282,8 +282,8 @@ export function CommandList({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleComponentProps<React.ComponentProps<typeof AutocompleteList>>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<React.ComponentProps<typeof AutocompleteList>>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
@@ -299,8 +299,8 @@ export function CommandEmpty({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleComponentProps<React.ComponentProps<typeof AutocompleteEmpty>>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<React.ComponentProps<typeof AutocompleteEmpty>>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
@@ -316,14 +316,14 @@ export function CommandPanel({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleComponentProps<React.ComponentProps<"div">>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<React.ComponentProps<"div">>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
     <div
       data-slot="command-panel"
-      {...mergeStyleProps(stylexProps(className, styles.panel, xstyle), props)}
+      {...mergeStylexProps(stylexProps(className, styles.panel, xstyle), props)}
     />
   )
 }
@@ -331,8 +331,8 @@ export function CommandGroup({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleComponentProps<React.ComponentProps<typeof AutocompleteGroup>>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<React.ComponentProps<typeof AutocompleteGroup>>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
@@ -348,8 +348,8 @@ export function CommandGroupLabel({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleComponentProps<React.ComponentProps<typeof AutocompleteGroupLabel>>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<React.ComponentProps<typeof AutocompleteGroupLabel>>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
@@ -366,8 +366,8 @@ export function CommandItem({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleComponentProps<React.ComponentProps<typeof AutocompleteItem>>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<React.ComponentProps<typeof AutocompleteItem>>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
@@ -383,8 +383,8 @@ export function CommandSeparator({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleComponentProps<React.ComponentProps<typeof AutocompleteSeparator>>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<React.ComponentProps<typeof AutocompleteSeparator>>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
@@ -400,14 +400,14 @@ export function CommandShortcut({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleComponentProps<React.ComponentProps<"kbd">>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<React.ComponentProps<"kbd">>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
     <kbd
       data-slot="command-shortcut"
-      {...mergeStyleProps(
+      {...mergeStylexProps(
         stylexProps(className, styles.shortcut, xstyle),
         props,
       )}
@@ -418,14 +418,17 @@ export function CommandFooter({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleComponentProps<React.ComponentProps<"div">>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<React.ComponentProps<"div">>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
     <div
       data-slot="command-footer"
-      {...mergeStyleProps(stylexProps(className, styles.footer, xstyle), props)}
+      {...mergeStylexProps(
+        stylexProps(className, styles.footer, xstyle),
+        props,
+      )}
     />
   )
 }

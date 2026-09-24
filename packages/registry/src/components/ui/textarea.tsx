@@ -1,6 +1,6 @@
 "use client"
 
-import type { StyleComponentProps, StyleProps } from "@registry/lib/style-props"
+import type { StyleXComponentProps } from "@registry/lib/stylex"
 import type { StyleXProps } from "@registry/lib/stylex"
 import type * as React from "react"
 
@@ -74,7 +74,7 @@ const styles = stylex.create({
   },
 })
 
-export type TextareaProps = StyleComponentProps<
+export type TextareaProps = StyleXComponentProps<
   React.ComponentPropsWithoutRef<"textarea"> &
     React.RefAttributes<HTMLTextAreaElement>,
   {
@@ -93,7 +93,7 @@ export function Textarea({
   ref,
   ...restProps
 }: TextareaProps) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const props = restProps
   const xstyle = consumerXstyle
 
   const sizeStyle =

@@ -1,13 +1,13 @@
 "use client"
 
-import type { StyleComponentProps, StyleProps } from "@registry/lib/style-props"
+import type { StyleXComponentProps } from "@registry/lib/stylex"
 
 import { Dialog as SheetPrimitive } from "@base-ui/react/dialog"
 import { mergeProps } from "@base-ui/react/merge-props"
 import { useRender } from "@base-ui/react/use-render"
 import { Button } from "@registry/components/ui/button"
 import { ScrollArea } from "@registry/components/ui/scroll-area"
-import { mergeStyleProps, stylexProps } from "@registry/lib/stylex"
+import { mergeStylexProps, stylexProps } from "@registry/lib/stylex"
 import { themeMarker, tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import { XIcon } from "lucide-react"
@@ -217,14 +217,14 @@ export function SheetTrigger({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleComponentProps<SheetPrimitive.Trigger.Props>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<SheetPrimitive.Trigger.Props>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
     <SheetPrimitive.Trigger
       data-slot="sheet-trigger"
-      {...mergeStyleProps(stylexProps(className, xstyle), props)}
+      {...mergeStylexProps(stylexProps(className, xstyle), props)}
     />
   )
 }
@@ -232,14 +232,14 @@ export function SheetClose({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleComponentProps<SheetPrimitive.Close.Props>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<SheetPrimitive.Close.Props>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
     <SheetPrimitive.Close
       data-slot="sheet-close"
-      {...mergeStyleProps(stylexProps(className, xstyle), props)}
+      {...mergeStylexProps(stylexProps(className, xstyle), props)}
     />
   )
 }
@@ -247,14 +247,14 @@ export function SheetBackdrop({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleComponentProps<SheetPrimitive.Backdrop.Props>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<SheetPrimitive.Backdrop.Props>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
     <SheetPrimitive.Backdrop
       data-slot="sheet-backdrop"
-      {...mergeStyleProps(
+      {...mergeStylexProps(
         stylexProps(className, styles.backdrop, xstyle),
         props,
       )}
@@ -268,20 +268,20 @@ export function SheetViewport({
   side = "right",
   variant = "default",
   ...restProps
-}: StyleComponentProps<
+}: StyleXComponentProps<
   SheetPrimitive.Viewport.Props,
   {
     side?: SheetSide
     variant?: SheetVariant
   }
 >) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
     <SheetPrimitive.Viewport
       data-slot="sheet-viewport"
-      {...mergeStyleProps(
+      {...mergeStylexProps(
         stylexProps(
           className,
           styles.viewport,
@@ -305,7 +305,7 @@ export function SheetPopup({
   closeProps,
   portalProps,
   ...restProps
-}: StyleComponentProps<
+}: StyleXComponentProps<
   SheetPrimitive.Popup.Props,
   {
     showCloseButton?: boolean
@@ -315,7 +315,7 @@ export function SheetPopup({
     portalProps?: SheetPrimitive.Portal.Props
   }
 >) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
@@ -326,7 +326,7 @@ export function SheetPopup({
           data-side={side}
           data-slot="sheet-popup"
           data-variant={variant}
-          {...mergeStyleProps(
+          {...mergeStylexProps(
             stylexProps(
               className,
               styles.popup,
@@ -359,8 +359,8 @@ export function SheetHeader({
   className,
   render,
   ...restProps
-}: StyleComponentProps<useRender.ComponentProps<"div">>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<useRender.ComponentProps<"div">>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   const defaultProps = {
@@ -379,13 +379,13 @@ export function SheetFooter({
   variant = "default",
   render,
   ...restProps
-}: StyleComponentProps<
+}: StyleXComponentProps<
   useRender.ComponentProps<"div">,
   {
     variant?: "default" | "bare"
   }
 >) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const props = restProps
   const xstyle = consumerXstyle
 
   const defaultProps = {
@@ -408,14 +408,14 @@ export function SheetTitle({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleComponentProps<SheetPrimitive.Title.Props>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<SheetPrimitive.Title.Props>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
     <SheetPrimitive.Title
       data-slot="sheet-title"
-      {...mergeStyleProps(stylexProps(className, styles.title, xstyle), props)}
+      {...mergeStylexProps(stylexProps(className, styles.title, xstyle), props)}
     />
   )
 }
@@ -423,14 +423,14 @@ export function SheetDescription({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleComponentProps<SheetPrimitive.Description.Props>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<SheetPrimitive.Description.Props>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
     <SheetPrimitive.Description
       data-slot="sheet-description"
-      {...mergeStyleProps(
+      {...mergeStylexProps(
         stylexProps(className, styles.description, xstyle),
         props,
       )}
@@ -443,11 +443,11 @@ export function SheetPanel({
   scrollFade = true,
   render,
   ...restProps
-}: StyleComponentProps<
+}: StyleXComponentProps<
   useRender.ComponentProps<"div">,
   { scrollFade?: boolean }
 >) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const props = restProps
   const xstyle = consumerXstyle
 
   const defaultProps = {

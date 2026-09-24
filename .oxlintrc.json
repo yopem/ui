@@ -137,17 +137,14 @@
           "error",
           {
             "methods": {
-              "atoms": false,
               "className": false,
               "css": false,
               "reactStyle": false,
               "stylexStyle": false,
-              "xstyle": false
+              "xstyle": true
             }
           }
         ],
-        "yopem-ui/no-leaked-dom-style-props": "error",
-        "yopem-ui/no-unsupported-style-props": "error",
         "yopem-ui/prefer-ui-primitives": "error",
         "yopem-ui/static-stylex": "error",
         "yopem-ui/valid-polymorphic-as": "error"

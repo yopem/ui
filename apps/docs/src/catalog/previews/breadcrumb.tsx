@@ -1,5 +1,7 @@
 // next/link replaced -> anchor
 
+import * as stylex from "@stylexjs/stylex"
+
 import {
   Breadcrumb,
   BreadcrumbEllipsis,
@@ -12,6 +14,12 @@ import {
 import { Button } from "@/components/ui/button"
 import { Link } from "@/components/ui/link"
 import { Menu, MenuItem, MenuPopup, MenuTrigger } from "@/components/ui/menu"
+const styles = stylex.create({
+  morePages: {
+    margin: "calc(0.25rem * -1.5)",
+    color: "var(--muted-foreground)",
+  },
+})
 export function Preview() {
   return (
     <Breadcrumb>
@@ -27,8 +35,7 @@ export function Preview() {
             <MenuTrigger
               render={
                 <Button
-                  margin={"calc(0.25rem * -1.5)"}
-                  color={"var(--muted-foreground)"}
+                  xstyle={styles.morePages}
                   aria-label="More pages"
                   size="icon-sm"
                   variant="ghost"

@@ -1,9 +1,9 @@
 "use client"
 
-import type { StyleComponentProps, StyleProps } from "@registry/lib/style-props"
+import type { StyleXComponentProps } from "@registry/lib/stylex"
 import type * as React from "react"
 
-import { mergeStyleProps, stylexProps } from "@registry/lib/stylex"
+import { mergeStylexProps, stylexProps } from "@registry/lib/stylex"
 import * as stylex from "@stylexjs/stylex"
 
 const styles = stylex.create({
@@ -13,7 +13,7 @@ const styles = stylex.create({
 type FlexElementProps = React.ComponentPropsWithoutRef<"div"> &
   React.RefAttributes<HTMLDivElement>
 
-export type FlexProps = StyleComponentProps<FlexElementProps>
+export type FlexProps = StyleXComponentProps<FlexElementProps>
 
 export function Flex({
   xstyle: consumerXstyle,
@@ -21,13 +21,13 @@ export function Flex({
   ref,
   ...restProps
 }: FlexProps) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
     <div
       data-slot="flex"
-      {...mergeStyleProps(stylexProps(className, styles.root, xstyle), props)}
+      {...mergeStylexProps(stylexProps(className, styles.root, xstyle), props)}
       ref={ref}
     />
   )

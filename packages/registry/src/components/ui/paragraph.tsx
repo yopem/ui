@@ -1,22 +1,22 @@
-import type { StyleComponentProps, StyleProps } from "@registry/lib/style-props"
+import type { StyleXComponentProps } from "@registry/lib/stylex"
 import type { ComponentProps } from "react"
 
-import { mergeStyleProps, stylexProps } from "@registry/lib/stylex"
+import { mergeStylexProps, stylexProps } from "@registry/lib/stylex"
 
-export type ParagraphProps = StyleComponentProps<ComponentProps<"p">>
+export type ParagraphProps = StyleXComponentProps<ComponentProps<"p">>
 
 export function Paragraph({
   xstyle: consumerXstyle,
   className,
   ...restProps
 }: ParagraphProps) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
     <p
       data-slot="paragraph"
-      {...mergeStyleProps(stylexProps(className, xstyle), props)}
+      {...mergeStylexProps(stylexProps(className, xstyle), props)}
     />
   )
 }

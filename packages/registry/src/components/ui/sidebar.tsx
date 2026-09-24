@@ -1,6 +1,6 @@
 "use client"
 
-import type { StyleComponentProps, StyleProps } from "@registry/lib/style-props"
+import type { StyleXComponentProps } from "@registry/lib/stylex"
 
 import { mergeProps } from "@base-ui/react/merge-props"
 import { useRender } from "@base-ui/react/use-render"
@@ -21,7 +21,7 @@ import {
   TooltipPopup,
   TooltipTrigger,
 } from "@registry/components/ui/tooltip"
-import { mergeStyleProps, stylexProps } from "@registry/lib/stylex"
+import { mergeStylexProps, stylexProps } from "@registry/lib/stylex"
 import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import { PanelLeftIcon } from "lucide-react"
@@ -561,10 +561,9 @@ export function SidebarProvider({
   open: openProp,
   onOpenChange: setOpenProp,
   className,
-  style,
   children,
   ...restProps
-}: StyleComponentProps<
+}: StyleXComponentProps<
   React.ComponentProps<"div">,
   {
     defaultOpen?: boolean
@@ -572,7 +571,7 @@ export function SidebarProvider({
     onOpenChange?: (open: boolean) => void
   }
 >) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const props = restProps
   const xstyle = consumerXstyle
 
   const isMobile = useIsMobile()
@@ -631,7 +630,7 @@ export function SidebarProvider({
       styles.widths(SIDEBAR_WIDTH, SIDEBAR_WIDTH_ICON),
       xstyle,
     ),
-    { ...props, style },
+    props,
   )
   return (
     <SidebarContext.Provider value={contextValue}>
@@ -650,7 +649,7 @@ export function Sidebar({
   className,
   children,
   ...restProps
-}: StyleComponentProps<
+}: StyleXComponentProps<
   React.ComponentProps<"div">,
   {
     side?: "left" | "right"
@@ -658,7 +657,7 @@ export function Sidebar({
     collapsible?: "offcanvas" | "icon" | "none"
   }
 >) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const props = restProps
   const xstyle = consumerXstyle
 
   const { isMobile, state, openMobile, setOpenMobile } = useSidebar()
@@ -666,7 +665,7 @@ export function Sidebar({
     return (
       <div
         data-slot="sidebar"
-        {...mergeStyleProps(
+        {...mergeStylexProps(
           stylexProps(className, styles.staticSidebar, xstyle),
           props,
         )}
@@ -707,7 +706,7 @@ export function Sidebar({
       <div {...stylex.props(styles.gap)} data-slot="sidebar-gap" />
       <div
         data-slot="sidebar-container"
-        {...mergeStyleProps(
+        {...mergeStylexProps(
           stylexProps(
             className,
             styles.container,
@@ -735,8 +734,8 @@ export function SidebarTrigger({
   className,
   onClick,
   ...restProps
-}: StyleComponentProps<React.ComponentProps<typeof Button>>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<React.ComponentProps<typeof Button>>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   const { toggleSidebar } = useSidebar()
@@ -765,8 +764,8 @@ export function SidebarRail({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleComponentProps<React.ComponentProps<"button">>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<React.ComponentProps<"button">>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   const { toggleSidebar } = useSidebar()
@@ -780,7 +779,7 @@ export function SidebarRail({
       tabIndex={-1}
       title="Toggle Sidebar"
       type="button"
-      {...mergeStyleProps(stylexProps(className, styles.rail, xstyle), props)}
+      {...mergeStylexProps(stylexProps(className, styles.rail, xstyle), props)}
     />
   )
 }
@@ -788,14 +787,14 @@ export function SidebarInset({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleComponentProps<React.ComponentProps<"main">>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<React.ComponentProps<"main">>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
     <main
       data-slot="sidebar-inset"
-      {...mergeStyleProps(stylexProps(className, styles.inset, xstyle), props)}
+      {...mergeStylexProps(stylexProps(className, styles.inset, xstyle), props)}
     />
   )
 }
@@ -803,8 +802,8 @@ export function SidebarInput({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleComponentProps<React.ComponentProps<typeof Input>>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<React.ComponentProps<typeof Input>>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
@@ -821,15 +820,15 @@ export function SidebarHeader({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleComponentProps<React.ComponentProps<"div">>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<React.ComponentProps<"div">>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
     <div
       data-sidebar="header"
       data-slot="sidebar-header"
-      {...mergeStyleProps(
+      {...mergeStylexProps(
         stylexProps(className, styles.section, xstyle),
         props,
       )}
@@ -840,15 +839,15 @@ export function SidebarFooter({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleComponentProps<React.ComponentProps<"div">>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<React.ComponentProps<"div">>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
     <div
       data-sidebar="footer"
       data-slot="sidebar-footer"
-      {...mergeStyleProps(
+      {...mergeStylexProps(
         stylexProps(className, styles.section, xstyle),
         props,
       )}
@@ -859,8 +858,8 @@ export function SidebarSeparator({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleComponentProps<React.ComponentProps<typeof Separator>>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<React.ComponentProps<typeof Separator>>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
@@ -877,8 +876,8 @@ export function SidebarContent({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleComponentProps<React.ComponentProps<"div">>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<React.ComponentProps<"div">>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
@@ -891,7 +890,7 @@ export function SidebarContent({
       <div
         data-sidebar="content"
         data-slot="sidebar-content"
-        {...mergeStyleProps(
+        {...mergeStylexProps(
           stylexProps(className, styles.content, xstyle),
           props,
         )}
@@ -903,15 +902,15 @@ export function SidebarGroup({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleComponentProps<React.ComponentProps<"div">>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<React.ComponentProps<"div">>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
     <div
       data-sidebar="group"
       data-slot="sidebar-group"
-      {...mergeStyleProps(stylexProps(className, styles.group, xstyle), props)}
+      {...mergeStylexProps(stylexProps(className, styles.group, xstyle), props)}
     />
   )
 }
@@ -920,8 +919,8 @@ export function SidebarGroupLabel({
   className,
   render,
   ...restProps
-}: StyleComponentProps<useRender.ComponentProps<"div">>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<useRender.ComponentProps<"div">>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   const defaultProps = {
@@ -940,8 +939,8 @@ export function SidebarGroupAction({
   className,
   render,
   ...restProps
-}: StyleComponentProps<useRender.ComponentProps<"button">>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<useRender.ComponentProps<"button">>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   const defaultProps = {
@@ -959,15 +958,15 @@ export function SidebarGroupContent({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleComponentProps<React.ComponentProps<"div">>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<React.ComponentProps<"div">>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
     <div
       data-sidebar="group-content"
       data-slot="sidebar-group-content"
-      {...mergeStyleProps(
+      {...mergeStylexProps(
         stylexProps(className, styles.groupContent, xstyle),
         props,
       )}
@@ -978,15 +977,15 @@ export function SidebarMenu({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleComponentProps<React.ComponentProps<"ul">>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<React.ComponentProps<"ul">>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
     <ul
       data-sidebar="menu"
       data-slot="sidebar-menu"
-      {...mergeStyleProps(stylexProps(className, styles.menu, xstyle), props)}
+      {...mergeStylexProps(stylexProps(className, styles.menu, xstyle), props)}
     />
   )
 }
@@ -994,15 +993,15 @@ export function SidebarMenuItem({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleComponentProps<React.ComponentProps<"li">>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<React.ComponentProps<"li">>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
     <li
       data-sidebar="menu-item"
       data-slot="sidebar-menu-item"
-      {...mergeStyleProps(
+      {...mergeStylexProps(
         stylexProps(className, styles.menuItem, xstyle),
         props,
       )}
@@ -1019,7 +1018,7 @@ export function SidebarMenuButton({
   className,
   render,
   ...restProps
-}: StyleComponentProps<
+}: StyleXComponentProps<
   useRender.ComponentProps<"button">,
   {
     isActive?: boolean
@@ -1028,7 +1027,7 @@ export function SidebarMenuButton({
     size?: keyof typeof menuButtonSizeStyles | null
   }
 >) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const props = restProps
   const xstyle = consumerXstyle
 
   const { isMobile, state } = useSidebar()
@@ -1073,13 +1072,13 @@ export function SidebarMenuAction({
   showOnHover = false,
   render,
   ...restProps
-}: StyleComponentProps<
+}: StyleXComponentProps<
   useRender.ComponentProps<"button">,
   {
     showOnHover?: boolean
   }
 >) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const props = restProps
   const xstyle = consumerXstyle
 
   const defaultProps = {
@@ -1102,15 +1101,15 @@ export function SidebarMenuBadge({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleComponentProps<React.ComponentProps<"div">>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<React.ComponentProps<"div">>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
     <div
       data-sidebar="menu-badge"
       data-slot="sidebar-menu-badge"
-      {...mergeStyleProps(stylexProps(className, styles.badge, xstyle), props)}
+      {...mergeStylexProps(stylexProps(className, styles.badge, xstyle), props)}
     />
   )
 }
@@ -1119,8 +1118,8 @@ export function SidebarMenuSkeleton({
   className,
   showIcon = false,
   ...restProps
-}: StyleComponentProps<React.ComponentProps<"div">, { showIcon?: boolean }>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<React.ComponentProps<"div">, { showIcon?: boolean }>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   const [width] = React.useState(
@@ -1130,7 +1129,7 @@ export function SidebarMenuSkeleton({
     <div
       data-sidebar="menu-skeleton"
       data-slot="sidebar-menu-skeleton"
-      {...mergeStyleProps(
+      {...mergeStylexProps(
         stylexProps(className, styles.skeleton, xstyle),
         props,
       )}
@@ -1156,15 +1155,15 @@ export function SidebarMenuSub({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleComponentProps<React.ComponentProps<"ul">>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<React.ComponentProps<"ul">>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
     <ul
       data-sidebar="menu-sub"
       data-slot="sidebar-menu-sub"
-      {...mergeStyleProps(
+      {...mergeStylexProps(
         stylexProps(className, styles.menuSub, xstyle),
         props,
       )}
@@ -1175,15 +1174,15 @@ export function SidebarMenuSubItem({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleComponentProps<React.ComponentProps<"li">>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<React.ComponentProps<"li">>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
     <li
       data-sidebar="menu-sub-item"
       data-slot="sidebar-menu-sub-item"
-      {...mergeStyleProps(stylexProps(className, xstyle), props)}
+      {...mergeStylexProps(stylexProps(className, xstyle), props)}
     />
   )
 }
@@ -1194,14 +1193,14 @@ export function SidebarMenuSubButton({
   className,
   render,
   ...restProps
-}: StyleComponentProps<
+}: StyleXComponentProps<
   useRender.ComponentProps<"a">,
   {
     size?: "sm" | "md"
     isActive?: boolean
   }
 >) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const props = restProps
   const xstyle = consumerXstyle
 
   const defaultProps = {
@@ -1227,14 +1226,14 @@ export function SidebarMenuText({
   className,
   xstyle: consumerXstyle,
   ...restProps
-}: StyleComponentProps<React.ComponentProps<"span">>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<React.ComponentProps<"span">>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
     <span
       data-slot="sidebar-menu-text"
-      {...mergeStyleProps(
+      {...mergeStylexProps(
         stylexProps(className, sidebarSlotStyles.text, xstyle),
         props,
       )}

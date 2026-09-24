@@ -1,9 +1,9 @@
 "use client"
 
-import type { StyleComponentProps, StyleProps } from "@registry/lib/style-props"
+import type { StyleXComponentProps } from "@registry/lib/stylex"
 
 import { Avatar as AvatarPrimitive } from "@base-ui/react/avatar"
-import { mergeStyleProps, stylexProps } from "@registry/lib/stylex"
+import { mergeStylexProps, stylexProps } from "@registry/lib/stylex"
 import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 
@@ -39,14 +39,14 @@ export function Avatar({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleComponentProps<AvatarPrimitive.Root.Props>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<AvatarPrimitive.Root.Props>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
     <AvatarPrimitive.Root
       data-slot="avatar"
-      {...mergeStyleProps(stylexProps(className, styles.root, xstyle), props)}
+      {...mergeStylexProps(stylexProps(className, styles.root, xstyle), props)}
     />
   )
 }
@@ -55,14 +55,14 @@ export function AvatarImage({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleComponentProps<AvatarPrimitive.Image.Props>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<AvatarPrimitive.Image.Props>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
     <AvatarPrimitive.Image
       data-slot="avatar-image"
-      {...mergeStyleProps(stylexProps(className, styles.image, xstyle), props)}
+      {...mergeStylexProps(stylexProps(className, styles.image, xstyle), props)}
     />
   )
 }
@@ -71,14 +71,14 @@ export function AvatarFallback({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleComponentProps<AvatarPrimitive.Fallback.Props>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<AvatarPrimitive.Fallback.Props>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
     <AvatarPrimitive.Fallback
       data-slot="avatar-fallback"
-      {...mergeStyleProps(
+      {...mergeStylexProps(
         stylexProps(className, styles.fallback, xstyle),
         props,
       )}

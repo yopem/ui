@@ -1,3 +1,5 @@
+import * as stylex from "@stylexjs/stylex"
+
 import { Button } from "@/components/ui/button"
 import { Field, FieldLabel } from "@/components/ui/field"
 import { Form } from "@/components/ui/form"
@@ -13,6 +15,10 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet"
+const styles = stylex.create({
+  form: { display: "contents" },
+  sheetPanel: { display: "grid", gap: "calc(0.25rem * 4)" },
+})
 
 const profileFields = [
   { defaultValue: "Margaret Welsh", label: "Name" },
@@ -32,8 +38,8 @@ export function Preview() {
             Make changes to your profile here. Click save when you&apos;re done.
           </SheetDescription>
         </SheetHeader>
-        <Form display={"contents"}>
-          <SheetPanel display={"grid"} gap={"calc(0.25rem * 4)"}>
+        <Form xstyle={styles.form}>
+          <SheetPanel xstyle={styles.sheetPanel}>
             {profileFields.map(({ defaultValue, label }) => (
               <Field key={label}>
                 <FieldLabel>{label}</FieldLabel>

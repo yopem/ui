@@ -1,6 +1,6 @@
 "use client"
 
-import type { StyleComponentProps, StyleProps } from "@registry/lib/style-props"
+import type { StyleXComponentProps } from "@registry/lib/stylex"
 
 import { mergeProps } from "@base-ui/react/merge-props"
 import { useRender } from "@base-ui/react/use-render"
@@ -25,8 +25,8 @@ export function Label({
   className,
   render,
   ...restProps
-}: StyleComponentProps<useRender.ComponentProps<"label">>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<useRender.ComponentProps<"label">>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   const defaultProps = {

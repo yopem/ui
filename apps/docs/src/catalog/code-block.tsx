@@ -8,6 +8,150 @@ import { lazy, Suspense, useState } from "react"
 import { stripStandaloneComments } from "@/catalog/source-code"
 import { Box } from "@/components/ui/box"
 import { useCopyToClipboard } from "@/hooks/use-copy-to-clipboard"
+
+const primitiveStyles = stylex.create({
+  box: {
+    inlineSize: "max-content",
+    minInlineSize: "100%",
+    paddingBlock: "1rem",
+    paddingInlineStart: "1rem",
+    paddingInlineEnd: "3.5rem",
+  },
+  scrollArea: {
+    margin: "calc(var(--spacing) * 0)",
+    maxBlockSize: "9rem",
+    fontSize: "0.8125rem",
+    lineHeight: 1.65,
+    tabSize: 2,
+    whiteSpace: "pre",
+    fontFamily: tokens["--font-mono"],
+    maskImage: "linear-gradient(to bottom, black 45%, transparent 100%)",
+    overflow: "hidden",
+  },
+  scrollArea2: {
+    margin: "calc(var(--spacing) * 0)",
+    maxBlockSize: "36rem",
+    fontSize: "0.8125rem",
+    lineHeight: 1.65,
+    tabSize: 2,
+    whiteSpace: "pre",
+    fontFamily: tokens["--font-mono"],
+  },
+  button: {
+    backgroundColor: tokens["--accent"],
+    borderColor: tokens["--border"],
+    borderStyle: "solid",
+    borderWidth: 1,
+    borderRadius: tokens["--radius-sm"],
+    color: tokens["--accent-foreground"],
+    cursor: "pointer",
+    fontSize: "0.75rem",
+    fontWeight: 600,
+    insetBlockEnd: "0.75rem",
+    insetInlineStart: "50%",
+    paddingBlock: "0.375rem",
+    paddingInline: "0.625rem",
+    position: "absolute",
+    transform: "translateX(-50%)",
+    zIndex: 1,
+    outlineColor: {
+      ":is(:focus-visible, [data-focus-visible])": tokens["--ring"],
+    },
+    outlineStyle: { ":is(:focus-visible, [data-focus-visible])": "solid" },
+    outlineWidth: { ":is(:focus-visible, [data-focus-visible])": 2 },
+    outlineOffset: { ":is(:focus-visible, [data-focus-visible])": -2 },
+  },
+  output: {
+    display: "block",
+    paddingInline: "1rem",
+    fontSize: "0.8125rem",
+    overflowWrap: "anywhere",
+  },
+  span: { color: tokens["--destructive"] },
+  box2: {
+    backgroundColor: tokens["--code"],
+    color: tokens["--code-foreground"],
+    borderColor: tokens["--border"],
+    borderStyle: "solid",
+    borderWidth: 1,
+    borderRadius: tokens["--radius-lg"],
+    marginBlock: "1.5rem",
+    minInlineSize: "calc(var(--spacing) * 0)",
+    overflow: "hidden",
+    position: "relative",
+    borderStartStartRadius: 0,
+    borderStartEndRadius: 0,
+    marginBlockStart: "calc(var(--spacing) * -1)",
+  },
+  box3: {
+    backgroundColor: tokens["--code"],
+    color: tokens["--code-foreground"],
+    borderColor: tokens["--border"],
+    borderStyle: "solid",
+    borderWidth: 1,
+    borderRadius: tokens["--radius-lg"],
+    marginBlock: "1.5rem",
+    minInlineSize: "calc(var(--spacing) * 0)",
+    overflow: "hidden",
+    position: "relative",
+  },
+  button2: {
+    alignItems: "center",
+    backgroundColor: {
+      default: "transparent",
+      ":is(:hover, [data-hover]):not(:disabled, [disabled], [aria-disabled=true], [data-disabled])":
+        tokens["--accent"],
+    },
+    blockSize: "2rem",
+    borderColor: tokens["--border"],
+    borderStyle: "solid",
+    borderWidth: 1,
+    borderRadius: tokens["--radius-sm"],
+    color: tokens["--foreground"],
+    cursor: {
+      default: "pointer",
+      ":is(:disabled, [disabled], [aria-disabled=true], [data-disabled])":
+        "wait",
+    },
+    opacity: {
+      ":is(:disabled, [disabled], [aria-disabled=true], [data-disabled])": 0.5,
+      default: 1,
+    },
+    display: "flex",
+    inlineSize: "2rem",
+    insetBlockStart: "0.75rem",
+    insetInlineEnd: "0.75rem",
+    justifyContent: "center",
+    paddingBlock: "calc(var(--spacing) * 0)",
+    paddingInline: "calc(var(--spacing) * 0)",
+    position: "absolute",
+    zIndex: 1,
+    outlineColor: {
+      ":is(:focus-visible, [data-focus-visible])": tokens["--ring"],
+    },
+    outlineStyle: { ":is(:focus-visible, [data-focus-visible])": "solid" },
+    outlineWidth: { ":is(:focus-visible, [data-focus-visible])": 2 },
+    outlineOffset: { ":is(:focus-visible, [data-focus-visible])": -2 },
+  },
+  box4: {
+    alignItems: "center",
+    borderBlockEndColor: tokens["--border"],
+    borderBlockEndStyle: "solid",
+    borderBlockEndWidth: 1,
+    display: "flex",
+    gap: "0.75rem",
+    justifyContent: "space-between",
+    paddingBlock: "0.5rem",
+    paddingInline: "0.75rem",
+    paddingInlineEnd: "3.5rem",
+  },
+  code: {
+    fontFamily: tokens["--font-mono"],
+    fontSize: "0.8125rem",
+    fontWeight: 600,
+    overflowWrap: "anywhere",
+  },
+})
 const HighlightedCode = lazy(() =>
   import("./highlighted-code").then((module) => ({
     default: module.HighlightedCode,
@@ -36,13 +180,7 @@ export function CopyableCode({
   const codeContent = (
     <Suspense
       fallback={
-        <Box
-          inlineSize="max-content"
-          minInlineSize="100%"
-          paddingBlock="1rem"
-          paddingInlineStart="1rem"
-          paddingInlineEnd="3.5rem"
-        >
+        <Box xstyle={primitiveStyles.box}>
           <Box as="code">{visibleCode}</Box>
         </Box>
       }
@@ -57,15 +195,7 @@ export function CopyableCode({
   const scrollArea =
     collapsible && !expanded ? (
       <ScrollArea
-        margin={0}
-        maxBlockSize="9rem"
-        fontSize="0.8125rem"
-        lineHeight={1.65}
-        tabSize={2}
-        whiteSpace="pre"
-        fontFamily={tokens["--font-mono"]}
-        maskImage="linear-gradient(to bottom, black 45%, transparent 100%)"
-        overflow="hidden"
+        xstyle={primitiveStyles.scrollArea}
         aria-label={title}
         clampContentMinWidth={false}
         overscrollContain
@@ -74,13 +204,7 @@ export function CopyableCode({
       </ScrollArea>
     ) : (
       <ScrollArea
-        margin={0}
-        maxBlockSize="36rem"
-        fontSize="0.8125rem"
-        lineHeight={1.65}
-        tabSize={2}
-        whiteSpace="pre"
-        fontFamily={tokens["--font-mono"]}
+        xstyle={primitiveStyles.scrollArea2}
         aria-label={title}
         clampContentMinWidth={false}
         overscrollContain
@@ -101,43 +225,16 @@ export function CopyableCode({
       {collapsible && !expanded ? (
         <Box
           as="button"
-          backgroundColor={tokens["--accent"]}
-          borderColor={tokens["--border"]}
-          borderStyle="solid"
-          borderWidth={1}
-          borderRadius={tokens["--radius-sm"]}
-          color={tokens["--accent-foreground"]}
-          cursor="pointer"
-          fontSize="0.75rem"
-          fontWeight={600}
-          insetBlockEnd="0.75rem"
-          insetInlineStart="50%"
-          paddingBlock="0.375rem"
-          paddingInline="0.625rem"
-          position="absolute"
-          transform="translateX(-50%)"
-          zIndex={1}
-          _focusVisible={{
-            outlineColor: tokens["--ring"],
-            outlineStyle: "solid",
-            outlineWidth: 2,
-            outlineOffset: -2,
-          }}
+          xstyle={primitiveStyles.button}
           type="button"
           onClick={() => setExpanded(true)}
         >
           View code
         </Box>
       ) : null}
-      <Box
-        as="output"
-        display="block"
-        paddingInline="1rem"
-        fontSize="0.8125rem"
-        overflowWrap="anywhere"
-      >
+      <Box as="output" xstyle={primitiveStyles.output}>
         {copyError ? (
-          <Box as="span" color={tokens["--destructive"]}>
+          <Box as="span" xstyle={primitiveStyles.span}>
             {copyError}
           </Box>
         ) : null}
@@ -145,42 +242,9 @@ export function CopyableCode({
     </>
   )
   if (preview && !header) {
-    return (
-      <Box
-        backgroundColor={tokens["--code"]}
-        color={tokens["--code-foreground"]}
-        borderColor={tokens["--border"]}
-        borderStyle="solid"
-        borderWidth={1}
-        borderRadius={tokens["--radius-lg"]}
-        marginBlock="1.5rem"
-        minInlineSize={0}
-        overflow="hidden"
-        position="relative"
-        borderStartStartRadius={0}
-        borderStartEndRadius={0}
-        marginBlockStart={-1}
-      >
-        {contents}
-      </Box>
-    )
+    return <Box xstyle={primitiveStyles.box2}>{contents}</Box>
   }
-  return (
-    <Box
-      backgroundColor={tokens["--code"]}
-      color={tokens["--code-foreground"]}
-      borderColor={tokens["--border"]}
-      borderStyle="solid"
-      borderWidth={1}
-      borderRadius={tokens["--radius-lg"]}
-      marginBlock="1.5rem"
-      minInlineSize={0}
-      overflow="hidden"
-      position="relative"
-    >
-      {contents}
-    </Box>
-  )
+  return <Box xstyle={primitiveStyles.box3}>{contents}</Box>
 }
 
 function CodeBlockControls({
@@ -199,32 +263,7 @@ function CodeBlockControls({
   const button = (
     <Box
       as="button"
-      alignItems="center"
-      backgroundColor="transparent"
-      _hover={{ backgroundColor: tokens["--accent"] }}
-      blockSize="2rem"
-      borderColor={tokens["--border"]}
-      borderStyle="solid"
-      borderWidth={1}
-      borderRadius={tokens["--radius-sm"]}
-      color={tokens["--foreground"]}
-      cursor="pointer"
-      _disabled={{ cursor: "wait", opacity: 0.5 }}
-      display="flex"
-      inlineSize="2rem"
-      insetBlockStart="0.75rem"
-      insetInlineEnd="0.75rem"
-      justifyContent="center"
-      opacity={1}
-      padding={0}
-      position="absolute"
-      zIndex={1}
-      _focusVisible={{
-        outlineColor: tokens["--ring"],
-        outlineStyle: "solid",
-        outlineWidth: 2,
-        outlineOffset: -2,
-      }}
+      xstyle={primitiveStyles.button2}
       type="button"
       disabled={!hydrated}
       aria-label={isCopied ? `${title} copied` : `Copy ${title}`}
@@ -241,25 +280,8 @@ function CodeBlockControls({
     </Box>
   )
   return header ? (
-    <Box
-      alignItems="center"
-      borderBlockEndColor={tokens["--border"]}
-      borderBlockEndStyle="solid"
-      borderBlockEndWidth={1}
-      display="flex"
-      gap="0.75rem"
-      justifyContent="space-between"
-      paddingBlock="0.5rem"
-      paddingInline="0.75rem"
-      paddingInlineEnd="3.5rem"
-    >
-      <Box
-        as="code"
-        fontFamily={tokens["--font-mono"]}
-        fontSize="0.8125rem"
-        fontWeight={600}
-        overflowWrap="anywhere"
-      >
+    <Box xstyle={primitiveStyles.box4}>
+      <Box as="code" xstyle={primitiveStyles.code}>
         {header}
       </Box>
       {button}

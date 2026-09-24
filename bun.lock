@@ -50,7 +50,6 @@
         "@types/react": "^19.2.18",
         "@types/react-dom": "^19.2.4",
         "@vitejs/plugin-react": "^6.1.0",
-        "@yopem-ui/compiler": "workspace:*",
         "@yopem-ui/registry": "workspace:*",
         "vite": "^8.2.2",
       },
@@ -63,23 +62,6 @@
       },
       "dependencies": {
         "typescript-api": "npm:typescript@6.0.2",
-      },
-    },
-    "packages/compiler": {
-      "name": "@yopem-ui/compiler",
-      "version": "0.1.0",
-      "dependencies": {
-        "@yopem-ui/registry": "workspace:*",
-        "typescript-api": "npm:typescript@6.0.2",
-        "unplugin": "^2.3.11",
-      },
-      "devDependencies": {
-        "@babel/core": "^7.29.7",
-        "@babel/types": "^7.29.8",
-        "@types/babel__core": "^7.20.5",
-        "@types/bun": "^1.3.11",
-        "@types/react": "^19.2.18",
-        "typescript": "^7.0.2",
       },
     },
     "packages/oxlint-plugin": {
@@ -641,8 +623,6 @@
     "@vitejs/plugin-react": ["@vitejs/plugin-react@6.1.0", "", { "dependencies": { "@rolldown/pluginutils": "^1.0.1" }, "peerDependencies": { "@rolldown/plugin-babel": "^0.1.7 || ^0.2.0", "babel-plugin-react-compiler": "^1.0.0", "oxc-transform-react": "^0.145.0", "vite": "^8.0.0" }, "optionalPeers": ["@rolldown/plugin-babel", "babel-plugin-react-compiler", "oxc-transform-react"] }, "sha512-qd2BzUBehkov86WFhg0JkEFEYyCLG9uPCe6qWTY/kRlss9OvJrOF2UbIWT7p+8IzZHkEu0DNGHc4HSv+JdDLsw=="],
 
     "@yopem-ui/cli": ["@yopem-ui/cli@workspace:packages/cli"],
-
-    "@yopem-ui/compiler": ["@yopem-ui/compiler@workspace:packages/compiler"],
 
     "@yopem-ui/docs": ["@yopem-ui/docs@workspace:apps/docs"],
 

@@ -1,7 +1,7 @@
-import type { StyleComponentProps, StyleProps } from "@registry/lib/style-props"
+import type { StyleXComponentProps } from "@registry/lib/stylex"
 import type * as React from "react"
 
-import { mergeStyleProps, stylexProps } from "@registry/lib/stylex"
+import { mergeStylexProps, stylexProps } from "@registry/lib/stylex"
 import { themeMarker, tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 
@@ -59,14 +59,14 @@ export function Frame({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleComponentProps<React.ComponentProps<"div">>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<React.ComponentProps<"div">>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
     <div
       data-slot="frame"
-      {...mergeStyleProps(stylexProps(className, styles.root, xstyle), props)}
+      {...mergeStylexProps(stylexProps(className, styles.root, xstyle), props)}
     />
   )
 }
@@ -74,14 +74,14 @@ export function FramePanel({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleComponentProps<React.ComponentProps<"div">>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<React.ComponentProps<"div">>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
     <div
       data-slot="frame-panel"
-      {...mergeStyleProps(stylexProps(className, styles.panel, xstyle), props)}
+      {...mergeStylexProps(stylexProps(className, styles.panel, xstyle), props)}
     />
   )
 }
@@ -89,14 +89,17 @@ export function FrameHeader({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleComponentProps<React.ComponentProps<"header">>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<React.ComponentProps<"header">>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
     <header
       data-slot="frame-panel-header"
-      {...mergeStyleProps(stylexProps(className, styles.header, xstyle), props)}
+      {...mergeStylexProps(
+        stylexProps(className, styles.header, xstyle),
+        props,
+      )}
     />
   )
 }
@@ -104,14 +107,14 @@ export function FrameTitle({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleComponentProps<React.ComponentProps<"div">>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<React.ComponentProps<"div">>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
     <div
       data-slot="frame-panel-title"
-      {...mergeStyleProps(stylexProps(className, styles.title, xstyle), props)}
+      {...mergeStylexProps(stylexProps(className, styles.title, xstyle), props)}
     />
   )
 }
@@ -119,14 +122,14 @@ export function FrameDescription({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleComponentProps<React.ComponentProps<"div">>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<React.ComponentProps<"div">>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
     <div
       data-slot="frame-panel-description"
-      {...mergeStyleProps(
+      {...mergeStylexProps(
         stylexProps(className, styles.description, xstyle),
         props,
       )}
@@ -137,14 +140,17 @@ export function FrameFooter({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleComponentProps<React.ComponentProps<"footer">>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<React.ComponentProps<"footer">>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
     <footer
       data-slot="frame-panel-footer"
-      {...mergeStyleProps(stylexProps(className, styles.footer, xstyle), props)}
+      {...mergeStylexProps(
+        stylexProps(className, styles.footer, xstyle),
+        props,
+      )}
     />
   )
 }

@@ -1,9 +1,9 @@
 "use client"
 
-import type { StyleComponentProps, StyleProps } from "@registry/lib/style-props"
+import type { StyleXComponentProps } from "@registry/lib/stylex"
 
 import { Toolbar as ToolbarPrimitive } from "@base-ui/react/toolbar"
-import { mergeStyleProps, stylexProps } from "@registry/lib/stylex"
+import { mergeStylexProps, stylexProps } from "@registry/lib/stylex"
 import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 
@@ -30,14 +30,14 @@ export function Toolbar({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleComponentProps<ToolbarPrimitive.Root.Props>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<ToolbarPrimitive.Root.Props>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
     <ToolbarPrimitive.Root
       data-slot="toolbar"
-      {...mergeStyleProps(stylexProps(className, styles.root, xstyle), props)}
+      {...mergeStylexProps(stylexProps(className, styles.root, xstyle), props)}
     />
   )
 }
@@ -45,14 +45,14 @@ export function ToolbarButton({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleComponentProps<ToolbarPrimitive.Button.Props>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<ToolbarPrimitive.Button.Props>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
     <ToolbarPrimitive.Button
       data-slot="toolbar-button"
-      {...mergeStyleProps(stylexProps(className, xstyle), props)}
+      {...mergeStylexProps(stylexProps(className, xstyle), props)}
     />
   )
 }
@@ -60,14 +60,14 @@ export function ToolbarLink({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleComponentProps<ToolbarPrimitive.Link.Props>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<ToolbarPrimitive.Link.Props>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
     <ToolbarPrimitive.Link
       data-slot="toolbar-link"
-      {...mergeStyleProps(stylexProps(className, xstyle), props)}
+      {...mergeStylexProps(stylexProps(className, xstyle), props)}
     />
   )
 }
@@ -75,14 +75,14 @@ export function ToolbarInput({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleComponentProps<ToolbarPrimitive.Input.Props>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<ToolbarPrimitive.Input.Props>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
     <ToolbarPrimitive.Input
       data-slot="toolbar-input"
-      {...mergeStyleProps(stylexProps(className, xstyle), props)}
+      {...mergeStylexProps(stylexProps(className, xstyle), props)}
     />
   )
 }
@@ -90,14 +90,14 @@ export function ToolbarGroup({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleComponentProps<ToolbarPrimitive.Group.Props>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<ToolbarPrimitive.Group.Props>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
     <ToolbarPrimitive.Group
       data-slot="toolbar-group"
-      {...mergeStyleProps(stylexProps(className, styles.group, xstyle), props)}
+      {...mergeStylexProps(stylexProps(className, styles.group, xstyle), props)}
     />
   )
 }
@@ -106,15 +106,15 @@ export function ToolbarSeparator({
   className,
   orientation = "vertical",
   ...restProps
-}: StyleComponentProps<ToolbarPrimitive.Separator.Props>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<ToolbarPrimitive.Separator.Props>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
     <ToolbarPrimitive.Separator
       data-slot="toolbar-separator"
       orientation={orientation}
-      {...mergeStyleProps(
+      {...mergeStylexProps(
         stylexProps(
           className,
           styles.separator,

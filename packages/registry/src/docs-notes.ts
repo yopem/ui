@@ -4,14 +4,7 @@ export const usageNotes: Record<string, [string, ...string[]]> = {
     "Copy the base files, configure StyleX in your bundler, and import styles/styles.css once. Native StyleX tokens provide light defaults; no provider, script, or font package is required.",
     "Customize tokens and create complete light/dark themes in tokens.stylex.ts. The optional theme item adds saved light/dark/system switching. styles.css contains reset, reduced-motion policy, and unavoidable upstream viewport rules, not theme values.",
     "The documentation copies components into src/components/ui and uses the standard @/* alias for src. Keep this alias in TypeScript, your bundler, and StyleX.",
-    "Copy both style-props compilers with base. Run the unplugin before StyleX in Vite-based frameworks, or the Babel plugin before StyleX in Next.js Babel and PostCSS configuration. It turns static JSX style props into native StyleX declarations; dynamic style values are build errors. JSX spreads are not a supported way to pass style props. No generated property lookup table or --ysp runtime styles are shipped.",
-    "Provide an explicit base value when conditionally overriding component defaults, for example p={{ base: 2, md: 4 }}. Static conditions compile to StyleX selectors and media queries; outside the condition, earlier component defaults remain in effect.",
-    'Numeric spacing and dimensions multiply the StyleX --spacing theme token (default 0.25rem): p={4} is 1rem, while p="4px" is literal CSS. Strings are not theme-token lookups. Negative numeric margins are allowed; negative padding is rejected. Unitless CSS properties keep their numeric meaning.',
-    "Precedence is defaults, variants, style props, xstyle, then explicit inline style for matching atomic properties. Shorthand and longhand CSS properties can still conflict under the native cascade; use matching longhands in xstyle when overriding shorthand style props. External className is not guaranteed to win last. Direct style props override matching css entries. Component-specific props retain their original meaning.",
-    "Responsive arrays map to base, sm, md, lg, xl, 2xl; null and undefined skip entries. Objects use named breakpoints starting at 480, 768, 1024, 1280, and 1536 CSS pixels. mdOnly ends before lg, mdDown is below md, and mdToXl includes the xl interval. Reversed ranges are rejected.",
-    "Nested conditions combine supported state, direction, theme, and media keys such as _hover, _focusVisible, _disabled, _rtl, _dark, and _motionReduce. Conditions style existing state; they do not implement behavior. Consult style-props-config.ts for supported keys.",
-    "Typed css accepts supported properties, aliases, custom properties, conditions, or statically compiled StyleX styles. Use css={styles.custom} for selectors outside the prop vocabulary, subject to StyleX compiler rules. Raw objects do not accept arbitrary selectors, raw at-rules, keyframes, or Chakra theme-token paths. Unknown properties and conditions throw. Pseudo-elements cannot nest or define custom properties.",
-    "Style props compile at the JSX call site, not inside component render functions. Custom wrappers use xstyle and stylexProps directly; runtime style prop objects are unsupported.",
+    "Create local styles with stylex.create and compose them through xstyle after component defaults and variants. className remains available for external CSS integration; docs use StyleX only.",
   ],
   theme: [
     "Copy the two optional theme runtime files after base. Pass the same configuration to ThemeProvider, ThemeScript, and getRootThemeProps.",
@@ -54,44 +47,35 @@ export const usageNotes: Record<string, [string, ...string[]]> = {
     "FrameTitle and FrameDescription label the group. Keep interactive controls inside the panels rather than making the entire frame clickable.",
   ],
   box: [
-    "Use Box as the generic wrapper. It renders a div by default, accepts shared style props and xstyle, and supports any intrinsic tag through as.",
-    "Native props and refs pass through, including img width and height strings or numbers, meta content, and input size. Use css or xstyle for overrides; conditional responsive values need a base value.",
+    "Start with Box for generic containers. It renders a div by default, applies default box sizing and minimum inline size, and supports native tags through as.",
+    "Use xstyle for StyleX overrides and className for external CSS integration. Native attributes and refs follow the selected tag, including input size, image dimensions, and meta content.",
   ],
   flex: [
-    "Use Flex for one-dimensional layouts. It renders a div with display:flex and accepts shared style props, xstyle, native div props, and ref.",
-    "Flex has no as prop; set flexDirection, gap, and alignment through style props. Conditional responsive values need a base value.",
+    "Flex renders a div with display:flex. Customize direction, alignment, and gap with xstyle.",
   ],
   vstack: [
-    "Use VStack for vertically stacked content. It renders a div with centered items, column direction, and a default gap of calc(var(--spacing) * 4).",
-    "VStack is div-only and accepts shared style props, xstyle, native div props, and ref. Conditional responsive values need a base value.",
+    "VStack renders a div with centered items, column direction, and a default gap of four spacing units. Override through xstyle.",
   ],
   hstack: [
-    "Use HStack for horizontally arranged content. It renders a div with centered items, row direction, and a default gap of calc(var(--spacing) * 4).",
-    "HStack is div-only and accepts shared style props, xstyle, native div props, and ref. Conditional responsive values need a base value.",
+    "HStack renders a div with centered items, row direction, and a default gap of four spacing units. Override through xstyle.",
   ],
   stack: [
-    "Use Stack for vertical content. It renders a div with column direction and a default gap of calc(var(--spacing) * 4).",
-    "Stack is div-only and accepts shared style props, xstyle, native div props, and ref. Conditional responsive values need a base value.",
+    "Stack renders a div with column direction and a default gap of four spacing units. Override through xstyle.",
   ],
   grid: [
-    "Use Grid for two-dimensional layouts. It renders a div with display:grid and no other layout default.",
-    "Grid is div-only and accepts shared style props, xstyle, native div props, and ref. Set gridTemplateColumns or other grid properties explicitly; conditional responsive values need a base value.",
+    "Grid renders a div with display:grid. Set columns and gaps through xstyle.",
   ],
   center: [
-    "Use Center for content that should be centered on both axes. It renders a div with display:flex, alignItems:center, and justifyContent:center.",
-    "Center is div-only and accepts shared style props, xstyle, native div props, and ref. Conditional responsive values need a base value.",
+    "Center renders a div with flex layout centered on both axes. Override through xstyle.",
   ],
   link: [
-    "Use Link for navigation. It renders a native a element, accepts anchor props, shared style props, xstyle, and ref, with no component visual defaults.",
-    "Link does not add router navigation or router-specific behavior. Preserve native href, events, and keyboard behavior; use css or xstyle for visual styling. Conditional responsive values need a base value.",
+    "Link renders a native anchor with href, events, ref, and keyboard behavior. Use xstyle to customize appearance; router navigation stays with your framework.",
   ],
   paragraph: [
-    "Use Paragraph for body copy. It renders a native p element and accepts native paragraph props, shared style props, xstyle, and ref.",
-    "Paragraph adds no component visual defaults. Conditional responsive values need a base value.",
+    "Paragraph renders a native p with no visual defaults. Use xstyle for typography.",
   ],
   heading: [
-    "Use Heading for document headings. It renders h2 by default and accepts only h1 through h6 through as.",
-    "Heading accepts native heading props, shared style props, xstyle, and ref; it adds no component visual defaults. Conditional responsive values need a base value.",
+    "Heading renders h2 by default; as accepts h1 through h6. Use xstyle to control visual size independently of semantics.",
   ],
   group: [
     "Wrap adjacent controls in Group. Apply groupItemStyles.item through each direct control's xstyle, or controlXstyle for Input and Textarea wrappers. GroupText and GroupSeparator apply joining styles themselves.",
@@ -286,7 +270,7 @@ export const usageNotes: Record<string, [string, ...string[]]> = {
 
 export const ownPropNotes: Record<string, string> = {
   xstyle:
-    "StyleX styles merged after this part's defaults, variants, and style props. Explicit inline style wins last. Accepts style objects, conditional arrays, themes and dynamic styles.",
+    "StyleX styles compose after this part's defaults and variants. Accepts style objects, conditional arrays, themes, and dynamic styles.",
   controlXstyle:
     "StyleX overrides and scoped themes for the decorative control wrapper. xstyle targets the native input or textarea.",
   children: "Content rendered inside this part.",

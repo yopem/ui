@@ -1,11 +1,11 @@
 "use client"
 
-import type { StyleComponentProps, StyleProps } from "@registry/lib/style-props"
+import type { StyleXComponentProps } from "@registry/lib/stylex"
 import type React from "react"
 
 import { mergeProps } from "@base-ui/react/merge-props"
 import { useRender } from "@base-ui/react/use-render"
-import { mergeStyleProps, stylexProps } from "@registry/lib/stylex"
+import { mergeStylexProps, stylexProps } from "@registry/lib/stylex"
 import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 
@@ -135,7 +135,7 @@ const styles = stylex.create({
 })
 
 export type TableVariant = "default" | "card"
-export type TableProps = StyleComponentProps<
+export type TableProps = StyleXComponentProps<
   React.ComponentProps<"table">,
   {
     variant?: TableVariant
@@ -149,15 +149,15 @@ export function Table({
   variant = "default",
   render,
   ...restProps
-}: StyleComponentProps<TableProps>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<TableProps>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   const defaultProps = {
     children: (
       <table
         data-slot="table"
-        {...mergeStyleProps(
+        {...mergeStylexProps(
           stylexProps(className, styles.table, xstyle),
           props,
         )}
@@ -178,14 +178,14 @@ export function TableHeader({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleComponentProps<React.ComponentProps<"thead">>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<React.ComponentProps<"thead">>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
     <thead
       data-slot="table-header"
-      {...mergeStyleProps(stylexProps(className, xstyle), props)}
+      {...mergeStylexProps(stylexProps(className, xstyle), props)}
     />
   )
 }
@@ -193,14 +193,14 @@ export function TableBody({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleComponentProps<React.ComponentProps<"tbody">>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<React.ComponentProps<"tbody">>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
     <tbody
       data-slot="table-body"
-      {...mergeStyleProps(stylexProps(className, styles.body, xstyle), props)}
+      {...mergeStylexProps(stylexProps(className, styles.body, xstyle), props)}
     />
   )
 }
@@ -208,14 +208,17 @@ export function TableFooter({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleComponentProps<React.ComponentProps<"tfoot">>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<React.ComponentProps<"tfoot">>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
     <tfoot
       data-slot="table-footer"
-      {...mergeStyleProps(stylexProps(className, styles.footer, xstyle), props)}
+      {...mergeStylexProps(
+        stylexProps(className, styles.footer, xstyle),
+        props,
+      )}
     />
   )
 }
@@ -223,14 +226,14 @@ export function TableRow({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleComponentProps<React.ComponentProps<"tr">>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<React.ComponentProps<"tr">>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
     <tr
       data-slot="table-row"
-      {...mergeStyleProps(stylexProps(className, styles.row, xstyle), props)}
+      {...mergeStylexProps(stylexProps(className, styles.row, xstyle), props)}
     />
   )
 }
@@ -238,14 +241,14 @@ export function TableHead({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleComponentProps<React.ComponentProps<"th">>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<React.ComponentProps<"th">>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
     <th
       data-slot="table-head"
-      {...mergeStyleProps(stylexProps(className, styles.head, xstyle), props)}
+      {...mergeStylexProps(stylexProps(className, styles.head, xstyle), props)}
     />
   )
 }
@@ -253,14 +256,14 @@ export function TableCell({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleComponentProps<React.ComponentProps<"td">>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<React.ComponentProps<"td">>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
     <td
       data-slot="table-cell"
-      {...mergeStyleProps(stylexProps(className, styles.cell, xstyle), props)}
+      {...mergeStylexProps(stylexProps(className, styles.cell, xstyle), props)}
     />
   )
 }
@@ -268,14 +271,14 @@ export function TableCaption({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleComponentProps<React.ComponentProps<"caption">>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<React.ComponentProps<"caption">>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
     <caption
       data-slot="table-caption"
-      {...mergeStyleProps(
+      {...mergeStylexProps(
         stylexProps(className, styles.caption, xstyle),
         props,
       )}

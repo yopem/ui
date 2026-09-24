@@ -1,3 +1,5 @@
+import * as stylex from "@stylexjs/stylex"
+
 import { Button } from "@/components/ui/button"
 import {
   Drawer,
@@ -9,6 +11,15 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer"
+const styles = stylex.create({
+  drawerHeader: { textAlign: "center" },
+  drawerFooter: {
+    justifyContent: {
+      default: "center",
+      "@media (min-width: 768px)": "center",
+    },
+  },
+})
 
 export function Preview() {
   return (
@@ -17,17 +28,13 @@ export function Preview() {
         Open drawer
       </DrawerTrigger>
       <DrawerPopup showBar>
-        <DrawerHeader textAlign={"center"}>
+        <DrawerHeader xstyle={styles.drawerHeader}>
           <DrawerTitle>Notifications</DrawerTitle>
           <DrawerDescription>
             This is the description of the drawer.
           </DrawerDescription>
         </DrawerHeader>
-        <DrawerFooter
-          justifyContent={"center"}
-          md={{ justifyContent: "center" }}
-          variant="bare"
-        >
+        <DrawerFooter xstyle={styles.drawerFooter} variant="bare">
           <DrawerClose render={<Button variant="outline" />}>Close</DrawerClose>
         </DrawerFooter>
       </DrawerPopup>

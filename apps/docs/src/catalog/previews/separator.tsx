@@ -1,36 +1,45 @@
+import * as stylex from "@stylexjs/stylex"
+
 import { Box } from "@/components/ui/box"
 import { Flex } from "@/components/ui/flex"
 import { Heading } from "@/components/ui/heading"
 import { Paragraph } from "@/components/ui/paragraph"
 import { Separator } from "@/components/ui/separator"
+const styles = stylex.create({
+  box: { maxInlineSize: "calc(0.25rem * 72)" },
+  flex: { flexDirection: "column", gap: "0.25rem" },
+  h4: {
+    fontSize: "0.875rem",
+    lineHeight: "calc(1.25 / 0.875)",
+    fontWeight: "500",
+  },
+  paragraph: {
+    fontSize: "0.875rem",
+    lineHeight: "calc(1.25 / 0.875)",
+    color: "var(--muted-foreground)",
+  },
+  separator: { marginBlock: "calc(0.25rem * 4)" },
+  flex2: {
+    alignItems: "center",
+    gap: "calc(0.25rem * 4)",
+    fontSize: "0.875rem",
+    lineHeight: "calc(1.25 / 0.875)",
+  },
+})
 export function Preview() {
   return (
-    <Box maxInlineSize={"calc(0.25rem * 72)"}>
-      <Flex flexDirection={"column"} gap={"0.25rem"}>
-        <Heading
-          as="h4"
-          fontSize={"0.875rem"}
-          lineHeight={"calc(1.25 / 0.875)"}
-          fontWeight={"500"}
-        >
+    <Box xstyle={styles.box}>
+      <Flex xstyle={styles.flex}>
+        <Heading as="h4" xstyle={styles.h4}>
           coss ui
         </Heading>
-        <Paragraph
-          fontSize={"0.875rem"}
-          lineHeight={"calc(1.25 / 0.875)"}
-          color={"var(--muted-foreground)"}
-        >
+        <Paragraph xstyle={styles.paragraph}>
           Unstyled, accessible primitives for fast product UI and design
           systems.
         </Paragraph>
       </Flex>
-      <Separator marginBlock={"calc(0.25rem * 4)"} />
-      <Flex
-        alignItems={"center"}
-        gap={"calc(0.25rem * 4)"}
-        fontSize={"0.875rem"}
-        lineHeight={"calc(1.25 / 0.875)"}
-      >
+      <Separator xstyle={styles.separator} />
+      <Flex xstyle={styles.flex2}>
         <Box>Blog</Box>
         <Separator orientation="vertical" />
         <Box>Docs</Box>

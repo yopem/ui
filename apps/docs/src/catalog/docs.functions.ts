@@ -12,10 +12,6 @@ const sources = import.meta.glob<string>(
     import: "default",
   },
 )
-const compilerSources = import.meta.glob<string>(
-  "../../../../packages/compiler/src/*.ts",
-  { query: "?raw", import: "default" },
-)
 const previewSources = import.meta.glob<string>("./previews/*.tsx", {
   query: "?raw",
   import: "default",
@@ -83,11 +79,7 @@ export const getDocumentation = createServerFn({ method: "GET" })
       })),
       files: await Promise.all(
         files.map(async (file) => {
-          const load =
-            sources[`../../../../packages/registry/src/${file.path}`] ??
-            compilerSources[
-              `../../../../packages/compiler/src/${file.path.slice(4)}`
-            ]
+          const load = sources[`../../../../packages/registry/src/${file.path}`]
           if (!load) throw new Error(`Missing canonical source: ${file.path}`)
           return {
             path: file.path,

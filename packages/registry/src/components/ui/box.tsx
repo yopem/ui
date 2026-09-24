@@ -1,72 +1,36 @@
-import type { StyleComponentProps } from "@registry/lib/style-props"
+import type { StyleXComponentProps } from "@registry/lib/stylex"
 import type * as React from "react"
 
-import { mergeStyleProps, stylexProps } from "@registry/lib/stylex"
+import { mergeStylexProps, stylexProps } from "@registry/lib/stylex"
+import * as stylex from "@stylexjs/stylex"
 import { createElement } from "react"
+
+const styles = stylex.create({
+  root: {
+    boxSizing: "border-box",
+    minInlineSize: 0,
+  },
+})
 
 export type BoxElement = keyof React.JSX.IntrinsicElements
 
-type NativeCollisionProps<Tag extends BoxElement> = Tag extends "input"
-  ? Pick<React.ComponentPropsWithRef<"input">, "size">
-  : Tag extends "img"
-    ? Pick<React.ComponentPropsWithRef<"img">, "width" | "height">
-    : Tag extends "meta"
-      ? Pick<React.ComponentPropsWithRef<"meta">, "content">
-      : Record<never, never>
-
-export type BoxProps<Tag extends BoxElement = "div"> = StyleComponentProps<
+export type BoxProps<Tag extends BoxElement = "div"> = StyleXComponentProps<
   React.ComponentPropsWithRef<Tag>,
   { as?: Tag }
-> &
-  NativeCollisionProps<Tag>
-
-interface NativeProps {
-  size?: number
-  width?: string | number
-  height?: string | number
-  content?: string
-}
-
-function extractNativeProps<Tag extends BoxElement>(
-  as: Tag | undefined,
-  restProps: Omit<BoxProps<Tag>, "as" | "className" | "xstyle">,
-) {
-  const native: NativeProps = {}
-  if (as === "input" && "size" in restProps) {
-    native.size =
-      typeof restProps.size === "number" ? restProps.size : undefined
-  }
-  if (as === "img") {
-    for (const key of ["width", "height"] as const) {
-      const value = restProps[key]
-      native[key] =
-        typeof value === "string" || typeof value === "number"
-          ? value
-          : undefined
-    }
-  }
-  if (as === "meta") {
-    native.content =
-      typeof restProps.content === "string" ? restProps.content : undefined
-  }
-  for (const key of Object.keys(native)) Reflect.deleteProperty(restProps, key)
-  return native
-}
+>
 
 export function Box<Tag extends BoxElement = "div">({
   as,
-  xstyle: consumerXstyle,
+  xstyle,
   className,
-  ...restProps
+  ...props
 }: BoxProps<Tag>) {
-  const native = extractNativeProps(as, restProps)
-  const xstyle = consumerXstyle
   const Component: React.ElementType = as ?? "div"
   return createElement(
     Component,
-    mergeStyleProps(
-      { ...stylexProps(className, xstyle), "data-slot": "box" },
-      { ...restProps, ...native },
+    mergeStylexProps(
+      { ...stylexProps(className, styles.root, xstyle), "data-slot": "box" },
+      props,
     ),
   )
 }

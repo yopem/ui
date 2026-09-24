@@ -10,21 +10,12 @@ export const sourceImportReplacements = [
 ] as const
 
 export function sourceFilePath(path: string) {
-  const compiler =
-    path === "lib/style-props-babel.ts" ||
-    path === "lib/style-props-unplugin.ts"
-  return resolve(
-    import.meta.dirname,
-    compiler ? `../../compiler/src/${path.slice(4)}` : path,
-  )
+  return resolve(import.meta.dirname, path)
 }
 
 export function rewriteImports(content: string) {
   return sourceImportReplacements.reduce(
     (result, [source, target]) => result.replaceAll(source, target),
-    content.replaceAll(
-      'from "@yopem-ui/registry/lib/style-props-config"',
-      'from "./style-props-config.ts"',
-    ),
+    content,
   )
 }

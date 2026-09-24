@@ -1,11 +1,11 @@
 "use client"
 
-import type { StyleComponentProps, StyleProps } from "@registry/lib/style-props"
+import type { StyleXComponentProps } from "@registry/lib/stylex"
 import type * as React from "react"
 
 import { mergeProps } from "@base-ui/react/merge-props"
 import { useRender } from "@base-ui/react/use-render"
-import { mergeStyleProps, stylexProps } from "@registry/lib/stylex"
+import { mergeStylexProps, stylexProps } from "@registry/lib/stylex"
 import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import { ChevronRight, MoreHorizontal } from "lucide-react"
@@ -44,15 +44,15 @@ export function Breadcrumb({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleComponentProps<React.ComponentProps<"nav">>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<React.ComponentProps<"nav">>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
     <nav
       aria-label="breadcrumb"
       data-slot="breadcrumb"
-      {...mergeStyleProps(stylexProps(className, xstyle), props)}
+      {...mergeStylexProps(stylexProps(className, xstyle), props)}
     />
   )
 }
@@ -62,18 +62,18 @@ export function BreadcrumbList({
   className,
   start,
   ...restProps
-}: StyleComponentProps<
+}: StyleXComponentProps<
   React.ComponentProps<"ol">,
   Pick<React.ComponentProps<"ol">, "start">
 >) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
     <ol
       start={start}
       data-slot="breadcrumb-list"
-      {...mergeStyleProps(stylexProps(className, styles.list, xstyle), props)}
+      {...mergeStylexProps(stylexProps(className, styles.list, xstyle), props)}
     />
   )
 }
@@ -82,14 +82,14 @@ export function BreadcrumbItem({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleComponentProps<React.ComponentProps<"li">>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<React.ComponentProps<"li">>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
     <li
       data-slot="breadcrumb-item"
-      {...mergeStyleProps(stylexProps(className, styles.item, xstyle), props)}
+      {...mergeStylexProps(stylexProps(className, styles.item, xstyle), props)}
     />
   )
 }
@@ -99,8 +99,8 @@ export function BreadcrumbLink({
   className,
   render,
   ...restProps
-}: StyleComponentProps<useRender.ComponentProps<"a">>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<useRender.ComponentProps<"a">>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   const defaultProps = {
@@ -118,8 +118,8 @@ export function BreadcrumbPage({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleComponentProps<React.ComponentProps<"span">>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<React.ComponentProps<"span">>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
@@ -127,7 +127,7 @@ export function BreadcrumbPage({
       aria-current="page"
 
       data-slot="breadcrumb-page"
-      {...mergeStyleProps(stylexProps(className, styles.page, xstyle), props)}
+      {...mergeStylexProps(stylexProps(className, styles.page, xstyle), props)}
     />
   )
 }
@@ -137,8 +137,8 @@ export function BreadcrumbSeparator({
   children,
   className,
   ...restProps
-}: StyleComponentProps<React.ComponentProps<"li">>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<React.ComponentProps<"li">>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
@@ -147,7 +147,7 @@ export function BreadcrumbSeparator({
 
       data-slot="breadcrumb-separator"
       role="presentation"
-      {...mergeStyleProps(
+      {...mergeStylexProps(
         stylexProps(className, styles.separator, xstyle),
         props,
       )}
@@ -161,8 +161,8 @@ export function BreadcrumbEllipsis({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleComponentProps<React.ComponentProps<"span">>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<React.ComponentProps<"span">>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
@@ -171,7 +171,7 @@ export function BreadcrumbEllipsis({
 
       data-slot="breadcrumb-ellipsis"
       role="presentation"
-      {...mergeStyleProps(stylexProps(className, xstyle), props)}
+      {...mergeStylexProps(stylexProps(className, xstyle), props)}
     >
       <MoreHorizontal {...stylex.props(styles.icon)} />
       <span {...stylex.props(styles.srOnly)}>More</span>

@@ -1,20 +1,32 @@
+import * as stylex from "@stylexjs/stylex"
+
 import { Box } from "@/components/ui/box"
 import { Flex } from "@/components/ui/flex"
 import { Kbd, KbdGroup } from "@/components/ui/kbd"
 import { Paragraph } from "@/components/ui/paragraph"
+const styles = stylex.create({
+  flex: { flexDirection: "column", gap: "calc(0.25rem * 4)" },
+  paragraph: {
+    marginBlockEnd: "calc(0.25rem * 2)",
+    fontSize: "0.875rem",
+    lineHeight: "calc(1.25 / 0.875)",
+    color: "var(--muted-foreground)",
+  },
+  flex2: { gap: "calc(0.25rem * 2)" },
+  paragraph2: {
+    marginBlockEnd: "calc(0.25rem * 2)",
+    fontSize: "0.875rem",
+    lineHeight: "calc(1.25 / 0.875)",
+    color: "var(--muted-foreground)",
+  },
+  flex3: { gap: "calc(0.25rem * 2)" },
+})
 export function Preview() {
   return (
-    <Flex flexDirection={"column"} gap={"calc(0.25rem * 4)"}>
+    <Flex xstyle={styles.flex}>
       <Box>
-        <Paragraph
-          marginBlockEnd={"calc(0.25rem * 2)"}
-          fontSize={"0.875rem"}
-          lineHeight={"calc(1.25 / 0.875)"}
-          color={"var(--muted-foreground)"}
-        >
-          Single keys:
-        </Paragraph>
-        <Flex gap={"calc(0.25rem * 2)"}>
+        <Paragraph xstyle={styles.paragraph}>Single keys:</Paragraph>
+        <Flex xstyle={styles.flex2}>
           <Kbd>K</Kbd>
           <Kbd>⌘</Kbd>
           <Kbd>⌃</Kbd>
@@ -22,15 +34,8 @@ export function Preview() {
         </Flex>
       </Box>
       <Box>
-        <Paragraph
-          marginBlockEnd={"calc(0.25rem * 2)"}
-          fontSize={"0.875rem"}
-          lineHeight={"calc(1.25 / 0.875)"}
-          color={"var(--muted-foreground)"}
-        >
-          Key combinations:
-        </Paragraph>
-        <Flex gap={"calc(0.25rem * 2)"}>
+        <Paragraph xstyle={styles.paragraph2}>Key combinations:</Paragraph>
+        <Flex xstyle={styles.flex3}>
           <KbdGroup>
             <Kbd>⌘</Kbd>
             <Kbd>K</Kbd>

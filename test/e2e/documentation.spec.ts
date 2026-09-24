@@ -87,7 +87,7 @@ test("minimal setup and StyleX customization are documented", async ({
   )
   await expect(
     page.getByRole("button", { name: /^Copy src\/(styles|lib)\// }),
-  ).toHaveCount(7)
+  ).toHaveCount(3)
   await page.goto("/docs/theming")
   await expect(
     page.getByRole("heading", { name: "Component overrides", exact: true }),
@@ -390,7 +390,7 @@ test("mobile navigation changes theme and restores trigger focus", async ({
   await expect(trigger).toBeFocused()
 })
 
-test("setup guide explains compiler and shared files", async ({ page }) => {
+test("setup guide explains StyleX setup and shared files", async ({ page }) => {
   await page.goto("/docs/installation")
   const title = page.getByRole("heading", {
     name: "Installation",

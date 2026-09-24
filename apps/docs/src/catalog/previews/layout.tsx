@@ -1,5 +1,6 @@
 "use client"
 
+import * as stylex from "@stylexjs/stylex"
 import { useRef, useState } from "react"
 
 import { Box } from "@/components/ui/box"
@@ -14,6 +15,32 @@ import { Link } from "@/components/ui/link"
 import { Paragraph } from "@/components/ui/paragraph"
 import { Stack } from "@/components/ui/stack"
 import { VStack } from "@/components/ui/vstack"
+const styles = stylex.create({
+  layoutRoot: {
+    gap: "calc(var(--spacing) * 4)",
+    paddingBlock: "calc(var(--spacing) * 4)",
+    paddingInline: "calc(var(--spacing) * 4)",
+  },
+  box: {
+    paddingBlock: "calc(var(--spacing) * 2)",
+    paddingInline: "calc(var(--spacing) * 2)",
+  },
+  flex: {
+    alignItems: "center",
+    flexDirection: "row",
+    gap: "calc(var(--spacing) * 3)",
+  },
+  rtlFlex: { flexDirection: "row", gap: "calc(var(--spacing) * 2)" },
+  responsiveTag: {
+    display: { default: "block", "@media (min-width: 768px)": "flex" },
+  },
+  overrideHstack: { gap: "5px", justifyContent: "flex-end" },
+  grid: {
+    gap: "calc(var(--spacing) * 4)",
+    gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
+  },
+  center: { minBlockSize: "4rem" },
+})
 
 export function Preview() {
   const linkRef = useRef<HTMLAnchorElement>(null)
@@ -23,8 +50,8 @@ export function Preview() {
   const [submitted, setSubmitted] = useState(false)
 
   return (
-    <Stack data-testid="layout-root" gap={4} p={4}>
-      <Box as="section" data-testid="box" p={2}>
+    <Stack data-testid="layout-root" xstyle={styles.layoutRoot}>
+      <Box as="section" data-testid="box" xstyle={styles.box}>
         <Heading as="h1" data-testid="heading-h1" id="page-title">
           Layout primitives
         </Heading>
@@ -51,15 +78,15 @@ export function Preview() {
           Go to destination
         </Link>
       </Box>
-      <Flex alignItems="center" data-testid="flex" flexDirection="row" gap={3}>
+      <Flex xstyle={styles.flex} data-testid="flex">
         <Box as="span">One</Box>
         <Box as="span">Two</Box>
       </Flex>
-      <Flex data-testid="rtl-flex" dir="rtl" flexDirection="row" gap={2}>
+      <Flex data-testid="rtl-flex" dir="rtl" xstyle={styles.rtlFlex}>
         <Box as="span">يمين</Box>
         <Box as="span">يسار</Box>
       </Flex>
-      <Box data-testid="responsive-tag" display={{ base: "block", md: "flex" }}>
+      <Box data-testid="responsive-tag" xstyle={styles.responsiveTag}>
         Responsive layout
       </Box>
       <VStack data-testid="vstack">
@@ -70,22 +97,18 @@ export function Preview() {
         <Box as="span">Horizontal one</Box>
         <Box as="span">Horizontal two</Box>
       </HStack>
-      <HStack data-testid="override-hstack" gap="5px" justifyContent="flex-end">
+      <HStack data-testid="override-hstack" xstyle={styles.overrideHstack}>
         <Box as="span">Overridden layout</Box>
       </HStack>
       <Stack data-testid="stack">
         <Box as="span">Stack one</Box>
         <Box as="span">Stack two</Box>
       </Stack>
-      <Grid
-        data-testid="grid"
-        gap={4}
-        gridTemplateColumns="repeat(2, minmax(0, 1fr))"
-      >
+      <Grid data-testid="grid" xstyle={styles.grid}>
         <Box as="span">Grid one</Box>
         <Box as="span">Grid two</Box>
       </Grid>
-      <Center data-testid="center" minBlockSize="4rem">
+      <Center data-testid="center" xstyle={styles.center}>
         <Box as="span">Centered</Box>
       </Center>
       <Box

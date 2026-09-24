@@ -1,9 +1,9 @@
 "use client"
 
-import type { StyleComponentProps, StyleProps } from "@registry/lib/style-props"
+import type { StyleXComponentProps } from "@registry/lib/stylex"
 
 import { Popover as PopoverPrimitive } from "@base-ui/react/popover"
-import { mergeStyleProps, stylexProps } from "@registry/lib/stylex"
+import { mergeStylexProps, stylexProps } from "@registry/lib/stylex"
 import { themeMarker, tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 
@@ -127,14 +127,14 @@ export function PopoverTrigger({
   className,
   children,
   ...restProps
-}: StyleComponentProps<PopoverPrimitive.Trigger.Props>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<PopoverPrimitive.Trigger.Props>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
     <PopoverPrimitive.Trigger
       data-slot="popover-trigger"
-      {...mergeStyleProps(stylexProps(className, xstyle), props)}
+      {...mergeStylexProps(stylexProps(className, xstyle), props)}
     >
       {children}
     </PopoverPrimitive.Trigger>
@@ -154,7 +154,7 @@ export function PopoverPopup({
   portalProps,
   instant = false,
   ...restProps
-}: StyleComponentProps<
+}: StyleXComponentProps<
   PopoverPrimitive.Popup.Props,
   {
     portalProps?: PopoverPrimitive.Portal.Props
@@ -167,7 +167,7 @@ export function PopoverPopup({
     instant?: boolean
   }
 >) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
@@ -184,7 +184,7 @@ export function PopoverPopup({
       >
         <PopoverPrimitive.Popup
           data-slot="popover-popup"
-          {...mergeStyleProps(
+          {...mergeStylexProps(
             stylexProps(
               className,
               styles.popup,
@@ -214,14 +214,14 @@ export function PopoverClose({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleComponentProps<PopoverPrimitive.Close.Props>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<PopoverPrimitive.Close.Props>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
     <PopoverPrimitive.Close
       data-slot="popover-close"
-      {...mergeStyleProps(stylexProps(className, xstyle), props)}
+      {...mergeStylexProps(stylexProps(className, xstyle), props)}
     />
   )
 }
@@ -229,14 +229,14 @@ export function PopoverTitle({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleComponentProps<PopoverPrimitive.Title.Props>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<PopoverPrimitive.Title.Props>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
     <PopoverPrimitive.Title
       data-slot="popover-title"
-      {...mergeStyleProps(stylexProps(className, styles.title, xstyle), props)}
+      {...mergeStylexProps(stylexProps(className, styles.title, xstyle), props)}
     />
   )
 }
@@ -244,14 +244,14 @@ export function PopoverDescription({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleComponentProps<PopoverPrimitive.Description.Props>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<PopoverPrimitive.Description.Props>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
     <PopoverPrimitive.Description
       data-slot="popover-description"
-      {...mergeStyleProps(
+      {...mergeStylexProps(
         stylexProps(className, styles.description, xstyle),
         props,
       )}

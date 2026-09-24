@@ -58,12 +58,11 @@ consistent.
 
 ### React Router
 
-Client-rendered React Router uses the normal Vite setup. Run the style-props
-compiler before StyleX, then load the shared CSS and root theme in your client
-entry.
+Client-rendered React Router uses the normal Vite setup. Load shared CSS and the
+root theme in your client entry.
 
 ```sh
-npm install --save-dev @stylexjs/unplugin@^0.19.0 unplugin@^2.3.11 typescript-api@npm:typescript@6.0.2 @types/react@^19.2.18
+npm install --save-dev @stylexjs/unplugin@^0.19.0 @types/react@^19.2.18
 ```
 
 ```tsx
@@ -71,14 +70,12 @@ import stylex from "@stylexjs/unplugin"
 import react from "@vitejs/plugin-react"
 import { fileURLToPath } from "node:url"
 import { defineConfig } from "vite"
-import { styleProps } from "./src/lib/style-props-unplugin.ts"
 
 const source = fileURLToPath(new URL("./src", import.meta.url))
 
 export default defineConfig({
   resolve: { alias: { "@": source } },
   plugins: [
-    styleProps.vite(),
     stylex.vite({
       aliases: { "@/*": [source + "/*"] },
       runtimeInjection: false,
@@ -139,14 +136,12 @@ import react from "@vitejs/plugin-react"
 import { tanstackRouter } from "@tanstack/router-plugin/vite"
 import { fileURLToPath } from "node:url"
 import { defineConfig } from "vite"
-import { styleProps } from "./src/lib/style-props-unplugin.ts"
 
 const source = fileURLToPath(new URL("./src", import.meta.url))
 
 export default defineConfig({
   resolve: { alias: { "@": source } },
   plugins: [
-    styleProps.vite(),
     stylex.vite({
       aliases: { "@/*": [source + "/*"] },
       runtimeInjection: false,
@@ -178,12 +173,11 @@ export default defineConfig({
 
 ### TanStack Start
 
-Configure the style-props unplugin before StyleX and TanStack Start. StyleX
-extracts CSS into the build output; import the shared stylesheet in your root
-route.
+Configure StyleX with TanStack Start. StyleX extracts CSS into the build output;
+import the shared stylesheet in your root route.
 
 ```sh
-npm install --save-dev @stylexjs/unplugin@^0.19.0 unplugin@^2.3.11 typescript-api@npm:typescript@6.0.2 @types/react@^19.2.18
+npm install --save-dev @stylexjs/unplugin@^0.19.0 @types/react@^19.2.18
 ```
 
 ```tsx
@@ -192,7 +186,6 @@ import { tanstackStart } from "@tanstack/react-start/plugin/vite"
 import react from "@vitejs/plugin-react"
 import { fileURLToPath } from "node:url"
 import { defineConfig } from "vite"
-import { styleProps } from "./src/lib/style-props-unplugin.ts"
 
 const root = fileURLToPath(new URL(".", import.meta.url))
 const source = fileURLToPath(new URL("./src", import.meta.url))
@@ -200,7 +193,6 @@ const source = fileURLToPath(new URL("./src", import.meta.url))
 export default defineConfig({
   resolve: { alias: { "@": source } },
   plugins: [
-    styleProps.vite(),
     stylex.vite({
       aliases: { "@/*": [source + "/*"] },
       runtimeInjection: false,
@@ -259,20 +251,17 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 ### Next.js
 
 This App Router setup uses webpack. Run next dev --webpack and next build
---webpack on Next versions that support those flags. Node 24+ loads the copied
-TypeScript style-props compiler in Babel config. Use babel.config.js: Next.js
-does not load .cjs Babel configs. Expand local theme spreads before StyleX and
-keep TypeScript installed for alias resolution. Do not install the Vite plugin.
-The manual Babel example assumes CommonJS; init writes named ESM exports for
-projects using type: module.
+--webpack on Next versions that support those flags. Use babel.config.js:
+Next.js does not load .cjs Babel configs. Expand local theme spreads before
+StyleX. Do not install the Vite plugin. The manual Babel example assumes
+CommonJS; init writes named ESM exports for projects using type: module.
 
 ```sh
-npm install --save-dev @babel/core@^7.29.7 @stylexjs/babel-plugin@^0.19.0 @stylexjs/postcss-plugin@^0.19.0 autoprefixer@^10.4.0 typescript@^5.9.3 typescript-api@npm:typescript@6.0.2 @types/node@^24.0.0 @types/react@^19.2.18 @types/babel__core@^7.20.5 @babel/types@^7.29.8
+npm install --save-dev @babel/core@^7.29.7 @stylexjs/babel-plugin@^0.19.0 @stylexjs/postcss-plugin@^0.19.0 autoprefixer@^10.4.0 @types/react@^19.2.18
 ```
 
 ```js
 const path = require("node:path")
-const stylePropsBabel = require("./src/lib/style-props-babel.ts").default
 
 function expandLocalSpreads({ types: t }) {
   return {
@@ -316,7 +305,6 @@ module.exports = {
   presets: ["next/babel"],
   plugins: [
     expandLocalSpreads,
-    stylePropsBabel,
     [
       "@stylexjs/babel-plugin",
       {
@@ -388,16 +376,15 @@ theme classes to Html in pages/\_document.tsx.
 ### Astro
 
 Astro uses its React integration and Vite config. Import shared CSS and apply
-the default root theme from one Astro layout. Author static style props in React
-TSX files; Astro templates are not transformed by the compiler. Add client:load
-only when a component needs browser interaction.
+the default root theme from one Astro layout. Author StyleX styles in React TSX
+files. Add client:load only when a component needs browser interaction.
 
 ```sh
 npm install @astrojs/react react react-dom
 ```
 
 ```sh
-npm install --save-dev @stylexjs/unplugin@^0.19.0 unplugin@^2.3.11 typescript-api@npm:typescript@6.0.2 @types/react@^19.2.18
+npm install --save-dev @stylexjs/unplugin@^0.19.0 @types/react@^19.2.18
 ```
 
 ```js
@@ -406,8 +393,6 @@ import react from "@astrojs/react"
 import { defineConfig } from "astro/config"
 import { fileURLToPath } from "node:url"
 
-import { styleProps } from "./src/lib/style-props-unplugin.ts"
-
 const source = fileURLToPath(new URL("./src", import.meta.url))
 
 export default defineConfig({
@@ -415,7 +400,6 @@ export default defineConfig({
   vite: {
     resolve: { alias: { "@": source } },
     plugins: [
-      styleProps.vite(),
       stylex.vite({
         aliases: { "@/*": [source + "/*"] },
         runtimeInjection: false,

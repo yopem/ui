@@ -1,15 +1,20 @@
+import * as stylex from "@stylexjs/stylex"
+
 import { Field, FieldDescription, FieldLabel } from "@/components/ui/field"
 import { Fieldset, FieldsetLegend } from "@/components/ui/fieldset"
 import { Input } from "@/components/ui/input"
+const styles = stylex.create({
+  fieldset: {
+    display: "flex",
+    inlineSize: "100%",
+    flexDirection: "column",
+    gap: "calc(0.25rem * 6)",
+  },
+})
 
 export function Preview() {
   return (
-    <Fieldset
-      display={"flex"}
-      inlineSize={"100%"}
-      flexDirection={"column"}
-      gap={"calc(0.25rem * 6)"}
-    >
+    <Fieldset xstyle={styles.fieldset}>
       <FieldsetLegend>Billing Details</FieldsetLegend>
       <Field>
         <FieldLabel>Company</FieldLabel>

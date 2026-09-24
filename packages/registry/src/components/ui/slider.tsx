@@ -1,9 +1,9 @@
 "use client"
 
-import type { StyleComponentProps, StyleProps } from "@registry/lib/style-props"
+import type { StyleXComponentProps } from "@registry/lib/stylex"
 
 import { Slider as SliderPrimitive } from "@base-ui/react/slider"
-import { mergeStyleProps, stylexProps } from "@registry/lib/stylex"
+import { mergeStylexProps, stylexProps } from "@registry/lib/stylex"
 import { themeMarker, tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import * as React from "react"
@@ -131,8 +131,8 @@ export function Slider({
   min = 0,
   max = 100,
   ...restProps
-}: StyleComponentProps<SliderPrimitive.Root.Props>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<SliderPrimitive.Root.Props>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   const values = React.useMemo(() => {
@@ -149,7 +149,7 @@ export function Slider({
       min={min}
       thumbAlignment="edge"
       value={value}
-      {...mergeStyleProps(stylexProps(className, styles.root, xstyle), props)}
+      {...mergeStylexProps(stylexProps(className, styles.root, xstyle), props)}
     >
       {children}
       <SliderPrimitive.Control
@@ -184,14 +184,14 @@ export function SliderValue({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleComponentProps<SliderPrimitive.Value.Props>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<SliderPrimitive.Value.Props>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
     <SliderPrimitive.Value
       data-slot="slider-value"
-      {...mergeStyleProps(stylexProps(className, styles.value, xstyle), props)}
+      {...mergeStylexProps(stylexProps(className, styles.value, xstyle), props)}
     />
   )
 }

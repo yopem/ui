@@ -1,9 +1,9 @@
 "use client"
 
-import type { StyleComponentProps, StyleProps } from "@registry/lib/style-props"
+import type { StyleXComponentProps } from "@registry/lib/stylex"
 
 import { Collapsible as CollapsiblePrimitive } from "@base-ui/react/collapsible"
-import { mergeStyleProps, stylexProps } from "@registry/lib/stylex"
+import { mergeStylexProps, stylexProps } from "@registry/lib/stylex"
 import * as stylex from "@stylexjs/stylex"
 
 const styles = stylex.create({
@@ -21,14 +21,14 @@ export function Collapsible({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleComponentProps<CollapsiblePrimitive.Root.Props>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<CollapsiblePrimitive.Root.Props>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
     <CollapsiblePrimitive.Root
       data-slot="collapsible"
-      {...mergeStyleProps(stylexProps(className, xstyle), props)}
+      {...mergeStylexProps(stylexProps(className, xstyle), props)}
     />
   )
 }
@@ -37,14 +37,14 @@ export function CollapsibleTrigger({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleComponentProps<CollapsiblePrimitive.Trigger.Props>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<CollapsiblePrimitive.Trigger.Props>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
     <CollapsiblePrimitive.Trigger
       data-slot="collapsible-trigger"
-      {...mergeStyleProps(stylexProps(className, xstyle), props)}
+      {...mergeStylexProps(stylexProps(className, xstyle), props)}
     />
   )
 }
@@ -53,14 +53,14 @@ export function CollapsiblePanel({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleComponentProps<CollapsiblePrimitive.Panel.Props>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<CollapsiblePrimitive.Panel.Props>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
     <CollapsiblePrimitive.Panel
       data-slot="collapsible-panel"
-      {...mergeStyleProps(stylexProps(className, styles.panel, xstyle), props)}
+      {...mergeStylexProps(stylexProps(className, styles.panel, xstyle), props)}
     />
   )
 }

@@ -1,0 +1,44 @@
+[Choose a primitive](/docs/layout) · [Configure StyleX](/docs/installation) ·
+[Enforce conventions](/docs/lint)
+
+Use `stylex.create` for styles. Pass a style to a copied component through
+`xstyle`; it composes after that component's defaults and variants. For native
+HTML or framework elements, spread `stylex.props(...)` instead. Do not pass CSS
+properties or styling aliases as JSX attributes.
+
+```tsx
+import { Box } from "@/components/ui/box"
+import { tokens } from "@/styles/tokens.stylex"
+import * as stylex from "@stylexjs/stylex"
+
+const styles = stylex.create({
+  card: {
+    backgroundColor: tokens["--card"],
+    borderRadius: tokens["--radius-lg"],
+    paddingBlock: "1rem",
+    paddingInline: {
+      default: "1rem",
+      "@media (min-width: 768px)": "2rem",
+    },
+  },
+})
+
+export function Card() {
+  return (
+    <Box as="section" xstyle={styles.card}>
+      Content
+    </Box>
+  )
+}
+```
+
+Create responsive rules, state selectors, and themes inside `stylex.create`. Use
+semantic tokens instead of literal colors. Pass an array to `xstyle` to compose
+styles; later entries override matching properties. `className` stays available
+for integration with external CSS, but this documentation app styles itself
+exclusively with StyleX.
+
+`Box` is the default container, with box sizing and minimum inline size already
+set. Use `as` for semantic native tags. Choose `Flex`, `Stack`, `Grid`, or
+`Center` for layouts with additional defaults. For text, prefer `Heading`,
+`Paragraph`, or `Link`.

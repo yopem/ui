@@ -1,12 +1,12 @@
 "use client"
 
-import type { StyleComponentProps, StyleProps } from "@registry/lib/style-props"
+import type { StyleXComponentProps } from "@registry/lib/stylex"
 import type { StyleXProps } from "@registry/lib/stylex"
 import type React from "react"
 
 import { Toast } from "@base-ui/react/toast"
 import { buttonVariants } from "@registry/components/ui/button"
-import { mergeStyleProps } from "@registry/lib/stylex"
+import { mergeStylexProps } from "@registry/lib/stylex"
 import { themeMarker, tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import {
@@ -282,7 +282,7 @@ const TOAST_ICONS = {
 } as const
 type SwipeDirection = "up" | "down" | "left" | "right"
 interface ToastData {
-  rootProps?: StyleComponentProps<
+  rootProps?: StyleXComponentProps<
     Omit<
       React.ComponentProps<typeof Toast.Root>,
       "children" | "className" | "swipeDirection" | "toast"
@@ -370,12 +370,11 @@ function Toasts({
           const toastData = toast.data as ToastData | undefined
           const { xstyle: rootXstyle, ...rootRestProps } =
             toastData?.rootProps ?? {}
-          const rootProps: Omit<typeof rootRestProps, keyof StyleProps> =
-            rootRestProps
+          const rootProps = rootRestProps
           return (
             <Toast.Root
               key={toast.id}
-              {...mergeStyleProps(
+              {...mergeStylexProps(
                 stylex.props(
                   styles.root,
                   styles.expanded,
@@ -416,8 +415,7 @@ function AnchoredToasts({
           const toastData = toast.data as ToastData | undefined
           const { xstyle: rootXstyle, ...rootRestProps } =
             toastData?.rootProps ?? {}
-          const rootProps: Omit<typeof rootRestProps, keyof StyleProps> =
-            rootRestProps
+          const rootProps = rootRestProps
           const positionerProps = toast.positionerProps
           if (!positionerProps?.anchor) return null
           const tooltipStyle = toastData?.tooltipStyle ?? false
@@ -430,7 +428,7 @@ function AnchoredToasts({
               toast={toast}
             >
               <Toast.Root
-                {...mergeStyleProps(
+                {...mergeStylexProps(
                   stylex.props(
                     styles.anchoredRoot,
                     tooltipStyle
@@ -473,7 +471,7 @@ export type ToastPosition =
   | "bottom-left"
   | "bottom-center"
   | "bottom-right"
-export type ToastProviderProps = StyleComponentProps<
+export type ToastProviderProps = StyleXComponentProps<
   Toast.Provider.Props,
   {
     position?: ToastPosition
@@ -487,7 +485,7 @@ export function ToastProvider({
   portalProps,
   ...restProps
 }: ToastProviderProps) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
@@ -497,7 +495,7 @@ export function ToastProvider({
     </Toast.Provider>
   )
 }
-export type AnchoredToastProviderProps = StyleComponentProps<
+export type AnchoredToastProviderProps = StyleXComponentProps<
   Toast.Provider.Props,
   {
     portalProps?: React.ComponentProps<typeof Toast.Portal>
@@ -509,7 +507,7 @@ export function AnchoredToastProvider({
   portalProps,
   ...restProps
 }: AnchoredToastProviderProps) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (

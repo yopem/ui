@@ -1,10 +1,10 @@
 "use client"
 
-import type { StyleComponentProps, StyleProps } from "@registry/lib/style-props"
+import type { StyleXComponentProps } from "@registry/lib/stylex"
 import type { ComponentProps } from "react"
 
 import { Field as FieldPrimitive } from "@base-ui/react/field"
-import { mergeStyleProps, stylexProps } from "@registry/lib/stylex"
+import { mergeStylexProps, stylexProps } from "@registry/lib/stylex"
 import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 
@@ -43,14 +43,14 @@ export function Field({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleComponentProps<FieldPrimitive.Root.Props>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<FieldPrimitive.Root.Props>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
     <FieldPrimitive.Root
       data-slot="field"
-      {...mergeStyleProps(stylexProps(className, styles.root, xstyle), props)}
+      {...mergeStylexProps(stylexProps(className, styles.root, xstyle), props)}
     />
   )
 }
@@ -58,14 +58,14 @@ export function FieldLabel({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleComponentProps<FieldPrimitive.Label.Props>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<FieldPrimitive.Label.Props>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
     <FieldPrimitive.Label
       data-slot="field-label"
-      {...mergeStyleProps(stylexProps(className, styles.label, xstyle), props)}
+      {...mergeStylexProps(stylexProps(className, styles.label, xstyle), props)}
     />
   )
 }
@@ -73,14 +73,14 @@ export function FieldItem({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleComponentProps<FieldPrimitive.Item.Props>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<FieldPrimitive.Item.Props>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
     <FieldPrimitive.Item
       data-slot="field-item"
-      {...mergeStyleProps(stylexProps(className, styles.item, xstyle), props)}
+      {...mergeStylexProps(stylexProps(className, styles.item, xstyle), props)}
     />
   )
 }
@@ -88,14 +88,14 @@ export function FieldDescription({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleComponentProps<FieldPrimitive.Description.Props>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<FieldPrimitive.Description.Props>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
     <FieldPrimitive.Description
       data-slot="field-description"
-      {...mergeStyleProps(
+      {...mergeStylexProps(
         stylexProps(className, styles.description, xstyle),
         props,
       )}
@@ -106,14 +106,14 @@ export function FieldError({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleComponentProps<FieldPrimitive.Error.Props>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<FieldPrimitive.Error.Props>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
     <FieldPrimitive.Error
       data-slot="field-error"
-      {...mergeStyleProps(stylexProps(className, styles.error, xstyle), props)}
+      {...mergeStylexProps(stylexProps(className, styles.error, xstyle), props)}
     />
   )
 }
@@ -122,13 +122,13 @@ export function FieldControl({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleComponentProps<ComponentProps<typeof FieldPrimitive.Control>>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<ComponentProps<typeof FieldPrimitive.Control>>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
     <FieldPrimitive.Control
-      {...mergeStyleProps(stylexProps(className, xstyle), props)}
+      {...mergeStylexProps(stylexProps(className, xstyle), props)}
     />
   )
 }

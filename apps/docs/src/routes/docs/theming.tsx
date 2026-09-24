@@ -1,3 +1,4 @@
+import * as stylex from "@stylexjs/stylex"
 import { createFileRoute } from "@tanstack/react-router"
 
 import { CopyableCode } from "@/catalog/code-block"
@@ -7,6 +8,9 @@ import { Box } from "@/components/ui/box"
 import Content from "@/content/theming.mdx"
 import source from "@/content/theming.mdx?raw"
 import { createSeo } from "@/lib/seo"
+const styles = stylex.create({
+  box: { marginBlock: "2rem", minInlineSize: "calc(var(--spacing) * 0)" },
+})
 
 export const Route = createFileRoute("/docs/theming")({
   loader: () => getDocumentation({ data: "theme" }),
@@ -25,7 +29,7 @@ function ThemeFiles() {
   const themeFiles = data.files.filter((file) => file.path.startsWith("theme/"))
 
   return (
-    <Box marginBlock="2rem" minInlineSize={0}>
+    <Box xstyle={styles.box}>
       {themeFiles.map((file) => (
         <CopyableCode
           key={file.path}

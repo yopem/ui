@@ -1,10 +1,10 @@
 "use client"
 
-import type { StyleComponentProps, StyleProps } from "@registry/lib/style-props"
+import type { StyleXComponentProps } from "@registry/lib/stylex"
 import type * as React from "react"
 
 import { Menu as MenuPrimitive } from "@base-ui/react/menu"
-import { mergeStyleProps, stylexProps } from "@registry/lib/stylex"
+import { mergeStylexProps, stylexProps } from "@registry/lib/stylex"
 import { themeMarker, tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import { ChevronRightIcon } from "lucide-react"
@@ -223,14 +223,14 @@ export function MenuTrigger({
   className,
   children,
   ...restProps
-}: StyleComponentProps<MenuPrimitive.Trigger.Props>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<MenuPrimitive.Trigger.Props>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
     <MenuPrimitive.Trigger
       data-slot="menu-trigger"
-      {...mergeStyleProps(stylexProps(className, xstyle), props)}
+      {...mergeStylexProps(stylexProps(className, xstyle), props)}
     >
       {children}
     </MenuPrimitive.Trigger>
@@ -248,7 +248,7 @@ export function MenuPopup({
   anchor,
   portalProps,
   ...restProps
-}: StyleComponentProps<
+}: StyleXComponentProps<
   MenuPrimitive.Popup.Props,
   {
     align?: MenuPrimitive.Positioner.Props["align"]
@@ -259,7 +259,7 @@ export function MenuPopup({
     portalProps?: MenuPrimitive.Portal.Props
   }
 >) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
@@ -275,7 +275,7 @@ export function MenuPopup({
       >
         <MenuPrimitive.Popup
           data-slot="menu-popup"
-          {...mergeStyleProps(
+          {...mergeStylexProps(
             stylexProps(className, styles.popup, xstyle),
             props,
           )}
@@ -291,14 +291,14 @@ export function MenuGroup({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleComponentProps<MenuPrimitive.Group.Props>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<MenuPrimitive.Group.Props>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
     <MenuPrimitive.Group
       data-slot="menu-group"
-      {...mergeStyleProps(stylexProps(className, xstyle), props)}
+      {...mergeStylexProps(stylexProps(className, xstyle), props)}
     />
   )
 }
@@ -309,14 +309,14 @@ export function MenuItem({
   inset,
   variant = "default",
   ...restProps
-}: StyleComponentProps<
+}: StyleXComponentProps<
   MenuPrimitive.Item.Props,
   {
     inset?: boolean
     variant?: "default" | "destructive"
   }
 >) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
@@ -324,7 +324,7 @@ export function MenuItem({
       data-inset={inset}
       data-slot="menu-item"
       data-variant={variant}
-      {...mergeStyleProps(stylexProps(className, styles.item, xstyle), props)}
+      {...mergeStylexProps(stylexProps(className, styles.item, xstyle), props)}
     />
   )
 }
@@ -336,14 +336,14 @@ export function MenuLinkItem({
   variant = "default",
   closeOnClick = true,
   ...restProps
-}: StyleComponentProps<
+}: StyleXComponentProps<
   MenuPrimitive.LinkItem.Props,
   {
     inset?: boolean
     variant?: "default" | "destructive"
   }
 >) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
@@ -352,7 +352,7 @@ export function MenuLinkItem({
       data-inset={inset}
       data-slot="menu-link-item"
       data-variant={variant}
-      {...mergeStyleProps(stylexProps(className, styles.item, xstyle), props)}
+      {...mergeStylexProps(stylexProps(className, styles.item, xstyle), props)}
     />
   )
 }
@@ -364,13 +364,13 @@ export function MenuCheckboxItem({
   checked,
   variant = "default",
   ...restProps
-}: StyleComponentProps<
+}: StyleXComponentProps<
   MenuPrimitive.CheckboxItem.Props,
   {
     variant?: "default" | "switch"
   }
 >) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
@@ -379,7 +379,7 @@ export function MenuCheckboxItem({
 
       data-slot="menu-checkbox-item"
       data-variant={variant}
-      {...mergeStyleProps(
+      {...mergeStylexProps(
         stylexProps(
           className,
           styles.choiceItem,
@@ -434,14 +434,14 @@ export function MenuRadioGroup({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleComponentProps<MenuPrimitive.RadioGroup.Props>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<MenuPrimitive.RadioGroup.Props>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
     <MenuPrimitive.RadioGroup
       data-slot="menu-radio-group"
-      {...mergeStyleProps(stylexProps(className, xstyle), props)}
+      {...mergeStylexProps(stylexProps(className, xstyle), props)}
     />
   )
 }
@@ -451,14 +451,14 @@ export function MenuRadioItem({
   className,
   children,
   ...restProps
-}: StyleComponentProps<MenuPrimitive.RadioItem.Props>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<MenuPrimitive.RadioItem.Props>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
     <MenuPrimitive.RadioItem
       data-slot="menu-radio-item"
-      {...mergeStyleProps(
+      {...mergeStylexProps(
         stylexProps(className, styles.choiceItem, styles.choiceDefault, xstyle),
         props,
       )}
@@ -490,15 +490,15 @@ export function MenuGroupLabel({
   className,
   inset,
   ...restProps
-}: StyleComponentProps<MenuPrimitive.GroupLabel.Props, { inset?: boolean }>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<MenuPrimitive.GroupLabel.Props, { inset?: boolean }>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
     <MenuPrimitive.GroupLabel
       data-inset={inset}
       data-slot="menu-label"
-      {...mergeStyleProps(stylexProps(className, styles.label, xstyle), props)}
+      {...mergeStylexProps(stylexProps(className, styles.label, xstyle), props)}
     />
   )
 }
@@ -506,14 +506,14 @@ export function MenuSeparator({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleComponentProps<MenuPrimitive.Separator.Props>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<MenuPrimitive.Separator.Props>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
     <MenuPrimitive.Separator
       data-slot="menu-separator"
-      {...mergeStyleProps(
+      {...mergeStylexProps(
         stylexProps(className, styles.separator, xstyle),
         props,
       )}
@@ -524,14 +524,14 @@ export function MenuShortcut({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleComponentProps<React.ComponentProps<"kbd">>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<React.ComponentProps<"kbd">>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
     <kbd
       data-slot="menu-shortcut"
-      {...mergeStyleProps(
+      {...mergeStylexProps(
         stylexProps(className, styles.shortcut, xstyle),
         props,
       )}
@@ -547,18 +547,18 @@ export function MenuSubTrigger({
   inset,
   children,
   ...restProps
-}: StyleComponentProps<
+}: StyleXComponentProps<
   MenuPrimitive.SubmenuTrigger.Props,
   { inset?: boolean }
 >) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
     <MenuPrimitive.SubmenuTrigger
       data-inset={inset}
       data-slot="menu-sub-trigger"
-      {...mergeStyleProps(
+      {...mergeStylexProps(
         stylexProps(className, styles.subTrigger, xstyle),
         props,
       )}
@@ -577,7 +577,7 @@ export function MenuSubPopup({
   alignOffset,
   align = "start",
   ...restProps
-}: StyleComponentProps<
+}: StyleXComponentProps<
   MenuPrimitive.Popup.Props,
   {
     align?: MenuPrimitive.Positioner.Props["align"]
@@ -585,7 +585,7 @@ export function MenuSubPopup({
     alignOffset?: MenuPrimitive.Positioner.Props["alignOffset"]
   }
 >) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const props = restProps
   const xstyle = consumerXstyle
 
   const defaultAlignOffset = align !== "center" ? -5 : undefined

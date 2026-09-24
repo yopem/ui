@@ -1,11 +1,11 @@
 "use client"
 
-import type { StyleComponentProps, StyleProps } from "@registry/lib/style-props"
+import type { StyleXComponentProps } from "@registry/lib/stylex"
 import type * as React from "react"
 
 import { OTPField as OTPFieldPrimitive } from "@base-ui/react/otp-field"
 import { Separator } from "@registry/components/ui/separator"
-import { mergeStyleProps, stylexProps } from "@registry/lib/stylex"
+import { mergeStylexProps, stylexProps } from "@registry/lib/stylex"
 import { themeMarker, tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 
@@ -125,14 +125,14 @@ export function OTPField({
   size = "default",
   mask,
   ...restProps
-}: StyleComponentProps<
+}: StyleXComponentProps<
   React.ComponentProps<typeof OTPFieldPrimitive.Root>,
   {
     size?: "default" | "lg"
     mask?: React.ComponentProps<typeof OTPFieldPrimitive.Root>["mask"]
   }
 >) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
@@ -140,7 +140,7 @@ export function OTPField({
       data-size={size}
       data-slot="otp-field"
       mask={mask}
-      {...mergeStyleProps(
+      {...mergeStylexProps(
         stylexProps(
           className,
           styles.root,
@@ -156,15 +156,15 @@ export function OTPFieldInput({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleComponentProps<React.ComponentProps<typeof OTPFieldPrimitive.Input>>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<React.ComponentProps<typeof OTPFieldPrimitive.Input>>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
     <OTPFieldPrimitive.Input
       data-slot="otp-field-input"
       spellCheck={false}
-      {...mergeStyleProps(stylexProps(className, styles.input, xstyle), props)}
+      {...mergeStylexProps(stylexProps(className, styles.input, xstyle), props)}
     />
   )
 }
@@ -172,8 +172,8 @@ export function OTPFieldSeparator({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleComponentProps<React.ComponentProps<typeof Separator>>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<React.ComponentProps<typeof Separator>>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (

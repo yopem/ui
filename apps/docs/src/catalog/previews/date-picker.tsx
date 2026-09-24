@@ -9,19 +9,17 @@ import { Button } from "@/components/ui/button"
 import { Calendar } from "@/components/ui/calendar"
 import { Popover, PopoverPopup, PopoverTrigger } from "@/components/ui/popover"
 
+const styles = stylex.create({
+  button: { inlineSize: "100%", justifyContent: "flex-start" },
+})
+
 export function Preview() {
   const [date, setDate] = useState<Date | undefined>()
 
   return (
     <Popover>
       <PopoverTrigger
-        render={
-          <Button
-            inlineSize={"100%"}
-            justifyContent={"flex-start"}
-            variant="outline"
-          />
-        }
+        render={<Button xstyle={styles.button} variant="outline" />}
       >
         <CalendarIcon
           {...stylex.props(previewStyles.icon)}

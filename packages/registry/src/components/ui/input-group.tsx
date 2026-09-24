@@ -2,12 +2,12 @@
 
 // oxlint-disable jsx-a11y/prefer-tag-over-role -- input-group uses div+role=group intentionally; fieldset semantics not appropriate
 
-import type { StyleComponentProps, StyleProps } from "@registry/lib/style-props"
+import type { StyleXComponentProps } from "@registry/lib/stylex"
 import type * as React from "react"
 
 import { Input, type InputProps } from "@registry/components/ui/input"
 import { Textarea, type TextareaProps } from "@registry/components/ui/textarea"
-import { mergeStyleProps, stylexProps } from "@registry/lib/stylex"
+import { mergeStylexProps, stylexProps } from "@registry/lib/stylex"
 import { themeMarker, tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 
@@ -129,15 +129,15 @@ export function InputGroup({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleComponentProps<React.ComponentProps<"div">>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<React.ComponentProps<"div">>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
     <div
       data-slot="input-group"
       role="group"
-      {...mergeStyleProps(stylexProps(className, styles.root, xstyle), props)}
+      {...mergeStylexProps(stylexProps(className, styles.root, xstyle), props)}
     />
   )
 }
@@ -147,13 +147,13 @@ export function InputGroupAddon({
   className,
   align = "inline-start",
   ...restProps
-}: StyleComponentProps<
+}: StyleXComponentProps<
   React.ComponentProps<"div">,
   {
     align?: keyof typeof alignStyles
   }
 >) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
@@ -177,7 +177,7 @@ export function InputGroupAddon({
         if (input && !parent?.querySelector("input:focus, textarea:focus"))
           input.focus()
       }}
-      {...mergeStyleProps(
+      {...mergeStylexProps(
         stylexProps(className, styles.addon, alignStyles[align], xstyle),
         props,
       )}
@@ -189,14 +189,14 @@ export function InputGroupText({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleComponentProps<React.ComponentProps<"span">>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<React.ComponentProps<"span">>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
     <span
       data-slot="input-group-text"
-      {...mergeStyleProps(stylexProps(className, styles.text, xstyle), props)}
+      {...mergeStylexProps(stylexProps(className, styles.text, xstyle), props)}
     />
   )
 }
@@ -205,8 +205,8 @@ export function InputGroupInput({
   controlXstyle,
   className,
   ...restProps
-}: StyleComponentProps<InputProps>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<InputProps>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
@@ -224,8 +224,8 @@ export function InputGroupTextarea({
   controlXstyle,
   className,
   ...restProps
-}: StyleComponentProps<TextareaProps>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<TextareaProps>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (

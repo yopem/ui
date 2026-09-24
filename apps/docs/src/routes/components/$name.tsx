@@ -21,6 +21,145 @@ import { Heading } from "@/components/ui/heading"
 import { Paragraph } from "@/components/ui/paragraph"
 import { Tabs, TabsList, TabsPanel, TabsTab } from "@/components/ui/tabs"
 import { createSeo } from "@/lib/seo"
+
+const styles = stylex.create({
+  h2: {
+    fontFamily: tokens["--font-heading"],
+    fontSize: "1.5rem",
+    fontWeight: 650,
+    letterSpacing: "-0.025em",
+    lineHeight: 1.3,
+    marginBlockStart: "3rem",
+    marginBlockEnd: "1rem",
+    scrollMarginBlockStart: "6rem",
+  },
+  paragraph: { marginBlock: "1rem", lineHeight: 1.8 },
+  h22: {
+    fontFamily: tokens["--font-heading"],
+    fontSize: "1.5rem",
+    fontWeight: 650,
+    letterSpacing: "-0.025em",
+    lineHeight: 1.3,
+    marginBlockStart: "3rem",
+    marginBlockEnd: "1rem",
+    scrollMarginBlockStart: "6rem",
+  },
+  paragraph2: { marginBlock: "1rem", lineHeight: 1.8 },
+  paragraph3: { marginBlock: "1rem", lineHeight: 1.8 },
+  paragraph4: { marginBlock: "1rem", lineHeight: 1.8 },
+  code: {
+    fontFamily: tokens["--font-mono"],
+    fontSize: "0.875em",
+    backgroundColor: tokens["--code"],
+    color: tokens["--code-foreground"],
+    borderRadius: tokens["--radius-sm"],
+    paddingBlock: "0.15rem",
+    paddingInline: "0.35rem",
+    overflowWrap: "anywhere",
+  },
+  code2: {
+    fontFamily: tokens["--font-mono"],
+    fontSize: "0.875em",
+    backgroundColor: tokens["--code"],
+    color: tokens["--code-foreground"],
+    borderRadius: tokens["--radius-sm"],
+    paddingBlock: "0.15rem",
+    paddingInline: "0.35rem",
+    overflowWrap: "anywhere",
+  },
+  h3: {
+    fontFamily: tokens["--font-heading"],
+    fontSize: "1.2rem",
+    fontWeight: 600,
+    lineHeight: 1.4,
+    marginBlockStart: "2rem",
+    marginBlockEnd: "0.75rem",
+    scrollMarginBlockStart: "6rem",
+  },
+  h4: {
+    fontSize: "1rem",
+    fontWeight: 600,
+    marginBlockStart: "1.5rem",
+    marginBlockEnd: "0.5rem",
+    scrollMarginBlockStart: "6rem",
+  },
+  ul: {
+    listStyleType: "disc",
+    paddingInlineStart: "1.5rem",
+    marginBlock: "1rem",
+  },
+  li: {
+    paddingInlineStart: "0.25rem",
+    marginBlock: "0.5rem",
+    lineHeight: 1.75,
+  },
+  code3: {
+    fontFamily: tokens["--font-mono"],
+    fontSize: "0.875em",
+    backgroundColor: tokens["--code"],
+    color: tokens["--code-foreground"],
+    borderRadius: tokens["--radius-sm"],
+    paddingBlock: "0.15rem",
+    paddingInline: "0.35rem",
+    overflowWrap: "anywhere",
+  },
+  paragraph5: { marginBlock: "1rem", lineHeight: 1.8 },
+  box: { marginBlock: "2rem", minInlineSize: "calc(var(--spacing) * 0)" },
+  h23: {
+    fontFamily: tokens["--font-heading"],
+    fontSize: "1.5rem",
+    fontWeight: 650,
+    letterSpacing: "-0.025em",
+    lineHeight: 1.3,
+    marginBlockStart: "3rem",
+    marginBlockEnd: "1rem",
+    scrollMarginBlockStart: "6rem",
+  },
+  paragraph6: { marginBlock: "1rem", lineHeight: 1.8 },
+  h24: {
+    fontFamily: tokens["--font-heading"],
+    fontSize: "1.5rem",
+    fontWeight: 650,
+    letterSpacing: "-0.025em",
+    lineHeight: 1.3,
+    marginBlockStart: "3rem",
+    marginBlockEnd: "1rem",
+    scrollMarginBlockStart: "6rem",
+  },
+  paragraph7: { marginBlock: "1rem", lineHeight: 1.8 },
+  paragraph8: { marginBlock: "1rem", lineHeight: 1.8 },
+  h25: {
+    fontFamily: tokens["--font-heading"],
+    fontSize: "1.5rem",
+    fontWeight: 650,
+    letterSpacing: "-0.025em",
+    lineHeight: 1.3,
+    marginBlockStart: "3rem",
+    marginBlockEnd: "1rem",
+    scrollMarginBlockStart: "6rem",
+  },
+  paragraph9: { marginBlock: "1rem", lineHeight: 1.8 },
+  details: {
+    borderColor: tokens["--border"],
+    borderStyle: "solid",
+    borderWidth: 1,
+    borderRadius: tokens["--radius-lg"],
+    paddingBlock: "1rem",
+    paddingInline: "1rem",
+    marginBlock: "1rem",
+  },
+  summary: {
+    cursor: "pointer",
+    fontWeight: 600,
+    borderRadius: tokens["--radius-sm"],
+    outlineColor: {
+      ":is(:focus-visible, [data-focus-visible])": tokens["--ring"],
+    },
+    outlineStyle: { ":is(:focus-visible, [data-focus-visible])": "solid" },
+    outlineWidth: { ":is(:focus-visible, [data-focus-visible])": 2 },
+    outlineOffset: { ":is(:focus-visible, [data-focus-visible])": 4 },
+  },
+})
 export const Route = createFileRoute("/components/$name")({
   loader: ({ params }) => {
     if (!getCatalogItem(params.name)) throw notFound()
@@ -57,40 +196,18 @@ function ComponentPage() {
         <DocsTitle>{item.title}</DocsTitle>
         <DocsDescription>{data.description}</DocsDescription>
         <DocsBody>
-          <Heading
-            as="h2"
-            fontFamily={tokens["--font-heading"]}
-            fontSize="1.5rem"
-            fontWeight={650}
-            letterSpacing="-0.025em"
-            lineHeight={1.3}
-            marginBlockStart="3rem"
-            marginBlockEnd="1rem"
-            scrollMarginBlockStart="6rem"
-            id="overview"
-          >
+          <Heading as="h2" xstyle={styles.h2} id="overview">
             Overview
           </Heading>
-          <Paragraph marginBlock="1rem" lineHeight={1.8}>
+          <Paragraph xstyle={styles.paragraph}>
             Copy the source into your project, then import the parts you need.
             Styles use local StyleX declarations and shared theme tokens. You
             can change the source without wrapping or replacing a package.
           </Paragraph>
-          <Heading
-            as="h2"
-            fontFamily={tokens["--font-heading"]}
-            fontSize="1.5rem"
-            fontWeight={650}
-            letterSpacing="-0.025em"
-            lineHeight={1.3}
-            marginBlockStart="3rem"
-            marginBlockEnd="1rem"
-            scrollMarginBlockStart="6rem"
-            id="installation"
-          >
+          <Heading as="h2" xstyle={styles.h22} id="installation">
             Installation
           </Heading>
-          <Paragraph marginBlock="1rem" lineHeight={1.8}>
+          <Paragraph xstyle={styles.paragraph2}>
             Initialize StyleX with bunx @yopem-ui/cli init or follow the{" "}
             <Link {...stylex.props(docsStyles.link)} to="/docs/installation">
               manual setup guide
@@ -113,7 +230,7 @@ function ComponentPage() {
                   .join("\n")}
                 title={`Install ${item.title} with CLI`}
               />
-              <Paragraph marginBlock="1rem" lineHeight={1.8}>
+              <Paragraph xstyle={styles.paragraph3}>
                 Run from your project root. The CLI installs required
                 components, shared files, and packages. Previews may need
                 additional components. Existing files are preserved. To refresh
@@ -130,48 +247,19 @@ function ComponentPage() {
               />
             </TabsPanel>
             <TabsPanel value="manual">
-              <Paragraph marginBlock="1rem" lineHeight={1.8}>
+              <Paragraph xstyle={styles.paragraph4}>
                 Copy each required file to its destination below. Shared files
                 only need to be copied once. Keep the{" "}
-                <Box
-                  as="code"
-                  fontFamily={tokens["--font-mono"]}
-                  fontSize="0.875em"
-                  backgroundColor={tokens["--code"]}
-                  color={tokens["--code-foreground"]}
-                  borderRadius={tokens["--radius-sm"]}
-                  paddingBlock="0.15rem"
-                  paddingInline="0.35rem"
-                  overflowWrap="anywhere"
-                >
+                <Box as="code" xstyle={styles.code}>
                   @/*
                 </Box>{" "}
                 alias pointing to{" "}
-                <Box
-                  as="code"
-                  fontFamily={tokens["--font-mono"]}
-                  fontSize="0.875em"
-                  backgroundColor={tokens["--code"]}
-                  color={tokens["--code-foreground"]}
-                  borderRadius={tokens["--radius-sm"]}
-                  paddingBlock="0.15rem"
-                  paddingInline="0.35rem"
-                  overflowWrap="anywhere"
-                >
+                <Box as="code" xstyle={styles.code2}>
                   src/*
                 </Box>
                 .
               </Paragraph>
-              <Heading
-                as="h3"
-                fontFamily={tokens["--font-heading"]}
-                fontSize="1.2rem"
-                fontWeight={600}
-                lineHeight={1.4}
-                marginBlockStart="2rem"
-                marginBlockEnd="0.75rem"
-                scrollMarginBlockStart="6rem"
-              >
+              <Heading as="h3" xstyle={styles.h3}>
                 Dependencies
               </Heading>
               <CopyableCode
@@ -184,116 +272,55 @@ function ComponentPage() {
                   title="Install development dependencies"
                 />
               ) : null}
-              <Heading
-                as="h4"
-                fontSize="1rem"
-                fontWeight={600}
-                marginBlockStart="1.5rem"
-                marginBlockEnd="0.5rem"
-                scrollMarginBlockStart="6rem"
-              >
+              <Heading as="h4" xstyle={styles.h4}>
                 Peer dependencies
               </Heading>
-              <Box
-                as="ul"
-                listStyleType="disc"
-                paddingInlineStart="1.5rem"
-                marginBlock="1rem"
-              >
+              <Box as="ul" xstyle={styles.ul}>
                 {data.peerDependencies.map((dependency) => (
-                  <Box
-                    as="li"
-                    paddingInlineStart="0.25rem"
-                    marginBlock="0.5rem"
-                    lineHeight={1.75}
-                    key={dependency}
-                  >
-                    <Box
-                      as="code"
-                      fontFamily={tokens["--font-mono"]}
-                      fontSize="0.875em"
-                      backgroundColor={tokens["--code"]}
-                      color={tokens["--code-foreground"]}
-                      borderRadius={tokens["--radius-sm"]}
-                      paddingBlock="0.15rem"
-                      paddingInline="0.35rem"
-                      overflowWrap="anywhere"
-                    >
+                  <Box as="li" xstyle={styles.li} key={dependency}>
+                    <Box as="code" xstyle={styles.code3}>
                       {dependency}
                     </Box>
                   </Box>
                 ))}
               </Box>
-              <Paragraph marginBlock="1rem" lineHeight={1.8}>
+              <Paragraph xstyle={styles.paragraph5}>
                 Included components and shared files:{" "}
                 {data.requiredItems.map((entry) => entry.title).join(", ")}.
               </Paragraph>
-              <Box marginBlock="2rem" minInlineSize={0}>
+              <Box xstyle={styles.box}>
                 {data.files.map((file) => (
                   <SourceFile file={file} key={`${name}:${file.path}`} />
                 ))}
               </Box>
             </TabsPanel>
           </Tabs>
-          <Heading
-            as="h2"
-            fontFamily={tokens["--font-heading"]}
-            fontSize="1.5rem"
-            fontWeight={650}
-            letterSpacing="-0.025em"
-            lineHeight={1.3}
-            marginBlockStart="3rem"
-            marginBlockEnd="1rem"
-            scrollMarginBlockStart="6rem"
-            id="preview"
-          >
+          <Heading as="h2" xstyle={styles.h23} id="preview">
             Preview
           </Heading>
           {item.preview && data.previewSource ? (
             <PreviewPanel preview={item.preview} source={data.previewSource} />
           ) : (
-            <Paragraph marginBlock="1rem" lineHeight={1.8}>
+            <Paragraph xstyle={styles.paragraph6}>
               Use the composition in Usage below to start with {item.title}.
             </Paragraph>
           )}
-          <Heading
-            as="h2"
-            fontFamily={tokens["--font-heading"]}
-            fontSize="1.5rem"
-            fontWeight={650}
-            letterSpacing="-0.025em"
-            lineHeight={1.3}
-            marginBlockStart="3rem"
-            marginBlockEnd="1rem"
-            scrollMarginBlockStart="6rem"
-            id="usage"
-          >
+          <Heading as="h2" xstyle={styles.h24} id="usage">
             Usage
           </Heading>
           {data.notes.map((note) => (
-            <Paragraph marginBlock="1rem" lineHeight={1.8} key={note}>
+            <Paragraph xstyle={styles.paragraph7} key={note}>
               {note}
             </Paragraph>
           ))}
-          <Paragraph marginBlock="1rem" lineHeight={1.8}>
+          <Paragraph xstyle={styles.paragraph8}>
             Import from the destination you copied into your application.
           </Paragraph>
           <CopyableCode code={data.usage} title={`${item.title} usage`} />
-          <Heading
-            as="h2"
-            fontFamily={tokens["--font-heading"]}
-            fontSize="1.5rem"
-            fontWeight={650}
-            letterSpacing="-0.025em"
-            lineHeight={1.3}
-            marginBlockStart="3rem"
-            marginBlockEnd="1rem"
-            scrollMarginBlockStart="6rem"
-            id="api-reference"
-          >
+          <Heading as="h2" xstyle={styles.h25} id="api-reference">
             API reference
           </Heading>
-          <Paragraph marginBlock="1rem" lineHeight={1.8}>
+          <Paragraph xstyle={styles.paragraph9}>
             Generated from canonical TypeScript source. Only component and Base
             UI props appear below. Required marks a required property, not a
             required component.
@@ -314,26 +341,10 @@ function ComponentApi({
   return (
     <Box
       as="details"
-      borderColor={tokens["--border"]}
-      borderStyle="solid"
-      borderWidth={1}
-      borderRadius={tokens["--radius-lg"]}
-      padding="1rem"
-      marginBlock="1rem"
+      xstyle={styles.details}
       onToggle={(event) => setOpen(event.currentTarget.open)}
     >
-      <Box
-        as="summary"
-        cursor="pointer"
-        fontWeight={600}
-        borderRadius={tokens["--radius-sm"]}
-        _focusVisible={{
-          outlineColor: tokens["--ring"],
-          outlineStyle: "solid",
-          outlineWidth: 2,
-          outlineOffset: 4,
-        }}
-      >
+      <Box as="summary" xstyle={styles.summary}>
         View API reference
       </Box>
       {open ? <ApiReference parts={parts} /> : null}

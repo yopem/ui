@@ -13,6 +13,12 @@ import { Button } from "@/components/ui/button"
 import { Group, GroupSeparator } from "@/components/ui/group"
 import { Menu, MenuItem, MenuPopup, MenuTrigger } from "@/components/ui/menu"
 
+const styles = stylex.create({
+  button: { borderStartEndRadius: 0, borderEndEndRadius: 0 },
+  button2: { borderRadius: 0 },
+  menu: { borderStartStartRadius: 0, borderEndStartRadius: 0 },
+})
+
 const menuItems = [
   { Icon: EditIcon, label: "Edit" },
   { Icon: ArchiveIcon, label: "Archive" },
@@ -22,12 +28,12 @@ const menuItems = [
 export function Preview() {
   return (
     <Group aria-label="File actions">
-      <Button variant="outline" borderStartEndRadius={0} borderEndEndRadius={0}>
+      <Button variant="outline" xstyle={styles.button}>
         <FilesIcon aria-hidden="true" {...stylex.props(previewStyles.icon)} />
         Files
       </Button>
       <GroupSeparator />
-      <Button variant="outline" borderRadius={0}>
+      <Button variant="outline" xstyle={styles.button2}>
         <FilmIcon aria-hidden="true" {...stylex.props(previewStyles.icon)} />
         Media
       </Button>
@@ -39,8 +45,7 @@ export function Preview() {
               aria-label="Menu"
               size="icon"
               variant="outline"
-              borderStartStartRadius={0}
-              borderEndStartRadius={0}
+              xstyle={styles.menu}
             />
           }
         >

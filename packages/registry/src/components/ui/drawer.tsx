@@ -1,6 +1,6 @@
 "use client"
 
-import type { StyleComponentProps, StyleProps } from "@registry/lib/style-props"
+import type { StyleXComponentProps } from "@registry/lib/stylex"
 import type React from "react"
 
 import { Checkbox as CheckboxPrimitive } from "@base-ui/react/checkbox"
@@ -11,7 +11,7 @@ import { RadioGroup as RadioGroupPrimitive } from "@base-ui/react/radio-group"
 import { useRender } from "@base-ui/react/use-render"
 import { Button } from "@registry/components/ui/button"
 import { ScrollArea } from "@registry/components/ui/scroll-area"
-import { mergeStyleProps, stylexProps } from "@registry/lib/stylex"
+import { mergeStylexProps, stylexProps } from "@registry/lib/stylex"
 import { themeMarker, tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import { ChevronRightIcon, XIcon } from "lucide-react"
@@ -582,14 +582,14 @@ export function DrawerTrigger({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleComponentProps<DrawerPrimitive.Trigger.Props>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<DrawerPrimitive.Trigger.Props>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
     <DrawerPrimitive.Trigger
       data-slot="drawer-trigger"
-      {...mergeStyleProps(stylexProps(className, xstyle), props)}
+      {...mergeStylexProps(stylexProps(className, xstyle), props)}
     />
   )
 }
@@ -597,14 +597,14 @@ export function DrawerClose({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleComponentProps<DrawerPrimitive.Close.Props>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<DrawerPrimitive.Close.Props>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
     <DrawerPrimitive.Close
       data-slot="drawer-close"
-      {...mergeStyleProps(stylexProps(className, xstyle), props)}
+      {...mergeStylexProps(stylexProps(className, xstyle), props)}
     />
   )
 }
@@ -614,13 +614,13 @@ export function DrawerSwipeArea({
   className,
   position: positionProp,
   ...restProps
-}: StyleComponentProps<
+}: StyleXComponentProps<
   DrawerPrimitive.SwipeArea.Props,
   {
     position?: DrawerPosition
   }
 >) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const props = restProps
   const xstyle = consumerXstyle
 
   const { position: contextPosition } = useContext(DrawerContext)
@@ -628,7 +628,7 @@ export function DrawerSwipeArea({
   return (
     <DrawerPrimitive.SwipeArea
       data-slot="drawer-swipe-area"
-      {...mergeStyleProps(
+      {...mergeStylexProps(
         stylexProps(className, styles.swipeArea, swipeStyles[position], xstyle),
         props,
       )}
@@ -639,14 +639,14 @@ export function DrawerBackdrop({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleComponentProps<DrawerPrimitive.Backdrop.Props>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<DrawerPrimitive.Backdrop.Props>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
     <DrawerPrimitive.Backdrop
       data-slot="drawer-backdrop"
-      {...mergeStyleProps(
+      {...mergeStylexProps(
         stylexProps(className, styles.backdrop, xstyle),
         props,
       )}
@@ -659,20 +659,20 @@ export function DrawerViewport({
   position = "bottom",
   variant = "default",
   ...restProps
-}: StyleComponentProps<
+}: StyleXComponentProps<
   DrawerPrimitive.Viewport.Props,
   {
     position?: DrawerPosition
     variant?: DrawerVariant
   }
 >) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
     <DrawerPrimitive.Viewport
       data-slot="drawer-viewport"
-      {...mergeStyleProps(
+      {...mergeStylexProps(
         stylexProps(
           className,
           styles.viewport,
@@ -702,7 +702,7 @@ export function DrawerPopup({
   showBar = false,
   portalProps,
   ...restProps
-}: StyleComponentProps<
+}: StyleXComponentProps<
   DrawerPrimitive.Popup.Props,
   {
     showCloseButton?: boolean
@@ -712,7 +712,7 @@ export function DrawerPopup({
     portalProps?: DrawerPrimitive.Portal.Props
   }
 >) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const props = restProps
   const xstyle = consumerXstyle
 
   const { position: contextPosition } = useContext(DrawerContext)
@@ -725,7 +725,7 @@ export function DrawerPopup({
           data-position={position}
           data-slot="drawer-popup"
           data-variant={variant}
-          {...mergeStyleProps(
+          {...mergeStylexProps(
             stylexProps(
               className,
               styles.popup,
@@ -763,13 +763,13 @@ export function DrawerHeader({
   allowSelection = false,
   render,
   ...restProps
-}: StyleComponentProps<
+}: StyleXComponentProps<
   useRender.ComponentProps<"div">,
   {
     allowSelection?: boolean
   }
 >) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const props = restProps
   const xstyle = consumerXstyle
 
   const defaultProps = {
@@ -794,14 +794,14 @@ export function DrawerFooter({
   allowSelection = true,
   render,
   ...restProps
-}: StyleComponentProps<
+}: StyleXComponentProps<
   useRender.ComponentProps<"div">,
   {
     variant?: "default" | "bare"
     allowSelection?: boolean
   }
 >) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const props = restProps
   const xstyle = consumerXstyle
 
   const defaultProps = {
@@ -825,14 +825,14 @@ export function DrawerTitle({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleComponentProps<DrawerPrimitive.Title.Props>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<DrawerPrimitive.Title.Props>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
     <DrawerPrimitive.Title
       data-slot="drawer-title"
-      {...mergeStyleProps(stylexProps(className, styles.title, xstyle), props)}
+      {...mergeStylexProps(stylexProps(className, styles.title, xstyle), props)}
     />
   )
 }
@@ -840,14 +840,14 @@ export function DrawerDescription({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleComponentProps<DrawerPrimitive.Description.Props>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<DrawerPrimitive.Description.Props>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
     <DrawerPrimitive.Description
       data-slot="drawer-description"
-      {...mergeStyleProps(
+      {...mergeStylexProps(
         stylexProps(className, styles.description, xstyle),
         props,
       )}
@@ -863,7 +863,7 @@ export function DrawerPanel({
   allowSelection = true,
   render,
   ...restProps
-}: StyleComponentProps<
+}: StyleXComponentProps<
   useRender.ComponentProps<"div">,
   {
     scrollFade?: boolean
@@ -871,7 +871,7 @@ export function DrawerPanel({
     allowSelection?: boolean
   }
 >) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const props = restProps
   const xstyle = consumerXstyle
 
   const defaultProps = {
@@ -907,13 +907,13 @@ export function DrawerBar({
   position: positionProp,
   render,
   ...restProps
-}: StyleComponentProps<
+}: StyleXComponentProps<
   useRender.ComponentProps<"div">,
   {
     position?: DrawerPosition
   }
 >) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const props = restProps
   const xstyle = consumerXstyle
 
   const { position: contextPosition } = useContext(DrawerContext)
@@ -941,13 +941,13 @@ export function DrawerContent({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleComponentProps<React.ComponentProps<typeof DrawerPrimitive.Content>>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<React.ComponentProps<typeof DrawerPrimitive.Content>>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
     <DrawerPrimitive.Content
-      {...mergeStyleProps(stylexProps(className, xstyle), props)}
+      {...mergeStylexProps(stylexProps(className, xstyle), props)}
     />
   )
 }
@@ -956,8 +956,8 @@ export function DrawerMenu({
   className,
   render,
   ...restProps
-}: StyleComponentProps<useRender.ComponentProps<"nav">>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<useRender.ComponentProps<"nav">>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   const defaultProps = {
@@ -977,13 +977,13 @@ export function DrawerMenuItem({
   render,
   disabled,
   ...restProps
-}: StyleComponentProps<
+}: StyleXComponentProps<
   useRender.ComponentProps<"button">,
   {
     variant?: "default" | "destructive"
   }
 >) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const props = restProps
   const xstyle = consumerXstyle
 
   const defaultProps = {
@@ -1004,8 +1004,8 @@ export function DrawerMenuSeparator({
   className,
   render,
   ...restProps
-}: StyleComponentProps<useRender.ComponentProps<"div">>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<useRender.ComponentProps<"div">>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   const defaultProps = {
@@ -1023,8 +1023,8 @@ export function DrawerMenuGroup({
   className,
   render,
   ...restProps
-}: StyleComponentProps<useRender.ComponentProps<"div">>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<useRender.ComponentProps<"div">>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   const defaultProps = {
@@ -1042,8 +1042,8 @@ export function DrawerMenuGroupLabel({
   className,
   render,
   ...restProps
-}: StyleComponentProps<useRender.ComponentProps<"div">>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<useRender.ComponentProps<"div">>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   const defaultProps = {
@@ -1062,14 +1062,14 @@ export function DrawerMenuTrigger({
   className,
   children,
   ...restProps
-}: StyleComponentProps<DrawerPrimitive.Trigger.Props>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<DrawerPrimitive.Trigger.Props>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
     <DrawerTrigger
       data-slot="drawer-menu-trigger"
-      {...mergeStyleProps(
+      {...mergeStylexProps(
         stylexProps(className, styles.menuItem, xstyle),
         props,
       )}
@@ -1093,14 +1093,14 @@ export function DrawerMenuCheckboxItem({
   disabled,
   render,
   ...restProps
-}: StyleComponentProps<
+}: StyleXComponentProps<
   CheckboxPrimitive.Root.Props,
   {
     variant?: "default" | "switch"
     render?: React.ReactElement
   }
 >) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
@@ -1113,7 +1113,7 @@ export function DrawerMenuCheckboxItem({
       disabled={disabled}
       onCheckedChange={onCheckedChange}
       render={render}
-      {...mergeStyleProps(
+      {...mergeStylexProps(
         stylexProps(
           className,
           styles.choiceItem,
@@ -1164,14 +1164,14 @@ export function DrawerMenuRadioGroup({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleComponentProps<RadioGroupPrimitive.Props>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<RadioGroupPrimitive.Props>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
     <RadioGroupPrimitive
       data-slot="drawer-menu-radio-group"
-      {...mergeStyleProps(
+      {...mergeStylexProps(
         stylexProps(className, styles.menuGroup, xstyle),
         props,
       )}
@@ -1186,14 +1186,14 @@ export function DrawerMenuRadioItem({
   disabled,
   render,
   ...restProps
-}: StyleComponentProps<
+}: StyleXComponentProps<
   RadioPrimitive.Root.Props,
   {
     value: string
     render?: React.ReactElement
   }
 >) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
@@ -1202,7 +1202,7 @@ export function DrawerMenuRadioItem({
       disabled={disabled}
       render={render}
       value={value}
-      {...mergeStyleProps(
+      {...mergeStylexProps(
         stylexProps(className, styles.choiceItem, styles.choiceDefault, xstyle),
         props,
       )}

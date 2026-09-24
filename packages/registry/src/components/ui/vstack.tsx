@@ -1,9 +1,9 @@
 "use client"
 
-import type { StyleComponentProps, StyleProps } from "@registry/lib/style-props"
+import type { StyleXComponentProps } from "@registry/lib/stylex"
 import type * as React from "react"
 
-import { mergeStyleProps, stylexProps } from "@registry/lib/stylex"
+import { mergeStylexProps, stylexProps } from "@registry/lib/stylex"
 import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 
@@ -19,7 +19,7 @@ const styles = stylex.create({
 type VStackElementProps = React.ComponentPropsWithoutRef<"div"> &
   React.RefAttributes<HTMLDivElement>
 
-export type VStackProps = StyleComponentProps<VStackElementProps>
+export type VStackProps = StyleXComponentProps<VStackElementProps>
 
 export function VStack({
   xstyle: consumerXstyle,
@@ -27,13 +27,13 @@ export function VStack({
   ref,
   ...restProps
 }: VStackProps) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
     <div
       data-slot="vstack"
-      {...mergeStyleProps(stylexProps(className, styles.root, xstyle), props)}
+      {...mergeStylexProps(stylexProps(className, styles.root, xstyle), props)}
       ref={ref}
     />
   )

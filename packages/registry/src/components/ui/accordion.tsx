@@ -1,9 +1,9 @@
 "use client"
 
-import type { StyleComponentProps, StyleProps } from "@registry/lib/style-props"
+import type { StyleXComponentProps } from "@registry/lib/stylex"
 
 import { Accordion as AccordionPrimitive } from "@base-ui/react/accordion"
-import { mergeStyleProps, stylexProps } from "@registry/lib/stylex"
+import { mergeStylexProps, stylexProps } from "@registry/lib/stylex"
 import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import { ChevronDownIcon } from "lucide-react"
@@ -69,14 +69,14 @@ export function Accordion({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleComponentProps<AccordionPrimitive.Root.Props>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<AccordionPrimitive.Root.Props>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
     <AccordionPrimitive.Root
       data-slot="accordion"
-      {...mergeStyleProps(stylexProps(className, xstyle), props)}
+      {...mergeStylexProps(stylexProps(className, xstyle), props)}
     />
   )
 }
@@ -85,14 +85,14 @@ export function AccordionItem({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleComponentProps<AccordionPrimitive.Item.Props>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<AccordionPrimitive.Item.Props>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
     <AccordionPrimitive.Item
       data-slot="accordion-item"
-      {...mergeStyleProps(stylexProps(className, styles.item, xstyle), props)}
+      {...mergeStylexProps(stylexProps(className, styles.item, xstyle), props)}
     />
   )
 }
@@ -102,15 +102,15 @@ export function AccordionTrigger({
   className,
   children,
   ...restProps
-}: StyleComponentProps<AccordionPrimitive.Trigger.Props>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<AccordionPrimitive.Trigger.Props>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
     <AccordionPrimitive.Header {...stylex.props(styles.header)}>
       <AccordionPrimitive.Trigger
         data-slot="accordion-trigger"
-        {...mergeStyleProps(
+        {...mergeStylexProps(
           stylexProps(className, styles.trigger, xstyle),
           props,
         )}
@@ -130,14 +130,14 @@ export function AccordionPanel({
   className,
   children,
   ...restProps
-}: StyleComponentProps<AccordionPrimitive.Panel.Props>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<AccordionPrimitive.Panel.Props>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
     <AccordionPrimitive.Panel
       data-slot="accordion-panel"
-      {...mergeStyleProps(
+      {...mergeStylexProps(
         stylexProps(
           typeof className === "function" ? className : undefined,
           styles.panel,

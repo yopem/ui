@@ -17,6 +17,59 @@ import { Grid } from "@/components/ui/grid"
 import { Heading } from "@/components/ui/heading"
 import { Paragraph } from "@/components/ui/paragraph"
 import { createSeo } from "@/lib/seo"
+
+const styles = stylex.create({
+  section: { marginBlock: "2rem", minInlineSize: "calc(var(--spacing) * 0)" },
+  searchComponents: {
+    backgroundColor: tokens["--background"],
+    borderColor: tokens["--input"],
+    borderRadius: tokens["--radius-lg"],
+    borderStyle: "solid",
+    borderWidth: 1,
+    color: tokens["--foreground"],
+    font: "inherit",
+    inlineSize: "100%",
+    maxInlineSize: "32rem",
+    paddingBlock: "0.75rem",
+    paddingInline: "0.9rem",
+    outlineColor: {
+      ":is(:focus-visible, [data-focus-visible])": tokens["--ring"],
+    },
+    outlineStyle: { ":is(:focus-visible, [data-focus-visible])": "solid" },
+    outlineWidth: { ":is(:focus-visible, [data-focus-visible])": 2 },
+    outlineOffset: { ":is(:focus-visible, [data-focus-visible])": 2 },
+  },
+  grid: {
+    gap: "0.75rem",
+    gridTemplateColumns: {
+      default: "1fr",
+      "@media (min-width: 768px)": "repeat(2, minmax(0, 1fr))",
+      "@media (min-width: 1024px)": "repeat(3, minmax(0, 1fr))",
+    },
+  },
+  h2: {
+    fontSize: "1rem",
+    fontWeight: 650,
+    letterSpacing: "-0.01em",
+    margin: "calc(var(--spacing) * 0)",
+  },
+  span: {
+    color: tokens["--muted-foreground"],
+    fontSize: "0.75rem",
+    marginBlockStart: "auto",
+  },
+  paragraph: {
+    borderColor: tokens["--border"],
+    borderRadius: tokens["--radius-xl"],
+    borderStyle: "dashed",
+    borderWidth: 1,
+    color: tokens["--muted-foreground"],
+    gridColumn: "1 / -1",
+    paddingBlock: "2rem",
+    paddingInline: "2rem",
+    textAlign: "center",
+  },
+})
 export const Route = createFileRoute("/components/")({
   head: () =>
     createSeo({
@@ -48,26 +101,10 @@ function ComponentsPage() {
           the API, and copy the source into your project.
         </DocsDescription>
         <DocsBody>
-          <Box as="section" marginBlock="2rem" minInlineSize={0}>
+          <Box as="section" xstyle={styles.section}>
             <Box
               as="input"
-              backgroundColor={tokens["--background"]}
-              borderColor={tokens["--input"]}
-              borderRadius={tokens["--radius-lg"]}
-              borderStyle="solid"
-              borderWidth={1}
-              color={tokens["--foreground"]}
-              font="inherit"
-              inlineSize="100%"
-              maxInlineSize="32rem"
-              paddingBlock="0.75rem"
-              paddingInline="0.9rem"
-              _focusVisible={{
-                outlineColor: tokens["--ring"],
-                outlineStyle: "solid",
-                outlineWidth: 2,
-                outlineOffset: 2,
-              }}
+              xstyle={styles.searchComponents}
               aria-label="Search components"
               onChange={(event) => setQuery(event.target.value)}
               placeholder="Search components…"
@@ -75,14 +112,7 @@ function ComponentsPage() {
               value={query}
             />
           </Box>
-          <Grid
-            gap="0.75rem"
-            gridTemplateColumns={{
-              base: "1fr",
-              md: "repeat(2, minmax(0, 1fr))",
-              lg: "repeat(3, minmax(0, 1fr))",
-            }}
-          >
+          <Grid xstyle={styles.grid}>
             {results.map((item) => (
               <Link
                 {...stylex.props(catalogStyles.card)}
@@ -91,36 +121,16 @@ function ComponentsPage() {
                 preload="intent"
                 to="/components/$name"
               >
-                <Heading
-                  as="h2"
-                  fontSize="1rem"
-                  fontWeight={650}
-                  letterSpacing="-0.01em"
-                  margin={0}
-                >
+                <Heading as="h2" xstyle={styles.h2}>
                   {item.title}
                 </Heading>
-                <Box
-                  as="span"
-                  color={tokens["--muted-foreground"]}
-                  fontSize="0.75rem"
-                  marginBlockStart="auto"
-                >
+                <Box as="span" xstyle={styles.span}>
                   {item.preview ? "Live preview" : "Usage and API"}
                 </Box>
               </Link>
             ))}
             {results.length === 0 ? (
-              <Paragraph
-                borderColor={tokens["--border"]}
-                borderRadius={tokens["--radius-xl"]}
-                borderStyle="dashed"
-                borderWidth={1}
-                color={tokens["--muted-foreground"]}
-                gridColumn="1 / -1"
-                padding="2rem"
-                textAlign="center"
-              >
+              <Paragraph xstyle={styles.paragraph}>
                 No components match “{query}”.
               </Paragraph>
             ) : null}

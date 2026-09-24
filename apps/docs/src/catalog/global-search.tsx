@@ -20,6 +20,52 @@ import { useCallback, useRef, useState } from "react"
 
 import { Box } from "@/components/ui/box"
 
+const primitiveStyles = stylex.create({
+  searchDocumentation: {
+    marginInlineStart: "auto",
+    inlineSize: { default: "15rem", "@media (max-width: 767.98px)": "2.5rem" },
+    justifyContent: {
+      default: "flex-start",
+      "@media (max-width: 767.98px)": "center",
+    },
+    color: tokens["--muted-foreground"],
+  },
+  span: {
+    display: { default: "inline", "@media (max-width: 767.98px)": "none" },
+  },
+  kbd: {
+    marginInlineStart: "auto",
+    fontFamily: tokens["--font-mono"],
+    fontSize: "0.6875rem",
+    display: { default: "inline", "@media (max-width: 767.98px)": "none" },
+  },
+  dialogPopup: {
+    paddingBlock: "1.5rem",
+    paddingInline: "1.5rem",
+    gap: "1rem",
+    maxBlockSize: "min(42rem, 85dvh)",
+  },
+  output: {
+    color: tokens["--muted-foreground"],
+    fontSize: "0.8125rem",
+    margin: "calc(var(--spacing) * 0)",
+  },
+  span2: { color: tokens["--destructive"] },
+  searchResults: { minBlockSize: 0 },
+  ul: {
+    listStyleType: "none",
+    margin: "calc(var(--spacing) * 0)",
+    paddingBlock: "calc(var(--spacing) * 0)",
+    paddingInline: "calc(var(--spacing) * 0)",
+  },
+  span3: {
+    display: "block",
+    color: tokens["--muted-foreground"],
+    fontSize: "0.75rem",
+    marginBlockEnd: "0.25rem",
+  },
+})
+
 function listenForSearchShortcut(onShortcut: () => void) {
   function onKeyDown(event: KeyboardEvent) {
     if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
@@ -121,31 +167,20 @@ export function GlobalSearch() {
             variant="outline"
             ref={registerTrigger}
             aria-label="Search documentation"
-            marginInlineStart={"auto"}
-            inlineSize={{ base: "15rem", mdDown: "2.5rem" }}
-            justifyContent={{ base: "flex-start", mdDown: "center" }}
-            color={tokens["--muted-foreground"]}
+            xstyle={primitiveStyles.searchDocumentation}
           />
         }
       >
         <SearchIcon size={16} />
-        <Box as="span" display={{ base: "inline", mdDown: "none" }}>
+        <Box as="span" xstyle={primitiveStyles.span}>
           Search docs
         </Box>
-        <Box
-          as="kbd"
-          marginInlineStart={"auto"}
-          fontFamily={tokens["--font-mono"]}
-          fontSize={"0.6875rem"}
-          display={{ base: "inline", mdDown: "none" }}
-        >
+        <Box as="kbd" xstyle={primitiveStyles.kbd}>
           ⌘ / Ctrl K
         </Box>
       </DialogTrigger>
       <DialogPopup
-        padding="1.5rem"
-        gap="1rem"
-        maxBlockSize="min(42rem, 85dvh)"
+        xstyle={primitiveStyles.dialogPopup}
         initialFocus={inputRef}
         finalFocus={triggerRef}
         bottomStickOnMobile={false}
@@ -166,15 +201,9 @@ export function GlobalSearch() {
             void search(nextQuery)
           }}
         />
-        <Box
-          as="output"
-          aria-live="polite"
-          color={tokens["--muted-foreground"]}
-          fontSize="0.8125rem"
-          margin={0}
-        >
+        <Box as="output" aria-live="polite" xstyle={primitiveStyles.output}>
           {status === "error" ? (
-            <Box as="span" color={tokens["--destructive"]}>
+            <Box as="span" xstyle={primitiveStyles.span2}>
               Search unavailable. Change your query to try again.
             </Box>
           ) : !query.trim() ? (
@@ -189,9 +218,9 @@ export function GlobalSearch() {
           aria-label="Search results"
           overscrollContain
           scrollFade
-          minBlockSize={0}
+          xstyle={primitiveStyles.searchResults}
         >
-          <Box as="ul" listStyleType={"none"} margin={0} padding={0}>
+          <Box as="ul" xstyle={primitiveStyles.ul}>
             {status === "ready"
               ? results.map((result) => (
                   <Box as="li" key={result.id}>
@@ -201,13 +230,7 @@ export function GlobalSearch() {
                       {...stylex.props(styles.result)}
                     >
                       {result.breadcrumbs?.length ? (
-                        <Box
-                          as="span"
-                          display={"block"}
-                          color={tokens["--muted-foreground"]}
-                          fontSize={"0.75rem"}
-                          marginBlockEnd={"0.25rem"}
-                        >
+                        <Box as="span" xstyle={primitiveStyles.span3}>
                           {result.breadcrumbs
                             .join(" / ")
                             .replace(/<\/?mark>/g, "")}

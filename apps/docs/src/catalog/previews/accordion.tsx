@@ -1,9 +1,12 @@
+import * as stylex from "@stylexjs/stylex"
+
 import {
   Accordion,
   AccordionItem,
   AccordionPanel,
   AccordionTrigger,
 } from "@/components/ui/accordion"
+const styles = stylex.create({ accordion: { inlineSize: "100%" } })
 
 export function Preview() {
   const items = [
@@ -27,7 +30,7 @@ export function Preview() {
   ]
 
   return (
-    <Accordion inlineSize={"100%"} defaultValue={["3"]}>
+    <Accordion xstyle={styles.accordion} defaultValue={["3"]}>
       {items.map((item) => (
         <AccordionItem key={item.id} value={item.id}>
           <AccordionTrigger>{item.title}</AccordionTrigger>

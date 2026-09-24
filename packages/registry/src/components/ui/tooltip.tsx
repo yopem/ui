@@ -1,9 +1,9 @@
 "use client"
 
-import type { StyleComponentProps, StyleProps } from "@registry/lib/style-props"
+import type { StyleXComponentProps } from "@registry/lib/stylex"
 
 import { Tooltip as TooltipPrimitive } from "@base-ui/react/tooltip"
-import { mergeStyleProps, stylexProps } from "@registry/lib/stylex"
+import { mergeStylexProps, stylexProps } from "@registry/lib/stylex"
 import { themeMarker, tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 
@@ -71,14 +71,14 @@ export function TooltipTrigger({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleComponentProps<TooltipPrimitive.Trigger.Props>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<TooltipPrimitive.Trigger.Props>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
     <TooltipPrimitive.Trigger
       data-slot="tooltip-trigger"
-      {...mergeStyleProps(stylexProps(className, xstyle), props)}
+      {...mergeStylexProps(stylexProps(className, xstyle), props)}
     />
   )
 }
@@ -93,7 +93,7 @@ export function TooltipPopup({
   children,
   portalProps,
   ...restProps
-}: StyleComponentProps<
+}: StyleXComponentProps<
   TooltipPrimitive.Popup.Props,
   {
     align?: TooltipPrimitive.Positioner.Props["align"]
@@ -103,7 +103,7 @@ export function TooltipPopup({
     portalProps?: TooltipPrimitive.Portal.Props
   }
 >) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
@@ -118,7 +118,7 @@ export function TooltipPopup({
       >
         <TooltipPrimitive.Popup
           data-slot="tooltip-popup"
-          {...mergeStyleProps(
+          {...mergeStylexProps(
             stylexProps(className, styles.popup, xstyle),
             props,
           )}

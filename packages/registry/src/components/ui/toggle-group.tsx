@@ -1,7 +1,7 @@
 "use client"
 
 import type { Toggle as TogglePrimitive } from "@base-ui/react/toggle"
-import type { StyleComponentProps, StyleProps } from "@registry/lib/style-props"
+import type { StyleXComponentProps } from "@registry/lib/stylex"
 
 import { ToggleGroup as ToggleGroupPrimitive } from "@base-ui/react/toggle-group"
 import { Separator } from "@registry/components/ui/separator"
@@ -9,7 +9,7 @@ import {
   Toggle as ToggleComponent,
   type ToggleVariantProps,
 } from "@registry/components/ui/toggle"
-import { mergeStyleProps, stylexProps } from "@registry/lib/stylex"
+import { mergeStylexProps, stylexProps } from "@registry/lib/stylex"
 import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import * as React from "react"
@@ -41,10 +41,10 @@ export function ToggleGroup({
   orientation = "horizontal",
   children,
   ...restProps
-}: StyleComponentProps<
+}: StyleXComponentProps<
   ToggleGroupPrimitive.Props & Omit<ToggleVariantProps, "className">
 >) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const props = restProps
   const xstyle = consumerXstyle
 
   const contextValue = React.useMemo(() => ({ size, variant }), [size, variant])
@@ -54,7 +54,7 @@ export function ToggleGroup({
       data-slot="toggle-group"
       data-variant={variant}
       orientation={orientation}
-      {...mergeStyleProps(
+      {...mergeStylexProps(
         stylexProps(
           className,
           styles.root,
@@ -79,10 +79,10 @@ export function ToggleGroupItem({
   variant,
   size,
   ...restProps
-}: StyleComponentProps<
+}: StyleXComponentProps<
   TogglePrimitive.Props & Omit<ToggleVariantProps, "className">
 >) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const props = restProps
   const xstyle = consumerXstyle
 
   const context = React.useContext(ToggleGroupContext)
@@ -108,8 +108,8 @@ export function ToggleGroupSeparator({
   className,
   orientation = "vertical",
   ...restProps
-}: StyleComponentProps<React.ComponentProps<typeof Separator>>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<React.ComponentProps<typeof Separator>>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (

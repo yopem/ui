@@ -1,3 +1,5 @@
+import * as stylex from "@stylexjs/stylex"
+
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -13,6 +15,11 @@ import {
 import { Field, FieldLabel } from "@/components/ui/field"
 import { Form } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
+const styles = stylex.create({
+  dialogPopup: { maxInlineSize: { "@media (min-width: 768px)": "24rem" } },
+  form: { display: "contents" },
+  dialogPanel: { display: "grid", gap: "calc(0.25rem * 4)" },
+})
 
 const profileFields = [
   { defaultValue: "Margaret Welsh", label: "Name" },
@@ -25,15 +32,15 @@ export function Preview() {
       <DialogTrigger render={<Button variant="outline" />}>
         Open Dialog
       </DialogTrigger>
-      <DialogPopup md={{ maxInlineSize: "24rem" }}>
+      <DialogPopup xstyle={styles.dialogPopup}>
         <DialogHeader>
           <DialogTitle>Edit profile</DialogTitle>
           <DialogDescription>
             Make changes to your profile here. Click save when you&apos;re done.
           </DialogDescription>
         </DialogHeader>
-        <Form display={"contents"}>
-          <DialogPanel display={"grid"} gap={"calc(0.25rem * 4)"}>
+        <Form xstyle={styles.form}>
+          <DialogPanel xstyle={styles.dialogPanel}>
             {profileFields.map((field) => (
               <Field key={field.label}>
                 <FieldLabel>{field.label}</FieldLabel>

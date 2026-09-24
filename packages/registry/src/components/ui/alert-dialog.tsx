@@ -1,10 +1,10 @@
 "use client"
 
-import type { StyleComponentProps, StyleProps } from "@registry/lib/style-props"
+import type { StyleXComponentProps } from "@registry/lib/stylex"
 import type React from "react"
 
 import { AlertDialog as AlertDialogPrimitive } from "@base-ui/react/alert-dialog"
-import { mergeStyleProps, stylexProps } from "@registry/lib/stylex"
+import { mergeStylexProps, stylexProps } from "@registry/lib/stylex"
 import { themeMarker, tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 
@@ -142,14 +142,14 @@ export function AlertDialogTrigger({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleComponentProps<AlertDialogPrimitive.Trigger.Props>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<AlertDialogPrimitive.Trigger.Props>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
     <AlertDialogPrimitive.Trigger
       data-slot="alert-dialog-trigger"
-      {...mergeStyleProps(stylexProps(className, xstyle), props)}
+      {...mergeStylexProps(stylexProps(className, xstyle), props)}
     />
   )
 }
@@ -158,14 +158,14 @@ export function AlertDialogBackdrop({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleComponentProps<AlertDialogPrimitive.Backdrop.Props>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<AlertDialogPrimitive.Backdrop.Props>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
     <AlertDialogPrimitive.Backdrop
       data-slot="alert-dialog-backdrop"
-      {...mergeStyleProps(
+      {...mergeStylexProps(
         stylexProps(className, styles.backdrop, xstyle),
         props,
       )}
@@ -177,14 +177,14 @@ export function AlertDialogViewport({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleComponentProps<AlertDialogPrimitive.Viewport.Props>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<AlertDialogPrimitive.Viewport.Props>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
     <AlertDialogPrimitive.Viewport
       data-slot="alert-dialog-viewport"
-      {...mergeStyleProps(
+      {...mergeStylexProps(
         stylexProps(className, styles.viewport, xstyle),
         props,
       )}
@@ -198,14 +198,14 @@ export function AlertDialogPopup({
   bottomStickOnMobile = true,
   portalProps,
   ...restProps
-}: StyleComponentProps<
+}: StyleXComponentProps<
   AlertDialogPrimitive.Popup.Props,
   {
     bottomStickOnMobile?: boolean
     portalProps?: AlertDialogPrimitive.Portal.Props
   }
 >) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
@@ -219,7 +219,7 @@ export function AlertDialogPopup({
       >
         <AlertDialogPrimitive.Popup
           data-slot="alert-dialog-popup"
-          {...mergeStyleProps(
+          {...mergeStylexProps(
             stylexProps(
               className,
               styles.popup,
@@ -238,14 +238,17 @@ export function AlertDialogHeader({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleComponentProps<React.ComponentProps<"div">>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<React.ComponentProps<"div">>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
     <div
       data-slot="alert-dialog-header"
-      {...mergeStyleProps(stylexProps(className, styles.header, xstyle), props)}
+      {...mergeStylexProps(
+        stylexProps(className, styles.header, xstyle),
+        props,
+      )}
     />
   )
 }
@@ -255,19 +258,19 @@ export function AlertDialogFooter({
   className,
   variant = "default",
   ...restProps
-}: StyleComponentProps<
+}: StyleXComponentProps<
   React.ComponentProps<"div">,
   {
     variant?: "default" | "bare"
   }
 >) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
     <div
       data-slot="alert-dialog-footer"
-      {...mergeStyleProps(
+      {...mergeStylexProps(
         stylexProps(
           className,
           styles.footer,
@@ -284,14 +287,14 @@ export function AlertDialogTitle({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleComponentProps<AlertDialogPrimitive.Title.Props>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<AlertDialogPrimitive.Title.Props>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
     <AlertDialogPrimitive.Title
       data-slot="alert-dialog-title"
-      {...mergeStyleProps(stylexProps(className, styles.title, xstyle), props)}
+      {...mergeStylexProps(stylexProps(className, styles.title, xstyle), props)}
     />
   )
 }
@@ -300,14 +303,14 @@ export function AlertDialogDescription({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleComponentProps<AlertDialogPrimitive.Description.Props>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<AlertDialogPrimitive.Description.Props>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
     <AlertDialogPrimitive.Description
       data-slot="alert-dialog-description"
-      {...mergeStyleProps(
+      {...mergeStylexProps(
         stylexProps(className, styles.description, xstyle),
         props,
       )}
@@ -319,14 +322,14 @@ export function AlertDialogClose({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleComponentProps<AlertDialogPrimitive.Close.Props>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<AlertDialogPrimitive.Close.Props>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
     <AlertDialogPrimitive.Close
       data-slot="alert-dialog-close"
-      {...mergeStyleProps(stylexProps(className, xstyle), props)}
+      {...mergeStylexProps(stylexProps(className, xstyle), props)}
     />
   )
 }

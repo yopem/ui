@@ -1,8 +1,0 @@
-{
-  "extends": "@yopem/typescript-config/react",
-  "compilerOptions": {
-    "noEmit": true,
-    "types": ["bun", "node"]
-  },
-  "include": ["src/**/*.ts", "test/**/*.ts"]
-}

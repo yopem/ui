@@ -1,12 +1,12 @@
 "use client"
 
-import type { StyleComponentProps, StyleProps } from "@registry/lib/style-props"
+import type { StyleXComponentProps } from "@registry/lib/stylex"
 import type * as React from "react"
 
 import { mergeProps } from "@base-ui/react/merge-props"
 import { useRender } from "@base-ui/react/use-render"
 import { type Button, buttonVariants } from "@registry/components/ui/button"
-import { mergeStyleProps, stylexProps } from "@registry/lib/stylex"
+import { mergeStylexProps, stylexProps } from "@registry/lib/stylex"
 import * as stylex from "@stylexjs/stylex"
 import { clsx } from "clsx"
 import {
@@ -66,8 +66,8 @@ export function Pagination({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleComponentProps<React.ComponentProps<"nav">>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<React.ComponentProps<"nav">>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
@@ -75,7 +75,7 @@ export function Pagination({
       aria-label="pagination"
 
       data-slot="pagination"
-      {...mergeStyleProps(stylexProps(className, styles.root, xstyle), props)}
+      {...mergeStylexProps(stylexProps(className, styles.root, xstyle), props)}
     />
   )
 }
@@ -84,14 +84,14 @@ export function PaginationContent({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleComponentProps<React.ComponentProps<"ul">>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<React.ComponentProps<"ul">>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
     <ul
       data-slot="pagination-content"
-      {...mergeStyleProps(
+      {...mergeStylexProps(
         stylexProps(className, styles.content, xstyle),
         props,
       )}
@@ -103,19 +103,19 @@ export function PaginationItem({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleComponentProps<React.ComponentProps<"li">>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<React.ComponentProps<"li">>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
     <li
       data-slot="pagination-item"
-      {...mergeStyleProps(stylexProps(className, xstyle), props)}
+      {...mergeStylexProps(stylexProps(className, xstyle), props)}
     />
   )
 }
 
-export type PaginationLinkProps = StyleComponentProps<
+export type PaginationLinkProps = StyleXComponentProps<
   useRender.ComponentProps<"a">,
   {
     isActive?: boolean
@@ -131,7 +131,7 @@ export function PaginationLink({
   render,
   ...restProps
 }: PaginationLinkProps) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+  const props = restProps
   const xstyle = consumerXstyle
 
   const defaultProps = {
@@ -162,8 +162,8 @@ export function PaginationPrevious({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleComponentProps<React.ComponentProps<typeof PaginationLink>>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<React.ComponentProps<typeof PaginationLink>>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
@@ -184,8 +184,8 @@ export function PaginationNext({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleComponentProps<React.ComponentProps<typeof PaginationLink>>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<React.ComponentProps<typeof PaginationLink>>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
@@ -206,8 +206,8 @@ export function PaginationEllipsis({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleComponentProps<React.ComponentProps<"span">>) {
-  const props: Omit<typeof restProps, keyof StyleProps> = restProps
+}: StyleXComponentProps<React.ComponentProps<"span">>) {
+  const props = restProps
   const xstyle = consumerXstyle
 
   return (
@@ -215,7 +215,7 @@ export function PaginationEllipsis({
       aria-hidden
 
       data-slot="pagination-ellipsis"
-      {...mergeStyleProps(
+      {...mergeStylexProps(
         stylexProps(className, styles.ellipsis, xstyle),
         props,
       )}
