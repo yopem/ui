@@ -31,7 +31,7 @@ test("documentation navigation has no separator borders", async ({ page }) => {
   test.skip((page.viewportSize()?.width ?? 0) < 768, "Desktop sidebar only")
   await page.goto("/")
   await expect(page.getByRole("banner")).toHaveCSS("border-bottom-width", "0px")
-  await expect(page.getByRole("complementary")).toHaveCSS(
+  await expect(page.getByRole("complementary").first()).toHaveCSS(
     "border-inline-end-width",
     "0px",
   )
@@ -275,6 +275,7 @@ test("dark theme uses StyleX classes without inline color-scheme", async ({
   await expect(page.locator("html")).toHaveCSS("--foreground", /\S/)
   await expect(page.getByRole("main")).toHaveCSS("font-family", /Figtree/)
   await expect(page.getByRole("main")).not.toHaveCSS("color", "rgb(0, 0, 0)")
+  await expect(page.locator('link[href*="virtual:stylex"]')).toHaveCount(0)
   await expect(page.locator("html")).not.toHaveAttribute(
     "style",
     /color-scheme/,

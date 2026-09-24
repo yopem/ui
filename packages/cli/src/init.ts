@@ -198,11 +198,68 @@ function addAlias(
 }
 
 function babelPlugin() {
-  return "babel({ plugins: yopemBabelConfig.plugins })"
+  return "babel({ plugins: yopemBabelPlugins })"
+}
+
+function stylexSetup() {
+  return `import babel from "@rolldown/plugin-babel"
+import { createRequire as yopemCreateRequire } from "node:module"
+import { fileURLToPath as yopemFileURLToPath } from "node:url"
+
+const yopemSource = yopemFileURLToPath(new URL("./src", import.meta.url))
+const yopemBabelPlugins = [["@stylexjs/babel-plugin", {
+  aliases: { "@/*": [yopemSource + "/*"] },
+  dev: process.env.NODE_ENV !== "production",
+  runtimeInjection: false,
+  treeshakeCompensation: true,
+  unstable_moduleResolution: { type: "commonJS" },
+}]]
+const yopemPostcssPlugin = yopemCreateRequire(import.meta.url)("@stylexjs/postcss-plugin")({
+  cwd: yopemFileURLToPath(new URL(".", import.meta.url)),
+  include: ["src/**/*.{js,jsx,ts,tsx}", "app/**/*.{js,jsx,ts,tsx}"],
+  babelConfig: {
+    babelrc: false,
+    parserOpts: { plugins: ["typescript", "jsx"] },
+    plugins: yopemBabelPlugins,
+  },
+  useCSSLayers: true,
+})
+if (typeof yopemPostcssPlugin?.postcssPlugin !== "string")
+  throw new Error("Invalid StyleX PostCSS plugin")
+`
 }
 
 function hasYopemStylexConfig(content: string) {
   return content.includes(babelPlugin())
+}
+
+function addStylexPostcss(
+  source: ts.SourceFile,
+  config: ts.ObjectLiteralExpression,
+  path: string,
+  edits: Edit[],
+) {
+  const css = property(config, "css")
+  if (css) {
+    const options = objectValue(css, path)
+    if (property(options, "postcss"))
+      throw new Error(
+        `Existing PostCSS config requires manual review in ${path}`,
+      )
+    addProperty(
+      source,
+      options,
+      "postcss: { plugins: [yopemPostcssPlugin] }",
+      edits,
+    )
+  } else {
+    addProperty(
+      source,
+      config,
+      "css: { postcss: { plugins: [yopemPostcssPlugin] } }",
+      edits,
+    )
+  }
 }
 
 function viteConfig(content: string, path: string) {
@@ -210,7 +267,10 @@ function viteConfig(content: string, path: string) {
     if (!content.includes('"@":') && !content.includes("'@':")) {
       throw new Error(`Existing StyleX configuration lacks @ alias in ${path}`)
     }
-    if (!hasYopemStylexConfig(content)) {
+    if (
+      !hasYopemStylexConfig(content) ||
+      !content.includes("postcss: { plugins: [yopemPostcssPlugin] }")
+    ) {
       throw new Error(`Incomplete Yopem build configuration in ${path}`)
     }
     return content
@@ -229,8 +289,8 @@ function viteConfig(content: string, path: string) {
     addProperty(source, config, `plugins: [${entries.join(", ")}]`, edits)
   }
   addAlias(source, config, path, edits)
-  const imports = `import babel from "@rolldown/plugin-babel"\nimport yopemBabelConfig from "./babel.config.cjs"\nimport { fileURLToPath as yopemFileURLToPath } from "node:url"\n\nconst yopemSource = yopemFileURLToPath(new URL("./src", import.meta.url))\n`
-  edits.push({ start: 0, end: 0, text: imports })
+  addStylexPostcss(source, config, path, edits)
+  edits.push({ start: 0, end: 0, text: stylexSetup() })
   return applyEdits(content, edits)
 }
 
@@ -255,7 +315,7 @@ function astroConfig(content: string, path: string) {
     if (!content.includes('"@":') && !content.includes("'@':")) {
       throw new Error(`Existing StyleX configuration lacks @ alias in ${path}`)
     }
-    if (!hasYopemStylexConfig(content)) {
+    if (!content.includes("postcss: { plugins: [yopemPostcssPlugin] }")) {
       throw new Error(`Incomplete Yopem build configuration in ${path}`)
     }
     return content
@@ -286,12 +346,13 @@ function astroConfig(content: string, path: string) {
     addProperty(
       source,
       config,
-      `vite: { resolve: { alias: { "@": yopemSource } }, plugins: [${babelPlugin()}] }`,
+      `vite: { resolve: { alias: { "@": yopemSource } }, plugins: [${babelPlugin()}], css: { postcss: { plugins: [yopemPostcssPlugin] } } }`,
       edits,
     )
   } else {
     const nested = objectValue(vite, path)
     addAlias(source, nested, path, edits)
+    addStylexPostcss(source, nested, path, edits)
     const plugins = property(nested, "plugins")
     if (plugins) {
       if (!ts.isArrayLiteralExpression(plugins.initializer)) {
@@ -305,7 +366,7 @@ function astroConfig(content: string, path: string) {
   edits.push({
     start: 0,
     end: 0,
-    text: `import babel from "@rolldown/plugin-babel"\nimport yopemBabelConfig from "./babel.config.cjs"\n${reactImport ? "" : 'import react from "@astrojs/react"\n'}import { fileURLToPath as yopemFileURLToPath } from "node:url"\n\nconst yopemSource = yopemFileURLToPath(new URL("./src", import.meta.url))\n`,
+    text: `${reactImport ? "" : 'import react from "@astrojs/react"\n'}${stylexSetup()}`,
   })
   return applyEdits(content, edits)
 }
@@ -621,17 +682,6 @@ ${esm ? 'export const presets = ["next/babel"]\nexport const plugins = [' : 'mod
 `
 }
 
-function viteBabel() {
-  return nextBabel(false).replace('  presets: ["next/babel"],\n', "")
-}
-
-function vitePostcss() {
-  return nextPostcss()
-    .replaceAll("./babel.config.js", "./babel.config.cjs")
-    .replace("    autoprefixer: {},\n", "")
-    .replace(', "pages/**/*.{js,jsx,ts,tsx}"', "")
-}
-
 function nextPostcss() {
   return `const babelConfig = require("./babel.config.js")
 
@@ -652,12 +702,7 @@ module.exports = {
 `
 }
 
-function postcss(
-  content: string,
-  path: string,
-  esm: boolean,
-  babelPath = "./babel.config.js",
-) {
+function postcss(content: string, path: string, esm: boolean) {
   if (content.includes('"@stylexjs/postcss-plugin"')) return content
   const source = parsed(path, content)
   let config: ts.ObjectLiteralExpression | undefined
@@ -694,8 +739,8 @@ function postcss(
     start: 0,
     end: 0,
     text: esm
-      ? `import { createRequire } from "node:module"\nconst yopemBabelConfig = createRequire(import.meta.url)("${babelPath}")\n`
-      : `const yopemBabelConfig = require("${babelPath}")\n`,
+      ? 'import { createRequire } from "node:module"\nconst yopemBabelConfig = createRequire(import.meta.url)("./babel.config.js")\n'
+      : 'const yopemBabelConfig = require("./babel.config.js")\n',
   })
   return applyEdits(content, edits)
 }
@@ -818,6 +863,22 @@ export async function initProject(options: InitOptions = {}) {
     const after = transform(before ?? fallback!)
     if (before !== after) edits.set(path, { before, after })
   }
+  if (framework !== "next") {
+    for (const name of [
+      "babel.config.js",
+      "babel.config.cjs",
+      "babel.config.mjs",
+      "postcss.config.js",
+      "postcss.config.cjs",
+      "postcss.config.mjs",
+    ]) {
+      if (await existingFile(root, name)) {
+        throw new Error(
+          `Existing ${name.startsWith("babel") ? "Babel" : "PostCSS"} config requires manual review`,
+        )
+      }
+    }
+  }
   const tsPath =
     framework !== "next" &&
     framework !== "astro" &&
@@ -932,39 +993,6 @@ export async function initProject(options: InitOptions = {}) {
       ])
       await plan(entry, (content) => reactEntry(content, entry))
     }
-  }
-  if (framework !== "next") {
-    const babel = viteBabel()
-    await plan(
-      "babel.config.cjs",
-      (content) => {
-        if (content !== babel)
-          throw new Error("Existing Babel config requires manual review")
-        return content
-      },
-      babel,
-    )
-    const postcssConfig = vitePostcss()
-    const postcssPath = await chooseFile(
-      root,
-      ["postcss.config.cjs", "postcss.config.js", "postcss.config.mjs"],
-      "postcss.config.cjs",
-    )
-    await plan(
-      postcssPath,
-      (content) =>
-        content === postcssConfig ||
-        content.includes('"@stylexjs/postcss-plugin"')
-          ? content
-          : postcss(
-              content,
-              postcssPath,
-              postcssPath.endsWith(".mjs") ||
-                (postcssPath.endsWith(".js") && manifest.type === "module"),
-              "./babel.config.cjs",
-            ),
-      postcssConfig,
-    )
   }
   const packageRun =
     options.run ??

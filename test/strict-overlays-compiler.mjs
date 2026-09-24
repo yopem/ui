@@ -10,9 +10,8 @@ const registryRequire = createRequire(
   resolve(root, "packages/registry/package.json"),
 )
 const docsRequire = createRequire(resolve(root, "apps/docs/package.json"))
-const compilerRequire = createRequire(docsRequire.resolve("@stylexjs/unplugin"))
-const { transformSync } = compilerRequire("@babel/core")
-const plugin = compilerRequire("@stylexjs/babel-plugin")
+const { transformSync } = docsRequire("@babel/core")
+const plugin = docsRequire("@stylexjs/babel-plugin")
 const stylex = registryRequire("@stylexjs/stylex")
 const ts = registryRequire("typescript-api")
 

@@ -102,12 +102,6 @@ for (const fixture of [
         }),
       )
       put("tsconfig.json", "{}")
-      if (fixture.framework === "vite") {
-        put(
-          "postcss.config.cjs",
-          "module.exports = { plugins: { autoprefixer: {} } }",
-        )
-      }
       put(
         fixture.config,
         fixture.framework === "astro"
@@ -146,8 +140,10 @@ for (const fixture of [
       expect(commands.flat()).toContain("@rolldown/plugin-babel@^0.2.4")
       const config = readFileSync(join(root, fixture.config), "utf8")
       expect(config).toContain("@rolldown/plugin-babel")
-      expect(config).toContain("babel({ plugins: yopemBabelConfig.plugins })")
+      expect(config).toContain('"@stylexjs/babel-plugin"')
+      expect(config).toContain("yopemBabelPlugins")
       expect(config).not.toContain("@stylexjs/unplugin")
+      expect(config).not.toContain("babel.config.cjs")
       expect(
         readFileSync(join(root, "src/styles/styles.css"), "utf8"),
       ).toContain("@stylex;")
@@ -155,14 +151,10 @@ for (const fixture of [
       expect(readFileSync(join(root, fixture.layout), "utf8")).not.toContain(
         "stylex.css",
       )
-      expect(readFileSync(join(root, "babel.config.cjs"), "utf8")).toContain(
-        "expandLocalSpreads",
-      )
-      const postcss = readFileSync(join(root, "postcss.config.cjs"), "utf8")
-      expect(postcss).toContain("@stylexjs/postcss-plugin")
-      expect(postcss).toContain('"app/**/*.{js,jsx,ts,tsx}"')
-      if (fixture.framework === "vite")
-        expect(postcss).toContain("autoprefixer")
+      expect(existsSync(join(root, "babel.config.cjs"))).toBe(false)
+      expect(config).toContain("@stylexjs/postcss-plugin")
+      expect(config).toContain('"app/**/*.{js,jsx,ts,tsx}"')
+      expect(existsSync(join(root, "postcss.config.cjs"))).toBe(false)
       await initProject({
         cwd: root,
         framework: fixture.framework,
@@ -174,6 +166,34 @@ for (const fixture of [
     }
   })
 }
+
+test("CLI leaves existing PostCSS configuration unchanged", async () => {
+  const root = mkdtempSync(join(tmpdir(), "yopem-existing-postcss-"))
+  try {
+    writeFileSync(
+      join(root, "package.json"),
+      JSON.stringify({ dependencies: { vite: "*", react: "*" } }),
+    )
+    writeFileSync(join(root, "tsconfig.json"), "{}")
+    writeFileSync(
+      join(root, "vite.config.ts"),
+      "export default { plugins: [] }",
+    )
+    writeFileSync(
+      join(root, "postcss.config.cjs"),
+      "module.exports = { plugins: { autoprefixer: {} } }",
+    )
+    await expect(initProject({ cwd: root })).rejects.toThrow(
+      "Existing PostCSS config requires manual review",
+    )
+    expect(existsSync(join(root, "babel.config.cjs"))).toBe(false)
+    expect(readFileSync(join(root, "postcss.config.cjs"), "utf8")).toContain(
+      "autoprefixer",
+    )
+  } finally {
+    rmSync(root, { recursive: true, force: true })
+  }
+})
 
 for (const fixture of [
   {

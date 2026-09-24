@@ -107,21 +107,6 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       <head>
         <ThemeScript />
         <HeadContent />
-        {import.meta.env.DEV ? (
-          <link
-            rel="stylesheet"
-            href="/virtual:stylex.css"
-            ref={(link) => {
-              if (!link) return
-              const refresh = () => {
-                link.href = `/virtual:stylex.css?t=${Date.now()}`
-              }
-              refresh()
-              import.meta.hot?.on("stylex:css-update", refresh)
-              return () => import.meta.hot?.off("stylex:css-update", refresh)
-            }}
-          />
-        ) : null}
       </head>
       <body>
         <ThemeProvider>

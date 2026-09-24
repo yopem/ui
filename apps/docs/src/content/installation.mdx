@@ -58,135 +58,90 @@ consistent.
 
 ### Vite and Rolldown setup
 
-React Router, TanStack Router, TanStack Start, and Astro use the same StyleX
-Babel and PostCSS configuration. Use Vite 8 (Rolldown); no unplugin or Rollup
-adapter is needed. Install the build dependencies:
+Vite 8 (Rolldown) uses `@rolldown/plugin-babel` to transform StyleX and its
+PostCSS plugin to extract rules into the shared `src/styles/styles.css`.
+Configure both inside your existing `vite.config.ts`; no unplugin, Babel config,
+or PostCSS config file is needed. The CLI makes these edits for you.
 
 ```sh
 npm install --save-dev @rolldown/plugin-babel@^0.2.4 @babel/core@^7.29.7 @stylexjs/babel-plugin@^0.19.0 @stylexjs/postcss-plugin@^0.19.0
 ```
 
-Create `babel.config.cjs` using the `expandLocalSpreads` function from the
-[Next.js Babel example](#nextjs) below. Keep the same plugin options, but omit
-the `next/babel` preset:
+```ts
+import babel from "@rolldown/plugin-babel"
+import { createRequire } from "node:module"
+import { fileURLToPath } from "node:url"
+import { defineConfig } from "vite"
 
-```js
-const path = require("node:path")
-
-// Copy expandLocalSpreads from the Next.js example below.
-module.exports = {
-  plugins: [
-    expandLocalSpreads,
-    [
-      "@stylexjs/babel-plugin",
-      {
-        aliases: { "@/*": [path.join(__dirname, "src/*")] },
-        dev: process.env.NODE_ENV !== "production",
-        runtimeInjection: false,
-        treeshakeCompensation: true,
-        unstable_moduleResolution: { type: "commonJS" },
-      },
-    ],
-  ],
-}
-```
-
-Create `postcss.config.cjs` so CSS extraction uses those exact Babel plugins:
-
-```js
-const babelConfig = require("./babel.config.cjs")
-
-module.exports = {
-  plugins: {
-    "@stylexjs/postcss-plugin": {
-      include: ["src/**/*.{js,jsx,ts,tsx}", "app/**/*.{js,jsx,ts,tsx}"],
-      babelConfig: {
-        babelrc: false,
-        parserOpts: { plugins: ["typescript", "jsx"] },
-        plugins: babelConfig.plugins,
-      },
-      useCSSLayers: true,
+const source = fileURLToPath(new URL("./src", import.meta.url))
+const plugins: [string, object][] = [
+  [
+    "@stylexjs/babel-plugin",
+    {
+      aliases: { "@/*": [source + "/*"] },
+      dev: process.env.NODE_ENV !== "production",
+      runtimeInjection: false,
+      treeshakeCompensation: true,
+      unstable_moduleResolution: { type: "commonJS" },
     },
+  ],
+]
+const loadPostcss: unknown = createRequire(import.meta.url)(
+  "@stylexjs/postcss-plugin",
+)
+if (typeof loadPostcss !== "function")
+  throw new Error("StyleX PostCSS unavailable")
+const postcss: unknown = loadPostcss({
+  cwd: fileURLToPath(new URL(".", import.meta.url)),
+  include: ["src/**/*.{js,jsx,ts,tsx}", "app/**/*.{js,jsx,ts,tsx}"],
+  babelConfig: {
+    babelrc: false,
+    parserOpts: { plugins: ["typescript", "jsx"] },
+    plugins,
   },
+  useCSSLayers: true,
+})
+function isPostcssPlugin(value: unknown): value is { postcssPlugin: string } {
+  return (
+    typeof value === "object" &&
+    value !== null &&
+    "postcssPlugin" in value &&
+    typeof value.postcssPlugin === "string"
+  )
 }
+if (!isPostcssPlugin(postcss)) throw new Error("Invalid StyleX PostCSS plugin")
+
+export default defineConfig({
+  resolve: { alias: { "@": source } },
+  css: { postcss: { plugins: [postcss] } },
+  plugins: [babel({ plugins })], // keep your existing React/router plugins after Babel
+})
 ```
 
-The shared `src/styles/styles.css` already contains `@stylex;`. Import this
-single stylesheet in your application entry or document root. The CLI also adds
-root theme classes automatically.
+The shared stylesheet already contains `@stylex;`. Import only
+`@/styles/styles.css` in your application entry or document root. If you have an
+existing PostCSS config, merge its plugins into this inline configuration
+manually before running init.
 
 ### React Router
 
-For client-rendered React Router, replace `reactRouter()` below with `react()`
-from `@vitejs/plugin-react` and import `@/styles/styles.css` in `src/main.tsx`.
-For React Router **framework mode**, keep `reactRouter()` in the plugin list and
-import the same stylesheet in `app/root.tsx` (or `src/root.tsx`). Apply
-`themeMarker`, `lightTheme`, and `rootStyles.html` to its `<html>` element and
-`rootStyles.body` to `<body>`. The CLI configures both client and framework
-mode; RSC mode requires manual setup.
-
-```tsx
-import babel from "@rolldown/plugin-babel"
-import babelConfig from "./babel.config.cjs"
-import { reactRouter } from "@react-router/dev/vite" // framework mode only
-import { fileURLToPath } from "node:url"
-import { defineConfig } from "vite"
-
-const source = fileURLToPath(new URL("./src", import.meta.url))
-
-export default defineConfig({
-  resolve: { alias: { "@": source } },
-  plugins: [
-    babel({ plugins: babelConfig.plugins }),
-    reactRouter(), // omit for client mode; keep your React Vite plugin
-  ],
-})
-```
+For client-rendered React Router, keep `react()` from `@vitejs/plugin-react`
+after Babel and import the stylesheet in `src/main.tsx`. For **framework mode**,
+keep `reactRouter()` from `@react-router/dev/vite` after Babel and import it in
+`app/root.tsx` (or `src/root.tsx`). Apply `themeMarker`, `lightTheme`, and
+`rootStyles.html` to `<html>`, and `rootStyles.body` to `<body>`. RSC mode
+requires manual setup.
 
 ### TanStack Router
 
-Client-rendered TanStack Router uses the same Vite config, with its router and
-React plugins after Babel. Import `@/styles/styles.css` in `src/main.tsx`.
-
-```tsx
-import babel from "@rolldown/plugin-babel"
-import babelConfig from "./babel.config.cjs"
-import react from "@vitejs/plugin-react"
-import { tanstackRouter } from "@tanstack/router-plugin/vite"
-import { fileURLToPath } from "node:url"
-import { defineConfig } from "vite"
-
-const source = fileURLToPath(new URL("./src", import.meta.url))
-export default defineConfig({
-  resolve: { alias: { "@": source } },
-  plugins: [
-    babel({ plugins: babelConfig.plugins }),
-    tanstackRouter({ target: "react", autoCodeSplitting: true }),
-    react(),
-  ],
-})
-```
+Keep `tanstackRouter({ target: "react", autoCodeSplitting: true })` and
+`react()` after Babel. Import `@/styles/styles.css` in `src/main.tsx`.
 
 ### TanStack Start
 
-Keep your TanStack Start plugin after Babel. Import `@/styles/styles.css` in
-`src/routes/__root.tsx` and apply the root theme classes to `<html>` and
+Keep `tanstackStart()` and `react()` after Babel. Import `@/styles/styles.css`
+in `src/routes/__root.tsx` and apply the root theme classes to `<html>` and
 `<body>` (as shown in the [Next.js example](#nextjs)).
-
-```tsx
-import babel from "@rolldown/plugin-babel"
-import babelConfig from "./babel.config.cjs"
-import { tanstackStart } from "@tanstack/react-start/plugin/vite"
-import react from "@vitejs/plugin-react"
-import { fileURLToPath } from "node:url"
-import { defineConfig } from "vite"
-
-const source = fileURLToPath(new URL("./src", import.meta.url))
-export default defineConfig({
-  resolve: { alias: { "@": source } },
-  plugins: [babel({ plugins: babelConfig.plugins }), tanstackStart(), react()],
-})
-```
 
 ### Next.js
 
@@ -314,21 +269,45 @@ theme classes to Html in pages/\_document.tsx.
 
 Install `@astrojs/react`, `react`, and `react-dom` if absent. Author StyleX
 styles in React TSX components; use `client:load` only for interactive islands.
-Configure Astro's nested Vite plugin list with Rolldown Babel:
+Put the same Babel plugins and PostCSS setup from the Vite example above in
+`astro.config.mjs` (not separate config files), inside Astro's `vite` option:
 
 ```js
 import babel from "@rolldown/plugin-babel"
-import babelConfig from "./babel.config.cjs"
 import react from "@astrojs/react"
 import { defineConfig } from "astro/config"
+import { createRequire } from "node:module"
 import { fileURLToPath } from "node:url"
 
 const source = fileURLToPath(new URL("./src", import.meta.url))
+const plugins = [
+  [
+    "@stylexjs/babel-plugin",
+    {
+      aliases: { "@/*": [source + "/*"] },
+      dev: process.env.NODE_ENV !== "production",
+      runtimeInjection: false,
+      treeshakeCompensation: true,
+      unstable_moduleResolution: { type: "commonJS" },
+    },
+  ],
+]
+const postcss = createRequire(import.meta.url)("@stylexjs/postcss-plugin")({
+  cwd: fileURLToPath(new URL(".", import.meta.url)),
+  include: ["src/**/*.{js,jsx,ts,tsx}", "app/**/*.{js,jsx,ts,tsx}"],
+  babelConfig: {
+    babelrc: false,
+    parserOpts: { plugins: ["typescript", "jsx"] },
+    plugins,
+  },
+  useCSSLayers: true,
+})
 export default defineConfig({
   integrations: [react()],
   vite: {
     resolve: { alias: { "@": source } },
-    plugins: [babel({ plugins: babelConfig.plugins })],
+    css: { postcss: { plugins: [postcss] } },
+    plugins: [babel({ plugins })],
   },
 })
 ```
