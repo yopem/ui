@@ -1,0 +1,63 @@
+[Choose a component](#components) · [Learn style props](/docs/style-props) ·
+[Enforce usage with lint](/docs/lint)
+
+<span id="components" />
+
+## Choose a primitive
+
+Need a wrapper? Start with Box. Use Stack for vertical groups, HStack for
+horizontal groups, Flex for custom alignment, and Grid for columns. Use Link,
+Paragraph, and Heading for meaningful text elements instead of styling a generic
+Box. Select a component below to see a live example and copy its source.
+
+- [Box](/components/box): Div by default; `as` selects a semantic element with
+  tag-specific events and refs.
+- [Flex](/components/flex): Flex layout with direction, alignment,
+  justification, and wrapping.
+- [Stack](/components/stack): Column flex layout with four spacing units between
+  children.
+- [HStack](/components/hstack): Row flex layout with centered cross-axis
+  alignment and four spacing units between children.
+- [VStack](/components/vstack): Column flex layout with four spacing units
+  between children.
+- [Grid](/components/grid): Grid layout with configurable columns, rows, and
+  gaps.
+- [Center](/components/center): Flex layout centered on both axes.
+- [Link](/components/link): Native anchor with `href`, `target`, `rel`,
+  `download`, ref, and native keyboard behavior.
+- [Paragraph](/components/paragraph): Native paragraph without forced visual
+  defaults.
+- [Heading](/components/heading): `h2` by default; `as` selects `h1` through
+  `h6` independently of visual size.
+
+<span id="semantics" />
+
+## Native semantics
+
+Box defaults to div. Its as prop selects the native tag and its event/ref types.
+Input size, image width and height, and meta content remain native attributes.
+Use css or sizing aliases w and h for conflicting styles. Other recognized CSS
+property names retain their styling meaning. Heading restricts as to heading
+tags. Link performs native navigation; it does not replace a framework router
+link.
+
+### Semantic components
+
+```tsx
+import { Box } from "@/components/ui/box"
+import { Heading } from "@/components/ui/heading"
+import { Link } from "@/components/ui/link"
+import { Paragraph } from "@/components/ui/paragraph"
+
+export function Article() {
+  return (
+    <Box as="article" p={4}>
+      <Heading as="h2">Getting started</Heading>
+      <Paragraph>Copy the components into your application.</Paragraph>
+      <Link href="/docs/installation">Installation guide</Link>
+    </Box>
+  )
+}
+```
+
+Next: [style these components with props](/docs/style-props).

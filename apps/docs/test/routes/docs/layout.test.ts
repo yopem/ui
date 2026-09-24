@@ -1,12 +1,19 @@
 import { expect, test } from "bun:test"
 import { readFileSync } from "node:fs"
 
-const source = readFileSync(
+const route = readFileSync(
   new URL("../../../src/routes/docs/layout.tsx", import.meta.url),
   "utf8",
 )
+const content = readFileSync(
+  new URL("../../../src/content/layout.mdx", import.meta.url),
+  "utf8",
+)
 
-test("layout guide covers component choices and native semantics", () => {
+test("layout guide renders MDX with component choices and native semantics", () => {
+  expect(route).toContain('createFileRoute("/docs/layout")')
+  expect(route).toContain("source={layoutSource}")
+  expect(route).toContain("Content={LayoutContent}")
   for (const [slug, name] of [
     ["box", "Box"],
     ["flex", "Flex"],
@@ -18,9 +25,11 @@ test("layout guide covers component choices and native semantics", () => {
     ["link", "Link"],
     ["paragraph", "Paragraph"],
     ["heading", "Heading"],
-  ])
-    expect(source).toMatch(new RegExp(`"${slug}"\\s*,\\s*"${name}"`))
-  expect(source).toContain("/components/${slug}")
-  expect(source).toContain('id="semantics"')
-  expect(source).toContain('href="/docs/style-props"')
+  ]) {
+    expect(content).toContain(`[${name}](/components/${slug})`)
+  }
+  expect(content).toContain("## Native semantics")
+  expect(content).toContain("[Learn style props](/docs/style-props)")
+  expect(content).toContain('<span id="components" />')
+  expect(content).toContain('<Box as="article" p={4}>')
 })
