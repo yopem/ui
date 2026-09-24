@@ -1,12 +1,11 @@
-import * as stylex from "@stylexjs/stylex"
-import { ChevronDownIcon } from "lucide-react"
-
-import { Box } from "@/components/ui/box"
+import { Box } from "@registry/components/ui/box"
 import {
   Collapsible,
   CollapsiblePanel,
   CollapsibleTrigger,
-} from "@/components/ui/collapsible"
+} from "@registry/components/ui/collapsible"
+import * as stylex from "@stylexjs/stylex"
+import { ChevronDownIcon } from "lucide-react"
 
 const styles = stylex.create({
   collapsibleTrigger: {

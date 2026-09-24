@@ -1,7 +1,5 @@
-import * as stylex from "@stylexjs/stylex"
-
-import { Badge } from "@/components/ui/badge"
-import { Box } from "@/components/ui/box"
+import { Badge } from "@registry/components/ui/badge"
+import { Box } from "@registry/components/ui/box"
 import {
   Table,
   TableBody,
@@ -11,7 +9,8 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"
+} from "@registry/components/ui/table"
+import * as stylex from "@stylexjs/stylex"
 const styles = stylex.create({
   tableHead: { textAlign: "right" },
   tableCell: { fontWeight: "500" },

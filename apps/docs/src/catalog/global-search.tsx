@@ -2,6 +2,7 @@
 
 import type { SortedResult } from "fumadocs-core/search"
 
+import { Box } from "@registry/components/ui/box"
 import { Button } from "@registry/components/ui/button"
 import {
   Dialog,
@@ -17,8 +18,6 @@ import * as stylex from "@stylexjs/stylex"
 import { Link } from "@tanstack/react-router"
 import { SearchIcon } from "lucide-react"
 import { useCallback, useRef, useState } from "react"
-
-import { Box } from "@/components/ui/box"
 
 const primitiveStyles = stylex.create({
   searchDocumentation: {

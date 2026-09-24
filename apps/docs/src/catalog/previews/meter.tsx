@@ -1,13 +1,12 @@
-import * as stylex from "@stylexjs/stylex"
-
-import { Flex } from "@/components/ui/flex"
+import { Flex } from "@registry/components/ui/flex"
 import {
   Meter,
   MeterIndicator,
   MeterLabel,
   MeterTrack,
   MeterValue,
-} from "@/components/ui/meter"
+} from "@registry/components/ui/meter"
+import * as stylex from "@stylexjs/stylex"
 const styles = stylex.create({
   flex: {
     alignItems: "center",

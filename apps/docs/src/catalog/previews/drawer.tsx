@@ -1,6 +1,4 @@
-import * as stylex from "@stylexjs/stylex"
-
-import { Button } from "@/components/ui/button"
+import { Button } from "@registry/components/ui/button"
 import {
   Drawer,
   DrawerClose,
@@ -10,7 +8,8 @@ import {
   DrawerPopup,
   DrawerTitle,
   DrawerTrigger,
-} from "@/components/ui/drawer"
+} from "@registry/components/ui/drawer"
+import * as stylex from "@stylexjs/stylex"
 const styles = stylex.create({
   drawerHeader: { textAlign: "center" },
   drawerFooter: {

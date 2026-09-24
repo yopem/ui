@@ -1,8 +1,7 @@
+import { Box } from "@registry/components/ui/box"
+import { Flex } from "@registry/components/ui/flex"
+import { Link } from "@registry/components/ui/link"
 import * as stylex from "@stylexjs/stylex"
-
-import { Box } from "@/components/ui/box"
-import { Flex } from "@/components/ui/flex"
-import { Link } from "@/components/ui/link"
 const styles = stylex.create({
   flex: {
     alignItems: "center",

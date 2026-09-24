@@ -1,8 +1,7 @@
 "use client"
 
+import { Calendar } from "@registry/components/ui/calendar"
 import * as React from "react"
-
-import { Calendar } from "@/components/ui/calendar"
 
 export function Preview() {
   const [date, setDate] = React.useState<Date | undefined>(new Date())

@@ -2,13 +2,12 @@
 
 import type { FormEvent } from "react"
 
+import { Button } from "@registry/components/ui/button"
+import { Field, FieldError, FieldLabel } from "@registry/components/ui/field"
+import { Form } from "@registry/components/ui/form"
+import { Input } from "@registry/components/ui/input"
 import * as stylex from "@stylexjs/stylex"
 import { useState } from "react"
-
-import { Button } from "@/components/ui/button"
-import { Field, FieldError, FieldLabel } from "@/components/ui/field"
-import { Form } from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
 const styles = stylex.create({
   form: {
     display: "flex",

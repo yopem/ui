@@ -1,5 +1,3 @@
-import * as stylex from "@stylexjs/stylex"
-
 import {
   Frame,
   FrameDescription,
@@ -7,9 +5,10 @@ import {
   FrameHeader,
   FramePanel,
   FrameTitle,
-} from "@/components/ui/frame"
-import { Heading } from "@/components/ui/heading"
-import { Paragraph } from "@/components/ui/paragraph"
+} from "@registry/components/ui/frame"
+import { Heading } from "@registry/components/ui/heading"
+import { Paragraph } from "@registry/components/ui/paragraph"
+import * as stylex from "@stylexjs/stylex"
 const styles = stylex.create({
   frame: { inlineSize: "100%" },
   h2: {

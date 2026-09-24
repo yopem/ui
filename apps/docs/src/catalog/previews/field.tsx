@@ -1,5 +1,9 @@
-import { Field, FieldDescription, FieldLabel } from "@/components/ui/field"
-import { Input } from "@/components/ui/input"
+import {
+  Field,
+  FieldDescription,
+  FieldLabel,
+} from "@registry/components/ui/field"
+import { Input } from "@registry/components/ui/input"
 
 export function Preview() {
   return (

@@ -1,5 +1,9 @@
-import { Button } from "@/components/ui/button"
-import { Tooltip, TooltipPopup, TooltipTrigger } from "@/components/ui/tooltip"
+import { Button } from "@registry/components/ui/button"
+import {
+  Tooltip,
+  TooltipPopup,
+  TooltipTrigger,
+} from "@registry/components/ui/tooltip"
 
 export function Preview() {
   return (

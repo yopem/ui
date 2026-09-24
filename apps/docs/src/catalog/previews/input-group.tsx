@@ -1,11 +1,10 @@
-import * as stylex from "@stylexjs/stylex"
-import { SearchIcon } from "lucide-react"
-
 import {
   InputGroup,
   InputGroupAddon,
   InputGroupInput,
-} from "@/components/ui/input-group"
+} from "@registry/components/ui/input-group"
+import * as stylex from "@stylexjs/stylex"
+import { SearchIcon } from "lucide-react"
 
 export function Preview() {
   return (

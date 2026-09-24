@@ -1,5 +1,29 @@
 "use client"
 
+import { Button } from "@registry/components/ui/button"
+import {
+  Select,
+  SelectItem,
+  SelectPopup,
+  SelectTrigger,
+  SelectValue,
+} from "@registry/components/ui/select"
+import {
+  ToggleGroup,
+  ToggleGroupItem,
+} from "@registry/components/ui/toggle-group"
+import {
+  Toolbar,
+  ToolbarButton,
+  ToolbarGroup,
+  ToolbarSeparator,
+} from "@registry/components/ui/toolbar"
+import {
+  Tooltip,
+  TooltipPopup,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@registry/components/ui/tooltip"
 import * as stylex from "@stylexjs/stylex"
 import {
   AlignCenterIcon,
@@ -8,28 +32,6 @@ import {
   DollarSignIcon,
   PercentIcon,
 } from "lucide-react"
-
-import { Button } from "@/components/ui/button"
-import {
-  Select,
-  SelectItem,
-  SelectPopup,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
-import {
-  Toolbar,
-  ToolbarButton,
-  ToolbarGroup,
-  ToolbarSeparator,
-} from "@/components/ui/toolbar"
-import {
-  Tooltip,
-  TooltipPopup,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip"
 
 const styles = stylex.create({
   toggleGroup: {

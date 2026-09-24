@@ -4,7 +4,7 @@ import {
   NumberFieldGroup,
   NumberFieldIncrement,
   NumberFieldInput,
-} from "@/components/ui/number-field"
+} from "@registry/components/ui/number-field"
 
 export function Preview() {
   return (

@@ -1,12 +1,17 @@
+import { Box } from "@registry/components/ui/box"
+import { Paragraph } from "@registry/components/ui/paragraph"
+import {
+  Tabs,
+  TabsList,
+  TabsPanel,
+  TabsTab,
+} from "@registry/components/ui/tabs"
 import * as stylex from "@stylexjs/stylex"
 import { createFileRoute } from "@tanstack/react-router"
 
 import { CopyableCode } from "@/catalog/code-block"
 import { getDocumentation } from "@/catalog/docs.functions"
 import { GuidePage } from "@/catalog/guide-content"
-import { Box } from "@/components/ui/box"
-import { Paragraph } from "@/components/ui/paragraph"
-import { Tabs, TabsList, TabsPanel, TabsTab } from "@/components/ui/tabs"
 import Content from "@/content/installation.mdx"
 import source from "@/content/installation.mdx?raw"
 import { createSeo } from "@/lib/seo"

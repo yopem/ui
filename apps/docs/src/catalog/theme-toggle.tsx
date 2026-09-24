@@ -1,10 +1,9 @@
+import { Box } from "@registry/components/ui/box"
+import { Grid } from "@registry/components/ui/grid"
 import { tokens } from "@registry/styles/tokens.stylex"
 import { useTheme } from "@registry/theme/theme-provider"
 import * as stylex from "@stylexjs/stylex"
 import { MonitorIcon, MoonIcon, SunIcon } from "lucide-react"
-
-import { Box } from "@/components/ui/box"
-import { Grid } from "@/components/ui/grid"
 const styles = stylex.create({
   appearance: {
     borderWidth: 0,

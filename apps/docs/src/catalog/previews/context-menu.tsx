@@ -1,12 +1,11 @@
-import * as stylex from "@stylexjs/stylex"
-
 import {
   ContextMenu,
   ContextMenuItem,
   ContextMenuPopup,
   ContextMenuSeparator,
   ContextMenuTrigger,
-} from "@/components/ui/context-menu"
+} from "@registry/components/ui/context-menu"
+import * as stylex from "@stylexjs/stylex"
 const styles = stylex.create({
   contextMenuTrigger: {
     display: "flex",

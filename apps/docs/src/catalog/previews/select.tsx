@@ -4,7 +4,7 @@ import {
   SelectPopup,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
+} from "@registry/components/ui/select"
 
 const items = [
   { label: "Next.js", value: "next" },

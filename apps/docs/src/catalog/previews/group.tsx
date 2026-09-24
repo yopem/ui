@@ -1,3 +1,11 @@
+import { Button } from "@registry/components/ui/button"
+import { Group, GroupSeparator } from "@registry/components/ui/group"
+import {
+  Menu,
+  MenuItem,
+  MenuPopup,
+  MenuTrigger,
+} from "@registry/components/ui/menu"
 import * as stylex from "@stylexjs/stylex"
 import {
   ArchiveIcon,
@@ -8,10 +16,6 @@ import {
   ShareIcon,
   TrashIcon,
 } from "lucide-react"
-
-import { Button } from "@/components/ui/button"
-import { Group, GroupSeparator } from "@/components/ui/group"
-import { Menu, MenuItem, MenuPopup, MenuTrigger } from "@/components/ui/menu"
 
 const styles = stylex.create({
   button: { borderStartEndRadius: 0, borderEndEndRadius: 0 },

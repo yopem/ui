@@ -1,19 +1,18 @@
 "use client"
 
-import * as stylex from "@stylexjs/stylex"
-
-import { Box } from "@/components/ui/box"
-import { Button } from "@/components/ui/button"
-import { Field } from "@/components/ui/field"
-import { Form } from "@/components/ui/form"
+import { Box } from "@registry/components/ui/box"
+import { Button } from "@registry/components/ui/button"
+import { Field } from "@registry/components/ui/field"
+import { Form } from "@registry/components/ui/form"
 import {
   Popover,
   PopoverDescription,
   PopoverPopup,
   PopoverTitle,
   PopoverTrigger,
-} from "@/components/ui/popover"
-import { Textarea } from "@/components/ui/textarea"
+} from "@registry/components/ui/popover"
+import { Textarea } from "@registry/components/ui/textarea"
+import * as stylex from "@stylexjs/stylex"
 const styles = stylex.create({
   popoverPopup: { inlineSize: "calc(0.25rem * 80)" },
   box: { marginBlockEnd: "calc(0.25rem * 4)" },

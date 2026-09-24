@@ -1,7 +1,4 @@
-import * as stylex from "@stylexjs/stylex"
-import { CircleAlertIcon } from "lucide-react"
-
-import { Button } from "@/components/ui/button"
+import { Button } from "@registry/components/ui/button"
 import {
   Card,
   CardDescription,
@@ -9,19 +6,21 @@ import {
   CardHeader,
   CardPanel,
   CardTitle,
-} from "@/components/ui/card"
-import { Field, FieldLabel } from "@/components/ui/field"
-import { Flex } from "@/components/ui/flex"
-import { Form } from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import { Paragraph } from "@/components/ui/paragraph"
+} from "@registry/components/ui/card"
+import { Field, FieldLabel } from "@registry/components/ui/field"
+import { Flex } from "@registry/components/ui/flex"
+import { Form } from "@registry/components/ui/form"
+import { Input } from "@registry/components/ui/input"
+import { Paragraph } from "@registry/components/ui/paragraph"
 import {
   Select,
   SelectItem,
   SelectPopup,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
+} from "@registry/components/ui/select"
+import * as stylex from "@stylexjs/stylex"
+import { CircleAlertIcon } from "lucide-react"
 
 const styles = stylex.create({
   form: {

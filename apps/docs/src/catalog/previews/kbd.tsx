@@ -1,9 +1,8 @@
+import { Box } from "@registry/components/ui/box"
+import { Flex } from "@registry/components/ui/flex"
+import { Kbd, KbdGroup } from "@registry/components/ui/kbd"
+import { Paragraph } from "@registry/components/ui/paragraph"
 import * as stylex from "@stylexjs/stylex"
-
-import { Box } from "@/components/ui/box"
-import { Flex } from "@/components/ui/flex"
-import { Kbd, KbdGroup } from "@/components/ui/kbd"
-import { Paragraph } from "@/components/ui/paragraph"
 const styles = stylex.create({
   flex: { flexDirection: "column", gap: "calc(0.25rem * 4)" },
   paragraph: {

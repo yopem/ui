@@ -1,7 +1,7 @@
 "use client"
 
-import { Button } from "@/components/ui/button"
-import { toastManager } from "@/components/ui/toast"
+import { Button } from "@registry/components/ui/button"
+import { toastManager } from "@registry/components/ui/toast"
 
 export function Preview() {
   return (

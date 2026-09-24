@@ -1,12 +1,11 @@
 import type { Root } from "fumadocs-core/page-tree"
 
+import { Box } from "@registry/components/ui/box"
+import { Link as UiLink } from "@registry/components/ui/link"
 import { ScrollArea } from "@registry/components/ui/scroll-area"
 import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import { Link, useLocation } from "@tanstack/react-router"
-
-import { Box } from "@/components/ui/box"
-import { Link as UiLink } from "@/components/ui/link"
 
 import { catalog } from "./components"
 

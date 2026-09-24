@@ -1,3 +1,4 @@
+import { Box } from "@registry/components/ui/box"
 import { ScrollArea } from "@registry/components/ui/scroll-area"
 import { themeMarker, tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
@@ -6,7 +7,6 @@ import { CheckIcon, CopyIcon } from "lucide-react"
 import { lazy, Suspense, useState } from "react"
 
 import { stripStandaloneComments } from "@/catalog/source-code"
-import { Box } from "@/components/ui/box"
 import { useCopyToClipboard } from "@/hooks/use-copy-to-clipboard"
 
 const primitiveStyles = stylex.create({

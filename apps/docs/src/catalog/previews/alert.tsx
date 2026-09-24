@@ -1,5 +1,9 @@
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
-import { Paragraph } from "@/components/ui/paragraph"
+import {
+  Alert,
+  AlertDescription,
+  AlertTitle,
+} from "@registry/components/ui/alert"
+import { Paragraph } from "@registry/components/ui/paragraph"
 export function Preview() {
   return (
     <Alert>

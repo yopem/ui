@@ -1,10 +1,10 @@
+import { Box } from "@registry/components/ui/box"
 import * as stylex from "@stylexjs/stylex"
 import { createFileRoute } from "@tanstack/react-router"
 
 import { CopyableCode } from "@/catalog/code-block"
 import { getDocumentation } from "@/catalog/docs.functions"
 import { GuidePage } from "@/catalog/guide-content"
-import { Box } from "@/components/ui/box"
 import Content from "@/content/theming.mdx"
 import source from "@/content/theming.mdx?raw"
 import { createSeo } from "@/lib/seo"

@@ -1,16 +1,15 @@
-import * as stylex from "@stylexjs/stylex"
-import { CornerUpLeftIcon, StarIcon } from "lucide-react"
-
-import { Box } from "@/components/ui/box"
-import { Button } from "@/components/ui/button"
-import { Flex } from "@/components/ui/flex"
-import { Heading } from "@/components/ui/heading"
-import { Paragraph } from "@/components/ui/paragraph"
+import { Box } from "@registry/components/ui/box"
+import { Button } from "@registry/components/ui/button"
+import { Flex } from "@registry/components/ui/flex"
+import { Heading } from "@registry/components/ui/heading"
+import { Paragraph } from "@registry/components/ui/paragraph"
 import {
   PreviewCard,
   PreviewCardPopup,
   PreviewCardTrigger,
-} from "@/components/ui/preview-card"
+} from "@registry/components/ui/preview-card"
+import * as stylex from "@stylexjs/stylex"
+import { CornerUpLeftIcon, StarIcon } from "lucide-react"
 
 const styles = stylex.create({
   flex: { flexDirection: "column", gap: "calc(0.25rem * 4)" },

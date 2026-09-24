@@ -1,12 +1,11 @@
 import type { ReactNode } from "react"
 
+import { Box } from "@registry/components/ui/box"
+import { Grid } from "@registry/components/ui/grid"
+import { Heading } from "@registry/components/ui/heading"
+import { Paragraph } from "@registry/components/ui/paragraph"
 import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
-
-import { Box } from "@/components/ui/box"
-import { Grid } from "@/components/ui/grid"
-import { Heading } from "@/components/ui/heading"
-import { Paragraph } from "@/components/ui/paragraph"
 
 import type { TocItem } from "./table-of-contents"
 

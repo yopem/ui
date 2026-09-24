@@ -1,6 +1,5 @@
+import { Paragraph } from "@registry/components/ui/paragraph"
 import * as stylex from "@stylexjs/stylex"
-
-import { Paragraph } from "@/components/ui/paragraph"
 const styles = stylex.create({ paragraph: { maxInlineSize: "60ch" } })
 
 export function Preview() {

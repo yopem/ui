@@ -1,5 +1,6 @@
 import type { ReactNode } from "react"
 
+import { Box } from "@registry/components/ui/box"
 import { Button } from "@registry/components/ui/button"
 import {
   Dialog,
@@ -8,6 +9,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@registry/components/ui/dialog"
+import { Grid } from "@registry/components/ui/grid"
+import { Link as UiLink } from "@registry/components/ui/link"
 import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import { Link } from "@tanstack/react-router"
@@ -15,9 +18,6 @@ import { MenuIcon } from "lucide-react"
 import { useState } from "react"
 
 import { BrandLogo } from "@/components/brand-logo"
-import { Box } from "@/components/ui/box"
-import { Grid } from "@/components/ui/grid"
-import { Link as UiLink } from "@/components/ui/link"
 
 import { DocsNavigation } from "./docs-navigation"
 import { GlobalSearch } from "./global-search"

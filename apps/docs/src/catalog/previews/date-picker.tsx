@@ -1,13 +1,16 @@
 "use client"
 
+import { Button } from "@registry/components/ui/button"
+import { Calendar } from "@registry/components/ui/calendar"
+import {
+  Popover,
+  PopoverPopup,
+  PopoverTrigger,
+} from "@registry/components/ui/popover"
 import * as stylex from "@stylexjs/stylex"
 import { format } from "date-fns"
 import { CalendarIcon } from "lucide-react"
 import { useState } from "react"
-
-import { Button } from "@/components/ui/button"
-import { Calendar } from "@/components/ui/calendar"
-import { Popover, PopoverPopup, PopoverTrigger } from "@/components/ui/popover"
 
 const styles = stylex.create({
   button: { inlineSize: "100%", justifyContent: "flex-start" },

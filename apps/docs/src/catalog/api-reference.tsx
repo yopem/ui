@@ -1,14 +1,13 @@
 import type { ApiPart, ApiProp } from "@registry/docs"
 
+import { Box } from "@registry/components/ui/box"
+import { Heading } from "@registry/components/ui/heading"
+import { Link } from "@registry/components/ui/link"
+import { Paragraph } from "@registry/components/ui/paragraph"
 import { ScrollArea } from "@registry/components/ui/scroll-area"
 import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import { useState } from "react"
-
-import { Box } from "@/components/ui/box"
-import { Heading } from "@/components/ui/heading"
-import { Link } from "@/components/ui/link"
-import { Paragraph } from "@/components/ui/paragraph"
 
 import { CopyableCode } from "./code-block"
 const styles = stylex.create({

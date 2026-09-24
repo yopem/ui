@@ -7,7 +7,7 @@ import {
   ComboboxItem,
   ComboboxList,
   ComboboxPopup,
-} from "@/components/ui/combobox"
+} from "@registry/components/ui/combobox"
 
 const items = [
   { label: "Apple", value: "apple" },

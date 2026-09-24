@@ -1,7 +1,11 @@
+import { Paragraph } from "@registry/components/ui/paragraph"
+import {
+  Tabs,
+  TabsList,
+  TabsPanel,
+  TabsTab,
+} from "@registry/components/ui/tabs"
 import * as stylex from "@stylexjs/stylex"
-
-import { Paragraph } from "@/components/ui/paragraph"
-import { Tabs, TabsList, TabsPanel, TabsTab } from "@/components/ui/tabs"
 const styles = stylex.create({
   paragraph: {
     paddingBlock: "calc(0.25rem * 4)",

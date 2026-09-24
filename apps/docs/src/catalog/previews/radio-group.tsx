@@ -1,5 +1,5 @@
-import { Label } from "@/components/ui/label"
-import { Radio, RadioGroup } from "@/components/ui/radio-group"
+import { Label } from "@registry/components/ui/label"
+import { Radio, RadioGroup } from "@registry/components/ui/radio-group"
 
 export function Preview() {
   return (

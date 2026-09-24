@@ -1,3 +1,12 @@
+import { Box } from "@registry/components/ui/box"
+import { Heading } from "@registry/components/ui/heading"
+import { Paragraph } from "@registry/components/ui/paragraph"
+import {
+  Tabs,
+  TabsList,
+  TabsPanel,
+  TabsTab,
+} from "@registry/components/ui/tabs"
 import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import { Link, createFileRoute, notFound } from "@tanstack/react-router"
@@ -16,10 +25,6 @@ import {
 } from "@/catalog/docs-page"
 import { docsStyles } from "@/catalog/docs-styles"
 import { getDocumentation } from "@/catalog/docs.functions"
-import { Box } from "@/components/ui/box"
-import { Heading } from "@/components/ui/heading"
-import { Paragraph } from "@/components/ui/paragraph"
-import { Tabs, TabsList, TabsPanel, TabsTab } from "@/components/ui/tabs"
 import { createSeo } from "@/lib/seo"
 
 const styles = stylex.create({

@@ -1,14 +1,13 @@
 import type { MDXComponents } from "mdx/types"
 import type { ComponentProps, ReactNode } from "react"
 
+import { Box } from "@registry/components/ui/box"
+import { Heading } from "@registry/components/ui/heading"
+import { Link } from "@registry/components/ui/link"
+import { Paragraph } from "@registry/components/ui/paragraph"
 import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import { isValidElement } from "react"
-
-import { Box } from "@/components/ui/box"
-import { Heading } from "@/components/ui/heading"
-import { Link } from "@/components/ui/link"
-import { Paragraph } from "@/components/ui/paragraph"
 
 import { CopyableCode } from "./code-block"
 import { DocumentationLayout } from "./docs-layout"

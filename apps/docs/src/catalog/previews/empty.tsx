@@ -1,7 +1,4 @@
-import * as stylex from "@stylexjs/stylex"
-import { BookIcon, RouteIcon } from "lucide-react"
-
-import { Button } from "@/components/ui/button"
+import { Button } from "@registry/components/ui/button"
 import {
   Empty,
   EmptyContent,
@@ -9,8 +6,10 @@ import {
   EmptyHeader,
   EmptyMedia,
   EmptyTitle,
-} from "@/components/ui/empty"
-import { Flex } from "@/components/ui/flex"
+} from "@registry/components/ui/empty"
+import { Flex } from "@registry/components/ui/flex"
+import * as stylex from "@stylexjs/stylex"
+import { BookIcon, RouteIcon } from "lucide-react"
 
 const styles = stylex.create({ flex: { gap: "calc(0.25rem * 2)" } })
 export function Preview() {

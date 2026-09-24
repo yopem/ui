@@ -1,13 +1,12 @@
 "use client"
 
+import { Box } from "@registry/components/ui/box"
+import { Flex } from "@registry/components/ui/flex"
+import { Heading } from "@registry/components/ui/heading"
 import { ScrollArea } from "@registry/components/ui/scroll-area"
 import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import { Suspense } from "react"
-
-import { Box } from "@/components/ui/box"
-import { Flex } from "@/components/ui/flex"
-import { Heading } from "@/components/ui/heading"
 
 import type { CatalogPreview } from "./components"
 

@@ -1,6 +1,4 @@
-import * as stylex from "@stylexjs/stylex"
-
-import { Button } from "@/components/ui/button"
+import { Button } from "@registry/components/ui/button"
 import {
   Dialog,
   DialogClose,
@@ -11,10 +9,11 @@ import {
   DialogPopup,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog"
-import { Field, FieldLabel } from "@/components/ui/field"
-import { Form } from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
+} from "@registry/components/ui/dialog"
+import { Field, FieldLabel } from "@registry/components/ui/field"
+import { Form } from "@registry/components/ui/form"
+import { Input } from "@registry/components/ui/input"
+import * as stylex from "@stylexjs/stylex"
 const styles = stylex.create({
   dialogPopup: { maxInlineSize: { "@media (min-width: 768px)": "24rem" } },
   form: { display: "contents" },

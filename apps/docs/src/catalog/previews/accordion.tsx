@@ -1,11 +1,10 @@
-import * as stylex from "@stylexjs/stylex"
-
 import {
   Accordion,
   AccordionItem,
   AccordionPanel,
   AccordionTrigger,
-} from "@/components/ui/accordion"
+} from "@registry/components/ui/accordion"
+import * as stylex from "@stylexjs/stylex"
 const styles = stylex.create({ accordion: { inlineSize: "100%" } })
 
 export function Preview() {

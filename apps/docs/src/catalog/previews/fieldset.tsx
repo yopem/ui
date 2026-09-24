@@ -1,8 +1,11 @@
+import {
+  Field,
+  FieldDescription,
+  FieldLabel,
+} from "@registry/components/ui/field"
+import { Fieldset, FieldsetLegend } from "@registry/components/ui/fieldset"
+import { Input } from "@registry/components/ui/input"
 import * as stylex from "@stylexjs/stylex"
-
-import { Field, FieldDescription, FieldLabel } from "@/components/ui/field"
-import { Fieldset, FieldsetLegend } from "@/components/ui/fieldset"
-import { Input } from "@/components/ui/input"
 const styles = stylex.create({
   fieldset: {
     display: "flex",

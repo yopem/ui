@@ -1,6 +1,5 @@
+import { Box } from "@registry/components/ui/box"
 import * as stylex from "@stylexjs/stylex"
-
-import { Box } from "@/components/ui/box"
 const styles = stylex.create({
   section: {
     paddingBlock: "calc(var(--spacing) * 4)",

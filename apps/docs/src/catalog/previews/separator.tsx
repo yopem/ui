@@ -1,10 +1,9 @@
+import { Box } from "@registry/components/ui/box"
+import { Flex } from "@registry/components/ui/flex"
+import { Heading } from "@registry/components/ui/heading"
+import { Paragraph } from "@registry/components/ui/paragraph"
+import { Separator } from "@registry/components/ui/separator"
 import * as stylex from "@stylexjs/stylex"
-
-import { Box } from "@/components/ui/box"
-import { Flex } from "@/components/ui/flex"
-import { Heading } from "@/components/ui/heading"
-import { Paragraph } from "@/components/ui/paragraph"
-import { Separator } from "@/components/ui/separator"
 const styles = stylex.create({
   box: { maxInlineSize: "calc(0.25rem * 72)" },
   flex: { flexDirection: "column", gap: "0.25rem" },

@@ -1,7 +1,6 @@
+import { Box } from "@registry/components/ui/box"
+import { Center } from "@registry/components/ui/center"
 import * as stylex from "@stylexjs/stylex"
-
-import { Box } from "@/components/ui/box"
-import { Center } from "@/components/ui/center"
 const styles = stylex.create({ center: { minBlockSize: "8rem" } })
 
 export function Preview() {

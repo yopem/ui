@@ -1,7 +1,5 @@
 // next/link replaced -> anchor
 
-import * as stylex from "@stylexjs/stylex"
-
 import {
   Breadcrumb,
   BreadcrumbEllipsis,
@@ -10,10 +8,16 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb"
-import { Button } from "@/components/ui/button"
-import { Link } from "@/components/ui/link"
-import { Menu, MenuItem, MenuPopup, MenuTrigger } from "@/components/ui/menu"
+} from "@registry/components/ui/breadcrumb"
+import { Button } from "@registry/components/ui/button"
+import { Link } from "@registry/components/ui/link"
+import {
+  Menu,
+  MenuItem,
+  MenuPopup,
+  MenuTrigger,
+} from "@registry/components/ui/menu"
+import * as stylex from "@stylexjs/stylex"
 const styles = stylex.create({
   morePages: {
     margin: "calc(0.25rem * -1.5)",

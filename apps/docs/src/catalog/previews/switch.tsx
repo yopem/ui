@@ -1,5 +1,5 @@
-import { Label } from "@/components/ui/label"
-import { Switch } from "@/components/ui/switch"
+import { Label } from "@registry/components/ui/label"
+import { Switch } from "@registry/components/ui/switch"
 
 export function Preview() {
   return (

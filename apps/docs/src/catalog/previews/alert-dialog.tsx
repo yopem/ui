@@ -7,8 +7,8 @@ import {
   AlertDialogPopup,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/components/ui/alert-dialog"
-import { Button } from "@/components/ui/button"
+} from "@registry/components/ui/alert-dialog"
+import { Button } from "@registry/components/ui/button"
 
 export function Preview() {
   return (

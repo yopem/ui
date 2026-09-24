@@ -1,13 +1,4 @@
-import * as stylex from "@stylexjs/stylex"
-import {
-  PauseIcon,
-  PlayIcon,
-  SkipBackIcon,
-  SkipForwardIcon,
-  TrashIcon,
-} from "lucide-react"
-
-import { Button } from "@/components/ui/button"
+import { Button } from "@registry/components/ui/button"
 import {
   Menu,
   MenuCheckboxItem,
@@ -23,7 +14,15 @@ import {
   MenuSubPopup,
   MenuSubTrigger,
   MenuTrigger,
-} from "@/components/ui/menu"
+} from "@registry/components/ui/menu"
+import * as stylex from "@stylexjs/stylex"
+import {
+  PauseIcon,
+  PlayIcon,
+  SkipBackIcon,
+  SkipForwardIcon,
+  TrashIcon,
+} from "lucide-react"
 
 export function Preview() {
   return (

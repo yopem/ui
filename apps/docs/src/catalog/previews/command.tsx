@@ -1,11 +1,7 @@
 "use client"
 
-import * as stylex from "@stylexjs/stylex"
-import { ArrowDownIcon, ArrowUpIcon, CornerDownLeftIcon } from "lucide-react"
-import { Fragment, useEffect, useState } from "react"
-
-import { Box } from "@/components/ui/box"
-import { Button } from "@/components/ui/button"
+import { Box } from "@registry/components/ui/box"
+import { Button } from "@registry/components/ui/button"
 import {
   Command,
   CommandCollection,
@@ -22,9 +18,12 @@ import {
   CommandPanel,
   CommandSeparator,
   CommandShortcut,
-} from "@/components/ui/command"
-import { Flex } from "@/components/ui/flex"
-import { Kbd, KbdGroup } from "@/components/ui/kbd"
+} from "@registry/components/ui/command"
+import { Flex } from "@registry/components/ui/flex"
+import { Kbd, KbdGroup } from "@registry/components/ui/kbd"
+import * as stylex from "@stylexjs/stylex"
+import { ArrowDownIcon, ArrowUpIcon, CornerDownLeftIcon } from "lucide-react"
+import { Fragment, useEffect, useState } from "react"
 
 const styles = stylex.create({
   span: { flex: "1" },

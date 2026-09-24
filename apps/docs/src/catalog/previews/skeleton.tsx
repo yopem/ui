@@ -1,15 +1,18 @@
 "use client"
 
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "@registry/components/ui/avatar"
+import { Box } from "@registry/components/ui/box"
+import { Button } from "@registry/components/ui/button"
+import { Flex } from "@registry/components/ui/flex"
+import { Heading } from "@registry/components/ui/heading"
+import { Skeleton } from "@registry/components/ui/skeleton"
 import * as stylex from "@stylexjs/stylex"
 import { UserRoundPlusIcon, UsersRoundIcon } from "lucide-react"
 import { useEffect, useState } from "react"
-
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Box } from "@/components/ui/box"
-import { Button } from "@/components/ui/button"
-import { Flex } from "@/components/ui/flex"
-import { Heading } from "@/components/ui/heading"
-import { Skeleton } from "@/components/ui/skeleton"
 
 const styles = stylex.create({
   avatar: { inlineSize: "calc(0.25rem * 10)", blockSize: "calc(0.25rem * 10)" },

@@ -1,20 +1,19 @@
 "use client"
 
+import { Box } from "@registry/components/ui/box"
+import { Button } from "@registry/components/ui/button"
+import { Center } from "@registry/components/ui/center"
+import { Flex } from "@registry/components/ui/flex"
+import { Grid } from "@registry/components/ui/grid"
+import { Heading } from "@registry/components/ui/heading"
+import { HStack } from "@registry/components/ui/hstack"
+import { Label } from "@registry/components/ui/label"
+import { Link } from "@registry/components/ui/link"
+import { Paragraph } from "@registry/components/ui/paragraph"
+import { Stack } from "@registry/components/ui/stack"
+import { VStack } from "@registry/components/ui/vstack"
 import * as stylex from "@stylexjs/stylex"
 import { useRef, useState } from "react"
-
-import { Box } from "@/components/ui/box"
-import { Button } from "@/components/ui/button"
-import { Center } from "@/components/ui/center"
-import { Flex } from "@/components/ui/flex"
-import { Grid } from "@/components/ui/grid"
-import { Heading } from "@/components/ui/heading"
-import { HStack } from "@/components/ui/hstack"
-import { Label } from "@/components/ui/label"
-import { Link } from "@/components/ui/link"
-import { Paragraph } from "@/components/ui/paragraph"
-import { Stack } from "@/components/ui/stack"
-import { VStack } from "@/components/ui/vstack"
 const styles = stylex.create({
   layoutRoot: {
     gap: "calc(var(--spacing) * 4)",

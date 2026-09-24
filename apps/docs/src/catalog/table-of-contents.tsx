@@ -2,13 +2,12 @@
 
 import type { ReactNode } from "react"
 
+import { Box } from "@registry/components/ui/box"
+import { Link } from "@registry/components/ui/link"
+import { Paragraph } from "@registry/components/ui/paragraph"
 import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import { useCallback, useState } from "react"
-
-import { Box } from "@/components/ui/box"
-import { Link } from "@/components/ui/link"
-import { Paragraph } from "@/components/ui/paragraph"
 const styles = stylex.create({
   onThisPage: {
     display: { default: "none", "@media (min-width: 1536px)": "block" },

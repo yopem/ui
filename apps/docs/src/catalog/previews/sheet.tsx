@@ -1,9 +1,7 @@
-import * as stylex from "@stylexjs/stylex"
-
-import { Button } from "@/components/ui/button"
-import { Field, FieldLabel } from "@/components/ui/field"
-import { Form } from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
+import { Button } from "@registry/components/ui/button"
+import { Field, FieldLabel } from "@registry/components/ui/field"
+import { Form } from "@registry/components/ui/form"
+import { Input } from "@registry/components/ui/input"
 import {
   Sheet,
   SheetClose,
@@ -14,7 +12,8 @@ import {
   SheetPopup,
   SheetTitle,
   SheetTrigger,
-} from "@/components/ui/sheet"
+} from "@registry/components/ui/sheet"
+import * as stylex from "@stylexjs/stylex"
 const styles = stylex.create({
   form: { display: "contents" },
   sheetPanel: { display: "grid", gap: "calc(0.25rem * 4)" },

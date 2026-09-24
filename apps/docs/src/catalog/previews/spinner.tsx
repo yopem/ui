@@ -1,4 +1,4 @@
-import { Spinner } from "@/components/ui/spinner"
+import { Spinner } from "@registry/components/ui/spinner"
 
 export function Preview() {
   return <Spinner />

@@ -7,7 +7,7 @@ import {
   AutocompleteItem,
   AutocompleteList,
   AutocompletePopup,
-} from "@/components/ui/autocomplete"
+} from "@registry/components/ui/autocomplete"
 
 const items = [
   { label: "Apple", value: "apple" },

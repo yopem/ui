@@ -1,8 +1,7 @@
 "use client"
 
+import { Progress } from "@registry/components/ui/progress"
 import { useEffect, useState } from "react"
-
-import { Progress } from "@/components/ui/progress"
 
 export function Preview() {
   const [value, setValue] = useState(20)

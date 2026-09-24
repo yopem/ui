@@ -1,4 +1,4 @@
-import { Heading } from "@/components/ui/heading"
+import { Heading } from "@registry/components/ui/heading"
 
 export function Preview() {
   return (

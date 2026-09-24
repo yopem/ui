@@ -1,5 +1,5 @@
-import { Box } from "@/components/ui/box"
-import { Stack } from "@/components/ui/stack"
+import { Box } from "@registry/components/ui/box"
+import { Stack } from "@registry/components/ui/stack"
 
 export function Preview() {
   return (

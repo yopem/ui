@@ -3,9 +3,10 @@ import type { ErrorComponentProps } from "@tanstack/react-router"
 import "@fontsource-variable/figtree"
 import "@fontsource-variable/jetbrains-mono"
 import { Button } from "@registry/components/ui/button"
-import { ToastProvider } from "@registry/components/ui/toast"
+import { Paragraph } from "@registry/components/ui/paragraph"
 
 import "@/styles.css"
+import { ToastProvider } from "@registry/components/ui/toast"
 import { getRootThemeProps, ThemeScript } from "@registry/theme/theme"
 import { ThemeProvider } from "@registry/theme/theme-provider"
 import * as stylex from "@stylexjs/stylex"
@@ -26,7 +27,6 @@ import {
   DocsTitle,
 } from "@/catalog/docs-page"
 import { docsStyles } from "@/catalog/docs-styles"
-import { Paragraph } from "@/components/ui/paragraph"
 import { siteJsonLd } from "@/lib/seo"
 
 const styles = stylex.create({
