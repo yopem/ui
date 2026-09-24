@@ -1,3 +1,4 @@
+import mdx from "@mdx-js/rollup"
 import stylex from "@stylexjs/unplugin"
 import { devtools } from "@tanstack/devtools-vite"
 import { tanstackStart } from "@tanstack/react-start/plugin/vite"
@@ -18,6 +19,15 @@ const styleXOptions = {
   // TanStack Start loads its reset after StyleX in dev; layers invert precedence.
   useCSSLayers: false,
   devMode: "css-only" as const,
+}
+
+const mdxPlugin = mdx()
+const transformMdx = mdxPlugin.transform
+if (typeof transformMdx !== "function")
+  throw new Error("MDX plugin transform unavailable")
+mdxPlugin.transform = function (code, id) {
+  if (id.includes("?raw")) return Promise.resolve(undefined)
+  return transformMdx.call(this, code, id)
 }
 
 const config = defineConfig({
@@ -43,6 +53,7 @@ const config = defineConfig({
       },
     }),
     tanstackStart(),
+    mdxPlugin,
     viteReact(),
   ],
 })

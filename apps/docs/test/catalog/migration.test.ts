@@ -41,6 +41,10 @@ test("docs migration keeps semantic and layout primitive contracts", () => {
     join(sourceRoot, "routes/index.tsx"),
     "utf8",
   )
+  const guide = readFileSync(
+    join(sourceRoot, "catalog/guide-content.tsx"),
+    "utf8",
+  )
   const rootDocument = readFileSync(
     join(sourceRoot, "routes/__root.tsx"),
     "utf8",
@@ -54,8 +58,10 @@ test("docs migration keeps semantic and layout primitive contracts", () => {
   expect(docsLayout).toContain("<Grid xstyle={styles.frame}")
   expect(docsLayout).toContain("<UiLink href=")
   expect(docsLayout).toContain('<Link to="/"')
-  expect(introduction).toContain("<Flex")
-  expect(introduction).toContain("<Grid")
+  expect(introduction).toContain("<GuidePage")
+  expect(guide).toContain("<DocsPage")
+  expect(guide).toContain('as="h2"')
+  expect(guide).toContain('as="h3"')
   expect(rootDocument).toContain("<html")
   expect(rootDocument).toContain("<head>")
   expect(rootDocument).toContain("<body>")
