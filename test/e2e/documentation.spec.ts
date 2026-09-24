@@ -409,6 +409,7 @@ test("setup guide explains StyleX setup and shared files", async ({ page }) => {
   })
   await expect(title).toBeVisible()
   await expect(title).toHaveCSS("font-size", /^(34|44)px$/)
+  await expect(page.locator("pre.shiki code span").first()).toBeVisible()
   await expect(
     page.getByText("@rolldown/plugin-babel", { exact: false }).first(),
   ).toBeVisible()

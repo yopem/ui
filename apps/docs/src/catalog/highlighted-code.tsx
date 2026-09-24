@@ -1,6 +1,8 @@
 import type { ComponentProps } from "react"
 
 import { Box } from "@registry/components/ui/box"
+import { createHighlighterCoreSync } from "@shikijs/core"
+import { createJavaScriptRegexEngine } from "@shikijs/engine-javascript"
 import astro from "@shikijs/langs/astro"
 import css from "@shikijs/langs/css"
 import javascript from "@shikijs/langs/javascript"
@@ -10,8 +12,6 @@ import tsx from "@shikijs/langs/tsx"
 import typescript from "@shikijs/langs/typescript"
 import githubDark from "@shikijs/themes/github-dark"
 import githubLight from "@shikijs/themes/github-light"
-import { createHighlighterCoreSync } from "shiki/core"
-import { createJavaScriptRegexEngine } from "shiki/engine/javascript"
 const highlighter = createHighlighterCoreSync({
   engine: createJavaScriptRegexEngine(),
   langs: [astro, css, javascript, json, shellscript, tsx, typescript],
