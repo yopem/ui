@@ -3,10 +3,15 @@ First, [choose a layout component](/docs/layout) and
 
 ## Rules
 
-The local Oxlint plugin provides four rules:
+The local Oxlint plugin enforces styling methods and component contracts. Other
+StyleX consistency rules remain opt-in:
 
-- **yopem-ui/prefer-ui-primitives**: prefer `Box` over native `div`, `Link` over
-  `a`, and semantic UI components where available.
+- **yopem-ui/no-restyle** (recommended): restrict StyleX properties passed
+  through `xstyle` to imported UI components. By default only layout properties
+  pass, so color and shape changes prefer existing `variant` props, and spacing
+  prefers `size` where those props exist. Resolves local `stylex.create`
+  declarations, arrays, and conditional styles; skips imported or computed
+  styles that cannot be verified within the file.
 - **yopem-ui/enforce-styling-methods**: allow `xstyle` and consumer `className`
   on imported UI components; reject `css`, inline React style, and direct
   `stylex.props` spreads on those components. Set `className: false` for apps
@@ -14,6 +19,13 @@ The local Oxlint plugin provides four rules:
 - **yopem-ui/static-stylex**: require statically analyzable StyleX declarations.
 - **yopem-ui/valid-polymorphic-as**: validate native tags on Box and heading
   levels on Heading.
+- **yopem-ui/no-raw-stylex-colors** (off by default): flag literal hex and CSS
+  color functions on color properties in `stylex.create`. Tokens pass. Enabled
+  in docs app; does not inspect shadows or unrelated CSS strings.
+- **yopem-ui/atoms** (off by default): `mode: "allow"` (default), `"disallow"`
+  (reject atoms imports), or `"enforce"` (reject `stylex.create` declarations
+  and require atoms in JSX `xstyle`/`sx` expressions). Official atoms compose
+  alongside StyleX styles, not inside `stylex.create` objects.
 
 ## Configuration
 
@@ -39,7 +51,7 @@ expose `className` for external integration.
           "error",
           { "methods": { "className": false } }
         ],
-        "yopem-ui/prefer-ui-primitives": "error",
+        "yopem-ui/no-raw-stylex-colors": "error",
         "yopem-ui/static-stylex": "error",
         "yopem-ui/valid-polymorphic-as": "error"
       }
@@ -47,6 +59,56 @@ expose `className` for external integration.
   ]
 }
 ```
+
+To enforce component contracts, enable `no-restyle` (included in plugin
+`recommendedRules`; docs previews currently opt out while keeping raw-color
+consistency enabled):
+
+```json
+{
+  "yopem-ui/no-restyle": [
+    "error",
+    {
+      "allow": ["layout", "margin*"],
+      "deny": ["marginBlockStart"],
+      "exclude": ["^Legacy"],
+      "contracts": [
+        {
+          "pattern": "^CardTitle$",
+          "allow": ["fontSize", "color"],
+          "deny": [],
+          "message": "Use a {{component}} variant instead of {{property}}."
+        }
+      ]
+    }
+  ]
+}
+```
+
+`allow` and `deny` accept StyleX property names, `*` globs, or categories
+(`layout`, `spacing`, `color`, `typography`, `shape`, `effects`, `motion`).
+Omitted `allow` defaults to `layout`; an empty `allow` permits none. `deny`
+wins. Contract regexes match imported component names; last matching contract
+wins and replaces only keys it sets. `exclude` takes component name regexes. Set
+`componentSources` and `styleComponents` to replace imported UI recognition
+defaults. Messages support `{{component}}` and `{{property}}`. Use file
+overrides to exempt component implementations.
+
+To use atoms, install and compile `@stylexjs/atoms` with StyleX's Babel plugin.
+Atoms use a default import and compose through StyleX props or `sx`:
+
+```tsx
+import x from "@stylexjs/atoms"
+
+const preview = <Button xstyle={[x.paddingInline._12px, x.color.blue]} />
+```
+
+Configure `"yopem-ui/atoms": ["error", { "mode": "enforce" }]` to require atoms
+instead of local `stylex.create` declarations and in JSX `xstyle`/`sx`.
+`"disallow"` rejects atoms imports; `"allow"` permits both. For a wrapper
+imported from `@apps/stylexjs/atoms`, set `"source": "@apps/stylexjs/atoms"`.
+This repo does not currently include that wrapper or the atoms dependency; leave
+the atoms rule off until installed and compiled.
 
 Native framework elements (for example TanStack Router links) can use
 `stylex.props(...)`. Imported UI components should use `xstyle` instead of a
@@ -56,9 +118,6 @@ StyleX prop spread, so component defaults and consumer styles compose in order.
 
 ## Exceptions
 
-`prefer-ui-primitives` accepts `allowElements` for document-shell and resource
-tags. Tag replacements are not autofixed: semantics and imports need review.
-Registry implementations and non-DOM JSX renderers are outside the docs rule
-scope. SVG, MathML, custom elements, and component expressions remain supported;
-HTML inside SVG `foreignObject` is still checked. Run `bun run lint` from the
-repository root.
+The library no longer requires UI wrappers for native elements. Registry
+implementations and non-DOM JSX renderers are outside the docs rule scope. Run
+`bun run lint` from the repository root.

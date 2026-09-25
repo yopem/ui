@@ -65,7 +65,7 @@ export const guidePages = [
     title: "Lint rules",
     url: "/docs/lint",
     content:
-      "Oxlint rules enforce-styling-methods prefer-ui-primitives static-stylex valid-polymorphic-as configuration allowElements",
+      "Oxlint rules enforce-styling-methods static-stylex valid-polymorphic-as no-restyle no-raw-stylex-colors atoms contracts StyleX configuration properties",
   },
   {
     title: "Theming",
