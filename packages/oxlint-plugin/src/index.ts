@@ -25,7 +25,6 @@ type VariableDeclarator = Parameters<
 type SourceNode = NonNullable<
   Parameters<RuleContext["sourceCode"]["getText"]>[0]
 > & { type: string }
-type Namespace = "svg" | "math" | null
 type StylingMethod =
   | "className"
   | "css"
@@ -46,6 +45,23 @@ interface StylingOptions {
   componentSources: string[]
   methods: Record<StylingMethod, boolean>
   styleComponents: Set<string>
+}
+
+interface StylePolicy {
+  allow?: string[]
+  deny?: string[]
+  message?: string
+}
+
+interface StyleContract extends StylePolicy {
+  pattern: string
+}
+
+interface RestyleOptions extends StylePolicy {
+  contracts?: StyleContract[]
+  exclude?: string[]
+  componentSources?: string[]
+  styleComponents?: string[]
 }
 
 const DEFAULT_COMPONENT_SOURCES = [
@@ -315,6 +331,203 @@ function getCallArguments(value: unknown) {
   return Array.isArray(args) ? args : []
 }
 
+function getRestyleOptions(context: RuleContext): RestyleOptions {
+  const option = context.options[0]
+  return typeof option === "object" && option !== null && !Array.isArray(option)
+    ? option
+    : {}
+}
+
+function matchesPattern(value: string, pattern: string) {
+  const escaped = pattern.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
+  return new RegExp(`^${escaped.replaceAll("\\*", ".*")}$`).test(value)
+}
+
+const PROPERTY_CATEGORIES: Record<string, string> = {
+  background: "color",
+  borderColor: "color",
+  color: "color",
+  fill: "color",
+  stroke: "color",
+  margin: "layout",
+  inlineSize: "layout",
+  blockSize: "layout",
+  width: "layout",
+  height: "layout",
+  padding: "spacing",
+  gap: "spacing",
+  font: "typography",
+  text: "typography",
+  lineHeight: "typography",
+  borderRadius: "shape",
+  boxShadow: "effects",
+  opacity: "effects",
+  animation: "motion",
+  transition: "motion",
+}
+
+function categoryOf(property: string) {
+  return (
+    Object.entries(PROPERTY_CATEGORIES).find(([prefix]) =>
+      property.startsWith(prefix),
+    )?.[1] ?? "unclassified"
+  )
+}
+
+function policyAllows(property: string, policy: StylePolicy) {
+  const matches = (entry: string) =>
+    entry === categoryOf(property) || matchesPattern(property, entry)
+  return (
+    (policy.allow === undefined || policy.allow.some(matches)) &&
+    !policy.deny?.some(matches)
+  )
+}
+
+const COMPONENT_PROPS: Record<string, { variant?: boolean; size?: boolean }> = {
+  Button: { variant: true, size: true },
+  Badge: { variant: true, size: true },
+  Toggle: { variant: true, size: true },
+  Tabs: { variant: true, size: true },
+  TabsTab: { size: true },
+  Table: { variant: true },
+  Input: { size: true },
+  Textarea: { size: true },
+  NumberField: { size: true },
+  SidebarMenuButton: { variant: true, size: true },
+  Alert: { variant: true },
+  Sidebar: { variant: true },
+}
+
+function defaultRestyleMessage(component: string, property: string) {
+  const category = categoryOf(property)
+  const props = COMPONENT_PROPS[component]
+  const alternative =
+    category === "spacing" && props?.size
+      ? "size"
+      : (category === "color" ||
+            category === "shape" ||
+            category === "effects") &&
+          props?.variant
+        ? "variant"
+        : null
+  return alternative === null
+    ? `${property} cannot restyle ${component}. Use a component prop or approved StyleX property.`
+    : `${property} cannot restyle ${component}. Use its ${alternative} prop first.`
+}
+
+function getPolicy(component: string, options: RestyleOptions): StylePolicy {
+  const contract = options.contracts?.findLast((entry) => {
+    try {
+      return new RegExp(entry.pattern).test(component)
+    } catch {
+      return false
+    }
+  })
+  return {
+    allow: contract?.allow ?? options.allow ?? ["layout"],
+    deny: contract?.deny ?? options.deny,
+    message: contract?.message ?? options.message,
+  }
+}
+
+function visitStyleProperties(
+  value: unknown,
+  onProperty: (property: string, node: SourceNode) => void,
+) {
+  if (!isNode(value, "ObjectExpression")) return
+  const properties = getProperty(value, "properties")
+  if (!Array.isArray(properties)) return
+  for (const item of properties) {
+    if (!isNode(item, "Property")) continue
+    const property = getPropertyName(getProperty(item, "key"))
+    const child = getProperty(item, "value")
+    if (
+      property !== null &&
+      !property.startsWith(":") &&
+      !property.startsWith("@")
+    ) {
+      onProperty(property, item)
+    } else if (isNode(child, "ObjectExpression")) {
+      visitStyleProperties(child, onProperty)
+    }
+  }
+}
+
+function getStyleLiterals(value: unknown): string[] {
+  const literal = getLiteralString(value)
+  if (literal !== null) return [literal]
+  if (!isNode(value, "ObjectExpression")) return []
+  const properties = getProperty(value, "properties")
+  return Array.isArray(properties)
+    ? properties.flatMap((property) =>
+        getStyleLiterals(getProperty(property, "value")),
+      )
+    : []
+}
+
+function resolveStyle(
+  value: unknown,
+  declarations: Map<string, Map<string, unknown>>,
+  onStyle: (style: unknown) => void,
+) {
+  if (!isNode(value)) return
+  if (value.type === "ArrayExpression") {
+    const elements = getProperty(value, "elements")
+    if (Array.isArray(elements)) {
+      for (const element of elements)
+        resolveStyle(element, declarations, onStyle)
+    }
+  } else if (value.type === "ConditionalExpression") {
+    resolveStyle(getProperty(value, "consequent"), declarations, onStyle)
+    resolveStyle(getProperty(value, "alternate"), declarations, onStyle)
+  } else if (value.type === "LogicalExpression") {
+    resolveStyle(getProperty(value, "right"), declarations, onStyle)
+  } else if (value.type === "ObjectExpression") {
+    onStyle(value)
+  } else if (value.type === "MemberExpression") {
+    const name = getIdentifier(getProperty(value, "object"))
+    const key = getPropertyName(getProperty(value, "property"))
+    if (
+      name !== null &&
+      key !== null &&
+      getProperty(value, "computed") !== true
+    ) {
+      const style = declarations.get(name)?.get(key)
+      if (style !== undefined) onStyle(style)
+    }
+  }
+}
+
+function trackStyleDeclaration(
+  node: VariableDeclarator,
+  bindings: ImportBindings,
+  declarations: Map<string, Map<string, unknown>>,
+) {
+  const name = getIdentifier(node.id)
+  if (
+    name === null ||
+    !isNamedCall(
+      node.init,
+      bindings.stylexCreate,
+      bindings.stylexNamespaces,
+      "create",
+    )
+  )
+    return
+  const root = getCallArguments(node.init)[0]
+  if (!isNode(root, "ObjectExpression")) return
+  const styles = new Map<string, unknown>()
+  const properties = getProperty(root, "properties")
+  if (Array.isArray(properties)) {
+    for (const item of properties) {
+      if (!isNode(item, "Property")) continue
+      const key = getPropertyName(getProperty(item, "key"))
+      if (key !== null) styles.set(key, getProperty(item, "value"))
+    }
+  }
+  declarations.set(name, styles)
+}
+
 function classifyMethod(
   attribute: unknown,
   bindings: ImportBindings,
@@ -372,80 +585,278 @@ const HTML_ELEMENTS = new Set(
   ),
 )
 
-const SVG_ELEMENTS = new Set(
-  "a animate animateMotion animateTransform circle clipPath defs desc ellipse feBlend feColorMatrix feComponentTransfer feComposite feConvolveMatrix feDiffuseLighting feDisplacementMap feDistantLight feDropShadow feFlood feFuncA feFuncB feFuncG feFuncR feGaussianBlur feImage feMerge feMergeNode feMorphology feOffset fePointLight feSpecularLighting feSpotLight feTile feTurbulence filter foreignObject g image line linearGradient marker mask metadata mpath path pattern polygon polyline radialGradient rect script set stop style svg switch symbol text textPath title tspan use view".split(
-    " ",
-  ),
-)
-
-const MATHML_ELEMENTS = new Set(
-  "annotation annotation-xml maction maligngroup malignmark math menclose merror mfenced mfrac mglyph mi mlabeledtr mmultiscripts mn mo mover mpadded mphantom mprescripts mroot mrow ms mscarries mscarry msline mspace msqrt msrow mstack mstyle msub msubsup msup mtable mtd mtext mtr munder munderover semantics".split(
-    " ",
-  ),
-)
-
-function getJsxTag(name: unknown) {
-  if (typeof name !== "object" || name === null) return null
-  return "type" in name &&
-    name.type === "JSXIdentifier" &&
-    "name" in name &&
-    typeof name.name === "string"
-    ? name.name
-    : null
+const policySchema = {
+  additionalProperties: false,
+  properties: {
+    allow: { items: { type: "string" }, type: "array" },
+    deny: { items: { type: "string" }, type: "array" },
+    message: { type: "string" },
+  },
+  type: "object",
 }
 
-function getNamespace(
-  node: JSXOpeningElement,
-  context: RuleContext,
-): Namespace {
-  let namespace: Namespace = null
-
-  for (const ancestor of context.sourceCode.getAncestors(node)) {
-    if (
-      !("type" in ancestor) ||
-      ancestor.type !== "JSXElement" ||
-      !("openingElement" in ancestor)
-    )
-      continue
-    const opening = ancestor.openingElement
-    if (typeof opening !== "object" || opening === null || !("name" in opening))
-      continue
-    const ancestorTag = getJsxTag(opening.name)
-    if (ancestorTag === "svg") namespace = "svg"
-    if (ancestorTag === "math") namespace = "math"
-    if (ancestorTag === "foreignObject" && namespace === "svg") {
-      namespace = null
+const noRestyleRule: Rule = {
+  meta: {
+    type: "problem",
+    docs: {
+      description: "Restrict StyleX properties passed to UI components.",
+    },
+    messages: {
+      disallowed: "{{message}}",
+    },
+    schema: [
+      {
+        ...policySchema,
+        properties: {
+          ...policySchema.properties,
+          componentSources: { items: { type: "string" }, type: "array" },
+          styleComponents: { items: { type: "string" }, type: "array" },
+          exclude: { items: { type: "string" }, type: "array" },
+          contracts: {
+            type: "array",
+            items: {
+              ...policySchema,
+              properties: {
+                ...policySchema.properties,
+                pattern: { type: "string" },
+              },
+              required: ["pattern"],
+            },
+          },
+        },
+      },
+    ],
+  },
+  create(context: RuleContext) {
+    const policyOptions = getRestyleOptions(context)
+    const options = getStylingOptions(context)
+    const bindings = createImportBindings()
+    const declarations = new Map<string, Map<string, unknown>>()
+    const elements: JSXOpeningElement[] = []
+    return {
+      ImportDeclaration(node: ImportDeclaration) {
+        trackImports(node, bindings, options)
+      },
+      VariableDeclarator(node: VariableDeclarator) {
+        trackStyleDeclaration(node, bindings, declarations)
+      },
+      JSXOpeningElement(node: JSXOpeningElement) {
+        elements.push(node)
+      },
+      "Program:exit"() {
+        for (const node of elements) {
+          const component = getComponent(
+            node.name,
+            node,
+            bindings,
+            context,
+            options,
+          )
+          if (
+            component === null ||
+            policyOptions.exclude?.some((pattern) => {
+              try {
+                return new RegExp(pattern).test(component)
+              } catch {
+                return false
+              }
+            })
+          )
+            continue
+          const policy = getPolicy(component, policyOptions)
+          for (const attribute of node.attributes) {
+            if (getAttributeName(attribute) !== "xstyle") continue
+            resolveStyle(
+              getAttributeExpression(attribute),
+              declarations,
+              (style) => {
+                visitStyleProperties(style, (property, propertyNode) => {
+                  if (policyAllows(property, policy)) return
+                  const message = (
+                    policy.message ?? defaultRestyleMessage(component, property)
+                  )
+                    .replaceAll("{{property}}", property)
+                    .replaceAll("{{component}}", component)
+                  context.report({
+                    messageId: "disallowed",
+                    data: { message },
+                    node: propertyNode,
+                  })
+                })
+              },
+            )
+          }
+        }
+      },
     }
-  }
-
-  return namespace
+  },
 }
 
-function getAllowedElements(context: RuleContext) {
-  const option = context.options[0]
-  if (option === null || typeof option !== "object" || Array.isArray(option)) {
-    return []
-  }
-
-  const allowElements = option.allowElements
-  if (!Array.isArray(allowElements)) return []
-
-  return allowElements.filter(
-    (element): element is string => typeof element === "string",
-  )
+const noRawStylexColorsRule: Rule = {
+  meta: {
+    type: "problem",
+    docs: {
+      description: "Prefer design tokens to raw colors in StyleX declarations.",
+    },
+    messages: {
+      rawColor: "Use a design token instead of raw {{property}} color.",
+    },
+    schema: [],
+  },
+  create(context: RuleContext) {
+    const bindings = createImportBindings()
+    const options = getStylingOptions(context)
+    return {
+      ImportDeclaration(node: ImportDeclaration) {
+        trackImports(node, bindings, options)
+      },
+      VariableDeclarator(node: VariableDeclarator) {
+        if (
+          !isNamedCall(
+            node.init,
+            bindings.stylexCreate,
+            bindings.stylexNamespaces,
+            "create",
+          )
+        )
+          return
+        const root = getCallArguments(node.init)[0]
+        if (!isNode(root, "ObjectExpression")) return
+        const styles = getProperty(root, "properties")
+        if (!Array.isArray(styles)) return
+        for (const style of styles) {
+          if (!isNode(style, "Property")) continue
+          visitStyleProperties(
+            getProperty(style, "value"),
+            (property, propertyNode) => {
+              if (
+                !/^(?:color|background(?:Color)?|border.*Color|outlineColor|textDecorationColor|fill|stroke)$/.test(
+                  property,
+                )
+              )
+                return
+              const values = getStyleLiterals(
+                getProperty(propertyNode, "value"),
+              )
+              if (
+                values.some((value) =>
+                  /^(?:#[\da-f]{3,8}|(?:rgb|hsl|oklch|oklab|lab|lch|color)\()/i.test(
+                    value,
+                  ),
+                )
+              ) {
+                context.report({
+                  messageId: "rawColor",
+                  data: { property },
+                  node: propertyNode,
+                })
+              }
+            },
+          )
+        }
+      },
+    }
+  },
 }
 
-function isAllowedNamespaceElement(
-  tag: string,
-  node: JSXOpeningElement,
-  context: RuleContext,
-) {
-  if (tag === "svg" || tag === "math") return true
-
-  const namespace = getNamespace(node, context)
-  if (namespace === "svg") return SVG_ELEMENTS.has(tag)
-  if (namespace === "math") return MATHML_ELEMENTS.has(tag)
+function containsAtom(value: unknown, atoms: ReadonlySet<string>): boolean {
+  if (!isNode(value)) return false
+  if (value.type === "Identifier") return atoms.has(getIdentifier(value) ?? "")
+  if (value.type === "MemberExpression") {
+    return containsAtom(getProperty(value, "object"), atoms)
+  }
+  if (value.type === "CallExpression") {
+    return containsAtom(getProperty(value, "callee"), atoms)
+  }
+  if (value.type === "ArrayExpression") {
+    const elements = getProperty(value, "elements")
+    return (
+      Array.isArray(elements) &&
+      elements.some((entry) => containsAtom(entry, atoms))
+    )
+  }
+  if (value.type === "ConditionalExpression") {
+    return (
+      containsAtom(getProperty(value, "consequent"), atoms) ||
+      containsAtom(getProperty(value, "alternate"), atoms)
+    )
+  }
+  if (value.type === "LogicalExpression") {
+    return containsAtom(getProperty(value, "right"), atoms)
+  }
   return false
+}
+
+const atomsRule: Rule = {
+  meta: {
+    type: "problem",
+    docs: {
+      description:
+        "Allow, disallow, or require StyleX atoms instead of local declarations.",
+    },
+    messages: {
+      disallowed: "StyleX atoms are disallowed here.",
+      required:
+        "Use @stylexjs/atoms instead of stylex.create for inline styles.",
+      requiredJsx:
+        "Use @stylexjs/atoms in xstyle or sx instead of local styles.",
+    },
+    schema: [
+      {
+        additionalProperties: false,
+        properties: {
+          mode: { enum: ["allow", "disallow", "enforce"] },
+          source: { type: "string" },
+        },
+        type: "object",
+      },
+    ],
+  },
+  create(context: RuleContext) {
+    const option = context.options[0]
+    const mode = getProperty(option, "mode") ?? "allow"
+    const source = getProperty(option, "source") ?? "@stylexjs/atoms"
+    const bindings = createImportBindings()
+    const options = getStylingOptions(context)
+    const atoms = new Set<string>()
+    return {
+      ImportDeclaration(node: ImportDeclaration) {
+        trackImports(node, bindings, options)
+        if (getImportSource(node) === source) {
+          for (const specifier of node.specifiers) {
+            const name = getIdentifier(getProperty(specifier, "local"))
+            if (name !== null) atoms.add(name)
+          }
+          if (mode === "disallow")
+            context.report({ messageId: "disallowed", node })
+        }
+      },
+      VariableDeclarator(node: VariableDeclarator) {
+        if (
+          mode === "enforce" &&
+          isNamedCall(
+            node.init,
+            bindings.stylexCreate,
+            bindings.stylexNamespaces,
+            "create",
+          )
+        ) {
+          context.report({ messageId: "required", node: node.init ?? node })
+        }
+      },
+      JSXOpeningElement(node: JSXOpeningElement) {
+        if (mode !== "enforce") return
+        for (const attribute of node.attributes) {
+          const name = getAttributeName(attribute)
+          if (name !== "xstyle" && name !== "sx") continue
+          const expression = getAttributeExpression(attribute)
+          if (expression !== null && !containsAtom(expression, atoms)) {
+            context.report({ messageId: "requiredJsx", node: attribute })
+          }
+        }
+      },
+    }
+  },
 }
 
 const enforceStylingMethodsRule: Rule = {
@@ -597,70 +1008,9 @@ const staticStylexRule: Rule = {
   },
 }
 
-const preferUiPrimitivesRule: Rule = {
-  meta: {
-    type: "suggestion",
-    docs: {
-      description:
-        "Prefer UI primitives over known native HTML elements in JSX.",
-    },
-    messages: {
-      preferPrimitive: "Prefer {{primitive}} over native <{{tag}}>.",
-    },
-    schema: [
-      {
-        additionalProperties: false,
-        properties: {
-          allowElements: {
-            items: { type: "string" },
-            type: "array",
-          },
-        },
-        type: "object",
-      },
-    ],
-  },
-  create(context: RuleContext) {
-    const allowedElements = new Set(getAllowedElements(context))
-
-    return {
-      JSXOpeningElement(node: JSXOpeningElement) {
-        const tag = getJsxTag(node.name)
-        if (
-          tag === null ||
-          !HTML_ELEMENTS.has(tag) ||
-          tag.includes("-") ||
-          allowedElements.has(tag) ||
-          isAllowedNamespaceElement(tag, node, context)
-        ) {
-          return
-        }
-
-        context.report({
-          data: {
-            tag,
-            primitive:
-              tag === "a"
-                ? "Link"
-                : tag === "p"
-                  ? "Paragraph"
-                  : /^h[1-6]$/.test(tag)
-                    ? `Heading as="${tag}"`
-                    : tag === "div"
-                      ? "Box"
-                      : `Box as="${tag}"`,
-          },
-          messageId: "preferPrimitive",
-          node: node.name,
-        })
-      },
-    }
-  },
-}
-
 export const recommendedRules = {
   "yopem-ui/enforce-styling-methods": "error",
-  "yopem-ui/prefer-ui-primitives": "error",
+  "yopem-ui/no-restyle": "error",
   "yopem-ui/static-stylex": "error",
   "yopem-ui/valid-polymorphic-as": "error",
 } as const
@@ -671,8 +1021,10 @@ const plugin: Plugin = {
     recommended: { rules: recommendedRules },
   },
   rules: {
+    atoms: atomsRule,
+    "no-raw-stylex-colors": noRawStylexColorsRule,
+    "no-restyle": noRestyleRule,
     "enforce-styling-methods": enforceStylingMethodsRule,
-    "prefer-ui-primitives": preferUiPrimitivesRule,
     "static-stylex": staticStylexRule,
     "valid-polymorphic-as": validPolymorphicAsRule,
   },
