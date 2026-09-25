@@ -119,7 +119,7 @@ export function DocumentationLayout({ children }: { children: ReactNode }) {
         </Dialog>
         <Link to="/" {...stylex.props(styles.brand)}>
           <BrandLogo />
-          Yopem UI
+          UI
         </Link>
         <GlobalSearch />
       </Box>
