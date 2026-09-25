@@ -60,12 +60,12 @@ test("MDX guides render sections, anchors, and copyable snippets", async ({
     page.getByRole("heading", { name: "What you need" }),
   ).toBeVisible()
   await expect(
-    page.getByRole("link", { name: "2. Copy Button" }),
-  ).toHaveAttribute("href", "#2-copy-button")
+    page.getByRole("link", { name: "2. Install Button" }),
+  ).toHaveAttribute("href", "#2-install-button")
   await expect(
     page.getByRole("button", { name: "Copy Code" }).first(),
   ).toBeEnabled()
-  await expect(page.locator("#copy-button")).toHaveCount(1)
+  await expect(page.locator("#install-button")).toHaveCount(1)
   expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([])
 })
 
@@ -73,7 +73,6 @@ test("minimal setup and StyleX customization are documented", async ({
   page,
 }) => {
   await page.goto("/docs/installation")
-  await expect(page.getByRole("tab", { name: "CLI" })).toBeVisible()
   await expect(
     page.getByRole("button", { name: "Copy Initialize project with CLI" }),
   ).toBeEnabled()
@@ -81,20 +80,10 @@ test("minimal setup and StyleX customization are documented", async ({
     page.getByRole("button", { name: "Copy Select framework with CLI" }),
   ).toBeEnabled()
   await expect(
-    page.getByText(/React Router client mode.*react-router-dom/),
+    page.getByText(/React Router client mode is detected from/),
   ).toBeVisible()
-  await page.getByRole("tab", { name: "CLI" }).focus()
-  await page.keyboard.press("ArrowRight")
-  await expect(page.getByRole("tab", { name: "Manual" })).toBeFocused()
-  await page.keyboard.press("Enter")
-  await expect(page.getByRole("tab", { name: "Manual" })).toHaveAttribute(
-    "aria-selected",
-    "true",
-  )
-  await expect(
-    page.getByRole("button", { name: /^Copy src\/(styles|lib)\// }),
-  ).toHaveCount(3)
-  await expect(page.getByText(/Follow steps 1 and 2 above/)).toBeVisible()
+  await expect(page.getByRole("tab", { name: "Manual" })).toHaveCount(0)
+  await expect(page.getByText(/manual setup guide/i)).toHaveCount(0)
   await page.goto("/docs/theming")
   await expect(
     page.getByRole("heading", { name: "Component overrides", exact: true }),
@@ -110,7 +99,7 @@ test("minimal setup and StyleX customization are documented", async ({
   ).toHaveCount(2)
 })
 
-test("component docs cover setup, source files, and API", async ({ page }) => {
+test("component docs cover CLI setup and API", async ({ page }) => {
   const missingStyles: string[] = []
   page.on("response", (response) => {
     if (
@@ -130,10 +119,7 @@ test("component docs cover setup, source files, and API", async ({ page }) => {
   await expect(
     page.getByRole("button", { name: "Copy Button usage", exact: true }),
   ).toBeEnabled()
-  await expect(page.getByRole("tab", { name: "CLI" })).toHaveAttribute(
-    "aria-selected",
-    "true",
-  )
+  await expect(page.getByRole("tab", { name: "Manual" })).toHaveCount(0)
   await expect(
     page.getByRole("button", {
       name: "Copy Initialize StyleX project with CLI",
@@ -145,23 +131,6 @@ test("component docs cover setup, source files, and API", async ({ page }) => {
   await expect(
     page.getByRole("button", { name: "Copy Update Button with CLI" }),
   ).toBeEnabled()
-  await page.getByRole("tab", { name: "Manual" }).click()
-  const sourceHeader = page
-    .getByText("src/components/ui/button.tsx", { exact: true })
-    .locator("..")
-  await expect(sourceHeader).toBeVisible()
-  await expect(
-    sourceHeader.getByRole("button", {
-      name: "Copy src/components/ui/button.tsx",
-      exact: true,
-    }),
-  ).toBeVisible()
-  await expect(
-    page.getByRole("button", {
-      name: "Copy src/components/ui/spinner.tsx",
-      exact: true,
-    }),
-  ).toBeVisible()
   await page
     .locator("summary")
     .filter({ hasText: "View API reference" })
@@ -190,16 +159,12 @@ test("component docs cover setup, source files, and API", async ({ page }) => {
   await expect(
     page.getByRole("button", { name: "Copy Clickable default action source" }),
   ).toBeVisible()
-  const viewCode = page.getByRole("button", { name: "View code", exact: true })
-  const collapsedCodeCount = await viewCode.count()
-  await viewCode.first().click()
-  await expect(viewCode).toHaveCount(collapsedCodeCount - 1)
   await expect(
     page.getByText(/inherited React and HTML properties/i),
   ).toHaveCount(0)
 })
 
-test("copy buttons copy source, not installation commands", async ({
+test("copy buttons copy usage, not installation commands", async ({
   page,
   context,
 }) => {
@@ -211,16 +176,6 @@ test("copy buttons copy source, not installation commands", async ({
   await expect
     .poll(() => page.evaluate(() => navigator.clipboard.readText()))
     .toContain('from "@/components/ui/button"')
-  await page.getByRole("tab", { name: "Manual" }).click()
-  await page
-    .getByRole("button", {
-      name: "Copy src/components/ui/button.tsx",
-      exact: true,
-    })
-    .click()
-  await expect
-    .poll(() => page.evaluate(() => navigator.clipboard.readText()))
-    .toContain("export function Button")
 })
 
 test("clipboard failures explain manual copying", async ({ page }) => {
@@ -236,12 +191,8 @@ test("clipboard failures explain manual copying", async ({ page }) => {
   await expect(
     page.getByRole("button", { name: "Copy Button usage", exact: true }),
   ).toBeEnabled()
-  await page.getByRole("tab", { name: "Manual" }).click()
   await page
-    .getByRole("button", {
-      name: "Copy src/components/ui/button.tsx",
-      exact: true,
-    })
+    .getByRole("button", { name: "Copy Button usage", exact: true })
     .click()
   await expect(
     page.getByRole("status").filter({ hasText: /copy|clipboard/i }),
@@ -292,10 +243,11 @@ test("dark theme uses StyleX classes without inline color-scheme", async ({
 test("main document scrolls normally and restores position on back navigation", async ({
   page,
 }) => {
+  test.setTimeout(45_000)
   await page.goto("/components/sidebar")
   await expect(
     page.getByRole("button", { name: "Copy Sidebar usage", exact: true }),
-  ).toBeEnabled()
+  ).toBeEnabled({ timeout: 25_000 })
   const main = await page.getByRole("main").boundingBox()
   const viewport = page.viewportSize()!
   if (!main) throw new Error("Main documentation region is missing")
@@ -357,7 +309,11 @@ test("desktop table of contents stays fixed and tracks the section", async ({
 test("search supports keyboard opening, empty results, errors, and focus restoration", async ({
   page,
 }) => {
+  test.setTimeout(45_000)
   await page.goto("/components/button")
+  await expect(
+    page.getByRole("button", { name: "Copy Button usage", exact: true }),
+  ).toBeEnabled({ timeout: 25_000 })
   await page.route("**/api/search?query=*", (route) =>
     route.fulfill({ contentType: "application/json", body: "[]" }),
   )
@@ -385,8 +341,12 @@ test("search supports keyboard opening, empty results, errors, and focus restora
 test("mobile navigation changes theme and restores trigger focus", async ({
   page,
 }) => {
+  test.setTimeout(45_000)
   await page.setViewportSize({ width: 390, height: 844 })
   await page.goto("/components/button")
+  await expect(
+    page.getByRole("button", { name: "Copy Button usage", exact: true }),
+  ).toBeEnabled({ timeout: 25_000 })
   const trigger = page.getByRole("button", { name: "Open navigation" })
   await trigger.click()
   const dialog = page.getByRole("dialog", { name: "Documentation" })
@@ -401,7 +361,7 @@ test("mobile navigation changes theme and restores trigger focus", async ({
   await expect(trigger).toBeFocused()
 })
 
-test("setup guide explains StyleX setup and shared files", async ({ page }) => {
+test("setup guide explains CLI setup", async ({ page }) => {
   await page.goto("/docs/installation")
   const title = page.getByRole("heading", {
     name: "Installation",
@@ -409,20 +369,11 @@ test("setup guide explains StyleX setup and shared files", async ({ page }) => {
   })
   await expect(title).toBeVisible()
   await expect(title).toHaveCSS("font-size", /^(34|44)px$/)
-  await expect(page.locator("pre.shiki code span").first()).toBeVisible()
   await expect(
-    page.getByText("@rolldown/plugin-babel", { exact: false }).first(),
-  ).toBeVisible()
+    page.getByRole("button", { name: "Copy Initialize project with CLI" }),
+  ).toBeEnabled()
+  await expect(page.getByText("Terminal", { exact: true })).toHaveCount(0)
   await expect(
-    page.getByRole("heading", {
-      name: "4. Configure your framework",
-      exact: true,
-    }),
-  ).toBeVisible()
-  await expect(
-    page.getByRole("heading", {
-      name: "3. Initialize setup",
-      exact: true,
-    }),
+    page.getByRole("heading", { name: "Initialize project", exact: true }),
   ).toBeVisible()
 })

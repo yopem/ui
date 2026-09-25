@@ -1,12 +1,6 @@
 import { Box } from "@registry/components/ui/box"
 import { Heading } from "@registry/components/ui/heading"
 import { Paragraph } from "@registry/components/ui/paragraph"
-import {
-  Tabs,
-  TabsList,
-  TabsPanel,
-  TabsTab,
-} from "@registry/components/ui/tabs"
 import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import { Link, createFileRoute, notFound } from "@tanstack/react-router"
@@ -51,65 +45,6 @@ const styles = stylex.create({
   },
   paragraph2: { marginBlock: "1rem", lineHeight: 1.8 },
   paragraph3: { marginBlock: "1rem", lineHeight: 1.8 },
-  paragraph4: { marginBlock: "1rem", lineHeight: 1.8 },
-  code: {
-    fontFamily: tokens["--font-mono"],
-    fontSize: "0.875em",
-    backgroundColor: tokens["--code"],
-    color: tokens["--code-foreground"],
-    borderRadius: tokens["--radius-sm"],
-    paddingBlock: "0.15rem",
-    paddingInline: "0.35rem",
-    overflowWrap: "anywhere",
-  },
-  code2: {
-    fontFamily: tokens["--font-mono"],
-    fontSize: "0.875em",
-    backgroundColor: tokens["--code"],
-    color: tokens["--code-foreground"],
-    borderRadius: tokens["--radius-sm"],
-    paddingBlock: "0.15rem",
-    paddingInline: "0.35rem",
-    overflowWrap: "anywhere",
-  },
-  h3: {
-    fontFamily: tokens["--font-heading"],
-    fontSize: "1.2rem",
-    fontWeight: 600,
-    lineHeight: 1.4,
-    marginBlockStart: "2rem",
-    marginBlockEnd: "0.75rem",
-    scrollMarginBlockStart: "6rem",
-  },
-  h4: {
-    fontSize: "1rem",
-    fontWeight: 600,
-    marginBlockStart: "1.5rem",
-    marginBlockEnd: "0.5rem",
-    scrollMarginBlockStart: "6rem",
-  },
-  ul: {
-    listStyleType: "disc",
-    paddingInlineStart: "1.5rem",
-    marginBlock: "1rem",
-  },
-  li: {
-    paddingInlineStart: "0.25rem",
-    marginBlock: "0.5rem",
-    lineHeight: 1.75,
-  },
-  code3: {
-    fontFamily: tokens["--font-mono"],
-    fontSize: "0.875em",
-    backgroundColor: tokens["--code"],
-    color: tokens["--code-foreground"],
-    borderRadius: tokens["--radius-sm"],
-    paddingBlock: "0.15rem",
-    paddingInline: "0.35rem",
-    overflowWrap: "anywhere",
-  },
-  paragraph5: { marginBlock: "1rem", lineHeight: 1.8 },
-  box: { marginBlock: "2rem", minInlineSize: "calc(var(--spacing) * 0)" },
   h23: {
     fontFamily: tokens["--font-heading"],
     fontSize: "1.5rem",
@@ -213,93 +148,32 @@ function ComponentPage() {
             Installation
           </Heading>
           <Paragraph xstyle={styles.paragraph2}>
-            Initialize StyleX with bunx @yopem-ui/cli init or follow the{" "}
-            <Link {...stylex.props(docsStyles.link)} to="/docs/installation">
-              manual setup guide
-            </Link>{" "}
-            first. The CLI copies source and installs component dependencies.
+            Run bunx @yopem-ui/cli init from your project root first. The CLI
+            configures StyleX and installs shared files and dependencies.
           </Paragraph>
-          <Tabs defaultValue="cli">
-            <TabsList aria-label="Installation method">
-              <TabsTab value="cli">CLI</TabsTab>
-              <TabsTab value="manual">Manual</TabsTab>
-            </TabsList>
-            <TabsPanel value="cli">
-              <CopyableCode
-                code="bunx @yopem-ui/cli init"
-                title="Initialize StyleX project with CLI"
-              />
-              <CopyableCode
-                code={data.installNames
-                  .map((installName) => `bunx @yopem-ui/cli add ${installName}`)
-                  .join("\n")}
-                title={`Install ${item.title} with CLI`}
-              />
-              <Paragraph xstyle={styles.paragraph3}>
-                Run from your project root. The CLI installs required
-                components, shared files, and packages. Previews may need
-                additional components. Existing files are preserved. To refresh
-                installed source, use update; locally edited files need an
-                explicit --force to overwrite.
-              </Paragraph>
-              <CopyableCode
-                code={data.installNames
-                  .map(
-                    (installName) => `bunx @yopem-ui/cli update ${installName}`,
-                  )
-                  .join("\n")}
-                title={`Update ${item.title} with CLI`}
-              />
-            </TabsPanel>
-            <TabsPanel value="manual">
-              <Paragraph xstyle={styles.paragraph4}>
-                Copy each required file to its destination below. Shared files
-                only need to be copied once. Keep the{" "}
-                <Box as="code" xstyle={styles.code}>
-                  @/*
-                </Box>{" "}
-                alias pointing to{" "}
-                <Box as="code" xstyle={styles.code2}>
-                  src/*
-                </Box>
-                .
-              </Paragraph>
-              <Heading as="h3" xstyle={styles.h3}>
-                Dependencies
-              </Heading>
-              <CopyableCode
-                code={`npm install ${data.dependencies.join(" ")}`}
-                title="Install dependencies"
-              />
-              {data.devDependencies.length ? (
-                <CopyableCode
-                  code={`npm install --save-dev ${data.devDependencies.join(" ")}`}
-                  title="Install development dependencies"
-                />
-              ) : null}
-              <Heading as="h4" xstyle={styles.h4}>
-                Peer dependencies
-              </Heading>
-              <Box as="ul" xstyle={styles.ul}>
-                {data.peerDependencies.map((dependency) => (
-                  <Box as="li" xstyle={styles.li} key={dependency}>
-                    <Box as="code" xstyle={styles.code3}>
-                      {dependency}
-                    </Box>
-                  </Box>
-                ))}
-              </Box>
-              <Paragraph xstyle={styles.paragraph5}>
-                Included components and shared files:{" "}
-                {data.requiredItems.map((entry) => entry.title).join(", ")}.
-              </Paragraph>
-              <Box xstyle={styles.box}>
-                {data.files.map((file) => (
-                  <SourceFile file={file} key={`${name}:${file.path}`} />
-                ))}
-              </Box>
-            </TabsPanel>
-          </Tabs>
+          <CopyableCode
+            code="bunx @yopem-ui/cli init"
+            title="Initialize StyleX project with CLI"
+          />
+          <CopyableCode
+            code={data.installNames
+              .map((installName) => `bunx @yopem-ui/cli add ${installName}`)
+              .join("\n")}
+            title={`Install ${item.title} with CLI`}
+          />
+          <Paragraph xstyle={styles.paragraph3}>
+            Run from your project root. The CLI installs required components,
+            shared files, and packages. Previews may need additional components.
+            Existing files are preserved. To refresh installed source, use
+            update; locally edited files need an explicit --force to overwrite.
+          </Paragraph>
+          <CopyableCode
+            code={data.installNames
+              .map((installName) => `bunx @yopem-ui/cli update ${installName}`)
+              .join("\n")}
+            title={`Update ${item.title} with CLI`}
+          />
+
           <Heading as="h2" xstyle={styles.h23} id="preview">
             Preview
           </Heading>
@@ -319,7 +193,7 @@ function ComponentPage() {
             </Paragraph>
           ))}
           <Paragraph xstyle={styles.paragraph8}>
-            Import from the destination you copied into your application.
+            Import from the local file installed by the CLI.
           </Paragraph>
           <CopyableCode code={data.usage} title={`${item.title} usage`} />
           <Heading as="h2" xstyle={styles.h25} id="api-reference">
@@ -354,17 +228,6 @@ function ComponentApi({
       </Box>
       {open ? <ApiReference parts={parts} /> : null}
     </Box>
-  )
-}
-
-function SourceFile({ file }: { file: { content: string; target: string } }) {
-  return (
-    <CopyableCode
-      code={file.content}
-      header={file.target}
-      preview
-      title={file.target}
-    />
   )
 }
 

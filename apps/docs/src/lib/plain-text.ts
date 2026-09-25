@@ -20,7 +20,7 @@ export function createLlms(
 
   return `# Yopem UI
 
-> Source-owned, accessible React components built with StyleX and Base UI. Initialize supported projects with \`bunx @yopem-ui/cli init\`, then install source with the CLI or copy it manually; customize it without package lock-in.
+> Source-owned, accessible React components built with StyleX and Base UI. Initialize supported projects with \`bunx @yopem-ui/cli init\`, then install source with the CLI; customize it without package lock-in.
 
 ## Documentation
 
@@ -42,16 +42,6 @@ export function createComponentText(
   title: string,
   data: Awaited<ReturnType<typeof getDocumentation>>,
 ) {
-  const dependencies = [
-    ...data.dependencies,
-    ...data.devDependencies.map((dependency) => `${dependency} (development)`),
-    ...data.peerDependencies.map((dependency) => `${dependency} (peer)`),
-  ]
-  const files = data.files
-    .map(
-      (file) => `### ${file.target}\n\n\`\`\`\n${file.content.trim()}\n\`\`\``,
-    )
-    .join("\n\n")
   const preview = data.previewSource
     ? `\`\`\`tsx\n${data.previewSource.trim()}\n\`\`\``
     : "No preview. See Usage below."
@@ -67,7 +57,7 @@ export function createComponentText(
     })
     .join("\n\n")
 
-  return `# ${title}\n\n${data.description}\n\n## Installation\n\nCLI: \`bunx @yopem-ui/cli init\` (supported frameworks), then \`bunx @yopem-ui/cli add <component>\` (update: \`bunx @yopem-ui/cli update <component>\`). For unsupported setups, configure StyleX manually. Manual installation:\n\n${dependencies.map((dependency) => `- ${dependency}`).join("\n")}\n\nRequired components and files: ${data.requiredItems.map((item) => item.title).join(", ")}.\n\n${files}\n\n## Preview\n\n${preview}\n\n## Usage\n\n${data.notes.join("\n\n")}\n\n\`\`\`tsx\n${data.usage.trim()}\n\`\`\`\n\n## API reference\n\n${api}\n`
+  return `# ${title}\n\n${data.description}\n\n## Installation\n\nRun \`bunx @yopem-ui/cli init\` in a supported project, then \`bunx @yopem-ui/cli add <component>\` (update: \`bunx @yopem-ui/cli update <component>\`). Init configures StyleX; add installs required source files and dependencies.\n\n## Preview\n\n${preview}\n\n## Usage\n\n${data.notes.join("\n\n")}\n\n\`\`\`tsx\n${data.usage.trim()}\n\`\`\`\n\n## API reference\n\n${api}\n`
 }
 
 export function createGuideText(page: { content: string; title: string }) {

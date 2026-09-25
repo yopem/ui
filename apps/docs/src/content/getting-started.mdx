@@ -4,39 +4,33 @@
 - React Router with Vite, TanStack Start, Next.js, or Astro.
 - Permission to add packages and files to the project.
 
-Yopem has no runtime package. Initialize StyleX once with the CLI or manual
-setup, then add component source with the CLI or copy it manually.
+Yopem has no runtime component package. Initialize StyleX once, then install
+component source with the CLI.
 
 <span id="setup" />
 
 ## 1. Set up StyleX
 
-Open the [installation guide](/docs/installation). Run `bunx @yopem-ui/cli init`
-for supported frameworks, or follow the manual instructions there. Init installs
-shared packages, source alias, tokens, global styles, and build configuration.
+Run `bunx @yopem-ui/cli init` from your project root. Init installs shared
+packages, source alias, tokens, global styles, and build configuration. See the
+[installation guide](/docs/installation) for supported frameworks.
 
 Continue only after your app completes a production build. StyleX is a
 build-time compiler, so installing its runtime package alone is not enough.
 
-<span id="copy-button" />
+<span id="install-button" />
 
-## 2. Copy Button
+## 2. Install Button
 
-Open the [Button documentation](/components/button). Use the CLI tab to install
-Button and shared files, or use the Manual tab:
-
-1. Run the dependency command.
-2. Expand each required file.
-3. Copy its complete source to the displayed path.
-
-Shared files appear again so each component page is complete. Skip any shared
-file already present and unchanged in your project.
+Run `bunx @yopem-ui/cli add button` from your project root. The CLI installs
+Button, required shared files, and dependencies. See the
+[Button documentation](/components/button) for usage and API details.
 
 <span id="use-button" />
 
 ## 3. Use Button
 
-Import Button from the local file you copied. The standard setup maps `@/*` to
+Import Button from the local file installed by the CLI. Init maps `@/*` to
 `src/*`.
 
 **src/components/save-button.tsx**

@@ -1,341 +1,37 @@
-<span id="dependencies" />
+## Initialize project
 
-## 1. Install packages (manual)
+Start with a React and TypeScript project. Run `bunx @yopem-ui/cli init` from
+its root:
 
-Start with a React and TypeScript project. Skip steps 1 and 2 when using the
-CLI: init installs dependencies and configures imports. For manual setup,
-install shared runtime packages once. Each component page lists its extra
-dependencies.
+<InstallationCommands />
 
-```sh
-npm install @stylexjs/stylex@^0.19.0 clsx@^2.1.1
-```
+Init detects Vite React, React Router (client or framework), TanStack Router,
+TanStack Start, Next.js App Router, or Astro. It installs the shared source,
+StyleX dependencies, and Oxlint plugin; configures the `@/*` alias, build
+plugins, and root styles. Existing project code stays in place. Unsupported or
+conflicting configuration stops with an error instead of being overwritten.
 
-<span id="imports" />
+If your project has multiple supported frameworks, use `--framework` as shown
+above. Accepted values: `vite`, `react-router`, `tanstack-router`,
+`tanstack-start`, `next`, and `astro`. React Router client mode is detected from
+`react-router` or `react-router-dom`; framework mode from `@react-router/dev`.
 
-## 2. Configure imports (manual)
-
-Map @ to src. Components then live in src/components/ui and import each other
-from @/components/ui. Keep the same alias in TypeScript, your bundler, and
-StyleX.
-
-```json
-{
-  "compilerOptions": {
-    "baseUrl": ".",
-    "noEmit": true,
-    "allowImportingTsExtensions": true,
-    "paths": { "@/*": ["./src/*"] }
-  }
-}
-```
-
-<span id="shared-files" />
-
-## 3. Initialize setup
-
-Run `bunx @yopem-ui/cli init` from your project root, or copy the shared files
-manually. Init also installs Oxlint and the Yopem lint plugin, then creates or
-merges `.oxlintrc.json`. It enforces layout primitives instead of `<div>` and
-`<span>` by default; see [lint rules](/docs/lint) to opt out. Run
-`bunx oxlint .` to check your app. The CLI and manual steps are available in the
-tabs below.
-
-<InstallationMethods />
-
-<span id="choose" />
-
-## 4. Configure your framework
-
-CLI init handles each setup below. For manual setup, use the linked build
-configuration and import the shared stylesheet in the indicated entry:
-
-- [Vite React](#vite-and-rolldown-setup) — `vite`; `src/main.tsx`.
-- [React Router](#react-router) — client mode (`react-router` or
-  `react-router-dom`): `src/main.tsx`; framework mode (`@react-router/dev`):
-  `app/root.tsx` or `src/root.tsx`.
-- [TanStack Router](#tanstack-router) — `@tanstack/react-router`;
-  `src/main.tsx`.
-- [TanStack Start](#tanstack-start) — `@tanstack/react-start`;
-  `src/routes/__root.tsx`.
-- [Next.js](#nextjs) — App Router (`next`); `app/layout.tsx` or
-  `src/app/layout.tsx`.
-- [Astro](#astro) — `astro` with React integration; `src/layouts/Layout.astro`.
-
-Using another build tool? Follow its official StyleX setup and keep the @ alias
-consistent.
-
-### Vite and Rolldown setup
-
-Vite 8 (Rolldown) uses `@rolldown/plugin-babel` to transform StyleX and its
-PostCSS plugin to extract rules into the shared `src/styles/styles.css`.
-Configure both inside your existing `vite.config.ts`; no unplugin, Babel config,
-or PostCSS config file is needed. The CLI makes these edits for you.
-
-```sh
-npm install --save-dev @rolldown/plugin-babel@^0.2.4 @babel/core@^7.29.7 @stylexjs/babel-plugin@^0.19.0 @stylexjs/postcss-plugin@^0.19.0
-```
-
-```ts
-import babel from "@rolldown/plugin-babel"
-import { createRequire } from "node:module"
-import { fileURLToPath } from "node:url"
-import { defineConfig } from "vite"
-
-const source = fileURLToPath(new URL("./src", import.meta.url))
-const plugins: [string, object][] = [
-  [
-    "@stylexjs/babel-plugin",
-    {
-      aliases: { "@/*": [source + "/*"] },
-      dev: process.env.NODE_ENV !== "production",
-      runtimeInjection: false,
-      treeshakeCompensation: true,
-      unstable_moduleResolution: { type: "commonJS" },
-    },
-  ],
-]
-const loadPostcss: unknown = createRequire(import.meta.url)(
-  "@stylexjs/postcss-plugin",
-)
-if (typeof loadPostcss !== "function")
-  throw new Error("StyleX PostCSS unavailable")
-const postcss: unknown = loadPostcss({
-  cwd: fileURLToPath(new URL(".", import.meta.url)),
-  include: ["src/**/*.{js,jsx,ts,tsx}", "app/**/*.{js,jsx,ts,tsx}"],
-  babelConfig: {
-    babelrc: false,
-    parserOpts: { plugins: ["typescript", "jsx"] },
-    plugins,
-  },
-  useCSSLayers: true,
-})
-function isPostcssPlugin(value: unknown): value is { postcssPlugin: string } {
-  return (
-    typeof value === "object" &&
-    value !== null &&
-    "postcssPlugin" in value &&
-    typeof value.postcssPlugin === "string"
-  )
-}
-if (!isPostcssPlugin(postcss)) throw new Error("Invalid StyleX PostCSS plugin")
-
-export default defineConfig({
-  resolve: { alias: { "@": source } },
-  css: { postcss: { plugins: [postcss] } },
-  plugins: [babel({ plugins })], // keep your existing React/router plugins after Babel
-})
-```
-
-The shared stylesheet already contains `@stylex;`. Import only
-`@/styles/styles.css` in your application entry or document root. If you have an
-existing declarative Babel or PostCSS config, init moves its plugins into
-`vite.config.*` (or `astro.config.*`) and removes the old file. Dynamic configs
-that cannot be migrated safely remain untouched; simplify them first.
-
-### React Router
-
-CLI init detects client mode from `react-router` or `react-router-dom` and
-framework mode from `@react-router/dev`. For client-rendered React Router, keep
-`react()` from `@vitejs/plugin-react` after Babel and import the stylesheet in
-`src/main.tsx`. For **framework mode**, keep `reactRouter()` from
-`@react-router/dev/vite` after Babel and import it in `app/root.tsx` (or
-`src/root.tsx`). Apply `themeMarker`, `lightTheme`, and `rootStyles.html` to
-`<html>`, and `rootStyles.body` to `<body>`. RSC mode requires manual setup.
-
-### TanStack Router
-
-Keep `tanstackRouter({ target: "react", autoCodeSplitting: true })` and
-`react()` after Babel. Import `@/styles/styles.css` in `src/main.tsx`.
-
-### TanStack Start
-
-Keep `tanstackStart()` and `react()` after Babel. Import `@/styles/styles.css`
-in `src/routes/__root.tsx` and apply the root theme classes to `<html>` and
-`<body>` (as shown in the [Next.js example](#nextjs)).
-
-### Next.js
-
-This App Router setup uses webpack. Run next dev --webpack and next build
---webpack on Next versions that support those flags. Use babel.config.js:
-Next.js does not load .cjs Babel configs. Expand local theme spreads before
-StyleX. Do not install the Vite plugin. The manual Babel example assumes
-CommonJS; init writes named ESM exports for projects using type: module.
-
-```sh
-npm install --save-dev @babel/core@^7.29.7 @stylexjs/babel-plugin@^0.19.0 @stylexjs/postcss-plugin@^0.19.0 autoprefixer@^10.4.0 @types/react@^19.2.18
-```
-
-```js
-const path = require("node:path")
-
-function expandLocalSpreads({ types: t }) {
-  return {
-    visitor: {
-      Program: {
-        enter(program, state) {
-          if (
-            !state.filename
-              ?.replaceAll("\\", "/")
-              .endsWith("/src/styles/tokens.stylex.ts")
-          )
-            return
-          program.traverse({
-            ObjectExpression(path) {
-              path.node.properties = path.node.properties.flatMap(
-                (property) => {
-                  if (
-                    !t.isSpreadElement(property) ||
-                    !t.isIdentifier(property.argument)
-                  )
-                    return [property]
-                  const binding = path.scope.getBinding(property.argument.name)
-                  const value = binding?.path.node.init
-                  if (
-                    !t.isObjectExpression(value) ||
-                    value.properties.some(t.isSpreadElement)
-                  )
-                    return [property]
-                  return value.properties.map((part) => t.cloneNode(part, true))
-                },
-              )
-            },
-          })
-        },
-      },
-    },
-  }
-}
-
-module.exports = {
-  presets: ["next/babel"],
-  plugins: [
-    expandLocalSpreads,
-    [
-      "@stylexjs/babel-plugin",
-      {
-        aliases: { "@/*": [path.join(__dirname, "src/*")] },
-        dev: process.env.NODE_ENV !== "production",
-        runtimeInjection: false,
-        treeshakeCompensation: true,
-        unstable_moduleResolution: { type: "commonJS" },
-      },
-    ],
-  ],
-}
-```
-
-```js
-const babelConfig = require("./babel.config.js")
-
-module.exports = {
-  plugins: {
-    "@stylexjs/postcss-plugin": {
-      include: [
-        "src/**/*.{js,jsx,ts,tsx}",
-        "app/**/*.{js,jsx,ts,tsx}",
-        "pages/**/*.{js,jsx,ts,tsx}",
-      ],
-      babelConfig: {
-        babelrc: false,
-        parserOpts: { plugins: ["typescript", "jsx"] },
-        plugins: babelConfig.plugins,
-      },
-      useCSSLayers: true,
-    },
-    autoprefixer: {},
-  },
-}
-```
-
-The shared `src/styles/styles.css` already contains `@stylex;`. Import it in
-your root layout.
-
-```tsx
-import "@/styles/styles.css"
-import * as stylex from "@stylexjs/stylex"
-import { lightTheme, rootStyles, themeMarker } from "@/styles/tokens.stylex"
-
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
-  return (
-    <html
-      {...stylex.props(themeMarker, lightTheme, rootStyles.html)}
-      data-theme="light"
-      lang="en"
-    >
-      <body {...stylex.props(rootStyles.body)}>{children}</body>
-    </html>
-  )
-}
-```
-
-Pages Router projects import the stylesheet in pages/\_app.tsx and apply root
-theme classes to Html in pages/\_document.tsx.
-
-### Astro
-
-Install `@astrojs/react`, `react`, and `react-dom` if absent. Author StyleX
-styles in React TSX components; use `client:load` only for interactive islands.
-Put the same Babel plugins and PostCSS setup from the Vite example above in
-`astro.config.mjs` (not separate config files), inside Astro's `vite` option:
-
-```js
-import babel from "@rolldown/plugin-babel"
-import react from "@astrojs/react"
-import { defineConfig } from "astro/config"
-import { createRequire } from "node:module"
-import { fileURLToPath } from "node:url"
-
-const source = fileURLToPath(new URL("./src", import.meta.url))
-const plugins = [
-  [
-    "@stylexjs/babel-plugin",
-    {
-      aliases: { "@/*": [source + "/*"] },
-      dev: process.env.NODE_ENV !== "production",
-      runtimeInjection: false,
-      treeshakeCompensation: true,
-      unstable_moduleResolution: { type: "commonJS" },
-    },
-  ],
-]
-const postcss = createRequire(import.meta.url)("@stylexjs/postcss-plugin")({
-  cwd: fileURLToPath(new URL(".", import.meta.url)),
-  include: ["src/**/*.{js,jsx,ts,tsx}", "app/**/*.{js,jsx,ts,tsx}"],
-  babelConfig: {
-    babelrc: false,
-    parserOpts: { plugins: ["typescript", "jsx"] },
-    plugins,
-  },
-  useCSSLayers: true,
-})
-export default defineConfig({
-  integrations: [react()],
-  vite: {
-    resolve: { alias: { "@": source } },
-    css: { postcss: { plugins: [postcss] } },
-    plugins: [babel({ plugins })],
-  },
-})
-```
-
-Import `@/styles/styles.css` in `src/layouts/Layout.astro` frontmatter and apply
-`stylex.props(themeMarker, lightTheme, rootStyles.html).className` to `<html>`
-and `stylex.props(rootStyles.body).className` to `<body>`.
+Vite integrations use Rolldown Babel. Next.js App Router requires Node 24+ and
+webpack. React Router RSC mode, Next.js Pages Router, and other build tools are
+not supported by init. The CLI package is not published yet; `bunx` commands
+work after release.
 
 <span id="check" />
 
-## 5. Verify and continue
+## Verify and continue
 
-Run your production build. It must finish without StyleX or CSS extraction
-errors.
+Run your project's production build. It must finish without StyleX or CSS
+extraction errors. Run `bunx oxlint .` to check your app; see
+[lint rules](/docs/lint) for configuration.
 
-Then follow [Add your first component](/docs/getting-started) to copy, render,
-and verify Button.
+Then [add your first component](/docs/getting-started) with the CLI. To refresh
+installed shared files, run `bunx @yopem-ui/cli update base`; locally edited
+files are preserved unless you pass `--force`.
 
 Static light mode needs no provider. Add switching only if needed. See the
 [theming guide](/docs/theming) for dark mode, custom themes, and CSP nonces.

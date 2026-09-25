@@ -77,18 +77,18 @@ export const guidePages = [
     title: "Introduction",
     url: "/",
     content:
-      "Source-owned React components with StyleX and Base UI. Install with CLI or copy and paste components into your project.",
+      "Source-owned React components with StyleX and Base UI. Initialize and install component source with the CLI.",
   },
   {
     title: "Getting started",
     url: "/docs/getting-started",
     content:
-      "React TypeScript StyleX components accessibility composition usage prerequisites CLI manual installation",
+      "React TypeScript StyleX components accessibility composition usage prerequisites CLI installation",
   },
   {
     title: "Installation",
     url: "/docs/installation",
     content:
-      "CLI and manual setup dependencies StyleX Vite aliases tokens themes ThemeProvider CSS reset",
+      "CLI init dependencies StyleX Vite aliases tokens themes ThemeProvider CSS reset",
   },
 ]

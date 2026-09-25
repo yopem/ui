@@ -22,7 +22,8 @@ test("machine-readable documentation endpoints expose correct formats", async ({
 
   const guide = await (await request.get("/docs/installation.md")).text()
   expect(guide).toContain("bunx @yopem-ui/cli init")
-  expect(guide).not.toContain("<InstallationMethods />")
+  expect(guide).not.toContain("<InstallationCommands />")
+  expect(guide).not.toContain("Manual installation")
 })
 
 test("dynamic documentation routes return real 404 responses", async ({

@@ -85,6 +85,21 @@ const config = defineConfig({
   plugins: [
     devtools({ injectSource: { enabled: false } }),
     babel({ plugins: stylexPlugins }),
+    {
+      name: "docs-markdown-routes",
+      configureServer(server) {
+        server.middlewares.use((request, _response, next) => {
+          if (
+            request.method === "GET" &&
+            /^\/(?:components(?:\/[^/?]+)?|docs\/[^/?]+|index)\.md(?:\?|$)/.test(
+              request.url ?? "",
+            )
+          )
+            request.headers.accept = "text/html"
+          next()
+        })
+      },
+    },
     nitro({
       rolldownConfig: {
         // Nitro rechunks SSR modules; preserve token initialization before themes.

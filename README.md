@@ -18,7 +18,7 @@ bunx @yopem-ui/cli update button
 `init` installs tokens, reset CSS, and StyleX helpers, configures build plugins
 and aliases, and wires root styles. It stops on conflicting configurations.
 `update` preserves locally edited files unless passed `--force`. CLI is not yet
-published; component pages also provide manual source copies. See
+published; commands work after release. See
 [installation](https://ui.yopem.com/docs/installation).
 
 ## Styling
