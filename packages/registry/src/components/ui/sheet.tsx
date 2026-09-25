@@ -341,8 +341,9 @@ export function SheetPopup({
           {showCloseButton ? (
             <SheetPrimitive.Close
               aria-label="Close"
-              className={stylex.props(styles.close).className}
-              render={<Button size="icon" variant="ghost" />}
+              render={
+                <Button size="icon" variant="ghost" xstyle={styles.close} />
+              }
               {...closeProps}
             >
               <XIcon {...stylex.props(styles.closeIcon)} />

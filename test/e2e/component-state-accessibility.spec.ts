@@ -62,6 +62,41 @@ for (const [component, visibleText] of cases) {
   })
 }
 
+test("sheet close button stays in the popup corner without shifting content", async ({
+  page,
+}) => {
+  await page.goto("/components/sheet")
+  await expect(
+    page.getByRole("button", { name: /^Copy .* usage$/ }).first(),
+  ).toBeEnabled()
+  await page.getByRole("button", { name: "Open Sheet" }).click()
+
+  const popup = page.locator('[data-slot="sheet-popup"]')
+  const header = page.locator('[data-slot="sheet-header"]')
+  const close = popup.getByRole("button", { name: "Close" })
+  await expect(close).toHaveCSS("position", "absolute")
+
+  const popupBox = await popup.boundingBox()
+  const headerBox = await header.boundingBox()
+  const closeBox = await close.boundingBox()
+  expect(popupBox).not.toBeNull()
+  expect(headerBox).not.toBeNull()
+  expect(closeBox).not.toBeNull()
+  if (popupBox && headerBox && closeBox) {
+    expect(closeBox.x).toBeGreaterThan(
+      popupBox.x + popupBox.width - closeBox.width - 12,
+    )
+    expect(closeBox.x + closeBox.width).toBeLessThanOrEqual(
+      popupBox.x + popupBox.width,
+    )
+    expect(closeBox.y).toBeLessThan(headerBox.y + headerBox.height)
+    expect(headerBox.y).toBeCloseTo(popupBox.y, 0)
+  }
+
+  await close.click()
+  await expect(popup).not.toBeVisible()
+})
+
 test("context menu keyboard alternative opens an accessible menu", async ({
   page,
 }) => {
