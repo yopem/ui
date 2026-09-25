@@ -8,6 +8,7 @@ import {
   PreviewCardPopup,
   PreviewCardTrigger,
 } from "@registry/components/ui/preview-card"
+import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import { CornerUpLeftIcon, StarIcon } from "lucide-react"
 
@@ -36,7 +37,7 @@ const styles = stylex.create({
     inlineSize: "calc(0.25rem * 2)",
     blockSize: "calc(0.25rem * 2)",
     borderRadius: "calc(infinity * 1px)",
-    backgroundColor: "oklch(62.3% 0.214 259.815)",
+    backgroundColor: tokens["--info"],
   },
   flex5: { alignItems: "center", gap: "0.25rem" },
   flex6: { alignItems: "center", gap: "0.25rem" },

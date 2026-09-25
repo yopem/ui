@@ -10,6 +10,7 @@ import {
   TableHeader,
   TableRow,
 } from "@registry/components/ui/table"
+import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 const styles = stylex.create({
   tableHead: { textAlign: "right" },
@@ -18,7 +19,7 @@ const styles = stylex.create({
     inlineSize: "calc(0.25rem * 1.5)",
     blockSize: "calc(0.25rem * 1.5)",
     borderRadius: "calc(infinity * 1px)",
-    backgroundColor: "oklch(69.6% 0.17 162.48)",
+    backgroundColor: tokens["--success"],
   },
   tableCell2: { textAlign: "right" },
   tableCell3: { fontWeight: "500" },
@@ -35,7 +36,7 @@ const styles = stylex.create({
     inlineSize: "calc(0.25rem * 1.5)",
     blockSize: "calc(0.25rem * 1.5)",
     borderRadius: "calc(infinity * 1px)",
-    backgroundColor: "oklch(76.9% 0.188 70.08)",
+    backgroundColor: tokens["--warning"],
   },
   tableCell6: { textAlign: "right" },
   tableCell7: { fontWeight: "500" },
@@ -43,7 +44,7 @@ const styles = stylex.create({
     inlineSize: "calc(0.25rem * 1.5)",
     blockSize: "calc(0.25rem * 1.5)",
     borderRadius: "calc(infinity * 1px)",
-    backgroundColor: "oklch(69.6% 0.17 162.48)",
+    backgroundColor: tokens["--success"],
   },
   tableCell8: { textAlign: "right" },
   tableCell9: { fontWeight: "500" },
@@ -51,7 +52,7 @@ const styles = stylex.create({
     inlineSize: "calc(0.25rem * 1.5)",
     blockSize: "calc(0.25rem * 1.5)",
     borderRadius: "calc(infinity * 1px)",
-    backgroundColor: "oklch(69.6% 0.17 162.48)",
+    backgroundColor: tokens["--success"],
   },
   tableCell10: { textAlign: "right" },
   tableCell11: { fontWeight: "500" },
@@ -59,7 +60,7 @@ const styles = stylex.create({
     inlineSize: "calc(0.25rem * 1.5)",
     blockSize: "calc(0.25rem * 1.5)",
     borderRadius: "calc(infinity * 1px)",
-    backgroundColor: "oklch(63.7% 0.237 25.331)",
+    backgroundColor: tokens["--destructive"],
   },
   tableCell12: { textAlign: "right" },
   tableCell13: { textAlign: "right" },
