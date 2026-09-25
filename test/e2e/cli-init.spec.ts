@@ -6,6 +6,7 @@ import {
   readFileSync,
   existsSync,
   rmSync,
+  symlinkSync,
   writeFileSync,
 } from "node:fs"
 import { tmpdir } from "node:os"
@@ -200,6 +201,50 @@ for (const fixture of [
       expect(config).toContain("@stylexjs/postcss-plugin")
       expect(config).toContain('"app/**/*.{js,jsx,ts,tsx}"')
       expect(existsSync(join(root, "postcss.config.cjs"))).toBe(false)
+      if (fixture.framework === "vite") {
+        mkdirSync(join(root, "node_modules/@yopem-ui"), {
+          recursive: true,
+        })
+        symlinkSync(
+          join(process.cwd(), "packages/oxlint-plugin"),
+          join(root, "node_modules/@yopem-ui/oxlint-plugin"),
+        )
+        put(
+          "src/check.tsx",
+          `import * as sx from "@stylexjs/stylex";
+import { Box, Button } from "@/components/ui/layout";
+const key = "bad";
+const styles = sx.create({ button: { backgroundColor: "#fff" }, [key]: {} });
+export const view = <div><Button css={{ color: "red" }} xstyle={styles.button} /><Box as="fake-tag" /></div>;`,
+        )
+        put(
+          "src/components/ui/internal.tsx",
+          "export const Internal = () => <div />;",
+        )
+        const oxlint = join(process.cwd(), "node_modules/.bin/oxlint")
+        const result = spawnSync(
+          oxlint,
+          ["--config", ".oxlintrc.json", "src/check.tsx"],
+          { cwd: root, encoding: "utf8" },
+        )
+        expect(result.status).toBe(1)
+        for (const rule of [
+          "enforce-styling-methods",
+          "no-restyle",
+          "no-raw-stylex-colors",
+          "prefer-layout-primitives",
+          "static-stylex",
+          "valid-polymorphic-as",
+        ]) {
+          expect(result.stdout).toContain(`yopem-ui(${rule})`)
+        }
+        const internal = spawnSync(
+          oxlint,
+          ["--config", ".oxlintrc.json", "src/components/ui/internal.tsx"],
+          { cwd: root, encoding: "utf8" },
+        )
+        expect(internal.status).toBe(0)
+      }
       const lintBefore = readFileSync(join(root, ".oxlintrc.json"), "utf8")
       await initProject({
         cwd: root,

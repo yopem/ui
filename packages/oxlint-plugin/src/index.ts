@@ -22,6 +22,9 @@ type ImportDeclaration = Parameters<
 type VariableDeclarator = Parameters<
   NonNullable<RuleVisitor["VariableDeclarator"]>
 >[0]
+type ScopedVariable = ReturnType<
+  RuleContext["sourceCode"]["getScope"]
+>["variables"][number]
 type SourceNode = NonNullable<
   Parameters<RuleContext["sourceCode"]["getText"]>[0]
 > & { type: string }
@@ -216,11 +219,11 @@ function trackImports(
   }
 }
 
-function isImportBinding(
-  node: JSXOpeningElement,
+function getVariable(
+  node: JSXOpeningElement | VariableDeclarator,
   name: string,
   context: RuleContext,
-) {
+): ScopedVariable | undefined {
   for (
     let scope: ReturnType<RuleContext["sourceCode"]["getScope"]> | null =
       context.sourceCode.getScope(node);
@@ -230,13 +233,21 @@ function isImportBinding(
     const variable = scope.variables.find(
       (candidate) => candidate.name === name,
     )
-    if (variable !== undefined) {
-      return variable.defs.some(
-        (definition) => definition.type === "ImportBinding",
-      )
-    }
+    if (variable !== undefined) return variable
   }
-  return false
+  return undefined
+}
+
+function isImportBinding(
+  node: JSXOpeningElement,
+  name: string,
+  context: RuleContext,
+) {
+  return (
+    getVariable(node, name, context)?.defs.some(
+      (definition) => definition.type === "ImportBinding",
+    ) ?? false
+  )
 }
 
 function getComponent(
@@ -467,7 +478,9 @@ function getStyleLiterals(value: unknown): string[] {
 
 function resolveStyle(
   value: unknown,
-  declarations: Map<string, Map<string, unknown>>,
+  declarations: Map<ScopedVariable, Map<string, unknown>>,
+  node: JSXOpeningElement,
+  context: RuleContext,
   onStyle: (style: unknown) => void,
 ) {
   if (!isNode(value)) return
@@ -475,13 +488,31 @@ function resolveStyle(
     const elements = getProperty(value, "elements")
     if (Array.isArray(elements)) {
       for (const element of elements)
-        resolveStyle(element, declarations, onStyle)
+        resolveStyle(element, declarations, node, context, onStyle)
     }
   } else if (value.type === "ConditionalExpression") {
-    resolveStyle(getProperty(value, "consequent"), declarations, onStyle)
-    resolveStyle(getProperty(value, "alternate"), declarations, onStyle)
+    resolveStyle(
+      getProperty(value, "consequent"),
+      declarations,
+      node,
+      context,
+      onStyle,
+    )
+    resolveStyle(
+      getProperty(value, "alternate"),
+      declarations,
+      node,
+      context,
+      onStyle,
+    )
   } else if (value.type === "LogicalExpression") {
-    resolveStyle(getProperty(value, "right"), declarations, onStyle)
+    resolveStyle(
+      getProperty(value, "right"),
+      declarations,
+      node,
+      context,
+      onStyle,
+    )
   } else if (value.type === "ObjectExpression") {
     onStyle(value)
   } else if (value.type === "MemberExpression") {
@@ -492,7 +523,8 @@ function resolveStyle(
       key !== null &&
       getProperty(value, "computed") !== true
     ) {
-      const style = declarations.get(name)?.get(key)
+      const variable = getVariable(node, name, context)
+      const style = variable && declarations.get(variable)?.get(key)
       if (style !== undefined) onStyle(style)
     }
   }
@@ -501,11 +533,13 @@ function resolveStyle(
 function trackStyleDeclaration(
   node: VariableDeclarator,
   bindings: ImportBindings,
-  declarations: Map<string, Map<string, unknown>>,
+  declarations: Map<ScopedVariable, Map<string, unknown>>,
+  context: RuleContext,
 ) {
   const name = getIdentifier(node.id)
+  const variable = name === null ? undefined : getVariable(node, name, context)
   if (
-    name === null ||
+    variable === undefined ||
     !isNamedCall(
       node.init,
       bindings.stylexCreate,
@@ -525,7 +559,7 @@ function trackStyleDeclaration(
       if (key !== null) styles.set(key, getProperty(item, "value"))
     }
   }
-  declarations.set(name, styles)
+  declarations.set(variable, styles)
 }
 
 function classifyMethod(
@@ -580,7 +614,13 @@ const stylingRuleSchema = [
 ]
 
 const HTML_ELEMENTS = new Set(
-  "a abbr address area article aside audio b base bdi bdo blockquote body br button canvas caption cite code col colgroup data datalist dd del details dfn dialog div dl dt em embed fieldset figcaption figure footer form h1 h2 h3 h4 h5 h6 head header hgroup hr html i iframe img input ins kbd label legend li link main map mark menu meta meter nav noscript object ol optgroup option output p picture pre progress q rp rt ruby s samp search section select slot small source span strong style sub summary sup table tbody td template textarea tfoot th thead time title tr track u ul var video wbr script".split(
+  "a abbr address area article aside audio b base bdi bdo big blockquote body br button canvas caption center cite code col colgroup data datalist dd del details dfn dialog div dl dt em embed fieldset figcaption figure footer form h1 h2 h3 h4 h5 h6 head header hgroup hr html i iframe img input ins kbd keygen label legend li link main map mark menu menuitem meta meter nav noindex noscript object ol optgroup option output p param picture pre progress q rp rt ruby s samp search section select slot small source span strong style sub summary sup table tbody td template textarea tfoot th thead time title tr track u ul var video wbr webview script".split(
+    " ",
+  ),
+)
+
+const SVG_ELEMENTS = new Set(
+  "svg animate animateMotion animateTransform circle clipPath defs desc ellipse feBlend feColorMatrix feComponentTransfer feComposite feConvolveMatrix feDiffuseLighting feDisplacementMap feDistantLight feDropShadow feFlood feFuncA feFuncB feFuncG feFuncR feGaussianBlur feImage feMerge feMergeNode feMorphology feOffset fePointLight feSpecularLighting feSpotLight feTile feTurbulence filter foreignObject g image line linearGradient marker mask metadata mpath path pattern polygon polyline radialGradient rect set stop switch symbol text textPath tspan use view".split(
     " ",
   ),
 )
@@ -674,14 +714,14 @@ const noRestyleRule: Rule = {
     const policyOptions = getRestyleOptions(context)
     const options = getStylingOptions(context)
     const bindings = createImportBindings()
-    const declarations = new Map<string, Map<string, unknown>>()
+    const declarations = new Map<ScopedVariable, Map<string, unknown>>()
     const elements: JSXOpeningElement[] = []
     return {
       ImportDeclaration(node: ImportDeclaration) {
         trackImports(node, bindings, options)
       },
       VariableDeclarator(node: VariableDeclarator) {
-        trackStyleDeclaration(node, bindings, declarations)
+        trackStyleDeclaration(node, bindings, declarations, context)
       },
       JSXOpeningElement(node: JSXOpeningElement) {
         elements.push(node)
@@ -712,6 +752,8 @@ const noRestyleRule: Rule = {
             resolveStyle(
               getAttributeExpression(attribute),
               declarations,
+              node,
+              context,
               (style) => {
                 visitStyleProperties(style, (property, propertyNode) => {
                   if (policyAllows(property, policy)) return
@@ -825,7 +867,10 @@ function containsAtom(value: unknown, atoms: ReadonlySet<string>): boolean {
     )
   }
   if (value.type === "LogicalExpression") {
-    return containsAtom(getProperty(value, "right"), atoms)
+    return (
+      containsAtom(getProperty(value, "left"), atoms) ||
+      containsAtom(getProperty(value, "right"), atoms)
+    )
   }
   return false
 }
@@ -976,7 +1021,10 @@ const validPolymorphicAsRule: Rule = {
           }
           return
         }
-        if (tag === null || !HTML_ELEMENTS.has(tag)) {
+        if (
+          tag === null ||
+          (!HTML_ELEMENTS.has(tag) && !SVG_ELEMENTS.has(tag))
+        ) {
           context.report({
             data: { component },
             messageId: "invalidIntrinsic",

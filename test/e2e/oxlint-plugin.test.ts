@@ -39,6 +39,100 @@ function lint(source: string, rules: Record<string, unknown>) {
 const imports = `import * as sx from "@stylexjs/stylex";
 import { Button as Action, CardTitle } from "@registry/components/ui/button";`
 
+test("styling methods allow supported props and reject CSS, inline, and StyleX spreads", () => {
+  const valid = lint(
+    `${imports}
+const styles = sx.create({ button: { color: "red" } });
+const view = <><Action className="custom" xstyle={styles.button} /><button style={{ color: "red" }} /></>;`,
+    { "yopem-ui/enforce-styling-methods": "error" },
+  )
+  expect(valid.status).toBe(0)
+
+  const invalid = lint(
+    `${imports}
+const styles = sx.create({ button: { color: "red" } });
+const view = <><Action css={{ color: "red" }} style={{ color: "red" }} {...sx.props(styles.button)} /><Action style={sx.props(styles.button).style} /></>;`,
+    { "yopem-ui/enforce-styling-methods": "error" },
+  )
+  expect(invalid.status).toBe(1)
+  expect(invalid.output).toContain("css styling is disabled")
+  expect(invalid.output).toContain("reactStyle styling is disabled")
+  expect(invalid.output.match(/stylexStyle styling is disabled/g)).toHaveLength(
+    2,
+  )
+})
+
+test("styling methods honor import aliases, namespaces, and overrides", () => {
+  const result = lint(
+    `import { Button as Action } from "@acme/ui";
+import * as UI from "@acme/ui";
+const view = <><Action className="custom" /><UI.Button className="custom" /><button className="native" /></>;`,
+    {
+      "yopem-ui/enforce-styling-methods": [
+        "error",
+        {
+          componentSources: ["@acme/ui"],
+          styleComponents: ["Button"],
+          methods: { className: false },
+        },
+      ],
+    },
+  )
+  expect(result.status).toBe(1)
+  expect(result.output.match(/className styling is disabled/g)).toHaveLength(2)
+  expect(result.output).not.toContain("native")
+})
+
+test("polymorphic as validates Box tags and Heading levels", () => {
+  const valid = lint(
+    `import { Box as Layout, Heading } from "@/components/ui/layout";
+const view = <><Layout as="main" /><Heading as="h2" /><button as="unknown" /></>;`,
+    { "yopem-ui/valid-polymorphic-as": "error" },
+  )
+  expect(valid.status).toBe(0)
+
+  const invalid = lint(
+    `import * as UI from "@/components/ui/layout";
+const tag = "main";
+const view = <><UI.Box as="fake-tag" /><UI.Box as={tag} /><UI.Heading as="main" /><UI.Heading as={tag} /></>;`,
+    { "yopem-ui/valid-polymorphic-as": "error" },
+  )
+  expect(invalid.status).toBe(1)
+  expect(invalid.output.match(/Box as must be/g)).toHaveLength(2)
+  expect(invalid.output.match(/Heading as must be/g)).toHaveLength(2)
+})
+
+test("static StyleX accepts fixed keys and rejects dynamic shapes", () => {
+  const valid = lint(
+    `import { create as make, when } from "@stylexjs/stylex";
+const styles = make({ root: { color: "red", ":hover": { opacity: 1 }, [when.ancestor(":hover")]: { opacity: 0 } } });`,
+    { "yopem-ui/static-stylex": "error" },
+  )
+  expect(valid.status).toBe(0)
+
+  const invalid = lint(
+    `import * as sx from "@stylexjs/stylex";
+const key = "color";
+const values = {};
+const one = sx.create(values);
+const two = sx.create({ [key]: { color: "red" }, root: { [key]: "red", ...values } });`,
+    { "yopem-ui/static-stylex": "error" },
+  )
+  expect(invalid.status).toBe(1)
+  expect(
+    invalid.output.match(/must use static object shapes and keys/g),
+  ).toHaveLength(4)
+})
+
+test("Box as accepts native SVG elements", () => {
+  const result = lint(
+    `import { Box } from "@/components/ui/box";
+const view = <><Box as="svg" /><Box as="circle" /><Box as="linearGradient" /><Box as="param" /><Box as="webview" /></>;`,
+    { "yopem-ui/valid-polymorphic-as": "error" },
+  )
+  expect(result.status).toBe(0)
+})
+
 const policy = [
   "error",
   {
@@ -131,6 +225,21 @@ const a = <Action xstyle={styles.button} />;`,
   expect(result.output).toContain("raw color")
 })
 
+test("StyleX styles resolve within the JSX lexical scope", () => {
+  const result = lint(
+    `${imports}
+const styles = sx.create({ button: { marginInline: 4 } });
+function Shadow() {
+  const styles = sx.create({ button: { backgroundColor: "red" } });
+  return <Action xstyle={styles.button} />;
+}
+const view = <Action xstyle={styles.button} />;`,
+    { "yopem-ui/no-restyle": "error" },
+  )
+  expect(result.status).toBe(1)
+  expect(result.output.match(/Use its variant prop first/g)).toHaveLength(1)
+})
+
 test("StyleX raw colors only report literal color properties, not token references", () => {
   const result = lint(
     `import { create as make } from "@stylexjs/stylex";
@@ -174,6 +283,16 @@ const a = <div xstyle={atomic.color.blue} />;`,
   )
   expect(custom.status).toBe(0)
 }, 30_000)
+
+test("atoms policy finds references on either side of logical expressions", () => {
+  const result = lint(
+    `import x from "@stylexjs/atoms";
+const fallback = {};
+const view = <div xstyle={x.color.blue || fallback} />;`,
+    { "yopem-ui/atoms": ["error", { mode: "enforce" }] },
+  )
+  expect(result.status).toBe(0)
+})
 
 test("layout primitives replace presentational div and span by default", () => {
   const result = lint(
