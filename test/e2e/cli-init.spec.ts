@@ -161,6 +161,28 @@ for (const fixture of [
         fetcher,
       })
       expect(commands.flat()).toContain("@rolldown/plugin-babel@^0.2.4")
+      expect(commands.flat()).toContain("oxlint@^1.79.0")
+      expect(commands.flat()).toContain("@yopem-ui/oxlint-plugin@^0.1.0")
+      const lint = JSON.parse(
+        readFileSync(join(root, ".oxlintrc.json"), "utf8"),
+      )
+      expect(lint.jsPlugins).toContainEqual({
+        name: "yopem-ui",
+        specifier: "@yopem-ui/oxlint-plugin",
+      })
+      expect(lint.rules["yopem-ui/prefer-layout-primitives"]).toBe("error")
+      expect(lint.rules["yopem-ui/no-raw-stylex-colors"]).toBe("error")
+      expect(lint.overrides).toContainEqual({
+        files: ["src/components/ui/**/*.{tsx,jsx}"],
+        rules: {
+          "yopem-ui/enforce-styling-methods": "off",
+          "yopem-ui/no-restyle": "off",
+          "yopem-ui/no-raw-stylex-colors": "off",
+          "yopem-ui/prefer-layout-primitives": "off",
+          "yopem-ui/static-stylex": "off",
+          "yopem-ui/valid-polymorphic-as": "off",
+        },
+      })
       const config = readFileSync(join(root, fixture.config), "utf8")
       expect(config).toContain("@rolldown/plugin-babel")
       expect(config).toContain('"@stylexjs/babel-plugin"')
@@ -178,17 +200,72 @@ for (const fixture of [
       expect(config).toContain("@stylexjs/postcss-plugin")
       expect(config).toContain('"app/**/*.{js,jsx,ts,tsx}"')
       expect(existsSync(join(root, "postcss.config.cjs"))).toBe(false)
+      const lintBefore = readFileSync(join(root, ".oxlintrc.json"), "utf8")
       await initProject({
         cwd: root,
         framework: fixture.framework,
         run,
         fetcher,
       })
+      expect(readFileSync(join(root, ".oxlintrc.json"), "utf8")).toBe(
+        lintBefore,
+      )
     } finally {
       rmSync(root, { recursive: true, force: true })
     }
   })
 }
+
+test("CLI preserves existing lint rules, plugins, and explicit opt-out", async () => {
+  const root = mkdtempSync(join(tmpdir(), "yopem-existing-lint-"))
+  try {
+    mkdirSync(join(root, "src"), { recursive: true })
+    writeFileSync(
+      join(root, "package.json"),
+      JSON.stringify({ dependencies: { vite: "*", react: "*" } }),
+    )
+    writeFileSync(join(root, "tsconfig.json"), "{}")
+    writeFileSync(join(root, "src/main.tsx"), 'import React from "react"')
+    writeFileSync(
+      join(root, "vite.config.ts"),
+      "export default { plugins: [] }",
+    )
+    writeFileSync(
+      join(root, ".oxlintrc.json"),
+      JSON.stringify({
+        jsPlugins: [{ name: "other", specifier: "other-plugin" }],
+        rules: {
+          "no-console": "warn",
+          "yopem-ui/prefer-layout-primitives": "off",
+        },
+      }),
+    )
+    const options = {
+      cwd: root,
+      run: () => Promise.resolve(),
+      fetcher: () =>
+        Promise.resolve(
+          new Response(
+            readFileSync(
+              join(process.cwd(), "packages/registry/dist/r/base.json"),
+              "utf8",
+            ),
+          ),
+        ),
+    }
+    await initProject(options)
+    const lintText = readFileSync(join(root, ".oxlintrc.json"), "utf8")
+    const lint = JSON.parse(lintText)
+    expect(lint.rules["no-console"]).toBe("warn")
+    expect(lint.rules["yopem-ui/prefer-layout-primitives"]).toBe("off")
+    expect(lint.rules["yopem-ui/static-stylex"]).toBe("error")
+    expect(lint.jsPlugins).toHaveLength(2)
+    await initProject(options)
+    expect(readFileSync(join(root, ".oxlintrc.json"), "utf8")).toBe(lintText)
+  } finally {
+    rmSync(root, { recursive: true, force: true })
+  }
+})
 
 test("CLI moves existing Babel and PostCSS plugins into Vite config", async () => {
   const root = mkdtempSync(join(tmpdir(), "yopem-existing-config-"))

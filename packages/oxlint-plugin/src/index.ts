@@ -595,6 +595,49 @@ const policySchema = {
   type: "object",
 }
 
+const preferLayoutPrimitivesRule: Rule = {
+  meta: {
+    type: "problem",
+    docs: {
+      description:
+        "Prefer layout primitives to presentational native elements.",
+    },
+    messages: {
+      nativeElement:
+        "Use a layout primitive such as Box, Flex, Grid, Center, or Stack instead of <{{element}}>.",
+    },
+    schema: [
+      {
+        additionalProperties: false,
+        properties: {
+          elements: { items: { type: "string" }, type: "array" },
+        },
+        type: "object",
+      },
+    ],
+  },
+  create(context: RuleContext) {
+    const elements = new Set(
+      getStringArray(getProperty(context.options[0], "elements"), [
+        "div",
+        "span",
+      ]),
+    )
+    return {
+      JSXOpeningElement(node: JSXOpeningElement) {
+        const element = getIdentifier(node.name)
+        if (element !== null && elements.has(element)) {
+          context.report({
+            data: { element },
+            messageId: "nativeElement",
+            node: node.name,
+          })
+        }
+      },
+    }
+  },
+}
+
 const noRestyleRule: Rule = {
   meta: {
     type: "problem",
@@ -1011,6 +1054,7 @@ const staticStylexRule: Rule = {
 export const recommendedRules = {
   "yopem-ui/enforce-styling-methods": "error",
   "yopem-ui/no-restyle": "error",
+  "yopem-ui/prefer-layout-primitives": "error",
   "yopem-ui/static-stylex": "error",
   "yopem-ui/valid-polymorphic-as": "error",
 } as const
@@ -1024,6 +1068,7 @@ const plugin: Plugin = {
     atoms: atomsRule,
     "no-raw-stylex-colors": noRawStylexColorsRule,
     "no-restyle": noRestyleRule,
+    "prefer-layout-primitives": preferLayoutPrimitivesRule,
     "enforce-styling-methods": enforceStylingMethodsRule,
     "static-stylex": staticStylexRule,
     "valid-polymorphic-as": validPolymorphicAsRule,

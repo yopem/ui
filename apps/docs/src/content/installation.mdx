@@ -35,7 +35,11 @@ StyleX.
 ## 3. Initialize setup
 
 Run `bunx @yopem-ui/cli init` from your project root, or copy the shared files
-manually. The CLI and manual steps are available in the tabs below.
+manually. Init also installs Oxlint and the Yopem lint plugin, then creates or
+merges `.oxlintrc.json`. It enforces layout primitives instead of `<div>` and
+`<span>` by default; see [lint rules](/docs/lint) to opt out. Run
+`bunx oxlint .` to check your app. The CLI and manual steps are available in the
+tabs below.
 
 <InstallationMethods />
 

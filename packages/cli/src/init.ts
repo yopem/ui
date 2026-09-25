@@ -1066,6 +1066,59 @@ function postcss(content: string, path: string, esm: boolean) {
   return applyEdits(content, edits)
 }
 
+const lintRules = {
+  "yopem-ui/enforce-styling-methods": "error",
+  "yopem-ui/no-restyle": "error",
+  "yopem-ui/no-raw-stylex-colors": "error",
+  "yopem-ui/prefer-layout-primitives": "error",
+  "yopem-ui/static-stylex": "error",
+  "yopem-ui/valid-polymorphic-as": "error",
+}
+
+function lintConfig(content: string) {
+  const config: unknown = JSON.parse(content)
+  if (!object(config)) throw new Error("Invalid .oxlintrc.json")
+  const plugins = config.jsPlugins ?? []
+  const rules = config.rules ?? {}
+  const overrides = config.overrides ?? []
+  if (!Array.isArray(plugins) || !object(rules) || !Array.isArray(overrides)) {
+    throw new Error("Invalid .oxlintrc.json plugins, rules, or overrides")
+  }
+  const componentOverride = {
+    files: ["src/components/ui/**/*.{tsx,jsx}"],
+    rules: Object.fromEntries(
+      Object.keys(lintRules).map((name) => [name, "off"]),
+    ),
+  }
+  const existing = plugins.find(
+    (plugin) => object(plugin) && plugin.name === "yopem-ui",
+  )
+  if (
+    existing &&
+    (!object(existing) || existing.specifier !== "@yopem-ui/oxlint-plugin")
+  ) {
+    throw new Error("Conflicting yopem-ui plugin in .oxlintrc.json")
+  }
+  const next = {
+    ...config,
+    jsPlugins: existing
+      ? plugins
+      : [
+          ...plugins,
+          { name: "yopem-ui", specifier: "@yopem-ui/oxlint-plugin" },
+        ],
+    rules: { ...lintRules, ...rules },
+    overrides: overrides.some(
+      (entry) => JSON.stringify(entry) === JSON.stringify(componentOverride),
+    )
+      ? overrides
+      : [...overrides, componentOverride],
+  }
+  return JSON.stringify(config) === JSON.stringify(next)
+    ? content
+    : `${JSON.stringify(next, null, 2)}\n`
+}
+
 function nextScripts(value: unknown) {
   if (!object(value)) throw new Error("Invalid package.json scripts")
   const scripts = { ...value }
@@ -1230,7 +1283,10 @@ export async function initProject(options: InitOptions = {}) {
       ? "tsconfig.app.json"
       : "tsconfig.json"
   await plan(tsPath, (content) => tsconfig(content, tsPath, framework))
+  await plan(".oxlintrc.json", lintConfig, "{}")
   const devDependencies = [
+    "oxlint@^1.79.0",
+    "@yopem-ui/oxlint-plugin@^0.1.0",
     "@rolldown/plugin-babel@^0.2.4",
     "@babel/core@^7.29.7",
     "@stylexjs/babel-plugin@^0.19.0",

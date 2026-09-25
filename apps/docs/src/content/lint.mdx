@@ -6,6 +6,10 @@ First, [choose a layout component](/docs/layout) and
 The local Oxlint plugin enforces styling methods and component contracts. Other
 StyleX consistency rules remain opt-in:
 
+- **yopem-ui/prefer-layout-primitives** (recommended): replace `<div>` and
+  `<span>` with layout primitives such as Box, Flex, Grid, Center, or Stack.
+  Other semantic tags remain valid. Set `elements` to replace the checked tags,
+  or turn the rule off for code that intentionally uses native elements.
 - **yopem-ui/no-restyle** (recommended): restrict StyleX properties passed
   through `xstyle` to imported UI components. By default only layout properties
   pass, so color and shape changes prefer existing `variant` props, and spacing
@@ -19,9 +23,10 @@ StyleX consistency rules remain opt-in:
 - **yopem-ui/static-stylex**: require statically analyzable StyleX declarations.
 - **yopem-ui/valid-polymorphic-as**: validate native tags on Box and heading
   levels on Heading.
-- **yopem-ui/no-raw-stylex-colors** (off by default): flag literal hex and CSS
-  color functions on color properties in `stylex.create`. Tokens pass. Enabled
-  in docs app; does not inspect shadows or unrelated CSS strings.
+- **yopem-ui/no-raw-stylex-colors** (off in plugin's recommended preset): flag
+  literal hex and CSS color functions on color properties in `stylex.create`.
+  Tokens pass. CLI init and docs app enable it; shadows and unrelated CSS
+  strings are not inspected.
 - **yopem-ui/atoms** (off by default): `mode: "allow"` (default), `"disallow"`
   (reject atoms imports), or `"enforce"` (reject `stylex.create` declarations
   and require atoms in JSX `xstyle`/`sx` expressions). Official atoms compose
@@ -29,9 +34,13 @@ StyleX consistency rules remain opt-in:
 
 ## Configuration
 
-Configure the plugin for your app source. The following policy allows `xstyle`,
-but disallows `className` inside the docs app. The copied components still
-expose `className` for external integration.
+`bunx @yopem-ui/cli init` installs Oxlint and `@yopem-ui/oxlint-plugin`, then
+creates or merges `.oxlintrc.json` with the recommended rules and raw-color
+checks. Existing rules, including explicit `"off"` values, remain untouched.
+Copied `src/components/ui/` implementations are exempted from the Yopem rules;
+app JSX is checked. Configure the plugin for your app source. The following
+docs-app policy allows `xstyle` but disallows `className`. Copied components
+still expose `className` for external integration.
 
 **.oxlintrc.json**
 
@@ -40,7 +49,7 @@ expose `className` for external integration.
   "jsPlugins": [
     {
       "name": "yopem-ui",
-      "specifier": "./packages/oxlint-plugin/src/index.ts"
+      "specifier": "@yopem-ui/oxlint-plugin"
     }
   ],
   "overrides": [
@@ -61,8 +70,8 @@ expose `className` for external integration.
 ```
 
 To enforce component contracts, enable `no-restyle` (included in plugin
-`recommendedRules`; docs previews currently opt out while keeping raw-color
-consistency enabled):
+`recommendedRules` and CLI init; docs previews currently opt out while keeping
+raw-color consistency enabled):
 
 ```json
 {
@@ -110,6 +119,12 @@ imported from `@apps/stylexjs/atoms`, set `"source": "@apps/stylexjs/atoms"`.
 This repo does not currently include that wrapper or the atoms dependency; leave
 the atoms rule off until installed and compiled.
 
+Opt out of the default native layout rule in your `.oxlintrc.json` with
+`"yopem-ui/prefer-layout-primitives": "off"`, or replace its checked tags with
+`["error", { "elements": ["div", "span", "section"] }]`. Use Oxlint file
+overrides for document shells or renderer code. The docs app does not enable
+this rule for its existing markup.
+
 Native framework elements (for example TanStack Router links) can use
 `stylex.props(...)`. Imported UI components should use `xstyle` instead of a
 StyleX prop spread, so component defaults and consumer styles compose in order.
@@ -118,6 +133,5 @@ StyleX prop spread, so component defaults and consumer styles compose in order.
 
 ## Exceptions
 
-The library no longer requires UI wrappers for native elements. Registry
-implementations and non-DOM JSX renderers are outside the docs rule scope. Run
-`bun run lint` from the repository root.
+Registry implementations and non-DOM JSX renderers are outside the docs rule
+scope. Run `bun run lint` from the repository root.

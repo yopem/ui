@@ -1,12 +1,18 @@
 {
   "name": "@yopem-ui/oxlint-plugin",
-  "private": true,
+  "version": "0.1.0",
+  "files": [
+    "src"
+  ],
   "type": "module",
   "exports": {
     ".": {
       "types": "./src/index.ts",
       "default": "./src/index.ts"
     }
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "scripts": {
     "typecheck": "tsc --noEmit"

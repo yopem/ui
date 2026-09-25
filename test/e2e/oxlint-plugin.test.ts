@@ -175,6 +175,33 @@ const a = <div xstyle={atomic.color.blue} />;`,
   expect(custom.status).toBe(0)
 }, 30_000)
 
+test("layout primitives replace presentational div and span by default", () => {
+  const result = lint(
+    `import { Box as Container, Stack } from "@/components/ui/layout";
+const view = <><div><span>Text</span></div><Container /><Stack /><section /><svg><g /></svg><custom-widget /></>;`,
+    { "yopem-ui/prefer-layout-primitives": "error" },
+  )
+  expect(result.status).toBe(1)
+  expect(result.output).toContain("Box")
+  expect(result.output).toContain("div")
+  expect(result.output).toContain("span")
+  expect(result.output).not.toContain("section")
+})
+
+test("layout primitive rule supports opt-out and additional tags", () => {
+  const source = `const view = <><div /><span /><main /></>;`
+  expect(
+    lint(source, { "yopem-ui/prefer-layout-primitives": "off" }).status,
+  ).toBe(0)
+  const result = lint(source, {
+    "yopem-ui/prefer-layout-primitives": ["error", { elements: ["main"] }],
+  })
+  expect(result.status).toBe(1)
+  expect(result.output).toContain("main")
+  expect(result.output).not.toContain("<div>")
+  expect(result.output).not.toContain("<span>")
+})
+
 test("new rules remain opt-in", () => {
   const result = lint(
     `${imports}
