@@ -116,6 +116,9 @@ export const usageNotes: Record<string, [string, ...string[]]> = {
   clipboard: [
     "Supply the value to copy. The button reports success or failure to assistive technology and never submits its parent form by default.",
   ],
+  marquee: [
+    "Marquee provides a pause control and stops animating with reduced motion. Avoid putting essential controls in moving content.",
+  ],
   group: [
     "Wrap adjacent controls in Group. Apply groupItemStyles.item through each direct control's xstyle, or controlXstyle for Input and Textarea wrappers. GroupText and GroupSeparator apply joining styles themselves.",
     "orientation switches between horizontal and vertical layouts. ButtonGroup, ButtonGroupText and ButtonGroupSeparator are aliases.",

@@ -25,6 +25,13 @@ const definitions: Definition[] = [
     title: "Clipboard",
   },
   {
+    api: ["MarqueeProps", "Marquee"],
+    categories: ["display"],
+    description: "Pauseable scrolling content with reduced-motion support.",
+    name: "marquee",
+    title: "Marquee",
+  },
+  {
     api: ["Alert", "AlertTitle", "AlertDescription", "AlertAction"],
     categories: ["feedback"],
     description: "Status message with semantic variants and optional action.",

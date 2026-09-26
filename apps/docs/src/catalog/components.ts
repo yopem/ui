@@ -79,6 +79,7 @@ const previewDescriptions: Record<string, string> = {
   kbd: "Keyboard shortcut keycaps",
   layout: "Composable layout primitives",
   link: "Link to component catalog",
+  marquee: "Pauseable scrolling content",
   menu: "Playback actions menu",
   meter: "Storage usage meter",
   navigation: "Segmented navigation",

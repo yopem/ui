@@ -23,6 +23,14 @@ export function Preview() {
   )
 }
 `,
+  marquee: `"use client"
+
+import { Marquee } from "@/components/ui/marquee"
+
+export function Preview() {
+  return <Marquee><span>Design systems</span><span>Accessible components</span><span>Reusable source</span></Marquee>
+}
+`,
   "absolute-center": `"use client"
 
 import { AbsoluteCenter } from "@/components/ui/absolute-center"
