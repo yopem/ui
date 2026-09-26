@@ -71,6 +71,13 @@ const definitions: Definition[] = [
     title: "Container",
   },
   {
+    api: ["AbsoluteCenterAxis", "AbsoluteCenterProps", "AbsoluteCenter"],
+    categories: ["layout"],
+    description: "Center an element within a positioned ancestor.",
+    name: "absolute-center",
+    title: "AbsoluteCenter",
+  },
+  {
     api: ["LinkProps", "Link"],
     categories: ["navigation"],
     description: "Native anchor with xstyle and no component visual defaults.",

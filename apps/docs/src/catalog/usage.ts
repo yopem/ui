@@ -1,5 +1,16 @@
 // Standalone TSX files use the standard @ alias for src.
 export const usageSnippets: Record<string, string> = {
+  "absolute-center": `"use client"
+
+import { AbsoluteCenter } from "@/components/ui/absolute-center"
+import * as stylex from "@stylexjs/stylex"
+
+const styles = stylex.create({ area: { position: "relative", minBlockSize: "8rem", borderWidth: 1, borderStyle: "solid" } })
+
+export function Preview() {
+  return <div {...stylex.props(styles.area)}><AbsoluteCenter>Centered</AbsoluteCenter></div>
+}
+`,
   highlight: `"use client"
 
 import { Highlight } from "@/components/ui/highlight"

@@ -71,6 +71,9 @@ export const usageNotes: Record<string, [string, ...string[]]> = {
   container: [
     "Container centers page content with a 90rem maximum inline size and four spacing units of horizontal padding. Use fluid to remove the width cap or xstyle to choose another maximum width and padding.",
   ],
+  "absolute-center": [
+    "Position an ancestor before placing AbsoluteCenter inside it. Set axis to horizontal or vertical to center along one dimension only.",
+  ],
   link: [
     "Link renders a native anchor with href, events, ref, and keyboard behavior. Use xstyle to customize appearance; router navigation stays with your framework.",
   ],
