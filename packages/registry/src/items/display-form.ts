@@ -54,6 +54,13 @@ const definitions: Definition[] = [
     title: "Stat",
   },
   {
+    api: ["Steps", "StepsItem"],
+    categories: ["navigation"],
+    description: "Ordered process steps with a current-step indicator.",
+    name: "steps",
+    title: "Steps",
+  },
+  {
     api: ["Alert", "AlertTitle", "AlertDescription", "AlertAction"],
     categories: ["feedback"],
     description: "Status message with semantic variants and optional action.",

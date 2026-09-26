@@ -128,6 +128,9 @@ export const usageNotes: Record<string, [string, ...string[]]> = {
   stat: [
     "Compose StatLabel, StatValue and optional StatDescription inside Stat. The definition list keeps values paired with their labels.",
   ],
+  steps: [
+    "Compose StepsItem inside Steps in process order. Set status=current for the active item; the current step is exposed with aria-current=step.",
+  ],
   group: [
     "Wrap adjacent controls in Group. Apply groupItemStyles.item through each direct control's xstyle, or controlXstyle for Input and Textarea wrappers. GroupText and GroupSeparator apply joining styles themselves.",
     "orientation switches between horizontal and vertical layouts. ButtonGroup, ButtonGroupText and ButtonGroupSeparator are aliases.",

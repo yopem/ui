@@ -101,6 +101,7 @@ const previewDescriptions: Record<string, string> = {
   slider: "Adjustable range",
   spinner: "Indeterminate loading spinner",
   stat: "Labeled request metric",
+  steps: "Ordered setup progress",
   stack: "Vertically stacked status",
   switch: "Labeled on/off switch",
   table: "Projects data table",

@@ -76,6 +76,14 @@ export function Preview() {
   return <Stat><StatLabel>Requests</StatLabel><StatValue>1,248</StatValue><StatDescription>Last 30 days</StatDescription></Stat>
 }
 `,
+  steps: `"use client"
+
+import { Steps, StepsItem } from "@/components/ui/steps"
+
+export function Preview() {
+  return <Steps><StepsItem status="completed">Account</StepsItem><StepsItem status="current">Preferences</StepsItem><StepsItem>Finish</StepsItem></Steps>
+}
+`,
   "absolute-center": `"use client"
 
 import { AbsoluteCenter } from "@/components/ui/absolute-center"
