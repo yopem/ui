@@ -1,7 +1,7 @@
 import { Box } from "@registry/components/ui/box"
 import { Flex } from "@registry/components/ui/flex"
 import { Kbd, KbdGroup } from "@registry/components/ui/kbd"
-import { Paragraph } from "@registry/components/ui/paragraph"
+import { Text } from "@registry/components/ui/text"
 import * as stylex from "@stylexjs/stylex"
 const styles = stylex.create({
   flex: { flexDirection: "column", gap: "calc(0.25rem * 4)" },
@@ -24,7 +24,7 @@ export function Preview() {
   return (
     <Flex xstyle={styles.flex}>
       <Box>
-        <Paragraph xstyle={styles.paragraph}>Single keys:</Paragraph>
+        <Text xstyle={styles.paragraph}>Single keys:</Text>
         <Flex xstyle={styles.flex2}>
           <Kbd>K</Kbd>
           <Kbd>⌘</Kbd>
@@ -33,7 +33,7 @@ export function Preview() {
         </Flex>
       </Box>
       <Box>
-        <Paragraph xstyle={styles.paragraph2}>Key combinations:</Paragraph>
+        <Text xstyle={styles.paragraph2}>Key combinations:</Text>
         <Flex xstyle={styles.flex3}>
           <KbdGroup>
             <Kbd>⌘</Kbd>

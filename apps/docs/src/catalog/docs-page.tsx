@@ -3,7 +3,7 @@ import type { ReactNode } from "react"
 import { Box } from "@registry/components/ui/box"
 import { Grid } from "@registry/components/ui/grid"
 import { Heading } from "@registry/components/ui/heading"
-import { Paragraph } from "@registry/components/ui/paragraph"
+import { Text } from "@registry/components/ui/text"
 import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 
@@ -116,5 +116,5 @@ export function DocsTitle({ children }: { children: ReactNode }) {
 }
 
 export function DocsDescription({ children }: { children: ReactNode }) {
-  return <Paragraph xstyle={styles.paragraph}>{children}</Paragraph>
+  return <Text xstyle={styles.paragraph}>{children}</Text>
 }

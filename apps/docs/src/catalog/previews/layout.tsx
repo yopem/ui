@@ -1,19 +1,24 @@
 "use client"
 
+import { AbsoluteCenter } from "@registry/components/ui/absolute-center"
+import { Bleed } from "@registry/components/ui/bleed"
 import { Box } from "@registry/components/ui/box"
 import { Button } from "@registry/components/ui/button"
 import { Center } from "@registry/components/ui/center"
 import { Container } from "@registry/components/ui/container"
 import { Flex } from "@registry/components/ui/flex"
+import { Float } from "@registry/components/ui/float"
 import { Grid } from "@registry/components/ui/grid"
 import { Heading } from "@registry/components/ui/heading"
 import { HStack } from "@registry/components/ui/hstack"
 import { Label } from "@registry/components/ui/label"
 import { Link } from "@registry/components/ui/link"
-import { Paragraph } from "@registry/components/ui/paragraph"
 import { Stack } from "@registry/components/ui/stack"
+import { Text } from "@registry/components/ui/text"
 import { VStack } from "@registry/components/ui/vstack"
+import { Wrap } from "@registry/components/ui/wrap"
 import * as stylex from "@stylexjs/stylex"
+import { Link as RouterLink } from "@tanstack/react-router"
 import { useRef, useState } from "react"
 const styles = stylex.create({
   layoutRoot: {
@@ -41,13 +46,15 @@ const styles = stylex.create({
   },
   center: { minBlockSize: "4rem" },
   container: { maxInlineSize: "60rem", paddingInline: "24px" },
+  positioned: { position: "relative", minBlockSize: "6rem" },
+  padded: { paddingInline: "1rem" },
 })
 
 export function Preview() {
   const linkRef = useRef<HTMLAnchorElement>(null)
   const nameRef = useRef<HTMLInputElement>(null)
-  const paragraphRef = useRef<HTMLParagraphElement>(null)
-  const [paragraphTag, setParagraphTag] = useState("Not inspected")
+  const textRef = useRef<HTMLParagraphElement>(null)
+  const [textTag, setTextTag] = useState("Not inspected")
   const [submitted, setSubmitted] = useState(false)
 
   return (
@@ -69,14 +76,20 @@ export function Preview() {
         <Heading as="h6" data-testid="heading-h6">
           Sixth-level heading
         </Heading>
-        <Paragraph ref={paragraphRef} data-testid="paragraph-ref">
-          Paragraph content keeps its native p element.
-        </Paragraph>
-        <Paragraph data-testid="paragraph-secondary">
+        <Text ref={textRef} data-testid="text-ref">
+          Text content keeps its native p element.
+        </Text>
+        <Text data-testid="text-secondary">
           Layout primitives keep document semantics explicit.
-        </Paragraph>
+        </Text>
         <Link ref={linkRef} data-testid="native-link" href="#destination">
           Go to destination
+        </Link>
+        <Link
+          render={<RouterLink to="/docs/installation" />}
+          data-testid="router-link"
+        >
+          Read docs
         </Link>
       </Box>
       <Flex xstyle={styles.flex} data-testid="flex">
@@ -118,6 +131,32 @@ export function Preview() {
       <Container data-testid="fluid-container" fluid>
         Fluid content
       </Container>
+      <Box data-testid="positioned-layout" xstyle={styles.positioned}>
+        <AbsoluteCenter data-testid="absolute-center">Middle</AbsoluteCenter>
+        <Float data-testid="float" placement="top-end">
+          Corner
+        </Float>
+      </Box>
+      <Box
+        data-testid="rtl-positioned-layout"
+        dir="rtl"
+        xstyle={styles.positioned}
+      >
+        <AbsoluteCenter data-testid="rtl-absolute-center">
+          RTL middle
+        </AbsoluteCenter>
+        <Float data-testid="rtl-float" placement="top-center">
+          RTL top
+        </Float>
+      </Box>
+      <Box data-testid="padded-layout" xstyle={styles.padded}>
+        <Bleed data-testid="bleed">Bleeding content</Bleed>
+      </Box>
+      <Wrap data-testid="wrap">
+        <Box as="span">One</Box>
+        <Box as="span">Two</Box>
+        <Box as="span">Three</Box>
+      </Wrap>
       <Box
         as="form"
         data-testid="native-form"
@@ -145,8 +184,8 @@ export function Preview() {
         <Button
           data-testid="inspect-refs"
           onClick={() =>
-            setParagraphTag(
-              `${paragraphRef.current?.tagName ?? "missing"} ${linkRef.current?.tagName ?? "missing"}`,
+            setTextTag(
+              `${textRef.current?.tagName ?? "missing"} ${linkRef.current?.tagName ?? "missing"}`,
             )
           }
           type="button"
@@ -157,10 +196,10 @@ export function Preview() {
           Submit
         </Button>
       </Box>
-      <Paragraph aria-live="polite" data-testid="submit-status">
+      <Text aria-live="polite" data-testid="submit-status">
         {submitted ? "Submitted" : "Not submitted"}
-      </Paragraph>
-      <Paragraph data-testid="paragraph-ref-status">{paragraphTag}</Paragraph>
+      </Text>
+      <Text data-testid="text-ref-status">{textTag}</Text>
       <Box as="div" data-testid="destination" id="destination" tabIndex={-1}>
         Destination
       </Box>

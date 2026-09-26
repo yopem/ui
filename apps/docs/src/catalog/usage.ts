@@ -747,12 +747,12 @@ export function Preview() {
 // Next.js: import NextLink from "next/link" and use
 // <Link render={<NextLink href="/docs" />}>Read the documentation</Link>
 `,
-  paragraph: `"use client"
+  text: `"use client"
 
-import { Paragraph } from "@/components/ui/paragraph"
+import { Text } from "@/components/ui/text"
 
 export function Preview() {
-  return <Paragraph>Keep body copy in a native paragraph.</Paragraph>
+  return <Text>Keep body copy in a native paragraph.</Text>
 }
 `,
   heading: `"use client"

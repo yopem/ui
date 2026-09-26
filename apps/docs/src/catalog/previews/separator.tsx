@@ -1,8 +1,8 @@
 import { Box } from "@registry/components/ui/box"
 import { Flex } from "@registry/components/ui/flex"
 import { Heading } from "@registry/components/ui/heading"
-import { Paragraph } from "@registry/components/ui/paragraph"
 import { Separator } from "@registry/components/ui/separator"
+import { Text } from "@registry/components/ui/text"
 import * as stylex from "@stylexjs/stylex"
 const styles = stylex.create({
   box: { maxInlineSize: "calc(0.25rem * 72)" },
@@ -32,10 +32,10 @@ export function Preview() {
         <Heading as="h4" xstyle={styles.h4}>
           coss ui
         </Heading>
-        <Paragraph xstyle={styles.paragraph}>
+        <Text xstyle={styles.paragraph}>
           Unstyled, accessible primitives for fast product UI and design
           systems.
-        </Paragraph>
+        </Text>
       </Flex>
       <Separator xstyle={styles.separator} />
       <Flex xstyle={styles.flex2}>

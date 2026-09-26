@@ -79,7 +79,7 @@ const previewDescriptions: Record<string, string> = {
   "number-field": "Quantity stepper",
   "otp-field": "One-time password entry",
   pagination: "Page navigation",
-  paragraph: "Constrained reading-width text",
+  text: "Constrained reading-width text",
   popover: "Feedback form popover",
   "preview-card": "Link preview card",
   progress: "Upload progress indicator",

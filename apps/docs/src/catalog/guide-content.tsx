@@ -4,7 +4,7 @@ import type { ComponentProps, ReactNode } from "react"
 import { Box } from "@registry/components/ui/box"
 import { Heading } from "@registry/components/ui/heading"
 import { Link } from "@registry/components/ui/link"
-import { Paragraph } from "@registry/components/ui/paragraph"
+import { Text } from "@registry/components/ui/text"
 import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import { isValidElement } from "react"
@@ -134,9 +134,7 @@ function GuideCode({ children }: { children?: ReactNode }) {
 const guideComponents: MDXComponents = {
   h2: GuideH2,
   h3: GuideH3,
-  p: ({ children }) => (
-    <Paragraph xstyle={styles.paragraph}>{children}</Paragraph>
-  ),
+  p: ({ children }) => <Text xstyle={styles.paragraph}>{children}</Text>,
   a: ({ children, href, title, target, rel }) => (
     <Link
       xstyle={styles.link}

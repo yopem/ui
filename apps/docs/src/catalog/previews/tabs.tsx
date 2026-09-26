@@ -1,10 +1,10 @@
-import { Paragraph } from "@registry/components/ui/paragraph"
 import {
   Tabs,
   TabsList,
   TabsPanel,
   TabsTab,
 } from "@registry/components/ui/tabs"
+import { Text } from "@registry/components/ui/text"
 import * as stylex from "@stylexjs/stylex"
 const styles = stylex.create({
   paragraph: {
@@ -41,13 +41,13 @@ export function Preview() {
         <TabsTab value="tab-3">Tab 3</TabsTab>
       </TabsList>
       <TabsPanel value="tab-1">
-        <Paragraph xstyle={styles.paragraph}>Tab 1 content</Paragraph>
+        <Text xstyle={styles.paragraph}>Tab 1 content</Text>
       </TabsPanel>
       <TabsPanel value="tab-2">
-        <Paragraph xstyle={styles.paragraph2}>Tab 2 content</Paragraph>
+        <Text xstyle={styles.paragraph2}>Tab 2 content</Text>
       </TabsPanel>
       <TabsPanel value="tab-3">
-        <Paragraph xstyle={styles.paragraph3}>Tab 3 content</Paragraph>
+        <Text xstyle={styles.paragraph3}>Tab 3 content</Text>
       </TabsPanel>
     </Tabs>
   )

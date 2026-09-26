@@ -32,7 +32,7 @@ test.describe("layout and typography primitives", () => {
       "container",
       "fluid-container",
       "native-link",
-      "paragraph-ref",
+      "text-ref",
       "preserved-heading",
     ]) {
       await expect(page.getByTestId(testId)).toBeVisible()
@@ -43,10 +43,11 @@ test.describe("layout and typography primitives", () => {
       "tagName",
       "A",
     )
-    await expect(page.getByTestId("paragraph-ref")).toHaveJSProperty(
-      "tagName",
-      "P",
+    await expect(page.getByTestId("router-link")).toHaveAttribute(
+      "href",
+      "/docs/installation",
     )
+    await expect(page.getByTestId("text-ref")).toHaveJSProperty("tagName", "P")
 
     for (const [testId, tagName] of [
       ["heading-h1", "H1"],
@@ -61,6 +62,14 @@ test.describe("layout and typography primitives", () => {
         tagName,
       )
     }
+  })
+
+  test("renders TanStack Router links without losing navigation", async ({
+    page,
+  }) => {
+    await openLayoutPreview(page)
+    await page.getByTestId("router-link").click()
+    await expect(page).toHaveURL(/\/docs\/installation\/?$/)
   })
 
   test("preserves layout geometry, gap, direction, and RTL", async ({
@@ -156,6 +165,41 @@ test.describe("layout and typography primitives", () => {
     ).toBeLessThan(2)
   })
 
+  test("centers overlays, floats corners, and wraps content", async ({
+    page,
+  }) => {
+    await openLayoutPreview(page)
+    const area = await page.getByTestId("positioned-layout").boundingBox()
+    const center = await page.getByTestId("absolute-center").boundingBox()
+    const float = await page.getByTestId("float").boundingBox()
+    expect(
+      Math.abs(
+        (center?.x ?? 0) +
+          (center?.width ?? 0) / 2 -
+          ((area?.x ?? 0) + (area?.width ?? 0) / 2),
+      ),
+    ).toBeLessThan(2)
+    expect(float?.x).toBeGreaterThan(center?.x ?? 0)
+    const rtlArea = await page
+      .getByTestId("rtl-positioned-layout")
+      .boundingBox()
+    for (const testId of ["rtl-absolute-center", "rtl-float"]) {
+      const item = await page.getByTestId(testId).boundingBox()
+      expect(
+        Math.abs(
+          (item?.x ?? 0) +
+            (item?.width ?? 0) / 2 -
+            ((rtlArea?.x ?? 0) + (rtlArea?.width ?? 0) / 2),
+        ),
+      ).toBeLessThan(2)
+    }
+    await expect(page.getByTestId("wrap")).toHaveCSS("flex-wrap", "wrap")
+    await expect(page.getByTestId("bleed")).toHaveCSS(
+      "margin-inline-start",
+      "-16px",
+    )
+  })
+
   test("composes xstyle with layout defaults", async ({ page }) => {
     await openLayoutPreview(page)
     await expect(page.getByTestId("stack")).toHaveCSS("gap", "16px")
@@ -208,7 +252,7 @@ test.describe("layout and typography primitives", () => {
     await expect(name).toBeFocused()
 
     await page.getByTestId("inspect-refs").click()
-    await expect(page.getByTestId("paragraph-ref-status")).toHaveText("P A")
+    await expect(page.getByTestId("text-ref-status")).toHaveText("P A")
 
     await page.getByRole("link", { name: "Go to destination" }).press("Enter")
     await expect(page).toHaveURL(/#destination$/)

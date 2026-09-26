@@ -106,11 +106,11 @@ const definitions: Definition[] = [
     title: "Link",
   },
   {
-    api: ["ParagraphProps", "Paragraph"],
+    api: ["TextProps", "Text"],
     categories: ["typography"],
     description: "Native paragraph with xstyle.",
-    name: "paragraph",
-    title: "Paragraph",
+    name: "text",
+    title: "Text",
   },
   {
     api: ["HighlightProps", "Highlight"],

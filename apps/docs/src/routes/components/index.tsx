@@ -1,7 +1,7 @@
 import { Box } from "@registry/components/ui/box"
 import { Grid } from "@registry/components/ui/grid"
 import { Heading } from "@registry/components/ui/heading"
-import { Paragraph } from "@registry/components/ui/paragraph"
+import { Text } from "@registry/components/ui/text"
 import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import { Link, createFileRoute } from "@tanstack/react-router"
@@ -130,9 +130,9 @@ function ComponentsPage() {
               </Link>
             ))}
             {results.length === 0 ? (
-              <Paragraph xstyle={styles.paragraph}>
+              <Text xstyle={styles.paragraph}>
                 No components match “{query}”.
-              </Paragraph>
+              </Text>
             ) : null}
           </Grid>
         </DocsBody>

@@ -4,7 +4,7 @@ import type { ReactNode } from "react"
 
 import { Box } from "@registry/components/ui/box"
 import { Link } from "@registry/components/ui/link"
-import { Paragraph } from "@registry/components/ui/paragraph"
+import { Text } from "@registry/components/ui/text"
 import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import { useCallback, useState } from "react"
@@ -122,7 +122,7 @@ export function TableOfContents({ items }: { items: TocItem[] }) {
       xstyle={styles.onThisPage}
     >
       <Box as="nav" aria-label="On this page">
-        <Paragraph xstyle={styles.paragraph}>On this page</Paragraph>
+        <Text xstyle={styles.paragraph}>On this page</Text>
         <Box as="ul" xstyle={styles.ul}>
           {items.map((item) => (
             <Box as="li" key={item.url}>

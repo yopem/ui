@@ -1,6 +1,6 @@
 import { Box } from "@registry/components/ui/box"
 import { Heading } from "@registry/components/ui/heading"
-import { Paragraph } from "@registry/components/ui/paragraph"
+import { Text } from "@registry/components/ui/text"
 import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import { Link, createFileRoute, notFound } from "@tanstack/react-router"
@@ -139,18 +139,18 @@ function ComponentPage() {
           <Heading as="h2" xstyle={styles.h2} id="overview">
             Overview
           </Heading>
-          <Paragraph xstyle={styles.paragraph}>
+          <Text xstyle={styles.paragraph}>
             Copy the source into your project, then import the parts you need.
             Styles use local StyleX declarations and shared theme tokens. You
             can change the source without wrapping or replacing a package.
-          </Paragraph>
+          </Text>
           <Heading as="h2" xstyle={styles.h22} id="installation">
             Installation
           </Heading>
-          <Paragraph xstyle={styles.paragraph2}>
+          <Text xstyle={styles.paragraph2}>
             Run bunx @yopem-ui/cli init from your project root first. The CLI
             configures StyleX and installs shared files and dependencies.
-          </Paragraph>
+          </Text>
           <CopyableCode
             code="bunx @yopem-ui/cli init"
             title="Initialize StyleX project with CLI"
@@ -161,12 +161,12 @@ function ComponentPage() {
               .join("\n")}
             title={`Install ${item.title} with CLI`}
           />
-          <Paragraph xstyle={styles.paragraph3}>
+          <Text xstyle={styles.paragraph3}>
             Run from your project root. The CLI installs required components,
             shared files, and packages. Previews may need additional components.
             Existing files are preserved. To refresh installed source, use
             update; locally edited files need an explicit --force to overwrite.
-          </Paragraph>
+          </Text>
           <CopyableCode
             code={data.installNames
               .map((installName) => `bunx @yopem-ui/cli update ${installName}`)
@@ -180,30 +180,30 @@ function ComponentPage() {
           {item.preview && data.previewSource ? (
             <PreviewPanel preview={item.preview} source={data.previewSource} />
           ) : (
-            <Paragraph xstyle={styles.paragraph6}>
+            <Text xstyle={styles.paragraph6}>
               Use the composition in Usage below to start with {item.title}.
-            </Paragraph>
+            </Text>
           )}
           <Heading as="h2" xstyle={styles.h24} id="usage">
             Usage
           </Heading>
           {data.notes.map((note) => (
-            <Paragraph xstyle={styles.paragraph7} key={note}>
+            <Text xstyle={styles.paragraph7} key={note}>
               {note}
-            </Paragraph>
+            </Text>
           ))}
-          <Paragraph xstyle={styles.paragraph8}>
+          <Text xstyle={styles.paragraph8}>
             Import from the local file installed by the CLI.
-          </Paragraph>
+          </Text>
           <CopyableCode code={data.usage} title={`${item.title} usage`} />
           <Heading as="h2" xstyle={styles.h25} id="api-reference">
             API reference
           </Heading>
-          <Paragraph xstyle={styles.paragraph9}>
+          <Text xstyle={styles.paragraph9}>
             Generated from canonical TypeScript source. Only component and Base
             UI props appear below. Required marks a required property, not a
             required component.
-          </Paragraph>
+          </Text>
           <ComponentApi key={name} parts={data.api} />
         </DocsBody>
       </DocsPage>

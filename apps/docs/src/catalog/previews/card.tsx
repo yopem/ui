@@ -11,7 +11,6 @@ import { Field, FieldLabel } from "@registry/components/ui/field"
 import { Flex } from "@registry/components/ui/flex"
 import { Form } from "@registry/components/ui/form"
 import { Input } from "@registry/components/ui/input"
-import { Paragraph } from "@registry/components/ui/paragraph"
 import {
   Select,
   SelectItem,
@@ -19,6 +18,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@registry/components/ui/select"
+import { Text } from "@registry/components/ui/text"
 import * as stylex from "@stylexjs/stylex"
 import { CircleAlertIcon } from "lucide-react"
 
@@ -93,7 +93,7 @@ export function Preview() {
       <CardFooter>
         <Flex xstyle={styles.flex}>
           <CircleAlertIcon {...stylex.props(previewStyles.preview5)} />
-          <Paragraph>This will take a few seconds to complete.</Paragraph>
+          <Text>This will take a few seconds to complete.</Text>
         </Flex>
       </CardFooter>
     </Card>

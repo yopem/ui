@@ -3,7 +3,7 @@ import type { ErrorComponentProps } from "@tanstack/react-router"
 import "@fontsource-variable/figtree"
 import "@fontsource-variable/jetbrains-mono"
 import { Button } from "@registry/components/ui/button"
-import { Paragraph } from "@registry/components/ui/paragraph"
+import { Text } from "@registry/components/ui/text"
 
 import "@/styles.css"
 import { ToastProvider } from "@registry/components/ui/toast"
@@ -65,11 +65,11 @@ function ErrorPage({ reset }: ErrorComponentProps) {
           <Button type="button" onClick={reset}>
             Try again
           </Button>
-          <Paragraph xstyle={styles.paragraph}>
+          <Text xstyle={styles.paragraph}>
             <Link to="/" {...stylex.props(docsStyles.link)}>
               Return to documentation home
             </Link>
-          </Paragraph>
+          </Text>
         </DocsBody>
       </DocsPage>
     </DocumentationLayout>

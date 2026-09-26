@@ -7,7 +7,7 @@ import {
   FrameTitle,
 } from "@registry/components/ui/frame"
 import { Heading } from "@registry/components/ui/heading"
-import { Paragraph } from "@registry/components/ui/paragraph"
+import { Text } from "@registry/components/ui/text"
 import * as stylex from "@stylexjs/stylex"
 const styles = stylex.create({
   frame: { inlineSize: "100%" },
@@ -38,10 +38,10 @@ export function Preview() {
         <Heading as="h2" xstyle={styles.h2}>
           Section title
         </Heading>
-        <Paragraph xstyle={styles.paragraph}>Section description</Paragraph>
+        <Text xstyle={styles.paragraph}>Section description</Text>
       </FramePanel>
       <FrameFooter>
-        <Paragraph xstyle={styles.paragraph2}>Footer</Paragraph>
+        <Text xstyle={styles.paragraph2}>Footer</Text>
       </FrameFooter>
     </Frame>
   )

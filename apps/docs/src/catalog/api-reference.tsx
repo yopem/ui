@@ -3,8 +3,8 @@ import type { ApiPart, ApiProp } from "@registry/docs"
 import { Box } from "@registry/components/ui/box"
 import { Heading } from "@registry/components/ui/heading"
 import { Link } from "@registry/components/ui/link"
-import { Paragraph } from "@registry/components/ui/paragraph"
 import { ScrollArea } from "@registry/components/ui/scroll-area"
+import { Text } from "@registry/components/ui/text"
 import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import { useState } from "react"
@@ -377,13 +377,13 @@ function PartReference({
         <Heading as="h3" xstyle={styles.h3} id={`api-${part.name}`}>
           {part.name}
         </Heading>
-        <Paragraph xstyle={styles.paragraph}>
+        <Text xstyle={styles.paragraph}>
           Alias for{" "}
           <Link xstyle={styles.link} href={`#api-${alias}`}>
             {alias}
           </Link>
           . Uses the same props and defaults.
-        </Paragraph>
+        </Text>
       </Box>
     )
   const specific = part.props
@@ -396,7 +396,7 @@ function PartReference({
       <Heading as="h3" xstyle={styles.h32} id={`api-${part.name}`}>
         {part.name}
       </Heading>
-      <Paragraph xstyle={styles.paragraph2}>{part.description}</Paragraph>
+      <Text xstyle={styles.paragraph2}>{part.description}</Text>
       {part.parameters.length ? (
         <>
           <Heading as="h4" xstyle={styles.h4}>
@@ -456,9 +456,9 @@ function PartReference({
                   <Heading as="h4" xstyle={styles.h44}>
                     Combination {index + 1}
                   </Heading>
-                  <Paragraph xstyle={styles.paragraph3}>
+                  <Text xstyle={styles.paragraph3}>
                     Required: {variant.required.join(", ") || "None"}.
-                  </Paragraph>
+                  </Text>
                   <PropertiesTable
                     properties={variant.props.map((prop) => ({
                       ...part.props.find((entry) => entry.name === prop.name),

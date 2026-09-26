@@ -2,12 +2,12 @@ import { Box } from "@registry/components/ui/box"
 import { Button } from "@registry/components/ui/button"
 import { Flex } from "@registry/components/ui/flex"
 import { Heading } from "@registry/components/ui/heading"
-import { Paragraph } from "@registry/components/ui/paragraph"
 import {
   PreviewCard,
   PreviewCardPopup,
   PreviewCardTrigger,
 } from "@registry/components/ui/preview-card"
+import { Text } from "@registry/components/ui/text"
 import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import { CornerUpLeftIcon, StarIcon } from "lucide-react"
@@ -54,10 +54,10 @@ export function Preview() {
             <Heading as="h2" xstyle={styles.h2}>
               coss.com/ui
             </Heading>
-            <Paragraph xstyle={styles.paragraph}>
+            <Text xstyle={styles.paragraph}>
               Beautifully designed components that you can copy and paste into
               your apps.
-            </Paragraph>
+            </Text>
           </Flex>
           <Flex xstyle={styles.flex3}>
             <Flex xstyle={styles.flex4}>
