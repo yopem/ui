@@ -47,6 +47,13 @@ const definitions: Definition[] = [
     title: "Rating",
   },
   {
+    api: ["Stat", "StatLabel", "StatValue", "StatDescription"],
+    categories: ["display"],
+    description: "Semantic definition list for a labeled metric.",
+    name: "stat",
+    title: "Stat",
+  },
+  {
     api: ["Alert", "AlertTitle", "AlertDescription", "AlertAction"],
     categories: ["feedback"],
     description: "Status message with semantic variants and optional action.",

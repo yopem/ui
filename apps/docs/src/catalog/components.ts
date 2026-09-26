@@ -100,6 +100,7 @@ const previewDescriptions: Record<string, string> = {
   skeleton: "Loading profile cards",
   slider: "Adjustable range",
   spinner: "Indeterminate loading spinner",
+  stat: "Labeled request metric",
   stack: "Vertically stacked status",
   switch: "Labeled on/off switch",
   table: "Projects data table",

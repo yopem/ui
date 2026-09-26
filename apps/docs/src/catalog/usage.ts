@@ -68,6 +68,14 @@ export function Preview() {
   )
 }
 `,
+  stat: `"use client"
+
+import { Stat, StatDescription, StatLabel, StatValue } from "@/components/ui/stat"
+
+export function Preview() {
+  return <Stat><StatLabel>Requests</StatLabel><StatValue>1,248</StatValue><StatDescription>Last 30 days</StatDescription></Stat>
+}
+`,
   "absolute-center": `"use client"
 
 import { AbsoluteCenter } from "@/components/ui/absolute-center"

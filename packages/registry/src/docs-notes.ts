@@ -125,6 +125,9 @@ export const usageNotes: Record<string, [string, ...string[]]> = {
   rating: [
     "Rating uses Base UI radio controls with arrow-key selection. Supply an accessible group label and use value or defaultValue with onValueChange.",
   ],
+  stat: [
+    "Compose StatLabel, StatValue and optional StatDescription inside Stat. The definition list keeps values paired with their labels.",
+  ],
   group: [
     "Wrap adjacent controls in Group. Apply groupItemStyles.item through each direct control's xstyle, or controlXstyle for Input and Textarea wrappers. GroupText and GroupSeparator apply joining styles themselves.",
     "orientation switches between horizontal and vertical layouts. ButtonGroup, ButtonGroupText and ButtonGroupSeparator are aliases.",
