@@ -75,6 +75,7 @@ test("sheet close button stays in the popup corner without shifting content", as
   const header = page.locator('[data-slot="sheet-header"]')
   const close = popup.getByRole("button", { name: "Close" })
   await expect(close).toHaveCSS("position", "absolute")
+  await expect(popup).toHaveCSS("translate", "none")
 
   const popupBox = await popup.boundingBox()
   const headerBox = await header.boundingBox()
