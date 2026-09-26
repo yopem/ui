@@ -92,6 +92,7 @@ const previewDescriptions: Record<string, string> = {
   "preview-card": "Link preview card",
   progress: "Upload progress indicator",
   "radio-group": "Single choice selection",
+  rating: "Keyboard-accessible star rating",
   "scroll-area": "Scrollable content list",
   select: "Dropdown selection",
   separator: "Section heading and divider",

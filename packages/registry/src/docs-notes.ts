@@ -122,6 +122,9 @@ export const usageNotes: Record<string, [string, ...string[]]> = {
   "native-select": [
     "Use NativeSelect with a visible label and native option elements. Choose it when custom popup behavior is unnecessary.",
   ],
+  rating: [
+    "Rating uses Base UI radio controls with arrow-key selection. Supply an accessible group label and use value or defaultValue with onValueChange.",
+  ],
   group: [
     "Wrap adjacent controls in Group. Apply groupItemStyles.item through each direct control's xstyle, or controlXstyle for Input and Textarea wrappers. GroupText and GroupSeparator apply joining styles themselves.",
     "orientation switches between horizontal and vertical layouts. ButtonGroup, ButtonGroupText and ButtonGroupSeparator are aliases.",

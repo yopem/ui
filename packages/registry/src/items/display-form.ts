@@ -40,6 +40,13 @@ const definitions: Definition[] = [
     title: "NativeSelect",
   },
   {
+    api: ["RatingProps", "Rating"],
+    categories: ["controls"],
+    description: "Accessible star rating backed by Base UI Radio Group.",
+    name: "rating",
+    title: "Rating",
+  },
+  {
     api: ["Alert", "AlertTitle", "AlertDescription", "AlertAction"],
     categories: ["feedback"],
     description: "Status message with semantic variants and optional action.",
@@ -388,6 +395,7 @@ const definitions: Definition[] = [
 const baseUiComponents = new Set([
   "avatar",
   "badge",
+  "rating",
   "breadcrumb",
   "card",
   "checkbox",
@@ -416,6 +424,7 @@ const lucideComponents = new Set([
   "breadcrumb",
   "checkmark",
   "number-field",
+  "rating",
 ])
 
 export const displayFormItems: SourceItem[] = definitions.map(
