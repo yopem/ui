@@ -120,6 +120,13 @@ const definitions: Definition[] = [
     title: "Blockquote",
   },
   {
+    api: ["EmProps", "Em"],
+    categories: ["typography"],
+    description: "Native emphasized text.",
+    name: "em",
+    title: "Em",
+  },
+  {
     api: ["HighlightProps", "Highlight"],
     categories: ["typography"],
     description: "Highlight matching text with semantic marks.",

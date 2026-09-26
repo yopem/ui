@@ -92,6 +92,9 @@ export const usageNotes: Record<string, [string, ...string[]]> = {
   blockquote: [
     "Use Blockquote for quoted passages, not for indentation. Supply a citation in surrounding content when needed.",
   ],
+  em: [
+    "Em adds semantic stress emphasis. Use it for meaning rather than visual italics alone.",
+  ],
   highlight: [
     "Highlight marks matching text segments. Keep the original text readable when there are no matches.",
   ],

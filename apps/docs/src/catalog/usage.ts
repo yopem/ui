@@ -30,6 +30,14 @@ export function Preview() {
   return <Blockquote cite="https://example.com">Good design is as little design as possible.</Blockquote>
 }
 `,
+  em: `"use client"
+
+import { Em } from "@/components/ui/em"
+
+export function Preview() {
+  return <p>We <Em>do</Em> care about the details.</p>
+}
+`,
   float: `"use client"
 
 import { Float } from "@/components/ui/float"
