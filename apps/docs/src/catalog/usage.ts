@@ -30,6 +30,14 @@ export function Preview() {
   return <Blockquote cite="https://example.com">Good design is as little design as possible.</Blockquote>
 }
 `,
+  codeblock: `"use client"
+
+import { Codeblock } from "@/components/ui/codeblock"
+
+export function Preview() {
+  return <Codeblock>{"const answer = 42"}</Codeblock>
+}
+`,
   em: `"use client"
 
 import { Em } from "@/components/ui/em"

@@ -149,6 +149,13 @@ const definitions: Definition[] = [
     title: "Prose",
   },
   {
+    api: ["CodeblockProps", "Codeblock"],
+    categories: ["typography"],
+    description: "Scrollable preformatted source code.",
+    name: "codeblock",
+    title: "Codeblock",
+  },
+  {
     api: ["HeadingTag", "HeadingProps", "Heading"],
     categories: ["typography"],
     description:

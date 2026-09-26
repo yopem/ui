@@ -34,6 +34,7 @@ const previewDescriptions: Record<string, string> = {
   "absolute-center": "Centered overlay content",
   bleed: "Full-bleed content within padding",
   blockquote: "Quoted passage",
+  codeblock: "Formatted source code with copy action",
   em: "Stress emphasis in text",
   float: "Corner badge over a card",
   highlight: "Search term highlighted in text",

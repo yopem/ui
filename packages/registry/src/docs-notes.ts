@@ -104,6 +104,9 @@ export const usageNotes: Record<string, [string, ...string[]]> = {
   prose: [
     "Prose supplies a readable width for long-form content. Compose semantic headings, paragraphs and lists inside it.",
   ],
+  codeblock: [
+    "Codeblock preserves code whitespace and allows horizontal scrolling. Supply a language label outside the block when context is not obvious.",
+  ],
   heading: [
     "Heading renders h2 by default; as accepts h1 through h6. Use xstyle to control visual size independently of semantics.",
   ],
