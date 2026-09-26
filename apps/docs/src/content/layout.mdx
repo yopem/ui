@@ -7,9 +7,9 @@
 
 Need a wrapper? Start with Box. Use Stack for vertical groups, HStack for
 horizontal groups, Flex for custom alignment, and Grid for columns. Container
-constrains and centers page content. Use Link, Paragraph, and Heading for
-meaningful text elements instead of styling a generic Box. Select a component
-below to see a live preview and copy its source.
+constrains and centers page content. Use Link, Text, and Heading for meaningful
+text elements instead of styling a generic Box. Select a component below to see
+a live preview and copy its source.
 
 - [Box](/components/box): Div by default; `as` selects a semantic element with
   tag-specific events and refs. Applies default box sizing and minimum inline
@@ -26,10 +26,21 @@ below to see a live preview and copy its source.
 - [Center](/components/center): Flex layout centered on both axes.
 - [Container](/components/container): Fluid page wrapper centered up to 90rem;
   use `fluid` for full width or `xstyle` to override maximum width and padding.
+- [Absolute Center](/components/absolute-center): Center content within a
+  positioned parent.
+- [Bleed](/components/bleed): Extend content into a parent's inline padding.
+- [Float](/components/float): Position content over a parent's corner.
+- [Wrap](/components/wrap): Lay out items in wrapping rows.
 - [Link](/components/link): Native anchor with `href`, `target`, `rel`,
   `download`, ref, and native keyboard behavior.
-- [Paragraph](/components/paragraph): Native paragraph without forced visual
-  defaults.
+- [Text](/components/text): Native paragraph without forced visual defaults.
+- [Blockquote](/components/blockquote): Long-form quotation.
+- [Em](/components/em): Emphasized text.
+- [Highlight](/components/highlight): Highlight matching words.
+- [Mark](/components/mark): Marked text.
+- [Prose](/components/prose): Readable long-form content.
+- [Codeblock](/components/codeblock): Preformatted code with horizontal
+  overflow.
 - [Heading](/components/heading): `h2` by default; `as` selects `h1` through
   `h6` independently of visual size.
 
@@ -40,7 +51,8 @@ below to see a live preview and copy its source.
 Box defaults to div. Its `as` prop selects the native tag and its event/ref
 types. Input size, image width and height, and meta content remain native
 attributes. Use `xstyle` for styling. Heading restricts `as` to heading tags.
-Link performs native navigation; it does not replace a framework router link.
+Link performs native navigation by default. Pass a TanStack Router or Next.js
+Link through `render` to preserve framework navigation.
 
 ### Semantic components
 
@@ -48,7 +60,7 @@ Link performs native navigation; it does not replace a framework router link.
 import { Box } from "@/components/ui/box"
 import { Heading } from "@/components/ui/heading"
 import { Link } from "@/components/ui/link"
-import { Paragraph } from "@/components/ui/paragraph"
+import { Text } from "@/components/ui/text"
 import * as stylex from "@stylexjs/stylex"
 
 const styles = stylex.create({ article: { padding: "1rem" } })
@@ -57,7 +69,7 @@ export function Article() {
   return (
     <Box as="article" xstyle={styles.article}>
       <Heading as="h2">Getting started</Heading>
-      <Paragraph>Copy the components into your application.</Paragraph>
+      <Text>Copy the components into your application.</Text>
       <Link href="/docs/installation">Installation guide</Link>
     </Box>
   )
