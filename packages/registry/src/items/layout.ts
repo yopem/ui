@@ -84,6 +84,13 @@ const definitions: Definition[] = [
     title: "Paragraph",
   },
   {
+    api: ["MarkProps", "Mark"],
+    categories: ["typography"],
+    description: "Native marked text using semantic theme tokens.",
+    name: "mark",
+    title: "Mark",
+  },
+  {
     api: ["HeadingTag", "HeadingProps", "Heading"],
     categories: ["typography"],
     description:

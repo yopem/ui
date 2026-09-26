@@ -77,6 +77,9 @@ export const usageNotes: Record<string, [string, ...string[]]> = {
   paragraph: [
     "Paragraph renders a native p with no visual defaults. Use xstyle for typography.",
   ],
+  mark: [
+    "Mark highlights text relevant to the current context. It does not replace an accessible status message.",
+  ],
   heading: [
     "Heading renders h2 by default; as accepts h1 through h6. Use xstyle to control visual size independently of semantics.",
   ],

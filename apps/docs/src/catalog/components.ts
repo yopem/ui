@@ -31,6 +31,7 @@ const compositionOverrides: Record<
 
 const previewDescriptions: Record<string, string> = {
   accordion: "Expandable sections",
+  mark: "Marked text",
   alert: "Informational alert with guidance",
   "alert-dialog": "Confirmation dialog",
   autocomplete: "Searchable fruit selection",
