@@ -54,6 +54,7 @@ const previewDescriptions: Record<string, string> = {
   center: "Centered content block",
   container: "Centered page-width wrapper",
   checkbox: "Checkbox with label",
+  checkmark: "Decorative success icon",
   "checkbox-group": "Multiple choice selection",
   collapsible: "Expandable details list",
   combobox: "Searchable options",

@@ -1,5 +1,13 @@
 // Standalone TSX files use the standard @ alias for src.
 export const usageSnippets: Record<string, string> = {
+  checkmark: `"use client"
+
+import { Checkmark } from "@/components/ui/checkmark"
+
+export function Preview() {
+  return <p><Checkmark /> Saved successfully</p>
+}
+`,
   "absolute-center": `"use client"
 
 import { AbsoluteCenter } from "@/components/ui/absolute-center"

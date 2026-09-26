@@ -11,6 +11,13 @@ interface Definition {
 
 const definitions: Definition[] = [
   {
+    api: ["Checkmark"],
+    categories: ["display"],
+    description: "Decorative check icon for a confirmed state.",
+    name: "checkmark",
+    title: "Checkmark",
+  },
+  {
     api: ["Alert", "AlertTitle", "AlertDescription", "AlertAction"],
     categories: ["feedback"],
     description: "Status message with semantic variants and optional action.",
@@ -383,7 +390,11 @@ const baseUiComponents = new Set([
   "toggle-group",
   "toolbar",
 ])
-const lucideComponents = new Set(["breadcrumb", "number-field"])
+const lucideComponents = new Set([
+  "breadcrumb",
+  "checkmark",
+  "number-field",
+])
 
 export const displayFormItems: SourceItem[] = definitions.map(
   ({

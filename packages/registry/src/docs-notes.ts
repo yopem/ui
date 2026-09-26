@@ -110,6 +110,9 @@ export const usageNotes: Record<string, [string, ...string[]]> = {
   heading: [
     "Heading renders h2 by default; as accepts h1 through h6. Use xstyle to control visual size independently of semantics.",
   ],
+  checkmark: [
+    "Checkmark is decorative and hidden from assistive technology. Include text that communicates success or selection beside it.",
+  ],
   group: [
     "Wrap adjacent controls in Group. Apply groupItemStyles.item through each direct control's xstyle, or controlXstyle for Input and Textarea wrappers. GroupText and GroupSeparator apply joining styles themselves.",
     "orientation switches between horizontal and vertical layouts. ButtonGroup, ButtonGroupText and ButtonGroupSeparator are aliases.",
