@@ -32,6 +32,7 @@ const compositionOverrides: Record<
 const previewDescriptions: Record<string, string> = {
   accordion: "Expandable sections",
   "absolute-center": "Centered overlay content",
+  bleed: "Full-bleed content within padding",
   highlight: "Search term highlighted in text",
   mark: "Marked text",
   alert: "Informational alert with guidance",

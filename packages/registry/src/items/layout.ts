@@ -78,6 +78,13 @@ const definitions: Definition[] = [
     title: "AbsoluteCenter",
   },
   {
+    api: ["BleedProps", "Bleed"],
+    categories: ["layout"],
+    description: "Extend content into a parent's inline padding.",
+    name: "bleed",
+    title: "Bleed",
+  },
+  {
     api: ["LinkProps", "Link"],
     categories: ["navigation"],
     description: "Native anchor with xstyle and no component visual defaults.",

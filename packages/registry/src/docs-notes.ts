@@ -74,6 +74,9 @@ export const usageNotes: Record<string, [string, ...string[]]> = {
   "absolute-center": [
     "Position an ancestor before placing AbsoluteCenter inside it. Set axis to horizontal or vertical to center along one dimension only.",
   ],
+  bleed: [
+    "Place Bleed inside a padded region to extend content to its inline edges. Avoid using it as a page-width wrapper; Container handles that case.",
+  ],
   link: [
     "Link renders a native anchor with href, events, ref, and keyboard behavior. Use xstyle to customize appearance; router navigation stays with your framework.",
   ],
