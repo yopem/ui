@@ -89,6 +89,9 @@ export const usageNotes: Record<string, [string, ...string[]]> = {
   text: [
     "Text replaces Paragraph and renders a native p. Use xstyle for typography.",
   ],
+  blockquote: [
+    "Use Blockquote for quoted passages, not for indentation. Supply a citation in surrounding content when needed.",
+  ],
   highlight: [
     "Highlight marks matching text segments. Keep the original text readable when there are no matches.",
   ],

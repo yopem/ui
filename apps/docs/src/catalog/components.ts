@@ -33,6 +33,7 @@ const previewDescriptions: Record<string, string> = {
   accordion: "Expandable sections",
   "absolute-center": "Centered overlay content",
   bleed: "Full-bleed content within padding",
+  blockquote: "Quoted passage",
   float: "Corner badge over a card",
   highlight: "Search term highlighted in text",
   mark: "Marked text",

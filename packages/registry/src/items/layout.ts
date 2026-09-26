@@ -113,6 +113,13 @@ const definitions: Definition[] = [
     title: "Text",
   },
   {
+    api: ["BlockquoteProps", "Blockquote"],
+    categories: ["typography"],
+    description: "Semantic quotation with a quiet left border.",
+    name: "blockquote",
+    title: "Blockquote",
+  },
+  {
     api: ["HighlightProps", "Highlight"],
     categories: ["typography"],
     description: "Highlight matching text with semantic marks.",

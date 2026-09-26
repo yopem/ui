@@ -22,6 +22,14 @@ export function Preview() {
   return <div {...stylex.props(styles.area)}><Bleed>Full-width content in a padded section</Bleed></div>
 }
 `,
+  blockquote: `"use client"
+
+import { Blockquote } from "@/components/ui/blockquote"
+
+export function Preview() {
+  return <Blockquote cite="https://example.com">Good design is as little design as possible.</Blockquote>
+}
+`,
   float: `"use client"
 
 import { Float } from "@/components/ui/float"
