@@ -49,6 +49,14 @@ export function Preview() {
   return <p>Remember to <Mark>save your work</Mark>.</p>
 }
 `,
+  wrap: `"use client"
+
+import { Wrap } from "@/components/ui/wrap"
+
+export function Preview() {
+  return <Wrap><span>Design</span><span>Development</span><span>Accessibility</span><span>Documentation</span></Wrap>
+}
+`,
   accordion: `"use client"
 
 import {

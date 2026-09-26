@@ -36,6 +36,7 @@ const previewDescriptions: Record<string, string> = {
   float: "Corner badge over a card",
   highlight: "Search term highlighted in text",
   mark: "Marked text",
+  wrap: "Wrapping tag list",
   alert: "Informational alert with guidance",
   "alert-dialog": "Confirmation dialog",
   autocomplete: "Searchable fruit selection",

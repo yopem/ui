@@ -92,6 +92,13 @@ const definitions: Definition[] = [
     title: "Float",
   },
   {
+    api: ["WrapProps", "Wrap"],
+    categories: ["layout"],
+    description: "Flex layout that wraps items across rows.",
+    name: "wrap",
+    title: "Wrap",
+  },
+  {
     api: ["LinkProps", "Link"],
     categories: ["navigation"],
     description: "Native anchor with xstyle and no component visual defaults.",

@@ -80,6 +80,9 @@ export const usageNotes: Record<string, [string, ...string[]]> = {
   float: [
     "Position the parent and use Float to place a badge or action over one corner. Keep interactive content keyboard reachable.",
   ],
+  wrap: [
+    "Wrap uses flex rows that wrap automatically. Set gap through xstyle rather than adding spacing to every child.",
+  ],
   link: [
     "Link renders a native anchor with href, events, ref, and keyboard behavior. Use xstyle to customize appearance; router navigation stays with your framework.",
   ],
