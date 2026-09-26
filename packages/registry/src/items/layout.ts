@@ -5,6 +5,7 @@ interface Definition {
   categories: string[]
   description: string
   name: string
+  registryDependencies?: string[]
   title: string
 }
 
@@ -84,6 +85,14 @@ const definitions: Definition[] = [
     title: "Paragraph",
   },
   {
+    api: ["HighlightProps", "Highlight"],
+    categories: ["typography"],
+    description: "Highlight matching text with semantic marks.",
+    name: "highlight",
+    registryDependencies: ["mark"],
+    title: "Highlight",
+  },
+  {
     api: ["MarkProps", "Mark"],
     categories: ["typography"],
     description: "Native marked text using semantic theme tokens.",
@@ -101,7 +110,7 @@ const definitions: Definition[] = [
 ]
 
 export const layoutItems: SourceItem[] = definitions.map(
-  ({ api, categories, description, name, title }) => ({
+  ({ api, categories, description, name, registryDependencies, title }) => ({
     categories,
     dependencies: [],
     description,
@@ -119,7 +128,7 @@ export const layoutItems: SourceItem[] = definitions.map(
     ],
     name,
     peerDependencies: ["react@>=19 <20", "react-dom@>=19 <20"],
-    registryDependencies: ["base"],
+    registryDependencies: ["base", ...(registryDependencies ?? [])],
     title,
     type: "registry:ui" as const,
   }),

@@ -77,6 +77,9 @@ export const usageNotes: Record<string, [string, ...string[]]> = {
   paragraph: [
     "Paragraph renders a native p with no visual defaults. Use xstyle for typography.",
   ],
+  highlight: [
+    "Highlight marks matching text segments. Keep the original text readable when there are no matches.",
+  ],
   mark: [
     "Mark highlights text relevant to the current context. It does not replace an accessible status message.",
   ],

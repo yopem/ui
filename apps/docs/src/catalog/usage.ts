@@ -1,5 +1,13 @@
 // Standalone TSX files use the standard @ alias for src.
 export const usageSnippets: Record<string, string> = {
+  highlight: `"use client"
+
+import { Highlight } from "@/components/ui/highlight"
+
+export function Preview() {
+  return <Highlight query="accessible">Build accessible components for everyone.</Highlight>
+}
+`,
   mark: `"use client"
 
 import { Mark } from "@/components/ui/mark"
