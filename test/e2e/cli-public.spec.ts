@@ -96,6 +96,20 @@ test("packed CLI installs from local registry and runs published lint plugin", a
     const edited = readFileSync(tokens, "utf8")
     run(project, "bunx", "yopem-ui", "add", "box")
     run(project, "bunx", "yopem-ui", "add", "container")
+    for (const name of [
+      "highlight",
+      "rating",
+      "native-select",
+      "clipboard",
+      "link",
+      "wrap",
+      "text",
+    ]) {
+      run(project, "bunx", "yopem-ui", "add", name)
+      expect(
+        readFileSync(join(project, `src/components/ui/${name}.tsx`), "utf8"),
+      ).toContain("data-slot")
+    }
     expect(
       readFileSync(join(project, "src/components/ui/container.tsx"), "utf8"),
     ).toContain("export function Container")
@@ -114,6 +128,19 @@ test("packed CLI installs from local registry and runs published lint plugin", a
     expect(invalid.status).toBe(1)
     expect(`${invalid.stdout}${invalid.stderr}`).toContain(
       "yopem-ui(valid-polymorphic-as)",
+    )
+    writeFileSync(
+      join(project, "src/invalid.tsx"),
+      'import { Text } from "@/components/ui/text"\nimport { tokens } from "@/styles/tokens.stylex"\nimport * as stylex from "@stylexjs/stylex"\nconst styles = stylex.create({ root: { color: tokens["--foreground"] } })\nexport const Invalid = <Text xstyle={styles.root}>Text</Text>',
+    )
+    const invalidText = spawnSync("bun", ["run", "lint"], {
+      cwd: project,
+      encoding: "utf8",
+    })
+    logs.push(`invalid Text lint\n${invalidText.stdout}${invalidText.stderr}`)
+    expect(invalidText.status).toBe(1)
+    expect(`${invalidText.stdout}${invalidText.stderr}`).toContain(
+      "color cannot restyle Text",
     )
   } finally {
     writeFileSync(

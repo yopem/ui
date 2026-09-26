@@ -53,6 +53,51 @@ test("Container is discoverable and installable from registry", async ({
   )
 })
 
+test("new components are listed, documented, and installable", async ({
+  request,
+}) => {
+  for (const name of [
+    "absolute-center",
+    "bleed",
+    "blockquote",
+    "checkmark",
+    "clipboard",
+    "codeblock",
+    "em",
+    "float",
+    "highlight",
+    "mark",
+    "marquee",
+    "native-select",
+    "prose",
+    "rating",
+    "stat",
+    "steps",
+    "text",
+    "wrap",
+  ]) {
+    const itemResponse = await request.get(`/r/${name}.json`)
+    expect(itemResponse.status(), name).toBe(200)
+    const item = await itemResponse.json()
+    expect(item.name).toBe(name)
+    expect(item.files).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ target: `@/components/ui/${name}.tsx` }),
+      ]),
+    )
+    const docs = await request.get(`/components/${name}.md`)
+    expect(docs.status(), name).toBe(200)
+    expect(await docs.text()).toContain(`# ${item.title}`)
+    for (const url of ["/llms.txt", "/sitemap.xml"]) {
+      const response = await request.get(url)
+      expect(response.status(), url).toBe(200)
+      expect(await response.text(), url).toContain(`/components/${name}`)
+    }
+  }
+  const removed = await request.get("/r/paragraph.json")
+  expect(removed.status()).toBe(404)
+})
+
 test("dynamic documentation routes return real 404 responses", async ({
   request,
 }) => {

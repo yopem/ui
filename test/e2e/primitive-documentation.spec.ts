@@ -10,8 +10,18 @@ const components = [
   ["grid", "Grid"],
   ["center", "Center"],
   ["container", "Container"],
+  ["absolute-center", "Absolute Center"],
+  ["bleed", "Bleed"],
+  ["float", "Float"],
+  ["wrap", "Wrap"],
+  ["blockquote", "Blockquote"],
+  ["em", "Em"],
+  ["highlight", "Highlight"],
+  ["mark", "Mark"],
+  ["prose", "Prose"],
+  ["codeblock", "Codeblock"],
   ["link", "Link"],
-  ["paragraph", "Paragraph"],
+  ["text", "Text"],
   ["heading", "Heading"],
 ] as const
 
@@ -98,7 +108,10 @@ for (const [slug, name] of components) {
       .filter({ hasText: "View API reference" })
       .click()
     await expect(
-      page.getByRole("heading", { name: `${name}Props`, exact: true }),
+      page.getByRole("heading", {
+        name: `${name.replaceAll(" ", "")}Props`,
+        exact: true,
+      }),
     ).toBeVisible()
   })
 }
