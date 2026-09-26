@@ -734,10 +734,18 @@ export function Preview() {
   link: `"use client"
 
 import { Link } from "@/components/ui/link"
+import { Link as RouterLink } from "@tanstack/react-router"
 
 export function Preview() {
-  return <Link href="/docs">Read the documentation</Link>
+  return (
+    <Link render={<RouterLink to="/docs/installation" />}>
+      Read the documentation
+    </Link>
+  )
 }
+
+// Next.js: import NextLink from "next/link" and use
+// <Link render={<NextLink href="/docs" />}>Read the documentation</Link>
 `,
   paragraph: `"use client"
 

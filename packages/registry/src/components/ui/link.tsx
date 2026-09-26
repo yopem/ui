@@ -1,25 +1,29 @@
+"use client"
+
 import type { StyleXComponentProps } from "@registry/lib/stylex"
-import type { ComponentProps } from "react"
 
-import { mergeStylexProps, stylexProps } from "@registry/lib/stylex"
+import { mergeProps } from "@base-ui/react/merge-props"
+import { useRender } from "@base-ui/react/use-render"
+import { stylexProps } from "@registry/lib/stylex"
 
-export type LinkProps = StyleXComponentProps<ComponentProps<"a">>
+export type LinkProps = StyleXComponentProps<useRender.ComponentProps<"a">>
 
 export function Link({
   xstyle: consumerXstyle,
   className,
-  children,
+  render,
   ...restProps
 }: LinkProps) {
   const props = restProps
   const xstyle = consumerXstyle
 
-  return (
-    <a
-      data-slot="link"
-      {...mergeStylexProps(stylexProps(className, xstyle), props)}
-    >
-      {children}
-    </a>
-  )
+  const defaultProps = {
+    ...stylexProps(className, xstyle),
+    "data-slot": "link",
+  }
+  return useRender({
+    defaultTagName: "a",
+    props: mergeProps<"a">(defaultProps, props),
+    render,
+  })
 }

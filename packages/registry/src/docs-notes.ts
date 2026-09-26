@@ -84,7 +84,7 @@ export const usageNotes: Record<string, [string, ...string[]]> = {
     "Wrap uses flex rows that wrap automatically. Set gap through xstyle rather than adding spacing to every child.",
   ],
   link: [
-    "Link renders a native anchor with href, events, ref, and keyboard behavior. Use xstyle to customize appearance; router navigation stays with your framework.",
+    'Link renders a native anchor with href, events, ref, and keyboard behavior. Use render={<RouterLink to="/path" />} with TanStack Router or render={<NextLink href="/path" />} with Next.js so the framework handles navigation. Both router components must render an anchor.',
   ],
   paragraph: [
     "Paragraph renders a native p with no visual defaults. Use xstyle for typography.",
