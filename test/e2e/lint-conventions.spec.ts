@@ -6,7 +6,7 @@ import { join, resolve } from "node:path"
 const root = resolve(import.meta.dirname, "../..")
 const oxlint = join(root, "node_modules/.bin/oxlint")
 
-test("docs lint accepts StyleX and prefers Box over native div", () => {
+test("docs lint accepts StyleX and rejects forbidden styling", () => {
   const directory = mkdtempSync(join(root, "apps/docs/src/lint-fixture-"))
   const source = join(directory, "preview.tsx")
   try {
@@ -29,8 +29,10 @@ test("docs lint accepts StyleX and prefers Box over native div", () => {
       source,
       `
       import { Box } from "@/components/ui/box"
+      import * as stylex from "@stylexjs/stylex"
+      const styles = stylex.create({ root: { backgroundColor: "#fff" } })
       export function Preview() {
-        return <div><Box className="custom">Content</Box></div>
+        return <div><Box className="custom" xstyle={styles.root}>Content</Box></div>
       }
     `,
     )
@@ -40,7 +42,7 @@ test("docs lint accepts StyleX and prefers Box over native div", () => {
     })
     expect(invalid.status).not.toBe(0)
     const output = invalid.stdout + invalid.stderr
-    expect(output).toContain("Prefer Box over native <div>")
+    expect(output).toContain("yopem-ui(no-raw-stylex-colors)")
     expect(output).toContain("className")
   } finally {
     rmSync(directory, { force: true, recursive: true })

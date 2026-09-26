@@ -74,6 +74,36 @@ function parsed(path: string, content: string) {
   return source
 }
 
+function sameSyntax(left: ts.Node, right: ts.Node): boolean {
+  if (left.kind !== right.kind) return false
+  if (
+    ts.isIdentifier(left) &&
+    ts.isIdentifier(right) &&
+    left.text !== right.text
+  )
+    return false
+  if (
+    ts.isLiteralExpression(left) &&
+    ts.isLiteralExpression(right) &&
+    left.text !== right.text
+  )
+    return false
+  const leftChildren: ts.Node[] = []
+  const rightChildren: ts.Node[] = []
+  ts.forEachChild(left, (child) => {
+    leftChildren.push(child)
+  })
+  ts.forEachChild(right, (child) => {
+    rightChildren.push(child)
+  })
+  return (
+    leftChildren.length === rightChildren.length &&
+    leftChildren.every((child, index) =>
+      sameSyntax(child, rightChildren[index]!),
+    )
+  )
+}
+
 function property(node: ts.ObjectLiteralExpression, name: string) {
   if (node.properties.some(ts.isSpreadAssignment)) {
     throw new Error("Cannot safely edit a configuration object with spreads")
@@ -692,7 +722,7 @@ function astroConfig(
   return applyEdits(content, edits)
 }
 
-function tsconfig(content: string, path: string, framework: Framework) {
+function tsconfig(content: string, path: string) {
   const source = ts.parseJsonText(path, content)
   if (hasParseErrors(source)) throw new Error(`Cannot parse ${path}`)
   const root = source.statements[0]
@@ -710,9 +740,7 @@ function tsconfig(content: string, path: string, framework: Framework) {
     addProperty(
       source,
       config,
-      framework === "next"
-        ? '"compilerOptions": { "baseUrl": ".", "noEmit": true, "allowImportingTsExtensions": true, "paths": { "@/*": ["./src/*"] } }'
-        : '"compilerOptions": { "noEmit": true, "allowImportingTsExtensions": true, "paths": { "@/*": ["./src/*"] } }',
+      '"compilerOptions": { "noEmit": true, "allowImportingTsExtensions": true, "paths": { "@/*": ["./src/*"] } }',
       edits,
     )
   } else {
@@ -725,9 +753,6 @@ function tsconfig(content: string, path: string, framework: Framework) {
       }
     }
     const baseUrl = property(options, "baseUrl")
-    if (framework === "next" && !baseUrl) {
-      addProperty(source, options, '"baseUrl": "."', edits)
-    }
     if (
       baseUrl &&
       (!ts.isStringLiteral(baseUrl.initializer) ||
@@ -894,7 +919,9 @@ function astroLayout(content: string, path: string) {
     throw new Error(`Incomplete Yopem layout in ${path}`)
   }
   if (!/^---\s*\n/.test(content)) {
-    throw new Error(`Expected Astro frontmatter in ${path}`)
+    if (content.startsWith("---"))
+      throw new Error(`Expected Astro frontmatter in ${path}`)
+    content = `---\n---\n${content}`
   }
   const end = content.indexOf("\n---", 3)
   const head = [...content.matchAll(/<head(?:\s+[^<>]*)?>/g)]
@@ -968,6 +995,8 @@ const require = createRequire(import.meta.url)
 const __dirname = dirname(fileURLToPath(import.meta.url))`
     : ""
   return `${header}
+// Next loads this Babel config synchronously through CommonJS.
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 const path = require("node:path")
 
 function expandLocalSpreads({ types: t }) {
@@ -1004,7 +1033,9 @@ ${esm ? 'export const presets = ["next/babel"]\nexport const plugins = [' : 'mod
 }
 
 function nextPostcss() {
-  return `const babelConfig = require("./babel.config.js")
+  return `// Next loads this PostCSS config synchronously through CommonJS.
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const babelConfig = require("./babel.config.js")
 
 module.exports = {
   plugins: {
@@ -1133,6 +1164,7 @@ function nextScripts(value: unknown) {
     }
     if (!command.includes("--webpack")) scripts[name] = `${command} --webpack`
   }
+  if (scripts.lint === "eslint") scripts.lint = "eslint && oxlint ."
   return scripts
 }
 
@@ -1282,7 +1314,7 @@ export async function initProject(options: InitOptions = {}) {
     (await existingFile(root, "tsconfig.app.json"))
       ? "tsconfig.app.json"
       : "tsconfig.json"
-  await plan(tsPath, (content) => tsconfig(content, tsPath, framework))
+  await plan(tsPath, (content) => tsconfig(content, tsPath))
   await plan(".oxlintrc.json", lintConfig, "{}")
   const devDependencies = [
     "oxlint@^1.79.0",
@@ -1337,7 +1369,7 @@ export async function initProject(options: InitOptions = {}) {
     await plan(
       babel,
       (content) => {
-        if (content !== babelContent) {
+        if (!sameSyntax(parsed(babel, content), parsed(babel, babelContent))) {
           throw new Error("Existing Babel config requires manual review")
         }
         return content
@@ -1369,6 +1401,8 @@ export async function initProject(options: InitOptions = {}) {
       "@stylexjs/babel-plugin@^0.19.0",
       "@stylexjs/postcss-plugin@^0.19.0",
       "autoprefixer@^10.4.0",
+      "oxlint@^1.79.0",
+      "@yopem-ui/oxlint-plugin@^0.1.0",
     )
   } else {
     const config = await chooseFile(root, [

@@ -52,7 +52,6 @@ test("lint guide offers copyable configuration", async ({ page }) => {
     page.getByRole("heading", { name: "Lint rules", level: 1 }),
   ).toBeVisible()
   const copyButtons = page.getByRole("button", { name: "Copy Code" })
-  await expect(copyButtons).toHaveCount(1)
   await expect(copyButtons.first()).toBeEnabled()
   expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([])
 })

@@ -1,20 +1,25 @@
 {
   "name": "@yopem-ui/oxlint-plugin",
   "version": "0.1.0",
+  "description": "Oxlint rules for Yopem UI projects",
+  "license": "MIT",
   "files": [
-    "src"
+    "src",
+    "dist",
+    "LICENSE"
   ],
   "type": "module",
   "exports": {
     ".": {
       "types": "./src/index.ts",
-      "default": "./src/index.ts"
+      "default": "./dist/index.js"
     }
   },
   "publishConfig": {
     "access": "public"
   },
   "scripts": {
+    "prepack": "cp ../../LICENSE LICENSE && bun build src/index.ts --target node --format esm --outdir dist",
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {

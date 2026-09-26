@@ -2,7 +2,7 @@ import { createHash } from "node:crypto"
 import { lstat, mkdir, readFile, realpath, writeFile } from "node:fs/promises"
 import { dirname, join } from "node:path"
 
-const registryUrl = "https://ui.yopem.com/r"
+const registryUrl = "http://localhost:3100/r"
 const namePattern = /^[a-z0-9]+(?:-[a-z0-9]+)*$/
 const hashPattern = /^sha256-[A-Za-z0-9+/]{43}=$/
 const types = new Set([
@@ -259,7 +259,11 @@ export async function installItem(name: string, options: InstallOptions = {}) {
       : null
     const previous = manifest.files[path]
     if (current && previous && current !== previous && !options.force) {
-      throw new Error(`Modified file: ${path} (use --force to overwrite)`)
+      if (options.mode === "update") {
+        throw new Error(`Modified file: ${path} (use --force to overwrite)`)
+      }
+      skipped++
+      continue
     }
     if (current === file.integrity) {
       manifest.files[path] = file.integrity

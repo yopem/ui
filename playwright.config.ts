@@ -15,6 +15,7 @@ export default defineConfig({
         ["html", { open: "never", outputFolder: "test-results/report" }],
       ],
   testDir: "test/e2e",
+  testMatch: "**/*.spec.ts",
   use: {
     baseURL: `http://localhost:${port}`,
     screenshot: "only-on-failure",
@@ -31,11 +32,11 @@ export default defineConfig({
   projects: [
     {
       name: "chromium",
-      use: { ...devices["Desktop Chrome"] },
+      use: { ...devices["Desktop Chrome"], channel: "chromium" },
     },
     {
       name: "mobile-chromium",
-      use: { ...devices["Pixel 7"] },
+      use: { ...devices["Pixel 7"], channel: "chromium" },
     },
   ],
 })

@@ -15,6 +15,9 @@ import { join } from "node:path"
 // Test exercises source directly; root workspace has no CLI dependency.
 // oxlint-disable-next-line import/no-relative-parent-imports
 import { initProject } from "../../packages/cli/src/init"
+// Test exercises source directly; root workspace has no CLI dependency.
+// oxlint-disable-next-line import/no-relative-parent-imports
+import { installItem } from "../../packages/cli/src/install"
 
 test("Next.js uses the shared stylesheet for StyleX", async () => {
   const root = mkdtempSync(join(tmpdir(), "yopem-next-init-"))
@@ -24,7 +27,7 @@ test("Next.js uses the shared stylesheet for StyleX", async () => {
       join(root, "package.json"),
       JSON.stringify({
         dependencies: { next: "*", react: "*" },
-        scripts: { dev: "next dev", build: "next build" },
+        scripts: { dev: "next dev", build: "next build", lint: "eslint" },
       }),
     )
     writeFileSync(join(root, "tsconfig.json"), "{}")
@@ -32,22 +35,55 @@ test("Next.js uses the shared stylesheet for StyleX", async () => {
       join(root, "src/app/layout.tsx"),
       'import React from "react"\nexport default function Layout(){return <html><body>Hi</body></html>}',
     )
-    await initProject({
-      cwd: root,
-      run: () => Promise.resolve(),
-      fetcher: () =>
-        Promise.resolve(
-          new Response(
-            readFileSync(
-              join(process.cwd(), "packages/registry/dist/r/base.json"),
-              "utf8",
-            ),
+    const commands: string[][] = []
+    const run = (args: string[]) => {
+      commands.push(args)
+      return Promise.resolve()
+    }
+    const fetcher = (url: string) => {
+      expect(url).toBe("http://localhost:3100/r/base.json")
+      return Promise.resolve(
+        new Response(
+          readFileSync(
+            join(process.cwd(), "packages/registry/dist/r/base.json"),
+            "utf8",
           ),
         ),
-    })
+      )
+    }
+    await initProject({ cwd: root, run, fetcher })
+    expect(commands.flat()).toContain("oxlint@^1.79.0")
+    expect(commands.flat()).toContain("@yopem-ui/oxlint-plugin@^0.1.0")
+    expect(
+      JSON.parse(readFileSync(join(root, "package.json"), "utf8")).scripts.lint,
+    ).toBe("eslint && oxlint .")
+    const babelPath = join(root, "babel.config.js")
+    const original = readFileSync(babelPath, "utf8")
+    const formatted = spawnSync(
+      join(process.cwd(), "node_modules/.bin/oxfmt"),
+      ["fmt", "babel.config.js"],
+      { cwd: root, encoding: "utf8" },
+    )
+    expect(formatted.status, formatted.stderr).toBe(0)
+    const afterFormat = readFileSync(babelPath, "utf8")
+    expect(afterFormat).not.toBe(original)
+    await initProject({ cwd: root, run, fetcher })
+    expect(readFileSync(babelPath, "utf8")).toBe(afterFormat)
+    writeFileSync(
+      babelPath,
+      afterFormat.replace("runtimeInjection: false", "runtimeInjection: true"),
+    )
+    await expect(initProject({ cwd: root, run, fetcher })).rejects.toThrow(
+      "Existing Babel config requires manual review",
+    )
     expect(readFileSync(join(root, "src/styles/styles.css"), "utf8")).toContain(
       "@stylex;",
     )
+    const tsconfig = JSON.parse(
+      readFileSync(join(root, "tsconfig.json"), "utf8"),
+    )
+    expect(tsconfig.compilerOptions.baseUrl).toBeUndefined()
+    expect(tsconfig.compilerOptions.paths["@/*"]).toEqual(["./src/*"])
     expect(existsSync(join(root, "src/styles/stylex.css"))).toBe(false)
     expect(
       readFileSync(join(root, "src/app/layout.tsx"), "utf8"),
@@ -100,8 +136,15 @@ for (const fixture of [
     config: "astro.config.mjs",
     layout: "src/layouts/Layout.astro",
   },
+  {
+    framework: "astro",
+    dependency: "astro",
+    config: "astro.config.mjs",
+    layout: "src/layouts/Layout.astro",
+    variant: "no frontmatter",
+  },
 ] as const) {
-  test(`CLI configures ${fixture.framework} (${fixture.dependency}) with Babel and no unplugin`, async () => {
+  test(`CLI configures ${fixture.framework} (${fixture.dependency}${"variant" in fixture ? `, ${fixture.variant}` : ""}) with Babel and no unplugin`, async () => {
     const root = mkdtempSync(join(tmpdir(), "yopem-babel-init-"))
     const put = (path: string, text: string) => {
       mkdirSync(join(root, path, ".."), { recursive: true })
@@ -131,7 +174,7 @@ for (const fixture of [
       put(
         fixture.layout,
         fixture.framework === "astro"
-          ? "---\n---\n<html><head></head><body></body></html>"
+          ? `${"variant" in fixture ? "" : "---\n---\n"}<html><head></head><body></body></html>`
           : fixture.framework === "tanstack-start" ||
               fixture.layout === "app/root.tsx"
             ? 'import React from "react"\nexport function Root(){ return <html><head></head><body></body></html> }'
@@ -142,11 +185,15 @@ for (const fixture of [
         commands.push(args)
         return Promise.resolve()
       }
-      const fetcher = () =>
+      const fetcher = (url: string) =>
         Promise.resolve(
           new Response(
             readFileSync(
-              join(process.cwd(), "packages/registry/dist/r/base.json"),
+              join(
+                process.cwd(),
+                "packages/registry/dist/r",
+                new URL(url).pathname.split("/").at(-1)!,
+              ),
               "utf8",
             ),
           ),
@@ -202,6 +249,15 @@ for (const fixture of [
       expect(config).toContain('"app/**/*.{js,jsx,ts,tsx}"')
       expect(existsSync(join(root, "postcss.config.cjs"))).toBe(false)
       if (fixture.framework === "vite") {
+        const tokensPath = join(root, "src/styles/tokens.stylex.ts")
+        const editedTokens = `${readFileSync(tokensPath, "utf8")}\n`
+        writeFileSync(tokensPath, editedTokens)
+        await initProject({ cwd: root, run, fetcher })
+        await installItem("button", { cwd: root, run, fetcher })
+        expect(readFileSync(tokensPath, "utf8")).toBe(editedTokens)
+        await expect(
+          installItem("base", { cwd: root, run, fetcher, mode: "update" }),
+        ).rejects.toThrow("Modified file: src/styles/tokens.stylex.ts")
         mkdirSync(join(root, "node_modules/@yopem-ui"), {
           recursive: true,
         })

@@ -1,4 +1,4 @@
-@layer yopem-reset, yopem-base;
+@layer yopem-reset, theme, base, components, utilities, yopem-base, priority1, priority2, priority3, priority4, priority5, priority6, priority7, priority8, priority9, priority10;
 
 @stylex;
 

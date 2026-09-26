@@ -272,7 +272,7 @@ test("main document scrolls normally and restores position on back navigation", 
 
   const saved = await page.evaluate(() => window.scrollY)
   expect(saved).toBeGreaterThan(0)
-  await page.getByRole("link", { name: "Yopem UI", exact: true }).click()
+  await page.getByRole("link", { name: "UI", exact: true }).click()
   await page.waitForURL((url) => url.pathname === "/")
   await expect(page.getByRole("heading", { level: 1 })).toContainText(
     "React components you copy, own, and change.",

@@ -18,8 +18,10 @@ above. Accepted values: `vite`, `react-router`, `tanstack-router`,
 
 Vite integrations use Rolldown Babel. Next.js App Router requires Node 24+ and
 webpack. React Router RSC mode, Next.js Pages Router, and other build tools are
-not supported by init. The CLI package is not published yet; `bunx` commands
-work after release.
+not supported by init. Until registry deployment, CLI reads registry files from
+`http://localhost:3100/r`; start docs server with `bun run dev` before using it.
+CLI and Oxlint plugin are not published yet; `bunx` commands work after both
+packages are released.
 
 <span id="check" />
 

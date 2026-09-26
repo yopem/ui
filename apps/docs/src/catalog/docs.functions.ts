@@ -26,12 +26,7 @@ export const getDocumentation = createServerFn({ method: "GET" })
   .handler(async ({ data: slug }) => {
     const items = getDocumentationItems(slug)
     const previewLoader = previewSources[`./previews/${slug}.tsx`]
-    const previewSource = previewLoader
-      ? (await previewLoader()).replaceAll(
-          "@/lib/table-wrapper",
-          "@tanstack/react-table",
-        )
-      : null
+    const previewSource = previewLoader ? await previewLoader() : null
     const allItems = getRequiredItems(slug, previewSource ?? "")
     const files = [
       ...new Map(
