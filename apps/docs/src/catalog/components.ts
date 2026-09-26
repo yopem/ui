@@ -83,6 +83,7 @@ const previewDescriptions: Record<string, string> = {
   menu: "Playback actions menu",
   meter: "Storage usage meter",
   navigation: "Segmented navigation",
+  "native-select": "Native theme selection",
   "number-field": "Quantity stepper",
   "otp-field": "One-time password entry",
   pagination: "Page navigation",

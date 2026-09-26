@@ -119,6 +119,9 @@ export const usageNotes: Record<string, [string, ...string[]]> = {
   marquee: [
     "Marquee provides a pause control and stops animating with reduced motion. Avoid putting essential controls in moving content.",
   ],
+  "native-select": [
+    "Use NativeSelect with a visible label and native option elements. Choose it when custom popup behavior is unnecessary.",
+  ],
   group: [
     "Wrap adjacent controls in Group. Apply groupItemStyles.item through each direct control's xstyle, or controlXstyle for Input and Textarea wrappers. GroupText and GroupSeparator apply joining styles themselves.",
     "orientation switches between horizontal and vertical layouts. ButtonGroup, ButtonGroupText and ButtonGroupSeparator are aliases.",

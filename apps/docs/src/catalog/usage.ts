@@ -31,6 +31,30 @@ export function Preview() {
   return <Marquee><span>Design systems</span><span>Accessible components</span><span>Reusable source</span></Marquee>
 }
 `,
+  "native-select": `"use client"
+
+import { NativeSelect } from "@/components/ui/native-select"
+
+export function Preview() {
+  return (
+    <>
+      <label>
+        Theme{" "}
+        <NativeSelect defaultValue="system">
+          <option value="system">System</option>
+          <option value="light">Light</option>
+          <option value="dark">Dark</option>
+        </NativeSelect>
+      </label>
+      <label>
+        Disabled theme <NativeSelect disabled defaultValue="system">
+          <option value="system">System</option>
+        </NativeSelect>
+      </label>
+    </>
+  )
+}
+`,
   "absolute-center": `"use client"
 
 import { AbsoluteCenter } from "@/components/ui/absolute-center"

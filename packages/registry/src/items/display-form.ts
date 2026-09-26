@@ -32,6 +32,14 @@ const definitions: Definition[] = [
     title: "Marquee",
   },
   {
+    api: ["NativeSelectProps", "NativeSelect"],
+    categories: ["controls"],
+    description:
+      "Styled native select with browser keyboard and form behavior.",
+    name: "native-select",
+    title: "NativeSelect",
+  },
+  {
     api: ["Alert", "AlertTitle", "AlertDescription", "AlertAction"],
     categories: ["feedback"],
     description: "Status message with semantic variants and optional action.",
