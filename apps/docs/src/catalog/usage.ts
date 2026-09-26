@@ -22,6 +22,17 @@ export function Preview() {
   return <div {...stylex.props(styles.area)}><Bleed>Full-width content in a padded section</Bleed></div>
 }
 `,
+  float: `"use client"
+
+import { Float } from "@/components/ui/float"
+import * as stylex from "@stylexjs/stylex"
+
+const styles = stylex.create({ area: { position: "relative", minBlockSize: "8rem", padding: "2rem" } })
+
+export function Preview() {
+  return <div {...stylex.props(styles.area)}>Notification card<Float>New</Float></div>
+}
+`,
   highlight: `"use client"
 
 import { Highlight } from "@/components/ui/highlight"

@@ -85,6 +85,13 @@ const definitions: Definition[] = [
     title: "Bleed",
   },
   {
+    api: ["FloatPlacement", "FloatProps", "Float"],
+    categories: ["layout"],
+    description: "Position content over a corner of its parent.",
+    name: "float",
+    title: "Float",
+  },
+  {
     api: ["LinkProps", "Link"],
     categories: ["navigation"],
     description: "Native anchor with xstyle and no component visual defaults.",

@@ -77,6 +77,9 @@ export const usageNotes: Record<string, [string, ...string[]]> = {
   bleed: [
     "Place Bleed inside a padded region to extend content to its inline edges. Avoid using it as a page-width wrapper; Container handles that case.",
   ],
+  float: [
+    "Position the parent and use Float to place a badge or action over one corner. Keep interactive content keyboard reachable.",
+  ],
   link: [
     "Link renders a native anchor with href, events, ref, and keyboard behavior. Use xstyle to customize appearance; router navigation stays with your framework.",
   ],
