@@ -666,6 +666,14 @@ export function Preview() {
   return <Center xstyle={styles.root}>Centered content</Center>
 }
 `,
+  container: `"use client"
+
+import { Container } from "@/components/ui/container"
+
+export function Preview() {
+  return <Container>Content stays centered on wide screens.</Container>
+}
+`,
   link: `"use client"
 
 import { Link } from "@/components/ui/link"

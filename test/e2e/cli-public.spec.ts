@@ -95,6 +95,10 @@ test("packed CLI installs from local registry and runs published lint plugin", a
     appendFileSync(tokens, "\n")
     const edited = readFileSync(tokens, "utf8")
     run(project, "bunx", "yopem-ui", "add", "box")
+    run(project, "bunx", "yopem-ui", "add", "container")
+    expect(
+      readFileSync(join(project, "src/components/ui/container.tsx"), "utf8"),
+    ).toContain("export function Container")
     run(project, "bunx", "yopem-ui", "init", "--framework", "vite")
     expect(readFileSync(tokens, "utf8")).toBe(edited)
     run(project, "bun", "run", "lint")

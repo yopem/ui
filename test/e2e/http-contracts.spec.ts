@@ -26,6 +26,33 @@ test("machine-readable documentation endpoints expose correct formats", async ({
   expect(guide).not.toContain("Manual installation")
 })
 
+test("Container is discoverable and installable from registry", async ({
+  request,
+}) => {
+  for (const [url, content] of [
+    ["/llms.txt", "/components/container"],
+    ["/sitemap.xml", "/components/container"],
+    ["/components/container.md", "fluid"],
+  ]) {
+    const response = await request.get(url)
+    expect(response.status(), url).toBe(200)
+    expect(await response.text()).toContain(content)
+  }
+  const response = await request.get("/r/container.json")
+  expect(response.status()).toBe(200)
+  const item = await response.json()
+  expect(item.name).toBe("container")
+  expect(item.registryDependencies).toContain("base")
+  expect(item.files).toEqual(
+    expect.arrayContaining([
+      expect.objectContaining({
+        target: "@/components/ui/container.tsx",
+        content: expect.stringContaining("export function Container"),
+      }),
+    ]),
+  )
+})
+
 test("dynamic documentation routes return real 404 responses", async ({
   request,
 }) => {

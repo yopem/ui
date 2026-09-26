@@ -42,6 +42,7 @@ const previewDescriptions: Record<string, string> = {
   calendar: "Date selection",
   card: "Project creation card",
   center: "Centered content block",
+  container: "Centered page-width wrapper",
   checkbox: "Checkbox with label",
   "checkbox-group": "Multiple choice selection",
   collapsible: "Expandable details list",

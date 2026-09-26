@@ -62,6 +62,14 @@ const definitions: Definition[] = [
     title: "Center",
   },
   {
+    api: ["ContainerProps", "Container"],
+    categories: ["layout"],
+    description:
+      "Centered, fluid page wrapper with a 90rem maximum width and horizontal padding.",
+    name: "container",
+    title: "Container",
+  },
+  {
     api: ["LinkProps", "Link"],
     categories: ["navigation"],
     description: "Native anchor with xstyle and no component visual defaults.",

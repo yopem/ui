@@ -16,7 +16,7 @@ async function openLayoutPreview(
 }
 
 test.describe("layout and typography primitives", () => {
-  test("renders all ten primitives with semantic native elements", async ({
+  test("renders all eleven primitives with semantic native elements", async ({
     page,
   }) => {
     await openLayoutPreview(page)
@@ -29,6 +29,8 @@ test.describe("layout and typography primitives", () => {
       "stack",
       "grid",
       "center",
+      "container",
+      "fluid-container",
       "native-link",
       "paragraph-ref",
       "preserved-heading",
@@ -125,6 +127,33 @@ test.describe("layout and typography primitives", () => {
         ),
       ).toBeLessThan(2)
     }
+  })
+
+  test("constrains content, remains fluid, and accepts xstyle overrides", async ({
+    page,
+  }) => {
+    await openLayoutPreview(page)
+    const container = page.getByTestId("container")
+    const fluid = page.getByTestId("fluid-container")
+    await expect(container).toHaveAttribute("data-slot", "container")
+    await expect(container).toHaveCSS("max-width", "960px")
+    await expect(fluid).toHaveCSS("max-width", "none")
+    await expect(container).toHaveCSS("padding-inline-start", "24px")
+
+    await page.setViewportSize({ width: 500, height: 800 })
+    const narrow = await container.boundingBox()
+    expect(narrow?.width).toBeLessThanOrEqual(500)
+    await page.setViewportSize({ width: 1280, height: 800 })
+    const wide = await container.boundingBox()
+    const parent = await fluid.boundingBox()
+    expect(wide?.width).toBeLessThanOrEqual(960)
+    expect(
+      Math.abs(
+        (wide?.x ?? 0) +
+          (wide?.width ?? 0) / 2 -
+          ((parent?.x ?? 0) + (parent?.width ?? 0) / 2),
+      ),
+    ).toBeLessThan(2)
   })
 
   test("composes xstyle with layout defaults", async ({ page }) => {

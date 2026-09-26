@@ -9,6 +9,7 @@ const components = [
   ["vstack", "VStack"],
   ["grid", "Grid"],
   ["center", "Center"],
+  ["container", "Container"],
   ["link", "Link"],
   ["paragraph", "Paragraph"],
   ["heading", "Heading"],

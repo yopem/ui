@@ -3,6 +3,7 @@
 import { Box } from "@registry/components/ui/box"
 import { Button } from "@registry/components/ui/button"
 import { Center } from "@registry/components/ui/center"
+import { Container } from "@registry/components/ui/container"
 import { Flex } from "@registry/components/ui/flex"
 import { Grid } from "@registry/components/ui/grid"
 import { Heading } from "@registry/components/ui/heading"
@@ -39,6 +40,7 @@ const styles = stylex.create({
     gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
   },
   center: { minBlockSize: "4rem" },
+  container: { maxInlineSize: "60rem", paddingInline: "24px" },
 })
 
 export function Preview() {
@@ -110,6 +112,12 @@ export function Preview() {
       <Center data-testid="center" xstyle={styles.center}>
         <Box as="span">Centered</Box>
       </Center>
+      <Container data-testid="container" xstyle={styles.container}>
+        Constrained content
+      </Container>
+      <Container data-testid="fluid-container" fluid>
+        Fluid content
+      </Container>
       <Box
         as="form"
         data-testid="native-form"

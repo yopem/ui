@@ -68,6 +68,9 @@ export const usageNotes: Record<string, [string, ...string[]]> = {
   center: [
     "Center renders a div with flex layout centered on both axes. Override through xstyle.",
   ],
+  container: [
+    "Container centers page content with a 90rem maximum inline size and four spacing units of horizontal padding. Use fluid to remove the width cap or xstyle to choose another maximum width and padding.",
+  ],
   link: [
     "Link renders a native anchor with href, events, ref, and keyboard behavior. Use xstyle to customize appearance; router navigation stays with your framework.",
   ],
