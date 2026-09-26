@@ -8,6 +8,21 @@ export function Preview() {
   return <p><Checkmark /> Saved successfully</p>
 }
 `,
+  clipboard: `"use client"
+
+import { Clipboard } from "@/components/ui/clipboard"
+
+export function Preview() {
+  return (
+    <>
+      <Clipboard value="https://example.com">Copy link</Clipboard>
+      <Clipboard aria-label="Unavailable copy" disabled value="not copied">
+        Disabled copy
+      </Clipboard>
+    </>
+  )
+}
+`,
   "absolute-center": `"use client"
 
 import { AbsoluteCenter } from "@/components/ui/absolute-center"

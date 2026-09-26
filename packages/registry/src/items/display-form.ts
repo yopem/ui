@@ -18,6 +18,13 @@ const definitions: Definition[] = [
     title: "Checkmark",
   },
   {
+    api: ["ClipboardProps", "Clipboard"],
+    categories: ["controls"],
+    description: "Copy text with accessible success and failure feedback.",
+    name: "clipboard",
+    title: "Clipboard",
+  },
+  {
     api: ["Alert", "AlertTitle", "AlertDescription", "AlertAction"],
     categories: ["feedback"],
     description: "Status message with semantic variants and optional action.",

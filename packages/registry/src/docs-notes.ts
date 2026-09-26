@@ -113,6 +113,9 @@ export const usageNotes: Record<string, [string, ...string[]]> = {
   checkmark: [
     "Checkmark is decorative and hidden from assistive technology. Include text that communicates success or selection beside it.",
   ],
+  clipboard: [
+    "Supply the value to copy. The button reports success or failure to assistive technology and never submits its parent form by default.",
+  ],
   group: [
     "Wrap adjacent controls in Group. Apply groupItemStyles.item through each direct control's xstyle, or controlXstyle for Input and Textarea wrappers. GroupText and GroupSeparator apply joining styles themselves.",
     "orientation switches between horizontal and vertical layouts. ButtonGroup, ButtonGroupText and ButtonGroupSeparator are aliases.",
