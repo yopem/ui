@@ -65,6 +65,14 @@ export function Preview() {
   return <p>Remember to <Mark>save your work</Mark>.</p>
 }
 `,
+  prose: `"use client"
+
+import { Prose } from "@/components/ui/prose"
+
+export function Preview() {
+  return <Prose><h2>Readable content</h2><p>Give long-form content room to breathe.</p></Prose>
+}
+`,
   wrap: `"use client"
 
 import { Wrap } from "@/components/ui/wrap"

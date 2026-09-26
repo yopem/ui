@@ -142,6 +142,13 @@ const definitions: Definition[] = [
     title: "Mark",
   },
   {
+    api: ["ProseProps", "Prose"],
+    categories: ["typography"],
+    description: "Readable container for long-form content.",
+    name: "prose",
+    title: "Prose",
+  },
+  {
     api: ["HeadingTag", "HeadingProps", "Heading"],
     categories: ["typography"],
     description:

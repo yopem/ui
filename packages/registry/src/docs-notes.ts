@@ -101,6 +101,9 @@ export const usageNotes: Record<string, [string, ...string[]]> = {
   mark: [
     "Mark highlights text relevant to the current context. It does not replace an accessible status message.",
   ],
+  prose: [
+    "Prose supplies a readable width for long-form content. Compose semantic headings, paragraphs and lists inside it.",
+  ],
   heading: [
     "Heading renders h2 by default; as accepts h1 through h6. Use xstyle to control visual size independently of semantics.",
   ],
