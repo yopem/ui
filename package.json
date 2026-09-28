@@ -24,6 +24,7 @@
     "@axe-core/playwright": "^4.13.0",
     "@playwright/test": "^1.63.0",
     "@types/node": "catalog:",
+    "@yopem/oxlint-config": "^0.0.9",
     "@yopem/typescript-config": "catalog:",
     "oxfmt": "^0.70.0",
     "oxlint": "catalog:",
