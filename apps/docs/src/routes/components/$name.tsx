@@ -100,13 +100,16 @@ const styles = stylex.create({
     outlineOffset: { ":is(:focus-visible, [data-focus-visible])": 4 },
   },
 })
+
 export const Route = createFileRoute("/components/$name")({
   loader: ({ params }) => {
     if (!getCatalogItem(params.name)) throw notFound()
+
     return getDocumentation({ data: params.name })
   },
   head: ({ params }) => {
     const title = getCatalogItem(params.name)?.title ?? "Component"
+
     return createSeo({
       description: `${title} source, preview, usage, and API reference for React and StyleX.`,
       path: `/components/${params.name}`,
@@ -129,7 +132,9 @@ function ComponentPage() {
   const data = Route.useLoaderData()
   const { name } = Route.useParams()
   const item = getCatalogItem(name)
+
   if (!item) return <MissingComponent />
+
   return (
     <DocumentationLayout>
       <DocsPage toc={toc}>
@@ -217,6 +222,7 @@ function ComponentApi({
   parts: Parameters<typeof ApiReference>[0]["parts"]
 }) {
   const [open, setOpen] = useState(false)
+
   return (
     <Box
       as="details"

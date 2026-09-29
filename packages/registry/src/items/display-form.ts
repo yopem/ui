@@ -434,6 +434,7 @@ const baseUiComponents = new Set([
   "toggle-group",
   "toolbar",
 ])
+
 const lucideComponents = new Set([
   "breadcrumb",
   "checkmark",

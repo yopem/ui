@@ -215,7 +215,9 @@ const styles = stylex.create({
 
 export const MenuCreateHandle: typeof MenuPrimitive.createHandle =
   MenuPrimitive.createHandle
+
 export const Menu: typeof MenuPrimitive.Root = MenuPrimitive.Root
+
 export const MenuPortal: typeof MenuPrimitive.Portal = MenuPrimitive.Portal
 
 export function MenuTrigger({
@@ -502,6 +504,7 @@ export function MenuGroupLabel({
     />
   )
 }
+
 export function MenuSeparator({
   xstyle: consumerXstyle,
   className,
@@ -520,6 +523,7 @@ export function MenuSeparator({
     />
   )
 }
+
 export function MenuShortcut({
   xstyle: consumerXstyle,
   className,
@@ -538,9 +542,11 @@ export function MenuShortcut({
     />
   )
 }
+
 export function MenuSub(props: MenuPrimitive.SubmenuRoot.Props) {
   return <MenuPrimitive.SubmenuRoot data-slot="menu-sub" {...props} />
 }
+
 export function MenuSubTrigger({
   xstyle: consumerXstyle,
   className,
@@ -570,6 +576,7 @@ export function MenuSubTrigger({
     </MenuPrimitive.SubmenuTrigger>
   )
 }
+
 export function MenuSubPopup({
   xstyle: consumerXstyle,
   className,
@@ -589,6 +596,7 @@ export function MenuSubPopup({
   const xstyle = consumerXstyle
 
   const defaultAlignOffset = align !== "center" ? -5 : undefined
+
   return (
     <MenuPopup
       align={align}

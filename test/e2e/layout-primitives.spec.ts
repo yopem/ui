@@ -107,6 +107,7 @@ test.describe("layout and typography primitives", () => {
     const gridSecond = await gridItems.nth(1).boundingBox()
     expect(gridFirst).not.toBeNull()
     expect(gridSecond).not.toBeNull()
+
     if (gridFirst && gridSecond) {
       expect(gridSecond.x).toBeGreaterThan(gridFirst.x)
       expect(Math.abs(gridSecond.y - gridFirst.y)).toBeLessThan(2)
@@ -117,16 +118,20 @@ test.describe("layout and typography primitives", () => {
     const secondItem = await stackItems.nth(1).boundingBox()
     expect(firstItem).not.toBeNull()
     expect(secondItem).not.toBeNull()
+
     if (firstItem && secondItem)
       expect(secondItem.y).toBeGreaterThan(firstItem.y)
 
     const center = await page.getByTestId("center").boundingBox()
+
     const centeredItem = await page
       .getByTestId("center")
       .locator(":scope > span")
       .boundingBox()
+
     expect(center).not.toBeNull()
     expect(centeredItem).not.toBeNull()
+
     if (center && centeredItem) {
       expect(
         Math.abs(
@@ -180,9 +185,11 @@ test.describe("layout and typography primitives", () => {
       ),
     ).toBeLessThan(2)
     expect(float?.x).toBeGreaterThan(center?.x ?? 0)
+
     const rtlArea = await page
       .getByTestId("rtl-positioned-layout")
       .boundingBox()
+
     for (const testId of ["rtl-absolute-center", "rtl-float"]) {
       const item = await page.getByTestId(testId).boundingBox()
       expect(
@@ -193,6 +200,7 @@ test.describe("layout and typography primitives", () => {
         ),
       ).toBeLessThan(2)
     }
+
     await expect(page.getByTestId("wrap")).toHaveCSS("flex-wrap", "wrap")
     await expect(page.getByTestId("bleed")).toHaveCSS(
       "margin-inline-start",

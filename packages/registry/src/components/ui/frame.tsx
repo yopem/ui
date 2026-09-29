@@ -70,6 +70,7 @@ export function Frame({
     />
   )
 }
+
 export function FramePanel({
   xstyle: consumerXstyle,
   className,
@@ -85,6 +86,7 @@ export function FramePanel({
     />
   )
 }
+
 export function FrameHeader({
   xstyle: consumerXstyle,
   className,
@@ -103,6 +105,7 @@ export function FrameHeader({
     />
   )
 }
+
 export function FrameTitle({
   xstyle: consumerXstyle,
   className,
@@ -118,6 +121,7 @@ export function FrameTitle({
     />
   )
 }
+
 export function FrameDescription({
   xstyle: consumerXstyle,
   className,
@@ -136,6 +140,7 @@ export function FrameDescription({
     />
   )
 }
+
 export function FrameFooter({
   xstyle: consumerXstyle,
   className,

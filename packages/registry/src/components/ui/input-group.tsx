@@ -163,6 +163,7 @@ export function InputGroupAddon({
       role="presentation"
       onMouseDown={(event: React.MouseEvent<HTMLDivElement>) => {
         const target = event.target as HTMLElement
+
         if (
           target.closest(
             "button, a, input, select, textarea, [role='button'], [role='combobox'], [role='listbox'], [data-slot='select-trigger']",
@@ -171,9 +172,11 @@ export function InputGroupAddon({
           return
         event.preventDefault()
         const parent = event.currentTarget.parentElement
+
         const input = parent?.querySelector<
           HTMLInputElement | HTMLTextAreaElement
         >("input, textarea")
+
         if (input && !parent?.querySelector("input:focus, textarea:focus"))
           input.focus()
       }}
@@ -200,6 +203,7 @@ export function InputGroupText({
     />
   )
 }
+
 export function InputGroupInput({
   xstyle: consumerXstyle,
   controlXstyle,
@@ -219,6 +223,7 @@ export function InputGroupInput({
     />
   )
 }
+
 export function InputGroupTextarea({
   xstyle: consumerXstyle,
   controlXstyle,

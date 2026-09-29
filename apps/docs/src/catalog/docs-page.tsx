@@ -10,6 +10,7 @@ import * as stylex from "@stylexjs/stylex"
 import type { TocItem } from "./table-of-contents"
 
 import { TableOfContents } from "./table-of-contents"
+
 const styles = stylex.create({
   grid: {
     display: "grid",
@@ -72,6 +73,7 @@ const styles = stylex.create({
     maxInlineSize: "42rem",
   },
 })
+
 const emptyToc: TocItem[] = []
 
 export function DocsPage({
@@ -93,6 +95,7 @@ export function DocsPage({
       </Grid>
     )
   }
+
   return (
     <Grid xstyle={styles.grid2}>
       <Box as="article" xstyle={styles.article2}>

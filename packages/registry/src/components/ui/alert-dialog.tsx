@@ -133,8 +133,10 @@ const styles = stylex.create({
 
 export const AlertDialogCreateHandle: typeof AlertDialogPrimitive.createHandle =
   AlertDialogPrimitive.createHandle
+
 export const AlertDialog: typeof AlertDialogPrimitive.Root =
   AlertDialogPrimitive.Root
+
 export const AlertDialogPortal: typeof AlertDialogPrimitive.Portal =
   AlertDialogPrimitive.Portal
 

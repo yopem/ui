@@ -1,6 +1,7 @@
 export const siteOrigin = "https://ui.yopem.com"
 
 const siteName = "Yopem UI"
+
 const siteDescription = "StyleX React UI Library"
 
 export const siteJsonLd = JSON.stringify({

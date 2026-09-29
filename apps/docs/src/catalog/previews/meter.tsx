@@ -7,6 +7,7 @@ import {
   MeterValue,
 } from "@registry/components/ui/meter"
 import * as stylex from "@stylexjs/stylex"
+
 const styles = stylex.create({
   flex: {
     alignItems: "center",
@@ -14,6 +15,7 @@ const styles = stylex.create({
     gap: "calc(0.25rem * 2)",
   },
 })
+
 export function Preview() {
   return (
     <Meter aria-label="Storage usage" value={75}>

@@ -214,6 +214,7 @@ const styles = stylex.create({
 
 export const ContextMenu: typeof ContextMenuPrimitive.Root =
   ContextMenuPrimitive.Root
+
 export const ContextMenuPortal: typeof ContextMenuPrimitive.Portal =
   ContextMenuPrimitive.Portal
 
@@ -507,6 +508,7 @@ export function ContextMenuGroupLabel({
     />
   )
 }
+
 export function ContextMenuSeparator({
   xstyle: consumerXstyle,
   className,
@@ -525,6 +527,7 @@ export function ContextMenuSeparator({
     />
   )
 }
+
 export function ContextMenuShortcut({
   xstyle: consumerXstyle,
   className,
@@ -543,11 +546,13 @@ export function ContextMenuShortcut({
     />
   )
 }
+
 export function ContextMenuSub(props: ContextMenuPrimitive.SubmenuRoot.Props) {
   return (
     <ContextMenuPrimitive.SubmenuRoot data-slot="context-menu-sub" {...props} />
   )
 }
+
 export function ContextMenuSubTrigger({
   xstyle: consumerXstyle,
   className,
@@ -579,6 +584,7 @@ export function ContextMenuSubTrigger({
     </ContextMenuPrimitive.SubmenuTrigger>
   )
 }
+
 export function ContextMenuSubPopup({
   xstyle: consumerXstyle,
   className,
@@ -598,6 +604,7 @@ export function ContextMenuSubPopup({
   const xstyle = consumerXstyle
 
   const defaultAlignOffset = align !== "center" ? -5 : undefined
+
   return (
     <ContextMenuPopup
       align={align}

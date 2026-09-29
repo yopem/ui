@@ -10,6 +10,7 @@ import * as stylex from "@stylexjs/stylex"
 import { useState } from "react"
 
 import { CopyableCode } from "./code-block"
+
 const styles = stylex.create({
   scrollArea: {
     marginBlock: "1rem",
@@ -277,6 +278,7 @@ const styles = stylex.create({
     outlineOffset: { ":is(:focus-visible, [data-focus-visible])": -2 },
   },
 })
+
 function PropertiesTable({
   properties,
   label = "Prop",
@@ -367,6 +369,7 @@ function PartReference({
 }) {
   const [showVariants, setShowVariants] = useState(false)
   const [showSignatures, setShowSignatures] = useState(false)
+
   if (alias)
     return (
       <Box
@@ -387,6 +390,7 @@ function PartReference({
       </Box>
     )
   const specific = part.props
+
   return (
     <Box
       as="section"
@@ -502,6 +506,7 @@ export function ApiReference({
   parts: (ApiPart & { id: string })[]
 }) {
   const names = new Set(parts.map((part) => part.name))
+
   return parts.map((part) => (
     <PartReference
       key={part.id}

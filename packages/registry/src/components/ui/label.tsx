@@ -33,6 +33,7 @@ export function Label({
     ...stylexProps(className, styles.root, xstyle),
     "data-slot": "label",
   }
+
   return useRender({
     defaultTagName: "label",
     props: mergeProps<"label">(defaultProps, props),

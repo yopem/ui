@@ -21,6 +21,7 @@ export function Link({
     ...stylexProps(className, xstyle),
     "data-slot": "link",
   }
+
   return useRender({
     defaultTagName: "a",
     props: mergeProps<"a">(defaultProps, props),

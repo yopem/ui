@@ -218,6 +218,7 @@ export const AutocompleteInput = React.forwardRef<
   const xstyle = consumerXstyle
 
   const sizeValue = size ?? "default"
+
   return (
     <AutocompletePrimitive.InputGroup
       {...stylex.props(styles.inputGroup)}
@@ -337,6 +338,7 @@ export function AutocompletePopup({
     </AutocompletePrimitive.Portal>
   )
 }
+
 export function AutocompleteItem({
   xstyle: consumerXstyle,
   className,
@@ -355,6 +357,7 @@ export function AutocompleteItem({
     </AutocompletePrimitive.Item>
   )
 }
+
 export function AutocompleteSeparator({
   xstyle: consumerXstyle,
   className,
@@ -373,6 +376,7 @@ export function AutocompleteSeparator({
     />
   )
 }
+
 export function AutocompleteGroup({
   xstyle: consumerXstyle,
   className,
@@ -388,6 +392,7 @@ export function AutocompleteGroup({
     />
   )
 }
+
 export function AutocompleteGroupLabel({
   xstyle: consumerXstyle,
   className,
@@ -406,6 +411,7 @@ export function AutocompleteGroupLabel({
     />
   )
 }
+
 export function AutocompleteEmpty({
   xstyle: consumerXstyle,
   className,
@@ -421,6 +427,7 @@ export function AutocompleteEmpty({
     />
   )
 }
+
 export function AutocompleteRow({
   xstyle: consumerXstyle,
   className,
@@ -436,8 +443,10 @@ export function AutocompleteRow({
     />
   )
 }
+
 export const AutocompleteValue: typeof AutocompletePrimitive.Value =
   AutocompletePrimitive.Value
+
 export function AutocompleteList({
   xstyle: consumerXstyle,
   className,
@@ -458,6 +467,7 @@ export function AutocompleteList({
     </ScrollArea>
   )
 }
+
 export function AutocompleteClear({
   xstyle: consumerXstyle,
   className,
@@ -478,6 +488,7 @@ export function AutocompleteClear({
     </AutocompletePrimitive.Clear>
   )
 }
+
 export function AutocompleteStatus({
   xstyle: consumerXstyle,
   className,
@@ -496,8 +507,10 @@ export function AutocompleteStatus({
     />
   )
 }
+
 export const AutocompleteCollection: typeof AutocompletePrimitive.Collection =
   AutocompletePrimitive.Collection
+
 export function AutocompleteTrigger({
   xstyle: consumerXstyle,
   className,
@@ -519,6 +532,8 @@ export function AutocompleteTrigger({
     </AutocompletePrimitive.Trigger>
   )
 }
+
 export const useAutocompleteFilter: typeof AutocompletePrimitive.useFilter =
   AutocompletePrimitive.useFilter
+
 export { AutocompletePrimitive }

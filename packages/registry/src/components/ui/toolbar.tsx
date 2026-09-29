@@ -41,6 +41,7 @@ export function Toolbar({
     />
   )
 }
+
 export function ToolbarButton({
   xstyle: consumerXstyle,
   className,
@@ -56,6 +57,7 @@ export function ToolbarButton({
     />
   )
 }
+
 export function ToolbarLink({
   xstyle: consumerXstyle,
   className,
@@ -71,6 +73,7 @@ export function ToolbarLink({
     />
   )
 }
+
 export function ToolbarInput({
   xstyle: consumerXstyle,
   className,
@@ -86,6 +89,7 @@ export function ToolbarInput({
     />
   )
 }
+
 export function ToolbarGroup({
   xstyle: consumerXstyle,
   className,
@@ -101,6 +105,7 @@ export function ToolbarGroup({
     />
   )
 }
+
 export function ToolbarSeparator({
   xstyle: consumerXstyle,
   className,
@@ -126,4 +131,5 @@ export function ToolbarSeparator({
     />
   )
 }
+
 export { ToolbarPrimitive }

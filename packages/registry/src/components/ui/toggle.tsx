@@ -157,15 +157,18 @@ const sizeStyles = {
   lg: styles.sizeLarge,
   sm: styles.sizeSmall,
 } as const
+
 const variantStyles = {
   default: styles.default,
   outline: styles.outline,
 } as const
+
 export interface ToggleVariantProps {
   className?: string
   size?: keyof typeof sizeStyles
   variant?: keyof typeof variantStyles
 }
+
 export function toggleVariants({
   className,
   size = "default",
@@ -177,6 +180,7 @@ export function toggleVariants({
     className,
   )
 }
+
 export function Toggle({
   xstyle: consumerXstyle,
   className,
@@ -205,4 +209,5 @@ export function Toggle({
     />
   )
 }
+
 export { TogglePrimitive }

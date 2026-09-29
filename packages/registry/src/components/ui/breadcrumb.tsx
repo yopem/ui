@@ -107,6 +107,7 @@ export function BreadcrumbLink({
     ...stylexProps(className, styles.link, xstyle),
     "data-slot": "breadcrumb-link",
   }
+
   return useRender({
     defaultTagName: "a",
     props: mergeProps<"a">(defaultProps, props),

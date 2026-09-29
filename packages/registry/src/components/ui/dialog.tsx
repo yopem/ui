@@ -173,7 +173,9 @@ const styles = stylex.create({
 
 export const DialogCreateHandle: typeof DialogPrimitive.createHandle =
   DialogPrimitive.createHandle
+
 export const Dialog: typeof DialogPrimitive.Root = DialogPrimitive.Root
+
 export const DialogPortal: typeof DialogPrimitive.Portal =
   DialogPrimitive.Portal
 
@@ -192,6 +194,7 @@ export function DialogTrigger({
     />
   )
 }
+
 export function DialogClose({
   xstyle: consumerXstyle,
   className,
@@ -207,6 +210,7 @@ export function DialogClose({
     />
   )
 }
+
 export function DialogBackdrop({
   xstyle: consumerXstyle,
   className,
@@ -225,6 +229,7 @@ export function DialogBackdrop({
     />
   )
 }
+
 export function DialogViewport({
   xstyle: consumerXstyle,
   className,
@@ -317,6 +322,7 @@ export function DialogHeader({
     ...stylexProps(className, styles.header, xstyle),
     "data-slot": "dialog-header",
   }
+
   return useRender({
     defaultTagName: "div",
     props: mergeProps<"div">(defaultProps, props),
@@ -349,6 +355,7 @@ export function DialogFooter({
     "data-slot": "dialog-footer",
     "data-variant": variant,
   }
+
   return useRender({
     defaultTagName: "div",
     props: mergeProps<"div">(defaultProps, props),
@@ -371,6 +378,7 @@ export function DialogTitle({
     />
   )
 }
+
 export function DialogDescription({
   xstyle: consumerXstyle,
   className,
@@ -407,11 +415,13 @@ export function DialogPanel({
     ...stylexProps(className, styles.panel, xstyle),
     "data-slot": "dialog-panel",
   }
+
   const content = useRender({
     defaultTagName: "div",
     props: mergeProps<"div">(defaultProps, props),
     render,
   })
+
   return (
     <ScrollArea overscrollContain scrollFade={scrollFade}>
       {content}

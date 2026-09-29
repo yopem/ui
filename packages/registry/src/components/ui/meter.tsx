@@ -59,6 +59,7 @@ export function Meter({
     </MeterPrimitive.Root>
   )
 }
+
 export function MeterLabel({
   xstyle: consumerXstyle,
   className,
@@ -74,6 +75,7 @@ export function MeterLabel({
     />
   )
 }
+
 export function MeterTrack({
   xstyle: consumerXstyle,
   className,
@@ -89,6 +91,7 @@ export function MeterTrack({
     />
   )
 }
+
 export function MeterIndicator({
   xstyle: consumerXstyle,
   className,
@@ -107,6 +110,7 @@ export function MeterIndicator({
     />
   )
 }
+
 export function MeterValue({
   xstyle: consumerXstyle,
   className,
@@ -122,4 +126,5 @@ export function MeterValue({
     />
   )
 }
+
 export { MeterPrimitive }

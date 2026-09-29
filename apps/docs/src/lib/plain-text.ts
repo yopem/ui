@@ -8,12 +8,15 @@ export function createLlms(
   catalog: { slug: string; title: string }[],
 ) {
   const url = (path: string) => new URL(path, origin).href
+
   const guideLinks = guidePages
     .map((page) => {
       const path = page.url === "/" ? "/index.md" : `${page.url}.md`
+
       return `- [${page.title}](${url(path)}): ${page.content}`
     })
     .join("\n")
+
   const componentLinks = catalog
     .map((item) => `- [${item.title}](${url(`/components/${item.slug}.md`)})`)
     .join("\n")
@@ -45,6 +48,7 @@ export function createComponentText(
   const preview = data.previewSource
     ? `\`\`\`tsx\n${data.previewSource.trim()}\n\`\`\``
     : "No preview. See Usage below."
+
   const api = data.api
     .map((part) => {
       const properties = [...part.parameters, ...part.props]
@@ -53,6 +57,7 @@ export function createComponentText(
             `- ${property.name}: ${property.type}${property.required ? " (required)" : ""}${property.default ? `; default ${property.default}` : ""}${property.description ? ` — ${property.description}` : ""}`,
         )
         .join("\n")
+
       return `### ${part.name}\n\n${part.aliasOf ? `Alias for ${part.aliasOf}.` : part.description}${properties ? `\n\n${properties}` : ""}${part.signatures.length ? `\n\n\`\`\`ts\n${part.signatures.join("\n")}\n\`\`\`` : ""}`
     })
     .join("\n\n")
@@ -62,14 +67,17 @@ export function createComponentText(
 
 export function createGuideText(page: { content: string; title: string }) {
   let fenced = false
+
   const content = page.content
     .split("\n")
     .filter((line) => {
       if (/^(```|~~~)/.test(line)) fenced = !fenced
+
       return fenced || !/^<[A-Z][\w]*(?:\s[^>]*)?\s*\/>$/.test(line.trim())
     })
     .join("\n")
     .trim()
+
   return `# ${page.title}\n\n${content}\n`
 }
 

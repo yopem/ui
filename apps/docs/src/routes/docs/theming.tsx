@@ -8,6 +8,7 @@ import { GuidePage } from "@/catalog/guide-content"
 import Content from "@/content/theming.mdx"
 import source from "@/content/theming.mdx?raw"
 import { createSeo } from "@/lib/seo"
+
 const styles = stylex.create({
   box: { marginBlock: "2rem", minInlineSize: "calc(var(--spacing) * 0)" },
 })

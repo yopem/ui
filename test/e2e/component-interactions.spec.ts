@@ -50,6 +50,7 @@ test("tabs support arrow-key navigation", async ({ page }) => {
 
 test("checkbox toggles with Space", async ({ page }) => {
   await openPreview(page, "checkbox")
+
   const checkbox = page.getByRole("checkbox", {
     name: "Accept terms and conditions",
   })

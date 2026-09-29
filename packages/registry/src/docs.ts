@@ -3,6 +3,7 @@ import type { compactDocs } from "./docs-extract"
 import { delegatedDefaults, ownPropNotes, usageNotes } from "./docs-notes"
 import generated from "./docs.generated.json"
 import { sourceItems } from "./items/index"
+
 export { sourceImportReplacements } from "./source-files"
 
 export const apiNotes = [
@@ -54,28 +55,38 @@ const partPurposes: Record<string, string> = {
 
 function describePart(name: string, kind: string, description: string) {
   if (description) return description
+
   if (kind === "namespace")
     return "Unstyled Base UI exports for custom composition. Dotted API entries below document its exported parts."
+
   if (kind === "type")
     return "Exported TypeScript type. Its signature and property table describe the accepted values."
+
   if (name.endsWith("Context"))
     return "Shared React context used by this component's parts. Prefer the public provider and hook for normal composition."
+
   if (name.endsWith("Variants"))
     return "Returns the class name for the requested visual variants."
   const leaf = name.split(".").at(-1)!
+
   if (leaf.startsWith("use"))
     return "Hook for accessing this component's state or filtering helpers. Call it at the top level of a React component."
+
   if (kind === "function" && name.includes(".")) {
     const owner = name.slice(0, name.lastIndexOf("."))
+
     return /^(use|create)|CreateHandle$/.test(owner.split(".").at(-1)!)
       ? `Method on the value returned by ${owner}(). Call it with the arguments below.`
       : `Method on ${owner}. Call it with the arguments below.`
   }
+
   if (kind === "value")
     return "Exported value. The signature and members below describe its shape."
+
   const suffix = Object.keys(partPurposes)
     .sort((a, b) => b.length - a.length)
     .find((key) => name.endsWith(key))
+
   return suffix
     ? partPurposes[suffix]!
     : "Component part. Compose it as described in the usage notes; its accepted props are listed below."
@@ -100,11 +111,14 @@ export function createComponentDocs(
   data: ReturnType<typeof compactDocs> = generated,
 ) {
   const properties = data.properties.map(describeProperty)
+
   return sourceItems.map((item) => {
     const extracted = data.items.find((entry) => entry.name === item.name)
     const notes = usageNotes[item.name]
+
     if (!extracted || !notes)
       throw new Error(`Missing documentation for ${item.name}`)
+
     return {
       name: item.name,
       title: item.title,
@@ -143,8 +157,10 @@ export function createComponentDocs(
             ?.target.replace(/\.tsx?$/, "") ?? null,
         props: part.props.map((index) => {
           const prop = properties[index]!
+
           const defaultValue =
             delegatedDefaults[part.aliasOf ?? part.name]?.[prop.name]
+
           return defaultValue === undefined || defaultValue === prop.default
             ? prop
             : { ...prop, default: defaultValue }
@@ -164,4 +180,5 @@ export function createComponentDocs(
 export const componentDocs = createComponentDocs()
 
 export type ComponentDoc = (typeof componentDocs)[number]
+
 export type ApiPart = ComponentDoc["parts"][number]

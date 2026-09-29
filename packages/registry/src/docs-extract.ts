@@ -11,6 +11,7 @@ const root = dirname(fileURLToPath(import.meta.url))
 export function extractDocs() {
   const configPath = resolve(root, "../tsconfig.json")
   const config = ts.readConfigFile(configPath, ts.sys.readFile)
+
   const parsed = ts.parseJsonConfigFileContent(
     config.config,
     ts.sys,
@@ -18,6 +19,7 @@ export function extractDocs() {
     undefined,
     configPath,
   )
+
   if (config.error || parsed.errors.length) {
     throw new Error(
       ts.formatDiagnosticsWithColorAndContext(
@@ -30,13 +32,16 @@ export function extractDocs() {
       ),
     )
   }
+
   const files = sourceItems.flatMap((item) =>
     item.files
       .filter((file) => /\.tsx?$/.test(file.path))
       .map((file) => sourceFilePath(file.path)),
   )
+
   const program = ts.createProgram([...new Set(files)], parsed.options)
   const diagnostics = ts.getPreEmitDiagnostics(program)
+
   if (diagnostics.length)
     throw new Error(
       ts.formatDiagnosticsWithColorAndContext(diagnostics, {
@@ -47,41 +52,54 @@ export function extractDocs() {
     )
   const checker = program.getTypeChecker()
   const flags = ts.TypeFormatFlags.NoTruncation
+
   const text = (type: ts.Type, node: ts.Node) => {
     const externalAlias = type.aliasSymbol?.declarations?.some((d) =>
       d.getSourceFile().fileName.includes("node_modules"),
     )
+
     const types = type.isUnion() && !externalAlias ? type.types : [type]
+
     const values = types.map((t) => {
       const value = checker.typeToString(t, node, flags)
+
       return types.length > 1 && t.getCallSignatures().length
         ? `(${value})`
         : value
     })
+
     if (values.includes("false") && values.includes("true")) {
       values.splice(values.indexOf("false"), 1, "boolean")
       values.splice(values.indexOf("true"), 1)
     }
+
     return values
       .join(" | ")
       .replaceAll(/import\("[^"]*node_modules\//g, 'import("')
   }
+
   const resolveSymbol = (symbol: ts.Symbol) =>
     symbol.flags & ts.SymbolFlags.Alias
       ? checker.getAliasedSymbol(symbol)
       : symbol
+
   const source = (node: ts.Node) => {
     const path = node.getSourceFile().fileName.replaceAll("\\", "/")
     const dependency = path.lastIndexOf("node_modules/")
+
     return dependency >= 0 ? path.slice(dependency + 13) : relative(root, path)
   }
+
   function defaults(node: ts.Node, seen = new Set<ts.Node>()) {
     const values: Record<string, string> = {}
+
     if (seen.has(node)) return values
     seen.add(node)
     let implementation: ts.FunctionLikeDeclaration | undefined
+
     function find(child: ts.Node) {
       if (implementation) return
+
       if (
         ts.isFunctionDeclaration(child) ||
         ts.isFunctionExpression(child) ||
@@ -90,13 +108,17 @@ export function extractDocs() {
         implementation = child
       else ts.forEachChild(child, find)
     }
+
     find(node)
+
     if (!implementation) return values
     const parameter = implementation.parameters[0]?.name
+
     const rest =
       parameter && ts.isObjectBindingPattern(parameter)
         ? parameter.elements.find((e) => e.dotDotDotToken)?.name.getText()
         : parameter?.getText()
+
     if (parameter && ts.isObjectBindingPattern(parameter)) {
       for (const binding of parameter.elements) {
         if (binding.initializer)
@@ -104,6 +126,7 @@ export function extractDocs() {
             binding.initializer.getText()
       }
     }
+
     function visit(child: ts.Node) {
       if (
         child !== implementation &&
@@ -112,6 +135,7 @@ export function extractDocs() {
           ts.isFunctionDeclaration(child))
       )
         return
+
       if (
         ts.isJsxAttributes(child) &&
         child.properties.some(
@@ -121,10 +145,12 @@ export function extractDocs() {
         for (const attr of child.properties) {
           if (!ts.isJsxAttribute(attr)) continue
           const initializer = attr.initializer
+
           const expression =
             initializer && ts.isJsxExpression(initializer)
               ? initializer.expression
               : initializer
+
           if (!initializer) values[attr.name.getText()] ??= "true"
           else if (
             expression &&
@@ -136,13 +162,16 @@ export function extractDocs() {
           )
             values[attr.name.getText()] ??= expression.getText()
         }
+
         const element = child.parent
+
         if (
           ts.isJsxOpeningElement(element) ||
           ts.isJsxSelfClosingElement(element)
         ) {
           const symbol = checker.getSymbolAtLocation(element.tagName)
           const declaration = symbol && resolveSymbol(symbol).valueDeclaration
+
           if (declaration?.getSourceFile().fileName.startsWith(root)) {
             for (const [name, value] of Object.entries(
               defaults(declaration, seen),
@@ -151,11 +180,15 @@ export function extractDocs() {
           }
         }
       }
+
       ts.forEachChild(child, visit)
     }
+
     visit(implementation)
+
     return values
   }
+
   function properties(
     types: ts.Type[],
     node: ts.Node,
@@ -176,25 +209,32 @@ export function extractDocs() {
               ts.TypeFlags.BigIntLike)
           ),
       )
+
     const branchProperties = branches.map(
       (t) => new Map(checker.getPropertiesOfType(t).map((p) => [p.name, p])),
     )
+
     const names = new Set(
       branchProperties.flatMap((props) => [...props.keys()]),
     )
+
     return [...names].sort().map((name) => {
       const symbols = branchProperties.map((props) => props.get(name))
       const symbol = symbols.find((p) => p !== undefined)!
       const declaration = symbol.declarations?.[0] ?? node
+
       const types = symbols.flatMap((p) =>
         p ? [text(checker.getTypeOfSymbolAtLocation(p, node), node)] : [],
       )
+
       const tag = symbol
         .getJsDocTags(checker)
         .find((t) => t.name === "default" || t.name === "defaultValue")
+
       const defaultValue =
         (Object.hasOwn(fallback, name) ? fallback[name] : undefined) ??
         (tag?.text ? ts.displayPartsToString(tag.text) : undefined)
+
       return {
         name:
           name.startsWith("__@") &&
@@ -227,6 +267,7 @@ export function extractDocs() {
       }
     })
   }
+
   // Only inspect direct record fields, never array, callable, React or built-in internals.
   function recordTypes(type: ts.Type) {
     return (type.isUnion() ? type.types : [type]).filter(
@@ -246,17 +287,22 @@ export function extractDocs() {
           ),
     )
   }
+
   function part(exported: ts.Symbol, name: string, memberType?: ts.Type) {
     const symbol = resolveSymbol(exported)
     const node = symbol.valueDeclaration ?? symbol.declarations?.[0]
+
     if (!node) throw new Error(`Missing declaration for ${name}`)
     const isType = !(symbol.flags & ts.SymbolFlags.Value)
+
     const type =
       memberType ??
       (isType
         ? checker.getDeclaredTypeOfSymbol(symbol)
         : checker.getTypeOfSymbolAtLocation(symbol, node))
+
     const signatures = type.getCallSignatures()
+
     const kind = isType
       ? "type"
       : name.endsWith("Context")
@@ -269,6 +315,7 @@ export function extractDocs() {
           : symbol.flags & ts.SymbolFlags.Namespace
             ? "namespace"
             : "value"
+
     const propsTypes =
       signatures.length && kind !== "value" && !isType
         ? signatures.flatMap((signature) =>
@@ -282,11 +329,13 @@ export function extractDocs() {
               : [],
           )
         : [type]
+
     const variants = propsTypes
       .flatMap((t) => (t.isUnion() ? t.types : [t]))
       .filter(
         (t) => t.flags & (ts.TypeFlags.Object | ts.TypeFlags.Intersection),
       )
+
     return {
       name,
       kind,
@@ -314,11 +363,14 @@ export function extractDocs() {
         kind === "function"
           ? (signatures[0]?.parameters ?? []).map((parameter) => {
               const declaration = parameter.valueDeclaration
+
               const parameterType = checker.getTypeOfSymbolAtLocation(
                 parameter,
                 node,
               )
+
               const fallback: Record<string, string> = {}
+
               if (
                 declaration &&
                 ts.isParameter(declaration) &&
@@ -329,6 +381,7 @@ export function extractDocs() {
                     fallback[(binding.propertyName ?? binding.name).getText()] =
                       binding.initializer.getText()
               }
+
               return {
                 source: source(declaration ?? node),
                 properties: properties(
@@ -401,6 +454,7 @@ export function extractDocs() {
           : [],
     }
   }
+
   return sourceItems.map((item) => ({
     name: item.name,
     parts: item.files
@@ -408,12 +462,15 @@ export function extractDocs() {
       .flatMap((file) => {
         const module = program.getSourceFile(sourceFilePath(file.path))
         const symbol = module && checker.getSymbolAtLocation(module)
+
         if (!symbol) throw new Error(`Cannot extract ${file.path}`)
+
         return checker.getExportsOfModule(symbol).flatMap((exported) => {
           const result = part(exported, exported.name)
           const target = resolveSymbol(exported)
           const node = target.valueDeclaration ?? target.declarations?.[0]
           const type = node && checker.getTypeOfSymbolAtLocation(target, node)
+
           const memberTypes =
             type && !exported.name.endsWith("Context")
               ? result.kind === "value"
@@ -426,10 +483,13 @@ export function extractDocs() {
                       )
                   : []
               : []
+
           const callableMembers = new Map<string, ReturnType<typeof part>>()
+
           for (const memberType of memberTypes) {
             for (const member of checker.getPropertiesOfType(memberType)) {
               const callable = checker.getTypeOfSymbolAtLocation(member, node!)
+
               if (
                 /^[A-Za-z_$][\w$]*$/.test(member.name) &&
                 !member
@@ -443,6 +503,7 @@ export function extractDocs() {
                 )
             }
           }
+
           const members =
             result.kind === "namespace"
               ? checker
@@ -451,6 +512,7 @@ export function extractDocs() {
                     part(member, `${exported.name}.${member.name}`),
                   )
               : [...callableMembers.values()]
+
           return [result, ...members]
         })
       }),
@@ -461,7 +523,9 @@ export function compactDocs(docs: ReturnType<typeof extractDocs>) {
   const properties: ReturnType<
     typeof extractDocs
   >[number]["parts"][number]["props"] = []
+
   const indices = new Map<string, number>()
+
   const items = docs.map((item) => ({
     ...item,
     parts: item.parts.map((part) => ({
@@ -469,15 +533,18 @@ export function compactDocs(docs: ReturnType<typeof extractDocs>) {
       props: part.props.map((prop) => {
         const key = JSON.stringify(prop)
         let index = indices.get(key)
+
         if (index === undefined) {
           index = properties.length
           indices.set(key, index)
           properties.push(prop)
         }
+
         return index
       }),
     })),
   }))
+
   return { items, properties }
 }
 
@@ -487,6 +554,7 @@ export async function writeDocsData(data: ReturnType<typeof compactDocs>) {
     JSON.stringify(data, null, 2),
     { printWidth: 80 },
   )
+
   if (output.errors.length)
     throw new Error("Could not format generated API documentation")
   await Bun.write(resolve(root, "docs.generated.json"), output.code)

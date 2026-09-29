@@ -135,6 +135,7 @@ const styles = stylex.create({
 })
 
 export type TableVariant = "default" | "card"
+
 export type TableProps = StyleXComponentProps<
   React.ComponentProps<"table">,
   {
@@ -167,6 +168,7 @@ export function Table({
     "data-slot": "table-container",
     "data-variant": variant,
   }
+
   return useRender({
     defaultTagName: "div",
     props: mergeProps<"div">(defaultProps, {}),
@@ -189,6 +191,7 @@ export function TableHeader({
     />
   )
 }
+
 export function TableBody({
   xstyle: consumerXstyle,
   className,
@@ -204,6 +207,7 @@ export function TableBody({
     />
   )
 }
+
 export function TableFooter({
   xstyle: consumerXstyle,
   className,
@@ -222,6 +226,7 @@ export function TableFooter({
     />
   )
 }
+
 export function TableRow({
   xstyle: consumerXstyle,
   className,
@@ -237,6 +242,7 @@ export function TableRow({
     />
   )
 }
+
 export function TableHead({
   xstyle: consumerXstyle,
   className,
@@ -252,6 +258,7 @@ export function TableHead({
     />
   )
 }
+
 export function TableCell({
   xstyle: consumerXstyle,
   className,
@@ -267,6 +274,7 @@ export function TableCell({
     />
   )
 }
+
 export function TableCaption({
   xstyle: consumerXstyle,
   className,

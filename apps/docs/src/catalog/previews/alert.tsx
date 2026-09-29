@@ -4,6 +4,7 @@ import {
   AlertTitle,
 } from "@registry/components/ui/alert"
 import { Text } from "@registry/components/ui/text"
+
 export function Preview() {
   return (
     <Alert>

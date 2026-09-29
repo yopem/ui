@@ -61,6 +61,7 @@ const primitiveStyles = stylex.create({
     outlineOffset: { ":is(:focus-visible, [data-focus-visible])": 2 },
   },
 })
+
 const tree: Root = {
   name: "Yopem UI",
   children: [
@@ -85,6 +86,7 @@ const tree: Root = {
 
 export function DocsNavigation({ onNavigate }: { onNavigate?: () => void }) {
   const pathname = useLocation({ select: (location) => location.pathname })
+
   return (
     <ScrollArea
       aria-label="Documentation navigation"

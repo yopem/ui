@@ -1,6 +1,7 @@
 import { defineConfig, devices } from "@playwright/test"
 
 const port = process.env.PLAYWRIGHT_PORT ?? "3100"
+
 const production = process.env.PLAYWRIGHT_PRODUCTION === "1"
 
 export default defineConfig({

@@ -53,6 +53,7 @@ export function Progress({
     </ProgressPrimitive.Root>
   )
 }
+
 export function ProgressLabel({
   xstyle: consumerXstyle,
   className,
@@ -68,6 +69,7 @@ export function ProgressLabel({
     />
   )
 }
+
 export function ProgressTrack({
   xstyle: consumerXstyle,
   className,
@@ -83,6 +85,7 @@ export function ProgressTrack({
     />
   )
 }
+
 export function ProgressIndicator({
   xstyle: consumerXstyle,
   className,
@@ -101,6 +104,7 @@ export function ProgressIndicator({
     />
   )
 }
+
 export function ProgressValue({
   xstyle: consumerXstyle,
   className,
@@ -116,4 +120,5 @@ export function ProgressValue({
     />
   )
 }
+
 export { ProgressPrimitive }

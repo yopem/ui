@@ -9,6 +9,7 @@ import * as stylex from "@stylexjs/stylex"
 import * as React from "react"
 
 type TabsVariant = "default" | "underline"
+
 type TabsSize = "default" | "lg" | "sm"
 
 const TabsListContext = React.createContext<TabsSize>("default")

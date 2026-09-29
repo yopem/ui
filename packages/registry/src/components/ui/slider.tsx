@@ -137,11 +137,15 @@ export function Slider({
 
   const values = React.useMemo(() => {
     if (value !== undefined) return Array.isArray(value) ? value : [value]
+
     if (defaultValue !== undefined)
       return Array.isArray(defaultValue) ? defaultValue : [defaultValue]
+
     return [min]
   }, [value, defaultValue, min])
+
   const label = props["aria-label"]
+
   return (
     <SliderPrimitive.Root
       defaultValue={defaultValue}
@@ -180,6 +184,7 @@ export function Slider({
     </SliderPrimitive.Root>
   )
 }
+
 export function SliderValue({
   xstyle: consumerXstyle,
   className,
@@ -195,4 +200,5 @@ export function SliderValue({
     />
   )
 }
+
 export { SliderPrimitive }

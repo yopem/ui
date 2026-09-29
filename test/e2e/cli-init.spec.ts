@@ -21,6 +21,7 @@ import { installItem } from "../../packages/cli/src/install"
 
 test("Next.js uses the shared stylesheet for StyleX", async () => {
   const root = mkdtempSync(join(tmpdir(), "yopem-next-init-"))
+
   try {
     mkdirSync(join(root, "src/app"), { recursive: true })
     writeFileSync(
@@ -36,12 +37,16 @@ test("Next.js uses the shared stylesheet for StyleX", async () => {
       'import React from "react"\nexport default function Layout(){return <html><body>Hi</body></html>}',
     )
     const commands: string[][] = []
+
     const run = (args: string[]) => {
       commands.push(args)
+
       return Promise.resolve()
     }
+
     const fetcher = (url: string) => {
       expect(url).toBe("http://localhost:3100/r/base.json")
+
       return Promise.resolve(
         new Response(
           readFileSync(
@@ -51,6 +56,7 @@ test("Next.js uses the shared stylesheet for StyleX", async () => {
         ),
       )
     }
+
     await initProject({ cwd: root, run, fetcher })
     expect(commands.flat()).toContain("oxlint@^1.79.0")
     expect(commands.flat()).toContain("@yopem-ui/oxlint-plugin@^0.1.0")
@@ -59,11 +65,13 @@ test("Next.js uses the shared stylesheet for StyleX", async () => {
     ).toBe("eslint && oxlint .")
     const babelPath = join(root, "babel.config.js")
     const original = readFileSync(babelPath, "utf8")
+
     const formatted = spawnSync(
       join(process.cwd(), "node_modules/.bin/oxfmt"),
       ["fmt", "babel.config.js"],
       { cwd: root, encoding: "utf8" },
     )
+
     expect(formatted.status, formatted.stderr).toBe(0)
     const afterFormat = readFileSync(babelPath, "utf8")
     expect(afterFormat).not.toBe(original)
@@ -79,9 +87,11 @@ test("Next.js uses the shared stylesheet for StyleX", async () => {
     expect(readFileSync(join(root, "src/styles/styles.css"), "utf8")).toContain(
       "@stylex;",
     )
+
     const tsconfig = JSON.parse(
       readFileSync(join(root, "tsconfig.json"), "utf8"),
     )
+
     expect(tsconfig.compilerOptions.baseUrl).toBeUndefined()
     expect(tsconfig.compilerOptions.paths["@/*"]).toEqual(["./src/*"])
     expect(existsSync(join(root, "src/styles/stylex.css"))).toBe(false)
@@ -146,10 +156,12 @@ for (const fixture of [
 ] as const) {
   test(`CLI configures ${fixture.framework} (${fixture.dependency}${"variant" in fixture ? `, ${fixture.variant}` : ""}) with Babel and no unplugin`, async () => {
     const root = mkdtempSync(join(tmpdir(), "yopem-babel-init-"))
+
     const put = (path: string, text: string) => {
       mkdirSync(join(root, path, ".."), { recursive: true })
       writeFileSync(join(root, path), text)
     }
+
     try {
       put(
         "package.json",
@@ -181,10 +193,13 @@ for (const fixture of [
             : 'import React from "react"\n',
       )
       const commands: string[][] = []
+
       const run = (args: string[]) => {
         commands.push(args)
+
         return Promise.resolve()
       }
+
       const fetcher = (url: string) =>
         Promise.resolve(
           new Response(
@@ -198,6 +213,7 @@ for (const fixture of [
             ),
           ),
         )
+
       await initProject({
         cwd: root,
         framework:
@@ -211,9 +227,11 @@ for (const fixture of [
       expect(commands.flat()).toContain("@rolldown/plugin-babel@^0.2.4")
       expect(commands.flat()).toContain("oxlint@^1.79.0")
       expect(commands.flat()).toContain("@yopem-ui/oxlint-plugin@^0.1.0")
+
       const lint = JSON.parse(
         readFileSync(join(root, ".oxlintrc.json"), "utf8"),
       )
+
       expect(lint.jsPlugins).toContainEqual({
         name: "yopem-ui",
         specifier: "@yopem-ui/oxlint-plugin",
@@ -248,6 +266,7 @@ for (const fixture of [
       expect(config).toContain("@stylexjs/postcss-plugin")
       expect(config).toContain('"app/**/*.{js,jsx,ts,tsx}"')
       expect(existsSync(join(root, "postcss.config.cjs"))).toBe(false)
+
       if (fixture.framework === "vite") {
         const tokensPath = join(root, "src/styles/tokens.stylex.ts")
         const editedTokens = `${readFileSync(tokensPath, "utf8")}\n`
@@ -278,12 +297,15 @@ export const view = <div><Button css={{ color: "red" }} xstyle={styles.button} /
           "export const Internal = () => <div />;",
         )
         const oxlint = join(process.cwd(), "node_modules/.bin/oxlint")
+
         const result = spawnSync(
           oxlint,
           ["--config", ".oxlintrc.json", "src/check.tsx"],
           { cwd: root, encoding: "utf8" },
         )
+
         expect(result.status).toBe(1)
+
         for (const rule of [
           "enforce-styling-methods",
           "no-restyle",
@@ -294,13 +316,16 @@ export const view = <div><Button css={{ color: "red" }} xstyle={styles.button} /
         ]) {
           expect(result.stdout).toContain(`yopem-ui(${rule})`)
         }
+
         const internal = spawnSync(
           oxlint,
           ["--config", ".oxlintrc.json", "src/components/ui/internal.tsx"],
           { cwd: root, encoding: "utf8" },
         )
+
         expect(internal.status).toBe(0)
       }
+
       const lintBefore = readFileSync(join(root, ".oxlintrc.json"), "utf8")
       await initProject({
         cwd: root,
@@ -319,6 +344,7 @@ export const view = <div><Button css={{ color: "red" }} xstyle={styles.button} /
 
 test("CLI preserves existing lint rules, plugins, and explicit opt-out", async () => {
   const root = mkdtempSync(join(tmpdir(), "yopem-existing-lint-"))
+
   try {
     mkdirSync(join(root, "src"), { recursive: true })
     writeFileSync(
@@ -341,6 +367,7 @@ test("CLI preserves existing lint rules, plugins, and explicit opt-out", async (
         },
       }),
     )
+
     const options = {
       cwd: root,
       run: () => Promise.resolve(),
@@ -354,6 +381,7 @@ test("CLI preserves existing lint rules, plugins, and explicit opt-out", async (
           ),
         ),
     }
+
     await initProject(options)
     const lintText = readFileSync(join(root, ".oxlintrc.json"), "utf8")
     const lint = JSON.parse(lintText)
@@ -370,6 +398,7 @@ test("CLI preserves existing lint rules, plugins, and explicit opt-out", async (
 
 test("CLI moves existing Babel and PostCSS plugins into Vite config", async () => {
   const root = mkdtempSync(join(tmpdir(), "yopem-existing-config-"))
+
   try {
     mkdirSync(join(root, "src"), { recursive: true })
     writeFileSync(
@@ -390,6 +419,7 @@ test("CLI moves existing Babel and PostCSS plugins into Vite config", async () =
       join(root, "postcss.config.cjs"),
       'module.exports = { plugins: [require("autoprefixer")({ grid: true })] }',
     )
+
     const options = {
       cwd: root,
       run: () => Promise.resolve(),
@@ -403,6 +433,7 @@ test("CLI moves existing Babel and PostCSS plugins into Vite config", async () =
           ),
         ),
     }
+
     await initProject(options)
     const config = readFileSync(join(root, "vite.config.ts"), "utf8")
     expect(config).toContain('"@babel/plugin-transform-react-jsx"')
@@ -420,6 +451,7 @@ test("CLI moves existing Babel and PostCSS plugins into Vite config", async () =
 
 test("CLI migrates JSON Babel and ESM PostCSS configs for Astro", async () => {
   const root = mkdtempSync(join(tmpdir(), "yopem-astro-existing-config-"))
+
   try {
     mkdirSync(join(root, "src/layouts"), { recursive: true })
     writeFileSync(
@@ -470,6 +502,7 @@ test("CLI migrates JSON Babel and ESM PostCSS configs for Astro", async () => {
 
 test("CLI upgrades earlier generated Vite setup without duplicate plugins", async () => {
   const root = mkdtempSync(join(tmpdir(), "yopem-legacy-init-"))
+
   try {
     mkdirSync(join(root, "src"), { recursive: true })
     writeFileSync(
@@ -522,6 +555,7 @@ export default { plugins: [babel({ plugins: yopemBabelConfig.plugins })], resolv
 
 test("CLI refuses customized StyleX options rather than discarding them", async () => {
   const root = mkdtempSync(join(tmpdir(), "yopem-custom-stylex-config-"))
+
   try {
     writeFileSync(
       join(root, "package.json"),
@@ -532,8 +566,10 @@ test("CLI refuses customized StyleX options rather than discarding them", async 
       join(root, "vite.config.ts"),
       "export default { plugins: [] }",
     )
+
     const custom =
       'module.exports = { plugins: [["@stylexjs/babel-plugin", { aliases: { "~/*": ["./src/*"] } }]] }'
+
     writeFileSync(join(root, "babel.config.cjs"), custom)
     await expect(initProject({ cwd: root })).rejects.toThrow(
       "Unsupported Babel config in babel.config.cjs",
@@ -549,6 +585,7 @@ test("CLI refuses customized StyleX options rather than discarding them", async 
 
 test("CLI preserves unsupported dynamic configuration without changes", async () => {
   const root = mkdtempSync(join(tmpdir(), "yopem-dynamic-postcss-"))
+
   try {
     writeFileSync(
       join(root, "package.json"),
@@ -592,6 +629,7 @@ export default { integrations: [react()], vite: { plugins: [stylex.vite({})], re
 ] as const) {
   test(`CLI rejects incomplete ${fixture.framework} StyleX configuration`, () => {
     const root = mkdtempSync(join(tmpdir(), "yopem-incomplete-stylex-"))
+
     try {
       writeFileSync(
         join(root, "package.json"),
@@ -607,6 +645,7 @@ export default { integrations: [react()], vite: { plugins: [stylex.vite({})], re
         [join(process.cwd(), "packages/cli/src/cli.ts"), "init"],
         { cwd: root, encoding: "utf8" },
       )
+
       expect(result.status).toBe(1)
       expect(result.stderr).toContain(
         `Incomplete Yopem build configuration in ${fixture.path}`,

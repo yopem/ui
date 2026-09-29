@@ -38,6 +38,7 @@ test("Container is discoverable and installable from registry", async ({
     expect(response.status(), url).toBe(200)
     expect(await response.text()).toContain(content)
   }
+
   const response = await request.get("/r/container.json")
   expect(response.status()).toBe(200)
   const item = await response.json()
@@ -88,12 +89,14 @@ test("new components are listed, documented, and installable", async ({
     const docs = await request.get(`/components/${name}.md`)
     expect(docs.status(), name).toBe(200)
     expect(await docs.text()).toContain(`# ${item.title}`)
+
     for (const url of ["/llms.txt", "/sitemap.xml"]) {
       const response = await request.get(url)
       expect(response.status(), url).toBe(200)
       expect(await response.text(), url).toContain(`/components/${name}`)
     }
   }
+
   const removed = await request.get("/r/paragraph.json")
   expect(removed.status()).toBe(404)
 })
@@ -137,6 +140,7 @@ test("Open Graph endpoint returns a cacheable PNG", async ({ request }) => {
   const response = await request.get(
     "/api/og?title=%20Button%20&description=Accessible%20button",
   )
+
   expect(response.status()).toBe(200)
   expect(response.headers()["content-type"]).toBe("image/png")
   expect(response.headers()["cache-control"]).toContain("max-age=86400")

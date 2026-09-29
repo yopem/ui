@@ -12,6 +12,7 @@ import {
 } from "@registry/components/ui/table"
 import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
+
 const styles = stylex.create({
   tableHead: { textAlign: "right" },
   tableCell: { fontWeight: "500" },
@@ -65,6 +66,7 @@ const styles = stylex.create({
   tableCell12: { textAlign: "right" },
   tableCell13: { textAlign: "right" },
 })
+
 export function Preview() {
   return (
     <Table>

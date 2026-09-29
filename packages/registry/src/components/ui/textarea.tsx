@@ -98,7 +98,9 @@ export function Textarea({
 
   const sizeStyle =
     size === "sm" ? styles.small : size === "lg" ? styles.large : null
+
   const wrapperClassName = typeof className === "string" ? className : undefined
+
   return (
     <span
       {...stylexProps(

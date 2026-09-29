@@ -23,23 +23,29 @@ function isFramework(
 
 export async function runCli(args: string[], options: InitOptions = {}) {
   const [command, name, ...flags] = args
+
   if (command === "init") {
     const framework = name === "--framework" ? args[2] : undefined
+
     if (
       args.length !== 1 &&
       !(args.length === 3 && name === "--framework" && isFramework(framework))
     ) {
       throw new Error(usage)
     }
+
     const result = await initProject({
       ...options,
       framework: isFramework(framework) ? framework : undefined,
     })
+
     console.info(
       `Configured ${result.framework} (${result.configured} file(s))`,
     )
+
     return result
   }
+
   if (
     (command !== "add" && command !== "update") ||
     !name ||
@@ -47,14 +53,17 @@ export async function runCli(args: string[], options: InitOptions = {}) {
   ) {
     throw new Error(usage)
   }
+
   const result = await installItem(name, {
     ...options,
     mode: command,
     force: flags.includes("--force"),
   })
+
   console.info(
     `Installed ${result.installed} file(s), skipped ${result.skipped}`,
   )
+
   return result
 }
 

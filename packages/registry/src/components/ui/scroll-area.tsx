@@ -95,6 +95,7 @@ export function ScrollArea({
   const xstyle = consumerXstyle
 
   const label = ariaLabel ?? "Scrollable content"
+
   return (
     <ScrollAreaPrimitive.Root
       {...mergeStylexProps(stylexProps(className, styles.root, xstyle), props)}

@@ -273,6 +273,7 @@ const sizeStyles = {
   lg: styles.triggerLarge,
   sm: styles.triggerSmall,
 } as const
+
 type SelectSize = keyof typeof sizeStyles
 
 export const Select: typeof SelectPrimitive.Root = SelectPrimitive.Root
@@ -311,6 +312,7 @@ export function SelectButton({
 
   const typeValue: React.ButtonHTMLAttributes<HTMLButtonElement>["type"] =
     render ? undefined : "button"
+
   const defaultProps = {
     children: (
       <>
@@ -328,6 +330,7 @@ export function SelectButton({
     "data-slot": "select-button",
     type: typeValue,
   }
+
   return useRender({
     defaultTagName: "button",
     props: mergeProps<"button">(defaultProps, props),
@@ -368,6 +371,7 @@ export function SelectTrigger({
     </SelectPrimitive.Trigger>
   )
 }
+
 export function SelectValue({
   xstyle: consumerXstyle,
   className,
@@ -500,6 +504,7 @@ export function SelectItem({
     </SelectPrimitive.Item>
   )
 }
+
 export function SelectSeparator({
   xstyle: consumerXstyle,
   className,
@@ -518,6 +523,7 @@ export function SelectSeparator({
     />
   )
 }
+
 export function SelectGroup({
   xstyle: consumerXstyle,
   className,
@@ -533,6 +539,7 @@ export function SelectGroup({
     />
   )
 }
+
 export function SelectLabel({
   xstyle: consumerXstyle,
   className,
@@ -548,6 +555,7 @@ export function SelectLabel({
     />
   )
 }
+
 export function SelectGroupLabel({
   className,
   xstyle: consumerXstyle,

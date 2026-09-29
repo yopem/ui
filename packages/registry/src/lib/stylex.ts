@@ -17,7 +17,9 @@ export type StyleXStyle = StyleXArray<
 >
 
 type InlineStyle = CSSProperties | ((state: never) => CSSProperties | undefined)
+
 type ClassName = string | ((state: never) => string | undefined)
+
 interface MergeableProps {
   style?: InlineStyle
   className?: ClassName
@@ -64,6 +66,7 @@ export function mergeStylexProps(
 ) {
   const { style, className } = props
   const generatedClassName = generated.className
+
   return {
     ...generated,
     ...props,
@@ -112,8 +115,10 @@ export function stylexProps<State>(
   ...styles: readonly StyleXStyle[]
 ) {
   const props = stylex.props(...styles)
+
   const style =
     props.style && Object.keys(props.style).length > 0 ? props.style : undefined
+
   return {
     ...props,
     style,

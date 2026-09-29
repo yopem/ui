@@ -213,6 +213,7 @@ const sizeStyles = {
   lg: styles.sizeLarge,
   sm: styles.sizeSmall,
 } as const
+
 const variantStyles = {
   default: styles.default,
   destructive: styles.destructive,
@@ -273,6 +274,7 @@ export function Badge({
     "data-slot": "badge",
     "data-variant": variant ?? "default",
   }
+
   return useRender({
     defaultTagName: "span",
     props: mergeProps<"span">(defaultProps, props),

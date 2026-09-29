@@ -11,7 +11,9 @@ export const Route = createFileRoute("/docs/{$name}.md")({
         const page = guidePages.find(
           (entry) => entry.url === `/docs/${params.name}`,
         )
+
         const source = page && getGuideSource(params.name)
+
         return source
           ? markdownResponse(
               createGuideText({ title: page.title, content: source }),

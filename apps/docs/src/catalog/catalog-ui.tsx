@@ -11,6 +11,7 @@ import { Suspense } from "react"
 import type { CatalogPreview } from "./components"
 
 import { CopyableCode } from "./code-block"
+
 const styles = stylex.create({
   section: { marginBlock: "2rem", minInlineSize: "calc(var(--spacing) * 0)" },
   h3: { marginBlock: "0 0.75rem" },
@@ -34,6 +35,7 @@ const styles = stylex.create({
     paddingInline: "1.5rem",
   },
 })
+
 const previewHelpers = Object.entries(
   import.meta.glob<string>("../hooks/*.ts", {
     query: "?raw",
@@ -54,6 +56,7 @@ export function PreviewPanel({
   source: string
 }) {
   const Preview = preview.component
+
   return (
     <Box as="section" xstyle={styles.section}>
       <Heading as="h3" xstyle={styles.h3}>

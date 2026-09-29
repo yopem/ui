@@ -31,10 +31,12 @@ for (const theme of ["light", "dark"] as const) {
       const preview = page.locator('[aria-label$="live preview"]')
       await preview.waitFor()
       await page.waitForFunction(() => document.fonts.status === "loaded")
+
       const result = await new AxeBuilder({ page })
         .include('[aria-label$="live preview"]')
         .disableRules(["heading-order"])
         .analyze()
+
       expect(
         result.violations.map(({ help, id, nodes }) => ({
           help,

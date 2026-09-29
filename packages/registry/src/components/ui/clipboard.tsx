@@ -71,6 +71,7 @@ export function Clipboard({
     try {
       if (typeof navigator === "undefined" || !navigator.clipboard?.writeText) {
         setStatus("error")
+
         return
       }
 
@@ -83,6 +84,7 @@ export function Clipboard({
 
   function handleClick(event: MouseEvent<HTMLButtonElement>) {
     onClick?.(event)
+
     if (!event.defaultPrevented) void copyToClipboard()
   }
 

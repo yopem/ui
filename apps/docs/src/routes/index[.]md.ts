@@ -10,6 +10,7 @@ export const Route = createFileRoute("/index.md")({
       GET: () => {
         const page = guidePages.find((entry) => entry.url === "/")
         const source = getGuideSource("introduction")
+
         return page && source
           ? markdownResponse(
               createGuideText({ title: page.title, content: source }),

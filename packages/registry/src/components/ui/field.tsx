@@ -54,6 +54,7 @@ export function Field({
     />
   )
 }
+
 export function FieldLabel({
   xstyle: consumerXstyle,
   className,
@@ -69,6 +70,7 @@ export function FieldLabel({
     />
   )
 }
+
 export function FieldItem({
   xstyle: consumerXstyle,
   className,
@@ -84,6 +86,7 @@ export function FieldItem({
     />
   )
 }
+
 export function FieldDescription({
   xstyle: consumerXstyle,
   className,
@@ -102,6 +105,7 @@ export function FieldDescription({
     />
   )
 }
+
 export function FieldError({
   xstyle: consumerXstyle,
   className,
@@ -132,6 +136,8 @@ export function FieldControl({
     />
   )
 }
+
 export const FieldValidity: typeof FieldPrimitive.Validity =
   FieldPrimitive.Validity
+
 export { FieldPrimitive }

@@ -3,6 +3,7 @@ import { Flex } from "@registry/components/ui/flex"
 import { Heading } from "@registry/components/ui/heading"
 import { ScrollArea } from "@registry/components/ui/scroll-area"
 import * as stylex from "@stylexjs/stylex"
+
 const styles = stylex.create({
   scrollArea: {
     blockSize: "calc(0.25rem * 64)",
@@ -23,6 +24,7 @@ const styles = stylex.create({
   flex: { flexDirection: "column", gap: "0.25rem" },
   box2: { fontSize: "0.875rem", lineHeight: "calc(1.25 / 0.875)" },
 })
+
 const tags = Array.from({ length: 50 }, (_, i) => `v1.0.0-alpha.${i}`)
 
 export function Preview() {

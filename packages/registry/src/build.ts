@@ -10,9 +10,13 @@ import { z } from "zod"
 import { componentDocs } from "./docs"
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..")
+
 const projectRoot = resolve(root, "../..")
+
 const dist = resolve(root, "dist")
+
 const version = "0.1.0"
+
 const schemaBase = "https://ui.yopem.com/schema"
 
 function integrity(content: string) {
@@ -33,6 +37,7 @@ const items = await Promise.all(
         const content = rewriteImports(
           await readFile(sourceFilePath(file.path), "utf8"),
         )
+
         return { ...file, content, integrity: integrity(content) }
       }),
     )
@@ -69,6 +74,7 @@ const registry = registrySchema.parse({
 for (const doc of componentDocs) {
   await writeJson(resolve(dist, "r/docs", `${doc.name}.json`), doc)
 }
+
 await writeJson(
   resolve(dist, "r", "docs.json"),
   componentDocs.map(({ parts: _, ...doc }) => ({
@@ -76,19 +82,27 @@ await writeJson(
     apiUrl: `/r/docs/${doc.name}.json`,
   })),
 )
+
 await writeJson(resolve(dist, "r", "registry.json"), registry)
+
 await writeJson(
   resolve(dist, "schema", "registry.json"),
   z.toJSONSchema(registrySchema),
 )
+
 await writeJson(
   resolve(dist, "schema", "registry-item.json"),
   z.toJSONSchema(registryItemSchema),
 )
+
 const publicDir = resolve(projectRoot, "apps/docs/public")
+
 await rm(resolve(publicDir, "r"), { force: true, recursive: true })
+
 await rm(resolve(publicDir, "schema"), { force: true, recursive: true })
+
 await cp(resolve(dist, "r"), resolve(publicDir, "r"), { recursive: true })
+
 await cp(resolve(dist, "schema"), resolve(publicDir, "schema"), {
   recursive: true,
 })

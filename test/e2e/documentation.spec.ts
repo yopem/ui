@@ -1,5 +1,6 @@
 import AxeBuilder from "@axe-core/playwright"
 import { expect, test } from "@playwright/test"
+
 test("component docs show live preview and copyable source", async ({
   context,
   page,
@@ -250,6 +251,7 @@ test("main document scrolls normally and restores position on back navigation", 
   ).toBeEnabled({ timeout: 25_000 })
   const main = await page.getByRole("main").boundingBox()
   const viewport = page.viewportSize()!
+
   if (!main) throw new Error("Main documentation region is missing")
   await page.mouse.move(
     main.x + Math.min(main.width / 2, viewport.width - main.x - 24),
@@ -363,10 +365,12 @@ test("mobile navigation changes theme and restores trigger focus", async ({
 
 test("setup guide explains CLI setup", async ({ page }) => {
   await page.goto("/docs/installation")
+
   const title = page.getByRole("heading", {
     name: "Installation",
     exact: true,
   })
+
   await expect(title).toBeVisible()
   await expect(title).toHaveCSS("font-size", /^(34|44)px$/)
   await expect(

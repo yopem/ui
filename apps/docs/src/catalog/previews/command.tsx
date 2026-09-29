@@ -32,6 +32,7 @@ const styles = stylex.create({
   flex3: { alignItems: "center", gap: "calc(0.25rem * 2)" },
   flex4: { alignItems: "center", gap: "calc(0.25rem * 2)" },
 })
+
 export interface Item {
   value: string
   label: string
@@ -80,6 +81,7 @@ export function Preview() {
     }
 
     document.addEventListener("keydown", down)
+
     return () => document.removeEventListener("keydown", down)
   }, [])
 

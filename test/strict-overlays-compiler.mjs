@@ -6,25 +6,35 @@ import { resolve } from "node:path"
 import { runInNewContext } from "node:vm"
 
 const root = resolve(import.meta.dirname, "..")
+
 const registryRequire = createRequire(
   resolve(root, "packages/registry/package.json"),
 )
+
 const docsRequire = createRequire(resolve(root, "apps/docs/package.json"))
+
 const { transformSync } = docsRequire("@babel/core")
+
 const plugin = docsRequire("@stylexjs/babel-plugin")
+
 const stylex = registryRequire("@stylexjs/stylex")
+
 const ts = registryRequire("typescript-api")
 
 const fixtures = {}
+
 for (const name of process.argv.slice(2)) {
   const filename = resolve(
     root,
     "packages/registry/src/components/ui",
     `${name}.tsx`,
   )
+
   const source = readFileSync(filename, "utf8")
+
   const end =
     source.indexOf("\n})", source.indexOf("const styles = stylex.create(")) + 3
+
   const result = transformSync(
     `${source.slice(0, end)}\nexport const fixtureStyles = styles;
 export const fixtureOverrides = stylex.create({ test: { paddingBlockEnd: "3rem", paddingInlineEnd: "3rem", pointerEvents: "auto", backgroundColor: "rgb(255, 0, 0)" } });`.replaceAll(
@@ -45,12 +55,14 @@ export const fixtureOverrides = stylex.create({ test: { paddingBlockEnd: "3rem",
       ],
     },
   )
+
   const code = ts.transpileModule(result.code, {
     compilerOptions: {
       module: ts.ModuleKind.ESNext,
       target: ts.ScriptTarget.ES2022,
     },
   }).outputText
+
   const styles = runInNewContext(
     `${code.replace(/import[\s\S]*?from\s*["'][^"']+["'];?/g, "").replace(/export /g, "")}\n({ ...fixtureStyles, override: fixtureOverrides.test })`,
     {
@@ -59,6 +71,7 @@ export const fixtureOverrides = stylex.create({ test: { paddingBlockEnd: "3rem",
       React: { createContext: () => ({}) },
     },
   )
+
   fixtures[name] = {
     styles,
     css: result.metadata.stylex
@@ -67,4 +80,5 @@ export const fixtureOverrides = stylex.create({ test: { paddingBlockEnd: "3rem",
       .join("\n"),
   }
 }
+
 process.stdout.write(JSON.stringify(fixtures))

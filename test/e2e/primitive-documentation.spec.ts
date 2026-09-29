@@ -33,11 +33,13 @@ test("layout guide lists components and preserves legacy links", async ({
   await expect(
     page.getByRole("heading", { name: "Layout and typography", level: 1 }),
   ).toBeVisible()
+
   for (const [slug, name] of components) {
     await expect(
       page.locator("article").getByRole("link", { name, exact: true }),
     ).toHaveAttribute("href", `/components/${slug}`)
   }
+
   await expect(
     page.getByRole("heading", { name: "Native semantics" }),
   ).toBeVisible()
@@ -70,6 +72,7 @@ test("lint guide offers copyable configuration", async ({ page }) => {
 test("guides stay readable and navigable at 320px", async ({ page }) => {
   test.setTimeout(90_000)
   await page.setViewportSize({ width: 320, height: 700 })
+
   for (const path of ["/docs/layout", "/docs/styling", "/docs/lint"]) {
     await page.goto(path)
     expect(
@@ -77,10 +80,12 @@ test("guides stay readable and navigable at 320px", async ({ page }) => {
     ).toBeLessThanOrEqual(320)
     expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([])
   }
+
   await expect(
     page.getByRole("button", { name: "Search documentation" }),
   ).toBeVisible()
   await page.getByRole("button", { name: "Open navigation" }).click()
+
   for (const name of [
     "Layout and typography",
     "Styling with StyleX",

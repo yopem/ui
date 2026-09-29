@@ -13,6 +13,7 @@ import {
 } from "@registry/components/ui/popover"
 import { Textarea } from "@registry/components/ui/textarea"
 import * as stylex from "@stylexjs/stylex"
+
 const styles = stylex.create({
   popoverPopup: { inlineSize: "calc(0.25rem * 80)" },
   box: { marginBlockEnd: "calc(0.25rem * 4)" },
@@ -24,6 +25,7 @@ const styles = stylex.create({
     gap: "calc(0.25rem * 4)",
   },
 })
+
 export function Preview() {
   return (
     <Popover>

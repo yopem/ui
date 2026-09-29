@@ -27,6 +27,7 @@ function highlightText(text: string, query: string): ReactNode {
 
   for (const match of text.matchAll(expression)) {
     if (match.index === undefined) continue
+
     if (match.index > cursor) parts.push(text.slice(cursor, match.index))
 
     const end = match.index + match[0].length
@@ -35,7 +36,9 @@ function highlightText(text: string, query: string): ReactNode {
   }
 
   if (parts.length === 0) return text
+
   if (cursor < text.length) parts.push(text.slice(cursor))
+
   return parts
 }
 

@@ -16,16 +16,20 @@ export function useCopyToClipboard({
   const copyToClipboard = async (value: string) => {
     setCopyError(null)
     setIsCopied(false)
+
     try {
       if (typeof navigator === "undefined" || !navigator.clipboard?.writeText) {
         throw new Error(
           "Clipboard unavailable. Select the code and copy it manually.",
         )
       }
+
       await navigator.clipboard.writeText(value)
+
       if (timeoutIdRef.current) clearTimeout(timeoutIdRef.current)
       setIsCopied(true)
       onCopy?.()
+
       if (timeout !== 0) {
         timeoutIdRef.current = setTimeout(() => {
           setIsCopied(false)

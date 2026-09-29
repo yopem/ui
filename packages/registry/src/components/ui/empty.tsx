@@ -92,6 +92,7 @@ const mediaVariantStyles = {
   default: styles.mediaDefault,
   icon: styles.mediaIcon,
 } as const
+
 function emptyMediaVariants({
   className,
   variant = "default",
@@ -117,6 +118,7 @@ export function Empty({
     />
   )
 }
+
 export function EmptyHeader({
   xstyle: consumerXstyle,
   className,
@@ -135,6 +137,7 @@ export function EmptyHeader({
     />
   )
 }
+
 export function EmptyMedia({
   xstyle: consumerXstyle,
   className,
@@ -150,6 +153,7 @@ export function EmptyMedia({
   const xstyle = consumerXstyle
 
   const mediaClassName = emptyMediaVariants({ className, variant })
+
   return (
     <div
       data-slot="empty-media"
@@ -181,6 +185,7 @@ export function EmptyMedia({
     </div>
   )
 }
+
 export function EmptyTitle({
   xstyle: consumerXstyle,
   className,
@@ -196,6 +201,7 @@ export function EmptyTitle({
     />
   )
 }
+
 export function EmptyDescription({
   xstyle: consumerXstyle,
   className,
@@ -214,6 +220,7 @@ export function EmptyDescription({
     />
   )
 }
+
 export function EmptyContent({
   xstyle: consumerXstyle,
   className,

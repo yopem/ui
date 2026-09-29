@@ -6,6 +6,7 @@ import {
 } from "@registry/components/ui/tabs"
 import { Text } from "@registry/components/ui/text"
 import * as stylex from "@stylexjs/stylex"
+
 const styles = stylex.create({
   paragraph: {
     paddingBlock: "calc(0.25rem * 4)",
@@ -32,6 +33,7 @@ const styles = stylex.create({
     color: "var(--muted-foreground)",
   },
 })
+
 export function Preview() {
   return (
     <Tabs defaultValue="tab-1">

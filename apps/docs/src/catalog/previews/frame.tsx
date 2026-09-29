@@ -9,6 +9,7 @@ import {
 import { Heading } from "@registry/components/ui/heading"
 import { Text } from "@registry/components/ui/text"
 import * as stylex from "@stylexjs/stylex"
+
 const styles = stylex.create({
   frame: { inlineSize: "100%" },
   h2: {
@@ -27,6 +28,7 @@ const styles = stylex.create({
     color: "var(--muted-foreground)",
   },
 })
+
 export function Preview() {
   return (
     <Frame xstyle={styles.frame}>

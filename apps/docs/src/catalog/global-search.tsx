@@ -74,20 +74,27 @@ function listenForSearchShortcut(onShortcut: () => void) {
   }
 
   document.addEventListener("keydown", onKeyDown)
+
   return () => document.removeEventListener("keydown", onKeyDown)
 }
 
 function isSearchResult(value: unknown): value is SortedResult {
   if (typeof value !== "object" || value === null) return false
+
   if (!("id" in value) || typeof value.id !== "string") return false
+
   if (!("url" in value) || typeof value.url !== "string") return false
+
   if (!value.url.startsWith("/") || value.url.startsWith("//")) return false
+
   if (!("content" in value) || typeof value.content !== "string") return false
+
   if (
     !("type" in value) ||
     (value.type !== "page" && value.type !== "heading" && value.type !== "text")
   )
     return false
+
   return (
     !("breadcrumbs" in value) ||
     value.breadcrumbs === undefined ||
@@ -100,20 +107,24 @@ export function GlobalSearch() {
   const [open, setOpen] = useState(false)
   const [query, setQuery] = useState("")
   const [results, setResults] = useState<SortedResult[]>([])
+
   const [status, setStatus] = useState<"idle" | "loading" | "ready" | "error">(
     "idle",
   )
+
   const controllerRef = useRef<AbortController>(null)
   const inputRef = useRef<HTMLInputElement>(null)
   const triggerRef = useRef<HTMLButtonElement>(null)
 
   const registerTrigger = useCallback((node: HTMLButtonElement | null) => {
     triggerRef.current = node
+
     if (!node) return
 
     const stopListening = listenForSearchShortcut(() => {
       setOpen((value) => !value)
     })
+
     return () => {
       controllerRef.current?.abort()
       stopListening()
@@ -123,9 +134,11 @@ export function GlobalSearch() {
   async function search(nextQuery: string) {
     controllerRef.current?.abort()
     const trimmedQuery = nextQuery.trim()
+
     if (!trimmedQuery) {
       setResults([])
       setStatus("idle")
+
       return
     }
 
@@ -139,10 +152,13 @@ export function GlobalSearch() {
         `/api/search?query=${encodeURIComponent(trimmedQuery)}`,
         { signal: controller.signal },
       )
+
       if (!response.ok) throw new Error("Search unavailable")
       const data: unknown = await response.json()
+
       if (!Array.isArray(data) || !data.every(isSearchResult))
         throw new Error("Invalid search response")
+
       if (!controller.signal.aborted) {
         setResults(data)
         setStatus("ready")
@@ -157,6 +173,7 @@ export function GlobalSearch() {
       open={open}
       onOpenChange={(value) => {
         setOpen(value)
+
         if (!value) controllerRef.current?.abort()
       }}
     >

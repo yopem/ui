@@ -18,11 +18,13 @@ import { ChevronRightIcon, XIcon } from "lucide-react"
 import { createContext, useContext, useMemo } from "react"
 
 type DrawerPosition = "right" | "left" | "top" | "bottom"
+
 type DrawerVariant = "default" | "straight" | "inset"
 
 const DrawerContext = createContext<{ position: DrawerPosition }>({
   position: "bottom",
 })
+
 const directionMap: Record<
   DrawerPosition,
   DrawerPrimitive.Root.Props["swipeDirection"]
@@ -534,24 +536,28 @@ const swipeStyles = {
   right: styles.swipeRight,
   top: styles.swipeTop,
 } as const
+
 const viewportStyles = {
   bottom: styles.viewportBottom,
   left: styles.viewportLeft,
   right: styles.viewportRight,
   top: styles.viewportTop,
 } as const
+
 const popupStyles = {
   bottom: styles.popupBottom,
   left: styles.popupLeft,
   right: styles.popupRight,
   top: styles.popupTop,
 } as const
+
 const roundedStyles = {
   bottom: styles.roundedBottom,
   left: styles.roundedLeft,
   right: styles.roundedRight,
   top: styles.roundedTop,
 } as const
+
 const barPositionStyles = {
   bottom: styles.barBottom,
   left: styles.barLeft,
@@ -561,12 +567,14 @@ const barPositionStyles = {
 
 export const DrawerCreateHandle: typeof DrawerPrimitive.createHandle =
   DrawerPrimitive.createHandle
+
 export function Drawer({
   swipeDirection,
   position = "bottom",
   ...props
 }: DrawerPrimitive.Root.Props & { position?: DrawerPosition }) {
   const contextValue = useMemo(() => ({ position }), [position])
+
   return (
     <DrawerContext.Provider value={contextValue}>
       <DrawerPrimitive.Root
@@ -576,8 +584,10 @@ export function Drawer({
     </DrawerContext.Provider>
   )
 }
+
 export const DrawerPortal: typeof DrawerPrimitive.Portal =
   DrawerPrimitive.Portal
+
 export function DrawerTrigger({
   xstyle: consumerXstyle,
   className,
@@ -593,6 +603,7 @@ export function DrawerTrigger({
     />
   )
 }
+
 export function DrawerClose({
   xstyle: consumerXstyle,
   className,
@@ -625,6 +636,7 @@ export function DrawerSwipeArea({
 
   const { position: contextPosition } = useContext(DrawerContext)
   const position = positionProp ?? contextPosition
+
   return (
     <DrawerPrimitive.SwipeArea
       data-slot="drawer-swipe-area"
@@ -635,6 +647,7 @@ export function DrawerSwipeArea({
     />
   )
 }
+
 export function DrawerBackdrop({
   xstyle: consumerXstyle,
   className,
@@ -653,6 +666,7 @@ export function DrawerBackdrop({
     />
   )
 }
+
 export function DrawerViewport({
   xstyle: consumerXstyle,
   className,
@@ -717,6 +731,7 @@ export function DrawerPopup({
 
   const { position: contextPosition } = useContext(DrawerContext)
   const position = positionProp ?? contextPosition
+
   return (
     <DrawerPortal {...portalProps}>
       <DrawerBackdrop />
@@ -781,12 +796,14 @@ export function DrawerHeader({
     ),
     "data-slot": "drawer-header",
   }
+
   return useRender({
     defaultTagName: "div",
     props: mergeProps<"div">(defaultProps, props),
     render: allowSelection ? <DrawerContent render={render} /> : render,
   })
 }
+
 export function DrawerFooter({
   xstyle: consumerXstyle,
   className,
@@ -815,12 +832,14 @@ export function DrawerFooter({
     "data-slot": "drawer-footer",
     "data-variant": variant,
   }
+
   return useRender({
     defaultTagName: "div",
     props: mergeProps<"div">(defaultProps, props),
     render: allowSelection ? <DrawerContent render={render} /> : render,
   })
 }
+
 export function DrawerTitle({
   xstyle: consumerXstyle,
   className,
@@ -836,6 +855,7 @@ export function DrawerTitle({
     />
   )
 }
+
 export function DrawerDescription({
   xstyle: consumerXstyle,
   className,
@@ -883,11 +903,13 @@ export function DrawerPanel({
     ),
     "data-slot": "drawer-panel",
   }
+
   const content = useRender({
     defaultTagName: "div",
     props: mergeProps<"div">(defaultProps, props),
     render: allowSelection ? <DrawerContent render={render} /> : render,
   })
+
   return scrollable ? (
     <ScrollArea
       className={stylex.props(styles.touchAuto).className}
@@ -919,6 +941,7 @@ export function DrawerBar({
   const { position: contextPosition } = useContext(DrawerContext)
   const position = positionProp ?? contextPosition
   const horizontal = position === "left" || position === "right"
+
   const defaultProps = {
     "aria-hidden": true as const,
     ...stylexProps(
@@ -930,6 +953,7 @@ export function DrawerBar({
     ),
     "data-slot": "drawer-bar",
   }
+
   return useRender({
     defaultTagName: "div",
     props: mergeProps<"div">(defaultProps, props),
@@ -951,6 +975,7 @@ export function DrawerContent({
     />
   )
 }
+
 export function DrawerMenu({
   xstyle: consumerXstyle,
   className,
@@ -964,12 +989,14 @@ export function DrawerMenu({
     ...stylexProps(className, styles.menu, xstyle),
     "data-slot": "drawer-menu",
   }
+
   return useRender({
     defaultTagName: "nav",
     props: mergeProps<"nav">(defaultProps, props),
     render,
   })
 }
+
 export function DrawerMenuItem({
   xstyle: consumerXstyle,
   className,
@@ -993,12 +1020,14 @@ export function DrawerMenuItem({
     disabled,
     type: "button" as const,
   }
+
   return useRender({
     defaultTagName: "button",
     props: mergeProps<"button">(defaultProps, props),
     render,
   })
 }
+
 export function DrawerMenuSeparator({
   xstyle: consumerXstyle,
   className,
@@ -1012,12 +1041,14 @@ export function DrawerMenuSeparator({
     ...stylexProps(className, styles.menuSeparator, xstyle),
     "data-slot": "drawer-menu-separator",
   }
+
   return useRender({
     defaultTagName: "div",
     props: mergeProps<"div">(defaultProps, props),
     render,
   })
 }
+
 export function DrawerMenuGroup({
   xstyle: consumerXstyle,
   className,
@@ -1031,12 +1062,14 @@ export function DrawerMenuGroup({
     ...stylexProps(className, styles.menuGroup, xstyle),
     "data-slot": "drawer-menu-group",
   }
+
   return useRender({
     defaultTagName: "div",
     props: mergeProps<"div">(defaultProps, props),
     render,
   })
 }
+
 export function DrawerMenuGroupLabel({
   xstyle: consumerXstyle,
   className,
@@ -1050,6 +1083,7 @@ export function DrawerMenuGroupLabel({
     ...stylexProps(className, styles.menuGroupLabel, xstyle),
     "data-slot": "drawer-menu-group-label",
   }
+
   return useRender({
     defaultTagName: "div",
     props: mergeProps<"div">(defaultProps, props),
@@ -1160,6 +1194,7 @@ export function DrawerMenuCheckboxItem({
     </CheckboxPrimitive.Root>
   )
 }
+
 export function DrawerMenuRadioGroup({
   xstyle: consumerXstyle,
   className,
@@ -1178,6 +1213,7 @@ export function DrawerMenuRadioGroup({
     />
   )
 }
+
 export function DrawerMenuRadioItem({
   xstyle: consumerXstyle,
   className,

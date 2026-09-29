@@ -48,6 +48,7 @@ export function ToggleGroup({
   const xstyle = consumerXstyle
 
   const contextValue = React.useMemo(() => ({ size, variant }), [size, variant])
+
   return (
     <ToggleGroupPrimitive
       data-size={size}
@@ -88,6 +89,7 @@ export function ToggleGroupItem({
   const context = React.useContext(ToggleGroupContext)
   const resolvedVariant = context.variant || variant
   const resolvedSize = context.size || size
+
   return (
     <ToggleComponent
       className={className}
@@ -121,4 +123,5 @@ export function ToggleGroupSeparator({
     />
   )
 }
+
 export { ToggleGroupPrimitive }

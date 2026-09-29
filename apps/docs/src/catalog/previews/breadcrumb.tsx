@@ -18,12 +18,14 @@ import {
   MenuTrigger,
 } from "@registry/components/ui/menu"
 import * as stylex from "@stylexjs/stylex"
+
 const styles = stylex.create({
   morePages: {
     margin: "calc(0.25rem * -1.5)",
     color: "var(--muted-foreground)",
   },
 })
+
 export function Preview() {
   return (
     <Breadcrumb>

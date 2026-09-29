@@ -10,9 +10,11 @@ test("rating supports keyboard selection and announces selected value", async ({
   await rating.getByRole("radio", { name: "3 stars" }).click()
   await page.keyboard.press("ArrowRight")
   await expect(rating.getByRole("radio", { name: "4 stars" })).toBeChecked()
+
   const disabledRating = page.getByRole("radiogroup", {
     name: "Disabled rating",
   })
+
   await expect(
     disabledRating.getByRole("radio", { name: "2 stars" }),
   ).toBeDisabled()

@@ -203,6 +203,7 @@ export function NumberField({
   const generatedId = React.useId()
   const fieldId = id ?? generatedId
   const contextValue = React.useMemo(() => ({ fieldId }), [fieldId])
+
   return (
     <NumberFieldContext.Provider value={contextValue}>
       <NumberFieldPrimitive.Root
@@ -217,6 +218,7 @@ export function NumberField({
     </NumberFieldContext.Provider>
   )
 }
+
 export function NumberFieldGroup({
   xstyle: consumerXstyle,
   className,
@@ -232,6 +234,7 @@ export function NumberFieldGroup({
     />
   )
 }
+
 export function NumberFieldDecrement({
   xstyle: consumerXstyle,
   className,
@@ -252,6 +255,7 @@ export function NumberFieldDecrement({
     </NumberFieldPrimitive.Decrement>
   )
 }
+
 export function NumberFieldIncrement({
   xstyle: consumerXstyle,
   className,
@@ -272,6 +276,7 @@ export function NumberFieldIncrement({
     </NumberFieldPrimitive.Increment>
   )
 }
+
 export function NumberFieldInput({
   xstyle: consumerXstyle,
   className,
@@ -287,6 +292,7 @@ export function NumberFieldInput({
     />
   )
 }
+
 export function NumberFieldScrubArea({
   xstyle: consumerXstyle,
   className,
@@ -300,10 +306,12 @@ export function NumberFieldScrubArea({
   const xstyle = consumerXstyle
 
   const context = React.useContext(NumberFieldContext)
+
   if (!context)
     throw new Error(
       "NumberFieldScrubArea must be used within a NumberField component for accessibility.",
     )
+
   return (
     <NumberFieldPrimitive.ScrubArea
       data-slot="number-field-scrub-area"
@@ -321,6 +329,7 @@ export function NumberFieldScrubArea({
     </NumberFieldPrimitive.ScrubArea>
   )
 }
+
 export function CursorGrowIcon({
   xstyle: consumerXstyle,
   className,
@@ -344,4 +353,5 @@ export function CursorGrowIcon({
     </svg>
   )
 }
+
 export { NumberFieldPrimitive }

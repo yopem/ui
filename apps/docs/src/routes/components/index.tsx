@@ -70,6 +70,7 @@ const styles = stylex.create({
     textAlign: "center",
   },
 })
+
 export const Route = createFileRoute("/components/")({
   head: () =>
     createSeo({
@@ -84,6 +85,7 @@ export const Route = createFileRoute("/components/")({
 function ComponentsPage() {
   const [query, setQuery] = useState("")
   const normalizedQuery = query.trim().toLocaleLowerCase()
+
   const results = normalizedQuery
     ? catalog.filter((item) =>
         `${item.title} ${item.slug}`

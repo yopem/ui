@@ -9,6 +9,7 @@ import { resolve } from "node:path"
 import { defineConfig } from "vite"
 
 const root = resolve(import.meta.dirname, "../..")
+
 const stylexOptions = {
   aliases: { "@registry/*": [resolve(root, "packages/registry/src/*")] },
   dev: process.env.NODE_ENV !== "production",
@@ -16,14 +17,18 @@ const stylexOptions = {
   treeshakeCompensation: true,
   unstable_moduleResolution: { rootDir: root, type: "commonJS" as const },
 }
+
 const stylexPlugins: [string, object][] = [
   ["@stylexjs/babel-plugin", stylexOptions],
 ]
+
 const loadStylexPostcss: unknown = createRequire(import.meta.url)(
   "@stylexjs/postcss-plugin",
 )
+
 if (typeof loadStylexPostcss !== "function")
   throw new Error("StyleX PostCSS plugin unavailable")
+
 const stylexPostcssPlugin: unknown = loadStylexPostcss({
   cwd: import.meta.dirname,
   include: [
@@ -38,6 +43,7 @@ const stylexPostcssPlugin: unknown = loadStylexPostcss({
   // TanStack Start loads its reset after StyleX in dev; layers invert precedence.
   useCSSLayers: false,
 })
+
 function isPostcssPlugin(value: unknown): value is { postcssPlugin: string } {
   return (
     typeof value === "object" &&
@@ -46,15 +52,20 @@ function isPostcssPlugin(value: unknown): value is { postcssPlugin: string } {
     typeof value.postcssPlugin === "string"
   )
 }
+
 if (!isPostcssPlugin(stylexPostcssPlugin))
   throw new Error("Invalid StyleX PostCSS plugin")
 
 const mdxPlugin = mdx()
+
 const transformMdx = mdxPlugin.transform
+
 if (typeof transformMdx !== "function")
   throw new Error("MDX plugin transform unavailable")
+
 mdxPlugin.transform = function (code, id) {
   if (id.includes("?raw")) return Promise.resolve(undefined)
+
   return transformMdx.call(this, code, id)
 }
 

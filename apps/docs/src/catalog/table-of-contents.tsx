@@ -8,6 +8,7 @@ import { Text } from "@registry/components/ui/text"
 import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import { useCallback, useState } from "react"
+
 const styles = stylex.create({
   onThisPage: {
     display: { default: "none", "@media (min-width: 1536px)": "block" },
@@ -64,6 +65,7 @@ const styles = stylex.create({
   span3: { paddingInlineStart: "0.75rem" },
   span4: { paddingInlineStart: "0.75rem" },
 })
+
 export interface TocItem {
   title: ReactNode
   url: string
@@ -77,15 +79,18 @@ function listenForActiveSection(
   const headings = items
     .map((item) => document.getElementById(item.url.slice(1)))
     .filter((heading) => heading !== null)
+
   if (headings.length === 0) return
   let frame = 0
 
   function updateActiveSection() {
     let activeHeading = headings[0]
+
     for (const heading of headings) {
       if (heading.getBoundingClientRect().top > 112) break
       activeHeading = heading
     }
+
     onActiveUrlChange(`#${activeHeading.id}`)
   }
 
@@ -97,6 +102,7 @@ function listenForActiveSection(
   updateActiveSection()
   window.addEventListener("scroll", scheduleUpdate, { passive: true })
   window.addEventListener("resize", scheduleUpdate)
+
   return () => {
     cancelAnimationFrame(frame)
     window.removeEventListener("scroll", scheduleUpdate)
@@ -106,9 +112,11 @@ function listenForActiveSection(
 
 export function TableOfContents({ items }: { items: TocItem[] }) {
   const [activeUrl, setActiveUrl] = useState<string>()
+
   const trackSections = useCallback(
     (node: HTMLElement | null) => {
       if (!node) return
+
       return listenForActiveSection(items, setActiveUrl)
     },
     [items],

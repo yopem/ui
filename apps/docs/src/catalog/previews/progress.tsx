@@ -12,6 +12,7 @@ export function Preview() {
         Math.min(100, Math.round(current + Math.random() * 25)),
       )
     }, 1000)
+
     return () => clearInterval(interval)
   }, [])
 

@@ -44,6 +44,7 @@ for (const [component, visibleText] of cases) {
     await expect(
       page.getByText(visibleText, { exact: false }).last(),
     ).toBeVisible()
+
     const result = await new AxeBuilder({ page })
       .exclude("pre.shiki")
       .disableRules([
@@ -52,6 +53,7 @@ for (const [component, visibleText] of cases) {
         "scrollable-region-focusable",
       ])
       .analyze()
+
     expect(
       result.violations.map(({ help, id, nodes }) => ({
         help,
@@ -83,6 +85,7 @@ test("sheet close button stays in the popup corner without shifting content", as
   expect(popupBox).not.toBeNull()
   expect(headerBox).not.toBeNull()
   expect(closeBox).not.toBeNull()
+
   if (popupBox && headerBox && closeBox) {
     expect(closeBox.x).toBeGreaterThan(
       popupBox.x + popupBox.width - closeBox.width - 12,
@@ -109,9 +112,11 @@ test("context menu keyboard alternative opens an accessible menu", async ({
   await trigger.focus()
   await page.keyboard.press("Shift+F10")
   await expect(page.getByRole("menuitem", { name: "Back" })).toBeVisible()
+
   const result = await new AxeBuilder({ page })
     .exclude("pre.shiki")
     .disableRules(["aria-hidden-focus", "region"])
     .analyze()
+
   expect(result.violations).toEqual([])
 })

@@ -12,6 +12,7 @@ import * as stylex from "@stylexjs/stylex"
 import { BookIcon, RouteIcon } from "lucide-react"
 
 const styles = stylex.create({ flex: { gap: "calc(0.25rem * 2)" } })
+
 export function Preview() {
   return (
     <Empty>

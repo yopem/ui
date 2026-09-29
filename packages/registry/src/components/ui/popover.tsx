@@ -120,6 +120,7 @@ const styles = stylex.create({
 
 export const PopoverCreateHandle: typeof PopoverPrimitive.createHandle =
   PopoverPrimitive.createHandle
+
 export const Popover: typeof PopoverPrimitive.Root = PopoverPrimitive.Root
 
 export function PopoverTrigger({
@@ -225,6 +226,7 @@ export function PopoverClose({
     />
   )
 }
+
 export function PopoverTitle({
   xstyle: consumerXstyle,
   className,
@@ -240,6 +242,7 @@ export function PopoverTitle({
     />
   )
 }
+
 export function PopoverDescription({
   xstyle: consumerXstyle,
   className,

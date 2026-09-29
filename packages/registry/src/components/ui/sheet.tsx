@@ -13,6 +13,7 @@ import * as stylex from "@stylexjs/stylex"
 import { XIcon } from "lucide-react"
 
 type SheetSide = "right" | "left" | "top" | "bottom"
+
 type SheetVariant = "default" | "inset"
 
 const styles = stylex.create({
@@ -204,6 +205,7 @@ const viewportSideStyles = {
   right: styles.viewportRight,
   top: styles.viewportTop,
 } as const
+
 const popupSideStyles = {
   bottom: styles.popupBottom,
   left: styles.popupLeft,
@@ -212,7 +214,9 @@ const popupSideStyles = {
 } as const
 
 export const Sheet: typeof SheetPrimitive.Root = SheetPrimitive.Root
+
 export const SheetPortal: typeof SheetPrimitive.Portal = SheetPrimitive.Portal
+
 export function SheetTrigger({
   xstyle: consumerXstyle,
   className,
@@ -228,6 +232,7 @@ export function SheetTrigger({
     />
   )
 }
+
 export function SheetClose({
   xstyle: consumerXstyle,
   className,
@@ -243,6 +248,7 @@ export function SheetClose({
     />
   )
 }
+
 export function SheetBackdrop({
   xstyle: consumerXstyle,
   className,
@@ -368,12 +374,14 @@ export function SheetHeader({
     ...stylexProps(className, styles.header, xstyle),
     "data-slot": "sheet-header",
   }
+
   return useRender({
     defaultTagName: "div",
     props: mergeProps<"div">(defaultProps, props),
     render,
   })
 }
+
 export function SheetFooter({
   xstyle: consumerXstyle,
   className,
@@ -399,12 +407,14 @@ export function SheetFooter({
     "data-slot": "sheet-footer",
     "data-variant": variant,
   }
+
   return useRender({
     defaultTagName: "div",
     props: mergeProps<"div">(defaultProps, props),
     render,
   })
 }
+
 export function SheetTitle({
   xstyle: consumerXstyle,
   className,
@@ -420,6 +430,7 @@ export function SheetTitle({
     />
   )
 }
+
 export function SheetDescription({
   xstyle: consumerXstyle,
   className,
@@ -438,6 +449,7 @@ export function SheetDescription({
     />
   )
 }
+
 export function SheetPanel({
   xstyle: consumerXstyle,
   className,
@@ -455,11 +467,13 @@ export function SheetPanel({
     ...stylexProps(className, styles.panel, xstyle),
     "data-slot": "sheet-panel",
   }
+
   const content = useRender({
     defaultTagName: "div",
     props: mergeProps<"div">(defaultProps, props),
     render,
   })
+
   return (
     <ScrollArea overscrollContain scrollFade={scrollFade}>
       {content}

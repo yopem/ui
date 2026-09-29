@@ -6,6 +6,7 @@ import {
   ContextMenuTrigger,
 } from "@registry/components/ui/context-menu"
 import * as stylex from "@stylexjs/stylex"
+
 const styles = stylex.create({
   contextMenuTrigger: {
     display: "flex",

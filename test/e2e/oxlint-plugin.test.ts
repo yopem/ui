@@ -3,11 +3,14 @@ import { mkdirSync, rmSync, writeFileSync } from "node:fs"
 import { resolve } from "node:path"
 
 const directory = resolve(import.meta.dir, "../../tmp/oxlint-plugin-e2e")
+
 const plugin = resolve(
   import.meta.dir,
   "../../packages/oxlint-plugin/src/index.ts",
 )
+
 mkdirSync(directory, { recursive: true })
+
 afterAll(() => rmSync(directory, { recursive: true, force: true }))
 
 function lint(source: string, rules: Record<string, unknown>) {
@@ -21,6 +24,7 @@ function lint(source: string, rules: Record<string, unknown>) {
     }),
   )
   writeFileSync(input, source)
+
   const result = Bun.spawnSync(
     [
       resolve(import.meta.dir, "../../node_modules/.bin/oxlint"),
@@ -30,6 +34,7 @@ function lint(source: string, rules: Record<string, unknown>) {
     ],
     { cwd: directory },
   )
+
   return {
     status: result.exitCode,
     output: `${result.stdout.toString()}${result.stderr.toString()}`,
@@ -46,6 +51,7 @@ const styles = sx.create({ button: { color: "red" } });
 const view = <><Action className="custom" xstyle={styles.button} /><button style={{ color: "red" }} /></>;`,
     { "yopem-ui/enforce-styling-methods": "error" },
   )
+
   expect(valid.status).toBe(0)
 
   const invalid = lint(
@@ -54,6 +60,7 @@ const styles = sx.create({ button: { color: "red" } });
 const view = <><Action css={{ color: "red" }} style={{ color: "red" }} {...sx.props(styles.button)} /><Action style={sx.props(styles.button).style} /></>;`,
     { "yopem-ui/enforce-styling-methods": "error" },
   )
+
   expect(invalid.status).toBe(1)
   expect(invalid.output).toContain("css styling is disabled")
   expect(invalid.output).toContain("reactStyle styling is disabled")
@@ -78,6 +85,7 @@ const view = <><Action className="custom" /><UI.Button className="custom" /><but
       ],
     },
   )
+
   expect(result.status).toBe(1)
   expect(result.output.match(/className styling is disabled/g)).toHaveLength(2)
   expect(result.output).not.toContain("native")
@@ -89,6 +97,7 @@ test("polymorphic as validates Box tags and Heading levels", () => {
 const view = <><Layout as="main" /><Heading as="h2" /><button as="unknown" /></>;`,
     { "yopem-ui/valid-polymorphic-as": "error" },
   )
+
   expect(valid.status).toBe(0)
 
   const invalid = lint(
@@ -97,6 +106,7 @@ const tag = "main";
 const view = <><UI.Box as="fake-tag" /><UI.Box as={tag} /><UI.Heading as="main" /><UI.Heading as={tag} /></>;`,
     { "yopem-ui/valid-polymorphic-as": "error" },
   )
+
   expect(invalid.status).toBe(1)
   expect(invalid.output.match(/Box as must be/g)).toHaveLength(2)
   expect(invalid.output.match(/Heading as must be/g)).toHaveLength(2)
@@ -108,6 +118,7 @@ test("static StyleX accepts fixed keys and rejects dynamic shapes", () => {
 const styles = make({ root: { color: "red", ":hover": { opacity: 1 }, [when.ancestor(":hover")]: { opacity: 0 } } });`,
     { "yopem-ui/static-stylex": "error" },
   )
+
   expect(valid.status).toBe(0)
 
   const invalid = lint(
@@ -118,6 +129,7 @@ const one = sx.create(values);
 const two = sx.create({ [key]: { color: "red" }, root: { [key]: "red", ...values } });`,
     { "yopem-ui/static-stylex": "error" },
   )
+
   expect(invalid.status).toBe(1)
   expect(
     invalid.output.match(/must use static object shapes and keys/g),
@@ -130,6 +142,7 @@ test("Box as accepts native SVG elements", () => {
 const view = <><Box as="svg" /><Box as="circle" /><Box as="linearGradient" /><Box as="param" /><Box as="webview" /></>;`,
     { "yopem-ui/valid-polymorphic-as": "error" },
   )
+
   expect(result.status).toBe(0)
 })
 
@@ -161,6 +174,7 @@ const a = <Action xstyle={styles.button} />;
 const b = <CardTitle xstyle={styles.title} />;`,
     { "yopem-ui/no-restyle": policy },
   )
+
   expect(result.status).toBe(1)
   expect(result.output).toContain("backgroundColor")
   expect(result.output).toContain("color")
@@ -176,6 +190,7 @@ const a = <Action xstyle={styles.button} />;
 const styles = sx.create({ button: { backgroundColor: "red" } });`,
     { "yopem-ui/no-restyle": "error" },
   )
+
   expect(result.status).toBe(1)
   expect(result.output).toContain("variant")
 })
@@ -187,6 +202,7 @@ const styles = sx.create({ button: { backgroundColor: "red", paddingInline: 8, m
 const a = <Action xstyle={styles.button} />;`,
     { "yopem-ui/no-restyle": "error" },
   )
+
   expect(result.status).toBe(1)
   expect(result.output).toContain("variant")
   expect(result.output).toContain("size")
@@ -207,6 +223,7 @@ const b = <CardTitle xstyle={external} />;`,
       ],
     },
   )
+
   expect(result.status).toBe(0)
 })
 
@@ -220,6 +237,7 @@ const a = <Action xstyle={styles.button} />;`,
       "yopem-ui/no-raw-stylex-colors": "error",
     },
   )
+
   expect(result.status).toBe(1)
   expect(result.output).toContain("variant")
   expect(result.output).toContain("raw color")
@@ -236,6 +254,7 @@ function Shadow() {
 const view = <Action xstyle={styles.button} />;`,
     { "yopem-ui/no-restyle": "error" },
   )
+
   expect(result.status).toBe(1)
   expect(result.output.match(/Use its variant prop first/g)).toHaveLength(1)
 })
@@ -247,6 +266,7 @@ import { tokens } from "@registry/styles/tokens.stylex";
 const styles = make({ root: { color: "#fff", backgroundColor: tokens.background, ':hover': { borderColor: "rgb(0 0 0)" }, boxShadow: "0 1px #000" } });`,
     { "yopem-ui/no-raw-stylex-colors": "error" },
   )
+
   expect(result.status).toBe(1)
   expect(result.output).toContain("color")
   expect(result.output).toContain("borderColor")
@@ -259,18 +279,24 @@ import * as stylex from "@stylexjs/stylex";
 const styles = stylex.create({ root: { padding: 4 } });
 const a = <div sx={[x.color.blue, styles.root]} />;
 const b = <div xstyle={styles.root} />;`
+
   expect(
     lint(source, { "yopem-ui/atoms": ["error", { mode: "allow" }] }).status,
   ).toBe(0)
+
   const denied = lint(source, {
     "yopem-ui/atoms": ["error", { mode: "disallow" }],
   })
+
   expect(denied.output).toContain("StyleX atoms are disallowed")
+
   const enforced = lint(source, {
     "yopem-ui/atoms": ["error", { mode: "enforce" }],
   })
+
   expect(enforced.output).toContain("stylex.create")
   expect(enforced.output).toContain("xstyle")
+
   const custom = lint(
     `import atomic from "@apps/stylexjs/atoms";
 const a = <div xstyle={atomic.color.blue} />;`,
@@ -281,6 +307,7 @@ const a = <div xstyle={atomic.color.blue} />;`,
       ],
     },
   )
+
   expect(custom.status).toBe(0)
 }, 30_000)
 
@@ -291,6 +318,7 @@ const fallback = {};
 const view = <div xstyle={x.color.blue || fallback} />;`,
     { "yopem-ui/atoms": ["error", { mode: "enforce" }] },
   )
+
   expect(result.status).toBe(0)
 })
 
@@ -300,6 +328,7 @@ test("layout primitives replace presentational div and span by default", () => {
 const view = <><div><span>Text</span></div><Container /><Stack /><section /><svg><g /></svg><custom-widget /></>;`,
     { "yopem-ui/prefer-layout-primitives": "error" },
   )
+
   expect(result.status).toBe(1)
   expect(result.output).toContain("Box")
   expect(result.output).toContain("div")
@@ -312,9 +341,11 @@ test("layout primitive rule supports opt-out and additional tags", () => {
   expect(
     lint(source, { "yopem-ui/prefer-layout-primitives": "off" }).status,
   ).toBe(0)
+
   const result = lint(source, {
     "yopem-ui/prefer-layout-primitives": ["error", { elements: ["main"] }],
   })
+
   expect(result.status).toBe(1)
   expect(result.output).toContain("main")
   expect(result.output).not.toContain("<div>")
@@ -328,5 +359,6 @@ const styles = sx.create({ button: { color: "#fff" } });
 const a = <Action xstyle={styles.button} />;`,
     {},
   )
+
   expect(result.status).toBe(0)
 })

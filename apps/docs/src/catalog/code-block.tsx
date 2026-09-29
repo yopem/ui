@@ -152,6 +152,7 @@ const primitiveStyles = stylex.create({
     overflowWrap: "anywhere",
   },
 })
+
 const HighlightedCode = lazy(() =>
   import("./highlighted-code").then((module) => ({
     default: module.HighlightedCode,
@@ -174,9 +175,12 @@ export function CopyableCode({
   const codeLines = cleanCode.trimEnd().split("\n")
   const collapsible = preview && codeLines.length > 5
   const [expanded, setExpanded] = useState(!preview)
+
   const visibleCode =
     collapsible && !expanded ? codeLines.slice(0, 5).join("\n") : cleanCode
+
   const { copyToClipboard, copyError, isCopied } = useCopyToClipboard()
+
   const codeContent = (
     <Suspense
       fallback={
@@ -192,6 +196,7 @@ export function CopyableCode({
       />
     </Suspense>
   )
+
   const scrollArea =
     collapsible && !expanded ? (
       <ScrollArea
@@ -212,6 +217,7 @@ export function CopyableCode({
         {codeContent}
       </ScrollArea>
     )
+
   const contents = (
     <>
       <CodeBlockControls
@@ -241,9 +247,11 @@ export function CopyableCode({
       </Box>
     </>
   )
+
   if (preview && !header) {
     return <Box xstyle={primitiveStyles.box2}>{contents}</Box>
   }
+
   return <Box xstyle={primitiveStyles.box3}>{contents}</Box>
 }
 
@@ -279,6 +287,7 @@ function CodeBlockControls({
       )}
     </Box>
   )
+
   return header ? (
     <Box xstyle={primitiveStyles.box4}>
       <Box as="code" xstyle={primitiveStyles.code}>

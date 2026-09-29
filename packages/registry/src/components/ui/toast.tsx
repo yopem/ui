@@ -23,12 +23,14 @@ const successOdd = stylex.keyframes({
   "60%": { scale: 0.99 },
   "100%": { scale: 1 },
 })
+
 const successEven = stylex.keyframes({
   "0%": { scale: 1 },
   "30%": { scale: 1.025 },
   "59.999%": { scale: 0.99 },
   "100%": { scale: 1 },
 })
+
 const errorOdd = stylex.keyframes({
   "0%": { translate: "0 0" },
   "25%": { translate: "-3px 0" },
@@ -36,6 +38,7 @@ const errorOdd = stylex.keyframes({
   "75%": { translate: "-3px 0" },
   "100%": { translate: "0 0" },
 })
+
 const errorEven = stylex.keyframes({
   "0%": { translate: "0 0" },
   "25%": { translate: "-3px 0" },
@@ -43,6 +46,7 @@ const errorEven = stylex.keyframes({
   "74.999%": { translate: "-3px 0" },
   "100%": { translate: "0 0" },
 })
+
 const spin = stylex.keyframes({ to: { transform: "rotate(360deg)" } })
 
 const styles = stylex.create({
@@ -280,7 +284,9 @@ const TOAST_ICONS = {
   success: CircleCheckIcon,
   warning: TriangleAlertIcon,
 } as const
+
 type SwipeDirection = "up" | "down" | "left" | "right"
+
 interface ToastData {
   rootProps?: StyleXComponentProps<
     Omit<
@@ -293,20 +299,28 @@ interface ToastData {
 
 function getSwipeDirection(position: ToastPosition): SwipeDirection[] {
   const vertical: SwipeDirection = position.startsWith("top") ? "up" : "down"
+
   if (position.includes("center")) return [vertical]
+
   return position.includes("left") ? ["left", vertical] : ["right", vertical]
 }
+
 function getReplayStyle(toast: { type?: string; updateKey?: number }) {
   const key = toast.updateKey ?? 0
+
   if (key <= 0) return null
+
   if (toast.type === "error")
     return key % 2 === 0 ? styles.replayErrorEven : styles.replayErrorOdd
+
   return key % 2 === 0 ? styles.replaySuccessEven : styles.replaySuccessOdd
 }
 
 function ToastIcon({ type }: { type?: string }) {
   const Icon = type ? TOAST_ICONS[type as keyof typeof TOAST_ICONS] : null
+
   if (!Icon) return null
+
   return (
     <div {...stylex.props(styles.icon)} data-slot="toast-icon">
       <Icon
@@ -359,6 +373,7 @@ function Toasts({
 }) {
   const { toasts } = Toast.useToastManager()
   const swipeDirection = getSwipeDirection(position)
+
   return (
     <Toast.Portal data-slot="toast-portal" {...portalProps}>
       <Toast.Viewport
@@ -368,9 +383,12 @@ function Toasts({
       >
         {toasts.map((toast) => {
           const toastData = toast.data as ToastData | undefined
+
           const { xstyle: rootXstyle, ...rootRestProps } =
             toastData?.rootProps ?? {}
+
           const rootProps = rootRestProps
+
           return (
             <Toast.Root
               key={toast.id}
@@ -405,6 +423,7 @@ function AnchoredToasts({
   portalProps?: React.ComponentProps<typeof Toast.Portal>
 }) {
   const { toasts } = Toast.useToastManager()
+
   return (
     <Toast.Portal data-slot="toast-portal-anchored" {...portalProps}>
       <Toast.Viewport
@@ -413,12 +432,16 @@ function AnchoredToasts({
       >
         {toasts.map((toast) => {
           const toastData = toast.data as ToastData | undefined
+
           const { xstyle: rootXstyle, ...rootRestProps } =
             toastData?.rootProps ?? {}
+
           const rootProps = rootRestProps
           const positionerProps = toast.positionerProps
+
           if (!positionerProps?.anchor) return null
           const tooltipStyle = toastData?.tooltipStyle ?? false
+
           return (
             <Toast.Positioner
               key={toast.id}
@@ -463,7 +486,9 @@ function AnchoredToasts({
 }
 
 export const toastManager = Toast.createToastManager()
+
 export const anchoredToastManager = Toast.createToastManager()
+
 export type ToastPosition =
   | "top-left"
   | "top-center"
@@ -471,6 +496,7 @@ export type ToastPosition =
   | "bottom-left"
   | "bottom-center"
   | "bottom-right"
+
 export type ToastProviderProps = StyleXComponentProps<
   Toast.Provider.Props,
   {
@@ -478,6 +504,7 @@ export type ToastProviderProps = StyleXComponentProps<
     portalProps?: React.ComponentProps<typeof Toast.Portal>
   }
 >
+
 export function ToastProvider({
   xstyle: consumerXstyle,
   children,
@@ -495,12 +522,14 @@ export function ToastProvider({
     </Toast.Provider>
   )
 }
+
 export type AnchoredToastProviderProps = StyleXComponentProps<
   Toast.Provider.Props,
   {
     portalProps?: React.ComponentProps<typeof Toast.Portal>
   }
 >
+
 export function AnchoredToastProvider({
   xstyle: consumerXstyle,
   children,
@@ -517,4 +546,5 @@ export function AnchoredToastProvider({
     </Toast.Provider>
   )
 }
+
 export { Toast as ToastPrimitive }

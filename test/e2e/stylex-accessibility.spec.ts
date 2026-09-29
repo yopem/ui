@@ -40,10 +40,13 @@ test("buttons expose keyboard focus and minimum targets", async ({ page }) => {
 
   await buttons.first().focus()
   await expect(buttons.first()).toBeFocused()
+
   const focusStyle = await buttons.first().evaluate((element) => {
     const computed = getComputedStyle(element)
+
     return { outline: computed.outline, shadow: computed.boxShadow }
   })
+
   expect(focusStyle.outline !== "none" || focusStyle.shadow !== "none").toBe(
     true,
   )

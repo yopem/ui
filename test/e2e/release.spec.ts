@@ -11,6 +11,7 @@ test("release dry run packs both public packages with resolved catalogs", async 
     encoding: "utf8",
     timeout: 120_000,
   })
+
   const output = `${result.stdout}${result.stderr}`
   writeFileSync(resolve(root, "test-results/release-dry-run.log"), output)
   await test.info().attach("release-dry-run.log", {

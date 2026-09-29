@@ -12,6 +12,7 @@ const sources = import.meta.glob<string>(
     import: "default",
   },
 )
+
 const previewSources = import.meta.glob<string>("./previews/*.tsx", {
   query: "?raw",
   import: "default",
@@ -21,6 +22,7 @@ export const getDocumentation = createServerFn({ method: "GET" })
   .validator((slug: string) => {
     if (typeof slug !== "string" || !/^[a-z0-9-]+$/.test(slug))
       throw new Error("Invalid component name")
+
     return slug
   })
   .handler(async ({ data: slug }) => {
@@ -28,19 +30,23 @@ export const getDocumentation = createServerFn({ method: "GET" })
     const previewLoader = previewSources[`./previews/${slug}.tsx`]
     const previewSource = previewLoader ? await previewLoader() : null
     const allItems = getRequiredItems(slug, previewSource ?? "")
+
     const files = [
       ...new Map(
         allItems.flatMap((item) => item.files).map((file) => [file.path, file]),
       ).values(),
     ]
+
     const api = items
       .filter((item) => item.type === "registry:ui")
       .flatMap((item) => {
         const reference = componentDocs.find(
           (entry) => entry.name === item.name,
         )
+
         if (!reference) throw new Error(`Missing API reference: ${item.name}`)
         const names = new Set(reference.parts.map((part) => part.name))
+
         return reference.parts.map((part) => ({
           ...part,
           ...(part.aliasOf && names.has(part.aliasOf)
@@ -49,6 +55,7 @@ export const getDocumentation = createServerFn({ method: "GET" })
           id: `${item.name}:${part.name}`,
         }))
       })
+
     return {
       title: items.map((item) => item.title).join(" + "),
       description: items.map((item) => item.description).join(" "),
@@ -56,6 +63,7 @@ export const getDocumentation = createServerFn({ method: "GET" })
       previewSource,
       notes: items.flatMap((item) => {
         const doc = componentDocs.find((entry) => entry.name === item.name)
+
         return doc ? [doc.usage, ...doc.notes] : []
       }),
       dependencies: [
@@ -75,7 +83,9 @@ export const getDocumentation = createServerFn({ method: "GET" })
       files: await Promise.all(
         files.map(async (file) => {
           const load = sources[`../../../../packages/registry/src/${file.path}`]
+
           if (!load) throw new Error(`Missing canonical source: ${file.path}`)
+
           return {
             path: file.path,
             target: `src/${file.path}`,

@@ -4,10 +4,15 @@ import { createRequire } from "node:module"
 import { resolve } from "node:path"
 
 const root = resolve(import.meta.dirname, "..")
+
 const docsRequire = createRequire(resolve(root, "apps/docs/package.json"))
+
 const { transformSync } = docsRequire("@babel/core")
+
 const plugin = docsRequire("@stylexjs/babel-plugin")
+
 const { source, filename } = JSON.parse(readFileSync(0, "utf8"))
+
 const result = transformSync(source, {
   filename,
   plugins: [
@@ -21,4 +26,5 @@ const result = transformSync(source, {
     ],
   ],
 })
+
 process.stdout.write(result.code)

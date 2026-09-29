@@ -15,6 +15,7 @@ export interface CatalogItem {
 }
 
 const modules = import.meta.glob<{ Preview: ComponentType }>("./previews/*.tsx")
+
 const compositionOverrides: Record<
   string,
   Pick<CatalogItem, "name" | "title">
@@ -122,8 +123,10 @@ export const catalog: CatalogItem[] = Object.entries(modules)
         .split("/")
         .at(-1)
         ?.replace(/\.tsx$/, "") ?? path
+
     const override = compositionOverrides[slug]
     const title = override?.title ?? titleCase(slug)
+
     return {
       name: override?.name ?? componentIdentifier(slug),
       preview: {
@@ -148,7 +151,9 @@ export function getCatalogItem(slug: string) {
 
 function titleCase(value: string) {
   if (value === "hstack") return "HStack"
+
   if (value === "vstack") return "VStack"
+
   return value
     .replaceAll("-", " ")
     .replace(/\b\w/g, (letter) => letter.toUpperCase())

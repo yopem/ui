@@ -3,6 +3,7 @@ import { Flex } from "@registry/components/ui/flex"
 import { Kbd, KbdGroup } from "@registry/components/ui/kbd"
 import { Text } from "@registry/components/ui/text"
 import * as stylex from "@stylexjs/stylex"
+
 const styles = stylex.create({
   flex: { flexDirection: "column", gap: "calc(0.25rem * 4)" },
   paragraph: {
@@ -20,6 +21,7 @@ const styles = stylex.create({
   },
   flex3: { gap: "calc(0.25rem * 2)" },
 })
+
 export function Preview() {
   return (
     <Flex xstyle={styles.flex}>

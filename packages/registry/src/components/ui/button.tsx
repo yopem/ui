@@ -475,6 +475,7 @@ export function Button({
   const xstyle = consumerXstyle
 
   const isDisabled = Boolean(loading || disabledProp)
+
   const typeValue: React.ButtonHTMLAttributes<HTMLButtonElement>["type"] =
     render ? undefined : "button"
 

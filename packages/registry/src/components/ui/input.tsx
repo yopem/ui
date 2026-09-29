@@ -184,7 +184,9 @@ export type InputProps = StyleXComponentProps<
 
 function getInputSizeStyle(size: InputProps["size"]) {
   if (size === "sm") return styles.small
+
   if (size === "lg") return styles.large
+
   return null
 }
 
@@ -193,6 +195,7 @@ function mergeInputClassName(
   className: InputProps["className"],
 ) {
   if (typeof className !== "function") return inputClassName
+
   return (state: InputPrimitive.State) => clsx(inputClassName, className(state))
 }
 
@@ -209,6 +212,7 @@ export function Input({
   const xstyle = consumerXstyle
 
   const sizeStyle = getInputSizeStyle(size)
+
   const inputProps = stylexProps(
     undefined,
     styles.input,
@@ -218,7 +222,9 @@ export function Input({
     stylex.defaultMarker(),
     xstyle,
   )
+
   const wrapperClassName = typeof className === "string" ? className : undefined
+
   return (
     <span
       {...stylexProps(

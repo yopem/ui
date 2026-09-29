@@ -4,11 +4,13 @@ import { mkdtempSync, rmSync, writeFileSync } from "node:fs"
 import { join, resolve } from "node:path"
 
 const root = resolve(import.meta.dirname, "../..")
+
 const oxlint = join(root, "node_modules/.bin/oxlint")
 
 test("docs lint accepts StyleX and rejects forbidden styling", () => {
   const directory = mkdtempSync(join(root, "apps/docs/src/lint-fixture-"))
   const source = join(directory, "preview.tsx")
+
   try {
     writeFileSync(
       source,
@@ -19,10 +21,12 @@ test("docs lint accepts StyleX and rejects forbidden styling", () => {
       export function Preview() { return <Box xstyle={styles.root}>Content</Box> }
     `,
     )
+
     const valid = spawnSync(oxlint, ["--config", "oxlint.config.ts", source], {
       cwd: root,
       encoding: "utf8",
     })
+
     expect(valid.status, valid.stdout + valid.stderr).toBe(0)
 
     writeFileSync(
@@ -36,6 +40,7 @@ test("docs lint accepts StyleX and rejects forbidden styling", () => {
       }
     `,
     )
+
     const invalid = spawnSync(
       oxlint,
       ["--config", "oxlint.config.ts", source],
@@ -44,6 +49,7 @@ test("docs lint accepts StyleX and rejects forbidden styling", () => {
         encoding: "utf8",
       },
     )
+
     expect(invalid.status).not.toBe(0)
     const output = invalid.stdout + invalid.stderr
     expect(output).toContain("yopem-ui(no-raw-stylex-colors)")

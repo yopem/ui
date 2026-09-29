@@ -12,6 +12,7 @@ import tsx from "@shikijs/langs/tsx"
 import typescript from "@shikijs/langs/typescript"
 import githubDark from "@shikijs/themes/github-dark"
 import githubLight from "@shikijs/themes/github-light"
+
 const highlighter = createHighlighterCoreSync({
   engine: createJavaScriptRegexEngine(),
   langs: [astro, css, javascript, json, shellscript, tsx, typescript],
@@ -20,12 +21,18 @@ const highlighter = createHighlighterCoreSync({
 
 function getCodeLanguage(title: string) {
   if (/\.astro\b/i.test(title)) return "astro"
+
   if (/\.css\b/i.test(title)) return "css"
+
   if (/\.json\b/i.test(title)) return "json"
+
   if (/\.(?:c|m)?js\b/i.test(title)) return "javascript"
+
   if (/\.ts\b/i.test(title) || /(?:return type|signature)$/i.test(title))
     return "typescript"
+
   if (/^install\b/i.test(title)) return "shellscript"
+
   return "tsx"
 }
 

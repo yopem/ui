@@ -331,6 +331,7 @@ const orientationStyles = {
   horizontal: styles.horizontal,
   vertical: styles.vertical,
 } as const
+
 export function groupVariants({
   className,
   orientation = "horizontal",
@@ -391,6 +392,7 @@ export function GroupText({
     ...stylexProps(className, styles.text, groupItemStyles.item, xstyle),
     "data-slot": "group-text",
   }
+
   return useRender({
     defaultTagName: "div",
     props: mergeProps(defaultProps, props),

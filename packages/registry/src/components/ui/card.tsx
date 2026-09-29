@@ -183,12 +183,14 @@ export function Card({
     ...stylexProps(className, styles.card, xstyle),
     "data-slot": "card",
   }
+
   return useRender({
     defaultTagName: "div",
     props: mergeProps<"div">(defaultProps, props),
     render,
   })
 }
+
 export function CardFrame({
   xstyle: consumerXstyle,
   className,
@@ -202,12 +204,14 @@ export function CardFrame({
     ...stylexProps(className, styles.frame, xstyle),
     "data-slot": "card-frame",
   }
+
   return useRender({
     defaultTagName: "div",
     props: mergeProps<"div">(defaultProps, props),
     render,
   })
 }
+
 export function CardFrameHeader({
   xstyle: consumerXstyle,
   className,
@@ -221,12 +225,14 @@ export function CardFrameHeader({
     ...stylexProps(className, styles.frameHeader, xstyle),
     "data-slot": "card-frame-header",
   }
+
   return useRender({
     defaultTagName: "div",
     props: mergeProps<"div">(defaultProps, props),
     render,
   })
 }
+
 export function CardFrameTitle({
   xstyle: consumerXstyle,
   className,
@@ -240,12 +246,14 @@ export function CardFrameTitle({
     ...stylexProps(className, styles.frameTitle, xstyle),
     "data-slot": "card-frame-title",
   }
+
   return useRender({
     defaultTagName: "div",
     props: mergeProps<"div">(defaultProps, props),
     render,
   })
 }
+
 export function CardFrameDescription({
   xstyle: consumerXstyle,
   className,
@@ -259,12 +267,14 @@ export function CardFrameDescription({
     ...stylexProps(className, styles.frameDescription, xstyle),
     "data-slot": "card-frame-description",
   }
+
   return useRender({
     defaultTagName: "div",
     props: mergeProps<"div">(defaultProps, props),
     render,
   })
 }
+
 export function CardFrameAction({
   xstyle: consumerXstyle,
   className,
@@ -278,12 +288,14 @@ export function CardFrameAction({
     ...stylexProps(className, styles.frameAction, xstyle),
     "data-slot": "card-frame-action",
   }
+
   return useRender({
     defaultTagName: "div",
     props: mergeProps<"div">(defaultProps, props),
     render,
   })
 }
+
 export function CardFrameFooter({
   xstyle: consumerXstyle,
   className,
@@ -297,12 +309,14 @@ export function CardFrameFooter({
     ...stylexProps(className, styles.frameFooter, xstyle),
     "data-slot": "card-frame-footer",
   }
+
   return useRender({
     defaultTagName: "div",
     props: mergeProps<"div">(defaultProps, props),
     render,
   })
 }
+
 export function CardHeader({
   xstyle: consumerXstyle,
   separator = false,
@@ -326,12 +340,14 @@ export function CardHeader({
     "data-slot": "card-header",
     "data-separator": separator ? "" : undefined,
   }
+
   return useRender({
     defaultTagName: "div",
     props: mergeProps<"div">(defaultProps, props),
     render,
   })
 }
+
 export function CardTitle({
   xstyle: consumerXstyle,
   className,
@@ -345,12 +361,14 @@ export function CardTitle({
     ...stylexProps(className, styles.title, xstyle),
     "data-slot": "card-title",
   }
+
   return useRender({
     defaultTagName: "div",
     props: mergeProps<"div">(defaultProps, props),
     render,
   })
 }
+
 export function CardDescription({
   xstyle: consumerXstyle,
   className,
@@ -364,12 +382,14 @@ export function CardDescription({
     ...stylexProps(className, styles.description, xstyle),
     "data-slot": "card-description",
   }
+
   return useRender({
     defaultTagName: "div",
     props: mergeProps<"div">(defaultProps, props),
     render,
   })
 }
+
 export function CardAction({
   xstyle: consumerXstyle,
   className,
@@ -383,12 +403,14 @@ export function CardAction({
     ...stylexProps(className, styles.action, xstyle),
     "data-slot": "card-action",
   }
+
   return useRender({
     defaultTagName: "div",
     props: mergeProps<"div">(defaultProps, props),
     render,
   })
 }
+
 export function CardPanel({
   xstyle: consumerXstyle,
   className,
@@ -402,12 +424,14 @@ export function CardPanel({
     ...stylexProps(className, styles.panel, xstyle),
     "data-slot": "card-panel",
   }
+
   return useRender({
     defaultTagName: "div",
     props: mergeProps<"div">(defaultProps, props),
     render,
   })
 }
+
 export function CardFooter({
   xstyle: consumerXstyle,
   separator = false,
@@ -431,6 +455,7 @@ export function CardFooter({
     "data-slot": "card-footer",
     "data-separator": separator ? "" : undefined,
   }
+
   return useRender({
     defaultTagName: "div",
     props: mergeProps<"div">(defaultProps, props),

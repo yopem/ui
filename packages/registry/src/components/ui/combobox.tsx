@@ -315,10 +315,12 @@ export function Combobox<Value, Multiple extends boolean | undefined = false>(
 ) {
   const chipsRef = React.useRef<Element | null>(null)
   const multiple = Boolean(props.multiple)
+
   const contextValue = React.useMemo(
     () => ({ chipsRef, multiple }),
     [chipsRef, multiple],
   )
+
   return (
     <ComboboxContext.Provider value={contextValue}>
       <ComboboxPrimitive.Root {...props} />
@@ -344,6 +346,7 @@ export const ComboboxChipsInput = React.forwardRef<
   const xstyle = consumerXstyle
 
   const sizeValue = size ?? "default"
+
   return (
     <ComboboxPrimitive.Input
       data-size={typeof sizeValue === "string" ? sizeValue : undefined}
@@ -394,6 +397,7 @@ export const ComboboxInput = React.forwardRef<
   const xstyle = consumerXstyle
 
   const sizeValue = size ?? "default"
+
   return (
     <ComboboxPrimitive.InputGroup
       {...stylex.props(styles.inputGroup)}
@@ -450,6 +454,7 @@ export const ComboboxInput = React.forwardRef<
     </ComboboxPrimitive.InputGroup>
   )
 })
+
 export function ComboboxTrigger({
   xstyle: consumerXstyle,
   className,
@@ -501,6 +506,7 @@ export function ComboboxPopup({
 
   const { chipsRef } = React.useContext(ComboboxContext)
   const anchor = anchorProp ?? chipsRef
+
   return (
     <ComboboxPrimitive.Portal {...portalProps}>
       <ComboboxPrimitive.Positioner
@@ -536,6 +542,7 @@ export function ComboboxPopup({
     </ComboboxPrimitive.Portal>
   )
 }
+
 export function ComboboxItem({
   xstyle: consumerXstyle,
   className,
@@ -571,6 +578,7 @@ export function ComboboxItem({
     </ComboboxPrimitive.Item>
   )
 }
+
 export function ComboboxSeparator({
   xstyle: consumerXstyle,
   className,
@@ -589,6 +597,7 @@ export function ComboboxSeparator({
     />
   )
 }
+
 export function ComboboxGroup({
   xstyle: consumerXstyle,
   className,
@@ -604,6 +613,7 @@ export function ComboboxGroup({
     />
   )
 }
+
 export function ComboboxGroupLabel({
   xstyle: consumerXstyle,
   className,
@@ -622,6 +632,7 @@ export function ComboboxGroupLabel({
     />
   )
 }
+
 export function ComboboxEmpty({
   xstyle: consumerXstyle,
   className,
@@ -637,6 +648,7 @@ export function ComboboxEmpty({
     />
   )
 }
+
 export function ComboboxRow({
   xstyle: consumerXstyle,
   className,
@@ -652,8 +664,10 @@ export function ComboboxRow({
     />
   )
 }
+
 export const ComboboxValue: typeof ComboboxPrimitive.Value =
   ComboboxPrimitive.Value
+
 export function ComboboxList({
   xstyle: consumerXstyle,
   className,
@@ -674,6 +688,7 @@ export function ComboboxList({
     </ScrollArea>
   )
 }
+
 export function ComboboxClear({
   xstyle: consumerXstyle,
   className,
@@ -689,6 +704,7 @@ export function ComboboxClear({
     />
   )
 }
+
 export function ComboboxStatus({
   xstyle: consumerXstyle,
   className,
@@ -707,6 +723,7 @@ export function ComboboxStatus({
     />
   )
 }
+
 export const ComboboxCollection: typeof ComboboxPrimitive.Collection =
   ComboboxPrimitive.Collection
 
@@ -726,6 +743,7 @@ export function ComboboxChips({
   const xstyle = consumerXstyle
 
   const { chipsRef } = React.useContext(ComboboxContext)
+
   return (
     <ComboboxPrimitive.Chips
       data-slot="combobox-chips"
@@ -745,6 +763,7 @@ export function ComboboxChips({
     </ComboboxPrimitive.Chips>
   )
 }
+
 export function ComboboxChip({
   className,
   xstyle: consumerXstyle,
@@ -770,6 +789,7 @@ export function ComboboxChip({
     </ComboboxPrimitive.Chip>
   )
 }
+
 export function ComboboxChipRemove({
   className,
   xstyle: consumerXstyle,
@@ -792,6 +812,8 @@ export function ComboboxChipRemove({
     </ComboboxPrimitive.ChipRemove>
   )
 }
+
 export const useComboboxFilter: typeof ComboboxPrimitive.useFilter =
   ComboboxPrimitive.useFilter
+
 export { ComboboxPrimitive }

@@ -11,17 +11,21 @@ export const Route = createFileRoute("/api/og")({
     handlers: {
       GET: async ({ request }) => {
         const url = new URL(request.url)
+
         const title = cleanText(
           url.searchParams.get("title"),
           "Yopem UI · StyleX React UI Library",
           120,
         )
+
         const description = cleanText(
           url.searchParams.get("description"),
           "Accessible React components you copy, own, and customize.",
           220,
         )
+
         const [regularFont, boldFont] = await loadFonts(request)
+
         const png = await renderOgImage(
           title,
           description,
@@ -51,6 +55,7 @@ function loadFonts(request: Request) {
     [regularFontUrl, boldFontUrl].map((fontUrl) =>
       fetch(new URL(fontUrl, request.url)).then((response) => {
         if (!response.ok) throw new Error("Could not load OG image font")
+
         return response.arrayBuffer()
       }),
     ),

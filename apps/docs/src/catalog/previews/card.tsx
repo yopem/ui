@@ -38,6 +38,7 @@ const styles = stylex.create({
     color: "var(--muted-foreground)",
   },
 })
+
 const frameworkOptions = [
   { label: "Next.js", value: "next" },
   { label: "Vite", value: "vite" },

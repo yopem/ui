@@ -1,9 +1,13 @@
 import type { RuleTester } from "oxlint/plugins-dev"
 
 type Rule = Parameters<RuleTester["run"]>[1]
+
 type CreateRule = Extract<Rule, { create: (...args: never[]) => unknown }>
+
 type RuleContext = Parameters<CreateRule["create"]>[0]
+
 type RuleVisitor = ReturnType<CreateRule["create"]>
+
 type JSXOpeningElement = Parameters<
   NonNullable<RuleVisitor["JSXOpeningElement"]>
 >[0]
@@ -19,15 +23,19 @@ interface Plugin {
 type ImportDeclaration = Parameters<
   NonNullable<RuleVisitor["ImportDeclaration"]>
 >[0]
+
 type VariableDeclarator = Parameters<
   NonNullable<RuleVisitor["VariableDeclarator"]>
 >[0]
+
 type ScopedVariable = ReturnType<
   RuleContext["sourceCode"]["getScope"]
 >["variables"][number]
+
 type SourceNode = NonNullable<
   Parameters<RuleContext["sourceCode"]["getText"]>[0]
 > & { type: string }
+
 type StylingMethod =
   | "className"
   | "css"
@@ -72,11 +80,14 @@ const DEFAULT_COMPONENT_SOURCES = [
   "@registry/components/ui/",
   "@yopem-ui/ui",
 ]
+
 export const styleComponentNames =
   "AbsoluteCenter Accordion AccordionContent AccordionItem AccordionPanel AccordionTrigger Alert AlertAction AlertDescription AlertDialogBackdrop AlertDialogClose AlertDialogContent AlertDialogDescription AlertDialogFooter AlertDialogHeader AlertDialogOverlay AlertDialogPopup AlertDialogTitle AlertDialogTrigger AlertDialogViewport AlertTitle AnchoredToastProvider AutocompleteClear AutocompleteEmpty AutocompleteGroup AutocompleteGroupLabel AutocompleteInput AutocompleteItem AutocompleteList AutocompletePopup AutocompleteRow AutocompleteSeparator AutocompleteStatus AutocompleteTrigger Avatar AvatarFallback AvatarImage Badge Bleed Blockquote Box Breadcrumb BreadcrumbEllipsis BreadcrumbItem BreadcrumbLink BreadcrumbList BreadcrumbPage BreadcrumbSeparator Button ButtonGroup ButtonGroupSeparator ButtonGroupText Calendar Card CardAction CardContent CardDescription CardFooter CardFrame CardFrameAction CardFrameDescription CardFrameFooter CardFrameHeader CardFrameTitle CardHeader CardPanel CardTitle Center Checkbox CheckboxGroup Checkmark Clipboard Codeblock Collapsible CollapsibleContent CollapsiblePanel CollapsibleTrigger ComboboxChip ComboboxChipRemove ComboboxChips ComboboxChipsInput ComboboxClear ComboboxEmpty ComboboxGroup ComboboxGroupLabel ComboboxInput ComboboxItem ComboboxList ComboboxPopup ComboboxRow ComboboxSeparator ComboboxStatus ComboboxTrigger CommandDialogBackdrop CommandDialogPopup CommandDialogTrigger CommandDialogViewport CommandEmpty CommandFooter CommandGroup CommandGroupLabel CommandInput CommandItem CommandList CommandPanel CommandSeparator CommandShortcut ContextMenuCheckboxItem ContextMenuGroup ContextMenuGroupLabel ContextMenuItem ContextMenuLinkItem ContextMenuPopup ContextMenuRadioGroup ContextMenuRadioItem ContextMenuSeparator ContextMenuShortcut ContextMenuSubPopup ContextMenuSubTrigger ContextMenuTrigger CursorGrowIcon DialogBackdrop DialogClose DialogContent DialogDescription DialogFooter DialogHeader DialogOverlay DialogPanel DialogPopup DialogTitle DialogTrigger DialogViewport DrawerBackdrop DrawerBar DrawerClose DrawerContent DrawerDescription DrawerFooter DrawerHeader DrawerMenu DrawerMenuCheckboxItem DrawerMenuGroup DrawerMenuGroupLabel DrawerMenuItem DrawerMenuRadioGroup DrawerMenuRadioItem DrawerMenuSeparator DrawerMenuTrigger DrawerPanel DrawerPopup DrawerSwipeArea DrawerTitle DrawerTrigger DrawerViewport DropdownMenuCheckboxItem DropdownMenuContent DropdownMenuGroup DropdownMenuItem DropdownMenuLabel DropdownMenuRadioGroup DropdownMenuRadioItem DropdownMenuSeparator DropdownMenuShortcut DropdownMenuSubContent DropdownMenuSubTrigger DropdownMenuTrigger Em Empty EmptyContent EmptyDescription EmptyHeader EmptyMedia EmptyTitle Field FieldControl FieldDescription FieldError FieldItem FieldLabel Fieldset FieldsetLegend Flex Float Form Frame FrameDescription FrameFooter FrameHeader FramePanel FrameTitle Grid Group GroupSeparator GroupText HStack Heading Highlight HoverCardContent HoverCardTrigger Input InputGroup InputGroupAddon InputGroupInput InputGroupText InputGroupTextarea Kbd KbdGroup Label Link Mark Marquee MenuCheckboxItem MenuGroup MenuGroupLabel MenuItem MenuLinkItem MenuPopup MenuRadioGroup MenuRadioItem MenuSeparator MenuShortcut MenuSubPopup MenuSubTrigger MenuTrigger Meter MeterIndicator MeterLabel MeterTrack MeterValue NativeSelect NumberField NumberFieldDecrement NumberFieldGroup NumberFieldIncrement NumberFieldInput NumberFieldScrubArea OTPField OTPFieldInput OTPFieldSeparator Pagination PaginationContent PaginationEllipsis PaginationItem PaginationLink PaginationNext PaginationPrevious PopoverClose PopoverContent PopoverDescription PopoverPopup PopoverTitle PopoverTrigger PreviewCardPopup PreviewCardTrigger Progress ProgressIndicator ProgressLabel ProgressTrack ProgressValue Prose Radio RadioGroup RadioGroupItem Rating ScrollArea ScrollBar SelectButton SelectContent SelectGroup SelectGroupLabel SelectItem SelectLabel SelectPopup SelectSeparator SelectTrigger SelectValue Separator SheetBackdrop SheetClose SheetContent SheetDescription SheetFooter SheetHeader SheetOverlay SheetPanel SheetPopup SheetTitle SheetTrigger SheetViewport Sidebar SidebarContent SidebarFooter SidebarGroup SidebarGroupAction SidebarGroupContent SidebarGroupLabel SidebarHeader SidebarInput SidebarInset SidebarMenu SidebarMenuAction SidebarMenuBadge SidebarMenuButton SidebarMenuItem SidebarMenuSkeleton SidebarMenuSub SidebarMenuSubButton SidebarMenuSubItem SidebarMenuText SidebarProvider SidebarRail SidebarSeparator SidebarTrigger Skeleton Slider SliderValue Spinner Stack Stat StatDescription StatLabel StatValue Steps StepsItem Switch Table TableBody TableCaption TableCell TableFooter TableHead TableHeader TableRow Tabs TabsContent TabsList TabsPanel TabsTab TabsTrigger Text Textarea ToastProvider Toggle ToggleGroup ToggleGroupItem ToggleGroupSeparator Toolbar ToolbarButton ToolbarGroup ToolbarInput ToolbarLink ToolbarSeparator TooltipContent TooltipPopup TooltipTrigger VStack Wrap".split(
     " ",
   )
+
 const DEFAULT_STYLE_COMPONENTS = new Set(styleComponentNames)
+
 const STYLE_METHODS: readonly StylingMethod[] = [
   "className",
   "css",
@@ -84,6 +95,7 @@ const STYLE_METHODS: readonly StylingMethod[] = [
   "stylexStyle",
   "xstyle",
 ]
+
 function isNode(value: unknown, type?: string): value is SourceNode {
   return (
     typeof value === "object" &&
@@ -119,6 +131,7 @@ function getIdentifier(value: unknown) {
 function getLiteralString(value: unknown) {
   if (!isNode(value)) return null
   const literal = getProperty(value, "value")
+
   return typeof literal === "string" ? literal : null
 }
 
@@ -144,11 +157,14 @@ function getStringArray(value: unknown, fallback: Iterable<string>) {
 
 function getStylingOptions(context: RuleContext): StylingOptions {
   const option = context.options[0]
+
   const record =
     typeof option === "object" && option !== null && !Array.isArray(option)
       ? option
       : {}
+
   const methodOption = getProperty(record, "methods")
+
   const methods = Object.fromEntries(
     STYLE_METHODS.map((method) => [
       method,
@@ -192,12 +208,15 @@ function trackImports(
   options: StylingOptions,
 ) {
   const source = getImportSource(node)
+
   if (source === null || !Array.isArray(node.specifiers)) return
 
   for (const specifier of node.specifiers) {
     const local = getIdentifier(getProperty(specifier, "local"))
+
     if (local === null) continue
     const type = getString(getProperty(specifier, "type"))
+
     const imported =
       getPropertyName(getProperty(specifier, "imported")) ?? "default"
 
@@ -208,12 +227,16 @@ function trackImports(
         bindings.components.set(local, imported)
       }
     }
+
     if (source === "@stylexjs/stylex") {
       if (type === "ImportNamespaceSpecifier" || imported === "default") {
         bindings.stylexNamespaces.add(local)
       }
+
       if (imported === "create") bindings.stylexCreate.add(local)
+
       if (imported === "props") bindings.stylexProps.add(local)
+
       if (imported === "when") bindings.stylexWhen.add(local)
     }
   }
@@ -233,8 +256,10 @@ function getVariable(
     const variable = scope.variables.find(
       (candidate) => candidate.name === name,
     )
+
     if (variable !== undefined) return variable
   }
+
   return undefined
 }
 
@@ -258,15 +283,18 @@ function getComponent(
   options: StylingOptions,
 ): string | null {
   const identifier = getIdentifier(name)
+
   if (identifier !== null) {
     return bindings.components.has(identifier) &&
       isImportBinding(node, identifier, context)
       ? (bindings.components.get(identifier) ?? null)
       : null
   }
+
   if (!isNode(name, "JSXMemberExpression")) return null
   const namespace = getIdentifier(getProperty(name, "object"))
   const property = getIdentifier(getProperty(name, "property"))
+
   return namespace !== null &&
     property !== null &&
     bindings.componentNamespaces.has(namespace) &&
@@ -278,14 +306,17 @@ function getComponent(
 
 function getAttributeName(attribute: unknown) {
   if (!isNode(attribute, "JSXAttribute")) return null
+
   return getIdentifier(getProperty(attribute, "name"))
 }
 
 function getAttributeExpression(attribute: unknown) {
   if (!isNode(attribute, "JSXAttribute")) return null
   const value = getProperty(attribute, "value")
+
   if (!isNode(value, "JSXExpressionContainer")) return null
   const expression = getProperty(value, "expression")
+
   return isNode(expression) ? expression : null
 }
 
@@ -298,9 +329,12 @@ function isNamedCall(
   if (!isNode(value, "CallExpression")) return false
   const callee = getProperty(value, "callee")
   const direct = getIdentifier(callee)
+
   if (direct !== null && names.has(direct)) return true
+
   if (!isNode(callee, "MemberExpression")) return false
   const object = getIdentifier(getProperty(callee, "object"))
+
   return (
     object !== null &&
     namespaces.has(object) &&
@@ -311,14 +345,19 @@ function isNamedCall(
 function isStaticStylexCondition(value: unknown, bindings: ImportBindings) {
   if (!isNode(value, "CallExpression")) return false
   const callee = getProperty(value, "callee")
+
   if (!isNode(callee, "MemberExpression")) return false
   const condition = getPropertyName(getProperty(callee, "property"))
+
   if (condition !== "ancestor" && condition !== "descendant") return false
   const object = getProperty(callee, "object")
   const direct = getIdentifier(object)
+
   if (direct !== null) return bindings.stylexWhen.has(direct)
+
   if (!isNode(object, "MemberExpression")) return false
   const namespace = getIdentifier(getProperty(object, "object"))
+
   return (
     namespace !== null &&
     bindings.stylexNamespaces.has(namespace) &&
@@ -339,11 +378,13 @@ function getCallArguments(value: unknown) {
   const args = isNode(value, "CallExpression")
     ? getProperty(value, "arguments")
     : null
+
   return Array.isArray(args) ? args : []
 }
 
 function getRestyleOptions(context: RuleContext): RestyleOptions {
   const option = context.options[0]
+
   return typeof option === "object" && option !== null && !Array.isArray(option)
     ? option
     : {}
@@ -351,6 +392,7 @@ function getRestyleOptions(context: RuleContext): RestyleOptions {
 
 function matchesPattern(value: string, pattern: string) {
   const escaped = pattern.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
+
   return new RegExp(`^${escaped.replaceAll("\\*", ".*")}$`).test(value)
 }
 
@@ -388,6 +430,7 @@ function categoryOf(property: string) {
 function policyAllows(property: string, policy: StylePolicy) {
   const matches = (entry: string) =>
     entry === categoryOf(property) || matchesPattern(property, entry)
+
   return (
     (policy.allow === undefined || policy.allow.some(matches)) &&
     !policy.deny?.some(matches)
@@ -412,6 +455,7 @@ const COMPONENT_PROPS: Record<string, { variant?: boolean; size?: boolean }> = {
 function defaultRestyleMessage(component: string, property: string) {
   const category = categoryOf(property)
   const props = COMPONENT_PROPS[component]
+
   const alternative =
     category === "spacing" && props?.size
       ? "size"
@@ -421,6 +465,7 @@ function defaultRestyleMessage(component: string, property: string) {
           props?.variant
         ? "variant"
         : null
+
   return alternative === null
     ? `${property} cannot restyle ${component}. Use a component prop or approved StyleX property.`
     : `${property} cannot restyle ${component}. Use its ${alternative} prop first.`
@@ -434,6 +479,7 @@ function getPolicy(component: string, options: RestyleOptions): StylePolicy {
       return false
     }
   })
+
   return {
     allow: contract?.allow ?? options.allow ?? ["layout"],
     deny: contract?.deny ?? options.deny,
@@ -447,11 +493,14 @@ function visitStyleProperties(
 ) {
   if (!isNode(value, "ObjectExpression")) return
   const properties = getProperty(value, "properties")
+
   if (!Array.isArray(properties)) return
+
   for (const item of properties) {
     if (!isNode(item, "Property")) continue
     const property = getPropertyName(getProperty(item, "key"))
     const child = getProperty(item, "value")
+
     if (
       property !== null &&
       !property.startsWith(":") &&
@@ -466,9 +515,12 @@ function visitStyleProperties(
 
 function getStyleLiterals(value: unknown): string[] {
   const literal = getLiteralString(value)
+
   if (literal !== null) return [literal]
+
   if (!isNode(value, "ObjectExpression")) return []
   const properties = getProperty(value, "properties")
+
   return Array.isArray(properties)
     ? properties.flatMap((property) =>
         getStyleLiterals(getProperty(property, "value")),
@@ -484,8 +536,10 @@ function resolveStyle(
   onStyle: (style: unknown) => void,
 ) {
   if (!isNode(value)) return
+
   if (value.type === "ArrayExpression") {
     const elements = getProperty(value, "elements")
+
     if (Array.isArray(elements)) {
       for (const element of elements)
         resolveStyle(element, declarations, node, context, onStyle)
@@ -518,6 +572,7 @@ function resolveStyle(
   } else if (value.type === "MemberExpression") {
     const name = getIdentifier(getProperty(value, "object"))
     const key = getPropertyName(getProperty(value, "property"))
+
     if (
       name !== null &&
       key !== null &&
@@ -525,6 +580,7 @@ function resolveStyle(
     ) {
       const variable = getVariable(node, name, context)
       const style = variable && declarations.get(variable)?.get(key)
+
       if (style !== undefined) onStyle(style)
     }
   }
@@ -538,6 +594,7 @@ function trackStyleDeclaration(
 ) {
   const name = getIdentifier(node.id)
   const variable = name === null ? undefined : getVariable(node, name, context)
+
   if (
     variable === undefined ||
     !isNamedCall(
@@ -549,16 +606,20 @@ function trackStyleDeclaration(
   )
     return
   const root = getCallArguments(node.init)[0]
+
   if (!isNode(root, "ObjectExpression")) return
   const styles = new Map<string, unknown>()
   const properties = getProperty(root, "properties")
+
   if (Array.isArray(properties)) {
     for (const item of properties) {
       if (!isNode(item, "Property")) continue
       const key = getPropertyName(getProperty(item, "key"))
+
       if (key !== null) styles.set(key, getProperty(item, "value"))
     }
   }
+
   declarations.set(variable, styles)
 }
 
@@ -567,12 +628,17 @@ function classifyMethod(
   bindings: ImportBindings,
 ): StylingMethod | null {
   const name = getAttributeName(attribute)
+
   const expression = isNode(attribute, "JSXSpreadAttribute")
     ? getProperty(attribute, "argument")
     : getAttributeExpression(attribute)
+
   if (name === "xstyle") return "xstyle"
+
   if (name === "className") return "className"
+
   if (name === "css") return "css"
+
   if (name === "style") {
     if (
       isNode(expression, "MemberExpression") &&
@@ -580,14 +646,17 @@ function classifyMethod(
       isStylexPropsCall(getProperty(expression, "object"), bindings)
     )
       return "stylexStyle"
+
     return "reactStyle"
   }
+
   if (
     isNode(attribute, "JSXSpreadAttribute") &&
     isStylexPropsCall(expression, bindings)
   ) {
     return "stylexStyle"
   }
+
   return null
 }
 
@@ -663,9 +732,11 @@ const preferLayoutPrimitivesRule: Rule = {
         "span",
       ]),
     )
+
     return {
       JSXOpeningElement(node: JSXOpeningElement) {
         const element = getIdentifier(node.name)
+
         if (element !== null && elements.has(element)) {
           context.report({
             data: { element },
@@ -716,6 +787,7 @@ const noRestyleRule: Rule = {
     const bindings = createImportBindings()
     const declarations = new Map<ScopedVariable, Map<string, unknown>>()
     const elements: JSXOpeningElement[] = []
+
     return {
       ImportDeclaration(node: ImportDeclaration) {
         trackImports(node, bindings, options)
@@ -735,6 +807,7 @@ const noRestyleRule: Rule = {
             context,
             options,
           )
+
           if (
             component === null ||
             policyOptions.exclude?.some((pattern) => {
@@ -747,6 +820,7 @@ const noRestyleRule: Rule = {
           )
             continue
           const policy = getPolicy(component, policyOptions)
+
           for (const attribute of node.attributes) {
             if (getAttributeName(attribute) !== "xstyle") continue
             resolveStyle(
@@ -757,11 +831,13 @@ const noRestyleRule: Rule = {
               (style) => {
                 visitStyleProperties(style, (property, propertyNode) => {
                   if (policyAllows(property, policy)) return
+
                   const message = (
                     policy.message ?? defaultRestyleMessage(component, property)
                   )
                     .replaceAll("{{property}}", property)
                     .replaceAll("{{component}}", component)
+
                   context.report({
                     messageId: "disallowed",
                     data: { message },
@@ -791,6 +867,7 @@ const noRawStylexColorsRule: Rule = {
   create(context: RuleContext) {
     const bindings = createImportBindings()
     const options = getStylingOptions(context)
+
     return {
       ImportDeclaration(node: ImportDeclaration) {
         trackImports(node, bindings, options)
@@ -806,9 +883,12 @@ const noRawStylexColorsRule: Rule = {
         )
           return
         const root = getCallArguments(node.init)[0]
+
         if (!isNode(root, "ObjectExpression")) return
         const styles = getProperty(root, "properties")
+
         if (!Array.isArray(styles)) return
+
         for (const style of styles) {
           if (!isNode(style, "Property")) continue
           visitStyleProperties(
@@ -820,9 +900,11 @@ const noRawStylexColorsRule: Rule = {
                 )
               )
                 return
+
               const values = getStyleLiterals(
                 getProperty(propertyNode, "value"),
               )
+
               if (
                 values.some((value) =>
                   /^(?:#[\da-f]{3,8}|(?:rgb|hsl|oklch|oklab|lab|lch|color)\()/i.test(
@@ -846,32 +928,40 @@ const noRawStylexColorsRule: Rule = {
 
 function containsAtom(value: unknown, atoms: ReadonlySet<string>): boolean {
   if (!isNode(value)) return false
+
   if (value.type === "Identifier") return atoms.has(getIdentifier(value) ?? "")
+
   if (value.type === "MemberExpression") {
     return containsAtom(getProperty(value, "object"), atoms)
   }
+
   if (value.type === "CallExpression") {
     return containsAtom(getProperty(value, "callee"), atoms)
   }
+
   if (value.type === "ArrayExpression") {
     const elements = getProperty(value, "elements")
+
     return (
       Array.isArray(elements) &&
       elements.some((entry) => containsAtom(entry, atoms))
     )
   }
+
   if (value.type === "ConditionalExpression") {
     return (
       containsAtom(getProperty(value, "consequent"), atoms) ||
       containsAtom(getProperty(value, "alternate"), atoms)
     )
   }
+
   if (value.type === "LogicalExpression") {
     return (
       containsAtom(getProperty(value, "left"), atoms) ||
       containsAtom(getProperty(value, "right"), atoms)
     )
   }
+
   return false
 }
 
@@ -907,14 +997,18 @@ const atomsRule: Rule = {
     const bindings = createImportBindings()
     const options = getStylingOptions(context)
     const atoms = new Set<string>()
+
     return {
       ImportDeclaration(node: ImportDeclaration) {
         trackImports(node, bindings, options)
+
         if (getImportSource(node) === source) {
           for (const specifier of node.specifiers) {
             const name = getIdentifier(getProperty(specifier, "local"))
+
             if (name !== null) atoms.add(name)
           }
+
           if (mode === "disallow")
             context.report({ messageId: "disallowed", node })
         }
@@ -934,10 +1028,13 @@ const atomsRule: Rule = {
       },
       JSXOpeningElement(node: JSXOpeningElement) {
         if (mode !== "enforce") return
+
         for (const attribute of node.attributes) {
           const name = getAttributeName(attribute)
+
           if (name !== "xstyle" && name !== "sx") continue
           const expression = getAttributeExpression(attribute)
+
           if (expression !== null && !containsAtom(expression, atoms)) {
             context.report({ messageId: "requiredJsx", node: attribute })
           }
@@ -960,6 +1057,7 @@ const enforceStylingMethodsRule: Rule = {
   create(context: RuleContext) {
     const options = getStylingOptions(context)
     const bindings = createImportBindings()
+
     return {
       ImportDeclaration(node: ImportDeclaration) {
         trackImports(node, bindings, options)
@@ -967,8 +1065,10 @@ const enforceStylingMethodsRule: Rule = {
       JSXOpeningElement(node: JSXOpeningElement) {
         if (getComponent(node.name, node, bindings, context, options) === null)
           return
+
         for (const attribute of node.attributes) {
           const method = classifyMethod(attribute, bindings)
+
           if (method === null || options.methods[method]) continue
           context.report({
             data: { alternatives: getStyleMethodAlternatives(options), method },
@@ -996,6 +1096,7 @@ const validPolymorphicAsRule: Rule = {
   create(context: RuleContext) {
     const options = getStylingOptions(context)
     const bindings = createImportBindings()
+
     return {
       ImportDeclaration(node: ImportDeclaration) {
         trackImports(node, bindings, options)
@@ -1008,19 +1109,25 @@ const validPolymorphicAsRule: Rule = {
           context,
           options,
         )
+
         if (component !== "Box" && component !== "Heading") return
+
         const attribute = node.attributes.find(
           (candidate) => getAttributeName(candidate) === "as",
         )
+
         if (attribute === undefined) return
         const value = getProperty(attribute, "value")
         const tag = getLiteralString(value)
+
         if (component === "Heading") {
           if (tag === null || !/^h[1-6]$/.test(tag)) {
             context.report({ messageId: "invalidHeading", node: attribute })
           }
+
           return
         }
+
         if (
           tag === null ||
           (!HTML_ELEMENTS.has(tag) && !SVG_ELEMENTS.has(tag))
@@ -1051,6 +1158,7 @@ const staticStylexRule: Rule = {
   create(context: RuleContext) {
     const bindings = createImportBindings()
     const options = getStylingOptions(context)
+
     return {
       ImportDeclaration(node: ImportDeclaration) {
         trackImports(node, bindings, options)
@@ -1066,19 +1174,28 @@ const staticStylexRule: Rule = {
         ) {
           return
         }
+
         const root = getCallArguments(node.init)[0]
+
         if (!isNode(root, "ObjectExpression")) {
           context.report({ messageId: "nonStatic", node })
+
           return
         }
+
         const stack: unknown[] = [root]
+
         while (stack.length > 0) {
           const current = stack.pop()
+
           if (!isNode(current, "ObjectExpression")) continue
           const properties = getProperty(current, "properties")
+
           if (!Array.isArray(properties)) continue
+
           for (const property of properties) {
             if (!isNode(property)) continue
+
             if (
               property.type !== "Property" ||
               (getProperty(property, "computed") === true &&
@@ -1090,7 +1207,9 @@ const staticStylexRule: Rule = {
               context.report({ messageId: "nonStatic", node: property })
               continue
             }
+
             const value = getProperty(property, "value")
+
             if (isNode(value, "ObjectExpression")) stack.push(value)
           }
         }

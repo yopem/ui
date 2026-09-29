@@ -84,8 +84,10 @@ const primitiveStyles = stylex.create({
   },
   main: { minInlineSize: "calc(var(--spacing) * 0)", outline: "none" },
 })
+
 export function DocumentationLayout({ children }: { children: ReactNode }) {
   const [mobileOpen, setMobileOpen] = useState(false)
+
   return (
     <Box xstyle={primitiveStyles.box}>
       <UiLink href="#docs-content" xstyle={primitiveStyles.uiLink}>

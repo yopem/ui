@@ -42,6 +42,7 @@ const styles = stylex.create({
   flex5: { alignItems: "center", gap: "0.25rem" },
   flex6: { alignItems: "center", gap: "0.25rem" },
 })
+
 export function Preview() {
   return (
     <PreviewCard>

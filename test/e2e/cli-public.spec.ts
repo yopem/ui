@@ -29,6 +29,7 @@ test("packed CLI installs from local registry and runs published lint plugin", a
       encoding: "utf8",
       timeout: 120_000,
     })
+
     const output = `${result.stdout}${result.stderr}`
     logs.push(`${args.join(" ")}\n${output}`)
     expect(result.status, output).toBe(0)
@@ -45,7 +46,9 @@ test("packed CLI installs from local registry and runs published lint plugin", a
         directory,
       )
     }
+
     const license = readFileSync(join(root, "LICENSE"), "utf8")
+
     for (const archive of readdirSync(directory).filter((name) =>
       name.endsWith(".tgz"),
     )) {
@@ -56,16 +59,20 @@ test("packed CLI installs from local registry and runs published lint plugin", a
           encoding: "utf8",
         },
       )
+
       expect(contents.status, `${archive}: ${contents.stderr}`).toBe(0)
       expect(contents.stdout).toBe(license)
+
       const manifest = spawnSync(
         "tar",
         ["-xOf", join(directory, archive), "package/package.json"],
         { encoding: "utf8" },
       )
+
       expect(manifest.status, `${archive}: ${manifest.stderr}`).toBe(0)
       expect(manifest.stdout).not.toContain("catalog:")
     }
+
     mkdirSync(join(project, "src"), { recursive: true })
     writeFileSync(
       join(project, "package.json"),
@@ -103,6 +110,7 @@ test("packed CLI installs from local registry and runs published lint plugin", a
     const edited = readFileSync(tokens, "utf8")
     run(project, "bunx", "yopem-ui", "add", "box")
     run(project, "bunx", "yopem-ui", "add", "container")
+
     for (const name of [
       "highlight",
       "rating",
@@ -117,6 +125,7 @@ test("packed CLI installs from local registry and runs published lint plugin", a
         readFileSync(join(project, `src/components/ui/${name}.tsx`), "utf8"),
       ).toContain("data-slot")
     }
+
     expect(
       readFileSync(join(project, "src/components/ui/container.tsx"), "utf8"),
     ).toContain("export function Container")
@@ -127,10 +136,12 @@ test("packed CLI installs from local registry and runs published lint plugin", a
       join(project, "src/invalid.tsx"),
       'import { Box } from "@/components/ui/box"\nexport const Invalid = <Box as="fake-tag" />',
     )
+
     const invalid = spawnSync("bun", ["run", "lint"], {
       cwd: project,
       encoding: "utf8",
     })
+
     logs.push(`invalid lint\n${invalid.stdout}${invalid.stderr}`)
     expect(invalid.status).toBe(1)
     expect(`${invalid.stdout}${invalid.stderr}`).toContain(
@@ -140,10 +151,12 @@ test("packed CLI installs from local registry and runs published lint plugin", a
       join(project, "src/invalid.tsx"),
       'import { Text } from "@/components/ui/text"\nimport { tokens } from "@/styles/tokens.stylex"\nimport * as stylex from "@stylexjs/stylex"\nconst styles = stylex.create({ root: { color: tokens["--foreground"] } })\nexport const Invalid = <Text xstyle={styles.root}>Text</Text>',
     )
+
     const invalidText = spawnSync("bun", ["run", "lint"], {
       cwd: project,
       encoding: "utf8",
     })
+
     logs.push(`invalid Text lint\n${invalidText.stdout}${invalidText.stderr}`)
     expect(invalidText.status).toBe(1)
     expect(`${invalidText.stdout}${invalidText.stderr}`).toContain(

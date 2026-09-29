@@ -4,6 +4,7 @@ import { tokens } from "@registry/styles/tokens.stylex"
 import { useTheme } from "@registry/theme/theme-provider"
 import * as stylex from "@stylexjs/stylex"
 import { MonitorIcon, MoonIcon, SunIcon } from "lucide-react"
+
 const styles = stylex.create({
   appearance: {
     borderWidth: 0,
@@ -55,6 +56,7 @@ const styles = stylex.create({
     fontWeight: { ":is([aria-pressed=true], [data-pressed])": 600 },
   },
 })
+
 const themeOptions = [
   { icon: MonitorIcon, label: "Auto", value: "system" },
   { icon: SunIcon, label: "Light", value: "light" },
@@ -63,6 +65,7 @@ const themeOptions = [
 
 export function ThemeToggle() {
   const { theme, setTheme } = useTheme()
+
   return (
     <Box as="fieldset" aria-label="Appearance" xstyle={styles.appearance}>
       <Grid xstyle={styles.grid}>

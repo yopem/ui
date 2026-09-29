@@ -1,9 +1,11 @@
 export function getSnippetDependencies(source: string) {
   const components = new Set<string>()
   const packages = new Set<string>()
+
   // ponytail: snippets use static imports; use a TS parser if dynamic imports are added.
   for (const match of source.matchAll(/\bfrom\s+["']([^"']+)["']/g)) {
     const path = match[1]!
+
     if (path.startsWith("@/components/ui/")) {
       components.add(path.split("/").at(-1)!)
     } else if (!path.startsWith("@/")) {
@@ -15,5 +17,6 @@ export function getSnippetDependencies(source: string) {
       )
     }
   }
+
   return { components: [...components], packages: [...packages] }
 }

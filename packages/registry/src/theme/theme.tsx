@@ -8,8 +8,11 @@ import {
 import * as stylex from "@stylexjs/stylex"
 
 export type Theme = "dark" | "light" | "system"
+
 export type ResolvedTheme = Exclude<Theme, "system">
+
 export const STORAGE_KEY = "yopem-ui-theme"
+
 export const MEDIA_QUERY = "(prefers-color-scheme: dark)"
 
 const schemes = stylex.create({
@@ -29,12 +32,14 @@ export function createThemeConfig(themes: {
     themes.light,
     schemes.light,
   )
+
   const dark = stylex.props(
     themeMarker,
     rootStyles.html,
     themes.dark,
     schemes.dark,
   )
+
   return {
     light,
     dark,
@@ -52,8 +57,11 @@ export const themeConfig = createThemeConfig({
   light: lightTheme,
   dark: darkTheme,
 })
+
 export type ThemeConfig = typeof themeConfig
+
 export const themeClasses = themeConfig.classes
+
 export const themeClassNames = {
   light: themeConfig.light.className ?? "",
   dark: themeConfig.dark.className ?? "",
@@ -87,6 +95,8 @@ export function ThemeScript({
     classes: themes.classes,
     media: MEDIA_QUERY,
   }).replace(/</g, "\\u003c")
+
   const script = `(()=>{const c=${config},r=document.documentElement;let t=c.defaultTheme;try{const s=localStorage.getItem(c.storageKey);if(s==="light"||s==="dark"||s==="system")t=s}catch{}const v=t==="system"?(matchMedia(c.media).matches?"dark":"light"):t;r.classList.remove(...c.classes.light,...c.classes.dark);r.classList.add(...c.classes[v]);r.dataset.theme=v})()`
+
   return <script dangerouslySetInnerHTML={{ __html: script }} nonce={nonce} />
 }

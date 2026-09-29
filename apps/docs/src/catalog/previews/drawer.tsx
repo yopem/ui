@@ -10,6 +10,7 @@ import {
   DrawerTrigger,
 } from "@registry/components/ui/drawer"
 import * as stylex from "@stylexjs/stylex"
+
 const styles = stylex.create({
   drawerHeader: { textAlign: "center" },
   drawerFooter: {

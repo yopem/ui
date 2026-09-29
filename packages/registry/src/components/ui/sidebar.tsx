@@ -28,10 +28,15 @@ import { PanelLeftIcon } from "lucide-react"
 import * as React from "react"
 
 const SIDEBAR_COOKIE_NAME = "sidebar_state"
+
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7
+
 const SIDEBAR_WIDTH = "16rem"
+
 const SIDEBAR_WIDTH_MOBILE = "18rem"
+
 const SIDEBAR_WIDTH_ICON = "3rem"
+
 const SIDEBAR_KEYBOARD_SHORTCUT = "b"
 
 export const sidebarSlotStyles = stylex.create({
@@ -517,6 +522,7 @@ const menuButtonSizeStyles = {
   lg: styles.menuButtonLarge,
   sm: styles.menuButtonSmall,
 } as const
+
 const menuButtonVariantStyles = {
   default: null,
   outline: styles.menuButtonOutline,
@@ -524,15 +530,19 @@ const menuButtonVariantStyles = {
 
 function useIsMobile() {
   const query = "(max-width: 799px)"
+
   const subscribe = React.useCallback((callback: () => void) => {
     const media = window.matchMedia(query)
     media.addEventListener("change", callback)
+
     return () => media.removeEventListener("change", callback)
   }, [])
+
   const getSnapshot = React.useCallback(
     () => typeof window !== "undefined" && window.matchMedia(query).matches,
     [],
   )
+
   return React.useSyncExternalStore(subscribe, getSnapshot, () => false)
 }
 
@@ -545,13 +555,17 @@ export interface SidebarContextProps {
   isMobile: boolean
   toggleSidebar: () => void
 }
+
 export const SidebarContext = React.createContext<SidebarContextProps | null>(
   null,
 )
+
 export function useSidebar() {
   const context = React.useContext(SidebarContext)
+
   if (!context)
     throw new Error("useSidebar must be used within a SidebarProvider.")
+
   return context
 }
 
@@ -578,9 +592,11 @@ export function SidebarProvider({
   const [openMobile, setOpenMobile] = React.useState(false)
   const [_open, _setOpen] = React.useState(defaultOpen)
   const open = openProp ?? _open
+
   const setOpen = React.useCallback(
     async (value: boolean | ((value: boolean) => boolean)) => {
       const next = typeof value === "function" ? value(open) : value
+
       if (setOpenProp) setOpenProp(next)
       else _setOpen(next)
       await cookieStore.set({
@@ -592,11 +608,13 @@ export function SidebarProvider({
     },
     [open, setOpenProp],
   )
+
   const toggleSidebar = React.useCallback(
     () =>
       isMobile ? setOpenMobile((value) => !value) : setOpen((value) => !value),
     [isMobile, setOpen],
   )
+
   React.useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (
@@ -607,10 +625,13 @@ export function SidebarProvider({
         toggleSidebar()
       }
     }
+
     window.addEventListener("keydown", handleKeyDown)
+
     return () => window.removeEventListener("keydown", handleKeyDown)
   }, [toggleSidebar])
   const state: SidebarContextProps["state"] = open ? "expanded" : "collapsed"
+
   const contextValue = React.useMemo(
     () => ({
       isMobile,
@@ -623,6 +644,7 @@ export function SidebarProvider({
     }),
     [isMobile, open, openMobile, setOpen, state, toggleSidebar],
   )
+
   const wrapperProps = mergeProps(
     stylexProps(
       className,
@@ -632,6 +654,7 @@ export function SidebarProvider({
     ),
     props,
   )
+
   return (
     <SidebarContext.Provider value={contextValue}>
       <div {...wrapperProps} data-slot="sidebar-wrapper">
@@ -661,6 +684,7 @@ export function Sidebar({
   const xstyle = consumerXstyle
 
   const { isMobile, state, openMobile, setOpenMobile } = useSidebar()
+
   if (collapsible === "none")
     return (
       <div
@@ -673,6 +697,7 @@ export function Sidebar({
         {children}
       </div>
     )
+
   if (isMobile)
     return (
       <Sheet onOpenChange={setOpenMobile} open={openMobile}>
@@ -694,6 +719,7 @@ export function Sidebar({
       </Sheet>
     )
   const padded = variant === "floating" || variant === "inset"
+
   return (
     <div
       {...stylex.props(styles.desktopRoot)}
@@ -739,6 +765,7 @@ export function SidebarTrigger({
   const xstyle = consumerXstyle
 
   const { toggleSidebar } = useSidebar()
+
   return (
     <Button
       className={className}
@@ -760,6 +787,7 @@ export function SidebarTrigger({
     </Button>
   )
 }
+
 export function SidebarRail({
   xstyle: consumerXstyle,
   className,
@@ -769,6 +797,7 @@ export function SidebarRail({
   const xstyle = consumerXstyle
 
   const { toggleSidebar } = useSidebar()
+
   return (
     <button
       aria-label="Toggle Sidebar"
@@ -783,6 +812,7 @@ export function SidebarRail({
     />
   )
 }
+
 export function SidebarInset({
   xstyle: consumerXstyle,
   className,
@@ -798,6 +828,7 @@ export function SidebarInset({
     />
   )
 }
+
 export function SidebarInput({
   xstyle: consumerXstyle,
   className,
@@ -816,6 +847,7 @@ export function SidebarInput({
     />
   )
 }
+
 export function SidebarHeader({
   xstyle: consumerXstyle,
   className,
@@ -835,6 +867,7 @@ export function SidebarHeader({
     />
   )
 }
+
 export function SidebarFooter({
   xstyle: consumerXstyle,
   className,
@@ -854,6 +887,7 @@ export function SidebarFooter({
     />
   )
 }
+
 export function SidebarSeparator({
   xstyle: consumerXstyle,
   className,
@@ -872,6 +906,7 @@ export function SidebarSeparator({
     />
   )
 }
+
 export function SidebarContent({
   xstyle: consumerXstyle,
   className,
@@ -898,6 +933,7 @@ export function SidebarContent({
     </ScrollArea>
   )
 }
+
 export function SidebarGroup({
   xstyle: consumerXstyle,
   className,
@@ -914,6 +950,7 @@ export function SidebarGroup({
     />
   )
 }
+
 export function SidebarGroupLabel({
   xstyle: consumerXstyle,
   className,
@@ -928,12 +965,14 @@ export function SidebarGroupLabel({
     "data-sidebar": "group-label",
     "data-slot": "sidebar-group-label",
   }
+
   return useRender({
     defaultTagName: "div",
     props: mergeProps(defaultProps, props),
     render,
   })
 }
+
 export function SidebarGroupAction({
   xstyle: consumerXstyle,
   className,
@@ -948,12 +987,14 @@ export function SidebarGroupAction({
     "data-sidebar": "group-action",
     "data-slot": "sidebar-group-action",
   }
+
   return useRender({
     defaultTagName: "button",
     props: mergeProps(defaultProps, props),
     render,
   })
 }
+
 export function SidebarGroupContent({
   xstyle: consumerXstyle,
   className,
@@ -973,6 +1014,7 @@ export function SidebarGroupContent({
     />
   )
 }
+
 export function SidebarMenu({
   xstyle: consumerXstyle,
   className,
@@ -989,6 +1031,7 @@ export function SidebarMenu({
     />
   )
 }
+
 export function SidebarMenuItem({
   xstyle: consumerXstyle,
   className,
@@ -1031,6 +1074,7 @@ export function SidebarMenuButton({
   const xstyle = consumerXstyle
 
   const { isMobile, state } = useSidebar()
+
   const defaultProps = {
     ...stylexProps(
       className,
@@ -1044,14 +1088,18 @@ export function SidebarMenuButton({
     "data-size": size,
     "data-slot": "sidebar-menu-button",
   }
+
   const buttonElement = useRender({
     defaultTagName: "button",
     props: mergeProps<"button">(defaultProps, props),
     render,
   })
+
   if (!tooltip) return buttonElement
+
   const popupProps =
     typeof tooltip === "string" ? { children: tooltip } : tooltip
+
   return (
     <Tooltip>
       <TooltipTrigger
@@ -1066,6 +1114,7 @@ export function SidebarMenuButton({
     </Tooltip>
   )
 }
+
 export function SidebarMenuAction({
   xstyle: consumerXstyle,
   className,
@@ -1091,12 +1140,14 @@ export function SidebarMenuAction({
     "data-sidebar": "menu-action",
     "data-slot": "sidebar-menu-action",
   }
+
   return useRender({
     defaultTagName: "button",
     props: mergeProps<"button">(defaultProps, props),
     render,
   })
 }
+
 export function SidebarMenuBadge({
   xstyle: consumerXstyle,
   className,
@@ -1113,6 +1164,7 @@ export function SidebarMenuBadge({
     />
   )
 }
+
 export function SidebarMenuSkeleton({
   xstyle: consumerXstyle,
   className,
@@ -1125,6 +1177,7 @@ export function SidebarMenuSkeleton({
   const [width] = React.useState(
     () => `${Math.floor(Math.random() * 40) + 50}%`,
   )
+
   return (
     <div
       data-sidebar="menu-skeleton"
@@ -1151,6 +1204,7 @@ export function SidebarMenuSkeleton({
     </div>
   )
 }
+
 export function SidebarMenuSub({
   xstyle: consumerXstyle,
   className,
@@ -1170,6 +1224,7 @@ export function SidebarMenuSub({
     />
   )
 }
+
 export function SidebarMenuSubItem({
   xstyle: consumerXstyle,
   className,
@@ -1186,6 +1241,7 @@ export function SidebarMenuSubItem({
     />
   )
 }
+
 export function SidebarMenuSubButton({
   xstyle: consumerXstyle,
   size = "md",
@@ -1215,6 +1271,7 @@ export function SidebarMenuSubButton({
     "data-size": size,
     "data-slot": "sidebar-menu-sub-button",
   }
+
   return useRender({
     defaultTagName: "a",
     props: mergeProps<"a">(defaultProps, props),

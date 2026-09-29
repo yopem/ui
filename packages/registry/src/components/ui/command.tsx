@@ -152,10 +152,13 @@ const styles = stylex.create({
 
 export const CommandDialog: typeof CommandDialogPrimitive.Root =
   CommandDialogPrimitive.Root
+
 export const CommandDialogPortal: typeof CommandDialogPrimitive.Portal =
   CommandDialogPrimitive.Portal
+
 export const CommandCreateHandle: typeof CommandDialogPrimitive.createHandle =
   CommandDialogPrimitive.createHandle
+
 export function CommandDialogTrigger({
   xstyle: consumerXstyle,
   className,
@@ -171,6 +174,7 @@ export function CommandDialogTrigger({
     />
   )
 }
+
 export function CommandDialogBackdrop({
   xstyle: consumerXstyle,
   className,
@@ -189,6 +193,7 @@ export function CommandDialogBackdrop({
     />
   )
 }
+
 export function CommandDialogViewport({
   xstyle: consumerXstyle,
   className,
@@ -207,6 +212,7 @@ export function CommandDialogViewport({
     />
   )
 }
+
 export function CommandDialogPopup({
   xstyle: consumerXstyle,
   className,
@@ -239,6 +245,7 @@ export function CommandDialogPopup({
     </CommandDialogPortal>
   )
 }
+
 export function Command({
   autoHighlight = "always",
   keepHighlight = true,
@@ -254,6 +261,7 @@ export function Command({
     />
   )
 }
+
 export function CommandInput({
   xstyle: consumerXstyle,
   className,
@@ -278,6 +286,7 @@ export function CommandInput({
     </div>
   )
 }
+
 export function CommandList({
   xstyle: consumerXstyle,
   className,
@@ -295,6 +304,7 @@ export function CommandList({
     />
   )
 }
+
 export function CommandEmpty({
   xstyle: consumerXstyle,
   className,
@@ -312,6 +322,7 @@ export function CommandEmpty({
     />
   )
 }
+
 export function CommandPanel({
   xstyle: consumerXstyle,
   className,
@@ -327,6 +338,7 @@ export function CommandPanel({
     />
   )
 }
+
 export function CommandGroup({
   xstyle: consumerXstyle,
   className,
@@ -344,6 +356,7 @@ export function CommandGroup({
     />
   )
 }
+
 export function CommandGroupLabel({
   xstyle: consumerXstyle,
   className,
@@ -361,7 +374,9 @@ export function CommandGroupLabel({
     />
   )
 }
+
 export const CommandCollection = AutocompleteCollection
+
 export function CommandItem({
   xstyle: consumerXstyle,
   className,
@@ -379,6 +394,7 @@ export function CommandItem({
     />
   )
 }
+
 export function CommandSeparator({
   xstyle: consumerXstyle,
   className,
@@ -396,6 +412,7 @@ export function CommandSeparator({
     />
   )
 }
+
 export function CommandShortcut({
   xstyle: consumerXstyle,
   className,
@@ -414,6 +431,7 @@ export function CommandShortcut({
     />
   )
 }
+
 export function CommandFooter({
   xstyle: consumerXstyle,
   className,
@@ -432,4 +450,5 @@ export function CommandFooter({
     />
   )
 }
+
 export { CommandDialogPrimitive }

@@ -63,8 +63,10 @@ const styles = stylex.create({
 
 export const TooltipCreateHandle: typeof TooltipPrimitive.createHandle =
   TooltipPrimitive.createHandle
+
 export const TooltipProvider: typeof TooltipPrimitive.Provider =
   TooltipPrimitive.Provider
+
 export const Tooltip: typeof TooltipPrimitive.Root = TooltipPrimitive.Root
 
 export function TooltipTrigger({

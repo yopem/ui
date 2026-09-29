@@ -26,6 +26,7 @@ export function Fieldset({
     />
   )
 }
+
 export function FieldsetLegend({
   xstyle: consumerXstyle,
   className,
@@ -44,4 +45,5 @@ export function FieldsetLegend({
     />
   )
 }
+
 export { FieldsetPrimitive }

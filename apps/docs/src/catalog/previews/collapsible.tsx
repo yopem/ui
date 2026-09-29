@@ -47,6 +47,7 @@ const styles = stylex.create({
     fontFamily: '"Geist Mono", ui-monospace, monospace',
   },
 })
+
 export function Preview() {
   return (
     <Collapsible>

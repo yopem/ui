@@ -13,6 +13,7 @@ import { CopyableCode } from "./code-block"
 import { DocumentationLayout } from "./docs-layout"
 import { DocsBody, DocsDescription, DocsPage, DocsTitle } from "./docs-page"
 import { guideToc, headingId } from "./guide-toc"
+
 const styles = stylex.create({
   h2: {
     fontFamily: tokens["--font-heading"],
@@ -122,8 +123,10 @@ function GuideH3({ children, id }: ComponentProps<"h3">) {
 function GuideCode({ children }: { children?: ReactNode }) {
   if (isValidElement<{ children?: ReactNode }>(children)) {
     const code = children.props.children
+
     if (typeof code === "string") return <CopyableCode code={code} />
   }
+
   return (
     <Box as="pre" xstyle={styles.pre}>
       {children}

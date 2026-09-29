@@ -239,6 +239,7 @@ export function Calendar({
     (result, key) => {
       const name = key as keyof typeof defaultClassNames
       result[name] = clsx(defaultClassNames[name], classNames?.[name])
+
       return result
     },
     { ...defaultClassNames },
@@ -262,6 +263,7 @@ export function Calendar({
           />
         )
       }
+
       if (orientation === "right") {
         return (
           <ChevronRightIcon
@@ -271,6 +273,7 @@ export function Calendar({
           />
         )
       }
+
       return (
         <ChevronsUpDownIcon
           {...stylexProps(iconClassName, styles.icon)}

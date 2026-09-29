@@ -109,8 +109,11 @@ export const darkValues = {
 }
 
 export const tokens = stylex.defineVars({ ...lightValues })
+
 export const themeMarker = stylex.defineMarker()
+
 export const lightTheme = stylex.createTheme(tokens, { ...lightValues })
+
 export const darkTheme = stylex.createTheme(tokens, { ...darkValues })
 
 export const rootStyles = stylex.create({

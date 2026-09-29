@@ -1,5 +1,6 @@
 import { Box } from "@registry/components/ui/box"
 import { OTPField, OTPFieldInput } from "@registry/components/ui/otp-field"
+
 const OTP_LENGTH = 6
 
 const OTP_SLOT_KEYS = Array.from(

@@ -26,6 +26,7 @@ export function Box<Tag extends BoxElement = "div">({
   ...props
 }: BoxProps<Tag>) {
   const Component: React.ElementType = as ?? "div"
+
   return createElement(
     Component,
     mergeStylexProps(

@@ -4,6 +4,7 @@ import { Heading } from "@registry/components/ui/heading"
 import { Separator } from "@registry/components/ui/separator"
 import { Text } from "@registry/components/ui/text"
 import * as stylex from "@stylexjs/stylex"
+
 const styles = stylex.create({
   box: { maxInlineSize: "calc(0.25rem * 72)" },
   flex: { flexDirection: "column", gap: "0.25rem" },
@@ -25,6 +26,7 @@ const styles = stylex.create({
     lineHeight: "calc(1.25 / 0.875)",
   },
 })
+
 export function Preview() {
   return (
     <Box xstyle={styles.box}>

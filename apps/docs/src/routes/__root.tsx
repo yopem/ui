@@ -32,6 +32,7 @@ import { siteJsonLd } from "@/lib/seo"
 const styles = stylex.create({
   paragraph: { marginBlock: "1rem", lineHeight: 1.8 },
 })
+
 export const Route = createRootRoute({
   head: () => ({
     links: [{ rel: "icon", href: "/favicon.svg", type: "image/svg+xml" }],

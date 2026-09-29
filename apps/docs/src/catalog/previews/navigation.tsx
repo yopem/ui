@@ -2,6 +2,7 @@ import { Box } from "@registry/components/ui/box"
 import { Flex } from "@registry/components/ui/flex"
 import { Link } from "@registry/components/ui/link"
 import * as stylex from "@stylexjs/stylex"
+
 const styles = stylex.create({
   flex: {
     alignItems: "center",
@@ -105,6 +106,7 @@ const styles = stylex.create({
     },
   },
 })
+
 export function Preview() {
   return (
     <Box as="nav" aria-label="Project sections">

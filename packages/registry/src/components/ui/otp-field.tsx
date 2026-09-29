@@ -152,6 +152,7 @@ export function OTPField({
     />
   )
 }
+
 export function OTPFieldInput({
   xstyle: consumerXstyle,
   className,
@@ -168,6 +169,7 @@ export function OTPFieldInput({
     />
   )
 }
+
 export function OTPFieldSeparator({
   xstyle: consumerXstyle,
   className,
@@ -189,4 +191,5 @@ export function OTPFieldSeparator({
     />
   )
 }
+
 export { OTPFieldPrimitive }

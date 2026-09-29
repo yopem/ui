@@ -35,6 +35,7 @@ export const compositionItems: Record<string, string[]> = {
 
 export function getDocumentationItems(slug: string) {
   const names = compositionItems[slug] ?? [slug]
+
   return names
     .map((name) => sourceItems.find((item) => item.name === name))
     .filter((item) => item !== undefined)
@@ -42,20 +43,28 @@ export function getDocumentationItems(slug: string) {
 
 export function getRequiredItems(slug: string, previewSource = "") {
   const required = new Map<string, (typeof sourceItems)[number]>()
+
   const visit = (name: string) => {
     if (required.has(name)) return
     const item = sourceItems.find((entry) => entry.name === name)
+
     if (!item) throw new Error(`Missing source dependency: ${name}`)
     required.set(name, item)
+
     for (const dependency of item.registryDependencies) visit(dependency)
   }
+
   const items = getDocumentationItems(slug)
+
   if (items.length === 0) throw new Error("Component not found")
+
   for (const item of items) visit(item.name)
+
   for (const name of getSnippetDependencies(
     `${usageSnippets[slug] ?? ""}\n${previewSource}`,
   ).components)
     visit(name)
+
   return [...required.values()]
 }
 

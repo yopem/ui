@@ -76,6 +76,7 @@ export function Rating({
 
   function handleValueChange(nextValue: string) {
     const nextRating = Number(nextValue)
+
     if (value === undefined) setUncontrolledValue(nextRating)
     onValueChange?.(nextRating)
   }
@@ -93,6 +94,7 @@ export function Rating({
     >
       {Array.from({ length: ratingCount }, (_, index) => {
         const rating = index + 1
+
         return (
           <RadioPrimitive.Root
             aria-label={`${rating} ${rating === 1 ? "star" : "stars"}`}

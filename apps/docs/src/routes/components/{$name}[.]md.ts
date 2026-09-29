@@ -9,8 +9,10 @@ export const Route = createFileRoute("/components/{$name}.md")({
     handlers: {
       GET: async ({ params }) => {
         const item = getCatalogItem(params.name)
+
         if (!item) return markdownResponse("Page not found\n", 404)
         const data = await getDocumentation({ data: params.name })
+
         return markdownResponse(createComponentText(item.title, data))
       },
     },

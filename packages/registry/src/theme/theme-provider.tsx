@@ -23,6 +23,7 @@ import {
 function subscribeToSystemTheme(callback: () => void) {
   const media = matchMedia(MEDIA_QUERY)
   media.addEventListener("change", callback)
+
   return () => media.removeEventListener("change", callback)
 }
 
@@ -44,6 +45,7 @@ const ThemeContext = createContext<ThemeContextValue | undefined>(undefined)
 
 function subscribeToStorage(callback: () => void) {
   window.addEventListener("storage", callback)
+
   return () => window.removeEventListener("storage", callback)
 }
 
@@ -65,28 +67,35 @@ export function ThemeProvider({
   themes = themeConfig,
 }: ThemeProviderProps) {
   const [preference, setThemeState] = useState<Theme | null>(null)
+
   const getStoredTheme = useCallback(() => {
     try {
       const saved = localStorage.getItem(storageKey)
+
       if (saved === "light" || saved === "dark" || saved === "system")
         return saved
     } catch {
       // Storage can be blocked. Use the configured default instead.
     }
+
     return defaultTheme
   }, [defaultTheme, storageKey])
+
   const storedTheme = useSyncExternalStore(
     subscribeToStorage,
     getStoredTheme,
     getServerPreference,
   )
+
   const theme = preference ?? storedTheme ?? defaultTheme
   const ready = storedTheme !== null
+
   const systemTheme = useSyncExternalStore(
     subscribeToSystemTheme,
     getSystemTheme,
     getServerTheme,
   )
+
   const resolvedTheme = theme === "system" ? systemTheme : theme
 
   useEffect(() => {
@@ -95,6 +104,7 @@ export function ThemeProvider({
     root.classList.remove(...themes.classes.light, ...themes.classes.dark)
     root.classList.add(...themes.classes[resolvedTheme])
     root.dataset.theme = resolvedTheme
+
     return () => root.classList.remove(...themes.classes[resolvedTheme])
   }, [ready, resolvedTheme, themes])
 
@@ -105,6 +115,7 @@ export function ThemeProvider({
       } catch {
         // Blocked storage must not prevent changing the current theme.
       }
+
       setThemeState(nextTheme)
     },
     [storageKey],
@@ -120,6 +131,8 @@ export function ThemeProvider({
 
 export function useTheme() {
   const value = useContext(ThemeContext)
+
   if (!value) throw new Error("useTheme must be used within ThemeProvider")
+
   return value
 }
