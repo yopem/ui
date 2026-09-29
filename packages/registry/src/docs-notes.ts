@@ -1,5 +1,5 @@
 // These notes describe Yopem's composition choices, not only the upstream types.
-export const usageNotes: Record<string, [string, ...string[]]> = {
+const usageNoteValues = {
   base: [
     "Copy the base files, configure StyleX in your bundler, and import styles/styles.css once. Native StyleX tokens provide light defaults; no provider, script, or font package is required.",
     "Customize tokens and create complete light/dark themes in tokens.stylex.ts. The optional theme item adds saved light/dark/system switching. styles.css contains reset, reduced-motion policy, and unavoidable upstream viewport rules, not theme values.",
@@ -320,9 +320,13 @@ export const usageNotes: Record<string, [string, ...string[]]> = {
     "Use anchoredToastManager with AnchoredToastProvider for anchor-positioned notifications. Keep the matching provider mounted while sending updates or closing a toast.",
     "ToastProvider position chooses the viewport corner or center edge. Use timeout to control dismissal and include actions only when users have enough time to reach them.",
   ],
-}
+} satisfies Record<string, [string, ...string[]]>
 
-export const ownPropNotes: Record<string, string> = {
+export const usageNotes = new Map<string, [string, ...string[]]>(
+  Object.entries(usageNoteValues),
+)
+
+const ownPropNoteValues = {
   xstyle:
     "StyleX styles compose after this part's defaults and variants. Accepts style objects, conditional arrays, themes, and dynamic styles.",
   controlXstyle:
@@ -407,8 +411,10 @@ export const ownPropNotes: Record<string, string> = {
   onOpenChange: "Called when expanded state should change.",
 }
 
+export const ownPropNotes = new Map(Object.entries(ownPropNoteValues))
+
 // Defaults delegated to a styling helper or context are not parameter initializers.
-export const delegatedDefaults: Record<string, Record<string, string>> = {
+const delegatedDefaultValues = {
   Button: {
     size: '"default"',
     variant: '"default"',
@@ -430,3 +436,13 @@ export const delegatedDefaults: Record<string, Record<string, string>> = {
   DrawerSwipeArea: { position: "Inherited from Drawer" },
   DrawerBar: { position: "Inherited from Drawer" },
 }
+
+export const delegatedDefaults = new Map<string, ReadonlyMap<string, string>>(
+  Object.entries(delegatedDefaultValues).map(
+    ([name, defaults]) =>
+      [name, new Map<string, string>(Object.entries(defaults))] satisfies [
+        string,
+        ReadonlyMap<string, string>,
+      ],
+  ),
+)

@@ -59,7 +59,7 @@ export const getDocumentation = createServerFn({ method: "GET" })
     return {
       title: items.map((item) => item.title).join(" + "),
       description: items.map((item) => item.description).join(" "),
-      usage: usageSnippets[slug] ?? "",
+      usage: usageSnippets.get(slug) ?? "",
       previewSource,
       notes: items.flatMap((item) => {
         const doc = componentDocs.find((entry) => entry.name === item.name)

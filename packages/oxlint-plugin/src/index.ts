@@ -396,7 +396,7 @@ function matchesPattern(value: string, pattern: string) {
   return new RegExp(`^${escaped.replaceAll("\\*", ".*")}$`).test(value)
 }
 
-const PROPERTY_CATEGORIES: Record<string, string> = {
+const PROPERTY_CATEGORIES = {
   background: "color",
   borderColor: "color",
   color: "color",
@@ -437,24 +437,24 @@ function policyAllows(property: string, policy: StylePolicy) {
   )
 }
 
-const COMPONENT_PROPS: Record<string, { variant?: boolean; size?: boolean }> = {
-  Button: { variant: true, size: true },
-  Badge: { variant: true, size: true },
-  Toggle: { variant: true, size: true },
-  Tabs: { variant: true, size: true },
-  TabsTab: { size: true },
-  Table: { variant: true },
-  Input: { size: true },
-  Textarea: { size: true },
-  NumberField: { size: true },
-  SidebarMenuButton: { variant: true, size: true },
-  Alert: { variant: true },
-  Sidebar: { variant: true },
-}
+const COMPONENT_PROPS = new Map<string, { variant?: boolean; size?: boolean }>([
+  ["Button", { variant: true, size: true }],
+  ["Badge", { variant: true, size: true }],
+  ["Toggle", { variant: true, size: true }],
+  ["Tabs", { variant: true, size: true }],
+  ["TabsTab", { size: true }],
+  ["Table", { variant: true }],
+  ["Input", { size: true }],
+  ["Textarea", { size: true }],
+  ["NumberField", { size: true }],
+  ["SidebarMenuButton", { variant: true, size: true }],
+  ["Alert", { variant: true }],
+  ["Sidebar", { variant: true }],
+])
 
 function defaultRestyleMessage(component: string, property: string) {
   const category = categoryOf(property)
-  const props = COMPONENT_PROPS[component]
+  const props = COMPONENT_PROPS.get(component)
 
   const alternative =
     category === "spacing" && props?.size

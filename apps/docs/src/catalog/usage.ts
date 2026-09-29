@@ -1,5 +1,5 @@
 // Standalone TSX files use the standard @ alias for src.
-export const usageSnippets: Record<string, string> = {
+const usageSnippetValues = {
   checkmark: `"use client"
 
 import { Checkmark } from "@/components/ui/checkmark"
@@ -1574,3 +1574,5 @@ export function Preview() {
 }
 `,
 }
+
+export const usageSnippets = new Map(Object.entries(usageSnippetValues))

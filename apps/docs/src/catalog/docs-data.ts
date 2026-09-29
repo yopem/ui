@@ -3,7 +3,7 @@ import { sourceItems } from "@registry/items"
 import { getSnippetDependencies } from "./snippet-dependencies"
 import { usageSnippets } from "./usage"
 
-export const compositionItems: Record<string, string[]> = {
+const compositionItemValues = {
   "date-picker": ["calendar", "popover", "button"],
   navigation: ["radio-group", "tabs"],
   layout: [
@@ -33,8 +33,10 @@ export const compositionItems: Record<string, string[]> = {
   ],
 }
 
+export const compositionItems = new Map(Object.entries(compositionItemValues))
+
 export function getDocumentationItems(slug: string) {
-  const names = compositionItems[slug] ?? [slug]
+  const names = compositionItems.get(slug) ?? [slug]
 
   return names
     .map((name) => sourceItems.find((item) => item.name === name))
@@ -61,7 +63,7 @@ export function getRequiredItems(slug: string, previewSource = "") {
   for (const item of items) visit(item.name)
 
   for (const name of getSnippetDependencies(
-    `${usageSnippets[slug] ?? ""}\n${previewSource}`,
+    `${usageSnippets.get(slug) ?? ""}\n${previewSource}`,
   ).components)
     visit(name)
 

@@ -22,7 +22,7 @@ export interface ApiProp {
   source: string
 }
 
-const partPurposes: Record<string, string> = {
+const partPurposes = {
   Trigger: "Control that opens or toggles the associated content.",
   Popup:
     "Visible popup content with Yopem styling and the wrapper's positioning or modal composition.",
@@ -83,13 +83,14 @@ function describePart(name: string, kind: string, description: string) {
   if (kind === "value")
     return "Exported value. The signature and members below describe its shape."
 
-  const suffix = Object.keys(partPurposes)
-    .sort((a, b) => b.length - a.length)
-    .find((key) => name.endsWith(key))
+  const purpose = Object.entries(partPurposes)
+    .sort(([a], [b]) => b.length - a.length)
+    .find(([suffix]) => name.endsWith(suffix))?.[1]
 
-  return suffix
-    ? partPurposes[suffix]!
-    : "Component part. Compose it as described in the usage notes; its accepted props are listed below."
+  return (
+    purpose ??
+    "Component part. Compose it as described in the usage notes; its accepted props are listed below."
+  )
 }
 
 function describeProperty(prop: ApiProp) {
@@ -98,7 +99,7 @@ function describeProperty(prop: ApiProp) {
     description:
       prop.description ||
       (/^(components|theme|styles|lib)\//.test(prop.source)
-        ? ownPropNotes[prop.name]
+        ? ownPropNotes.get(prop.name)
         : undefined) ||
       (prop.source.startsWith("@types/react")
         ? `React/HTML ${prop.name} attribute or event handler.`
@@ -114,7 +115,7 @@ export function createComponentDocs(
 
   return sourceItems.map((item) => {
     const extracted = data.items.find((entry) => entry.name === item.name)
-    const notes = usageNotes[item.name]
+    const notes = usageNotes.get(item.name)
 
     if (!extracted || !notes)
       throw new Error(`Missing documentation for ${item.name}`)
@@ -158,8 +159,9 @@ export function createComponentDocs(
         props: part.props.map((index) => {
           const prop = properties[index]!
 
-          const defaultValue =
-            delegatedDefaults[part.aliasOf ?? part.name]?.[prop.name]
+          const defaultValue = delegatedDefaults
+            .get(part.aliasOf ?? part.name)
+            ?.get(prop.name)
 
           return defaultValue === undefined || defaultValue === prop.default
             ? prop

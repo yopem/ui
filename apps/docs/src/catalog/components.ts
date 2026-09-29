@@ -16,21 +16,15 @@ export interface CatalogItem {
 
 const modules = import.meta.glob<{ Preview: ComponentType }>("./previews/*.tsx")
 
-const compositionOverrides: Record<
+const compositionOverrides = new Map<
   string,
   Pick<CatalogItem, "name" | "title">
-> = {
-  "date-picker": {
-    name: "DatePicker",
-    title: "Date Picker",
-  },
-  navigation: {
-    name: "SegmentedControl",
-    title: "Segmented Control",
-  },
-}
+>([
+  ["date-picker", { name: "DatePicker", title: "Date Picker" }],
+  ["navigation", { name: "SegmentedControl", title: "Segmented Control" }],
+])
 
-const previewDescriptions: Record<string, string> = {
+const previewDescriptionValues = {
   accordion: "Expandable sections",
   "absolute-center": "Centered overlay content",
   bleed: "Full-bleed content within padding",
@@ -116,6 +110,8 @@ const previewDescriptions: Record<string, string> = {
   vstack: "Vertical account status",
 }
 
+const previewDescriptions = new Map(Object.entries(previewDescriptionValues))
+
 export const catalog: CatalogItem[] = Object.entries(modules)
   .map(([path, load]): CatalogItem => {
     const slug =
@@ -124,7 +120,7 @@ export const catalog: CatalogItem[] = Object.entries(modules)
         .at(-1)
         ?.replace(/\.tsx$/, "") ?? path
 
-    const override = compositionOverrides[slug]
+    const override = compositionOverrides.get(slug)
     const title = override?.title ?? titleCase(slug)
 
     return {
@@ -133,7 +129,7 @@ export const catalog: CatalogItem[] = Object.entries(modules)
         component: lazy(() =>
           load().then((module) => ({ default: module.Preview })),
         ),
-        title: previewDescriptions[slug] ?? `${title} in use`,
+        title: previewDescriptions.get(slug) ?? `${title} in use`,
       },
       slug,
       title,
