@@ -460,8 +460,8 @@ export function extractDocs() {
     parts: item.files
       .filter((file) => /\.tsx?$/.test(file.path))
       .flatMap((file) => {
-        const module = program.getSourceFile(sourceFilePath(file.path))
-        const symbol = module && checker.getSymbolAtLocation(module)
+        const source = program.getSourceFile(sourceFilePath(file.path))
+        const symbol = source && checker.getSymbolAtLocation(source)
 
         if (!symbol) throw new Error(`Cannot extract ${file.path}`)
 
