@@ -36,6 +36,7 @@
     "@types/node": "catalog:",
     "@yopem/oxlint-config": "^0.1.2",
     "@yopem/typescript-config": "catalog:",
+    "lefthook": "^2.1.14",
     "oxfmt": "^0.71.0",
     "oxlint": "catalog:",
     "pkg-pr-new": "^0.0.88",

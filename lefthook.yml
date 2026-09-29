@@ -1,0 +1,9 @@
+pre-commit:
+  commands:
+    quality:
+      run: bun fmt:check && bun lint && bun typecheck
+
+pre-push:
+  commands:
+    quality:
+      run: bun fmt:check && bun lint && bun typecheck
