@@ -1,6 +1,5 @@
 {
   "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "extends": ["./node_modules/@yopem/oxlint-config/src/.oxlintrc.json"],
   "plugins": [
     "eslint",
     "import",
@@ -13,6 +12,11 @@
     "unicorn"
   ],
   "jsPlugins": [
+    { "name": "quality", "specifier": "@yopem/oxlint-config/plugins/quality" },
+    {
+      "name": "stylistic",
+      "specifier": "@yopem/oxlint-config/plugins/stylistic"
+    },
     {
       "name": "yopem-ui",
       "specifier": "./packages/oxlint-plugin/src/index.ts"

@@ -24,9 +24,9 @@
     "@axe-core/playwright": "^4.13.0",
     "@playwright/test": "^1.63.0",
     "@types/node": "catalog:",
-    "@yopem/oxlint-config": "^0.0.9",
+    "@yopem/oxlint-config": "^0.1.2",
     "@yopem/typescript-config": "catalog:",
-    "oxfmt": "^0.70.0",
+    "oxfmt": "^0.71.0",
     "oxlint": "catalog:",
     "typescript": "catalog:"
   },
@@ -35,23 +35,23 @@
     "@daypicker/react": "^10.0.1",
     "@stylexjs/stylex": "^0.19.1",
     "@types/bun": "^1.4.2",
-    "@types/node": "^26.6.2",
+    "@types/node": "^26.6.3",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "@yopem/typescript-config": "^0.2.2",
     "lucide-react": "^1.48.0",
-    "oxlint": "^1.85.0",
+    "oxlint": "^1.86.0",
     "react": "^19.3.0",
     "react-dom": "^19.3.0",
     "typescript": "^7.0.2",
-    "typescript-api": "npm:typescript@6.0.3",
+    "typescript-api": "npm:typescript@7.0.2",
     "zod": "^4.6.5"
   },
   "catalogs": {
     "peer": {
-      "oxlint": "^1.79.0",
-      "react": ">=18 <20",
-      "react-dom": ">=18 <20"
+      "oxlint": "^1.86.0",
+      "react": "^19.3.0",
+      "react-dom": "^19.3.0"
     }
   }
 }
