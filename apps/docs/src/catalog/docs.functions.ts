@@ -47,13 +47,21 @@ export const getDocumentation = createServerFn({ method: "GET" })
         if (!reference) throw new Error(`Missing API reference: ${item.name}`)
         const names = new Set(reference.parts.map((part) => part.name))
 
-        return reference.parts.map((part) => ({
-          ...part,
-          ...(part.aliasOf && names.has(part.aliasOf)
-            ? { props: [], parameters: [], propVariants: [], signatures: [] }
-            : {}),
-          id: `${item.name}:${part.name}`,
-        }))
+        return reference.parts.map((part) => {
+          const apiPart = { ...part }
+
+          if (part.aliasOf && names.has(part.aliasOf)) {
+            apiPart.props = []
+            apiPart.parameters = []
+            apiPart.propVariants = []
+            apiPart.signatures = []
+          }
+
+          return {
+            ...apiPart,
+            id: `${item.name}:${part.name}`,
+          }
+        })
       })
 
     return {

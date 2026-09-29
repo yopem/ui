@@ -1474,10 +1474,11 @@ export async function initProject(options: InitOptions = {}) {
     throw new Error("Invalid project package.json")
   }
 
-  const dependencies = {
-    ...(object(manifest.dependencies) ? manifest.dependencies : {}),
-    ...(object(manifest.devDependencies) ? manifest.devDependencies : {}),
-  }
+  const dependencies = Object.fromEntries(
+    [manifest.dependencies, manifest.devDependencies].flatMap((entry) =>
+      object(entry) ? Object.entries(entry) : [],
+    ),
+  )
 
   const framework = detectFramework(dependencies, options.framework)
   const manager = await packageManager(root, manifest.packageManager)
@@ -1726,10 +1727,11 @@ export async function initProject(options: InitOptions = {}) {
   if (!object(installed))
     throw new Error("Invalid package.json after installation")
 
-  const available = {
-    ...(object(installed.dependencies) ? installed.dependencies : {}),
-    ...(object(installed.devDependencies) ? installed.devDependencies : {}),
-  }
+  const available = Object.fromEntries(
+    [installed.dependencies, installed.devDependencies].flatMap((entry) =>
+      object(entry) ? Object.entries(entry) : [],
+    ),
+  )
 
   const neededRuntime = runtimeDependencies.filter(
     (name) => !(name in available),

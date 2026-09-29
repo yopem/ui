@@ -235,7 +235,7 @@ export function extractDocs() {
         (Object.hasOwn(fallback, name) ? fallback[name] : undefined) ??
         (tag?.text ? ts.displayPartsToString(tag.text) : undefined)
 
-      return {
+      const property = {
         name:
           name.startsWith("__@") &&
           (ts.isPropertySignature(declaration) ||
@@ -262,9 +262,11 @@ export function extractDocs() {
               .filter(Boolean),
           ),
         ].join("\n\n"),
-        ...(defaultValue === undefined ? {} : { default: defaultValue }),
-        source: source(declaration),
       }
+
+      return defaultValue === undefined
+        ? { ...property, source: source(declaration) }
+        : { ...property, default: defaultValue, source: source(declaration) }
     })
   }
 

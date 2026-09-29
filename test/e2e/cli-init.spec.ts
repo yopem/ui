@@ -163,18 +163,21 @@ for (const fixture of [
     }
 
     try {
+      const dependencies = new Map<string, string>([
+        [fixture.dependency, "*"],
+        ["react", "*"],
+      ])
+
+      if (
+        fixture.framework === "react-router" &&
+        fixture.layout === "src/main.tsx"
+      ) {
+        dependencies.set("vite", "*")
+      }
+
       put(
         "package.json",
-        JSON.stringify({
-          dependencies: {
-            [fixture.dependency]: "*",
-            react: "*",
-            ...(fixture.framework === "react-router" &&
-            fixture.layout === "src/main.tsx"
-              ? { vite: "*" }
-              : {}),
-          },
-        }),
+        JSON.stringify({ dependencies: Object.fromEntries(dependencies) }),
       )
       put("tsconfig.json", "{}")
       put(
