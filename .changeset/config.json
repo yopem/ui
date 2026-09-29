@@ -1,0 +1,10 @@
+{
+  "$schema": "https://unpkg.com/@changesets/config@3.0.5/schema.json",
+  "changelog": ["@changesets/changelog-github", { "repo": "yopem/ui" }],
+  "commit": false,
+  "fixed": [],
+  "access": "public",
+  "baseBranch": "main",
+  "updateInternalDependencies": "patch",
+  "ignore": []
+}

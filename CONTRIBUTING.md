@@ -35,5 +35,10 @@ Automated checks do not constitute VoiceOver or NVDA certification.
 
 ## Releases
 
-Contributors should open a pull request and must not create or push version
-tags. Maintainers handle versioning and releases after changes merge.
+For changes to `@yopem-ui/cli` or `@yopem-ui/oxlint-plugin`, run
+`bunx changeset` and commit the generated changeset with your pull request. The
+registry is private and is not published to npm. After merge, the release
+workflow opens a version pull request; merging it publishes changed packages to
+npm.
+
+Pull requests also receive preview packages from pkg.pr.new.

@@ -58,6 +58,13 @@ test("packed CLI installs from local registry and runs published lint plugin", a
       )
       expect(contents.status, `${archive}: ${contents.stderr}`).toBe(0)
       expect(contents.stdout).toBe(license)
+      const manifest = spawnSync(
+        "tar",
+        ["-xOf", join(directory, archive), "package/package.json"],
+        { encoding: "utf8" },
+      )
+      expect(manifest.status, `${archive}: ${manifest.stderr}`).toBe(0)
+      expect(manifest.stdout).not.toContain("catalog:")
     }
     mkdirSync(join(project, "src"), { recursive: true })
     writeFileSync(

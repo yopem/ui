@@ -1,0 +1,38 @@
+name: Release
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".changeset/**"
+      - "packages/cli/**"
+      - "packages/oxlint-plugin/**"
+      - "package.json"
+      - "bun.lock"
+      - ".github/workflows/release.yml"
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: release-${{ github.ref }}
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: oven-sh/setup-bun@v2
+      - run: bun install --frozen-lockfile
+      - name: Create version PR or publish to npm
+        uses: changesets/action@v1
+        with:
+          version: bun run version
+          publish: bun run release
+          commit: "ci(changesets): version packages"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_CONFIG_TOKEN: ${{ secrets.NPM_TOKEN }}

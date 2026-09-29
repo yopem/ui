@@ -19,7 +19,7 @@ test("docs lint accepts StyleX and rejects forbidden styling", () => {
       export function Preview() { return <Box xstyle={styles.root}>Content</Box> }
     `,
     )
-    const valid = spawnSync(oxlint, ["--config", ".oxlintrc.json", source], {
+    const valid = spawnSync(oxlint, ["--config", "oxlint.config.ts", source], {
       cwd: root,
       encoding: "utf8",
     })
@@ -36,10 +36,14 @@ test("docs lint accepts StyleX and rejects forbidden styling", () => {
       }
     `,
     )
-    const invalid = spawnSync(oxlint, ["--config", ".oxlintrc.json", source], {
-      cwd: root,
-      encoding: "utf8",
-    })
+    const invalid = spawnSync(
+      oxlint,
+      ["--config", "oxlint.config.ts", source],
+      {
+        cwd: root,
+        encoding: "utf8",
+      },
+    )
     expect(invalid.status).not.toBe(0)
     const output = invalid.stdout + invalid.stderr
     expect(output).toContain("yopem-ui(no-raw-stylex-colors)")

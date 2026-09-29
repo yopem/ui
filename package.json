@@ -11,6 +11,8 @@
     "generate-routes": "bun run --cwd apps/docs generate-routes",
     "build": "bun run registry:build && bun run --cwd apps/docs build",
     "registry:build": "bun run --cwd packages/registry build",
+    "release": "bun scripts/release.ts",
+    "version": "changeset version && bun install",
     "start": "bun run --cwd apps/docs start",
     "preview": "bun run --cwd apps/docs preview",
     "typecheck": "bun run --filter '*' typecheck",
@@ -22,12 +24,16 @@
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.13.0",
+    "@changesets/changelog-github": "0.7.0",
+    "@changesets/cli": "2.31.1",
     "@playwright/test": "^1.63.0",
+    "@types/bun": "catalog:",
     "@types/node": "catalog:",
     "@yopem/oxlint-config": "^0.1.2",
     "@yopem/typescript-config": "catalog:",
     "oxfmt": "^0.71.0",
     "oxlint": "catalog:",
+    "pkg-pr-new": "^0.0.88",
     "typescript": "catalog:"
   },
   "catalog": {
@@ -44,7 +50,7 @@
     "react": "^19.3.0",
     "react-dom": "^19.3.0",
     "typescript": "^7.0.2",
-    "typescript-api": "npm:typescript@7.0.2",
+    "typescript-api": "npm:@typescript/typescript6@^6.0.2",
     "zod": "^4.6.5"
   },
   "catalogs": {
