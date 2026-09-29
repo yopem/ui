@@ -1,13 +1,9 @@
 import baseConfig from "@yopem/oxlint-config"
+import reactConfig from "@yopem/oxlint-config/react"
 import { defineConfig } from "oxlint"
 
-const configWithoutNextjs = {
-  ...baseConfig,
-  plugins: baseConfig.plugins.filter((plugin) => plugin !== "nextjs"),
-}
-
 export default defineConfig({
-  extends: [configWithoutNextjs],
+  extends: [baseConfig, reactConfig],
   plugins: [
     "eslint",
     "import",
