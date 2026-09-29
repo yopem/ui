@@ -19,7 +19,6 @@
     "access": "public"
   },
   "scripts": {
-    "prepack": "cp ../../LICENSE LICENSE && bun build src/index.ts --target node --format esm --outdir dist",
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {

@@ -1,14 +1,13 @@
 {
   "name": "@yopem-ui/cli",
-  "version": "0.1.0",
+  "version": "0.0.1",
   "description": "CLI for installing Yopem UI source components and StyleX setup",
   "license": "MIT",
   "bin": {
     "yopem-ui": "./src/cli.ts"
   },
   "files": [
-    "src",
-    "LICENSE"
+    "src"
   ],
   "type": "module",
   "exports": {
@@ -20,8 +19,7 @@
     "access": "public"
   },
   "scripts": {
-    "prepack": "cp ../../LICENSE LICENSE",
-    "typecheck": "tsc --ignoreConfig --noEmit --strict --target esnext --module preserve --moduleResolution bundler --types bun,node src/cli.ts src/init.ts src/install.ts"
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "typescript-api": "catalog:"

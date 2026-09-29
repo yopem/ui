@@ -14,3 +14,8 @@ bunx @yopem-ui/cli update button
 Router, and Astro. Pass `--framework <name>` if autodetection is ambiguous.
 Installed source changes stay intact on `init` and `add`; `update` rejects
 modified files unless `--force` is supplied.
+
+## Licence
+
+This project is licensed under the terms of the
+[MIT license](https://github.com/yopem/ui/blob/main/LICENSE.md).
