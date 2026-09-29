@@ -2,11 +2,24 @@
   "name": "@yopem-ui/oxlint-plugin",
   "version": "0.0.1",
   "description": "Oxlint rules for Yopem UI projects",
+  "keywords": [
+    "oxlint",
+    "stylex",
+    "ui"
+  ],
+  "bugs": {
+    "url": "https://github.com/yopem/ui/issues"
+  },
   "license": "MIT",
+  "author": "Karyana Yandi <karyana@yandi.me>",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yopem/ui.git",
+    "directory": "packages/oxlint-plugin"
+  },
   "files": [
     "src",
-    "dist",
-    "LICENSE"
+    "dist"
   ],
   "type": "module",
   "exports": {

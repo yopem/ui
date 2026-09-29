@@ -1,6 +1,22 @@
 {
   "name": "@yopem-ui/docs",
   "private": true,
+  "description": "Documentation for Yopem UI",
+  "keywords": [
+    "cli",
+    "stylex",
+    "ui"
+  ],
+  "bugs": {
+    "url": "https://github.com/yopem/ui/issues"
+  },
+  "license": "MIT",
+  "author": "Karyana Yandi <karyana@yandi.me>",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yopem/ui.git",
+    "directory": "apps/docs"
+  },
   "type": "module",
   "imports": {
     "@/*": "./src/*"

@@ -1,6 +1,11 @@
 {
   "name": "yopem-ui",
   "private": true,
+  "author": "Karyana Yandi <karyana@yandi.me>",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yopem/ui.git"
+  },
   "workspaces": [
     "apps/*",
     "packages/*"
