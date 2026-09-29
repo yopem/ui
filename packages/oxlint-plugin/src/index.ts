@@ -2,7 +2,7 @@ import type { RuleTester } from "oxlint/plugins-dev"
 
 type Rule = Parameters<RuleTester["run"]>[1]
 
-type CreateRule = Extract<Rule, { create: (...args: never[]) => unknown }>
+type CreateRule = Extract<Rule, { create: (...args: never[]) => void }>
 
 type RuleContext = Parameters<CreateRule["create"]>[0]
 
@@ -117,7 +117,7 @@ function hasProperty<Key extends PropertyKey>(
   return typeof value === "object" && value !== null && key in value
 }
 
-function getProperty(value: unknown, key: string): unknown {
+function getProperty(value: unknown, key: string) {
   return hasProperty(value, key) ? value[key] : undefined
 }
 

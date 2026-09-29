@@ -38,11 +38,11 @@ type PropValue<Props, Key extends PropertyKey> = Key extends keyof Props
 
 type MergedClassName<Class> = [Class] extends [never]
   ? string
-  : Class extends (state: infer State) => unknown
+  : Class extends (state: infer State) => void
     ? (state: State) => string
     : string
 
-type MergedStyle<Style> = Style extends (state: infer State) => unknown
+type MergedStyle<Style> = Style extends (state: infer State) => void
   ? (state: State) => CSSProperties
   : CSSProperties
 
