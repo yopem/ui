@@ -76,9 +76,11 @@ function listenForActiveSection(
   items: TocItem[],
   onActiveUrlChange: (url: string) => void,
 ) {
-  const headings = items
-    .map((item) => document.getElementById(item.url.slice(1)))
-    .filter((heading) => heading !== null)
+  const headings = items.flatMap((item) => {
+    const heading = document.getElementById(item.url.slice(1))
+
+    return heading === null ? [] : [heading]
+  })
 
   if (headings.length === 0) return
   let frame = 0
