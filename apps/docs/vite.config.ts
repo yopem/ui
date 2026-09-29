@@ -107,6 +107,8 @@ const config = defineConfig({
       },
       rollupConfig: {
         external: [
+          /^react(?:\/|$)/,
+          /^react-dom(?:\/|$)/,
           /^@resvg\/resvg-js/,
           /^@sentry\//,
           /^harfbuzzjs$/,
