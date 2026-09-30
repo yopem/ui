@@ -28,7 +28,7 @@
     "build:test": "vite build --mode test --logLevel warn",
     "start": "node .output/server/index.mjs",
     "preview": "vite preview",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "bun run generate-routes && tsc --noEmit"
   },
   "dependencies": {
     "@daypicker/react": "catalog:",
