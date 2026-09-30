@@ -312,14 +312,14 @@ const styles = stylex.create({
 })
 
 export const ComboboxContext = React.createContext<{
-  chipsRef: React.RefObject<Element | null> | null
+  chipsRef: React.RefObject<HTMLDivElement | null> | null
   multiple: boolean
 }>({ chipsRef: null, multiple: false })
 
 export function Combobox<Value, Multiple extends boolean | undefined = false>(
   props: ComboboxPrimitive.Root.Props<Value, Multiple>,
 ) {
-  const chipsRef = React.useRef<Element | null>(null)
+  const chipsRef = React.useRef<HTMLDivElement | null>(null)
   const multiple = Boolean(props.multiple)
 
   const contextValue = React.useMemo(
@@ -753,7 +753,7 @@ export function ComboboxChips({
   return (
     <ComboboxPrimitive.Chips
       data-slot="combobox-chips"
-      ref={chipsRef as React.Ref<HTMLDivElement> | null}
+      ref={chipsRef}
       {...mergeStylexProps(stylexProps(className, styles.chips, xstyle), props)}
     >
       {startAddon ? (

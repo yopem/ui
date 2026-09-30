@@ -11,6 +11,7 @@ if (process.env.CHANGESETS_OUTPUT) {
 for (const name of packages) {
   const cwd = new URL(`../packages/${name}/`, import.meta.url).pathname
 
+  // SAFETY: Checked-in workspace manifests provide `name` and `version`.
   const manifest = JSON.parse(
     await readFile(`${cwd}/package.json`, "utf8"),
   ) as {

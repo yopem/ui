@@ -162,10 +162,9 @@ export function InputGroupAddon({
       data-slot="input-group-addon"
       role="presentation"
       onMouseDown={(event: React.MouseEvent<HTMLDivElement>) => {
-        const target = event.target as HTMLElement
-
         if (
-          target.closest(
+          event.target instanceof Element &&
+          event.target.closest(
             "button, a, input, select, textarea, [role='button'], [role='combobox'], [role='listbox'], [data-slot='select-trigger']",
           )
         )

@@ -20,6 +20,10 @@ type BreakpointQuery =
   | `max-${Breakpoint}`
   | `${Breakpoint}:max-${Breakpoint}`
 
+function isBreakpoint(value: string): value is Breakpoint {
+  return Object.hasOwn(BREAKPOINTS, value)
+}
+
 function resolveMin(value: Breakpoint | number): string {
   const px = isNumber(value) ? value : BREAKPOINTS[value]
 
@@ -59,9 +63,9 @@ function parseQuery(
     if (segment.startsWith("max-")) {
       const bp = segment.slice(4)
 
-      if (bp in BREAKPOINTS) parts.push(resolveMax(bp as Breakpoint))
-    } else if (segment in BREAKPOINTS) {
-      parts.push(resolveMin(segment as Breakpoint))
+      if (isBreakpoint(bp)) parts.push(resolveMax(bp))
+    } else if (isBreakpoint(segment)) {
+      parts.push(resolveMin(segment))
     }
   }
 

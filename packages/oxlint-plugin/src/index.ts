@@ -182,6 +182,7 @@ function getStylingOptions(context: RuleContext): StylingOptions {
 
   const methodOption = getProperty(record, "methods")
 
+  // SAFETY: STYLE_METHODS lists every StylingMethod before building this record.
   const methods = Object.fromEntries(
     STYLE_METHODS.map((method) => [
       method,

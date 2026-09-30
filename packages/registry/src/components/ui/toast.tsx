@@ -316,8 +316,12 @@ function getReplayStyle(toast: { type?: string; updateKey?: number }) {
   return key % 2 === 0 ? styles.replaySuccessEven : styles.replaySuccessOdd
 }
 
+function isToastType(type: string): type is keyof typeof TOAST_ICONS {
+  return Object.hasOwn(TOAST_ICONS, type)
+}
+
 function ToastIcon({ type }: { type?: string }) {
-  const Icon = type ? TOAST_ICONS[type as keyof typeof TOAST_ICONS] : null
+  const Icon = type != null && isToastType(type) ? TOAST_ICONS[type] : null
 
   if (!Icon) return null
 
@@ -371,7 +375,7 @@ function Toasts({
   xstyle?: StyleXProps["xstyle"]
   portalProps?: React.ComponentProps<typeof Toast.Portal>
 }) {
-  const { toasts } = Toast.useToastManager()
+  const { toasts } = Toast.useToastManager<ToastData>()
   const swipeDirection = getSwipeDirection(position)
 
   return (
@@ -382,7 +386,7 @@ function Toasts({
         data-slot="toast-viewport"
       >
         {toasts.map((toast) => {
-          const toastData = toast.data as ToastData | undefined
+          const toastData = toast.data
 
           const { xstyle: rootXstyle, ...rootRestProps } =
             toastData?.rootProps ?? {}
@@ -422,7 +426,7 @@ function AnchoredToasts({
 }: StyleXProps & {
   portalProps?: React.ComponentProps<typeof Toast.Portal>
 }) {
-  const { toasts } = Toast.useToastManager()
+  const { toasts } = Toast.useToastManager<ToastData>()
 
   return (
     <Toast.Portal data-slot="toast-portal-anchored" {...portalProps}>
@@ -431,7 +435,7 @@ function AnchoredToasts({
         data-slot="toast-viewport-anchored"
       >
         {toasts.map((toast) => {
-          const toastData = toast.data as ToastData | undefined
+          const toastData = toast.data
 
           const { xstyle: rootXstyle, ...rootRestProps } =
             toastData?.rootProps ?? {}
@@ -485,9 +489,9 @@ function AnchoredToasts({
   )
 }
 
-export const toastManager = Toast.createToastManager()
+export const toastManager = Toast.createToastManager<ToastData>()
 
-export const anchoredToastManager = Toast.createToastManager()
+export const anchoredToastManager = Toast.createToastManager<ToastData>()
 
 export type ToastPosition =
   | "top-left"

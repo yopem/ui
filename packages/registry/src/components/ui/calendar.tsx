@@ -237,6 +237,7 @@ export function Calendar({
 
   const mergedClassNames = Object.keys(defaultClassNames).reduce(
     (result, key) => {
+      // SAFETY: `key` comes from `Object.keys(defaultClassNames)`.
       const name = key as keyof typeof defaultClassNames
       result[name] = clsx(defaultClassNames[name], classNames?.[name])
 
@@ -291,12 +292,14 @@ export function Calendar({
     formatters: {
       formatMonthDropdown: (date: Date) =>
         date.toLocaleString("default", { month: "short" }),
-    } as React.ComponentProps<typeof DayPicker>["formatters"],
+    } satisfies React.ComponentProps<typeof DayPicker>["formatters"],
     mode,
     showOutsideDays,
     ...mergeStylexProps(stylexProps(className, styles.root, xstyle), props),
   }
 
+  // SAFETY: `mode` and `props` derive from DayPicker input.
+  // DayPicker forwards data attributes to its root.
   return (
     <DayPicker
       {...(dayPickerProps as React.ComponentProps<typeof DayPicker>)}
