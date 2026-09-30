@@ -23,7 +23,7 @@ function integrity(content: string) {
   return `sha256-${createHash("sha256").update(content).digest("base64")}`
 }
 
-async function writeJson(path: string, value: unknown) {
+async function writeJson<Value>(path: string, value: Value) {
   await mkdir(dirname(path), { recursive: true })
   await writeFile(path, `${JSON.stringify(value, null, 2)}\n`)
 }

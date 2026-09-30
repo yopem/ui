@@ -36,6 +36,14 @@ type SourceNode = NonNullable<
   Parameters<RuleContext["sourceCode"]["getText"]>[0]
 > & { type: string }
 
+type JsonValue = boolean | null | number | string | JsonObject | JsonValue[]
+
+interface JsonObject {
+  [key: string]: JsonValue | undefined
+}
+
+type PluginValue = JsonValue | SourceNode | undefined
+
 type StylingMethod =
   | "className"
   | "css"
@@ -96,40 +104,41 @@ const STYLE_METHODS: readonly StylingMethod[] = [
   "xstyle",
 ]
 
-function isObject(value: unknown): value is object {
+function isObject<Value>(value: Value): value is Value & object {
   // oxlint-disable-next-line quality/no-runtime-typeof -- SAFETY: AST and options inputs must be objects before property access.
   return typeof value === "object" && value !== null
 }
 
-function isString(value: unknown): value is string {
+function isString<Value>(value: Value): value is Value & string {
   // oxlint-disable-next-line quality/no-runtime-typeof -- SAFETY: AST string fields must be validated before use.
   return typeof value === "string"
 }
 
-function isBoolean(value: unknown): value is boolean {
+function isBoolean<Value>(value: Value): value is Value & boolean {
   // oxlint-disable-next-line quality/no-runtime-typeof -- SAFETY: rule options must be validated before use.
   return typeof value === "boolean"
 }
 
-function isNode(value: unknown, type?: string): value is SourceNode {
+function isNode(value: PluginValue, type?: string): value is SourceNode {
+  if (!isObject(value)) return false
+
   const nodeType = getProperty(value, "type")
 
-  return (
-    isObject(value) &&
-    isString(nodeType) &&
-    (type === undefined || nodeType === type)
-  )
+  return isString(nodeType) && (type === undefined || nodeType === type)
 }
 
-function getProperty(value: unknown, key: string) {
+function getProperty(value: PluginValue, key: string): PluginValue {
   if (!isObject(value)) return undefined
 
-  const property: unknown = Object.getOwnPropertyDescriptor(value, key)?.value
+  const property: PluginValue = Object.getOwnPropertyDescriptor(
+    value,
+    key,
+  )?.value
 
   return property
 }
 
-function getIdentifier(value: unknown) {
+function getIdentifier(value: PluginValue) {
   if (
     !isNode(value) ||
     (value.type !== "Identifier" && value.type !== "JSXIdentifier")
@@ -141,14 +150,14 @@ function getIdentifier(value: unknown) {
   return isString(name) ? name : null
 }
 
-function getLiteralString(value: unknown) {
+function getLiteralString(value: PluginValue) {
   if (!isNode(value)) return null
   const literal = getProperty(value, "value")
 
   return isString(literal) ? literal : null
 }
 
-function getPropertyName(value: unknown) {
+function getPropertyName(value: PluginValue) {
   return getIdentifier(value) ?? getLiteralString(value)
 }
 
@@ -162,7 +171,7 @@ function isMatchingSource(source: string, patterns: readonly string[]) {
   )
 }
 
-function getStringArray(value: unknown, fallback: Iterable<string>) {
+function getStringArray(value: PluginValue, fallback: Iterable<string>) {
   return Array.isArray(value) ? value.filter(isString) : [...fallback]
 }
 
@@ -285,7 +294,7 @@ function isImportBinding(
 }
 
 function getComponent(
-  name: unknown,
+  name: PluginValue,
   node: JSXOpeningElement,
   bindings: ImportBindings,
   context: RuleContext,
@@ -313,13 +322,13 @@ function getComponent(
     : null
 }
 
-function getAttributeName(attribute: unknown) {
+function getAttributeName(attribute: PluginValue) {
   if (!isNode(attribute, "JSXAttribute")) return null
 
   return getIdentifier(getProperty(attribute, "name"))
 }
 
-function getAttributeExpression(attribute: unknown) {
+function getAttributeExpression(attribute: PluginValue) {
   if (!isNode(attribute, "JSXAttribute")) return null
   const value = getProperty(attribute, "value")
 
@@ -330,7 +339,7 @@ function getAttributeExpression(attribute: unknown) {
 }
 
 function isNamedCall(
-  value: unknown,
+  value: PluginValue,
   names: ReadonlySet<string>,
   namespaces: ReadonlySet<string>,
   method: string,
@@ -351,7 +360,7 @@ function isNamedCall(
   )
 }
 
-function isStaticStylexCondition(value: unknown, bindings: ImportBindings) {
+function isStaticStylexCondition(value: PluginValue, bindings: ImportBindings) {
   if (!isNode(value, "CallExpression")) return false
   const callee = getProperty(value, "callee")
 
@@ -374,7 +383,7 @@ function isStaticStylexCondition(value: unknown, bindings: ImportBindings) {
   )
 }
 
-function isStylexPropsCall(value: unknown, bindings: ImportBindings) {
+function isStylexPropsCall(value: PluginValue, bindings: ImportBindings) {
   return isNamedCall(
     value,
     bindings.stylexProps,
@@ -383,7 +392,7 @@ function isStylexPropsCall(value: unknown, bindings: ImportBindings) {
   )
 }
 
-function getCallArguments(value: unknown) {
+function getCallArguments(value: PluginValue) {
   const args = isNode(value, "CallExpression")
     ? getProperty(value, "arguments")
     : null
@@ -495,7 +504,7 @@ function getPolicy(component: string, options: RestyleOptions): StylePolicy {
 }
 
 function visitStyleProperties(
-  value: unknown,
+  value: PluginValue,
   onProperty: (property: string, node: SourceNode) => void,
 ) {
   if (!isNode(value, "ObjectExpression")) return
@@ -520,7 +529,7 @@ function visitStyleProperties(
   }
 }
 
-function getStyleLiterals(value: unknown): string[] {
+function getStyleLiterals(value: PluginValue): string[] {
   const literal = getLiteralString(value)
 
   if (literal !== null) return [literal]
@@ -536,11 +545,11 @@ function getStyleLiterals(value: unknown): string[] {
 }
 
 function resolveStyle(
-  value: unknown,
-  declarations: Map<ScopedVariable, Map<string, unknown>>,
+  value: PluginValue,
+  declarations: Map<ScopedVariable, Map<string, SourceNode>>,
   node: JSXOpeningElement,
   context: RuleContext,
-  onStyle: (style: unknown) => void,
+  onStyle: (style: SourceNode) => void,
 ) {
   if (!isNode(value)) return
 
@@ -596,7 +605,7 @@ function resolveStyle(
 function trackStyleDeclaration(
   node: VariableDeclarator,
   bindings: ImportBindings,
-  declarations: Map<ScopedVariable, Map<string, unknown>>,
+  declarations: Map<ScopedVariable, Map<string, SourceNode>>,
   context: RuleContext,
 ) {
   const name = getIdentifier(node.id)
@@ -615,7 +624,7 @@ function trackStyleDeclaration(
   const root = getCallArguments(node.init)[0]
 
   if (!isNode(root, "ObjectExpression")) return
-  const styles = new Map<string, unknown>()
+  const styles = new Map<string, SourceNode>()
   const properties = getProperty(root, "properties")
 
   if (Array.isArray(properties)) {
@@ -623,7 +632,9 @@ function trackStyleDeclaration(
       if (!isNode(item, "Property")) continue
       const key = getPropertyName(getProperty(item, "key"))
 
-      if (key !== null) styles.set(key, getProperty(item, "value"))
+      const style = getProperty(item, "value")
+
+      if (key !== null && isNode(style)) styles.set(key, style)
     }
   }
 
@@ -631,7 +642,7 @@ function trackStyleDeclaration(
 }
 
 function classifyMethod(
-  attribute: unknown,
+  attribute: PluginValue,
   bindings: ImportBindings,
 ): StylingMethod | null {
   const name = getAttributeName(attribute)
@@ -792,7 +803,7 @@ const noRestyleRule: Rule = {
     const policyOptions = getRestyleOptions(context)
     const options = getStylingOptions(context)
     const bindings = createImportBindings()
-    const declarations = new Map<ScopedVariable, Map<string, unknown>>()
+    const declarations = new Map<ScopedVariable, Map<string, SourceNode>>()
     const elements: JSXOpeningElement[] = []
 
     return {
@@ -933,7 +944,7 @@ const noRawStylexColorsRule: Rule = {
   },
 }
 
-function containsAtom(value: unknown, atoms: ReadonlySet<string>): boolean {
+function containsAtom(value: PluginValue, atoms: ReadonlySet<string>): boolean {
   if (!isNode(value)) return false
 
   if (value.type === "Identifier") return atoms.has(getIdentifier(value) ?? "")
@@ -1190,7 +1201,7 @@ const staticStylexRule: Rule = {
           return
         }
 
-        const stack: unknown[] = [root]
+        const stack: PluginValue[] = [root]
 
         while (stack.length > 0) {
           const current = stack.pop()

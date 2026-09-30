@@ -2,7 +2,7 @@ import { readFile, realpath, writeFile, mkdir, unlink } from "node:fs/promises"
 import { dirname, join } from "node:path"
 import ts from "typescript-api"
 
-import type { InstallOptions, JsonObject } from "./install"
+import type { InstallOptions, JsonObject, JsonValue } from "./install"
 
 import {
   existingFile,
@@ -32,7 +32,7 @@ export interface InitOptions extends InstallOptions {
   framework?: Framework
 }
 
-function object(value: unknown): value is JsonObject {
+function object(value: JsonValue | undefined): value is JsonObject {
   return isRecord(value)
 }
 
@@ -322,7 +322,7 @@ function staticLiteral(node: ts.Expression): boolean {
 
 function migrateBabel(content: string, path: string) {
   if (path === ".babelrc" || path === ".babelrc.json") {
-    const config: unknown = JSON.parse(content)
+    const config: JsonValue = JSON.parse(content)
 
     if (
       !object(config) ||
@@ -343,7 +343,7 @@ function migrateBabel(content: string, path: string) {
         if (value === "@stylexjs/babel-plugin") return []
 
         if (Array.isArray(value) && value[0] === "@stylexjs/babel-plugin") {
-          const options: unknown = value[1]
+          const options: JsonValue | undefined = value[1]
 
           if (
             options !== undefined &&
@@ -1296,7 +1296,7 @@ const lintRules = {
 }
 
 function lintConfig(content: string) {
-  const config: unknown = JSON.parse(content)
+  const config: JsonValue = JSON.parse(content)
 
   if (!object(config)) throw new Error("Invalid .oxlintrc.json")
   const plugins = config.jsPlugins ?? []
@@ -1346,7 +1346,7 @@ function lintConfig(content: string) {
     : `${JSON.stringify(next, null, 2)}\n`
 }
 
-function nextScripts(value: unknown) {
+function nextScripts(value: JsonValue | undefined) {
   if (!object(value)) throw new Error("Invalid package.json scripts")
   const scripts = { ...value }
 
@@ -1421,7 +1421,7 @@ function detectFramework(
 
 async function packageManager(
   root: string,
-  declared: unknown,
+  declared: JsonValue | undefined,
 ): Promise<PackageManager> {
   const markers: [PackageManager, string][] = [
     ["bun", "bun.lock"],
@@ -1468,7 +1468,7 @@ export async function initProject(options: InitOptions = {}) {
   }
 
   const packageText = await readFile(join(root, "package.json"), "utf8")
-  const manifest: unknown = JSON.parse(packageText)
+  const manifest: JsonValue = JSON.parse(packageText)
 
   if (
     !object(manifest) ||
@@ -1725,7 +1725,7 @@ export async function initProject(options: InitOptions = {}) {
   }
 
   const packages = await readFile(join(root, "package.json"), "utf8")
-  const installed: unknown = JSON.parse(packages)
+  const installed: JsonValue = JSON.parse(packages)
 
   if (!object(installed))
     throw new Error("Invalid package.json after installation")
@@ -1770,7 +1770,7 @@ export async function initProject(options: InitOptions = {}) {
   for (const path of retired.keys()) await unlink(join(root, path))
 
   if (framework === "next") {
-    const latest: unknown = JSON.parse(
+    const latest: JsonValue = JSON.parse(
       await readFile(join(root, "package.json"), "utf8"),
     )
 

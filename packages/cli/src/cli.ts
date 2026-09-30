@@ -68,8 +68,8 @@ export async function runCli(args: string[], options: InitOptions = {}) {
 }
 
 if (import.meta.main) {
-  runCli(process.argv.slice(2)).catch((error: unknown) => {
-    console.error(error instanceof Error ? error.message : error)
+  runCli(process.argv.slice(2)).catch((cause: unknown) => {
+    console.error(cause instanceof Error ? cause.message : cause)
     process.exitCode = 1
   })
 }

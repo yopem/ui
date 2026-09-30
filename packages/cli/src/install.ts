@@ -25,7 +25,7 @@ export type JsonValue =
   | JsonValue[]
 
 export interface JsonObject {
-  [key: string]: JsonValue
+  [key: string]: JsonValue | undefined
 }
 
 interface RegistryFile {
@@ -57,7 +57,7 @@ export interface InstallOptions {
   run?: (args: string[], cwd: string) => Promise<void>
 }
 
-export function isRecord(value: unknown): value is JsonObject {
+export function isRecord(value: JsonValue | undefined): value is JsonObject {
   // oxlint-disable-next-line quality/no-runtime-typeof -- SAFETY: reject primitives before reading untrusted registry JSON.
   return typeof value === "object" && value !== null && !Array.isArray(value)
 }
@@ -67,7 +67,7 @@ export function isString(value: unknown): value is string {
   return typeof value === "string"
 }
 
-function isStringArray(value: unknown): value is string[] {
+function isStringArray(value: JsonValue | undefined): value is string[] {
   return Array.isArray(value) && value.every(isString)
 }
 
@@ -103,7 +103,7 @@ function hash(content: string) {
   return `sha256-${createHash("sha256").update(content).digest("base64")}`
 }
 
-function parseItem(value: unknown, name: string): RegistryItem {
+function parseItem(value: JsonValue, name: string): RegistryItem {
   if (
     !isRecord(value) ||
     value.schemaVersion !== 1 ||
@@ -188,10 +188,10 @@ export async function existingFile(root: string, relative: string) {
   for (const [index, part] of parts.entries()) {
     current = join(current, part)
 
-    const entry = await lstat(current).catch((error: unknown) => {
-      if (error instanceof Error && "code" in error && error.code === "ENOENT")
+    const entry = await lstat(current).catch((cause: unknown) => {
+      if (cause instanceof Error && "code" in cause && cause.code === "ENOENT")
         return null
-      throw error
+      throw cause
     })
 
     if (!entry) return false
@@ -216,7 +216,7 @@ async function readManifest(root: string): Promise<Manifest> {
     return { version: 1, files: {} }
   }
 
-  const value: unknown = JSON.parse(
+  const value: JsonValue = JSON.parse(
     await readFile(join(root, ".yopem-ui.json"), "utf8"),
   )
 
