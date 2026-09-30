@@ -82,6 +82,9 @@ test("steps expose active item as current step", async ({ page }) => {
 test("clipboard reports copied content", async ({ page, context }) => {
   await context.grantPermissions(["clipboard-read", "clipboard-write"])
   await page.goto("/components/clipboard", { waitUntil: "networkidle" })
+  await expect(
+    page.getByRole("button", { name: "Copy Clipboard usage" }),
+  ).toBeEnabled({ timeout: 20_000 })
   await page.getByRole("button", { name: "Copy to clipboard" }).click()
   await expect(
     page.locator('[data-slot="clipboard-status"]').first(),

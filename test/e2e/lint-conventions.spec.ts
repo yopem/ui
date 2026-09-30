@@ -17,8 +17,12 @@ test("docs lint accepts StyleX and rejects forbidden styling", () => {
       `
       import { Box } from "@/components/ui/box"
       import * as stylex from "@stylexjs/stylex"
+
       const styles = stylex.create({ root: { padding: "1rem" } })
-      export function Preview() { return <Box xstyle={styles.root}>Content</Box> }
+
+      export function Preview() {
+        return <Box xstyle={styles.root}>Content</Box>
+      }
     `,
     )
 
@@ -34,7 +38,9 @@ test("docs lint accepts StyleX and rejects forbidden styling", () => {
       `
       import { Box } from "@/components/ui/box"
       import * as stylex from "@stylexjs/stylex"
+
       const styles = stylex.create({ root: { backgroundColor: "#fff" } })
+
       export function Preview() {
         return <div><Box className="custom" xstyle={styles.root}>Content</Box></div>
       }

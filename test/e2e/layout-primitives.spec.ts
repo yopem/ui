@@ -174,6 +174,18 @@ test.describe("layout and typography primitives", () => {
     page,
   }) => {
     await openLayoutPreview(page)
+
+    for (const testId of [
+      "positioned-layout",
+      "absolute-center",
+      "float",
+      "rtl-positioned-layout",
+      "rtl-absolute-center",
+      "rtl-float",
+    ]) {
+      await expect(page.getByTestId(testId)).toBeVisible()
+    }
+
     const area = await page.getByTestId("positioned-layout").boundingBox()
     const center = await page.getByTestId("absolute-center").boundingBox()
     const float = await page.getByTestId("float").boundingBox()
