@@ -2,7 +2,7 @@ import { readFile, realpath, writeFile, mkdir, unlink } from "node:fs/promises"
 import { dirname, join } from "node:path"
 import ts from "typescript-api"
 
-import type { InstallOptions } from "./install"
+import type { InstallOptions, JsonObject } from "./install"
 
 import {
   existingFile,
@@ -27,8 +27,6 @@ interface Edit {
   end: number
   text: string
 }
-
-type JsonObject = Record<string, unknown>
 
 export interface InitOptions extends InstallOptions {
   framework?: Framework

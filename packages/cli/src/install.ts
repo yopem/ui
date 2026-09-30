@@ -16,7 +16,17 @@ const types = new Set([
   "registry:ui",
 ])
 
-type RecordValue = Record<string, unknown>
+export type JsonValue =
+  | boolean
+  | null
+  | number
+  | string
+  | JsonObject
+  | JsonValue[]
+
+export interface JsonObject {
+  [key: string]: JsonValue
+}
 
 interface RegistryFile {
   content: string
@@ -47,7 +57,7 @@ export interface InstallOptions {
   run?: (args: string[], cwd: string) => Promise<void>
 }
 
-export function isRecord(value: unknown): value is RecordValue {
+export function isRecord(value: unknown): value is JsonObject {
   // oxlint-disable-next-line quality/no-runtime-typeof -- SAFETY: reject primitives before reading untrusted registry JSON.
   return typeof value === "object" && value !== null && !Array.isArray(value)
 }
@@ -179,7 +189,8 @@ export async function existingFile(root: string, relative: string) {
     current = join(current, part)
 
     const entry = await lstat(current).catch((error: unknown) => {
-      if (isRecord(error) && error.code === "ENOENT") return null
+      if (error instanceof Error && "code" in error && error.code === "ENOENT")
+        return null
       throw error
     })
 

@@ -2,6 +2,12 @@ import { afterAll, expect, test } from "bun:test"
 import { mkdirSync, rmSync, writeFileSync } from "node:fs"
 import { resolve } from "node:path"
 
+type JsonValue = boolean | null | number | string | JsonObject | JsonValue[]
+
+interface JsonObject {
+  [key: string]: JsonValue
+}
+
 const directory = resolve(import.meta.dir, "../../tmp/oxlint-plugin-e2e")
 
 const plugin = resolve(
@@ -13,7 +19,7 @@ mkdirSync(directory, { recursive: true })
 
 afterAll(() => rmSync(directory, { recursive: true, force: true }))
 
-function lint(source: string, rules: Record<string, unknown>) {
+function lint(source: string, rules: JsonObject) {
   const config = resolve(directory, "config.json")
   const input = resolve(directory, "fixture.tsx")
   writeFileSync(

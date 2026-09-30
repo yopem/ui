@@ -16,7 +16,7 @@ interface Plugin {
   meta: {
     name: string
   }
-  configs: Record<string, { rules: Record<string, unknown> }>
+  configs: { recommended: { rules: typeof recommendedRules } }
   rules: Record<string, Rule>
 }
 
@@ -112,22 +112,21 @@ function isBoolean(value: unknown): value is boolean {
 }
 
 function isNode(value: unknown, type?: string): value is SourceNode {
+  const nodeType = getProperty(value, "type")
+
   return (
-    hasProperty(value, "type") &&
-    isString(value.type) &&
-    (type === undefined || value.type === type)
+    isObject(value) &&
+    isString(nodeType) &&
+    (type === undefined || nodeType === type)
   )
 }
 
-function hasProperty<Key extends PropertyKey>(
-  value: unknown,
-  key: Key,
-): value is Record<Key, unknown> {
-  return isObject(value) && key in value
-}
-
 function getProperty(value: unknown, key: string) {
-  return hasProperty(value, key) ? value[key] : undefined
+  if (!isObject(value)) return undefined
+
+  const property: unknown = Object.getOwnPropertyDescriptor(value, key)?.value
+
+  return property
 }
 
 function getIdentifier(value: unknown) {
