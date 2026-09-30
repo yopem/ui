@@ -5,6 +5,7 @@ import { Box } from "@registry/components/ui/box"
 import { Heading } from "@registry/components/ui/heading"
 import { Link } from "@registry/components/ui/link"
 import { Text } from "@registry/components/ui/text"
+import { isString } from "@registry/lib/stylex"
 import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import { isValidElement } from "react"
@@ -96,9 +97,7 @@ function GuideH2({ children, id }: ComponentProps<"h2">) {
   return (
     <Heading
       as="h2"
-      id={
-        id ?? (typeof children === "string" ? headingId(children) : undefined)
-      }
+      id={id ?? (isString(children) ? headingId(children) : undefined)}
       xstyle={styles.h2}
     >
       {children}
@@ -110,9 +109,7 @@ function GuideH3({ children, id }: ComponentProps<"h3">) {
   return (
     <Heading
       as="h3"
-      id={
-        id ?? (typeof children === "string" ? headingId(children) : undefined)
-      }
+      id={id ?? (isString(children) ? headingId(children) : undefined)}
       xstyle={styles.h3}
     >
       {children}
@@ -124,7 +121,7 @@ function GuideCode({ children }: { children?: ReactNode }) {
   if (isValidElement<{ children?: ReactNode }>(children)) {
     const code = children.props.children
 
-    if (typeof code === "string") return <CopyableCode code={code} />
+    if (isString(code)) return <CopyableCode code={code} />
   }
 
   return (

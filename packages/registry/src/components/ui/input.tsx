@@ -5,7 +5,12 @@ import type { StyleXProps } from "@registry/lib/stylex"
 import type * as React from "react"
 
 import { Input as InputPrimitive } from "@base-ui/react/input"
-import { stylexProps } from "@registry/lib/stylex"
+import {
+  isCallback,
+  isNumber,
+  isString,
+  stylexProps,
+} from "@registry/lib/stylex"
 import { themeMarker, tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import { clsx } from "clsx"
@@ -194,7 +199,7 @@ function mergeInputClassName(
   inputClassName: string,
   className: InputProps["className"],
 ) {
-  if (typeof className !== "function") return inputClassName
+  if (!isCallback(className)) return inputClassName
 
   return (state: InputPrimitive.State) => clsx(inputClassName, className(state))
 }
@@ -223,7 +228,7 @@ export function Input({
     xstyle,
   )
 
-  const wrapperClassName = typeof className === "string" ? className : undefined
+  const wrapperClassName = isString(className) ? className : undefined
 
   return (
     <span
@@ -240,7 +245,7 @@ export function Input({
         <input
           {...inputProps}
           data-slot="input"
-          size={typeof size === "number" ? size : undefined}
+          size={isNumber(size) ? size : undefined}
           style={inputProps.style}
           {...props}
         />
@@ -249,7 +254,7 @@ export function Input({
           {...inputProps}
           className={mergeInputClassName(inputProps.className, className)}
           data-slot="input"
-          size={typeof size === "number" ? size : undefined}
+          size={isNumber(size) ? size : undefined}
           style={inputProps.style}
           {...props}
         />

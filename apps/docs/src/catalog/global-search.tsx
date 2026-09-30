@@ -1,7 +1,5 @@
 "use client"
 
-import type { SortedResult } from "fumadocs-core/search"
-
 import { Box } from "@registry/components/ui/box"
 import { Button } from "@registry/components/ui/button"
 import {
@@ -18,6 +16,7 @@ import * as stylex from "@stylexjs/stylex"
 import { Link } from "@tanstack/react-router"
 import { SearchIcon } from "lucide-react"
 import { useCallback, useRef, useState } from "react"
+import { z } from "zod"
 
 const primitiveStyles = stylex.create({
   searchDocumentation: {
@@ -78,35 +77,22 @@ function listenForSearchShortcut(onShortcut: () => void) {
   return () => document.removeEventListener("keydown", onKeyDown)
 }
 
-function isSearchResult(value: unknown): value is SortedResult {
-  if (typeof value !== "object" || value === null) return false
+const searchResultSchema = z.object({
+  id: z.string(),
+  url: z.string().refine((url) => url.startsWith("/") && !url.startsWith("//")),
+  content: z.string(),
+  type: z.enum(["page", "heading", "text"]),
+  breadcrumbs: z.array(z.string()).optional(),
+})
 
-  if (!("id" in value) || typeof value.id !== "string") return false
+const searchResultsSchema = z.array(searchResultSchema)
 
-  if (!("url" in value) || typeof value.url !== "string") return false
-
-  if (!value.url.startsWith("/") || value.url.startsWith("//")) return false
-
-  if (!("content" in value) || typeof value.content !== "string") return false
-
-  if (
-    !("type" in value) ||
-    (value.type !== "page" && value.type !== "heading" && value.type !== "text")
-  )
-    return false
-
-  return (
-    !("breadcrumbs" in value) ||
-    value.breadcrumbs === undefined ||
-    (Array.isArray(value.breadcrumbs) &&
-      value.breadcrumbs.every((crumb) => typeof crumb === "string"))
-  )
-}
+type SearchResult = z.infer<typeof searchResultSchema>
 
 export function GlobalSearch() {
   const [open, setOpen] = useState(false)
   const [query, setQuery] = useState("")
-  const [results, setResults] = useState<SortedResult[]>([])
+  const [results, setResults] = useState<SearchResult[]>([])
 
   const [status, setStatus] = useState<"idle" | "loading" | "ready" | "error">(
     "idle",
@@ -156,11 +142,12 @@ export function GlobalSearch() {
       if (!response.ok) throw new Error("Search unavailable")
       const data: unknown = await response.json()
 
-      if (!Array.isArray(data) || !data.every(isSearchResult))
-        throw new Error("Invalid search response")
+      const parsed = searchResultsSchema.safeParse(data)
+
+      if (!parsed.success) throw new Error("Invalid search response")
 
       if (!controller.signal.aborted) {
-        setResults(data)
+        setResults(parsed.data)
         setStatus("ready")
       }
     } catch {

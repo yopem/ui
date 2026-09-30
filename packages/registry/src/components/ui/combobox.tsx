@@ -5,7 +5,13 @@ import type { StyleXComponentProps } from "@registry/lib/stylex"
 import { Combobox as ComboboxPrimitive } from "@base-ui/react/combobox"
 import { Input } from "@registry/components/ui/input"
 import { ScrollArea } from "@registry/components/ui/scroll-area"
-import { mergeStylexProps, stylexProps } from "@registry/lib/stylex"
+import {
+  isCallback,
+  isNumber,
+  isString,
+  mergeStylexProps,
+  stylexProps,
+} from "@registry/lib/stylex"
 import { themeMarker, tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import { ChevronsUpDownIcon, XIcon } from "lucide-react"
@@ -349,10 +355,10 @@ export const ComboboxChipsInput = React.forwardRef<
 
   return (
     <ComboboxPrimitive.Input
-      data-size={typeof sizeValue === "string" ? sizeValue : undefined}
+      data-size={isString(sizeValue) ? sizeValue : undefined}
       data-slot="combobox-chips-input"
       ref={ref}
-      size={typeof sizeValue === "number" ? sizeValue : undefined}
+      size={isNumber(sizeValue) ? sizeValue : undefined}
       {...mergeStylexProps(
         stylexProps(
           className,
@@ -402,7 +408,7 @@ export const ComboboxInput = React.forwardRef<
     <ComboboxPrimitive.InputGroup
       {...stylex.props(styles.inputGroup)}
       data-has-start-addon={startAddon ? "" : undefined}
-      data-size={typeof sizeValue === "string" ? sizeValue : undefined}
+      data-size={isString(sizeValue) ? sizeValue : undefined}
       data-slot="combobox-input-group"
     >
       {startAddon ? (
@@ -520,7 +526,7 @@ export function ComboboxPopup({
       >
         <span
           {...stylexProps(
-            typeof className === "string" ? className : undefined,
+            isString(className) ? className : undefined,
             styles.surface,
           )}
         >
@@ -528,7 +534,7 @@ export function ComboboxPopup({
             data-slot="combobox-popup"
             {...mergeStylexProps(
               stylexProps(
-                typeof className === "function" ? className : undefined,
+                isCallback(className) ? className : undefined,
                 styles.popup,
                 xstyle,
               ),

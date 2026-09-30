@@ -3,7 +3,12 @@
 import type { StyleXComponentProps } from "@registry/lib/stylex"
 
 import { Accordion as AccordionPrimitive } from "@base-ui/react/accordion"
-import { mergeStylexProps, stylexProps } from "@registry/lib/stylex"
+import {
+  isCallback,
+  isString,
+  mergeStylexProps,
+  stylexProps,
+} from "@registry/lib/stylex"
 import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import { ChevronDownIcon } from "lucide-react"
@@ -139,7 +144,7 @@ export function AccordionPanel({
       data-slot="accordion-panel"
       {...mergeStylexProps(
         stylexProps(
-          typeof className === "function" ? className : undefined,
+          isCallback(className) ? className : undefined,
           styles.panel,
         ),
         props,
@@ -147,7 +152,7 @@ export function AccordionPanel({
     >
       <div
         {...stylexProps(
-          typeof className === "string" ? className : undefined,
+          isString(className) ? className : undefined,
           styles.panelContent,
           xstyle,
         )}

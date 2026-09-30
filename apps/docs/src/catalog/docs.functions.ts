@@ -1,6 +1,7 @@
 import { componentDocs } from "@registry/docs"
 import { rewriteImports } from "@registry/source-files"
 import { createServerFn } from "@tanstack/react-start"
+import { z } from "zod"
 
 import { getDocumentationItems, getRequiredItems } from "./docs-data"
 import { usageSnippets } from "./usage"
@@ -18,13 +19,12 @@ const previewSources = import.meta.glob<string>("./previews/*.tsx", {
   import: "default",
 })
 
-export const getDocumentation = createServerFn({ method: "GET" })
-  .validator((slug: string) => {
-    if (typeof slug !== "string" || !/^[a-z0-9-]+$/.test(slug))
-      throw new Error("Invalid component name")
+const slugSchema = z
+  .string()
+  .regex(/^[a-z0-9-]+$/, { error: "Invalid component name" })
 
-    return slug
-  })
+export const getDocumentation = createServerFn({ method: "GET" })
+  .validator(slugSchema)
   .handler(async ({ data: slug }) => {
     const items = getDocumentationItems(slug)
     const previewLoader = previewSources[`./previews/${slug}.tsx`]

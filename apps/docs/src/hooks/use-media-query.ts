@@ -1,5 +1,6 @@
 "use client"
 
+import { isNumber, isString } from "@registry/lib/stylex"
 import { useCallback, useSyncExternalStore } from "react"
 
 const BREAKPOINTS = {
@@ -20,13 +21,13 @@ type BreakpointQuery =
   | `${Breakpoint}:max-${Breakpoint}`
 
 function resolveMin(value: Breakpoint | number): string {
-  const px = typeof value === "number" ? value : BREAKPOINTS[value]
+  const px = isNumber(value) ? value : BREAKPOINTS[value]
 
   return `(min-width: ${px}px)`
 }
 
 function resolveMax(value: Breakpoint | number): string {
-  const px = typeof value === "number" ? value : BREAKPOINTS[value]
+  const px = isNumber(value) ? value : BREAKPOINTS[value]
 
   return `(max-width: ${px - 1}px)`
 }
@@ -34,7 +35,7 @@ function resolveMax(value: Breakpoint | number): string {
 function parseQuery(
   query: BreakpointQuery | MediaQueryInput | (string & {}),
 ): string {
-  if (typeof query !== "string") {
+  if (!isString(query)) {
     const parts: string[] = []
 
     if (query.min != null) parts.push(resolveMin(query.min))

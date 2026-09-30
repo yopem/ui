@@ -4,7 +4,13 @@ import ts from "typescript-api"
 
 import type { InstallOptions } from "./install"
 
-import { existingFile, installItem, runBun } from "./install"
+import {
+  existingFile,
+  installItem,
+  isRecord,
+  isString,
+  runBun,
+} from "./install"
 
 type Framework =
   | "vite"
@@ -29,7 +35,7 @@ export interface InitOptions extends InstallOptions {
 }
 
 function object(value: unknown): value is JsonObject {
-  return typeof value === "object" && value !== null && !Array.isArray(value)
+  return isRecord(value)
 }
 
 function applyEdits(source: string, edits: Edit[]) {
@@ -1350,7 +1356,7 @@ function nextScripts(value: unknown) {
     const command = scripts[name]
 
     if (
-      typeof command !== "string" ||
+      !isString(command) ||
       !new RegExp(`^next ${name}(?:\\s|$)`).test(command) ||
       /--turbopack|--turbo|[;&|`$]/.test(command)
     ) {
@@ -1387,7 +1393,7 @@ function detectFramework(
   dependencies: JsonObject,
   chosen?: Framework,
 ): Framework {
-  const present = (name: string) => typeof dependencies[name] === "string"
+  const present = (name: string) => isString(dependencies[name])
   const detected: Framework[] = []
 
   if (present("next")) detected.push("next")
@@ -1435,8 +1441,7 @@ async function packageManager(
 
   if (found.size > 1) throw new Error("Conflicting package manager lockfiles")
 
-  const named =
-    typeof declared === "string" ? declared.split("@")[0] : undefined
+  const named = isString(declared) ? declared.split("@")[0] : undefined
 
   if (
     named &&

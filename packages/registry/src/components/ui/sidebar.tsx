@@ -21,7 +21,12 @@ import {
   TooltipPopup,
   TooltipTrigger,
 } from "@registry/components/ui/tooltip"
-import { mergeStylexProps, stylexProps } from "@registry/lib/stylex"
+import {
+  isCallback,
+  isString,
+  mergeStylexProps,
+  stylexProps,
+} from "@registry/lib/stylex"
 import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import { PanelLeftIcon } from "lucide-react"
@@ -595,7 +600,7 @@ export function SidebarProvider({
 
   const setOpen = React.useCallback(
     async (value: boolean | ((value: boolean) => boolean)) => {
-      const next = typeof value === "function" ? value(open) : value
+      const next = isCallback(value) ? value(open) : value
 
       if (setOpenProp) setOpenProp(next)
       else _setOpen(next)
@@ -1097,8 +1102,7 @@ export function SidebarMenuButton({
 
   if (!tooltip) return buttonElement
 
-  const popupProps =
-    typeof tooltip === "string" ? { children: tooltip } : tooltip
+  const popupProps = isString(tooltip) ? { children: tooltip } : tooltip
 
   return (
     <Tooltip>

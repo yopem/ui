@@ -5,7 +5,12 @@ import type { StyleXComponentProps } from "@registry/lib/stylex"
 import { Autocomplete as AutocompletePrimitive } from "@base-ui/react/autocomplete"
 import { Input } from "@registry/components/ui/input"
 import { ScrollArea } from "@registry/components/ui/scroll-area"
-import { mergeStylexProps, stylexProps } from "@registry/lib/stylex"
+import {
+  isCallback,
+  isString,
+  mergeStylexProps,
+  stylexProps,
+} from "@registry/lib/stylex"
 import { themeMarker, tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import { ChevronsUpDownIcon, XIcon } from "lucide-react"
@@ -223,7 +228,7 @@ export const AutocompleteInput = React.forwardRef<
     <AutocompletePrimitive.InputGroup
       {...stylex.props(styles.inputGroup)}
       data-has-start-addon={startAddon ? "" : undefined}
-      data-size={typeof sizeValue === "string" ? sizeValue : undefined}
+      data-size={isString(sizeValue) ? sizeValue : undefined}
       data-slot="autocomplete-input-group"
     >
       {startAddon ? (
@@ -316,7 +321,7 @@ export function AutocompletePopup({
       >
         <span
           {...stylexProps(
-            typeof className === "string" ? className : undefined,
+            isString(className) ? className : undefined,
             styles.surface,
           )}
         >
@@ -324,7 +329,7 @@ export function AutocompletePopup({
             data-slot="autocomplete-popup"
             {...mergeStylexProps(
               stylexProps(
-                typeof className === "function" ? className : undefined,
+                isCallback(className) ? className : undefined,
                 styles.popup,
                 xstyle,
               ),

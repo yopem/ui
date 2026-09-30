@@ -47,14 +47,18 @@ export interface InstallOptions {
   run?: (args: string[], cwd: string) => Promise<void>
 }
 
-function isRecord(value: unknown): value is RecordValue {
+export function isRecord(value: unknown): value is RecordValue {
+  // oxlint-disable-next-line quality/no-runtime-typeof -- SAFETY: reject primitives before reading untrusted registry JSON.
   return typeof value === "object" && value !== null && !Array.isArray(value)
 }
 
+export function isString(value: unknown): value is string {
+  // oxlint-disable-next-line quality/no-runtime-typeof -- SAFETY: validate untrusted registry fields before use.
+  return typeof value === "string"
+}
+
 function isStringArray(value: unknown): value is string[] {
-  return (
-    Array.isArray(value) && value.every((entry) => typeof entry === "string")
-  )
+  return Array.isArray(value) && value.every(isString)
 }
 
 function safePath(path: string) {
@@ -94,10 +98,11 @@ function parseItem(value: unknown, name: string): RegistryItem {
     !isRecord(value) ||
     value.schemaVersion !== 1 ||
     value.name !== name ||
-    !types.has(String(value.type)) ||
-    typeof value.title !== "string" ||
-    typeof value.description !== "string" ||
-    typeof value.registryVersion !== "string" ||
+    !isString(value.type) ||
+    !types.has(value.type) ||
+    !isString(value.title) ||
+    !isString(value.description) ||
+    !isString(value.registryVersion) ||
     !isStringArray(value.categories) ||
     !isStringArray(value.dependencies) ||
     !isStringArray(value.devDependencies) ||
@@ -130,12 +135,12 @@ function parseItem(value: unknown, name: string): RegistryItem {
   for (const file of value.files) {
     if (
       !isRecord(file) ||
-      typeof file.path !== "string" ||
-      typeof file.target !== "string" ||
-      typeof file.type !== "string" ||
+      !isString(file.path) ||
+      !isString(file.target) ||
+      !isString(file.type) ||
       !types.has(file.type) ||
-      typeof file.content !== "string" ||
-      typeof file.integrity !== "string" ||
+      !isString(file.content) ||
+      !isString(file.integrity) ||
       !hashPattern.test(file.integrity)
     ) {
       throw new Error(`Invalid registry file in ${name}`)
@@ -214,7 +219,7 @@ async function readManifest(root: string): Promise<Manifest> {
     if (
       path !== targetPath(`@/${path.slice(4)}`) ||
       !path.startsWith("src/") ||
-      typeof integrity !== "string" ||
+      !isString(integrity) ||
       !hashPattern.test(integrity)
     ) {
       throw new Error("Invalid .yopem-ui.json")

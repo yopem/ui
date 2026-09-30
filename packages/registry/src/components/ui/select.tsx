@@ -6,7 +6,12 @@ import type * as React from "react"
 import { mergeProps } from "@base-ui/react/merge-props"
 import { Select as SelectPrimitive } from "@base-ui/react/select"
 import { useRender } from "@base-ui/react/use-render"
-import { mergeStylexProps, stylexProps } from "@registry/lib/stylex"
+import {
+  isCallback,
+  isString,
+  mergeStylexProps,
+  stylexProps,
+} from "@registry/lib/stylex"
 import { themeMarker, tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import { clsx } from "clsx"
@@ -431,7 +436,7 @@ export function SelectPopup({
           data-slot="select-popup"
           {...mergeStylexProps(
             stylexProps(
-              typeof className === "function" ? className : undefined,
+              isCallback(className) ? className : undefined,
               styles.popup,
               xstyle,
             ),
@@ -447,7 +452,7 @@ export function SelectPopup({
           <div {...stylex.props(styles.popupSurface)}>
             <SelectPrimitive.List
               {...stylexProps(
-                typeof className === "string" ? className : undefined,
+                isString(className) ? className : undefined,
                 styles.list,
               )}
               data-slot="select-list"

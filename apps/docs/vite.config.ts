@@ -26,6 +26,7 @@ const loadStylexPostcss: unknown = createRequire(import.meta.url)(
   "@stylexjs/postcss-plugin",
 )
 
+// oxlint-disable-next-line quality/no-runtime-typeof -- SAFETY: validate dynamic export before call.
 if (typeof loadStylexPostcss !== "function")
   throw new Error("StyleX PostCSS plugin unavailable")
 
@@ -46,9 +47,11 @@ const stylexPostcssPlugin: unknown = loadStylexPostcss({
 
 function isPostcssPlugin(value: unknown): value is { postcssPlugin: string } {
   return (
+    // oxlint-disable-next-line quality/no-runtime-typeof -- SAFETY: validate unknown plugin shape.
     typeof value === "object" &&
     value !== null &&
     "postcssPlugin" in value &&
+    // oxlint-disable-next-line quality/no-runtime-typeof -- SAFETY: plugin contract requires string name.
     typeof value.postcssPlugin === "string"
   )
 }
@@ -60,6 +63,7 @@ const mdxPlugin = mdx()
 
 const transformMdx = mdxPlugin.transform
 
+// oxlint-disable-next-line quality/no-runtime-typeof -- SAFETY: validate optional plugin hook before call.
 if (typeof transformMdx !== "function")
   throw new Error("MDX plugin transform unavailable")
 

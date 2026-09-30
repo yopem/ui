@@ -20,6 +20,29 @@ type InlineStyle = CSSProperties | ((state: never) => CSSProperties | undefined)
 
 type ClassName = string | ((state: never) => string | undefined)
 
+type CallbackOf<Value> = Value extends (
+  ...args: infer Arguments
+) => infer Result
+  ? (...args: Arguments) => Result
+  : never
+
+export function isString<Value>(value: Value): value is Extract<Value, string> {
+  // oxlint-disable-next-line quality/no-runtime-typeof -- SAFETY: primitive string check preserves the component's string-or-callback prop contract.
+  return typeof value === "string"
+}
+
+export function isNumber<Value>(value: Value): value is Extract<Value, number> {
+  // oxlint-disable-next-line quality/no-runtime-typeof -- SAFETY: primitive number check preserves the input size contract.
+  return typeof value === "number"
+}
+
+export function isCallback<Value>(
+  value: Value,
+): value is Value & CallbackOf<Value> {
+  // oxlint-disable-next-line quality/no-runtime-typeof -- SAFETY: callback unions require callable discrimination to preserve the public prop contract.
+  return typeof value === "function"
+}
+
 interface MergeableProps {
   style?: InlineStyle
   className?: ClassName
@@ -71,23 +94,21 @@ export function mergeStylexProps(
     ...generated,
     ...props,
     className:
-      typeof generatedClassName === "function" ||
-      typeof className === "function"
+      isCallback(generatedClassName) || isCallback(className)
         ? function mergedClassName(state: never) {
             return clsx(
-              typeof generatedClassName === "function"
+              isCallback(generatedClassName)
                 ? generatedClassName(state)
                 : generatedClassName,
-              typeof className === "function" ? className(state) : className,
+              isCallback(className) ? className(state) : className,
             )
           }
         : clsx(generatedClassName, className),
-    style:
-      typeof style === "function"
-        ? function mergedStyle(state: never) {
-            return { ...generated.style, ...style(state) }
-          }
-        : { ...generated.style, ...style },
+    style: isCallback(style)
+      ? function mergedStyle(state: never) {
+          return { ...generated.style, ...style(state) }
+        }
+      : { ...generated.style, ...style },
   }
 }
 
@@ -122,9 +143,8 @@ export function stylexProps<State>(
   return {
     ...props,
     style,
-    className:
-      typeof className === "function"
-        ? (state: State) => clsx(props.className, className(state))
-        : clsx(props.className, className),
+    className: isCallback(className)
+      ? (state: State) => clsx(props.className, className(state))
+      : clsx(props.className, className),
   }
 }

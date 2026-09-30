@@ -44,6 +44,7 @@ function highlightText(text: string, query: string): ReactNode {
 
 function highlightChildren(children: ReactNode, query: string): ReactNode {
   return Children.map(children, (child) => {
+    // oxlint-disable-next-line quality/no-runtime-typeof -- ReactNode may be text or element.
     if (typeof child === "string" || typeof child === "number") {
       return highlightText(String(child), query)
     }

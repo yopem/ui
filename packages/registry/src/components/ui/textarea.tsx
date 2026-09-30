@@ -6,7 +6,7 @@ import type * as React from "react"
 
 import { Field as FieldPrimitive } from "@base-ui/react/field"
 import { mergeProps } from "@base-ui/react/merge-props"
-import { stylexProps } from "@registry/lib/stylex"
+import { isString, stylexProps } from "@registry/lib/stylex"
 import { themeMarker, tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 
@@ -99,7 +99,7 @@ export function Textarea({
   const sizeStyle =
     size === "sm" ? styles.small : size === "lg" ? styles.large : null
 
-  const wrapperClassName = typeof className === "string" ? className : undefined
+  const wrapperClassName = isString(className) ? className : undefined
 
   return (
     <span

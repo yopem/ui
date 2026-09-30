@@ -96,25 +96,34 @@ const STYLE_METHODS: readonly StylingMethod[] = [
   "xstyle",
 ]
 
-function isNode(value: unknown, type?: string): value is SourceNode {
-  return (
-    typeof value === "object" &&
-    value !== null &&
-    "type" in value &&
-    typeof value.type === "string" &&
-    (type === undefined || value.type === type)
-  )
+function isObject(value: unknown): value is object {
+  // oxlint-disable-next-line quality/no-runtime-typeof -- SAFETY: AST and options inputs must be objects before property access.
+  return typeof value === "object" && value !== null
 }
 
-function getString(value: unknown) {
-  return typeof value === "string" ? value : null
+function isString(value: unknown): value is string {
+  // oxlint-disable-next-line quality/no-runtime-typeof -- SAFETY: AST string fields must be validated before use.
+  return typeof value === "string"
+}
+
+function isBoolean(value: unknown): value is boolean {
+  // oxlint-disable-next-line quality/no-runtime-typeof -- SAFETY: rule options must be validated before use.
+  return typeof value === "boolean"
+}
+
+function isNode(value: unknown, type?: string): value is SourceNode {
+  return (
+    hasProperty(value, "type") &&
+    isString(value.type) &&
+    (type === undefined || value.type === type)
+  )
 }
 
 function hasProperty<Key extends PropertyKey>(
   value: unknown,
   key: Key,
 ): value is Record<Key, unknown> {
-  return typeof value === "object" && value !== null && key in value
+  return isObject(value) && key in value
 }
 
 function getProperty(value: unknown, key: string) {
@@ -122,17 +131,22 @@ function getProperty(value: unknown, key: string) {
 }
 
 function getIdentifier(value: unknown) {
-  return isNode(value) &&
-    (value.type === "Identifier" || value.type === "JSXIdentifier")
-    ? getString(getProperty(value, "name"))
-    : null
+  if (
+    !isNode(value) ||
+    (value.type !== "Identifier" && value.type !== "JSXIdentifier")
+  )
+    return null
+
+  const name = getProperty(value, "name")
+
+  return isString(name) ? name : null
 }
 
 function getLiteralString(value: unknown) {
   if (!isNode(value)) return null
   const literal = getProperty(value, "value")
 
-  return typeof literal === "string" ? literal : null
+  return isString(literal) ? literal : null
 }
 
 function getPropertyName(value: unknown) {
@@ -150,27 +164,22 @@ function isMatchingSource(source: string, patterns: readonly string[]) {
 }
 
 function getStringArray(value: unknown, fallback: Iterable<string>) {
-  return Array.isArray(value)
-    ? value.filter((entry): entry is string => typeof entry === "string")
-    : [...fallback]
+  return Array.isArray(value) ? value.filter(isString) : [...fallback]
 }
 
 function getStylingOptions(context: RuleContext): StylingOptions {
   const option = context.options[0]
 
-  const record =
-    typeof option === "object" && option !== null && !Array.isArray(option)
-      ? option
-      : {}
+  const record = isObject(option) && !Array.isArray(option) ? option : {}
 
   const methodOption = getProperty(record, "methods")
 
   const methods = Object.fromEntries(
     STYLE_METHODS.map((method) => [
       method,
-      typeof methodOption === "object" &&
-      methodOption !== null &&
-      typeof getProperty(methodOption, method) === "boolean"
+      isObject(methodOption) &&
+      !Array.isArray(methodOption) &&
+      isBoolean(getProperty(methodOption, method))
         ? getProperty(methodOption, method)
         : method === "className" || method === "xstyle",
     ]),
@@ -215,7 +224,8 @@ function trackImports(
     const local = getIdentifier(getProperty(specifier, "local"))
 
     if (local === null) continue
-    const type = getString(getProperty(specifier, "type"))
+    const typeValue = getProperty(specifier, "type")
+    const type = isString(typeValue) ? typeValue : null
 
     const imported =
       getPropertyName(getProperty(specifier, "imported")) ?? "default"
@@ -385,9 +395,7 @@ function getCallArguments(value: unknown) {
 function getRestyleOptions(context: RuleContext): RestyleOptions {
   const option = context.options[0]
 
-  return typeof option === "object" && option !== null && !Array.isArray(option)
-    ? option
-    : {}
+  return isObject(option) && !Array.isArray(option) ? option : {}
 }
 
 function matchesPattern(value: string, pattern: string) {

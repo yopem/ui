@@ -1,3 +1,4 @@
+import "zod/compile"
 import { createRouter as createTanStackRouter } from "@tanstack/react-router"
 
 import { routeTree } from "./routeTree.gen"
