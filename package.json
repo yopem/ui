@@ -14,7 +14,7 @@
   "scripts": {
     "dev": "bun run --cwd apps/docs dev",
     "generate-routes": "bun run --cwd apps/docs generate-routes",
-    "build": "bun run registry:build && bun run --cwd apps/docs build",
+    "build": "bun run --cwd packages/oxlint-plugin build && bun run registry:build && bun run --cwd apps/docs build",
     "registry:build": "bun run --cwd packages/registry build",
     "release": "bun scripts/release.ts",
     "version": "changeset version && bun install",

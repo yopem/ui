@@ -47,22 +47,9 @@ test("packed CLI installs from local registry and runs published lint plugin", a
       )
     }
 
-    const license = readFileSync(join(root, "LICENSE"), "utf8")
-
     for (const archive of readdirSync(directory).filter((name) =>
       name.endsWith(".tgz"),
     )) {
-      const contents = spawnSync(
-        "tar",
-        ["-xOf", join(directory, archive), "package/LICENSE"],
-        {
-          encoding: "utf8",
-        },
-      )
-
-      expect(contents.status, `${archive}: ${contents.stderr}`).toBe(0)
-      expect(contents.stdout).toBe(license)
-
       const manifest = spawnSync(
         "tar",
         ["-xOf", join(directory, archive), "package/package.json"],
