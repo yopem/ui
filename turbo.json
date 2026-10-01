@@ -1,0 +1,58 @@
+{
+  "$schema": "https://turborepo.dev/schema.json",
+  "globalDependencies": ["tsconfig.json"],
+  "globalEnv": ["CI"],
+  "tasks": {
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": ["dist/**", ".output/**"],
+      "env": ["VITE_*", "NODE_ENV"]
+    },
+    "@yopem-ui/registry#build": {
+      "outputs": [
+        "dist/**",
+        "src/docs.generated.json",
+        "$TURBO_ROOT$/apps/docs/public/r/**",
+        "$TURBO_ROOT$/apps/docs/public/schema/**"
+      ]
+    },
+    "test": {
+      "cache": false
+    },
+    "@yopem-ui/cli#test": {
+      "dependsOn": [
+        "@yopem-ui/registry#build",
+        "@yopem-ui/oxlint-plugin#build"
+      ],
+      "cache": false
+    },
+    "test:e2e": {
+      "dependsOn": ["build"],
+      "cache": false,
+      "passThroughEnv": ["PLAYWRIGHT_*", "FULL_A11Y"]
+    },
+    "test:a11y": {
+      "dependsOn": ["build"],
+      "cache": false,
+      "passThroughEnv": ["PLAYWRIGHT_*", "A11Y_LIMIT"]
+    },
+    "@yopem-ui/registry#test:e2e": {
+      "dependsOn": ["@yopem-ui/docs#build"],
+      "cache": false,
+      "passThroughEnv": [
+        "REGISTRY_PLAYWRIGHT_PORT",
+        "PLAYWRIGHT_*",
+        "FULL_A11Y"
+      ]
+    },
+    "@yopem-ui/registry#test:a11y": {
+      "dependsOn": ["@yopem-ui/docs#build"],
+      "cache": false,
+      "passThroughEnv": [
+        "REGISTRY_PLAYWRIGHT_PORT",
+        "PLAYWRIGHT_*",
+        "A11Y_LIMIT"
+      ]
+    }
+  }
+}

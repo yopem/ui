@@ -16,8 +16,10 @@ bun run lint            # oxlint
 bun run fmt              # format with oxfmt
 bun run fmt:check        # verify formatting
 bun run typecheck        # typecheck registry and docs
-bun run test             # Playwright end-to-end tests
-bun run test:a11y        # full Chromium accessibility suite
+bun run test             # CLI and Oxlint Bun suites through Turbo
+bun run test:e2e          # docs and registry Playwright suites through Turbo
+bun run test:a11y        # docs and registry accessibility suites through Turbo
+bun test packages/cli     # CLI tests without browsers
 bun run build            # registry and docs production build
 ```
 
@@ -52,7 +54,16 @@ accessibility, and production build.
   - `src/theme/` — optional theme config, script, provider, and hook.
   - `src/build.ts` — writes unversioned and versioned registry items, docs, and
     JSON schemas, then copies them into the docs public directory.
-- `test/e2e/` — Playwright interaction, accessibility, and production checks.
+- `packages/cli/test/` — CLI tests using `bun:test`, without browser fixtures.
+- `packages/oxlint-plugin/test/` — lint rule tests using `bun:test`.
+- `apps/docs/test/e2e/` — documentation navigation, HTTP, and accessibility
+  checks. Config lives in `apps/docs/playwright.config.ts`.
+- `packages/registry/test/e2e/` — component interactions, previews, and
+  accessibility checks. Config lives in `packages/registry/playwright.config.ts`.
+- Tests, runner dependencies, and configuration belong to their owning
+  workspace. Root test scripts use Turborepo to run each phase in parallel.
+- Browser suites share the built docs fixture, using fixed test ports: docs
+  `3100`, registry `3101`. Do not change ports to bypass an occupied server.
 
 Path aliases are `@registry/*` for registry source and `@/*` inside docs.
 
@@ -60,9 +71,12 @@ Path aliases are `@registry/*` for registry source and `@/*` inside docs.
 
 - Never write unit tests after writing implementation code. If unit tests are
   necessary, define them before implementation, not as a retrospective check.
-- Strongly prefer end-to-end (E2E) tests as the sole testing mechanism. Exercise
-  complex features through real user workflows and observable outcomes rather
-  than testing internal functions or mocked interactions in isolation.
+- CLI tests use `bun:test`, not Playwright. Verify CLI integration by creating
+  real projects or monorepos, running the packed CLI and Oxlint, and saving
+  command output. CLI validation does not require a browser.
+- For UI behavior, strongly prefer end-to-end (E2E) tests. Exercise complex
+  features through real user workflows and observable outcomes rather than
+  testing internal functions or mocked interactions in isolation.
 - Make E2E runs reproducible: state prerequisites, use repeatable setup and
   inputs, and leave a verifiable artifact at the end (such as a test report,
   trace, screenshot, or saved output) with enough context to confirm the result
@@ -135,3 +149,14 @@ For component work:
 5. Run `bun run registry:build`.
 6. Run focused registry, docs, interaction, and accessibility tests as needed,
    then required checks.
+
+<!-- BEGIN:turborepo-agent-rules -->
+
+# This is NOT the Turborepo you know
+
+Turborepo configuration, task behavior, and CLI commands can vary between installed versions and may differ from your training data. Resolve the `turbo` package from this file's directory or relevant workspace; in monorepos, it may not be visible from the repository root. For example, run `node -p "require.resolve('turbo/package.json')"` from a workspace that depends on `turbo`.
+
+Read `docs/README.md` inside that installed package first, then read the relevant pages from its `docs/` directory before changing Turborepo configuration or commands. Heed deprecation notices. These bundled docs match the installed package version and are available without network access.
+
+This block is written and re-added by `turbo` before repository-scoped commands when an AI agent is detected. In the Turborepo source repository, its template is defined in `crates/turborepo-cli/src/cli/agent_guidance.rs`. Removing the managed block while updates are enabled means a later qualifying invocation will add it again. Set `"agentGuidance": false` in the root `turbo.json` or `turbo.jsonc` to opt out; this does not remove an existing block. Keep the block committed with your work to avoid an uncommitted change on the next agent invocation.
+<!-- END:turborepo-agent-rules -->

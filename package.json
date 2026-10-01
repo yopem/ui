@@ -22,12 +22,12 @@
     "start": "bun run --cwd apps/docs start",
     "preview": "bun run --cwd apps/docs preview",
     "typecheck": "bun run --filter '*' typecheck",
-    "test": "bun run registry:build && bun run --cwd packages/oxlint-plugin build && bun run --cwd packages/cli test && bun run --cwd packages/oxlint-plugin test",
-    "test:a11y": "bun run build && bun run --cwd apps/docs test:a11y && bun run --cwd packages/registry test:a11y",
+    "test": "turbo run test",
+    "test:e2e": "turbo run test:e2e",
+    "test:a11y": "turbo run test:a11y",
     "lint": "oxlint lint .",
     "fmt": "oxfmt fmt .",
-    "fmt:check": "oxfmt --check .",
-    "test:e2e": "bun run build && bun run --cwd apps/docs test:e2e && bun run --cwd packages/registry test:e2e"
+    "fmt:check": "oxfmt --check ."
   },
   "devDependencies": {
     "@changesets/changelog-github": "1.0.1",
@@ -40,11 +40,13 @@
     "oxfmt": "^0.71.0",
     "oxlint": "catalog:",
     "pkg-pr-new": "^0.0.88",
+    "turbo": "^2.11.6",
     "typescript": "catalog:"
   },
   "overrides": {
     "@effect/platform-node-shared": "4.0.0-rc.115"
   },
+  "packageManager": "bun@1.4.2",
   "catalog": {
     "@babel/core": "^8.0.6",
     "@daypicker/react": "^10.0.1",

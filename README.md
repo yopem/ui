@@ -57,9 +57,32 @@ bun run dev
 bun run registry:build
 bun run lint && bun run fmt:check && bun run typecheck
 bun run test
+bun run test:e2e
 bun run test:a11y
 bun run build
 ```
+
+Tests live with their workspace: CLI and Oxlint use `bun:test`; docs and
+registry use Playwright for browser and accessibility checks. Turborepo builds
+required fixtures and runs workspace tasks in parallel within each phase:
+
+```sh
+bun run test && bun run test:e2e && bun run test:a11y
+```
+
+After building, run a workspace directly:
+
+```sh
+bun run --cwd packages/cli test
+bun run --cwd packages/oxlint-plugin test
+bun run --cwd apps/docs test:e2e
+bun run --cwd apps/docs test:a11y
+bun run --cwd packages/registry test:e2e
+bun run --cwd packages/registry test:a11y
+```
+
+Browser suites use the built docs app on fixed test ports: `3100` for docs and
+`3101` for registry. Logs and reports stay in each workspace's `test-results/`.
 
 ## License
 
