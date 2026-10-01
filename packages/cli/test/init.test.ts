@@ -1,6 +1,4 @@
-import { initProject } from "@cli/init"
-import { installItem } from "@cli/install"
-import { expect, test } from "@playwright/test"
+import { expect, setDefaultTimeout, test } from "bun:test"
 import { spawnSync } from "node:child_process"
 import {
   mkdtempSync,
@@ -12,7 +10,14 @@ import {
   writeFileSync,
 } from "node:fs"
 import { tmpdir } from "node:os"
-import { join } from "node:path"
+import { join, resolve } from "node:path"
+
+import { initProject } from "@/init"
+import { installItem } from "@/install"
+
+const repositoryRoot = resolve(import.meta.dirname, "../../..")
+
+setDefaultTimeout(30_000)
 
 test("Next.js uses the shared stylesheet for StyleX", async () => {
   const root = mkdtempSync(join(tmpdir(), "yopem-next-init-"))
@@ -45,7 +50,7 @@ test("Next.js uses the shared stylesheet for StyleX", async () => {
       return Promise.resolve(
         new Response(
           readFileSync(
-            join(process.cwd(), "packages/registry/dist/r/base.json"),
+            join(repositoryRoot, "packages/registry/dist/r/base.json"),
             "utf8",
           ),
         ),
@@ -62,7 +67,7 @@ test("Next.js uses the shared stylesheet for StyleX", async () => {
     const original = readFileSync(babelPath, "utf8")
 
     const formatted = spawnSync(
-      join(process.cwd(), "node_modules/.bin/oxfmt"),
+      join(repositoryRoot, "node_modules/.bin/oxfmt"),
       ["fmt", "babel.config.js"],
       { cwd: root, encoding: "utf8" },
     )
@@ -203,7 +208,7 @@ for (const fixture of [
           new Response(
             readFileSync(
               join(
-                process.cwd(),
+                repositoryRoot,
                 "packages/registry/dist/r",
                 new URL(url).pathname.split("/").at(-1)!,
               ),
@@ -279,7 +284,7 @@ for (const fixture of [
           recursive: true,
         })
         symlinkSync(
-          join(process.cwd(), "packages/oxlint-plugin"),
+          join(repositoryRoot, "packages/oxlint-plugin"),
           join(root, "node_modules/@yopem-ui/oxlint-plugin"),
         )
         put(
@@ -294,7 +299,7 @@ export const view = <div><Button css={{ color: "red" }} xstyle={styles.button} /
           "src/components/ui/internal.tsx",
           "export const Internal = () => <div />;",
         )
-        const oxlint = join(process.cwd(), "node_modules/.bin/oxlint")
+        const oxlint = join(repositoryRoot, "node_modules/.bin/oxlint")
 
         const result = spawnSync(
           oxlint,
@@ -373,7 +378,7 @@ test("CLI preserves existing lint rules, plugins, and explicit opt-out", async (
         Promise.resolve(
           new Response(
             readFileSync(
-              join(process.cwd(), "packages/registry/dist/r/base.json"),
+              join(repositoryRoot, "packages/registry/dist/r/base.json"),
               "utf8",
             ),
           ),
@@ -425,7 +430,7 @@ test("CLI moves existing Babel and PostCSS plugins into Vite config", async () =
         Promise.resolve(
           new Response(
             readFileSync(
-              join(process.cwd(), "packages/registry/dist/r/base.json"),
+              join(repositoryRoot, "packages/registry/dist/r/base.json"),
               "utf8",
             ),
           ),
@@ -480,7 +485,7 @@ test("CLI migrates JSON Babel and ESM PostCSS configs for Astro", async () => {
         Promise.resolve(
           new Response(
             readFileSync(
-              join(process.cwd(), "packages/registry/dist/r/base.json"),
+              join(repositoryRoot, "packages/registry/dist/r/base.json"),
               "utf8",
             ),
           ),
@@ -532,7 +537,7 @@ export default { plugins: [babel({ plugins: yopemBabelConfig.plugins })], resolv
         Promise.resolve(
           new Response(
             readFileSync(
-              join(process.cwd(), "packages/registry/dist/r/base.json"),
+              join(repositoryRoot, "packages/registry/dist/r/base.json"),
               "utf8",
             ),
           ),
@@ -640,7 +645,7 @@ export default { integrations: [react()], vite: { plugins: [stylex.vite({})], re
 
       const result = spawnSync(
         "bun",
-        [join(process.cwd(), "packages/cli/src/cli.ts"), "init"],
+        [join(repositoryRoot, "packages/cli/src/cli.ts"), "init"],
         { cwd: root, encoding: "utf8" },
       )
 

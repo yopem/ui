@@ -1,5 +1,4 @@
-import { runCli } from "@cli/cli"
-import { expect, test } from "@playwright/test"
+import { expect, setDefaultTimeout, test } from "bun:test"
 import {
   mkdtempSync,
   mkdirSync,
@@ -8,7 +7,13 @@ import {
   writeFileSync,
 } from "node:fs"
 import { tmpdir } from "node:os"
-import { join } from "node:path"
+import { join, resolve } from "node:path"
+
+import { runCli } from "@/cli"
+
+const repositoryRoot = resolve(import.meta.dirname, "../../..")
+
+setDefaultTimeout(30_000)
 
 for (const framework of ["next", "astro", "tanstack-start"] as const) {
   test(`shared UI setup supports ${framework}`, async () => {
@@ -72,7 +77,7 @@ for (const framework of ["next", "astro", "tanstack-start"] as const) {
           new Response(
             readFileSync(
               join(
-                process.cwd(),
+                repositoryRoot,
                 "packages/registry/dist/r",
                 new URL(url).pathname.split("/").at(-1)!,
               ),
@@ -106,10 +111,16 @@ for (const framework of ["next", "astro", "tanstack-start"] as const) {
       expect(readFileSync(join(root, `apps/web/${config}`), "utf8")).toBe(
         configured,
       )
-      await test.info().attach(`${framework}-shared-config`, {
-        body: configured,
-        contentType: "text/plain",
+      mkdirSync(resolve(import.meta.dirname, "../test-results"), {
+        recursive: true,
       })
+      writeFileSync(
+        resolve(
+          import.meta.dirname,
+          `../test-results/${framework}-shared-config.txt`,
+        ),
+        configured,
+      )
     } finally {
       rmSync(root, { recursive: true, force: true })
     }

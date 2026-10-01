@@ -1,6 +1,4 @@
-import { runCli } from "@cli/cli"
-import { packageRunner } from "@cli/project"
-import { expect, test } from "@playwright/test"
+import { expect, setDefaultTimeout, test } from "bun:test"
 import { spawnSync } from "node:child_process"
 import {
   chmodSync,
@@ -11,7 +9,14 @@ import {
   writeFileSync,
 } from "node:fs"
 import { tmpdir } from "node:os"
-import { join } from "node:path"
+import { join, resolve } from "node:path"
+
+import { runCli } from "@/cli"
+import { packageRunner } from "@/project"
+
+const repositoryRoot = resolve(import.meta.dirname, "../../..")
+
+setDefaultTimeout(30_000)
 
 function fixture() {
   const root = mkdtempSync(join(tmpdir(), "yopem-monorepo-"))
@@ -61,7 +66,7 @@ function fixture() {
       new Response(
         readFileSync(
           join(
-            process.cwd(),
+            repositoryRoot,
             "packages/registry/dist/r",
             new URL(url).pathname.split("/").at(-1)!,
           ),
@@ -186,9 +191,13 @@ test("shared UI init, add, repeat and modified update stay workspace-local", asy
         "utf8",
       ),
     ).toBe(button)
-    await test
-      .info()
-      .attach("shared-vite-config", { body: config, contentType: "text/plain" })
+    mkdirSync(resolve(import.meta.dirname, "../test-results"), {
+      recursive: true,
+    })
+    writeFileSync(
+      resolve(import.meta.dirname, "../test-results/shared-vite-config.txt"),
+      config,
+    )
   } finally {
     rmSync(root, { recursive: true, force: true })
   }
@@ -235,7 +244,7 @@ for (const manager of ["npm", "pnpm", "yarn"] as const) {
       )
       chmodSync(join(root, `bin/${manager}`), 0o755)
       const output = join(root, "command.log")
-      const script = `import { packageRunner } from ${JSON.stringify(join(process.cwd(), "packages/cli/src/project.ts"))}; const run = await packageRunner(${JSON.stringify(join(root, "apps/web"))}); await run(["add", "-d", "@acme/ui@workspace:*"], ${JSON.stringify(join(root, "apps/web"))});`
+      const script = `import { packageRunner } from ${JSON.stringify(join(repositoryRoot, "packages/cli/src/project.ts"))}; const run = await packageRunner(${JSON.stringify(join(root, "apps/web"))}); await run(["add", "-d", "@acme/ui@workspace:*"], ${JSON.stringify(join(root, "apps/web"))});`
 
       const result = spawnSync("bun", ["-e", script], {
         encoding: "utf8",

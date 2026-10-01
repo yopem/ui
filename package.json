@@ -22,7 +22,7 @@
     "start": "bun run --cwd apps/docs start",
     "preview": "bun run --cwd apps/docs preview",
     "typecheck": "bun run --filter '*' typecheck",
-    "test": "bun run build && PLAYWRIGHT_PRODUCTION=1 playwright test",
+    "test": "bun run build && bun run --cwd packages/cli test && PLAYWRIGHT_PRODUCTION=1 playwright test",
     "test:a11y": "bun run build && FULL_A11Y=1 PLAYWRIGHT_PRODUCTION=1 playwright test --project=chromium --grep @full-a11y",
     "lint": "oxlint lint .",
     "fmt": "oxfmt fmt .",

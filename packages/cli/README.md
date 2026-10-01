@@ -45,6 +45,22 @@ later `add` and `update` reuse that name from its `.yopem-ui.json`. Run
 Existing conflicting exports or build configuration require manual review; init
 does not migrate app-local components.
 
+## Development checks
+
+From the repository root, generate registry fixtures and build the lint plugin
+before running CLI tests:
+
+```sh
+bun run registry:build
+bun run --cwd packages/oxlint-plugin build
+bun test packages/cli
+```
+
+`bun run --cwd packages/cli test` also runs the CLI suite. Tests use `bun:test`,
+not browsers; packaged installation checks serve registry JSON with Bun when
+port 3100 has no registry server. Command logs and configuration artifacts are
+saved in `packages/cli/test-results/`.
+
 ## Licence
 
 This project is licensed under the terms of the
