@@ -37,11 +37,13 @@ bunx @yopem-ui/cli update button --cwd packages/ui
 
 `init --ui` installs base files in the UI package, adds source subpath exports,
 links the app, and configures StyleX to scan both packages. Next.js also gets
-`transpilePackages`. Shared source imports use the UI package name, such as
-`@acme/ui/components/ui/button`; later `add` and `update` reuse that name from
-its `.yopem-ui.json`. Run `init --ui` for each consuming app and keep passing
-`--ui` when repeating init. Existing conflicting exports or build configuration
-require manual review; init does not migrate app-local components.
+`transpilePackages`. Init registers shared package imports with the Yopem UI
+Oxlint rules, preserving existing rule options and explicit opt-outs. Shared
+source imports use the UI package name, such as `@acme/ui/components/ui/button`;
+later `add` and `update` reuse that name from its `.yopem-ui.json`. Run
+`init --ui` for each consuming app and keep passing `--ui` when repeating init.
+Existing conflicting exports or build configuration require manual review; init
+does not migrate app-local components.
 
 ## Licence
 

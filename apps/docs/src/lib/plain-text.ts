@@ -31,7 +31,7 @@ Target a workspace app: \`bunx @yopem-ui/cli init --cwd apps/web\`, then \`bunx 
 
 Share UI source: \`bunx @yopem-ui/cli init --cwd apps/web --ui ../../packages/ui\`, then \`bunx @yopem-ui/cli add button --cwd packages/ui\` or \`bunx @yopem-ui/cli update button --cwd packages/ui\`. The UI package must be an existing named React package in the same workspace. The --ui path is relative to the target app. Run init --ui for each consumer and on repeat init. Source imports use the UI package name, for example \`@acme/ui/components/ui/button\`.
 
-Init adds source exports and a workspace dependency, configures StyleX across both packages, and enables Next.js transpilePackages. Bun, npm, pnpm, and Yarn workspace package managers are detected from the app and workspace root. Files, dependencies, and tracking manifests stay in their target packages; locally edited source remains protected. Existing app-local components are not migrated automatically.
+Init adds source exports and a workspace dependency, configures StyleX across both packages, enables Next.js transpilePackages, and registers shared package imports with the Yopem UI Oxlint rules. Bun, npm, pnpm, and Yarn workspace package managers are detected from the app and workspace root. Files, dependencies, and tracking manifests stay in their target packages; locally edited source remains protected. Existing app-local components are not migrated automatically.
 
 ## Documentation
 

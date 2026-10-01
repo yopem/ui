@@ -1369,7 +1369,7 @@ const lintRules = {
   "yopem-ui/valid-polymorphic-as": "error",
 }
 
-function lintConfig(content: string) {
+function lintConfig(content: string, shared?: SharedUI) {
   const config: JsonValue = JSON.parse(content)
 
   if (!object(config)) throw new Error("Invalid .oxlintrc.json")
@@ -1399,6 +1399,45 @@ function lintConfig(content: string) {
     throw new Error("Conflicting yopem-ui plugin in .oxlintrc.json")
   }
 
+  const configuredRules: JsonObject = { ...lintRules, ...rules }
+
+  if (shared) {
+    for (const name of [
+      "yopem-ui/enforce-styling-methods",
+      "yopem-ui/no-restyle",
+      "yopem-ui/valid-polymorphic-as",
+    ]) {
+      const setting = configuredRules[name] ?? "error"
+      const level = Array.isArray(setting) ? (setting[0] ?? "error") : setting
+
+      if (level === "off" || level === 0) continue
+
+      const options = Array.isArray(setting) ? (setting[1] ?? {}) : {}
+
+      if (!object(options)) throw new Error(`Invalid options for ${name}`)
+
+      const sources = options.componentSources ?? [
+        "@/components/ui/",
+        "@registry/components/ui/",
+        "@yopem-ui/ui",
+      ]
+
+      if (!Array.isArray(sources) || !sources.every(isString)) {
+        throw new Error(`Invalid componentSources for ${name}`)
+      }
+
+      configuredRules[name] = [
+        level,
+        {
+          ...options,
+          componentSources: [
+            ...new Set([...sources, `${shared.name}/components/ui/`]),
+          ],
+        },
+      ]
+    }
+  }
+
   const next = {
     ...config,
     jsPlugins: existing
@@ -1407,7 +1446,7 @@ function lintConfig(content: string) {
           ...plugins,
           { name: "yopem-ui", specifier: "@yopem-ui/oxlint-plugin" },
         ],
-    rules: { ...lintRules, ...rules },
+    rules: configuredRules,
     overrides: overrides.some(
       (entry) => JSON.stringify(entry) === JSON.stringify(componentOverride),
     )
@@ -1609,7 +1648,7 @@ export async function initProject(options: InitOptions = {}) {
       : "tsconfig.json"
 
   await plan(tsPath, (content) => tsconfig(content, tsPath))
-  await plan(".oxlintrc.json", lintConfig, "{}")
+  await plan(".oxlintrc.json", (content) => lintConfig(content, shared), "{}")
 
   if (shared) {
     const prefix = relative(root, uiRoot).replaceAll("\\", "/")
