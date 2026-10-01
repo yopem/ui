@@ -1548,6 +1548,7 @@ function detectFramework(
 }
 
 export async function initProject(options: InitOptions = {}) {
+  if (options.dryRun) throw new Error("--dry-run is not supported for init")
   const root = await realpath(options.cwd ?? process.cwd())
 
   if (!(await existingFile(root, "package.json"))) {

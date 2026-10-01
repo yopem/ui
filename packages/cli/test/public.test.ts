@@ -12,6 +12,8 @@ import {
 import { tmpdir } from "node:os"
 import { join, resolve } from "node:path"
 
+import { snapshot } from "./files"
+
 const root = resolve(import.meta.dirname, "../../..")
 
 const results = resolve(import.meta.dirname, "../test-results")
@@ -71,6 +73,8 @@ async function run(logs: string[], cwd: string, ...args: string[]) {
   const output = `${stdout}${stderr}`
   logs.push(`${cwd}\n${args.join(" ")}\nexit: ${status}\n${output}`)
   expect(status, output).toBe(0)
+
+  return output
 }
 
 async function installPackedCli(
@@ -94,6 +98,8 @@ async function installPackedCli(
     .filter((name) => name.endsWith(".tgz"))
     .map((name) => join(directory, name))
 
+  let version: string | undefined
+
   for (const archive of archives) {
     const manifest = spawnSync(
       "tar",
@@ -103,9 +109,64 @@ async function installPackedCli(
 
     expect(manifest.status, `${archive}: ${manifest.stderr}`).toBe(0)
     expect(manifest.stdout).not.toContain("catalog:")
+
+    const metadata: { name: string; version: string } = JSON.parse(
+      manifest.stdout,
+    )
+
+    if (metadata.name === "@yopem-ui/cli") version = metadata.version
   }
 
+  expect(version).toBeString()
+
+  if (version === undefined) throw new Error("Missing packed CLI version")
   await run(logs, project, "bun", "add", "-d", ...archives)
+  const before = snapshot(project)
+  const help = await run(logs, project, "bunx", "yopem-ui", "--help")
+  expect(help).toContain("Usage:")
+  expect(help).toContain("--dry-run")
+
+  const installedVersion = await run(
+    logs,
+    project,
+    "bunx",
+    "yopem-ui",
+    "--version",
+  )
+
+  expect(installedVersion.trim()).toBe(version)
+  expect(snapshot(project)).toEqual(before)
+  logs.push(
+    `Packed help/version verified; version matches packed manifest: ${version}; project unchanged`,
+  )
+}
+
+async function previewPackedCli(
+  logs: string[],
+  project: string,
+  args: string[],
+  snapshotRoot = project,
+) {
+  const before = snapshot(snapshotRoot)
+
+  const output = await run(
+    logs,
+    project,
+    "bunx",
+    "yopem-ui",
+    ...args,
+    "--dry-run",
+  )
+
+  expect(output).toContain("src/components/ui/button.tsx")
+  expect(output).toContain("No files written")
+  expect(output).not.toContain("Installed ")
+  expect(output).toContain("Runtime dependencies:")
+  expect(output).toContain("Dev dependencies:")
+  expect(snapshot(snapshotRoot)).toEqual(before)
+  logs.push(
+    "Dry-run preview verified: all files/directories unchanged, no package or config changes",
+  )
 }
 
 function saveLogs(name: string, logs: string[]) {
@@ -206,6 +267,7 @@ test("packed CLI installs from local registry, builds Vite and runs published li
       'import React from "react"\nimport { createRoot } from "react-dom/client"\nimport { Button } from "@/components/ui/button"\ncreateRoot(document.getElementById("root")!).render(<Button>Build smoke</Button>)',
     )
     await installPackedCli(logs, directory, project)
+    await previewPackedCli(logs, project, ["add", "button", ...registry])
     await run(
       logs,
       project,
@@ -216,6 +278,7 @@ test("packed CLI installs from local registry, builds Vite and runs published li
       "vite",
       ...registry,
     )
+    await previewPackedCli(logs, project, ["add", "button", ...registry])
     await run(logs, project, "bunx", "yopem-ui", "add", "button", ...registry)
     await run(logs, project, "bun", "run", "build")
     verifyBuild(project, "vite", "packaged-cli", logs)
@@ -412,6 +475,17 @@ for (const { framework, shared } of [
         framework,
         ...registry,
         ...(shared ? ["--ui", "../../packages/ui"] : []),
+      )
+      await previewPackedCli(
+        logs,
+        app,
+        [
+          "add",
+          "button",
+          ...registry,
+          ...(shared ? ["--cwd", "../../packages/ui"] : []),
+        ],
+        project,
       )
       await run(
         logs,

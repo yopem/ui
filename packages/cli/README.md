@@ -21,6 +21,37 @@ Installed source changes stay intact on `init` and `add`; `update` rejects
 modified files unless `--force` is supplied. Installed files and their hashes
 are tracked in `ui.json`.
 
+## Dry run
+
+Preview `add` or `update` before installing:
+
+```sh
+bunx @yopem-ui/cli add button --dry-run
+bunx @yopem-ui/cli update button --dry-run
+bunx @yopem-ui/cli update button --dry-run --force
+```
+
+The plan lists file writes (including tracking in `ui.json`), skips, all local
+file conflicts, and runtime/dev dependency additions. Forced source overwrites
+are marked explicitly. As in normal mode, `add` skips modified tracked files;
+`update` reports them as conflicts without `--force`. Conflicts block a real
+install until resolved or forced. Dependency lists show the package arguments
+the installer would request, not package-manager version resolution.
+
+Dry runs still read the registry and validate URLs, schemas, paths, and file
+integrity. They write no files, create no directories or temporary files, never
+run a package manager, and do not create or change `ui.json`, project config,
+package manifests, lockfiles, or dependencies. `--cwd` and `--registry` work as
+usual. `init --dry-run` and `initProject({ dryRun: true })` are rejected before
+any changes.
+
+Programmatic callers use `installItem(name, { dryRun: true })` through
+`@yopem-ui/cli/install`. The result adds `preview.files` (`path`, `action`,
+optional `reason` and `forced`), `preview.dependencies`, and
+`preview.devDependencies`; `installed` is zero. Normal calls retain their
+`{ installed, skipped }` result. Previewed writes apply when no conflicts block
+the command and files have not changed before a subsequent real install.
+
 ## Registry
 
 Pass `--registry <URL>` to `init`, `add`, or `update` to use another registry.
@@ -89,11 +120,18 @@ network tests use isolated local Bun servers for successful workflows, header
 and body stalls, malformed JSON, and HTTP/network failures. Command logs and
 configuration artifacts are saved in `packages/cli/test-results/`.
 
+`bun test packages/cli/test/dry-run.test.ts` checks real fixture projects with
+local registries, whole-project file/directory snapshots, dependency-call
+tracking, conflict/force previews, shared import prefixes, validation failures,
+and CLI argument rules. Snapshot and preview evidence is saved in
+`step5-dry-run.json` under the results directory.
+
 `bun test packages/cli/test/public.test.ts` runs packed CLI production smoke
-checks: init, add Button, lint, and build in Vite and Next.js App Router apps,
-including shared UI workspaces. Requires Node.js for Next.js and network access
-for fixture dependencies. Tests verify build artifacts and compiled StyleX CSS,
-then save `packaged-*.log`, `packaged-*.html`, and `packaged-*.css` evidence.
+checks: help, version matching the packed manifest, dry-run previews, init, add
+Button, lint, and build in Vite and Next.js App Router apps, including shared UI
+workspaces. Requires Node.js for Next.js and network access for fixture
+dependencies. Tests verify build artifacts and compiled StyleX CSS, then save
+`packaged-*.log`, `packaged-*.html`, and `packaged-*.css` evidence.
 
 ## Licence
 

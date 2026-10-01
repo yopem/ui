@@ -63,8 +63,20 @@ interface Manifest {
   importPrefix?: string
 }
 
+export interface InstallPreview {
+  files: {
+    path: string
+    action: "write" | "skip" | "conflict"
+    reason?: string
+    forced?: true
+  }[]
+  dependencies: string[]
+  devDependencies: string[]
+}
+
 export interface InstallOptions {
   cwd?: string
+  dryRun?: boolean
   force?: boolean
   importPrefix?: string
   mode?: "add" | "update"
@@ -631,6 +643,7 @@ export async function installItem(name: string, options: InstallOptions = {}) {
   }
 
   const changes = new Map<string, FileChange>()
+  const previewFiles: InstallPreview["files"] = []
   let installed = 0
   let skipped = 0
 
@@ -641,18 +654,24 @@ export async function installItem(name: string, options: InstallOptions = {}) {
     const current = before === null ? null : hash(before)
     changes.set(path, { before, after: before })
     const previous = manifest.files[path]
+    const decision: InstallPreview["files"][number] = { path, action: "skip" }
+    previewFiles.push(decision)
 
     if (current && previous && current !== previous && !options.force) {
-      if (options.mode === "update") {
-        throw new Error(`Modified file: ${path} (use --force to overwrite)`)
-      }
+      decision.reason = `Modified file: ${path} (use --force to overwrite)`
 
-      skipped++
+      if (options.mode === "update") {
+        decision.action = "conflict"
+
+        if (!options.dryRun) throw new Error(decision.reason)
+      } else skipped++
+
       continue
     }
 
     if (current === file.integrity) {
       manifest.files[path] = file.integrity
+      decision.reason = `Identical file: ${path}`
       skipped++
     } else if (
       current &&
@@ -660,22 +679,44 @@ export async function installItem(name: string, options: InstallOptions = {}) {
       previous === current &&
       options.mode !== "update"
     ) {
+      decision.reason = `Tracked file: ${path} (use update to replace)`
       skipped++
     } else if (current && !options.force && previous !== current) {
-      throw new Error(`Existing file: ${path} (use --force to overwrite)`)
+      decision.action = "conflict"
+      decision.reason = `Existing file: ${path} (use --force to overwrite)`
+
+      if (!options.dryRun) throw new Error(decision.reason)
     } else {
+      decision.action = "write"
+
+      if (current && options.force) decision.forced = true
       changes.set(path, { before, after: file.content })
       manifest.files[path] = file.integrity
       installed++
     }
   }
 
-  changes.set("ui.json", {
-    before: manifestText,
-    after: `${JSON.stringify(manifest, null, 2)}\n`,
+  const manifestAfter = `${JSON.stringify(manifest, null, 2)}\n`
+  changes.set("ui.json", { before: manifestText, after: manifestAfter })
+  previewFiles.push({
+    path: "ui.json",
+    action: manifestText === manifestAfter ? "skip" : "write",
   })
 
   for (const dependency of dependencies) devDependencies.delete(dependency)
+
+  if (options.dryRun) {
+    return {
+      installed: 0,
+      skipped,
+      preview: {
+        files: previewFiles,
+        dependencies: [...dependencies],
+        devDependencies: [...devDependencies],
+      },
+    }
+  }
+
   let dependenciesStarted = false
 
   try {

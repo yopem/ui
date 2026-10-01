@@ -8,7 +8,7 @@ import { installItem, isRecord, isString } from "@yopem-ui/cli/install"
 import { resolve } from "node:path"
 
 const usage =
-  "Usage: yopem-ui [--help | --version] | init [--framework vite|tanstack-router|tanstack-start|react-router|next|astro] [--ui <path>] [--cwd <path>] [--registry <URL>] | <add|update> <name> [--force] [--cwd <path>] [--registry <URL>]"
+  "Usage: yopem-ui [--help | --version] | init [--framework vite|tanstack-router|tanstack-start|react-router|next|astro] [--ui <path>] [--cwd <path>] [--registry <URL>] | <add|update> <name> [--force] [--dry-run] [--cwd <path>] [--registry <URL>]"
 
 function isFramework(
   value: string | undefined,
@@ -62,7 +62,7 @@ export async function runCli(args: string[], options: InitOptions = {}) {
 
     if (flags.has(argument)) throw new Error(usage)
 
-    if (argument === "--force") {
+    if (argument === "--force" || argument === "--dry-run") {
       flags.set(argument, "true")
       continue
     }
@@ -79,6 +79,8 @@ export async function runCli(args: string[], options: InitOptions = {}) {
   const registryUrl = flags.get("--registry") ?? options.registryUrl
 
   if (command === "init") {
+    if (flags.has("--dry-run") || options.dryRun)
+      throw new Error("--dry-run is not supported for init")
     const framework = flags.get("--framework")
 
     if (
@@ -118,11 +120,29 @@ export async function runCli(args: string[], options: InitOptions = {}) {
     registryUrl,
     mode: command,
     force: flags.has("--force"),
+    dryRun: flags.has("--dry-run") || options.dryRun,
   })
 
-  console.info(
-    `Installed ${result.installed} file(s), skipped ${result.skipped}`,
-  )
+  if (result.preview) {
+    const { files, dependencies, devDependencies } = result.preview
+    const labels = { write: "Write", skip: "Skip", conflict: "Conflict" }
+
+    for (const file of files) {
+      console.info(
+        `${labels[file.action]} ${file.reason ?? file.path}${file.forced ? " (forced overwrite)" : ""}`,
+      )
+    }
+
+    console.info(`Runtime dependencies: ${dependencies.join(", ") || "none"}`)
+    console.info(`Dev dependencies: ${devDependencies.join(", ") || "none"}`)
+    console.info(
+      `Dry run: ${files.filter((file) => file.action === "write").length} file write(s), ${files.filter((file) => file.action === "skip").length} skip(s), ${files.filter((file) => file.action === "conflict").length} conflict(s). No files written.`,
+    )
+  } else {
+    console.info(
+      `Installed ${result.installed} file(s), skipped ${result.skipped}`,
+    )
+  }
 
   return result
 }
