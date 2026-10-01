@@ -1,9 +1,26 @@
 pre-commit:
   commands:
-    quality:
-      run: bun fmt:check && bun lint && bun typecheck
+    lint:
+      glob: "*.{js,mjs,ts,tsx}"
+      run: bun --bun oxlint {staged_files}
+    format:
+      glob: "*.{css,html,js,json,md,mjs,toml,ts,tsx,yml}"
+      run: bun --bun oxfmt --check {staged_files}
+    typecheck:
+      glob: "*.{ts,tsx}"
+      run: bun run typecheck
+    test:
+      glob: "**/*.test.{ts,tsx}"
+      run: bun run test
 
 pre-push:
   commands:
-    quality:
-      run: bun fmt:check && bun lint && bun typecheck
+    lint:
+      glob: "*.{js,mjs,ts,tsx}"
+      run: bun --bun oxlint {push_files}
+    format:
+      glob: "*.{css,html,js,json,md,mjs,toml,ts,tsx,yml}"
+      run: bun --bun oxfmt --check {push_files}
+    typecheck:
+      glob: "*.{ts,tsx}"
+      run: bun run typecheck
