@@ -1,4 +1,5 @@
 import type {
+  FileChange,
   InstallOptions,
   JsonObject,
   JsonValue,
@@ -9,14 +10,15 @@ import {
   installItem,
   isRecord,
   isString,
+  writeFiles,
 } from "@yopem-ui/cli/install"
 import {
   isPackageName,
   packageRunner,
   workspaceRoot,
 } from "@yopem-ui/cli/project"
-import { readFile, realpath, writeFile, mkdir, unlink } from "node:fs/promises"
-import { dirname, join, relative, resolve } from "node:path"
+import { readFile, realpath } from "node:fs/promises"
+import { join, relative, resolve } from "node:path"
 import ts from "typescript-api"
 
 type Framework =
@@ -1865,129 +1867,134 @@ export async function initProject(options: InitOptions = {}) {
     }
   }
 
-  await installItem("base", {
-    ...options,
-    cwd: uiRoot,
-    importPrefix: shared?.name,
-    run: uiRun,
-  })
+  let baseInstalled = false
 
-  if (shared) {
-    const path = `${relative(root, uiRoot).replaceAll("\\", "/")}/package.json`
-    const planned = edits.get(path)
-
-    if (planned) {
-      const current = await readFile(join(uiRoot, "package.json"), "utf8")
-      const before: JsonValue = JSON.parse(planned.before!)
-      const after: JsonValue = JSON.parse(planned.after)
-      const value: JsonValue = JSON.parse(current)
-
-      if (
-        !object(before) ||
-        !object(after) ||
-        !object(value) ||
-        value.name !== before.name ||
-        JSON.stringify(value.exports) !== JSON.stringify(before.exports) ||
-        JSON.stringify(value.sideEffects) !== JSON.stringify(before.sideEffects)
-      )
-        throw new Error("UI package exports changed during installation")
-
-      edits.set(path, {
-        before: current,
-        after: `${JSON.stringify({ ...value, exports: after.exports, sideEffects: after.sideEffects }, null, 2)}\n`,
-      })
-    }
-  }
-
-  if (
-    !(await readFile(join(uiRoot, "src/styles/styles.css"), "utf8")).includes(
-      "@stylex;",
-    )
-  ) {
-    throw new Error(
-      "Add @stylex; to src/styles/styles.css before configuring StyleX",
-    )
-  }
-
-  const packages = await readFile(join(root, "package.json"), "utf8")
-  const installed: JsonValue = JSON.parse(packages)
-
-  if (!object(installed))
-    throw new Error("Invalid package.json after installation")
-
-  const available = Object.fromEntries(
-    [installed.dependencies, installed.devDependencies].flatMap((entry) =>
-      object(entry) ? Object.entries(entry) : [],
-    ),
-  )
-
-  const neededRuntime = runtimeDependencies.filter((name) => {
-    if (shared && name === `${shared.name}@workspace:*`) {
-      const version = available[shared.name]
-
-      return (
-        !isString(version) ||
-        (version !== "*" && !version.startsWith("workspace:"))
-      )
-    }
-
-    const packageName = name.includes("@", 1)
-      ? name.slice(0, name.lastIndexOf("@"))
-      : name
-
-    return !(packageName in available)
-  })
-
-  if (neededRuntime.length) await packageRun(["add", ...neededRuntime], root)
-
-  const neededDev = devDependencies.filter(
-    (name) => !(name.split("@").slice(0, -1).join("@") in available),
-  )
-
-  if (neededDev.length) await packageRun(["add", "-d", ...neededDev], root)
-
-  for (const [path, { before }] of edits) {
-    const exists = await existingFile(root, path)
-    const current = exists ? await readFile(join(root, path), "utf8") : null
-
-    if (current !== before) throw new Error(`File changed during init: ${path}`)
-  }
-
-  for (const [path, before] of retired) {
-    if ((await readFile(join(root, path), "utf8")) !== before)
-      throw new Error(`File changed during init: ${path}`)
-  }
-
-  for (const [path, { before, after }] of edits) {
-    await mkdir(dirname(join(root, path)), { recursive: true })
-    await writeFile(join(root, path), after, {
-      flag: before === null ? "wx" : "w",
+  try {
+    await installItem("base", {
+      ...options,
+      cwd: uiRoot,
+      importPrefix: shared?.name,
+      run: uiRun,
     })
-  }
+    baseInstalled = true
 
-  for (const path of retired.keys()) await unlink(join(root, path))
+    if (
+      !(await readFile(join(uiRoot, "src/styles/styles.css"), "utf8")).includes(
+        "@stylex;",
+      )
+    ) {
+      throw new Error(
+        "Add @stylex; to src/styles/styles.css before configuring StyleX",
+      )
+    }
 
-  if (framework === "next") {
-    const latest: JsonValue = JSON.parse(
-      await readFile(join(root, "package.json"), "utf8"),
-    )
+    if (!(await existingFile(root, "package.json")))
+      throw new Error("Missing package.json after installation")
+    const packages = await readFile(join(root, "package.json"), "utf8")
+    const installed: JsonValue = JSON.parse(packages)
 
-    if (!object(latest))
+    if (!object(installed))
       throw new Error("Invalid package.json after installation")
 
-    if (JSON.stringify(latest.scripts) !== JSON.stringify(manifest.scripts)) {
-      throw new Error("Next.js scripts changed during init")
+    const available = Object.fromEntries(
+      [installed.dependencies, installed.devDependencies].flatMap((entry) =>
+        object(entry) ? Object.entries(entry) : [],
+      ),
+    )
+
+    const neededRuntime = runtimeDependencies.filter((name) => {
+      if (shared && name === `${shared.name}@workspace:*`) {
+        const version = available[shared.name]
+
+        return (
+          !isString(version) ||
+          (version !== "*" && !version.startsWith("workspace:"))
+        )
+      }
+
+      const packageName = name.includes("@", 1)
+        ? name.slice(0, name.lastIndexOf("@"))
+        : name
+
+      return !(packageName in available)
+    })
+
+    if (neededRuntime.length) await packageRun(["add", ...neededRuntime], root)
+
+    const neededDev = devDependencies.filter(
+      (name) => !(name.split("@").slice(0, -1).join("@") in available),
+    )
+
+    if (neededDev.length) await packageRun(["add", "-d", ...neededDev], root)
+
+    if (shared) {
+      const path = `${relative(root, uiRoot).replaceAll("\\", "/")}/package.json`
+      const planned = edits.get(path)
+
+      if (planned) {
+        if (!(await existingFile(root, path)))
+          throw new Error("Missing UI package.json after installation")
+        const current = await readFile(join(uiRoot, "package.json"), "utf8")
+        const before: JsonValue = JSON.parse(planned.before!)
+        const after: JsonValue = JSON.parse(planned.after)
+        const value: JsonValue = JSON.parse(current)
+
+        if (
+          !object(before) ||
+          !object(after) ||
+          !object(value) ||
+          value.name !== before.name ||
+          JSON.stringify(value.exports) !== JSON.stringify(before.exports) ||
+          JSON.stringify(value.sideEffects) !==
+            JSON.stringify(before.sideEffects)
+        )
+          throw new Error("UI package exports changed during installation")
+
+        edits.set(path, {
+          before: current,
+          after: `${JSON.stringify({ ...value, exports: after.exports, sideEffects: after.sideEffects }, null, 2)}\n`,
+        })
+      }
     }
 
-    const scripts = nextScripts(latest.scripts)
+    const changes = new Map<string, FileChange>(edits)
 
-    if (JSON.stringify(latest.scripts) !== JSON.stringify(scripts)) {
-      await writeFile(
-        join(root, "package.json"),
-        `${JSON.stringify({ ...latest, scripts }, null, 2)}\n`,
-      )
+    for (const [path, before] of retired) {
+      changes.set(path, { before, after: null })
     }
+
+    if (framework === "next") {
+      if (!(await existingFile(root, "package.json")))
+        throw new Error("Missing package.json after installation")
+      const before = await readFile(join(root, "package.json"), "utf8")
+      const latest: JsonValue = JSON.parse(before)
+
+      if (!object(latest))
+        throw new Error("Invalid package.json after installation")
+
+      if (JSON.stringify(latest.scripts) !== JSON.stringify(manifest.scripts)) {
+        throw new Error("Next.js scripts changed during init")
+      }
+
+      const scripts = nextScripts(latest.scripts)
+
+      changes.set("package.json", {
+        before,
+        after:
+          JSON.stringify(latest.scripts) === JSON.stringify(scripts)
+            ? before
+            : `${JSON.stringify({ ...latest, scripts }, null, 2)}\n`,
+      })
+    }
+
+    await writeFiles(root, changes)
+
+    return { framework, configured: edits.size }
+  } catch (cause) {
+    if (!baseInstalled) throw cause
+    throw new Error(
+      `${cause instanceof Error ? cause.message : String(cause)}\nDependencies may have changed (package.json, lockfiles, node_modules); package-manager changes were not rolled back.\nPrior init base install may have changed source files and ui.json; that install was not rolled back.`,
+      { cause },
+    )
   }
-
-  return { framework, configured: edits.size }
 }

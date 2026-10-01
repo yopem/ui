@@ -1,7 +1,19 @@
 import { isPackageName, packageRunner } from "@yopem-ui/cli/project"
 import { createHash } from "node:crypto"
-import { lstat, mkdir, readFile, realpath, writeFile } from "node:fs/promises"
-import { dirname, join } from "node:path"
+import {
+  chmod,
+  link,
+  lstat,
+  mkdir,
+  mkdtemp,
+  readFile,
+  realpath,
+  rename,
+  rm,
+  unlink,
+  writeFile,
+} from "node:fs/promises"
+import { dirname, join, relative } from "node:path"
 
 const registryUrl = "http://localhost:3100/r"
 
@@ -218,14 +230,10 @@ export async function existingFile(root: string, relative: string) {
   return true
 }
 
-async function readManifest(root: string): Promise<Manifest> {
-  if (!(await existingFile(root, ".yopem-ui.json"))) {
-    return { version: 1, files: {} }
-  }
+function readManifest(content: string | null): Manifest {
+  if (content === null) return { version: 1, files: {} }
 
-  const value: JsonValue = JSON.parse(
-    await readFile(join(root, ".yopem-ui.json"), "utf8"),
-  )
+  const value: JsonValue = JSON.parse(content)
 
   if (
     !isRecord(value) ||
@@ -233,7 +241,7 @@ async function readManifest(root: string): Promise<Manifest> {
     !isRecord(value.files) ||
     (value.importPrefix !== undefined && !validImportPrefix(value.importPrefix))
   ) {
-    throw new Error("Invalid .yopem-ui.json")
+    throw new Error("Invalid ui.json")
   }
 
   const files: Record<string, string> = {}
@@ -245,7 +253,7 @@ async function readManifest(root: string): Promise<Manifest> {
       !isString(integrity) ||
       !hashPattern.test(integrity)
     ) {
-      throw new Error("Invalid .yopem-ui.json")
+      throw new Error("Invalid ui.json")
     }
 
     files[path] = integrity
@@ -257,6 +265,181 @@ async function readManifest(root: string): Promise<Manifest> {
     ...(value.importPrefix !== undefined && {
       importPrefix: value.importPrefix,
     }),
+  }
+}
+
+export interface FileChange {
+  before: string | null
+  after: string | null
+}
+
+interface StagedFile {
+  path: string
+  before: Buffer | null
+  after: Buffer | null
+  mode: number | null
+  afterMode: number | null
+  changed: boolean
+  directory: string | null
+}
+
+export async function writeFiles(
+  root: string,
+  changes: ReadonlyMap<string, FileChange>,
+  prepare?: () => Promise<void>,
+) {
+  const staged: StagedFile[] = []
+  const committed: StagedFile[] = []
+  const recovery = new Set<StagedFile>()
+
+  async function verify(
+    file: StagedFile,
+    expected: Buffer | null,
+    mode: number | null,
+  ) {
+    const exists = await existingFile(root, file.path)
+    const path = join(root, file.path)
+    const current = exists ? await readFile(path) : null
+
+    if (
+      (current === null
+        ? expected !== null
+        : expected === null || !current.equals(expected)) ||
+      (exists && ((await lstat(path)).mode & 0o7777) !== mode)
+    ) {
+      throw new Error(`File changed before commit: ${file.path}`)
+    }
+  }
+
+  async function cleanup() {
+    const failures: string[] = []
+
+    for (const file of staged) {
+      if (!file.directory || recovery.has(file)) continue
+
+      try {
+        await existingFile(root, relative(root, join(file.directory, "before")))
+        await rm(file.directory, { recursive: true, force: true })
+      } catch (cause) {
+        failures.push(
+          `Temporary cleanup failed: ${file.directory}: ${String(cause)}`,
+        )
+      }
+    }
+
+    return failures
+  }
+
+  try {
+    for (const [path, change] of changes) {
+      const exists = await existingFile(root, path)
+      const before = exists ? await readFile(join(root, path)) : null
+
+      if ((before?.toString("utf8") ?? null) !== change.before) {
+        throw new Error(`File changed before commit: ${path}`)
+      }
+
+      const mode = exists ? (await lstat(join(root, path))).mode & 0o7777 : null
+      const after = change.after === null ? null : Buffer.from(change.after)
+      staged.push({
+        path,
+        before,
+        after,
+        mode,
+        afterMode: mode,
+        changed: change.before !== change.after,
+        directory: null,
+      })
+    }
+
+    for (const file of staged) {
+      if (!file.changed) continue
+      const parent = dirname(join(root, file.path))
+      await mkdir(parent, { recursive: true })
+      await verify(file, file.before, file.mode)
+      file.directory = await mkdtemp(join(parent, ".yopem-ui-"))
+
+      if (file.after !== null) {
+        const path = join(file.directory, "after")
+        await writeFile(path, file.after, { flag: "wx" })
+
+        if (file.mode !== null) await chmod(path, file.mode)
+        file.afterMode = (await lstat(path)).mode & 0o7777
+      }
+
+      if (file.before !== null) {
+        const path = join(file.directory, "before")
+        await writeFile(path, file.before, { flag: "wx" })
+        await chmod(path, file.mode!)
+      }
+    }
+
+    await prepare?.()
+
+    for (const file of staged) await verify(file, file.before, file.mode)
+
+    for (const file of staged) {
+      if (!file.changed) continue
+      await verify(file, file.before, file.mode)
+      const path = join(root, file.path)
+
+      try {
+        if (file.after === null) await unlink(path)
+        else if (file.before === null)
+          await link(join(file.directory!, "after"), path)
+        else await rename(join(file.directory!, "after"), path)
+      } catch (cause) {
+        throw new Error(`Failed to commit ${file.path}: ${String(cause)}`, {
+          cause,
+        })
+      }
+
+      committed.push(file)
+    }
+  } catch (cause) {
+    const failures: string[] = []
+
+    for (const file of committed.toReversed()) {
+      try {
+        await verify(
+          file,
+          file.after,
+          file.after === null ? null : file.afterMode,
+        )
+
+        if (file.before === null) await unlink(join(root, file.path))
+        else if (file.after === null)
+          await link(join(file.directory!, "before"), join(root, file.path))
+        else
+          await rename(join(file.directory!, "before"), join(root, file.path))
+      } catch (rollbackCause) {
+        const backup =
+          file.before === null
+            ? ""
+            : `; original backup: ${join(file.directory!, "before")}`
+
+        if (file.before !== null) recovery.add(file)
+        failures.push(`${file.path}: ${String(rollbackCause)}${backup}`)
+      }
+    }
+
+    const rollback = committed.length
+      ? failures.length
+        ? `\nRollback incomplete: ${failures.join("\n")}`
+        : "\nCommitted files restored."
+      : ""
+
+    const cleanupFailures = await cleanup()
+    throw new Error(
+      `${cause instanceof Error ? cause.message : String(cause)}${rollback}${cleanupFailures.length ? `\n${cleanupFailures.join("\n")}` : ""}`,
+      { cause },
+    )
+  }
+
+  const failures = await cleanup()
+
+  if (failures.length) {
+    throw new Error(`Files committed. ${failures.join("\n")}`)
   }
 }
 
@@ -276,7 +459,12 @@ export async function installItem(name: string, options: InstallOptions = {}) {
   if (!namePattern.test(name)) throw new Error(`Invalid item name: ${name}`)
   const root = await realpath(options.cwd ?? process.cwd())
   const run = await packageRunner(root, options.run)
-  const manifest = await readManifest(root)
+
+  const manifestText = (await existingFile(root, "ui.json"))
+    ? await readFile(join(root, "ui.json"), "utf8")
+    : null
+
+  const manifest = readManifest(manifestText)
   const importPrefix = options.importPrefix ?? manifest.importPrefix ?? "@"
 
   if (
@@ -345,16 +533,16 @@ export async function installItem(name: string, options: InstallOptions = {}) {
     }
   }
 
-  const writes: [string, RegistryFile][] = []
+  const changes = new Map<string, FileChange>()
+  let installed = 0
   let skipped = 0
 
   for (const [path, file] of files) {
     const exists = await existingFile(root, path)
 
-    const current = exists
-      ? hash(await readFile(join(root, path), "utf8"))
-      : null
-
+    const before = exists ? await readFile(join(root, path), "utf8") : null
+    const current = before === null ? null : hash(before)
+    changes.set(path, { before, after: before })
     const previous = manifest.files[path]
 
     if (current && previous && current !== previous && !options.force) {
@@ -379,39 +567,39 @@ export async function installItem(name: string, options: InstallOptions = {}) {
     } else if (current && !options.force && previous !== current) {
       throw new Error(`Existing file: ${path} (use --force to overwrite)`)
     } else {
-      writes.push([path, file])
+      changes.set(path, { before, after: file.content })
+      manifest.files[path] = file.integrity
+      installed++
     }
   }
 
-  if (dependencies.size) await run(["add", ...dependencies], root)
+  changes.set("ui.json", {
+    before: manifestText,
+    after: `${JSON.stringify(manifest, null, 2)}\n`,
+  })
 
   for (const dependency of dependencies) devDependencies.delete(dependency)
+  let dependenciesStarted = false
 
-  if (devDependencies.size) await run(["add", "-d", ...devDependencies], root)
-
-  for (const [path, file] of writes) {
-    if (await existingFile(root, path)) {
-      const current = hash(await readFile(join(root, path), "utf8"))
-      const previous = manifest.files[path]
-
-      if (
-        current !== previous &&
-        current !== file.integrity &&
-        !options.force
-      ) {
-        throw new Error(`Modified file: ${path} (use --force to overwrite)`)
+  try {
+    await writeFiles(root, changes, async () => {
+      if (dependencies.size) {
+        dependenciesStarted = true
+        await run(["add", ...dependencies], root)
       }
-    }
 
-    await mkdir(dirname(join(root, path)), { recursive: true })
-    await writeFile(join(root, path), file.content, { flag: "w" })
-    manifest.files[path] = file.integrity
+      if (devDependencies.size) {
+        dependenciesStarted = true
+        await run(["add", "-d", ...devDependencies], root)
+      }
+    })
+  } catch (cause) {
+    if (!dependenciesStarted) throw cause
+    throw new Error(
+      `${cause instanceof Error ? cause.message : String(cause)}\nDependencies may have changed (package.json, lockfiles, node_modules); package-manager changes were not rolled back.`,
+      { cause },
+    )
   }
 
-  await writeFile(
-    join(root, ".yopem-ui.json"),
-    `${JSON.stringify(manifest, null, 2)}\n`,
-  )
-
-  return { installed: writes.length, skipped }
+  return { installed, skipped }
 }
