@@ -8,12 +8,9 @@ interface JsonObject {
   [key: string]: JsonValue
 }
 
-const directory = resolve(import.meta.dir, "../../tmp/oxlint-plugin-e2e")
+const directory = resolve(import.meta.dir, "../tmp/oxlint-plugin-e2e")
 
-const plugin = resolve(
-  import.meta.dir,
-  "../../packages/oxlint-plugin/src/index.ts",
-)
+const plugin = resolve(import.meta.dir, "../src/index.ts")
 
 mkdirSync(directory, { recursive: true })
 
@@ -33,17 +30,26 @@ function lint(source: string, rules: JsonObject) {
 
   const result = Bun.spawnSync(
     [
-      resolve(import.meta.dir, "../../node_modules/.bin/oxlint"),
+      resolve(import.meta.dir, "../../../node_modules/.bin/oxlint"),
       "--config",
       config,
+      "--format=json",
       input,
     ],
     { cwd: directory },
   )
 
+  const report: { diagnostics: { code?: string; message: string }[] } =
+    JSON.parse(result.stdout.toString())
+
   return {
     status: result.exitCode,
-    output: `${result.stdout.toString()}${result.stderr.toString()}`,
+    output: [
+      ...report.diagnostics.map(
+        (diagnostic) => `${diagnostic.code ?? "lint"}: ${diagnostic.message}`,
+      ),
+      result.stderr.toString(),
+    ].join("\n"),
   }
 }
 

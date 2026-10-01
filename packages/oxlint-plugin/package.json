@@ -34,7 +34,8 @@
   "scripts": {
     "build": "bun build ./src/index.ts --target=node --outdir=dist --packages=external",
     "prepack": "bun run build",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "bun test ./test"
   },
   "devDependencies": {
     "@types/bun": "catalog:",
