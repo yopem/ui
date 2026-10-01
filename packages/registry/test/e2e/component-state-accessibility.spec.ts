@@ -14,7 +14,7 @@ const cases = [
 ] as const
 
 for (const [component, visibleText] of cases) {
-  test(`${component} open state has no detectable accessibility violations`, async ({
+  test(`@a11y ${component} open state has no detectable accessibility violations`, async ({
     page,
   }) => {
     await page.emulateMedia({ reducedMotion: "reduce" })
@@ -101,7 +101,7 @@ test("sheet close button stays in the popup corner without shifting content", as
   await expect(popup).not.toBeVisible()
 })
 
-test("context menu keyboard alternative opens an accessible menu", async ({
+test("@a11y context menu keyboard alternative opens an accessible menu", async ({
   page,
 }) => {
   await page.goto("/components/context-menu")

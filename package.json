@@ -22,17 +22,16 @@
     "start": "bun run --cwd apps/docs start",
     "preview": "bun run --cwd apps/docs preview",
     "typecheck": "bun run --filter '*' typecheck",
-    "test": "bun run build && bun run --cwd packages/cli test && bun run --cwd packages/oxlint-plugin test && PLAYWRIGHT_PRODUCTION=1 playwright test",
-    "test:a11y": "bun run build && FULL_A11Y=1 PLAYWRIGHT_PRODUCTION=1 playwright test --project=chromium --grep @full-a11y",
+    "test": "bun run registry:build && bun run --cwd packages/oxlint-plugin build && bun run --cwd packages/cli test && bun run --cwd packages/oxlint-plugin test",
+    "test:a11y": "bun run build && bun run --cwd apps/docs test:a11y && bun run --cwd packages/registry test:a11y",
     "lint": "oxlint lint .",
     "fmt": "oxfmt fmt .",
-    "fmt:check": "oxfmt --check ."
+    "fmt:check": "oxfmt --check .",
+    "test:e2e": "bun run build && bun run --cwd apps/docs test:e2e && bun run --cwd packages/registry test:e2e"
   },
   "devDependencies": {
-    "@axe-core/playwright": "^4.13.0",
     "@changesets/changelog-github": "1.0.1",
     "@changesets/cli": "3.0.3",
-    "@playwright/test": "^1.63.0",
     "@types/bun": "catalog:",
     "@types/node": "catalog:",
     "@yopem/oxlint-config": "^0.1.4",

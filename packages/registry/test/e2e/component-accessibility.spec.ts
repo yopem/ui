@@ -10,7 +10,7 @@ test.skip(
 
 const previews = (
   await readdir(
-    resolve(import.meta.dirname, "../../apps/docs/src/catalog/previews"),
+    resolve(import.meta.dirname, "../../../../apps/docs/src/catalog/previews"),
   )
 )
   .filter((file) => file.endsWith(".tsx"))
@@ -20,7 +20,7 @@ const previews = (
 
 for (const theme of ["light", "dark"] as const) {
   for (const slug of previews) {
-    test(`@full-a11y ${slug} preview has no ${theme} theme violations`, async ({
+    test(`@a11y @full-a11y ${slug} preview has no ${theme} theme violations`, async ({
       page,
     }) => {
       await page.addInitScript(

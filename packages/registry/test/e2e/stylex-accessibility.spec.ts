@@ -12,7 +12,7 @@ test.beforeEach(async ({ page }) => {
   ).toBeVisible()
 })
 
-test("Button vertical slice has no detectable accessibility violations", async ({
+test("@a11y Button vertical slice has no detectable accessibility violations", async ({
   page,
 }) => {
   const results = await new AxeBuilder({ page }).analyze()

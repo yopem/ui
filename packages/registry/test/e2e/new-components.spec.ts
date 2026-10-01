@@ -1,7 +1,7 @@
 import AxeBuilder from "@axe-core/playwright"
 import { expect, test } from "@playwright/test"
 
-test("rating supports keyboard selection and announces selected value", async ({
+test("@a11y rating supports keyboard selection and announces selected value", async ({
   page,
 }) => {
   await page.goto("/components/rating", { waitUntil: "networkidle" })
@@ -71,7 +71,7 @@ test("prose constrains long-form content", async ({ page }) => {
     .toBeLessThanOrEqual(700)
 })
 
-test("steps expose active item as current step", async ({ page }) => {
+test("@a11y steps expose active item as current step", async ({ page }) => {
   await page.goto("/components/steps")
   await expect(
     page.locator('[data-slot="steps-item"]').filter({ hasText: "Preferences" }),

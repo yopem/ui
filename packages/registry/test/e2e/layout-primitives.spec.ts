@@ -284,7 +284,7 @@ test.describe("layout and typography primitives", () => {
   })
 
   for (const theme of ["light", "dark"] as const) {
-    test(`has no detectable accessibility violations in ${theme} theme`, async ({
+    test(`@a11y has no detectable accessibility violations in ${theme} theme`, async ({
       page,
     }) => {
       await openLayoutPreview(page, theme)

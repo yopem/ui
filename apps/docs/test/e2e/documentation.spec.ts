@@ -52,7 +52,7 @@ test("unknown routes show the docs not found page", async ({ page }) => {
   ).toBeVisible()
 })
 
-test("MDX guides render sections, anchors, and copyable snippets", async ({
+test("@a11y MDX guides render sections, anchors, and copyable snippets", async ({
   page,
 }) => {
   await page.setViewportSize({ width: 1600, height: 900 })

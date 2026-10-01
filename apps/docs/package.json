@@ -29,7 +29,9 @@
     "deploy": "export CLOUDFLARE_ACCOUNT_ID=661bd2c4ba9614f17d1d852772da422a && alchemy deploy --stage prod --adopt && wrangler pages deploy .output/public --project-name ui --branch main",
     "start": "wrangler pages dev .output/public --port ${PORT:-3100}",
     "preview": "vite preview",
-    "typecheck": "bun run generate-routes && tsc --noEmit"
+    "typecheck": "bun run generate-routes && tsc --noEmit",
+    "test:e2e": "PLAYWRIGHT_PRODUCTION=1 playwright test",
+    "test:a11y": "FULL_A11Y=1 PLAYWRIGHT_PRODUCTION=1 playwright test --project=chromium --grep @a11y"
   },
   "dependencies": {
     "@daypicker/react": "catalog:",
@@ -59,9 +61,11 @@
     "zod": "catalog:"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.13.0",
     "@babel/core": "catalog:",
     "@effect/platform-bun": "4.0.0-rc.115",
     "@effect/platform-node": "4.0.0-rc.115",
+    "@playwright/test": "^1.63.0",
     "@rolldown/plugin-babel": "^0.2.4",
     "@stylexjs/babel-plugin": "^0.19.1",
     "@stylexjs/postcss-plugin": "^0.19.1",

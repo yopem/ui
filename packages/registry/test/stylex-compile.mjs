@@ -3,7 +3,7 @@ import { readFileSync } from "node:fs"
 import { createRequire } from "node:module"
 import { resolve } from "node:path"
 
-const root = resolve(import.meta.dirname, "..")
+const root = resolve(import.meta.dirname, "../../..")
 
 const docsRequire = createRequire(resolve(root, "apps/docs/package.json"))
 

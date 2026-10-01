@@ -25,7 +25,7 @@ const components = [
   ["heading", "Heading"],
 ] as const
 
-test("layout guide lists components and preserves legacy links", async ({
+test("@a11y layout guide lists components and preserves legacy links", async ({
   page,
 }) => {
   await page.goto("/docs/primitives")
@@ -49,7 +49,7 @@ test("layout guide lists components and preserves legacy links", async ({
   expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([])
 })
 
-test("styling guide teaches StyleX overrides", async ({ page }) => {
+test("@a11y styling guide teaches StyleX overrides", async ({ page }) => {
   await page.goto("/docs/styling")
   await expect(
     page.getByRole("heading", { name: "Styling with StyleX", level: 1 }),
@@ -59,7 +59,7 @@ test("styling guide teaches StyleX overrides", async ({ page }) => {
   expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([])
 })
 
-test("lint guide offers copyable configuration", async ({ page }) => {
+test("@a11y lint guide offers copyable configuration", async ({ page }) => {
   await page.goto("/docs/lint")
   await expect(
     page.getByRole("heading", { name: "Lint rules", level: 1 }),
@@ -69,7 +69,7 @@ test("lint guide offers copyable configuration", async ({ page }) => {
   expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([])
 })
 
-test("guides stay readable and navigable at 320px", async ({ page }) => {
+test("@a11y guides stay readable and navigable at 320px", async ({ page }) => {
   test.setTimeout(90_000)
   await page.setViewportSize({ width: 320, height: 700 })
 

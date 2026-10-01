@@ -5,10 +5,8 @@
     "": {
       "name": "ui",
       "devDependencies": {
-        "@axe-core/playwright": "^4.13.0",
         "@changesets/changelog-github": "1.0.1",
         "@changesets/cli": "3.0.3",
-        "@playwright/test": "^1.63.0",
         "@types/bun": "catalog:",
         "@types/node": "catalog:",
         "@yopem/oxlint-config": "^0.1.4",
@@ -50,9 +48,11 @@
         "zod": "catalog:",
       },
       "devDependencies": {
+        "@axe-core/playwright": "^4.13.0",
         "@babel/core": "catalog:",
         "@effect/platform-bun": "4.0.0-rc.115",
         "@effect/platform-node": "4.0.0-rc.115",
+        "@playwright/test": "^1.63.0",
         "@rolldown/plugin-babel": "^0.2.4",
         "@stylexjs/babel-plugin": "^0.19.1",
         "@stylexjs/postcss-plugin": "^0.19.1",
@@ -105,8 +105,10 @@
         "zod": "catalog:",
       },
       "devDependencies": {
+        "@axe-core/playwright": "^4.13.0",
         "@babel/core": "catalog:",
         "@babel/types": "^8.0.6",
+        "@playwright/test": "^1.63.0",
         "@types/babel__core": "^7.20.5",
         "@types/bun": "catalog:",
         "@types/react": "catalog:",

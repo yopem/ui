@@ -4,7 +4,7 @@ import { resolve } from "node:path"
 
 const previews = (
   await readdir(
-    resolve(import.meta.dirname, "../../apps/docs/src/catalog/previews"),
+    resolve(import.meta.dirname, "../../../../apps/docs/src/catalog/previews"),
   )
 )
   .filter((file) => file.endsWith(".tsx"))

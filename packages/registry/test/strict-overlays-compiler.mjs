@@ -5,7 +5,7 @@ import { createRequire } from "node:module"
 import { resolve } from "node:path"
 import { runInNewContext } from "node:vm"
 
-const root = resolve(import.meta.dirname, "..")
+const root = resolve(import.meta.dirname, "../../..")
 
 const registryRequire = createRequire(
   resolve(root, "packages/registry/package.json"),
