@@ -22,7 +22,7 @@
     "@/*": "./src/*"
   },
   "scripts": {
-    "dev": "(test -f ../../packages/registry/src/docs.generated.json || bun run --cwd ../../packages/registry docs:generate) && vite dev --port 3100",
+    "dev": "bun run --cwd ../../packages/registry build && vite dev --port 3100",
     "generate-routes": "tsr generate",
     "build": "vite build && bun static.ts",
     "build:test": "vite build --mode test --logLevel warn && bun static.ts",

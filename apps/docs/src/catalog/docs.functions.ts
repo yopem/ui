@@ -1,4 +1,5 @@
-import { componentDocs } from "@registry/docs"
+import type { componentDocs } from "@registry/docs"
+
 import { rewriteImports } from "@registry/source-files"
 import { z } from "zod"
 
@@ -18,6 +19,11 @@ const previewSources = import.meta.glob<string>("./previews/*.tsx", {
   import: "default",
 })
 
+const documentationSources = import.meta.glob<(typeof componentDocs)[number]>(
+  "../../public/r/docs/*.json",
+  { import: "default" },
+)
+
 const slugSchema = z
   .string()
   .regex(/^[a-z0-9-]+$/, { error: "Invalid component name" })
@@ -25,6 +31,17 @@ const slugSchema = z
 export async function getDocumentation({ data }: { data: string }) {
   const slug = slugSchema.parse(data)
   const items = getDocumentationItems(slug)
+
+  const docs = await Promise.all(
+    items.map((item) => {
+      const load = documentationSources[`../../public/r/docs/${item.name}.json`]
+
+      if (!load) throw new Error(`Missing API reference: ${item.name}`)
+
+      return load()
+    }),
+  )
+
   const previewLoader = previewSources[`./previews/${slug}.tsx`]
   const previewSource = previewLoader ? await previewLoader() : null
   const allItems = getRequiredItems(slug, previewSource ?? "")
@@ -38,7 +55,7 @@ export async function getDocumentation({ data }: { data: string }) {
   const api = items
     .filter((item) => item.type === "registry:ui")
     .flatMap((item) => {
-      const reference = componentDocs.find((entry) => entry.name === item.name)
+      const reference = docs.find((entry) => entry.name === item.name)
 
       if (!reference) throw new Error(`Missing API reference: ${item.name}`)
       const names = new Set(reference.parts.map((part) => part.name))
@@ -66,7 +83,7 @@ export async function getDocumentation({ data }: { data: string }) {
     usage: usageSnippets.get(slug) ?? "",
     previewSource,
     notes: items.flatMap((item) => {
-      const doc = componentDocs.find((entry) => entry.name === item.name)
+      const doc = docs.find((entry) => entry.name === item.name)
 
       return doc ? [doc.usage, ...doc.notes] : []
     }),
