@@ -8,6 +8,7 @@ export function createPlaywrightConfig(port: string, workspace: string) {
   return defineConfig({
     expect: { timeout: 10_000 },
     fullyParallel: true,
+    workers: 1,
     outputDir: resultsDirectory,
     grepInvert: process.env.FULL_A11Y ? undefined : /@full-a11y/,
     reporter: process.env.CI

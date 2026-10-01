@@ -86,7 +86,7 @@ test("toast appears after trigger click", async ({ page }) => {
   await expect(page.getByText("Event has been created")).toBeVisible()
 })
 
-test("accordion and collapsible expose expanded state", async ({ page }) => {
+test("accordion exposes expanded state", async ({ page }) => {
   await openPreview(page, "accordion")
   const accordion = page.getByRole("button", { name: "What is Base UI?" })
   await accordion.focus()
@@ -95,7 +95,9 @@ test("accordion and collapsible expose expanded state", async ({ page }) => {
   await expect(
     page.getByText("Base UI is a library", { exact: false }),
   ).toBeVisible()
+})
 
+test("collapsible exposes expanded state", async ({ page }) => {
   await openPreview(page, "collapsible")
   const collapsible = page.getByRole("button", { name: "Show recovery keys" })
   await collapsible.focus()
@@ -104,21 +106,23 @@ test("accordion and collapsible expose expanded state", async ({ page }) => {
   await expect(page.getByText("4829-1735-6621")).toBeVisible()
 })
 
-test("switch, toggle, and radio group support keyboard state changes", async ({
-  page,
-}) => {
+test("switch supports keyboard state changes", async ({ page }) => {
   await openPreview(page, "switch")
   const switchControl = page.getByRole("switch", { name: "Marketing emails" })
   await switchControl.focus()
   await page.keyboard.press("Space")
   await expect(switchControl).toBeChecked()
+})
 
+test("toggle supports keyboard state changes", async ({ page }) => {
   await openPreview(page, "toggle")
   const toggle = page.getByRole("button", { name: "Toggle", exact: true })
   await toggle.focus()
   await page.keyboard.press("Space")
   await expect(toggle).toHaveAttribute("aria-pressed", "true")
+})
 
+test("radio group supports keyboard state changes", async ({ page }) => {
   await openPreview(page, "radio-group")
   const next = page.getByRole("radio", { name: "Next.js" })
   const vite = page.getByRole("radio", { name: "Vite" })

@@ -13,6 +13,9 @@ async function openLayoutPreview(
   )
   await page.goto("/components/layout")
   await expect(page.getByTestId("layout-root")).toBeVisible()
+  await expect(
+    page.getByRole("button", { name: /^Copy .* usage$/ }).first(),
+  ).toBeEnabled()
 }
 
 test.describe("layout and typography primitives", () => {
