@@ -1,13 +1,14 @@
 #!/usr/bin/env bun
 
 import type { InitOptions } from "@yopem-ui/cli/init"
+import type { JsonValue } from "@yopem-ui/cli/install"
 
 import { initProject } from "@yopem-ui/cli/init"
-import { installItem } from "@yopem-ui/cli/install"
+import { installItem, isRecord, isString } from "@yopem-ui/cli/install"
 import { resolve } from "node:path"
 
 const usage =
-  "Usage: yopem-ui init [--framework vite|tanstack-router|tanstack-start|react-router|next|astro] [--ui <path>] [--cwd <path>] [--registry <URL>] | <add|update> <name> [--force] [--cwd <path>] [--registry <URL>]"
+  "Usage: yopem-ui [--help | --version] | init [--framework vite|tanstack-router|tanstack-start|react-router|next|astro] [--ui <path>] [--cwd <path>] [--registry <URL>] | <add|update> <name> [--force] [--cwd <path>] [--registry <URL>]"
 
 function isFramework(
   value: string | undefined,
@@ -24,6 +25,30 @@ function isFramework(
 
 export async function runCli(args: string[], options: InitOptions = {}) {
   const [command, ...rest] = args
+
+  if (command === undefined || command === "--help" || command === "-h") {
+    if (rest.length) throw new Error(usage)
+    console.info(usage)
+
+    return
+  }
+
+  if (command === "--version" || command === "-v") {
+    if (rest.length) throw new Error(usage)
+
+    const manifest: JsonValue = await Bun.file(
+      new URL("../package.json", import.meta.url),
+    ).json()
+
+    if (!isRecord(manifest) || !isString(manifest.version)) {
+      throw new Error("Invalid CLI package version")
+    }
+
+    console.info(manifest.version)
+
+    return
+  }
+
   const positional: string[] = []
   const flags = new Map<string, string>()
 

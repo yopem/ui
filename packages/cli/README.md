@@ -7,7 +7,13 @@ Requires Bun. Registry requests default to `https://ui.yopem.com/r`.
 bunx @yopem-ui/cli init
 bunx @yopem-ui/cli add button
 bunx @yopem-ui/cli update button
+bunx @yopem-ui/cli --help
+bunx @yopem-ui/cli --version
 ```
+
+No arguments or `--help` (`-h`) prints usage; `--version` (`-v`) prints the
+installed CLI version. These commands need no project and exit successfully.
+Invalid commands or arguments exit with status 1.
 
 `init` supports Vite, TanStack Router, TanStack Start, React Router, Next.js App
 Router, and Astro. Pass `--framework <name>` if autodetection is ambiguous.
