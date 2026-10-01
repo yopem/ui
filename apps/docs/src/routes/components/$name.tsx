@@ -102,10 +102,17 @@ const styles = stylex.create({
 })
 
 export const Route = createFileRoute("/components/$name")({
-  loader: ({ params }) => {
-    if (!getCatalogItem(params.name)) throw notFound()
+  loader: async ({ params }) => {
+    const item = getCatalogItem(params.name)
 
-    return getDocumentation({ data: params.name })
+    if (!item) throw notFound()
+
+    const [documentation] = await Promise.all([
+      getDocumentation({ data: params.name }),
+      item.preview?.component.preload?.(),
+    ])
+
+    return documentation
   },
   head: ({ params }) => {
     const title = getCatalogItem(params.name)?.title ?? "Component"

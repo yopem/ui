@@ -1,9 +1,10 @@
-import type { ComponentType, LazyExoticComponent } from "react"
+import type { RouteComponent } from "@tanstack/react-router"
+import type { FunctionComponent } from "react"
 
-import { lazy } from "react"
+import { lazyRouteComponent } from "@tanstack/react-router"
 
 export interface CatalogPreview {
-  component: LazyExoticComponent<ComponentType>
+  component: RouteComponent
   title: string
 }
 
@@ -14,7 +15,9 @@ export interface CatalogItem {
   title: string
 }
 
-const modules = import.meta.glob<{ Preview: ComponentType }>("./previews/*.tsx")
+const modules = import.meta.glob<{ Preview: FunctionComponent }>(
+  "./previews/*.tsx",
+)
 
 const compositionOverrides = new Map<
   string,
@@ -126,9 +129,7 @@ export const catalog: CatalogItem[] = Object.entries(modules)
     return {
       name: override?.name ?? componentIdentifier(slug),
       preview: {
-        component: lazy(() =>
-          load().then((module) => ({ default: module.Preview })),
-        ),
+        component: lazyRouteComponent(load, "Preview"),
         title: previewDescriptions.get(slug) ?? `${title} in use`,
       },
       slug,

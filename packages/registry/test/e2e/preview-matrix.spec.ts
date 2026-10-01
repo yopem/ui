@@ -11,6 +11,19 @@ const previews = (
   .map((file) => file.slice(0, -4))
   .toSorted()
 
+test.describe("server-rendered previews", () => {
+  test.use({ javaScriptEnabled: false })
+
+  test("preview controls render without waiting for client JavaScript", async ({
+    page,
+  }) => {
+    await page.goto("/components/popover")
+    await expect(
+      page.getByRole("button", { name: "Open Popover" }),
+    ).toBeVisible()
+  })
+})
+
 for (const slug of previews) {
   test(`${slug} preview renders without runtime errors`, async ({
     page,
