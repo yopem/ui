@@ -27,6 +27,14 @@ StyleX consistency rules remain opt-in:
   literal hex and CSS color functions on color properties in `stylex.create`.
   Tokens pass. CLI init and docs app enable it; shadows and unrelated CSS
   strings are not inspected.
+- **yopem-ui/no-unused-stylex-styles** (off by default): report unused top-level
+  style keys in local `stylex.create` declarations. Tracks lexical scope, import
+  aliases, dot access, string-literal bracket access, and dynamic style
+  functions. Skips exported objects, objects passed around or destructured,
+  dynamic property access, and declarations with spreads or computed keys
+  because their usage cannot be verified within the file. Enable with
+  `"yopem-ui/no-unused-stylex-styles": "warn"` or `"error"` in your rules
+  configuration. No autofix; removing styles can remove side effects.
 - **yopem-ui/atoms** (off by default): `mode: "allow"` (default), `"disallow"`
   (reject atoms imports), or `"enforce"` (reject `stylex.create` declarations
   and require atoms in JSX `xstyle`/`sx` expressions). Official atoms compose

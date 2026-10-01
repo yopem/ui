@@ -1237,6 +1237,127 @@ const staticStylexRule: Rule = {
   },
 }
 
+const noUnusedStylexStylesRule: Rule = {
+  meta: {
+    type: "problem",
+    docs: {
+      description: "Report unused local styles declared with StyleX create.",
+    },
+    messages: {
+      unused: 'StyleX style "{{name}}" is unused.',
+    },
+    schema: [],
+  },
+  create(context: RuleContext) {
+    const bindings = createImportBindings()
+    const options = getStylingOptions(context)
+    const nodes: VariableDeclarator[] = []
+
+    return {
+      ImportDeclaration(node: ImportDeclaration) {
+        trackImports(node, bindings, options)
+      },
+      VariableDeclarator(node: VariableDeclarator) {
+        nodes.push(node)
+      },
+      "Program:exit"() {
+        for (const node of nodes) {
+          const callee = getProperty(node.init, "callee")
+
+          const importName =
+            getIdentifier(callee) ??
+            getIdentifier(getProperty(callee, "object"))
+
+          if (
+            importName === null ||
+            (getProperty(callee, "computed") === true &&
+              getLiteralString(getProperty(callee, "property")) !== "create") ||
+            !getVariable(node, importName, context)?.defs.some(
+              (definition) => definition.type === "ImportBinding",
+            )
+          )
+            continue
+
+          const declarations = new Map<
+            ScopedVariable,
+            Map<string, SourceNode>
+          >()
+
+          trackStyleDeclaration(node, bindings, declarations, context)
+          const root = getCallArguments(node.init)[0]
+          const properties = getProperty(root, "properties")
+
+          if (
+            !Array.isArray(properties) ||
+            properties.some(
+              (property) =>
+                !isNode(property, "Property") ||
+                getProperty(property, "computed") === true,
+            ) ||
+            isNode(
+              getProperty(getProperty(node, "parent"), "parent"),
+              "ExportNamedDeclaration",
+            )
+          )
+            continue
+
+          for (const [variable, styles] of declarations) {
+            const used = new Set<string>()
+            let escapes = false
+
+            for (const reference of variable.references) {
+              if (!reference.isRead()) continue
+              const parent = getProperty(reference.identifier, "parent")
+
+              if (
+                !isNode(parent, "MemberExpression") ||
+                getProperty(parent, "object") !== reference.identifier
+              ) {
+                escapes = true
+                break
+              }
+
+              const property = getProperty(parent, "property")
+
+              const name =
+                getProperty(parent, "computed") === true
+                  ? getLiteralString(property)
+                  : getIdentifier(property)
+
+              if (name === null) {
+                escapes = true
+                break
+              }
+
+              used.add(name)
+            }
+
+            if (escapes) continue
+
+            for (const property of properties) {
+              const name = getPropertyName(getProperty(property, "key"))
+              const key = getProperty(property, "key")
+
+              if (
+                name !== null &&
+                styles.has(name) &&
+                !used.has(name) &&
+                isNode(key)
+              ) {
+                context.report({
+                  data: { name },
+                  messageId: "unused",
+                  node: key,
+                })
+              }
+            }
+          }
+        }
+      },
+    }
+  },
+}
+
 export const recommendedRules = {
   "yopem-ui/enforce-styling-methods": "error",
   "yopem-ui/no-restyle": "error",
@@ -1253,6 +1374,7 @@ const plugin: Plugin = {
   rules: {
     atoms: atomsRule,
     "no-raw-stylex-colors": noRawStylexColorsRule,
+    "no-unused-stylex-styles": noUnusedStylexStylesRule,
     "no-restyle": noRestyleRule,
     "prefer-layout-primitives": preferLayoutPrimitivesRule,
     "enforce-styling-methods": enforceStylingMethodsRule,

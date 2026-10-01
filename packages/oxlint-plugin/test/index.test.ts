@@ -1,3 +1,4 @@
+import { recommendedRules } from "@yopem-ui/oxlint-plugin"
 import { afterAll, expect, test } from "bun:test"
 import { mkdirSync, rmSync, writeFileSync } from "node:fs"
 import { resolve } from "node:path"
@@ -364,10 +365,87 @@ test("layout primitive rule supports opt-out and additional tags", () => {
   expect(result.output).not.toContain("<span>")
 })
 
+test("unused StyleX styles report only unreferenced top-level keys", () => {
+  const result = lint(
+    `import { create as make } from "@stylexjs/stylex";
+const styles = make({ used: { color: "red" }, unused: { color: "blue" }, dynamic: (size) => ({ width: size }) });
+const view = <div {...styles.used} />;
+styles.dynamic(4);`,
+    { "yopem-ui/no-unused-stylex-styles": "error" },
+  )
+
+  expect(result.status).toBe(1)
+  expect(result.output).toContain('StyleX style "unused" is unused')
+  expect(result.output.match(/is unused/g)).toHaveLength(1)
+})
+
+test("unused StyleX styles resolve scopes, quoted keys, and forward references", () => {
+  const result = lint(
+    `import * as sx from "@stylexjs/stylex";
+const view = <div xstyle={styles["used"]} />;
+const styles = sx.create({ "used": {}, unused: {} });
+function nested() {
+  const styles = sx.create({ used: {}, unused: {} });
+  return styles.unused;
+}
+function shadow(sx) {
+  const styles = sx.create({ ignored: {} });
+}`,
+    { "yopem-ui/no-unused-stylex-styles": "error" },
+  )
+
+  expect(result.status).toBe(1)
+  expect(result.output).toContain('StyleX style "unused" is unused')
+  expect(result.output).toContain('StyleX style "used" is unused')
+  expect(result.output.match(/is unused/g)).toHaveLength(2)
+  expect(result.output).not.toContain('StyleX style "ignored"')
+})
+
+test("unused StyleX styles skip exports, escaping objects, and dynamic access", () => {
+  const result = lint(
+    `import stylex from "@stylexjs/stylex";
+export const exported = stylex.create({ root: {} });
+const named = stylex.create({ root: {} });
+export { named };
+const passed = stylex.create({ root: {} });
+consume(passed);
+const dynamic = stylex.create({ root: {} });
+consume(dynamic[key]);
+const destructured = stylex.create({ root: {} });
+const { root } = destructured;
+const computed = stylex.create({ [key]: {}, root: {} });
+const spread = stylex.create({ ...external, root: {} });`,
+    { "yopem-ui/no-unused-stylex-styles": "error" },
+  )
+
+  expect(result.status).toBe(0)
+})
+
+test("unused StyleX styles detect entirely unused declarations and ignore unrelated create calls", () => {
+  const result = lint(
+    `import * as stylex from "@stylexjs/stylex";
+const styles = stylex.create({ first: {}, second: {} });
+const unrelated = other.create({ ignored: {} });
+const create = "otherMethod";
+const computed = stylex[create]({ ignored: {} });`,
+    { "yopem-ui/no-unused-stylex-styles": "error" },
+  )
+
+  expect(result.status).toBe(1)
+  expect(result.output.match(/is unused/g)).toHaveLength(2)
+  expect(result.output).not.toContain('StyleX style "ignored"')
+})
+
+test("unused StyleX styles remain outside recommended rules", () => {
+  expect(Object.keys(recommendedRules)).not.toContain(
+    "yopem-ui/no-unused-stylex-styles",
+  )
+})
+
 test("new rules remain opt-in", () => {
   const result = lint(
     `${imports}
-const styles = sx.create({ button: { color: "#fff" } });
+const styles = sx.create({ button: { color: "#fff" }, unused: {} });
 const a = <Action xstyle={styles.button} />;`,
     {},
   )
