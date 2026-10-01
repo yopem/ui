@@ -45,7 +45,7 @@ test("Next.js uses the shared stylesheet for StyleX", async () => {
     }
 
     const fetcher = (url: string) => {
-      expect(url).toBe("http://localhost:3100/r/base.json")
+      expect(url).toBe("https://ui.yopem.com/r/base.json")
 
       return Promise.resolve(
         new Response(

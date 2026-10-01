@@ -1,8 +1,7 @@
 # @yopem-ui/cli
 
 Copy Yopem UI components and configure StyleX in an existing React project.
-Requires Bun. Until the registry is deployed, run the docs server on
-`http://localhost:3100` before using the CLI.
+Requires Bun. Registry requests default to `https://ui.yopem.com/r`.
 
 ```sh
 bunx @yopem-ui/cli init
@@ -15,6 +14,26 @@ Router, and Astro. Pass `--framework <name>` if autodetection is ambiguous.
 Installed source changes stay intact on `init` and `add`; `update` rejects
 modified files unless `--force` is supplied. Installed files and their hashes
 are tracked in `ui.json`.
+
+## Registry
+
+Pass `--registry <URL>` to `init`, `add`, or `update` to use another registry.
+The override applies to that command only; it is not stored in `ui.json`. URLs
+must use HTTPS, except HTTP on `localhost` or loopback addresses. Credentials,
+query strings, and fragments are rejected.
+
+For local development, start this repository's docs server with `bun run dev`:
+
+```sh
+bunx @yopem-ui/cli init --registry http://localhost:3100/r
+bunx @yopem-ui/cli add button --registry http://localhost:3100/r
+bunx @yopem-ui/cli update button --registry http://localhost:3100/r
+```
+
+Each request has a 30-second timeout covering connection and JSON body reads.
+Failures report timeout, network, HTTP status, or malformed JSON details without
+writing source, configuration, or dependencies. Programmatic callers can set
+`InstallOptions.registryUrl` and `requestTimeoutMs` (milliseconds).
 
 ## Monorepos
 
@@ -58,9 +77,11 @@ bun test packages/cli
 ```
 
 `bun run --cwd packages/cli test` also runs the CLI suite. Tests use `bun:test`,
-not browsers; packaged installation checks serve registry JSON with Bun when
-port 3100 has no registry server. Command logs and configuration artifacts are
-saved in `packages/cli/test-results/`.
+not browsers; packaged installation checks explicitly pass a local `--registry`
+and serve registry JSON with Bun when port 3100 has no registry server. Registry
+network tests use isolated local Bun servers for successful workflows, header
+and body stalls, malformed JSON, and HTTP/network failures. Command logs and
+configuration artifacts are saved in `packages/cli/test-results/`.
 
 `bun test packages/cli/test/public.test.ts` runs packed CLI production smoke
 checks: init, add Button, lint, and build in Vite and Next.js App Router apps,

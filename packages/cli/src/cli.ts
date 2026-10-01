@@ -7,7 +7,7 @@ import { installItem } from "@yopem-ui/cli/install"
 import { resolve } from "node:path"
 
 const usage =
-  "Usage: yopem-ui init [--framework vite|tanstack-router|tanstack-start|react-router|next|astro] [--ui <path>] [--cwd <path>] | <add|update> <name> [--force] [--cwd <path>]"
+  "Usage: yopem-ui init [--framework vite|tanstack-router|tanstack-start|react-router|next|astro] [--ui <path>] [--cwd <path>] [--registry <URL>] | <add|update> <name> [--force] [--cwd <path>] [--registry <URL>]"
 
 function isFramework(
   value: string | undefined,
@@ -42,7 +42,7 @@ export async function runCli(args: string[], options: InitOptions = {}) {
       continue
     }
 
-    if (!["--cwd", "--ui", "--framework"].includes(argument))
+    if (!["--cwd", "--ui", "--framework", "--registry"].includes(argument))
       throw new Error(usage)
     const value = rest[++index]
 
@@ -51,6 +51,7 @@ export async function runCli(args: string[], options: InitOptions = {}) {
   }
 
   const cwd = resolve(options.cwd ?? process.cwd(), flags.get("--cwd") ?? ".")
+  const registryUrl = flags.get("--registry") ?? options.registryUrl
 
   if (command === "init") {
     const framework = flags.get("--framework")
@@ -65,6 +66,7 @@ export async function runCli(args: string[], options: InitOptions = {}) {
     const result = await initProject({
       ...options,
       cwd,
+      registryUrl,
       ui: flags.get("--ui") ?? options.ui,
       framework: isFramework(framework) ? framework : options.framework,
     })
@@ -88,6 +90,7 @@ export async function runCli(args: string[], options: InitOptions = {}) {
   const result = await installItem(positional[0]!, {
     ...options,
     cwd,
+    registryUrl,
     mode: command,
     force: flags.has("--force"),
   })

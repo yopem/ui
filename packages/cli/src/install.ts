@@ -15,7 +15,7 @@ import {
 } from "node:fs/promises"
 import { dirname, join, relative } from "node:path"
 
-const registryUrl = "http://localhost:3100/r"
+const defaultRegistryUrl = "https://ui.yopem.com/r"
 
 const namePattern = /^[a-z0-9]+(?:-[a-z0-9]+)*$/
 
@@ -68,8 +68,90 @@ export interface InstallOptions {
   force?: boolean
   importPrefix?: string
   mode?: "add" | "update"
-  fetcher?: (url: string) => Promise<Response>
+  registryUrl?: string
+  requestTimeoutMs?: number
+  fetcher?: (url: string, init?: RequestInit) => Promise<Response>
   run?: (args: string[], cwd: string) => Promise<void>
+}
+
+function registryBaseUrl(value: string) {
+  const url = URL.parse(value)
+
+  const local =
+    url &&
+    (url.hostname === "localhost" ||
+      url.hostname === "[::1]" ||
+      /^127(?:\.\d+){3}$/.test(url.hostname))
+
+  if (
+    !url ||
+    url.username ||
+    url.password ||
+    url.href.includes("?") ||
+    url.href.includes("#") ||
+    (url.protocol !== "https:" && !(url.protocol === "http:" && local))
+  ) {
+    throw new Error(
+      "Invalid registry URL. Use HTTPS (or local HTTP on localhost or a loopback address), without credentials, query or fragment.",
+    )
+  }
+
+  return url.href.replace(/\/+$/, "")
+}
+
+async function registryItemJson(
+  url: string,
+  fetcher: NonNullable<InstallOptions["fetcher"]>,
+  timeoutMs: number,
+) {
+  const controller = new AbortController()
+  const deadline = Promise.withResolvers<never>()
+
+  const timer = setTimeout(() => {
+    deadline.reject(
+      new Error(
+        `Registry request timed out after ${timeoutMs}ms: ${url}. Check your connection and --registry URL.`,
+      ),
+    )
+    controller.abort()
+  }, timeoutMs)
+
+  async function read() {
+    let response: Response
+
+    try {
+      response = await fetcher(url, { signal: controller.signal })
+    } catch {
+      throw new Error(
+        `Registry network error: ${url}. Check your connection and --registry URL.`,
+      )
+    }
+
+    if (!response.ok) {
+      throw new Error(
+        `Registry request failed: ${url} (HTTP ${response.status}). Check --registry URL and item name.`,
+      )
+    }
+
+    try {
+      const value: JsonValue = await response.json()
+
+      return value
+    } catch (cause) {
+      throw new Error(
+        cause instanceof SyntaxError
+          ? `Registry returned malformed JSON: ${url}. Check --registry URL and registry contents.`
+          : `Registry network error reading response: ${url}. Check your connection and --registry URL.`,
+      )
+    }
+  }
+
+  try {
+    return await Promise.race([read(), deadline.promise])
+  } finally {
+    clearTimeout(timer)
+    controller.abort()
+  }
 }
 
 export function isRecord(value: JsonValue | undefined): value is JsonObject {
@@ -457,6 +539,19 @@ export async function runBun(args: string[], cwd: string) {
 
 export async function installItem(name: string, options: InstallOptions = {}) {
   if (!namePattern.test(name)) throw new Error(`Invalid item name: ${name}`)
+  const registryUrl = registryBaseUrl(options.registryUrl ?? defaultRegistryUrl)
+  const requestTimeoutMs = options.requestTimeoutMs ?? 30_000
+
+  if (
+    !Number.isInteger(requestTimeoutMs) ||
+    requestTimeoutMs <= 0 ||
+    requestTimeoutMs > 2_147_483_647
+  ) {
+    throw new Error(
+      "Registry request timeout must be an integer from 1 to 2147483647ms",
+    )
+  }
+
   const root = await realpath(options.cwd ?? process.cwd())
   const run = await packageRunner(root, options.run)
 
@@ -495,13 +590,15 @@ export async function installItem(name: string, options: InstallOptions = {}) {
     }
 
     visiting.add(itemName)
-    const response = await fetcher(`${registryUrl}/${itemName}.json`)
 
-    if (!response.ok)
-      throw new Error(
-        `Registry request failed: ${itemName} (${response.status})`,
-      )
-    const item = parseItem(await response.json(), itemName)
+    const item = parseItem(
+      await registryItemJson(
+        `${registryUrl}/${itemName}.json`,
+        fetcher,
+        requestTimeoutMs,
+      ),
+      itemName,
+    )
 
     for (const dependency of item.registryDependencies) await visit(dependency)
     items.set(itemName, item)

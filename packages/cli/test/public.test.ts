@@ -16,6 +16,8 @@ const root = resolve(import.meta.dirname, "../../..")
 
 const results = resolve(import.meta.dirname, "../test-results")
 
+const registry = ["--registry", "http://localhost:3100/r"]
+
 let registryServer: Bun.Server<undefined> | undefined
 
 beforeAll(async () => {
@@ -204,15 +206,32 @@ test("packed CLI installs from local registry, builds Vite and runs published li
       'import React from "react"\nimport { createRoot } from "react-dom/client"\nimport { Button } from "@/components/ui/button"\ncreateRoot(document.getElementById("root")!).render(<Button>Build smoke</Button>)',
     )
     await installPackedCli(logs, directory, project)
-    await run(logs, project, "bunx", "yopem-ui", "init", "--framework", "vite")
-    await run(logs, project, "bunx", "yopem-ui", "add", "button")
+    await run(
+      logs,
+      project,
+      "bunx",
+      "yopem-ui",
+      "init",
+      "--framework",
+      "vite",
+      ...registry,
+    )
+    await run(logs, project, "bunx", "yopem-ui", "add", "button", ...registry)
     await run(logs, project, "bun", "run", "build")
     verifyBuild(project, "vite", "packaged-cli", logs)
     const tokens = join(project, "src/styles/tokens.stylex.ts")
     appendFileSync(tokens, "\n")
     const edited = readFileSync(tokens, "utf8")
-    await run(logs, project, "bunx", "yopem-ui", "add", "box")
-    await run(logs, project, "bunx", "yopem-ui", "add", "container")
+    await run(logs, project, "bunx", "yopem-ui", "add", "box", ...registry)
+    await run(
+      logs,
+      project,
+      "bunx",
+      "yopem-ui",
+      "add",
+      "container",
+      ...registry,
+    )
 
     for (const name of [
       "highlight",
@@ -223,7 +242,7 @@ test("packed CLI installs from local registry, builds Vite and runs published li
       "wrap",
       "text",
     ]) {
-      await run(logs, project, "bunx", "yopem-ui", "add", name)
+      await run(logs, project, "bunx", "yopem-ui", "add", name, ...registry)
       expect(
         readFileSync(join(project, `src/components/ui/${name}.tsx`), "utf8"),
       ).toContain("data-slot")
@@ -232,7 +251,16 @@ test("packed CLI installs from local registry, builds Vite and runs published li
     expect(
       readFileSync(join(project, "src/components/ui/container.tsx"), "utf8"),
     ).toContain("export function Container")
-    await run(logs, project, "bunx", "yopem-ui", "init", "--framework", "vite")
+    await run(
+      logs,
+      project,
+      "bunx",
+      "yopem-ui",
+      "init",
+      "--framework",
+      "vite",
+      ...registry,
+    )
     expect(readFileSync(tokens, "utf8")).toBe(edited)
     await run(logs, project, "bun", "run", "lint")
     writeFileSync(
@@ -382,6 +410,7 @@ for (const { framework, shared } of [
         "init",
         "--framework",
         framework,
+        ...registry,
         ...(shared ? ["--ui", "../../packages/ui"] : []),
       )
       await run(
@@ -391,6 +420,7 @@ for (const { framework, shared } of [
         "yopem-ui",
         "add",
         "button",
+        ...registry,
         ...(shared ? ["--cwd", "../../packages/ui"] : []),
       )
       await run(logs, app, "bun", "run", "lint")
