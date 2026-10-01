@@ -1,7 +1,7 @@
 import { Resvg } from "@resvg/resvg-js"
 import satori from "satori"
 
-import { brandLogoPath } from "@/lib/brand"
+import { brandLogoPath } from "./brand"
 
 // Satori needs intrinsic JSX and inline styles, not React components or CSS classes.
 export async function renderOgImage(

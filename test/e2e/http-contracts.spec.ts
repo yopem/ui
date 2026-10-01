@@ -20,6 +20,10 @@ test("machine-readable documentation endpoints expose correct formats", async ({
     expect(await response.text(), url).toContain(text)
   }
 
+  const llms = await (await request.get("/llms.txt")).text()
+  expect(llms).toContain("https://ui.yopem.com/components/button.md")
+  expect(llms).not.toContain("localhost")
+
   const guide = await (await request.get("/docs/installation.md")).text()
   expect(guide).toContain("bunx @yopem-ui/cli init")
   expect(guide).not.toContain("<InstallationCommands />")
@@ -119,7 +123,7 @@ test("dynamic documentation routes return real 404 responses", async ({
 test("missing components show the not found page", async ({ page }) => {
   await page.goto("/components/missing")
   await expect(
-    page.getByText("Component not found", { exact: true }),
+    page.getByRole("heading", { name: "Page not found", level: 1 }),
   ).toBeVisible()
 })
 
@@ -136,10 +140,18 @@ test("legacy StyleX route redirects and stored theme applies to docs", async ({
   await expect(page.locator("html")).toHaveAttribute("data-theme", "light")
 })
 
-test("Open Graph endpoint returns a cacheable PNG", async ({ request }) => {
-  const response = await request.get(
-    "/api/og?title=%20Button%20&description=Accessible%20button",
-  )
+test("Open Graph metadata points to a cacheable static PNG", async ({
+  page,
+  request,
+}) => {
+  await page.goto("/components/button")
+
+  const imageUrl = await page
+    .locator('meta[property="og:image"]')
+    .getAttribute("content")
+
+  expect(imageUrl).toBe("https://ui.yopem.com/og/components/button.png")
+  const response = await request.get("/og/components/button.png")
 
   expect(response.status()).toBe(200)
   expect(response.headers()["content-type"]).toBe("image/png")
@@ -147,4 +159,29 @@ test("Open Graph endpoint returns a cacheable PNG", async ({ request }) => {
   expect(response.headers()["x-content-type-options"]).toBe("nosniff")
   const image = await response.body()
   expect([...image.subarray(0, 8)]).toEqual([137, 80, 78, 71, 13, 10, 26, 10])
+})
+
+test("static navigation needs no server functions", async ({ page }) => {
+  await page.route("**/_server/**", (route) => route.abort())
+  await page.goto("/components/button")
+  await page.getByRole("link", { name: "UI", exact: true }).click()
+  await page.waitForURL((url) => url.pathname === "/")
+  await expect(page.getByRole("heading", { level: 1 })).toContainText(
+    "React components you copy, own, and change.",
+  )
+  await page.getByRole("button", { name: "Search documentation" }).click()
+  const search = page.getByRole("dialog", { name: "Search documentation" })
+  await expect(search).toBeVisible()
+  await expect(search.getByRole("searchbox")).toBeFocused()
+  await search.getByRole("searchbox").fill("Accordion")
+  await search
+    .getByRole("link", { name: "Accordion", exact: true })
+    .first()
+    .click()
+  await expect(
+    page.getByRole("heading", { name: "Accordion", level: 1 }),
+  ).toBeVisible()
+  await expect(
+    page.getByRole("button", { name: "Copy Accordion usage", exact: true }),
+  ).toBeEnabled()
 })

@@ -316,28 +316,40 @@ test("search supports keyboard opening, empty results, errors, and focus restora
   await expect(
     page.getByRole("button", { name: "Copy Button usage", exact: true }),
   ).toBeEnabled({ timeout: 25_000 })
-  await page.route("**/api/search?query=*", (route) =>
-    route.fulfill({ contentType: "application/json", body: "[]" }),
-  )
   const trigger = page.getByRole("button", { name: "Search documentation" })
   await trigger.press("Control+KeyK")
   const dialog = page.getByRole("dialog", { name: "Search documentation" })
   const input = dialog.getByRole("searchbox", { name: "Search documentation" })
   await expect(dialog).toBeVisible()
   await expect(input).toBeFocused()
-  await input.fill("no-such-documentation-result")
+  await input.fill("qxzvjk987654321")
   await expect(dialog.getByRole("status")).toHaveText("0 results")
   await page.keyboard.press("Escape")
   await expect(dialog).toBeHidden()
   await expect(trigger).toBeFocused()
 
-  await page.unroute("**/api/search?query=*")
-  await page.route("**/api/search?query=*", (route) =>
-    route.fulfill({ status: 503 }),
-  )
   await trigger.press("Control+KeyK")
   await input.fill("button")
+  await expect(
+    dialog.getByRole("link", { name: /Button/ }).first(),
+  ).toBeVisible()
+  await page.keyboard.press("Escape")
+
+  await page.route("**/api/search.json*", (route) =>
+    route.fulfill({ status: 503 }),
+  )
+  await page.reload()
+  await trigger.click()
+  await expect(dialog).toBeVisible()
+  await expect(input).toBeFocused()
+  await input.fill("button")
   await expect(dialog.getByRole("status")).toContainText("Search unavailable")
+
+  await page.unroute("**/api/search.json*")
+  await input.fill("Accordion")
+  await expect(
+    dialog.getByRole("link", { name: "Accordion", exact: true }).first(),
+  ).toBeVisible()
 })
 
 test("mobile navigation changes theme and restores trigger focus", async ({

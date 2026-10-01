@@ -26,6 +26,8 @@ build/
 /packages/registry/src/docs.generated.json
 .tanstack/
 .output/
+.alchemy/
+.wrangler/
 
 # Debug
 npm-debug.log*

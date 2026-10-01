@@ -13,6 +13,7 @@
   "type": "module",
   "scripts": {
     "dev": "bun run --cwd apps/docs dev",
+    "deploy": "bun run build && bun run --cwd apps/docs deploy",
     "generate-routes": "bun run --cwd apps/docs generate-routes",
     "build": "bun run --cwd packages/oxlint-plugin build && bun run registry:build && bun run --cwd apps/docs build",
     "registry:build": "bun run --cwd packages/registry build",
@@ -41,6 +42,9 @@
     "oxlint": "catalog:",
     "pkg-pr-new": "^0.0.88",
     "typescript": "catalog:"
+  },
+  "overrides": {
+    "@effect/platform-node-shared": "4.0.0-rc.115"
   },
   "catalog": {
     "@babel/core": "^8.0.6",

@@ -44,9 +44,7 @@ export function createSitemap(paths: string[]) {
 
 export function createSeo({ description, path, title }: SeoOptions) {
   const url = new URL(path, siteOrigin).href
-  const image = new URL("/api/og", siteOrigin)
-  image.searchParams.set("title", title)
-  image.searchParams.set("description", description)
+  const image = new URL(`/og${path === "/" ? "/index" : path}.png`, siteOrigin)
 
   return {
     links: [{ href: url, rel: "canonical" }],

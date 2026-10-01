@@ -4,6 +4,7 @@ import { devtools } from "@tanstack/devtools-vite"
 import { tanstackStart } from "@tanstack/react-start/plugin/vite"
 import viteReact from "@vitejs/plugin-react"
 import { nitro } from "nitro/vite"
+import { readdirSync } from "node:fs"
 import { createRequire } from "node:module"
 import { resolve } from "node:path"
 import { defineConfig } from "vite"
@@ -96,7 +97,8 @@ const config = defineConfig({
     },
   },
   optimizeDeps: { exclude: ["@resvg/resvg-js"] },
-  resolve: { tsconfigPaths: true },
+  resolve: { dedupe: ["react", "react-dom"], tsconfigPaths: true },
+  ssr: { noExternal: ["@base-ui/react", "@base-ui/utils"] },
   plugins: [
     devtools({ injectSource: { enabled: false } }),
     babel({ plugins: stylexPlugins }),
@@ -116,6 +118,43 @@ const config = defineConfig({
       },
     },
     nitro({
+      preset: "static",
+      hooks: {
+        "prerender:generate"(route) {
+          if (route.route === "/404" && route.error?.status === 404) {
+            route.error = undefined
+            route.fileName = "/404.html"
+          }
+        },
+      },
+      prerender: {
+        autoSubfolderIndex: false,
+        crawlLinks: true,
+        failOnError: true,
+        concurrency: 4,
+        ignore: ["/stylex", "/docs/primitives", "/api/og"],
+        routes: [
+          "/",
+          "/404",
+          "/components.md",
+          "/index.md",
+          "/api/search.json",
+          "/llms.txt",
+          "/sitemap.xml",
+          ...readdirSync(resolve(import.meta.dirname, "src/catalog/previews"))
+            .filter((name) => name.endsWith(".tsx"))
+            .flatMap((name) => {
+              const slug = name.replace(/\.tsx$/, "")
+
+              return [`/components/${slug}`, `/components/${slug}.md`]
+            }),
+          ...readdirSync(resolve(import.meta.dirname, "src/routes/docs"))
+            .filter(
+              (name) => name.endsWith(".tsx") && name !== "primitives.tsx",
+            )
+            .map((name) => `/docs/${name.replace(/\.tsx$/, "")}.md`),
+        ],
+      },
       rolldownConfig: {
         // Nitro rechunks SSR modules; preserve token initialization before themes.
         output: { strictExecutionOrder: true },

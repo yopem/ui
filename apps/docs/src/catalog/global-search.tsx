@@ -14,6 +14,7 @@ import { ScrollArea } from "@registry/components/ui/scroll-area"
 import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import { Link } from "@tanstack/react-router"
+import { staticClient } from "fumadocs-core/search/client/orama-static"
 import { SearchIcon } from "lucide-react"
 import { useCallback, useRef, useState } from "react"
 import { z } from "zod"
@@ -89,6 +90,8 @@ const searchResultsSchema = z.array(searchResultSchema)
 
 type SearchResult = z.infer<typeof searchResultSchema>
 
+let searchClient = staticClient({ from: "/api/search.json" })
+
 export function GlobalSearch() {
   const [open, setOpen] = useState(false)
   const [query, setQuery] = useState("")
@@ -134,13 +137,7 @@ export function GlobalSearch() {
     setStatus("loading")
 
     try {
-      const response = await fetch(
-        `/api/search?query=${encodeURIComponent(trimmedQuery)}`,
-        { signal: controller.signal },
-      )
-
-      if (!response.ok) throw new Error("Search unavailable")
-      const data: unknown = await response.json()
+      const data = await searchClient.search(trimmedQuery)
 
       const parsed = searchResultsSchema.safeParse(data)
 
@@ -151,7 +148,13 @@ export function GlobalSearch() {
         setStatus("ready")
       }
     } catch {
-      if (!controller.signal.aborted) setStatus("error")
+      if (!controller.signal.aborted) {
+        // Fumadocs caches rejected index loads by URL; retry with a fresh key.
+        searchClient = staticClient({
+          from: `/api/search.json?retry=${Date.now()}`,
+        })
+        setStatus("error")
+      }
     }
   }
 

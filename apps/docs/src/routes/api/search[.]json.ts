@@ -36,6 +36,6 @@ const search = createSearchAPI("simple", {
   ],
 })
 
-export const Route = createFileRoute("/api/search")({
-  server: { handlers: { GET: ({ request }) => search.GET(request) } },
+export const Route = createFileRoute("/api/search.json")({
+  server: { handlers: { GET: () => search.staticGET() } },
 })

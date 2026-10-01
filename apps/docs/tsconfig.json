@@ -10,7 +10,7 @@
     "noUncheckedSideEffectImports": true,
     "target": "ES2022",
     "jsx": "react-jsx",
-    "types": ["vite/client", "mdx"],
+    "types": ["vite/client", "mdx", "bun", "@tanstack/react-start"],
     "paths": {
       "@/*": ["./src/*"],
       "@registry/*": ["../../packages/registry/src/*"]
