@@ -277,6 +277,19 @@ function addAlias(
   ) {
     throw new Error(`Incompatible @ alias in ${path}`)
   }
+
+  const aliasValue = declaration?.initializer ?? current.initializer
+
+  if (
+    ts.isStringLiteral(aliasValue) &&
+    /^(?:\.\/)?src\/?$/.test(aliasValue.text)
+  ) {
+    edits.push({
+      start: current.initializer.getStart(source),
+      end: current.initializer.end,
+      text: "yopemSource",
+    })
+  }
 }
 
 function moduleConfig(source: ts.SourceFile, path: string) {

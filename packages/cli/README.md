@@ -61,6 +61,12 @@ not browsers; packaged installation checks serve registry JSON with Bun when
 port 3100 has no registry server. Command logs and configuration artifacts are
 saved in `packages/cli/test-results/`.
 
+`bun test packages/cli/test/public.test.ts` runs packed CLI production smoke
+checks: init, add Button, lint, and build in Vite and Next.js App Router apps,
+including shared UI workspaces. Requires Node.js for Next.js and network access
+for fixture dependencies. Tests verify build artifacts and compiled StyleX CSS,
+then save `packaged-*.log`, `packaged-*.html`, and `packaged-*.css` evidence.
+
 ## Licence
 
 This project is licensed under the terms of the
