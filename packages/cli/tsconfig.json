@@ -2,7 +2,10 @@
   "extends": "@yopem/typescript-config/base",
   "compilerOptions": {
     "noEmit": true,
-    "types": ["bun", "node"]
+    "types": ["bun", "node"],
+    "paths": {
+      "@/*": ["./src/*"]
+    }
   },
   "include": ["src/**/*.ts", "test/**/*.ts"]
 }

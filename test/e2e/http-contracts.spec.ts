@@ -23,6 +23,10 @@ test("machine-readable documentation endpoints expose correct formats", async ({
   const llms = await (await request.get("/llms.txt")).text()
   expect(llms).toContain("https://ui.yopem.com/components/button.md")
   expect(llms).not.toContain("localhost")
+  expect(llms).toContain("init --cwd apps/web --ui ../../packages/ui")
+  expect(llms).toContain("add button --cwd packages/ui")
+  expect(llms).toContain("update button --cwd packages/ui")
+  expect(llms).toContain("relative to the target app")
 
   const guide = await (await request.get("/docs/installation.md")).text()
   expect(guide).toContain("bunx @yopem-ui/cli init")

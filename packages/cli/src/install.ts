@@ -1,3 +1,4 @@
+import { isPackageName, packageRunner } from "@yopem-ui/cli/project"
 import { createHash } from "node:crypto"
 import { lstat, mkdir, readFile, realpath, writeFile } from "node:fs/promises"
 import { dirname, join } from "node:path"
@@ -47,11 +48,13 @@ interface RegistryItem {
 interface Manifest {
   version: 1
   files: Record<string, string>
+  importPrefix?: string
 }
 
 export interface InstallOptions {
   cwd?: string
   force?: boolean
+  importPrefix?: string
   mode?: "add" | "update"
   fetcher?: (url: string) => Promise<Response>
   run?: (args: string[], cwd: string) => Promise<void>
@@ -101,6 +104,10 @@ function targetPath(target: string) {
 
 function hash(content: string) {
   return `sha256-${createHash("sha256").update(content).digest("base64")}`
+}
+
+function validImportPrefix(value: unknown): value is string {
+  return value === "@" || isPackageName(value)
 }
 
 function parseItem(value: JsonValue, name: string): RegistryItem {
@@ -220,7 +227,12 @@ async function readManifest(root: string): Promise<Manifest> {
     await readFile(join(root, ".yopem-ui.json"), "utf8"),
   )
 
-  if (!isRecord(value) || value.version !== 1 || !isRecord(value.files)) {
+  if (
+    !isRecord(value) ||
+    value.version !== 1 ||
+    !isRecord(value.files) ||
+    (value.importPrefix !== undefined && !validImportPrefix(value.importPrefix))
+  ) {
     throw new Error("Invalid .yopem-ui.json")
   }
 
@@ -239,7 +251,13 @@ async function readManifest(root: string): Promise<Manifest> {
     files[path] = integrity
   }
 
-  return { version: 1, files }
+  return {
+    version: 1,
+    files,
+    ...(value.importPrefix !== undefined && {
+      importPrefix: value.importPrefix,
+    }),
+  }
 }
 
 export async function runBun(args: string[], cwd: string) {
@@ -257,7 +275,26 @@ export async function runBun(args: string[], cwd: string) {
 export async function installItem(name: string, options: InstallOptions = {}) {
   if (!namePattern.test(name)) throw new Error(`Invalid item name: ${name}`)
   const root = await realpath(options.cwd ?? process.cwd())
+  const run = await packageRunner(root, options.run)
   const manifest = await readManifest(root)
+  const importPrefix = options.importPrefix ?? manifest.importPrefix ?? "@"
+
+  if (
+    !validImportPrefix(importPrefix) ||
+    (options.importPrefix !== undefined &&
+      !validImportPrefix(options.importPrefix))
+  ) {
+    throw new Error(`Invalid import prefix: ${importPrefix}`)
+  }
+
+  if (
+    importPrefix !== (manifest.importPrefix ?? "@") &&
+    Object.keys(manifest.files).length > 0
+  ) {
+    throw new Error("Cannot change import prefix with tracked files")
+  }
+
+  if (options.importPrefix !== undefined) manifest.importPrefix = importPrefix
   const items = new Map<string, RegistryItem>()
   const visiting = new Set<string>()
   const fetcher = options.fetcher ?? fetch
@@ -296,13 +333,15 @@ export async function installItem(name: string, options: InstallOptions = {}) {
 
     for (const file of item.files) {
       const path = targetPath(file.target)
+      const content = file.content.replace(/(["'`])@\//g, `$1${importPrefix}/`)
+      const transformed = { ...file, content, integrity: hash(content) }
       const previous = files.get(path)
 
-      if (previous && previous.integrity !== file.integrity) {
+      if (previous && previous.integrity !== transformed.integrity) {
         throw new Error(`Conflicting registry files: ${path}`)
       }
 
-      files.set(path, file)
+      files.set(path, transformed)
     }
   }
 
@@ -343,8 +382,6 @@ export async function installItem(name: string, options: InstallOptions = {}) {
       writes.push([path, file])
     }
   }
-
-  const run = options.run ?? runBun
 
   if (dependencies.size) await run(["add", ...dependencies], root)
 

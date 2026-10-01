@@ -1,3 +1,5 @@
+import { initProject } from "@cli/init"
+import { installItem } from "@cli/install"
 import { expect, test } from "@playwright/test"
 import { spawnSync } from "node:child_process"
 import {
@@ -11,13 +13,6 @@ import {
 } from "node:fs"
 import { tmpdir } from "node:os"
 import { join } from "node:path"
-
-// Test exercises source directly; root workspace has no CLI dependency.
-// oxlint-disable-next-line import/no-relative-parent-imports
-import { initProject } from "../../packages/cli/src/init"
-// Test exercises source directly; root workspace has no CLI dependency.
-// oxlint-disable-next-line import/no-relative-parent-imports
-import { installItem } from "../../packages/cli/src/install"
 
 test("Next.js uses the shared stylesheet for StyleX", async () => {
   const root = mkdtempSync(join(tmpdir(), "yopem-next-init-"))

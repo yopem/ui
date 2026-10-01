@@ -1,12 +1,13 @@
 #!/usr/bin/env bun
 
-import type { InitOptions } from "./init"
+import type { InitOptions } from "@yopem-ui/cli/init"
 
-import { initProject } from "./init"
-import { installItem } from "./install"
+import { initProject } from "@yopem-ui/cli/init"
+import { installItem } from "@yopem-ui/cli/install"
+import { resolve } from "node:path"
 
 const usage =
-  "Usage: yopem-ui init [--framework vite|tanstack-router|tanstack-start|react-router|next|astro] | <add|update> <name> [--force]"
+  "Usage: yopem-ui init [--framework vite|tanstack-router|tanstack-start|react-router|next|astro] [--ui <path>] [--cwd <path>] | <add|update> <name> [--force] [--cwd <path>]"
 
 function isFramework(
   value: string | undefined,
@@ -22,21 +23,50 @@ function isFramework(
 }
 
 export async function runCli(args: string[], options: InitOptions = {}) {
-  const [command, name, ...flags] = args
+  const [command, ...rest] = args
+  const positional: string[] = []
+  const flags = new Map<string, string>()
+
+  for (let index = 0; index < rest.length; index++) {
+    const argument = rest[index]!
+
+    if (!argument.startsWith("--")) {
+      positional.push(argument)
+      continue
+    }
+
+    if (flags.has(argument)) throw new Error(usage)
+
+    if (argument === "--force") {
+      flags.set(argument, "true")
+      continue
+    }
+
+    if (!["--cwd", "--ui", "--framework"].includes(argument))
+      throw new Error(usage)
+    const value = rest[++index]
+
+    if (!value || value.startsWith("--")) throw new Error(usage)
+    flags.set(argument, value)
+  }
+
+  const cwd = resolve(options.cwd ?? process.cwd(), flags.get("--cwd") ?? ".")
 
   if (command === "init") {
-    const framework = name === "--framework" ? args[2] : undefined
+    const framework = flags.get("--framework")
 
     if (
-      args.length !== 1 &&
-      !(args.length === 3 && name === "--framework" && isFramework(framework))
-    ) {
+      positional.length ||
+      flags.has("--force") ||
+      (framework !== undefined && !isFramework(framework))
+    )
       throw new Error(usage)
-    }
 
     const result = await initProject({
       ...options,
-      framework: isFramework(framework) ? framework : undefined,
+      cwd,
+      ui: flags.get("--ui") ?? options.ui,
+      framework: isFramework(framework) ? framework : options.framework,
     })
 
     console.info(
@@ -48,16 +78,18 @@ export async function runCli(args: string[], options: InitOptions = {}) {
 
   if (
     (command !== "add" && command !== "update") ||
-    !name ||
-    flags.some((flag) => flag !== "--force")
+    positional.length !== 1 ||
+    flags.has("--ui") ||
+    flags.has("--framework")
   ) {
     throw new Error(usage)
   }
 
-  const result = await installItem(name, {
+  const result = await installItem(positional[0]!, {
     ...options,
+    cwd,
     mode: command,
-    force: flags.includes("--force"),
+    force: flags.has("--force"),
   })
 
   console.info(

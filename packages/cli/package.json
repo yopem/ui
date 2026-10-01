@@ -27,7 +27,8 @@
   "exports": {
     "./cli": "./src/cli.ts",
     "./init": "./src/init.ts",
-    "./install": "./src/install.ts"
+    "./install": "./src/install.ts",
+    "./project": "./src/project.ts"
   },
   "publishConfig": {
     "access": "public"
