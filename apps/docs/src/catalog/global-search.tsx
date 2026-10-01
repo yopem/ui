@@ -257,27 +257,6 @@ export function GlobalSearch() {
 }
 
 const styles = stylex.create({
-  trigger: {
-    marginInlineStart: "auto",
-    inlineSize: { default: "15rem", "@media (max-width: 639px)": "2.5rem" },
-    justifyContent: {
-      default: "flex-start",
-      "@media (max-width: 639px)": "center",
-    },
-    color: tokens["--muted-foreground"],
-  },
-  triggerText: {
-    display: { default: "inline", "@media (max-width: 639px)": "none" },
-  },
-  shortcut: {
-    marginInlineStart: "auto",
-    fontFamily: tokens["--font-mono"],
-    fontSize: "0.6875rem",
-    display: { default: "inline", "@media (max-width: 639px)": "none" },
-  },
-  popup: { padding: "1.5rem", gap: "1rem", maxBlockSize: "min(42rem, 85dvh)" },
-  resultsScroll: { minBlockSize: 0 },
-  results: { listStyleType: "none", margin: 0, padding: 0 },
   result: {
     display: "block",
     padding: "0.875rem",
@@ -292,16 +271,4 @@ const styles = stylex.create({
       outlineOffset: -2,
     },
   },
-  breadcrumb: {
-    display: "block",
-    color: tokens["--muted-foreground"],
-    fontSize: "0.75rem",
-    marginBlockEnd: "0.25rem",
-  },
-  status: {
-    color: tokens["--muted-foreground"],
-    fontSize: "0.8125rem",
-    margin: 0,
-  },
-  error: { color: tokens["--destructive"] },
 })

@@ -1,6 +1,6 @@
 import { Box } from "@registry/components/ui/box"
 import { ScrollArea } from "@registry/components/ui/scroll-area"
-import { themeMarker, tokens } from "@registry/styles/tokens.stylex"
+import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import { useHydrated } from "@tanstack/react-router"
 import { CheckIcon, CopyIcon } from "lucide-react"
@@ -311,109 +311,12 @@ const copiedReduced = stylex.keyframes({
 })
 
 const styles = stylex.create({
-  root: {
-    backgroundColor: tokens["--code"],
-    color: tokens["--code-foreground"],
-    borderColor: tokens["--border"],
-    borderStyle: "solid",
-    borderWidth: 1,
-    borderRadius: tokens["--radius-lg"],
-    marginBlock: "1.5rem",
-    minInlineSize: 0,
-    overflow: "hidden",
-    position: "relative",
-  },
-  previewRoot: {
-    borderStartStartRadius: 0,
-    borderStartEndRadius: 0,
-    marginBlockStart: -1,
-  },
-  header: {
-    alignItems: "center",
-    borderBlockEndColor: tokens["--border"],
-    borderBlockEndStyle: "solid",
-    borderBlockEndWidth: 1,
-    display: "flex",
-    gap: "0.75rem",
-    justifyContent: "space-between",
-    paddingBlock: "0.5rem",
-    paddingInline: "0.75rem",
-  },
-  headerTitle: {
-    fontFamily: tokens["--font-mono"],
-    fontSize: "0.8125rem",
-    fontWeight: 600,
-    overflowWrap: "anywhere",
-  },
-  headerCopy: { flexShrink: 0, position: "static" },
-  preview: {
-    maxBlockSize: "9rem",
-    maskImage: "linear-gradient(to bottom, black 45%, transparent 100%)",
-    overflow: "hidden",
-  },
-  expand: {
-    backgroundColor: tokens["--accent"],
-    borderColor: tokens["--border"],
-    borderStyle: "solid",
-    borderWidth: 1,
-    borderRadius: tokens["--radius-sm"],
-    color: tokens["--accent-foreground"],
-    cursor: "pointer",
-    fontSize: "0.75rem",
-    fontWeight: 600,
-    insetBlockEnd: "0.75rem",
-    insetInlineStart: "50%",
-    paddingBlock: "0.375rem",
-    paddingInline: "0.625rem",
-    position: "absolute",
-    transform: "translateX(-50%)",
-    zIndex: 1,
-  },
-  copy: {
-    alignItems: "center",
-    backgroundColor: {
-      default: "transparent",
-      ":hover": tokens["--accent"],
-    },
-    blockSize: "2rem",
-    borderColor: tokens["--border"],
-    borderStyle: "solid",
-    borderWidth: 1,
-    borderRadius: tokens["--radius-sm"],
-    color: tokens["--foreground"],
-    cursor: { default: "pointer", ":disabled": "wait" },
-    display: "flex",
-    inlineSize: "2rem",
-    insetBlockStart: "0.75rem",
-    insetInlineEnd: "0.75rem",
-    justifyContent: "center",
-    opacity: { default: 1, ":disabled": 0.5 },
-    padding: 0,
-    position: "absolute",
-    zIndex: 1,
-  },
   icon: { blockSize: "1rem", inlineSize: "1rem" },
   copiedIcon: {
     animation: {
       default: `${copied} 150ms cubic-bezier(0.23, 1, 0.32, 1)`,
       "@media (prefers-reduced-motion: reduce)": `${copiedReduced} 150ms cubic-bezier(0.23, 1, 0.32, 1)`,
     },
-  },
-  focus: {
-    ":focus-visible": {
-      outlineColor: tokens["--ring"],
-      outlineStyle: "solid",
-      outlineWidth: 2,
-      outlineOffset: -2,
-    },
-  },
-  pre: {
-    margin: 0,
-    maxBlockSize: "36rem",
-    fontSize: "0.8125rem",
-    lineHeight: 1.65,
-    tabSize: 2,
-    whiteSpace: "pre",
   },
   codeContent: {
     inlineSize: "max-content",
@@ -422,18 +325,4 @@ const styles = stylex.create({
     paddingInlineStart: "1rem",
     paddingInlineEnd: "3.5rem",
   },
-  code: {
-    colorScheme: {
-      default: "light",
-      [stylex.when.ancestor('[data-theme="dark"]', themeMarker)]: "dark",
-    },
-    fontFamily: tokens["--font-mono"],
-  },
-  status: {
-    display: "block",
-    paddingInline: "1rem",
-    fontSize: "0.8125rem",
-    overflowWrap: "anywhere",
-  },
-  error: { color: tokens["--destructive"] },
 })

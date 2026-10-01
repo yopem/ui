@@ -140,18 +140,6 @@ export function DocsNavigation({ onNavigate }: { onNavigate?: () => void }) {
 }
 
 const styles = stylex.create({
-  scroll: { flex: 1, minBlockSize: 0 },
-  nav: { padding: "1.25rem" },
-  list: { listStyleType: "none", padding: 0, margin: 0 },
-  group: {
-    color: tokens["--muted-foreground"],
-    fontSize: "0.6875rem",
-    fontWeight: 600,
-    letterSpacing: "0.075em",
-    textTransform: "uppercase",
-    paddingInline: "0.75rem",
-    paddingBlock: "1.25rem 0.625rem",
-  },
   link: {
     display: "block",
     color: tokens["--muted-foreground"],

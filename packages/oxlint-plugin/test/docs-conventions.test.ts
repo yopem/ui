@@ -39,7 +39,10 @@ test("docs lint accepts StyleX and rejects forbidden styling", () => {
       import { Box } from "@/components/ui/box"
       import * as stylex from "@stylexjs/stylex"
 
-      const styles = stylex.create({ root: { backgroundColor: "#fff" } })
+      const styles = stylex.create({
+        root: { backgroundColor: "#fff" },
+        unused: { padding: "1rem" },
+      })
 
       export function Preview() {
         return <div><Box className="custom" xstyle={styles.root}>Content</Box></div>
@@ -59,6 +62,7 @@ test("docs lint accepts StyleX and rejects forbidden styling", () => {
     expect(invalid.status).not.toBe(0)
     const output = invalid.stdout + invalid.stderr
     expect(output).toContain("yopem-ui(no-raw-stylex-colors)")
+    expect(output).toContain("yopem-ui(no-unused-stylex-styles)")
     expect(output).toContain("className")
   } finally {
     rmSync(directory, { force: true, recursive: true })
