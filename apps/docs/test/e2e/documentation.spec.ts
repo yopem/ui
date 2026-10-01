@@ -18,6 +18,30 @@ test("component docs show live preview and copyable source", async ({
     .toContain("function Preview")
 })
 
+test("search waits for client hydration before accepting clicks", async ({
+  page,
+}) => {
+  const scripts = Promise.withResolvers<void>()
+  await page.route("**/assets/*.js", async (route) => {
+    await scripts.promise
+    await route.continue()
+  })
+
+  try {
+    await page.goto("/components/button", { waitUntil: "commit" })
+    const trigger = page.getByRole("button", { name: "Search documentation" })
+    await expect(trigger).toBeDisabled()
+    scripts.resolve()
+    await expect(trigger).toBeEnabled()
+    await trigger.click()
+    await expect(
+      page.getByRole("dialog", { name: "Search documentation" }),
+    ).toBeVisible()
+  } finally {
+    scripts.resolve()
+  }
+})
+
 test("sidebar links to llms.txt", async ({ page }) => {
   test.skip((page.viewportSize()?.width ?? 0) < 768, "Desktop navigation only")
   await page.goto("/")

@@ -13,7 +13,7 @@ import { Input } from "@registry/components/ui/input"
 import { ScrollArea } from "@registry/components/ui/scroll-area"
 import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
-import { Link } from "@tanstack/react-router"
+import { Link, useHydrated } from "@tanstack/react-router"
 import { staticClient } from "fumadocs-core/search/client/orama-static"
 import { SearchIcon } from "lucide-react"
 import { useCallback, useRef, useState } from "react"
@@ -93,6 +93,7 @@ type SearchResult = z.infer<typeof searchResultSchema>
 let searchClient = staticClient({ from: "/api/search.json" })
 
 export function GlobalSearch() {
+  const hydrated = useHydrated()
   const [open, setOpen] = useState(false)
   const [query, setQuery] = useState("")
   const [results, setResults] = useState<SearchResult[]>([])
@@ -168,6 +169,7 @@ export function GlobalSearch() {
       }}
     >
       <DialogTrigger
+        disabled={!hydrated}
         render={
           <Button
             variant="outline"
