@@ -19,6 +19,10 @@
     "test": {
       "cache": false
     },
+    "@yopem-ui/oxlint-plugin#test": {
+      "dependsOn": ["build"],
+      "cache": false
+    },
     "@yopem-ui/cli#test": {
       "dependsOn": [
         "@yopem-ui/registry#build",
