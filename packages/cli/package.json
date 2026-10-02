@@ -1,6 +1,6 @@
 {
   "name": "@yopem-ui/cli",
-  "version": "0.0.2",
+  "version": "0.1.0",
   "description": "CLI for installing Yopem UI source components and StyleX setup",
   "keywords": [
     "cli",
