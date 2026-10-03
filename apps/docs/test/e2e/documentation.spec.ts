@@ -16,6 +16,12 @@ test("component docs show live preview and copyable source", async ({
   await expect
     .poll(() => page.evaluate(() => navigator.clipboard.readText()))
     .toContain("function Preview")
+  const source = await page.evaluate(() => navigator.clipboard.readText())
+  expect(source).toContain('from "@/components/ui/button"')
+  expect(source).not.toContain("@registry/")
+  await expect(
+    page.getByRole("group", { name: "Clickable default action source" }),
+  ).toContainText('from "@/components/ui/button"')
 })
 
 test("@a11y code blocks preserve shell, JSON, and TSX highlighting", async ({

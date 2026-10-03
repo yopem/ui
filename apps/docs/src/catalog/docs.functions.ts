@@ -43,7 +43,11 @@ export async function getDocumentation({ data }: { data: string }) {
   )
 
   const previewLoader = previewSources[`./previews/${slug}.tsx`]
-  const previewSource = previewLoader ? await previewLoader() : null
+
+  const previewSource = previewLoader
+    ? rewriteImports(await previewLoader())
+    : null
+
   const allItems = getRequiredItems(slug, previewSource ?? "")
 
   const files = [

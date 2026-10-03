@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test"
+import { readdirSync } from "node:fs"
 
 test("machine-readable documentation endpoints expose correct formats", async ({
   request,
@@ -32,6 +33,31 @@ test("machine-readable documentation endpoints expose correct formats", async ({
   expect(guide).toContain("bunx @yopem-ui/cli init")
   expect(guide).not.toContain("<InstallationCommands />")
   expect(guide).not.toContain("Manual installation")
+})
+
+test("all component examples use consumer import paths", async ({
+  request,
+}, testInfo) => {
+  const paths = readdirSync(
+    new URL("../../src/catalog/previews/", import.meta.url),
+  )
+    .filter((file) => file.endsWith(".tsx"))
+    .map((file) => `/components/${file.slice(0, -4)}`)
+
+  expect(paths.length).toBeGreaterThan(0)
+
+  for (const path of paths) {
+    const response = await request.get(`${path}.md`)
+    expect(response.status(), path).toBe(200)
+    const source = await response.text()
+    expect(source, path).not.toContain("@registry/components/")
+    expect(source, path).toContain('from "@/components/ui/')
+  }
+
+  await testInfo.attach("checked-component-paths", {
+    body: paths.join("\n"),
+    contentType: "text/plain",
+  })
 })
 
 test("Container is discoverable and installable from registry", async ({
