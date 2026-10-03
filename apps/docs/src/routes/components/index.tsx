@@ -5,7 +5,7 @@ import { Text } from "@registry/components/ui/text"
 import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import { Link, createFileRoute } from "@tanstack/react-router"
-import { useState, useCallback } from "react"
+import { useState, useMemo } from "react"
 
 import { catalog } from "@/catalog/components"
 import { DocumentationLayout } from "@/catalog/docs-layout"
@@ -99,9 +99,11 @@ function ComponentsPage() {
       )
     : catalogEntries
 
-  const handleChange = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) =>
-      setQuery(event.target.value),
+  const handleChange = useMemo(
+    () =>
+      function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
+        return setQuery(event.target.value)
+      },
     [setQuery],
   )
 

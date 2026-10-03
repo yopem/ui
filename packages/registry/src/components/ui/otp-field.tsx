@@ -1,7 +1,7 @@
 "use client"
 
 import type { StyleXComponentProps } from "@registry/lib/stylex"
-import type * as React from "react"
+import type { ComponentProps } from "react"
 
 import { OTPField as OTPFieldPrimitive } from "@base-ui/react/otp-field"
 import { Separator } from "@registry/components/ui/separator"
@@ -126,10 +126,10 @@ export function OTPField({
   mask,
   ...restProps
 }: StyleXComponentProps<
-  React.ComponentProps<typeof OTPFieldPrimitive.Root>,
+  ComponentProps<typeof OTPFieldPrimitive.Root>,
   {
     size?: "default" | "lg"
-    mask?: React.ComponentProps<typeof OTPFieldPrimitive.Root>["mask"]
+    mask?: ComponentProps<typeof OTPFieldPrimitive.Root>["mask"]
   }
 >) {
   const props = restProps
@@ -157,7 +157,7 @@ export function OTPFieldInput({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleXComponentProps<React.ComponentProps<typeof OTPFieldPrimitive.Input>>) {
+}: StyleXComponentProps<ComponentProps<typeof OTPFieldPrimitive.Input>>) {
   const props = restProps
   const xstyle = consumerXstyle
 
@@ -174,7 +174,7 @@ export function OTPFieldSeparator({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleXComponentProps<React.ComponentProps<typeof Separator>>) {
+}: StyleXComponentProps<ComponentProps<typeof Separator>>) {
   const props = restProps
   const xstyle = consumerXstyle
 

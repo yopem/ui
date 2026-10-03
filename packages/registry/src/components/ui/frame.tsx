@@ -1,5 +1,5 @@
 import type { StyleXComponentProps } from "@registry/lib/stylex"
-import type * as React from "react"
+import type { ComponentProps } from "react"
 
 import { mergeStylexProps, stylexProps } from "@registry/lib/stylex"
 import { themeMarker, tokens } from "@registry/styles/tokens.stylex"
@@ -59,7 +59,7 @@ export function Frame({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleXComponentProps<React.ComponentProps<"div">>) {
+}: StyleXComponentProps<ComponentProps<"div">>) {
   const props = restProps
   const xstyle = consumerXstyle
 
@@ -75,7 +75,7 @@ export function FramePanel({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleXComponentProps<React.ComponentProps<"div">>) {
+}: StyleXComponentProps<ComponentProps<"div">>) {
   const props = restProps
   const xstyle = consumerXstyle
 
@@ -91,7 +91,7 @@ export function FrameHeader({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleXComponentProps<React.ComponentProps<"header">>) {
+}: StyleXComponentProps<ComponentProps<"header">>) {
   const props = restProps
   const xstyle = consumerXstyle
 
@@ -110,7 +110,7 @@ export function FrameTitle({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleXComponentProps<React.ComponentProps<"div">>) {
+}: StyleXComponentProps<ComponentProps<"div">>) {
   const props = restProps
   const xstyle = consumerXstyle
 
@@ -126,7 +126,7 @@ export function FrameDescription({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleXComponentProps<React.ComponentProps<"div">>) {
+}: StyleXComponentProps<ComponentProps<"div">>) {
   const props = restProps
   const xstyle = consumerXstyle
 
@@ -145,7 +145,7 @@ export function FrameFooter({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleXComponentProps<React.ComponentProps<"footer">>) {
+}: StyleXComponentProps<ComponentProps<"footer">>) {
   const props = restProps
   const xstyle = consumerXstyle
 

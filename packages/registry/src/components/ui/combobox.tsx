@@ -1,6 +1,7 @@
 "use client"
 
 import type { StyleXComponentProps } from "@registry/lib/stylex"
+import type { RefObject, ReactNode } from "react"
 
 import { Combobox as ComboboxPrimitive } from "@base-ui/react/combobox"
 import { Input } from "@registry/components/ui/input"
@@ -15,7 +16,7 @@ import {
 import { themeMarker, tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import { ChevronsUpDownIcon, XIcon } from "lucide-react"
-import * as React from "react"
+import { createContext, useRef, useMemo, forwardRef, useContext } from "react"
 
 export const comboboxSlotStyles = stylex.create({
   icon: {
@@ -311,18 +312,18 @@ const styles = stylex.create({
   },
 })
 
-export const ComboboxContext = React.createContext<{
-  chipsRef: React.RefObject<HTMLDivElement | null> | null
+export const ComboboxContext = createContext<{
+  chipsRef: RefObject<HTMLDivElement | null> | null
   multiple: boolean
 }>({ chipsRef: null, multiple: false })
 
 export function Combobox<Value, Multiple extends boolean | undefined = false>(
   props: ComboboxPrimitive.Root.Props<Value, Multiple>,
 ) {
-  const chipsRef = React.useRef<HTMLDivElement | null>(null)
+  const chipsRef = useRef<HTMLDivElement | null>(null)
   const multiple = Boolean(props.multiple)
 
-  const contextValue = React.useMemo(
+  const contextValue = useMemo(
     () => ({ chipsRef, multiple }),
     [chipsRef, multiple],
   )
@@ -341,7 +342,7 @@ type ComboboxInputProps = StyleXComponentProps<
   }
 >
 
-export const ComboboxChipsInput = React.forwardRef<
+export const ComboboxChipsInput = forwardRef<
   HTMLInputElement,
   ComboboxInputProps
 >(function ComboboxChipsInput(
@@ -377,12 +378,12 @@ export const ComboboxChipsInput = React.forwardRef<
 type ComboboxControlInputProps = ComboboxInputProps & {
   showTrigger?: boolean
   showClear?: boolean
-  startAddon?: React.ReactNode
+  startAddon?: ReactNode
   triggerProps?: ComboboxPrimitive.Trigger.Props
   clearProps?: ComboboxPrimitive.Clear.Props
 }
 
-export const ComboboxInput = React.forwardRef<
+export const ComboboxInput = forwardRef<
   HTMLInputElement,
   ComboboxControlInputProps
 >(function ComboboxInput(
@@ -510,7 +511,7 @@ export function ComboboxPopup({
   const props = restProps
   const xstyle = consumerXstyle
 
-  const { chipsRef } = React.useContext(ComboboxContext)
+  const { chipsRef } = useContext(ComboboxContext)
   const anchor = anchorProp ?? chipsRef
 
   return (
@@ -742,13 +743,13 @@ export function ComboboxChips({
 }: StyleXComponentProps<
   ComboboxPrimitive.Chips.Props,
   {
-    startAddon?: React.ReactNode
+    startAddon?: ReactNode
   }
 >) {
   const props = restProps
   const xstyle = consumerXstyle
 
-  const { chipsRef } = React.useContext(ComboboxContext)
+  const { chipsRef } = useContext(ComboboxContext)
 
   return (
     <ComboboxPrimitive.Chips

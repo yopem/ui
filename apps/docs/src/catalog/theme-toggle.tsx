@@ -6,7 +6,7 @@ import { tokens } from "@registry/styles/tokens.stylex"
 import { useTheme } from "@registry/theme/theme-provider"
 import * as stylex from "@stylexjs/stylex"
 import { MonitorIcon, MoonIcon, SunIcon } from "lucide-react"
-import { useCallback } from "react"
+import { useMemo } from "react"
 
 const styles = stylex.create({
   appearance: {
@@ -69,14 +69,15 @@ const themeOptions = [
 export function ThemeToggle() {
   const { theme, setTheme } = useTheme()
 
-  const selectTheme = useCallback(
-    (event: MouseEvent<HTMLButtonElement>) => {
-      const value = event.currentTarget.value
+  const selectTheme = useMemo(
+    () =>
+      function selectTheme(event: MouseEvent<HTMLButtonElement>) {
+        const value = event.currentTarget.value
 
-      if (value === "system" || value === "light" || value === "dark") {
-        setTheme(value)
-      }
-    },
+        if (value === "system" || value === "light" || value === "dark") {
+          setTheme(value)
+        }
+      },
     [setTheme],
   )
 

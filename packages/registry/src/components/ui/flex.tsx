@@ -1,7 +1,7 @@
 "use client"
 
 import type { StyleXComponentProps } from "@registry/lib/stylex"
-import type * as React from "react"
+import type { ComponentPropsWithoutRef, RefAttributes } from "react"
 
 import { mergeStylexProps, stylexProps } from "@registry/lib/stylex"
 import * as stylex from "@stylexjs/stylex"
@@ -10,8 +10,8 @@ const styles = stylex.create({
   root: { display: "flex" },
 })
 
-type FlexElementProps = React.ComponentPropsWithoutRef<"div"> &
-  React.RefAttributes<HTMLDivElement>
+type FlexElementProps = ComponentPropsWithoutRef<"div"> &
+  RefAttributes<HTMLDivElement>
 
 export type FlexProps = StyleXComponentProps<FlexElementProps>
 

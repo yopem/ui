@@ -12,9 +12,8 @@ import {
 } from "@registry/theme/theme"
 import {
   createContext,
-  useCallback,
   useContext,
-  useEffect,
+  useLayoutEffect,
   useMemo,
   useState,
   useSyncExternalStore,
@@ -68,18 +67,22 @@ export function ThemeProvider({
 }: ThemeProviderProps) {
   const [preference, setThemeState] = useState<Theme | null>(null)
 
-  const getStoredTheme = useCallback(() => {
-    try {
-      const saved = localStorage.getItem(storageKey)
+  const getStoredTheme = useMemo(
+    () =>
+      function getStoredTheme() {
+        try {
+          const saved = localStorage.getItem(storageKey)
 
-      if (saved === "light" || saved === "dark" || saved === "system")
-        return saved
-    } catch {
-      // Storage can be blocked. Use the configured default instead.
-    }
+          if (saved === "light" || saved === "dark" || saved === "system")
+            return saved
+        } catch {
+          // Storage can be blocked. Use the configured default instead.
+        }
 
-    return defaultTheme
-  }, [defaultTheme, storageKey])
+        return defaultTheme
+      },
+    [defaultTheme, storageKey],
+  )
 
   const storedTheme = useSyncExternalStore(
     subscribeToStorage,
@@ -98,7 +101,7 @@ export function ThemeProvider({
 
   const resolvedTheme = theme === "system" ? systemTheme : theme
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!ready) return
     const root = document.documentElement
     root.classList.remove(...themes.classes.light, ...themes.classes.dark)
@@ -108,16 +111,17 @@ export function ThemeProvider({
     return () => root.classList.remove(...themes.classes[resolvedTheme])
   }, [ready, resolvedTheme, themes])
 
-  const setTheme = useCallback(
-    (nextTheme: Theme) => {
-      try {
-        localStorage.setItem(storageKey, nextTheme)
-      } catch {
-        // Blocked storage must not prevent changing the current theme.
-      }
+  const setTheme = useMemo(
+    () =>
+      function setTheme(nextTheme: Theme) {
+        try {
+          localStorage.setItem(storageKey, nextTheme)
+        } catch {
+          // Blocked storage must not prevent changing the current theme.
+        }
 
-      setThemeState(nextTheme)
-    },
+        setThemeState(nextTheme)
+      },
     [storageKey],
   )
 

@@ -1,7 +1,7 @@
 "use client"
 
 import type { StyleXComponentProps } from "@registry/lib/stylex"
-import type * as React from "react"
+import type { ComponentPropsWithoutRef, RefAttributes } from "react"
 
 import { mergeStylexProps, stylexProps } from "@registry/lib/stylex"
 import { tokens } from "@registry/styles/tokens.stylex"
@@ -16,8 +16,8 @@ const styles = stylex.create({
   },
 })
 
-type VStackElementProps = React.ComponentPropsWithoutRef<"div"> &
-  React.RefAttributes<HTMLDivElement>
+type VStackElementProps = ComponentPropsWithoutRef<"div"> &
+  RefAttributes<HTMLDivElement>
 
 export type VStackProps = StyleXComponentProps<VStackElementProps>
 

@@ -1,6 +1,7 @@
 "use client"
 
 import type { StyleXComponentProps } from "@registry/lib/stylex"
+import type { ReactNode } from "react"
 
 import { Autocomplete as AutocompletePrimitive } from "@base-ui/react/autocomplete"
 import { Input } from "@registry/components/ui/input"
@@ -14,7 +15,7 @@ import {
 import { themeMarker, tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import { ChevronsUpDownIcon, XIcon } from "lucide-react"
-import * as React from "react"
+import { forwardRef } from "react"
 
 export const autocompleteSlotStyles = stylex.create({
   icon: {
@@ -195,14 +196,14 @@ type AutocompleteInputProps = StyleXComponentProps<
   {
     showTrigger?: boolean
     showClear?: boolean
-    startAddon?: React.ReactNode
+    startAddon?: ReactNode
     size?: "sm" | "default" | "lg" | number
     triggerProps?: AutocompletePrimitive.Trigger.Props
     clearProps?: AutocompletePrimitive.Clear.Props
   }
 >
 
-export const AutocompleteInput = React.forwardRef<
+export const AutocompleteInput = forwardRef<
   HTMLInputElement,
   AutocompleteInputProps
 >(function AutocompleteInput(

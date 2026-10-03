@@ -1,7 +1,7 @@
 "use client"
 
 import type { StyleXComponentProps } from "@registry/lib/stylex"
-import type * as React from "react"
+import type { ComponentPropsWithRef } from "react"
 
 import { mergeStylexProps, stylexProps } from "@registry/lib/stylex"
 import * as stylex from "@stylexjs/stylex"
@@ -55,7 +55,7 @@ export type FloatPlacement =
   | "top-center"
 
 export type FloatProps = StyleXComponentProps<
-  React.ComponentPropsWithRef<"div">,
+  ComponentPropsWithRef<"div">,
   { placement?: FloatPlacement }
 >
 

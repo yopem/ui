@@ -244,6 +244,19 @@ test("copy buttons copy usage, not installation commands", async ({
   await expect
     .poll(() => page.evaluate(() => navigator.clipboard.readText()))
     .toContain('from "@/components/ui/button"')
+  await expect(
+    page.getByRole("button", { name: "Button usage copied", exact: true }),
+  ).toBeVisible()
+  await expect(
+    page.getByRole("button", { name: "Copy Button usage", exact: true }),
+  ).toBeVisible()
+  await page
+    .getByRole("button", { name: "Copy Button usage", exact: true })
+    .click()
+  await page.goto("/components/accordion")
+  await expect(
+    page.getByRole("button", { name: "Copy Accordion usage", exact: true }),
+  ).toBeEnabled()
 })
 
 test("clipboard failures explain manual copying", async ({ page }) => {

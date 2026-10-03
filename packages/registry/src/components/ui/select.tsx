@@ -1,7 +1,7 @@
 "use client"
 
 import type { StyleXComponentProps } from "@registry/lib/stylex"
-import type * as React from "react"
+import type { ButtonHTMLAttributes } from "react"
 
 import { mergeProps } from "@base-ui/react/merge-props"
 import { Select as SelectPrimitive } from "@base-ui/react/select"
@@ -315,8 +315,9 @@ export function SelectButton({
   const props = restProps
   const xstyle = consumerXstyle
 
-  const typeValue: React.ButtonHTMLAttributes<HTMLButtonElement>["type"] =
-    render ? undefined : "button"
+  const typeValue: ButtonHTMLAttributes<HTMLButtonElement>["type"] = render
+    ? undefined
+    : "button"
 
   const defaultProps = {
     children: (

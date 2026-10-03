@@ -1,5 +1,5 @@
 import type { StyleXComponentProps } from "@registry/lib/stylex"
-import type * as React from "react"
+import type { ComponentProps } from "react"
 
 import { mergeStylexProps, stylexProps } from "@registry/lib/stylex"
 import { tokens } from "@registry/styles/tokens.stylex"
@@ -30,7 +30,7 @@ export function Kbd({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleXComponentProps<React.ComponentProps<"kbd">>) {
+}: StyleXComponentProps<ComponentProps<"kbd">>) {
   const props = restProps
   const xstyle = consumerXstyle
 
@@ -46,7 +46,7 @@ export function KbdGroup({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleXComponentProps<React.ComponentProps<"kbd">>) {
+}: StyleXComponentProps<ComponentProps<"kbd">>) {
   const props = restProps
   const xstyle = consumerXstyle
 

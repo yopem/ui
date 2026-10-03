@@ -1,6 +1,7 @@
 "use client"
 
 import type { StyleXComponentProps } from "@registry/lib/stylex"
+import type { Context, ComponentProps } from "react"
 
 import { NumberField as NumberFieldPrimitive } from "@base-ui/react/number-field"
 import { Label } from "@registry/components/ui/label"
@@ -8,7 +9,7 @@ import { mergeStylexProps, stylexProps } from "@registry/lib/stylex"
 import { themeMarker, tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import { MinusIcon, PlusIcon } from "lucide-react"
-import * as React from "react"
+import { createContext, useId, useMemo, useContext } from "react"
 
 const styles = stylex.create({
   root: {
@@ -182,8 +183,8 @@ const styles = stylex.create({
   },
 })
 
-export const NumberFieldContext: React.Context<{ fieldId: string } | null> =
-  React.createContext<{ fieldId: string } | null>(null)
+export const NumberFieldContext: Context<{ fieldId: string } | null> =
+  createContext<{ fieldId: string } | null>(null)
 
 export function NumberField({
   xstyle: consumerXstyle,
@@ -200,9 +201,9 @@ export function NumberField({
   const props = restProps
   const xstyle = consumerXstyle
 
-  const generatedId = React.useId()
+  const generatedId = useId()
   const fieldId = id ?? generatedId
-  const contextValue = React.useMemo(() => ({ fieldId }), [fieldId])
+  const contextValue = useMemo(() => ({ fieldId }), [fieldId])
 
   return (
     <NumberFieldContext.Provider value={contextValue}>
@@ -305,7 +306,7 @@ export function NumberFieldScrubArea({
   const props = restProps
   const xstyle = consumerXstyle
 
-  const context = React.useContext(NumberFieldContext)
+  const context = useContext(NumberFieldContext)
 
   if (!context)
     throw new Error(
@@ -334,7 +335,7 @@ export function CursorGrowIcon({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleXComponentProps<React.ComponentProps<"svg">>) {
+}: StyleXComponentProps<ComponentProps<"svg">>) {
   const props = restProps
   const xstyle = consumerXstyle
 

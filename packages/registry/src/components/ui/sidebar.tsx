@@ -1,6 +1,7 @@
 "use client"
 
 import type { StyleXComponentProps } from "@registry/lib/stylex"
+import type { ComponentProps } from "react"
 
 import { mergeProps } from "@base-ui/react/merge-props"
 import { useRender } from "@base-ui/react/use-render"
@@ -30,7 +31,13 @@ import {
 import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import { PanelLeftIcon } from "lucide-react"
-import * as React from "react"
+import {
+  useSyncExternalStore,
+  createContext,
+  useContext,
+  useState,
+  useMemo,
+} from "react"
 
 const SIDEBAR_COOKIE_NAME = "sidebar_state"
 
@@ -536,19 +543,26 @@ const menuButtonVariantStyles = {
 function useIsMobile() {
   const query = "(max-width: 799px)"
 
-  const subscribe = React.useCallback((callback: () => void) => {
-    const media = window.matchMedia(query)
-    media.addEventListener("change", callback)
+  const subscribe = useMemo(
+    () =>
+      function subscribe(callback: () => void) {
+        const media = window.matchMedia(query)
+        media.addEventListener("change", callback)
 
-    return () => media.removeEventListener("change", callback)
-  }, [])
-
-  const getSnapshot = React.useCallback(
-    () => typeof window !== "undefined" && window.matchMedia(query).matches,
+        return () => media.removeEventListener("change", callback)
+      },
     [],
   )
 
-  return React.useSyncExternalStore(subscribe, getSnapshot, () => false)
+  const getSnapshot = useMemo(
+    () =>
+      function getSnapshot() {
+        return typeof window !== "undefined" && window.matchMedia(query).matches
+      },
+    [],
+  )
+
+  return useSyncExternalStore(subscribe, getSnapshot, () => false)
 }
 
 export interface SidebarContextProps {
@@ -561,12 +575,10 @@ export interface SidebarContextProps {
   toggleSidebar: () => void
 }
 
-export const SidebarContext = React.createContext<SidebarContextProps | null>(
-  null,
-)
+export const SidebarContext = createContext<SidebarContextProps | null>(null)
 
 export function useSidebar() {
-  const context = React.useContext(SidebarContext)
+  const context = useContext(SidebarContext)
 
   if (!context)
     throw new Error("useSidebar must be used within a SidebarProvider.")
@@ -583,7 +595,7 @@ export function SidebarProvider({
   children,
   ...restProps
 }: StyleXComponentProps<
-  React.ComponentProps<"div">,
+  ComponentProps<"div">,
   {
     defaultOpen?: boolean
     open?: boolean
@@ -594,34 +606,41 @@ export function SidebarProvider({
   const xstyle = consumerXstyle
 
   const isMobile = useIsMobile()
-  const [openMobile, setOpenMobile] = React.useState(false)
-  const [_open, _setOpen] = React.useState(defaultOpen)
+  const [openMobile, setOpenMobile] = useState(false)
+  const [_open, _setOpen] = useState(defaultOpen)
   const open = openProp ?? _open
 
-  const setOpen = React.useCallback(
-    async (value: boolean | ((value: boolean) => boolean)) => {
-      const next = isCallback(value) ? value(open) : value
+  const setOpen = useMemo(
+    () =>
+      async function setOpen(value: boolean | ((value: boolean) => boolean)) {
+        const next = isCallback(value) ? value(open) : value
 
-      if (setOpenProp) setOpenProp(next)
-      else _setOpen(next)
-      await cookieStore.set({
-        expires: Date.now() + SIDEBAR_COOKIE_MAX_AGE * 1000,
-        name: SIDEBAR_COOKIE_NAME,
-        path: "/",
-        value: String(next),
-      })
-    },
+        if (setOpenProp) setOpenProp(next)
+        else _setOpen(next)
+        await cookieStore.set({
+          expires: Date.now() + SIDEBAR_COOKIE_MAX_AGE * 1000,
+          name: SIDEBAR_COOKIE_NAME,
+          path: "/",
+          value: String(next),
+        })
+      },
     [open, setOpenProp],
   )
 
-  const toggleSidebar = React.useCallback(
+  const toggleSidebar = useMemo(
     () =>
-      isMobile ? setOpenMobile((value) => !value) : setOpen((value) => !value),
+      function toggleSidebar() {
+        return isMobile
+          ? setOpenMobile((value) => !value)
+          : setOpen((value) => !value)
+      },
     [isMobile, setOpen],
   )
 
-  React.useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
+  function registerShortcut(node: HTMLDivElement | null) {
+    if (!node) return
+
+    function handleKeyDown(event: KeyboardEvent) {
       if (
         event.key === SIDEBAR_KEYBOARD_SHORTCUT &&
         (event.metaKey || event.ctrlKey)
@@ -634,10 +653,11 @@ export function SidebarProvider({
     window.addEventListener("keydown", handleKeyDown)
 
     return () => window.removeEventListener("keydown", handleKeyDown)
-  }, [toggleSidebar])
+  }
+
   const state: SidebarContextProps["state"] = open ? "expanded" : "collapsed"
 
-  const contextValue = React.useMemo(
+  const contextValue = useMemo(
     () => ({
       isMobile,
       open,
@@ -658,6 +678,7 @@ export function SidebarProvider({
       xstyle,
     ),
     props,
+    { ref: registerShortcut },
   )
 
   return (
@@ -678,7 +699,7 @@ export function Sidebar({
   children,
   ...restProps
 }: StyleXComponentProps<
-  React.ComponentProps<"div">,
+  ComponentProps<"div">,
   {
     side?: "left" | "right"
     variant?: "sidebar" | "floating" | "inset"
@@ -765,11 +786,20 @@ export function SidebarTrigger({
   className,
   onClick,
   ...restProps
-}: StyleXComponentProps<React.ComponentProps<typeof Button>>) {
+}: StyleXComponentProps<ComponentProps<typeof Button>>) {
   const props = restProps
   const xstyle = consumerXstyle
 
   const { toggleSidebar } = useSidebar()
+
+  const handleClick = useMemo(
+    () =>
+      function handleClick(event: Parameters<NonNullable<typeof onClick>>[0]) {
+        onClick?.(event)
+        toggleSidebar()
+      },
+    [onClick, toggleSidebar],
+  )
 
   return (
     <Button
@@ -777,10 +807,7 @@ export function SidebarTrigger({
       xstyle={[styles.trigger, xstyle]}
       data-sidebar="trigger"
       data-slot="sidebar-trigger"
-      onClick={(event) => {
-        onClick?.(event)
-        toggleSidebar()
-      }}
+      onClick={handleClick}
       size="icon"
       variant="ghost"
       {...props}
@@ -797,7 +824,7 @@ export function SidebarRail({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleXComponentProps<React.ComponentProps<"button">>) {
+}: StyleXComponentProps<ComponentProps<"button">>) {
   const props = restProps
   const xstyle = consumerXstyle
 
@@ -822,7 +849,7 @@ export function SidebarInset({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleXComponentProps<React.ComponentProps<"main">>) {
+}: StyleXComponentProps<ComponentProps<"main">>) {
   const props = restProps
   const xstyle = consumerXstyle
 
@@ -838,7 +865,7 @@ export function SidebarInput({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleXComponentProps<React.ComponentProps<typeof Input>>) {
+}: StyleXComponentProps<ComponentProps<typeof Input>>) {
   const props = restProps
   const xstyle = consumerXstyle
 
@@ -857,7 +884,7 @@ export function SidebarHeader({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleXComponentProps<React.ComponentProps<"div">>) {
+}: StyleXComponentProps<ComponentProps<"div">>) {
   const props = restProps
   const xstyle = consumerXstyle
 
@@ -877,7 +904,7 @@ export function SidebarFooter({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleXComponentProps<React.ComponentProps<"div">>) {
+}: StyleXComponentProps<ComponentProps<"div">>) {
   const props = restProps
   const xstyle = consumerXstyle
 
@@ -897,7 +924,7 @@ export function SidebarSeparator({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleXComponentProps<React.ComponentProps<typeof Separator>>) {
+}: StyleXComponentProps<ComponentProps<typeof Separator>>) {
   const props = restProps
   const xstyle = consumerXstyle
 
@@ -916,7 +943,7 @@ export function SidebarContent({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleXComponentProps<React.ComponentProps<"div">>) {
+}: StyleXComponentProps<ComponentProps<"div">>) {
   const props = restProps
   const xstyle = consumerXstyle
 
@@ -943,7 +970,7 @@ export function SidebarGroup({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleXComponentProps<React.ComponentProps<"div">>) {
+}: StyleXComponentProps<ComponentProps<"div">>) {
   const props = restProps
   const xstyle = consumerXstyle
 
@@ -1004,7 +1031,7 @@ export function SidebarGroupContent({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleXComponentProps<React.ComponentProps<"div">>) {
+}: StyleXComponentProps<ComponentProps<"div">>) {
   const props = restProps
   const xstyle = consumerXstyle
 
@@ -1024,7 +1051,7 @@ export function SidebarMenu({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleXComponentProps<React.ComponentProps<"ul">>) {
+}: StyleXComponentProps<ComponentProps<"ul">>) {
   const props = restProps
   const xstyle = consumerXstyle
 
@@ -1041,7 +1068,7 @@ export function SidebarMenuItem({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleXComponentProps<React.ComponentProps<"li">>) {
+}: StyleXComponentProps<ComponentProps<"li">>) {
   const props = restProps
   const xstyle = consumerXstyle
 
@@ -1070,7 +1097,7 @@ export function SidebarMenuButton({
   useRender.ComponentProps<"button">,
   {
     isActive?: boolean
-    tooltip?: string | React.ComponentProps<typeof TooltipPopup>
+    tooltip?: string | ComponentProps<typeof TooltipPopup>
     variant?: keyof typeof menuButtonVariantStyles | null
     size?: keyof typeof menuButtonSizeStyles | null
   }
@@ -1154,7 +1181,7 @@ export function SidebarMenuBadge({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleXComponentProps<React.ComponentProps<"div">>) {
+}: StyleXComponentProps<ComponentProps<"div">>) {
   const props = restProps
   const xstyle = consumerXstyle
 
@@ -1172,13 +1199,11 @@ export function SidebarMenuSkeleton({
   className,
   showIcon = false,
   ...restProps
-}: StyleXComponentProps<React.ComponentProps<"div">, { showIcon?: boolean }>) {
+}: StyleXComponentProps<ComponentProps<"div">, { showIcon?: boolean }>) {
   const props = restProps
   const xstyle = consumerXstyle
 
-  const [width] = React.useState(
-    () => `${Math.floor(Math.random() * 40) + 50}%`,
-  )
+  const [width] = useState(() => `${Math.floor(Math.random() * 40) + 50}%`)
 
   return (
     <div
@@ -1211,7 +1236,7 @@ export function SidebarMenuSub({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleXComponentProps<React.ComponentProps<"ul">>) {
+}: StyleXComponentProps<ComponentProps<"ul">>) {
   const props = restProps
   const xstyle = consumerXstyle
 
@@ -1231,7 +1256,7 @@ export function SidebarMenuSubItem({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleXComponentProps<React.ComponentProps<"li">>) {
+}: StyleXComponentProps<ComponentProps<"li">>) {
   const props = restProps
   const xstyle = consumerXstyle
 
@@ -1285,7 +1310,7 @@ export function SidebarMenuText({
   className,
   xstyle: consumerXstyle,
   ...restProps
-}: StyleXComponentProps<React.ComponentProps<"span">>) {
+}: StyleXComponentProps<ComponentProps<"span">>) {
   const props = restProps
   const xstyle = consumerXstyle
 

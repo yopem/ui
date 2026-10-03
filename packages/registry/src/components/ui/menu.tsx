@@ -1,7 +1,7 @@
 "use client"
 
 import type { StyleXComponentProps } from "@registry/lib/stylex"
-import type * as React from "react"
+import type { ComponentProps } from "react"
 
 import { Menu as MenuPrimitive } from "@base-ui/react/menu"
 import { mergeStylexProps, stylexProps } from "@registry/lib/stylex"
@@ -528,7 +528,7 @@ export function MenuShortcut({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleXComponentProps<React.ComponentProps<"kbd">>) {
+}: StyleXComponentProps<ComponentProps<"kbd">>) {
   const props = restProps
   const xstyle = consumerXstyle
 

@@ -1,7 +1,7 @@
 "use client"
 
 import type { StyleXComponentProps } from "@registry/lib/stylex"
-import type * as React from "react"
+import type { ComponentProps } from "react"
 
 import { ContextMenu as ContextMenuPrimitive } from "@base-ui/react/context-menu"
 import { mergeStylexProps, stylexProps } from "@registry/lib/stylex"
@@ -532,7 +532,7 @@ export function ContextMenuShortcut({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleXComponentProps<React.ComponentProps<"kbd">>) {
+}: StyleXComponentProps<ComponentProps<"kbd">>) {
   const props = restProps
   const xstyle = consumerXstyle
 

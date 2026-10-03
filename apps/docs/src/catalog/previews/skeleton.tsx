@@ -1,5 +1,7 @@
 "use client"
 
+import type { Ref } from "react"
+
 import {
   Avatar,
   AvatarFallback,
@@ -12,7 +14,7 @@ import { Heading } from "@registry/components/ui/heading"
 import { Skeleton } from "@registry/components/ui/skeleton"
 import * as stylex from "@stylexjs/stylex"
 import { UserRoundPlusIcon, UsersRoundIcon } from "lucide-react"
-import { useEffect, useState } from "react"
+import { useMemo, useRef, useState } from "react"
 
 const styles = stylex.create({
   avatar: { inlineSize: "calc(0.25rem * 10)", blockSize: "calc(0.25rem * 10)" },
@@ -120,16 +122,24 @@ const users = [
 function UserCard({ delay, user }: { delay: number; user: (typeof users)[0] }) {
   const [isLoaded, setIsLoaded] = useState(false)
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsLoaded(true)
-    }, delay)
+  const timerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
 
-    return () => clearTimeout(timer)
-  }, [delay])
+  const startLoading = useMemo(
+    () =>
+      function startLoading(node: HTMLDivElement | null) {
+        clearTimeout(timerRef.current)
+
+        if (!node) return
+
+        timerRef.current = setTimeout(() => {
+          setIsLoaded(true)
+        }, delay)
+      },
+    [delay],
+  )
 
   if (!isLoaded) {
-    return <UserCardSkeleton />
+    return <UserCardSkeleton ref={startLoading} />
   }
 
   return (
@@ -166,10 +176,10 @@ function UserCard({ delay, user }: { delay: number; user: (typeof users)[0] }) {
   )
 }
 
-function UserCardSkeleton() {
+function UserCardSkeleton({ ref }: { ref: Ref<HTMLDivElement> }) {
   return (
     <>
-      <Skeleton xstyle={styles.skeleton} />
+      <Skeleton ref={ref} xstyle={styles.skeleton} />
       <Flex xstyle={styles.flex4}>
         <Skeleton xstyle={styles.skeleton2} />
         <Flex xstyle={styles.flex5}>

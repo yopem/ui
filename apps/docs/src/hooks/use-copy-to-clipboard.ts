@@ -1,6 +1,39 @@
 "use client"
 
-import * as React from "react"
+import { useState, useSyncExternalStore } from "react"
+
+function createCopyStatus() {
+  let copied = false
+  let timer: ReturnType<typeof setTimeout> | undefined
+  let notify: (() => void) | undefined
+
+  function setCopied(value: boolean, timeout = 0) {
+    clearTimeout(timer)
+    copied = value
+    notify?.()
+
+    if (value && timeout !== 0 && notify) {
+      timer = setTimeout(() => setCopied(false), timeout)
+    }
+  }
+
+  return {
+    getSnapshot: () => copied,
+    setCopied,
+    subscribe(callback: () => void) {
+      notify = callback
+
+      return () => {
+        clearTimeout(timer)
+        notify = undefined
+      }
+    },
+  }
+}
+
+function getServerSnapshot() {
+  return false
+}
 
 export function useCopyToClipboard({
   timeout = 2000,
@@ -9,13 +42,19 @@ export function useCopyToClipboard({
   timeout?: number
   onCopy?: () => void
 } = {}) {
-  const [isCopied, setIsCopied] = React.useState(false)
-  const [copyError, setCopyError] = React.useState<string | null>(null)
-  const timeoutIdRef = React.useRef<ReturnType<typeof setTimeout> | null>(null)
+  const [status] = useState(createCopyStatus)
 
-  const copyToClipboard = async (value: string) => {
+  const isCopied = useSyncExternalStore(
+    status.subscribe,
+    status.getSnapshot,
+    getServerSnapshot,
+  )
+
+  const [copyError, setCopyError] = useState<string | null>(null)
+
+  async function copyToClipboard(value: string) {
     setCopyError(null)
-    setIsCopied(false)
+    status.setCopied(false)
 
     try {
       if (typeof navigator === "undefined" || !navigator.clipboard?.writeText) {
@@ -25,28 +64,12 @@ export function useCopyToClipboard({
       }
 
       await navigator.clipboard.writeText(value)
-
-      if (timeoutIdRef.current) clearTimeout(timeoutIdRef.current)
-      setIsCopied(true)
+      status.setCopied(true, timeout)
       onCopy?.()
-
-      if (timeout !== 0) {
-        timeoutIdRef.current = setTimeout(() => {
-          setIsCopied(false)
-          timeoutIdRef.current = null
-        }, timeout)
-      }
     } catch {
       setCopyError("Could not copy. Select the code and copy it manually.")
     }
   }
-
-  React.useEffect(
-    () => () => {
-      if (timeoutIdRef.current) clearTimeout(timeoutIdRef.current)
-    },
-    [],
-  )
 
   return { copyToClipboard, copyError, isCopied }
 }

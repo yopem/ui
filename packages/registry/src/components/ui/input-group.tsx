@@ -3,13 +3,14 @@
 // oxlint-disable jsx-a11y/prefer-tag-over-role -- input-group uses div+role=group intentionally; fieldset semantics not appropriate
 
 import type { StyleXComponentProps } from "@registry/lib/stylex"
-import type * as React from "react"
+import type { ComponentProps, MouseEvent } from "react"
 
 import { Input, type InputProps } from "@registry/components/ui/input"
 import { Textarea, type TextareaProps } from "@registry/components/ui/textarea"
 import { mergeStylexProps, stylexProps } from "@registry/lib/stylex"
 import { themeMarker, tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
+import { useMemo } from "react"
 
 const styles = stylex.create({
   root: {
@@ -129,7 +130,7 @@ export function InputGroup({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleXComponentProps<React.ComponentProps<"div">>) {
+}: StyleXComponentProps<ComponentProps<"div">>) {
   const props = restProps
   const xstyle = consumerXstyle
 
@@ -142,13 +143,33 @@ export function InputGroup({
   )
 }
 
+function focusControl(event: MouseEvent<HTMLDivElement>) {
+  if (
+    event.target instanceof Element &&
+    event.target.closest(
+      "button, a, input, select, textarea, [role='button'], [role='combobox'], [role='listbox'], [data-slot='select-trigger']",
+    )
+  )
+    return
+
+  event.preventDefault()
+  const parent = event.currentTarget.parentElement
+
+  const input = parent?.querySelector<HTMLInputElement | HTMLTextAreaElement>(
+    "input, textarea",
+  )
+
+  if (input && !parent?.querySelector("input:focus, textarea:focus"))
+    input.focus()
+}
+
 export function InputGroupAddon({
   xstyle: consumerXstyle,
   className,
   align = "inline-start",
   ...restProps
 }: StyleXComponentProps<
-  React.ComponentProps<"div">,
+  ComponentProps<"div">,
   {
     align?: keyof typeof alignStyles
   }
@@ -161,24 +182,7 @@ export function InputGroupAddon({
       data-align={align}
       data-slot="input-group-addon"
       role="presentation"
-      onMouseDown={(event: React.MouseEvent<HTMLDivElement>) => {
-        if (
-          event.target instanceof Element &&
-          event.target.closest(
-            "button, a, input, select, textarea, [role='button'], [role='combobox'], [role='listbox'], [data-slot='select-trigger']",
-          )
-        )
-          return
-        event.preventDefault()
-        const parent = event.currentTarget.parentElement
-
-        const input = parent?.querySelector<
-          HTMLInputElement | HTMLTextAreaElement
-        >("input, textarea")
-
-        if (input && !parent?.querySelector("input:focus, textarea:focus"))
-          input.focus()
-      }}
+      onMouseDown={focusControl}
       {...mergeStylexProps(
         stylexProps(className, styles.addon, alignStyles[align], xstyle),
         props,
@@ -191,7 +195,7 @@ export function InputGroupText({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleXComponentProps<React.ComponentProps<"span">>) {
+}: StyleXComponentProps<ComponentProps<"span">>) {
   const props = restProps
   const xstyle = consumerXstyle
 
@@ -212,10 +216,15 @@ export function InputGroupInput({
   const props = restProps
   const xstyle = consumerXstyle
 
+  const controlStyles = useMemo(
+    () => [styles.control, controlXstyle],
+    [controlXstyle],
+  )
+
   return (
     <Input
       className={className}
-      controlXstyle={[styles.control, controlXstyle]}
+      controlXstyle={controlStyles}
       xstyle={xstyle}
       unstyled
       {...props}
@@ -232,11 +241,18 @@ export function InputGroupTextarea({
   const props = restProps
   const xstyle = consumerXstyle
 
+  const controlStyles = useMemo(
+    () => [styles.control, controlXstyle],
+    [controlXstyle],
+  )
+
+  const textareaStyles = useMemo(() => [styles.textarea, xstyle], [xstyle])
+
   return (
     <Textarea
       className={className}
-      controlXstyle={[styles.control, controlXstyle]}
-      xstyle={[styles.textarea, xstyle]}
+      controlXstyle={controlStyles}
+      xstyle={textareaStyles}
       unstyled
       {...props}
     />

@@ -4,7 +4,7 @@ import { Text } from "@registry/components/ui/text"
 import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import { Link, createFileRoute, notFound } from "@tanstack/react-router"
-import { useState, useCallback } from "react"
+import { useState, useMemo } from "react"
 
 import { ApiReference } from "@/catalog/api-reference"
 import { PreviewPanel } from "@/catalog/catalog-ui"
@@ -233,9 +233,11 @@ function ComponentApi({
 }) {
   const [open, setOpen] = useState(false)
 
-  const handleToggle = useCallback(
-    (event: React.SyntheticEvent<HTMLDetailsElement>) =>
-      setOpen(event.currentTarget.open),
+  const handleToggle = useMemo(
+    () =>
+      function handleToggle(event: React.SyntheticEvent<HTMLDetailsElement>) {
+        return setOpen(event.currentTarget.open)
+      },
     [setOpen],
   )
 

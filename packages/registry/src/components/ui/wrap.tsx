@@ -1,7 +1,7 @@
 "use client"
 
 import type { StyleXComponentProps } from "@registry/lib/stylex"
-import type * as React from "react"
+import type { ComponentPropsWithRef } from "react"
 
 import { mergeStylexProps, stylexProps } from "@registry/lib/stylex"
 import { tokens } from "@registry/styles/tokens.stylex"
@@ -16,7 +16,7 @@ const styles = stylex.create({
   },
 })
 
-export type WrapProps = StyleXComponentProps<React.ComponentPropsWithRef<"div">>
+export type WrapProps = StyleXComponentProps<ComponentPropsWithRef<"div">>
 
 export function Wrap({ xstyle, className, ref, ...props }: WrapProps) {
   return (

@@ -19,7 +19,7 @@ import { VStack } from "@registry/components/ui/vstack"
 import { Wrap } from "@registry/components/ui/wrap"
 import * as stylex from "@stylexjs/stylex"
 import { Link as RouterLink } from "@tanstack/react-router"
-import { useRef, useState, useCallback } from "react"
+import { useRef, useState, useMemo } from "react"
 
 const styles = stylex.create({
   layoutRoot: {
@@ -58,21 +58,30 @@ export function Preview() {
   const [textTag, setTextTag] = useState("Not inspected")
   const [submitted, setSubmitted] = useState(false)
 
-  const handleSubmit = useCallback(
-    (event: React.FormEvent<HTMLFormElement>) => {
-      event.preventDefault()
-      setSubmitted(true)
-    },
+  const handleSubmit = useMemo(
+    () =>
+      function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+        event.preventDefault()
+        setSubmitted(true)
+      },
     [setSubmitted],
   )
 
-  const focusName = useCallback(() => nameRef.current?.focus(), [nameRef])
-
-  const inspectRefs = useCallback(
+  const focusName = useMemo(
     () =>
-      setTextTag(
-        `${textRef.current?.tagName ?? "missing"} ${linkRef.current?.tagName ?? "missing"}`,
-      ),
+      function focusName() {
+        return nameRef.current?.focus()
+      },
+    [nameRef],
+  )
+
+  const inspectRefs = useMemo(
+    () =>
+      function inspectRefs() {
+        return setTextTag(
+          `${textRef.current?.tagName ?? "missing"} ${linkRef.current?.tagName ?? "missing"}`,
+        )
+      },
     [setTextTag, textRef, linkRef],
   )
 

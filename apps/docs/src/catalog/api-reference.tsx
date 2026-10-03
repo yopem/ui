@@ -7,7 +7,7 @@ import { ScrollArea } from "@registry/components/ui/scroll-area"
 import { Text } from "@registry/components/ui/text"
 import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
-import { useCallback, useMemo, useState } from "react"
+import { useMemo, useState } from "react"
 
 import { CopyableCode } from "./code-block"
 
@@ -395,15 +395,21 @@ function PartReference({
     [part.propVariants, part.props, part.source],
   )
 
-  const toggleVariants = useCallback(
-    (event: React.SyntheticEvent<HTMLDetailsElement>) =>
-      setShowVariants(event.currentTarget.open),
+  const toggleVariants = useMemo(
+    () =>
+      function toggleVariants(event: React.SyntheticEvent<HTMLDetailsElement>) {
+        return setShowVariants(event.currentTarget.open)
+      },
     [],
   )
 
-  const toggleSignatures = useCallback(
-    (event: React.SyntheticEvent<HTMLDetailsElement>) =>
-      setShowSignatures(event.currentTarget.open),
+  const toggleSignatures = useMemo(
+    () =>
+      function toggleSignatures(
+        event: React.SyntheticEvent<HTMLDetailsElement>,
+      ) {
+        return setShowSignatures(event.currentTarget.open)
+      },
     [],
   )
 

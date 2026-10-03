@@ -4,7 +4,7 @@ import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import { useHydrated } from "@tanstack/react-router"
 import { CheckIcon, CopyIcon } from "lucide-react"
-import { lazy, Suspense, useState, useCallback } from "react"
+import { lazy, Suspense, useState, useMemo } from "react"
 
 import { stripStandaloneComments } from "@/catalog/source-code"
 import { useCopyToClipboard } from "@/hooks/use-copy-to-clipboard"
@@ -221,12 +221,21 @@ export function CopyableCode({
       </ScrollArea>
     )
 
-  const handleCopy = useCallback(
-    () => void copyToClipboard(cleanCode),
+  const handleCopy = useMemo(
+    () =>
+      function handleCopy() {
+        return void copyToClipboard(cleanCode)
+      },
     [copyToClipboard, cleanCode],
   )
 
-  const handleClick = useCallback(() => setExpanded(true), [setExpanded])
+  const handleClick = useMemo(
+    () =>
+      function handleClick() {
+        return setExpanded(true)
+      },
+    [setExpanded],
+  )
 
   const contents = (
     <>

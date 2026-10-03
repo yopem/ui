@@ -6,7 +6,7 @@ import { Slider as SliderPrimitive } from "@base-ui/react/slider"
 import { mergeStylexProps, stylexProps } from "@registry/lib/stylex"
 import { themeMarker, tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
-import * as React from "react"
+import { useMemo } from "react"
 
 const styles = stylex.create({
   root: {
@@ -135,7 +135,7 @@ export function Slider({
   const props = restProps
   const xstyle = consumerXstyle
 
-  const values = React.useMemo(() => {
+  const values = useMemo(() => {
     if (value !== undefined) return Array.isArray(value) ? value : [value]
 
     if (defaultValue !== undefined)

@@ -2,6 +2,7 @@
 
 import type { Toggle as TogglePrimitive } from "@base-ui/react/toggle"
 import type { StyleXComponentProps } from "@registry/lib/stylex"
+import type { Context, ComponentProps } from "react"
 
 import { ToggleGroup as ToggleGroupPrimitive } from "@base-ui/react/toggle-group"
 import { Separator } from "@registry/components/ui/separator"
@@ -12,7 +13,7 @@ import {
 import { mergeStylexProps, stylexProps } from "@registry/lib/stylex"
 import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
-import * as React from "react"
+import { createContext, useMemo, useContext } from "react"
 
 const styles = stylex.create({
   root: { display: "flex", inlineSize: "fit-content" },
@@ -27,8 +28,8 @@ const styles = stylex.create({
   },
 })
 
-export const ToggleGroupContext: React.Context<ToggleVariantProps> =
-  React.createContext<ToggleVariantProps>({
+export const ToggleGroupContext: Context<ToggleVariantProps> =
+  createContext<ToggleVariantProps>({
     size: "default",
     variant: "default",
   })
@@ -47,7 +48,7 @@ export function ToggleGroup({
   const props = restProps
   const xstyle = consumerXstyle
 
-  const contextValue = React.useMemo(() => ({ size, variant }), [size, variant])
+  const contextValue = useMemo(() => ({ size, variant }), [size, variant])
 
   return (
     <ToggleGroupPrimitive
@@ -86,7 +87,7 @@ export function ToggleGroupItem({
   const props = restProps
   const xstyle = consumerXstyle
 
-  const context = React.useContext(ToggleGroupContext)
+  const context = useContext(ToggleGroupContext)
   const resolvedVariant = context.variant || variant
   const resolvedSize = context.size || size
 
@@ -110,7 +111,7 @@ export function ToggleGroupSeparator({
   className,
   orientation = "vertical",
   ...restProps
-}: StyleXComponentProps<React.ComponentProps<typeof Separator>>) {
+}: StyleXComponentProps<ComponentProps<typeof Separator>>) {
   const props = restProps
   const xstyle = consumerXstyle
 

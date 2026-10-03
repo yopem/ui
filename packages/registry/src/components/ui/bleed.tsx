@@ -1,7 +1,7 @@
 "use client"
 
 import type { StyleXComponentProps } from "@registry/lib/stylex"
-import type * as React from "react"
+import type { ComponentPropsWithRef } from "react"
 
 import { mergeStylexProps, stylexProps } from "@registry/lib/stylex"
 import { tokens } from "@registry/styles/tokens.stylex"
@@ -11,9 +11,7 @@ const styles = stylex.create({
   root: { marginInline: `calc(${tokens["--spacing"]} * -4)` },
 })
 
-export type BleedProps = StyleXComponentProps<
-  React.ComponentPropsWithRef<"div">
->
+export type BleedProps = StyleXComponentProps<ComponentPropsWithRef<"div">>
 
 export function Bleed({ xstyle, className, ref, ...props }: BleedProps) {
   return (

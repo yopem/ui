@@ -3,7 +3,7 @@
 // oxlint-disable jsx-a11y/prefer-tag-over-role -- Button group uses div+role=group for styling; fieldset not appropriate
 
 import type { StyleXComponentProps } from "@registry/lib/stylex"
-import type * as React from "react"
+import type { ComponentProps, ReactNode } from "react"
 
 import { mergeProps } from "@base-ui/react/merge-props"
 import { useRender } from "@base-ui/react/use-render"
@@ -349,11 +349,11 @@ export function Group({
   children,
   ...restProps
 }: StyleXComponentProps<
-  React.ComponentProps<"div">,
+  ComponentProps<"div">,
   {
     className?: string
     orientation?: keyof typeof orientationStyles
-    children: React.ReactNode
+    children: ReactNode
   }
 >) {
   const props = restProps
@@ -405,7 +405,7 @@ export function GroupSeparator({
   className,
   orientation = "vertical",
   ...restProps
-}: StyleXComponentProps<React.ComponentProps<typeof Separator>>) {
+}: StyleXComponentProps<ComponentProps<typeof Separator>>) {
   const props = restProps
   const xstyle = consumerXstyle
 

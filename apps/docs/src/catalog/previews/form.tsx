@@ -7,7 +7,7 @@ import { Field, FieldError, FieldLabel } from "@registry/components/ui/field"
 import { Form } from "@registry/components/ui/form"
 import { Input } from "@registry/components/ui/input"
 import * as stylex from "@stylexjs/stylex"
-import { useState, useCallback } from "react"
+import { useState, useMemo } from "react"
 
 const styles = stylex.create({
   form: {
@@ -22,15 +22,16 @@ const styles = stylex.create({
 export function Preview() {
   const [loading, setLoading] = useState(false)
 
-  const onSubmit = useCallback(
-    async (e: FormEvent<HTMLFormElement>) => {
-      e.preventDefault()
-      const formData = new FormData(e.currentTarget)
-      setLoading(true)
-      await new Promise((r) => setTimeout(r, 800))
-      setLoading(false)
-      alert(`Email: ${formData.get("email") || ""}`)
-    },
+  const onSubmit = useMemo(
+    () =>
+      async function onSubmit(e: FormEvent<HTMLFormElement>) {
+        e.preventDefault()
+        const formData = new FormData(e.currentTarget)
+        setLoading(true)
+        await new Promise((r) => setTimeout(r, 800))
+        setLoading(false)
+        alert(`Email: ${formData.get("email") || ""}`)
+      },
     [setLoading],
   )
 

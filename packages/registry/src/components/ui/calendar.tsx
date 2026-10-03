@@ -1,7 +1,7 @@
 "use client"
 
 import type { StyleXComponentProps } from "@registry/lib/stylex"
-import type * as React from "react"
+import type { ComponentProps } from "react"
 
 import { DayPicker } from "@daypicker/react"
 import { mergeStylexProps, stylexProps } from "@registry/lib/stylex"
@@ -247,7 +247,7 @@ export function Calendar({
   components: userComponents,
   mode = "single",
   ...restProps
-}: StyleXComponentProps<React.ComponentProps<typeof DayPicker>>) {
+}: StyleXComponentProps<ComponentProps<typeof DayPicker>>) {
   const props = restProps
   const xstyle = consumerXstyle
 
@@ -292,7 +292,7 @@ export function Calendar({
     formatters: {
       formatMonthDropdown: (date: Date) =>
         date.toLocaleString("default", { month: "short" }),
-    } satisfies React.ComponentProps<typeof DayPicker>["formatters"],
+    } satisfies ComponentProps<typeof DayPicker>["formatters"],
     mode,
     showOutsideDays,
     ...mergeStylexProps(stylexProps(className, styles.root, xstyle), props),
@@ -300,9 +300,5 @@ export function Calendar({
 
   // SAFETY: `mode` and `props` derive from DayPicker input.
   // DayPicker forwards data attributes to its root.
-  return (
-    <DayPicker
-      {...(dayPickerProps as React.ComponentProps<typeof DayPicker>)}
-    />
-  )
+  return <DayPicker {...(dayPickerProps as ComponentProps<typeof DayPicker>)} />
 }

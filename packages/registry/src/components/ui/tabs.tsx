@@ -6,13 +6,13 @@ import { Tabs as TabsPrimitive } from "@base-ui/react/tabs"
 import { mergeStylexProps, stylexProps } from "@registry/lib/stylex"
 import { themeMarker, tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
-import * as React from "react"
+import { createContext, useContext } from "react"
 
 type TabsVariant = "default" | "underline"
 
 type TabsSize = "default" | "lg" | "sm"
 
-const TabsListContext = React.createContext<TabsSize>("default")
+const TabsListContext = createContext<TabsSize>("default")
 
 export const tabsSlotStyles = stylex.create({
   icon: {
@@ -233,7 +233,7 @@ export function TabsTab({
   const props = restProps
   const xstyle = consumerXstyle
 
-  const contextSize = React.useContext(TabsListContext)
+  const contextSize = useContext(TabsListContext)
   const resolvedSize = size ?? contextSize
 
   return (

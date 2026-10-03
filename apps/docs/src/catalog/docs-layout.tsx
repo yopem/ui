@@ -15,7 +15,7 @@ import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import { Link } from "@tanstack/react-router"
 import { MenuIcon } from "lucide-react"
-import { useState, useCallback } from "react"
+import { useState, useMemo } from "react"
 
 import { BrandLogo } from "@/components/brand-logo"
 
@@ -88,8 +88,11 @@ const primitiveStyles = stylex.create({
 export function DocumentationLayout({ children }: { children: ReactNode }) {
   const [mobileOpen, setMobileOpen] = useState(false)
 
-  const handleNavigate = useCallback(
-    () => setMobileOpen(false),
+  const handleNavigate = useMemo(
+    () =>
+      function handleNavigate() {
+        return setMobileOpen(false)
+      },
     [setMobileOpen],
   )
 

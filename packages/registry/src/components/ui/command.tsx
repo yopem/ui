@@ -1,7 +1,7 @@
 "use client"
 
 import type { StyleXComponentProps } from "@registry/lib/stylex"
-import type * as React from "react"
+import type { ComponentProps } from "react"
 
 import { Dialog as CommandDialogPrimitive } from "@base-ui/react/dialog"
 import {
@@ -250,7 +250,7 @@ export function Command({
   autoHighlight = "always",
   keepHighlight = true,
   ...props
-}: React.ComponentProps<typeof Autocomplete>) {
+}: ComponentProps<typeof Autocomplete>) {
   return (
     <Autocomplete
       autoHighlight={autoHighlight}
@@ -267,14 +267,14 @@ export function CommandInput({
   className,
   placeholder,
   ...restProps
-}: StyleXComponentProps<React.ComponentProps<typeof AutocompleteInput>>) {
+}: StyleXComponentProps<ComponentProps<typeof AutocompleteInput>>) {
   const props = restProps
   const xstyle = consumerXstyle
 
   return (
     <div {...stylex.props(styles.inputWrap)}>
       <AutocompleteInput
-        // oxlint-disable-next-line jsx-a11y/no-autofocus -- command palette needs immediate focus
+        // oxlint-disable-next-line jsx-a11y/no-autofocus, react-doctor/no-autofocus -- command palettes intentionally focus their search input
         autoFocus
         className={className}
         xstyle={[styles.commandInput, xstyle]}
@@ -291,7 +291,7 @@ export function CommandList({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleXComponentProps<React.ComponentProps<typeof AutocompleteList>>) {
+}: StyleXComponentProps<ComponentProps<typeof AutocompleteList>>) {
   const props = restProps
   const xstyle = consumerXstyle
 
@@ -309,7 +309,7 @@ export function CommandEmpty({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleXComponentProps<React.ComponentProps<typeof AutocompleteEmpty>>) {
+}: StyleXComponentProps<ComponentProps<typeof AutocompleteEmpty>>) {
   const props = restProps
   const xstyle = consumerXstyle
 
@@ -327,7 +327,7 @@ export function CommandPanel({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleXComponentProps<React.ComponentProps<"div">>) {
+}: StyleXComponentProps<ComponentProps<"div">>) {
   const props = restProps
   const xstyle = consumerXstyle
 
@@ -343,7 +343,7 @@ export function CommandGroup({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleXComponentProps<React.ComponentProps<typeof AutocompleteGroup>>) {
+}: StyleXComponentProps<ComponentProps<typeof AutocompleteGroup>>) {
   const props = restProps
   const xstyle = consumerXstyle
 
@@ -361,7 +361,7 @@ export function CommandGroupLabel({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleXComponentProps<React.ComponentProps<typeof AutocompleteGroupLabel>>) {
+}: StyleXComponentProps<ComponentProps<typeof AutocompleteGroupLabel>>) {
   const props = restProps
   const xstyle = consumerXstyle
 
@@ -381,7 +381,7 @@ export function CommandItem({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleXComponentProps<React.ComponentProps<typeof AutocompleteItem>>) {
+}: StyleXComponentProps<ComponentProps<typeof AutocompleteItem>>) {
   const props = restProps
   const xstyle = consumerXstyle
 
@@ -399,7 +399,7 @@ export function CommandSeparator({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleXComponentProps<React.ComponentProps<typeof AutocompleteSeparator>>) {
+}: StyleXComponentProps<ComponentProps<typeof AutocompleteSeparator>>) {
   const props = restProps
   const xstyle = consumerXstyle
 
@@ -417,7 +417,7 @@ export function CommandShortcut({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleXComponentProps<React.ComponentProps<"kbd">>) {
+}: StyleXComponentProps<ComponentProps<"kbd">>) {
   const props = restProps
   const xstyle = consumerXstyle
 
@@ -436,7 +436,7 @@ export function CommandFooter({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleXComponentProps<React.ComponentProps<"div">>) {
+}: StyleXComponentProps<ComponentProps<"div">>) {
   const props = restProps
   const xstyle = consumerXstyle
 

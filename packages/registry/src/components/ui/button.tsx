@@ -2,7 +2,7 @@
 
 import type { StyleXComponentProps } from "@registry/lib/stylex"
 import type { StyleXProps } from "@registry/lib/stylex"
-import type * as React from "react"
+import type { ButtonHTMLAttributes } from "react"
 
 import { mergeProps } from "@base-ui/react/merge-props"
 import { useRender } from "@base-ui/react/use-render"
@@ -476,8 +476,9 @@ export function Button({
 
   const isDisabled = Boolean(loading || disabledProp)
 
-  const typeValue: React.ButtonHTMLAttributes<HTMLButtonElement>["type"] =
-    render ? undefined : "button"
+  const typeValue: ButtonHTMLAttributes<HTMLButtonElement>["type"] = render
+    ? undefined
+    : "button"
 
   const defaultProps = {
     children: (

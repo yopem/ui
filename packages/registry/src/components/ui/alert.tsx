@@ -1,5 +1,5 @@
 import type { StyleXComponentProps } from "@registry/lib/stylex"
-import type * as React from "react"
+import type { ComponentProps } from "react"
 
 import { mergeStylexProps, stylexProps } from "@registry/lib/stylex"
 import { themeMarker, tokens } from "@registry/styles/tokens.stylex"
@@ -118,10 +118,7 @@ export function Alert({
   className,
   variant,
   ...restProps
-}: StyleXComponentProps<
-  React.ComponentProps<"div">,
-  { variant?: AlertVariant }
->) {
+}: StyleXComponentProps<ComponentProps<"div">, { variant?: AlertVariant }>) {
   const props = restProps
   const xstyle = consumerXstyle
 
@@ -147,7 +144,7 @@ export function AlertTitle({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleXComponentProps<React.ComponentProps<"div">>) {
+}: StyleXComponentProps<ComponentProps<"div">>) {
   const props = restProps
   const xstyle = consumerXstyle
 
@@ -163,7 +160,7 @@ export function AlertDescription({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleXComponentProps<React.ComponentProps<"div">>) {
+}: StyleXComponentProps<ComponentProps<"div">>) {
   const props = restProps
   const xstyle = consumerXstyle
 
@@ -182,7 +179,7 @@ export function AlertAction({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleXComponentProps<React.ComponentProps<"div">>) {
+}: StyleXComponentProps<ComponentProps<"div">>) {
   const props = restProps
   const xstyle = consumerXstyle
 

@@ -24,7 +24,7 @@ import { Kbd, KbdGroup } from "@registry/components/ui/kbd"
 import * as stylex from "@stylexjs/stylex"
 import { useHydrated } from "@tanstack/react-router"
 import { ArrowDownIcon, ArrowUpIcon, CornerDownLeftIcon } from "lucide-react"
-import { Fragment, useCallback, useRef, useState } from "react"
+import { Fragment, useRef, useState, useMemo } from "react"
 
 const styles = stylex.create({
   span: { flex: "1" },
@@ -70,29 +70,37 @@ export function Preview() {
   const hydrated = useHydrated()
   const [open, setOpen] = useState(false)
 
-  const handleItemClick = useCallback(() => {
-    setOpen(false)
-  }, [])
+  const handleItemClick = useMemo(
+    () =>
+      function handleItemClick() {
+        setOpen(false)
+      },
+    [],
+  )
 
   const shortcutCleanupRef = useRef<(() => void) | null>(null)
 
-  const registerTrigger = useCallback((node: HTMLButtonElement | null) => {
-    shortcutCleanupRef.current?.()
-    shortcutCleanupRef.current = null
+  const registerTrigger = useMemo(
+    () =>
+      function registerTrigger(node: HTMLButtonElement | null) {
+        shortcutCleanupRef.current?.()
+        shortcutCleanupRef.current = null
 
-    if (!node) return
+        if (!node) return
 
-    function handleShortcut(event: KeyboardEvent) {
-      if (event.key === "j" && (event.metaKey || event.ctrlKey)) {
-        event.preventDefault()
-        setOpen((current) => !current)
-      }
-    }
+        function handleShortcut(event: KeyboardEvent) {
+          if (event.key === "j" && (event.metaKey || event.ctrlKey)) {
+            event.preventDefault()
+            setOpen((current) => !current)
+          }
+        }
 
-    document.addEventListener("keydown", handleShortcut)
-    shortcutCleanupRef.current = () =>
-      document.removeEventListener("keydown", handleShortcut)
-  }, [])
+        document.addEventListener("keydown", handleShortcut)
+        shortcutCleanupRef.current = () =>
+          document.removeEventListener("keydown", handleShortcut)
+      },
+    [],
+  )
 
   return (
     <CommandDialog onOpenChange={setOpen} open={open}>

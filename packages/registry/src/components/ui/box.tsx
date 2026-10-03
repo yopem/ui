@@ -1,5 +1,5 @@
 import type { StyleXComponentProps } from "@registry/lib/stylex"
-import type * as React from "react"
+import type { JSX, ComponentPropsWithRef, ElementType } from "react"
 
 import { mergeStylexProps, stylexProps } from "@registry/lib/stylex"
 import * as stylex from "@stylexjs/stylex"
@@ -12,10 +12,10 @@ const styles = stylex.create({
   },
 })
 
-export type BoxElement = keyof React.JSX.IntrinsicElements
+export type BoxElement = keyof JSX.IntrinsicElements
 
 export type BoxProps<Tag extends BoxElement = "div"> = StyleXComponentProps<
-  React.ComponentPropsWithRef<Tag>,
+  ComponentPropsWithRef<Tag>,
   { as?: Tag }
 >
 
@@ -25,7 +25,7 @@ export function Box<Tag extends BoxElement = "div">({
   className,
   ...props
 }: BoxProps<Tag>) {
-  const Component: React.ElementType = as ?? "div"
+  const Component: ElementType = as ?? "div"
 
   return createElement(
     Component,

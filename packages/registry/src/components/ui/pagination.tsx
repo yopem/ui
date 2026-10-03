@@ -1,7 +1,7 @@
 "use client"
 
 import type { StyleXComponentProps } from "@registry/lib/stylex"
-import type * as React from "react"
+import type { ComponentProps } from "react"
 
 import { mergeProps } from "@base-ui/react/merge-props"
 import { useRender } from "@base-ui/react/use-render"
@@ -66,7 +66,7 @@ export function Pagination({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleXComponentProps<React.ComponentProps<"nav">>) {
+}: StyleXComponentProps<ComponentProps<"nav">>) {
   const props = restProps
   const xstyle = consumerXstyle
 
@@ -84,7 +84,7 @@ export function PaginationContent({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleXComponentProps<React.ComponentProps<"ul">>) {
+}: StyleXComponentProps<ComponentProps<"ul">>) {
   const props = restProps
   const xstyle = consumerXstyle
 
@@ -103,7 +103,7 @@ export function PaginationItem({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleXComponentProps<React.ComponentProps<"li">>) {
+}: StyleXComponentProps<ComponentProps<"li">>) {
   const props = restProps
   const xstyle = consumerXstyle
 
@@ -119,7 +119,7 @@ export type PaginationLinkProps = StyleXComponentProps<
   useRender.ComponentProps<"a">,
   {
     isActive?: boolean
-    size?: React.ComponentProps<typeof Button>["size"]
+    size?: ComponentProps<typeof Button>["size"]
   }
 >
 
@@ -162,7 +162,7 @@ export function PaginationPrevious({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleXComponentProps<React.ComponentProps<typeof PaginationLink>>) {
+}: StyleXComponentProps<ComponentProps<typeof PaginationLink>>) {
   const props = restProps
   const xstyle = consumerXstyle
 
@@ -184,7 +184,7 @@ export function PaginationNext({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleXComponentProps<React.ComponentProps<typeof PaginationLink>>) {
+}: StyleXComponentProps<ComponentProps<typeof PaginationLink>>) {
   const props = restProps
   const xstyle = consumerXstyle
 
@@ -206,7 +206,7 @@ export function PaginationEllipsis({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleXComponentProps<React.ComponentProps<"span">>) {
+}: StyleXComponentProps<ComponentProps<"span">>) {
   const props = restProps
   const xstyle = consumerXstyle
 

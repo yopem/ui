@@ -1,7 +1,7 @@
 "use client"
 
 import type { StyleXComponentProps } from "@registry/lib/stylex"
-import type * as React from "react"
+import type { ComponentPropsWithRef } from "react"
 
 import { mergeStylexProps, stylexProps } from "@registry/lib/stylex"
 import * as stylex from "@stylexjs/stylex"
@@ -36,7 +36,7 @@ const styles = stylex.create({
 export type AbsoluteCenterAxis = "both" | "horizontal" | "vertical"
 
 export type AbsoluteCenterProps = StyleXComponentProps<
-  React.ComponentPropsWithRef<"div">,
+  ComponentPropsWithRef<"div">,
   { axis?: AbsoluteCenterAxis }
 >
 

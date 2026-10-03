@@ -1,7 +1,7 @@
 "use client"
 
 import { isNumber, isString } from "@registry/lib/stylex"
-import { useCallback, useSyncExternalStore } from "react"
+import { useSyncExternalStore, useMemo } from "react"
 
 const BREAKPOINTS = {
   "2xl": 1536,
@@ -88,26 +88,31 @@ export function useMediaQuery(
 ): boolean {
   const mediaQuery = parseQuery(query)
 
-  const subscribe = useCallback(
-    (callback: () => void) => {
-      if (typeof window === "undefined")
-        return () => {
-          /* noop */
-        }
+  const subscribe = useMemo(
+    () =>
+      function subscribe(callback: () => void) {
+        if (typeof window === "undefined")
+          return () => {
+            /* noop */
+          }
 
-      const mql = window.matchMedia(mediaQuery)
-      mql.addEventListener("change", callback)
+        const mql = window.matchMedia(mediaQuery)
+        mql.addEventListener("change", callback)
 
-      return () => mql.removeEventListener("change", callback)
-    },
+        return () => mql.removeEventListener("change", callback)
+      },
     [mediaQuery],
   )
 
-  const getSnapshot = useCallback(() => {
-    if (typeof window === "undefined") return false
+  const getSnapshot = useMemo(
+    () =>
+      function getSnapshot() {
+        if (typeof window === "undefined") return false
 
-    return window.matchMedia(mediaQuery).matches
-  }, [mediaQuery])
+        return window.matchMedia(mediaQuery).matches
+      },
+    [mediaQuery],
+  )
 
   return useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot)
 }

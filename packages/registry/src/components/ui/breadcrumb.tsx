@@ -1,7 +1,7 @@
 "use client"
 
 import type { StyleXComponentProps } from "@registry/lib/stylex"
-import type * as React from "react"
+import type { ComponentProps } from "react"
 
 import { mergeProps } from "@base-ui/react/merge-props"
 import { useRender } from "@base-ui/react/use-render"
@@ -44,7 +44,7 @@ export function Breadcrumb({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleXComponentProps<React.ComponentProps<"nav">>) {
+}: StyleXComponentProps<ComponentProps<"nav">>) {
   const props = restProps
   const xstyle = consumerXstyle
 
@@ -63,8 +63,8 @@ export function BreadcrumbList({
   start,
   ...restProps
 }: StyleXComponentProps<
-  React.ComponentProps<"ol">,
-  Pick<React.ComponentProps<"ol">, "start">
+  ComponentProps<"ol">,
+  Pick<ComponentProps<"ol">, "start">
 >) {
   const props = restProps
   const xstyle = consumerXstyle
@@ -82,7 +82,7 @@ export function BreadcrumbItem({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleXComponentProps<React.ComponentProps<"li">>) {
+}: StyleXComponentProps<ComponentProps<"li">>) {
   const props = restProps
   const xstyle = consumerXstyle
 
@@ -119,7 +119,7 @@ export function BreadcrumbPage({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleXComponentProps<React.ComponentProps<"span">>) {
+}: StyleXComponentProps<ComponentProps<"span">>) {
   const props = restProps
   const xstyle = consumerXstyle
 
@@ -138,7 +138,7 @@ export function BreadcrumbSeparator({
   children,
   className,
   ...restProps
-}: StyleXComponentProps<React.ComponentProps<"li">>) {
+}: StyleXComponentProps<ComponentProps<"li">>) {
   const props = restProps
   const xstyle = consumerXstyle
 
@@ -162,7 +162,7 @@ export function BreadcrumbEllipsis({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleXComponentProps<React.ComponentProps<"span">>) {
+}: StyleXComponentProps<ComponentProps<"span">>) {
   const props = restProps
   const xstyle = consumerXstyle
 

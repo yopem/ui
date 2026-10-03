@@ -2,7 +2,7 @@
 
 import type { StyleXComponentProps } from "@registry/lib/stylex"
 import type { StyleXProps } from "@registry/lib/stylex"
-import type * as React from "react"
+import type { RefAttributes } from "react"
 
 import { Input as InputPrimitive } from "@base-ui/react/input"
 import {
@@ -177,7 +177,7 @@ const styles = stylex.create({
 })
 
 export type InputProps = StyleXComponentProps<
-  Omit<InputPrimitive.Props & React.RefAttributes<HTMLInputElement>, "size">,
+  Omit<InputPrimitive.Props & RefAttributes<HTMLInputElement>, "size">,
   {
     size?: "sm" | "default" | "lg" | number
     unstyled?: boolean

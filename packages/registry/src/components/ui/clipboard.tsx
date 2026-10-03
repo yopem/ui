@@ -6,7 +6,7 @@ import type { ComponentPropsWithRef, MouseEvent } from "react"
 import { mergeStylexProps, stylexProps } from "@registry/lib/stylex"
 import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
-import { useState, useCallback } from "react"
+import { useState, useMemo } from "react"
 
 const styles = stylex.create({
   button: {
@@ -65,29 +65,37 @@ export function Clipboard({
     null,
   )
 
-  const copyToClipboard = useCallback(async () => {
-    setStatus("pending")
+  const copyToClipboard = useMemo(
+    () =>
+      async function copyToClipboard() {
+        setStatus("pending")
 
-    try {
-      if (typeof navigator === "undefined" || !navigator.clipboard?.writeText) {
-        setStatus("error")
+        try {
+          if (
+            typeof navigator === "undefined" ||
+            !navigator.clipboard?.writeText
+          ) {
+            setStatus("error")
 
-        return
-      }
+            return
+          }
 
-      await navigator.clipboard.writeText(value)
-      setStatus("success")
-    } catch {
-      setStatus("error")
-    }
-  }, [setStatus, value])
+          await navigator.clipboard.writeText(value)
+          setStatus("success")
+        } catch {
+          setStatus("error")
+        }
+      },
+    [setStatus, value],
+  )
 
-  const handleClick = useCallback(
-    (event: MouseEvent<HTMLButtonElement>) => {
-      onClick?.(event)
+  const handleClick = useMemo(
+    () =>
+      function handleClick(event: MouseEvent<HTMLButtonElement>) {
+        onClick?.(event)
 
-      if (!event.defaultPrevented) void copyToClipboard()
-    },
+        if (!event.defaultPrevented) void copyToClipboard()
+      },
     [onClick, copyToClipboard],
   )
 

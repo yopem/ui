@@ -7,7 +7,7 @@ import { Link } from "@registry/components/ui/link"
 import { Text } from "@registry/components/ui/text"
 import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
-import { useCallback, useState } from "react"
+import { useState, useMemo } from "react"
 
 const styles = stylex.create({
   onThisPage: {
@@ -115,12 +115,13 @@ function listenForActiveSection(
 export function TableOfContents({ items }: { items: TocItem[] }) {
   const [activeUrl, setActiveUrl] = useState<string>()
 
-  const trackSections = useCallback(
-    (node: HTMLElement | null) => {
-      if (!node) return
+  const trackSections = useMemo(
+    () =>
+      function trackSections(node: HTMLElement | null) {
+        if (!node) return
 
-      return listenForActiveSection(items, setActiveUrl)
-    },
+        return listenForActiveSection(items, setActiveUrl)
+      },
     [items],
   )
 
