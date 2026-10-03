@@ -35,6 +35,39 @@ test("machine-readable documentation endpoints expose correct formats", async ({
   expect(guide).not.toContain("Manual installation")
 })
 
+test("design-system-first policy is published and discoverable", async ({
+  request,
+}, testInfo) => {
+  const response = await request.get("/docs/lint.md")
+  expect(response.status()).toBe(200)
+  const policy = await response.text()
+
+  for (const text of [
+    "Heading as",
+    "Box as",
+    "Native anchors and framework",
+    "links are excluded",
+    "Codeblock",
+    "styleComponents",
+    "conditional branches",
+  ])
+    expect(policy).toContain(text)
+
+  for (const [url, path] of [
+    ["/llms.txt", "/docs/lint.md"],
+    ["/sitemap.xml", "/docs/lint"],
+  ]) {
+    const index = await request.get(url)
+    expect(index.status()).toBe(200)
+    expect(await index.text()).toContain(path)
+  }
+
+  await testInfo.attach("design-system-first-policy", {
+    body: policy,
+    contentType: "text/markdown",
+  })
+})
+
 test("all component examples use consumer import paths", async ({
   request,
 }, testInfo) => {

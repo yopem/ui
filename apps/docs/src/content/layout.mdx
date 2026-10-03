@@ -7,9 +7,10 @@
 
 Need a wrapper? Start with Box. Use Stack for vertical groups, HStack for
 horizontal groups, Flex for custom alignment, and Grid for columns. Container
-constrains and centers page content. Use Link, Text, and Heading for meaningful
-text elements instead of styling a generic Box. Select a component below to see
-a live preview and copy its source.
+constrains and centers page content. Use Text and Heading for meaningful text
+instead of styling a generic Box. Prefer TanStack Router Link for application
+navigation; registry Link is optional and excluded from the default lint policy.
+Select a component below to see a live preview and copy its source.
 
 - [Box](/components/box): Div by default; `as` selects a semantic element with
   tag-specific events and refs. Applies default box sizing and minimum inline
@@ -51,8 +52,10 @@ a live preview and copy its source.
 Box defaults to div. Its `as` prop selects the native tag and its event/ref
 types. Input size, image width and height, and meta content remain native
 attributes. Use `xstyle` for styling. Heading restricts `as` to heading tags.
-Link performs native navigation by default. Pass a TanStack Router or Next.js
-Link through `render` to preserve framework navigation.
+Link performs native navigation by default. Use TanStack Router Link directly
+for application navigation. Native anchors and framework links remain valid;
+there is no requirement to wrap them in registry Link. If deliberately using
+registry Link, pass a framework Link through `render` to preserve navigation.
 
 ### Semantic components
 

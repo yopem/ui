@@ -90,7 +90,7 @@ const DEFAULT_COMPONENT_SOURCES = [
 ]
 
 export const styleComponentNames =
-  "AbsoluteCenter Accordion AccordionContent AccordionItem AccordionPanel AccordionTrigger Alert AlertAction AlertDescription AlertDialogBackdrop AlertDialogClose AlertDialogContent AlertDialogDescription AlertDialogFooter AlertDialogHeader AlertDialogOverlay AlertDialogPopup AlertDialogTitle AlertDialogTrigger AlertDialogViewport AlertTitle AnchoredToastProvider AutocompleteClear AutocompleteEmpty AutocompleteGroup AutocompleteGroupLabel AutocompleteInput AutocompleteItem AutocompleteList AutocompletePopup AutocompleteRow AutocompleteSeparator AutocompleteStatus AutocompleteTrigger Avatar AvatarFallback AvatarImage Badge Bleed Blockquote Box Breadcrumb BreadcrumbEllipsis BreadcrumbItem BreadcrumbLink BreadcrumbList BreadcrumbPage BreadcrumbSeparator Button ButtonGroup ButtonGroupSeparator ButtonGroupText Calendar Card CardAction CardContent CardDescription CardFooter CardFrame CardFrameAction CardFrameDescription CardFrameFooter CardFrameHeader CardFrameTitle CardHeader CardPanel CardTitle Center Checkbox CheckboxGroup Checkmark Clipboard Codeblock Collapsible CollapsibleContent CollapsiblePanel CollapsibleTrigger ComboboxChip ComboboxChipRemove ComboboxChips ComboboxChipsInput ComboboxClear ComboboxEmpty ComboboxGroup ComboboxGroupLabel ComboboxInput ComboboxItem ComboboxList ComboboxPopup ComboboxRow ComboboxSeparator ComboboxStatus ComboboxTrigger CommandDialogBackdrop CommandDialogPopup CommandDialogTrigger CommandDialogViewport CommandEmpty CommandFooter CommandGroup CommandGroupLabel CommandInput CommandItem CommandList CommandPanel CommandSeparator CommandShortcut ContextMenuCheckboxItem ContextMenuGroup ContextMenuGroupLabel ContextMenuItem ContextMenuLinkItem ContextMenuPopup ContextMenuRadioGroup ContextMenuRadioItem ContextMenuSeparator ContextMenuShortcut ContextMenuSubPopup ContextMenuSubTrigger ContextMenuTrigger CursorGrowIcon DialogBackdrop DialogClose DialogContent DialogDescription DialogFooter DialogHeader DialogOverlay DialogPanel DialogPopup DialogTitle DialogTrigger DialogViewport DrawerBackdrop DrawerBar DrawerClose DrawerContent DrawerDescription DrawerFooter DrawerHeader DrawerMenu DrawerMenuCheckboxItem DrawerMenuGroup DrawerMenuGroupLabel DrawerMenuItem DrawerMenuRadioGroup DrawerMenuRadioItem DrawerMenuSeparator DrawerMenuTrigger DrawerPanel DrawerPopup DrawerSwipeArea DrawerTitle DrawerTrigger DrawerViewport DropdownMenuCheckboxItem DropdownMenuContent DropdownMenuGroup DropdownMenuItem DropdownMenuLabel DropdownMenuRadioGroup DropdownMenuRadioItem DropdownMenuSeparator DropdownMenuShortcut DropdownMenuSubContent DropdownMenuSubTrigger DropdownMenuTrigger Em Empty EmptyContent EmptyDescription EmptyHeader EmptyMedia EmptyTitle Field FieldControl FieldDescription FieldError FieldItem FieldLabel Fieldset FieldsetLegend Flex Float Form Frame FrameDescription FrameFooter FrameHeader FramePanel FrameTitle Grid Group GroupSeparator GroupText HStack Heading Highlight HoverCardContent HoverCardTrigger Input InputGroup InputGroupAddon InputGroupInput InputGroupText InputGroupTextarea Kbd KbdGroup Label Link Mark Marquee MenuCheckboxItem MenuGroup MenuGroupLabel MenuItem MenuLinkItem MenuPopup MenuRadioGroup MenuRadioItem MenuSeparator MenuShortcut MenuSubPopup MenuSubTrigger MenuTrigger Meter MeterIndicator MeterLabel MeterTrack MeterValue NativeSelect NumberField NumberFieldDecrement NumberFieldGroup NumberFieldIncrement NumberFieldInput NumberFieldScrubArea OTPField OTPFieldInput OTPFieldSeparator Pagination PaginationContent PaginationEllipsis PaginationItem PaginationLink PaginationNext PaginationPrevious PopoverClose PopoverContent PopoverDescription PopoverPopup PopoverTitle PopoverTrigger PreviewCardPopup PreviewCardTrigger Progress ProgressIndicator ProgressLabel ProgressTrack ProgressValue Prose Radio RadioGroup RadioGroupItem Rating ScrollArea ScrollBar SelectButton SelectContent SelectGroup SelectGroupLabel SelectItem SelectLabel SelectPopup SelectSeparator SelectTrigger SelectValue Separator SheetBackdrop SheetClose SheetContent SheetDescription SheetFooter SheetHeader SheetOverlay SheetPanel SheetPopup SheetTitle SheetTrigger SheetViewport Sidebar SidebarContent SidebarFooter SidebarGroup SidebarGroupAction SidebarGroupContent SidebarGroupLabel SidebarHeader SidebarInput SidebarInset SidebarMenu SidebarMenuAction SidebarMenuBadge SidebarMenuButton SidebarMenuItem SidebarMenuSkeleton SidebarMenuSub SidebarMenuSubButton SidebarMenuSubItem SidebarMenuText SidebarProvider SidebarRail SidebarSeparator SidebarTrigger Skeleton Slider SliderValue Spinner Stack Stat StatDescription StatLabel StatValue Steps StepsItem Switch Table TableBody TableCaption TableCell TableFooter TableHead TableHeader TableRow Tabs TabsContent TabsList TabsPanel TabsTab TabsTrigger Text Textarea ToastProvider Toggle ToggleGroup ToggleGroupItem ToggleGroupSeparator Toolbar ToolbarButton ToolbarGroup ToolbarInput ToolbarLink ToolbarSeparator TooltipContent TooltipPopup TooltipTrigger VStack Wrap".split(
+  "AbsoluteCenter Accordion AccordionContent AccordionItem AccordionPanel AccordionTrigger Alert AlertAction AlertDescription AlertDialogBackdrop AlertDialogClose AlertDialogContent AlertDialogDescription AlertDialogFooter AlertDialogHeader AlertDialogOverlay AlertDialogPopup AlertDialogTitle AlertDialogTrigger AlertDialogViewport AlertTitle AnchoredToastProvider AutocompleteClear AutocompleteEmpty AutocompleteGroup AutocompleteGroupLabel AutocompleteInput AutocompleteItem AutocompleteList AutocompletePopup AutocompleteRow AutocompleteSeparator AutocompleteStatus AutocompleteTrigger Avatar AvatarFallback AvatarImage Badge Bleed Blockquote Box Breadcrumb BreadcrumbEllipsis BreadcrumbItem BreadcrumbLink BreadcrumbList BreadcrumbPage BreadcrumbSeparator Button ButtonGroup ButtonGroupSeparator ButtonGroupText Calendar Card CardAction CardContent CardDescription CardFooter CardFrame CardFrameAction CardFrameDescription CardFrameFooter CardFrameHeader CardFrameTitle CardHeader CardPanel CardTitle Center Checkbox CheckboxGroup Checkmark Clipboard Codeblock Collapsible CollapsibleContent CollapsiblePanel CollapsibleTrigger ComboboxChip ComboboxChipRemove ComboboxChips ComboboxChipsInput ComboboxClear ComboboxEmpty ComboboxGroup ComboboxGroupLabel ComboboxInput ComboboxItem ComboboxList ComboboxPopup ComboboxRow ComboboxSeparator ComboboxStatus ComboboxTrigger CommandDialogBackdrop CommandDialogPopup CommandDialogTrigger CommandDialogViewport CommandEmpty CommandFooter CommandGroup CommandGroupLabel CommandInput CommandItem CommandList CommandPanel CommandSeparator CommandShortcut ContextMenuCheckboxItem ContextMenuGroup ContextMenuGroupLabel ContextMenuItem ContextMenuLinkItem ContextMenuPopup ContextMenuRadioGroup ContextMenuRadioItem ContextMenuSeparator ContextMenuShortcut ContextMenuSubPopup ContextMenuSubTrigger ContextMenuTrigger CursorGrowIcon DialogBackdrop DialogClose DialogContent DialogDescription DialogFooter DialogHeader DialogOverlay DialogPanel DialogPopup DialogTitle DialogTrigger DialogViewport DrawerBackdrop DrawerBar DrawerClose DrawerContent DrawerDescription DrawerFooter DrawerHeader DrawerMenu DrawerMenuCheckboxItem DrawerMenuGroup DrawerMenuGroupLabel DrawerMenuItem DrawerMenuRadioGroup DrawerMenuRadioItem DrawerMenuSeparator DrawerMenuTrigger DrawerPanel DrawerPopup DrawerSwipeArea DrawerTitle DrawerTrigger DrawerViewport DropdownMenuCheckboxItem DropdownMenuContent DropdownMenuGroup DropdownMenuItem DropdownMenuLabel DropdownMenuRadioGroup DropdownMenuRadioItem DropdownMenuSeparator DropdownMenuShortcut DropdownMenuSubContent DropdownMenuSubTrigger DropdownMenuTrigger Em Empty EmptyContent EmptyDescription EmptyHeader EmptyMedia EmptyTitle Field FieldControl FieldDescription FieldError FieldItem FieldLabel Fieldset FieldsetLegend Flex Float Form Frame FrameDescription FrameFooter FrameHeader FramePanel FrameTitle Grid Group GroupSeparator GroupText HStack Heading Highlight HoverCardContent HoverCardTrigger Input InputGroup InputGroupAddon InputGroupInput InputGroupText InputGroupTextarea Kbd KbdGroup Label Mark Marquee MenuCheckboxItem MenuGroup MenuGroupLabel MenuItem MenuLinkItem MenuPopup MenuRadioGroup MenuRadioItem MenuSeparator MenuShortcut MenuSubPopup MenuSubTrigger MenuTrigger Meter MeterIndicator MeterLabel MeterTrack MeterValue NativeSelect NumberField NumberFieldDecrement NumberFieldGroup NumberFieldIncrement NumberFieldInput NumberFieldScrubArea OTPField OTPFieldInput OTPFieldSeparator Pagination PaginationContent PaginationEllipsis PaginationItem PaginationLink PaginationNext PaginationPrevious PopoverClose PopoverContent PopoverDescription PopoverPopup PopoverTitle PopoverTrigger PreviewCardPopup PreviewCardTrigger Progress ProgressIndicator ProgressLabel ProgressTrack ProgressValue Prose Radio RadioGroup RadioGroupItem Rating ScrollArea ScrollBar SelectButton SelectContent SelectGroup SelectGroupLabel SelectItem SelectLabel SelectPopup SelectSeparator SelectTrigger SelectValue Separator SheetBackdrop SheetClose SheetContent SheetDescription SheetFooter SheetHeader SheetOverlay SheetPanel SheetPopup SheetTitle SheetTrigger SheetViewport Sidebar SidebarContent SidebarFooter SidebarGroup SidebarGroupAction SidebarGroupContent SidebarGroupLabel SidebarHeader SidebarInput SidebarInset SidebarMenu SidebarMenuAction SidebarMenuBadge SidebarMenuButton SidebarMenuItem SidebarMenuSkeleton SidebarMenuSub SidebarMenuSubButton SidebarMenuSubItem SidebarMenuText SidebarProvider SidebarRail SidebarSeparator SidebarTrigger Skeleton Slider SliderValue Spinner Stack Stat StatDescription StatLabel StatValue Steps StepsItem Switch Table TableBody TableCaption TableCell TableFooter TableHead TableHeader TableRow Tabs TabsContent TabsList TabsPanel TabsTab TabsTrigger Text Textarea ToastProvider Toggle ToggleGroup ToggleGroupItem ToggleGroupSeparator Toolbar ToolbarButton ToolbarGroup ToolbarInput ToolbarLink ToolbarSeparator TooltipContent TooltipPopup TooltipTrigger VStack Wrap".split(
     " ",
   )
 
@@ -723,16 +723,33 @@ const policySchema = {
   type: "object",
 }
 
+const nativePrimitiveRecommendations = new Map<string, string>([
+  [
+    "div",
+    "Box (or Flex, Stack, HStack, VStack, Grid, Center, Container, AbsoluteCenter, Bleed, Float, or Wrap for its layout purpose)",
+  ],
+  ..."span main section article aside header footer nav address figure figcaption search hgroup ul ol li dl dt dd pre"
+    .split(" ")
+    .map((tag): [string, string] => [tag, `Box as="${tag}"`]),
+  ["p", "Text"],
+  ["blockquote", "Blockquote"],
+  ["em", "Em"],
+  ["mark", "Mark (or Highlight for matching words)"],
+  ..."h1 h2 h3 h4 h5 h6"
+    .split(" ")
+    .map((tag): [string, string] => [tag, `Heading as="${tag}"`]),
+])
+
 const preferLayoutPrimitivesRule: Rule = {
   meta: {
     type: "problem",
     docs: {
       description:
-        "Prefer layout primitives to presentational native elements.",
+        "Prefer design-system layout and typography primitives while preserving native semantics.",
     },
     messages: {
       nativeElement:
-        "Use a layout primitive such as Box, Flex, Grid, Center, or Stack instead of <{{element}}>.",
+        "Use {{replacement}} instead of <{{element}}>. Preserve native props and refs; use xstyle for visual overrides.",
     },
     schema: [
       {
@@ -746,10 +763,10 @@ const preferLayoutPrimitivesRule: Rule = {
   },
   create(context: RuleContext) {
     const elements = new Set(
-      getStringArray(getProperty(context.options[0], "elements"), [
-        "div",
-        "span",
-      ]),
+      getStringArray(
+        getProperty(context.options[0], "elements"),
+        nativePrimitiveRecommendations.keys(),
+      ),
     )
 
     return {
@@ -758,7 +775,12 @@ const preferLayoutPrimitivesRule: Rule = {
 
         if (element !== null && elements.has(element)) {
           context.report({
-            data: { element },
+            data: {
+              element,
+              replacement:
+                nativePrimitiveRecommendations.get(element) ??
+                `Box as="${element}"`,
+            },
             messageId: "nativeElement",
             node: node.name,
           })
