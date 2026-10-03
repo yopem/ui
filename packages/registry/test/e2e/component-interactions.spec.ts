@@ -34,6 +34,33 @@ test("dialog opens from keyboard, closes with Escape, and restores focus", async
   await expect(trigger).toBeFocused()
 })
 
+test("command palette focuses input on open and restores trigger focus", async ({
+  page,
+}) => {
+  await openPreview(page, "command")
+  const trigger = page.getByRole("button", { name: /Open Command Palette/ })
+  await expect(trigger).toBeEnabled()
+  await expect(trigger).not.toBeFocused()
+  await trigger.focus()
+  await page.keyboard.press("Enter")
+  const input = page.getByPlaceholder("Search for apps and commands...")
+  await expect(input).toBeFocused()
+  await input.fill("Figma")
+  await page.getByRole("option", { name: /Figma/ }).click()
+  await expect(input).toBeHidden()
+  await expect(trigger).toBeFocused()
+  await trigger.click()
+  await expect(input).toBeFocused()
+  await page.keyboard.press("Escape")
+  await expect(input).toBeHidden()
+  await expect(trigger).toBeFocused()
+  await page.keyboard.press("Control+j")
+  await expect(input).toBeFocused()
+  await page.keyboard.press("Control+j")
+  await expect(input).toBeHidden()
+  await expect(trigger).toBeFocused()
+})
+
 test("tabs support arrow-key navigation", async ({ page }) => {
   await openPreview(page, "tabs")
   const firstTab = page.getByRole("tab", { name: "Tab 1" })

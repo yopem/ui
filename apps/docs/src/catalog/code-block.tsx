@@ -4,7 +4,7 @@ import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import { useHydrated } from "@tanstack/react-router"
 import { CheckIcon, CopyIcon } from "lucide-react"
-import { lazy, Suspense, useState } from "react"
+import { lazy, Suspense, useState, useCallback } from "react"
 
 import { stripStandaloneComments } from "@/catalog/source-code"
 import { useCopyToClipboard } from "@/hooks/use-copy-to-clipboard"
@@ -221,6 +221,13 @@ export function CopyableCode({
       </ScrollArea>
     )
 
+  const handleCopy = useCallback(
+    () => void copyToClipboard(cleanCode),
+    [copyToClipboard, cleanCode],
+  )
+
+  const handleClick = useCallback(() => setExpanded(true), [setExpanded])
+
   const contents = (
     <>
       <CodeBlockControls
@@ -228,7 +235,7 @@ export function CopyableCode({
         hydrated={hydrated}
         isCopied={isCopied}
         title={title}
-        onCopy={() => void copyToClipboard(cleanCode)}
+        onCopy={handleCopy}
       />
       {scrollArea}
       {collapsible && !expanded ? (
@@ -236,7 +243,7 @@ export function CopyableCode({
           as="button"
           xstyle={primitiveStyles.button}
           type="button"
-          onClick={() => setExpanded(true)}
+          onClick={handleClick}
         >
           View code
         </Box>

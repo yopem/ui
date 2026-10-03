@@ -44,6 +44,8 @@ function ThemeFiles() {
   )
 }
 
+const themingComponents = { ThemeFiles }
+
 function Theming() {
   return (
     <GuidePage
@@ -51,7 +53,7 @@ function Theming() {
       description="Most apps only need to edit the shared tokens. Use xstyle for one-off changes. Add the theme runtime only when users need to switch between light, dark, and system modes."
       source={source}
       Content={Content}
-      components={{ ThemeFiles }}
+      components={themingComponents}
     />
   )
 }

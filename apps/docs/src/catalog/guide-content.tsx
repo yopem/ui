@@ -8,7 +8,7 @@ import { Text } from "@registry/components/ui/text"
 import { isString } from "@registry/lib/stylex"
 import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
-import { isValidElement } from "react"
+import { isValidElement, useMemo } from "react"
 
 import { CopyableCode } from "./code-block"
 import { DocumentationLayout } from "./docs-layout"
@@ -188,13 +188,18 @@ export function GuidePage({
   Content: (props: { components?: MDXComponents }) => ReactNode
   components?: MDXComponents
 }) {
+  const guidePageComponents = useMemo(
+    () => ({ ...guideComponents, ...components }),
+    [components],
+  )
+
   return (
     <DocumentationLayout>
       <DocsPage toc={guideToc(source)}>
         <DocsTitle>{title}</DocsTitle>
         <DocsDescription>{description}</DocsDescription>
         <DocsBody>
-          <Content components={{ ...guideComponents, ...components }} />
+          <Content components={guidePageComponents} />
         </DocsBody>
       </DocsPage>
     </DocumentationLayout>

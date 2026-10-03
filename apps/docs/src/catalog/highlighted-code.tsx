@@ -12,6 +12,7 @@ import tsx from "@shikijs/langs/tsx"
 import typescript from "@shikijs/langs/typescript"
 import githubDark from "@shikijs/themes/github-dark"
 import githubLight from "@shikijs/themes/github-light"
+import { useMemo } from "react"
 
 const highlighter = createHighlighterCoreSync({
   engine: createJavaScriptRegexEngine(),
@@ -71,10 +72,10 @@ export function HighlightedCode({
   title: string
   language?: string
 }) {
-  return (
-    <Box
-      {...props}
-      dangerouslySetInnerHTML={{ __html: highlightCode(code, title, language) }}
-    />
+  const highlightedHtml = useMemo(
+    () => ({ __html: highlightCode(code, title, language) }),
+    [code, title, language],
   )
+
+  return <Box {...props} dangerouslySetInnerHTML={highlightedHtml} />
 }

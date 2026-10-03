@@ -34,6 +34,8 @@ function InstallationCommands() {
   )
 }
 
+const installationComponents = { InstallationCommands }
+
 function Installation() {
   return (
     <GuidePage
@@ -41,7 +43,7 @@ function Installation() {
       description="Initialize supported frameworks with one CLI command."
       source={source}
       Content={Content}
-      components={{ InstallationCommands }}
+      components={installationComponents}
     />
   )
 }

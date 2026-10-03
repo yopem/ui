@@ -7,7 +7,7 @@ import { ScrollArea } from "@registry/components/ui/scroll-area"
 import { Text } from "@registry/components/ui/text"
 import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
-import { useState } from "react"
+import { useCallback, useMemo, useState } from "react"
 
 import { CopyableCode } from "./code-block"
 
@@ -370,6 +370,43 @@ function PartReference({
   const [showVariants, setShowVariants] = useState(false)
   const [showSignatures, setShowSignatures] = useState(false)
 
+  const parameters = useMemo(
+    () =>
+      part.parameters.map((parameter) => ({
+        ...parameter,
+        default: parameter.default ?? undefined,
+      })),
+    [part.parameters],
+  )
+
+  const variants = useMemo(
+    () =>
+      part.propVariants.map((variant) => ({
+        ...variant,
+        properties: variant.props.map((prop) => ({
+          ...part.props.find((entry) => entry.name === prop.name),
+          ...prop,
+          description:
+            part.props.find((entry) => entry.name === prop.name)?.description ??
+            "",
+          source: part.source,
+        })),
+      })),
+    [part.propVariants, part.props, part.source],
+  )
+
+  const toggleVariants = useCallback(
+    (event: React.SyntheticEvent<HTMLDetailsElement>) =>
+      setShowVariants(event.currentTarget.open),
+    [],
+  )
+
+  const toggleSignatures = useCallback(
+    (event: React.SyntheticEvent<HTMLDetailsElement>) =>
+      setShowSignatures(event.currentTarget.open),
+    [],
+  )
+
   if (alias)
     return (
       <Box
@@ -406,13 +443,7 @@ function PartReference({
           <Heading as="h4" xstyle={styles.h4}>
             Arguments
           </Heading>
-          <PropertiesTable
-            label="Argument"
-            properties={part.parameters.map((parameter) => ({
-              ...parameter,
-              default: parameter.default ?? undefined,
-            }))}
-          />
+          <PropertiesTable label="Argument" properties={parameters} />
           {part.parameters.map((parameter) =>
             parameter.properties.length ? (
               <Box key={parameter.name}>
@@ -446,16 +477,12 @@ function PartReference({
         </>
       ) : null}
       {part.propVariants.length ? (
-        <Box
-          as="details"
-          xstyle={styles.details2}
-          onToggle={(event) => setShowVariants(event.currentTarget.open)}
-        >
+        <Box as="details" xstyle={styles.details2} onToggle={toggleVariants}>
           <Box as="summary" xstyle={styles.summary2}>
             Accepted prop combinations
           </Box>
           {showVariants
-            ? part.propVariants.map((variant, index) => (
+            ? variants.map((variant, index) => (
                 <Box key={variant.type + index}>
                   <Heading as="h4" xstyle={styles.h44}>
                     Combination {index + 1}
@@ -463,26 +490,13 @@ function PartReference({
                   <Text xstyle={styles.paragraph3}>
                     Required: {variant.required.join(", ") || "None"}.
                   </Text>
-                  <PropertiesTable
-                    properties={variant.props.map((prop) => ({
-                      ...part.props.find((entry) => entry.name === prop.name),
-                      ...prop,
-                      description:
-                        part.props.find((entry) => entry.name === prop.name)
-                          ?.description ?? "",
-                      source: part.source,
-                    }))}
-                  />
+                  <PropertiesTable properties={variant.properties} />
                 </Box>
               ))
             : null}
         </Box>
       ) : null}
-      <Box
-        as="details"
-        xstyle={styles.details3}
-        onToggle={(event) => setShowSignatures(event.currentTarget.open)}
-      >
+      <Box as="details" xstyle={styles.details3} onToggle={toggleSignatures}>
         <Box as="summary" xstyle={styles.summary3}>
           Type signature
         </Box>

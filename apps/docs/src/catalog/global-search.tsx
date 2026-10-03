@@ -106,68 +106,87 @@ export function GlobalSearch() {
   const inputRef = useRef<HTMLInputElement>(null)
   const triggerRef = useRef<HTMLButtonElement>(null)
 
+  const shortcutCleanupRef = useRef<(() => void) | null>(null)
+
   const registerTrigger = useCallback((node: HTMLButtonElement | null) => {
+    shortcutCleanupRef.current?.()
+    shortcutCleanupRef.current = null
     triggerRef.current = node
 
-    if (!node) return
-
-    const stopListening = listenForSearchShortcut(() => {
-      setOpen((value) => !value)
-    })
-
-    return () => {
+    if (!node) {
       controllerRef.current?.abort()
-      stopListening()
-    }
-  }, [])
-
-  async function search(nextQuery: string) {
-    controllerRef.current?.abort()
-    const trimmedQuery = nextQuery.trim()
-
-    if (!trimmedQuery) {
-      setResults([])
-      setStatus("idle")
 
       return
     }
 
-    const controller = new AbortController()
-    controllerRef.current = controller
-    setResults([])
-    setStatus("loading")
+    shortcutCleanupRef.current = listenForSearchShortcut(() => {
+      setOpen((value) => !value)
+    })
+  }, [])
 
-    try {
-      const data = await searchClient.search(trimmedQuery)
+  const search = useCallback(
+    async (nextQuery: string) => {
+      controllerRef.current?.abort()
+      const trimmedQuery = nextQuery.trim()
 
-      const parsed = searchResultsSchema.safeParse(data)
+      if (!trimmedQuery) {
+        setResults([])
+        setStatus("idle")
 
-      if (!parsed.success) throw new Error("Invalid search response")
-
-      if (!controller.signal.aborted) {
-        setResults(parsed.data)
-        setStatus("ready")
+        return
       }
-    } catch {
-      if (!controller.signal.aborted) {
-        // Fumadocs caches rejected index loads by URL; retry with a fresh key.
-        searchClient = staticClient({
-          from: `/api/search.json?retry=${Date.now()}`,
-        })
-        setStatus("error")
+
+      const controller = new AbortController()
+      controllerRef.current = controller
+      setResults([])
+      setStatus("loading")
+
+      try {
+        const data = await searchClient.search(trimmedQuery)
+
+        const parsed = searchResultsSchema.safeParse(data)
+
+        if (!parsed.success) throw new Error("Invalid search response")
+
+        if (!controller.signal.aborted) {
+          setResults(parsed.data)
+          setStatus("ready")
+        }
+      } catch {
+        if (!controller.signal.aborted) {
+          // Fumadocs caches rejected index loads by URL; retry with a fresh key.
+          searchClient = staticClient({
+            from: `/api/search.json?retry=${Date.now()}`,
+          })
+          setStatus("error")
+        }
       }
-    }
-  }
+    },
+    [controllerRef, setResults, setStatus],
+  )
+
+  const handleOpenChange = useCallback(
+    (value: boolean) => {
+      setOpen(value)
+
+      if (!value) controllerRef.current?.abort()
+    },
+    [setOpen, controllerRef],
+  )
+
+  const handleChange = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      const nextQuery = event.target.value
+      setQuery(nextQuery)
+      void search(nextQuery)
+    },
+    [setQuery, search],
+  )
+
+  const handleClick = useCallback(() => setOpen(false), [setOpen])
 
   return (
-    <Dialog
-      open={open}
-      onOpenChange={(value) => {
-        setOpen(value)
-
-        if (!value) controllerRef.current?.abort()
-      }}
-    >
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger
         disabled={!hydrated}
         render={
@@ -203,11 +222,7 @@ export function GlobalSearch() {
           type="search"
           value={query}
           placeholder="Search components, previews, and guides…"
-          onChange={(event) => {
-            const nextQuery = event.target.value
-            setQuery(nextQuery)
-            void search(nextQuery)
-          }}
+          onChange={handleChange}
         />
         <Box as="output" aria-live="polite" xstyle={primitiveStyles.output}>
           {status === "error" ? (
@@ -234,7 +249,7 @@ export function GlobalSearch() {
                   <Box as="li" key={result.id}>
                     <Link
                       to={result.url}
-                      onClick={() => setOpen(false)}
+                      onClick={handleClick}
                       {...stylex.props(styles.result)}
                     >
                       {result.breadcrumbs?.length ? (

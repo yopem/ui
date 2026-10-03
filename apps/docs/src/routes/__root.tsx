@@ -95,6 +95,15 @@ function NotFoundPage() {
   )
 }
 
+const rootDocumentConfig = { position: "bottom-right" } as const
+
+const rootDocumentPlugins = [
+  {
+    name: "TanStack Router",
+    render: <TanStackRouterDevtoolsPanel />,
+  },
+]
+
 function RootDocument({ children }: { children: React.ReactNode }) {
   const isTestMode = import.meta.env.MODE === "test"
 
@@ -115,13 +124,8 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         </ThemeProvider>
         {import.meta.env.DEV && !isTestMode ? (
           <TanStackDevtools
-            config={{ position: "bottom-right" }}
-            plugins={[
-              {
-                name: "TanStack Router",
-                render: <TanStackRouterDevtoolsPanel />,
-              },
-            ]}
+            config={rootDocumentConfig}
+            plugins={rootDocumentPlugins}
           />
         ) : null}
         <Scripts />

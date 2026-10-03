@@ -6,6 +6,7 @@ import {
   type tokens,
 } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
+import { useMemo } from "react"
 
 export type Theme = "dark" | "light" | "system"
 
@@ -98,5 +99,7 @@ export function ThemeScript({
 
   const script = `(()=>{const c=${config},r=document.documentElement;let t=c.defaultTheme;try{const s=localStorage.getItem(c.storageKey);if(s==="light"||s==="dark"||s==="system")t=s}catch{}const v=t==="system"?(matchMedia(c.media).matches?"dark":"light"):t;r.classList.remove(...c.classes.light,...c.classes.dark);r.classList.add(...c.classes[v]);r.dataset.theme=v})()`
 
-  return <script dangerouslySetInnerHTML={{ __html: script }} nonce={nonce} />
+  const scriptHtml = useMemo(() => ({ __html: script }), [script])
+
+  return <script dangerouslySetInnerHTML={scriptHtml} nonce={nonce} />
 }

@@ -5,7 +5,7 @@ import { Text } from "@registry/components/ui/text"
 import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import { Link, createFileRoute } from "@tanstack/react-router"
-import { useState } from "react"
+import { useState, useCallback } from "react"
 
 import { catalog } from "@/catalog/components"
 import { DocumentationLayout } from "@/catalog/docs-layout"
@@ -82,17 +82,28 @@ export const Route = createFileRoute("/components/")({
   component: ComponentsPage,
 })
 
+const catalogEntries = catalog.map((item) => ({
+  ...item,
+  params: { name: item.slug },
+}))
+
 function ComponentsPage() {
   const [query, setQuery] = useState("")
   const normalizedQuery = query.trim().toLocaleLowerCase()
 
   const results = normalizedQuery
-    ? catalog.filter((item) =>
+    ? catalogEntries.filter((item) =>
         `${item.title} ${item.slug}`
           .toLocaleLowerCase()
           .includes(normalizedQuery),
       )
-    : catalog
+    : catalogEntries
+
+  const handleChange = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) =>
+      setQuery(event.target.value),
+    [setQuery],
+  )
 
   return (
     <DocumentationLayout>
@@ -108,7 +119,7 @@ function ComponentsPage() {
               as="input"
               xstyle={styles.searchComponents}
               aria-label="Search components"
-              onChange={(event) => setQuery(event.target.value)}
+              onChange={handleChange}
               placeholder="Search components…"
               type="search"
               value={query}
@@ -117,9 +128,9 @@ function ComponentsPage() {
           <Grid xstyle={styles.grid}>
             {results.map((item) => (
               <Link
-                {...stylex.props(catalogStyles.card)}
                 key={item.slug}
-                params={{ name: item.slug }}
+                {...stylex.props(catalogStyles.card)}
+                params={item.params}
                 preload="intent"
                 to="/components/$name"
               >
