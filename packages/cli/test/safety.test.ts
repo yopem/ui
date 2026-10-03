@@ -638,7 +638,7 @@ for (const framework of ["vite", "next"] as const) {
           run() {
             calls++
 
-            if (calls === 2) throw new Error("init dependency failed")
+            if (calls === 1) throw new Error("init dependency failed")
 
             return Promise.resolve()
           },
@@ -672,7 +672,7 @@ for (const path of ["src/main.tsx", "postcss.config.cjs"]) {
           cwd: project.root,
           fetcher: project.fetcher,
           run() {
-            if (++calls === 2)
+            if (++calls === 1)
               writeFileSync(join(project.root, path), "concurrent edit\n")
 
             return Promise.resolve()
@@ -741,7 +741,7 @@ test("init rechecks retired symlink after dependencies without following it", as
         cwd: project.root,
         fetcher: project.fetcher,
         run() {
-          if (++calls === 2) {
+          if (++calls === 1) {
             rmSync(join(project.root, "postcss.config.cjs"))
             symlinkSync(
               join(project.root, "outside.txt"),
@@ -774,7 +774,7 @@ test("Next scripts conflict is detected before any config commits", async () => 
         cwd: project.root,
         fetcher: project.fetcher,
         run() {
-          if (++calls === 2) {
+          if (++calls === 1) {
             const value = JSON.parse(project.read("package.json"))
             value.scripts.build = "next build --debug"
             writeFileSync(

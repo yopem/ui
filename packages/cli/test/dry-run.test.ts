@@ -178,7 +178,7 @@ test("new dry add validates dependencies, plans all writes and matches real inst
     expect(result.preview?.files).toEqual(
       [...paths, "ui.json"].map((path) => ({ path, action: "write" })),
     )
-    expect(result.preview?.dependencies).toEqual(["react", "@stylexjs/stylex"])
+    expect(result.preview?.dependencies).toEqual(["@stylexjs/stylex"])
     expect(result.preview?.devDependencies).toEqual(["typescript"])
     expect(await installItem("button", project.options)).toEqual({
       installed: 3,
@@ -578,7 +578,7 @@ for (const state of ["new", "conflicts", "force"] as const) {
       expect(stderr).toBe("")
       expect(stdout).toContain("No files written")
       expect(stdout).not.toContain("Installed ")
-      expect(stdout).toContain("Runtime dependencies: react, @stylexjs/stylex")
+      expect(stdout).toContain("Runtime dependencies: @stylexjs/stylex")
       expect(stdout).toContain("Dev dependencies: typescript")
 
       for (const path of paths) expect(stdout).toContain(path)

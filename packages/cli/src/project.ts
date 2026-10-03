@@ -21,7 +21,7 @@ export function isPackageName(value: unknown): value is string {
   )
 }
 
-async function readPackage(root: string): Promise<JsonObject> {
+export async function readPackage(root: string): Promise<JsonObject> {
   if (!(await existingFile(root, "package.json"))) return {}
 
   const value: JsonValue = JSON.parse(
@@ -220,4 +220,175 @@ export async function packageRunner(
       throw new Error(`${manager} ${command} failed`)
     }
   }
+}
+
+interface PendingDependencies {
+  dependencies: string[]
+  devDependencies: string[]
+}
+
+interface Requirement {
+  name: string
+  spec: string
+  argument: string
+}
+
+function requirement(argument: string): Requirement {
+  const separator = argument.indexOf("@", 1)
+  const name = separator < 0 ? argument : argument.slice(0, separator)
+  const spec = separator < 0 ? "" : argument.slice(separator + 1)
+
+  if (!isPackageName(name) || (separator >= 0 && !spec)) {
+    throw new Error(`Invalid package dependency: ${argument}`)
+  }
+
+  return { name, spec, argument }
+}
+
+function bounds(spec: string) {
+  const match = spec
+    .trim()
+    .match(/^(\^|~)?(\d+)(?:\.(\d+|[xX*]))?(?:\.(\d+|[xX*]))?$/)
+
+  if (!match) return null
+  const major = Number(match[2])
+  const hasMinor = match[3] !== undefined && /^\d+$/.test(match[3])
+  const hasPatch = match[4] !== undefined && /^\d+$/.test(match[4])
+
+  if (!hasMinor && hasPatch) return null
+  const minor = hasMinor ? Number(match[3]) : 0
+  const patch = hasPatch ? Number(match[4]) : 0
+  const minimum = `${major}.${minor}.${patch}`
+
+  if (!Bun.semver.satisfies(minimum, spec)) return null
+
+  const maximum =
+    match[1] === "^"
+      ? major > 0 || !hasMinor
+        ? `${major + 1}.0.0`
+        : minor > 0 || !hasPatch
+          ? `0.${minor + 1}.0`
+          : `0.0.${patch + 1}`
+      : !hasMinor
+        ? `${major + 1}.0.0`
+        : match[1] === "~" || !hasPatch
+          ? `${major}.${minor + 1}.0`
+          : null
+
+  return { minimum, maximum }
+}
+
+function compatible(existing: string, requested: string) {
+  if (!requested || requested === "*" || existing === requested) return true
+
+  if (requested === "workspace:*") {
+    return existing === "*" || existing.startsWith("workspace:")
+  }
+
+  const current = bounds(existing)
+  const wanted = bounds(requested)
+
+  if (!current) {
+    return (
+      /^v?\d+\.\d+\.\d+(?:-[\da-zA-Z.-]+)?(?:\+[\da-zA-Z.-]+)?$/.test(
+        existing,
+      ) && Bun.semver.satisfies(existing, requested)
+    )
+  }
+
+  if (!current.maximum) return Bun.semver.satisfies(current.minimum, requested)
+
+  if (!wanted?.maximum) return false
+
+  return (
+    Bun.semver.satisfies(current.minimum, requested) &&
+    Bun.semver.order(current.maximum, wanted.maximum) <= 0
+  )
+}
+
+function section(manifest: JsonObject, name: string) {
+  const value = manifest[name]
+
+  if (value === undefined) return {}
+
+  if (!isRecord(value)) throw new Error(`Invalid package.json ${name}`)
+
+  for (const [name, spec] of Object.entries(value)) {
+    if (!isPackageName(name) || !isString(spec) || !spec.trim()) {
+      throw new Error(`Invalid package.json dependency: ${name}`)
+    }
+  }
+
+  return value
+}
+
+export async function pendingDependencies(
+  root: string,
+  runtime: Iterable<string>,
+  dev: Iterable<string>,
+) {
+  const manifest = await readPackage(root)
+  const dependencies = section(manifest, "dependencies")
+  const devDependencies = section(manifest, "devDependencies")
+
+  const groups = new Map<
+    string,
+    { runtime: boolean; requirements: Requirement[] }
+  >()
+
+  for (const [arguments_, isRuntime] of [
+    [runtime, true],
+    [dev, false],
+  ] as const) {
+    for (const argument of arguments_) {
+      const entry = requirement(argument)
+
+      const group = groups.get(entry.name) ?? {
+        runtime: false,
+        requirements: [],
+      }
+
+      group.runtime ||= isRuntime
+      group.requirements.push(entry)
+      groups.set(entry.name, group)
+    }
+  }
+
+  const pending: PendingDependencies = {
+    dependencies: [],
+    devDependencies: [],
+  }
+
+  for (const [name, group] of groups) {
+    const installed = dependencies[name] ?? devDependencies[name]
+
+    const satisfied =
+      isString(installed) &&
+      group.requirements.every((entry) => compatible(installed, entry.spec))
+
+    if (satisfied && (!group.runtime || dependencies[name] !== undefined))
+      continue
+
+    const chosen = group.requirements.find((candidate) =>
+      group.requirements.every((entry) =>
+        compatible(candidate.spec || "*", entry.spec),
+      ),
+    )
+
+    if (!chosen && !satisfied) {
+      throw new Error(
+        `Conflicting package requirements: ${group.requirements.map((entry) => entry.argument).join(", ")}`,
+      )
+    }
+
+    const argument = satisfied ? `${name}@${installed}` : chosen!.argument
+
+    const target = group.runtime
+      ? pending.dependencies
+      : pending.devDependencies
+
+    target.push(argument)
+  }
+
+  return pending
 }

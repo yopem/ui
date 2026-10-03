@@ -136,9 +136,6 @@ async function installPackedCli(
 
   expect(installedVersion.trim()).toBe(version)
   expect(snapshot(project)).toEqual(before)
-  logs.push(
-    `Packed help/version verified; version matches packed manifest: ${version}; project unchanged`,
-  )
 }
 
 async function previewPackedCli(
@@ -166,6 +163,36 @@ async function previewPackedCli(
   expect(snapshot(snapshotRoot)).toEqual(before)
   logs.push(
     "Dry-run preview verified: all files/directories unchanged, no package or config changes",
+  )
+}
+
+async function verifyNoOpPackedCli(
+  logs: string[],
+  project: string,
+  flags: string[] = [],
+  snapshotRoot = project,
+) {
+  const before = snapshot(snapshotRoot)
+
+  for (const command of ["add", "update"]) {
+    const output = await run(
+      logs,
+      project,
+      "bunx",
+      "yopem-ui",
+      command,
+      "button",
+      ...registry,
+      ...flags,
+    )
+
+    expect(output).toContain("Installed 0 file(s)")
+    expect(output).not.toContain("bun add")
+    expect(snapshot(snapshotRoot)).toEqual(before)
+  }
+
+  logs.push(
+    "Repeated packed add/update: no package-manager output; project, lockfile and node_modules unchanged",
   )
 }
 
@@ -280,6 +307,7 @@ test("packed CLI installs from local registry, builds Vite and runs published li
     )
     await previewPackedCli(logs, project, ["add", "button", ...registry])
     await run(logs, project, "bunx", "yopem-ui", "add", "button", ...registry)
+    await verifyNoOpPackedCli(logs, project)
     await run(logs, project, "bun", "run", "build")
     verifyBuild(project, "vite", "packaged-cli", logs)
     const tokens = join(project, "src/styles/tokens.stylex.ts")
@@ -496,6 +524,12 @@ for (const { framework, shared } of [
         "button",
         ...registry,
         ...(shared ? ["--cwd", "../../packages/ui"] : []),
+      )
+      await verifyNoOpPackedCli(
+        logs,
+        app,
+        shared ? ["--cwd", "../../packages/ui"] : [],
+        project,
       )
       await run(logs, app, "bun", "run", "lint")
       await run(logs, app, "bun", "run", "build")

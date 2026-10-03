@@ -1,4 +1,8 @@
-import { isPackageName, packageRunner } from "@yopem-ui/cli/project"
+import {
+  isPackageName,
+  packageRunner,
+  pendingDependencies,
+} from "@yopem-ui/cli/project"
 import { createHash } from "node:crypto"
 import {
   chmod,
@@ -703,7 +707,7 @@ export async function installItem(name: string, options: InstallOptions = {}) {
     action: manifestText === manifestAfter ? "skip" : "write",
   })
 
-  for (const dependency of dependencies) devDependencies.delete(dependency)
+  const pending = await pendingDependencies(root, dependencies, devDependencies)
 
   if (options.dryRun) {
     return {
@@ -711,8 +715,7 @@ export async function installItem(name: string, options: InstallOptions = {}) {
       skipped,
       preview: {
         files: previewFiles,
-        dependencies: [...dependencies],
-        devDependencies: [...devDependencies],
+        ...pending,
       },
     }
   }
@@ -721,14 +724,14 @@ export async function installItem(name: string, options: InstallOptions = {}) {
 
   try {
     await writeFiles(root, changes, async () => {
-      if (dependencies.size) {
+      if (pending.dependencies.length) {
         dependenciesStarted = true
-        await run(["add", ...dependencies], root)
+        await run(["add", ...pending.dependencies], root)
       }
 
-      if (devDependencies.size) {
+      if (pending.devDependencies.length) {
         dependenciesStarted = true
-        await run(["add", "-d", ...devDependencies], root)
+        await run(["add", "-d", ...pending.devDependencies], root)
       }
     })
   } catch (cause) {
