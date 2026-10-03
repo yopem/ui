@@ -172,7 +172,7 @@ const config = defineConfig({
     }),
     tanstackStart(),
     mdxPlugin,
-    viteReact(),
+    viteReact({ compiler: true }),
   ],
 })
 
