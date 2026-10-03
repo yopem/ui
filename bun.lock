@@ -9,7 +9,7 @@
         "@changesets/cli": "3.0.3",
         "@types/bun": "catalog:",
         "@types/node": "catalog:",
-        "@yopem/oxlint-config": "^0.2.1",
+        "@yopem/oxlint-config": "^0.3.0",
         "@yopem/typescript-config": "catalog:",
         "lefthook": "^2.1.16",
         "oxfmt": "^0.71.0",
@@ -1175,7 +1175,7 @@
 
     "@yopem-ui/registry": ["@yopem-ui/registry@workspace:packages/registry"],
 
-    "@yopem/oxlint-config": ["@yopem/oxlint-config@0.2.1", "", { "dependencies": { "@oxlint/plugins": "1.76.0", "eslint-plugin-oxfmt": "^0.22.0", "oxlint": "1.76.0", "oxlint-plugin-react-doctor": "0.9.14", "oxlint-tsgolint": "^7.0.0" } }, "sha512-FMqlWEL09cZa34zA4zj7QS00vu1v0EBqUrLmk6HxtxyFNk2lyZeeR+Cw0mlq2+pJimoi6A/8GBId8NcPQmMETw=="],
+    "@yopem/oxlint-config": ["@yopem/oxlint-config@0.3.0", "", { "dependencies": { "@oxlint/plugins": "1.76.0", "eslint-plugin-oxfmt": "^0.22.0", "oxlint": "1.76.0", "oxlint-plugin-react-doctor": "0.9.14", "oxlint-tsgolint": "^7.0.0" } }, "sha512-YWMX6ajyQXjgOsRNQ5BICYK9X1OAj28RWuNenzeW1qftsZwMdCYXRbd0HkQjcm6dt5qKPzZT1cmihW6SyqY2Ag=="],
 
     "@yopem/typescript-config": ["@yopem/typescript-config@0.2.3", "", {}, "sha512-AfRH0PaaiYlAAicDEFtPNyUNJ90QpuSV2xYho4U1JUGnyNYqyjZZ7DWtjxq2ZuldbE/fDB8cAKPB6SYXrv8jrw=="],
 
