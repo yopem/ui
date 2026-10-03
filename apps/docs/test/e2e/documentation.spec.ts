@@ -18,6 +18,43 @@ test("component docs show live preview and copyable source", async ({
     .toContain("function Preview")
 })
 
+test("@a11y code blocks preserve shell, JSON, and TSX highlighting", async ({
+  page,
+}, testInfo) => {
+  await page.goto("/components/flex")
+
+  for (const title of [
+    "Initialize StyleX project with CLI",
+    "Install Flex with CLI",
+    "Update Flex with CLI",
+  ]) {
+    const code = page.getByRole("group", { name: title, exact: true })
+    await expect(code.locator("pre.shiki code")).toContainText("bunx")
+    await expect(code.locator(".line > span").first()).toHaveText("bunx")
+    await expect(code.locator(".line > span").first()).toHaveAttribute(
+      "style",
+      /color:/,
+    )
+  }
+
+  await page.goto("/docs/installation")
+  const shell = page.getByRole("group", { name: "Code", exact: true })
+  await expect(shell.locator(".line > span").first()).toHaveText("bunx")
+  await page.goto("/docs/lint")
+  const json = page.getByRole("group", { name: "Code", exact: true }).first()
+  await expect(json.locator("pre.shiki code")).toContainText('"jsPlugins"')
+  await expect(json.locator(".line > span").first()).toHaveText("{")
+  expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([])
+  await page.goto("/docs/getting-started")
+  const tsx = page.getByRole("group", { name: "Code", exact: true }).first()
+  await expect(tsx.locator("pre.shiki code")).toContainText("import")
+  await expect(tsx.locator(".line > span").first()).toHaveText("import")
+  await testInfo.attach("highlighted-code", {
+    body: await page.screenshot(),
+    contentType: "image/png",
+  })
+})
+
 test("search waits for client hydration before accepting clicks", async ({
   page,
 }) => {

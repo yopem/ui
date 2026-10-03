@@ -118,10 +118,11 @@ function GuideH3({ children, id }: ComponentProps<"h3">) {
 }
 
 function GuideCode({ children }: { children?: ReactNode }) {
-  if (isValidElement<{ children?: ReactNode }>(children)) {
+  if (isValidElement<ComponentProps<"code">>(children)) {
     const code = children.props.children
+    const language = children.props.className?.match(/\blanguage-(\S+)/)?.[1]
 
-    if (isString(code)) return <CopyableCode code={code} />
+    if (isString(code)) return <CopyableCode code={code} language={language} />
   }
 
   return (

@@ -164,10 +164,12 @@ function ComponentPage() {
             configures StyleX and installs shared files and dependencies.
           </Text>
           <CopyableCode
+            language="shellscript"
             code="bunx @yopem-ui/cli init"
             title="Initialize StyleX project with CLI"
           />
           <CopyableCode
+            language="shellscript"
             code={data.installNames
               .map((installName) => `bunx @yopem-ui/cli add ${installName}`)
               .join("\n")}
@@ -180,6 +182,7 @@ function ComponentPage() {
             update; locally edited files need an explicit --force to overwrite.
           </Text>
           <CopyableCode
+            language="shellscript"
             code={data.installNames
               .map((installName) => `bunx @yopem-ui/cli update ${installName}`)
               .join("\n")}

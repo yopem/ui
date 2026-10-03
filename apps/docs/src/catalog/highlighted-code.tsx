@@ -36,10 +36,14 @@ function getCodeLanguage(title: string) {
   return "tsx"
 }
 
-function highlightCode(code: string, title: string) {
+function highlightCode(code: string, title: string, language?: string) {
   return highlighter.codeToHtml(code, {
     defaultColor: "light-dark()",
-    lang: getCodeLanguage(title),
+    lang: language
+      ? highlighter.getLoadedLanguages().includes(language)
+        ? language
+        : "text"
+      : getCodeLanguage(title),
     themes: { dark: "github-dark", light: "github-light" },
     transformers: [
       {
@@ -60,12 +64,17 @@ function highlightCode(code: string, title: string) {
 export function HighlightedCode({
   code,
   title,
+  language,
   ...props
-}: ComponentProps<"div"> & { code: string; title: string }) {
+}: ComponentProps<"div"> & {
+  code: string
+  title: string
+  language?: string
+}) {
   return (
     <Box
       {...props}
-      dangerouslySetInnerHTML={{ __html: highlightCode(code, title) }}
+      dangerouslySetInnerHTML={{ __html: highlightCode(code, title, language) }}
     />
   )
 }

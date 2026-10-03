@@ -162,11 +162,13 @@ const HighlightedCode = lazy(() =>
 export function CopyableCode({
   code,
   header,
+  language,
   preview = false,
   title = "Code",
 }: {
   code: string
   header?: string
+  language?: string
   preview?: boolean
   title?: string
 }) {
@@ -192,6 +194,7 @@ export function CopyableCode({
       <HighlightedCode
         {...stylex.props(styles.codeContent)}
         code={visibleCode}
+        language={language}
         title={title}
       />
     </Suspense>
