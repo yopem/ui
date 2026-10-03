@@ -8,6 +8,8 @@ import * as stylex from "@stylexjs/stylex"
 
 const styles = stylex.create({ accordion: { inlineSize: "100%" } })
 
+const previewDefaultValue = ["3"]
+
 export function Preview() {
   const items = [
     {
@@ -30,7 +32,7 @@ export function Preview() {
   ]
 
   return (
-    <Accordion xstyle={styles.accordion} defaultValue={["3"]}>
+    <Accordion xstyle={styles.accordion} defaultValue={previewDefaultValue}>
       {items.map((item) => (
         <AccordionItem key={item.id} value={item.id}>
           <AccordionTrigger>{item.title}</AccordionTrigger>

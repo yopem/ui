@@ -170,13 +170,13 @@ export function Slider({
           />
           {Array.from({ length: values.length }, (_, index) => (
             <SliderPrimitive.Thumb
+              key={String(index)}
               {...stylex.props(styles.thumb)}
               aria-label={
                 label && values.length > 1 ? `${label} ${index + 1}` : label
               }
               data-slot="slider-thumb"
               index={index}
-              key={String(index)}
             />
           ))}
         </SliderPrimitive.Track>

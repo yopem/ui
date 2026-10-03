@@ -200,6 +200,45 @@ const styles = stylex.create({
 
 const buttonClassNames = stylex.props(styles.button).className
 
+function CalendarChevron({
+  className: iconClassName,
+  orientation,
+  ...iconProps
+}: {
+  className?: string
+  orientation?: "left" | "right" | "up" | "down"
+}) {
+  if (orientation === "left") {
+    return (
+      <ChevronLeftIcon
+        {...stylexProps(iconClassName, styles.icon, styles.directionIcon)}
+        {...iconProps}
+        aria-hidden="true"
+      />
+    )
+  }
+
+  if (orientation === "right") {
+    return (
+      <ChevronRightIcon
+        {...stylexProps(iconClassName, styles.icon, styles.directionIcon)}
+        {...iconProps}
+        aria-hidden="true"
+      />
+    )
+  }
+
+  return (
+    <ChevronsUpDownIcon
+      {...stylexProps(iconClassName, styles.icon)}
+      {...iconProps}
+      aria-hidden="true"
+    />
+  )
+}
+
+const defaultComponents = { Chevron: CalendarChevron }
+
 export function Calendar({
   xstyle: consumerXstyle,
   className,
@@ -245,45 +284,6 @@ export function Calendar({
     },
     { ...defaultClassNames },
   )
-
-  const defaultComponents = {
-    Chevron: ({
-      className: iconClassName,
-      orientation,
-      ...iconProps
-    }: {
-      className?: string
-      orientation?: "left" | "right" | "up" | "down"
-    }) => {
-      if (orientation === "left") {
-        return (
-          <ChevronLeftIcon
-            {...stylexProps(iconClassName, styles.icon, styles.directionIcon)}
-            {...iconProps}
-            aria-hidden="true"
-          />
-        )
-      }
-
-      if (orientation === "right") {
-        return (
-          <ChevronRightIcon
-            {...stylexProps(iconClassName, styles.icon, styles.directionIcon)}
-            {...iconProps}
-            aria-hidden="true"
-          />
-        )
-      }
-
-      return (
-        <ChevronsUpDownIcon
-          {...stylexProps(iconClassName, styles.icon)}
-          {...iconProps}
-          aria-hidden="true"
-        />
-      )
-    },
-  }
 
   const dayPickerProps = {
     classNames: mergedClassNames,

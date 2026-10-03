@@ -9,6 +9,7 @@ import { mergeProps } from "@base-ui/react/merge-props"
 import { isString, stylexProps } from "@registry/lib/stylex"
 import { themeMarker, tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
+import { useCallback } from "react"
 
 const styles = stylex.create({
   control: {
@@ -101,6 +102,20 @@ export function Textarea({
 
   const wrapperClassName = isString(className) ? className : undefined
 
+  const renderControl = useCallback(
+    (defaultProps: React.ComponentProps<"textarea">) => (
+      <textarea
+        data-slot="textarea"
+        {...mergeProps(
+          defaultProps,
+          stylex.props(styles.textarea, sizeStyle, xstyle),
+          props,
+        )}
+      />
+    ),
+    [sizeStyle, xstyle, props],
+  )
+
   return (
     <span
       {...stylexProps(
@@ -118,16 +133,7 @@ export function Textarea({
         disabled={props.disabled}
         id={props.id}
         name={props.name}
-        render={(defaultProps: React.ComponentProps<"textarea">) => (
-          <textarea
-            data-slot="textarea"
-            {...mergeProps(
-              defaultProps,
-              stylex.props(styles.textarea, sizeStyle, xstyle),
-              props,
-            )}
-          />
-        )}
+        render={renderControl}
       />
     </span>
   )

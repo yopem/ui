@@ -6,7 +6,7 @@ import type { ComponentPropsWithRef, MouseEvent } from "react"
 import { mergeStylexProps, stylexProps } from "@registry/lib/stylex"
 import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
-import { useState } from "react"
+import { useState, useCallback } from "react"
 
 const styles = stylex.create({
   button: {
@@ -65,7 +65,7 @@ export function Clipboard({
     null,
   )
 
-  async function copyToClipboard() {
+  const copyToClipboard = useCallback(async () => {
     setStatus("pending")
 
     try {
@@ -80,13 +80,16 @@ export function Clipboard({
     } catch {
       setStatus("error")
     }
-  }
+  }, [setStatus, value])
 
-  function handleClick(event: MouseEvent<HTMLButtonElement>) {
-    onClick?.(event)
+  const handleClick = useCallback(
+    (event: MouseEvent<HTMLButtonElement>) => {
+      onClick?.(event)
 
-    if (!event.defaultPrevented) void copyToClipboard()
-  }
+      if (!event.defaultPrevented) void copyToClipboard()
+    },
+    [onClick, copyToClipboard],
+  )
 
   return (
     <>

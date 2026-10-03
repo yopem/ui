@@ -47,11 +47,16 @@ const items = [
   { label: "Times New Roman", value: "times-new-roman" },
 ]
 
+const previewDefaultValue = ["left"]
+
 export function Preview() {
   return (
     <TooltipProvider>
       <Toolbar>
-        <ToggleGroup xstyle={styles.toggleGroup} defaultValue={["left"]}>
+        <ToggleGroup
+          xstyle={styles.toggleGroup}
+          defaultValue={previewDefaultValue}
+        >
           <Tooltip>
             <TooltipTrigger
               render={

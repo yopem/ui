@@ -8,7 +8,7 @@ import { mergeStylexProps, stylexProps } from "@registry/lib/stylex"
 import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import { StarIcon } from "lucide-react"
-import { useState } from "react"
+import { useState, useCallback } from "react"
 
 const styles = stylex.create({
   root: { display: "flex", gap: "0.125rem" },
@@ -74,12 +74,15 @@ export function Rating({
   const currentValue = value ?? uncontrolledValue
   const ratingCount = Number.isFinite(max) ? Math.max(1, Math.floor(max)) : 5
 
-  function handleValueChange(nextValue: string) {
-    const nextRating = Number(nextValue)
+  const handleValueChange = useCallback(
+    (nextValue: string) => {
+      const nextRating = Number(nextValue)
 
-    if (value === undefined) setUncontrolledValue(nextRating)
-    onValueChange?.(nextRating)
-  }
+      if (value === undefined) setUncontrolledValue(nextRating)
+      onValueChange?.(nextRating)
+    },
+    [value, setUncontrolledValue, onValueChange],
+  )
 
   return (
     <RadioGroupPrimitive<string>

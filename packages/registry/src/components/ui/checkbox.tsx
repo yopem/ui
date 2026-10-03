@@ -61,6 +61,37 @@ const styles = stylex.create({
   },
 })
 
+function renderIndicator(
+  indicatorProps: React.ComponentProps<"span">,
+  state: CheckboxPrimitive.Indicator.State,
+) {
+  return (
+    <span {...indicatorProps}>
+      <svg
+        aria-hidden="true"
+        {...stylex.props(styles.icon)}
+        fill="none"
+        height="24"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="3"
+        viewBox="0 0 24 24"
+        width="24"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d={
+            state.indeterminate
+              ? "M5.252 12h13.496"
+              : "M5.252 12.7 10.2 18.63 18.748 5.37"
+          }
+        />
+      </svg>
+    </span>
+  )
+}
+
 export function Checkbox({
   xstyle: consumerXstyle,
   className,
@@ -77,34 +108,7 @@ export function Checkbox({
       <CheckboxPrimitive.Indicator
         {...stylex.props(styles.indicator)}
         data-slot="checkbox-indicator"
-        render={(
-          indicatorProps: React.ComponentProps<"span">,
-          state: CheckboxPrimitive.Indicator.State,
-        ) => (
-          <span {...indicatorProps}>
-            <svg
-              aria-hidden="true"
-              {...stylex.props(styles.icon)}
-              fill="none"
-              height="24"
-              stroke="currentColor"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="3"
-              viewBox="0 0 24 24"
-              width="24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d={
-                  state.indeterminate
-                    ? "M5.252 12h13.496"
-                    : "M5.252 12.7 10.2 18.63 18.748 5.37"
-                }
-              />
-            </svg>
-          </span>
-        )}
+        render={renderIndicator}
       />
     </CheckboxPrimitive.Root>
   )

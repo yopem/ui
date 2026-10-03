@@ -5,9 +5,11 @@ import {
 import * as stylex from "@stylexjs/stylex"
 import { BoldIcon, ItalicIcon, UnderlineIcon } from "lucide-react"
 
+const previewDefaultValue = ["bold"]
+
 export function Preview() {
   return (
-    <ToggleGroup defaultValue={["bold"]}>
+    <ToggleGroup defaultValue={previewDefaultValue}>
       <ToggleGroupItem aria-label="Toggle bold" value="bold">
         <BoldIcon {...stylex.props(previewStyles.icon)} />
       </ToggleGroupItem>

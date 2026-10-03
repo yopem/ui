@@ -19,7 +19,7 @@ import { VStack } from "@registry/components/ui/vstack"
 import { Wrap } from "@registry/components/ui/wrap"
 import * as stylex from "@stylexjs/stylex"
 import { Link as RouterLink } from "@tanstack/react-router"
-import { useRef, useState } from "react"
+import { useRef, useState, useCallback } from "react"
 
 const styles = stylex.create({
   layoutRoot: {
@@ -57,6 +57,24 @@ export function Preview() {
   const textRef = useRef<HTMLParagraphElement>(null)
   const [textTag, setTextTag] = useState("Not inspected")
   const [submitted, setSubmitted] = useState(false)
+
+  const handleSubmit = useCallback(
+    (event: React.FormEvent<HTMLFormElement>) => {
+      event.preventDefault()
+      setSubmitted(true)
+    },
+    [setSubmitted],
+  )
+
+  const focusName = useCallback(() => nameRef.current?.focus(), [nameRef])
+
+  const inspectRefs = useCallback(
+    () =>
+      setTextTag(
+        `${textRef.current?.tagName ?? "missing"} ${linkRef.current?.tagName ?? "missing"}`,
+      ),
+    [setTextTag, textRef, linkRef],
+  )
 
   return (
     <Stack data-testid="layout-root" xstyle={styles.layoutRoot}>
@@ -158,14 +176,7 @@ export function Preview() {
         <Box as="span">Two</Box>
         <Box as="span">Three</Box>
       </Wrap>
-      <Box
-        as="form"
-        data-testid="native-form"
-        onSubmit={(event) => {
-          event.preventDefault()
-          setSubmitted(true)
-        }}
-      >
+      <Box as="form" data-testid="native-form" onSubmit={handleSubmit}>
         <Label htmlFor="layout-name">Name</Label>
         <Box
           as="input"
@@ -175,22 +186,10 @@ export function Preview() {
           required
           type="text"
         />
-        <Button
-          data-testid="focus-name"
-          onClick={() => nameRef.current?.focus()}
-          type="button"
-        >
+        <Button data-testid="focus-name" onClick={focusName} type="button">
           Focus name
         </Button>
-        <Button
-          data-testid="inspect-refs"
-          onClick={() =>
-            setTextTag(
-              `${textRef.current?.tagName ?? "missing"} ${linkRef.current?.tagName ?? "missing"}`,
-            )
-          }
-          type="button"
-        >
+        <Button data-testid="inspect-refs" onClick={inspectRefs} type="button">
           Inspect refs
         </Button>
         <Button data-testid="submit-form" type="submit">

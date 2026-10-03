@@ -22,8 +22,9 @@ import {
 import { Flex } from "@registry/components/ui/flex"
 import { Kbd, KbdGroup } from "@registry/components/ui/kbd"
 import * as stylex from "@stylexjs/stylex"
+import { useHydrated } from "@tanstack/react-router"
 import { ArrowDownIcon, ArrowUpIcon, CornerDownLeftIcon } from "lucide-react"
-import { Fragment, useEffect, useState } from "react"
+import { Fragment, useCallback, useRef, useState } from "react"
 
 const styles = stylex.create({
   span: { flex: "1" },
@@ -66,28 +67,40 @@ const groupedItems: Group[] = [
 ]
 
 export function Preview() {
+  const hydrated = useHydrated()
   const [open, setOpen] = useState(false)
 
-  function handleItemClick(_item: Item) {
+  const handleItemClick = useCallback(() => {
     setOpen(false)
-  }
+  }, [])
 
-  useEffect(() => {
-    const down = (e: KeyboardEvent) => {
-      if (e.key === "j" && (e.metaKey || e.ctrlKey)) {
-        e.preventDefault()
-        setOpen((open) => !open)
+  const shortcutCleanupRef = useRef<(() => void) | null>(null)
+
+  const registerTrigger = useCallback((node: HTMLButtonElement | null) => {
+    shortcutCleanupRef.current?.()
+    shortcutCleanupRef.current = null
+
+    if (!node) return
+
+    function handleShortcut(event: KeyboardEvent) {
+      if (event.key === "j" && (event.metaKey || event.ctrlKey)) {
+        event.preventDefault()
+        setOpen((current) => !current)
       }
     }
 
-    document.addEventListener("keydown", down)
-
-    return () => document.removeEventListener("keydown", down)
+    document.addEventListener("keydown", handleShortcut)
+    shortcutCleanupRef.current = () =>
+      document.removeEventListener("keydown", handleShortcut)
   }, [])
 
   return (
     <CommandDialog onOpenChange={setOpen} open={open}>
-      <CommandDialogTrigger render={<Button variant="outline" />}>
+      <CommandDialogTrigger
+        disabled={!hydrated}
+        ref={registerTrigger}
+        render={<Button variant="outline" />}
+      >
         Open Command Palette
         <KbdGroup>
           <Kbd>⌘</Kbd>
@@ -108,7 +121,7 @@ export function Preview() {
                       {(item: Item) => (
                         <CommandItem
                           key={item.value}
-                          onClick={() => handleItemClick(item)}
+                          onClick={handleItemClick}
                           value={item.value}
                         >
                           <Box as="span" xstyle={styles.span}>
