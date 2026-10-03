@@ -1,9 +1,10 @@
 import baseConfig from "@yopem/oxlint-config"
 import reactConfig from "@yopem/oxlint-config/react"
+import tanstackStartConfig from "@yopem/oxlint-config/tanstack-start"
 import { defineConfig } from "oxlint"
 
 export default defineConfig({
-  extends: [baseConfig, reactConfig],
+  extends: [baseConfig, reactConfig, tanstackStartConfig],
   plugins: [
     "eslint",
     "import",

@@ -9,7 +9,7 @@
         "@changesets/cli": "3.0.3",
         "@types/bun": "catalog:",
         "@types/node": "catalog:",
-        "@yopem/oxlint-config": "^0.1.6",
+        "@yopem/oxlint-config": "^0.2.0",
         "@yopem/typescript-config": "catalog:",
         "lefthook": "^2.1.16",
         "oxfmt": "^0.71.0",
@@ -1136,7 +1136,7 @@
 
     "@yopem-ui/registry": ["@yopem-ui/registry@workspace:packages/registry"],
 
-    "@yopem/oxlint-config": ["@yopem/oxlint-config@0.1.6", "", { "dependencies": { "@oxlint/plugins": "1.76.0", "eslint-plugin-oxfmt": "^0.22.0", "oxlint": "1.76.0", "oxlint-plugin-react-doctor": "0.9.14", "oxlint-tsgolint": "^7.0.0" } }, "sha512-1V0LmrgXlhXfaO8/Apx7s1HH2RsU9+OTVmVgfi4YRWCoX2iG7xCMoM1rDswi++3k5xOT9YwL0gUt/xhuLOCa7Q=="],
+    "@yopem/oxlint-config": ["@yopem/oxlint-config@0.2.0", "", { "dependencies": { "@oxlint/plugins": "1.76.0", "eslint-plugin-oxfmt": "^0.22.0", "oxlint": "1.76.0", "oxlint-plugin-react-doctor": "0.9.14", "oxlint-tsgolint": "^7.0.0" } }, "sha512-A/sbNhHk6HHnVW/Om492FgSt8s/uMV1FRik23HwesD3YZAJR6jEpTlbzbaDIxzT6r8+aUHGG+X5nCd2ATa9RtA=="],
 
     "@yopem/typescript-config": ["@yopem/typescript-config@0.2.3", "", {}, "sha512-AfRH0PaaiYlAAicDEFtPNyUNJ90QpuSV2xYho4U1JUGnyNYqyjZZ7DWtjxq2ZuldbE/fDB8cAKPB6SYXrv8jrw=="],
 
@@ -1424,7 +1424,7 @@
 
     "graphql": ["graphql@16.11.0", "", {}, "sha512-mS1lbMsxgQj6hge1XZ6p7GPhbrtFwUFYi3wRzXAC/FmYnyXMTvvI3td3rjmQ2u8ewXueaSvRPWaEcgVVOT9Jnw=="],
 
-    "h3": ["h3@2.0.1-rc.33", "", { "dependencies": { "rou3": "^1.0.0", "srvx": "^1.0.5" }, "peerDependencies": { "crossws": "^0.4.12", "ocache": ">=0.3.0" }, "optionalPeers": ["crossws", "ocache"], "bin": { "h3": "bin/h3.mjs" } }, "sha512-9ie509hkBSCgV32/7gnl2epLXorin5xL69G7RV2ZBf/5wxtf0L8HsSXpjGJuEihwGZj/4X9eJI3m/A/iE0i8MQ=="],
+    "h3": ["h3@2.0.1", "", { "dependencies": { "rou3": "^1.0.0", "srvx": "^1.0.5" }, "peerDependencies": { "crossws": "^0.4.12", "ocache": ">=0.3.0" }, "optionalPeers": ["crossws", "ocache"], "bin": { "h3": "bin/h3.mjs" } }, "sha512-trUtZ82iNkfYi8An9M2kIM/SPlomO59pTRMt4zMBffuVPdwv5v1Bxs7uShxi7bOIAuZne6zq6TsD9hVYdNgo+A=="],
 
     "h3-v2": ["h3@2.0.1-rc.20", "", { "dependencies": { "rou3": "^0.8.1", "srvx": "^0.11.13" }, "peerDependencies": { "crossws": "^0.4.1" }, "optionalPeers": ["crossws"], "bin": { "h3": "bin/h3.mjs" } }, "sha512-28ljodXuUp0fZovdiSRq4G9OgrxCztrJe5VdYzXAB7ueRvI7pIUqLU14Xi3XqdYJ/khXjfpUOOD2EQa6CmBgsg=="],
 
@@ -1624,7 +1624,7 @@
 
     "mdast-util-to-hast": ["mdast-util-to-hast@13.2.1", "", { "dependencies": { "@types/hast": "^3.0.0", "@types/mdast": "^4.0.0", "@ungap/structured-clone": "^1.0.0", "devlop": "^1.0.0", "micromark-util-sanitize-uri": "^2.0.0", "trim-lines": "^3.0.0", "unist-util-position": "^5.0.0", "unist-util-visit": "^5.0.0", "vfile": "^6.0.0" } }, "sha512-cctsq2wp5vTsLIcaymblUriiTcZd0CwWtCbLvrOzYCDZoWyMNV8sZ7krj09FSnsiJi3WVsHLM4k6Dq/yaPyCXA=="],
 
-    "mdast-util-to-markdown": ["mdast-util-to-markdown@2.1.3", "", { "dependencies": { "@types/mdast": "^4.0.0", "@types/unist": "^3.0.0", "longest-streak": "^3.0.0", "mdast-util-phrasing": "^4.0.0", "mdast-util-to-string": "^4.0.0", "micromark-util-character": "^2.0.0", "micromark-util-classify-character": "^2.0.0", "micromark-util-decode-string": "^2.0.0", "micromark-util-html-tag-name": "^2.0.0", "unist-util-visit": "^5.0.0", "zwitch": "^2.0.0" } }, "sha512-wgyJtgUkUcdU7zci7uuwc/tzoAhm0TswWhaXuvnWolqug+8jY7bgNkBBL0dYBnHgc/tHL7lCzRdPsdUxUKKBqw=="],
+    "mdast-util-to-markdown": ["mdast-util-to-markdown@2.2.0", "", { "dependencies": { "@types/mdast": "^4.0.0", "@types/unist": "^3.0.0", "longest-streak": "^3.0.0", "mdast-util-phrasing": "^4.0.0", "mdast-util-to-string": "^4.0.0", "micromark-util-character": "^2.0.0", "micromark-util-classify-character": "^2.0.0", "micromark-util-decode-string": "^2.0.0", "micromark-util-html-tag-name": "^2.0.0", "unist-util-visit": "^5.0.0", "zwitch": "^2.0.0" } }, "sha512-2Jn/ADrHFFyyniBMi0bncTbJqU78K3/TEYvzvwrWWzD9MYPUa/Gm4r3nOeKFQg/PDM5BsbDYdc8ackW4NTY6NA=="],
 
     "mdast-util-to-string": ["mdast-util-to-string@4.0.0", "", { "dependencies": { "@types/mdast": "^4.0.0" } }, "sha512-0H44vDimn51F0YwvxSJSm0eCDOJTRlmN0R1yBh4HLj9wiV1Dn0QoXGbvFAWj2hSItVTlCmBF1hqKlIyUBVFLPg=="],
 
