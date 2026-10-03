@@ -10,6 +10,7 @@ TanStack Start, Next.js App Router, or Astro project, initialize StyleX and add
 a component:
 
 ```sh
+bunx @yopem-ui/cli init --dry-run
 bunx @yopem-ui/cli init
 bunx @yopem-ui/cli add button
 bunx @yopem-ui/cli update button
@@ -17,8 +18,21 @@ bunx @yopem-ui/cli update button
 
 `init` installs tokens, reset CSS, and StyleX helpers, configures build plugins
 and aliases, and wires root styles. It stops on conflicting configurations.
-`update` preserves locally edited files unless passed `--force`. CLI is not yet
-published; commands work after release. See
+`init`, `add`, and `update` accept `--dry-run`: validate and preview without
+writing files or running a package manager. Init lists absolute target paths,
+configuration writes/skips/deletions, manifest exports/scripts, prerequisites,
+and pending dependencies per app or shared UI package (`--ui <path>`).
+Compatible dependency specs are preserved; repeated installs with identical
+source and satisfied dependencies do not run a package manager. Unknown spec
+compatibility is handled conservatively, not assumed satisfied.
+
+`update` preserves locally edited files unless passed `--force`. `ui.json`
+records registry URLs and item versions per tracked file, including transitive
+and overlapping owners. Legacy version-1 manifests remain supported. Switching a
+known file's registry warns before applying; skipped modified/tracked files keep
+their original provenance. `--registry <URL>` requires HTTPS (local HTTP
+allowed), without credentials, query, or fragment. Redirects are rejected. CLI
+is not yet published; commands work after release. See
 [installation](https://ui.yopem.com/docs/installation).
 
 ## Styling
