@@ -1,6 +1,12 @@
 import { afterAll, expect, test } from "bun:test"
 import { createHash } from "node:crypto"
-import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs"
+import {
+  mkdirSync,
+  mkdtempSync,
+  readFileSync,
+  rmSync,
+  writeFileSync,
+} from "node:fs"
 import { tmpdir } from "node:os"
 import { join, resolve } from "node:path"
 
@@ -245,6 +251,153 @@ for (const manifest of [
   })
 }
 
+test("provenance tracks transitive and overlapping owners, warns registry switch and retains skipped origins", async () => {
+  const project = fixture()
+  const button = project.items.get("button")!
+  button.registryDependencies.push("shared")
+  const shared = item("shared")
+  shared.files = [...button.files]
+  shared.registryVersion = "2.0.0"
+  project.items.set("shared", shared)
+
+  try {
+    await installItem("button", project.options)
+
+    const tracked = JSON.parse(
+      readFileSync(join(project.root, "ui.json"), "utf8"),
+    )
+
+    expect(tracked.provenance["src/lib/button.ts"]).toEqual({
+      registryUrl: project.options.registryUrl,
+      items: { shared: "2.0.0", button: "1.0.0" },
+    })
+    const before = snapshot(project.root)
+    const registryUrl = project.options.registryUrl.replace("/r", "/other")
+    const warnings: string[] = []
+
+    const dry = await installItem("button", {
+      ...project.options,
+      registryUrl,
+      mode: "update",
+      dryRun: true,
+    })
+
+    expect(dry.warnings?.[0]).toContain("different registry")
+    expect(snapshot(project.root)).toEqual(before)
+    project.put("src/lib/button.ts", "local modification\n")
+
+    const skipped = await installItem("button", {
+      ...project.options,
+      registryUrl,
+      onWarning(warning) {
+        warnings.push(warning)
+      },
+    })
+
+    expect(skipped.warnings).toEqual(warnings)
+    expect(
+      JSON.parse(readFileSync(join(project.root, "ui.json"), "utf8"))
+        .provenance,
+    ).toEqual(tracked.provenance)
+    expect(warnings[0]).toContain(project.options.registryUrl)
+    // Applied update records new origins, warning delivered before file commit.
+    await installItem("button", {
+      ...project.options,
+      registryUrl,
+      force: true,
+      mode: "update",
+      onWarning() {
+        expect(
+          readFileSync(join(project.root, "src/lib/button.ts"), "utf8"),
+        ).toBe("local modification\n")
+      },
+    })
+    expect(
+      JSON.parse(readFileSync(join(project.root, "ui.json"), "utf8"))
+        .provenance["src/lib/button.ts"].registryUrl,
+    ).toBe(registryUrl)
+  } finally {
+    project.dispose()
+  }
+})
+
+test("legacy ui.json migrates only applied/identical files; no-op preserves custom formatting", async () => {
+  const project = fixture()
+
+  try {
+    await installItem("button", project.options)
+
+    const manifest = JSON.parse(
+      readFileSync(join(project.root, "ui.json"), "utf8"),
+    )
+
+    delete manifest.provenance
+    project.put("ui.json", JSON.stringify(manifest))
+    await installItem("button", project.options)
+    expect(
+      JSON.parse(readFileSync(join(project.root, "ui.json"), "utf8"))
+        .provenance,
+    ).toBeDefined()
+    project.put(
+      "ui.json",
+      JSON.stringify(
+        JSON.parse(readFileSync(join(project.root, "ui.json"), "utf8")),
+      ),
+    )
+    const before = snapshot(project.root)
+    await installItem("button", project.options)
+    expect(snapshot(project.root)).toEqual(before)
+  } finally {
+    project.dispose()
+  }
+})
+
+for (const provenance of [
+  null,
+  [],
+  {
+    "src/lib/button.ts": {
+      registryUrl: "https://user:secret@example.com/r",
+      items: { button: "1" },
+    },
+  },
+  {
+    "src/lib/button.ts": {
+      registryUrl: "https://example.com/r",
+      items: { button: 42 },
+    },
+  },
+  {
+    "src/lib/unknown.ts": {
+      registryUrl: "https://example.com/r",
+      items: { button: "1" },
+    },
+  },
+]) {
+  test(`invalid provenance rejected: ${JSON.stringify(provenance)}`, async () => {
+    const project = fixture()
+
+    try {
+      await installItem("button", project.options)
+
+      const manifest = JSON.parse(
+        readFileSync(join(project.root, "ui.json"), "utf8"),
+      )
+
+      project.put("ui.json", JSON.stringify({ ...manifest, provenance }))
+      project.calls.length = 0
+      const before = snapshot(project.root)
+      await expect(installItem("button", project.options)).rejects.toThrow(
+        "Invalid ui.json",
+      )
+      expect(snapshot(project.root)).toEqual(before)
+      expect(project.calls).toEqual([])
+    } finally {
+      project.dispose()
+    }
+  })
+}
+
 for (const command of ["add", "update", "init"] as const) {
   for (const destination of [
     "local",
@@ -364,6 +517,30 @@ test("incompatible runtime/dev requirements fail before package-manager or file 
     )
     expect(snapshot(project.root)).toEqual(before)
     expect(project.calls).toEqual([])
+  } finally {
+    project.dispose()
+  }
+})
+
+test("identical tracked files keep applied item versions when fetched version changes", async () => {
+  const project = fixture()
+
+  try {
+    await installItem("button", project.options)
+    const before = snapshot(project.root)
+    project.items.get("button")!.registryVersion = "9.0.0"
+
+    const result = await installItem("button", {
+      ...project.options,
+      mode: "update",
+    })
+
+    expect(result.installed).toBe(0)
+    expect(snapshot(project.root)).toEqual(before)
+    expect(
+      JSON.parse(readFileSync(join(project.root, "ui.json"), "utf8"))
+        .provenance["src/lib/button.ts"].items.button,
+    ).toBe("1.0.0")
   } finally {
     project.dispose()
   }

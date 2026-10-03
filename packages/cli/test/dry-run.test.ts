@@ -235,10 +235,18 @@ for (const mode of ["add", "update"] as const) {
         }
 
         if (state === "mixed") {
-          const manifest: { version: number; files: Record<string, string> } =
-            JSON.parse(readFileSync(join(project.root, "ui.json"), "utf8"))
+          const manifest: {
+            version: number
+            files: Record<string, string>
+            provenance?: Record<
+              string,
+              { registryUrl: string; items: Record<string, string> }
+            >
+          } = JSON.parse(readFileSync(join(project.root, "ui.json"), "utf8"))
 
           delete manifest.files[paths[2]!]
+
+          if (manifest.provenance) delete manifest.provenance[paths[2]!]
           project.put("ui.json", `${JSON.stringify(manifest)}\n`)
         }
 

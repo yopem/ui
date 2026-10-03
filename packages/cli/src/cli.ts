@@ -78,6 +78,11 @@ export async function runCli(args: string[], options: InitOptions = {}) {
   const cwd = resolve(options.cwd ?? process.cwd(), flags.get("--cwd") ?? ".")
   const registryUrl = flags.get("--registry") ?? options.registryUrl
 
+  function onWarning(warning: string) {
+    console.warn(`Warning: ${warning}`)
+    options.onWarning?.(warning)
+  }
+
   if (command === "init") {
     if (flags.has("--dry-run") || options.dryRun)
       throw new Error("--dry-run is not supported for init")
@@ -94,6 +99,7 @@ export async function runCli(args: string[], options: InitOptions = {}) {
       ...options,
       cwd,
       registryUrl,
+      onWarning,
       ui: flags.get("--ui") ?? options.ui,
       framework: isFramework(framework) ? framework : options.framework,
     })
@@ -119,6 +125,7 @@ export async function runCli(args: string[], options: InitOptions = {}) {
     cwd,
     registryUrl,
     mode: command,
+    onWarning,
     force: flags.has("--force"),
     dryRun: flags.has("--dry-run") || options.dryRun,
   })

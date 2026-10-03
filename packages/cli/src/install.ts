@@ -59,12 +59,19 @@ interface RegistryItem {
   files: RegistryFile[]
   name: string
   registryDependencies: string[]
+  registryVersion: string
+}
+
+interface Provenance {
+  registryUrl: string
+  items: Record<string, string>
 }
 
 interface Manifest {
   version: 1
   files: Record<string, string>
   importPrefix?: string
+  provenance?: Record<string, Provenance>
 }
 
 export interface InstallPreview {
@@ -78,6 +85,13 @@ export interface InstallPreview {
   devDependencies: string[]
 }
 
+export interface InstallResult {
+  installed: number
+  skipped: number
+  preview?: InstallPreview
+  warnings?: string[]
+}
+
 export interface InstallOptions {
   cwd?: string
   dryRun?: boolean
@@ -88,6 +102,7 @@ export interface InstallOptions {
   requestTimeoutMs?: number
   fetcher?: (url: string, init?: RequestInit) => Promise<Response>
   run?: (args: string[], cwd: string) => Promise<void>
+  onWarning?: (warning: string) => void
 }
 
 function registryBaseUrl(value: string) {
@@ -239,6 +254,7 @@ function parseItem(value: JsonValue, name: string): RegistryItem {
     !isString(value.title) ||
     !isString(value.description) ||
     !isString(value.registryVersion) ||
+    !value.registryVersion.trim() ||
     !isStringArray(value.categories) ||
     !isStringArray(value.dependencies) ||
     !isStringArray(value.devDependencies) ||
@@ -304,6 +320,7 @@ function parseItem(value: JsonValue, name: string): RegistryItem {
     dependencies: value.dependencies,
     devDependencies: value.devDependencies,
     registryDependencies: value.registryDependencies,
+    registryVersion: value.registryVersion,
   }
 }
 
@@ -366,9 +383,44 @@ function readManifest(content: string | null): Manifest {
     files[path] = integrity
   }
 
+  const provenance: Record<string, Provenance> = {}
+
+  if (value.provenance !== undefined) {
+    if (!isRecord(value.provenance)) throw new Error("Invalid ui.json")
+
+    for (const [path, origin] of Object.entries(value.provenance)) {
+      if (
+        !files[path] ||
+        !isRecord(origin) ||
+        !isString(origin.registryUrl) ||
+        !isRecord(origin.items) ||
+        Object.keys(origin.items).length === 0
+      )
+        throw new Error("Invalid ui.json")
+
+      try {
+        if (registryBaseUrl(origin.registryUrl) !== origin.registryUrl)
+          throw new Error("Invalid ui.json")
+      } catch {
+        throw new Error("Invalid ui.json provenance registry URL")
+      }
+
+      const items: Record<string, string> = {}
+
+      for (const [name, version] of Object.entries(origin.items)) {
+        if (!namePattern.test(name) || !isString(version) || !version.trim())
+          throw new Error("Invalid ui.json")
+        items[name] = version
+      }
+
+      provenance[path] = { registryUrl: origin.registryUrl, items }
+    }
+  }
+
   return {
     version: 1,
     files,
+    ...(value.provenance !== undefined && { provenance }),
     ...(value.importPrefix !== undefined && {
       importPrefix: value.importPrefix,
     }),
@@ -562,7 +614,7 @@ export async function runBun(args: string[], cwd: string) {
   }
 }
 
-export async function installItem(name: string, options: InstallOptions = {}) {
+export async function planInstall(name: string, options: InstallOptions = {}) {
   if (!namePattern.test(name)) throw new Error(`Invalid item name: ${name}`)
   const registryUrl = registryBaseUrl(options.registryUrl ?? defaultRegistryUrl)
   const requestTimeoutMs = options.requestTimeoutMs ?? 30_000
@@ -585,6 +637,7 @@ export async function installItem(name: string, options: InstallOptions = {}) {
     : null
 
   const manifest = readManifest(manifestText)
+  const originalManifest = JSON.stringify(manifest)
   const importPrefix = options.importPrefix ?? manifest.importPrefix ?? "@"
 
   if (
@@ -632,6 +685,7 @@ export async function installItem(name: string, options: InstallOptions = {}) {
 
   await visit(name)
   const files = new Map<string, RegistryFile>()
+  const owners = new Map<string, Record<string, string>>()
   const dependencies = new Set<string>()
   const devDependencies = new Set<string>()
 
@@ -652,6 +706,9 @@ export async function installItem(name: string, options: InstallOptions = {}) {
       }
 
       files.set(path, transformed)
+      const ownership = owners.get(path) ?? {}
+      ownership[item.name] = item.registryVersion
+      owners.set(path, ownership)
     }
   }
 
@@ -659,6 +716,26 @@ export async function installItem(name: string, options: InstallOptions = {}) {
   const previewFiles: InstallPreview["files"] = []
   let installed = 0
   let skipped = 0
+  const warnings: string[] = []
+
+  function track(path: string, integrity: string, applied: boolean) {
+    manifest.files[path] = integrity
+    const previous = manifest.provenance?.[path]
+
+    if (!applied && previous && previous.registryUrl !== registryUrl) return
+
+    const ownership =
+      applied || !previous ? { ...owners.get(path)! } : { ...previous.items }
+
+    if (!applied && previous) {
+      for (const [name, version] of Object.entries(owners.get(path)!)) {
+        if (!Object.hasOwn(ownership, name)) ownership[name] = version
+      }
+    }
+
+    manifest.provenance ??= {}
+    manifest.provenance[path] = { registryUrl, items: ownership }
+  }
 
   for (const [path, file] of files) {
     const exists = await existingFile(root, path)
@@ -667,6 +744,14 @@ export async function installItem(name: string, options: InstallOptions = {}) {
     const current = before === null ? null : hash(before)
     changes.set(path, { before, after: before })
     const previous = manifest.files[path]
+    const origin = manifest.provenance?.[path]
+
+    if (origin && origin.registryUrl !== registryUrl) {
+      warnings.push(
+        `Updating tracked file from a different registry: ${path}. Previous: ${origin.registryUrl}; requested: ${registryUrl}. Review source before applying.`,
+      )
+    }
+
     const decision: InstallPreview["files"][number] = { path, action: "skip" }
     previewFiles.push(decision)
 
@@ -683,7 +768,7 @@ export async function installItem(name: string, options: InstallOptions = {}) {
     }
 
     if (current === file.integrity) {
-      manifest.files[path] = file.integrity
+      track(path, file.integrity, false)
       decision.reason = `Identical file: ${path}`
       skipped++
     } else if (
@@ -704,12 +789,16 @@ export async function installItem(name: string, options: InstallOptions = {}) {
 
       if (current && options.force) decision.forced = true
       changes.set(path, { before, after: file.content })
-      manifest.files[path] = file.integrity
+      track(path, file.integrity, true)
       installed++
     }
   }
 
-  const manifestAfter = `${JSON.stringify(manifest, null, 2)}\n`
+  const manifestAfter =
+    manifestText !== null && JSON.stringify(manifest) === originalManifest
+      ? manifestText
+      : `${JSON.stringify(manifest, null, 2)}\n`
+
   changes.set("ui.json", { before: manifestText, after: manifestAfter })
   previewFiles.push({
     path: "ui.json",
@@ -718,14 +807,43 @@ export async function installItem(name: string, options: InstallOptions = {}) {
 
   const pending = await pendingDependencies(root, dependencies, devDependencies)
 
+  return {
+    root,
+    run,
+    changes,
+    installed,
+    skipped,
+    warnings,
+    requirements: {
+      dependencies: [...dependencies],
+      devDependencies: [...devDependencies],
+    },
+    preview: { files: previewFiles, ...pending },
+  }
+}
+
+export async function installItem(
+  name: string,
+  options: InstallOptions = {},
+): Promise<InstallResult> {
+  return await applyInstall(await planInstall(name, options), options)
+}
+
+export async function applyInstall(
+  plan: Awaited<ReturnType<typeof planInstall>>,
+  options: InstallOptions = {},
+): Promise<InstallResult> {
+  const { root, run, changes, installed, skipped, warnings, preview } = plan
+  const warningResult = warnings.length ? { warnings } : {}
+
+  for (const warning of warnings) options.onWarning?.(warning)
+
   if (options.dryRun) {
     return {
       installed: 0,
       skipped,
-      preview: {
-        files: previewFiles,
-        ...pending,
-      },
+      preview,
+      ...warningResult,
     }
   }
 
@@ -733,14 +851,14 @@ export async function installItem(name: string, options: InstallOptions = {}) {
 
   try {
     await writeFiles(root, changes, async () => {
-      if (pending.dependencies.length) {
+      if (preview.dependencies.length) {
         dependenciesStarted = true
-        await run(["add", ...pending.dependencies], root)
+        await run(["add", ...preview.dependencies], root)
       }
 
-      if (pending.devDependencies.length) {
+      if (preview.devDependencies.length) {
         dependenciesStarted = true
-        await run(["add", "-d", ...pending.devDependencies], root)
+        await run(["add", "-d", ...preview.devDependencies], root)
       }
     })
   } catch (cause) {
@@ -751,5 +869,5 @@ export async function installItem(name: string, options: InstallOptions = {}) {
     )
   }
 
-  return { installed, skipped }
+  return { installed, skipped, ...warningResult }
 }
