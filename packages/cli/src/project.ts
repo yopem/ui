@@ -166,8 +166,12 @@ async function packageManager(root: string) {
     ["yarn", "yarn.lock"],
   ]
 
-  for (const [manager, path] of locks) {
-    if (await existingFile(root, path)) found.add(manager)
+  const existingLocks = await Promise.all(
+    locks.map(([, path]) => existingFile(root, path)),
+  )
+
+  for (const [index, [manager]] of locks.entries()) {
+    if (existingLocks[index]) found.add(manager)
   }
 
   if (found.size > 1) {
@@ -184,8 +188,12 @@ export async function packageRunner(
   run?: InstallOptions["run"],
 ): Promise<NonNullable<InstallOptions["run"]>> {
   const target = await realpath(root)
-  const owner = await workspaceRoot(target)
-  const local = await packageManager(target)
+
+  const [owner, local] = await Promise.all([
+    workspaceRoot(target),
+    packageManager(target),
+  ])
+
   const workspace = owner === target ? local : await packageManager(owner)
 
   if (local && workspace && local !== workspace) {

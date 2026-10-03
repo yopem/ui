@@ -490,26 +490,34 @@ export async function writeFiles(
   }
 
   try {
-    for (const [path, change] of changes) {
-      const exists = await existingFile(root, path)
-      const before = exists ? await readFile(join(root, path)) : null
+    staged.push(
+      ...(await Promise.all(
+        [...changes].map(async ([path, change]): Promise<StagedFile> => {
+          const exists = await existingFile(root, path)
+          const before = exists ? await readFile(join(root, path)) : null
 
-      if ((before?.toString("utf8") ?? null) !== change.before) {
-        throw new Error(`File changed before commit: ${path}`)
-      }
+          if ((before?.toString("utf8") ?? null) !== change.before) {
+            throw new Error(`File changed before commit: ${path}`)
+          }
 
-      const mode = exists ? (await lstat(join(root, path))).mode & 0o7777 : null
-      const after = change.after === null ? null : Buffer.from(change.after)
-      staged.push({
-        path,
-        before,
-        after,
-        mode,
-        afterMode: mode,
-        changed: change.before !== change.after,
-        directory: null,
-      })
-    }
+          const mode = exists
+            ? (await lstat(join(root, path))).mode & 0o7777
+            : null
+
+          const after = change.after === null ? null : Buffer.from(change.after)
+
+          return {
+            path,
+            before,
+            after,
+            mode,
+            afterMode: mode,
+            changed: change.before !== change.after,
+            directory: null,
+          }
+        }),
+      )),
+    )
 
     for (const file of staged) {
       if (!file.changed) continue
@@ -535,7 +543,9 @@ export async function writeFiles(
 
     await prepare?.()
 
-    for (const file of staged) await verify(file, file.before, file.mode)
+    await Promise.all(
+      staged.map((file) => verify(file, file.before, file.mode)),
+    )
 
     for (const file of staged) {
       if (!file.changed) continue
@@ -737,10 +747,16 @@ export async function planInstall(name: string, options: InstallOptions = {}) {
     manifest.provenance[path] = { registryUrl, items: ownership }
   }
 
-  for (const [path, file] of files) {
-    const exists = await existingFile(root, path)
+  const currentFiles = await Promise.all(
+    [...files].map(async ([path, file]) => {
+      const exists = await existingFile(root, path)
+      const before = exists ? await readFile(join(root, path), "utf8") : null
 
-    const before = exists ? await readFile(join(root, path), "utf8") : null
+      return { path, file, before }
+    }),
+  )
+
+  for (const { path, file, before } of currentFiles) {
     const current = before === null ? null : hash(before)
     changes.set(path, { before, after: before })
     const previous = manifest.files[path]

@@ -1519,10 +1519,11 @@ function nextScripts(value: JsonValue | undefined) {
 }
 
 async function chooseFile(root: string, names: string[], fallback?: string) {
-  const matches: string[] = []
+  const existing = await Promise.all(
+    names.map((name) => existingFile(root, name)),
+  )
 
-  for (const name of names)
-    if (await existingFile(root, name)) matches.push(name)
+  const matches = names.filter((_, index) => existing[index])
 
   if (matches.length > 1)
     throw new Error(`Ambiguous configuration: ${matches.join(", ")}`)
@@ -1619,8 +1620,11 @@ export async function initProject(
     }
   }
 
-  const packageRun = await packageRunner(root, options.run)
-  const uiRun = await packageRunner(uiRoot, options.run)
+  const [packageRun, uiRun] = await Promise.all([
+    packageRunner(root, options.run),
+    packageRunner(uiRoot, options.run),
+  ])
+
   const edits = new Map<string, { before: string | null; after: string }>()
 
   const plannedFiles: {
