@@ -4,6 +4,7 @@ import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs"
 import { tmpdir } from "node:os"
 import { join, resolve } from "node:path"
 
+import { runCli } from "@/cli"
 import { installItem } from "@/install"
 
 import { snapshot } from "./files"
@@ -243,6 +244,111 @@ for (const manifest of [
     }
   })
 }
+
+for (const command of ["add", "update", "init"] as const) {
+  for (const destination of [
+    "local",
+    "http://remote.invalid/unsafe",
+    "https://user:secret@remote.invalid/unsafe",
+  ]) {
+    test(`${command} rejects late native redirect to ${destination} without destination request or mutation`, async () => {
+      const project = fixture()
+      let contacted = 0
+
+      const sink = Bun.serve({
+        hostname: "127.0.0.1",
+        port: 0,
+        fetch() {
+          contacted++
+
+          return Response.json(item("broken"))
+        },
+      })
+
+      const server = Bun.serve({
+        hostname: "127.0.0.1",
+        port: 0,
+        fetch(request) {
+          const name = new URL(request.url).pathname
+            .split("/")
+            .at(-1)!
+            .replace(".json", "")
+
+          if (name === "broken")
+            return new Response("secret body", {
+              status: 302,
+              headers: {
+                Location:
+                  destination === "local" ? `${sink.url}target` : destination,
+              },
+            })
+          const value = item(name)
+          value.registryDependencies.push("broken")
+
+          return Response.json(value)
+        },
+      })
+
+      const before = snapshot(project.root)
+
+      try {
+        const message = await runCli(
+          [command, ...(command === "init" ? [] : ["button"])],
+          { ...project.options, registryUrl: `${server.url}r` },
+        ).then(
+          () => "unexpected success",
+          (cause: unknown) =>
+            cause instanceof Error ? cause.message : String(cause),
+        )
+
+        expect(message).toMatch(/network|redirect/i)
+        expect(message).toContain("--registry")
+        expect(message).not.toContain("secret")
+        expect(contacted).toBe(0)
+        expect(snapshot(project.root)).toEqual(before)
+        expect(project.calls).toEqual([])
+        evidence.push({
+          name: `${command} redirect ${destination}`,
+          message,
+          contacted,
+          unchanged: true,
+        })
+      } finally {
+        server.stop(true)
+        sink.stop(true)
+        project.dispose()
+      }
+    })
+  }
+}
+
+test("injected redirect rejected; fetch receives redirect:error and abort signal", async () => {
+  const project = fixture()
+  const before = snapshot(project.root)
+
+  try {
+    await expect(
+      installItem("button", {
+        ...project.options,
+        fetcher(_url, init) {
+          expect(init?.redirect).toBe("error")
+          expect(init?.signal).toBeInstanceOf(AbortSignal)
+
+          return Promise.resolve(
+            new Response("secret body", {
+              status: 307,
+              headers: { Location: "https://user:secret@remote.invalid" },
+            }),
+          )
+        },
+      }),
+    ).rejects.toThrow(/redirect.*--registry/i)
+    expect(snapshot(project.root)).toEqual(before)
+    expect(project.calls).toEqual([])
+  } finally {
+    project.dispose()
+  }
+})
 
 test("incompatible runtime/dev requirements fail before package-manager or file writes", async () => {
   const project = fixture()

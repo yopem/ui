@@ -136,10 +136,19 @@ async function registryItemJson(
     let response: Response
 
     try {
-      response = await fetcher(url, { signal: controller.signal })
+      response = await fetcher(url, {
+        signal: controller.signal,
+        redirect: "error",
+      })
     } catch {
       throw new Error(
         `Registry network error: ${url}. Check your connection and --registry URL.`,
+      )
+    }
+
+    if (response.status >= 300 && response.status < 400) {
+      throw new Error(
+        `Registry redirect rejected: ${url} (HTTP ${response.status}). Redirects are not allowed; check --registry URL.`,
       )
     }
 
