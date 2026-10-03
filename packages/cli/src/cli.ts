@@ -8,7 +8,7 @@ import { installItem, isRecord, isString } from "@yopem-ui/cli/install"
 import { resolve } from "node:path"
 
 const usage =
-  "Usage: yopem-ui [--help | --version] | init [--framework vite|tanstack-router|tanstack-start|react-router|next|astro] [--ui <path>] [--cwd <path>] [--registry <URL>] | <add|update> <name> [--force] [--dry-run] [--cwd <path>] [--registry <URL>]"
+  "Usage: yopem-ui [--help | --version] | init [--framework vite|tanstack-router|tanstack-start|react-router|next|astro] [--ui <path>] [--dry-run] [--cwd <path>] [--registry <URL>] | <add|update> <name> [--force] [--dry-run] [--cwd <path>] [--registry <URL>]"
 
 function isFramework(
   value: string | undefined,
@@ -84,8 +84,6 @@ export async function runCli(args: string[], options: InitOptions = {}) {
   }
 
   if (command === "init") {
-    if (flags.has("--dry-run") || options.dryRun)
-      throw new Error("--dry-run is not supported for init")
     const framework = flags.get("--framework")
 
     if (
@@ -99,14 +97,44 @@ export async function runCli(args: string[], options: InitOptions = {}) {
       ...options,
       cwd,
       registryUrl,
+      dryRun: flags.has("--dry-run") || options.dryRun,
       onWarning,
       ui: flags.get("--ui") ?? options.ui,
       framework: isFramework(framework) ? framework : options.framework,
     })
 
-    console.info(
-      `Configured ${result.framework} (${result.configured} file(s))`,
-    )
+    if (result.preview) {
+      for (const file of result.preview.files) {
+        const label =
+          file.action === "write"
+            ? "Write"
+            : file.action === "delete"
+              ? "Delete"
+              : "Skip"
+
+        console.info(
+          `${label} ${file.path}${file.reason ? ` (${file.reason})` : ""}`,
+        )
+      }
+
+      for (const group of result.preview.dependencies) {
+        console.info(
+          `Runtime dependencies (${group.cwd}): ${group.dependencies.join(", ") || "none"}`,
+        )
+        console.info(
+          `Dev dependencies (${group.cwd}): ${group.devDependencies.join(", ") || "none"}`,
+        )
+      }
+
+      console.info(`Prerequisites: ${result.preview.prerequisites.join("; ")}`)
+      console.info(
+        `Dry run: ${result.framework}. No files written or package-manager commands run.`,
+      )
+    } else {
+      console.info(
+        `Configured ${result.framework} (${result.configured} file(s))`,
+      )
+    }
 
     return result
   }

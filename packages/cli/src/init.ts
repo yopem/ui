@@ -6,15 +6,17 @@ import type {
 } from "@yopem-ui/cli/install"
 
 import {
+  applyInstall,
   existingFile,
-  installItem,
   isRecord,
   isString,
+  planInstall,
   writeFiles,
 } from "@yopem-ui/cli/install"
 import {
   isPackageName,
   packageRunner,
+  pendingDependencies,
   workspaceRoot,
 } from "@yopem-ui/cli/project"
 import { readFile, realpath } from "node:fs/promises"
@@ -38,6 +40,25 @@ interface Edit {
   start: number
   end: number
   text: string
+}
+
+export interface InitResult {
+  framework: Framework
+  configured: number
+  warnings?: string[]
+  preview?: {
+    files: {
+      path: string
+      action: "write" | "skip" | "delete" | "conflict"
+      reason?: string
+    }[]
+    dependencies: {
+      cwd: string
+      dependencies: string[]
+      devDependencies: string[]
+    }[]
+    prerequisites: string[]
+  }
 }
 
 export interface InitOptions extends InstallOptions {
@@ -1547,8 +1568,9 @@ function detectFramework(
   return detected[0]!
 }
 
-export async function initProject(options: InitOptions = {}) {
-  if (options.dryRun) throw new Error("--dry-run is not supported for init")
+export async function initProject(
+  options: InitOptions = {},
+): Promise<InitResult> {
   const root = await realpath(options.cwd ?? process.cwd())
 
   if (!(await existingFile(root, "package.json"))) {
@@ -1601,16 +1623,29 @@ export async function initProject(options: InitOptions = {}) {
   const uiRun = await packageRunner(uiRoot, options.run)
   const edits = new Map<string, { before: string | null; after: string }>()
 
+  const plannedFiles: {
+    path: string
+    action: "write" | "skip" | "delete"
+    reason?: string
+  }[] = []
+
   async function plan(
     path: string,
     transform: (content: string) => string,
     fallback?: string,
+    reason?: string,
   ) {
     const exists = await existingFile(root, path)
 
     if (!exists && fallback === undefined) throw new Error(`Missing ${path}`)
     const before = exists ? await readFile(join(root, path), "utf8") : null
     const after = transform(before ?? fallback!)
+
+    plannedFiles.push({
+      path: resolve(root, path),
+      action: before === after ? "skip" : "write",
+      ...(reason && { reason }),
+    })
 
     if (before !== after) edits.set(path, { before, after })
   }
@@ -1669,43 +1704,48 @@ export async function initProject(options: InitOptions = {}) {
   if (shared) {
     const prefix = relative(root, uiRoot).replaceAll("\\", "/")
 
-    await plan(`${prefix}/package.json`, (content) => {
-      const value: JsonValue = JSON.parse(content)
+    await plan(
+      `${prefix}/package.json`,
+      (content) => {
+        const value: JsonValue = JSON.parse(content)
 
-      if (
-        !object(value) ||
-        (value.exports !== undefined && !object(value.exports))
-      )
-        throw new Error("Shared UI package requires object exports")
-      const exports = object(value.exports) ? { ...value.exports } : {}
+        if (
+          !object(value) ||
+          (value.exports !== undefined && !object(value.exports))
+        )
+          throw new Error("Shared UI package requires object exports")
+        const exports = object(value.exports) ? { ...value.exports } : {}
 
-      const paths = {
-        "./components/ui/*": "./src/components/ui/*.tsx",
-        "./lib/*": "./src/lib/*.ts",
-        "./styles/tokens.stylex": "./src/styles/tokens.stylex.ts",
-        "./styles/styles.css": "./src/styles/styles.css",
-        "./theme/*": "./src/theme/*.tsx",
-      }
+        const paths = {
+          "./components/ui/*": "./src/components/ui/*.tsx",
+          "./lib/*": "./src/lib/*.ts",
+          "./styles/tokens.stylex": "./src/styles/tokens.stylex.ts",
+          "./styles/styles.css": "./src/styles/styles.css",
+          "./theme/*": "./src/theme/*.tsx",
+        }
 
-      for (const [path, target] of Object.entries(paths)) {
-        if (exports[path] !== undefined && exports[path] !== target)
-          throw new Error(`Conflicting UI package export: ${path}`)
-        exports[path] = target
-      }
+        for (const [path, target] of Object.entries(paths)) {
+          if (exports[path] !== undefined && exports[path] !== target)
+            throw new Error(`Conflicting UI package export: ${path}`)
+          exports[path] = target
+        }
 
-      const sideEffects =
-        value.sideEffects === false
-          ? ["**/*.css"]
-          : Array.isArray(value.sideEffects) &&
-              !value.sideEffects.includes("**/*.css")
-            ? [...value.sideEffects, "**/*.css"]
-            : value.sideEffects
+        const sideEffects =
+          value.sideEffects === false
+            ? ["**/*.css"]
+            : Array.isArray(value.sideEffects) &&
+                !value.sideEffects.includes("**/*.css")
+              ? [...value.sideEffects, "**/*.css"]
+              : value.sideEffects
 
-      return JSON.stringify(value.exports) === JSON.stringify(exports) &&
-        JSON.stringify(value.sideEffects) === JSON.stringify(sideEffects)
-        ? content
-        : `${JSON.stringify({ ...value, exports, sideEffects }, null, 2)}\n`
-    })
+        return JSON.stringify(value.exports) === JSON.stringify(exports) &&
+          JSON.stringify(value.sideEffects) === JSON.stringify(sideEffects)
+          ? content
+          : `${JSON.stringify({ ...value, exports, sideEffects }, null, 2)}\n`
+      },
+      undefined,
+      "Shared UI exports: ./components/ui/*, ./lib/*, ./styles/tokens.stylex, ./styles/styles.css, ./theme/*; CSS side effects",
+    )
   }
 
   const devDependencies = [
@@ -1868,15 +1908,165 @@ export async function initProject(options: InitOptions = {}) {
     }
   }
 
+  const basePlan = await planInstall("base", {
+    ...options,
+    cwd: uiRoot,
+    importPrefix: shared?.name,
+    dryRun: true,
+    run: uiRun,
+  })
+
+  const conflict = basePlan.preview.files.find(
+    (file) => file.action === "conflict",
+  )
+
+  if (conflict) throw new Error(conflict.reason)
+
+  if (
+    !basePlan.changes.get("src/styles/styles.css")?.after?.includes("@stylex;")
+  ) {
+    throw new Error(
+      "Add @stylex; to src/styles/styles.css before configuring StyleX",
+    )
+  }
+
+  const runtimeRequirements =
+    uiRoot === root
+      ? [...basePlan.requirements.dependencies, ...runtimeDependencies]
+      : runtimeDependencies
+
+  const devRequirements =
+    uiRoot === root
+      ? [...basePlan.requirements.devDependencies, ...devDependencies]
+      : devDependencies
+
+  const appPending = await pendingDependencies(
+    root,
+    runtimeRequirements,
+    devRequirements,
+  )
+
+  const baseDependencyNames = new Set(
+    [
+      ...basePlan.requirements.dependencies,
+      ...basePlan.requirements.devDependencies,
+    ].map((argument) => {
+      const separator = argument.indexOf("@", 1)
+
+      return separator < 0 ? argument : argument.slice(0, separator)
+    }),
+  )
+
+  function isBaseDependency(argument: string) {
+    const separator = argument.indexOf("@", 1)
+
+    return baseDependencyNames.has(
+      separator < 0 ? argument : argument.slice(0, separator),
+    )
+  }
+
+  const baseApplicationPlan =
+    uiRoot === root
+      ? {
+          ...basePlan,
+          preview: {
+            ...basePlan.preview,
+            dependencies: appPending.dependencies.filter(isBaseDependency),
+            devDependencies:
+              appPending.devDependencies.filter(isBaseDependency),
+          },
+        }
+      : basePlan
+
+  if (options.dryRun) {
+    const baseDependencies = {
+      dependencies: basePlan.preview.dependencies,
+      devDependencies: basePlan.preview.devDependencies,
+    }
+
+    for (const [path] of retired)
+      plannedFiles.push({ path: resolve(root, path), action: "delete" })
+
+    if (framework === "next") {
+      if (!object(manifest.scripts))
+        throw new Error("Next.js scripts are missing")
+      const originalScripts = manifest.scripts
+      const scripts = nextScripts(originalScripts)
+      plannedFiles.push({
+        path: join(root, "package.json"),
+        action:
+          JSON.stringify(scripts) === JSON.stringify(manifest.scripts)
+            ? "skip"
+            : "write",
+        reason: `Next.js scripts: ${
+          Object.entries(scripts)
+            .filter(([name, value]) => value !== originalScripts[name])
+            .map(
+              ([name, value]) =>
+                `${name}: ${JSON.stringify(originalScripts[name])} -> ${JSON.stringify(value)}`,
+            )
+            .join("; ") || "unchanged"
+        }`,
+      })
+    }
+
+    const dependencyTargets =
+      uiRoot === root
+        ? [{ cwd: root, ...appPending }]
+        : [
+            { cwd: uiRoot, ...baseDependencies },
+            { cwd: root, ...appPending },
+          ]
+
+    for (const group of dependencyTargets) {
+      if (!group.dependencies.length && !group.devDependencies.length) continue
+      const path = join(group.cwd, "package.json")
+      const planned = plannedFiles.find((file) => file.path === path)
+
+      if (planned) {
+        planned.action = "write"
+        planned.reason = [
+          planned.reason,
+          "Pending package-manager dependency changes",
+        ]
+          .filter(Boolean)
+          .join("; ")
+      } else {
+        plannedFiles.push({
+          path,
+          action: "write",
+          reason: "Pending package-manager dependency changes",
+        })
+      }
+    }
+
+    for (const warning of basePlan.warnings) options.onWarning?.(warning)
+
+    return {
+      framework,
+      configured: 0,
+      ...(basePlan.warnings.length && { warnings: basePlan.warnings }),
+      preview: {
+        files: [
+          ...basePlan.preview.files.map((file) => ({
+            ...file,
+            path: join(uiRoot, file.path),
+          })),
+          ...plannedFiles,
+        ],
+        dependencies: dependencyTargets,
+        prerequisites: [
+          "Supported framework, safe project paths and configuration",
+          "Validated registry base with @stylex; stylesheet directive",
+        ],
+      },
+    }
+  }
+
   let baseInstalled = false
 
   try {
-    await installItem("base", {
-      ...options,
-      cwd: uiRoot,
-      importPrefix: shared?.name,
-      run: uiRun,
-    })
+    const baseResult = await applyInstall(baseApplicationPlan, options)
     baseInstalled = true
 
     if (
@@ -1897,36 +2087,26 @@ export async function initProject(options: InitOptions = {}) {
     if (!object(installed))
       throw new Error("Invalid package.json after installation")
 
-    const available = Object.fromEntries(
-      [installed.dependencies, installed.devDependencies].flatMap((entry) =>
-        object(entry) ? Object.entries(entry) : [],
-      ),
+    const pending = await pendingDependencies(
+      root,
+      runtimeRequirements,
+      devRequirements,
     )
 
-    const neededRuntime = runtimeDependencies.filter((name) => {
-      if (shared && name === `${shared.name}@workspace:*`) {
-        const version = available[shared.name]
+    if (uiRoot === root) {
+      pending.dependencies = pending.dependencies.filter(
+        (argument) => !isBaseDependency(argument),
+      )
+      pending.devDependencies = pending.devDependencies.filter(
+        (argument) => !isBaseDependency(argument),
+      )
+    }
 
-        return (
-          !isString(version) ||
-          (version !== "*" && !version.startsWith("workspace:"))
-        )
-      }
+    if (pending.dependencies.length)
+      await packageRun(["add", ...pending.dependencies], root)
 
-      const packageName = name.includes("@", 1)
-        ? name.slice(0, name.lastIndexOf("@"))
-        : name
-
-      return !(packageName in available)
-    })
-
-    if (neededRuntime.length) await packageRun(["add", ...neededRuntime], root)
-
-    const neededDev = devDependencies.filter(
-      (name) => !(name.split("@").slice(0, -1).join("@") in available),
-    )
-
-    if (neededDev.length) await packageRun(["add", "-d", ...neededDev], root)
+    if (pending.devDependencies.length)
+      await packageRun(["add", "-d", ...pending.devDependencies], root)
 
     if (shared) {
       const path = `${relative(root, uiRoot).replaceAll("\\", "/")}/package.json`
@@ -1990,7 +2170,11 @@ export async function initProject(options: InitOptions = {}) {
 
     await writeFiles(root, changes)
 
-    return { framework, configured: edits.size }
+    return {
+      framework,
+      configured: edits.size,
+      ...(baseResult.warnings && { warnings: baseResult.warnings }),
+    }
   } catch (cause) {
     if (!baseInstalled) throw cause
     throw new Error(

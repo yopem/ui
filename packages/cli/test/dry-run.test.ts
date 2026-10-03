@@ -81,7 +81,14 @@ function fixture() {
   }
 
   version(1)
-  put("package.json", '{"name":"app","dependencies":{"react":"*"}}\n')
+  items.set(
+    "base",
+    registryItem("base", { "src/styles/styles.css": "@stylex;\n" }),
+  )
+  put(
+    "package.json",
+    '{"name":"app","dependencies":{"react":"*","vite":"*"}}\n',
+  )
   put("tsconfig.json", "{}\n")
   put("vite.config.ts", "export default { plugins: [] }\n")
   put("src/main.tsx", 'import React from "react"\n')
@@ -490,7 +497,7 @@ test("dry add retains registry timeout protection", async () => {
   }
 })
 
-test("CLI options honor dryRun and reject init spread-through", async () => {
+test("CLI options honor dryRun for add and init", async () => {
   const project = fixture()
   const options = { ...project.options, dryRun: true }
   const before = snapshot(project.root)
@@ -498,9 +505,8 @@ test("CLI options honor dryRun and reject init spread-through", async () => {
   try {
     await runCli(["add", "button"], options)
     project.unchanged("CLI programmatic dryRun", before)
-    const requests = [...project.requests]
-    await expect(runCli(["init"], options)).rejects.toThrow(/dry-run.*init/i)
-    expect(project.requests).toEqual(requests)
+    const result = await runCli(["init"], options)
+    expect(result && "framework" in result && result.preview).toBeDefined()
     project.unchanged("CLI init dryRun option", before)
   } finally {
     project.dispose()
@@ -513,8 +519,6 @@ for (const args of [
   ["update", "button", "--dry-run", "true"],
   ["add", "button", "--dry-run", "--dry-run"],
   ["add", "button", "--dry-run=true"],
-  ["init", "--dry-run"],
-  ["init", "--dry-run", "--ui", "packages/ui"],
 ]) {
   test(`dry CLI argument rule: ${args.join(" ")}`, async () => {
     const project = fixture()
@@ -533,20 +537,21 @@ for (const args of [
 }
 
 for (const cwd of ["valid", "missing"]) {
-  test(`programmatic init rejects dryRun before reads or mutations (${cwd})`, async () => {
+  test(`programmatic init validates dryRun without mutations (${cwd})`, async () => {
     const project = fixture()
     const before = snapshot(project.root)
 
     try {
-      await expect(
-        initProject({
-          ...project.options,
-          cwd: cwd === "valid" ? project.root : join(project.root, "missing"),
-          dryRun: true,
-        }),
-      ).rejects.toThrow(/dry-run.*init/i)
+      const operation = initProject({
+        ...project.options,
+        cwd: cwd === "valid" ? project.root : join(project.root, "missing"),
+        dryRun: true,
+      })
+
+      if (cwd === "valid") expect((await operation).preview).toBeDefined()
+      else await expect(operation).rejects.toThrow("ENOENT")
       project.unchanged(`programmatic init ${cwd}`, before)
-      expect(project.requests).toEqual([])
+      expect(project.requests).toEqual(cwd === "valid" ? ["/r/base.json"] : [])
     } finally {
       project.dispose()
     }

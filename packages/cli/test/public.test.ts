@@ -136,6 +136,26 @@ async function installPackedCli(
 
   expect(installedVersion.trim()).toBe(version)
   expect(snapshot(project)).toEqual(before)
+
+  const dryInit = await run(
+    logs,
+    project,
+    "bunx",
+    "yopem-ui",
+    "init",
+    "--dry-run",
+    ...registry,
+  )
+
+  expect(dryInit).toContain("No files written or package-manager commands run")
+  expect(dryInit).toContain(join(project, "package.json"))
+  expect(dryInit).toContain(join(project, "ui.json"))
+  expect(dryInit).toContain("@stylex;")
+  expect(snapshot(project)).toEqual(before)
+
+  logs.push(
+    `Packed help/version/init dry-run verified; version matches packed manifest: ${version}; project unchanged`,
+  )
 }
 
 async function previewPackedCli(

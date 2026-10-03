@@ -11,6 +11,7 @@ import { tmpdir } from "node:os"
 import { join, resolve } from "node:path"
 
 import { runCli } from "@/cli"
+import { initProject } from "@/init"
 import { installItem } from "@/install"
 
 import { snapshot } from "./files"
@@ -250,6 +251,166 @@ for (const manifest of [
     }
   })
 }
+
+for (const framework of [
+  "vite",
+  "tanstack-router",
+  "tanstack-start",
+  "react-router",
+  "next",
+  "astro",
+] as const) {
+  for (const shared of [false, true]) {
+    test(`init dry run ${framework}, shared=${shared}, plans validated base and config`, async () => {
+      const project = fixture()
+
+      const dependency = {
+        vite: "vite",
+        "tanstack-router": "@tanstack/react-router",
+        "tanstack-start": "@tanstack/react-start",
+        "react-router": "@react-router/dev",
+        next: "next",
+        astro: "astro",
+      }[framework]
+
+      project.put(
+        "package.json",
+        JSON.stringify({
+          dependencies: { [dependency]: "*", react: "*" },
+          scripts: { dev: "next dev", build: "next build" },
+        }),
+      )
+
+      if (framework === "astro") {
+        project.put("astro.config.mjs", "export default { integrations: [] }\n")
+        project.put(
+          "src/layouts/Layout.astro",
+          "---\n---\n<html><head></head><body></body></html>",
+        )
+      } else if (framework === "next") {
+        project.put(
+          "src/app/layout.tsx",
+          "export function Layout(){ return <html><body></body></html> }",
+        )
+      } else if (
+        framework === "tanstack-start" ||
+        framework === "react-router"
+      ) {
+        project.put(
+          framework === "tanstack-start"
+            ? "src/routes/__root.tsx"
+            : "app/root.tsx",
+          "export function Layout(){ return <html><head></head><body></body></html> }",
+        )
+      }
+
+      if (shared) {
+        project.put(
+          "package.json",
+          JSON.stringify({
+            workspaces: ["packages/*"],
+            dependencies: { [dependency]: "*", react: "*" },
+            scripts: { dev: "next dev", build: "next build" },
+          }),
+        )
+        project.put(
+          "packages/ui/package.json",
+          '{"name":"@acme/ui","sideEffects":false}',
+        )
+      }
+
+      const before = snapshot(project.root)
+
+      try {
+        const result = await initProject({
+          ...project.options,
+          framework,
+          dryRun: true,
+          ...(shared && { ui: "packages/ui" }),
+        })
+
+        expect(result.preview).toBeDefined()
+
+        if (framework === "next") {
+          expect(
+            result.preview?.files.find(
+              (file) => file.path === join(project.root, "package.json"),
+            )?.reason,
+          ).toContain("next build --webpack")
+        }
+
+        if (shared) {
+          expect(
+            result.preview?.files.find(
+              (file) =>
+                file.path === join(project.root, "packages/ui/package.json"),
+            )?.reason,
+          ).toContain("./components/ui/*")
+        }
+
+        expect(
+          result.preview?.files.some(
+            (file) =>
+              file.path ===
+                join(
+                  shared ? join(project.root, "packages/ui") : project.root,
+                  "src/styles/styles.css",
+                ) && file.action === "write",
+          ),
+        ).toBe(true)
+        expect(
+          result.preview?.dependencies.some(
+            (group) =>
+              group.cwd === project.root &&
+              group.devDependencies.includes("@stylexjs/babel-plugin@^0.19.0"),
+          ),
+        ).toBe(true)
+        expect(snapshot(project.root)).toEqual(before)
+        expect(project.calls).toEqual([])
+        evidence.push({
+          name: `init ${framework} shared=${shared}`,
+          result,
+          unchanged: true,
+        })
+      } finally {
+        project.dispose()
+      }
+    })
+  }
+}
+
+test("init dry run lists retired deletion and rejects base without @stylex before mutation", async () => {
+  const project = fixture()
+  project.put(".babelrc", '{"plugins":[]}')
+  const before = snapshot(project.root)
+
+  try {
+    const result = await runCli(["init", "--dry-run"], project.options)
+    expect(
+      result &&
+        "framework" in result &&
+        result.preview?.files.some(
+          (file) =>
+            file.path === join(project.root, ".babelrc") &&
+            file.action === "delete",
+        ),
+    ).toBe(true)
+    expect(snapshot(project.root)).toEqual(before)
+    const base = project.items.get("base")!
+    base.files[0]!.content = "/* missing directive */\n"
+    base.files[0]!.integrity = `sha256-${createHash("sha256").update(base.files[0]!.content).digest("base64")}`
+
+    for (const dryRun of [true, false]) {
+      await expect(initProject({ ...project.options, dryRun })).rejects.toThrow(
+        "Add @stylex;",
+      )
+      expect(snapshot(project.root)).toEqual(before)
+      expect(project.calls).toEqual([])
+    }
+  } finally {
+    project.dispose()
+  }
+})
 
 test("provenance tracks transitive and overlapping owners, warns registry switch and retains skipped origins", async () => {
   const project = fixture()
@@ -503,6 +664,39 @@ test("injected redirect rejected; fetch receives redirect:error and abort signal
   }
 })
 
+test("init registry switch exposes warnings before commit in real and dry results", async () => {
+  const project = fixture()
+
+  try {
+    await initProject(project.options)
+    const registryUrl = project.options.registryUrl.replace("/r", "/other")
+    const before = snapshot(project.root)
+
+    const dry = await initProject({
+      ...project.options,
+      registryUrl,
+      dryRun: true,
+    })
+
+    expect(dry.warnings?.[0]).toContain("different registry")
+    expect(snapshot(project.root)).toEqual(before)
+    const warnings: string[] = []
+
+    const real = await initProject({
+      ...project.options,
+      registryUrl,
+      onWarning(warning) {
+        warnings.push(warning)
+      },
+    })
+
+    expect(real.warnings).toEqual(warnings)
+    expect(warnings).toHaveLength(1)
+  } finally {
+    project.dispose()
+  }
+})
+
 test("incompatible runtime/dev requirements fail before package-manager or file writes", async () => {
   const project = fixture()
   project.items.set(
@@ -545,3 +739,259 @@ test("identical tracked files keep applied item versions when fetched version ch
     project.dispose()
   }
 })
+
+for (const existing of [false, true]) {
+  for (const dryRun of [false, true]) {
+    test(`init validates conflicting base/tool requirements before effects: existing=${existing}, dry=${dryRun}`, async () => {
+      const project = fixture()
+      project.items.set("base", item("base", ["@babel/core@^8.0.0"]))
+      project.put(
+        "package.json",
+        JSON.stringify({
+          dependencies: {
+            vite: "*",
+            react: "*",
+            ...(existing && { "@babel/core": "^8.0.0" }),
+          },
+        }),
+      )
+      const before = snapshot(project.root)
+
+      try {
+        await expect(
+          initProject({ ...project.options, dryRun }),
+        ).rejects.toThrow("Conflicting package requirements")
+        expect(snapshot(project.root)).toEqual(before)
+        expect(project.calls).toEqual([])
+      } finally {
+        project.dispose()
+      }
+    })
+  }
+
+  test(`init compatible base/tool overlap preserves runtime precedence without reinstall: existing=${existing}`, async () => {
+    const project = fixture()
+    project.items.set(
+      "base",
+      item("base", ["@babel/core@^7.29.7"], ["@babel/core@^7.29.7"]),
+    )
+    project.put(
+      "package.json",
+      JSON.stringify({
+        dependencies: {
+          vite: "*",
+          react: "*",
+          ...(existing && { "@babel/core": "^7.30.0" }),
+        },
+      }),
+    )
+    const before = snapshot(project.root)
+
+    try {
+      const dry = await initProject({ ...project.options, dryRun: true })
+      const group = dry.preview?.dependencies[0]
+      expect(
+        group?.dependencies.filter((argument) =>
+          argument.startsWith("@babel/core@"),
+        ),
+      ).toEqual(existing ? [] : ["@babel/core@^7.29.7"])
+      expect(
+        group?.devDependencies.some((argument) =>
+          argument.startsWith("@babel/core@"),
+        ),
+      ).toBe(false)
+      expect(snapshot(project.root)).toEqual(before)
+      await initProject({
+        ...project.options,
+        async run(args, cwd) {
+          await project.options.run(args, cwd)
+
+          const value: {
+            dependencies: Record<string, string>
+            devDependencies?: Record<string, string>
+          } = JSON.parse(readFileSync(join(cwd, "package.json"), "utf8"))
+
+          const dev = args.includes("-d")
+
+          if (dev) value.devDependencies ??= {}
+          const target = dev ? value.devDependencies! : value.dependencies
+
+          for (const argument of args.slice(dev ? 2 : 1)) {
+            const separator = argument.indexOf("@", 1)
+            target[separator < 0 ? argument : argument.slice(0, separator)] =
+              separator < 0 ? "*" : argument.slice(separator + 1)
+          }
+
+          project.put("package.json", JSON.stringify(value))
+        },
+      })
+      expect(
+        project.calls.flatMap((call) =>
+          call.args.filter((argument) => argument.startsWith("@babel/core@")),
+        ),
+      ).toEqual(existing ? [] : ["@babel/core@^7.29.7"])
+      expect(
+        project.calls
+          .filter((call) => call.args.includes("-d"))
+          .every(
+            (call) =>
+              !call.args.some((argument) =>
+                argument.startsWith("@babel/core@"),
+              ),
+          ),
+      ).toBe(true)
+    } finally {
+      project.dispose()
+    }
+  })
+}
+
+test("init shared UI does not merge requirements across separate package targets", async () => {
+  const project = fixture()
+  project.items.set("base", item("base", ["@babel/core@^8.0.0"]))
+  project.put(
+    "package.json",
+    JSON.stringify({
+      workspaces: ["packages/*"],
+      dependencies: { vite: "*", react: "*", "@babel/core": "^7.30.0" },
+    }),
+  )
+  project.put(
+    "packages/ui/package.json",
+    JSON.stringify({
+      name: "@acme/ui",
+      dependencies: { "@babel/core": "^8.0.0" },
+    }),
+  )
+  const before = snapshot(project.root)
+
+  try {
+    const dry = await initProject({
+      ...project.options,
+      ui: "packages/ui",
+      dryRun: true,
+    })
+
+    expect(dry.preview?.dependencies.map((group) => group.cwd)).toEqual([
+      join(project.root, "packages/ui"),
+      project.root,
+    ])
+    expect(
+      dry.preview?.dependencies.every((group) =>
+        [...group.dependencies, ...group.devDependencies].every(
+          (argument) => !argument.startsWith("@babel/core@"),
+        ),
+      ),
+    ).toBe(true)
+    expect(snapshot(project.root)).toEqual(before)
+    await initProject({ ...project.options, ui: "packages/ui" })
+    expect(
+      project.calls.every(
+        (call) =>
+          !call.args.some((argument) => argument.startsWith("@babel/core@")),
+      ),
+    ).toBe(true)
+  } finally {
+    project.dispose()
+  }
+})
+
+for (const existing of [false, true]) {
+  test(`init applies narrowed tooling requirement as runtime with preview parity: existing=${existing}`, async () => {
+    const project = fixture()
+    project.items.set("base", item("base", ["@babel/core@^7.0.0"]))
+    project.put(
+      "package.json",
+      JSON.stringify({
+        dependencies: {
+          vite: "*",
+          react: "*",
+          ...(existing && { "@babel/core": "^7.0.0" }),
+        },
+      }),
+    )
+    const before = snapshot(project.root)
+
+    const configBefore = readFileSync(
+      join(project.root, "vite.config.ts"),
+      "utf8",
+    )
+
+    try {
+      const dry = await initProject({ ...project.options, dryRun: true })
+      const group = dry.preview?.dependencies[0]
+
+      if (!group) throw new Error("Missing init preview dependency group")
+      expect(group.dependencies).toEqual(["@babel/core@^7.29.7"])
+      expect(
+        group?.devDependencies.some((argument) =>
+          argument.startsWith("@babel/core@"),
+        ),
+      ).toBe(false)
+      expect(snapshot(project.root)).toEqual(before)
+      await initProject({
+        ...project.options,
+        async run(args, cwd) {
+          await project.options.run(args, cwd)
+          expect(
+            readFileSync(join(project.root, "vite.config.ts"), "utf8"),
+          ).toBe(configBefore)
+
+          const value: {
+            dependencies: Record<string, string>
+            devDependencies?: Record<string, string>
+          } = JSON.parse(readFileSync(join(cwd, "package.json"), "utf8"))
+
+          const dev = args.includes("-d")
+
+          if (dev) {
+            expect(
+              readFileSync(join(project.root, "src/styles/styles.css"), "utf8"),
+            ).toContain("@stylex;")
+            value.devDependencies ??= {}
+          }
+
+          const target = dev ? value.devDependencies! : value.dependencies
+
+          for (const argument of args.slice(dev ? 2 : 1)) {
+            const separator = argument.indexOf("@", 1)
+            const name = separator < 0 ? argument : argument.slice(0, separator)
+            target[name] = separator < 0 ? "*" : argument.slice(separator + 1)
+
+            if (dev) delete value.dependencies[name]
+            else if (value.devDependencies) delete value.devDependencies[name]
+          }
+
+          project.put("package.json", JSON.stringify(value))
+        },
+      })
+
+      const runtime = project.calls
+        .filter((call) => !call.args.includes("-d"))
+        .flatMap((call) => call.args.slice(1))
+
+      const dev = project.calls
+        .filter((call) => call.args.includes("-d"))
+        .flatMap((call) => call.args.slice(2))
+
+      expect(runtime).toEqual(group.dependencies)
+      expect(dev).toEqual(group.devDependencies)
+
+      const manifest: {
+        dependencies: Record<string, string>
+        devDependencies: Record<string, string>
+      } = JSON.parse(readFileSync(join(project.root, "package.json"), "utf8"))
+
+      expect(manifest.dependencies["@babel/core"]).toBe("^7.29.7")
+      expect(manifest.devDependencies["@babel/core"]).toBeUndefined()
+      evidence.push({
+        scenario: "init narrowed overlap parity",
+        existing,
+        preview: group,
+        commands: project.calls,
+      })
+    } finally {
+      project.dispose()
+    }
+  })
+}
