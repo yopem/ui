@@ -1,7 +1,8 @@
 "use client"
 
-import type React from "react"
+import type { ReactNode } from "react"
 
+import { useEventCallback } from "@registry/hooks/use-event-callback"
 import {
   MEDIA_QUERY,
   STORAGE_KEY,
@@ -14,7 +15,6 @@ import {
   createContext,
   useContext,
   useLayoutEffect,
-  useMemo,
   useState,
   useSyncExternalStore,
 } from "react"
@@ -53,7 +53,7 @@ function getServerPreference() {
 }
 
 export interface ThemeProviderProps {
-  children: React.ReactNode
+  children: ReactNode
   defaultTheme?: Theme
   storageKey?: string
   themes?: ThemeConfig
@@ -67,22 +67,18 @@ export function ThemeProvider({
 }: ThemeProviderProps) {
   const [preference, setThemeState] = useState<Theme | null>(null)
 
-  const getStoredTheme = useMemo(
-    () =>
-      function getStoredTheme() {
-        try {
-          const saved = localStorage.getItem(storageKey)
+  function getStoredTheme() {
+    try {
+      const saved = localStorage.getItem(storageKey)
 
-          if (saved === "light" || saved === "dark" || saved === "system")
-            return saved
-        } catch {
-          // Storage can be blocked. Use the configured default instead.
-        }
+      if (saved === "light" || saved === "dark" || saved === "system")
+        return saved
+    } catch {
+      // Storage can be blocked. Use the configured default instead.
+    }
 
-        return defaultTheme
-      },
-    [defaultTheme, storageKey],
-  )
+    return defaultTheme
+  }
 
   const storedTheme = useSyncExternalStore(
     subscribeToStorage,
@@ -111,24 +107,21 @@ export function ThemeProvider({
     return () => root.classList.remove(...themes.classes[resolvedTheme])
   }, [ready, resolvedTheme, themes])
 
-  const setTheme = useMemo(
-    () =>
-      function setTheme(nextTheme: Theme) {
-        try {
-          localStorage.setItem(storageKey, nextTheme)
-        } catch {
-          // Blocked storage must not prevent changing the current theme.
-        }
+  const setTheme = useEventCallback(function (nextTheme: Theme) {
+    try {
+      localStorage.setItem(storageKey, nextTheme)
+    } catch {
+      // Blocked storage must not prevent changing the current theme.
+    }
 
-        setThemeState(nextTheme)
-      },
-    [storageKey],
-  )
+    setThemeState(nextTheme)
+  })
 
-  const value = useMemo(
-    () => ({ resolvedTheme, setTheme, theme }),
-    [resolvedTheme, setTheme, theme],
-  )
+  const [value, setValue] = useState({ resolvedTheme, setTheme, theme })
+
+  if (value.resolvedTheme !== resolvedTheme || value.theme !== theme) {
+    setValue({ resolvedTheme, setTheme, theme })
+  }
 
   return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>
 }

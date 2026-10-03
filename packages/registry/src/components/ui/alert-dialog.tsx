@@ -1,7 +1,7 @@
 "use client"
 
 import type { StyleXComponentProps } from "@registry/lib/stylex"
-import type React from "react"
+import type { ComponentProps } from "react"
 
 import { AlertDialog as AlertDialogPrimitive } from "@base-ui/react/alert-dialog"
 import { mergeStylexProps, stylexProps } from "@registry/lib/stylex"
@@ -240,7 +240,7 @@ export function AlertDialogHeader({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleXComponentProps<React.ComponentProps<"div">>) {
+}: StyleXComponentProps<ComponentProps<"div">>) {
   const props = restProps
   const xstyle = consumerXstyle
 
@@ -261,7 +261,7 @@ export function AlertDialogFooter({
   variant = "default",
   ...restProps
 }: StyleXComponentProps<
-  React.ComponentProps<"div">,
+  ComponentProps<"div">,
   {
     variant?: "default" | "bare"
   }

@@ -468,7 +468,13 @@ export const displayFormItems: SourceItem[] = definitions.map(
     ],
     name,
     peerDependencies: ["react@>=18 <20", "react-dom@>=18 <20"],
-    registryDependencies: ["base", ...registryDependencies],
+    registryDependencies: [
+      "base",
+      ...registryDependencies,
+      ...(["clipboard", "marquee", "rating"].includes(name)
+        ? ["use-event-callback"]
+        : []),
+    ],
     title,
     type: "registry:ui" as const,
   }),

@@ -1,7 +1,7 @@
 "use client"
 
 import type { StyleXComponentProps } from "@registry/lib/stylex"
-import type React from "react"
+import type { ComponentProps } from "react"
 
 import { mergeProps } from "@base-ui/react/merge-props"
 import { useRender } from "@base-ui/react/use-render"
@@ -137,7 +137,7 @@ const styles = stylex.create({
 export type TableVariant = "default" | "card"
 
 export type TableProps = StyleXComponentProps<
-  React.ComponentProps<"table">,
+  ComponentProps<"table">,
   {
     variant?: TableVariant
     render?: useRender.ComponentProps<"div">["render"]
@@ -180,7 +180,7 @@ export function TableHeader({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleXComponentProps<React.ComponentProps<"thead">>) {
+}: StyleXComponentProps<ComponentProps<"thead">>) {
   const props = restProps
   const xstyle = consumerXstyle
 
@@ -196,7 +196,7 @@ export function TableBody({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleXComponentProps<React.ComponentProps<"tbody">>) {
+}: StyleXComponentProps<ComponentProps<"tbody">>) {
   const props = restProps
   const xstyle = consumerXstyle
 
@@ -212,7 +212,7 @@ export function TableFooter({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleXComponentProps<React.ComponentProps<"tfoot">>) {
+}: StyleXComponentProps<ComponentProps<"tfoot">>) {
   const props = restProps
   const xstyle = consumerXstyle
 
@@ -231,7 +231,7 @@ export function TableRow({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleXComponentProps<React.ComponentProps<"tr">>) {
+}: StyleXComponentProps<ComponentProps<"tr">>) {
   const props = restProps
   const xstyle = consumerXstyle
 
@@ -247,7 +247,7 @@ export function TableHead({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleXComponentProps<React.ComponentProps<"th">>) {
+}: StyleXComponentProps<ComponentProps<"th">>) {
   const props = restProps
   const xstyle = consumerXstyle
 
@@ -263,7 +263,7 @@ export function TableCell({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleXComponentProps<React.ComponentProps<"td">>) {
+}: StyleXComponentProps<ComponentProps<"td">>) {
   const props = restProps
   const xstyle = consumerXstyle
 
@@ -279,7 +279,7 @@ export function TableCaption({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleXComponentProps<React.ComponentProps<"caption">>) {
+}: StyleXComponentProps<ComponentProps<"caption">>) {
   const props = restProps
   const xstyle = consumerXstyle
 

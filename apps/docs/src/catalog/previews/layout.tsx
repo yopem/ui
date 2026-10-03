@@ -1,5 +1,7 @@
 "use client"
 
+import type { FormEvent } from "react"
+
 import { AbsoluteCenter } from "@registry/components/ui/absolute-center"
 import { Bleed } from "@registry/components/ui/bleed"
 import { Box } from "@registry/components/ui/box"
@@ -17,9 +19,10 @@ import { Stack } from "@registry/components/ui/stack"
 import { Text } from "@registry/components/ui/text"
 import { VStack } from "@registry/components/ui/vstack"
 import { Wrap } from "@registry/components/ui/wrap"
+import { useEventCallback } from "@registry/hooks/use-event-callback"
 import * as stylex from "@stylexjs/stylex"
 import { Link as RouterLink } from "@tanstack/react-router"
-import { useRef, useState, useMemo } from "react"
+import { useRef, useState } from "react"
 
 const styles = stylex.create({
   layoutRoot: {
@@ -58,32 +61,22 @@ export function Preview() {
   const [textTag, setTextTag] = useState("Not inspected")
   const [submitted, setSubmitted] = useState(false)
 
-  const handleSubmit = useMemo(
-    () =>
-      function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-        event.preventDefault()
-        setSubmitted(true)
-      },
-    [setSubmitted],
-  )
+  const handleSubmit = useEventCallback(function (
+    event: FormEvent<HTMLFormElement>,
+  ) {
+    event.preventDefault()
+    setSubmitted(true)
+  })
 
-  const focusName = useMemo(
-    () =>
-      function focusName() {
-        return nameRef.current?.focus()
-      },
-    [nameRef],
-  )
+  const focusName = useEventCallback(function () {
+    return nameRef.current?.focus()
+  })
 
-  const inspectRefs = useMemo(
-    () =>
-      function inspectRefs() {
-        return setTextTag(
-          `${textRef.current?.tagName ?? "missing"} ${linkRef.current?.tagName ?? "missing"}`,
-        )
-      },
-    [setTextTag, textRef, linkRef],
-  )
+  const inspectRefs = useEventCallback(function () {
+    return setTextTag(
+      `${textRef.current?.tagName ?? "missing"} ${linkRef.current?.tagName ?? "missing"}`,
+    )
+  })
 
   return (
     <Stack data-testid="layout-root" xstyle={styles.layoutRoot}>

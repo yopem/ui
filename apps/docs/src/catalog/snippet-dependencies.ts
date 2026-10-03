@@ -6,7 +6,7 @@ export function getSnippetDependencies(source: string) {
   for (const match of source.matchAll(/\bfrom\s+["']([^"']+)["']/g)) {
     const path = match[1]!
 
-    if (path.startsWith("@/components/ui/")) {
+    if (path.startsWith("@/components/ui/") || path.startsWith("@/hooks/")) {
       components.add(path.split("/").at(-1)!)
     } else if (!path.startsWith("@/")) {
       packages.add(

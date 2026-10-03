@@ -1,7 +1,7 @@
 "use client"
 
 import type { StyleXComponentProps } from "@registry/lib/stylex"
-import type React from "react"
+import type { ComponentProps } from "react"
 
 import { Checkbox as CheckboxPrimitive } from "@base-ui/react/checkbox"
 import { mergeStylexProps, stylexProps } from "@registry/lib/stylex"
@@ -62,7 +62,7 @@ const styles = stylex.create({
 })
 
 function renderIndicator(
-  indicatorProps: React.ComponentProps<"span">,
+  indicatorProps: ComponentProps<"span">,
   state: CheckboxPrimitive.Indicator.State,
 ) {
   return (

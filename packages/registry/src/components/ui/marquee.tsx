@@ -3,10 +3,11 @@
 import type { StyleXComponentProps } from "@registry/lib/stylex"
 import type { ComponentPropsWithRef } from "react"
 
+import { useEventCallback } from "@registry/hooks/use-event-callback"
 import { mergeStylexProps, stylexProps } from "@registry/lib/stylex"
 import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
-import { useState, useMemo } from "react"
+import { useState } from "react"
 
 const scroll = stylex.keyframes({
   to: { transform: "translateX(-50%)" },
@@ -70,13 +71,9 @@ export function Marquee({
 }: MarqueeProps) {
   const [paused, setPaused] = useState(false)
 
-  const handleClick = useMemo(
-    () =>
-      function handleClick() {
-        return setPaused((current) => !current)
-      },
-    [setPaused],
-  )
+  const handleClick = useEventCallback(function () {
+    return setPaused((current) => !current)
+  })
 
   return (
     <div

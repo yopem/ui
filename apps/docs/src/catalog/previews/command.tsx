@@ -21,10 +21,11 @@ import {
 } from "@registry/components/ui/command"
 import { Flex } from "@registry/components/ui/flex"
 import { Kbd, KbdGroup } from "@registry/components/ui/kbd"
+import { useEventCallback } from "@registry/hooks/use-event-callback"
 import * as stylex from "@stylexjs/stylex"
 import { useHydrated } from "@tanstack/react-router"
 import { ArrowDownIcon, ArrowUpIcon, CornerDownLeftIcon } from "lucide-react"
-import { Fragment, useRef, useState, useMemo } from "react"
+import { Fragment, useRef, useState } from "react"
 
 const styles = stylex.create({
   span: { flex: "1" },
@@ -70,37 +71,31 @@ export function Preview() {
   const hydrated = useHydrated()
   const [open, setOpen] = useState(false)
 
-  const handleItemClick = useMemo(
-    () =>
-      function handleItemClick() {
-        setOpen(false)
-      },
-    [],
-  )
+  const handleItemClick = useEventCallback(function () {
+    setOpen(false)
+  })
 
   const shortcutCleanupRef = useRef<(() => void) | null>(null)
 
-  const registerTrigger = useMemo(
-    () =>
-      function registerTrigger(node: HTMLButtonElement | null) {
-        shortcutCleanupRef.current?.()
-        shortcutCleanupRef.current = null
+  const registerTrigger = useEventCallback(function (
+    node: HTMLButtonElement | null,
+  ) {
+    shortcutCleanupRef.current?.()
+    shortcutCleanupRef.current = null
 
-        if (!node) return
+    if (!node) return
 
-        function handleShortcut(event: KeyboardEvent) {
-          if (event.key === "j" && (event.metaKey || event.ctrlKey)) {
-            event.preventDefault()
-            setOpen((current) => !current)
-          }
-        }
+    function handleShortcut(event: KeyboardEvent) {
+      if (event.key === "j" && (event.metaKey || event.ctrlKey)) {
+        event.preventDefault()
+        setOpen((current) => !current)
+      }
+    }
 
-        document.addEventListener("keydown", handleShortcut)
-        shortcutCleanupRef.current = () =>
-          document.removeEventListener("keydown", handleShortcut)
-      },
-    [],
-  )
+    document.addEventListener("keydown", handleShortcut)
+    shortcutCleanupRef.current = () =>
+      document.removeEventListener("keydown", handleShortcut)
+  })
 
   return (
     <CommandDialog onOpenChange={setOpen} open={open}>

@@ -11,11 +11,12 @@ import {
 } from "@registry/components/ui/dialog"
 import { Grid } from "@registry/components/ui/grid"
 import { Link as UiLink } from "@registry/components/ui/link"
+import { useEventCallback } from "@registry/hooks/use-event-callback"
 import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import { Link } from "@tanstack/react-router"
 import { MenuIcon } from "lucide-react"
-import { useState, useMemo } from "react"
+import { useState } from "react"
 
 import { BrandLogo } from "@/components/brand-logo"
 
@@ -88,13 +89,9 @@ const primitiveStyles = stylex.create({
 export function DocumentationLayout({ children }: { children: ReactNode }) {
   const [mobileOpen, setMobileOpen] = useState(false)
 
-  const handleNavigate = useMemo(
-    () =>
-      function handleNavigate() {
-        return setMobileOpen(false)
-      },
-    [setMobileOpen],
-  )
+  const handleNavigate = useEventCallback(function () {
+    return setMobileOpen(false)
+  })
 
   return (
     <Box xstyle={primitiveStyles.box}>

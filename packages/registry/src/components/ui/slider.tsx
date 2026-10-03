@@ -6,7 +6,6 @@ import { Slider as SliderPrimitive } from "@base-ui/react/slider"
 import { mergeStylexProps, stylexProps } from "@registry/lib/stylex"
 import { themeMarker, tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
-import { useMemo } from "react"
 
 const styles = stylex.create({
   root: {
@@ -135,14 +134,8 @@ export function Slider({
   const props = restProps
   const xstyle = consumerXstyle
 
-  const values = useMemo(() => {
-    if (value !== undefined) return Array.isArray(value) ? value : [value]
-
-    if (defaultValue !== undefined)
-      return Array.isArray(defaultValue) ? defaultValue : [defaultValue]
-
-    return [min]
-  }, [value, defaultValue, min])
+  const values = value ?? defaultValue
+  const thumbCount = Array.isArray(values) ? values.length : 1
 
   const label = props["aria-label"]
 
@@ -168,12 +161,12 @@ export function Slider({
             {...stylex.props(styles.indicator)}
             data-slot="slider-indicator"
           />
-          {Array.from({ length: values.length }, (_, index) => (
+          {Array.from({ length: thumbCount }, (_, index) => (
             <SliderPrimitive.Thumb
               key={String(index)}
               {...stylex.props(styles.thumb)}
               aria-label={
-                label && values.length > 1 ? `${label} ${index + 1}` : label
+                label && thumbCount > 1 ? `${label} ${index + 1}` : label
               }
               data-slot="slider-thumb"
               index={index}

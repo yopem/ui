@@ -1,5 +1,13 @@
 // These notes describe Yopem's composition choices, not only the upstream types.
 const usageNoteValues = {
+  "use-event-callback": [
+    "The returned function keeps its identity and calls the latest committed callback. Arguments, return values, promises, and errors pass through unchanged.",
+    "Use it only for event handlers and effect callbacks, never during render. Calling it before the first commit throws. Updates publish during insertion effects, so aborted renders do not replace the committed callback.",
+  ],
+  "use-media-query": [
+    "Pass a breakpoint (sm, md, lg, xl, 2xl, 3xl, or 4xl), max-md, a range such as sm:max-lg, or a raw CSS media query. Named widths are 640, 800, 1024, 1280, 1536, 1600, and 2000 pixels respectively.",
+    "Object queries accept min, max, and pointer (coarse or fine). Minimum widths are inclusive and maximum widths exclusive. Server snapshots return false; matchMedia change listeners update the client and unsubscribe on unmount or query changes.",
+  ],
   base: [
     "Copy the base files, configure StyleX in your bundler, and import styles/styles.css once. Native StyleX tokens provide light defaults; no provider, script, or font package is required.",
     "Customize tokens and create complete light/dark themes in tokens.stylex.ts. The optional theme item adds saved light/dark/system switching. styles.css contains reset, reduced-motion policy, and unavoidable upstream viewport rules, not theme values.",
@@ -7,7 +15,7 @@ const usageNoteValues = {
     "Create local styles with stylex.create and compose them through xstyle after component defaults and variants. className remains available for external CSS integration; docs use StyleX only.",
   ],
   theme: [
-    "Copy the two optional theme runtime files after base. Pass the same configuration to ThemeProvider, ThemeScript, and getRootThemeProps.",
+    "Copy the two optional theme runtime files and their use-event-callback hook dependency after base. Pass the same configuration to ThemeProvider, ThemeScript, and getRootThemeProps.",
     "Create custom themes with StyleX in tokens.stylex.ts. Call createThemeConfig in your existing root layout; no extra config file is required. Match storageKey and defaultTheme between the provider and initial-paint script.",
   ],
   spinner: [

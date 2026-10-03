@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test"
+import { registryItemSchema } from "@registry/schema"
 import { readdirSync } from "node:fs"
 
 test("machine-readable documentation endpoints expose correct formats", async ({
@@ -133,6 +134,71 @@ test("new components are listed, documented, and installable", async ({
 
   const removed = await request.get("/r/paragraph.json")
   expect(removed.status()).toBe(404)
+})
+
+test("callback consumers ship the local event hook without Base UI utilities", async ({
+  request,
+}, testInfo) => {
+  const items = []
+
+  for (const name of [
+    "clipboard",
+    "codeblock",
+    "marquee",
+    "rating",
+    "sidebar",
+    "theme",
+  ]) {
+    const response = await request.get(`/r/${name}.json`)
+    expect(response.status(), name).toBe(200)
+    const item = registryItemSchema.parse(await response.json())
+    expect(item.dependencies, name).not.toContain("@base-ui/utils@^0.4.0")
+    expect(item.registryDependencies, name).toContain("use-event-callback")
+
+    for (const file of item.files) {
+      expect(file.content, `${name}/${file.path}`).not.toContain(
+        "@base-ui/utils",
+      )
+    }
+
+    items.push(item)
+  }
+
+  await testInfo.attach("event-callback-registry-items", {
+    body: JSON.stringify(items, null, 2),
+    contentType: "application/json",
+  })
+})
+
+test("registry hooks are installable, documented, and discoverable", async ({
+  request,
+}) => {
+  for (const [name, exportedName] of [
+    ["use-event-callback", "useEventCallback"],
+    ["use-media-query", "useMediaQuery"],
+  ]) {
+    const response = await request.get(`/r/${name}.json`)
+    expect(response.status(), name).toBe(200)
+    const item = registryItemSchema.parse(await response.json())
+    expect(item.type).toBe("registry:hook")
+    expect(item.files).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          target: `@/hooks/${name}.ts`,
+          content: expect.stringContaining(`export function ${exportedName}`),
+        }),
+      ]),
+    )
+
+    const docs = await request.get(`/components/${name}.md`)
+    expect(docs.status()).toBe(200)
+    expect(await docs.text()).toContain(`from "@/hooks/${name}"`)
+
+    for (const url of ["/llms.txt", "/sitemap.xml"]) {
+      const listing = await request.get(url)
+      expect(await listing.text()).toContain(`/components/${name}`)
+    }
+  }
 })
 
 test("dynamic documentation routes return real 404 responses", async ({

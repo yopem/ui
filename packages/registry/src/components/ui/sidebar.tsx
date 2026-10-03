@@ -22,6 +22,7 @@ import {
   TooltipPopup,
   TooltipTrigger,
 } from "@registry/components/ui/tooltip"
+import { useEventCallback } from "@registry/hooks/use-event-callback"
 import {
   isCallback,
   isString,
@@ -36,7 +37,6 @@ import {
   createContext,
   useContext,
   useState,
-  useMemo,
 } from "react"
 
 const SIDEBAR_COOKIE_NAME = "sidebar_state"
@@ -543,24 +543,16 @@ const menuButtonVariantStyles = {
 function useIsMobile() {
   const query = "(max-width: 799px)"
 
-  const subscribe = useMemo(
-    () =>
-      function subscribe(callback: () => void) {
-        const media = window.matchMedia(query)
-        media.addEventListener("change", callback)
+  function subscribe(callback: () => void) {
+    const media = window.matchMedia(query)
+    media.addEventListener("change", callback)
 
-        return () => media.removeEventListener("change", callback)
-      },
-    [],
-  )
+    return () => media.removeEventListener("change", callback)
+  }
 
-  const getSnapshot = useMemo(
-    () =>
-      function getSnapshot() {
-        return typeof window !== "undefined" && window.matchMedia(query).matches
-      },
-    [],
-  )
+  function getSnapshot() {
+    return typeof window !== "undefined" && window.matchMedia(query).matches
+  }
 
   return useSyncExternalStore(subscribe, getSnapshot, () => false)
 }
@@ -610,32 +602,26 @@ export function SidebarProvider({
   const [_open, _setOpen] = useState(defaultOpen)
   const open = openProp ?? _open
 
-  const setOpen = useMemo(
-    () =>
-      async function setOpen(value: boolean | ((value: boolean) => boolean)) {
-        const next = isCallback(value) ? value(open) : value
+  const setOpen = useEventCallback(async function (
+    value: boolean | ((value: boolean) => boolean),
+  ) {
+    const next = isCallback(value) ? value(open) : value
 
-        if (setOpenProp) setOpenProp(next)
-        else _setOpen(next)
-        await cookieStore.set({
-          expires: Date.now() + SIDEBAR_COOKIE_MAX_AGE * 1000,
-          name: SIDEBAR_COOKIE_NAME,
-          path: "/",
-          value: String(next),
-        })
-      },
-    [open, setOpenProp],
-  )
+    if (setOpenProp) setOpenProp(next)
+    else _setOpen(next)
+    await cookieStore.set({
+      expires: Date.now() + SIDEBAR_COOKIE_MAX_AGE * 1000,
+      name: SIDEBAR_COOKIE_NAME,
+      path: "/",
+      value: String(next),
+    })
+  })
 
-  const toggleSidebar = useMemo(
-    () =>
-      function toggleSidebar() {
-        return isMobile
-          ? setOpenMobile((value) => !value)
-          : setOpen((value) => !value)
-      },
-    [isMobile, setOpen],
-  )
+  const toggleSidebar = useEventCallback(function () {
+    return isMobile
+      ? setOpenMobile((value) => !value)
+      : setOpen((value) => !value)
+  })
 
   function registerShortcut(node: HTMLDivElement | null) {
     if (!node) return
@@ -657,8 +643,22 @@ export function SidebarProvider({
 
   const state: SidebarContextProps["state"] = open ? "expanded" : "collapsed"
 
-  const contextValue = useMemo(
-    () => ({
+  const [contextValue, setContextValue] = useState({
+    isMobile,
+    open,
+    openMobile,
+    setOpen,
+    setOpenMobile,
+    state,
+    toggleSidebar,
+  })
+
+  if (
+    contextValue.isMobile !== isMobile ||
+    contextValue.open !== open ||
+    contextValue.openMobile !== openMobile
+  ) {
+    setContextValue({
       isMobile,
       open,
       openMobile,
@@ -666,9 +666,8 @@ export function SidebarProvider({
       setOpenMobile,
       state,
       toggleSidebar,
-    }),
-    [isMobile, open, openMobile, setOpen, state, toggleSidebar],
-  )
+    })
+  }
 
   const wrapperProps = mergeProps(
     stylexProps(
@@ -792,14 +791,12 @@ export function SidebarTrigger({
 
   const { toggleSidebar } = useSidebar()
 
-  const handleClick = useMemo(
-    () =>
-      function handleClick(event: Parameters<NonNullable<typeof onClick>>[0]) {
-        onClick?.(event)
-        toggleSidebar()
-      },
-    [onClick, toggleSidebar],
-  )
+  const handleClick = useEventCallback(function (
+    event: Parameters<NonNullable<typeof onClick>>[0],
+  ) {
+    onClick?.(event)
+    toggleSidebar()
+  })
 
   return (
     <Button

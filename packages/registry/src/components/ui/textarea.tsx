@@ -2,18 +2,13 @@
 
 import type { StyleXComponentProps } from "@registry/lib/stylex"
 import type { StyleXProps } from "@registry/lib/stylex"
-import type {
-  ComponentPropsWithoutRef,
-  RefAttributes,
-  ComponentProps,
-} from "react"
+import type { ComponentPropsWithoutRef, RefAttributes } from "react"
 
 import { Field as FieldPrimitive } from "@base-ui/react/field"
 import { mergeProps } from "@base-ui/react/merge-props"
 import { isString, stylexProps } from "@registry/lib/stylex"
 import { themeMarker, tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
-import { useMemo } from "react"
 
 const styles = stylex.create({
   control: {
@@ -105,23 +100,6 @@ export function Textarea({
 
   const wrapperClassName = isString(className) ? className : undefined
 
-  const renderControl = useMemo(
-    () =>
-      function renderControl(defaultProps: ComponentProps<"textarea">) {
-        return (
-          <textarea
-            data-slot="textarea"
-            {...mergeProps(
-              defaultProps,
-              stylex.props(styles.textarea, sizeStyle, xstyle),
-              props,
-            )}
-          />
-        )
-      },
-    [sizeStyle, xstyle, props],
-  )
-
   return (
     <span
       {...stylexProps(
@@ -139,7 +117,15 @@ export function Textarea({
         disabled={props.disabled}
         id={props.id}
         name={props.name}
-        render={renderControl}
+        render={
+          <textarea
+            data-slot="textarea"
+            {...mergeProps(
+              stylex.props(styles.textarea, sizeStyle, xstyle),
+              props,
+            )}
+          />
+        }
       />
     </span>
   )

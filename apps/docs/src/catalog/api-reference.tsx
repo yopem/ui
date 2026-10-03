@@ -1,13 +1,15 @@
 import type { ApiPart, ApiProp } from "@registry/docs"
+import type { SyntheticEvent } from "react"
 
 import { Box } from "@registry/components/ui/box"
 import { Heading } from "@registry/components/ui/heading"
 import { Link } from "@registry/components/ui/link"
 import { ScrollArea } from "@registry/components/ui/scroll-area"
 import { Text } from "@registry/components/ui/text"
+import { useEventCallback } from "@registry/hooks/use-event-callback"
 import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
-import { useMemo, useState } from "react"
+import { useState } from "react"
 
 import { CopyableCode } from "./code-block"
 
@@ -283,7 +285,9 @@ function PropertiesTable({
   properties,
   label = "Prop",
 }: {
-  properties: ApiProp[]
+  properties: (Omit<ApiProp, "source" | "default"> & {
+    default?: string | null
+  })[]
   label?: string
 }) {
   return (
@@ -370,48 +374,28 @@ function PartReference({
   const [showVariants, setShowVariants] = useState(false)
   const [showSignatures, setShowSignatures] = useState(false)
 
-  const parameters = useMemo(
-    () =>
-      part.parameters.map((parameter) => ({
-        ...parameter,
-        default: parameter.default ?? undefined,
-      })),
-    [part.parameters],
-  )
+  const variants = part.propVariants.map((variant) => ({
+    ...variant,
+    properties: variant.props.map((prop) => ({
+      ...part.props.find((entry) => entry.name === prop.name),
+      ...prop,
+      description:
+        part.props.find((entry) => entry.name === prop.name)?.description ?? "",
+      source: part.source,
+    })),
+  }))
 
-  const variants = useMemo(
-    () =>
-      part.propVariants.map((variant) => ({
-        ...variant,
-        properties: variant.props.map((prop) => ({
-          ...part.props.find((entry) => entry.name === prop.name),
-          ...prop,
-          description:
-            part.props.find((entry) => entry.name === prop.name)?.description ??
-            "",
-          source: part.source,
-        })),
-      })),
-    [part.propVariants, part.props, part.source],
-  )
+  const toggleVariants = useEventCallback(function (
+    event: SyntheticEvent<HTMLDetailsElement>,
+  ) {
+    return setShowVariants(event.currentTarget.open)
+  })
 
-  const toggleVariants = useMemo(
-    () =>
-      function toggleVariants(event: React.SyntheticEvent<HTMLDetailsElement>) {
-        return setShowVariants(event.currentTarget.open)
-      },
-    [],
-  )
-
-  const toggleSignatures = useMemo(
-    () =>
-      function toggleSignatures(
-        event: React.SyntheticEvent<HTMLDetailsElement>,
-      ) {
-        return setShowSignatures(event.currentTarget.open)
-      },
-    [],
-  )
+  const toggleSignatures = useEventCallback(function (
+    event: SyntheticEvent<HTMLDetailsElement>,
+  ) {
+    return setShowSignatures(event.currentTarget.open)
+  })
 
   if (alias)
     return (
@@ -449,7 +433,7 @@ function PartReference({
           <Heading as="h4" xstyle={styles.h4}>
             Arguments
           </Heading>
-          <PropertiesTable label="Argument" properties={parameters} />
+          <PropertiesTable label="Argument" properties={part.parameters} />
           {part.parameters.map((parameter) =>
             parameter.properties.length ? (
               <Box key={parameter.name}>

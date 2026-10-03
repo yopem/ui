@@ -7,7 +7,7 @@ import { Link } from "@registry/components/ui/link"
 import { Text } from "@registry/components/ui/text"
 import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
-import { useState, useMemo } from "react"
+import { useLayoutEffect, useState } from "react"
 
 const styles = stylex.create({
   onThisPage: {
@@ -115,23 +115,10 @@ function listenForActiveSection(
 export function TableOfContents({ items }: { items: TocItem[] }) {
   const [activeUrl, setActiveUrl] = useState<string>()
 
-  const trackSections = useMemo(
-    () =>
-      function trackSections(node: HTMLElement | null) {
-        if (!node) return
-
-        return listenForActiveSection(items, setActiveUrl)
-      },
-    [items],
-  )
+  useLayoutEffect(() => listenForActiveSection(items, setActiveUrl), [items])
 
   return (
-    <Box
-      as="aside"
-      aria-label="On this page"
-      ref={trackSections}
-      xstyle={styles.onThisPage}
-    >
+    <Box as="aside" aria-label="On this page" xstyle={styles.onThisPage}>
       <Box as="nav" aria-label="On this page">
         <Text xstyle={styles.paragraph}>On this page</Text>
         <Box as="ul" xstyle={styles.ul}>

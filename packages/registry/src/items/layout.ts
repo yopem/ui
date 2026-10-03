@@ -184,7 +184,11 @@ export const layoutItems: SourceItem[] = definitions.map(
     ],
     name,
     peerDependencies: ["react@>=19 <20", "react-dom@>=19 <20"],
-    registryDependencies: ["base", ...(registryDependencies ?? [])],
+    registryDependencies: [
+      "base",
+      ...(registryDependencies ?? []),
+      ...(name === "codeblock" ? ["use-event-callback"] : []),
+    ],
     title,
     type: "registry:ui" as const,
   }),

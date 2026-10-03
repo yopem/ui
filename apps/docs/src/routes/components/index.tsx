@@ -1,11 +1,14 @@
+import type { ChangeEvent } from "react"
+
 import { Box } from "@registry/components/ui/box"
 import { Grid } from "@registry/components/ui/grid"
 import { Heading } from "@registry/components/ui/heading"
 import { Text } from "@registry/components/ui/text"
+import { useEventCallback } from "@registry/hooks/use-event-callback"
 import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import { Link, createFileRoute } from "@tanstack/react-router"
-import { useState, useMemo } from "react"
+import { useState } from "react"
 
 import { catalog } from "@/catalog/components"
 import { DocumentationLayout } from "@/catalog/docs-layout"
@@ -99,13 +102,11 @@ function ComponentsPage() {
       )
     : catalogEntries
 
-  const handleChange = useMemo(
-    () =>
-      function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
-        return setQuery(event.target.value)
-      },
-    [setQuery],
-  )
+  const handleChange = useEventCallback(function (
+    event: ChangeEvent<HTMLInputElement>,
+  ) {
+    return setQuery(event.target.value)
+  })
 
   return (
     <DocumentationLayout>
