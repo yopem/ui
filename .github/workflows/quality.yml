@@ -11,13 +11,26 @@ on:
 jobs:
   verify:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
     steps:
       - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: changes
+        with:
+          base: ${{ github.ref }}
+          filters: |
+            docs:
+              - 'apps/docs/**'
       - uses: oven-sh/setup-bun@v2
       - run: bun install --frozen-lockfile
       - run: bun run lint
       - run: bun run fmt:check
       - run: bun run typecheck
+      - run: bun run test
       - run: bunx playwright install --with-deps chromium
+        if: steps.changes.outputs.docs == 'true'
         working-directory: apps/docs
-      - run: bun run test && bun run test:e2e && bun run test:a11y
+      - run: bun run test:e2e && bun run test:a11y
+        if: steps.changes.outputs.docs == 'true'
