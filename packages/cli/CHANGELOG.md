@@ -1,5 +1,17 @@
 # @yopem-ui/cli
 
+## 0.1.2
+
+### Patch Changes
+
+- [`5dd8b2e`](https://github.com/yopem/ui/commit/5dd8b2e31f3f6e58a45b25f1cc6d4a0b72193dfc)
+  Thanks [@karyanayandi](https://github.com/karyanayandi)! - refactor(cli):
+  optimize async operations with Promise.all
+
+  Replaced sequential async calls with Promise.all for better performance and
+  readability. Updated multiple functions across init, install, and project
+  modules to use this approach.
+
 ## 0.1.1
 
 ### Patch Changes

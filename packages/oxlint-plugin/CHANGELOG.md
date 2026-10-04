@@ -1,5 +1,14 @@
 # @yopem-ui/oxlint-plugin
 
+## 0.1.1
+
+### Patch Changes
+
+- [#219](https://github.com/yopem/ui/pull/219)
+  [`4949ada`](https://github.com/yopem/ui/commit/4949adacf3e8f2ad462ef3464b6f37bfde6a4eea)
+  Thanks [@karyanayandi](https://github.com/karyanayandi)! - feat: expands
+  design-system-first lint rules
+
 ## 0.1.0
 
 ### Minor Changes
