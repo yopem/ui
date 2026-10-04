@@ -5,7 +5,9 @@ test("event callback reads latest state across repeated commits", async ({
 }) => {
   await page.goto("/components/use-event-callback")
   const increment = page.getByRole("button", { name: "Increment count" })
-  const count = page.getByRole("status")
+  const count = page.getByRole("status", { name: "Count", exact: true })
+  await expect(count).toHaveCount(1)
+  await expect(count).toHaveText("Count: 0")
 
   for (let value = 1; value <= 3; value++) {
     await increment.click()

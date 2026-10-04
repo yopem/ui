@@ -346,7 +346,100 @@ const view = <><div><span>Text</span></div><Container /><Stack /><section /><svg
   expect(result.output).toContain("Box")
   expect(result.output).toContain("div")
   expect(result.output).toContain("span")
-  expect(result.output).not.toContain("section")
+  expect(result.output).toContain('Box as="section"')
+})
+
+test("design-system-first covers semantic wrappers and typography without guessing layout", () => {
+  const tags = [
+    "div",
+    "span",
+    "main",
+    "section",
+    "article",
+    "aside",
+    "header",
+    "footer",
+    "nav",
+    "address",
+    "figure",
+    "figcaption",
+    "search",
+    "hgroup",
+    "ul",
+    "ol",
+    "li",
+    "dl",
+    "dt",
+    "dd",
+    "p",
+    "blockquote",
+    "em",
+    "mark",
+    "h1",
+    "h2",
+    "h3",
+    "h4",
+    "h5",
+    "h6",
+    "pre",
+  ]
+
+  const typography = lint(
+    `const view = <>{condition ? <Box>${tags
+      .map((tag) => `<${tag} ref={ref} {...props} />`)
+      .join("")}</Box> : items.map(item => <Heading>{item}</Heading>)}</>;`,
+    { "yopem-ui/prefer-layout-primitives": "error" },
+  )
+
+  expect(typography.status).toBe(1)
+  expect(
+    typography.output.match(/Preserve native props and refs/g),
+  ).toHaveLength(tags.length)
+
+  for (const tag of tags) expect(typography.output).toContain(`<${tag}>`)
+
+  for (const component of [
+    "Text",
+    "Blockquote",
+    "Em",
+    "Mark",
+    'Heading as="h1"',
+    'Heading as="h6"',
+    'Box as="pre"',
+  ])
+    expect(typography.output).toContain(component)
+  expect(typography.output).not.toContain("Codeblock")
+}, 30_000)
+
+test("native boundaries, framework links, aliases, namespaces, and polymorphic primitives pass", () => {
+  const result = lint(
+    `import { Box as Layout } from "@/components/ui/box";
+import * as UI from "@/components/ui/heading";
+import { Link } from "@tanstack/react-router";
+const view = <><Layout as="section" /><UI.Heading as="h1" /><Link to="/" /><a href="/" /><button /><input /><form /><label /><table><tbody><tr><td /></tr></tbody></table><code /><strong /><br /><img /><svg><text /><g /></svg><custom-widget /><Section /><foreignObject><div /></foreignObject></>;`,
+    { "yopem-ui/prefer-layout-primitives": "error" },
+  )
+
+  expect(result.status).toBe(1)
+  expect(result.output.match(/Use /g)).toHaveLength(1)
+  expect(result.output).toContain("<div>")
+})
+
+test("registry and router Link are excluded from default styling contracts", () => {
+  const result = lint(
+    `import { Link as NativeLink } from "@/components/ui/link";
+import { Link } from "@tanstack/react-router";
+import * as UI from "@/components/ui/link";
+import * as sx from "@stylexjs/stylex";
+const styles = sx.create({ link: { color: "red" } });
+const view = <><NativeLink style={{ color: "red" }} xstyle={styles.link} /><UI.Link css={{ color: "red" }} /><Link {...sx.props(styles.link)} /></>;`,
+    {
+      "yopem-ui/no-restyle": "error",
+      "yopem-ui/enforce-styling-methods": "error",
+    },
+  )
+
+  expect(result.status).toBe(0)
 })
 
 test("layout primitive rule supports opt-out and additional tags", () => {
