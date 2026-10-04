@@ -151,10 +151,11 @@ Native controls, tables, document metadata, SVG, custom elements, unknown
 components, and framework links remain valid. `strong`, inline `code`, and other
 text semantics without a dedicated equivalent remain native. Exempt copied
 primitive implementations and non-DOM renderers with file overrides; there is no
-automatic exemption based on filenames or `data-slot`. The docs app does not
-enable this rule for its existing markup. Registry Link is also excluded from
-default `no-restyle` and `enforce-styling-methods` recognition; explicit
-`styleComponents` can opt it back in.
+automatic exemption based on filenames or `data-slot`. The docs app enables this
+rule for all application JSX; only its non-DOM Open Graph renderer is exempt.
+Registry Link is also excluded from default `no-restyle` and
+`enforce-styling-methods` recognition; explicit `styleComponents` can opt it
+back in.
 
 Native framework elements (for example TanStack Router links) can use
 `stylex.props(...)`. Imported UI components should use `xstyle` instead of a

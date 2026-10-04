@@ -41,10 +41,18 @@ export default defineConfig({
             },
           },
         ],
+        "yopem-ui/prefer-layout-primitives": "error",
         "yopem-ui/no-raw-stylex-colors": "error",
         "yopem-ui/no-unused-stylex-styles": "error",
         "yopem-ui/static-stylex": "error",
         "yopem-ui/valid-polymorphic-as": "error",
+      },
+    },
+    {
+      // Takumi renders these elements to images, not a browser DOM.
+      files: ["apps/docs/src/lib/og.tsx"],
+      rules: {
+        "yopem-ui/prefer-layout-primitives": "off",
       },
     },
   ],

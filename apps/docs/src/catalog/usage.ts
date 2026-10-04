@@ -47,10 +47,11 @@ export function Preview() {
 `,
   checkmark: `"use client"
 
+import { Text } from "@/components/ui/text"
 import { Checkmark } from "@/components/ui/checkmark"
 
 export function Preview() {
-  return <p><Checkmark /> Saved successfully</p>
+  return <Text><Checkmark /> Saved successfully</Text>
 }
 `,
   clipboard: `"use client"
@@ -70,10 +71,11 @@ export function Preview() {
 `,
   marquee: `"use client"
 
+import { Box } from "@/components/ui/box"
 import { Marquee } from "@/components/ui/marquee"
 
 export function Preview() {
-  return <Marquee><span>Design systems</span><span>Accessible components</span><span>Reusable source</span></Marquee>
+  return <Marquee><Box as="span">Design systems</Box><Box as="span">Accessible components</Box><Box as="span">Reusable source</Box></Marquee>
 }
 `,
   "native-select": `"use client"
@@ -131,24 +133,26 @@ export function Preview() {
 `,
   "absolute-center": `"use client"
 
+import { Box } from "@/components/ui/box"
 import { AbsoluteCenter } from "@/components/ui/absolute-center"
 import * as stylex from "@stylexjs/stylex"
 
 const styles = stylex.create({ area: { position: "relative", minBlockSize: "8rem", borderWidth: 1, borderStyle: "solid" } })
 
 export function Preview() {
-  return <div {...stylex.props(styles.area)}><AbsoluteCenter>Centered</AbsoluteCenter></div>
+  return <Box xstyle={styles.area}><AbsoluteCenter>Centered</AbsoluteCenter></Box>
 }
 `,
   bleed: `"use client"
 
+import { Box } from "@/components/ui/box"
 import { Bleed } from "@/components/ui/bleed"
 import * as stylex from "@stylexjs/stylex"
 
 const styles = stylex.create({ area: { paddingInline: "2rem" } })
 
 export function Preview() {
-  return <div {...stylex.props(styles.area)}><Bleed>Full-width content in a padded section</Bleed></div>
+  return <Box xstyle={styles.area}><Bleed>Full-width content in a padded section</Bleed></Box>
 }
 `,
   blockquote: `"use client"
@@ -169,21 +173,23 @@ export function Preview() {
 `,
   em: `"use client"
 
+import { Text } from "@/components/ui/text"
 import { Em } from "@/components/ui/em"
 
 export function Preview() {
-  return <p>We <Em>do</Em> care about the details.</p>
+  return <Text>We <Em>do</Em> care about the details.</Text>
 }
 `,
   float: `"use client"
 
+import { Box } from "@/components/ui/box"
 import { Float } from "@/components/ui/float"
 import * as stylex from "@stylexjs/stylex"
 
 const styles = stylex.create({ area: { position: "relative", minBlockSize: "8rem", padding: "2rem" } })
 
 export function Preview() {
-  return <div {...stylex.props(styles.area)}>Notification card<Float>New</Float></div>
+  return <Box xstyle={styles.area}>Notification card<Float>New</Float></Box>
 }
 `,
   highlight: `"use client"
@@ -196,26 +202,30 @@ export function Preview() {
 `,
   mark: `"use client"
 
+import { Text } from "@/components/ui/text"
 import { Mark } from "@/components/ui/mark"
 
 export function Preview() {
-  return <p>Remember to <Mark>save your work</Mark>.</p>
+  return <Text>Remember to <Mark>save your work</Mark>.</Text>
 }
 `,
   prose: `"use client"
 
+import { Text } from "@/components/ui/text"
+import { Heading } from "@/components/ui/heading"
 import { Prose } from "@/components/ui/prose"
 
 export function Preview() {
-  return <Prose><h2>Readable content</h2><p>Give long-form content room to breathe.</p></Prose>
+  return <Prose><Heading as="h2">Readable content</Heading><Text>Give long-form content room to breathe.</Text></Prose>
 }
 `,
   wrap: `"use client"
 
+import { Box } from "@/components/ui/box"
 import { Wrap } from "@/components/ui/wrap"
 
 export function Preview() {
-  return <Wrap><span>Design</span><span>Development</span><span>Accessibility</span><span>Documentation</span></Wrap>
+  return <Wrap><Box as="span">Design</Box><Box as="span">Development</Box><Box as="span">Accessibility</Box><Box as="span">Documentation</Box></Wrap>
 }
 `,
   accordion: `"use client"
@@ -566,7 +576,7 @@ const styles = stylex.create({ trigger: { padding: "2rem" } })
 export function Preview() {
   return (
     <ContextMenu>
-      <ContextMenuTrigger tabIndex={0} {...stylex.props(styles.trigger)}>
+      <ContextMenuTrigger tabIndex={0} xstyle={styles.trigger}>
         Right-click here, or focus and press Shift+F10.
       </ContextMenuTrigger>
       <ContextMenuPopup>
@@ -804,6 +814,7 @@ export function Preview() {
 `,
   flex: `"use client"
 
+import { Box } from "@/components/ui/box"
 import { Flex } from "@/components/ui/flex"
 import * as stylex from "@stylexjs/stylex"
 
@@ -812,53 +823,57 @@ const styles = stylex.create({ row: { alignItems: "center", gap: "1rem" } })
 export function Preview() {
   return (
     <Flex xstyle={styles.row}>
-      <span>First</span>
-      <span>Second</span>
+      <Box as="span">First</Box>
+      <Box as="span">Second</Box>
     </Flex>
   )
 }
 `,
   vstack: `"use client"
 
+import { Box } from "@/components/ui/box"
 import { VStack } from "@/components/ui/vstack"
 
 export function Preview() {
   return (
     <VStack>
       <strong>Account ready</strong>
-      <span>Nothing else is needed.</span>
+      <Box as="span">Nothing else is needed.</Box>
     </VStack>
   )
 }
 `,
   hstack: `"use client"
 
+import { Box } from "@/components/ui/box"
 import { HStack } from "@/components/ui/hstack"
 
 export function Preview() {
   return (
     <HStack>
-      <span>Inbox</span>
-      <span aria-label="unread messages">3</span>
+      <Box as="span">Inbox</Box>
+      <Box as="span" aria-label="unread messages">3</Box>
     </HStack>
   )
 }
 `,
   stack: `"use client"
 
+import { Box } from "@/components/ui/box"
 import { Stack } from "@/components/ui/stack"
 
 export function Preview() {
   return (
     <Stack>
       <strong>Project status</strong>
-      <span>All systems operational.</span>
+      <Box as="span">All systems operational.</Box>
     </Stack>
   )
 }
 `,
   grid: `"use client"
 
+import { Box } from "@/components/ui/box"
 import { Grid } from "@/components/ui/grid"
 import * as stylex from "@stylexjs/stylex"
 
@@ -867,8 +882,8 @@ const styles = stylex.create({ columns: { gridTemplateColumns: "repeat(2, minmax
 export function Preview() {
   return (
     <Grid xstyle={styles.columns}>
-      <span>Design</span>
-      <span>Engineering</span>
+      <Box as="span">Design</Box>
+      <Box as="span">Engineering</Box>
     </Grid>
   )
 }
@@ -984,13 +999,14 @@ export function Preview() {
 `,
   kbd: `"use client"
 
+import { Text } from "@/components/ui/text"
 import { Kbd } from "@/components/ui/kbd"
 
 export function Preview() {
   return (
-    <p>
+    <Text>
       Press <Kbd>Escape</Kbd> to close.
-    </p>
+    </Text>
   )
 }
 `,
@@ -1061,23 +1077,25 @@ export function Preview() {
 `,
   navigation: `"use client"
 
+import { Box } from "@/components/ui/box"
+
 export function Preview() {
   return (
-    <nav aria-label="Main navigation">
-      <ul>
-        <li>
+    <Box as="nav" aria-label="Main navigation">
+      <Box as="ul">
+        <Box as="li">
           <a href="/" aria-current="page">
             Home
           </a>
-        </li>
-        <li>
+        </Box>
+        <Box as="li">
           <a href="/projects">Projects</a>
-        </li>
-        <li>
+        </Box>
+        <Box as="li">
           <a href="/settings">Settings</a>
-        </li>
-      </ul>
-    </nav>
+        </Box>
+      </Box>
+    </Box>
   )
 }
 `,
@@ -1188,6 +1206,8 @@ export function Preview() {
 `,
   "preview-card": `"use client"
 
+import { Text } from "@/components/ui/text"
+import { Heading } from "@/components/ui/heading"
 import {
   PreviewCard,
   PreviewCardPopup,
@@ -1201,8 +1221,8 @@ export function Preview() {
         Visit Example
       </PreviewCardTrigger>
       <PreviewCardPopup>
-        <h2>Example</h2>
-        <p>A sample website for documentation.</p>
+        <Heading as="h2">Example</Heading>
+        <Text>A sample website for documentation.</Text>
       </PreviewCardPopup>
     </PreviewCard>
   )
@@ -1236,6 +1256,7 @@ export function Preview() {
 `,
   "scroll-area": `"use client"
 
+import { Box } from "@/components/ui/box"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import * as stylex from "@stylexjs/stylex"
 
@@ -1243,12 +1264,12 @@ const styles = stylex.create({ viewport: { blockSize: "12rem" } })
 
 export function Preview() {
   return (
-    <ScrollArea {...stylex.props(styles.viewport)}>
-      <ul aria-label="Versions">
+    <ScrollArea xstyle={styles.viewport}>
+      <Box as="ul" aria-label="Versions">
         {Array.from({ length: 30 }, (_, index) => (
-          <li key={index}>Version 1.{index}</li>
+          <Box as="li" key={index}>Version 1.{index}</Box>
         ))}
-      </ul>
+      </Box>
     </ScrollArea>
   )
 }
@@ -1290,14 +1311,15 @@ export function Preview() {
 `,
   separator: `"use client"
 
+import { Text } from "@/components/ui/text"
 import { Separator } from "@/components/ui/separator"
 
 export function Preview() {
   return (
     <>
-      <p>Account settings</p>
+      <Text>Account settings</Text>
       <Separator />
-      <p>Notification settings</p>
+      <Text>Notification settings</Text>
     </>
   )
 }
@@ -1339,6 +1361,9 @@ export function Preview() {
 `,
   sidebar: `"use client"
 
+import { Heading } from "@/components/ui/heading"
+import { Text } from "@/components/ui/text"
+import { Box } from "@/components/ui/box"
 import * as stylex from "@stylexjs/stylex"
 import { HomeIcon, SettingsIcon } from "lucide-react"
 import {
@@ -1359,7 +1384,7 @@ export function Preview() {
     <SidebarProvider>
       <Sidebar>
         <SidebarContent>
-          <nav aria-label="Main navigation">
+          <Box as="nav" aria-label="Main navigation">
             <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton
@@ -1377,13 +1402,13 @@ export function Preview() {
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>
-          </nav>
+          </Box>
         </SidebarContent>
       </Sidebar>
       <SidebarInset>
         <SidebarTrigger />
-        <h1>Home</h1>
-        <p>Your workspace.</p>
+        <Heading as="h1">Home</Heading>
+        <Text>Your workspace.</Text>
       </SidebarInset>
     </SidebarProvider>
   )
@@ -1391,6 +1416,7 @@ export function Preview() {
 `,
   skeleton: `"use client"
 
+import { Box } from "@/components/ui/box"
 import { Skeleton } from "@/components/ui/skeleton"
 import * as stylex from "@stylexjs/stylex"
 
@@ -1398,12 +1424,12 @@ const styles = stylex.create({ placeholder: { blockSize: "1rem", inlineSize: "12
 
 export function Preview() {
   return (
-    <div role="status" aria-label="Loading profile">
+    <Box role="status" aria-label="Loading profile">
       <Skeleton
         aria-hidden="true"
-        {...stylex.props(styles.placeholder)}
+        xstyle={styles.placeholder}
       />
-    </div>
+    </Box>
   )
 }
 `,

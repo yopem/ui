@@ -1,11 +1,12 @@
 "use client"
 
 import { Checkmark } from "@registry/components/ui/checkmark"
+import { Text } from "@registry/components/ui/text"
 
 export function Preview() {
   return (
-    <p>
+    <Text>
       <Checkmark /> Saved successfully
-    </p>
+    </Text>
   )
 }
