@@ -533,7 +533,11 @@ export const remainingItems: SourceItem[] = definitions.map(
     ],
     name,
     peerDependencies: ["react@>=18 <20", "react-dom@>=18 <20"],
-    registryDependencies: ["base", ...registryDependencies],
+    registryDependencies: [
+      "base",
+      ...registryDependencies,
+      ...(name === "sidebar" ? ["use-event-callback"] : []),
+    ],
     title,
     type: "registry:ui" as const,
   }),

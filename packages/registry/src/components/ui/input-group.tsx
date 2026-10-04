@@ -10,7 +10,7 @@ import { Textarea, type TextareaProps } from "@registry/components/ui/textarea"
 import { mergeStylexProps, stylexProps } from "@registry/lib/stylex"
 import { themeMarker, tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
-import { useMemo } from "react"
+import { useState } from "react"
 
 const styles = stylex.create({
   root: {
@@ -216,15 +216,22 @@ export function InputGroupInput({
   const props = restProps
   const xstyle = consumerXstyle
 
-  const controlStyles = useMemo(
-    () => [styles.control, controlXstyle],
-    [controlXstyle],
-  )
+  const [control, setControl] = useState(() => ({
+    xstyle: controlXstyle,
+    styles: [styles.control, controlXstyle],
+  }))
+
+  if (control.xstyle !== controlXstyle) {
+    setControl({
+      xstyle: controlXstyle,
+      styles: [styles.control, controlXstyle],
+    })
+  }
 
   return (
     <Input
       className={className}
-      controlXstyle={controlStyles}
+      controlXstyle={control.styles}
       xstyle={xstyle}
       unstyled
       {...props}
@@ -241,18 +248,23 @@ export function InputGroupTextarea({
   const props = restProps
   const xstyle = consumerXstyle
 
-  const controlStyles = useMemo(
-    () => [styles.control, controlXstyle],
-    [controlXstyle],
-  )
+  const [control, setControl] = useState(() => ({
+    xstyle: controlXstyle,
+    styles: [styles.control, controlXstyle],
+  }))
 
-  const textareaStyles = useMemo(() => [styles.textarea, xstyle], [xstyle])
+  if (control.xstyle !== controlXstyle) {
+    setControl({
+      xstyle: controlXstyle,
+      styles: [styles.control, controlXstyle],
+    })
+  }
 
   return (
     <Textarea
       className={className}
-      controlXstyle={controlStyles}
-      xstyle={textareaStyles}
+      controlXstyle={control.styles}
+      xstyle={[styles.textarea, xstyle]}
       unstyled
       {...props}
     />

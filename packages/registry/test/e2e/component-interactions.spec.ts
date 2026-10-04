@@ -54,11 +54,14 @@ test("command palette focuses input on open and restores trigger focus", async (
   await page.keyboard.press("Escape")
   await expect(input).toBeHidden()
   await expect(trigger).toBeFocused()
-  await page.keyboard.press("Control+j")
-  await expect(input).toBeFocused()
-  await page.keyboard.press("Control+j")
-  await expect(input).toBeHidden()
-  await expect(trigger).toBeFocused()
+
+  for (let cycle = 0; cycle < 3; cycle++) {
+    await page.keyboard.press("Control+j")
+    await expect(input).toBeFocused()
+    await page.keyboard.press("Control+j")
+    await expect(input).toBeHidden()
+    await expect(trigger).toBeFocused()
+  }
 })
 
 test("timed previews advance and restart after navigation", async ({
@@ -84,6 +87,9 @@ test("timed previews advance and restart after navigation", async ({
 
   await openPreview(page, "progress")
   await expect(progress).toHaveAttribute("aria-valuenow", "20")
+  await expect
+    .poll(async () => Number(await progress.getAttribute("aria-valuenow")))
+    .toBeGreaterThan(20)
 })
 
 test("tabs support arrow-key navigation", async ({ page }) => {

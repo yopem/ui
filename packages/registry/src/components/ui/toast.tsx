@@ -2,7 +2,7 @@
 
 import type { StyleXComponentProps } from "@registry/lib/stylex"
 import type { StyleXProps } from "@registry/lib/stylex"
-import type React from "react"
+import type { ComponentProps } from "react"
 
 import { Toast } from "@base-ui/react/toast"
 import { buttonVariants } from "@registry/components/ui/button"
@@ -290,7 +290,7 @@ type SwipeDirection = "up" | "down" | "left" | "right"
 interface ToastData {
   rootProps?: StyleXComponentProps<
     Omit<
-      React.ComponentProps<typeof Toast.Root>,
+      ComponentProps<typeof Toast.Root>,
       "children" | "className" | "swipeDirection" | "toast"
     >
   >
@@ -373,7 +373,7 @@ function Toasts({
 }: {
   position: ToastPosition
   xstyle?: StyleXProps["xstyle"]
-  portalProps?: React.ComponentProps<typeof Toast.Portal>
+  portalProps?: ComponentProps<typeof Toast.Portal>
 }) {
   const { toasts } = Toast.useToastManager<ToastData>()
   const swipeDirection = getSwipeDirection(position)
@@ -424,7 +424,7 @@ function AnchoredToasts({
   xstyle,
   portalProps,
 }: StyleXProps & {
-  portalProps?: React.ComponentProps<typeof Toast.Portal>
+  portalProps?: ComponentProps<typeof Toast.Portal>
 }) {
   const { toasts } = Toast.useToastManager<ToastData>()
 
@@ -505,7 +505,7 @@ export type ToastProviderProps = StyleXComponentProps<
   Toast.Provider.Props,
   {
     position?: ToastPosition
-    portalProps?: React.ComponentProps<typeof Toast.Portal>
+    portalProps?: ComponentProps<typeof Toast.Portal>
   }
 >
 
@@ -530,7 +530,7 @@ export function ToastProvider({
 export type AnchoredToastProviderProps = StyleXComponentProps<
   Toast.Provider.Props,
   {
-    portalProps?: React.ComponentProps<typeof Toast.Portal>
+    portalProps?: ComponentProps<typeof Toast.Portal>
   }
 >
 

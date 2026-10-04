@@ -9,7 +9,7 @@ import { mergeStylexProps, stylexProps } from "@registry/lib/stylex"
 import { themeMarker, tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import { MinusIcon, PlusIcon } from "lucide-react"
-import { createContext, useId, useMemo, useContext } from "react"
+import { createContext, useId, useContext, useState } from "react"
 
 const styles = stylex.create({
   root: {
@@ -203,7 +203,9 @@ export function NumberField({
 
   const generatedId = useId()
   const fieldId = id ?? generatedId
-  const contextValue = useMemo(() => ({ fieldId }), [fieldId])
+  const [contextValue, setContextValue] = useState({ fieldId })
+
+  if (contextValue.fieldId !== fieldId) setContextValue({ fieldId })
 
   return (
     <NumberFieldContext.Provider value={contextValue}>

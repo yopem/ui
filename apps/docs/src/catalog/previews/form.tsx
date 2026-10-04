@@ -6,8 +6,9 @@ import { Button } from "@registry/components/ui/button"
 import { Field, FieldError, FieldLabel } from "@registry/components/ui/field"
 import { Form } from "@registry/components/ui/form"
 import { Input } from "@registry/components/ui/input"
+import { useEventCallback } from "@registry/hooks/use-event-callback"
 import * as stylex from "@stylexjs/stylex"
-import { useState, useMemo } from "react"
+import { useState } from "react"
 
 const styles = stylex.create({
   form: {
@@ -22,18 +23,16 @@ const styles = stylex.create({
 export function Preview() {
   const [loading, setLoading] = useState(false)
 
-  const onSubmit = useMemo(
-    () =>
-      async function onSubmit(e: FormEvent<HTMLFormElement>) {
-        e.preventDefault()
-        const formData = new FormData(e.currentTarget)
-        setLoading(true)
-        await new Promise((r) => setTimeout(r, 800))
-        setLoading(false)
-        alert(`Email: ${formData.get("email") || ""}`)
-      },
-    [setLoading],
-  )
+  const onSubmit = useEventCallback(async function (
+    e: FormEvent<HTMLFormElement>,
+  ) {
+    e.preventDefault()
+    const formData = new FormData(e.currentTarget)
+    setLoading(true)
+    await new Promise((r) => setTimeout(r, 800))
+    setLoading(false)
+    alert(`Email: ${formData.get("email") || ""}`)
+  })
 
   return (
     <Form xstyle={styles.form} onSubmit={onSubmit}>

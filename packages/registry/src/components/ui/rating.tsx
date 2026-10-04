@@ -4,11 +4,12 @@ import type { StyleXComponentProps } from "@registry/lib/stylex"
 
 import { Radio as RadioPrimitive } from "@base-ui/react/radio"
 import { RadioGroup as RadioGroupPrimitive } from "@base-ui/react/radio-group"
+import { useEventCallback } from "@registry/hooks/use-event-callback"
 import { mergeStylexProps, stylexProps } from "@registry/lib/stylex"
 import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import { StarIcon } from "lucide-react"
-import { useState, useMemo } from "react"
+import { useState } from "react"
 
 const styles = stylex.create({
   root: { display: "flex", gap: "0.125rem" },
@@ -74,16 +75,12 @@ export function Rating({
   const currentValue = value ?? uncontrolledValue
   const ratingCount = Number.isFinite(max) ? Math.max(1, Math.floor(max)) : 5
 
-  const handleValueChange = useMemo(
-    () =>
-      function handleValueChange(nextValue: string) {
-        const nextRating = Number(nextValue)
+  const handleValueChange = useEventCallback(function (nextValue: string) {
+    const nextRating = Number(nextValue)
 
-        if (value === undefined) setUncontrolledValue(nextRating)
-        onValueChange?.(nextRating)
-      },
-    [value, setUncontrolledValue, onValueChange],
-  )
+    if (value === undefined) setUncontrolledValue(nextRating)
+    onValueChange?.(nextRating)
+  })
 
   return (
     <RadioGroupPrimitive<string>

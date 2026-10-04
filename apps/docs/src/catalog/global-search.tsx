@@ -1,5 +1,7 @@
 "use client"
 
+import type { ChangeEvent } from "react"
+
 import { Box } from "@registry/components/ui/box"
 import { Button } from "@registry/components/ui/button"
 import {
@@ -11,12 +13,13 @@ import {
 } from "@registry/components/ui/dialog"
 import { Input } from "@registry/components/ui/input"
 import { ScrollArea } from "@registry/components/ui/scroll-area"
+import { useEventCallback } from "@registry/hooks/use-event-callback"
 import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import { Link, useHydrated } from "@tanstack/react-router"
 import { staticClient } from "fumadocs-core/search/client/orama-static"
 import { SearchIcon } from "lucide-react"
-import { useRef, useState, useMemo } from "react"
+import { useRef, useState } from "react"
 import { z } from "zod"
 
 const primitiveStyles = stylex.create({
@@ -124,75 +127,61 @@ export function GlobalSearch() {
       },
   )
 
-  const search = useMemo(
-    () =>
-      async function search(nextQuery: string) {
-        controllerRef.current?.abort()
-        const trimmedQuery = nextQuery.trim()
+  const search = useEventCallback(async function (nextQuery: string) {
+    controllerRef.current?.abort()
+    const trimmedQuery = nextQuery.trim()
 
-        if (!trimmedQuery) {
-          setResults([])
-          setStatus("idle")
+    if (!trimmedQuery) {
+      setResults([])
+      setStatus("idle")
 
-          return
-        }
+      return
+    }
 
-        const controller = new AbortController()
-        controllerRef.current = controller
-        setResults([])
-        setStatus("loading")
+    const controller = new AbortController()
+    controllerRef.current = controller
+    setResults([])
+    setStatus("loading")
 
-        try {
-          const data = await searchClient.search(trimmedQuery)
+    try {
+      const data = await searchClient.search(trimmedQuery)
 
-          const parsed = searchResultsSchema.safeParse(data)
+      const parsed = searchResultsSchema.safeParse(data)
 
-          if (!parsed.success) throw new Error("Invalid search response")
+      if (!parsed.success) throw new Error("Invalid search response")
 
-          if (!controller.signal.aborted) {
-            setResults(parsed.data)
-            setStatus("ready")
-          }
-        } catch {
-          if (!controller.signal.aborted) {
-            // Fumadocs caches rejected index loads by URL; retry with a fresh key.
-            searchClient = staticClient({
-              from: `/api/search.json?retry=${Date.now()}`,
-            })
-            setStatus("error")
-          }
-        }
-      },
-    [controllerRef, setResults, setStatus],
-  )
+      if (!controller.signal.aborted) {
+        setResults(parsed.data)
+        setStatus("ready")
+      }
+    } catch {
+      if (!controller.signal.aborted) {
+        // Fumadocs caches rejected index loads by URL; retry with a fresh key.
+        searchClient = staticClient({
+          from: `/api/search.json?retry=${Date.now()}`,
+        })
+        setStatus("error")
+      }
+    }
+  })
 
-  const handleOpenChange = useMemo(
-    () =>
-      function handleOpenChange(value: boolean) {
-        setOpen(value)
+  const handleOpenChange = useEventCallback(function (value: boolean) {
+    setOpen(value)
 
-        if (!value) controllerRef.current?.abort()
-      },
-    [setOpen, controllerRef],
-  )
+    if (!value) controllerRef.current?.abort()
+  })
 
-  const handleChange = useMemo(
-    () =>
-      function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
-        const nextQuery = event.target.value
-        setQuery(nextQuery)
-        void search(nextQuery)
-      },
-    [setQuery, search],
-  )
+  const handleChange = useEventCallback(function (
+    event: ChangeEvent<HTMLInputElement>,
+  ) {
+    const nextQuery = event.target.value
+    setQuery(nextQuery)
+    void search(nextQuery)
+  })
 
-  const handleClick = useMemo(
-    () =>
-      function handleClick() {
-        return setOpen(false)
-      },
-    [setOpen],
-  )
+  const handleClick = useEventCallback(function () {
+    return setOpen(false)
+  })
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>

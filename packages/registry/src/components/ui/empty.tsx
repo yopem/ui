@@ -1,5 +1,5 @@
 import type { StyleXComponentProps } from "@registry/lib/stylex"
-import type React from "react"
+import type { ComponentProps } from "react"
 
 import { mergeStylexProps, stylexProps } from "@registry/lib/stylex"
 import { themeMarker, tokens } from "@registry/styles/tokens.stylex"
@@ -107,7 +107,7 @@ export function Empty({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleXComponentProps<React.ComponentProps<"div">>) {
+}: StyleXComponentProps<ComponentProps<"div">>) {
   const props = restProps
   const xstyle = consumerXstyle
 
@@ -123,7 +123,7 @@ export function EmptyHeader({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleXComponentProps<React.ComponentProps<"div">>) {
+}: StyleXComponentProps<ComponentProps<"div">>) {
   const props = restProps
   const xstyle = consumerXstyle
 
@@ -144,7 +144,7 @@ export function EmptyMedia({
   variant = "default",
   ...restProps
 }: StyleXComponentProps<
-  React.ComponentProps<"div">,
+  ComponentProps<"div">,
   {
     variant?: keyof typeof mediaVariantStyles
   }
@@ -190,7 +190,7 @@ export function EmptyTitle({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleXComponentProps<React.ComponentProps<"div">>) {
+}: StyleXComponentProps<ComponentProps<"div">>) {
   const props = restProps
   const xstyle = consumerXstyle
 
@@ -206,7 +206,7 @@ export function EmptyDescription({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleXComponentProps<React.ComponentProps<"p">>) {
+}: StyleXComponentProps<ComponentProps<"p">>) {
   const props = restProps
   const xstyle = consumerXstyle
 
@@ -225,7 +225,7 @@ export function EmptyContent({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleXComponentProps<React.ComponentProps<"div">>) {
+}: StyleXComponentProps<ComponentProps<"div">>) {
   const props = restProps
   const xstyle = consumerXstyle
 

@@ -2,11 +2,11 @@ import type { MouseEvent } from "react"
 
 import { Box } from "@registry/components/ui/box"
 import { Grid } from "@registry/components/ui/grid"
+import { useEventCallback } from "@registry/hooks/use-event-callback"
 import { tokens } from "@registry/styles/tokens.stylex"
 import { useTheme } from "@registry/theme/theme-provider"
 import * as stylex from "@stylexjs/stylex"
 import { MonitorIcon, MoonIcon, SunIcon } from "lucide-react"
-import { useMemo } from "react"
 
 const styles = stylex.create({
   appearance: {
@@ -69,17 +69,15 @@ const themeOptions = [
 export function ThemeToggle() {
   const { theme, setTheme } = useTheme()
 
-  const selectTheme = useMemo(
-    () =>
-      function selectTheme(event: MouseEvent<HTMLButtonElement>) {
-        const value = event.currentTarget.value
+  const selectTheme = useEventCallback(function (
+    event: MouseEvent<HTMLButtonElement>,
+  ) {
+    const value = event.currentTarget.value
 
-        if (value === "system" || value === "light" || value === "dark") {
-          setTheme(value)
-        }
-      },
-    [setTheme],
-  )
+    if (value === "system" || value === "light" || value === "dark") {
+      setTheme(value)
+    }
+  })
 
   return (
     <Box as="fieldset" aria-label="Appearance" xstyle={styles.appearance}>

@@ -1,5 +1,50 @@
 // Standalone TSX files use the standard @ alias for src.
 const usageSnippetValues = {
+  "use-event-callback": `"use client"
+
+import { Button } from "@/components/ui/button"
+import { Box } from "@/components/ui/box"
+import { VStack } from "@/components/ui/vstack"
+import { useEventCallback } from "@/hooks/use-event-callback"
+import { useState } from "react"
+
+export function Preview() {
+  const [count, setCount] = useState(0)
+
+  const increment = useEventCallback(function () {
+    setCount(count + 1)
+  })
+
+  return (
+    <VStack>
+      <Button onClick={increment}>Increment count</Button>
+      <Box as="output">Count: {count}</Box>
+    </VStack>
+  )
+}
+`,
+  "use-media-query": `"use client"
+
+import { Text } from "@/components/ui/text"
+import { VStack } from "@/components/ui/vstack"
+import { useMediaQuery } from "@/hooks/use-media-query"
+
+export function Preview() {
+  const medium = useMediaQuery("md")
+  const range = useMediaQuery("sm:max-lg")
+  const maximum = useMediaQuery({ max: "md" })
+  const raw = useMediaQuery("(min-width: 1280px)")
+
+  return (
+    <VStack>
+      <Text data-testid="medium-query">Medium viewport: {String(medium)}</Text>
+      <Text data-testid="range-query">Small to large: {String(range)}</Text>
+      <Text data-testid="maximum-query">Below medium: {String(maximum)}</Text>
+      <Text data-testid="raw-query">Raw wide query: {String(raw)}</Text>
+    </VStack>
+  )
+}
+`,
   checkmark: `"use client"
 
 import { Checkmark } from "@/components/ui/checkmark"

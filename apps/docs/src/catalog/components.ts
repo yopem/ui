@@ -25,9 +25,16 @@ const compositionOverrides = new Map<
 >([
   ["date-picker", { name: "DatePicker", title: "Date Picker" }],
   ["navigation", { name: "SegmentedControl", title: "Segmented Control" }],
+  [
+    "use-event-callback",
+    { name: "useEventCallback", title: "useEventCallback" },
+  ],
+  ["use-media-query", { name: "useMediaQuery", title: "useMediaQuery" }],
 ])
 
 const previewDescriptionValues = {
+  "use-event-callback": "Stable handler reading the latest count",
+  "use-media-query": "Live viewport breakpoint matches",
   accordion: "Expandable sections",
   "absolute-center": "Centered overlay content",
   bleed: "Full-bleed content within padding",

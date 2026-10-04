@@ -1,5 +1,5 @@
 import type { StyleXComponentProps } from "@registry/lib/stylex"
-import type React from "react"
+import type { ComponentProps } from "react"
 
 import { mergeStylexProps, stylexProps } from "@registry/lib/stylex"
 import * as stylex from "@stylexjs/stylex"
@@ -23,7 +23,7 @@ export function Spinner({
   className,
   "aria-label": label = "Loading",
   ...restProps
-}: StyleXComponentProps<React.ComponentProps<typeof Loader2Icon>>) {
+}: StyleXComponentProps<ComponentProps<typeof Loader2Icon>>) {
   const props = restProps
   const xstyle = consumerXstyle
 

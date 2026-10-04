@@ -89,7 +89,7 @@ export const foundationItems: SourceItem[] = [
     ],
     name: "theme",
     peerDependencies: ["react@>=18 <20", "react-dom@>=18 <20"],
-    registryDependencies: ["base"],
+    registryDependencies: ["base", "use-event-callback"],
     title: "Theme runtime",
     type: "registry:lib",
   },

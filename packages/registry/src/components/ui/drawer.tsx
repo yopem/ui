@@ -1,7 +1,7 @@
 "use client"
 
 import type { StyleXComponentProps } from "@registry/lib/stylex"
-import type React from "react"
+import type { ComponentProps, ReactElement } from "react"
 
 import { Checkbox as CheckboxPrimitive } from "@base-ui/react/checkbox"
 import { Drawer as DrawerPrimitive } from "@base-ui/react/drawer"
@@ -15,15 +15,13 @@ import { mergeStylexProps, stylexProps } from "@registry/lib/stylex"
 import { themeMarker, tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import { ChevronRightIcon, XIcon } from "lucide-react"
-import { createContext, useContext, useMemo } from "react"
+import { createContext, useContext } from "react"
 
 type DrawerPosition = "right" | "left" | "top" | "bottom"
 
 type DrawerVariant = "default" | "straight" | "inset"
 
-const DrawerContext = createContext<{ position: DrawerPosition }>({
-  position: "bottom",
-})
+const DrawerContext = createContext<DrawerPosition>("bottom")
 
 const directionMap: Record<
   DrawerPosition,
@@ -573,10 +571,8 @@ export function Drawer({
   position = "bottom",
   ...props
 }: DrawerPrimitive.Root.Props & { position?: DrawerPosition }) {
-  const contextValue = useMemo(() => ({ position }), [position])
-
   return (
-    <DrawerContext.Provider value={contextValue}>
+    <DrawerContext.Provider value={position}>
       <DrawerPrimitive.Root
         swipeDirection={swipeDirection ?? directionMap[position]}
         {...props}
@@ -634,7 +630,7 @@ export function DrawerSwipeArea({
   const props = restProps
   const xstyle = consumerXstyle
 
-  const { position: contextPosition } = useContext(DrawerContext)
+  const contextPosition = useContext(DrawerContext)
   const position = positionProp ?? contextPosition
 
   return (
@@ -729,7 +725,7 @@ export function DrawerPopup({
   const props = restProps
   const xstyle = consumerXstyle
 
-  const { position: contextPosition } = useContext(DrawerContext)
+  const contextPosition = useContext(DrawerContext)
   const position = positionProp ?? contextPosition
 
   return (
@@ -938,7 +934,7 @@ export function DrawerBar({
   const props = restProps
   const xstyle = consumerXstyle
 
-  const { position: contextPosition } = useContext(DrawerContext)
+  const contextPosition = useContext(DrawerContext)
   const position = positionProp ?? contextPosition
   const horizontal = position === "left" || position === "right"
 
@@ -965,7 +961,7 @@ export function DrawerContent({
   xstyle: consumerXstyle,
   className,
   ...restProps
-}: StyleXComponentProps<React.ComponentProps<typeof DrawerPrimitive.Content>>) {
+}: StyleXComponentProps<ComponentProps<typeof DrawerPrimitive.Content>>) {
   const props = restProps
   const xstyle = consumerXstyle
 
@@ -1131,7 +1127,7 @@ export function DrawerMenuCheckboxItem({
   CheckboxPrimitive.Root.Props,
   {
     variant?: "default" | "switch"
-    render?: React.ReactElement
+    render?: ReactElement
   }
 >) {
   const props = restProps
@@ -1226,7 +1222,7 @@ export function DrawerMenuRadioItem({
   RadioPrimitive.Root.Props,
   {
     value: string
-    render?: React.ReactElement
+    render?: ReactElement
   }
 >) {
   const props = restProps

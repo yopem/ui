@@ -13,7 +13,7 @@ import {
 import { mergeStylexProps, stylexProps } from "@registry/lib/stylex"
 import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
-import { createContext, useMemo, useContext } from "react"
+import { createContext, useContext, useState } from "react"
 
 const styles = stylex.create({
   root: { display: "flex", inlineSize: "fit-content" },
@@ -48,7 +48,11 @@ export function ToggleGroup({
   const props = restProps
   const xstyle = consumerXstyle
 
-  const contextValue = useMemo(() => ({ size, variant }), [size, variant])
+  const [contextValue, setContextValue] = useState({ size, variant })
+
+  if (contextValue.size !== size || contextValue.variant !== variant) {
+    setContextValue({ size, variant })
+  }
 
   return (
     <ToggleGroupPrimitive

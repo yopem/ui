@@ -16,7 +16,7 @@ import {
 import { themeMarker, tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import { ChevronsUpDownIcon, XIcon } from "lucide-react"
-import { createContext, useRef, useMemo, forwardRef, useContext } from "react"
+import { createContext, forwardRef, useContext, useState } from "react"
 
 export const comboboxSlotStyles = stylex.create({
   icon: {
@@ -320,13 +320,16 @@ export const ComboboxContext = createContext<{
 export function Combobox<Value, Multiple extends boolean | undefined = false>(
   props: ComboboxPrimitive.Root.Props<Value, Multiple>,
 ) {
-  const chipsRef = useRef<HTMLDivElement | null>(null)
   const multiple = Boolean(props.multiple)
 
-  const contextValue = useMemo(
-    () => ({ chipsRef, multiple }),
-    [chipsRef, multiple],
-  )
+  const [contextValue, setContextValue] = useState<{
+    chipsRef: RefObject<HTMLDivElement | null>
+    multiple: boolean
+  }>(() => ({ chipsRef: { current: null }, multiple }))
+
+  if (contextValue.multiple !== multiple) {
+    setContextValue({ chipsRef: contextValue.chipsRef, multiple })
+  }
 
   return (
     <ComboboxContext.Provider value={contextValue}>

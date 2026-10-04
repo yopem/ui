@@ -3,10 +3,11 @@
 import type { StyleXComponentProps } from "@registry/lib/stylex"
 import type { ComponentProps } from "react"
 
+import { useEventCallback } from "@registry/hooks/use-event-callback"
 import { mergeStylexProps, stylexProps } from "@registry/lib/stylex"
 import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
-import { useRef, useState, useMemo } from "react"
+import { useRef, useState } from "react"
 
 const styles = stylex.create({
   root: {
@@ -77,20 +78,14 @@ export function Codeblock({
   const codeRef = useRef<HTMLPreElement>(null)
   const [copyStatus, setCopyStatus] = useState<"copied" | "error" | null>(null)
 
-  const copyCode = useMemo(
-    () =>
-      async function copyCode() {
-        try {
-          await navigator.clipboard.writeText(
-            codeRef.current?.textContent ?? "",
-          )
-          setCopyStatus("copied")
-        } catch {
-          setCopyStatus("error")
-        }
-      },
-    [codeRef, setCopyStatus],
-  )
+  const copyCode = useEventCallback(async function () {
+    try {
+      await navigator.clipboard.writeText(codeRef.current?.textContent ?? "")
+      setCopyStatus("copied")
+    } catch {
+      setCopyStatus("error")
+    }
+  })
 
   return (
     <div

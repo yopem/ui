@@ -1,10 +1,11 @@
 import { Box } from "@registry/components/ui/box"
 import { ScrollArea } from "@registry/components/ui/scroll-area"
+import { useEventCallback } from "@registry/hooks/use-event-callback"
 import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import { useHydrated } from "@tanstack/react-router"
 import { CheckIcon, CopyIcon } from "lucide-react"
-import { lazy, Suspense, useState, useMemo } from "react"
+import { lazy, Suspense, useState } from "react"
 
 import { stripStandaloneComments } from "@/catalog/source-code"
 import { useCopyToClipboard } from "@/hooks/use-copy-to-clipboard"
@@ -221,21 +222,13 @@ export function CopyableCode({
       </ScrollArea>
     )
 
-  const handleCopy = useMemo(
-    () =>
-      function handleCopy() {
-        return void copyToClipboard(cleanCode)
-      },
-    [copyToClipboard, cleanCode],
-  )
+  const handleCopy = useEventCallback(function () {
+    return void copyToClipboard(cleanCode)
+  })
 
-  const handleClick = useMemo(
-    () =>
-      function handleClick() {
-        return setExpanded(true)
-      },
-    [setExpanded],
-  )
+  const handleClick = useEventCallback(function () {
+    return setExpanded(true)
+  })
 
   const contents = (
     <>
