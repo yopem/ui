@@ -1,6 +1,40 @@
 import AxeBuilder from "@axe-core/playwright"
 import { expect, test } from "@playwright/test"
 
+for (const [component, content, tag, slot] of [
+  ["absolute-center", "Centered", "div", "box"],
+  ["bleed", "Full-width content in a padded section", "div", "box"],
+  ["float", "Notification card", "div", "box"],
+  ["em", "We do care about the details.", "p", "text"],
+  ["mark", "Remember to save your work.", "p", "text"],
+  ["checkmark", "Saved successfully", "p", "text"],
+  ["wrap", "Design", "span", "box"],
+  ["marquee", "Design systems", "span", "box"],
+  ["prose", "Readable content", "h2", "heading"],
+]) {
+  test(`${component} preview preserves semantics with design-system primitives`, async ({
+    page,
+  }, testInfo) => {
+    await page.goto(`/components/${component}`)
+    const main = page.getByRole("main")
+
+    const primitive = ["absolute-center", "bleed", "float"].includes(component)
+      ? main.locator(`[data-slot="${component}"]`).locator("..")
+      : main
+          .locator(`${tag}[data-slot="${slot}"]`)
+          .filter({ hasText: new RegExp(`^\\s*${content}\\s*$`) })
+          .first()
+
+    await expect(primitive).toBeVisible()
+    await expect(primitive).toHaveAttribute("data-slot", slot)
+    await expect(primitive).toContainText(content)
+    await testInfo.attach("primitive-preview", {
+      body: await page.screenshot({ animations: "disabled" }),
+      contentType: "image/png",
+    })
+  })
+}
+
 test("component docs show live preview and copyable source", async ({
   context,
   page,
@@ -24,7 +58,7 @@ test("component docs show live preview and copyable source", async ({
   ).toContainText('from "@/components/ui/button"')
 })
 
-test("@a11y code blocks preserve shell, JSON, and TSX highlighting", async ({
+test("@a11y component code blocks preserve shell highlighting", async ({
   page,
 }, testInfo) => {
   await page.goto("/components/flex")
@@ -43,23 +77,31 @@ test("@a11y code blocks preserve shell, JSON, and TSX highlighting", async ({
     )
   }
 
-  await page.goto("/docs/installation")
-  const shell = page.getByRole("group", { name: "Code", exact: true })
-  await expect(shell.locator(".line > span").first()).toHaveText("bunx")
-  await page.goto("/docs/lint")
-  const json = page.getByRole("group", { name: "Code", exact: true }).first()
-  await expect(json.locator("pre.shiki code")).toContainText('"jsPlugins"')
-  await expect(json.locator(".line > span").first()).toHaveText("{")
-  expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([])
-  await page.goto("/docs/getting-started")
-  const tsx = page.getByRole("group", { name: "Code", exact: true }).first()
-  await expect(tsx.locator("pre.shiki code")).toContainText("import")
-  await expect(tsx.locator(".line > span").first()).toHaveText("import")
   await testInfo.attach("highlighted-code", {
     body: await page.screenshot(),
     contentType: "image/png",
   })
 })
+
+for (const [guide, format, content, firstToken] of [
+  ["installation", "shell", "bunx", "bunx"],
+  ["lint", "JSON", '"jsPlugins"', "{"],
+  ["getting-started", "TSX", "import", "import"],
+]) {
+  test(`@a11y ${guide} code blocks preserve ${format} highlighting`, async ({
+    page,
+  }, testInfo) => {
+    await page.goto(`/docs/${guide}`)
+    const code = page.getByRole("group", { name: "Code", exact: true }).first()
+    await expect(code.locator("pre.shiki code")).toContainText(content)
+    await expect(code.locator(".line > span").first()).toHaveText(firstToken)
+    expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([])
+    await testInfo.attach("highlighted-code", {
+      body: await page.screenshot(),
+      contentType: "image/png",
+    })
+  })
+}
 
 test("search waits for client hydration before accepting clicks", async ({
   page,

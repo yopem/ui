@@ -61,6 +61,7 @@ test("docs lint accepts StyleX and rejects forbidden styling", () => {
 
     expect(invalid.status).not.toBe(0)
     const output = invalid.stdout + invalid.stderr
+    expect(output).toContain("yopem-ui(prefer-layout-primitives)")
     expect(output).toContain("yopem-ui(no-raw-stylex-colors)")
     expect(output).toContain("yopem-ui(no-unused-stylex-styles)")
     expect(output).toContain("className")

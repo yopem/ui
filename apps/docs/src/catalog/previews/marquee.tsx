@@ -1,13 +1,14 @@
 "use client"
 
+import { Box } from "@registry/components/ui/box"
 import { Marquee } from "@registry/components/ui/marquee"
 
 export function Preview() {
   return (
     <Marquee>
-      <span>Design systems</span>
-      <span>Accessible components</span>
-      <span>Reusable source</span>
+      <Box as="span">Design systems</Box>
+      <Box as="span">Accessible components</Box>
+      <Box as="span">Reusable source</Box>
     </Marquee>
   )
 }

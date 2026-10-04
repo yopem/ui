@@ -1,5 +1,6 @@
 "use client"
 
+import { Box } from "@registry/components/ui/box"
 import { Float } from "@registry/components/ui/float"
 import * as stylex from "@stylexjs/stylex"
 
@@ -9,8 +10,8 @@ const styles = stylex.create({
 
 export function Preview() {
   return (
-    <div {...stylex.props(styles.area)}>
+    <Box xstyle={styles.area}>
       Notification card<Float>New</Float>
-    </div>
+    </Box>
   )
 }
