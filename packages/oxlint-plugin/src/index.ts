@@ -730,14 +730,14 @@ const nativePrimitiveRecommendations = new Map<string, string>([
   ],
   ..."span main section article aside header footer nav address figure figcaption search hgroup ul ol li dl dt dd pre"
     .split(" ")
-    .map((tag): [string, string] => [tag, `Box as="${tag}"`]),
+    .map((tag): [string, string] => [tag, `Box render={<${tag} />}`]),
   ["p", "Text"],
   ["blockquote", "Blockquote"],
   ["em", "Em"],
   ["mark", "Mark (or Highlight for matching words)"],
   ..."h1 h2 h3 h4 h5 h6"
     .split(" ")
-    .map((tag): [string, string] => [tag, `Heading as="${tag}"`]),
+    .map((tag): [string, string] => [tag, `Heading render={<${tag} />}`]),
 ])
 
 const preferLayoutPrimitivesRule: Rule = {
@@ -773,13 +773,25 @@ const preferLayoutPrimitivesRule: Rule = {
       JSXOpeningElement(node: JSXOpeningElement) {
         const element = getIdentifier(node.name)
 
+        let ancestor = getProperty(node, "parent")
+
+        while (isNode(ancestor)) {
+          if (isNode(ancestor, "JSXAttribute")) {
+            if (getAttributeName(ancestor) === "render") return
+
+            break
+          }
+
+          ancestor = getProperty(ancestor, "parent")
+        }
+
         if (element !== null && elements.has(element)) {
           context.report({
             data: {
               element,
               replacement:
                 nativePrimitiveRecommendations.get(element) ??
-                `Box as="${element}"`,
+                `Box render={<${element} />}`,
             },
             messageId: "nativeElement",
             node: node.name,

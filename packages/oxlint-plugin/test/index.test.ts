@@ -335,6 +335,15 @@ const view = <div xstyle={x.color.blue || fallback} />;`,
   expect(result.status).toBe(0)
 })
 
+test("layout primitives allow native elements used for render composition", () => {
+  const result = lint(
+    `const view = <Box render={<section><span>Content</span></section>} />;`,
+    { "yopem-ui/prefer-layout-primitives": "error" },
+  )
+
+  expect(result.status).toBe(0)
+})
+
 test("layout primitives replace presentational div and span by default", () => {
   const result = lint(
     `import { Box as Container, Stack } from "@/components/ui/layout";
@@ -346,7 +355,7 @@ const view = <><div><span>Text</span></div><Container /><Stack /><section /><svg
   expect(result.output).toContain("Box")
   expect(result.output).toContain("div")
   expect(result.output).toContain("span")
-  expect(result.output).toContain('Box as="section"')
+  expect(result.output).toContain("Box render={<section />}")
 })
 
 test("design-system-first covers semantic wrappers and typography without guessing layout", () => {
@@ -403,9 +412,9 @@ test("design-system-first covers semantic wrappers and typography without guessi
     "Blockquote",
     "Em",
     "Mark",
-    'Heading as="h1"',
-    'Heading as="h6"',
-    'Box as="pre"',
+    "Heading render={<h1 />}",
+    "Heading render={<h6 />}",
+    "Box render={<pre />}",
   ])
     expect(typography.output).toContain(component)
   expect(typography.output).not.toContain("Codeblock")
