@@ -4,8 +4,8 @@ import { VStack } from "@registry/components/ui/vstack"
 export function Preview() {
   return (
     <VStack>
-      <Box as="strong">Account ready</Box>
-      <Box as="span">Nothing else is needed.</Box>
+      <Box render={<strong />}>Account ready</Box>
+      <Box render={<span />}>Nothing else is needed.</Box>
     </VStack>
   )
 }

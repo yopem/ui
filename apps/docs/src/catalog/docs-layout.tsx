@@ -98,7 +98,7 @@ export function DocumentationLayout({ children }: { children: ReactNode }) {
       <UiLink href="#docs-content" xstyle={primitiveStyles.uiLink}>
         Skip to content
       </UiLink>
-      <Box as="header" xstyle={primitiveStyles.header}>
+      <Box render={<header />} xstyle={primitiveStyles.header}>
         <Dialog open={mobileOpen} onOpenChange={setMobileOpen}>
           <DialogTrigger
             render={
@@ -131,12 +131,12 @@ export function DocumentationLayout({ children }: { children: ReactNode }) {
         <GlobalSearch />
       </Box>
       <Grid xstyle={primitiveStyles.grid}>
-        <Box as="aside" xstyle={primitiveStyles.aside}>
+        <Box render={<aside />} xstyle={primitiveStyles.aside}>
           <DocsNavigation />
           <ThemeToggle />
         </Box>
         <Box
-          as="main"
+          render={<main />}
           id="docs-content"
           tabIndex={-1}
           xstyle={primitiveStyles.main}

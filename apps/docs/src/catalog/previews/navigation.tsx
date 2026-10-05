@@ -109,7 +109,7 @@ const styles = stylex.create({
 
 export function Preview() {
   return (
-    <Box as="nav" aria-label="Project sections">
+    <Box render={<nav />} aria-label="Project sections">
       <Flex xstyle={styles.flex}>
         <Link aria-current="page" xstyle={styles.link} href="#overview">
           Overview

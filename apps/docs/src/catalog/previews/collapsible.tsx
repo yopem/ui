@@ -58,14 +58,14 @@ export function Preview() {
         />
       </CollapsibleTrigger>
       <CollapsiblePanel>
-        <Box as="ul" xstyle={styles.ul}>
-          <Box as="li" xstyle={styles.li}>
+        <Box render={<ul />} xstyle={styles.ul}>
+          <Box render={<li />} xstyle={styles.li}>
             4829-1735-6621
           </Box>
-          <Box as="li" xstyle={styles.li2}>
+          <Box render={<li />} xstyle={styles.li2}>
             9182-6407-5532
           </Box>
-          <Box as="li" xstyle={styles.li3}>
+          <Box render={<li />} xstyle={styles.li3}>
             3051-7924-9018
           </Box>
         </Box>

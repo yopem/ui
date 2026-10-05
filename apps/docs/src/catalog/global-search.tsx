@@ -197,10 +197,10 @@ export function GlobalSearch() {
         }
       >
         <SearchIcon size={16} />
-        <Box as="span" xstyle={primitiveStyles.span}>
+        <Box render={<span />} xstyle={primitiveStyles.span}>
           Search docs
         </Box>
-        <Box as="kbd" xstyle={primitiveStyles.kbd}>
+        <Box render={<kbd />} xstyle={primitiveStyles.kbd}>
           ⌘ / Ctrl K
         </Box>
       </DialogTrigger>
@@ -222,9 +222,13 @@ export function GlobalSearch() {
           placeholder="Search components, previews, and guides…"
           onChange={handleChange}
         />
-        <Box as="output" aria-live="polite" xstyle={primitiveStyles.output}>
+        <Box
+          render={<output />}
+          aria-live="polite"
+          xstyle={primitiveStyles.output}
+        >
           {status === "error" ? (
-            <Box as="span" xstyle={primitiveStyles.span2}>
+            <Box render={<span />} xstyle={primitiveStyles.span2}>
               Search unavailable. Change your query to try again.
             </Box>
           ) : !query.trim() ? (
@@ -241,17 +245,17 @@ export function GlobalSearch() {
           scrollFade
           xstyle={primitiveStyles.searchResults}
         >
-          <Box as="ul" xstyle={primitiveStyles.ul}>
+          <Box render={<ul />} xstyle={primitiveStyles.ul}>
             {status === "ready"
               ? results.map((result) => (
-                  <Box as="li" key={result.id}>
+                  <Box render={<li />} key={result.id}>
                     <Link
                       to={result.url}
                       onClick={handleClick}
                       {...stylex.props(styles.result)}
                     >
                       {result.breadcrumbs?.length ? (
-                        <Box as="span" xstyle={primitiveStyles.span3}>
+                        <Box render={<span />} xstyle={primitiveStyles.span3}>
                           {result.breadcrumbs
                             .join(" / ")
                             .replace(/<\/?mark>/g, "")}

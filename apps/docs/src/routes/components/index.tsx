@@ -117,15 +117,18 @@ function ComponentsPage() {
           the API, and copy the source into your project.
         </DocsDescription>
         <DocsBody>
-          <Box as="section" xstyle={styles.section}>
+          <Box render={<section />} xstyle={styles.section}>
             <Box
-              as="input"
+              render={
+                <input
+                  aria-label="Search components"
+                  onChange={handleChange}
+                  placeholder="Search components…"
+                  type="search"
+                  value={query}
+                />
+              }
               xstyle={styles.searchComponents}
-              aria-label="Search components"
-              onChange={handleChange}
-              placeholder="Search components…"
-              type="search"
-              value={query}
             />
           </Box>
           <Grid xstyle={styles.grid}>
@@ -137,10 +140,8 @@ function ComponentsPage() {
                 preload="intent"
                 to="/components/$name"
               >
-                <Heading as="h2" xstyle={styles.h2}>
-                  {item.title}
-                </Heading>
-                <Box as="span" xstyle={styles.span}>
+                <Heading render={<h2>{item.title}</h2>} xstyle={styles.h2} />
+                <Box render={<span />} xstyle={styles.span}>
                   {item.preview ? "Live preview" : "Usage and API"}
                 </Box>
               </Link>

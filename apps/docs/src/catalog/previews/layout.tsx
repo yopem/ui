@@ -80,23 +80,29 @@ export function Preview() {
 
   return (
     <Stack data-testid="layout-root" xstyle={styles.layoutRoot}>
-      <Box as="section" data-testid="box" xstyle={styles.box}>
-        <Heading as="h1" data-testid="heading-h1" id="page-title">
-          Layout primitives
-        </Heading>
+      <Box render={<section />} data-testid="box" xstyle={styles.box}>
+        <Heading
+          render={<h1>Layout primitives</h1>}
+          data-testid="heading-h1"
+          id="page-title"
+        />
         <Heading data-testid="preserved-heading">Semantic content</Heading>
-        <Heading as="h3" data-testid="heading-h3">
-          Third-level heading
-        </Heading>
-        <Heading as="h4" data-testid="heading-h4">
-          Fourth-level heading
-        </Heading>
-        <Heading as="h5" data-testid="heading-h5">
-          Fifth-level heading
-        </Heading>
-        <Heading as="h6" data-testid="heading-h6">
-          Sixth-level heading
-        </Heading>
+        <Heading
+          render={<h3>Third-level heading</h3>}
+          data-testid="heading-h3"
+        />
+        <Heading
+          render={<h4>Fourth-level heading</h4>}
+          data-testid="heading-h4"
+        />
+        <Heading
+          render={<h5>Fifth-level heading</h5>}
+          data-testid="heading-h5"
+        />
+        <Heading
+          render={<h6>Sixth-level heading</h6>}
+          data-testid="heading-h6"
+        />
         <Text ref={textRef} data-testid="text-ref">
           Text content keeps its native p element.
         </Text>
@@ -114,37 +120,37 @@ export function Preview() {
         </Link>
       </Box>
       <Flex xstyle={styles.flex} data-testid="flex">
-        <Box as="span">One</Box>
-        <Box as="span">Two</Box>
+        <Box render={<span />}>One</Box>
+        <Box render={<span />}>Two</Box>
       </Flex>
       <Flex data-testid="rtl-flex" dir="rtl" xstyle={styles.rtlFlex}>
-        <Box as="span">يمين</Box>
-        <Box as="span">يسار</Box>
+        <Box render={<span />}>يمين</Box>
+        <Box render={<span />}>يسار</Box>
       </Flex>
       <Box data-testid="responsive-tag" xstyle={styles.responsiveTag}>
         Responsive layout
       </Box>
       <VStack data-testid="vstack">
-        <Box as="span">Vertical one</Box>
-        <Box as="span">Vertical two</Box>
+        <Box render={<span />}>Vertical one</Box>
+        <Box render={<span />}>Vertical two</Box>
       </VStack>
       <HStack data-testid="hstack">
-        <Box as="span">Horizontal one</Box>
-        <Box as="span">Horizontal two</Box>
+        <Box render={<span />}>Horizontal one</Box>
+        <Box render={<span />}>Horizontal two</Box>
       </HStack>
       <HStack data-testid="override-hstack" xstyle={styles.overrideHstack}>
-        <Box as="span">Overridden layout</Box>
+        <Box render={<span />}>Overridden layout</Box>
       </HStack>
       <Stack data-testid="stack">
-        <Box as="span">Stack one</Box>
-        <Box as="span">Stack two</Box>
+        <Box render={<span />}>Stack one</Box>
+        <Box render={<span />}>Stack two</Box>
       </Stack>
       <Grid data-testid="grid" xstyle={styles.grid}>
-        <Box as="span">Grid one</Box>
-        <Box as="span">Grid two</Box>
+        <Box render={<span />}>Grid one</Box>
+        <Box render={<span />}>Grid two</Box>
       </Grid>
       <Center data-testid="center" xstyle={styles.center}>
-        <Box as="span">Centered</Box>
+        <Box render={<span />}>Centered</Box>
       </Center>
       <Container data-testid="container" xstyle={styles.container}>
         Constrained content
@@ -174,19 +180,22 @@ export function Preview() {
         <Bleed data-testid="bleed">Bleeding content</Bleed>
       </Box>
       <Wrap data-testid="wrap">
-        <Box as="span">One</Box>
-        <Box as="span">Two</Box>
-        <Box as="span">Three</Box>
+        <Box render={<span />}>One</Box>
+        <Box render={<span />}>Two</Box>
+        <Box render={<span />}>Three</Box>
       </Wrap>
-      <Box as="form" data-testid="native-form" onSubmit={handleSubmit}>
+      <Box render={<form onSubmit={handleSubmit} />} data-testid="native-form">
         <Label htmlFor="layout-name">Name</Label>
         <Box
-          as="input"
-          id="layout-name"
-          name="name"
-          ref={nameRef}
-          required
-          type="text"
+          render={
+            <input
+              id="layout-name"
+              name="name"
+              ref={nameRef}
+              required
+              type="text"
+            />
+          }
         />
         <Button data-testid="focus-name" onClick={focusName} type="button">
           Focus name
@@ -202,7 +211,12 @@ export function Preview() {
         {submitted ? "Submitted" : "Not submitted"}
       </Text>
       <Text data-testid="text-ref-status">{textTag}</Text>
-      <Box as="div" data-testid="destination" id="destination" tabIndex={-1}>
+      <Box
+        render={<div />}
+        data-testid="destination"
+        id="destination"
+        tabIndex={-1}
+      >
         Destination
       </Box>
     </Stack>

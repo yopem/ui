@@ -10,7 +10,7 @@ const styles = stylex.create({
 
 export function Preview() {
   return (
-    <Box as="section" xstyle={styles.section}>
+    <Box render={<section />} xstyle={styles.section}>
       Content inside a semantic Box.
     </Box>
   )

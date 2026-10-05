@@ -118,22 +118,30 @@ export function TableOfContents({ items }: { items: TocItem[] }) {
   useLayoutEffect(() => listenForActiveSection(items, setActiveUrl), [items])
 
   return (
-    <Box as="aside" aria-label="On this page" xstyle={styles.onThisPage}>
-      <Box as="nav" aria-label="On this page">
+    <Box
+      render={<aside />}
+      aria-label="On this page"
+      xstyle={styles.onThisPage}
+    >
+      <Box render={<nav />} aria-label="On this page">
         <Text xstyle={styles.paragraph}>On this page</Text>
-        <Box as="ul" xstyle={styles.ul}>
+        <Box render={<ul />} xstyle={styles.ul}>
           {items.map((item) => (
-            <Box as="li" key={item.url}>
+            <Box render={<li />} key={item.url}>
               <Link
                 aria-current={activeUrl === item.url ? "location" : undefined}
                 href={item.url}
                 xstyle={styles.link}
               >
                 {activeUrl === item.url ? (
-                  <Box as="span" xstyle={styles.span}>
-                    <Box as="span" aria-hidden="true" xstyle={styles.span2} />
+                  <Box render={<span />} xstyle={styles.span}>
+                    <Box
+                      render={<span />}
+                      aria-hidden="true"
+                      xstyle={styles.span2}
+                    />
                     {item.depth > 2 ? (
-                      <Box as="span" xstyle={styles.span3}>
+                      <Box render={<span />} xstyle={styles.span3}>
                         {item.title}
                       </Box>
                     ) : (
@@ -141,7 +149,7 @@ export function TableOfContents({ items }: { items: TocItem[] }) {
                     )}
                   </Box>
                 ) : item.depth > 2 ? (
-                  <Box as="span" xstyle={styles.span4}>
+                  <Box render={<span />} xstyle={styles.span4}>
                     {item.title}
                   </Box>
                 ) : (

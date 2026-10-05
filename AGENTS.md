@@ -138,7 +138,7 @@ artifacts; docs dev, registry build, and registry typecheck regenerate API data.
   children, elements with refs/events, and prop spreads. Preserve all native
   attributes, keyboard behavior, accessible semantics, and ref types.
 - Start with Box (div by default, border-box sizing, minimum inline size zero).
-  Use `Box as` for semantic landmarks, lists, inline spans, and generic preformatted
+  Use `Box render={<section />}` for semantic landmarks, lists, inline spans, and generic preformatted
   content. Do not replace semantic elements with an unqualified div.
 - Choose Flex for custom direction/alignment; Stack or VStack for columns with
   four spacing units; HStack for rows with centered cross-axis alignment and four
@@ -148,7 +148,7 @@ artifacts; docs dev, registry build, and registry typecheck regenerate API data.
   padding, Float over a parent's corner, and Wrap for wrapping rows. Customize
   layout through `xstyle`, not native wrappers with duplicated layout styles.
 - Use Text for paragraphs without forced visual defaults, Heading (`h2` by default)
-  with `as="h1"` through `h6` for semantic levels independent of visual size,
+  with `render={<h1 />}` through `h6` for semantic levels independent of visual size,
   Blockquote for long quotations, Em for emphasis, and Mark for marked text.
   Choose Highlight for matching words and Prose for readable long-form content.
 - Use Codeblock intentionally for code displays. Its div wrapper, toolbar, and

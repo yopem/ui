@@ -297,65 +297,88 @@ function PropertiesTable({
       clampContentMinWidth={false}
       overscrollContain
     >
-      <Box as="table" xstyle={styles.table}>
-        <Box as="thead">
-          <Box as="tr">
-            <Box as="th" xstyle={styles.th} scope="col">
-              {label}
-            </Box>
-            <Box as="th" xstyle={styles.th2} scope="col">
-              Type
-            </Box>
-            <Box as="th" xstyle={styles.th3} scope="col">
-              Default
-            </Box>
-            <Box as="th" xstyle={styles.th4} scope="col">
-              Required
-            </Box>
-            <Box as="th" xstyle={styles.th5} scope="col">
-              Description
-            </Box>
-          </Box>
-        </Box>
-        <Box as="tbody">
-          {properties.map((prop) => (
-            <Box as="tr" key={prop.name}>
-              <Box as="td" xstyle={styles.td}>
-                <Box as="code" xstyle={styles.code}>
-                  {prop.name}
-                </Box>
+      <Box render={<table />} xstyle={styles.table}>
+        <Box
+          render={
+            <thead>
+              <Box render={<tr />}>
+                <Box render={<th scope="col">{label}</th>} xstyle={styles.th} />
+                <Box render={<th scope="col">Type</th>} xstyle={styles.th2} />
+                <Box
+                  render={<th scope="col">Default</th>}
+                  xstyle={styles.th3}
+                />
+                <Box
+                  render={<th scope="col">Required</th>}
+                  xstyle={styles.th4}
+                />
+                <Box
+                  render={<th scope="col">Description</th>}
+                  xstyle={styles.th5}
+                />
               </Box>
-              <Box as="td" xstyle={styles.td2} aria-label={`${prop.name} type`}>
-                {prop.type.length > 140 ? (
-                  <Box as="details" xstyle={styles.details}>
-                    <Box as="summary" xstyle={styles.summary}>
-                      <Box as="code" xstyle={styles.code2}>
-                        {prop.type.slice(0, 100)}…
-                      </Box>
+            </thead>
+          }
+        />
+        <Box render={<tbody />}>
+          {properties.map((prop) => (
+            <Box render={<tr />} key={prop.name}>
+              <Box
+                render={
+                  <td>
+                    <Box render={<code />} xstyle={styles.code}>
+                      {prop.name}
                     </Box>
-                    <Box as="pre" xstyle={styles.pre}>
-                      <Box as="code" xstyle={styles.code3}>
+                  </td>
+                }
+                xstyle={styles.td}
+              />
+              <Box
+                render={
+                  <td>
+                    {prop.type.length > 140 ? (
+                      <Box render={<details />} xstyle={styles.details}>
+                        <Box
+                          render={
+                            <summary>
+                              <Box render={<code />} xstyle={styles.code2}>
+                                {prop.type.slice(0, 100)}…
+                              </Box>
+                            </summary>
+                          }
+                          xstyle={styles.summary}
+                        />
+                        <Box render={<pre />} xstyle={styles.pre}>
+                          <Box render={<code />} xstyle={styles.code3}>
+                            {prop.type}
+                          </Box>
+                        </Box>
+                      </Box>
+                    ) : (
+                      <Box render={<code />} xstyle={styles.code4}>
                         {prop.type}
                       </Box>
+                    )}
+                  </td>
+                }
+                xstyle={styles.td2}
+                aria-label={`${prop.name} type`}
+              />
+              <Box
+                render={
+                  <td>
+                    <Box render={<code />} xstyle={styles.code5}>
+                      {prop.default ?? "Not specified"}
                     </Box>
-                  </Box>
-                ) : (
-                  <Box as="code" xstyle={styles.code4}>
-                    {prop.type}
-                  </Box>
-                )}
-              </Box>
-              <Box as="td" xstyle={styles.td3}>
-                <Box as="code" xstyle={styles.code5}>
-                  {prop.default ?? "Not specified"}
-                </Box>
-              </Box>
-              <Box as="td" xstyle={styles.td4}>
-                {prop.required ? "Yes" : "No"}
-              </Box>
-              <Box as="td" xstyle={styles.td5}>
-                {prop.description}
-              </Box>
+                  </td>
+                }
+                xstyle={styles.td3}
+              />
+              <Box
+                render={<td>{prop.required ? "Yes" : "No"}</td>}
+                xstyle={styles.td4}
+              />
+              <Box render={<td>{prop.description}</td>} xstyle={styles.td5} />
             </Box>
           ))}
         </Box>
@@ -400,13 +423,15 @@ function PartReference({
   if (alias)
     return (
       <Box
-        as="section"
+        render={<section />}
         xstyle={styles.section}
         aria-labelledby={`api-${part.name}`}
       >
-        <Heading as="h3" xstyle={styles.h3} id={`api-${part.name}`}>
-          {part.name}
-        </Heading>
+        <Heading
+          render={<h3>{part.name}</h3>}
+          xstyle={styles.h3}
+          id={`api-${part.name}`}
+        />
         <Text xstyle={styles.paragraph}>
           Alias for{" "}
           <Link xstyle={styles.link} href={`#api-${alias}`}>
@@ -420,26 +445,27 @@ function PartReference({
 
   return (
     <Box
-      as="section"
+      render={<section />}
       xstyle={styles.section2}
       aria-labelledby={`api-${part.name}`}
     >
-      <Heading as="h3" xstyle={styles.h32} id={`api-${part.name}`}>
-        {part.name}
-      </Heading>
+      <Heading
+        render={<h3>{part.name}</h3>}
+        xstyle={styles.h32}
+        id={`api-${part.name}`}
+      />
       <Text xstyle={styles.paragraph2}>{part.description}</Text>
       {part.parameters.length ? (
         <>
-          <Heading as="h4" xstyle={styles.h4}>
-            Arguments
-          </Heading>
+          <Heading render={<h4>Arguments</h4>} xstyle={styles.h4} />
           <PropertiesTable label="Argument" properties={part.parameters} />
           {part.parameters.map((parameter) =>
             parameter.properties.length ? (
               <Box key={parameter.name}>
-                <Heading as="h4" xstyle={styles.h42}>
-                  {parameter.name} properties
-                </Heading>
+                <Heading
+                  render={<h4>{parameter.name} properties</h4>}
+                  xstyle={styles.h42}
+                />
                 <PropertiesTable properties={parameter.properties} />
               </Box>
             ) : null,
@@ -451,9 +477,7 @@ function PartReference({
       ) : null}
       {part.returns ? (
         <>
-          <Heading as="h4" xstyle={styles.h43}>
-            Returns
-          </Heading>
+          <Heading render={<h4>Returns</h4>} xstyle={styles.h43} />
           <CopyableCode
             title={`${part.name} return type`}
             code={part.returns.type}
@@ -467,16 +491,21 @@ function PartReference({
         </>
       ) : null}
       {part.propVariants.length ? (
-        <Box as="details" xstyle={styles.details2} onToggle={toggleVariants}>
-          <Box as="summary" xstyle={styles.summary2}>
-            Accepted prop combinations
-          </Box>
+        <Box
+          render={<details onToggle={toggleVariants} />}
+          xstyle={styles.details2}
+        >
+          <Box
+            render={<summary>Accepted prop combinations</summary>}
+            xstyle={styles.summary2}
+          />
           {showVariants
             ? variants.map((variant, index) => (
                 <Box key={variant.type + index}>
-                  <Heading as="h4" xstyle={styles.h44}>
-                    Combination {index + 1}
-                  </Heading>
+                  <Heading
+                    render={<h4>Combination {index + 1}</h4>}
+                    xstyle={styles.h44}
+                  />
                   <Text xstyle={styles.paragraph3}>
                     Required: {variant.required.join(", ") || "None"}.
                   </Text>
@@ -486,10 +515,14 @@ function PartReference({
             : null}
         </Box>
       ) : null}
-      <Box as="details" xstyle={styles.details3} onToggle={toggleSignatures}>
-        <Box as="summary" xstyle={styles.summary3}>
-          Type signature
-        </Box>
+      <Box
+        render={<details onToggle={toggleSignatures} />}
+        xstyle={styles.details3}
+      >
+        <Box
+          render={<summary>Type signature</summary>}
+          xstyle={styles.summary3}
+        />
         {showSignatures
           ? part.signatures.map((signature) => (
               <CopyableCode

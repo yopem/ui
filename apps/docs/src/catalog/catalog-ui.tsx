@@ -58,10 +58,8 @@ export function PreviewPanel({
   const Preview = preview.component
 
   return (
-    <Box as="section" xstyle={styles.section}>
-      <Heading as="h3" xstyle={styles.h3}>
-        {preview.title}
-      </Heading>
+    <Box render={<section />} xstyle={styles.section}>
+      <Heading render={<h3>{preview.title}</h3>} xstyle={styles.h3} />
       <ScrollArea
         xstyle={styles.scrollArea}
         aria-label={`${preview.title} live preview`}

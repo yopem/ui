@@ -137,18 +137,16 @@ function UserCard({ delay, user }: { delay: number; user: (typeof users)[0] }) {
         <AvatarFallback>{user.fallback}</AvatarFallback>
       </Avatar>
       <Flex xstyle={styles.flex}>
-        <Heading as="h4" xstyle={styles.h4}>
-          {user.name}
-        </Heading>
+        <Heading render={<h4>{user.name}</h4>} xstyle={styles.h4} />
         <Flex xstyle={styles.flex2}>
-          <Box as="span" xstyle={styles.span}>
+          <Box render={<span />} xstyle={styles.span}>
             {user.role}
           </Box>
           <Flex xstyle={styles.flex3}>
             <UsersRoundIcon {...stylex.props(previewStyles.preview7)} />
-            <Box as="span" xstyle={styles.span2}>
+            <Box render={<span />} xstyle={styles.span2}>
               {user.followers}
-              <Box as="span" xstyle={styles.span3}>
+              <Box render={<span />} xstyle={styles.span3}>
                 {" "}
                 followers
               </Box>

@@ -1,9 +1,11 @@
-import type { StyleXComponentProps } from "@registry/lib/stylex"
-import type { JSX, ComponentPropsWithRef, ElementType } from "react"
+"use client"
 
+import type { StyleXComponentProps } from "@registry/lib/stylex"
+import type { JSX } from "react"
+
+import { useRender } from "@base-ui/react/use-render"
 import { mergeStylexProps, stylexProps } from "@registry/lib/stylex"
 import * as stylex from "@stylexjs/stylex"
-import { createElement } from "react"
 
 const styles = stylex.create({
   root: {
@@ -14,24 +16,15 @@ const styles = stylex.create({
 
 export type BoxElement = keyof JSX.IntrinsicElements
 
-export type BoxProps<Tag extends BoxElement = "div"> = StyleXComponentProps<
-  ComponentPropsWithRef<Tag>,
-  { as?: Tag }
->
+export type BoxProps = StyleXComponentProps<useRender.ComponentProps<"div">>
 
-export function Box<Tag extends BoxElement = "div">({
-  as,
-  xstyle,
-  className,
-  ...props
-}: BoxProps<Tag>) {
-  const Component: ElementType = as ?? "div"
-
-  return createElement(
-    Component,
-    mergeStylexProps(
+export function Box({ render, xstyle, className, ...props }: BoxProps) {
+  return useRender({
+    defaultTagName: "div",
+    render,
+    props: mergeStylexProps(
       { ...stylexProps(className, styles.root, xstyle), "data-slot": "box" },
       props,
     ),
-  )
+  })
 }

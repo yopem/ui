@@ -16,7 +16,7 @@ export function Preview() {
   return (
     <VStack>
       <Button onClick={increment}>Increment count</Button>
-      <Box as="output" aria-label="Count">
+      <Box render={<output />} aria-label="Count">
         Count: {count}
       </Box>
     </VStack>

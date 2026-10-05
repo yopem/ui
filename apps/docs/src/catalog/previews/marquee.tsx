@@ -6,9 +6,9 @@ import { Marquee } from "@registry/components/ui/marquee"
 export function Preview() {
   return (
     <Marquee>
-      <Box as="span">Design systems</Box>
-      <Box as="span">Accessible components</Box>
-      <Box as="span">Reusable source</Box>
+      <Box render={<span />}>Design systems</Box>
+      <Box render={<span />}>Accessible components</Box>
+      <Box render={<span />}>Reusable source</Box>
     </Marquee>
   )
 }

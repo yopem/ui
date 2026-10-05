@@ -18,7 +18,7 @@ export function Preview() {
   return (
     <VStack>
       <Button onClick={increment}>Increment count</Button>
-      <Box as="output">Count: {count}</Box>
+      <Box render={<output />}>Count: {count}</Box>
     </VStack>
   )
 }
@@ -75,7 +75,7 @@ import { Box } from "@/components/ui/box"
 import { Marquee } from "@/components/ui/marquee"
 
 export function Preview() {
-  return <Marquee><Box as="span">Design systems</Box><Box as="span">Accessible components</Box><Box as="span">Reusable source</Box></Marquee>
+  return <Marquee><Box render={<span />}>Design systems</Box><Box render={<span />}>Accessible components</Box><Box render={<span />}>Reusable source</Box></Marquee>
 }
 `,
   "native-select": `"use client"
@@ -216,7 +216,7 @@ import { Heading } from "@/components/ui/heading"
 import { Prose } from "@/components/ui/prose"
 
 export function Preview() {
-  return <Prose><Heading as="h2">Readable content</Heading><Text>Give long-form content room to breathe.</Text></Prose>
+  return <Prose><Heading render={<h2 />}>Readable content</Heading><Text>Give long-form content room to breathe.</Text></Prose>
 }
 `,
   wrap: `"use client"
@@ -225,7 +225,7 @@ import { Box } from "@/components/ui/box"
 import { Wrap } from "@/components/ui/wrap"
 
 export function Preview() {
-  return <Wrap><Box as="span">Design</Box><Box as="span">Development</Box><Box as="span">Accessibility</Box><Box as="span">Documentation</Box></Wrap>
+  return <Wrap><Box render={<span />}>Design</Box><Box render={<span />}>Development</Box><Box render={<span />}>Accessibility</Box><Box render={<span />}>Documentation</Box></Wrap>
 }
 `,
   accordion: `"use client"
@@ -806,7 +806,7 @@ const styles = stylex.create({ section: { padding: "1rem" } })
 
 export function Preview() {
   return (
-    <Box as="section" xstyle={styles.section}>
+    <Box render={<section />} xstyle={styles.section}>
       Content inside a semantic Box.
     </Box>
   )
@@ -823,8 +823,8 @@ const styles = stylex.create({ row: { alignItems: "center", gap: "1rem" } })
 export function Preview() {
   return (
     <Flex xstyle={styles.row}>
-      <Box as="span">First</Box>
-      <Box as="span">Second</Box>
+      <Box render={<span />}>First</Box>
+      <Box render={<span />}>Second</Box>
     </Flex>
   )
 }
@@ -838,7 +838,7 @@ export function Preview() {
   return (
     <VStack>
       <strong>Account ready</strong>
-      <Box as="span">Nothing else is needed.</Box>
+      <Box render={<span />}>Nothing else is needed.</Box>
     </VStack>
   )
 }
@@ -851,8 +851,8 @@ import { HStack } from "@/components/ui/hstack"
 export function Preview() {
   return (
     <HStack>
-      <Box as="span">Inbox</Box>
-      <Box as="span" aria-label="unread messages">3</Box>
+      <Box render={<span />}>Inbox</Box>
+      <Box render={<span />} aria-label="unread messages">3</Box>
     </HStack>
   )
 }
@@ -866,7 +866,7 @@ export function Preview() {
   return (
     <Stack>
       <strong>Project status</strong>
-      <Box as="span">All systems operational.</Box>
+      <Box render={<span />}>All systems operational.</Box>
     </Stack>
   )
 }
@@ -882,8 +882,8 @@ const styles = stylex.create({ columns: { gridTemplateColumns: "repeat(2, minmax
 export function Preview() {
   return (
     <Grid xstyle={styles.columns}>
-      <Box as="span">Design</Box>
-      <Box as="span">Engineering</Box>
+      <Box render={<span />}>Design</Box>
+      <Box render={<span />}>Engineering</Box>
     </Grid>
   )
 }
@@ -938,7 +938,7 @@ import { Heading } from "@/components/ui/heading"
 export function Preview() {
   return (
     <>
-      <Heading as="h1">Page title</Heading>
+      <Heading render={<h1 />}>Page title</Heading>
       <Heading>Section title</Heading>
     </>
   )
@@ -1081,17 +1081,17 @@ import { Box } from "@/components/ui/box"
 
 export function Preview() {
   return (
-    <Box as="nav" aria-label="Main navigation">
-      <Box as="ul">
-        <Box as="li">
+    <Box render={<nav />} aria-label="Main navigation">
+      <Box render={<ul />}>
+        <Box render={<li />}>
           <a href="/" aria-current="page">
             Home
           </a>
         </Box>
-        <Box as="li">
+        <Box render={<li />}>
           <a href="/projects">Projects</a>
         </Box>
-        <Box as="li">
+        <Box render={<li />}>
           <a href="/settings">Settings</a>
         </Box>
       </Box>
@@ -1221,7 +1221,7 @@ export function Preview() {
         Visit Example
       </PreviewCardTrigger>
       <PreviewCardPopup>
-        <Heading as="h2">Example</Heading>
+        <Heading render={<h2 />}>Example</Heading>
         <Text>A sample website for documentation.</Text>
       </PreviewCardPopup>
     </PreviewCard>
@@ -1265,9 +1265,9 @@ const styles = stylex.create({ viewport: { blockSize: "12rem" } })
 export function Preview() {
   return (
     <ScrollArea xstyle={styles.viewport}>
-      <Box as="ul" aria-label="Versions">
+      <Box render={<ul />} aria-label="Versions">
         {Array.from({ length: 30 }, (_, index) => (
-          <Box as="li" key={index}>Version 1.{index}</Box>
+          <Box render={<li />} key={index}>Version 1.{index}</Box>
         ))}
       </Box>
     </ScrollArea>
@@ -1384,7 +1384,7 @@ export function Preview() {
     <SidebarProvider>
       <Sidebar>
         <SidebarContent>
-          <Box as="nav" aria-label="Main navigation">
+          <Box render={<nav />} aria-label="Main navigation">
             <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton
@@ -1407,7 +1407,7 @@ export function Preview() {
       </Sidebar>
       <SidebarInset>
         <SidebarTrigger />
-        <Heading as="h1">Home</Heading>
+        <Heading render={<h1 />}>Home</Heading>
         <Text>Your workspace.</Text>
       </SidebarInset>
     </SidebarProvider>

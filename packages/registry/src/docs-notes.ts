@@ -55,7 +55,7 @@ const usageNoteValues = {
     "FrameTitle and FrameDescription label the group. Keep interactive controls inside the panels rather than making the entire frame clickable.",
   ],
   box: [
-    "Start with Box for generic containers. It renders a div by default, applies default box sizing and minimum inline size, and supports native tags through as.",
+    "Start with Box for generic containers. It renders a div by default, applies default box sizing and minimum inline size, and supports element or callback composition through Base UI's render prop. Put element-specific attributes, handlers, and refs on the rendered element.",
     "Use xstyle for StyleX overrides and className for external CSS integration. Native attributes and refs follow the selected tag, including input size, image dimensions, and meta content.",
   ],
   flex: [
@@ -116,7 +116,7 @@ const usageNoteValues = {
     "Codeblock preserves code whitespace and allows horizontal scrolling. Supply a language label outside the block when context is not obvious.",
   ],
   heading: [
-    "Heading renders h2 by default; as accepts h1 through h6. Use xstyle to control visual size independently of semantics.",
+    "Heading renders h2 by default; use render={<h1 />} through render={<h6 />} to select semantic levels. Base UI's render prop also supports callbacks and custom components. Use xstyle to control visual size independently of semantics.",
   ],
   checkmark: [
     "Checkmark is decorative and hidden from assistive technology. Include text that communicates success or selection beside it.",

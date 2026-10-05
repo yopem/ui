@@ -188,7 +188,7 @@ export function CopyableCode({
     <Suspense
       fallback={
         <Box xstyle={primitiveStyles.box}>
-          <Box as="code">{visibleCode}</Box>
+          <Box render={<code />}>{visibleCode}</Box>
         </Box>
       }
     >
@@ -242,17 +242,16 @@ export function CopyableCode({
       {scrollArea}
       {collapsible && !expanded ? (
         <Box
-          as="button"
+          render={<button type="button" aria-label="View code" />}
           xstyle={primitiveStyles.button}
-          type="button"
           onClick={handleClick}
         >
           View code
         </Box>
       ) : null}
-      <Box as="output" xstyle={primitiveStyles.output}>
+      <Box render={<output />} xstyle={primitiveStyles.output}>
         {copyError ? (
-          <Box as="span" xstyle={primitiveStyles.span}>
+          <Box render={<span />} xstyle={primitiveStyles.span}>
             {copyError}
           </Box>
         ) : null}
@@ -282,11 +281,14 @@ function CodeBlockControls({
 }) {
   const button = (
     <Box
-      as="button"
+      render={
+        <button
+          type="button"
+          disabled={!hydrated}
+          aria-label={isCopied ? `${title} copied` : `Copy ${title}`}
+        />
+      }
       xstyle={primitiveStyles.button2}
-      type="button"
-      disabled={!hydrated}
-      aria-label={isCopied ? `${title} copied` : `Copy ${title}`}
       onClick={onCopy}
     >
       {isCopied ? (
@@ -302,7 +304,7 @@ function CodeBlockControls({
 
   return header ? (
     <Box xstyle={primitiveStyles.box4}>
-      <Box as="code" xstyle={primitiveStyles.code}>
+      <Box render={<code />} xstyle={primitiveStyles.code}>
         {header}
       </Box>
       {button}

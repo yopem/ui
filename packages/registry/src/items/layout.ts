@@ -168,7 +168,9 @@ const definitions: Definition[] = [
 export const layoutItems: SourceItem[] = definitions.map(
   ({ api, categories, description, name, registryDependencies, title }) => ({
     categories,
-    dependencies: name === "link" ? ["@base-ui/react@^1.7.0"] : [],
+    dependencies: ["box", "heading", "link"].includes(name)
+      ? ["@base-ui/react@^1.7.0"]
+      : [],
     description,
     devDependencies: [],
     docs: {

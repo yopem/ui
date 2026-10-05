@@ -37,9 +37,7 @@ export function Preview() {
         <FrameDescription>Brief description about the section</FrameDescription>
       </FrameHeader>
       <FramePanel>
-        <Heading as="h2" xstyle={styles.h2}>
-          Section title
-        </Heading>
+        <Heading render={<h2>Section title</h2>} xstyle={styles.h2} />
         <Text xstyle={styles.paragraph}>Section description</Text>
       </FramePanel>
       <FrameFooter>

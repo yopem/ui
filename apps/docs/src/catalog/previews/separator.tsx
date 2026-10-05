@@ -31,9 +31,7 @@ export function Preview() {
   return (
     <Box xstyle={styles.box}>
       <Flex xstyle={styles.flex}>
-        <Heading as="h4" xstyle={styles.h4}>
-          coss ui
-        </Heading>
+        <Heading render={<h4>coss ui</h4>} xstyle={styles.h4} />
         <Text xstyle={styles.paragraph}>
           Unstyled, accessible primitives for fast product UI and design
           systems.

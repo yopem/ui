@@ -95,18 +95,22 @@ export function DocsNavigation({ onNavigate }: { onNavigate?: () => void }) {
       xstyle={primitiveStyles.documentationNavigation}
     >
       <Box
-        as="nav"
+        render={<nav />}
         aria-label="Documentation"
         xstyle={primitiveStyles.documentation}
       >
-        <Box as="ul" xstyle={primitiveStyles.ul}>
+        <Box render={<ul />} xstyle={primitiveStyles.ul}>
           {tree.children.map((item) =>
             item.type === "separator" ? (
-              <Box as="li" key={String(item.name)} xstyle={primitiveStyles.li}>
+              <Box
+                render={<li />}
+                key={String(item.name)}
+                xstyle={primitiveStyles.li}
+              >
                 {item.name}
               </Box>
             ) : item.type === "page" ? (
-              <Box as="li" key={item.url}>
+              <Box render={<li />} key={item.url}>
                 <Link
                   to={item.url}
                   aria-current={pathname === item.url ? "page" : undefined}
@@ -121,10 +125,10 @@ export function DocsNavigation({ onNavigate }: { onNavigate?: () => void }) {
               </Box>
             ) : null,
           )}
-          <Box as="li" xstyle={primitiveStyles.li2}>
+          <Box render={<li />} xstyle={primitiveStyles.li2}>
             Resources
           </Box>
-          <Box as="li">
+          <Box render={<li />}>
             <UiLink
               href="/llms.txt"
               onClick={onNavigate}

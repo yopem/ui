@@ -96,24 +96,20 @@ const styles = stylex.create({
 function GuideH2({ children, id }: ComponentProps<"h2">) {
   return (
     <Heading
-      as="h2"
+      render={<h2>{children}</h2>}
       id={id ?? (isString(children) ? headingId(children) : undefined)}
       xstyle={styles.h2}
-    >
-      {children}
-    </Heading>
+    />
   )
 }
 
 function GuideH3({ children, id }: ComponentProps<"h3">) {
   return (
     <Heading
-      as="h3"
+      render={<h3>{children}</h3>}
       id={id ?? (isString(children) ? headingId(children) : undefined)}
       xstyle={styles.h3}
-    >
-      {children}
-    </Heading>
+    />
   )
 }
 
@@ -126,7 +122,7 @@ function GuideCode({ children }: { children?: ReactNode }) {
   }
 
   return (
-    <Box as="pre" xstyle={styles.pre}>
+    <Box render={<pre />} xstyle={styles.pre}>
       {children}
     </Box>
   )
@@ -148,27 +144,27 @@ const guideComponents: MDXComponents = {
     </Link>
   ),
   ul: ({ children }) => (
-    <Box as="ul" xstyle={styles.ul}>
+    <Box render={<ul />} xstyle={styles.ul}>
       {children}
     </Box>
   ),
   ol: ({ children }) => (
-    <Box as="ol" xstyle={styles.ol}>
+    <Box render={<ol />} xstyle={styles.ol}>
       {children}
     </Box>
   ),
   li: ({ children }) => (
-    <Box as="li" xstyle={styles.li}>
+    <Box render={<li />} xstyle={styles.li}>
       {children}
     </Box>
   ),
   strong: ({ children }) => (
-    <Box as="strong" xstyle={styles.strong}>
+    <Box render={<strong />} xstyle={styles.strong}>
       {children}
     </Box>
   ),
   code: ({ children }) => (
-    <Box as="code" xstyle={styles.code}>
+    <Box render={<code />} xstyle={styles.code}>
       {children}
     </Box>
   ),

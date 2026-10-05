@@ -10,11 +10,16 @@ const OTP_SLOT_KEYS = Array.from(
 
 export function Preview() {
   return (
-    <Box as="label" aria-label="One-time password">
+    <Box
+      render={
+        <label aria-label="One-time password" htmlFor="otp-first-character" />
+      }
+    >
       <OTPField length={OTP_LENGTH}>
         {OTP_SLOT_KEYS.map((slotKey, index) => (
           <OTPFieldInput
             key={slotKey}
+            id={index === 0 ? "otp-first-character" : undefined}
             aria-label={`Character ${index + 1} of ${OTP_LENGTH}`}
           />
         ))}

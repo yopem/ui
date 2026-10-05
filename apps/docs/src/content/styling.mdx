@@ -25,7 +25,7 @@ const styles = stylex.create({
 
 export function Card() {
   return (
-    <Box as="section" xstyle={styles.card}>
+    <Box render={<section />} xstyle={styles.card}>
       Content
     </Box>
   )
@@ -39,6 +39,6 @@ for integration with external CSS, but this documentation app styles itself
 exclusively with StyleX.
 
 `Box` is the default container, with box sizing and minimum inline size already
-set. Use `as` for semantic native tags. Choose `Flex`, `Stack`, `Grid`, or
+set. Use `render` for semantic native tags. Choose `Flex`, `Stack`, `Grid`, or
 `Center` for layouts with additional defaults. For text, prefer `Heading`,
 `Text`, or `Link`.

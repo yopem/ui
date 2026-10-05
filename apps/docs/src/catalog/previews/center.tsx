@@ -7,7 +7,7 @@ const styles = stylex.create({ center: { minBlockSize: "8rem" } })
 export function Preview() {
   return (
     <Center xstyle={styles.center}>
-      <Box as="span">Centered content</Box>
+      <Box render={<span />}>Centered content</Box>
     </Center>
   )
 }

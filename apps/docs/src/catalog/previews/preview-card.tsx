@@ -52,9 +52,7 @@ export function Preview() {
       <PreviewCardPopup>
         <Flex xstyle={styles.flex}>
           <Flex xstyle={styles.flex2}>
-            <Heading as="h2" xstyle={styles.h2}>
-              coss.com/ui
-            </Heading>
+            <Heading render={<h2>coss.com/ui</h2>} xstyle={styles.h2} />
             <Text xstyle={styles.paragraph}>
               Beautifully designed components that you can copy and paste into
               your apps.
@@ -62,16 +60,16 @@ export function Preview() {
           </Flex>
           <Flex xstyle={styles.flex3}>
             <Flex xstyle={styles.flex4}>
-              <Box as="span" aria-hidden="true" xstyle={styles.span} />
-              <Box as="span">TypeScript</Box>
+              <Box render={<span />} aria-hidden="true" xstyle={styles.span} />
+              <Box render={<span />}>TypeScript</Box>
             </Flex>
             <Flex xstyle={styles.flex5}>
               <StarIcon {...stylex.props(previewStyles.preview8)} />
-              <Box as="span">58.2k</Box>
+              <Box render={<span />}>58.2k</Box>
             </Flex>
             <Flex xstyle={styles.flex6}>
               <CornerUpLeftIcon {...stylex.props(previewStyles.preview8)} />
-              <Box as="span">5.1k</Box>
+              <Box render={<span />}>5.1k</Box>
             </Flex>
           </Flex>
         </Flex>

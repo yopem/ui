@@ -84,7 +84,7 @@ export function Preview() {
           <TableCell xstyle={styles.tableCell}>Website Redesign</TableCell>
           <TableCell>
             <Badge variant="outline">
-              <Box as="span" aria-hidden="true" xstyle={styles.span} />
+              <Box render={<span />} aria-hidden="true" xstyle={styles.span} />
               Paid
             </Badge>
           </TableCell>
@@ -95,7 +95,7 @@ export function Preview() {
           <TableCell xstyle={styles.tableCell3}>Mobile App</TableCell>
           <TableCell>
             <Badge variant="outline">
-              <Box as="span" aria-hidden="true" xstyle={styles.span2} />
+              <Box render={<span />} aria-hidden="true" xstyle={styles.span2} />
               Unpaid
             </Badge>
           </TableCell>
@@ -106,7 +106,7 @@ export function Preview() {
           <TableCell xstyle={styles.tableCell5}>API Integration</TableCell>
           <TableCell>
             <Badge variant="outline">
-              <Box as="span" aria-hidden="true" xstyle={styles.span3} />
+              <Box render={<span />} aria-hidden="true" xstyle={styles.span3} />
               Pending
             </Badge>
           </TableCell>
@@ -117,7 +117,7 @@ export function Preview() {
           <TableCell xstyle={styles.tableCell7}>Database Migration</TableCell>
           <TableCell>
             <Badge variant="outline">
-              <Box as="span" aria-hidden="true" xstyle={styles.span4} />
+              <Box render={<span />} aria-hidden="true" xstyle={styles.span4} />
               Paid
             </Badge>
           </TableCell>
@@ -128,7 +128,7 @@ export function Preview() {
           <TableCell xstyle={styles.tableCell9}>User Dashboard</TableCell>
           <TableCell>
             <Badge variant="outline">
-              <Box as="span" aria-hidden="true" xstyle={styles.span5} />
+              <Box render={<span />} aria-hidden="true" xstyle={styles.span5} />
               Paid
             </Badge>
           </TableCell>
@@ -139,7 +139,7 @@ export function Preview() {
           <TableCell xstyle={styles.tableCell11}>Security Audit</TableCell>
           <TableCell>
             <Badge variant="outline">
-              <Box as="span" aria-hidden="true" xstyle={styles.span6} />
+              <Box render={<span />} aria-hidden="true" xstyle={styles.span6} />
               Failed
             </Badge>
           </TableCell>

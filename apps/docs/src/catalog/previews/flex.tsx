@@ -9,8 +9,8 @@ const styles = stylex.create({
 export function Preview() {
   return (
     <Flex xstyle={styles.flex}>
-      <Box as="span">First</Box>
-      <Box as="span">Second</Box>
+      <Box render={<span />}>First</Box>
+      <Box render={<span />}>Second</Box>
     </Flex>
   )
 }

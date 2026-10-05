@@ -31,9 +31,7 @@ export function Preview() {
   return (
     <ScrollArea xstyle={styles.scrollArea}>
       <Box xstyle={styles.box}>
-        <Heading as="h4" xstyle={styles.h4}>
-          Tags
-        </Heading>
+        <Heading render={<h4>Tags</h4>} xstyle={styles.h4} />
         <Flex xstyle={styles.flex}>
           {tags.map((tag) => (
             <Box xstyle={styles.box2} key={tag}>

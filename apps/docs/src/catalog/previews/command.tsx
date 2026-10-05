@@ -127,7 +127,7 @@ export function Preview() {
                           onClick={handleItemClick}
                           value={item.value}
                         >
-                          <Box as="span" xstyle={styles.span}>
+                          <Box render={<span />} xstyle={styles.span}>
                             {item.label}
                           </Box>
                           {item.shortcut && (
@@ -153,18 +153,18 @@ export function Preview() {
                     <ArrowDownIcon {...stylex.props(previewStyles.icon)} />
                   </Kbd>
                 </KbdGroup>
-                <Box as="span">Navigate</Box>
+                <Box render={<span />}>Navigate</Box>
               </Flex>
               <Flex xstyle={styles.flex3}>
                 <Kbd>
                   <CornerDownLeftIcon {...stylex.props(previewStyles.icon)} />
                 </Kbd>
-                <Box as="span">Open</Box>
+                <Box render={<span />}>Open</Box>
               </Flex>
             </Flex>
             <Flex xstyle={styles.flex4}>
               <Kbd>Esc</Kbd>
-              <Box as="span">Close</Box>
+              <Box render={<span />}>Close</Box>
             </Flex>
           </CommandFooter>
         </Command>

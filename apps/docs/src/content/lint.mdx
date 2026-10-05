@@ -9,9 +9,9 @@ StyleX consistency rules remain opt-in:
 - **yopem-ui/prefer-layout-primitives** (recommended): prefer design-system
   layout and typography over native wrappers, paragraphs, quotations, emphasis,
   marked text, and headings. Diagnostics name the replacement and preserve
-  semantic tags through `Box as` or `Heading as`. Native anchors and framework
-  links are excluded. Set `elements` to replace the checked tags, or turn the
-  rule off for code that intentionally uses native elements.
+  semantic tags through `Box render` or `Heading render`. Native anchors and
+  framework links are excluded. Set `elements` to replace the checked tags, or
+  turn the rule off for code that intentionally uses native elements.
 - **yopem-ui/no-restyle** (recommended): restrict StyleX properties passed
   through `xstyle` to imported UI components. By default only layout properties
   pass (Link is excluded by default), so color and shape changes prefer existing
@@ -140,12 +140,14 @@ disables tag checks. Defaults check `div`, `span`, `main`, `section`, `article`,
 `mark`, and `h1` through `h6`. Props, spreads, refs, conditional branches, and
 nested JSX do not exempt checked tags.
 
-The rule does not infer layout from CSS, rewrite JSX, or inspect `as` values to
-force a specialized primitive. Choose Flex, Stack, Grid, or another layout
-primitive by intent. Use Prose for readable long-form content and Highlight for
-matching words; neither is a universal replacement for a native tag. Generic
-`pre` maps to `Box as="pre"`: Codeblock adds a toolbar and a div wrapper, so it
-is not a tag/ref-compatible replacement. Use Codeblock deliberately for code.
+Native elements inside a `render` prop are composition boundaries and remain
+valid. The rule does not infer layout from CSS, rewrite JSX, or inspect `render`
+values to force a specialized primitive. Choose Flex, Stack, Grid, or another
+layout primitive by intent. Use Prose for readable long-form content and
+Highlight for matching words; neither is a universal replacement for a native
+tag. Generic `pre` maps to `Box render={<pre />}`: Codeblock adds a toolbar and
+a div wrapper, so it is not a tag/ref-compatible replacement. Use Codeblock
+deliberately for code.
 
 Native controls, tables, document metadata, SVG, custom elements, unknown
 components, and framework links remain valid. `strong`, inline `code`, and other

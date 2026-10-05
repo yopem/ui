@@ -151,17 +151,21 @@ function ComponentPage() {
         <DocsTitle>{item.title}</DocsTitle>
         <DocsDescription>{data.description}</DocsDescription>
         <DocsBody>
-          <Heading as="h2" xstyle={styles.h2} id="overview">
-            Overview
-          </Heading>
+          <Heading
+            render={<h2>Overview</h2>}
+            xstyle={styles.h2}
+            id="overview"
+          />
           <Text xstyle={styles.paragraph}>
             Copy the source into your project, then import the parts you need.
             Styles use local StyleX declarations and shared theme tokens. You
             can change the source without wrapping or replacing a package.
           </Text>
-          <Heading as="h2" xstyle={styles.h22} id="installation">
-            Installation
-          </Heading>
+          <Heading
+            render={<h2>Installation</h2>}
+            xstyle={styles.h22}
+            id="installation"
+          />
           <Text xstyle={styles.paragraph2}>
             Run bunx @yopem-ui/cli init from your project root first. The CLI
             configures StyleX and installs shared files and dependencies.
@@ -192,9 +196,7 @@ function ComponentPage() {
             title={`Update ${item.title} with CLI`}
           />
 
-          <Heading as="h2" xstyle={styles.h23} id="preview">
-            Preview
-          </Heading>
+          <Heading render={<h2>Preview</h2>} xstyle={styles.h23} id="preview" />
           {item.preview && data.previewSource ? (
             <PreviewPanel preview={item.preview} source={data.previewSource} />
           ) : (
@@ -202,9 +204,7 @@ function ComponentPage() {
               Use the composition in Usage below to start with {item.title}.
             </Text>
           )}
-          <Heading as="h2" xstyle={styles.h24} id="usage">
-            Usage
-          </Heading>
+          <Heading render={<h2>Usage</h2>} xstyle={styles.h24} id="usage" />
           {data.notes.map((note) => (
             <Text xstyle={styles.paragraph7} key={note}>
               {note}
@@ -214,9 +214,11 @@ function ComponentPage() {
             Import from the local file installed by the CLI.
           </Text>
           <CopyableCode code={data.usage} title={`${item.title} usage`} />
-          <Heading as="h2" xstyle={styles.h25} id="api-reference">
-            API reference
-          </Heading>
+          <Heading
+            render={<h2>API reference</h2>}
+            xstyle={styles.h25}
+            id="api-reference"
+          />
           <Text xstyle={styles.paragraph9}>
             Generated from canonical TypeScript source. Only component and Base
             UI props appear below. Required marks a required property, not a
@@ -243,10 +245,11 @@ function ComponentApi({
   })
 
   return (
-    <Box as="details" xstyle={styles.details} onToggle={handleToggle}>
-      <Box as="summary" xstyle={styles.summary}>
-        View API reference
-      </Box>
+    <Box render={<details onToggle={handleToggle} />} xstyle={styles.details}>
+      <Box
+        render={<summary>View API reference</summary>}
+        xstyle={styles.summary}
+      />
       {open ? <ApiReference parts={parts} /> : null}
     </Box>
   )

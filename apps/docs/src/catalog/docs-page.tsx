@@ -88,7 +88,7 @@ export function DocsPage({
   if (full) {
     return (
       <Grid xstyle={styles.grid}>
-        <Box as="article" xstyle={styles.article}>
+        <Box render={<article />} xstyle={styles.article}>
           {children}
         </Box>
         {toc.length > 0 ? <TableOfContents items={toc} /> : null}
@@ -98,7 +98,7 @@ export function DocsPage({
 
   return (
     <Grid xstyle={styles.grid2}>
-      <Box as="article" xstyle={styles.article2}>
+      <Box render={<article />} xstyle={styles.article2}>
         {children}
       </Box>
       {toc.length > 0 ? <TableOfContents items={toc} /> : null}
@@ -111,11 +111,7 @@ export function DocsBody({ children }: { children: ReactNode }) {
 }
 
 export function DocsTitle({ children }: { children: ReactNode }) {
-  return (
-    <Heading as="h1" xstyle={styles.h1}>
-      {children}
-    </Heading>
-  )
+  return <Heading render={<h1>{children}</h1>} xstyle={styles.h1} />
 }
 
 export function DocsDescription({ children }: { children: ReactNode }) {

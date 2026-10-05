@@ -7,7 +7,7 @@ import { Text } from "@registry/components/ui/text"
 export function Preview() {
   return (
     <Prose>
-      <Heading as="h2">Readable content</Heading>
+      <Heading render={<h2>Readable content</h2>} />
       <Text>Give long-form content room to breathe.</Text>
     </Prose>
   )

@@ -80,17 +80,24 @@ export function ThemeToggle() {
   })
 
   return (
-    <Box as="fieldset" aria-label="Appearance" xstyle={styles.appearance}>
+    <Box
+      render={<fieldset />}
+      aria-label="Appearance"
+      xstyle={styles.appearance}
+    >
       <Grid xstyle={styles.grid}>
         {themeOptions.map(({ icon: Icon, label, value }) => (
           <Box
-            as="button"
-            aria-label={label}
+            render={
+              <button
+                aria-label={label}
+                onClick={selectTheme}
+                value={value}
+                type="button"
+              />
+            }
             aria-pressed={theme === value}
             key={value}
-            onClick={selectTheme}
-            value={value}
-            type="button"
             xstyle={styles.button}
           >
             <Icon aria-hidden size={14} strokeWidth={1.75} />
