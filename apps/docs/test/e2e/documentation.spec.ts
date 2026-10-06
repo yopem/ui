@@ -190,7 +190,7 @@ test("minimal setup and StyleX customization are documented", async ({
     page.getByRole("button", { name: "Copy Select framework with CLI" }),
   ).toBeEnabled()
   await expect(
-    page.getByText(/The command detects React Router client mode from/),
+    page.getByText("The command detects React Router client mode from"),
   ).toBeVisible()
   await expect(page.getByRole("tab", { name: "Manual" })).toHaveCount(0)
   await expect(page.getByText(/manual setup guide/i)).toHaveCount(0)
