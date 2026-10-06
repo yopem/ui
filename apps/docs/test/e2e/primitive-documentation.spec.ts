@@ -28,7 +28,7 @@ const components = [
 test("@a11y layout guide lists components and preserves legacy links", async ({
   page,
 }) => {
-  await page.goto("/docs/primitives")
+  await page.goto("/docs/primitives", { waitUntil: "domcontentloaded" })
   await expect(page).toHaveURL(/\/docs\/layout$/)
   await expect(
     page.getByRole("heading", { name: "Layout and typography", level: 1 }),
@@ -50,7 +50,7 @@ test("@a11y layout guide lists components and preserves legacy links", async ({
 })
 
 test("@a11y styling guide teaches StyleX overrides", async ({ page }) => {
-  await page.goto("/docs/styling")
+  await page.goto("/docs/styling", { waitUntil: "domcontentloaded" })
   await expect(
     page.getByRole("heading", { name: "Styling with StyleX", level: 1 }),
   ).toBeVisible()
@@ -60,12 +60,33 @@ test("@a11y styling guide teaches StyleX overrides", async ({ page }) => {
 })
 
 test("@a11y lint guide offers copyable configuration", async ({ page }) => {
-  await page.goto("/docs/lint")
+  test.setTimeout(90_000)
+  await page.goto("/docs/lint", { waitUntil: "domcontentloaded" })
   await expect(
     page.getByRole("heading", { name: "Lint rules", level: 1 }),
   ).toBeVisible()
-  const copyButtons = page.getByRole("button", { name: "Copy Code" })
-  await expect(copyButtons.first()).toBeEnabled()
+  const article = page.locator("article")
+
+  for (const rule of [
+    "prefer-layout-primitives",
+    "no-restyle",
+    "enforce-styling-methods",
+    "static-stylex",
+    "no-raw-stylex-colors",
+    "no-unused-stylex-styles",
+    "atoms",
+  ]) {
+    await expect(
+      article.getByRole("heading", { name: `yopem-ui/${rule}`, exact: true }),
+    ).toBeVisible()
+  }
+
+  const copyButtons = article.getByRole("button", { name: "Copy Code" })
+
+  expect(await copyButtons.count()).toBeGreaterThanOrEqual(14)
+  await expect(copyButtons.first()).toBeEnabled({ timeout: 30_000 })
+  await expect(article).not.toContainText("docs app")
+  await expect(article).not.toContainText("Docs previews")
   expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([])
 })
 
@@ -74,16 +95,19 @@ test("@a11y guides stay readable and navigable at 320px", async ({ page }) => {
   await page.setViewportSize({ width: 320, height: 700 })
 
   for (const path of ["/docs/layout", "/docs/styling", "/docs/lint"]) {
-    await page.goto(path)
+    await page.goto(path, { waitUntil: "domcontentloaded" })
     expect(
       await page.evaluate(() => document.documentElement.scrollWidth),
     ).toBeLessThanOrEqual(320)
     expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([])
   }
 
-  await expect(
-    page.getByRole("button", { name: "Search documentation" }),
-  ).toBeVisible()
+  const searchButton = page.getByRole("button", {
+    name: "Search documentation",
+  })
+
+  await expect(searchButton).toBeVisible()
+  await expect(searchButton).toBeEnabled({ timeout: 30_000 })
   await page.getByRole("button", { name: "Open navigation" }).click()
 
   for (const name of [

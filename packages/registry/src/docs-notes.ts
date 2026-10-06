@@ -12,7 +12,7 @@ const usageNoteValues = {
     "Copy the base files. Configure StyleX in your bundler. Import styles/styles.css once. Native StyleX tokens provide light defaults. You do not need a provider, script, or font package.",
     "Change tokens in tokens.stylex.ts. Create complete light and dark themes in that file. The optional theme item saves light, dark, and system preferences. styles.css contains reset, reduced-motion policy, and required upstream viewport rules. It does not contain theme values.",
     "The documentation copies components into src/components/ui and uses the standard @/* alias for src. Keep this alias in TypeScript, your bundler, and StyleX.",
-    "Create local styles with stylex.create. Apply them through xstyle after component defaults and variants. Use className for external CSS integration. The docs app uses only StyleX.",
+    "Create local styles with stylex.create. Apply them through xstyle after component defaults and variants. Use className for external CSS integration.",
   ],
   theme: [
     "Install base first. Copy the two optional theme runtime files and their use-event-callback hook dependency. Pass the same configuration to ThemeProvider, ThemeScript, and getRootThemeProps.",

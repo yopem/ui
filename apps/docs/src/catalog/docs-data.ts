@@ -87,7 +87,7 @@ export const guidePages = [
     title: "Lint rules",
     url: "/docs/lint",
     content:
-      "Configure Oxlint rules for StyleX properties and component contracts. prefer-layout-primitives checks div, span, and other native tags. Use Box render for semantic boundaries. Choose Flex, Grid, Center, Stack, Text, and Heading for layout and typography. Native router links and registry Link have default exclusions. Configure enforce-styling-methods, static-stylex, valid-polymorphic-as, no-restyle, and no-raw-stylex-colors. Enable no-unused-stylex-styles to check unused local styles. The atoms rule is opt-in. Use file overrides to opt out.",
+      "Configure all seven Yopem UI Oxlint rules with accepted and rejected code examples. Use prefer-layout-primitives for semantic layout and typography. Configure no-restyle, enforce-styling-methods, static-stylex, and no-raw-stylex-colors. Enable no-unused-stylex-styles or atoms when needed. Learn rule defaults, options, component imports, and file overrides.",
   },
   {
     title: "Theming",

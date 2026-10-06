@@ -45,7 +45,6 @@ export default defineConfig({
         "yopem-ui/no-raw-stylex-colors": "error",
         "yopem-ui/no-unused-stylex-styles": "error",
         "yopem-ui/static-stylex": "error",
-        "yopem-ui/valid-polymorphic-as": "error",
       },
     },
     {

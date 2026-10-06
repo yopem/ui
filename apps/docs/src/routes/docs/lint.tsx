@@ -9,7 +9,7 @@ export const Route = createFileRoute("/docs/lint")({
   head: () =>
     createSeo({
       description:
-        "Configure Yopem UI Oxlint rules for Box usage and static StyleX styles.",
+        "Configure Yopem UI Oxlint rules with examples for component usage, styling methods, design tokens, and StyleX declarations.",
       path: "/docs/lint",
       title: "Lint rules · Yopem UI",
     }),
@@ -20,7 +20,7 @@ function LintGuide() {
   return (
     <GuidePage
       title="Lint rules"
-      description="Source-owned Oxlint rules check component usage and static StyleX styles across the docs app."
+      description="Check component usage and StyleX styles. Learn each rule with accepted examples, rejected examples, and configuration options."
       source={lintSource}
       Content={LintContent}
     />

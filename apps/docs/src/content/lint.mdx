@@ -1,103 +1,176 @@
-First, [choose a layout component](/docs/layout). Then,
-[use StyleX to apply styles](/docs/styling).
-
-## Rules
-
-The local Oxlint plugin checks styling methods and component contracts. Enable
-the optional StyleX rules if you need more checks.
-
-- **yopem-ui/prefer-layout-primitives** (recommended): use design-system
-  components instead of native layout and text elements. The rule checks
-  wrappers, paragraphs, quotations, emphasis, marked text, and headings. Each
-  diagnostic gives the replacement component. Use `Box render` or
-  `Heading render` to keep the semantic tag. The rule does not check native
-  anchors or framework links. Set `elements` to change the list of tags to
-  check. Disable the rule for code that must use native elements.
-- **yopem-ui/no-restyle** (recommended): limits StyleX properties in `xstyle` on
-  imported UI components. By default, the rule permits only layout properties.
-  The rule does not check Link by default. Use an existing `variant` prop for
-  color and shape changes. Use an existing `size` prop for spacing changes. The
-  rule checks local `stylex.create` declarations, arrays, and conditional
-  styles. It does not check imported or computed styles that it cannot verify in
-  the file.
-- **yopem-ui/enforce-styling-methods**: permits `xstyle` and consumer
-  `className` on imported UI components. The rule does not check Link by
-  default. It rejects `css`, inline React styles, and direct `stylex.props`
-  spreads on these components. Set `className: false` if your app uses only
-  StyleX for styling. The docs app uses this setting.
-- **yopem-ui/static-stylex**: requires StyleX declarations that static analysis
-  can check.
-- **yopem-ui/valid-polymorphic-as**: checks native tags on Box and heading
-  levels on Heading.
-- **yopem-ui/no-raw-stylex-colors** (off in the plugin's recommended preset):
-  reports literal hex values and CSS color functions on color properties in
-  `stylex.create`. The rule permits tokens. CLI init and the docs app enable
-  this rule. The rule does not check shadows or other CSS strings.
-- **yopem-ui/no-unused-stylex-styles** (off by default): reports unused
-  top-level style keys in local `stylex.create` declarations. The rule tracks
-  lexical scope, import aliases, dot access, string-literal bracket access, and
-  dynamic style functions. It does not check exported objects or objects passed
-  to other code. It does not check destructured objects or dynamic property
-  access. It does not check declarations with spreads or computed keys. The rule
-  cannot verify these uses in the file. Set `"yopem-ui/no-unused-stylex-styles"`
-  to `"warn"` or `"error"` in your rules configuration to enable the rule. The
-  rule has no automatic fix. Removal of styles can remove side effects.
-- **yopem-ui/atoms** (off by default): controls the use of atoms. The default
-  mode, `"allow"`, permits atoms and StyleX styles. The `"disallow"` mode
-  rejects atoms imports. The `"enforce"` mode rejects `stylex.create`
-  declarations. It also requires atoms in JSX `xstyle` and `sx` expressions. Use
-  official atoms with StyleX styles, not inside `stylex.create` objects.
+Use Oxlint to check component usage and StyleX styles in your application. Each
+rule below explains what it checks, how to fix errors, and which options you can
+change.
 
 ## Configuration
 
 Run `bunx @yopem-ui/cli init` to install Oxlint and `@yopem-ui/oxlint-plugin`.
-The command creates or updates `.oxlintrc.json` with the recommended rules and
-raw-color checks. It does not change existing rules, including explicit `"off"`
-values.
+The command creates or updates `.oxlintrc.json`. It preserves existing rule
+settings, including explicit `"off"` values.
 
-The configuration excludes copied `src/components/ui/` implementations from
-Yopem rule checks. The rules check application JSX. Configure the plugin for
-your application source. The following docs-app configuration permits `xstyle`
-but rejects `className`. Copied components still provide `className` for
-external integration.
+The recommended preset enables four rules: `prefer-layout-primitives`,
+`no-restyle`, `enforce-styling-methods`, and `static-stylex`. CLI init also
+enables `no-raw-stylex-colors`. Enable `no-unused-stylex-styles` and `atoms`
+separately when needed.
 
-**.oxlintrc.json**
+For manual setup, use this configuration:
 
 ```json
 {
-  "jsPlugins": [
-    {
-      "name": "yopem-ui",
-      "specifier": "@yopem-ui/oxlint-plugin"
-    }
-  ],
+  "jsPlugins": [{ "name": "yopem-ui", "specifier": "@yopem-ui/oxlint-plugin" }],
+  "rules": {
+    "yopem-ui/prefer-layout-primitives": "error",
+    "yopem-ui/no-restyle": "error",
+    "yopem-ui/enforce-styling-methods": "error",
+    "yopem-ui/static-stylex": "error",
+    "yopem-ui/no-raw-stylex-colors": "error"
+  },
   "overrides": [
     {
-      "files": ["apps/docs/src/**/*.{tsx,jsx}"],
+      "files": ["src/components/ui/**/*.{tsx,jsx}"],
       "rules": {
-        "yopem-ui/enforce-styling-methods": [
-          "error",
-          { "methods": { "className": false } }
-        ],
-        "yopem-ui/no-raw-stylex-colors": "error",
-        "yopem-ui/static-stylex": "error",
-        "yopem-ui/valid-polymorphic-as": "error"
+        "yopem-ui/prefer-layout-primitives": "off",
+        "yopem-ui/no-restyle": "off",
+        "yopem-ui/enforce-styling-methods": "off",
+        "yopem-ui/static-stylex": "off",
+        "yopem-ui/no-raw-stylex-colors": "off"
       }
     }
   ]
 }
 ```
 
-Enable `no-restyle` to enforce component contracts. The plugin's
-`recommendedRules` and CLI init include this rule. Docs previews currently
-disable this rule but keep raw-color checks enabled.
+The override excludes copied component implementations. Keep these checks on
+application code that uses the components. Run `bunx oxlint .` to check your
+project.
+
+## Rules
+
+### yopem-ui/prefer-layout-primitives
+
+**Recommended.** Use layout and typography components instead of native elements
+with equivalent components. Each error names a replacement. Keep native
+attributes, events, and refs when you change the element.
+
+**Rejected:** native wrappers and text elements.
+
+```tsx
+export function Intro() {
+  return (
+    <section>
+      <h1>Getting started</h1>
+      <p>Install your first component.</p>
+    </section>
+  )
+}
+```
+
+**Accepted:** components preserve the semantic elements through `render`.
+
+```tsx
+import { Box } from "@/components/ui/box"
+import { Heading } from "@/components/ui/heading"
+import { Text } from "@/components/ui/text"
+
+export function Intro() {
+  return (
+    <Box render={<section />}>
+      <Heading render={<h1 />}>Getting started</Heading>
+      <Text>Install your first component.</Text>
+    </Box>
+  )
+}
+```
+
+Choose Flex, Stack, Grid, or another [layout component](/docs/layout) for the
+layout you need. The rule does not use CSS to choose a component.
+
+By default, the rule checks these tags:
+
+- Layout: `div`, `span`, `main`, `section`, `article`, `aside`, `header`,
+  `footer`, `nav`, `address`, `figure`, `figcaption`, `search`, and `hgroup`.
+- Lists: `ul`, `ol`, `li`, `dl`, `dt`, and `dd`.
+- Text: `pre`, `p`, `blockquote`, `em`, `mark`, and `h1` through `h6`.
+
+Props, spreads, refs, conditional branches, and nested JSX do not exclude these
+tags from checks. Native elements inside a `render` prop are permitted. The rule
+does not check native anchors or framework links. It also permits controls,
+tables, document metadata, SVG, custom elements, `strong`, and inline `code`.
+
+Use `Box render={<pre />}` for generic preformatted content. Use Codeblock for
+code displays. Codeblock adds a wrapper and toolbar, so it cannot directly
+replace a native `pre` or its ref.
+
+Set `elements` to replace the default tag list. An empty array disables tag
+checks.
+
+```json
+{
+  "yopem-ui/prefer-layout-primitives": [
+    "error",
+    { "elements": ["div", "span", "section"] }
+  ]
+}
+```
+
+### yopem-ui/no-restyle
+
+**Recommended.** Restrict properties passed through `xstyle` on imported UI
+components. By default, only properties in the `layout` category are permitted.
+Use component props such as `variant` and `size` before you change their styles.
+
+**Rejected:** changing Button color and padding through `xstyle`.
+
+```tsx
+import { Button } from "@/components/ui/button"
+import { tokens } from "@/styles/tokens.stylex"
+import * as stylex from "@stylexjs/stylex"
+
+const styles = stylex.create({
+  button: {
+    backgroundColor: tokens["--primary"],
+    paddingInline: "2rem",
+  },
+})
+
+export function Action() {
+  return <Button xstyle={styles.button}>Save</Button>
+}
+```
+
+**Accepted:** use Button props and a layout override.
+
+```tsx
+import { Button } from "@/components/ui/button"
+import * as stylex from "@stylexjs/stylex"
+
+const styles = stylex.create({ button: { marginInlineStart: "auto" } })
+
+export function Action() {
+  return (
+    <Button variant="outline" size="sm" xstyle={styles.button}>
+      Save
+    </Button>
+  )
+}
+```
+
+The rule checks local `stylex.create` declarations, arrays, conditional styles,
+and nested selectors. It cannot verify imported styles or dynamic computed
+access. Registry Link is excluded by default.
+
+Use property names, `*` patterns, or categories in `allow` and `deny`.
+Categories are `layout`, `spacing`, `color`, `typography`, `shape`, `effects`,
+`motion`, and `unclassified`. For example, margins and dimensions belong to
+`layout`; padding and gaps belong to `spacing`. An empty `allow` array permits
+no properties. A matching `deny` entry takes priority over `allow`.
 
 ```json
 {
   "yopem-ui/no-restyle": [
     "error",
     {
-      "allow": ["layout", "margin*"],
+      "allow": ["layout", "gap"],
       "deny": ["marginBlockStart"],
       "exclude": ["^Legacy"],
       "contracts": [
@@ -105,7 +178,7 @@ disable this rule but keep raw-color checks enabled.
           "pattern": "^CardTitle$",
           "allow": ["fontSize", "color"],
           "deny": [],
-          "message": "Use a {{component}} variant instead of {{property}}."
+          "message": "Use an approved {{property}} value on {{component}}."
         }
       ]
     }
@@ -113,87 +186,263 @@ disable this rule but keep raw-color checks enabled.
 }
 ```
 
-Use StyleX property names, `*` glob patterns, or categories in `allow` and
-`deny`. The categories are `layout`, `spacing`, `color`, `typography`, `shape`,
-`effects`, and `motion`. If you omit `allow`, the rule permits `layout`
-properties. An empty `allow` array permits no properties. If a property matches
-both `allow` and `deny`, the rule rejects it.
+`exclude` and contract `pattern` values are regular expressions for imported
+component names. The last matching contract wins. It replaces only the policy
+fields that it sets. Custom messages support `{{component}}` and `{{property}}`.
 
-Contract regular expressions match imported component names. If more than one
-contract matches, the rule uses the last matching contract. That contract
-replaces only the keys that it sets. Use component name regular expressions in
-`exclude`. Set `componentSources` and `styleComponents` to change the default
-settings that identify imported UI components. Messages can contain
-`{{component}}` and `{{property}}`. Use file overrides to exclude component
-implementations from rule checks.
+### yopem-ui/enforce-styling-methods
 
-To use atoms, install `@stylexjs/atoms`. Compile atoms with the StyleX Babel
-plugin. Use a default import for atoms. Combine atoms through StyleX props or
-`sx`:
+**Recommended.** Choose which styling methods imported UI components can accept.
+The defaults permit `xstyle` and `className`. They reject `css`, inline React
+`style`, and direct `stylex.props` spreads on those components.
+
+**Rejected:** an inline React style bypasses the component's style composition.
 
 ```tsx
-import x from "@stylexjs/atoms"
+import { Button } from "@/components/ui/button"
 
-const preview = <Button xstyle={[x.paddingInline._12px, x.color.blue]} />
+export function Action() {
+  return <Button style={{ marginInlineStart: "auto" }}>Save</Button>
+}
 ```
 
-Set `"yopem-ui/atoms": ["error", { "mode": "enforce" }]` to require atoms. This
-mode rejects local `stylex.create` declarations. It also requires atoms in JSX
-`xstyle` and `sx` expressions. The `"disallow"` mode rejects atoms imports. The
-`"allow"` mode permits atoms and StyleX styles.
+**Accepted:** pass StyleX styles through `xstyle`.
 
-For a wrapper imported from `@apps/stylexjs/atoms`, set
-`"source": "@apps/stylexjs/atoms"`. This repository does not currently include
-that wrapper or the atoms dependency. Keep the atoms rule off until you install
-and compile atoms.
+```tsx
+import { Button } from "@/components/ui/button"
+import * as stylex from "@stylexjs/stylex"
 
-Set `"yopem-ui/prefer-layout-primitives": "off"` in `.oxlintrc.json` to disable
-the default native layout rule. To change the list of tags to check, use
-`["error", { "elements": ["div", "span", "section"] }]`. Use Oxlint file
-overrides for document shells or renderer code. An empty `elements` array
-disables tag checks.
+const styles = stylex.create({ button: { marginInlineStart: "auto" } })
 
-By default, the rule checks these tags:
+export function Action() {
+  return <Button xstyle={styles.button}>Save</Button>
+}
+```
 
-- Layout tags: `div`, `span`, `main`, `section`, `article`, `aside`, `header`,
-  `footer`, `nav`, `address`, `figure`, `figcaption`, `search`, and `hgroup`.
-- List tags: `ul`, `ol`, `li`, `dl`, `dt`, and `dd`.
-- Text tags: `pre`, `p`, `blockquote`, `em`, `mark`, and `h1` through `h6`.
+Native elements and framework links can still use `stylex.props(...)`. Registry
+Link is excluded by default.
 
-Props, spreads, refs, conditional branches, and nested JSX do not exclude these
-tags from checks.
+Set individual `methods` to `true` or `false`. Omitted methods keep their
+defaults. `reactStyle` controls React `style`; `stylexStyle` controls StyleX
+spreads and `stylex.props(...).style`.
 
-Native elements inside a `render` prop are composition boundaries. The rule
-permits these elements. It does not use CSS to identify the layout or rewrite
-JSX. It does not check `render` values to require a specialized primitive.
-Choose Flex, Stack, Grid, or another layout primitive for the required layout.
+```json
+{
+  "yopem-ui/enforce-styling-methods": [
+    "error",
+    {
+      "methods": {
+        "className": false,
+        "css": false,
+        "reactStyle": false,
+        "stylexStyle": false,
+        "xstyle": true
+      }
+    }
+  ]
+}
+```
 
-Use Prose for long-form content that is easy to read. Use Highlight for matching
-words. Do not use either component as a replacement for all native tags. For
-generic `pre` content, use `Box render={<pre />}`. Codeblock adds a toolbar and
-a `div` wrapper. Thus, Codeblock is not a compatible replacement for a native
-`pre` tag or its ref. Use Codeblock for code displays.
+### yopem-ui/static-stylex
 
-The rule permits native controls, tables, document metadata, SVG, custom
-elements, unknown components, and framework links. Keep `strong`, inline `code`,
-and other text tags that have no equivalent component as native elements. Use
-file overrides to exclude copied primitive implementations and non-DOM renderers
-from checks. Filenames and `data-slot` do not automatically exclude code from
-checks.
+**Recommended.** Keep `stylex.create` object shapes and keys static so StyleX
+can compile them. The rule rejects a non-object argument, object spreads, and
+computed keys. It permits computed `stylex.when.ancestor` and
+`stylex.when.descendant` conditions.
 
-The docs app enables this rule for all application JSX. It excludes only its
-non-DOM Open Graph renderer. By default, `no-restyle` and
-`enforce-styling-methods` do not identify registry Link as a UI component. Set
-`styleComponents` explicitly to include registry Link in these checks.
+**Rejected:** a spread hides the declaration's properties.
 
-Native framework elements, such as TanStack Router links, can use
-`stylex.props(...)`. Use `xstyle` instead of a StyleX prop spread on imported UI
-components. This lets the component combine its default styles and consumer
-styles in order.
+```tsx
+import * as stylex from "@stylexjs/stylex"
 
-<span id="exceptions" />
+const spacing = { paddingInline: "1rem" }
+const styles = stylex.create({ root: { ...spacing } })
+```
+
+**Accepted:** write the properties in the declaration.
+
+```tsx
+import * as stylex from "@stylexjs/stylex"
+
+const styles = stylex.create({
+  root: {
+    paddingInline: "1rem",
+    opacity: { default: 1, ":hover": 0.8 },
+  },
+})
+```
+
+This rule has no options. It does not replace the StyleX compiler's validation
+of property values.
+
+### yopem-ui/no-raw-stylex-colors
+
+**Optional in the recommended preset; enabled by CLI init.** Use design tokens
+instead of literal colors in `stylex.create`. The rule reports hex values and
+CSS color functions on color properties, including nested state values.
+
+**Rejected:** a literal hex color.
+
+```tsx
+import * as stylex from "@stylexjs/stylex"
+
+const styles = stylex.create({ root: { color: "#fff" } })
+```
+
+**Accepted:** a semantic color token follows the active theme.
+
+```tsx
+import { tokens } from "@/styles/tokens.stylex"
+import * as stylex from "@stylexjs/stylex"
+
+const styles = stylex.create({ root: { color: tokens["--foreground"] } })
+```
+
+Checked properties include `color`, `background`, `backgroundColor`, border
+colors, `outlineColor`, `textDecorationColor`, `fill`, and `stroke`. Checked
+functions include `rgb`, `hsl`, `oklch`, `oklab`, `lab`, `lch`, and `color`. The
+rule does not check named colors, shadows, gradients, or other CSS strings. This
+rule has no options.
+
+### yopem-ui/no-unused-stylex-styles
+
+**Optional.** Report unused top-level style keys in local `stylex.create`
+declarations. Remove unused keys after you check whether their values have side
+effects. The rule has no automatic fix.
+
+**Rejected:** `unused` has no reference.
+
+```tsx
+import { Box } from "@/components/ui/box"
+import * as stylex from "@stylexjs/stylex"
+
+const styles = stylex.create({
+  root: { paddingInline: "1rem" },
+  unused: { marginBlock: "2rem" },
+})
+
+export function Panel() {
+  return <Box xstyle={styles.root}>Content</Box>
+}
+```
+
+**Accepted:** every declared key is used.
+
+```tsx
+import { Box } from "@/components/ui/box"
+import * as stylex from "@stylexjs/stylex"
+
+const styles = stylex.create({ root: { paddingInline: "1rem" } })
+
+export function Panel() {
+  return <Box xstyle={styles.root}>Content</Box>
+}
+```
+
+The rule recognizes import aliases, lexical scope, dot access, string-literal
+bracket access, and dynamic style functions. It skips exported objects, objects
+passed to other code, destructured objects, and dynamic property access. It also
+skips declarations with spreads or computed keys because their use cannot be
+verified in the file.
+
+Enable it as a warning or error. This rule has no options.
+
+```json
+{
+  "yopem-ui/no-unused-stylex-styles": "warn"
+}
+```
+
+### yopem-ui/atoms
+
+**Optional.** Control whether your application can use StyleX atoms. Install
+`@stylexjs/atoms` and compile it with the StyleX Babel plugin before using
+atoms.
+
+Choose a `mode`:
+
+- `allow` is the default. It permits atoms and local StyleX declarations.
+- `disallow` reports imports from the configured atoms source.
+- `enforce` rejects local `stylex.create` declarations and requires an atoms
+  reference in JSX `xstyle` and `sx` expressions.
+
+**Rejected in `enforce` mode:** local styles without atoms.
+
+```tsx
+import { Box } from "@/components/ui/box"
+import * as stylex from "@stylexjs/stylex"
+
+const styles = stylex.create({ root: { paddingInline: "12px" } })
+
+export function Panel() {
+  return <Box xstyle={styles.root}>Content</Box>
+}
+```
+
+**Accepted in `enforce` mode:** use atoms in `xstyle`.
+
+```tsx
+import { Box } from "@/components/ui/box"
+import x from "@stylexjs/atoms"
+
+export function Panel() {
+  return <Box xstyle={x.paddingInline._12px}>Content</Box>
+}
+```
+
+Combine atoms in an `xstyle` array. Do not place atoms inside `stylex.create`
+objects. The `enforce` mode checks for an atoms reference, not whether every
+array entry is an atom. Other enabled rules still apply; configure `no-restyle`
+to permit the properties you need.
+
+```json
+{
+  "yopem-ui/atoms": [
+    "error",
+    { "mode": "enforce", "source": "@stylexjs/atoms" }
+  ]
+}
+```
+
+Set `source` to your atoms module if you use a custom wrapper.
+
+## Component imports
+
+`no-restyle` and `enforce-styling-methods` identify components through their
+imports. Default sources are `@/components/ui/`, `@registry/components/ui/`, and
+`@yopem-ui/ui`. Source patterns match an exact import or an import that starts
+with the pattern. Import aliases and namespace imports are supported.
+
+Set `componentSources` and `styleComponents` when you use custom import paths or
+component names. These arrays replace their defaults. Include every source and
+component that you want checked.
+
+```json
+{
+  "yopem-ui/enforce-styling-methods": [
+    "error",
+    {
+      "componentSources": ["@acme/ui/"],
+      "styleComponents": ["Button", "Card", "Link"]
+    }
+  ]
+}
+```
 
 ## Exceptions
 
-The docs rules do not check registry implementations or non-DOM JSX renderers.
-Run `bun run lint` from the repository root.
+Use file overrides for copied primitives, document shells, and non-DOM renderers
+that need native elements. Disable only the rules that do not apply to those
+files. Filenames and `data-slot` attributes do not automatically exclude code
+from checks.
+
+```json
+{
+  "overrides": [
+    {
+      "files": ["src/renderers/**/*.{tsx,jsx}"],
+      "rules": { "yopem-ui/prefer-layout-primitives": "off" }
+    }
+  ]
+}
+```
