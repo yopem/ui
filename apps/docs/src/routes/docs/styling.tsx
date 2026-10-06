@@ -20,7 +20,7 @@ function StylingGuide() {
   return (
     <GuidePage
       title="Styling with StyleX"
-      description="Create styles with StyleX and compose them through xstyle after component defaults."
+      description="Create styles with StyleX. Apply them through xstyle after component defaults."
       source={stylingSource}
       Content={StylingContent}
     />

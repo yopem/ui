@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test"
 import { registryItemSchema } from "@registry/schema"
-import { readdirSync } from "node:fs"
+import { readdirSync, readFileSync } from "node:fs"
 
 test("machine-readable documentation endpoints expose correct formats", async ({
   request,
@@ -44,15 +44,14 @@ test("design-system-first policy is published and discoverable", async ({
   const policy = await response.text()
 
   for (const text of [
-    "Heading as",
-    "Box as",
-    "Native anchors and framework",
-    "links are excluded",
+    "Heading render",
+    "Box render",
+    "The rule does not check native anchors or framework links.",
     "Codeblock",
     "styleComponents",
     "conditional branches",
   ])
-    expect(policy).toContain(text)
+    expect(policy.replace(/\s+/g, " ")).toContain(text)
 
   for (const [url, path] of [
     ["/llms.txt", "/docs/lint.md"],
@@ -66,6 +65,32 @@ test("design-system-first policy is published and discoverable", async ({
   await testInfo.attach("design-system-first-policy", {
     body: policy,
     contentType: "text/markdown",
+  })
+})
+
+test("generated documentation publishes reviewed source text", async ({
+  request,
+}, testInfo) => {
+  const directory = new URL(
+    "../../../../packages/registry/dist/r/docs/",
+    import.meta.url,
+  )
+
+  const files = readdirSync(directory).filter((file) => file.endsWith(".json"))
+
+  expect(files.length).toBeGreaterThan(0)
+
+  for (const file of files) {
+    const response = await request.get(`/r/docs/${file}`)
+    expect(response.status(), file).toBe(200)
+    expect(await response.text(), file).toBe(
+      readFileSync(new URL(file, directory), "utf8"),
+    )
+  }
+
+  await testInfo.attach("reviewed-generated-documentation", {
+    body: files.join("\n"),
+    contentType: "text/plain",
   })
 })
 

@@ -113,7 +113,7 @@ export function mergeStylexProps(
 }
 
 export interface StyleXProps {
-  /** StyleX styles applied after component defaults and variants. */
+  /** The component applies these StyleX styles after its defaults and variants. */
   xstyle?: StyleXStyle
 }
 

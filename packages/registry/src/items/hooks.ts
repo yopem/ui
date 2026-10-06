@@ -5,12 +5,12 @@ export const hookItems: SourceItem[] = [
     categories: ["hooks"],
     dependencies: [],
     description:
-      "Stable event callback that invokes the latest committed handler.",
+      "Provides a stable event callback that calls the latest committed handler.",
     devDependencies: [],
     docs: {
       api: ["useEventCallback"],
       usage:
-        "Import useEventCallback from @/hooks/use-event-callback. Use it for event handlers and effect callbacks, never during render. Arguments, return values, and thrown errors pass through to the latest committed callback.",
+        "Import useEventCallback from @/hooks/use-event-callback. Use it for event handlers and effect callbacks. Do not call it during render. Arguments, return values, and thrown errors pass through to the latest committed callback.",
     },
     files: [
       {
@@ -29,12 +29,12 @@ export const hookItems: SourceItem[] = [
     categories: ["hooks"],
     dependencies: [],
     description:
-      "Reactive media queries with named breakpoints, ranges, and pointer queries.",
+      "Tracks media queries with named breakpoints, ranges, and pointer queries.",
     devDependencies: [],
     docs: {
       api: ["useMediaQuery", "MediaQueryInput"],
       usage:
-        "Import useMediaQuery from @/hooks/use-media-query. Pass a raw CSS media query, a breakpoint such as md or max-md, a range such as sm:max-lg, or an object with min, max, and pointer. Minimum widths are inclusive; maximum widths are exclusive. Server rendering returns false; the client subscribes to matchMedia changes.",
+        "Import useMediaQuery from @/hooks/use-media-query. Pass a raw CSS media query, named breakpoint, range, or object query. Breakpoint examples are md and max-md. A range example is sm:max-lg. Object queries accept min, max, and pointer. Minimum widths are inclusive. Maximum widths are exclusive. Server rendering returns false. The client subscribes to matchMedia changes.",
     },
     files: [
       {

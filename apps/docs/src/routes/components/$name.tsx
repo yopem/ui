@@ -157,9 +157,9 @@ function ComponentPage() {
             id="overview"
           />
           <Text xstyle={styles.paragraph}>
-            Copy the source into your project, then import the parts you need.
+            Copy the source into your project. Import the parts that you need.
             Styles use local StyleX declarations and shared theme tokens. You
-            can change the source without wrapping or replacing a package.
+            can change the source without a wrapper or replacement package.
           </Text>
           <Heading
             render={<h2>Installation</h2>}
@@ -185,8 +185,8 @@ function ComponentPage() {
           <Text xstyle={styles.paragraph3}>
             Run from your project root. The CLI installs required components,
             shared files, and packages. Previews may need additional components.
-            Existing files are preserved. To refresh installed source, use
-            update; locally edited files need an explicit --force to overwrite.
+            The CLI keeps existing files. Use update to refresh installed
+            source. Pass --force explicitly to overwrite locally edited files.
           </Text>
           <CopyableCode
             language="shellscript"
@@ -220,9 +220,9 @@ function ComponentPage() {
             id="api-reference"
           />
           <Text xstyle={styles.paragraph9}>
-            Generated from canonical TypeScript source. Only component and Base
-            UI props appear below. Required marks a required property, not a
-            required component.
+            The generator reads canonical TypeScript source. Only component and
+            Base UI props appear below. Required identifies a required property,
+            not a required component.
           </Text>
           <ComponentApi key={name} parts={data.api} />
         </DocsBody>

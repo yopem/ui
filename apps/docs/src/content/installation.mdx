@@ -1,32 +1,37 @@
 ## Initialize project
 
 Start with a React and TypeScript project. Run `bunx @yopem-ui/cli init` from
-its root:
+the project root:
 
 <InstallationCommands />
 
-Init detects Vite React, React Router (client or framework), TanStack Router,
-TanStack Start, Next.js App Router, or Astro. It installs the shared source,
-StyleX dependencies, and Oxlint plugin; configures the `@/*` alias, build
-plugins, and root styles. Existing project code stays in place. Unsupported or
-conflicting configuration stops with an error instead of being overwritten.
+The init command detects Vite React, React Router, TanStack Router, TanStack
+Start, Next.js App Router, or Astro. It supports React Router client mode and
+framework mode. It installs shared source, StyleX dependencies, and the Oxlint
+plugin. It configures the `@/*` alias, build plugins, and root styles. It keeps
+existing project code. If configuration is unsupported or conflicts with
+required settings, the command stops with an error. It does not overwrite that
+configuration.
 
 If your project has multiple supported frameworks, use `--framework` as shown
-above. Accepted values: `vite`, `react-router`, `tanstack-router`,
-`tanstack-start`, `next`, and `astro`. React Router client mode is detected from
-`react-router` or `react-router-dom`; framework mode from `@react-router/dev`.
+above. Accepted values are `vite`, `react-router`, `tanstack-router`,
+`tanstack-start`, `next`, and `astro`. The command detects React Router client
+mode from `react-router` or `react-router-dom`. It detects framework mode from
+`@react-router/dev`.
 
-Vite integrations use Rolldown Babel. Next.js App Router requires Node 24+ and
-webpack. React Router RSC mode, Next.js Pages Router, and other build tools are
-not supported by init. CLI reads registry files from `https://ui.yopem.com/r` by
-default and tracks installed files in `ui.json`. CLI and Oxlint plugin are not
-published yet; `bunx` commands work after both packages are released.
+Vite integrations use Rolldown Babel. Next.js App Router requires Node 24 or
+later and webpack. The init command does not support React Router RSC mode,
+Next.js Pages Router, or other build tools. The CLI reads registry files from
+`https://ui.yopem.com/r` by default. It records installed files in `ui.json`.
+The CLI and Oxlint plugin are not published yet. The `bunx` commands work after
+both packages are released.
 
 Pass `--registry <URL>` to `init`, `add`, or `update` to use another registry.
-Overrides apply per command, not through `ui.json`. HTTPS is required except for
-local HTTP on `localhost` or loopback addresses; URLs cannot include
-credentials, query strings, or fragments. For local development, start the docs
-server with `bun run dev` and pass the local registry explicitly:
+This setting applies to one command. It does not apply through `ui.json`. The
+URL must use HTTPS, except for local HTTP on `localhost` or loopback addresses.
+Do not include credentials, query strings, or fragments in the URL. For local
+development, start the docs server with `bun run dev`. Then pass the local
+registry explicitly:
 
 ```sh
 bunx @yopem-ui/cli init --registry http://localhost:3100/r
@@ -34,21 +39,22 @@ bunx @yopem-ui/cli add button --registry http://localhost:3100/r
 bunx @yopem-ui/cli update button --registry http://localhost:3100/r
 ```
 
-Requests time out after 30 seconds, including JSON body reads. Timeout, network,
-HTTP status, and malformed JSON errors stop installation before any source,
-configuration, or dependency changes.
+Requests have a 30-second timeout, including JSON body reads. Timeout, network,
+HTTP status, and malformed JSON errors stop installation. The CLI makes no
+source, configuration, or dependency changes after these errors.
 
 <span id="check" />
 
 ## Verify and continue
 
-Run your project's production build. It must finish without StyleX or CSS
-extraction errors. Run `bunx oxlint .` to check your app; see
+Run your project's production build. Check that it completes without StyleX or
+CSS extraction errors. Run `bunx oxlint .` to check your app. See the
 [lint rules](/docs/lint) for configuration.
 
-Then [add your first component](/docs/getting-started) with the CLI. To refresh
-installed shared files, run `bunx @yopem-ui/cli update base`; locally edited
-files are preserved unless you pass `--force`.
+Then [add your first component](/docs/getting-started) with the CLI. To update
+installed shared files, run `bunx @yopem-ui/cli update base`. The command keeps
+locally edited files unless you pass `--force`.
 
-Static light mode needs no provider. Add switching only if needed. See the
-[theming guide](/docs/theming) for dark mode, custom themes, and CSP nonces.
+Static light mode does not need a provider. Add theme switching only if
+necessary. See the [theming guide](/docs/theming) for dark mode, custom themes,
+and CSP nonces.

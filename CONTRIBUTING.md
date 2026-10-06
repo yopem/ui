@@ -7,9 +7,9 @@ bun install
 bun run dev
 ```
 
-External contributors should fork the repository, create a focused branch, and
-open a pull request against `main`. Use issue templates for reproducible bugs
-and concrete feature proposals.
+Fork the repository if you are an external contributor. Create a branch for one
+change. Open a pull request against `main`. Use issue templates to report
+reproducible bugs or propose specific features.
 
 ## Component changes
 
@@ -31,14 +31,14 @@ bun run build
 
 Install Chromium once with `bunx playwright install chromium`.
 
-Automated checks do not constitute VoiceOver or NVDA certification.
+Automated checks do not certify VoiceOver or NVDA support.
 
 ## Releases
 
 For changes to `@yopem-ui/cli` or `@yopem-ui/oxlint-plugin`, run
-`bunx changeset` and commit the generated changeset with your pull request. The
-registry is private and is not published to npm. After merge, the release
-workflow opens a version pull request; merging it publishes changed packages to
-npm.
+`bunx changeset`. Commit the generated changeset with your pull request. The
+registry is private. The project does not publish it to npm. After merge, the
+release workflow opens a version pull request. Merge that pull request to
+publish changed packages to npm.
 
 Pull requests also receive preview packages from pkg.pr.new.

@@ -9,7 +9,7 @@ export const Route = createFileRoute("/docs/layout")({
   head: () =>
     createSeo({
       description:
-        "Choose layout and typography components, preserve native semantics, and compose accessible page structure.",
+        "Choose layout and typography components. Keep native semantics. Build an accessible page structure.",
       path: "/docs/layout",
       title: "Layout and typography · Yopem UI",
     }),
@@ -20,7 +20,7 @@ function LayoutGuide() {
   return (
     <GuidePage
       title="Layout and typography"
-      description="Choose a layout or text component, then use its native semantics to build a readable page."
+      description="Choose a layout or text component. Use its native semantics to build a readable page."
       source={layoutSource}
       Content={LayoutContent}
     />

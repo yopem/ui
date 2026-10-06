@@ -4,26 +4,30 @@
 ## What is Yopem UI?
 
 Yopem is a component registry, not a component library dependency. Each
-component page contains a live preview, install dependencies, complete
+component page contains a live preview, installation dependencies, complete
 TypeScript source, usage notes, and generated API details.
 
-- **React 19:** Typed components that stay inside your project.
+- **React 19:** Typed components in your project.
 - **Base UI:** Keyboard and screen-reader behavior from accessible primitives.
-- **StyleX:** Colocated, typed styles compiled to atomic CSS.
+- **StyleX:** Typed styles beside component code. The compiler converts these
+  styles to atomic CSS.
 
 ## Why source-owned?
 
 - **Change anything.** Edit markup, behavior, variants, and styles in the same
   file.
-- **Ship less.** Copy the components you use instead of installing a full kit.
-- **Keep control.** Updates never change your app until you choose to copy them.
+- **Copy less.** Copy only the components that you use.
+- **Keep control.** Updates change your app only when you choose to copy them.
 
 ## How it works
 
-1. Configure the StyleX build transform and copy shared theme files once.
-2. Choose a component and install the dependencies shown on its page.
-3. Copy each required file to its displayed path under your source directory.
-4. Import the local component and customize its source or xstyle prop.
+1. Configure the StyleX build transform.
+2. Copy the shared theme files once.
+3. Choose a component.
+4. Install the dependencies shown on its page.
+5. Copy each required file to the displayed path in your source directory.
+6. Import the local component.
+7. Change its source or `xstyle` prop as necessary.
 
 **Use your local component**
 
@@ -37,9 +41,8 @@ export function SaveButton() {
 
 ## Where to start
 
-- [**Introduction**](/docs/getting-started): Learn the workflow by adding one
-  Button from start to finish.
-- [**Ready to configure**](/docs/installation): Pick React Router, TanStack
+- [**Introduction**](/docs/getting-started): Follow the steps to add one Button.
+- [**Ready to configure**](/docs/installation): Choose React Router, TanStack
   Start, Next.js, or Astro.
 - [**Build a layout**](/docs/layout): Choose layout and typography components
   for your page.

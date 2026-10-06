@@ -50,7 +50,7 @@ function Theming() {
   return (
     <GuidePage
       title="Theming"
-      description="Most apps only need to edit the shared tokens. Use xstyle for one-off changes. Add the theme runtime only when users need to switch between light, dark, and system modes."
+      description="Most apps need only changes to shared tokens. Use xstyle for local style changes. Add the theme runtime only if users need light, dark, and system switching."
       source={source}
       Content={Content}
       components={themingComponents}

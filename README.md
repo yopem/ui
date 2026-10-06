@@ -1,13 +1,15 @@
 # Yopem UI
 
-Source-owned React components built with StyleX and Base UI. Copy components
-into your app; first release does not publish a component package.
+Yopem UI provides source-owned React components with StyleX and Base UI. Copy
+components into your app. The first release does not publish a component
+package.
 
 ## Install source
 
-From a Vite React, React Router (client or framework), client TanStack Router,
-TanStack Start, Next.js App Router, or Astro project, initialize StyleX and add
-a component:
+Start with a supported React project. Supported frameworks are Vite React, React
+Router, client TanStack Router, TanStack Start, Next.js App Router, and Astro.
+React Router supports client mode and framework mode. Initialize StyleX before
+you add a component:
 
 ```sh
 bunx @yopem-ui/cli init --dry-run
@@ -16,34 +18,44 @@ bunx @yopem-ui/cli add button
 bunx @yopem-ui/cli update button
 ```
 
-`init` installs tokens, reset CSS, and StyleX helpers, configures build plugins
-and aliases, and wires root styles. It stops on conflicting configurations.
-`init`, `add`, and `update` accept `--dry-run`: validate and preview without
-writing files or running a package manager. Init lists absolute target paths,
-configuration writes/skips/deletions, manifest exports/scripts, prerequisites,
-and pending dependencies per app or shared UI package (`--ui <path>`).
-Compatible dependency specs are preserved; repeated installs with identical
-source and satisfied dependencies do not run a package manager. Unknown spec
-compatibility is handled conservatively, not assumed satisfied.
+The `init` command installs tokens, reset CSS, and StyleX helpers. It configures
+build plugins, aliases, and root styles. It stops if existing configuration
+conflicts with required settings.
 
-`update` preserves locally edited files unless passed `--force`. `ui.json`
-records registry URLs and item versions per tracked file, including transitive
-and overlapping owners. Legacy version-1 manifests remain supported. Switching a
-known file's registry warns before applying; skipped modified/tracked files keep
-their original provenance. `--registry <URL>` requires HTTPS (local HTTP
-allowed), without credentials, query, or fragment. Redirects are rejected. CLI
-is not yet published; commands work after release. See
+Use `--dry-run` with `init`, `add`, or `update` to validate and preview changes.
+A dry run does not write files or run a package manager. The init preview lists
+absolute target paths, configuration changes, manifest exports and scripts,
+prerequisites, and pending dependencies. It groups dependencies by app or shared
+UI package (`--ui <path>`).
+
+The CLI keeps compatible dependency specifications. It does not run a package
+manager if source is unchanged and dependencies meet requirements. It does not
+assume compatibility for unknown dependency specifications.
+
+The `update` command keeps locally edited files unless you pass `--force`. The
+`ui.json` manifest records registry URLs and item versions for each tracked
+file. This includes transitive and overlapping file owners. The CLI also
+supports legacy version-1 manifests. It warns before it applies a known file
+from a different registry. Modified or tracked files that it skips keep their
+original provenance.
+
+Use `--registry <URL>` to select another registry. The URL must use HTTPS,
+except for local HTTP. It must not contain credentials, query strings, or
+fragments. The CLI rejects redirects. The CLI is not yet published. These
+commands work after release. See
 [installation](https://ui.yopem.com/docs/installation).
 
 ## Styling
 
-Use `Box` for generic containers and semantic tags through `as`. Layout
-primitives such as `Flex`, `Stack`, and `Grid` provide additional defaults.
-Author styles with `stylex.create` and pass them as `xstyle` after component
-defaults and variants. Use `stylex.props` on native or framework elements.
-Components expose `className` for external CSS integration; this documentation
-app styles itself with StyleX only. No CSS-property aliases or style-props
-compiler are installed.
+Use `Box` for generic containers. Use its `render` prop to select a semantic
+tag. Layout primitives such as `Flex`, `Stack`, and `Grid` provide additional
+defaults. Create styles with `stylex.create`. Pass them through `xstyle` to
+apply them after component defaults and variants. Use `stylex.props` on native
+or framework elements.
+
+Components provide `className` for external CSS integration. The documentation
+app uses only StyleX for styling. The project does not install CSS-property
+aliases or a style-props compiler.
 
 ```tsx
 import { Box } from "@/components/ui/box"
@@ -53,7 +65,7 @@ const styles = stylex.create({ section: { padding: "1rem" } })
 
 export function Profile() {
   return (
-    <Box as="section" xstyle={styles.section}>
+    <Box render={<section />} xstyle={styles.section}>
       Profile
     </Box>
   )
@@ -76,15 +88,15 @@ bun run test:a11y
 bun run build
 ```
 
-Tests live with their workspace: CLI and Oxlint use `bun:test`; docs and
-registry use Playwright for browser and accessibility checks. Turborepo builds
-required fixtures and runs workspace tasks in parallel within each phase:
+Each workspace contains its tests. CLI and Oxlint tests use `bun:test`. Docs and
+registry tests use Playwright for browser and accessibility checks. Turborepo
+builds required fixtures. It runs workspace tasks in parallel within each phase:
 
 ```sh
 bun run test && bun run test:e2e && bun run test:a11y
 ```
 
-After building, run a workspace directly:
+After the build, run a workspace directly:
 
 ```sh
 bun run --cwd packages/cli test
@@ -95,8 +107,9 @@ bun run --cwd packages/registry test:e2e
 bun run --cwd packages/registry test:a11y
 ```
 
-Browser suites use the built docs app on fixed test ports: `3100` for docs and
-`3101` for registry. Logs and reports stay in each workspace's `test-results/`.
+Browser suites use the built docs app on fixed test ports. Docs tests use port
+`3100`. Registry tests use port `3101`. Each workspace saves logs and reports in
+`test-results/`.
 
 ## License
 

@@ -6,7 +6,7 @@ import introductionSource from "@/content/introduction.mdx?raw"
 import { createSeo } from "@/lib/seo"
 
 const description =
-  "Accessible React components styled with StyleX. Copy complete source into your project, then customize it without package lock-in."
+  "Use accessible React components with StyleX. Copy complete source into your project. Change it without a component package dependency."
 
 export const Route = createFileRoute("/")({
   head: () =>
@@ -22,7 +22,7 @@ function Introduction() {
   return (
     <GuidePage
       title="React components you copy, own, and change."
-      description="Yopem UI gives you accessible React component source built with Base UI and StyleX. Copy only what you need into your application. There is no Yopem package between you and your UI."
+      description="Yopem UI provides accessible React component source with Base UI and StyleX. Copy only the components that you need. Your app uses copied source, not a Yopem component package."
       source={introductionSource}
       Content={IntroductionContent}
     />

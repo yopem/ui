@@ -7,10 +7,10 @@ import { sourceItems } from "./items/index"
 export { sourceImportReplacements } from "./source-files"
 
 export const apiNotes = [
-  "Props are extracted from canonical source and the installed dependency declarations. Inherited HTML and React props are included; source identifies where each property is declared.",
-  "An omitted default means no default was found in the declaration or wrapper, not that the value is false. Defaults from parameter initializers and upstream JSDoc are supplemented by reviewed wrapper defaults.",
-  "required means required in every props branch. propVariants lists branch-specific requirements for union APIs such as Calendar. Named dependency types in signatures retain their TypeScript names.",
-  "Copy every file listed on the component page, including shared source dependencies, into src. Run the listed npm install command and configure the standard @/* alias as shown in the installation guide.",
+  "The generator extracts props from canonical source and installed dependency declarations. It includes inherited HTML and React props. source identifies each property's declaration.",
+  "An omitted default means the declaration or wrapper has no identified default. It does not mean the value is false. Reviewed wrapper defaults supplement defaults from parameter initializers and upstream JSDoc.",
+  "required means required in every props branch. propVariants lists requirements for each branch of union APIs, such as Calendar. Named dependency types in signatures keep their TypeScript names.",
+  "Copy every file listed on the component page into src. Include shared source dependencies. Run the listed npm install command. Configure the standard @/* alias as shown in the installation guide.",
 ]
 
 export interface ApiProp {
@@ -25,9 +25,9 @@ export interface ApiProp {
 const partPurposes = {
   Trigger: "Control that opens or toggles the associated content.",
   Popup:
-    "Visible popup content with Yopem styling and the wrapper's positioning or modal composition.",
+    "Shows popup content with Yopem styles. The wrapper provides positioning or modal composition.",
   Portal:
-    "Renders content into a portal container outside the normal DOM parent.",
+    "Renders content in a portal container outside the normal DOM parent.",
   Backdrop: "Layer behind the popup that separates it from the page.",
   Overlay: "Alias for the backdrop part.",
   Viewport: "Layout container for the popup within the viewport.",
@@ -48,7 +48,7 @@ const partPurposes = {
   Label: "Label associated with the component.",
   Provider: "Provides shared state or configuration to descendants.",
   Content:
-    "Content part. See the component notes for aliases and composition requirements.",
+    "Contains component content. See the component notes for aliases and composition requirements.",
   CreateHandle:
     "Creates a handle for connecting detached triggers and a component root.",
 }
@@ -57,20 +57,20 @@ function describePart(name: string, kind: string, description: string) {
   if (description) return description
 
   if (kind === "namespace")
-    return "Unstyled Base UI exports for custom composition. Dotted API entries below document its exported parts."
+    return "Provides unstyled Base UI exports for custom composition. API entries with dotted names below describe the exported parts."
 
   if (kind === "type")
     return "Exported TypeScript type. Its signature and property table describe the accepted values."
 
   if (name.endsWith("Context"))
-    return "Shared React context used by this component's parts. Prefer the public provider and hook for normal composition."
+    return "Provides shared React context for this component's parts. Use the public provider and hook for normal composition."
 
   if (name.endsWith("Variants"))
     return "Returns the class name for the requested visual variants."
   const leaf = name.split(".").at(-1)!
 
   if (leaf.startsWith("use"))
-    return "Hook for accessing this component's state or filtering helpers. Call it at the top level of a React component."
+    return "Provides access to component state or filtering helpers. Call this hook at the top level of a React component."
 
   if (kind === "function" && name.includes(".")) {
     const owner = name.slice(0, name.lastIndexOf("."))
@@ -81,7 +81,7 @@ function describePart(name: string, kind: string, description: string) {
   }
 
   if (kind === "value")
-    return "Exported value. The signature and members below describe its shape."
+    return "Exports a value. The signature and members below describe its structure."
 
   const purpose = Object.entries(partPurposes)
     .sort(([a], [b]) => b.length - a.length)
@@ -89,7 +89,7 @@ function describePart(name: string, kind: string, description: string) {
 
   return (
     purpose ??
-    "Component part. Compose it as described in the usage notes; its accepted props are listed below."
+    "Provides a component part. Combine it with other parts as described in the usage notes. See accepted props below."
   )
 }
 
@@ -139,7 +139,7 @@ export function createComponentDocs(
             }
           : null,
         description: part.aliasOf
-          ? `Alias for ${part.aliasOf}. Accepts the same props.`
+          ? `Alias for ${part.aliasOf}. It accepts the same props.`
           : describePart(
               part.name,
               part.kind,

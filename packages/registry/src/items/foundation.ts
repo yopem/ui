@@ -5,7 +5,7 @@ export const foundationItems: SourceItem[] = [
     categories: ["foundation"],
     dependencies: ["@stylexjs/stylex@^0.19.0", "clsx@^2.1.1"],
     description:
-      "Native StyleX tokens, themes, reset, and component styling helpers for Yopem UI.",
+      "Provides native StyleX tokens, themes, reset, and component styling helpers for Yopem UI.",
     devDependencies: ["@types/react@^19.2.18"],
     docs: {
       api: [
@@ -23,7 +23,7 @@ export const foundationItems: SourceItem[] = [
         "StyleXComponentProps",
       ],
       usage:
-        "Copy the base files, configure StyleX and import styles.css. Native tokens provide light defaults without a provider or script. Add the optional theme item for light/dark/system switching. Customize in the copied tokens.stylex.ts with stylex.createTheme(tokens, { ...lightValues, '--primary': '...' }); for dark use ...darkValues, not a partial theme layered over darkTheme. Keep these spreads in tokens.stylex.ts: StyleX 0.19 does not expand imported constant objects.",
+        "Copy the base files. Configure StyleX. Import styles.css. Native tokens provide light defaults without a provider or script. Add the optional theme item to switch between light, dark, and system modes. In the copied tokens.stylex.ts, use stylex.createTheme(tokens, { ...lightValues, '--primary': '...' }) for custom light themes. For dark themes, use ...darkValues. Do not apply a partial theme over darkTheme. Keep these spreads in tokens.stylex.ts. StyleX 0.19 does not expand imported constant objects.",
     },
     files: [
       {
@@ -52,7 +52,7 @@ export const foundationItems: SourceItem[] = [
     categories: ["foundation"],
     dependencies: [],
     description:
-      "Optional light, dark and system theme runtime with a CSP-compatible initial-paint script.",
+      "Provides optional light, dark, and system themes with a CSP-compatible initial-paint script.",
     devDependencies: [],
     docs: {
       api: [
@@ -73,7 +73,7 @@ export const foundationItems: SourceItem[] = [
         "ThemeProviderProps",
       ],
       usage:
-        "Create complete light/dark themes in tokens.stylex.ts with StyleX, export those themes, then call createThemeConfig({ light, dark }) in your existing server-safe root layout. Pass the same serializable themes config to getRootThemeProps('light', themes), ThemeScript and ThemeProvider. Match defaultTheme and storageKey between script and provider. Pass your CSP nonce to ThemeScript; suppress hydration warnings on html because the script changes its class and data-theme before hydration. theme.tsx is server-safe; only theme-provider.tsx is a client entry.",
+        "Create complete light and dark themes with StyleX in tokens.stylex.ts. Export those themes. Call createThemeConfig({ light, dark }) in your existing server-safe root layout. Pass the same serializable theme configuration to getRootThemeProps('light', themes), ThemeScript, and ThemeProvider. Use matching defaultTheme and storageKey values in the script and provider. Pass your CSP nonce to ThemeScript. Suppress hydration warnings on html. The script changes its class and data-theme before hydration. theme.tsx is server-safe. Only theme-provider.tsx is a client entry.",
     },
     files: [
       {
@@ -96,7 +96,7 @@ export const foundationItems: SourceItem[] = [
   {
     categories: ["feedback"],
     dependencies: ["lucide-react@^1.33.0"],
-    description: "Accessible animated loading indicator.",
+    description: "Shows an accessible animated loading indicator.",
     devDependencies: [],
     docs: {
       api: ["Spinner"],
@@ -119,7 +119,7 @@ export const foundationItems: SourceItem[] = [
     categories: ["actions"],
     dependencies: ["@base-ui/react@^1.7.0"],
     description:
-      "Button with variants, sizes, rendering composition, and loading state.",
+      "Provides a button with variants, sizes, render composition, and loading state.",
     devDependencies: [],
     docs: {
       api: ["buttonVariants", "Button", "ButtonProps"],

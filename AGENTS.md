@@ -98,6 +98,24 @@ Path aliases are `@registry/*` for registry source and `@/*` inside docs.
   accessibility suite, and a production build. Do not claim production safety
   when any required check was skipped or failed; report exact gaps.
 
+## Documentation writing
+
+- Use ASD-STE100 Simplified Technical English for all documentation.
+- Use short sentences, active voice, and one topic per paragraph.
+- Keep procedural sentences to 20 words or fewer. Keep descriptive sentences
+  to 25 words or fewer.
+- Give one instruction per sentence. Use the imperative form for instructions.
+- Use approved words with their approved meanings and parts of speech.
+  Use consistent technical nouns and technical verbs for software terms.
+- Preserve technical meaning, code examples, commands, API names, links, and
+  accessibility requirements. Do not apply simplified prose rules to code.
+- Apply these rules to guides, README files, component descriptions, usage
+  notes, API documentation, and documentation generator templates.
+- Update generated documentation through its source text and generator.
+  Never edit generated files directly. Do not rewrite generated changelogs.
+- Do not claim full ASD-STE100 compliance without checking the writing rules
+  and controlled dictionary.
+
 ## Source-of-truth and generated files
 
 Canonical sources live under `packages/registry/src/`. Never hand-edit

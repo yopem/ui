@@ -23,15 +23,29 @@ export function createLlms(
 
   return `# Yopem UI
 
-> Source-owned, accessible React components built with StyleX and Base UI. Initialize supported projects with \`bunx @yopem-ui/cli init\`, then install source with the CLI; customize it without package lock-in.
+> Yopem UI provides source-owned, accessible React components with StyleX and Base UI. Initialize supported projects with \`bunx @yopem-ui/cli init\`. Install component source with the CLI. Change the copied source without a component package dependency.
 
 ## Monorepo installation
 
-Target a workspace app: \`bunx @yopem-ui/cli init --cwd apps/web\`, then \`bunx @yopem-ui/cli add button --cwd apps/web\`.
+To initialize a workspace app, run \`bunx @yopem-ui/cli init --cwd apps/web\`.
+Then run \`bunx @yopem-ui/cli add button --cwd apps/web\`.
 
-Share UI source: \`bunx @yopem-ui/cli init --cwd apps/web --ui ../../packages/ui\`, then \`bunx @yopem-ui/cli add button --cwd packages/ui\` or \`bunx @yopem-ui/cli update button --cwd packages/ui\`. The UI package must be an existing named React package in the same workspace. The --ui path is relative to the target app. Run init --ui for each consumer and on repeat init. Source imports use the UI package name, for example \`@acme/ui/components/ui/button\`.
+To share UI source, run \`bunx @yopem-ui/cli init --cwd apps/web --ui ../../packages/ui\`.
+Then run \`bunx @yopem-ui/cli add button --cwd packages/ui\` or \`bunx @yopem-ui/cli update button --cwd packages/ui\`.
+The UI package must be an existing named React package in the same workspace.
+The --ui path is relative to the target app.
+Run init --ui for each consuming app.
+Pass --ui again when you repeat init.
+Source imports use the UI package name, such as \`@acme/ui/components/ui/button\`.
 
-Init adds source exports and a workspace dependency, configures StyleX across both packages, enables Next.js transpilePackages, and registers shared package imports with the Yopem UI Oxlint rules. Bun, npm, pnpm, and Yarn workspace package managers are detected from the app and workspace root. Files, dependencies, and tracking manifests stay in their target packages; locally edited source remains protected. Existing app-local components are not migrated automatically.
+Init adds source exports and a workspace dependency.
+It configures StyleX across both packages.
+It enables Next.js transpilePackages.
+It registers shared package imports with the Yopem UI Oxlint rules.
+The CLI detects Bun, npm, pnpm, and Yarn package managers from the app and workspace root.
+Files, dependencies, and tracking manifests stay in their target packages.
+The CLI keeps locally edited source.
+It does not migrate existing app-local components automatically.
 
 ## Documentation
 
@@ -70,7 +84,7 @@ export function createComponentText(
     })
     .join("\n\n")
 
-  return `# ${title}\n\n${data.description}\n\n## Installation\n\nRun \`bunx @yopem-ui/cli init\` in a supported project, then \`bunx @yopem-ui/cli add <component>\` (update: \`bunx @yopem-ui/cli update <component>\`). Init configures StyleX; add installs required source files and dependencies.\n\n## Preview\n\n${preview}\n\n## Usage\n\n${data.notes.join("\n\n")}\n\n\`\`\`tsx\n${data.usage.trim()}\n\`\`\`\n\n## API reference\n\n${api}\n`
+  return `# ${title}\n\n${data.description}\n\n## Installation\n\nRun \`bunx @yopem-ui/cli init\` in a supported project.\nThen run \`bunx @yopem-ui/cli add <component>\`.\nTo update a component, run \`bunx @yopem-ui/cli update <component>\`.\nThe init command configures StyleX.\nThe add command installs required source files and dependencies.\n\n## Preview\n\n${preview}\n\n## Usage\n\n${data.notes.join("\n\n")}\n\n\`\`\`tsx\n${data.usage.trim()}\n\`\`\`\n\n## API reference\n\n${api}\n`
 }
 
 export function createGuideText(page: { content: string; title: string }) {

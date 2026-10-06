@@ -20,7 +20,7 @@ function GettingStarted() {
   return (
     <GuidePage
       title="Add your first component"
-      description="This guide takes one Button from Yopem into your app. When finished, it will render with Yopem styles and remain fully editable in your source directory."
+      description="Follow this guide to add one Yopem Button to your app. The Button uses Yopem styles. You can edit its source in your project."
       source={gettingStartedSource}
       Content={GettingStartedContent}
     />

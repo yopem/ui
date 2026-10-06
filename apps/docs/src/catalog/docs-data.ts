@@ -75,42 +75,42 @@ export const guidePages = [
     title: "Layout and typography",
     url: "/docs/layout",
     content:
-      "Box Flex Stack HStack VStack Grid Center Container AbsoluteCenter Bleed Float Wrap Link Text Blockquote Em Highlight Mark Prose Codeblock Heading semantic layout native elements refs typography",
+      "Choose semantic layout and typography components. Use Box, Flex, Stack, HStack, VStack, Grid, Center, Container, AbsoluteCenter, Bleed, Float, and Wrap. Use Link, Text, Blockquote, Em, Highlight, Mark, Prose, Codeblock, and Heading for content. Keep native elements and refs where required.",
   },
   {
     title: "Styling with StyleX",
     url: "/docs/styling",
     content:
-      "StyleX create props xstyle semantic tokens responsive styles defaults components className integration",
+      "Create responsive styles with StyleX and semantic tokens. Apply styles through xstyle after component defaults. Use StyleX props or className for integration.",
   },
   {
     title: "Lint rules",
     url: "/docs/lint",
     content:
-      "Oxlint rules prefer-layout-primitives Box Flex Grid Center Stack typography Text Heading semantic Box render native boundaries router Link excluded opt-out div span enforce-styling-methods static-stylex valid-polymorphic-as no-restyle no-raw-stylex-colors no-unused-stylex-styles unused local styles opt-in atoms contracts StyleX configuration properties",
+      "Configure Oxlint rules for StyleX properties and component contracts. prefer-layout-primitives checks div, span, and other native tags. Use Box render for semantic boundaries. Choose Flex, Grid, Center, Stack, Text, and Heading for layout and typography. Native router links and registry Link have default exclusions. Configure enforce-styling-methods, static-stylex, valid-polymorphic-as, no-restyle, and no-raw-stylex-colors. Enable no-unused-stylex-styles to check unused local styles. The atoms rule is opt-in. Use file overrides to opt out.",
   },
   {
     title: "Theming",
     url: "/docs/theming",
     content:
-      "Customize colors fonts CSS variables StyleX tokens light dark system ThemeProvider ThemeScript useTheme getRootThemeProps nonce",
+      "Change colors, fonts, CSS variables, and StyleX tokens. Use ThemeProvider, ThemeScript, useTheme, and getRootThemeProps for light, dark, and system modes. Configure the script nonce when required.",
   },
   {
     title: "Introduction",
     url: "/",
     content:
-      "Source-owned React components with StyleX and Base UI. Initialize and install component source with the CLI.",
+      "Use source-owned React components with StyleX and Base UI. Initialize your project with the CLI. Install component source with the CLI.",
   },
   {
     title: "Getting started",
     url: "/docs/getting-started",
     content:
-      "React TypeScript StyleX components accessibility composition usage prerequisites CLI installation",
+      "Check React and TypeScript prerequisites. Install StyleX and components with the CLI. Learn component composition, usage, and accessibility requirements.",
   },
   {
     title: "Installation",
     url: "/docs/installation",
     content:
-      "CLI init dependencies StyleX Vite aliases tokens themes ThemeProvider CSS reset",
+      "Use CLI init to configure StyleX, dependencies, aliases, tokens, and CSS reset. Set up Vite or another supported framework. Add themes with ThemeProvider when required.",
   },
 ]

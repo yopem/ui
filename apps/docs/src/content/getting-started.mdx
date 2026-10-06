@@ -1,22 +1,24 @@
 ## What you need
 
-- A React application using TypeScript.
+- A React application that uses TypeScript.
 - React Router with Vite, TanStack Start, Next.js, or Astro.
 - Permission to add packages and files to the project.
 
-Yopem has no runtime component package. Initialize StyleX once, then install
+Yopem has no runtime component package. Initialize StyleX once. Then install
 component source with the CLI.
 
 <span id="setup" />
 
 ## 1. Set up StyleX
 
-Run `bunx @yopem-ui/cli init` from your project root. Init installs shared
-packages, source alias, tokens, global styles, and build configuration. See the
-[installation guide](/docs/installation) for supported frameworks.
+Run `bunx @yopem-ui/cli init` from your project root. The command installs
+shared packages, the source alias, tokens, global styles, and build
+configuration. See the [installation guide](/docs/installation) for supported
+frameworks.
 
-Continue only after your app completes a production build. StyleX is a
-build-time compiler, so installing its runtime package alone is not enough.
+Continue only after your app completes a production build. StyleX compiles
+styles during the build. Installation of its runtime package alone is not
+sufficient.
 
 <span id="install-button" />
 
@@ -30,8 +32,8 @@ Button, required shared files, and dependencies. See the
 
 ## 3. Use Button
 
-Import Button from the local file installed by the CLI. Init maps `@/*` to
-`src/*`.
+Import Button from the local file that the CLI installed. The init command maps
+`@/*` to `src/*`.
 
 **src/components/save-button.tsx**
 
@@ -43,16 +45,16 @@ export function SaveButton() {
 }
 ```
 
-Render SaveButton. Setup is working when it has padding, a border, a hover
-state, and a visible keyboard focus ring.
+Render SaveButton. Check that it has padding, a border, a hover state, and a
+visible keyboard focus ring.
 
 <span id="customize" />
 
 ## 4. Customize it
 
-Use variants for supported visual choices. Use xstyle for a local override,
-tokens for app-wide design changes, or edit the copied source when behavior
-should change.
+Use variants for supported visual changes. Use `xstyle` for a local style
+override. Use tokens for design changes throughout the app. Edit the copied
+source to change component behavior.
 
 **src/components/save-button.tsx**
 
@@ -67,12 +69,12 @@ export function SaveButton() {
 }
 ```
 
-Preserve accessible names, keyboard behavior, disabled states, and focus
-indicators when editing component source.
+Keep accessible names, keyboard behavior, disabled states, and focus indicators
+when you edit component source.
 
 ## Next steps
 
-- [**Add another component**](/components): Browse live previews and copy only
-  what your app needs.
+- [**Add another component**](/components): Examine live previews. Copy only the
+  components that your app needs.
 - [**Customize your theme**](/docs/theming): Change colors, fonts, radii, dark
   mode, or scoped themes.

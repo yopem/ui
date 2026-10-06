@@ -2,9 +2,9 @@
 [Enforce conventions](/docs/lint)
 
 Use `stylex.create` for styles. Pass a style to a copied component through
-`xstyle`; it composes after that component's defaults and variants. For native
-HTML or framework elements, spread `stylex.props(...)` instead. Do not pass CSS
-properties or styling aliases as JSX attributes.
+`xstyle`. The component applies this style after its defaults and variants. For
+native HTML or framework elements, spread `stylex.props(...)` instead. Do not
+pass CSS properties or styling aliases as JSX attributes.
 
 ```tsx
 import { Box } from "@/components/ui/box"
@@ -33,12 +33,11 @@ export function Card() {
 ```
 
 Create responsive rules, state selectors, and themes inside `stylex.create`. Use
-semantic tokens instead of literal colors. Pass an array to `xstyle` to compose
-styles; later entries override matching properties. `className` stays available
-for integration with external CSS, but this documentation app styles itself
-exclusively with StyleX.
+semantic tokens instead of literal colors. Pass an array to `xstyle` to combine
+styles. Later entries override matching properties. Use `className` for
+integration with external CSS. This documentation app uses only StyleX for
+styling.
 
-`Box` is the default container, with box sizing and minimum inline size already
-set. Use `render` for semantic native tags. Choose `Flex`, `Stack`, `Grid`, or
-`Center` for layouts with additional defaults. For text, prefer `Heading`,
-`Text`, or `Link`.
+`Box` is the default container. It sets box sizing and minimum inline size. Use
+`render` for semantic native tags. Choose `Flex`, `Stack`, `Grid`, or `Center`
+for layouts with additional defaults. Use `Heading`, `Text`, or `Link` for text.

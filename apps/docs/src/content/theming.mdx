@@ -1,15 +1,15 @@
 ## How theming works
 
-Yopem components read semantic values such as primary, background, foreground,
-font, and radius from `src/styles/tokens.stylex.ts`. Change that file once to
-update every component.
+Yopem components read semantic values from `src/styles/tokens.stylex.ts`. These
+values include primary, background, foreground, font, and radius. Change that
+file to update every component.
 
 <span id="tokens" />
 
 ## Change the whole app
 
-Complete [Installation](/docs/installation) first. Then open the copied token
-file and replace the values you want. Keep all other existing values.
+Complete [Installation](/docs/installation) first. Open the copied token file.
+Replace the required values. Keep all other existing values.
 
 ```tsx
 // Find these keys in src/styles/tokens.stylex.ts.
@@ -31,15 +31,15 @@ export const darkValues = {
 }
 ```
 
-Change background and foreground pairs together so text remains readable. Font
-tokens select a font family but do not download its files. Run a production
-build after editing tokens.
+Change background and foreground pairs together to keep text readable. Font
+tokens select a font family. They do not download font files. Run a production
+build after you edit tokens.
 
 <span id="xstyle" />
 
 ## Component overrides
 
-Use xstyle when one component should look different. Yopem applies it after
+Use `xstyle` to change the appearance of one component. Yopem applies it after
 default styles and variants.
 
 ```tsx
@@ -55,23 +55,23 @@ export function SaveButton() {
 }
 ```
 
-Use stylex.props for native HTML elements. Use xstyle for Yopem components.
-Preserve focus, hover, and disabled styles when overriding those states.
+Use `stylex.props` for native HTML elements. Use `xstyle` for Yopem components.
+Keep focus, hover, and disabled styles when you override those states.
 
 <span id="dark-mode" />
 
 ## Add dark mode
 
-Skip this section if your app has one fixed theme. A static light or dark theme
-needs no provider and no client script.
+If your app has one fixed theme, do not add theme switching. A static light or
+dark theme does not need a provider or client script.
 
-For user-selectable light, dark, and system modes, copy these two files:
+To let users select light, dark, and system modes, copy these two files:
 
 <ThemeFiles />
 
-Add the script before hydration and wrap your app with the provider. This
-example keeps TanStack Start head and script components in place. Adapt only
-those framework-specific imports for another SSR framework.
+Add the script before hydration. Wrap your app with the provider. This example
+keeps the TanStack Start head and script components. For another SSR framework,
+change only those framework-specific imports.
 
 ```tsx
 import "@/styles/styles.css"
@@ -104,8 +104,8 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 }
 ```
 
-Add any control that calls useTheme. Use your existing Select or Segmented
-Control component in a real interface.
+Add a control that calls `useTheme`. Use your existing Select or Segmented
+Control component in the interface.
 
 ```tsx
 "use client"
@@ -135,6 +135,6 @@ export function ThemePicker() {
 }
 ```
 
-ThemeScript and ThemeProvider must use matching defaults. If your Content
-Security Policy blocks inline scripts, pass the same per-request nonce allowed
-by your CSP to ThemeScript.
+ThemeScript and ThemeProvider must use the same defaults. If your Content
+Security Policy blocks inline scripts, pass its permitted per-request nonce to
+ThemeScript.
