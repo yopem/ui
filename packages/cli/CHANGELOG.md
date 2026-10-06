@@ -1,5 +1,23 @@
 # @yopem-ui/cli
 
+## 0.1.3
+
+### Patch Changes
+
+- [`feea63c`](https://github.com/yopem/ui/commit/feea63c423ee976cd75a8f3eac98f3a30f90ed27)
+  Thanks [@karyanayandi](https://github.com/karyanayandi)! - chore: update
+  README docs
+
+- [`6ca39eb`](https://github.com/yopem/ui/commit/6ca39eb907044aaa9ce5f975ee282f97bd099513)
+  Thanks [@karyanayandi](https://github.com/karyanayandi)! - refactor(cli):
+  remove valid-polymorphic-as lint rule
+
+  - Remove the "yopem-ui/valid-polymorphic-as" lint rule from lintRules.
+  - Update related test cases to reflect the removal of the rule.
+  - Replace instances of "valid-polymorphic-as" with alternative checks or
+    remove them where no longer needed.
+  - Adjust example code to align with the updated linting rules.
+
 ## 0.1.2
 
 ### Patch Changes
