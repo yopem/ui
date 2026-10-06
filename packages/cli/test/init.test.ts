@@ -249,7 +249,6 @@ for (const fixture of [
           "yopem-ui/no-raw-stylex-colors": "off",
           "yopem-ui/prefer-layout-primitives": "off",
           "yopem-ui/static-stylex": "off",
-          "yopem-ui/valid-polymorphic-as": "off",
         },
       })
       const config = readFileSync(join(root, fixture.config), "utf8")
@@ -290,10 +289,10 @@ for (const fixture of [
         put(
           "src/check.tsx",
           `import * as sx from "@stylexjs/stylex";
-import { Box, Button } from "@/components/ui/layout";
+import { Button } from "@/components/ui/button";
 const key = "bad";
 const styles = sx.create({ button: { backgroundColor: "#fff" }, [key]: {} });
-export const view = <div><Button css={{ color: "red" }} xstyle={styles.button} /><Box as="fake-tag" /></div>;`,
+export const view = <div><Button css={{ color: "red" }} xstyle={styles.button} /></div>;`,
         )
         put(
           "src/components/ui/internal.tsx",
@@ -315,7 +314,6 @@ export const view = <div><Button css={{ color: "red" }} xstyle={styles.button} /
           "no-raw-stylex-colors",
           "prefer-layout-primitives",
           "static-stylex",
-          "valid-polymorphic-as",
         ]) {
           expect(result.stdout).toContain(`yopem-ui(${rule})`)
         }

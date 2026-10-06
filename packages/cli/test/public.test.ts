@@ -376,7 +376,7 @@ test("packed CLI installs from local registry, builds Vite and runs published li
     await run(logs, project, "bun", "run", "lint")
     writeFileSync(
       join(project, "src/invalid.tsx"),
-      'import { Box } from "@/components/ui/box"\nexport const Invalid = <Box as="fake-tag" />',
+      'import { Box } from "@/components/ui/box"\nexport const Invalid = <Box style={{ padding: 4 }} />',
     )
 
     const invalid = spawnSync("bun", ["run", "lint"], {
@@ -387,7 +387,7 @@ test("packed CLI installs from local registry, builds Vite and runs published li
     logs.push(`invalid lint\n${invalid.stdout}${invalid.stderr}`)
     expect(invalid.status).toBe(1)
     expect(`${invalid.stdout}${invalid.stderr}`).toContain(
-      "yopem-ui(valid-polymorphic-as)",
+      "yopem-ui(enforce-styling-methods)",
     )
     writeFileSync(
       join(project, "src/invalid.tsx"),

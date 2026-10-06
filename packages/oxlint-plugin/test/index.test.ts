@@ -1,4 +1,4 @@
-import { recommendedRules } from "@yopem-ui/oxlint-plugin"
+import uiPlugin, { recommendedRules } from "@yopem-ui/oxlint-plugin"
 import { afterAll, expect, test } from "bun:test"
 import { mkdirSync, rmSync, writeFileSync } from "node:fs"
 import { resolve } from "node:path"
@@ -104,25 +104,22 @@ const view = <><Action className="custom" /><UI.Button className="custom" /><but
   expect(result.output).not.toContain("native")
 })
 
-test("polymorphic as validates Box tags and Heading levels", () => {
-  const valid = lint(
-    `import { Box as Layout, Heading } from "@/components/ui/layout";
-const view = <><Layout as="main" /><Heading as="h2" /><button as="unknown" /></>;`,
-    { "yopem-ui/valid-polymorphic-as": "error" },
-  )
-
-  expect(valid.status).toBe(0)
-
-  const invalid = lint(
-    `import * as UI from "@/components/ui/layout";
-const tag = "main";
-const view = <><UI.Box as="fake-tag" /><UI.Box as={tag} /><UI.Heading as="main" /><UI.Heading as={tag} /></>;`,
-    { "yopem-ui/valid-polymorphic-as": "error" },
-  )
-
-  expect(invalid.status).toBe(1)
-  expect(invalid.output.match(/Box as must be/g)).toHaveLength(2)
-  expect(invalid.output.match(/Heading as must be/g)).toHaveLength(2)
+test("plugin exposes supported rules and recommended defaults", () => {
+  expect(Object.keys(uiPlugin.rules).sort()).toEqual([
+    "atoms",
+    "enforce-styling-methods",
+    "no-raw-stylex-colors",
+    "no-restyle",
+    "no-unused-stylex-styles",
+    "prefer-layout-primitives",
+    "static-stylex",
+  ])
+  expect(recommendedRules).toEqual({
+    "yopem-ui/enforce-styling-methods": "error",
+    "yopem-ui/no-restyle": "error",
+    "yopem-ui/prefer-layout-primitives": "error",
+    "yopem-ui/static-stylex": "error",
+  })
 })
 
 test("static StyleX accepts fixed keys and rejects dynamic shapes", () => {
@@ -147,16 +144,6 @@ const two = sx.create({ [key]: { color: "red" }, root: { [key]: "red", ...values
   expect(
     invalid.output.match(/must use static object shapes and keys/g),
   ).toHaveLength(4)
-})
-
-test("Box as accepts native SVG elements", () => {
-  const result = lint(
-    `import { Box } from "@/components/ui/box";
-const view = <><Box as="svg" /><Box as="circle" /><Box as="linearGradient" /><Box as="param" /><Box as="webview" /></>;`,
-    { "yopem-ui/valid-polymorphic-as": "error" },
-  )
-
-  expect(result.status).toBe(0)
 })
 
 const policy = [
@@ -425,7 +412,7 @@ test("native boundaries, framework links, aliases, namespaces, and polymorphic p
     `import { Box as Layout } from "@/components/ui/box";
 import * as UI from "@/components/ui/heading";
 import { Link } from "@tanstack/react-router";
-const view = <><Layout as="section" /><UI.Heading as="h1" /><Link to="/" /><a href="/" /><button /><input /><form /><label /><table><tbody><tr><td /></tr></tbody></table><code /><strong /><br /><img /><svg><text /><g /></svg><custom-widget /><Section /><foreignObject><div /></foreignObject></>;`,
+const view = <><Layout render={<section />} /><UI.Heading render={<h1 />} /><Link to="/" /><a href="/" /><button /><input /><form /><label /><table><tbody><tr><td /></tr></tbody></table><code /><strong /><br /><img /><svg><text /><g /></svg><custom-widget /><Section /><foreignObject><div /></foreignObject></>;`,
     { "yopem-ui/prefer-layout-primitives": "error" },
   )
 

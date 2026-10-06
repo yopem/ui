@@ -5,6 +5,21 @@ This plugin provides Oxlint rules for Yopem UI projects. Run
 published entry point uses JavaScript. Oxlint can load it through Node from
 `node_modules`.
 
+## Rules
+
+| Rule                       | Default     | Purpose                                                                              |
+| -------------------------- | ----------- | ------------------------------------------------------------------------------------ |
+| `prefer-layout-primitives` | Recommended | Use layout and typography components while preserving native semantics.              |
+| `no-restyle`               | Recommended | Limit `xstyle` properties on imported UI components. Use `variant` and `size` first. |
+| `enforce-styling-methods`  | Recommended | Permit `xstyle` and `className`. Reject other component styling methods by default.  |
+| `static-stylex`            | Recommended | Require static object shapes and keys in `stylex.create`.                            |
+| `no-raw-stylex-colors`     | CLI init    | Use design tokens instead of literal hex colors and CSS color functions.             |
+| `no-unused-stylex-styles`  | Off         | Report unused keys in local StyleX declarations.                                     |
+| `atoms`                    | Off         | Permit, reject, or require StyleX atoms.                                             |
+
+See [rule examples and configuration](https://ui.yopem.com/docs/lint) for
+accepted and rejected code for every rule.
+
 ## Design-system-first (recommended)
 
 The `yopem-ui/prefer-layout-primitives` rule checks native layout and text

@@ -701,18 +701,6 @@ const stylingRuleSchema = [
   },
 ]
 
-const HTML_ELEMENTS = new Set(
-  "a abbr address area article aside audio b base bdi bdo big blockquote body br button canvas caption center cite code col colgroup data datalist dd del details dfn dialog div dl dt em embed fieldset figcaption figure footer form h1 h2 h3 h4 h5 h6 head header hgroup hr html i iframe img input ins kbd keygen label legend li link main map mark menu menuitem meta meter nav noindex noscript object ol optgroup option output p param picture pre progress q rp rt ruby s samp search section select slot small source span strong style sub summary sup table tbody td template textarea tfoot th thead time title tr track u ul var video wbr webview script".split(
-    " ",
-  ),
-)
-
-const SVG_ELEMENTS = new Set(
-  "svg animate animateMotion animateTransform circle clipPath defs desc ellipse feBlend feColorMatrix feComponentTransfer feComposite feConvolveMatrix feDiffuseLighting feDisplacementMap feDistantLight feDropShadow feFlood feFuncA feFuncB feFuncG feFuncR feGaussianBlur feImage feMerge feMergeNode feMorphology feOffset fePointLight feSpecularLighting feSpotLight feTile feTurbulence filter foreignObject g image line linearGradient marker mask metadata mpath path pattern polygon polyline radialGradient rect set stop switch symbol text textPath tspan use view".split(
-    " ",
-  ),
-)
-
 const policySchema = {
   additionalProperties: false,
   properties: {
@@ -1134,68 +1122,6 @@ const enforceStylingMethodsRule: Rule = {
   },
 }
 
-const validPolymorphicAsRule: Rule = {
-  meta: {
-    type: "problem",
-    docs: {
-      description: "Require statically valid polymorphic as props.",
-    },
-    messages: {
-      invalidHeading: "Heading as must be one of h1, h2, h3, h4, h5, or h6.",
-      invalidIntrinsic: "{{component}} as must be a native JSX element string.",
-    },
-    schema: stylingRuleSchema,
-  },
-  create(context: RuleContext) {
-    const options = getStylingOptions(context)
-    const bindings = createImportBindings()
-
-    return {
-      ImportDeclaration(node: ImportDeclaration) {
-        trackImports(node, bindings, options)
-      },
-      JSXOpeningElement(node: JSXOpeningElement) {
-        const component = getComponent(
-          node.name,
-          node,
-          bindings,
-          context,
-          options,
-        )
-
-        if (component !== "Box" && component !== "Heading") return
-
-        const attribute = node.attributes.find(
-          (candidate) => getAttributeName(candidate) === "as",
-        )
-
-        if (attribute === undefined) return
-        const value = getProperty(attribute, "value")
-        const tag = getLiteralString(value)
-
-        if (component === "Heading") {
-          if (tag === null || !/^h[1-6]$/.test(tag)) {
-            context.report({ messageId: "invalidHeading", node: attribute })
-          }
-
-          return
-        }
-
-        if (
-          tag === null ||
-          (!HTML_ELEMENTS.has(tag) && !SVG_ELEMENTS.has(tag))
-        ) {
-          context.report({
-            data: { component },
-            messageId: "invalidIntrinsic",
-            node: attribute,
-          })
-        }
-      },
-    }
-  },
-}
-
 const staticStylexRule: Rule = {
   meta: {
     type: "problem",
@@ -1397,7 +1323,6 @@ export const recommendedRules = {
   "yopem-ui/no-restyle": "error",
   "yopem-ui/prefer-layout-primitives": "error",
   "yopem-ui/static-stylex": "error",
-  "yopem-ui/valid-polymorphic-as": "error",
 } as const
 
 const plugin: Plugin = {
@@ -1413,7 +1338,6 @@ const plugin: Plugin = {
     "prefer-layout-primitives": preferLayoutPrimitivesRule,
     "enforce-styling-methods": enforceStylingMethodsRule,
     "static-stylex": staticStylexRule,
-    "valid-polymorphic-as": validPolymorphicAsRule,
   },
 }
 

@@ -1402,7 +1402,6 @@ const lintRules = {
   "yopem-ui/no-raw-stylex-colors": "error",
   "yopem-ui/prefer-layout-primitives": "error",
   "yopem-ui/static-stylex": "error",
-  "yopem-ui/valid-polymorphic-as": "error",
 }
 
 function lintConfig(content: string, shared?: SharedUI) {
@@ -1441,7 +1440,6 @@ function lintConfig(content: string, shared?: SharedUI) {
     for (const name of [
       "yopem-ui/enforce-styling-methods",
       "yopem-ui/no-restyle",
-      "yopem-ui/valid-polymorphic-as",
     ]) {
       const setting = configuredRules[name] ?? "error"
       const level = Array.isArray(setting) ? (setting[0] ?? "error") : setting
