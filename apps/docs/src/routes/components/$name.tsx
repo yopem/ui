@@ -132,8 +132,8 @@ export const Route = createFileRoute("/components/$name")({
 
 const toc = [
   { title: "Overview", url: "#overview", depth: 2 },
-  { title: "Installation", url: "#installation", depth: 2 },
   { title: "Preview", url: "#preview", depth: 2 },
+  { title: "Installation", url: "#installation", depth: 2 },
   { title: "Usage", url: "#usage", depth: 2 },
   { title: "API reference", url: "#api-reference", depth: 2 },
 ]
@@ -161,6 +161,14 @@ function ComponentPage() {
             Styles use local StyleX declarations and shared theme tokens. You
             can change the source without a wrapper or replacement package.
           </Text>
+          <Heading render={<h2>Preview</h2>} xstyle={styles.h23} id="preview" />
+          {item.preview && data.previewSource ? (
+            <PreviewPanel preview={item.preview} source={data.previewSource} />
+          ) : (
+            <Text xstyle={styles.paragraph6}>
+              Use the composition in Usage below to start with {item.title}.
+            </Text>
+          )}
           <Heading
             render={<h2>Installation</h2>}
             xstyle={styles.h22}
@@ -196,14 +204,6 @@ function ComponentPage() {
             title={`Update ${item.title} with CLI`}
           />
 
-          <Heading render={<h2>Preview</h2>} xstyle={styles.h23} id="preview" />
-          {item.preview && data.previewSource ? (
-            <PreviewPanel preview={item.preview} source={data.previewSource} />
-          ) : (
-            <Text xstyle={styles.paragraph6}>
-              Use the composition in Usage below to start with {item.title}.
-            </Text>
-          )}
           <Heading render={<h2>Usage</h2>} xstyle={styles.h24} id="usage" />
           {data.notes.map((note) => (
             <Text xstyle={styles.paragraph7} key={note}>

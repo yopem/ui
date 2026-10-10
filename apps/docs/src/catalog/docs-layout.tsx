@@ -14,7 +14,7 @@ import { Link as UiLink } from "@registry/components/ui/link"
 import { useEventCallback } from "@registry/hooks/use-event-callback"
 import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
-import { Link } from "@tanstack/react-router"
+import { Link, useHydrated } from "@tanstack/react-router"
 import { MenuIcon } from "lucide-react"
 import { useState } from "react"
 
@@ -76,6 +76,7 @@ const primitiveStyles = stylex.create({
     maxInlineSize: "100rem",
     marginInline: "auto",
   },
+  fullWidth: { gridTemplateColumns: "minmax(0, 1fr)" },
   aside: {
     display: { default: "flex", "@media (max-width: 767.98px)": "none" },
     flexDirection: "column",
@@ -86,7 +87,14 @@ const primitiveStyles = stylex.create({
   main: { minInlineSize: "calc(var(--spacing) * 0)", outline: "none" },
 })
 
-export function DocumentationLayout({ children }: { children: ReactNode }) {
+export function DocumentationLayout({
+  children,
+  navigation = true,
+}: {
+  children: ReactNode
+  navigation?: boolean
+}) {
+  const hydrated = useHydrated()
   const [mobileOpen, setMobileOpen] = useState(false)
 
   const handleNavigate = useEventCallback(function () {
@@ -106,6 +114,7 @@ export function DocumentationLayout({ children }: { children: ReactNode }) {
                 variant="ghost"
                 size="icon"
                 aria-label="Open navigation"
+                disabled={!hydrated}
                 xstyle={primitiveStyles.openNavigation}
               />
             }
@@ -121,7 +130,6 @@ export function DocumentationLayout({ children }: { children: ReactNode }) {
               Browse guides, components, and previews.
             </DialogDescription>
             <DocsNavigation onNavigate={handleNavigate} />
-            <ThemeToggle />
           </DialogPopup>
         </Dialog>
         <Link to="/" {...stylex.props(styles.brand)}>
@@ -129,12 +137,19 @@ export function DocumentationLayout({ children }: { children: ReactNode }) {
           UI
         </Link>
         <GlobalSearch />
+        <ThemeToggle />
       </Box>
-      <Grid xstyle={primitiveStyles.grid}>
-        <Box render={<aside />} xstyle={primitiveStyles.aside}>
-          <DocsNavigation />
-          <ThemeToggle />
-        </Box>
+      <Grid
+        xstyle={[
+          primitiveStyles.grid,
+          !navigation && primitiveStyles.fullWidth,
+        ]}
+      >
+        {navigation ? (
+          <Box render={<aside />} xstyle={primitiveStyles.aside}>
+            <DocsNavigation />
+          </Box>
+        ) : null}
         <Box
           render={<main />}
           id="docs-content"

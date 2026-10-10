@@ -121,6 +121,10 @@ function GuideCode({ children }: { children?: ReactNode }) {
     if (isString(code)) return <CopyableCode code={code} language={language} />
   }
 
+  return <PlainGuideCode>{children}</PlainGuideCode>
+}
+
+export function PlainGuideCode({ children }: { children?: ReactNode }) {
   return (
     <Box render={<pre />} xstyle={styles.pre}>
       {children}
@@ -171,16 +175,10 @@ const guideComponents: MDXComponents = {
   pre: GuideCode,
 }
 
-export function GuidePage({
-  title,
-  description,
-  source,
+export function GuideContent({
   Content,
   components,
 }: {
-  title: string
-  description: string
-  source: string
   Content: (props: { components?: MDXComponents }) => ReactNode
   components?: MDXComponents
 }) {
@@ -196,13 +194,29 @@ export function GuidePage({
     })
   }
 
+  return <Content components={configuration.value} />
+}
+
+export function GuidePage({
+  title,
+  description,
+  source,
+  Content,
+  components,
+}: {
+  title: string
+  description: string
+  source: string
+  Content: (props: { components?: MDXComponents }) => ReactNode
+  components?: MDXComponents
+}) {
   return (
     <DocumentationLayout>
       <DocsPage toc={guideToc(source)}>
         <DocsTitle>{title}</DocsTitle>
         <DocsDescription>{description}</DocsDescription>
         <DocsBody>
-          <Content components={configuration.value} />
+          <GuideContent Content={Content} components={components} />
         </DocsBody>
       </DocsPage>
     </DocumentationLayout>

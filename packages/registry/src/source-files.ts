@@ -1,5 +1,3 @@
-import { resolve } from "node:path"
-
 /** Import aliases used in the copyable source files served by the registry. */
 export const sourceImportReplacements = [
   ["@registry/components/ui/", "@/components/ui/"],
@@ -8,10 +6,6 @@ export const sourceImportReplacements = [
   ["@registry/styles/", "@/styles/"],
   ["@registry/theme/", "@/theme/"],
 ] as const
-
-export function sourceFilePath(path: string) {
-  return resolve(import.meta.dirname, path)
-}
 
 export function rewriteImports(content: string) {
   return sourceImportReplacements.reduce(

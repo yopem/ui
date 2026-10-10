@@ -11,7 +11,7 @@ import { useLayoutEffect, useState } from "react"
 
 const styles = stylex.create({
   onThisPage: {
-    display: { default: "none", "@media (min-width: 1536px)": "block" },
+    display: { default: "none", "@media (min-width: 1280px)": "block" },
     position: "sticky",
     insetBlockStart: "6rem",
     alignSelf: "start",
@@ -20,6 +20,23 @@ const styles = stylex.create({
     overscrollBehavior: "contain",
     fontSize: "0.8125rem",
   },
+  compact: {
+    display: { default: "block", "@media (min-width: 1280px)": "none" },
+    backgroundColor: tokens["--muted"],
+    borderRadius: tokens["--radius-lg"],
+    fontSize: "0.8125rem",
+    marginBlockEnd: "2rem",
+    padding: "0.875rem 1rem",
+  },
+  summary: {
+    cursor: "pointer",
+    fontWeight: 600,
+    ":focus-visible": {
+      outline: `2px solid ${tokens["--ring"]}`,
+      outlineOffset: 4,
+    },
+  },
+  compactNavigation: { paddingBlockStart: "1rem" },
   paragraph: { fontWeight: 600, marginBlock: "0 1rem" },
   ul: {
     listStyleType: "none",
@@ -112,10 +129,72 @@ function listenForActiveSection(
   }
 }
 
-export function TableOfContents({ items }: { items: TocItem[] }) {
+export function TableOfContents({
+  items,
+  compact = false,
+}: {
+  items: TocItem[]
+  compact?: boolean
+}) {
   const [activeUrl, setActiveUrl] = useState<string>()
 
-  useLayoutEffect(() => listenForActiveSection(items, setActiveUrl), [items])
+  useLayoutEffect(
+    () => (compact ? undefined : listenForActiveSection(items, setActiveUrl)),
+    [items, compact],
+  )
+
+  const navigation = (
+    <Box
+      render={<nav />}
+      aria-label="On this page"
+      xstyle={compact && styles.compactNavigation}
+    >
+      {!compact ? <Text xstyle={styles.paragraph}>On this page</Text> : null}
+      <Box render={<ul />} xstyle={styles.ul}>
+        {items.map((item) => (
+          <Box render={<li />} key={item.url}>
+            <Link
+              aria-current={activeUrl === item.url ? "location" : undefined}
+              href={item.url}
+              xstyle={styles.link}
+            >
+              {activeUrl === item.url ? (
+                <Box render={<span />} xstyle={styles.span}>
+                  <Box
+                    render={<span />}
+                    aria-hidden="true"
+                    xstyle={styles.span2}
+                  />
+                  {item.depth > 2 ? (
+                    <Box render={<span />} xstyle={styles.span3}>
+                      {item.title}
+                    </Box>
+                  ) : (
+                    item.title
+                  )}
+                </Box>
+              ) : item.depth > 2 ? (
+                <Box render={<span />} xstyle={styles.span4}>
+                  {item.title}
+                </Box>
+              ) : (
+                item.title
+              )}
+            </Link>
+          </Box>
+        ))}
+      </Box>
+    </Box>
+  )
+
+  if (compact) {
+    return (
+      <Box render={<details />} xstyle={styles.compact}>
+        <Box render={<summary>On this page</summary>} xstyle={styles.summary} />
+        {navigation}
+      </Box>
+    )
+  }
 
   return (
     <Box
@@ -123,43 +202,7 @@ export function TableOfContents({ items }: { items: TocItem[] }) {
       aria-label="On this page"
       xstyle={styles.onThisPage}
     >
-      <Box render={<nav />} aria-label="On this page">
-        <Text xstyle={styles.paragraph}>On this page</Text>
-        <Box render={<ul />} xstyle={styles.ul}>
-          {items.map((item) => (
-            <Box render={<li />} key={item.url}>
-              <Link
-                aria-current={activeUrl === item.url ? "location" : undefined}
-                href={item.url}
-                xstyle={styles.link}
-              >
-                {activeUrl === item.url ? (
-                  <Box render={<span />} xstyle={styles.span}>
-                    <Box
-                      render={<span />}
-                      aria-hidden="true"
-                      xstyle={styles.span2}
-                    />
-                    {item.depth > 2 ? (
-                      <Box render={<span />} xstyle={styles.span3}>
-                        {item.title}
-                      </Box>
-                    ) : (
-                      item.title
-                    )}
-                  </Box>
-                ) : item.depth > 2 ? (
-                  <Box render={<span />} xstyle={styles.span4}>
-                    {item.title}
-                  </Box>
-                ) : (
-                  item.title
-                )}
-              </Link>
-            </Box>
-          ))}
-        </Box>
-      </Box>
+      {navigation}
     </Box>
   )
 }

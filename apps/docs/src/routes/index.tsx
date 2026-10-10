@@ -1,8 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router"
 
-import { GuidePage } from "@/catalog/guide-content"
-import IntroductionContent from "@/content/introduction.mdx"
-import introductionSource from "@/content/introduction.mdx?raw"
+import { Introduction } from "@/catalog/introduction"
 import { createSeo } from "@/lib/seo"
 
 const description =
@@ -17,14 +15,3 @@ export const Route = createFileRoute("/")({
     }),
   component: Introduction,
 })
-
-function Introduction() {
-  return (
-    <GuidePage
-      title="React components you copy, own, and change."
-      description="Yopem UI provides accessible React component source with Base UI and StyleX. Copy only the components that you need. Your app uses copied source, not a Yopem component package."
-      source={introductionSource}
-      Content={IntroductionContent}
-    />
-  )
-}

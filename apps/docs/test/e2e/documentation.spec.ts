@@ -139,14 +139,16 @@ test("sidebar links to llms.txt", async ({ page }) => {
 
 test("documentation navigation has no separator borders", async ({ page }) => {
   test.skip((page.viewportSize()?.width ?? 0) < 768, "Desktop sidebar only")
-  await page.goto("/")
+  await page.goto("/docs/getting-started")
   await expect(page.getByRole("banner")).toHaveCSS("border-bottom-width", "0px")
   await expect(page.getByRole("complementary").first()).toHaveCSS(
     "border-inline-end-width",
     "0px",
   )
   await expect(
-    page.getByRole("group", { name: "Appearance" }).last(),
+    page.getByRole("banner").getByRole("button", {
+      name: /^Switch to (dark|light) theme$/,
+    }),
   ).toHaveCSS("border-top-width", "0px")
 })
 
@@ -474,24 +476,37 @@ test("search supports keyboard opening, empty results, errors, and focus restora
   ).toBeVisible()
 })
 
-test("mobile navigation changes theme and restores trigger focus", async ({
+test("mobile header changes theme and navigation restores trigger focus", async ({
   page,
 }) => {
   test.setTimeout(45_000)
   await page.setViewportSize({ width: 390, height: 844 })
+  await page.emulateMedia({ colorScheme: "light" })
   await page.goto("/components/button")
   await expect(
     page.getByRole("button", { name: "Copy Button usage", exact: true }),
   ).toBeEnabled({ timeout: 25_000 })
+  const header = page.getByRole("banner")
+  await header
+    .getByRole("button", { name: "Switch to dark theme", exact: true })
+    .click()
+  await expect(page.locator("html")).toHaveAttribute("data-theme", "dark")
+  await expect(
+    header.getByRole("button", { name: "Switch to light theme", exact: true }),
+  ).toBeVisible()
+  expect(
+    await page.evaluate(() => localStorage.getItem("yopem-ui-theme")),
+  ).toBe("dark")
   const trigger = page.getByRole("button", { name: "Open navigation" })
   await trigger.click()
   const dialog = page.getByRole("dialog", { name: "Documentation" })
   await expect(dialog).toBeVisible()
-  await dialog.getByRole("button", { name: "Dark" }).click()
-  await expect(page.locator("html")).toHaveAttribute("data-theme", "dark")
-  expect(
-    await page.evaluate(() => localStorage.getItem("yopem-ui-theme")),
-  ).toBe("dark")
+  await expect(
+    dialog.getByRole("button", {
+      name: /^(Switch to (dark|light) theme|Light|Dark|Auto)$/,
+      includeHidden: true,
+    }),
+  ).toHaveCount(0)
   await page.keyboard.press("Escape")
   await expect(dialog).toBeHidden()
   await expect(trigger).toBeFocused()

@@ -30,15 +30,15 @@ const styles = stylex.create({
     display: "grid",
     gridTemplateColumns: {
       default: "minmax(0, 1fr)",
-      "@media (min-width: 1536px)": "minmax(0, 48rem) 11rem",
+      "@media (min-width: 1280px)": "minmax(0, 48rem) 10rem",
     },
-    gap: "4rem",
+    gap: "2.5rem",
     maxInlineSize: "72rem",
     marginInline: "auto",
     paddingBlock: { default: "3.5rem", "@media (max-width: 479.98px)": "2rem" },
     paddingInline: {
       default: "2.5rem",
-      "@media (max-width: 479.98px)": "1.25rem",
+      "@media (max-width: 767.98px)": "1.25rem",
     },
     minInlineSize: "calc(var(--spacing) * 0)",
   },
@@ -99,6 +99,7 @@ export function DocsPage({
   return (
     <Grid xstyle={styles.grid2}>
       <Box render={<article />} xstyle={styles.article2}>
+        {toc.length > 0 ? <TableOfContents items={toc} compact /> : null}
         {children}
       </Box>
       {toc.length > 0 ? <TableOfContents items={toc} /> : null}
