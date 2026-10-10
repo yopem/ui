@@ -22,6 +22,7 @@ export default defineConfig({
       specifier: "./packages/oxlint-plugin/src/index.ts",
     },
   ],
+  options: baseConfig.options,
   rules: {
     "react-doctor/jsx-props-no-spreading": "off",
   },
