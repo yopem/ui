@@ -31,7 +31,8 @@ To initialize a workspace app, run \`bunx @yopem-ui/cli init --cwd apps/web\`.
 Then run \`bunx @yopem-ui/cli add button --cwd apps/web\`.
 
 To share UI source, run \`bunx @yopem-ui/cli init --cwd apps/web --ui ../../packages/ui\`.
-Then run \`bunx @yopem-ui/cli add button --cwd packages/ui\` or \`bunx @yopem-ui/cli update button --cwd packages/ui\`.
+Then run \`bunx @yopem-ui/cli add button --cwd packages/ui\`.
+See the [CLI guide](${url("/docs/cli.md")}) for update commands.
 The UI package must be an existing named React package in the same workspace.
 The --ui path is relative to the target app.
 Run init --ui for each consuming app.
@@ -84,7 +85,7 @@ export function createComponentText(
     })
     .join("\n\n")
 
-  return `# ${title}\n\n${data.description}\n\n## Installation\n\nRun \`bunx @yopem-ui/cli init\` in a supported project.\nThen run \`bunx @yopem-ui/cli add <component>\`.\nTo update a component, run \`bunx @yopem-ui/cli update <component>\`.\nThe init command configures StyleX.\nThe add command installs required source files and dependencies.\n\n## Preview\n\n${preview}\n\n## Usage\n\n${data.notes.join("\n\n")}\n\n\`\`\`tsx\n${data.usage.trim()}\n\`\`\`\n\n## API reference\n\n${api}\n`
+  return `# ${title}\n\n${data.description}\n\n## Installation\n\nRun \`bunx @yopem-ui/cli init\` in a supported project.\nThen run \`bunx @yopem-ui/cli add <component>\`.\nThe init command configures StyleX.\nThe add command installs required source files and dependencies.\n\n## Preview\n\n${preview}\n\n## Usage\n\n${data.notes.join("\n\n")}\n\n\`\`\`tsx\n${data.usage.trim()}\n\`\`\`\n\n## API reference\n\n${api}\n`
 }
 
 export function createGuideText(page: { content: string; title: string }) {

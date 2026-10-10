@@ -7,6 +7,7 @@ import { nitro } from "nitro/vite"
 import { readdirSync } from "node:fs"
 import { createRequire } from "node:module"
 import { resolve } from "node:path"
+import remarkGfm from "remark-gfm"
 import { defineConfig } from "vite"
 
 const root = resolve(import.meta.dirname, "../..")
@@ -60,7 +61,7 @@ function isPostcssPlugin(value: unknown): value is { postcssPlugin: string } {
 if (!isPostcssPlugin(stylexPostcssPlugin))
   throw new Error("Invalid StyleX PostCSS plugin")
 
-const mdxPlugin = mdx()
+const mdxPlugin = mdx({ remarkPlugins: [remarkGfm] })
 
 const transformMdx = mdxPlugin.transform
 

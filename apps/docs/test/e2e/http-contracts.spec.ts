@@ -27,7 +27,7 @@ test("machine-readable documentation endpoints expose correct formats", async ({
   expect(llms).not.toContain("localhost")
   expect(llms).toContain("init --cwd apps/web --ui ../../packages/ui")
   expect(llms).toContain("add button --cwd packages/ui")
-  expect(llms).toContain("update button --cwd packages/ui")
+  expect(llms).toContain("https://ui.yopem.com/docs/cli.md")
   expect(llms).toContain("relative to the target app")
 
   const guide = await (await request.get("/docs/installation.md")).text()
@@ -97,6 +97,8 @@ test("generated documentation publishes reviewed source text", async ({
 test("all component examples use consumer import paths", async ({
   request,
 }, testInfo) => {
+  test.setTimeout(120_000)
+
   const paths = readdirSync(
     new URL("../../src/catalog/previews/", import.meta.url),
   )
@@ -109,6 +111,10 @@ test("all component examples use consumer import paths", async ({
     const response = await request.get(`${path}.md`)
     expect(response.status(), path).toBe(200)
     const source = await response.text()
+    expect(source, path).not.toContain("bunx @yopem-ui/cli update")
+    const html = await request.get(path)
+    expect(html.status(), path).toBe(200)
+    expect(await html.text(), path).not.toContain("bunx @yopem-ui/cli update")
     expect(source, path).not.toContain("@registry/components/")
     expect(source, path).toContain('from "@/components/ui/')
   }

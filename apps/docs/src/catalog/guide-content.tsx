@@ -4,6 +4,16 @@ import type { ComponentProps, ReactNode } from "react"
 import { Box } from "@registry/components/ui/box"
 import { Heading } from "@registry/components/ui/heading"
 import { Link } from "@registry/components/ui/link"
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableFooter,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@registry/components/ui/table"
 import { Text } from "@registry/components/ui/text"
 import { isString } from "@registry/lib/stylex"
 import { tokens } from "@registry/styles/tokens.stylex"
@@ -48,6 +58,11 @@ const styles = stylex.create({
     marginBlock: "1.5rem",
   },
   paragraph: { marginBlock: "1rem", lineHeight: 1.8 },
+  tableCell: {
+    whiteSpace: "normal",
+    lineHeight: 1.6,
+    verticalAlign: "top",
+  },
   link: {
     color: tokens["--foreground"],
     textDecoration: "underline",
@@ -173,6 +188,14 @@ const guideComponents: MDXComponents = {
     </Box>
   ),
   pre: GuideCode,
+  table: Table,
+  thead: TableHeader,
+  tbody: TableBody,
+  tfoot: TableFooter,
+  tr: TableRow,
+  th: TableHead,
+  td: (props) => <TableCell {...props} xstyle={styles.tableCell} />,
+  caption: TableCaption,
 }
 
 export function GuideContent({

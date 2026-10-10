@@ -1,0 +1,189 @@
+Copy component source into an existing React project. Use the CLI to configure
+StyleX, install components, and update copied files.
+
+## Prerequisites
+
+- Install Bun to run the CLI.
+- Use a React application with TypeScript.
+- Get permission to add packages and files.
+- Use Vite, TanStack Router, TanStack Start, React Router, Next.js App Router,
+  or Astro.
+
+Vite integrations use Rolldown Babel. Next.js App Router requires Node 24 or
+later and webpack. React Router supports client mode and framework mode. The
+init command does not support React Router RSC mode or Next.js Pages Router.
+
+The CLI and Oxlint plugin are not published yet. The `bunx` commands work after
+both packages are released.
+
+## init
+
+Run init from the project root:
+
+```sh
+bunx @yopem-ui/cli init
+bunx @yopem-ui/cli init --framework react-router
+```
+
+The command detects the framework. It installs base source, StyleX dependencies,
+and the Oxlint plugin. It configures aliases, build plugins, and root styles. It
+keeps existing project code. Unsupported configuration or conflicting settings
+stop the command. See [Installation](/docs/installation) for setup details.
+
+Use `--framework` when detection finds more than one supported framework.
+Accepted values are `vite`, `tanstack-router`, `tanstack-start`, `react-router`,
+`next`, and `astro`.
+
+## add
+
+Initialize the project before you add components. Pass one registry item name:
+
+```sh
+bunx @yopem-ui/cli add button
+```
+
+The command installs component source, required shared files, and dependencies.
+It records installed files and their hashes in `ui.json`.
+
+## update
+
+Review local changes before you update an installed item:
+
+```sh
+bunx @yopem-ui/cli update button --dry-run
+bunx @yopem-ui/cli update button
+```
+
+Use the base item to update installed shared files:
+
+```sh
+bunx @yopem-ui/cli update base
+```
+
+The update command rejects modified files unless you pass `--force`. Save local
+changes before you use force. Force can remove your changes:
+
+```sh
+bunx @yopem-ui/cli update button --dry-run --force
+bunx @yopem-ui/cli update button --force
+```
+
+## Help and version
+
+Run the CLI without arguments to show usage. Use `--help` or `-h` for the same
+result. Use `--version` or `-v` to show the installed CLI version:
+
+```sh
+bunx @yopem-ui/cli
+bunx @yopem-ui/cli --help
+bunx @yopem-ui/cli -h
+bunx @yopem-ui/cli --version
+bunx @yopem-ui/cli -v
+```
+
+These commands do not need a project. They exit successfully. Do not add
+arguments to help or version commands. Use flags, not `help` or `version`
+command names. Invalid commands or arguments exit with status 1.
+
+## Options
+
+| Option               | Commands                | Purpose                                                                     |
+| -------------------- | ----------------------- | --------------------------------------------------------------------------- |
+| `--framework <name>` | `init`                  | Select a supported framework.                                               |
+| `--ui <path>`        | `init`                  | Use an existing shared UI package. The path is relative to the target app.  |
+| `--cwd <path>`       | `init`, `add`, `update` | Set the target directory. The default is the current directory.             |
+| `--registry <URL>`   | `init`, `add`, `update` | Set the registry for this command. The default is `https://ui.yopem.com/r`. |
+| `--dry-run`          | `init`, `add`, `update` | Preview changes without writes or package-manager commands.                 |
+| `--force`            | `add`, `update`         | Permit source overwrites. Review the preview first.                         |
+| `--help`, `-h`       | Standalone              | Show usage.                                                                 |
+| `--version`, `-v`    | Standalone              | Show the installed version.                                                 |
+
+Only help and version have short flags. Pass option values as separate
+arguments. Do not repeat flags. The init command accepts no item name and
+rejects `--force`. The add and update commands require one item name. They
+reject `--framework` and `--ui`.
+
+## Safe overwrites
+
+The init and add commands keep local changes to installed source by default. The
+add command skips modified tracked files. The update command reports them as
+conflicts. Use `--force` with add or update only when you want to overwrite
+source.
+
+Force does not bypass registry validation. It does not permit init to overwrite
+conflicting build configuration. Review conflicting exports and build
+configuration manually.
+
+## Dry run
+
+Preview setup or installation before you change files:
+
+```sh
+bunx @yopem-ui/cli init --dry-run
+bunx @yopem-ui/cli add button --dry-run
+```
+
+Dry runs read the registry. They validate URLs, schemas, paths, and file
+integrity. They do not write files, create directories or temporary files, or
+run a package manager. They do not change `ui.json`, configuration, package
+manifests, lockfiles, or dependencies.
+
+The plan lists writes, skipped files, conflicts, and dependency additions. It
+identifies forced source overwrites. Writes include tracking changes in
+`ui.json`. Dependency lists show requested package arguments, not resolved
+package versions. Init also lists prerequisites and setup changes for the app
+and shared UI package.
+
+Resolve conflicts before installation. A real installation requires files to
+remain unchanged after the preview.
+
+## Registry
+
+Pass `--registry <URL>` to use another registry. The setting applies to one
+command. The CLI does not store it in `ui.json`.
+
+URLs must use HTTPS, except HTTP on `localhost` or loopback addresses. Do not
+include credentials, query strings, or fragments. For local development, start
+this repository's docs server with `bun run dev`. Pass the local registry
+explicitly:
+
+```sh
+bunx @yopem-ui/cli init --registry http://localhost:3100/r
+bunx @yopem-ui/cli add button --registry http://localhost:3100/r
+bunx @yopem-ui/cli update button --registry http://localhost:3100/r
+```
+
+Requests have a 30-second timeout for connection and JSON body reads. Timeout,
+network, HTTP status, and malformed JSON errors stop installation. The CLI makes
+no source, configuration, or dependency changes after these failures.
+
+## Monorepos
+
+Use `--cwd` to target an app from the repository root:
+
+```sh
+bunx @yopem-ui/cli init --cwd apps/web
+bunx @yopem-ui/cli add button --cwd apps/web
+```
+
+The CLI detects the package manager from the app and workspace root. It supports
+Bun, npm, pnpm, and Yarn workspaces. Dependencies stay in the target package.
+
+Use an existing named React package in the same workspace for shared components:
+
+```sh
+bunx @yopem-ui/cli init --cwd apps/web --ui ../../packages/ui
+bunx @yopem-ui/cli add button --cwd packages/ui
+bunx @yopem-ui/cli update button --cwd packages/ui
+```
+
+The `--ui` path is relative to the target app, not the repository root. Init
+installs base files in the UI package. It adds source exports and links the app.
+It configures StyleX to scan both packages. For Next.js, it also adds
+`transpilePackages`. It registers shared imports with the Yopem UI Oxlint rules.
+It keeps existing rule options and explicit opt-outs.
+
+Shared imports use the package name, such as `@acme/ui/components/ui/button`.
+Later add and update commands use the name from the package's `ui.json`. Run
+`init --ui` for each consuming app. Pass `--ui` again when you repeat init. The
+init command does not migrate app-local components.

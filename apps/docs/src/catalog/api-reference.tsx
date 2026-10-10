@@ -5,6 +5,14 @@ import { Box } from "@registry/components/ui/box"
 import { Heading } from "@registry/components/ui/heading"
 import { Link } from "@registry/components/ui/link"
 import { ScrollArea } from "@registry/components/ui/scroll-area"
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@registry/components/ui/table"
 import { Text } from "@registry/components/ui/text"
 import { useEventCallback } from "@registry/hooks/use-event-callback"
 import { tokens } from "@registry/styles/tokens.stylex"
@@ -21,62 +29,23 @@ const styles = stylex.create({
     borderWidth: 1,
     borderRadius: tokens["--radius-lg"],
   },
+  tableContainer: {
+    // Let ScrollArea control scrolling instead of the Table wrapper.
+    display: "contents",
+  },
   table: {
-    inlineSize: "100%",
     borderCollapse: "collapse",
     fontSize: "0.8125rem",
     lineHeight: 1.6,
   },
+  row: {
+    borderBlockEndWidth: 0,
+    backgroundColor: { default: "transparent", ":hover": "transparent" },
+  },
   th: {
-    textAlign: "start",
-    verticalAlign: "top",
-    paddingBlock: "0.75rem",
-    paddingInline: "0.75rem",
-    borderBlockEndColor: tokens["--border"],
-    borderBlockEndStyle: "solid",
-    borderBlockEndWidth: 1,
-    backgroundColor: tokens["--muted"],
-    color: tokens["--foreground"],
-    fontWeight: 600,
-  },
-  th2: {
-    textAlign: "start",
-    verticalAlign: "top",
-    paddingBlock: "0.75rem",
-    paddingInline: "0.75rem",
-    borderBlockEndColor: tokens["--border"],
-    borderBlockEndStyle: "solid",
-    borderBlockEndWidth: 1,
-    backgroundColor: tokens["--muted"],
-    color: tokens["--foreground"],
-    fontWeight: 600,
-  },
-  th3: {
-    textAlign: "start",
-    verticalAlign: "top",
-    paddingBlock: "0.75rem",
-    paddingInline: "0.75rem",
-    borderBlockEndColor: tokens["--border"],
-    borderBlockEndStyle: "solid",
-    borderBlockEndWidth: 1,
-    backgroundColor: tokens["--muted"],
-    color: tokens["--foreground"],
-    fontWeight: 600,
-  },
-  th4: {
-    textAlign: "start",
-    verticalAlign: "top",
-    paddingBlock: "0.75rem",
-    paddingInline: "0.75rem",
-    borderBlockEndColor: tokens["--border"],
-    borderBlockEndStyle: "solid",
-    borderBlockEndWidth: 1,
-    backgroundColor: tokens["--muted"],
-    color: tokens["--foreground"],
-    fontWeight: 600,
-  },
-  th5: {
-    textAlign: "start",
+    blockSize: "auto",
+    lineHeight: "inherit",
+    whiteSpace: "normal",
     verticalAlign: "top",
     paddingBlock: "0.75rem",
     paddingInline: "0.75rem",
@@ -90,6 +59,7 @@ const styles = stylex.create({
   td: {
     textAlign: "start",
     verticalAlign: "top",
+    lineHeight: "inherit",
     paddingBlock: "0.75rem",
     paddingInline: "0.75rem",
     borderBlockEndColor: tokens["--border"],
@@ -103,18 +73,6 @@ const styles = stylex.create({
     fontFamily: tokens["--font-mono"],
     overflowWrap: "anywhere",
     fontSize: "0.8125rem",
-  },
-  td2: {
-    textAlign: "start",
-    verticalAlign: "top",
-    paddingBlock: "0.75rem",
-    paddingInline: "0.75rem",
-    borderBlockEndColor: tokens["--border"],
-    borderBlockEndStyle: "solid",
-    borderBlockEndWidth: 1,
-    minInlineSize: "7rem",
-    overflowWrap: "anywhere",
-    whiteSpace: "pre-wrap",
   },
   details: { marginBlock: "1rem", minInlineSize: "calc(var(--spacing) * 0)" },
   summary: {
@@ -155,46 +113,10 @@ const styles = stylex.create({
     overflowWrap: "anywhere",
     fontSize: "0.8125rem",
   },
-  td3: {
-    textAlign: "start",
-    verticalAlign: "top",
-    paddingBlock: "0.75rem",
-    paddingInline: "0.75rem",
-    borderBlockEndColor: tokens["--border"],
-    borderBlockEndStyle: "solid",
-    borderBlockEndWidth: 1,
-    minInlineSize: "7rem",
-    overflowWrap: "anywhere",
-    whiteSpace: "pre-wrap",
-  },
   code5: {
     fontFamily: tokens["--font-mono"],
     overflowWrap: "anywhere",
     fontSize: "0.8125rem",
-  },
-  td4: {
-    textAlign: "start",
-    verticalAlign: "top",
-    paddingBlock: "0.75rem",
-    paddingInline: "0.75rem",
-    borderBlockEndColor: tokens["--border"],
-    borderBlockEndStyle: "solid",
-    borderBlockEndWidth: 1,
-    minInlineSize: "7rem",
-    overflowWrap: "anywhere",
-    whiteSpace: "pre-wrap",
-  },
-  td5: {
-    textAlign: "start",
-    verticalAlign: "top",
-    paddingBlock: "0.75rem",
-    paddingInline: "0.75rem",
-    borderBlockEndColor: tokens["--border"],
-    borderBlockEndStyle: "solid",
-    borderBlockEndWidth: 1,
-    minInlineSize: "7rem",
-    overflowWrap: "anywhere",
-    whiteSpace: "pre-wrap",
   },
   section: {
     marginBlock: "2rem",
@@ -297,92 +219,75 @@ function PropertiesTable({
       clampContentMinWidth={false}
       overscrollContain
     >
-      <Box render={<table />} xstyle={styles.table}>
-        <Box
-          render={
-            <thead>
-              <Box render={<tr />}>
-                <Box render={<th scope="col">{label}</th>} xstyle={styles.th} />
-                <Box render={<th scope="col">Type</th>} xstyle={styles.th2} />
-                <Box
-                  render={<th scope="col">Default</th>}
-                  xstyle={styles.th3}
-                />
-                <Box
-                  render={<th scope="col">Required</th>}
-                  xstyle={styles.th4}
-                />
-                <Box
-                  render={<th scope="col">Description</th>}
-                  xstyle={styles.th5}
-                />
-              </Box>
-            </thead>
-          }
-        />
-        <Box render={<tbody />}>
+      <Table
+        render={<Box xstyle={styles.tableContainer} />}
+        xstyle={styles.table}
+      >
+        <TableHeader>
+          <TableRow xstyle={styles.row}>
+            <TableHead scope="col" xstyle={styles.th}>
+              {label}
+            </TableHead>
+            <TableHead scope="col" xstyle={styles.th}>
+              Type
+            </TableHead>
+            <TableHead scope="col" xstyle={styles.th}>
+              Default
+            </TableHead>
+            <TableHead scope="col" xstyle={styles.th}>
+              Required
+            </TableHead>
+            <TableHead scope="col" xstyle={styles.th}>
+              Description
+            </TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
           {properties.map((prop) => (
-            <Box render={<tr />} key={prop.name}>
-              <Box
-                render={
-                  <td>
-                    <Box render={<code />} xstyle={styles.code}>
-                      {prop.name}
-                    </Box>
-                  </td>
-                }
-                xstyle={styles.td}
-              />
-              <Box
-                render={
-                  <td>
-                    {prop.type.length > 140 ? (
-                      <Box render={<details />} xstyle={styles.details}>
-                        <Box
-                          render={
-                            <summary>
-                              <Box render={<code />} xstyle={styles.code2}>
-                                {prop.type.slice(0, 100)}…
-                              </Box>
-                            </summary>
-                          }
-                          xstyle={styles.summary}
-                        />
-                        <Box render={<pre />} xstyle={styles.pre}>
-                          <Box render={<code />} xstyle={styles.code3}>
-                            {prop.type}
+            <TableRow key={prop.name} xstyle={styles.row}>
+              <TableCell xstyle={styles.td}>
+                <Box render={<code />} xstyle={styles.code}>
+                  {prop.name}
+                </Box>
+              </TableCell>
+              <TableCell xstyle={styles.td} aria-label={`${prop.name} type`}>
+                {prop.type.length > 140 ? (
+                  <Box render={<details />} xstyle={styles.details}>
+                    <Box
+                      render={
+                        <summary>
+                          <Box render={<code />} xstyle={styles.code2}>
+                            {prop.type.slice(0, 100)}…
                           </Box>
-                        </Box>
-                      </Box>
-                    ) : (
-                      <Box render={<code />} xstyle={styles.code4}>
+                        </summary>
+                      }
+                      xstyle={styles.summary}
+                    />
+                    <Box render={<pre />} xstyle={styles.pre}>
+                      <Box render={<code />} xstyle={styles.code3}>
                         {prop.type}
                       </Box>
-                    )}
-                  </td>
-                }
-                xstyle={styles.td2}
-                aria-label={`${prop.name} type`}
-              />
-              <Box
-                render={
-                  <td>
-                    <Box render={<code />} xstyle={styles.code5}>
-                      {prop.default ?? "Not specified"}
                     </Box>
-                  </td>
-                }
-                xstyle={styles.td3}
-              />
-              <Box
-                render={<td>{prop.required ? "Yes" : "No"}</td>}
-                xstyle={styles.td4}
-              />
-              <Box render={<td>{prop.description}</td>} xstyle={styles.td5} />
-            </Box>
+                  </Box>
+                ) : (
+                  <Box render={<code />} xstyle={styles.code4}>
+                    {prop.type}
+                  </Box>
+                )}
+              </TableCell>
+              <TableCell xstyle={styles.td}>
+                <Box render={<code />} xstyle={styles.code5}>
+                  {prop.default ?? "Not specified"}
+                </Box>
+              </TableCell>
+              <TableCell xstyle={styles.td}>
+                {prop.required ? "Yes" : "No"}
+              </TableCell>
+              <TableCell xstyle={styles.td}>{prop.description}</TableCell>
+            </TableRow>
           ))}
-        </Box>
-      </Box>
+        </TableBody>
+      </Table>
     </ScrollArea>
   )
 }

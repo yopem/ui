@@ -26,23 +26,6 @@ Next.js Pages Router, or other build tools. The CLI reads registry files from
 The CLI and Oxlint plugin are not published yet. The `bunx` commands work after
 both packages are released.
 
-Pass `--registry <URL>` to `init`, `add`, or `update` to use another registry.
-This setting applies to one command. It does not apply through `ui.json`. The
-URL must use HTTPS, except for local HTTP on `localhost` or loopback addresses.
-Do not include credentials, query strings, or fragments in the URL. For local
-development, start the docs server with `bun run dev`. Then pass the local
-registry explicitly:
-
-```sh
-bunx @yopem-ui/cli init --registry http://localhost:3100/r
-bunx @yopem-ui/cli add button --registry http://localhost:3100/r
-bunx @yopem-ui/cli update button --registry http://localhost:3100/r
-```
-
-Requests have a 30-second timeout, including JSON body reads. Timeout, network,
-HTTP status, and malformed JSON errors stop installation. The CLI makes no
-source, configuration, or dependency changes after these errors.
-
 <span id="check" />
 
 ## Verify and continue
@@ -51,9 +34,9 @@ Run your project's production build. Check that it completes without StyleX or
 CSS extraction errors. Run `bunx oxlint .` to check your app. See the
 [lint rules](/docs/lint) for configuration.
 
-Then [add your first component](/docs/getting-started) with the CLI. To update
-installed shared files, run `bunx @yopem-ui/cli update base`. The command keeps
-locally edited files unless you pass `--force`.
+Then [add your first component](/docs/getting-started) with the CLI. See the
+[CLI guide](/docs/cli) for commands, options, registry settings, and safe
+updates.
 
 Static light mode does not need a provider. Add theme switching only if
 necessary. See the [theming guide](/docs/theming) for dark mode, custom themes,

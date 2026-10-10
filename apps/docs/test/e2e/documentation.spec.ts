@@ -66,7 +66,6 @@ test("@a11y component code blocks preserve shell highlighting", async ({
   for (const title of [
     "Initialize StyleX project with CLI",
     "Install Flex with CLI",
-    "Update Flex with CLI",
   ]) {
     const code = page.getByRole("group", { name: title, exact: true })
     await expect(code.locator("pre.shiki code")).toContainText("bunx")
@@ -242,12 +241,22 @@ test("component docs cover CLI setup and API", async ({ page }) => {
   ).toBeEnabled()
   await expect(
     page.getByRole("button", { name: "Copy Update Button with CLI" }),
-  ).toBeEnabled()
+  ).toHaveCount(0)
+  await expect(page.getByRole("main")).not.toContainText(
+    "bunx @yopem-ui/cli update",
+  )
+  const markdown = await page.request.get("/components/button.md")
+  expect(markdown.status()).toBe(200)
+  expect(await markdown.text()).not.toContain("bunx @yopem-ui/cli update")
   await page
     .locator("summary")
     .filter({ hasText: "View API reference" })
     .click()
   const api = page.getByRole("region", { name: "Button", exact: true })
+  await expect(api.getByRole("table").first()).toHaveAttribute(
+    "data-slot",
+    "table",
+  )
   await api
     .locator("summary")
     .filter({ hasText: "Type signature" })
@@ -259,6 +268,7 @@ test("component docs cover CLI setup and API", async ({ page }) => {
   await expect(
     api.getByRole("row").filter({ hasText: "loading" }),
   ).toContainText("false")
+  expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([])
   await expect(api.getByRole("row").filter({ hasText: "onClick" })).toHaveCount(
     0,
   )

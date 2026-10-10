@@ -72,6 +72,12 @@ export function getRequiredItems(slug: string, previewSource = "") {
 
 export const guidePages = [
   {
+    title: "CLI",
+    url: "/docs/cli",
+    content:
+      "Use init, add, and update commands. Show help and version with short flags. Configure framework, shared UI, cwd, and registry options. Preview changes with dry-run. Review safe overwrites and force behavior. Check Bun prerequisites and the unpublished package warning.",
+  },
+  {
     title: "Layout and typography",
     url: "/docs/layout",
     content:

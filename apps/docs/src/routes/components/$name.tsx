@@ -193,16 +193,8 @@ function ComponentPage() {
           <Text xstyle={styles.paragraph3}>
             Run from your project root. The CLI installs required components,
             shared files, and packages. Previews may need additional components.
-            The CLI keeps existing files. Use update to refresh installed
-            source. Pass --force explicitly to overwrite locally edited files.
+            The CLI keeps existing files.
           </Text>
-          <CopyableCode
-            language="shellscript"
-            code={data.installNames
-              .map((installName) => `bunx @yopem-ui/cli update ${installName}`)
-              .join("\n")}
-            title={`Update ${item.title} with CLI`}
-          />
 
           <Heading render={<h2>Usage</h2>} xstyle={styles.h24} id="usage" />
           {data.notes.map((note) => (

@@ -69,6 +69,7 @@ const tree: Root = {
     { type: "page", name: "Introduction", url: "/" },
     { type: "page", name: "Getting started", url: "/docs/getting-started" },
     { type: "page", name: "Installation", url: "/docs/installation" },
+    { type: "page", name: "CLI", url: "/docs/cli" },
     { type: "separator", name: "Learn" },
     { type: "page", name: "Theming", url: "/docs/theming" },
     { type: "page", name: "Layout and typography", url: "/docs/layout" },
