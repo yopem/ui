@@ -68,14 +68,14 @@ function fixture() {
     items.set(
       "shared",
       registryItem("shared", {
-        [paths[0]!]: `export const shared = ${value}\n`,
+        [paths[0]]: `export const shared = ${value}\n`,
       }),
     )
     items.set(
       "button",
       registryItem("button", {
-        [paths[1]!]: `import { shared } from "@/lib/shared"\nexport const button = shared + ${value}\n`,
-        [paths[2]!]: `export const helper = ${value}\n`,
+        [paths[1]]: `import { shared } from "@/lib/shared"\nexport const button = shared + ${value}\n`,
+        [paths[2]]: `export const helper = ${value}\n`,
       }),
     )
   }
@@ -123,8 +123,8 @@ function fixture() {
     evidence.push({ name, before, after, calls: [...calls] })
   }
 
-  function dispose() {
-    server.stop(true)
+  async function dispose() {
+    await server.stop(true)
     rmSync(root, { recursive: true, force: true })
   }
 
@@ -211,7 +211,7 @@ test("new dry add validates dependencies, plans all writes and matches real inst
         .sort(),
     ).toEqual(result.preview!.files.map((file) => file.path).sort())
   } finally {
-    project.dispose()
+    await project.dispose()
   }
 })
 
@@ -251,9 +251,9 @@ for (const mode of ["add", "update"] as const) {
             >
           } = JSON.parse(readFileSync(join(project.root, "ui.json"), "utf8"))
 
-          delete manifest.files[paths[2]!]
+          delete manifest.files[paths[2]]
 
-          if (manifest.provenance) delete manifest.provenance[paths[2]!]
+          if (manifest.provenance) delete manifest.provenance[paths[2]]
           project.put("ui.json", `${JSON.stringify(manifest)}\n`)
         }
 
@@ -292,7 +292,7 @@ for (const mode of ["add", "update"] as const) {
         )
 
         if (conflicts.length) {
-          await expect(
+          expect(
             installItem("button", { ...project.options, mode }),
           ).rejects.toThrow(/Modified file:|Existing file:/)
           project.unchanged(`real ${state} ${mode} rejected`, before)
@@ -307,7 +307,7 @@ for (const mode of ["add", "update"] as const) {
           if (action === "skip") expect(snapshot(project.root)).toEqual(before)
         }
       } finally {
-        project.dispose()
+        await project.dispose()
       }
     })
   }
@@ -340,7 +340,7 @@ for (const mode of ["add", "update"] as const) {
           await installItem("button", { ...project.options, ...options }),
         ).toEqual({ installed: 3, skipped: 0 })
       } finally {
-        project.dispose()
+        await project.dispose()
       }
     })
   }
@@ -359,7 +359,7 @@ test("dry force does not mark identical files as overwrites", async () => {
       ),
     ).toBe(true)
   } finally {
-    project.dispose()
+    await project.dispose()
   }
 })
 
@@ -378,7 +378,7 @@ test("dry shared package persists no new manifest and reuses tracked import pref
     await preview(project, "shared new add", options)
     expect(existsSync(join(options.cwd, "ui.json"))).toBe(false)
     await installItem("button", { ...project.options, ...options })
-    expect(readFileSync(join(options.cwd, paths[1]!), "utf8")).toContain(
+    expect(readFileSync(join(options.cwd, paths[1]), "utf8")).toContain(
       'from "@acme/ui/lib/shared"',
     )
     project.calls.length = 0
@@ -403,11 +403,11 @@ test("dry shared package persists no new manifest and reuses tracked import pref
       cwd: options.cwd,
       mode: "update",
     })
-    expect(readFileSync(join(options.cwd, paths[1]!), "utf8")).toContain(
+    expect(readFileSync(join(options.cwd, paths[1]), "utf8")).toContain(
       'from "@acme/ui/lib/shared"',
     )
   } finally {
-    project.dispose()
+    await project.dispose()
   }
 })
 
@@ -424,7 +424,7 @@ for (const failure of [
   test(`dry add still rejects ${failure} without mutations`, async () => {
     const project = fixture()
     const item = project.items.get("shared")!
-    const file = item.files[0]!
+    const file = item.files[0]
     let expected = ""
     let registryUrl = project.options.registryUrl
 
@@ -441,13 +441,13 @@ for (const failure of [
       item.registryDependencies = ["button"]
       expected = "Cyclic registry dependency"
     } else if (failure === "registry-conflict") {
-      project.items.get("button")!.files[0]!.target = file.target
+      project.items.get("button")!.files[0].target = file.target
       expected = "Conflicting registry files"
     } else if (failure === "symlink") {
       mkdirSync(join(project.root, "src/lib"))
       symlinkSync(
         join(project.root, "package.json"),
-        join(project.root, paths[0]!),
+        join(project.root, paths[0]),
       )
       expected = "Unsafe existing path"
     } else if (failure === "manifest") {
@@ -461,7 +461,7 @@ for (const failure of [
     const before = snapshot(project.root)
 
     try {
-      await expect(
+      expect(
         installItem("button", {
           ...project.options,
           registryUrl,
@@ -473,7 +473,7 @@ for (const failure of [
       if (failure === "URL" || failure === "manifest")
         expect(project.requests).toEqual([])
     } finally {
-      project.dispose()
+      await project.dispose()
     }
   })
 }
@@ -483,7 +483,7 @@ test("dry add retains registry timeout protection", async () => {
   const before = snapshot(project.root)
 
   try {
-    await expect(
+    expect(
       installItem("button", {
         ...project.options,
         dryRun: true,
@@ -493,7 +493,7 @@ test("dry add retains registry timeout protection", async () => {
     ).rejects.toThrow("Registry request timed out")
     project.unchanged("dry timeout", before)
   } finally {
-    project.dispose()
+    await project.dispose()
   }
 })
 
@@ -509,7 +509,7 @@ test("CLI options honor dryRun for add and init", async () => {
     expect(result && "framework" in result && result.preview).toBeDefined()
     project.unchanged("CLI init dryRun option", before)
   } finally {
-    project.dispose()
+    await project.dispose()
   }
 })
 
@@ -525,13 +525,13 @@ for (const args of [
     const before = snapshot(project.root)
 
     try {
-      await expect(runCli(args, project.options)).rejects.toThrow(
+      expect(runCli(args, project.options)).rejects.toThrow(
         /Usage:|dry-run.*init/i,
       )
       project.unchanged(args.join(" "), before)
       expect(project.requests).toEqual([])
     } finally {
-      project.dispose()
+      await project.dispose()
     }
   })
 }
@@ -549,11 +549,11 @@ for (const cwd of ["valid", "missing"]) {
       })
 
       if (cwd === "valid") expect((await operation).preview).toBeDefined()
-      else await expect(operation).rejects.toThrow("ENOENT")
+      else expect(operation).rejects.toThrow("ENOENT")
       project.unchanged(`programmatic init ${cwd}`, before)
       expect(project.requests).toEqual(cwd === "valid" ? ["/r/base.json"] : [])
     } finally {
-      project.dispose()
+      await project.dispose()
     }
   })
 }
@@ -604,7 +604,7 @@ for (const state of ["new", "conflicts", "force"] as const) {
       project.unchanged(`CLI ${state}`, before)
       evidence.push({ name: `CLI ${state} output`, status, stdout, stderr })
     } finally {
-      project.dispose()
+      await project.dispose()
     }
   })
 }

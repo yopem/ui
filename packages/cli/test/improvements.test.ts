@@ -99,8 +99,8 @@ function fixture() {
     },
   }
 
-  function dispose() {
-    server.stop(true)
+  async function dispose() {
+    await server.stop(true)
     rmSync(root, { recursive: true, force: true })
   }
 
@@ -170,7 +170,7 @@ for (const [existing, requirement, pending] of [
         calls: project.calls,
       })
     } finally {
-      project.dispose()
+      await project.dispose()
     }
   })
 }
@@ -226,7 +226,7 @@ test("runtime precedence by package name, dev promotion, repeated no-op and work
     expect(snapshot(project.root)).toEqual(before)
     expect(project.calls).toEqual([])
   } finally {
-    project.dispose()
+    await project.dispose()
   }
 })
 
@@ -243,11 +243,11 @@ for (const manifest of [
     const before = snapshot(project.root)
 
     try {
-      await expect(installItem("button", project.options)).rejects.toThrow()
+      expect(installItem("button", project.options)).rejects.toThrow()
       expect(snapshot(project.root)).toEqual(before)
       expect(project.calls).toEqual([])
     } finally {
-      project.dispose()
+      await project.dispose()
     }
   })
 }
@@ -373,7 +373,7 @@ for (const framework of [
           unchanged: true,
         })
       } finally {
-        project.dispose()
+        await project.dispose()
       }
     })
   }
@@ -397,18 +397,18 @@ test("init dry run lists retired deletion and rejects base without @stylex befor
     ).toBe(true)
     expect(snapshot(project.root)).toEqual(before)
     const base = project.items.get("base")!
-    base.files[0]!.content = "/* missing directive */\n"
-    base.files[0]!.integrity = `sha256-${createHash("sha256").update(base.files[0]!.content).digest("base64")}`
+    base.files[0].content = "/* missing directive */\n"
+    base.files[0].integrity = `sha256-${createHash("sha256").update(base.files[0].content).digest("base64")}`
 
     for (const dryRun of [true, false]) {
-      await expect(initProject({ ...project.options, dryRun })).rejects.toThrow(
+      expect(initProject({ ...project.options, dryRun })).rejects.toThrow(
         "Add @stylex;",
       )
       expect(snapshot(project.root)).toEqual(before)
       expect(project.calls).toEqual([])
     }
   } finally {
-    project.dispose()
+    await project.dispose()
   }
 })
 
@@ -478,7 +478,7 @@ test("provenance tracks transitive and overlapping owners, warns registry switch
         .provenance["src/lib/button.ts"].registryUrl,
     ).toBe(registryUrl)
   } finally {
-    project.dispose()
+    await project.dispose()
   }
 })
 
@@ -509,7 +509,7 @@ test("legacy ui.json migrates only applied/identical files; no-op preserves cust
     await installItem("button", project.options)
     expect(snapshot(project.root)).toEqual(before)
   } finally {
-    project.dispose()
+    await project.dispose()
   }
 })
 
@@ -548,13 +548,13 @@ for (const provenance of [
       project.put("ui.json", JSON.stringify({ ...manifest, provenance }))
       project.calls.length = 0
       const before = snapshot(project.root)
-      await expect(installItem("button", project.options)).rejects.toThrow(
+      expect(installItem("button", project.options)).rejects.toThrow(
         "Invalid ui.json",
       )
       expect(snapshot(project.root)).toEqual(before)
       expect(project.calls).toEqual([])
     } finally {
-      project.dispose()
+      await project.dispose()
     }
   })
 }
@@ -628,9 +628,9 @@ for (const command of ["add", "update", "init"] as const) {
           unchanged: true,
         })
       } finally {
-        server.stop(true)
-        sink.stop(true)
-        project.dispose()
+        await server.stop(true)
+        await sink.stop(true)
+        await project.dispose()
       }
     })
   }
@@ -641,7 +641,7 @@ test("injected redirect rejected; fetch receives redirect:error and abort signal
   const before = snapshot(project.root)
 
   try {
-    await expect(
+    expect(
       installItem("button", {
         ...project.options,
         fetcher(_url, init) {
@@ -660,7 +660,7 @@ test("injected redirect rejected; fetch receives redirect:error and abort signal
     expect(snapshot(project.root)).toEqual(before)
     expect(project.calls).toEqual([])
   } finally {
-    project.dispose()
+    await project.dispose()
   }
 })
 
@@ -693,7 +693,7 @@ test("init registry switch exposes warnings before commit in real and dry result
     expect(real.warnings).toEqual(warnings)
     expect(warnings).toHaveLength(1)
   } finally {
-    project.dispose()
+    await project.dispose()
   }
 })
 
@@ -706,13 +706,13 @@ test("incompatible runtime/dev requirements fail before package-manager or file 
   const before = snapshot(project.root)
 
   try {
-    await expect(installItem("button", project.options)).rejects.toThrow(
+    expect(installItem("button", project.options)).rejects.toThrow(
       "Conflicting package requirements",
     )
     expect(snapshot(project.root)).toEqual(before)
     expect(project.calls).toEqual([])
   } finally {
-    project.dispose()
+    await project.dispose()
   }
 })
 
@@ -736,7 +736,7 @@ test("identical tracked files keep applied item versions when fetched version ch
         .provenance["src/lib/button.ts"].items.button,
     ).toBe("1.0.0")
   } finally {
-    project.dispose()
+    await project.dispose()
   }
 })
 
@@ -758,13 +758,13 @@ for (const existing of [false, true]) {
       const before = snapshot(project.root)
 
       try {
-        await expect(
-          initProject({ ...project.options, dryRun }),
-        ).rejects.toThrow("Conflicting package requirements")
+        expect(initProject({ ...project.options, dryRun })).rejects.toThrow(
+          "Conflicting package requirements",
+        )
         expect(snapshot(project.root)).toEqual(before)
         expect(project.calls).toEqual([])
       } finally {
-        project.dispose()
+        await project.dispose()
       }
     })
   }
@@ -841,7 +841,7 @@ for (const existing of [false, true]) {
           ),
       ).toBe(true)
     } finally {
-      project.dispose()
+      await project.dispose()
     }
   })
 }
@@ -892,7 +892,7 @@ test("init shared UI does not merge requirements across separate package targets
       ),
     ).toBe(true)
   } finally {
-    project.dispose()
+    await project.dispose()
   }
 })
 
@@ -991,7 +991,7 @@ for (const existing of [false, true]) {
         commands: project.calls,
       })
     } finally {
-      project.dispose()
+      await project.dispose()
     }
   })
 }

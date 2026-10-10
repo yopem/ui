@@ -81,7 +81,7 @@ test("Next.js uses the shared stylesheet for StyleX", async () => {
       babelPath,
       afterFormat.replace("runtimeInjection: false", "runtimeInjection: true"),
     )
-    await expect(initProject({ cwd: root, run, fetcher })).rejects.toThrow(
+    expect(initProject({ cwd: root, run, fetcher })).rejects.toThrow(
       "Existing Babel config requires manual review",
     )
     expect(readFileSync(join(root, "src/styles/styles.css"), "utf8")).toContain(
@@ -276,7 +276,7 @@ for (const fixture of [
         await initProject({ cwd: root, run, fetcher })
         await installItem("button", { cwd: root, run, fetcher })
         expect(readFileSync(tokensPath, "utf8")).toBe(editedTokens)
-        await expect(
+        expect(
           installItem("base", { cwd: root, run, fetcher, mode: "update" }),
         ).rejects.toThrow("Modified file: src/styles/tokens.stylex.ts")
         mkdirSync(join(root, "node_modules/@yopem-ui"), {
@@ -554,7 +554,7 @@ export default { plugins: [babel({ plugins: yopemBabelConfig.plugins })], resolv
   }
 })
 
-test("CLI refuses customized StyleX options rather than discarding them", async () => {
+test("CLI refuses customized StyleX options rather than discarding them", () => {
   const root = mkdtempSync(join(tmpdir(), "yopem-custom-stylex-config-"))
 
   try {
@@ -572,7 +572,7 @@ test("CLI refuses customized StyleX options rather than discarding them", async 
       'module.exports = { plugins: [["@stylexjs/babel-plugin", { aliases: { "~/*": ["./src/*"] } }]] }'
 
     writeFileSync(join(root, "babel.config.cjs"), custom)
-    await expect(initProject({ cwd: root })).rejects.toThrow(
+    expect(initProject({ cwd: root })).rejects.toThrow(
       "Unsupported Babel config in babel.config.cjs",
     )
     expect(readFileSync(join(root, "babel.config.cjs"), "utf8")).toBe(custom)
@@ -584,7 +584,7 @@ test("CLI refuses customized StyleX options rather than discarding them", async 
   }
 })
 
-test("CLI preserves unsupported dynamic configuration without changes", async () => {
+test("CLI preserves unsupported dynamic configuration without changes", () => {
   const root = mkdtempSync(join(tmpdir(), "yopem-dynamic-postcss-"))
 
   try {
@@ -599,7 +599,7 @@ test("CLI preserves unsupported dynamic configuration without changes", async ()
     )
     const custom = "module.exports = { plugins: makePlugins() }"
     writeFileSync(join(root, "postcss.config.cjs"), custom)
-    await expect(initProject({ cwd: root })).rejects.toThrow(
+    expect(initProject({ cwd: root })).rejects.toThrow(
       "Unsupported PostCSS config in postcss.config.cjs",
     )
     expect(readFileSync(join(root, "vite.config.ts"), "utf8")).toBe(

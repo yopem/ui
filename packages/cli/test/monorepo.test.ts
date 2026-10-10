@@ -92,10 +92,10 @@ test("CLI targets workspace app without changing root", async () => {
     expect(
       readFileSync(join(root, "apps/web/src/styles/styles.css"), "utf8"),
     ).toContain("@stylex;")
-    await expect(
+    expect(
       runCli(["add", "button", "--cwd"], { cwd: root, run, fetcher }),
     ).rejects.toThrow("Usage:")
-    await expect(
+    expect(
       runCli(["init", "--cwd", "apps/web", "--cwd", "apps/web"], {
         cwd: root,
         run,
@@ -173,7 +173,7 @@ test("shared UI init, add, repeat and modified update stay workspace-local", asy
       config,
     )
     put("packages/ui/src/components/ui/button.tsx", `${button}\n`)
-    await expect(
+    expect(
       runCli(["update", "button", "--cwd", "packages/ui"], {
         cwd: root,
         run,
@@ -203,16 +203,16 @@ test("shared UI init, add, repeat and modified update stay workspace-local", asy
   }
 })
 
-test("workspace manager conflicts and unrelated shared packages fail before writes", async () => {
+test("workspace manager conflicts and unrelated shared packages fail before writes", () => {
   const { root, put, calls, run, fetcher } = fixture()
 
   try {
     put("apps/web/bun.lock", "")
-    await expect(packageRunner(join(root, "apps/web"))).rejects.toThrow(
+    expect(packageRunner(join(root, "apps/web"))).rejects.toThrow(
       "Package manager",
     )
     put("packages/ui/package.json", JSON.stringify({ name: "invalid/name" }))
-    await expect(
+    expect(
       runCli(["init", "--cwd", "apps/web", "--ui", "../../packages/ui"], {
         cwd: root,
         run,
@@ -290,7 +290,7 @@ test("pnpm YAML membership supports shared install and rejects excluded targets"
       JSON.stringify({ dependencies: { react: "*", vite: "*" } }),
     )
     const before = calls.length
-    await expect(
+    expect(
       runCli(["add", "button", "--cwd", "apps/private"], {
         cwd: root,
         run,
@@ -304,12 +304,12 @@ test("pnpm YAML membership supports shared install and rejects excluded targets"
 })
 
 for (const name of ["-unsafe", "@acme/ui;command"] as const) {
-  test(`shared init rejects unsafe package name ${name}`, async () => {
+  test(`shared init rejects unsafe package name ${name}`, () => {
     const { root, put, calls, run, fetcher } = fixture()
 
     try {
       put("packages/ui/package.json", JSON.stringify({ name }))
-      await expect(
+      expect(
         runCli(["init", "--cwd", "apps/web", "--ui", "../../packages/ui"], {
           cwd: root,
           run,

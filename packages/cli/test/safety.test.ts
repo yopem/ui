@@ -165,13 +165,13 @@ function fixture(framework?: "vite" | "next") {
 }
 
 for (const force of [false, true]) {
-  test(`late install conflict preflights every file before source writes (force=${force})`, async () => {
+  test(`late install conflict preflights every file before source writes (force=${force})`, () => {
     const project = fixture()
     const { root, source, second, manifest, fetcher } = project
     let calls = 0
 
     try {
-      await expect(
+      expect(
         installItem("base", {
           cwd: root,
           mode: "update",
@@ -196,13 +196,13 @@ for (const force of [false, true]) {
 }
 
 for (const failure of [1, 2]) {
-  test(`dependency command ${failure} failure leaves sources and tracking intact`, async () => {
+  test(`dependency command ${failure} failure leaves sources and tracking intact`, () => {
     const project = fixture()
     const { root, source, second, manifest, fetcher } = project
     let calls = 0
 
     try {
-      await expect(
+      expect(
         installItem("base", {
           cwd: root,
           mode: "update",
@@ -238,7 +238,7 @@ for (const failure of [1, 2]) {
   })
 }
 
-test("staging failure cleans partial temporary files before dependencies", async () => {
+test("staging failure cleans partial temporary files before dependencies", () => {
   const project = fixture()
   const writeFile = fs.writeFile
   let staged = 0
@@ -246,8 +246,11 @@ test("staging failure cleans partial temporary files before dependencies", async
   const fault = spyOn(fs, "writeFile").mockImplementation(
     (path, data, options) => {
       if (
-        String(path).includes(".yopem-ui-") &&
-        basename(String(path)) === "after" &&
+        // Only string paths identify staged files in this fault injection.
+        // oxlint-disable-next-line quality/no-runtime-typeof
+        typeof path === "string" &&
+        path.includes(".yopem-ui-") &&
+        basename(path) === "after" &&
         ++staged === 2
       ) {
         throw new Error("staging write denied")
@@ -260,7 +263,7 @@ test("staging failure cleans partial temporary files before dependencies", async
   let calls = 0
 
   try {
-    await expect(
+    expect(
       installItem("base", {
         cwd: project.root,
         mode: "update",
@@ -282,7 +285,7 @@ test("staging failure cleans partial temporary files before dependencies", async
   }
 })
 
-test("tracking manifest write failure rolls back replaced and new sources", async () => {
+test("tracking manifest write failure rolls back replaced and new sources", () => {
   const project = fixture()
   const destination = join(project.root, project.manifest)
   const rename = fs.rename
@@ -296,8 +299,7 @@ test("tracking manifest write failure rolls back replaced and new sources", asyn
 
   const writeFault = spyOn(fs, "writeFile").mockImplementation(
     (path, data, options) => {
-      if (String(path) === destination)
-        throw new Error("manifest commit denied")
+      if (path === destination) throw new Error("manifest commit denied")
 
       return writeFile(path, data, options)
     },
@@ -307,7 +309,7 @@ test("tracking manifest write failure rolls back replaced and new sources", asyn
   chmodSync(destination, 0o640)
 
   try {
-    await expect(
+    expect(
       installItem("base", {
         cwd: project.root,
         mode: "update",
@@ -370,10 +372,10 @@ test("incomplete rollback retains original backup and names recovery path", asyn
       .filter((path) => basename(path) === "before")
 
     expect(backups).toHaveLength(1)
-    const backup = backups[0]!
+    const backup = backups[0]
     expect(project.read(backup)).toBe("export const first = 1\n")
     expect(error).toContain(join(project.root, backup))
-    expect(project.read(project.source)).toBe(project.files[project.source]!)
+    expect(project.read(project.source)).toBe(project.files[project.source])
     project.unchanged([project.manifest])
     expect(existsSync(join(project.root, project.second))).toBe(false)
     mkdirSync(results, { recursive: true })
@@ -401,7 +403,7 @@ test("add preserves skipped modified source bytes without UTF-8 normalization", 
 
     expect(result).toEqual({ installed: 1, skipped: 1 })
     expect(readFileSync(join(project.root, project.source))).toEqual(original)
-    expect(project.read(project.second)).toBe(project.files[project.second]!)
+    expect(project.read(project.second)).toBe(project.files[project.second])
     project.clean()
   } finally {
     project.dispose()
@@ -423,8 +425,8 @@ test("successful update uses atomic replacement and preserves modes", async () =
       fetcher: project.fetcher,
       run: () => Promise.resolve(),
     })
-    expect(project.read(project.source)).toBe(project.files[project.source]!)
-    expect(project.read(project.second)).toBe(project.files[project.second]!)
+    expect(project.read(project.source)).toBe(project.files[project.source])
+    expect(project.read(project.second)).toBe(project.files[project.second])
     expect(statSync(source).ino).not.toBe(inode)
     expect(statSync(source).mode & 0o777).toBe(0o751)
     expect(statSync(manifest).mode & 0o777).toBe(0o640)
@@ -438,12 +440,12 @@ test("successful update uses atomic replacement and preserves modes", async () =
 })
 
 for (const path of ["src/styles/second.ts", "ui.json"]) {
-  test(`install rejects symlink introduced during dependencies at ${path}`, async () => {
+  test(`install rejects symlink introduced during dependencies at ${path}`, () => {
     const project = fixture()
     project.put("outside.txt", "outside original\n")
 
     try {
-      await expect(
+      expect(
         installItem("base", {
           cwd: project.root,
           mode: "update",
@@ -468,13 +470,13 @@ for (const path of ["src/styles/second.ts", "ui.json"]) {
   })
 }
 
-test("unsafe late directory fails before dependencies or earlier source writes", async () => {
+test("unsafe late directory fails before dependencies or earlier source writes", () => {
   const project = fixture()
   mkdirSync(join(project.root, project.second))
   let calls = 0
 
   try {
-    await expect(
+    expect(
       installItem("base", {
         cwd: project.root,
         mode: "update",
@@ -494,12 +496,12 @@ test("unsafe late directory fails before dependencies or earlier source writes",
   }
 })
 
-test("concurrent tracking manifest edit is preserved without source writes", async () => {
+test("concurrent tracking manifest edit is preserved without source writes", () => {
   const project = fixture()
   const current = '{"version":1,"files":{}}\n'
 
   try {
-    await expect(
+    expect(
       installItem("base", {
         cwd: project.root,
         mode: "update",
@@ -520,7 +522,7 @@ test("concurrent tracking manifest edit is preserved without source writes", asy
   }
 })
 
-test("install refuses symlinked parent before staging or dependencies", async () => {
+test("install refuses symlinked parent before staging or dependencies", () => {
   const project = fixture()
   const path = "src/linked/late.ts"
   project.put("outside/late.ts", "outside original\n")
@@ -528,7 +530,7 @@ test("install refuses symlinked parent before staging or dependencies", async ()
   let calls = 0
 
   try {
-    await expect(
+    expect(
       installItem("base", {
         cwd: project.root,
         force: true,
@@ -593,7 +595,7 @@ for (const conflict of [false, true]) {
       })
 
       if (conflict) {
-        await expect(operation).rejects.toThrow(
+        expect(operation).rejects.toThrow(
           /UI package exports changed during installation[\s\S]*base install may have changed/,
         )
         project.unchanged(viteFiles)
@@ -626,12 +628,12 @@ const viteFiles = [
 ]
 
 for (const framework of ["vite", "next"] as const) {
-  test(`init ${framework} dependency failure preserves config and reports prior base install`, async () => {
+  test(`init ${framework} dependency failure preserves config and reports prior base install`, () => {
     const project = fixture(framework)
     let calls = 0
 
     try {
-      await expect(
+      expect(
         initProject({
           cwd: project.root,
           fetcher: project.fetcher,
@@ -662,12 +664,12 @@ for (const framework of ["vite", "next"] as const) {
 }
 
 for (const path of ["src/main.tsx", "postcss.config.cjs"]) {
-  test(`init preflights late edit at ${path} without earlier config writes`, async () => {
+  test(`init preflights late edit at ${path} without earlier config writes`, () => {
     const project = fixture("vite")
     let calls = 0
 
     try {
-      await expect(
+      expect(
         initProject({
           cwd: project.root,
           fetcher: project.fetcher,
@@ -689,7 +691,7 @@ for (const path of ["src/main.tsx", "postcss.config.cjs"]) {
   })
 }
 
-test("init retirement failure restores Babel, config sources, modes and removes staged files", async () => {
+test("init retirement failure restores Babel, config sources, modes and removes staged files", () => {
   const project = fixture("vite")
   const unlink = fs.unlink
 
@@ -705,7 +707,7 @@ test("init retirement failure restores Babel, config sources, modes and removes 
   chmodSync(join(project.root, "tsconfig.json"), 0o640)
 
   try {
-    await expect(
+    expect(
       initProject({
         cwd: project.root,
         fetcher: project.fetcher,
@@ -730,13 +732,13 @@ test("init retirement failure restores Babel, config sources, modes and removes 
   }
 })
 
-test("init rechecks retired symlink after dependencies without following it", async () => {
+test("init rechecks retired symlink after dependencies without following it", () => {
   const project = fixture("vite")
   project.put("outside.txt", "outside original\n")
   let calls = 0
 
   try {
-    await expect(
+    expect(
       initProject({
         cwd: project.root,
         fetcher: project.fetcher,
@@ -764,12 +766,12 @@ test("init rechecks retired symlink after dependencies without following it", as
   }
 })
 
-test("Next scripts conflict is detected before any config commits", async () => {
+test("Next scripts conflict is detected before any config commits", () => {
   const project = fixture("next")
   let calls = 0
 
   try {
-    await expect(
+    expect(
       initProject({
         cwd: project.root,
         fetcher: project.fetcher,
@@ -799,7 +801,7 @@ test("Next scripts conflict is detected before any config commits", async () => 
   }
 })
 
-test("Next package write failure rolls back config but keeps package manager edits", async () => {
+test("Next package write failure rolls back config but keeps package manager edits", () => {
   const project = fixture("next")
   const destination = join(project.root, "package.json")
   const rename = fs.rename
@@ -814,8 +816,7 @@ test("Next package write failure rolls back config but keeps package manager edi
 
   const writeFault = spyOn(fs, "writeFile").mockImplementation(
     (path, data, options) => {
-      if (String(path) === destination)
-        throw new Error("Next scripts commit denied")
+      if (path === destination) throw new Error("Next scripts commit denied")
 
       return writeFile(path, data, options)
     },
@@ -825,7 +826,7 @@ test("Next package write failure rolls back config but keeps package manager edi
   let latest = ""
 
   try {
-    await expect(
+    expect(
       initProject({
         cwd: project.root,
         fetcher: project.fetcher,

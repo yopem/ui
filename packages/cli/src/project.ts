@@ -207,8 +207,7 @@ export async function packageRunner(
   if (manager === "bun") return runBun
 
   return async function runPackage(args: string[], cwd: string) {
-    const command =
-      manager === "npm" && args[0] === "add" ? "install" : args[0]!
+    const command = manager === "npm" && args[0] === "add" ? "install" : args[0]
 
     const flags = args.slice(1).map((argument) => {
       if (argument === "-d") return "-D"

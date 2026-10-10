@@ -53,7 +53,7 @@ export async function runCli(args: string[], options: InitOptions = {}) {
   const flags = new Map<string, string>()
 
   for (let index = 0; index < rest.length; index++) {
-    const argument = rest[index]!
+    const argument = rest[index]
 
     if (!argument.startsWith("--")) {
       positional.push(argument)
@@ -148,7 +148,7 @@ export async function runCli(args: string[], options: InitOptions = {}) {
     throw new Error(usage)
   }
 
-  const result = await installItem(positional[0]!, {
+  const result = await installItem(positional[0], {
     ...options,
     cwd,
     registryUrl,

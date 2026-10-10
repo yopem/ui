@@ -82,7 +82,7 @@ function applyEdits(source: string, edits: Edit[]) {
       throw new Error("Invalid configuration edit")
     }
 
-    if (index && edit.end > sorted[index - 1]!.start) {
+    if (index && edit.end > sorted[index - 1].start) {
       throw new Error("Overlapping configuration edits")
     }
 
@@ -150,7 +150,7 @@ function sameSyntax(left: ts.Node, right: ts.Node): boolean {
   return (
     leftChildren.length === rightChildren.length &&
     leftChildren.every((child, index) =>
-      sameSyntax(child, rightChildren[index]!),
+      sameSyntax(child, rightChildren[index]),
     )
   )
 }
@@ -541,12 +541,12 @@ function migratePostcss(content: string, path: string) {
         !ts.isStringLiteral(factory.arguments[0]) ||
         (factory === entry && entry.arguments.length !== 1) ||
         (factory !== entry &&
-          (entry.arguments.length !== 1 || !staticLiteral(entry.arguments[0]!)))
+          (entry.arguments.length !== 1 || !staticLiteral(entry.arguments[0])))
       )
         throw new Error(`Unsupported PostCSS config in ${path}`)
 
       const options =
-        factory === entry ? "" : entry.arguments[0]!.getText(source)
+        factory === entry ? "" : entry.arguments[0].getText(source)
 
       return `yopemCreateRequire(import.meta.url)(${JSON.stringify(factory.arguments[0].text)})(${options})`
     })
@@ -698,7 +698,7 @@ function stripLegacyConfig(content: string, path: string) {
   )
 
   if (index < 0) throw new Error(`Unsupported legacy configuration in ${path}`)
-  const entry = plugins.elements[index]!
+  const entry = plugins.elements[index]
   const previous = plugins.elements[index - 1]
   const next = plugins.elements[index + 1]
 
@@ -984,8 +984,8 @@ function tsconfig(content: string, path: string) {
       } else if (
         !ts.isArrayLiteralExpression(alias.initializer) ||
         alias.initializer.elements.length !== 1 ||
-        !ts.isStringLiteral(alias.initializer.elements[0]!) ||
-        !["./src/*", "src/*"].includes(alias.initializer.elements[0]!.text)
+        !ts.isStringLiteral(alias.initializer.elements[0]) ||
+        !["./src/*", "src/*"].includes(alias.initializer.elements[0].text)
       ) {
         throw new Error(`Incompatible @/* alias in ${path}`)
       }
@@ -1081,7 +1081,7 @@ function jsxLayout(
   const edits: Edit[] = []
 
   for (const tag of ["html", "body"] as const) {
-    const opening = elements[tag][0]!
+    const opening = elements[tag][0]
 
     if (opening.attributes.properties.some(ts.isJsxSpreadAttribute)) {
       throw new Error(`Unsupported ${tag} props spread in ${path}`)
@@ -1178,9 +1178,9 @@ function astroLayout(content: string, path: string, prefix = "@") {
     head.length !== 1 ||
     html.length !== 1 ||
     body.length !== 1 ||
-    head[0]!.index! < end ||
-    html[0]!.index! < end ||
-    body[0]!.index! < end
+    head[0].index < end ||
+    html[0].index < end ||
+    body[0].index < end
   ) {
     throw new Error(`Expected one html/head/body layout in ${path}`)
   }
@@ -1194,8 +1194,8 @@ function astroLayout(content: string, path: string, prefix = "@") {
   ]
 
   for (const [tag, match] of [
-    ["html", html[0]!],
-    ["body", body[0]!],
+    ["html", html[0]],
+    ["body", body[0]],
   ] as const) {
     let opening = match[0]
 
@@ -1233,8 +1233,8 @@ function astroLayout(content: string, path: string, prefix = "@") {
     }
 
     edits.push({
-      start: match.index!,
-      end: match.index! + match[0].length,
+      start: match.index,
+      end: match.index + match[0].length,
       text: opening,
     })
   }
@@ -1564,7 +1564,7 @@ function detectFramework(
     )
   }
 
-  return detected[0]!
+  return detected[0]
 }
 
 export async function initProject(

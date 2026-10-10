@@ -155,7 +155,7 @@ test("CLI init, add and update use explicit local registry instead of programmat
       `Local init/add/update override: ${requests.join(", ")}\nUpdated both files; ui.json tracked; dependency commands: ${project.calls.length}`,
     )
   } finally {
-    server.stop(true)
+    await server.stop(true)
     project.dispose()
   }
 })
@@ -186,7 +186,7 @@ test("InstallOptions.registryUrl works with native fetch", async () => {
     ).toContain("value = 1")
     logs.push(`Programmatic registry override: ${requests.join(", ")}`)
   } finally {
-    server.stop(true)
+    await server.stop(true)
     project.dispose()
   }
 })
@@ -307,7 +307,7 @@ for (const failure of [
           `${command} ${failure}: ${message}\nElapsed ${Math.round(elapsed)}ms; all files/directories unchanged; no package-manager calls; requests: ${requests.join(", ")}`,
         )
       } finally {
-        server.stop(true)
+        await server.stop(true)
         project.dispose()
       }
     })
@@ -325,11 +325,11 @@ for (const command of ["init", "add", "update"]) {
     })
 
     const registryUrl = `${server.url}r`
-    server.stop(true)
+    await server.stop(true)
     const before = project.snapshot()
 
     try {
-      await expect(
+      expect(
         runCli(
           [
             command,
@@ -491,18 +491,18 @@ for (const args of [
     "https://two.example/r",
   ],
 ]) {
-  test(`registry flag rejects missing or duplicate values: ${args.join(" ")}`, async () => {
-    await expect(runCli(args)).rejects.toThrow("Usage:")
+  test(`registry flag rejects missing or duplicate values: ${args.join(" ")}`, () => {
+    expect(runCli(args)).rejects.toThrow("Usage:")
   })
 }
 
 for (const requestTimeoutMs of [0, -1, 1.5, NaN, Infinity, 2_147_483_648]) {
-  test(`invalid request timeout ${requestTimeoutMs} fails before network`, async () => {
+  test(`invalid request timeout ${requestTimeoutMs} fails before network`, () => {
     const project = fixture()
     let requests = 0
 
     try {
-      await expect(
+      expect(
         installItem("button", {
           cwd: project.root,
           requestTimeoutMs,

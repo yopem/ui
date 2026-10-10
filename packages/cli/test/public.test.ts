@@ -51,8 +51,8 @@ beforeAll(async () => {
   })
 })
 
-afterAll(() => {
-  registryServer?.stop(true)
+afterAll(async () => {
+  await registryServer?.stop(true)
 })
 
 async function run(logs: string[], cwd: string, ...args: string[]) {
