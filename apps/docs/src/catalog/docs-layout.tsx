@@ -97,7 +97,7 @@ export function DocumentationLayout({
   const hydrated = useHydrated()
   const [mobileOpen, setMobileOpen] = useState(false)
 
-  const handleNavigate = useEventCallback(function () {
+  const handleNavigate = useEventCallback(() => {
     return setMobileOpen(false)
   })
 

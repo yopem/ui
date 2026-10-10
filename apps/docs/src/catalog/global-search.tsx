@@ -127,7 +127,7 @@ export function GlobalSearch() {
       },
   )
 
-  const search = useEventCallback(async function (nextQuery: string) {
+  const search = useEventCallback(async (nextQuery: string) => {
     controllerRef.current?.abort()
     const trimmedQuery = nextQuery.trim()
 
@@ -165,21 +165,21 @@ export function GlobalSearch() {
     }
   })
 
-  const handleOpenChange = useEventCallback(function (value: boolean) {
+  const handleOpenChange = useEventCallback((value: boolean) => {
     setOpen(value)
 
     if (!value) controllerRef.current?.abort()
   })
 
-  const handleChange = useEventCallback(function (
-    event: ChangeEvent<HTMLInputElement>,
-  ) {
-    const nextQuery = event.target.value
-    setQuery(nextQuery)
-    void search(nextQuery)
-  })
+  const handleChange = useEventCallback(
+    (event: ChangeEvent<HTMLInputElement>) => {
+      const nextQuery = event.target.value
+      setQuery(nextQuery)
+      void search(nextQuery)
+    },
+  )
 
-  const handleClick = useEventCallback(function () {
+  const handleClick = useEventCallback(() => {
     return setOpen(false)
   })
 

@@ -69,7 +69,7 @@ const transformMdx = mdxPlugin.transform
 if (typeof transformMdx !== "function")
   throw new Error("MDX plugin transform unavailable")
 
-mdxPlugin.transform = function (code, id) {
+mdxPlugin.transform = function transformDocsMdx(code, id) {
   if (id.includes("?raw")) return Promise.resolve(undefined)
 
   return transformMdx.call(this, code, id)

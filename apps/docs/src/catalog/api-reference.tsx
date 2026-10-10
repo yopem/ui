@@ -313,17 +313,17 @@ function PartReference({
     })),
   }))
 
-  const toggleVariants = useEventCallback(function (
-    event: SyntheticEvent<HTMLDetailsElement>,
-  ) {
-    return setShowVariants(event.currentTarget.open)
-  })
+  const toggleVariants = useEventCallback(
+    (event: SyntheticEvent<HTMLDetailsElement>) => {
+      return setShowVariants(event.currentTarget.open)
+    },
+  )
 
-  const toggleSignatures = useEventCallback(function (
-    event: SyntheticEvent<HTMLDetailsElement>,
-  ) {
-    return setShowSignatures(event.currentTarget.open)
-  })
+  const toggleSignatures = useEventCallback(
+    (event: SyntheticEvent<HTMLDetailsElement>) => {
+      return setShowSignatures(event.currentTarget.open)
+    },
+  )
 
   if (alias)
     return (

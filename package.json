@@ -42,7 +42,8 @@
     "oxlint-tsgolint": "^7.0.2004",
     "pkg-pr-new": "^0.0.91",
     "turbo": "^2.11.7",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "zod": "catalog:"
   },
   "overrides": {
     "@effect/platform-node-shared": "4.0.0-rc.115"

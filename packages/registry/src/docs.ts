@@ -97,13 +97,14 @@ function describeProperty(prop: ApiProp) {
   return {
     ...prop,
     description:
-      prop.description ||
-      (/^(components|theme|styles|lib)\//.test(prop.source)
-        ? ownPropNotes.get(prop.name)
-        : undefined) ||
-      (prop.source.startsWith("@types/react")
-        ? `React/HTML ${prop.name} attribute or event handler.`
-        : `${prop.name} member. See its type for accepted values.`),
+      prop.description.length > 0
+        ? prop.description
+        : ((/^(components|theme|styles|lib)\//.test(prop.source)
+            ? ownPropNotes.get(prop.name)
+            : undefined) ??
+          (prop.source.startsWith("@types/react")
+            ? `React/HTML ${prop.name} attribute or event handler.`
+            : `${prop.name} member. See its type for accepted values.`)),
   }
 }
 
@@ -157,7 +158,7 @@ export function createComponentDocs(
             )
             ?.target.replace(/\.tsx?$/, "") ?? null,
         props: part.props.map((index) => {
-          const prop = properties[index]!
+          const prop = properties[index]
 
           const defaultValue = delegatedDefaults
             .get(part.aliasOf ?? part.name)

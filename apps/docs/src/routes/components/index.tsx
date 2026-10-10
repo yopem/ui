@@ -147,13 +147,13 @@ function ComponentsPage() {
       )
     : catalogEntries
 
-  const handleChange = useEventCallback(function (
-    event: ChangeEvent<HTMLInputElement>,
-  ) {
-    return setQuery(event.target.value)
-  })
+  const handleChange = useEventCallback(
+    (event: ChangeEvent<HTMLInputElement>) => {
+      return setQuery(event.target.value)
+    },
+  )
 
-  const clearSearch = useEventCallback(function () {
+  const clearSearch = useEventCallback(() => {
     setQuery("")
     searchRef.current?.focus()
   })

@@ -66,7 +66,7 @@ export function Clipboard({
     null,
   )
 
-  const copyToClipboard = useEventCallback(async function () {
+  const copyToClipboard = useEventCallback(async () => {
     setStatus("pending")
 
     try {
@@ -83,13 +83,13 @@ export function Clipboard({
     }
   })
 
-  const handleClick = useEventCallback(function (
-    event: MouseEvent<HTMLButtonElement>,
-  ) {
-    onClick?.(event)
+  const handleClick = useEventCallback(
+    (event: MouseEvent<HTMLButtonElement>) => {
+      onClick?.(event)
 
-    if (!event.defaultPrevented) void copyToClipboard()
-  })
+      if (!event.defaultPrevented) void copyToClipboard()
+    },
+  )
 
   return (
     <>

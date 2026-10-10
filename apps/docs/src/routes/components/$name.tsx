@@ -230,11 +230,11 @@ function ComponentApi({
 }) {
   const [open, setOpen] = useState(false)
 
-  const handleToggle = useEventCallback(function (
-    event: SyntheticEvent<HTMLDetailsElement>,
-  ) {
-    return setOpen(event.currentTarget.open)
-  })
+  const handleToggle = useEventCallback(
+    (event: SyntheticEvent<HTMLDetailsElement>) => {
+      return setOpen(event.currentTarget.open)
+    },
+  )
 
   return (
     <Box render={<details onToggle={handleToggle} />} xstyle={styles.details}>

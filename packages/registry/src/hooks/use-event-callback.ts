@@ -8,18 +8,15 @@ export function useEventCallback<Args extends unknown[], Result>(
 ) {
   const callbackRef = useRef<typeof callback | null>(null)
 
-  const [eventCallback] = useState(
-    () =>
-      function (...args: Args) {
-        const currentCallback = callbackRef.current
+  const [eventCallback] = useState(() => (...args: Args) => {
+    const currentCallback = callbackRef.current
 
-        if (!currentCallback) {
-          throw new Error("useEventCallback cannot be called before commit")
-        }
+    if (!currentCallback) {
+      throw new Error("useEventCallback cannot be called before commit")
+    }
 
-        return currentCallback(...args)
-      },
-  )
+    return currentCallback(...args)
+  })
 
   useInsertionEffect(() => {
     callbackRef.current = callback

@@ -47,7 +47,9 @@ export const Route = createFileRoute("/api/og")({
 })
 
 function cleanText(value: string | null, fallback: string, maxLength: number) {
-  return value?.trim().slice(0, maxLength) || fallback
+  const text = value?.trim().slice(0, maxLength)
+
+  return text === "" ? fallback : (text ?? fallback)
 }
 
 function loadFonts(request: Request) {

@@ -107,7 +107,7 @@ export function ThemeProvider({
     return () => root.classList.remove(...themes.classes[resolvedTheme])
   }, [ready, resolvedTheme, themes])
 
-  const setTheme = useEventCallback(function (nextTheme: Theme) {
+  const setTheme = useEventCallback((nextTheme: Theme) => {
     try {
       localStorage.setItem(storageKey, nextTheme)
     } catch {

@@ -20,7 +20,7 @@ function createCopyStatus() {
   return {
     getSnapshot: () => copied,
     setCopied,
-    subscribe(callback: () => void) {
+    subscribe(this: void, callback: () => void) {
       notify = callback
 
       return () => {

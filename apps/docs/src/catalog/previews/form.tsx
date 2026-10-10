@@ -23,15 +23,16 @@ const styles = stylex.create({
 export function Preview() {
   const [loading, setLoading] = useState(false)
 
-  const onSubmit = useEventCallback(async function (
-    e: FormEvent<HTMLFormElement>,
-  ) {
+  const onSubmit = useEventCallback(async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     const formData = new FormData(e.currentTarget)
+    const email = formData.get("email") ?? ""
     setLoading(true)
     await new Promise((r) => setTimeout(r, 800))
     setLoading(false)
-    alert(`Email: ${formData.get("email") || ""}`)
+    alert(
+      `Email: ${email instanceof File ? Object.prototype.toString.call(email) : email}`,
+    )
   })
 
   return (

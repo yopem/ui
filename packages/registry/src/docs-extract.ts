@@ -9,7 +9,7 @@ const root = dirname(fileURLToPath(import.meta.url))
 
 export function extractDocs() {
   const configPath = resolve(root, "../tsconfig.json")
-  const config = ts.readConfigFile(configPath, ts.sys.readFile)
+  const config = ts.readConfigFile(configPath, (path) => ts.sys.readFile(path))
 
   const parsed = ts.parseJsonConfigFileContent(
     config.config,

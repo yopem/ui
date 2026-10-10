@@ -9,7 +9,7 @@ import { useState } from "react"
 export function Preview() {
   const [count, setCount] = useState(0)
 
-  const increment = useEventCallback(function () {
+  const increment = useEventCallback(() => {
     setCount(count + 1)
   })
 

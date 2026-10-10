@@ -18,6 +18,7 @@
         "pkg-pr-new": "^0.0.91",
         "turbo": "^2.11.7",
         "typescript": "catalog:",
+        "zod": "catalog:",
       },
     },
     "apps/docs": {

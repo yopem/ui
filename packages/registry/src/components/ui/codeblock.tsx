@@ -78,7 +78,7 @@ export function Codeblock({
   const codeRef = useRef<HTMLPreElement>(null)
   const [copyStatus, setCopyStatus] = useState<"copied" | "error" | null>(null)
 
-  const copyCode = useEventCallback(async function () {
+  const copyCode = useEventCallback(async () => {
     try {
       await navigator.clipboard.writeText(codeRef.current?.textContent ?? "")
       setCopyStatus("copied")

@@ -1,4 +1,9 @@
+import { spawn } from "bun"
 import { appendFile, readFile, writeFile } from "node:fs/promises"
+import process from "node:process"
+import { z } from "zod"
+
+const manifestSchema = z.object({ name: z.string(), version: z.string() })
 
 const packages = ["cli", "oxlint-plugin"]
 
@@ -11,13 +16,9 @@ if (process.env.CHANGESETS_OUTPUT) {
 for (const name of packages) {
   const cwd = new URL(`../packages/${name}/`, import.meta.url).pathname
 
-  // SAFETY: Checked-in workspace manifests provide `name` and `version`.
-  const manifest = JSON.parse(
-    await readFile(`${cwd}/package.json`, "utf8"),
-  ) as {
-    name: string
-    version: string
-  }
+  const manifest = manifestSchema.parse(
+    JSON.parse(await readFile(`${cwd}/package.json`, "utf8")),
+  )
 
   if (!dryRun) {
     const response = await fetch(
@@ -38,7 +39,7 @@ for (const name of packages) {
     ? ["bun", "pm", "pack", "--dry-run"]
     : ["bun", "publish", "--tolerate-republish"]
 
-  const publish = Bun.spawn(command, {
+  const publish = spawn(command, {
     cwd,
     stdout: "inherit",
     stderr: "inherit",
@@ -55,7 +56,7 @@ for (const name of packages) {
 
   const tag = `${manifest.name}@${manifest.version}`
 
-  const git = Bun.spawn(["git", "tag", "-a", tag, "-m", tag], {
+  const git = spawn(["git", "tag", "-a", tag, "-m", tag], {
     stdout: "inherit",
     stderr: "inherit",
   })

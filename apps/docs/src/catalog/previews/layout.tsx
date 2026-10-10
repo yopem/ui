@@ -61,18 +61,16 @@ export function Preview() {
   const [textTag, setTextTag] = useState("Not inspected")
   const [submitted, setSubmitted] = useState(false)
 
-  const handleSubmit = useEventCallback(function (
-    event: FormEvent<HTMLFormElement>,
-  ) {
+  const handleSubmit = useEventCallback((event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     setSubmitted(true)
   })
 
-  const focusName = useEventCallback(function () {
+  const focusName = useEventCallback(() => {
     return nameRef.current?.focus()
   })
 
-  const inspectRefs = useEventCallback(function () {
+  const inspectRefs = useEventCallback(() => {
     return setTextTag(
       `${textRef.current?.tagName ?? "missing"} ${linkRef.current?.tagName ?? "missing"}`,
     )

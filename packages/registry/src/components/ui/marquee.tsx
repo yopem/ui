@@ -71,7 +71,7 @@ export function Marquee({
 }: MarqueeProps) {
   const [paused, setPaused] = useState(false)
 
-  const handleClick = useEventCallback(function () {
+  const handleClick = useEventCallback(() => {
     return setPaused((current) => !current)
   })
 

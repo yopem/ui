@@ -92,8 +92,8 @@ export function ToggleGroupItem({
   const xstyle = consumerXstyle
 
   const context = useContext(ToggleGroupContext)
-  const resolvedVariant = context.variant || variant
-  const resolvedSize = context.size || size
+  const resolvedVariant = context.variant ?? variant
+  const resolvedSize = context.size ?? size
 
   return (
     <ToggleComponent

@@ -12,7 +12,7 @@ export function ThemeToggle() {
   const { resolvedTheme, setTheme } = useTheme()
   const nextTheme = resolvedTheme === "dark" ? "light" : "dark"
 
-  const toggleTheme = useEventCallback(function () {
+  const toggleTheme = useEventCallback(() => {
     setTheme(nextTheme)
   })
 

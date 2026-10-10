@@ -4,7 +4,7 @@ export function getSnippetDependencies(source: string) {
 
   // ponytail: snippets use static imports; use a TS parser if dynamic imports are added.
   for (const match of source.matchAll(/\bfrom\s+["']([^"']+)["']/g)) {
-    const path = match[1]!
+    const path = match[1]
 
     if (path.startsWith("@/components/ui/") || path.startsWith("@/hooks/")) {
       components.add(path.split("/").at(-1)!)

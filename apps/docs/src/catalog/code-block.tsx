@@ -222,11 +222,11 @@ export function CopyableCode({
       </ScrollArea>
     )
 
-  const handleCopy = useEventCallback(function () {
+  const handleCopy = useEventCallback(() => {
     return void copyToClipboard(cleanCode)
   })
 
-  const handleClick = useEventCallback(function () {
+  const handleClick = useEventCallback(() => {
     return setExpanded(true)
   })
 

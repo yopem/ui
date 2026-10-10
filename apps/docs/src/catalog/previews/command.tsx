@@ -71,15 +71,13 @@ export function Preview() {
   const hydrated = useHydrated()
   const [open, setOpen] = useState(false)
 
-  const handleItemClick = useEventCallback(function () {
+  const handleItemClick = useEventCallback(() => {
     setOpen(false)
   })
 
   const shortcutCleanupRef = useRef<(() => void) | null>(null)
 
-  const registerTrigger = useEventCallback(function (
-    node: HTMLButtonElement | null,
-  ) {
+  const registerTrigger = useEventCallback((node: HTMLButtonElement | null) => {
     shortcutCleanupRef.current?.()
     shortcutCleanupRef.current = null
 

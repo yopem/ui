@@ -551,7 +551,9 @@ function useIsMobile() {
   }
 
   function getSnapshot() {
-    return typeof window !== "undefined" && window.matchMedia(query).matches
+    return typeof window === "undefined"
+      ? false
+      : window.matchMedia(query).matches
   }
 
   return useSyncExternalStore(subscribe, getSnapshot, () => false)
@@ -602,22 +604,22 @@ export function SidebarProvider({
   const [_open, _setOpen] = useState(defaultOpen)
   const open = openProp ?? _open
 
-  const setOpen = useEventCallback(async function (
-    value: boolean | ((value: boolean) => boolean),
-  ) {
-    const next = isCallback(value) ? value(open) : value
+  const setOpen = useEventCallback(
+    async (value: boolean | ((value: boolean) => boolean)) => {
+      const next = isCallback(value) ? value(open) : value
 
-    if (setOpenProp) setOpenProp(next)
-    else _setOpen(next)
-    await cookieStore.set({
-      expires: Date.now() + SIDEBAR_COOKIE_MAX_AGE * 1000,
-      name: SIDEBAR_COOKIE_NAME,
-      path: "/",
-      value: String(next),
-    })
-  })
+      if (setOpenProp) setOpenProp(next)
+      else _setOpen(next)
+      await cookieStore.set({
+        expires: Date.now() + SIDEBAR_COOKIE_MAX_AGE * 1000,
+        name: SIDEBAR_COOKIE_NAME,
+        path: "/",
+        value: String(next),
+      })
+    },
+  )
 
-  const toggleSidebar = useEventCallback(function () {
+  const toggleSidebar = useEventCallback(() => {
     return isMobile
       ? setOpenMobile((value) => !value)
       : setOpen((value) => !value)
@@ -632,7 +634,7 @@ export function SidebarProvider({
         (event.metaKey || event.ctrlKey)
       ) {
         event.preventDefault()
-        toggleSidebar()
+        void toggleSidebar()
       }
     }
 
@@ -791,12 +793,12 @@ export function SidebarTrigger({
 
   const { toggleSidebar } = useSidebar()
 
-  const handleClick = useEventCallback(function (
-    event: Parameters<NonNullable<typeof onClick>>[0],
-  ) {
-    onClick?.(event)
-    toggleSidebar()
-  })
+  const handleClick = useEventCallback(
+    (event: Parameters<NonNullable<typeof onClick>>[0]) => {
+      onClick?.(event)
+      toggleSidebar()
+    },
+  )
 
   return (
     <Button

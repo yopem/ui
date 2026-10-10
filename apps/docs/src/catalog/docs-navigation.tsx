@@ -62,7 +62,7 @@ const primitiveStyles = stylex.create({
   },
 })
 
-const tree: Root = {
+const tree = {
   name: "Yopem UI",
   children: [
     { type: "separator", name: "Start here" },
@@ -83,7 +83,7 @@ const tree: Root = {
       url: `/components/${item.slug}`,
     })),
   ],
-}
+} satisfies Root
 
 export function DocsNavigation({ onNavigate }: { onNavigate?: () => void }) {
   const pathname = useLocation({ select: (location) => location.pathname })
@@ -103,11 +103,7 @@ export function DocsNavigation({ onNavigate }: { onNavigate?: () => void }) {
         <Box render={<ul />} xstyle={primitiveStyles.ul}>
           {tree.children.map((item) =>
             item.type === "separator" ? (
-              <Box
-                render={<li />}
-                key={String(item.name)}
-                xstyle={primitiveStyles.li}
-              >
+              <Box render={<li />} key={item.name} xstyle={primitiveStyles.li}>
                 {item.name}
               </Box>
             ) : item.type === "page" ? (

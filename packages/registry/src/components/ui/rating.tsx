@@ -75,7 +75,7 @@ export function Rating({
   const currentValue = value ?? uncontrolledValue
   const ratingCount = Number.isFinite(max) ? Math.max(1, Math.floor(max)) : 5
 
-  const handleValueChange = useEventCallback(function (nextValue: string) {
+  const handleValueChange = useEventCallback((nextValue: string) => {
     const nextRating = Number(nextValue)
 
     if (value === undefined) setUncontrolledValue(nextRating)

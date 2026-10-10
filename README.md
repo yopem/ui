@@ -58,8 +58,9 @@ app uses only StyleX for styling. The project does not install CSS-property
 aliases or a style-props compiler.
 
 ```tsx
-import { Box } from "@/components/ui/box"
 import * as stylex from "@stylexjs/stylex"
+
+import { Box } from "@/components/ui/box"
 
 const styles = stylex.create({ section: { padding: "1rem" } })
 
