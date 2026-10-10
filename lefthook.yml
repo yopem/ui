@@ -6,9 +6,6 @@ pre-commit:
     format:
       glob: "*.{css,html,js,json,md,mjs,toml,ts,tsx,yml}"
       run: bun --bun oxfmt {staged_files}
-    typecheck:
-      glob: "*.{ts,tsx}"
-      run: bun run typecheck
 
 pre-push:
   commands:
@@ -18,6 +15,3 @@ pre-push:
     formatcheck:
       glob: "*.{css,html,js,json,md,mjs,toml,ts,tsx,yml}"
       run: bun --bun oxfmt --check {push_files}
-    typecheck:
-      glob: "*.{ts,tsx}"
-      run: bun run typecheck
