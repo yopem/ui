@@ -1,5 +1,12 @@
 # @yopem-ui/cli
 
+## 0.1.4
+
+### Patch Changes
+
+- [`559f835`](https://github.com/yopem/ui/commit/559f835e60846dfd3e3d38c79b59420f58c83ebd)
+  Thanks [@karyanayandi](https://github.com/karyanayandi)! - f
+
 ## 0.1.3
 
 ### Patch Changes
