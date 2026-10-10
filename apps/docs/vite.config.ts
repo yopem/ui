@@ -90,6 +90,20 @@ const config = defineConfig({
                   test: /[\\/]@shikijs[\\/]langs[\\/]/,
                   maxSize: 300_000,
                 },
+                {
+                  name: "initial-runtime",
+                  tags: ["$initial"],
+                },
+                {
+                  name: "documentation-sources",
+                  test: /\.(?:tsx?|css)\?raw$/,
+                },
+                {
+                  name: "shared-runtime",
+                  minShareCount: 2,
+                  test: (id) =>
+                    !/[\\/]src[\\/]catalog[\\/]previews[\\/]/.test(id),
+                },
               ],
             },
           },

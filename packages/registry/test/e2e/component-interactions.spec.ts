@@ -64,32 +64,34 @@ test("command palette focuses input on open and restores trigger focus", async (
   }
 })
 
-test("timed previews advance and restart after navigation", async ({
-  page,
-}) => {
+test("progress advances and restarts after navigation", async ({ page }) => {
   await openPreview(page, "progress")
   const progress = page.getByRole("progressbar", { name: "Upload progress" })
   await expect
     .poll(async () => Number(await progress.getAttribute("aria-valuenow")))
     .toBeGreaterThan(20)
 
-  await openPreview(page, "skeleton")
-  await expect(page.locator('[data-slot="skeleton"]')).not.toHaveCount(0)
-  await expect(
-    page.getByRole("heading", { name: "Sarah Johnson" }),
-  ).toBeVisible({
-    timeout: 6000,
-  })
-  await expect(
-    page.getByRole("heading", { name: "Mark Bennett Andersson" }),
-  ).toBeVisible({ timeout: 6000 })
-  await expect(page.locator('[data-slot="skeleton"]')).toHaveCount(0)
-
-  await openPreview(page, "progress")
+  await page.goto("/components/skeleton", { waitUntil: "commit" })
+  await page.goto("/components/progress", { waitUntil: "commit" })
   await expect(progress).toHaveAttribute("aria-valuenow", "20")
   await expect
     .poll(async () => Number(await progress.getAttribute("aria-valuenow")))
     .toBeGreaterThan(20)
+})
+
+test("skeleton preview replaces loading placeholders", async ({ page }) => {
+  await page.goto("/components/skeleton", { waitUntil: "commit" })
+  await expect(page.locator('[data-slot="skeleton"]')).not.toHaveCount(0)
+  await expect(
+    page.getByRole("button", { name: "Copy Skeleton usage", exact: true }),
+  ).toBeEnabled()
+  await expect(
+    page.getByRole("heading", { name: "Sarah Johnson" }),
+  ).toBeVisible({ timeout: 6000 })
+  await expect(
+    page.getByRole("heading", { name: "Mark Bennett Andersson" }),
+  ).toBeVisible({ timeout: 6000 })
+  await expect(page.locator('[data-slot="skeleton"]')).toHaveCount(0)
 })
 
 test("tabs support arrow-key navigation", async ({ page }) => {

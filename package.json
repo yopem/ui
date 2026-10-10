@@ -22,9 +22,9 @@
     "start": "bun run --cwd apps/docs start",
     "preview": "bun run --cwd apps/docs preview",
     "typecheck": "bun run --filter '*' typecheck",
-    "test": "turbo run test",
-    "test:e2e": "turbo run test:e2e",
-    "test:a11y": "turbo run test:a11y",
+    "test": "turbo run test --continue=dependencies-successful",
+    "test:e2e": "turbo run test:e2e --continue=dependencies-successful",
+    "test:a11y": "turbo run test:a11y --continue=dependencies-successful",
     "lint": "oxlint lint .",
     "fmt": "oxfmt fmt .",
     "fmt:check": "oxfmt --check ."

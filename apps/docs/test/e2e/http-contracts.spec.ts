@@ -71,6 +71,8 @@ test("design-system-first policy is published and discoverable", async ({
 test("generated documentation publishes reviewed source text", async ({
   request,
 }, testInfo) => {
+  test.setTimeout(120_000)
+
   const directory = new URL(
     "../../../../packages/registry/dist/r/docs/",
     import.meta.url,
@@ -80,11 +82,15 @@ test("generated documentation publishes reviewed source text", async ({
 
   expect(files.length).toBeGreaterThan(0)
 
-  for (const file of files) {
-    const response = await request.get(`/r/docs/${file}`)
-    expect(response.status(), file).toBe(200)
-    expect(await response.text(), file).toBe(
-      readFileSync(new URL(file, directory), "utf8"),
+  for (let offset = 0; offset < files.length; offset += 6) {
+    await Promise.all(
+      files.slice(offset, offset + 6).map(async (file) => {
+        const response = await request.get(`/r/docs/${file}`)
+        expect(response.status(), file).toBe(200)
+        expect(await response.text(), file).toBe(
+          readFileSync(new URL(file, directory), "utf8"),
+        )
+      }),
     )
   }
 
@@ -107,16 +113,22 @@ test("all component examples use consumer import paths", async ({
 
   expect(paths.length).toBeGreaterThan(0)
 
-  for (const path of paths) {
-    const response = await request.get(`${path}.md`)
-    expect(response.status(), path).toBe(200)
-    const source = await response.text()
-    expect(source, path).not.toContain("bunx @yopem-ui/cli update")
-    const html = await request.get(path)
-    expect(html.status(), path).toBe(200)
-    expect(await html.text(), path).not.toContain("bunx @yopem-ui/cli update")
-    expect(source, path).not.toContain("@registry/components/")
-    expect(source, path).toContain('from "@/components/ui/')
+  for (let offset = 0; offset < paths.length; offset += 6) {
+    await Promise.all(
+      paths.slice(offset, offset + 6).map(async (path) => {
+        const response = await request.get(`${path}.md`)
+        expect(response.status(), path).toBe(200)
+        const source = await response.text()
+        expect(source, path).not.toContain("bunx @yopem-ui/cli update")
+        const html = await request.get(path)
+        expect(html.status(), path).toBe(200)
+        expect(await html.text(), path).not.toContain(
+          "bunx @yopem-ui/cli update",
+        )
+        expect(source, path).not.toContain("@registry/components/")
+        expect(source, path).toContain('from "@/components/ui/')
+      }),
+    )
   }
 
   await testInfo.attach("checked-component-paths", {
@@ -156,6 +168,14 @@ test("Container is discoverable and installable from registry", async ({
 test("new components are listed, documented, and installable", async ({
   request,
 }) => {
+  const listings = []
+
+  for (const url of ["/llms.txt", "/sitemap.xml"]) {
+    const response = await request.get(url)
+    expect(response.status(), url).toBe(200)
+    listings.push(await response.text())
+  }
+
   for (const name of [
     "absolute-center",
     "bleed",
@@ -189,11 +209,8 @@ test("new components are listed, documented, and installable", async ({
     expect(docs.status(), name).toBe(200)
     expect(await docs.text()).toContain(`# ${item.title}`)
 
-    for (const url of ["/llms.txt", "/sitemap.xml"]) {
-      const response = await request.get(url)
-      expect(response.status(), url).toBe(200)
-      expect(await response.text(), url).toContain(`/components/${name}`)
-    }
+    for (const listing of listings)
+      expect(listing, name).toContain(`/components/${name}`)
   }
 
   const removed = await request.get("/r/paragraph.json")

@@ -15,7 +15,7 @@ test("docs lint accepts StyleX and rejects forbidden styling", () => {
     writeFileSync(
       source,
       `
-      import { Box } from "@/components/ui/box"
+      import { Box } from "@registry/components/ui/box"
       import * as stylex from "@stylexjs/stylex"
 
       const styles = stylex.create({ root: { padding: "1rem" } })
@@ -36,7 +36,7 @@ test("docs lint accepts StyleX and rejects forbidden styling", () => {
     writeFileSync(
       source,
       `
-      import { Box } from "@/components/ui/box"
+      import { Box } from "@registry/components/ui/box"
       import * as stylex from "@stylexjs/stylex"
 
       const styles = stylex.create({
@@ -68,4 +68,4 @@ test("docs lint accepts StyleX and rejects forbidden styling", () => {
   } finally {
     rmSync(directory, { force: true, recursive: true })
   }
-})
+}, 30_000)

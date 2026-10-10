@@ -74,6 +74,9 @@ test("CLI guide is reachable from installation, navigation, and search", async (
 }) => {
   await page.goto("/docs/installation")
   await expect(
+    page.getByRole("button", { name: "Search documentation", exact: true }),
+  ).toBeEnabled()
+  await expect(
     page.getByRole("main").getByRole("heading", { name: /update/i }),
   ).toHaveCount(0)
   await page

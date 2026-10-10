@@ -82,16 +82,20 @@ test("@a11y component code blocks preserve shell highlighting", async ({
   })
 })
 
-for (const [guide, format, content, firstToken] of [
-  ["installation", "shell", "bunx", "bunx"],
-  ["lint", "JSON", '"jsPlugins"', "{"],
-  ["getting-started", "TSX", "import", "import"],
+for (const [guide, format, content, firstToken, codeTitle] of [
+  ["installation", "shell", "bunx", "bunx", "Initialize project with CLI"],
+  ["lint", "JSON", '"jsPlugins"', "{", "Code"],
+  ["getting-started", "TSX", "import", "import", "Code"],
 ]) {
   test(`@a11y ${guide} code blocks preserve ${format} highlighting`, async ({
     page,
   }, testInfo) => {
     await page.goto(`/docs/${guide}`)
-    const code = page.getByRole("group", { name: "Code", exact: true }).first()
+
+    const code = page
+      .getByRole("group", { name: codeTitle, exact: true })
+      .first()
+
     await expect(code.locator("pre.shiki code")).toContainText(content)
     await expect(code.locator(".line > span").first()).toHaveText(firstToken)
     expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([])
@@ -128,7 +132,7 @@ test("search waits for client hydration before accepting clicks", async ({
 
 test("sidebar links to llms.txt", async ({ page }) => {
   test.skip((page.viewportSize()?.width ?? 0) < 768, "Desktop navigation only")
-  await page.goto("/")
+  await page.goto("/docs/getting-started")
 
   await expect(page.getByRole("link", { name: "llms.txt" })).toHaveAttribute(
     "href",
