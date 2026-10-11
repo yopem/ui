@@ -26,7 +26,7 @@
     "generate-routes": "tsr generate",
     "build": "vite build && bun static.ts",
     "build:test": "vite build --mode test --logLevel warn && bun static.ts",
-    "deploy": "export CLOUDFLARE_ACCOUNT_ID=661bd2c4ba9614f17d1d852772da422a && alchemy deploy --stage prod --adopt && wrangler pages deploy .output/public --project-name ui --branch main",
+    "deploy": "alchemy deploy --stage prod --adopt && wrangler pages deploy .output/public --project-name ui --branch main",
     "start": "wrangler pages dev .output/public --port ${PORT:-3100}",
     "preview": "vite preview",
     "typecheck": "bun run generate-routes && tsc --noEmit",
