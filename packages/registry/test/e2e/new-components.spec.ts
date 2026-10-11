@@ -4,7 +4,11 @@ import { expect, test } from "@playwright/test"
 test("@a11y rating supports keyboard selection and announces selected value", async ({
   page,
 }) => {
-  await page.goto("/components/rating", { waitUntil: "networkidle" })
+  await page.goto("/components/rating", { waitUntil: "domcontentloaded" })
+  await expect(
+    page.getByRole("button", { name: "Copy Rating usage", exact: true }),
+  ).toBeEnabled()
+
   const rating = page.getByRole("radiogroup", { name: "Rate this component" })
   await expect(rating.getByRole("radio", { name: "3 stars" })).toBeChecked()
   await rating.getByRole("radio", { name: "3 stars" }).click()
@@ -22,7 +26,13 @@ test("@a11y rating supports keyboard selection and announces selected value", as
 })
 
 test("native select keeps form and keyboard behavior", async ({ page }) => {
-  await page.goto("/components/native-select", { waitUntil: "networkidle" })
+  await page.goto("/components/native-select", {
+    waitUntil: "domcontentloaded",
+  })
+  await expect(
+    page.getByRole("button", { name: "Copy Native Select usage", exact: true }),
+  ).toBeEnabled()
+
   const select = page.getByRole("combobox", { name: "Theme", exact: true })
   await expect(select).toHaveValue("system")
   await select.focus()
@@ -34,7 +44,10 @@ test("native select keeps form and keyboard behavior", async ({ page }) => {
 })
 
 test("marquee can be paused and resumed", async ({ page }) => {
-  await page.goto("/components/marquee", { waitUntil: "networkidle" })
+  await page.goto("/components/marquee", { waitUntil: "domcontentloaded" })
+  await expect(
+    page.getByRole("button", { name: "Copy Marquee usage", exact: true }),
+  ).toBeEnabled()
   await page.getByRole("button", { name: "Pause scrolling content" }).click()
   await expect(page.locator('[data-slot="marquee-track"]')).toHaveAttribute(
     "data-paused",
@@ -81,7 +94,7 @@ test("@a11y steps expose active item as current step", async ({ page }) => {
 
 test("clipboard reports copied content", async ({ page, context }) => {
   await context.grantPermissions(["clipboard-read", "clipboard-write"])
-  await page.goto("/components/clipboard", { waitUntil: "networkidle" })
+  await page.goto("/components/clipboard", { waitUntil: "domcontentloaded" })
   await expect(
     page.getByRole("button", { name: "Copy Clipboard usage" }),
   ).toBeEnabled({ timeout: 20_000 })
@@ -99,7 +112,10 @@ test("clipboard reports copied content", async ({ page, context }) => {
 
 test("codeblock preserves source and copies it", async ({ page, context }) => {
   await context.grantPermissions(["clipboard-read", "clipboard-write"])
-  await page.goto("/components/codeblock", { waitUntil: "networkidle" })
+  await page.goto("/components/codeblock", { waitUntil: "domcontentloaded" })
+  await expect(
+    page.getByRole("button", { name: "Copy Codeblock usage", exact: true }),
+  ).toBeEnabled()
   await page.getByRole("button", { name: "Copy code", exact: true }).click()
   await expect(page.getByText("Code copied.")).toBeVisible()
   expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(

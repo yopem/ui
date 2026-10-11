@@ -27,9 +27,15 @@ for (const theme of ["light", "dark"] as const) {
         (value) => localStorage.setItem("yopem-ui-theme", value),
         theme,
       )
-      await page.goto(`/components/${slug}`)
+      await page.goto(`/components/${slug}`, { waitUntil: "domcontentloaded" })
+      await expect(
+        page.getByRole("button", { name: /^Copy .* usage$/ }).first(),
+      ).toBeEnabled()
       const preview = page.locator('[aria-label$="live preview"]')
       await preview.waitFor()
+      await expect(
+        preview.locator('[data-slot="flex"]').first().locator(":scope > *"),
+      ).not.toHaveCount(0)
       await page.waitForFunction(() => document.fonts.status === "loaded")
 
       const result = await new AxeBuilder({ page })

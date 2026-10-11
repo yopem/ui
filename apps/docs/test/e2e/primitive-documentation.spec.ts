@@ -122,7 +122,7 @@ for (const [slug, name] of components) {
   test(`${name} has usage, a live preview and an API reference`, async ({
     page,
   }) => {
-    await page.goto(`/components/${slug}`)
+    await page.goto(`/components/${slug}`, { waitUntil: "domcontentloaded" })
     await expect(
       page.getByRole("heading", { name, exact: true, level: 1 }),
     ).toBeVisible()

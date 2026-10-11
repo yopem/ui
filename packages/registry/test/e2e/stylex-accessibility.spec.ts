@@ -3,7 +3,7 @@ import { expect, test } from "@playwright/test"
 
 test.beforeEach(async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" })
-  await page.goto("/components/button")
+  await page.goto("/components/button", { waitUntil: "domcontentloaded" })
   await expect(
     page.getByRole("button", { name: "Copy Button usage" }),
   ).toBeEnabled()
@@ -54,7 +54,7 @@ test("buttons expose keyboard focus and minimum targets", async ({ page }) => {
 
 test("stored dark theme applies before interaction", async ({ page }) => {
   await page.evaluate(() => localStorage.setItem("yopem-ui-theme", "dark"))
-  await page.reload()
+  await page.reload({ waitUntil: "domcontentloaded" })
   await expect(page.locator("html")).toHaveAttribute("data-theme", "dark")
   await expect(page.locator("html")).toHaveCSS("color-scheme", "dark")
 })
