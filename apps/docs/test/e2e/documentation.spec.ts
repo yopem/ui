@@ -94,6 +94,7 @@ for (const [guide, format, content, firstToken, codeTitle] of [
 
     const code = page
       .getByRole("group", { name: codeTitle, exact: true })
+      .filter({ hasText: content })
       .first()
 
     await expect(code.locator("pre.shiki code")).toContainText(content)
@@ -247,11 +248,11 @@ test("component docs cover CLI setup and API", async ({ page }) => {
     page.getByRole("button", { name: "Copy Update Button with CLI" }),
   ).toHaveCount(0)
   await expect(page.getByRole("main")).not.toContainText(
-    "bunx @yopem-ui/cli update",
+    "bunx --bun @yopem-ui/cli update",
   )
   const markdown = await page.request.get("/components/button.md")
   expect(markdown.status()).toBe(200)
-  expect(await markdown.text()).not.toContain("bunx @yopem-ui/cli update")
+  expect(await markdown.text()).not.toContain("bunx --bun @yopem-ui/cli update")
   await page
     .locator("summary")
     .filter({ hasText: "View API reference" })

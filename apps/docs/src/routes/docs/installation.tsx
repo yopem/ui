@@ -22,12 +22,12 @@ function InstallationCommands() {
     <>
       <CopyableCode
         language="shellscript"
-        code="bunx @yopem-ui/cli init"
+        code="bunx --bun @yopem-ui/cli init"
         title="Initialize project with CLI"
       />
       <CopyableCode
         language="shellscript"
-        code="bunx @yopem-ui/cli init --framework react-router"
+        code="bunx --bun @yopem-ui/cli init --framework react-router"
         title="Select framework with CLI"
       />
     </>

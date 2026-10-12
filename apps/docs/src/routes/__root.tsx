@@ -27,6 +27,7 @@ import {
   DocsTitle,
 } from "@/catalog/docs-page"
 import { docsStyles } from "@/catalog/docs-styles"
+import { PackageManagerProvider } from "@/catalog/package-manager"
 import { siteJsonLd } from "@/lib/seo"
 
 const styles = stylex.create({
@@ -120,7 +121,9 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       </head>
       <body>
         <ThemeProvider>
-          <ToastProvider>{children}</ToastProvider>
+          <ToastProvider>
+            <PackageManagerProvider>{children}</PackageManagerProvider>
+          </ToastProvider>
         </ThemeProvider>
         {import.meta.env.DEV && !isTestMode ? (
           <TanStackDevtools

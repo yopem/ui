@@ -12,11 +12,16 @@ React Router supports client mode and framework mode. Initialize StyleX before
 you add a component:
 
 ```sh
-bunx @yopem-ui/cli init --dry-run
-bunx @yopem-ui/cli init
-bunx @yopem-ui/cli add button
-bunx @yopem-ui/cli update button
+bunx --bun @yopem-ui/cli init --dry-run
+bunx --bun @yopem-ui/cli init
+bunx --bun @yopem-ui/cli add button
+bunx --bun @yopem-ui/cli update button
 ```
+
+The CLI supports Bun, npm, pnpm, and Yarn. Run it with
+`bunx --bun @yopem-ui/cli`, `npx @yopem-ui/cli`, `pnpm dlx @yopem-ui/cli`, or
+`yarn dlx @yopem-ui/cli`. The Yarn command requires Yarn 2 or later. The CLI
+uses your project's package manager to install dependencies.
 
 The `init` command installs tokens, reset CSS, and StyleX helpers. It configures
 build plugins, aliases, and root styles. It stops if existing configuration

@@ -4,7 +4,12 @@ change.
 
 ## Configuration
 
-Run `bunx @yopem-ui/cli init` to install Oxlint and `@yopem-ui/oxlint-plugin`.
+Run init to install Oxlint and `@yopem-ui/oxlint-plugin`:
+
+```sh
+npm exec -- @yopem-ui/cli init
+```
+
 The command creates or updates `.oxlintrc.json`. It preserves existing rule
 settings, including explicit `"off"` values.
 
@@ -13,7 +18,13 @@ The recommended preset enables four rules: `prefer-layout-primitives`,
 enables `no-raw-stylex-colors`. Enable `no-unused-stylex-styles` and `atoms`
 separately when needed.
 
-For manual setup, use this configuration:
+For manual setup, install the development dependencies:
+
+```sh
+pnpm add -D oxlint @yopem-ui/oxlint-plugin
+```
+
+Use this configuration:
 
 ```json
 {
@@ -41,8 +52,11 @@ For manual setup, use this configuration:
 ```
 
 The override excludes copied component implementations. Keep these checks on
-application code that uses the components. Run `bunx oxlint .` to check your
-project.
+application code that uses the components. Check your project:
+
+```sh
+pnpm exec oxlint .
+```
 
 ## Rules
 

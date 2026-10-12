@@ -18,12 +18,14 @@ import { Text } from "@registry/components/ui/text"
 import { isString } from "@registry/lib/stylex"
 import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
+import { Link as RouterLink } from "@tanstack/react-router"
 import { isValidElement, useState } from "react"
 
 import { CopyableCode } from "./code-block"
 import { DocumentationLayout } from "./docs-layout"
 import { DocsBody, DocsDescription, DocsPage, DocsTitle } from "./docs-page"
 import { guideToc, headingId } from "./guide-toc"
+import { usePackageManagerCommand } from "./package-manager"
 
 const styles = stylex.create({
   h2: {
@@ -147,21 +149,45 @@ export function PlainGuideCode({ children }: { children?: ReactNode }) {
   )
 }
 
+export function GuideInlineCode({ children }: { children?: ReactNode }) {
+  const code = isString(children) ? children : ""
+  const command = usePackageManagerCommand(code)
+  // Keep repository development commands unchanged.
+  const inlineCode = code.startsWith("bun run ") ? code : command
+
+  return (
+    <Box render={<code />} xstyle={styles.code}>
+      {code ? inlineCode : children}
+    </Box>
+  )
+}
+
 const guideComponents: MDXComponents = {
   h2: GuideH2,
   h3: GuideH3,
   p: ({ children }) => <Text xstyle={styles.paragraph}>{children}</Text>,
-  a: ({ children, href, title, target, rel }) => (
-    <Link
-      xstyle={styles.link}
-      href={href}
-      title={title}
-      target={target}
-      rel={rel}
-    >
-      {children}
-    </Link>
-  ),
+  a: ({ children, href, title, target, rel }) =>
+    href?.startsWith("/") && !href.startsWith("//") && !href.includes(".") ? (
+      <RouterLink
+        {...stylex.props(styles.link)}
+        to={href}
+        title={title}
+        target={target}
+        rel={rel}
+      >
+        {children}
+      </RouterLink>
+    ) : (
+      <Link
+        xstyle={styles.link}
+        href={href}
+        title={title}
+        target={target}
+        rel={rel}
+      >
+        {children}
+      </Link>
+    ),
   ul: ({ children }) => (
     <Box render={<ul />} xstyle={styles.ul}>
       {children}
@@ -182,11 +208,7 @@ const guideComponents: MDXComponents = {
       {children}
     </Box>
   ),
-  code: ({ children }) => (
-    <Box render={<code />} xstyle={styles.code}>
-      {children}
-    </Box>
-  ),
+  code: GuideInlineCode,
   pre: GuideCode,
   table: Table,
   thead: TableHeader,

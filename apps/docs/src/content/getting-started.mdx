@@ -11,10 +11,15 @@ component source with the CLI.
 
 ## 1. Set up StyleX
 
-Run `bunx @yopem-ui/cli init` from your project root. The command installs
-shared packages, the source alias, tokens, global styles, and build
-configuration. See the [installation guide](/docs/installation) for supported
-frameworks.
+Run init from your project root:
+
+```sh
+bunx --bun @yopem-ui/cli init
+```
+
+The command installs shared packages, the source alias, tokens, global styles,
+and build configuration. See the [installation guide](/docs/installation) for
+supported frameworks.
 
 Continue only after your app completes a production build. StyleX compiles
 styles during the build. Installation of its runtime package alone is not
@@ -24,8 +29,13 @@ sufficient.
 
 ## 2. Install Button
 
-Run `bunx @yopem-ui/cli add button` from your project root. The CLI installs
-Button, required shared files, and dependencies. See the
+Run add from your project root:
+
+```sh
+bunx --bun @yopem-ui/cli add button
+```
+
+The CLI installs Button, required shared files, and dependencies. See the
 [Button documentation](/components/button) for usage and API details.
 
 <span id="use-button" />

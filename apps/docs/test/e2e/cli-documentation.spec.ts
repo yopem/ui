@@ -84,6 +84,12 @@ test("CLI guide is reachable from installation, navigation, and search", async (
     .getByRole("link", { name: "CLI guide", exact: true })
     .click()
   await page.waitForURL("**/docs/cli")
+  await expect(
+    page
+      .getByRole("main")
+      .getByRole("heading", { name: "CLI", exact: true, level: 1 }),
+  ).toBeVisible()
+  await page.goto("/docs/installation")
 
   if ((page.viewportSize()?.width ?? 0) < 768) {
     await page.getByRole("button", { name: "Open navigation" }).click()
@@ -98,6 +104,11 @@ test("CLI guide is reachable from installation, navigation, and search", async (
       .click()
   }
 
+  await expect(
+    page
+      .getByRole("main")
+      .getByRole("heading", { name: "CLI", exact: true, level: 1 }),
+  ).toBeVisible()
   await page.getByRole("button", { name: "Search documentation" }).click()
   const dialog = page.getByRole("dialog", { name: "Search documentation" })
   await dialog.getByRole("searchbox").fill("CLI")
@@ -118,9 +129,9 @@ test("CLI guide has machine-readable documentation and discovery links", async (
 
   for (const text of [
     "# CLI",
-    "bunx @yopem-ui/cli init",
-    "bunx @yopem-ui/cli add button",
-    "bunx @yopem-ui/cli update base",
+    "bunx --bun @yopem-ui/cli init",
+    "bunx --bun @yopem-ui/cli add button",
+    "bunx --bun @yopem-ui/cli update base",
     "--help",
     "-h",
     "--version",

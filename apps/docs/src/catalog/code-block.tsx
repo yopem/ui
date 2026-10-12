@@ -7,6 +7,11 @@ import { useHydrated } from "@tanstack/react-router"
 import { CheckIcon, CopyIcon } from "lucide-react"
 import { lazy, Suspense, useState } from "react"
 
+import {
+  isPackageManagerCommand,
+  PackageManagerSwitcher,
+  usePackageManagerCommand,
+} from "@/catalog/package-manager"
 import { stripStandaloneComments } from "@/catalog/source-code"
 import { useCopyToClipboard } from "@/hooks/use-copy-to-clipboard"
 
@@ -144,7 +149,11 @@ const primitiveStyles = stylex.create({
     justifyContent: "space-between",
     paddingBlock: "0.5rem",
     paddingInline: "0.75rem",
-    paddingInlineEnd: "3.5rem",
+  },
+  toolbarCopy: {
+    position: "static",
+    borderWidth: 0,
+    flexShrink: 0,
   },
   code: {
     fontFamily: tokens["--font-mono"],
@@ -174,7 +183,14 @@ export function CopyableCode({
   title?: string
 }) {
   const hydrated = useHydrated()
-  const cleanCode = stripStandaloneComments(code)
+
+  const command =
+    (language === "shellscript" || language === "sh" || language === "bash") &&
+    isPackageManagerCommand(code)
+
+  const managerCode = usePackageManagerCommand(code)
+  const sourceCode = stripStandaloneComments(command ? managerCode : code)
+  const cleanCode = command ? sourceCode.trimEnd() : sourceCode
   const codeLines = cleanCode.trimEnd().split("\n")
   const collapsible = preview && codeLines.length > 5
   const [expanded, setExpanded] = useState(!preview)
@@ -234,6 +250,7 @@ export function CopyableCode({
     <>
       <CodeBlockControls
         header={header}
+        command={command}
         hydrated={hydrated}
         isCopied={isCopied}
         title={title}
@@ -260,20 +277,30 @@ export function CopyableCode({
   )
 
   if (preview && !header) {
-    return <Box xstyle={primitiveStyles.box2}>{contents}</Box>
+    return (
+      <Box data-testid="copyable-code" xstyle={primitiveStyles.box2}>
+        {contents}
+      </Box>
+    )
   }
 
-  return <Box xstyle={primitiveStyles.box3}>{contents}</Box>
+  return (
+    <Box data-testid="copyable-code" xstyle={primitiveStyles.box3}>
+      {contents}
+    </Box>
+  )
 }
 
 function CodeBlockControls({
   header,
+  command,
   hydrated,
   isCopied,
   onCopy,
   title,
 }: {
   header?: string
+  command: boolean
   hydrated: boolean
   isCopied: boolean
   onCopy: () => void
@@ -288,7 +315,10 @@ function CodeBlockControls({
           aria-label={isCopied ? `${title} copied` : `Copy ${title}`}
         />
       }
-      xstyle={primitiveStyles.button2}
+      xstyle={[
+        primitiveStyles.button2,
+        (Boolean(header) || command) && primitiveStyles.toolbarCopy,
+      ]}
       onClick={onCopy}
     >
       {isCopied ? (
@@ -302,11 +332,15 @@ function CodeBlockControls({
     </Box>
   )
 
-  return header ? (
+  return header || command ? (
     <Box xstyle={primitiveStyles.box4}>
-      <Box render={<code />} xstyle={primitiveStyles.code}>
-        {header}
-      </Box>
+      {command ? (
+        <PackageManagerSwitcher />
+      ) : (
+        <Box render={<code />} xstyle={primitiveStyles.code}>
+          {header}
+        </Box>
+      )}
       {button}
     </Box>
   ) : (

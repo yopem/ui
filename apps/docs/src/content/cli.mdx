@@ -3,7 +3,7 @@ StyleX, install components, and update copied files.
 
 ## Prerequisites
 
-- Install Bun to run the CLI.
+- Install Bun, npm, pnpm, or modern Yarn (version 2 or later).
 - Use a React application with TypeScript.
 - Get permission to add packages and files.
 - Use Vite, TanStack Router, TanStack Start, React Router, Next.js App Router,
@@ -13,16 +13,24 @@ Vite integrations use Rolldown Babel. Next.js App Router requires Node 24 or
 later and webpack. React Router supports client mode and framework mode. The
 init command does not support React Router RSC mode or Next.js Pages Router.
 
-The CLI and Oxlint plugin are not published yet. The `bunx` commands work after
-both packages are released.
+The CLI and Oxlint plugin are not published yet. These commands work after both
+packages are released.
+
+Select a package manager above a command block. All command blocks use the same
+selection. Yarn commands require modern Yarn (version 2 or later).
+
+- Bun: bunx --bun @yopem-ui/cli init
+- npm: npx @yopem-ui/cli init
+- pnpm: pnpm dlx @yopem-ui/cli init
+- Yarn: yarn dlx @yopem-ui/cli init
 
 ## init
 
 Run init from the project root:
 
 ```sh
-bunx @yopem-ui/cli init
-bunx @yopem-ui/cli init --framework react-router
+bunx --bun @yopem-ui/cli init
+bunx --bun @yopem-ui/cli init --framework react-router
 ```
 
 The command detects the framework. It installs base source, StyleX dependencies,
@@ -39,7 +47,7 @@ Accepted values are `vite`, `tanstack-router`, `tanstack-start`, `react-router`,
 Initialize the project before you add components. Pass one registry item name:
 
 ```sh
-bunx @yopem-ui/cli add button
+bunx --bun @yopem-ui/cli add button
 ```
 
 The command installs component source, required shared files, and dependencies.
@@ -50,22 +58,22 @@ It records installed files and their hashes in `ui.json`.
 Review local changes before you update an installed item:
 
 ```sh
-bunx @yopem-ui/cli update button --dry-run
-bunx @yopem-ui/cli update button
+bunx --bun @yopem-ui/cli update button --dry-run
+bunx --bun @yopem-ui/cli update button
 ```
 
 Use the base item to update installed shared files:
 
 ```sh
-bunx @yopem-ui/cli update base
+bunx --bun @yopem-ui/cli update base
 ```
 
 The update command rejects modified files unless you pass `--force`. Save local
 changes before you use force. Force can remove your changes:
 
 ```sh
-bunx @yopem-ui/cli update button --dry-run --force
-bunx @yopem-ui/cli update button --force
+bunx --bun @yopem-ui/cli update button --dry-run --force
+bunx --bun @yopem-ui/cli update button --force
 ```
 
 ## Help and version
@@ -74,11 +82,11 @@ Run the CLI without arguments to show usage. Use `--help` or `-h` for the same
 result. Use `--version` or `-v` to show the installed CLI version:
 
 ```sh
-bunx @yopem-ui/cli
-bunx @yopem-ui/cli --help
-bunx @yopem-ui/cli -h
-bunx @yopem-ui/cli --version
-bunx @yopem-ui/cli -v
+bunx --bun @yopem-ui/cli
+bunx --bun @yopem-ui/cli --help
+bunx --bun @yopem-ui/cli -h
+bunx --bun @yopem-ui/cli --version
+bunx --bun @yopem-ui/cli -v
 ```
 
 These commands do not need a project. They exit successfully. Do not add
@@ -119,8 +127,8 @@ configuration manually.
 Preview setup or installation before you change files:
 
 ```sh
-bunx @yopem-ui/cli init --dry-run
-bunx @yopem-ui/cli add button --dry-run
+bunx --bun @yopem-ui/cli init --dry-run
+bunx --bun @yopem-ui/cli add button --dry-run
 ```
 
 Dry runs read the registry. They validate URLs, schemas, paths, and file
@@ -148,9 +156,9 @@ this repository's docs server with `bun run dev`. Pass the local registry
 explicitly:
 
 ```sh
-bunx @yopem-ui/cli init --registry http://localhost:3100/r
-bunx @yopem-ui/cli add button --registry http://localhost:3100/r
-bunx @yopem-ui/cli update button --registry http://localhost:3100/r
+bunx --bun @yopem-ui/cli init --registry http://localhost:3100/r
+bunx --bun @yopem-ui/cli add button --registry http://localhost:3100/r
+bunx --bun @yopem-ui/cli update button --registry http://localhost:3100/r
 ```
 
 Requests have a 30-second timeout for connection and JSON body reads. Timeout,
@@ -162,8 +170,8 @@ no source, configuration, or dependency changes after these failures.
 Use `--cwd` to target an app from the repository root:
 
 ```sh
-bunx @yopem-ui/cli init --cwd apps/web
-bunx @yopem-ui/cli add button --cwd apps/web
+bunx --bun @yopem-ui/cli init --cwd apps/web
+bunx --bun @yopem-ui/cli add button --cwd apps/web
 ```
 
 The CLI detects the package manager from the app and workspace root. It supports
@@ -172,9 +180,9 @@ Bun, npm, pnpm, and Yarn workspaces. Dependencies stay in the target package.
 Use an existing named React package in the same workspace for shared components:
 
 ```sh
-bunx @yopem-ui/cli init --cwd apps/web --ui ../../packages/ui
-bunx @yopem-ui/cli add button --cwd packages/ui
-bunx @yopem-ui/cli update button --cwd packages/ui
+bunx --bun @yopem-ui/cli init --cwd apps/web --ui ../../packages/ui
+bunx --bun @yopem-ui/cli add button --cwd packages/ui
+bunx --bun @yopem-ui/cli update button --cwd packages/ui
 ```
 
 The `--ui` path is relative to the target app, not the repository root. Init

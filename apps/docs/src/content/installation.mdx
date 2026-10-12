@@ -1,7 +1,7 @@
 ## Initialize project
 
-Start with a React and TypeScript project. Run `bunx @yopem-ui/cli init` from
-the project root:
+Start with a React and TypeScript project. Run `bunx --bun @yopem-ui/cli init`
+from the project root:
 
 <InstallationCommands />
 
@@ -23,16 +23,29 @@ Vite integrations use Rolldown Babel. Next.js App Router requires Node 24 or
 later and webpack. The init command does not support React Router RSC mode,
 Next.js Pages Router, or other build tools. The CLI reads registry files from
 `https://ui.yopem.com/r` by default. It records installed files in `ui.json`.
-The CLI and Oxlint plugin are not published yet. The `bunx` commands work after
-both packages are released.
+The CLI and Oxlint plugin are not published yet. These commands work after both
+packages are released.
+
+Select a package manager above a command block. All command blocks use the same
+selection. Yarn commands require modern Yarn (version 2 or later).
+
+- Bun: bunx --bun @yopem-ui/cli init
+- npm: npx @yopem-ui/cli init
+- pnpm: pnpm dlx @yopem-ui/cli init
+- Yarn: yarn dlx @yopem-ui/cli init
 
 <span id="check" />
 
 ## Verify and continue
 
 Run your project's production build. Check that it completes without StyleX or
-CSS extraction errors. Run `bunx oxlint .` to check your app. See the
-[lint rules](/docs/lint) for configuration.
+CSS extraction errors. Check your app with Oxlint:
+
+```sh
+bunx oxlint .
+```
+
+See the [lint rules](/docs/lint) for configuration.
 
 Then [add your first component](/docs/getting-started) with the CLI. See the
 [CLI guide](/docs/cli) for commands, options, registry settings, and safe

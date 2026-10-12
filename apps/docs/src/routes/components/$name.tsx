@@ -175,18 +175,20 @@ function ComponentPage() {
             id="installation"
           />
           <Text xstyle={styles.paragraph2}>
-            Run bunx @yopem-ui/cli init from your project root first. The CLI
+            Run the init command from your project root first. The CLI
             configures StyleX and installs shared files and dependencies.
           </Text>
           <CopyableCode
             language="shellscript"
-            code="bunx @yopem-ui/cli init"
+            code="bunx --bun @yopem-ui/cli init"
             title="Initialize StyleX project with CLI"
           />
           <CopyableCode
             language="shellscript"
             code={data.installNames
-              .map((installName) => `bunx @yopem-ui/cli add ${installName}`)
+              .map(
+                (installName) => `bunx --bun @yopem-ui/cli add ${installName}`,
+              )
               .join("\n")}
             title={`Install ${item.title} with CLI`}
           />

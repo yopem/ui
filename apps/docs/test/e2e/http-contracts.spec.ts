@@ -31,9 +31,22 @@ test("machine-readable documentation endpoints expose correct formats", async ({
   expect(llms).toContain("relative to the target app")
 
   const guide = await (await request.get("/docs/installation.md")).text()
-  expect(guide).toContain("bunx @yopem-ui/cli init")
+  expect(guide).toContain("bunx --bun @yopem-ui/cli init")
   expect(guide).not.toContain("<InstallationCommands />")
   expect(guide).not.toContain("Manual installation")
+
+  const component = await (await request.get("/components/button.md")).text()
+
+  for (const source of [llms, guide, component]) {
+    for (const command of [
+      "Bun: bunx --bun @yopem-ui/cli init",
+      "npm: npx @yopem-ui/cli init",
+      "pnpm: pnpm dlx @yopem-ui/cli init",
+      "Yarn: yarn dlx @yopem-ui/cli init",
+    ])
+      expect(source).toContain(command)
+    expect(source).not.toContain("bunx @yopem-ui/cli")
+  }
 })
 
 test("design-system-first policy is published and discoverable", async ({
@@ -119,11 +132,11 @@ test("all component examples use consumer import paths", async ({
         const response = await request.get(`${path}.md`)
         expect(response.status(), path).toBe(200)
         const source = await response.text()
-        expect(source, path).not.toContain("bunx @yopem-ui/cli update")
+        expect(source, path).not.toContain("bunx --bun @yopem-ui/cli update")
         const html = await request.get(path)
         expect(html.status(), path).toBe(200)
         expect(await html.text(), path).not.toContain(
-          "bunx @yopem-ui/cli update",
+          "bunx --bun @yopem-ui/cli update",
         )
         expect(source, path).not.toContain("@registry/components/")
         expect(source, path).toContain('from "@/components/ui/')
