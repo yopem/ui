@@ -1,8 +1,4 @@
-import {
-  isPackageName,
-  packageRunner,
-  pendingDependencies,
-} from "@yopem-ui/cli/project"
+import spawn from "cross-spawn"
 import { createHash } from "node:crypto"
 import {
   chmod,
@@ -18,6 +14,8 @@ import {
   writeFile,
 } from "node:fs/promises"
 import { dirname, join, relative } from "node:path"
+
+import { isPackageName, packageRunner, pendingDependencies } from "./project.js"
 
 const defaultRegistryUrl = "https://ui.yopem.com/r"
 
@@ -613,15 +611,14 @@ export async function writeFiles(
 }
 
 export async function runBun(args: string[], cwd: string) {
-  const process = Bun.spawn(["bun", ...args], {
-    cwd,
-    stdout: "inherit",
-    stderr: "inherit",
+  await new Promise<void>((resolve, reject) => {
+    const child = spawn("bun", args, { cwd, stdio: "inherit" })
+    child.on("error", reject)
+    child.on("exit", (code) => {
+      if (code === 0) resolve()
+      else reject(new Error(`bun ${args.join(" ")} failed`))
+    })
   })
-
-  if ((await process.exited) !== 0) {
-    throw new Error(`bun ${args.join(" ")} failed`)
-  }
 }
 
 export async function planInstall(name: string, options: InstallOptions = {}) {

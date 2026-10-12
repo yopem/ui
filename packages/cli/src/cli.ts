@@ -1,11 +1,13 @@
-#!/usr/bin/env bun
+#!/usr/bin/env node
 
-import type { InitOptions } from "@yopem-ui/cli/init"
-import type { JsonValue } from "@yopem-ui/cli/install"
-
-import { initProject } from "@yopem-ui/cli/init"
-import { installItem, isRecord, isString } from "@yopem-ui/cli/install"
+import { readFile } from "node:fs/promises"
 import { resolve } from "node:path"
+
+import type { InitOptions } from "./init.js"
+import type { JsonValue } from "./install.js"
+
+import { initProject } from "./init.js"
+import { installItem, isRecord, isString } from "./install.js"
 
 const usage =
   "Usage: yopem-ui [--help | --version] | init [--framework vite|tanstack-router|tanstack-start|react-router|next|astro] [--ui <path>] [--dry-run] [--cwd <path>] [--registry <URL>] | <add|update> <name> [--force] [--dry-run] [--cwd <path>] [--registry <URL>]"
@@ -36,9 +38,9 @@ export async function runCli(args: string[], options: InitOptions = {}) {
   if (command === "--version" || command === "-v") {
     if (rest.length) throw new Error(usage)
 
-    const manifest: JsonValue = await Bun.file(
-      new URL("../package.json", import.meta.url),
-    ).json()
+    const manifest: JsonValue = JSON.parse(
+      await readFile(new URL("../package.json", import.meta.url), "utf8"),
+    )
 
     if (!isRecord(manifest) || !isString(manifest.version)) {
       throw new Error("Invalid CLI package version")
@@ -182,7 +184,10 @@ export async function runCli(args: string[], options: InitOptions = {}) {
   return result
 }
 
-if (import.meta.main) {
+// Bun changes direct import.meta.main checks in Node builds.
+const metadata = import.meta
+
+if (metadata.main) {
   runCli(process.argv.slice(2)).catch((cause: unknown) => {
     console.error(cause instanceof Error ? cause.message : cause)
     process.exitCode = 1

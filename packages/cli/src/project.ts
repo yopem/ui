@@ -1,12 +1,11 @@
-import type {
-  InstallOptions,
-  JsonObject,
-  JsonValue,
-} from "@yopem-ui/cli/install"
-
-import { existingFile, isRecord, isString, runBun } from "@yopem-ui/cli/install"
+import spawn from "cross-spawn"
 import { readFile, realpath } from "node:fs/promises"
 import { dirname, join, matchesGlob, relative } from "node:path"
+import semver from "semver"
+
+import type { InstallOptions, JsonObject, JsonValue } from "./install.js"
+
+import { existingFile, isRecord, isString, runBun } from "./install.js"
 
 type PackageManager = "bun" | "npm" | "pnpm" | "yarn"
 
@@ -162,7 +161,9 @@ async function packageManager(root: string) {
     ["bun", "bun.lock"],
     ["bun", "bun.lockb"],
     ["npm", "package-lock.json"],
+    ["npm", "npm-shrinkwrap.json"],
     ["pnpm", "pnpm-lock.yaml"],
+    ["pnpm", "pnpm-workspace.yaml"],
     ["yarn", "yarn.lock"],
   ]
 
@@ -200,7 +201,16 @@ export async function packageRunner(
     throw new Error("Package manager differs between target and workspace root")
   }
 
-  const manager = local ?? workspace ?? "bun"
+  const agent = process.env.npm_config_user_agent?.split("/")[0]
+
+  const fallback =
+    agent === "bun" || agent === "npm" || agent === "pnpm" || agent === "yarn"
+      ? agent
+      : process.versions.bun
+        ? "bun"
+        : "npm"
+
+  const manager = local ?? workspace ?? fallback
 
   if (run) return run
 
@@ -217,15 +227,18 @@ export async function packageRunner(
         : argument
     })
 
-    const child = Bun.spawn([manager, command, ...flags], {
-      cwd,
-      stdout: "inherit",
-      stderr: "inherit",
-    })
+    await new Promise<void>((resolve, reject) => {
+      const child = spawn(manager, [command, ...flags], {
+        cwd,
+        stdio: "inherit",
+      })
 
-    if ((await child.exited) !== 0) {
-      throw new Error(`${manager} ${command} failed`)
-    }
+      child.on("error", reject)
+      child.on("exit", (code) => {
+        if (code === 0) resolve()
+        else reject(new Error(`${manager} ${command} failed`))
+      })
+    })
   }
 }
 
@@ -267,7 +280,7 @@ function bounds(spec: string) {
   const patch = hasPatch ? Number(match[4]) : 0
   const minimum = `${major}.${minor}.${patch}`
 
-  if (!Bun.semver.satisfies(minimum, spec)) return null
+  if (!semver.satisfies(minimum, spec)) return null
 
   const maximum =
     match[1] === "^"
@@ -299,17 +312,17 @@ function compatible(existing: string, requested: string) {
     return (
       /^v?\d+\.\d+\.\d+(?:-[\da-zA-Z.-]+)?(?:\+[\da-zA-Z.-]+)?$/.test(
         existing,
-      ) && Bun.semver.satisfies(existing, requested)
+      ) && semver.satisfies(existing, requested)
     )
   }
 
-  if (!current.maximum) return Bun.semver.satisfies(current.minimum, requested)
+  if (!current.maximum) return semver.satisfies(current.minimum, requested)
 
   if (!wanted?.maximum) return false
 
   return (
-    Bun.semver.satisfies(current.minimum, requested) &&
-    Bun.semver.order(current.maximum, wanted.maximum) <= 0
+    semver.satisfies(current.minimum, requested) &&
+    semver.compare(current.maximum, wanted.maximum) <= 0
   )
 }
 

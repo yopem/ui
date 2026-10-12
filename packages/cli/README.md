@@ -1,15 +1,39 @@
 # @yopem-ui/cli
 
 Copy Yopem UI components into an existing React project. Configure StyleX with
-the CLI. The CLI requires Bun. Registry requests use `https://ui.yopem.com/r` by
-default.
+the CLI. npm, pnpm, and Yarn users need Node.js 22.20 or later, but do not need
+Bun. Registry requests use `https://ui.yopem.com/r` by default.
+
+Run the CLI with Bun, npm, pnpm, or Yarn:
 
 ```sh
-bunx @yopem-ui/cli init
-bunx @yopem-ui/cli add button
-bunx @yopem-ui/cli update button
-bunx @yopem-ui/cli --help
-bunx @yopem-ui/cli --version
+# Bun
+bunx --bun @yopem-ui/cli init
+bunx --bun @yopem-ui/cli add button
+bunx --bun @yopem-ui/cli update button
+
+# npm
+npx @yopem-ui/cli init
+npx @yopem-ui/cli add button
+npx @yopem-ui/cli update button
+
+# pnpm
+pnpm dlx @yopem-ui/cli init
+pnpm dlx @yopem-ui/cli add button
+pnpm dlx @yopem-ui/cli update button
+
+# Yarn
+yarn dlx @yopem-ui/cli init
+yarn dlx @yopem-ui/cli add button
+yarn dlx @yopem-ui/cli update button
+```
+
+`yarn dlx` requires Yarn 2 or later. With Yarn 1, install the CLI locally:
+
+```sh
+yarn add --dev @yopem-ui/cli
+yarn yopem-ui init
+yarn yopem-ui add button
 ```
 
 Run the CLI without arguments, or with `--help` (`-h`), to show usage. Use
@@ -28,9 +52,9 @@ installed source. The `update` command rejects modified files unless you pass
 Preview `add` or `update` before installation:
 
 ```sh
-bunx @yopem-ui/cli add button --dry-run
-bunx @yopem-ui/cli update button --dry-run
-bunx @yopem-ui/cli update button --dry-run --force
+bunx --bun @yopem-ui/cli add button --dry-run
+bunx --bun @yopem-ui/cli update button --dry-run
+bunx --bun @yopem-ui/cli update button --dry-run --force
 ```
 
 The plan lists file writes, skipped files, local conflicts, and runtime and
@@ -66,9 +90,9 @@ addresses. The CLI rejects credentials, query strings, and fragments.
 For local development, start this repository's docs server with `bun run dev`:
 
 ```sh
-bunx @yopem-ui/cli init --registry http://localhost:3100/r
-bunx @yopem-ui/cli add button --registry http://localhost:3100/r
-bunx @yopem-ui/cli update button --registry http://localhost:3100/r
+bunx --bun @yopem-ui/cli init --registry http://localhost:3100/r
+bunx --bun @yopem-ui/cli add button --registry http://localhost:3100/r
+bunx --bun @yopem-ui/cli update button --registry http://localhost:3100/r
 ```
 
 Each request has a 30-second timeout for connection and JSON body reads.
@@ -83,9 +107,15 @@ Use `--cwd` to target an app from the repository root. The CLI detects the
 package manager from the app and its workspace root. Dependencies stay in the
 target package. The CLI supports Bun, npm, pnpm, and Yarn workspaces.
 
+The CLI reads `packageManager` and lockfiles before it installs dependencies. It
+rejects conflicting managers. With no declaration or lockfile, it uses the
+manager from `npm_config_user_agent`. Without that value, Bun uses Bun and
+Node.js uses npm. npm uses `install`; other managers use `add`. npm links shared
+workspace packages with `*` because npm does not support `workspace:*`.
+
 ```sh
-bunx @yopem-ui/cli init --cwd apps/web
-bunx @yopem-ui/cli add button --cwd apps/web
+bunx --bun @yopem-ui/cli init --cwd apps/web
+bunx --bun @yopem-ui/cli add button --cwd apps/web
 ```
 
 For shared components, use an existing named React package in the same
@@ -93,9 +123,9 @@ workspace. The `--ui` path is relative to the target app, not the repository
 root.
 
 ```sh
-bunx @yopem-ui/cli init --cwd apps/web --ui ../../packages/ui
-bunx @yopem-ui/cli add button --cwd packages/ui
-bunx @yopem-ui/cli update button --cwd packages/ui
+bunx --bun @yopem-ui/cli init --cwd apps/web --ui ../../packages/ui
+bunx --bun @yopem-ui/cli add button --cwd packages/ui
+bunx --bun @yopem-ui/cli update button --cwd packages/ui
 ```
 
 The `init --ui` command installs base files in the UI package. It adds source
@@ -120,6 +150,24 @@ bun run registry:build
 bun run --cwd packages/oxlint-plugin build
 bun test packages/cli
 ```
+
+Build the CLI before packing it:
+
+```sh
+bun run --cwd packages/cli build
+cd packages/cli
+bun pm pack
+```
+
+The `prepack` script builds Node.js JavaScript in `dist`. Published packages
+contain this output, not TypeScript source. Repository development still uses
+Bun. End users do not run the build script.
+
+Run `bun test packages/cli/test/node.test.ts` for packed Node.js checks. These
+checks remove Bun from the CLI process PATH. They verify manager commands, dry
+runs, repeated installs, and real npm, pnpm, and Yarn installations. They
+require Node.js, all three package managers, and network access. Evidence is in
+`test-results/node-packed.log`.
 
 The `bun run --cwd packages/cli test` command also runs the CLI suite. Tests use
 `bun:test`, not browsers. Packaged installation checks explicitly pass a local

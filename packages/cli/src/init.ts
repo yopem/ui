@@ -1,9 +1,13 @@
+import { readFile, realpath } from "node:fs/promises"
+import { join, relative, resolve } from "node:path"
+import ts from "typescript-api"
+
 import type {
   FileChange,
   InstallOptions,
   JsonObject,
   JsonValue,
-} from "@yopem-ui/cli/install"
+} from "./install.js"
 
 import {
   applyInstall,
@@ -12,16 +16,13 @@ import {
   isString,
   planInstall,
   writeFiles,
-} from "@yopem-ui/cli/install"
+} from "./install.js"
 import {
   isPackageName,
   packageRunner,
   pendingDependencies,
   workspaceRoot,
-} from "@yopem-ui/cli/project"
-import { readFile, realpath } from "node:fs/promises"
-import { join, relative, resolve } from "node:path"
-import ts from "typescript-api"
+} from "./project.js"
 
 type Framework =
   | "vite"
