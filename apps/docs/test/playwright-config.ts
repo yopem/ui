@@ -31,6 +31,8 @@ export function createPlaywrightConfig(port: string, workspace: string) {
       trace: "retain-on-failure",
     },
     webServer: {
+      // Disable Wrangler local observability. Its trace collector delays asset responses.
+      env: { X_LOCAL_OBSERVABILITY: "false" },
       command: production
         ? `PORT=${port} bun run start --inspector-port=0 --persist-to=${JSON.stringify(resolve(workspace, ".wrangler/test", port))}`
         : `bun run dev -- --mode test --port ${port}`,
