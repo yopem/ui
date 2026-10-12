@@ -1,5 +1,34 @@
 # @yopem-ui/cli
 
+## 0.1.4
+
+### Patch Changes
+
+- [`559f835`](https://github.com/yopem/ui/commit/559f835e60846dfd3e3d38c79b59420f58c83ebd)
+  Thanks [@karyanayandi](https://github.com/karyanayandi)! - f
+
+- [`50c40c1`](https://github.com/yopem/ui/commit/50c40c107eb04e870c2f1a3b0286697037506698)
+  Thanks [@karyanayandi](https://github.com/karyanayandi)! - feat(cli): add
+  Node.js support and improve CLI compatibility
+
+  The CLI now supports Node.js 22.20+ alongside Bun. It includes updates for
+  compatibility with npm, pnpm, and Yarn. Key changes:
+
+  - Updated README with usage examples for npm, pnpm, and Yarn.
+  - Replaced Bun-specific APIs with Node.js-compatible alternatives.
+  - Added `cross-spawn` and `semver` dependencies for process handling and
+    version checks.
+  - Modified `package.json` to build and publish Node.js-compatible output.
+  - Introduced `build` and `prepack` scripts for Node.js builds.
+  - Updated `bin` and `exports` fields to use `dist` directory.
+  - Added `tsconfig.build.json` for TypeScript declaration generation.
+  - Replaced Bun's `spawn` and `semver` with `cross-spawn` and `semver` library.
+  - Added Node.js-specific tests in `node.test.ts` to verify CLI behavior.
+  - Updated CLI commands to detect and use the appropriate package manager.
+  - Improved error handling and compatibility for mixed environments.
+
+  These changes ensure the CLI works seamlessly across different environments.
+
 ## 0.1.3
 
 ### Patch Changes
