@@ -107,7 +107,10 @@ for (const [manager, runner, install, dev, localRunner] of managers) {
     ).toBeVisible()
     expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([])
     await testInfo.attach(`${manager}-commands`, {
-      body: await page.screenshot({ fullPage: true, animations: "disabled" }),
+      body: await dependencyBlock.screenshot({
+        animations: "disabled",
+        scale: "css",
+      }),
       contentType: "image/png",
     })
   })

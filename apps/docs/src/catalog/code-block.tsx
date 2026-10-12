@@ -8,11 +8,13 @@ import { CheckIcon, CopyIcon } from "lucide-react"
 import { lazy, Suspense, useState } from "react"
 
 import {
-  isPackageManagerCommand,
   PackageManagerSwitcher,
   usePackageManagerCommand,
 } from "@/catalog/package-manager"
-import { stripStandaloneComments } from "@/catalog/source-code"
+import {
+  isPackageManagerCommand,
+  stripStandaloneComments,
+} from "@/catalog/source-code"
 import { useCopyToClipboard } from "@/hooks/use-copy-to-clipboard"
 
 const primitiveStyles = stylex.create({
@@ -169,6 +171,20 @@ const HighlightedCode = lazy(() =>
   })),
 )
 
+export function useCopyableCodeSource(code: string, language?: string) {
+  const command =
+    (language === "shellscript" || language === "sh" || language === "bash") &&
+    isPackageManagerCommand(code)
+
+  const managerCode = usePackageManagerCommand(code)
+  const sourceCode = stripStandaloneComments(command ? managerCode : code)
+
+  return {
+    command,
+    cleanCode: command ? sourceCode.trimEnd() : sourceCode,
+  }
+}
+
 export function CopyableCode({
   code,
   header,
@@ -184,13 +200,7 @@ export function CopyableCode({
 }) {
   const hydrated = useHydrated()
 
-  const command =
-    (language === "shellscript" || language === "sh" || language === "bash") &&
-    isPackageManagerCommand(code)
-
-  const managerCode = usePackageManagerCommand(code)
-  const sourceCode = stripStandaloneComments(command ? managerCode : code)
-  const cleanCode = command ? sourceCode.trimEnd() : sourceCode
+  const { command, cleanCode } = useCopyableCodeSource(code, language)
   const codeLines = cleanCode.trimEnd().split("\n")
   const collapsible = preview && codeLines.length > 5
   const [expanded, setExpanded] = useState(!preview)

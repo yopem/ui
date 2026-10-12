@@ -24,6 +24,11 @@ jobs:
             docs:
               - 'apps/docs/**'
       - uses: oven-sh/setup-bun@v2
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22.20.0
+      - name: Install package managers for CLI tests
+        run: npm install --global npm@10.9.3 pnpm@10.18.3 yarn@1.22.22
       - run: bun install --frozen-lockfile
       - run: bun run generate-routes
       - run: bun run --cwd packages/registry docs:generate

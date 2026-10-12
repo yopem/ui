@@ -6,12 +6,13 @@ import {
   mkdtempSync,
   mkdirSync,
   readFileSync,
+  realpathSync,
   rmSync,
   symlinkSync,
   writeFileSync,
 } from "node:fs"
 import { tmpdir } from "node:os"
-import { dirname, join, resolve } from "node:path"
+import { join, resolve } from "node:path"
 import { pathToFileURL } from "node:url"
 
 import type { JsonValue } from "@/install"
@@ -33,10 +34,36 @@ function command(
     timeout: 120_000,
   })
 
-  expect(result.status, `${result.stdout}${result.stderr}`).toBe(0)
+  expect(
+    result.status,
+    `${command} ${args.join(" ")}\ncwd: ${cwd}\nPATH: ${env.PATH ?? ""}\nstatus: ${result.status}\nsignal: ${result.signal}\nerror: ${result.error?.message ?? "none"}\n${result.stdout ?? ""}${result.stderr ?? ""}`,
+  ).toBe(0)
 
   return result.stdout
 }
+
+test("command reports real process failures", () => {
+  expect(
+    command(process.execPath, ["-e", 'process.stdout.write("ok")'], cliRoot),
+  ).toBe("ok")
+  expect(() =>
+    command(
+      process.execPath,
+      ["-e", 'process.stderr.write("failed"); process.exit(7)'],
+      cliRoot,
+    ),
+  ).toThrow(/status: 7[\s\S]*failed/)
+  expect(() =>
+    command("yopem-missing-executable", [], cliRoot, { PATH: "" }),
+  ).toThrow(/yopem-missing-executable[\s\S]*(ENOENT|Executable not found)/)
+  expect(() =>
+    command(
+      process.execPath,
+      ["-e", 'process.kill(process.pid, "SIGTERM")'],
+      cliRoot,
+    ),
+  ).toThrow(/signal: SIGTERM/)
+})
 
 test("packed CLI runs on Node without Bun and installs through every manager", async () => {
   const root = mkdtempSync(join(tmpdir(), "yopem node &-"))
@@ -278,6 +305,31 @@ if (typeof runCli !== "function") throw new Error("Missing runCli export")
       }
     }
 
+    const realBin = join(root, "real-bin")
+    mkdirSync(realBin)
+
+    for (const tool of ["node", "npm", "pnpm", "yarn"]) {
+      const executable = Bun.which(tool)
+
+      if (!executable) throw new Error(`Required executable not found: ${tool}`)
+      symlinkSync(realpathSync(executable), join(realBin, tool))
+    }
+
+    const realEnv = {
+      ...process.env,
+      PATH: `${realBin}:/usr/bin:/bin`,
+      COREPACK_ENABLE_PROJECT_SPEC: "0",
+      YARN_CACHE_FOLDER: join(root, "yarn-cache"),
+    }
+
+    expect(Bun.which("bun", { PATH: realEnv.PATH })).toBeNull()
+
+    for (const tool of ["node", "npm", "pnpm", "yarn"]) {
+      logs.push(
+        `${tool}: ${command(tool, ["--version"], root, realEnv).trim()}`,
+      )
+    }
+
     for (const manager of ["npm", "pnpm", "yarn"]) {
       const project = join(root, `real-${manager}`)
       mkdirSync(project)
@@ -286,11 +338,7 @@ if (typeof runCli !== "function") throw new Error("Missing runCli export")
         JSON.stringify({ name: `real-${manager}`, private: true }),
       )
 
-      const env = {
-        ...process.env,
-        PATH: `${dirname(node)}:/usr/bin:/bin`,
-        COREPACK_ENABLE_PROJECT_SPEC: "0",
-      }
+      const env = realEnv
 
       const archive = join(root, "yopem-ui-cli-0.1.3.tgz")
       logs.push(
