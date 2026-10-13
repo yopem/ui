@@ -150,7 +150,7 @@ const styles = stylex.create({
       ':is([data-slot="number-field"][data-size="lg"] [data-slot="number-field-input"])':
         "2.375rem",
     },
-    minInlineSize: 0,
+
     outline: "none",
     paddingInline: {
       default: "calc(0.75rem - 1px)",

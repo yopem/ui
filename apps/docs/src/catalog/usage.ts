@@ -940,6 +940,10 @@ export function Preview() {
     <>
       <Heading render={<h1 />}>Page title</Heading>
       <Heading>Section title</Heading>
+      <Heading render={<h3 />}>Subsection title</Heading>
+      <Heading render={<h4 />}>Fourth-level title</Heading>
+      <Heading render={<h5 />}>Fifth-level title</Heading>
+      <Heading render={<h6 />}>Sixth-level title</Heading>
     </>
   )
 }

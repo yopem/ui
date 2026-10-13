@@ -120,7 +120,7 @@ const styles = stylex.create({
   },
   section: {
     marginBlock: "2rem",
-    minInlineSize: "calc(var(--spacing) * 0)",
+
     color: tokens["--foreground"],
   },
   h3: {
@@ -131,6 +131,7 @@ const styles = stylex.create({
     scrollMarginBlockStart: "6rem",
   },
   paragraph: {
+    fontSize: "inherit",
     marginBlock: "0.75rem",
     lineHeight: 1.7,
     overflowWrap: "anywhere",
@@ -149,7 +150,7 @@ const styles = stylex.create({
   },
   section2: {
     marginBlock: "2rem",
-    minInlineSize: "calc(var(--spacing) * 0)",
+
     color: tokens["--foreground"],
   },
   h32: {
@@ -160,6 +161,7 @@ const styles = stylex.create({
     scrollMarginBlockStart: "6rem",
   },
   paragraph2: {
+    fontSize: "inherit",
     marginBlock: "0.75rem",
     lineHeight: 1.7,
     overflowWrap: "anywhere",
@@ -183,6 +185,7 @@ const styles = stylex.create({
   },
   h44: { fontSize: "1rem", fontWeight: 650, marginBlock: "1.25rem 0.5rem" },
   paragraph3: {
+    fontSize: "inherit",
     marginBlock: "0.75rem",
     lineHeight: 1.7,
     overflowWrap: "anywhere",

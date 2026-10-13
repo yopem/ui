@@ -5,14 +5,6 @@ import type { JSX } from "react"
 
 import { useRender } from "@base-ui/react/use-render"
 import { mergeStylexProps, stylexProps } from "@registry/lib/stylex"
-import * as stylex from "@stylexjs/stylex"
-
-const styles = stylex.create({
-  root: {
-    boxSizing: "border-box",
-    minInlineSize: 0,
-  },
-})
 
 export type BoxElement = keyof JSX.IntrinsicElements
 
@@ -23,7 +15,7 @@ export function Box({ render, xstyle, className, ...props }: BoxProps) {
     defaultTagName: "div",
     render,
     props: mergeStylexProps(
-      { ...stylexProps(className, styles.root, xstyle), "data-slot": "box" },
+      { ...stylexProps(className, xstyle), "data-slot": "box" },
       props,
     ),
   })

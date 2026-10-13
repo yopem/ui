@@ -63,7 +63,7 @@ const styles = stylex.create({
     maxBlockSize: "100%",
     maxInlineSize: "32rem",
     minBlockSize: 0,
-    minInlineSize: 0,
+
     opacity: "calc(1 - var(--nested-dialogs))",
     outline: "none",
     position: "relative",

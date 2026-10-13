@@ -23,6 +23,11 @@ import * as stylex from "@stylexjs/stylex"
 import { CircleAlertIcon } from "lucide-react"
 
 const styles = stylex.create({
+  inheritedText: {
+    fontSize: "inherit",
+    lineHeight: "inherit",
+    color: "inherit",
+  },
   form: {
     display: "flex",
     inlineSize: "100%",
@@ -94,7 +99,9 @@ export function Preview() {
       <CardFooter>
         <Flex xstyle={styles.flex}>
           <CircleAlertIcon {...stylex.props(previewStyles.preview5)} />
-          <Text>This will take a few seconds to complete.</Text>
+          <Text xstyle={styles.inheritedText}>
+            This will take a few seconds to complete.
+          </Text>
         </Flex>
       </CardFooter>
     </Card>

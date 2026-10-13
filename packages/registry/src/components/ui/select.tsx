@@ -237,7 +237,7 @@ const styles = stylex.create({
     },
   },
   itemIndicator: { gridColumnStart: 1 },
-  itemText: { gridColumnStart: 2, minInlineSize: 0 },
+  itemText: { gridColumnStart: 2 },
   separator: {
     backgroundColor: tokens["--border"],
     blockSize: 1,

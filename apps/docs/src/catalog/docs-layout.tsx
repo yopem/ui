@@ -84,7 +84,7 @@ const primitiveStyles = stylex.create({
     position: "sticky",
     insetBlockStart: "4rem",
   },
-  main: { minInlineSize: "calc(var(--spacing) * 0)", outline: "none" },
+  main: { outline: "none" },
 })
 
 export function DocumentationLayout({

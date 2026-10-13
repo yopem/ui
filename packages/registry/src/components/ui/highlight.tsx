@@ -9,6 +9,11 @@ import { Children, cloneElement, isValidElement } from "react"
 
 const styles = stylex.create({
   root: {
+    fontFamily: "inherit",
+    fontSize: "inherit",
+    fontWeight: "inherit",
+    lineHeight: "inherit",
+    margin: 0,
     color: tokens["--foreground"],
     display: "inline",
   },

@@ -165,9 +165,10 @@ artifacts; docs dev, registry build, and registry typecheck regenerate API data.
   width), AbsoluteCenter within a positioned parent, Bleed to extend into inline
   padding, Float over a parent's corner, and Wrap for wrapping rows. Customize
   layout through `xstyle`, not native wrappers with duplicated layout styles.
-- Use Text for paragraphs without forced visual defaults, Heading (`h2` by default)
-  with `render={<h1 />}` through `h6` for semantic levels independent of visual size,
-  Blockquote for long quotations, Em for emphasis, and Mark for marked text.
+- Use Text for paragraphs with token-based typography defaults and `xstyle`
+  overrides. Use Heading (`h2` by default) with `render={<h1 />}` through `h6`
+  for semantic levels with different default sizes.
+  Use Blockquote for long quotations, Em for emphasis, and Mark for marked text.
   Choose Highlight for matching words and Prose for readable long-form content.
 - Use Codeblock intentionally for code displays. Its div wrapper, toolbar, and
   internal pre mean it cannot blindly replace a native pre or its ref/events.

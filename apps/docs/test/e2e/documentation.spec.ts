@@ -257,7 +257,18 @@ test("component docs cover CLI setup and API", async ({ page }) => {
     .locator("summary")
     .filter({ hasText: "View API reference" })
     .click()
+
+  const overview = page
+    .getByText("Copy the source into your project.", { exact: false })
+    .first()
+
+  await expect(overview).toHaveCSS("font-size", "15px")
+  await expect(overview).toHaveCSS("line-height", "27px")
   const api = page.getByRole("region", { name: "Button", exact: true })
+  await expect(api.locator('[data-slot="text"]').first()).toHaveCSS(
+    "font-size",
+    "15px",
+  )
   await expect(api.getByRole("table").first()).toHaveAttribute(
     "data-slot",
     "table",
@@ -437,6 +448,10 @@ test("desktop table of contents stays fixed and tracks the section", async ({
   const contents = page.getByRole("complementary", { name: "On this page" })
   const preview = contents.getByRole("link", { name: "Preview", exact: true })
   await expect(contents).toBeVisible()
+  await expect(contents.getByText("On this page", { exact: true })).toHaveCSS(
+    "font-size",
+    "13px",
+  )
 
   await preview.click()
   await expect(preview).toHaveAttribute("aria-current", "location")

@@ -14,7 +14,7 @@ const styles = stylex.create({
     flexDirection: "column",
     gap: "1.5rem",
     justifyContent: "center",
-    minInlineSize: 0,
+
     paddingBlock: { default: "3rem", "@media (min-width: 768px)": "5rem" },
     paddingInline: "1.5rem",
     textAlign: "center",
@@ -83,7 +83,7 @@ const styles = stylex.create({
     gap: "1rem",
     inlineSize: "100%",
     maxInlineSize: "24rem",
-    minInlineSize: 0,
+
     textWrap: "balance",
   },
 })

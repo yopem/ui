@@ -9,7 +9,6 @@ import * as stylex from "@stylexjs/stylex"
 
 const styles = stylex.create({
   root: {
-    boxSizing: "border-box",
     inlineSize: "100%",
     marginInline: "auto",
     maxInlineSize: "90rem",

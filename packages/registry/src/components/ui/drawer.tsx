@@ -109,7 +109,7 @@ const styles = stylex.create({
     inlineSize: "100%",
     maxBlockSize: "100%",
     minBlockSize: 0,
-    minInlineSize: 0,
+
     outline: "none",
     position: "relative",
     touchAction: "none",

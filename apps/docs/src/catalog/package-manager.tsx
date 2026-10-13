@@ -93,7 +93,6 @@ const styles = stylex.create({
     display: "flex",
     alignItems: "center",
     gap: "0.5rem",
-    minInlineSize: 0,
   },
   icon: {
     blockSize: "1rem",

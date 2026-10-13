@@ -246,7 +246,7 @@ const styles = stylex.create({
     display: "flex",
     flexDirection: "column",
     inlineSize: "100%",
-    minInlineSize: 0,
+
     padding: "0.5rem",
     position: "relative",
   },
@@ -320,7 +320,6 @@ const styles = stylex.create({
     flexDirection: "column",
     gap: "0.25rem",
     inlineSize: "100%",
-    minInlineSize: 0,
   },
   menuItem: { position: "relative" },
   menuButton: {
@@ -494,7 +493,7 @@ const styles = stylex.create({
     flexDirection: "column",
     gap: "0.25rem",
     marginInline: "0.875rem",
-    minInlineSize: 0,
+
     paddingBlock: "0.125rem",
     paddingInline: "0.625rem",
     transform: "translateX(1px)",
@@ -506,7 +505,7 @@ const styles = stylex.create({
     color: tokens["--sidebar-foreground"],
     display: "flex",
     gap: "0.5rem",
-    minInlineSize: 0,
+
     outline: "none",
     overflow: "hidden",
     paddingInline: "0.5rem",

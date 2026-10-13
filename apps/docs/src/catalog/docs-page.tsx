@@ -23,9 +23,8 @@ const styles = stylex.create({
       default: "2.5rem",
       "@media (max-width: 479.98px)": "1.25rem",
     },
-    minInlineSize: "calc(var(--spacing) * 0)",
   },
-  article: { minInlineSize: "calc(var(--spacing) * 0)", maxInlineSize: "none" },
+  article: { maxInlineSize: "none" },
   grid2: {
     display: "grid",
     gridTemplateColumns: {
@@ -40,17 +39,15 @@ const styles = stylex.create({
       default: "2.5rem",
       "@media (max-width: 767.98px)": "1.25rem",
     },
-    minInlineSize: "calc(var(--spacing) * 0)",
   },
   article2: {
-    minInlineSize: "calc(var(--spacing) * 0)",
     maxInlineSize: "52rem",
   },
   box: {
     color: tokens["--foreground"],
     fontSize: "0.9375rem",
     lineHeight: 1.75,
-    minInlineSize: "calc(var(--spacing) * 0)",
+
     overflowWrap: "break-word",
   },
   h1: {

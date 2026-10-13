@@ -59,7 +59,7 @@ const styles = stylex.create({
     lineHeight: 1.75,
     marginBlock: "1.5rem",
   },
-  paragraph: { marginBlock: "1rem", lineHeight: 1.8 },
+  paragraph: { fontSize: "inherit", marginBlock: "1rem", lineHeight: 1.8 },
   tableCell: {
     whiteSpace: "normal",
     lineHeight: 1.6,

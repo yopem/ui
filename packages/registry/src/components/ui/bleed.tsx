@@ -8,7 +8,9 @@ import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 
 const styles = stylex.create({
-  root: { marginInline: `calc(${tokens["--spacing"]} * -4)` },
+  root: {
+    marginInline: `calc(${tokens["--spacing"]} * -4)`,
+  },
 })
 
 export type BleedProps = StyleXComponentProps<ComponentPropsWithRef<"div">>

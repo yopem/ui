@@ -55,68 +55,79 @@ const usageNoteValues = {
     "FrameTitle and FrameDescription label the group. Keep interactive controls inside the panels rather than making the entire frame clickable.",
   ],
   box: [
-    "Start with Box for generic containers. It renders a div by default. It sets default box sizing and minimum inline size. Use an element or callback with the Base UI render prop for composition. Put element-specific attributes, handlers, and refs on the rendered element.",
+    "Start with Box for generic containers. It renders a div by default. The global reset sets border-box sizing and zero minimum inline size. It adds no padding, border, or background. Use an element or callback with the Base UI render prop for composition. Put element-specific attributes, handlers, and refs on the rendered element.",
     "Use xstyle for StyleX overrides and className for external CSS integration. Native attributes and refs follow the selected tag, including input size, image dimensions, and meta content.",
   ],
   flex: [
+    "The global reset sets border-box sizing and zero minimum inline size. Consumer xstyle overrides these defaults.",
     "Flex renders a div with display:flex. Customize direction, alignment, and gap with xstyle.",
   ],
   vstack: [
+    "The global reset sets border-box sizing and zero minimum inline size. Consumer xstyle overrides these defaults.",
     "VStack renders a div with centered items, column direction, and a default gap of four spacing units. Override through xstyle.",
   ],
   hstack: [
+    "The global reset sets border-box sizing and zero minimum inline size. Consumer xstyle overrides these defaults.",
     "HStack renders a div with centered items, row direction, and a default gap of four spacing units. Override through xstyle.",
   ],
   stack: [
+    "The global reset sets border-box sizing and zero minimum inline size. Consumer xstyle overrides these defaults.",
     "Stack renders a div with column direction and a default gap of four spacing units. Override through xstyle.",
   ],
   grid: [
+    "The global reset sets border-box sizing and zero minimum inline size. Consumer xstyle overrides these defaults.",
     "Grid renders a div with display:grid. Set columns and gaps through xstyle.",
   ],
   center: [
+    "The global reset sets border-box sizing and zero minimum inline size. Consumer xstyle overrides these defaults.",
     "Center renders a div with flex layout centered on both axes. Override through xstyle.",
   ],
   container: [
+    "The global reset sets border-box sizing and zero minimum inline size. Consumer xstyle overrides these defaults.",
     "Container centers page content. It sets a 90rem maximum inline size and four spacing units of horizontal padding. Use fluid to remove the width limit. Use xstyle to change maximum width and padding.",
   ],
   "absolute-center": [
+    "The global reset sets border-box sizing and zero minimum inline size. Consumer xstyle overrides these defaults.",
     "Position an ancestor before placing AbsoluteCenter inside it. Set axis to horizontal or vertical to center along one dimension only.",
   ],
   bleed: [
+    "The global reset sets border-box sizing and zero minimum inline size. Consumer xstyle overrides these defaults.",
     "Place Bleed inside a padded region to extend content to its inline edges. Avoid using it as a page-width wrapper; Container handles that case.",
   ],
   float: [
+    "The global reset sets border-box sizing and zero minimum inline size. Consumer xstyle overrides these defaults.",
     "Position the parent and use Float to place a badge or action over one corner. Keep interactive content accessible from the keyboard.",
   ],
   wrap: [
+    "The global reset sets border-box sizing and zero minimum inline size. Consumer xstyle overrides these defaults.",
     "Wrap uses flex rows that wrap automatically. Set gap through xstyle rather than adding spacing to every child.",
   ],
   link: [
     'Link renders a native anchor with href, events, ref, and keyboard behavior. With TanStack Router, use render={<RouterLink to="/path" />}. With Next.js, use render={<NextLink href="/path" />}. The framework then handles navigation. Both router components must render an anchor.',
   ],
   text: [
-    "Text replaces Paragraph and renders a native p. Use xstyle for typography.",
+    "Text renders a native p with the sans font token and foreground color token. It uses 1rem text, normal weight, 1.5 line height, and zero margins. Use xstyle to override these defaults.",
   ],
   blockquote: [
-    "Use Blockquote for quoted passages, not for indentation. Supply a citation in surrounding content when needed.",
+    "Blockquote uses the sans font token and 1rem text. It keeps its muted color, italic style, border, and spacing. Use Blockquote for quoted passages, not for indentation. Supply a citation in surrounding content when needed.",
   ],
   em: [
-    "Em adds semantic stress emphasis. Use it for meaning rather than visual italics alone.",
+    "Em inherits font size, font family, weight, and line height. It adds semantic stress emphasis. Use it for meaning rather than visual italics alone.",
   ],
   highlight: [
-    "Highlight marks matching text segments. Keep the original text readable when there are no matches.",
+    "Highlight inherits surrounding typography and uses the foreground color token. It marks matching text segments. Keep the original text readable when there are no matches.",
   ],
   mark: [
-    "Mark highlights text relevant to the current context. It does not replace an accessible status message.",
+    "Mark inherits surrounding typography and uses accent color tokens. It highlights text relevant to the current context. It does not replace an accessible status message.",
   ],
   prose: [
-    "Prose supplies a readable width for long-form content. Compose semantic headings, paragraphs and lists inside it.",
+    "Prose uses the sans font token, foreground color token, 1rem text, and 1.7 line height. It supplies a readable width for long-form content. Compose semantic headings, paragraphs and lists inside it.",
   ],
   codeblock: [
     "Codeblock preserves code whitespace and allows horizontal scrolling. Supply a language label outside the block when context is not obvious.",
   ],
   heading: [
-    "Heading renders h2 by default. Use render={<h1 />} through render={<h6 />} to select semantic levels. The Base UI render prop also supports callbacks and custom components. Use xstyle to control visual size independently of semantics.",
+    "Heading renders h2 by default. It uses the heading font token and foreground color token. Default sizes are h1 2.25rem, h2 1.5rem, h3 1.25rem, h4 1.125rem, h5 1rem, and h6 0.875rem. Other defaults are weight 600, 1.25 line height, -0.025em letter spacing, and zero margins. Use render={<h1 />} through render={<h6 />} to select semantic levels. The Base UI render prop also supports callbacks and custom components. Sizes follow the rendered native heading tag, including callbacks and custom components. Other rendered tags use the h2 size. Use xstyle to override the size.",
   ],
   checkmark: [
     "Checkmark is decorative and hidden from assistive technology. Include text that communicates success or selection beside it.",

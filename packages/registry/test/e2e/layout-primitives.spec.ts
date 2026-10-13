@@ -67,6 +67,165 @@ test.describe("layout and typography primitives", () => {
     }
   })
 
+  test("global reset covers native elements, pseudo-elements, and intrinsic widths", async ({
+    page,
+  }) => {
+    await openLayoutPreview(page)
+
+    const result = await page.evaluate(() => {
+      const host = document.createElement("div")
+      host.style.cssText = "display:flex;width:100px"
+      const input = document.createElement("input")
+      input.style.cssText =
+        "width:200px;padding:8px;border:2px solid;flex-shrink:1"
+
+      host.append(input)
+      document.body.append(host)
+
+      const native = getComputedStyle(input)
+      const before = getComputedStyle(input, "::before")
+      const after = getComputedStyle(input, "::after")
+
+      const result = {
+        sizing: [native.boxSizing, before.boxSizing, after.boxSizing],
+        minimum: [
+          native.minInlineSize,
+          before.minInlineSize,
+          after.minInlineSize,
+        ],
+        width: input.getBoundingClientRect().width,
+      }
+
+      host.remove()
+
+      return result
+    })
+
+    expect(result.sizing).toEqual(["border-box", "border-box", "border-box"])
+    expect(result.minimum).toEqual(["0px", "0px", "0px"])
+    expect(result.width).toBe(100)
+  })
+
+  test("heading size follows rendered tag, including callback and custom render", async ({
+    page,
+  }) => {
+    await openLayoutPreview(page)
+
+    for (const [id, size] of [
+      ["heading-h1", "36px"],
+      ["preserved-heading", "24px"],
+      ["heading-default-h3", "20px"],
+      ["heading-h4", "18px"],
+      ["heading-h5", "16px"],
+      ["heading-h6", "14px"],
+      ["heading-callback", "18px"],
+      ["heading-custom", "16px"],
+      ["heading-fallback", "24px"],
+    ] as const) {
+      await expect(page.getByTestId(id)).toHaveCSS("font-size", size)
+    }
+
+    await expect(page.getByTestId("heading-h1")).toHaveAttribute(
+      "id",
+      "page-title",
+    )
+    await expect(page.getByTestId("heading-h3")).toHaveCSS("font-size", "22px")
+    await expect(page.getByTestId("heading-custom")).toHaveJSProperty(
+      "tagName",
+      "H5",
+    )
+    await expect(page.getByTestId("heading-callback")).toHaveJSProperty(
+      "tagName",
+      "H4",
+    )
+  })
+
+  test("neutral layout defaults and consumer sizing overrides", async ({
+    page,
+  }) => {
+    await openLayoutPreview(page)
+
+    for (const id of [
+      "box",
+      "flex",
+      "grid",
+      "stack",
+      "hstack",
+      "vstack",
+      "center",
+      "container",
+      "absolute-center",
+      "bleed",
+      "float",
+      "wrap",
+    ]) {
+      await expect(page.getByTestId(id)).toHaveCSS("box-sizing", "border-box")
+      await expect(page.getByTestId(id)).toHaveCSS("min-inline-size", "0px")
+    }
+
+    const box = page.getByTestId("responsive-tag")
+    await expect(box).toHaveCSS("padding-top", "0px")
+    await expect(box).toHaveCSS("border-top-width", "0px")
+    await expect(box).toHaveCSS("background-color", "rgba(0, 0, 0, 0)")
+    await expect(page.getByTestId("override-hstack")).toHaveCSS(
+      "box-sizing",
+      "content-box",
+    )
+    await expect(page.getByTestId("override-hstack")).toHaveCSS(
+      "min-inline-size",
+      "32px",
+    )
+  })
+
+  for (const theme of ["light", "dark"] as const) {
+    test(`typography defaults and overrides in ${theme} theme`, async ({
+      page,
+    }) => {
+      await openLayoutPreview(page, theme)
+      const text = page.getByTestId("text-ref")
+      const heading = page.getByTestId("preserved-heading")
+
+      const color = await page
+        .locator("body")
+        .evaluate((element) => getComputedStyle(element).color)
+
+      for (const element of [text, heading]) {
+        await expect(element).toHaveCSS("box-sizing", "border-box")
+        await expect(element).toHaveCSS("min-inline-size", "0px")
+        await expect(element).toHaveCSS("margin-top", "0px")
+        await expect(element).toHaveCSS("margin-bottom", "0px")
+        await expect(element).toHaveCSS("color", color)
+        await expect(element).toHaveCSS("font-family", /Figtree/)
+      }
+
+      await expect(text).toHaveCSS("font-size", "16px")
+      await expect(text).toHaveCSS("line-height", "24px")
+      await expect(heading).toHaveCSS("font-size", "24px")
+      await expect(heading).toHaveCSS("line-height", "30px")
+      await expect(heading).toHaveCSS("font-weight", "600")
+      await expect(page.getByTestId("text-secondary")).toHaveCSS(
+        "font-size",
+        "14px",
+      )
+      await expect(page.getByTestId("text-secondary")).toHaveCSS(
+        "line-height",
+        "28px",
+      )
+      await expect(page.getByTestId("text-secondary")).toHaveCSS(
+        "margin-top",
+        "8px",
+      )
+      await expect(page.getByTestId("heading-h3")).toHaveCSS(
+        "font-size",
+        "22px",
+      )
+      await expect(page.getByTestId("heading-h3")).toHaveCSS(
+        "font-weight",
+        "500",
+      )
+    })
+  }
+
   test("renders TanStack Router links without losing navigation", async ({
     page,
   }) => {
@@ -302,3 +461,40 @@ test.describe("layout and typography primitives", () => {
     })
   }
 })
+
+for (const [name, tag] of [
+  ["blockquote", "BLOCKQUOTE"],
+  ["em", "EM"],
+  ["mark", "MARK"],
+  ["highlight", "SPAN"],
+  ["prose", "DIV"],
+] as const) {
+  test(`@a11y ${name} keeps typography defaults and semantics`, async ({
+    page,
+  }) => {
+    await page.goto(`/components/${name}`)
+    const element = page.locator(`[data-slot="${name}"]`).first()
+    await expect(element).toBeVisible()
+    await expect(element).toHaveJSProperty("tagName", tag)
+    await expect(element).toHaveCSS("box-sizing", "border-box")
+    await expect(element).toHaveCSS("min-inline-size", "0px")
+
+    if (name === "blockquote") {
+      await expect(element).toHaveCSS("font-style", "italic")
+      await expect(element).toHaveCSS("border-inline-start-width", "4px")
+      await expect(element).toHaveAttribute("cite", "https://example.com")
+    } else if (name === "em") {
+      await expect(element).toHaveCSS("font-style", "italic")
+      await expect(element).toHaveCSS("font-size", "16px")
+    } else if (name === "mark") {
+      await expect(element).toHaveCSS("padding-inline-start", "2px")
+    } else if (name === "highlight") {
+      await expect(element.locator("mark")).toHaveText("accessible")
+    } else {
+      await expect(element).toHaveCSS("font-size", "16px")
+      await expect(element).toHaveCSS("line-height", "27.2px")
+    }
+
+    expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([])
+  })
+}

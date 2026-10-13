@@ -37,7 +37,12 @@ const styles = stylex.create({
     },
   },
   compactNavigation: { paddingBlockStart: "1rem" },
-  paragraph: { fontWeight: 600, marginBlock: "0 1rem" },
+  paragraph: {
+    fontSize: "inherit",
+    lineHeight: "inherit",
+    fontWeight: 600,
+    marginBlock: "0 1rem",
+  },
   ul: {
     listStyleType: "none",
     paddingBlock: "calc(var(--spacing) * 0)",

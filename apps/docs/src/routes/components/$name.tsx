@@ -35,7 +35,7 @@ const styles = stylex.create({
     marginBlockEnd: "1rem",
     scrollMarginBlockStart: "6rem",
   },
-  paragraph: { marginBlock: "1rem", lineHeight: 1.8 },
+  paragraph: { fontSize: "inherit", marginBlock: "1rem", lineHeight: 1.8 },
   h22: {
     fontFamily: tokens["--font-heading"],
     fontSize: "1.5rem",
@@ -46,8 +46,8 @@ const styles = stylex.create({
     marginBlockEnd: "1rem",
     scrollMarginBlockStart: "6rem",
   },
-  paragraph2: { marginBlock: "1rem", lineHeight: 1.8 },
-  paragraph3: { marginBlock: "1rem", lineHeight: 1.8 },
+  paragraph2: { fontSize: "inherit", marginBlock: "1rem", lineHeight: 1.8 },
+  paragraph3: { fontSize: "inherit", marginBlock: "1rem", lineHeight: 1.8 },
   h23: {
     fontFamily: tokens["--font-heading"],
     fontSize: "1.5rem",
@@ -58,7 +58,7 @@ const styles = stylex.create({
     marginBlockEnd: "1rem",
     scrollMarginBlockStart: "6rem",
   },
-  paragraph6: { marginBlock: "1rem", lineHeight: 1.8 },
+  paragraph6: { fontSize: "inherit", marginBlock: "1rem", lineHeight: 1.8 },
   h24: {
     fontFamily: tokens["--font-heading"],
     fontSize: "1.5rem",
@@ -69,8 +69,8 @@ const styles = stylex.create({
     marginBlockEnd: "1rem",
     scrollMarginBlockStart: "6rem",
   },
-  paragraph7: { marginBlock: "1rem", lineHeight: 1.8 },
-  paragraph8: { marginBlock: "1rem", lineHeight: 1.8 },
+  paragraph7: { fontSize: "inherit", marginBlock: "1rem", lineHeight: 1.8 },
+  paragraph8: { fontSize: "inherit", marginBlock: "1rem", lineHeight: 1.8 },
   h25: {
     fontFamily: tokens["--font-heading"],
     fontSize: "1.5rem",
@@ -81,7 +81,7 @@ const styles = stylex.create({
     marginBlockEnd: "1rem",
     scrollMarginBlockStart: "6rem",
   },
-  paragraph9: { marginBlock: "1rem", lineHeight: 1.8 },
+  paragraph9: { fontSize: "inherit", marginBlock: "1rem", lineHeight: 1.8 },
   details: {
     borderColor: tokens["--border"],
     borderStyle: "solid",

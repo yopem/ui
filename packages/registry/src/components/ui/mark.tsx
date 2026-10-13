@@ -9,6 +9,11 @@ const styles = stylex.create({
   root: {
     backgroundColor: tokens["--accent"],
     borderRadius: tokens["--radius-sm"],
+    fontFamily: "inherit",
+    fontSize: "inherit",
+    fontWeight: "inherit",
+    lineHeight: "inherit",
+    margin: 0,
     color: tokens["--accent-foreground"],
     paddingInline: "0.125em",
   },

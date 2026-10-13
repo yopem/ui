@@ -12,8 +12,23 @@ for semantic text instead of a generic Box. Use TanStack Router Link for
 application navigation. Registry Link is optional. Select a component below to
 see a live preview. Copy its source as necessary.
 
+The global reset sets border-box sizing and zero minimum inline size for all
+elements and pseudo-elements. Box adds no padding, border, or background.
+Existing layout spacing stays unchanged.
+
+Text uses the sans font token and foreground color token. Its defaults are 1rem
+text, normal weight, 1.5 line height, and zero margins. Heading uses the heading
+font token, weight 600, and 1.25 line height. Heading has zero margins. Default
+sizes are h1 2.25rem, h2 1.5rem, h3 1.25rem, h4 1.125rem, h5 1rem, and h6
+0.875rem. Sizes follow the rendered native tag, including callbacks and custom
+components. Other tags use the h2 size. Use `xstyle` to override typography.
+
+Em, Mark, and Highlight inherit surrounding font size, font family, weight, and
+line height. Blockquote keeps its border, italic style, muted color, and
+spacing. Prose keeps its readable width and 1.7 line height.
+
 - [Box](/components/box): Uses `div` by default. The `render` prop selects a
-  semantic element with tag-specific events and refs. Box sets default box
+  semantic element with tag-specific events and refs. The global reset sets box
   sizing and minimum inline size.
 - [Flex](/components/flex): Flex layout. Set direction and alignment with
   `xstyle`.
@@ -35,7 +50,8 @@ see a live preview. Copy its source as necessary.
 - [Wrap](/components/wrap): Arranges items in rows that wrap.
 - [Link](/components/link): Native anchor with `href`, `target`, `rel`,
   `download`, ref, and native keyboard behavior.
-- [Text](/components/text): Native paragraph without forced visual defaults.
+- [Text](/components/text): Native paragraph with token-based typography
+  defaults and xstyle overrides.
 - [Blockquote](/components/blockquote): Long-form quotation.
 - [Em](/components/em): Emphasized text.
 - [Highlight](/components/highlight): Highlight matching words.
@@ -44,7 +60,7 @@ see a live preview. Copy its source as necessary.
 - [Codeblock](/components/codeblock): Preformatted code with horizontal
   overflow.
 - [Heading](/components/heading): Uses `h2` by default. The `render` prop
-  selects `h1` through `h6` independently of visual size.
+  selects `h1` through `h6` with different default sizes.
 
 <span id="semantics" />
 

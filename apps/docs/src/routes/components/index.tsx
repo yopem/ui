@@ -32,7 +32,6 @@ const styles = stylex.create({
     flexWrap: "wrap",
     gap: "1rem",
     marginBlock: "0 1.5rem",
-    minInlineSize: "calc(var(--spacing) * 0)",
   },
   filter: {
     display: "grid",

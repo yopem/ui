@@ -7,7 +7,10 @@ import { mergeStylexProps, stylexProps } from "@registry/lib/stylex"
 import * as stylex from "@stylexjs/stylex"
 
 const styles = stylex.create({
-  root: { position: "absolute", zIndex: 1 },
+  root: {
+    position: "absolute",
+    zIndex: 1,
+  },
   topStart: { insetBlockStart: 0, insetInlineStart: 0 },
   top: {
     inlineSize: "max-content",

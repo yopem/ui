@@ -7,7 +7,9 @@ import { mergeStylexProps, stylexProps } from "@registry/lib/stylex"
 import * as stylex from "@stylexjs/stylex"
 
 const styles = stylex.create({
-  root: { display: "flex" },
+  root: {
+    display: "flex",
+  },
 })
 
 type FlexElementProps = ComponentPropsWithoutRef<"div"> &

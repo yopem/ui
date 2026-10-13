@@ -86,7 +86,7 @@ const styles = stylex.create({
         "2.5rem",
     },
     lineHeight: "var(--otp-field-input-size)",
-    minInlineSize: 0,
+
     outline: "none",
     position: "relative",
     textAlign: "center",

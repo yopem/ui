@@ -1,6 +1,6 @@
 "use client"
 
-import type { FormEvent } from "react"
+import type { ComponentProps, FormEvent } from "react"
 
 import { AbsoluteCenter } from "@registry/components/ui/absolute-center"
 import { Bleed } from "@registry/components/ui/bleed"
@@ -43,7 +43,19 @@ const styles = stylex.create({
   responsiveTag: {
     display: { default: "block", "@media (min-width: 768px)": "flex" },
   },
-  overrideHstack: { gap: "5px", justifyContent: "flex-end" },
+  overrideHstack: {
+    gap: "5px",
+    justifyContent: "flex-end",
+    boxSizing: "content-box",
+    minInlineSize: "32px",
+  },
+  textOverride: {
+    fontSize: "0.875rem",
+    lineHeight: 2,
+    marginBlock: "0.5rem",
+    color: "var(--muted-foreground)",
+  },
+  headingOverride: { fontSize: "1.375rem", fontWeight: 500 },
   grid: {
     gap: "calc(var(--spacing) * 4)",
     gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
@@ -53,6 +65,14 @@ const styles = stylex.create({
   positioned: { position: "relative", minBlockSize: "6rem" },
   padded: { paddingInline: "1rem" },
 })
+
+function CustomHeading(props: ComponentProps<"h5">) {
+  return <Heading render={<h5>{props.children}</h5>} {...props} />
+}
+
+function renderFourthHeading(props: ComponentProps<"h2">) {
+  return <Heading render={<h4>{props.children}</h4>} {...props} />
+}
 
 export function Preview() {
   const linkRef = useRef<HTMLAnchorElement>(null)
@@ -88,6 +108,7 @@ export function Preview() {
         <Heading
           render={<h3>Third-level heading</h3>}
           data-testid="heading-h3"
+          xstyle={styles.headingOverride}
         />
         <Heading
           render={<h4>Fourth-level heading</h4>}
@@ -101,10 +122,25 @@ export function Preview() {
           render={<h6>Sixth-level heading</h6>}
           data-testid="heading-h6"
         />
+        <Heading
+          render={<h3>Default third level</h3>}
+          data-testid="heading-default-h3"
+        >
+          Default third level
+        </Heading>
+        <Heading render={renderFourthHeading} data-testid="heading-callback">
+          Callback heading
+        </Heading>
+        <Heading render={<CustomHeading />} data-testid="heading-custom">
+          Custom heading
+        </Heading>
+        <Heading render={<Box />} data-testid="heading-fallback">
+          Non-heading render
+        </Heading>
         <Text ref={textRef} data-testid="text-ref">
           Text content keeps its native p element.
         </Text>
-        <Text data-testid="text-secondary">
+        <Text data-testid="text-secondary" xstyle={styles.textOverride}>
           Layout primitives keep document semantics explicit.
         </Text>
         <Link ref={linkRef} data-testid="native-link" href="#destination">

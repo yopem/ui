@@ -45,7 +45,7 @@ const styles = stylex.create({
       "@media (min-width: 640px)": "0.875rem",
     },
     inlineSize: "100%",
-    minInlineSize: 0,
+
     position: "relative",
     transitionProperty: "box-shadow",
     opacity: {

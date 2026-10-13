@@ -93,7 +93,7 @@ const styles = stylex.create({
       default: "2.125rem",
       "@media (min-width: 640px)": "1.875rem",
     },
-    minInlineSize: 0,
+
     outline: "none",
     paddingInline: "calc(0.75rem - 1px)",
     transition: "background-color 5000000s ease-in-out 0s",

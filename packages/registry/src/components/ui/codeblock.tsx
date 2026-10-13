@@ -17,7 +17,7 @@ const styles = stylex.create({
     borderStyle: "solid",
     borderWidth: 1,
     color: tokens["--code-foreground"],
-    minInlineSize: 0,
+
     overflow: "hidden",
   },
   toolbar: {

@@ -9,6 +9,9 @@ const styles = stylex.create({
   root: {
     color: tokens["--foreground"],
     fontFamily: tokens["--font-sans"],
+    fontSize: "1rem",
+    fontWeight: 400,
+    margin: 0,
     lineHeight: 1.7,
     maxInlineSize: "68ch",
   },

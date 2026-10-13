@@ -7,6 +7,11 @@ import * as stylex from "@stylexjs/stylex"
 
 const styles = stylex.create({
   root: {
+    fontFamily: "inherit",
+    fontSize: "inherit",
+    fontWeight: "inherit",
+    lineHeight: "inherit",
+    margin: 0,
     color: tokens["--foreground"],
     fontStyle: "italic",
   },

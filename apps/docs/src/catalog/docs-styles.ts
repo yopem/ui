@@ -35,7 +35,6 @@ export const catalogStyles = stylex.create({
     fontFamily: tokens["--font-sans"],
     gap: "0.5rem",
     minBlockSize: "10.5rem",
-    minInlineSize: 0,
     padding: "1.25rem",
     textDecorationLine: "none",
     ":focus-visible": {

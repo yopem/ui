@@ -17,7 +17,6 @@ import { useLayoutEffect, useState } from "react"
 const styles = stylex.create({
   avatar: { inlineSize: "calc(0.25rem * 10)", blockSize: "calc(0.25rem * 10)" },
   flex: {
-    minInlineSize: "0px",
     flex: "1",
     flexDirection: "column",
     gap: "0.25rem",
@@ -39,7 +38,7 @@ const styles = stylex.create({
     color: "var(--muted-foreground)",
   },
   span: { overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" },
-  flex3: { minInlineSize: "0px", alignItems: "center", gap: "0.25rem" },
+  flex3: { alignItems: "center", gap: "0.25rem" },
   span2: { overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" },
   span3: { display: { "@media (max-width: 767.98px)": "none" } },
   skeleton: {

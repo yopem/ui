@@ -110,7 +110,8 @@ const definitions: Definition[] = [
   {
     api: ["TextProps", "Text"],
     categories: ["typography"],
-    description: "Renders a native paragraph with xstyle.",
+    description:
+      "Renders a native paragraph with token-based typography and xstyle overrides.",
     name: "text",
     title: "Text",
   },
@@ -161,7 +162,7 @@ const definitions: Definition[] = [
     api: ["HeadingTag", "HeadingProps", "Heading"],
     categories: ["typography"],
     description:
-      "Renders a native h2 heading by default. Supports h1 through h6 selection and xstyle.",
+      "Renders a styled h2 heading by default. Uses different h1 through h6 sizes and supports xstyle overrides.",
     name: "heading",
     title: "Heading",
   },

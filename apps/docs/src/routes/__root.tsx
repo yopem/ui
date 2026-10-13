@@ -31,7 +31,7 @@ import { PackageManagerProvider } from "@/catalog/package-manager"
 import { siteJsonLd } from "@/lib/seo"
 
 const styles = stylex.create({
-  paragraph: { marginBlock: "1rem", lineHeight: 1.8 },
+  paragraph: { fontSize: "inherit", marginBlock: "1rem", lineHeight: 1.8 },
 })
 
 export const Route = createRootRoute({

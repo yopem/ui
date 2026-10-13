@@ -84,7 +84,7 @@ const primitiveStyles = stylex.create({
     borderWidth: 1,
     borderRadius: tokens["--radius-lg"],
     marginBlock: "1.5rem",
-    minInlineSize: "calc(var(--spacing) * 0)",
+
     overflow: "hidden",
     position: "relative",
     borderStartStartRadius: 0,
@@ -99,7 +99,7 @@ const primitiveStyles = stylex.create({
     borderWidth: 1,
     borderRadius: tokens["--radius-lg"],
     marginBlock: "1.5rem",
-    minInlineSize: "calc(var(--spacing) * 0)",
+
     overflow: "hidden",
     position: "relative",
   },
