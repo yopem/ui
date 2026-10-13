@@ -323,8 +323,16 @@ test("packed CLI installs from local registry, builds Vite and runs published li
       "init",
       "--framework",
       "vite",
+      "--guidance",
+      "agents",
       ...registry,
     )
+    const guidance = readFileSync(join(project, "AGENTS.md"), "utf8")
+    expect(guidance).toContain("<!-- BEGIN:yopem-ui-design -->")
+    expect(guidance).toContain("<!-- END:yopem-ui-design -->")
+    expect(guidance).toContain("@/components/ui/")
+    expect(guidance).toContain("@/styles/tokens.stylex")
+    expect(guidance).toContain("stylex.create")
     await previewPackedCli(logs, project, ["add", "button", ...registry])
     await run(logs, project, "bunx", "yopem-ui", "add", "button", ...registry)
     await verifyNoOpPackedCli(logs, project)
@@ -370,7 +378,14 @@ test("packed CLI installs from local registry, builds Vite and runs published li
       "init",
       "--framework",
       "vite",
+      "--guidance",
+      "agents",
       ...registry,
+    )
+    expect(readFileSync(join(project, "AGENTS.md"), "utf8")).toBe(guidance)
+    expect(guidance.split("<!-- BEGIN:yopem-ui-design -->")).toHaveLength(2)
+    logs.push(
+      "Packed init guidance verified: managed block unchanged after repeated init",
     )
     expect(readFileSync(tokens, "utf8")).toBe(edited)
     await run(logs, project, "bun", "run", "lint")

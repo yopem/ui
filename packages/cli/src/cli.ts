@@ -2,15 +2,17 @@
 
 import { readFile } from "node:fs/promises"
 import { resolve } from "node:path"
+import { createInterface } from "node:readline"
 
 import type { InitOptions } from "./init.js"
 import type { JsonValue } from "./install.js"
 
+import { isGuidance } from "./guidance.js"
 import { initProject } from "./init.js"
 import { installItem, isRecord, isString } from "./install.js"
 
 const usage =
-  "Usage: yopem-ui [--help | --version] | init [--framework vite|tanstack-router|tanstack-start|react-router|next|astro] [--ui <path>] [--dry-run] [--cwd <path>] [--registry <URL>] | <add|update> <name> [--force] [--dry-run] [--cwd <path>] [--registry <URL>]"
+  "Usage: yopem-ui [--help | --version] | init [--framework vite|tanstack-router|tanstack-start|react-router|next|astro] [--ui <path>] [--guidance design|agents|none] [--dry-run] [--cwd <path>] [--registry <URL>] | <add|update> <name> [--force] [--dry-run] [--cwd <path>] [--registry <URL>]"
 
 function isFramework(
   value: string | undefined,
@@ -23,6 +25,45 @@ function isFramework(
     value === "next" ||
     value === "astro"
   )
+}
+
+async function promptGuidance() {
+  const input = createInterface({
+    input: process.stdin,
+    output: process.stdout,
+  })
+
+  function cancel() {
+    input.close()
+  }
+
+  process.once("SIGINT", cancel)
+
+  try {
+    console.info(
+      "Design system guidance:\n1. DESIGN.md\n2. Update AGENTS.md\n3. Do nothing (default)",
+    )
+    process.stdout.write("Choose [3]: ")
+
+    for await (const answer of input) {
+      switch (answer.trim()) {
+        case "1":
+          return "design"
+        case "2":
+          return "agents"
+        case "":
+        case "3":
+          return "none"
+        default:
+          process.stdout.write("Enter 1, 2, or 3. Choose [3]: ")
+      }
+    }
+
+    throw new Error("Guidance selection cancelled; no files changed")
+  } finally {
+    process.off("SIGINT", cancel)
+    input.close()
+  }
 }
 
 export async function runCli(args: string[], options: InitOptions = {}) {
@@ -69,7 +110,11 @@ export async function runCli(args: string[], options: InitOptions = {}) {
       continue
     }
 
-    if (!["--cwd", "--ui", "--framework", "--registry"].includes(argument))
+    if (
+      !["--cwd", "--ui", "--framework", "--registry", "--guidance"].includes(
+        argument,
+      )
+    )
       throw new Error(usage)
     const value = rest[++index]
 
@@ -87,18 +132,27 @@ export async function runCli(args: string[], options: InitOptions = {}) {
 
   if (command === "init") {
     const framework = flags.get("--framework")
+    const selectedGuidance = flags.get("--guidance") ?? options.guidance
 
     if (
       positional.length ||
       flags.has("--force") ||
-      (framework !== undefined && !isFramework(framework))
+      (framework !== undefined && !isFramework(framework)) ||
+      (selectedGuidance !== undefined && !isGuidance(selectedGuidance))
     )
       throw new Error(usage)
+
+    const guidance =
+      selectedGuidance ??
+      (metadata.main && process.stdin.isTTY && process.stdout.isTTY
+        ? await promptGuidance()
+        : "none")
 
     const result = await initProject({
       ...options,
       cwd,
       registryUrl,
+      guidance,
       dryRun: flags.has("--dry-run") || options.dryRun,
       onWarning,
       ui: flags.get("--ui") ?? options.ui,
@@ -145,7 +199,8 @@ export async function runCli(args: string[], options: InitOptions = {}) {
     (command !== "add" && command !== "update") ||
     positional.length !== 1 ||
     flags.has("--ui") ||
-    flags.has("--framework")
+    flags.has("--framework") ||
+    flags.has("--guidance")
   ) {
     throw new Error(usage)
   }

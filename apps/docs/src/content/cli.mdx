@@ -42,6 +42,34 @@ Use `--framework` when detection finds more than one supported framework.
 Accepted values are `vite`, `tanstack-router`, `tanstack-start`, `react-router`,
 `next`, and `astro`.
 
+### Design system guidance
+
+Interactive init offers `DESIGN.md`, update `AGENTS.md`, or do nothing. Press
+Enter to skip guidance. Noninteractive init skips guidance by default.
+
+Select a file without a prompt:
+
+```sh
+bunx --bun @yopem-ui/cli init --guidance design
+bunx --bun @yopem-ui/cli init --guidance agents
+bunx --bun @yopem-ui/cli init --guidance none
+```
+
+Both file options contain the same design system instructions. They cover
+StyleX, semantic tokens, typography, layout, themes, component selection, and
+accessibility.
+
+The instructions include light and dark color values, spacing values, and
+component sizes. Pixel equivalents assume a 16px root font size. Install
+components before you use them; init installs only base files.
+
+The selected file stays in the target app directory, including shared UI setup.
+Init preserves text outside the marked Yopem UI section. Repeated init updates
+that section. Malformed or duplicate markers stop init. The other file stays
+unchanged. Use the same option to refresh guidance after a CLI update.
+
+Use `--dry-run` with `--guidance` to preview the file without writes.
+
 ## add
 
 Initialize the project before you add components. Pass one registry item name:
@@ -95,21 +123,22 @@ command names. Invalid commands or arguments exit with status 1.
 
 ## Options
 
-| Option               | Commands                | Purpose                                                                     |
-| -------------------- | ----------------------- | --------------------------------------------------------------------------- |
-| `--framework <name>` | `init`                  | Select a supported framework.                                               |
-| `--ui <path>`        | `init`                  | Use an existing shared UI package. The path is relative to the target app.  |
-| `--cwd <path>`       | `init`, `add`, `update` | Set the target directory. The default is the current directory.             |
-| `--registry <URL>`   | `init`, `add`, `update` | Set the registry for this command. The default is `https://ui.yopem.com/r`. |
-| `--dry-run`          | `init`, `add`, `update` | Preview changes without writes or package-manager commands.                 |
-| `--force`            | `add`, `update`         | Permit source overwrites. Review the preview first.                         |
-| `--help`, `-h`       | Standalone              | Show usage.                                                                 |
-| `--version`, `-v`    | Standalone              | Show the installed version.                                                 |
+| Option                | Commands                | Purpose                                                                     |
+| --------------------- | ----------------------- | --------------------------------------------------------------------------- |
+| `--framework <name>`  | `init`                  | Select a supported framework.                                               |
+| `--guidance <choice>` | `init`                  | Select `design`, `agents`, or `none` for design system instructions.        |
+| `--ui <path>`         | `init`                  | Use an existing shared UI package. The path is relative to the target app.  |
+| `--cwd <path>`        | `init`, `add`, `update` | Set the target directory. The default is the current directory.             |
+| `--registry <URL>`    | `init`, `add`, `update` | Set the registry for this command. The default is `https://ui.yopem.com/r`. |
+| `--dry-run`           | `init`, `add`, `update` | Preview changes without writes or package-manager commands.                 |
+| `--force`             | `add`, `update`         | Permit source overwrites. Review the preview first.                         |
+| `--help`, `-h`        | Standalone              | Show usage.                                                                 |
+| `--version`, `-v`     | Standalone              | Show the installed version.                                                 |
 
 Only help and version have short flags. Pass option values as separate
 arguments. Do not repeat flags. The init command accepts no item name and
 rejects `--force`. The add and update commands require one item name. They
-reject `--framework` and `--ui`.
+reject `--framework`, `--ui`, and `--guidance`.
 
 ## Safe overwrites
 

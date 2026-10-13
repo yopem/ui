@@ -2,6 +2,7 @@ import { readFile, realpath } from "node:fs/promises"
 import { join, relative, resolve } from "node:path"
 import ts from "typescript-api"
 
+import type { Guidance } from "./guidance.js"
 import type {
   FileChange,
   InstallOptions,
@@ -9,6 +10,7 @@ import type {
   JsonValue,
 } from "./install.js"
 
+import { designGuidance, isGuidance } from "./guidance.js"
 import {
   applyInstall,
   existingFile,
@@ -65,6 +67,7 @@ export interface InitResult {
 export interface InitOptions extends InstallOptions {
   framework?: Framework
   ui?: string
+  guidance?: Guidance
 }
 
 function object(value: JsonValue | undefined): value is JsonObject {
@@ -1571,6 +1574,10 @@ function detectFramework(
 export async function initProject(
   options: InitOptions = {},
 ): Promise<InitResult> {
+  if (options.guidance !== undefined && !isGuidance(options.guidance)) {
+    throw new Error("Invalid guidance option; use design, agents, or none")
+  }
+
   const root = await realpath(options.cwd ?? process.cwd())
 
   if (!(await existingFile(root, "package.json"))) {
@@ -1651,6 +1658,16 @@ export async function initProject(
     })
 
     if (before !== after) edits.set(path, { before, after })
+  }
+
+  if (options.guidance === "design" || options.guidance === "agents") {
+    const path = options.guidance === "design" ? "DESIGN.md" : "AGENTS.md"
+    await plan(
+      path,
+      (content) => designGuidance(content, shared ? `${shared.name}/` : "@/"),
+      "",
+      "Yopem UI design system guidance; preserve content outside the managed block",
+    )
   }
 
   const retired = new Map<string, string>()

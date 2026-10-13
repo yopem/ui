@@ -13,6 +13,7 @@ test("@a11y CLI guide documents commands, options, and safe updates", async ({
   for (const name of [
     "Prerequisites",
     "init",
+    "Design system guidance",
     "add",
     "update",
     "Help and version",
@@ -27,6 +28,7 @@ test("@a11y CLI guide documents commands, options, and safe updates", async ({
 
   for (const flag of [
     "--framework",
+    "--guidance",
     "--ui",
     "--cwd",
     "--registry",
@@ -48,10 +50,27 @@ test("@a11y CLI guide documents commands, options, and safe updates", async ({
     "Commands",
     "Purpose",
   ])
-  await expect(options.getByRole("row")).toHaveCount(9)
+  await expect(options.getByRole("row")).toHaveCount(10)
   await expect(
     options.getByRole("cell", { name: "--framework <name>", exact: true }),
   ).toBeVisible()
+
+  await expect(
+    options.getByRole("cell", { name: "--guidance <choice>", exact: true }),
+  ).toBeVisible()
+
+  for (const text of [
+    "DESIGN.md",
+    "AGENTS.md",
+    "init --guidance design",
+    "init --guidance agents",
+    "init --guidance none",
+    "Noninteractive init skips guidance by default.",
+    "Init preserves text outside the marked Yopem UI section.",
+    "The instructions include light and dark color values, spacing values, and component sizes.",
+    "Use --dry-run with --guidance to preview the file without writes.",
+  ])
+    await expect(main).toContainText(text)
 
   await expect(main).toContainText(
     "The CLI and Oxlint plugin are not published yet.",
@@ -142,9 +161,21 @@ test("CLI guide has machine-readable documentation and discovery links", async (
     "--cwd",
     "--registry",
     "--dry-run",
+    "--guidance",
+    "init --guidance design",
+    "init --guidance agents",
+    "init --guidance none",
+    "DESIGN.md",
+    "AGENTS.md",
+    "Noninteractive init skips guidance by default.",
+    "Init preserves text outside the marked Yopem UI section.",
     "not published yet",
   ])
     expect(guide).toContain(text)
+
+  expect(guide.replace(/\s+/g, " ")).toContain(
+    "The instructions include light and dark color values, spacing values, and component sizes.",
+  )
 
   for (const [url, path] of [
     ["/llms.txt", "/docs/cli.md"],

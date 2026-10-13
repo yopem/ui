@@ -29,6 +29,7 @@ for (const args of [[], ["--help"], ["-h"], ["--version"], ["-v"]]) {
       } else {
         expect(result.stdout).toContain("Usage:")
         expect(result.stdout).toContain("--registry")
+        expect(result.stdout).toContain("--guidance design|agents|none")
         expect(result.stdout).toContain("--help")
         expect(result.stdout).toContain("--version")
       }

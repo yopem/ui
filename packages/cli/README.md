@@ -47,6 +47,40 @@ identify one framework. The `init` and `add` commands keep local changes to
 installed source. The `update` command rejects modified files unless you pass
 `--force`. The CLI records installed files and their hashes in `ui.json`.
 
+## Design system guidance
+
+Interactive init asks where to write design system guidance:
+
+1. `DESIGN.md`
+2. Update `AGENTS.md`
+3. Do nothing (default)
+
+Press Enter to skip guidance. Noninteractive and programmatic init skip guidance
+unless you select an option. Select an option without a prompt:
+
+```sh
+bunx --bun @yopem-ui/cli init --guidance design
+bunx --bun @yopem-ui/cli init --guidance agents
+bunx --bun @yopem-ui/cli init --guidance none
+bunx --bun @yopem-ui/cli init --guidance agents --dry-run
+```
+
+Both file options contain the same Yopem UI instructions. They cover StyleX,
+semantic tokens, typography, layout primitives, component selection, themes, and
+accessibility. The instructions include light and dark color values, spacing
+values, and component sizes. Pixel equivalents assume a 16px root font size.
+Init installs only base files. Install other components before you use them.
+
+The selected file is in the target app directory. With `--ui`, instructions use
+the shared package imports. Init keeps content outside the marked Yopem UI
+section. Repeated init updates that section without duplicate instructions.
+Malformed or duplicate markers stop init. The other guidance file stays
+unchanged. Dry runs list the selected file without writes. The CLI does not
+track guidance in `ui.json`. Run init with the same option to refresh guidance.
+
+Programmatic callers can set `InitOptions.guidance` to `design`, `agents`, or
+`none`. The `--guidance` option applies only to init.
+
 ## Dry run
 
 Preview `add` or `update` before installation:
