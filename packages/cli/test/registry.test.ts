@@ -233,13 +233,13 @@ for (const failure of [
           return new Response(
             new ReadableStream({
               start(controller) {
-                controller.enqueue(new TextEncoder().encode("{"))
+                controller.enqueue(
+                  new TextEncoder().encode('{"secret":"do-not-print",'),
+                )
 
                 if (failure === "body-network") {
-                  setTimeout(
-                    () => controller.error(new Error("do-not-print")),
-                    10,
-                  )
+                  // Bun logs stream error reasons. No reason still resets the connection.
+                  setTimeout(() => controller.error(), 10)
                 }
               },
             }),
@@ -293,7 +293,7 @@ for (const failure of [
         } else if (failure === "http-status") {
           expect(message).toContain("HTTP 503")
         } else {
-          expect(message).toMatch(/network/i)
+          expect(message).toMatch(/network error reading response/i)
         }
 
         expect(requests.map((path) => path.split("/").at(-1))).toEqual([

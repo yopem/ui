@@ -67,6 +67,7 @@ test("command reports real process failures", () => {
 
 test("packed CLI runs on Node without Bun and installs through every manager", async () => {
   const root = mkdtempSync(join(tmpdir(), "yopem node &-"))
+  const archive = join(root, "cli.tgz")
   const logs: string[] = []
 
   const server = Bun.serve({
@@ -101,12 +102,8 @@ test("packed CLI runs on Node without Bun and installs through every manager", a
   })
 
   try {
-    logs.push(command("bun", ["pm", "pack", "--destination", root], cliRoot))
-    command(
-      "tar",
-      ["-xzf", join(root, "yopem-ui-cli-0.1.3.tgz"), "-C", root],
-      root,
-    )
+    logs.push(command("bun", ["pm", "pack", "--filename", archive], cliRoot))
+    command("tar", ["-xzf", archive, "-C", root], root)
 
     const manifest: JsonValue = JSON.parse(
       readFileSync(join(root, "package/package.json"), "utf8"),
@@ -340,7 +337,6 @@ if (typeof runCli !== "function") throw new Error("Missing runCli export")
 
       const env = realEnv
 
-      const archive = join(root, "yopem-ui-cli-0.1.3.tgz")
       logs.push(
         command(
           manager,
