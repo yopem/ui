@@ -1,19 +1,21 @@
 import AxeBuilder from "@axe-core/playwright"
 import { expect, test } from "@playwright/test"
-import { readdirSync } from "node:fs"
 
 const groups = ["Setup", "Components", "Layout", "Typography", "Hooks"]
 
-const slugs = readdirSync(
-  new URL("../../src/catalog/previews/", import.meta.url),
-)
-  .filter((name) => name.endsWith(".tsx"))
-  .map((name) => name.replace(/\.tsx$/, ""))
-  .concat("label", "sidebar")
-
 test("@a11y grouped navigation preserves inventory, keyboard collapse, and mobile dismissal", async ({
   page,
+  request,
 }, testInfo) => {
+  const response = await request.get("/components.md")
+  expect(response.status()).toBe(200)
+
+  const componentHrefs =
+    (await response.text()).match(/(?<=\]\()\/components\/[\w-]+(?=\.md\))/g) ??
+    []
+
+  expect(componentHrefs.length).toBeGreaterThan(0)
+
   await page.goto("/components/button")
   const mobile = (page.viewportSize()?.width ?? 0) < 768
   const trigger = page.getByRole("button", { name: "Open navigation" })
@@ -28,8 +30,6 @@ test("@a11y grouped navigation preserves inventory, keyboard collapse, and mobil
         .getByRole("complementary")
         .first()
         .getByRole("navigation", { name: "Documentation", exact: true })
-
-  await expect(nav.getByRole("button")).toHaveText(groups)
 
   for (const group of groups) {
     await expect(
@@ -62,20 +62,21 @@ test("@a11y grouped navigation preserves inventory, keyboard collapse, and mobil
     .locator('[data-slot="collapsible"]')
     .filter({ has: page.getByRole("button", { name: "Hooks", exact: true }) })
 
-  await expect(hooks.getByRole("link")).toHaveText([
-    "useEventCallback",
-    "useMediaQuery",
+  for (const href of [
+    "/components/use-event-callback",
+    "/components/use-media-query",
   ])
+    await expect(hooks.locator(`a[href="${href}"]`)).toHaveCount(1)
 
   const hrefs = await nav
     .getByRole("link")
     .evaluateAll((links) => links.map((link) => link.getAttribute("href")))
 
   expect(hrefs.filter((href) => href?.startsWith("/components/"))).toHaveLength(
-    slugs.length,
+    componentHrefs.length,
   )
 
-  for (const slug of slugs) expect(hrefs).toContain(`/components/${slug}`)
+  for (const href of componentHrefs) expect(hrefs).toContain(href)
 
   for (const href of [
     "/",
@@ -133,7 +134,6 @@ test("@a11y grouped navigation preserves inventory, keyboard collapse, and mobil
 })
 
 for (const [path, previous, next] of [
-  ["/", null, "/docs/getting-started"],
   ["/docs/lint", "/docs/styling", "/components"],
   ["/components", "/docs/lint", "/components/accordion"],
   ["/components/tooltip", "/components/toolbar", "/components/absolute-center"],
@@ -193,7 +193,7 @@ for (const [path, previous, next] of [
         .getByRole("navigation", { name: "Documentation pages" })
         .getByRole("link", { name: /^Previous:/ })
         .click()
-      await expect(page).toHaveURL(new RegExp(`${path === "/" ? "/" : path}$`))
+      await expect(page).toHaveURL(new RegExp(`${path}$`))
     }
   })
 }

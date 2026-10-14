@@ -10,71 +10,17 @@ test("@a11y CLI guide documents commands, options, and safe updates", async ({
     main.getByRole("heading", { name: "CLI", exact: true, level: 1 }),
   ).toBeVisible()
 
-  for (const name of [
-    "Prerequisites",
-    "init",
-    "Design system guidance",
-    "add",
-    "update",
-    "Help and version",
-    "Options",
-    "Safe overwrites",
-    "Dry run",
-    "Registry",
-    "Monorepos",
-  ]) {
-    await expect(main.getByRole("heading", { name, exact: true })).toBeVisible()
-  }
-
-  for (const flag of [
-    "--framework",
-    "--guidance",
-    "--ui",
-    "--cwd",
-    "--registry",
-    "--dry-run",
-    "--force",
-    "--help",
-    "-h",
-    "--version",
-    "-v",
-  ]) {
-    await expect(main).toContainText(flag)
-  }
-
   const options = main.getByRole("table")
   await expect(options).toBeVisible()
-  await expect(options).toHaveAttribute("data-slot", "table")
   await expect(options.getByRole("columnheader")).toHaveText([
     "Option",
     "Commands",
     "Purpose",
   ])
-  await expect(options.getByRole("row")).toHaveCount(10)
   await expect(
     options.getByRole("cell", { name: "--framework <name>", exact: true }),
   ).toBeVisible()
 
-  await expect(
-    options.getByRole("cell", { name: "--guidance <choice>", exact: true }),
-  ).toBeVisible()
-
-  for (const text of [
-    "DESIGN.md",
-    "AGENTS.md",
-    "init --guidance design",
-    "init --guidance agents",
-    "init --guidance none",
-    "Noninteractive init skips guidance by default.",
-    "Init preserves text outside the marked Yopem UI section.",
-    "The instructions include light and dark color values, spacing values, and component sizes.",
-    "Use --dry-run with --guidance to preview the file without writes.",
-  ])
-    await expect(main).toContainText(text)
-
-  await expect(main).toContainText(
-    "The update command rejects modified files unless you pass --force.",
-  )
   await expect(
     main.getByRole("button", { name: "Copy Code" }).first(),
   ).toBeEnabled()
@@ -92,9 +38,6 @@ test("CLI guide is reachable from installation, navigation, and search", async (
   await expect(
     page.getByRole("button", { name: "Search documentation", exact: true }),
   ).toBeEnabled()
-  await expect(
-    page.getByRole("main").getByRole("heading", { name: /update/i }),
-  ).toHaveCount(0)
   await page
     .getByRole("main")
     .getByRole("link", { name: "CLI guide", exact: true })
@@ -125,10 +68,12 @@ test("CLI guide is reachable from installation, navigation, and search", async (
       .getByRole("main")
       .getByRole("heading", { name: "CLI", exact: true, level: 1 }),
   ).toBeVisible()
+  await page.goto("/docs/installation")
   await page.getByRole("button", { name: "Search documentation" }).click()
   const dialog = page.getByRole("dialog", { name: "Search documentation" })
   await dialog.getByRole("searchbox").fill("CLI")
   await dialog.getByRole("link", { name: "CLI", exact: true }).click()
+  await expect(page).toHaveURL(/\/docs\/cli$/)
   await expect(dialog).toBeHidden()
   await expect(
     page.getByRole("heading", { name: "CLI", exact: true, level: 1 }),
@@ -148,30 +93,8 @@ test("CLI guide has machine-readable documentation and discovery links", async (
     "bunx --bun @yopem-ui/cli init",
     "bunx --bun @yopem-ui/cli add button",
     "bunx --bun @yopem-ui/cli update base",
-    "--help",
-    "-h",
-    "--version",
-    "-v",
-    "--force",
-    "--framework",
-    "--ui",
-    "--cwd",
-    "--registry",
-    "--dry-run",
-    "--guidance",
-    "init --guidance design",
-    "init --guidance agents",
-    "init --guidance none",
-    "DESIGN.md",
-    "AGENTS.md",
-    "Noninteractive init skips guidance by default.",
-    "Init preserves text outside the marked Yopem UI section.",
   ])
     expect(guide).toContain(text)
-
-  expect(guide.replace(/\s+/g, " ")).toContain(
-    "The instructions include light and dark color values, spacing values, and component sizes.",
-  )
 
   for (const [url, path] of [
     ["/llms.txt", "/docs/cli.md"],
@@ -184,7 +107,6 @@ test("CLI guide has machine-readable documentation and discovery links", async (
 
   const installation = await (await request.get("/docs/installation.md")).text()
   expect(installation).toContain("[CLI guide](/docs/cli)")
-  expect(installation).not.toContain("update base")
   await testInfo.attach("cli-markdown", {
     body: guide,
     contentType: "text/markdown",

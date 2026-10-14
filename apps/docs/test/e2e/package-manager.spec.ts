@@ -2,13 +2,13 @@ import AxeBuilder from "@axe-core/playwright"
 import { expect, test } from "@playwright/test"
 
 const managers = [
-  ["Bun", "bunx --bun", "bun add -d", "bun run dev", "bunx --no-install"],
-  ["npm", "npx", "npm install -D", "bun run dev", "npx --no-install"],
-  ["pnpm", "pnpm dlx", "pnpm add -D", "bun run dev", "pnpm exec"],
-  ["Yarn", "yarn dlx", "yarn add -D", "bun run dev", "yarn exec"],
+  ["Bun", "bunx --bun", "bun add -d", "bunx --no-install"],
+  ["npm", "npx", "npm install -D", "npx --no-install"],
+  ["pnpm", "pnpm dlx", "pnpm add -D", "pnpm exec"],
+  ["Yarn", "yarn dlx", "yarn add -D", "yarn exec"],
 ] as const
 
-for (const [manager, runner, install, dev, localRunner] of managers) {
+for (const [manager, runner, install, localRunner] of managers) {
   test(`@a11y ${manager} commands share selection and copy current text`, async ({
     page,
     context,
@@ -23,7 +23,7 @@ for (const [manager, runner, install, dev, localRunner] of managers) {
       .click()
     await expect(
       switches.getByRole("button", { name: manager, exact: true }),
-    ).toHaveCount(3)
+    ).not.toHaveCount(0)
 
     for (const button of await switches
       .getByRole("button", { name: manager, exact: true })
@@ -46,7 +46,6 @@ for (const [manager, runner, install, dev, localRunner] of managers) {
     await expect(page.getByRole("main").locator("pre").first()).toContainText(
       `${runner} @yopem-ui/cli init --framework react-router`,
     )
-    await expect(page.getByRole("main")).toContainText(dev)
     await page.goto("/docs/lint")
     await page
       .getByRole("group", { name: "Package manager" })
@@ -56,13 +55,6 @@ for (const [manager, runner, install, dev, localRunner] of managers) {
     await expect(page.getByRole("main")).toContainText(
       `${install} oxlint @yopem-ui/oxlint-plugin`,
     )
-    await expect(
-      page
-        .getByRole("main")
-        .locator("pre")
-        .filter({ hasText: '"jsPlugins"' })
-        .first(),
-    ).toContainText('"specifier": "@yopem-ui/oxlint-plugin"')
 
     const localCommand = page
       .getByRole("main")
@@ -102,9 +94,6 @@ for (const [manager, runner, install, dev, localRunner] of managers) {
     await expect
       .poll(() => page.evaluate(() => navigator.clipboard.readText()))
       .toBe(`${install} oxlint @yopem-ui/oxlint-plugin`)
-    await expect(
-      dependencyBlock.getByRole("group", { name: "Package manager" }),
-    ).toBeVisible()
     expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([])
     await testInfo.attach(`${manager}-commands`, {
       body: await dependencyBlock.screenshot({
@@ -124,6 +113,13 @@ test("package manager keyboard selection updates component commands without chan
   const group = main.getByRole("group", { name: "Package manager" }).first()
   const bun = group.getByRole("button", { name: "Bun", exact: true })
   await expect(bun).toBeEnabled()
+
+  const source = main
+    .locator("pre")
+    .filter({ hasText: 'from "@/components/ui/button"' })
+    .first()
+
+  const originalSource = await source.innerText()
   await bun.focus()
   await page.keyboard.press("ArrowRight")
   await page.keyboard.press("Space")
@@ -132,16 +128,11 @@ test("package manager keyboard selection updates component commands without chan
   ).toHaveAttribute("aria-pressed", "true")
   await expect(
     main.locator("pre").filter({ hasText: "npx @yopem-ui/cli init" }),
-  ).toHaveCount(1)
+  ).toBeVisible()
   await expect(
     main.locator("pre").filter({ hasText: "npx @yopem-ui/cli add button" }),
-  ).toHaveCount(1)
-  await expect(
-    main
-      .locator("pre")
-      .filter({ hasText: 'from "@/components/ui/button"' })
-      .first(),
   ).toBeVisible()
+  await expect(source).toHaveText(originalSource)
   await testInfo.attach("keyboard-selection", {
     body: await page.screenshot({ fullPage: true }),
     contentType: "image/png",
@@ -169,33 +160,14 @@ test("package manager waits for hydration before accepting selection", async ({
   )
 })
 
-test("manager controls use compact lowercase labels and preserve raw source", async ({
-  page,
-  request,
-}, testInfo) => {
-  await page.goto("/docs/lint")
-  const group = page.getByRole("group", { name: "Package manager" }).first()
-  await expect(
-    group.getByRole("button", { name: "Bun", exact: true }),
-  ).toHaveText("bun")
-  await expect(
-    group.getByRole("button", { name: "Yarn", exact: true }),
-  ).toHaveText("yarn")
-  const toolbar = group.locator("..").locator("..")
-  await expect(toolbar.locator("svg[data-slot='terminal-icon']")).toBeVisible()
-  await expect(
-    toolbar.getByRole("button", { name: "Copy Code", exact: true }),
-  ).toBeVisible()
+test("lint Markdown preserves raw commands", async ({ request }) => {
   const source = await request.get("/docs/lint.md")
   expect(source.ok()).toBe(true)
+  expect(source.headers()["content-type"]).toContain("text/markdown")
   const rawSource = await source.text()
   expect(rawSource).toContain("pnpm add -D oxlint @yopem-ui/oxlint-plugin")
   expect(rawSource).toContain("pnpm exec oxlint .")
   expect(rawSource).toContain("npm exec -- @yopem-ui/cli init")
-  await testInfo.attach("compact-command-toolbar", {
-    body: await toolbar.screenshot(),
-    contentType: "image/png",
-  })
 })
 
 test("SSR command selection defaults to Bun", async ({ request }) => {

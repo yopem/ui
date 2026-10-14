@@ -152,6 +152,8 @@ const config = defineConfig({
           "/",
           "/404",
           "/components.md",
+          "/components/label.md",
+          "/components/sidebar.md",
           "/index.md",
           "/api/search.json",
           "/llms.txt",

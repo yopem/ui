@@ -105,7 +105,7 @@ for (const path of [
   }
 }
 
-test("header theme button stays at top right and sidebar keeps original style", async ({
+test("header contains theme button without horizontal overflow", async ({
   page,
 }, testInfo) => {
   for (const width of [1440, 320]) {
@@ -121,13 +121,13 @@ test("header theme button stays at top right and sidebar keeps original style", 
     const headerBox = await header.boundingBox()
     const toggleBox = await toggle.boundingBox()
 
-    expect(headerBox).not.toBeNull()
-    expect(toggleBox).not.toBeNull()
-
     if (!headerBox || !toggleBox)
       throw new Error("Header or theme button has no rendered bounds")
 
-    expect(toggleBox.x + toggleBox.width).toBeGreaterThan(width - 48)
+    expect(toggleBox.x).toBeGreaterThanOrEqual(headerBox.x)
+    expect(toggleBox.x + toggleBox.width).toBeLessThanOrEqual(
+      headerBox.x + headerBox.width,
+    )
     expect(toggleBox.y).toBeGreaterThanOrEqual(headerBox.y)
     expect(toggleBox.y + toggleBox.height).toBeLessThanOrEqual(
       headerBox.y + headerBox.height,
@@ -136,17 +136,7 @@ test("header theme button stays at top right and sidebar keeps original style", 
       await page.evaluate(() => document.documentElement.scrollWidth),
     ).toBeLessThanOrEqual(width)
 
-    if (width === 1440) {
-      const current = page
-        .getByRole("navigation", { name: "Documentation", exact: true })
-        .getByRole("link", { name: "Getting started", exact: true })
-
-      await expect(current).toHaveAttribute("aria-current", "page")
-      await expect(current).toHaveCSS("box-shadow", "none")
-      await expect(current).toHaveCSS("font-weight", "600")
-    }
-
-    await testInfo.attach(`original-navigation-${width}`, {
+    await testInfo.attach(`header-theme-${width}`, {
       body: await page.screenshot({ fullPage: true }),
       contentType: "image/png",
     })

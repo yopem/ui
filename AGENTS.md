@@ -69,6 +69,20 @@ Path aliases are `@registry/*` for registry source and `@/*` inside docs.
 
 ## Testing requirements
 
+- Test observable behavior and public contracts, not documentation wording.
+  Do not assert full sentences, descriptions, warnings, or lists of prose fragments.
+  Wording changes must not require test changes unless wording is the requested contract.
+- Assert exact text only for stable identifiers, commands, URLs, required legal text,
+  or accessible names used to operate the interface.
+  For documentation, check response status, content type, valid links, and usable examples.
+- Keep each contract in one owning test. Do not repeat content checks across HTML,
+  Markdown, and llms.txt when one contract test covers the behavior.
+  Do not lock tests to exact snippet counts, declaration syntax, or cosmetic CSS values.
+- Use public inventories to check published resources. Check structured fields,
+  dependencies, and consumer imports instead of full generated-file equality.
+- Do not test implementation source with string searches when rendered output or
+  user interaction can verify the same contract. Test copy controls through clipboard output.
+  Keep security and accessibility checks.
 - Never write unit tests after writing implementation code. If unit tests are
   necessary, define them before implementation, not as a retrospective check.
 - CLI tests use `bun:test`, not Playwright. Verify CLI integration by creating

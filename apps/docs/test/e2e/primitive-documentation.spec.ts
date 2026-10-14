@@ -1,5 +1,6 @@
 import AxeBuilder from "@axe-core/playwright"
 import { expect, test } from "@playwright/test"
+import { z } from "zod"
 
 const components = [
   ["box", "Box"],
@@ -56,53 +57,72 @@ test("layout section has no duplicate overview page", async ({ page }) => {
   const sitemap = await page.request.get("/sitemap.xml")
   expect(await sitemap.text()).not.toContain("/components/layout")
 
-  const guide = await page.request.get("/docs/layout.md")
-  const guideText = await guide.text()
-  expect(guideText).not.toContain("catalog/layout-examples")
-  expect(guideText).toContain("/docs/layout#live-layout-examples")
+  await page.goto("/docs/layout")
+  await page.getByRole("link", { name: "Open live layout examples" }).click()
+  await expect(page).toHaveURL(/\/docs\/layout#live-layout-examples$/)
+  await expect(page.locator("#live-layout-examples")).toBeVisible()
 
   const response = await page.goto("/components/layout")
   expect(response?.status()).toBe(404)
 })
 
-test("@a11y styling guide teaches StyleX overrides", async ({ page }) => {
+test("@a11y styling guide offers copyable StyleX examples", async ({
+  context,
+  page,
+}) => {
+  await context.grantPermissions(["clipboard-read", "clipboard-write"])
   await page.goto("/docs/styling", { waitUntil: "domcontentloaded" })
   await expect(
     page.getByRole("heading", { name: "Styling with StyleX", level: 1 }),
   ).toBeVisible()
-  await expect(page.getByText(/stylex\.create/).first()).toBeVisible()
-  await expect(page.getByText(/xstyle/).first()).toBeVisible()
+  const code = page.getByTestId("copyable-code").first()
+  const source = await code.locator("pre code").innerText()
+  expect(source.trim()).not.toBe("")
+  await code.getByRole("button", { name: "Copy Code", exact: true }).click()
+  await expect
+    .poll(() => page.evaluate(() => navigator.clipboard.readText()))
+    .toBe(source)
   expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([])
 })
 
-test("@a11y lint guide offers copyable configuration", async ({ page }) => {
+test("@a11y lint guide offers copyable configuration", async ({
+  context,
+  page,
+}) => {
   test.setTimeout(90_000)
+  await context.grantPermissions(["clipboard-read", "clipboard-write"])
   await page.goto("/docs/lint", { waitUntil: "domcontentloaded" })
   await expect(
     page.getByRole("heading", { name: "Lint rules", level: 1 }),
   ).toBeVisible()
   const article = page.locator("article")
 
-  for (const rule of [
-    "prefer-layout-primitives",
-    "no-restyle",
-    "enforce-styling-methods",
-    "static-stylex",
-    "no-raw-stylex-colors",
-    "no-unused-stylex-styles",
-    "atoms",
-  ]) {
-    await expect(
-      article.getByRole("heading", { name: `yopem-ui/${rule}`, exact: true }),
-    ).toBeVisible()
-  }
+  const configuration = article
+    .getByTestId("copyable-code")
+    .filter({ hasText: '"jsPlugins"' })
+    .first()
 
-  const copyButtons = article.getByRole("button", { name: "Copy Code" })
+  await configuration
+    .getByRole("button", { name: "Copy Code", exact: true })
+    .click()
+  await expect
+    .poll(() => page.evaluate(() => navigator.clipboard.readText()))
+    .toBe(await configuration.locator("pre code").innerText())
 
-  expect(await copyButtons.count()).toBeGreaterThanOrEqual(14)
-  await expect(copyButtons.first()).toBeEnabled({ timeout: 30_000 })
-  await expect(article).not.toContainText("docs app")
-  await expect(article).not.toContainText("Docs previews")
+  const config = z
+    .object({
+      jsPlugins: z.array(z.object({ name: z.string(), specifier: z.string() })),
+      rules: z.record(z.string(), z.string()),
+    })
+    .parse(
+      JSON.parse(await page.evaluate(() => navigator.clipboard.readText())),
+    )
+
+  expect(config.jsPlugins).toContainEqual({
+    name: "yopem-ui",
+    specifier: "@yopem-ui/oxlint-plugin",
+  })
+  expect(config.rules["yopem-ui/prefer-layout-primitives"]).toBe("error")
   expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([])
 })
 
@@ -132,31 +152,57 @@ test("@a11y guides stay readable and navigable at 320px", async ({ page }) => {
     "Lint rules",
   ])
     await expect(page.getByRole("link", { name, exact: true })).toBeVisible()
+  await page
+    .getByRole("link", { name: "Styling with StyleX", exact: true })
+    .click()
+  await expect(page).toHaveURL(/\/docs\/styling$/)
 })
 
-for (const [slug, name] of components) {
+for (const [slug, name] of [
+  ...components,
+  ["checkmark", "Checkmark"],
+  ["marquee", "Marquee"],
+]) {
   test(`${name} has usage, a live preview and an API reference`, async ({
+    context,
     page,
   }) => {
+    await context.grantPermissions(["clipboard-read", "clipboard-write"])
     await page.goto(`/components/${slug}`, { waitUntil: "domcontentloaded" })
     await expect(
       page.getByRole("heading", { name, exact: true, level: 1 }),
     ).toBeVisible()
     await expect(page.getByLabel(/live preview$/).first()).toBeVisible()
+
+    const copyUsage = page.getByRole("button", {
+      name: new RegExp(`^Copy ${name} usage$`, "i"),
+    })
+
+    const usage = page
+      .getByTestId("copyable-code")
+      .filter({ has: copyUsage })
+      .locator("pre code")
+
+    const source = await usage.innerText()
+    expect(source.trim()).not.toBe("")
+    await copyUsage.click()
+    await expect
+      .poll(() => page.evaluate(() => navigator.clipboard.readText()))
+      .toBe(source)
+
+    const reference = page
+      .locator("details")
+      .filter({
+        has: page.locator("summary").filter({ hasText: "View API reference" }),
+      })
+      .first()
+
+    await reference.locator("summary").first().click()
+    const table = reference.getByRole("table").first()
+    await expect(table).toBeVisible()
     await expect(
-      page.getByRole("button", {
-        name: new RegExp(`^Copy ${name} usage$`, "i"),
-      }),
-    ).toBeEnabled()
-    await page
-      .locator("summary")
-      .filter({ hasText: "View API reference" })
-      .click()
-    await expect(
-      page.getByRole("heading", {
-        name: `${name.replaceAll(" ", "")}Props`,
-        exact: true,
-      }),
+      table.getByRole("columnheader", { name: "Type", exact: true }),
     ).toBeVisible()
+    await expect(table.getByRole("cell").first()).toBeVisible()
   })
 }

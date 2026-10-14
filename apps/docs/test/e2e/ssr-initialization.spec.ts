@@ -14,7 +14,6 @@ for (const path of ["/", "/components", "/components/button"]) {
       "data-theme",
       /^(light|dark)$/,
     )
-    expect(await page.locator("html").getAttribute("class")).toBeTruthy()
     expect(errors).toEqual([])
   })
 }

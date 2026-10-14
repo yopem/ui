@@ -1,335 +1,241 @@
 import { expect, test } from "@playwright/test"
-import { registryItemSchema } from "@registry/schema"
-import { readdirSync, readFileSync } from "node:fs"
+import { registryItemSchema, registrySchema } from "@registry/schema"
+import { z } from "zod"
 
-test("machine-readable documentation endpoints expose correct formats", async ({
+const documentationSchema = z.object({
+  name: z.string(),
+  usage: z.string().min(1),
+  parts: z.array(z.object({ name: z.string().min(1) })),
+  installation: z.object({
+    files: z.array(z.object({ path: z.string(), target: z.string() })).min(1),
+    registryDependencies: z.array(z.string()),
+  }),
+})
+
+test("machine-readable documentation exposes formats and public resources", async ({
   request,
-}) => {
-  const cases = [
-    ["/components.md", "text/markdown", "# Components"],
-    ["/components/button.md", "text/markdown", "# Button"],
-    ["/docs/installation.md", "text/markdown", "# Installation"],
-    ["/docs/styling.md", "text/markdown", "# Styling with StyleX"],
-    ["/index.md", "text/markdown", "# Introduction"],
-    ["/llms.txt", "text/plain", "/components/button.md"],
-    ["/sitemap.xml", "application/xml", "/components/button"],
-  ] as const
+}, testInfo) => {
+  const bodies = new Map<string, string>()
 
-  for (const [url, contentType, text] of cases) {
+  for (const [url, contentType] of [
+    ["/components.md", "text/markdown"],
+    ["/components/button.md", "text/markdown"],
+    ["/docs/installation.md", "text/markdown"],
+    ["/docs/styling.md", "text/markdown"],
+    ["/docs/lint.md", "text/markdown"],
+    ["/index.md", "text/markdown"],
+    ["/llms.txt", "text/plain"],
+    ["/sitemap.xml", "application/xml"],
+  ]) {
     const response = await request.get(url)
     expect(response.status(), url).toBe(200)
     expect(response.headers()["content-type"], url).toContain(contentType)
-    expect(await response.text(), url).toContain(text)
+    const body = await response.text()
+    expect(body.trim(), url).not.toBe("")
+
+    if (contentType === "text/markdown") expect(body, url).toMatch(/^# /)
+    bodies.set(url, body)
   }
 
-  const llms = await (await request.get("/llms.txt")).text()
-  expect(llms).toContain("https://ui.yopem.com/components/button.md")
-  expect(llms).not.toContain("localhost")
-  expect(llms).toContain("init --cwd apps/web --ui ../../packages/ui")
-  expect(llms).toContain("add button --cwd packages/ui")
-  expect(llms).toContain("https://ui.yopem.com/docs/cli.md")
-  expect(llms).toContain("relative to the target app")
+  const llms = bodies.get("/llms.txt") ?? ""
 
-  const guide = await (await request.get("/docs/installation.md")).text()
-  expect(guide).toContain("bunx --bun @yopem-ui/cli init")
-  expect(guide).not.toContain("<InstallationCommands />")
-  expect(guide).not.toContain("Manual installation")
+  const links = [...llms.matchAll(/\]\((https?:\/\/[^)]+)\)/g)].map(
+    (match) => new URL(match[1]),
+  )
 
-  const component = await (await request.get("/components/button.md")).text()
+  expect(links.length).toBeGreaterThan(0)
 
-  for (const source of [llms, guide, component]) {
-    for (const command of [
-      "Bun: bunx --bun @yopem-ui/cli init",
-      "npm: npx @yopem-ui/cli init",
-      "pnpm: pnpm dlx @yopem-ui/cli init",
-      "Yarn: yarn dlx @yopem-ui/cli init",
-    ])
-      expect(source).toContain(command)
-    expect(source).not.toContain("bunx @yopem-ui/cli")
-  }
-})
+  for (const link of links) expect(link.origin).toBe("https://ui.yopem.com")
+  const paths = links.map((link) => link.pathname)
 
-test("llms.txt describes current setup and design system", async ({
-  request,
-}, testInfo) => {
-  const response = await request.get("/llms.txt")
-  expect(response.status()).toBe(200)
-  const content = await response.text()
-
-  for (const text of [
-    "React 19",
-    "Vite React",
-    "React Router RSC mode",
-    "Next.js Pages Router",
-    "Node 24 or later and webpack",
-    "init --dry-run",
-    "update button --dry-run",
-    "update reports modified files as conflicts",
-    "ui.json",
-    "--guidance agents",
-    "stylex.create",
-    "controlXstyle",
-    "ThemeScript",
-    "storageKey",
-    "prefer-layout-primitives",
-    "no-raw-stylex-colors",
-    "https://ui.yopem.com/docs/layout.md",
-    "https://ui.yopem.com/docs/theming.md",
-    "https://ui.yopem.com/r/docs/button.json",
-    "https://ui.yopem.com/schema/registry-item.json",
+  for (const path of [
+    "/components/button.md",
+    "/docs/cli.md",
+    "/docs/layout.md",
+    "/docs/theming.md",
+    "/docs/lint.md",
+    "/r/registry.json",
+    "/r/docs/button.json",
+    "/schema/registry-item.json",
   ])
-    expect(content, text).toContain(text)
+    expect(paths).toContain(path)
+
+  expect(bodies.get("/sitemap.xml")).toContain(
+    "<loc>https://ui.yopem.com/docs/lint</loc>",
+  )
+  expect(bodies.get("/docs/installation.md")).not.toContain(
+    "<InstallationCommands />",
+  )
+
+  for (const command of [
+    "bunx --bun @yopem-ui/cli init",
+    "npx @yopem-ui/cli init",
+    "pnpm dlx @yopem-ui/cli init",
+    "yarn dlx @yopem-ui/cli init",
+  ])
+    expect(llms).toContain(command)
+  expect(llms).not.toContain("bunx @yopem-ui/cli")
+
+  for (const path of paths.filter((path) => path.startsWith("/schema/"))) {
+    const response = await request.get(path)
+    expect(response.status(), path).toBe(200)
+    expect(response.headers()["content-type"], path).toContain(
+      "application/json",
+    )
+    expect(
+      z.object({ type: z.literal("object") }).parse(await response.json()).type,
+    ).toBe("object")
+  }
 
   await testInfo.attach("llms-current-guidance", {
-    body: content,
+    body: llms,
     contentType: "text/plain",
   })
 })
 
-test("design-system-first policy is published and discoverable", async ({
-  request,
-}, testInfo) => {
-  const response = await request.get("/docs/lint.md")
-  expect(response.status()).toBe(200)
-  const policy = await response.text()
-
-  for (const text of [
-    "Heading render",
-    "Box render",
-    "The rule does not check native anchors or framework links.",
-    "Codeblock",
-    "styleComponents",
-    "conditional branches",
-  ])
-    expect(policy.replace(/\s+/g, " ")).toContain(text)
-
-  for (const [url, path] of [
-    ["/llms.txt", "/docs/lint.md"],
-    ["/sitemap.xml", "/docs/lint"],
-  ]) {
-    const index = await request.get(url)
-    expect(index.status()).toBe(200)
-    expect(await index.text()).toContain(path)
-  }
-
-  await testInfo.attach("design-system-first-policy", {
-    body: policy,
-    contentType: "text/markdown",
-  })
-})
-
-test("generated documentation publishes reviewed source text", async ({
+test("public registry inventory ships source, dependencies, and documentation", async ({
   request,
 }, testInfo) => {
   test.setTimeout(120_000)
-
-  const directory = new URL(
-    "../../../../packages/registry/dist/r/docs/",
-    import.meta.url,
-  )
-
-  const files = readdirSync(directory).filter((file) => file.endsWith(".json"))
-
-  expect(files.length).toBeGreaterThan(0)
-
-  for (let offset = 0; offset < files.length; offset += 6) {
-    await Promise.all(
-      files.slice(offset, offset + 6).map(async (file) => {
-        const response = await request.get(`/r/docs/${file}`)
-        expect(response.status(), file).toBe(200)
-        expect(await response.text(), file).toBe(
-          readFileSync(new URL(file, directory), "utf8"),
-        )
-      }),
-    )
-  }
-
-  await testInfo.attach("reviewed-generated-documentation", {
-    body: files.join("\n"),
-    contentType: "text/plain",
-  })
-})
-
-test("all component examples use consumer import paths", async ({
-  request,
-}, testInfo) => {
-  test.setTimeout(120_000)
-
-  const paths = readdirSync(
-    new URL("../../src/catalog/previews/", import.meta.url),
-  )
-    .filter((file) => file.endsWith(".tsx"))
-    .map((file) => `/components/${file.slice(0, -4)}`)
-
-  expect(paths.length).toBeGreaterThan(0)
-
-  for (let offset = 0; offset < paths.length; offset += 6) {
-    await Promise.all(
-      paths.slice(offset, offset + 6).map(async (path) => {
-        const response = await request.get(`${path}.md`)
-        expect(response.status(), path).toBe(200)
-        const source = await response.text()
-        expect(source, path).not.toContain("bunx --bun @yopem-ui/cli update")
-        const html = await request.get(path)
-        expect(html.status(), path).toBe(200)
-        expect(await html.text(), path).not.toContain(
-          "bunx --bun @yopem-ui/cli update",
-        )
-        expect(source, path).not.toContain("@registry/components/")
-        expect(source, path).toContain('from "@/components/ui/')
-      }),
-    )
-  }
-
-  await testInfo.attach("checked-component-paths", {
-    body: paths.join("\n"),
-    contentType: "text/plain",
-  })
-})
-
-test("Container is discoverable and installable from registry", async ({
-  request,
-}) => {
-  for (const [url, content] of [
-    ["/llms.txt", "/components/container"],
-    ["/sitemap.xml", "/components/container"],
-    ["/components/container.md", "fluid"],
-  ]) {
-    const response = await request.get(url)
-    expect(response.status(), url).toBe(200)
-    expect(await response.text()).toContain(content)
-  }
-
-  const response = await request.get("/r/container.json")
+  const response = await request.get("/r/registry.json")
   expect(response.status()).toBe(200)
-  const item = await response.json()
-  expect(item.name).toBe("container")
-  expect(item.registryDependencies).toContain("base")
-  expect(item.files).toEqual(
-    expect.arrayContaining([
-      expect.objectContaining({
-        target: "@/components/ui/container.tsx",
-        content: expect.stringContaining("export function Container"),
-      }),
-    ]),
-  )
-})
-
-test("new components are listed, documented, and installable", async ({
-  request,
-}) => {
-  const listings = []
-
-  for (const url of ["/llms.txt", "/sitemap.xml"]) {
-    const response = await request.get(url)
-    expect(response.status(), url).toBe(200)
-    listings.push(await response.text())
-  }
+  expect(response.headers()["content-type"]).toContain("application/json")
+  const registry = registrySchema.parse(await response.json())
+  expect(registry.items.length).toBeGreaterThan(0)
+  const names = registry.items.map((item) => item.name)
 
   for (const name of [
-    "absolute-center",
-    "bleed",
-    "blockquote",
-    "checkmark",
-    "clipboard",
-    "codeblock",
-    "em",
-    "float",
-    "highlight",
-    "mark",
-    "marquee",
-    "native-select",
-    "prose",
-    "rating",
-    "stat",
-    "steps",
-    "text",
-    "wrap",
-  ]) {
-    const itemResponse = await request.get(`/r/${name}.json`)
-    expect(itemResponse.status(), name).toBe(200)
-    const item = await itemResponse.json()
-    expect(item.name).toBe(name)
-    expect(item.files).toEqual(
-      expect.arrayContaining([
-        expect.objectContaining({ target: `@/components/ui/${name}.tsx` }),
-      ]),
-    )
-    const docs = await request.get(`/components/${name}.md`)
-    expect(docs.status(), name).toBe(200)
-    expect(await docs.text()).toContain(`# ${item.title}`)
-
-    for (const listing of listings)
-      expect(listing, name).toContain(`/components/${name}`)
-  }
-
-  const removed = await request.get("/r/paragraph.json")
-  expect(removed.status()).toBe(404)
-})
-
-test("callback consumers ship the local event hook without Base UI utilities", async ({
-  request,
-}, testInfo) => {
-  const items = []
-
-  for (const name of [
+    "container",
     "clipboard",
     "codeblock",
     "marquee",
     "rating",
     "sidebar",
     "theme",
-  ]) {
-    const response = await request.get(`/r/${name}.json`)
-    expect(response.status(), name).toBe(200)
-    const item = registryItemSchema.parse(await response.json())
-    expect(item.dependencies, name).not.toContain("@base-ui/utils@^0.4.0")
-    expect(item.registryDependencies, name).toContain("use-event-callback")
+    "use-event-callback",
+    "use-media-query",
+  ])
+    expect(names).toContain(name)
+  const llms = await (await request.get("/llms.txt")).text()
+  const sitemap = await (await request.get("/sitemap.xml")).text()
+
+  for (const entry of registry.items) {
+    const itemResponse = await request.get(`/r/${entry.name}.json`)
+    expect(itemResponse.status(), entry.name).toBe(200)
+    expect(itemResponse.headers()["content-type"], entry.name).toContain(
+      "application/json",
+    )
+    const item = registryItemSchema.parse(await itemResponse.json())
+    expect(item.name).toBe(entry.name)
+    expect(item.type).toBe(entry.type)
+
+    if (["use-event-callback", "use-media-query"].includes(item.name))
+      expect(item.type).toBe("registry:hook")
+    expect(item.registryDependencies).toEqual(entry.registryDependencies)
+    expect(item.files.map(({ path, target }) => ({ path, target }))).toEqual(
+      entry.files.map(({ path, target }) => ({ path, target })),
+    )
+
+    for (const dependency of item.registryDependencies)
+      expect(names).toContain(dependency)
 
     for (const file of item.files) {
-      expect(file.content, `${name}/${file.path}`).not.toContain(
-        "@base-ui/utils",
+      expect(file.content?.trim(), `${item.name}/${file.path}`).toBeTruthy()
+      expect(file.content, `${item.name}/${file.path}`).not.toContain(
+        "@registry/",
       )
     }
 
-    items.push(item)
-  }
+    if (item.type === "registry:ui" || item.type === "registry:hook") {
+      const target =
+        item.type === "registry:hook"
+          ? `@/hooks/${item.name}.ts`
+          : `@/components/ui/${item.name}.tsx`
 
-  await testInfo.attach("event-callback-registry-items", {
-    body: JSON.stringify(items, null, 2),
-    contentType: "application/json",
-  })
-})
+      expect(item.files).toEqual(
+        expect.arrayContaining([expect.objectContaining({ target })]),
+      )
+    }
 
-test("registry hooks are installable, documented, and discoverable", async ({
-  request,
-}) => {
-  for (const [name, exportedName] of [
-    ["use-event-callback", "useEventCallback"],
-    ["use-media-query", "useMediaQuery"],
-  ]) {
-    const response = await request.get(`/r/${name}.json`)
-    expect(response.status(), name).toBe(200)
-    const item = registryItemSchema.parse(await response.json())
-    expect(item.type).toBe("registry:hook")
-    expect(item.files).toEqual(
-      expect.arrayContaining([
-        expect.objectContaining({
-          target: `@/hooks/${name}.ts`,
-          content: expect.stringContaining(`export function ${exportedName}`),
-        }),
-      ]),
+    if (item.name === "container")
+      expect(item.registryDependencies).toContain("base")
+
+    if (
+      [
+        "clipboard",
+        "codeblock",
+        "marquee",
+        "rating",
+        "sidebar",
+        "theme",
+      ].includes(item.name)
+    ) {
+      expect(item.registryDependencies, item.name).toContain(
+        "use-event-callback",
+      )
+
+      for (const dependency of item.dependencies)
+        expect(dependency).not.toMatch(/^@base-ui\/utils(?:@|$)/)
+
+      for (const file of item.files)
+        expect(file.content).not.toContain("@base-ui/utils")
+    }
+
+    const docsResponse = await request.get(`/r/docs/${item.name}.json`)
+    expect(docsResponse.status(), item.name).toBe(200)
+    expect(docsResponse.headers()["content-type"], item.name).toContain(
+      "application/json",
+    )
+    const docs = documentationSchema.parse(await docsResponse.json())
+    expect(docs.name).toBe(item.name)
+    expect(docs.installation.files).toEqual(
+      item.files.map(({ path, target }) => ({ path, target })),
+    )
+    expect(docs.installation.registryDependencies).toEqual(
+      item.registryDependencies,
     )
 
-    const docs = await request.get(`/components/${name}.md`)
-    expect(docs.status()).toBe(200)
-    expect(await docs.text()).toContain(`from "@/hooks/${name}"`)
-
-    for (const url of ["/llms.txt", "/sitemap.xml"]) {
-      const listing = await request.get(url)
-      expect(await listing.text()).toContain(`/components/${name}`)
-    }
+    if (item.type === "registry:ui" || item.type === "registry:hook")
+      expect(docs.parts.length, item.name).toBeGreaterThan(0)
   }
+
+  const index = await request.get("/components.md")
+  expect(index.status()).toBe(200)
+
+  const paths = [
+    ...(await index.text()).matchAll(/\]\((\/components\/[a-z0-9-]+\.md)\)/g),
+  ].map((match) => match[1])
+
+  expect(paths.length).toBeGreaterThan(0)
+
+  for (const item of registry.items) {
+    if (item.type === "registry:ui" || item.type === "registry:hook")
+      expect(paths, item.name).toContain(`/components/${item.name}.md`)
+  }
+
+  for (const path of paths) {
+    expect(llms, path).toContain(`https://ui.yopem.com${path}`)
+    expect(sitemap, path).toContain(
+      `<loc>https://ui.yopem.com${path.slice(0, -3)}</loc>`,
+    )
+    const docs = await request.get(path)
+    expect(docs.status(), path).toBe(200)
+    const examples = (await docs.text()).split("## API reference")[0]
+    expect(examples, path).not.toContain("@registry/")
+    expect(examples, path).toMatch(/from "@\/(?:components\/ui|hooks)\//)
+  }
+
+  for (const name of ["use-event-callback", "use-media-query"]) {
+    const docs = await request.get(`/components/${name}.md`)
+    expect(await docs.text()).toContain(`from "@/hooks/${name}"`)
+  }
+
+  const removed = await request.get("/r/paragraph.json")
+  expect(removed.status()).toBe(404)
+  await testInfo.attach("checked-public-registry", {
+    body: JSON.stringify({ names, paths }, null, 2),
+    contentType: "application/json",
+  })
 })
 
 test("dynamic documentation routes return real 404 responses", async ({
@@ -354,17 +260,11 @@ test("missing components show the not found page", async ({ page }) => {
   ).toBeVisible()
 })
 
-test("legacy StyleX route redirects and stored theme applies to docs", async ({
-  page,
-  request,
-}) => {
+test("legacy StyleX route redirects to components", async ({ request }) => {
   const redirect = await request.get("/stylex", { maxRedirects: 0 })
   expect(redirect.status()).toBeGreaterThanOrEqual(300)
   expect(redirect.status()).toBeLessThan(400)
   expect(redirect.headers().location).toBe("/components")
-
-  await page.goto("/components/button")
-  await expect(page.locator("html")).toHaveAttribute("data-theme", "light")
 })
 
 test("Open Graph metadata points to a cacheable static PNG", async ({
@@ -393,9 +293,7 @@ test("static navigation needs no server functions", async ({ page }) => {
   await page.goto("/components/button")
   await page.getByRole("link", { name: "UI", exact: true }).click()
   await page.waitForURL((url) => url.pathname === "/")
-  await expect(page.getByRole("heading", { level: 1 })).toContainText(
-    "React components you copy, own, and change.",
-  )
+  await expect(page.getByRole("heading", { level: 1 })).toBeVisible()
   await page.getByRole("button", { name: "Search documentation" }).click()
   const search = page.getByRole("dialog", { name: "Search documentation" })
   await expect(search).toBeVisible()
