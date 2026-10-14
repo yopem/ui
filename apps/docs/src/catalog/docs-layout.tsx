@@ -162,7 +162,7 @@ export function DocumentationLayout({
           xstyle={primitiveStyles.main}
         >
           {children}
-          {pageIndex >= 0 ? (
+          {navigation && pageIndex >= 0 ? (
             <Box
               render={<nav />}
               aria-label="Documentation pages"

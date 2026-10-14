@@ -141,6 +141,36 @@ test("sidebar links to llms.txt", async ({ page }) => {
   )
 })
 
+test("index hides page navigation while docs keep previous and next links", async ({
+  page,
+}, testInfo) => {
+  await page.goto("/")
+  await expect(page.getByRole("heading", { level: 1 })).toContainText(
+    "React components you copy, own, and change.",
+  )
+  await expect(
+    page.getByRole("navigation", { name: "Documentation pages" }),
+  ).toHaveCount(0)
+  await testInfo.attach("index-without-page-navigation", {
+    body: await page.screenshot({ fullPage: true, animations: "disabled" }),
+    contentType: "image/png",
+  })
+
+  await page.getByRole("link", { name: "Get started", exact: true }).click()
+  await page.waitForURL("**/docs/getting-started")
+
+  const navigation = page.getByRole("navigation", {
+    name: "Documentation pages",
+  })
+
+  await expect(
+    navigation.getByRole("link", { name: "Previous: Introduction" }),
+  ).toHaveAttribute("href", "/")
+  await expect(
+    navigation.getByRole("link", { name: "Next: Installation" }),
+  ).toHaveAttribute("href", "/docs/installation")
+})
+
 test("documentation navigation has no separator borders", async ({ page }) => {
   test.skip((page.viewportSize()?.width ?? 0) < 768, "Desktop sidebar only")
   await page.goto("/docs/getting-started")
