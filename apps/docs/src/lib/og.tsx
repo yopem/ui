@@ -11,7 +11,7 @@ const ogStyles = {
     color: "#171717",
     display: "flex",
     flexDirection: "column",
-    fontFamily: "Figtree",
+    fontFamily: "Inter",
     height: "100%",
     justifyContent: "space-between",
     padding: "72px 80px",
@@ -72,11 +72,11 @@ export async function renderOgImage(
       fonts: [
         {
           data: regularFont,
-          name: "Figtree",
+          name: "Inter",
           style: "normal",
           weight: 400,
         },
-        { data: boldFont, name: "Figtree", style: "normal", weight: 700 },
+        { data: boldFont, name: "Inter", style: "normal", weight: 700 },
       ],
       height: 630,
       width: 1200,

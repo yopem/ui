@@ -9,8 +9,8 @@ const output = resolve(import.meta.dirname, ".output/public")
 
 const [regularFont, boldFont] = await Promise.all(
   [
-    "@expo-google-fonts/figtree/400Regular/Figtree_400Regular.ttf",
-    "@expo-google-fonts/figtree/700Bold/Figtree_700Bold.ttf",
+    "@expo-google-fonts/inter/400Regular/Inter_400Regular.ttf",
+    "@expo-google-fonts/inter/700Bold/Inter_700Bold.ttf",
   ].map((font) => Bun.file(require.resolve(font)).arrayBuffer()),
 )
 

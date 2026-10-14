@@ -257,6 +257,8 @@ function checkGuidance(text: string, shared = false) {
   )
   expect(managed).toContain(shared ? "@acme/ui/lib/stylex" : "@/lib/stylex")
   expect(managed).not.toContain("@registry/")
+  expect(managed).toContain("Use Inter for body text and headings.")
+  expect(managed).toContain("Use IBM Plex Mono for code and mono text.")
   expect(managed).toMatch(/semantic.*tokens/i)
   expect(managed).toMatch(/keyboard/i)
   expect(managed).toMatch(/focus/i)

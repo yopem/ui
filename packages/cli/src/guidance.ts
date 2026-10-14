@@ -34,8 +34,9 @@ Use background/foreground, primary, secondary, muted, accent, card, and popover 
 Use destructive, success, warning, and info tokens for status.
 Do not replace semantic tokens with raw palette values when a token exists.
 
-Use Figtree for body text and headings. Use JetBrains Mono for code.
-Font tokens specify these families. Load the fonts in the application.
+Use Inter for body text and headings.
+Use IBM Plex Mono for code and mono text.
+Font tokens specify these families. Load both fonts in the application.
 
 Use \`tokens["--spacing"]\` for spacing. Its default is \`0.25rem\`.
 Stack, VStack, and HStack use four spacing units by default.

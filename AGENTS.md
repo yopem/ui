@@ -189,8 +189,9 @@ artifacts; docs dev, registry build, and registry typecheck regenerate API data.
 - Use neutral light and dark surfaces. Use semantic color pairs for text and
   surfaces: background/foreground, primary, secondary, muted, accent, card, and
   popover. Use destructive, success, warning, and info tokens for status.
-- Use Figtree for body text and headings. Use JetBrains Mono for code.
-  The font tokens specify these families; load the fonts in the application.
+- Use Inter for body text and headings.
+  Use IBM Plex Mono for code and mono text.
+  The font tokens specify these families. Load both fonts in the application.
 - Use `tokens["--spacing"]` as the spacing unit. Its default is `0.25rem`.
   Stack, VStack, and HStack use four spacing units by default.
 - Use radius tokens. The defaults are `0.375rem` (sm), `0.5rem` (md),

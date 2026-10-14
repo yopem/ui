@@ -374,6 +374,50 @@ test("StyleX search opens, finds a component, and navigates", async ({
   ).toBeVisible()
 })
 
+for (const theme of ["light", "dark"] as const) {
+  test(`Inter and IBM Plex Mono load in ${theme} theme`, async ({ page }) => {
+    await page.addInitScript(
+      (value) => localStorage.setItem("yopem-ui-theme", value),
+      theme,
+    )
+    await page.goto("/components/button")
+    await expect(
+      page.getByRole("button", { name: "Copy Button usage", exact: true }),
+    ).toBeEnabled()
+
+    for (const element of [
+      page.locator("body"),
+      page.getByRole("heading", { name: "Button", exact: true, level: 1 }),
+    ]) {
+      await expect(element).toHaveCSS("font-family", /Inter/)
+    }
+
+    for (const element of [
+      page.locator("main pre").first(),
+      page.locator("main code").first(),
+    ]) {
+      await expect(element).toHaveCSS("font-family", /IBM Plex Mono/)
+    }
+
+    await expect
+      .poll(() =>
+        page.evaluate(async () => {
+          const fonts = await Promise.all([
+            document.fonts.load('16px "Inter Variable"'),
+            document.fonts.load('16px "IBM Plex Mono"'),
+          ])
+
+          return Math.min(...fonts.map((faces) => faces.length))
+        }),
+      )
+      .toBeGreaterThan(0)
+    await page.screenshot({
+      path: test.info().outputPath(`inter-ibm-plex-mono-${theme}.png`),
+      fullPage: true,
+    })
+  })
+}
+
 test("dark theme uses StyleX classes without inline color-scheme", async ({
   page,
 }) => {
@@ -382,7 +426,7 @@ test("dark theme uses StyleX classes without inline color-scheme", async ({
   await expect(page.locator("html")).toHaveAttribute("data-theme", "dark")
   await expect(page.locator("html")).toHaveCSS("color-scheme", "dark")
   await expect(page.locator("html")).toHaveCSS("--foreground", /\S/)
-  await expect(page.getByRole("main")).toHaveCSS("font-family", /Figtree/)
+  await expect(page.getByRole("main")).toHaveCSS("font-family", /Inter/)
   await expect(page.getByRole("main")).not.toHaveCSS("color", "rgb(0, 0, 0)")
   await expect(page.locator('link[href*="virtual:stylex"]')).toHaveCount(0)
   await expect(page.locator("html")).not.toHaveAttribute(

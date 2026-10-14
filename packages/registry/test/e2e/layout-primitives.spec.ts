@@ -195,7 +195,7 @@ test.describe("layout and typography primitives", () => {
         await expect(element).toHaveCSS("margin-top", "0px")
         await expect(element).toHaveCSS("margin-bottom", "0px")
         await expect(element).toHaveCSS("color", color)
-        await expect(element).toHaveCSS("font-family", /Figtree/)
+        await expect(element).toHaveCSS("font-family", /Inter/)
       }
 
       await expect(text).toHaveCSS("font-size", "16px")

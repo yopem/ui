@@ -4,6 +4,7 @@ import {
   CollapsiblePanel,
   CollapsibleTrigger,
 } from "@registry/components/ui/collapsible"
+import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import { ChevronDownIcon } from "lucide-react"
 
@@ -30,21 +31,21 @@ const styles = stylex.create({
     backgroundColor: "var(--muted)",
     paddingInline: "calc(0.25rem * 2)",
     paddingBlock: "0.25rem",
-    fontFamily: '"Geist Mono", ui-monospace, monospace',
+    fontFamily: tokens["--font-mono"],
   },
   li2: {
     borderRadius: "calc(var(--radius) - 4px)",
     backgroundColor: "var(--muted)",
     paddingInline: "calc(0.25rem * 2)",
     paddingBlock: "0.25rem",
-    fontFamily: '"Geist Mono", ui-monospace, monospace',
+    fontFamily: tokens["--font-mono"],
   },
   li3: {
     borderRadius: "calc(var(--radius) - 4px)",
     backgroundColor: "var(--muted)",
     paddingInline: "calc(0.25rem * 2)",
     paddingBlock: "0.25rem",
-    fontFamily: '"Geist Mono", ui-monospace, monospace',
+    fontFamily: tokens["--font-mono"],
   },
 })
 

@@ -1,5 +1,5 @@
-import regularFontUrl from "@expo-google-fonts/figtree/400Regular/Figtree_400Regular.ttf?inline"
-import boldFontUrl from "@expo-google-fonts/figtree/700Bold/Figtree_700Bold.ttf?inline"
+import regularFontUrl from "@expo-google-fonts/inter/400Regular/Inter_400Regular.ttf?inline"
+import boldFontUrl from "@expo-google-fonts/inter/700Bold/Inter_700Bold.ttf?inline"
 import { createFileRoute } from "@tanstack/react-router"
 
 import { renderOgImage } from "@/lib/og"
