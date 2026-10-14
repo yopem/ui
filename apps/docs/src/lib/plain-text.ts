@@ -32,9 +32,41 @@ export function createLlms(
 
   return `# Yopem UI
 
-> Yopem UI provides source-owned, accessible React components with StyleX and Base UI. Initialize supported projects with \`bunx --bun @yopem-ui/cli init\`. Install component source with the CLI. Change the copied source without a component package dependency.
+> Yopem UI provides source-owned, accessible React 19 components with StyleX and Base UI. Copy source into your project. Change copied components without a component package dependency.
+
+## Installation
+
+Use a React project with TypeScript.
+Supported frameworks are Vite React, client TanStack Router, TanStack Start, React Router, Next.js App Router, and Astro.
+React Router supports client mode and framework mode, not React Router RSC mode.
+Next.js Pages Router is not supported. Next.js App Router requires Node 24 or later and webpack.
 
 ${cliRunners}
+
+Preview setup with \`bunx --bun @yopem-ui/cli init --dry-run\`.
+Run \`bunx --bun @yopem-ui/cli init\` to install tokens, reset CSS, StyleX helpers, dependencies, and the Oxlint plugin.
+Init configures aliases, build plugins, and root styles. Conflicting configuration stops init.
+Then run \`bunx --bun @yopem-ui/cli add button\` to install component source and required dependencies.
+
+## CLI updates and safety
+
+Preview updates with \`bunx --bun @yopem-ui/cli update button --dry-run\`.
+Then run \`bunx --bun @yopem-ui/cli update button\`.
+Use \`update base\` to update installed shared files.
+Init and add keep local source changes; update reports modified files as conflicts.
+Save local changes before using \`--force\` with add or update. Force can remove your changes.
+Dry runs validate and preview changes without writes or package-manager commands.
+The \`ui.json\` manifest tracks installed files, hashes, registry URLs, and item versions.
+The CLI uses the project's package manager and keeps compatible dependency specifications.
+
+Use \`--registry <URL>\` to select another registry for one command.
+Registry URLs require HTTPS, except local HTTP. Do not include credentials, query strings, or fragments.
+The CLI rejects redirects.
+
+Interactive init offers design system guidance in DESIGN.md, AGENTS.md, or neither file.
+Noninteractive init skips guidance by default.
+Use \`init --guidance design\`, \`init --guidance agents\`, or \`init --guidance none\` to select without a prompt.
+Guidance stays in the target app. Init preserves text outside the managed Yopem UI section.
 
 ## Monorepo installation
 
@@ -59,6 +91,36 @@ Files, dependencies, and tracking manifests stay in their target packages.
 The CLI keeps locally edited source.
 It does not migrate existing app-local components automatically.
 
+## Styling and composition
+
+Use \`stylex.create\` and semantic tokens from \`@/styles/tokens.stylex\`.
+Pass styles through \`xstyle\`; components apply them after defaults and variants.
+Input and Textarea use \`controlXstyle\` for wrappers and \`xstyle\` for native controls.
+Use \`stylex.props\` on native or framework elements. Use \`className\` for external CSS integration.
+Do not add utility classes, Tailwind, cva, inline style props, or styling aliases.
+
+Use Box for generic containers and its render prop for semantic tags.
+Choose Flex, Stack, HStack, VStack, Grid, Center, Container, AbsoluteCenter, Bleed, Float, or Wrap for layout.
+Use Heading, Text, Blockquote, Em, Mark, Highlight, Prose, and Codeblock for content.
+Keep framework links for application navigation. Native anchors remain valid for navigation and downloads.
+Use existing form and overlay components. Preserve Base UI keyboard behavior, focus management, accessible names, and reduced motion.
+
+## Themes and lint rules
+
+Use neutral light and dark surfaces with semantic color pairs.
+Use Inter for text and headings and IBM Plex Mono for code. Load both fonts in your app.
+Use spacing and radius tokens instead of separate design values.
+
+Theme switching adds theme.tsx and theme-provider.tsx to the base installation.
+Use ThemeProvider, ThemeScript, and useTheme for light, dark, and system modes.
+Use getRootThemeProps for the resolved light or dark root theme.
+Keep defaultTheme and storageKey identical in ThemeScript and ThemeProvider.
+Use the same theme configuration in getRootThemeProps, ThemeScript, and ThemeProvider.
+Pass the CSP nonce to ThemeScript when required.
+
+Yopem UI provides seven Oxlint rules: prefer-layout-primitives, no-restyle, enforce-styling-methods, static-stylex, no-raw-stylex-colors, no-unused-stylex-styles, and atoms.
+See the lint guide for rule defaults, options, and file overrides.
+
 ## Documentation
 
 ${guideLinks}
@@ -71,6 +133,9 @@ ${componentLinks}
 ## Machine-readable resources
 
 - [Registry index](${url("/r/registry.json")}): Component registry metadata
+- [Component documentation JSON](${url("/r/docs/button.json")}): Description, usage, and API data; replace button with the registry item name
+- [Registry schema](${url("/schema/registry.json")}): Registry index JSON schema
+- [Registry item schema](${url("/schema/registry-item.json")}): Registry item JSON schema
 - [Sitemap](${url("/sitemap.xml")}): Canonical public URLs
 `
 }

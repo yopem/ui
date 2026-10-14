@@ -46,8 +46,7 @@ original provenance.
 
 Use `--registry <URL>` to select another registry. The URL must use HTTPS,
 except for local HTTP. It must not contain credentials, query strings, or
-fragments. The CLI rejects redirects. The CLI is not yet published. These
-commands work after release. See
+fragments. The CLI rejects redirects. See
 [installation](https://ui.yopem.com/docs/installation).
 
 ## Styling

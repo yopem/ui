@@ -49,6 +49,43 @@ test("machine-readable documentation endpoints expose correct formats", async ({
   }
 })
 
+test("llms.txt describes current setup and design system", async ({
+  request,
+}, testInfo) => {
+  const response = await request.get("/llms.txt")
+  expect(response.status()).toBe(200)
+  const content = await response.text()
+
+  for (const text of [
+    "React 19",
+    "Vite React",
+    "React Router RSC mode",
+    "Next.js Pages Router",
+    "Node 24 or later and webpack",
+    "init --dry-run",
+    "update button --dry-run",
+    "update reports modified files as conflicts",
+    "ui.json",
+    "--guidance agents",
+    "stylex.create",
+    "controlXstyle",
+    "ThemeScript",
+    "storageKey",
+    "prefer-layout-primitives",
+    "no-raw-stylex-colors",
+    "https://ui.yopem.com/docs/layout.md",
+    "https://ui.yopem.com/docs/theming.md",
+    "https://ui.yopem.com/r/docs/button.json",
+    "https://ui.yopem.com/schema/registry-item.json",
+  ])
+    expect(content, text).toContain(text)
+
+  await testInfo.attach("llms-current-guidance", {
+    body: content,
+    contentType: "text/plain",
+  })
+})
+
 test("design-system-first policy is published and discoverable", async ({
   request,
 }, testInfo) => {

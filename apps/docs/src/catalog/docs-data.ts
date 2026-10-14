@@ -50,7 +50,7 @@ export const guidePages = [
     title: "CLI",
     url: "/docs/cli",
     content:
-      "Use init, add, and update commands. Show help and version with short flags. Configure framework, shared UI, cwd, and registry options. Preview changes with dry-run. Review safe overwrites and force behavior. Check Bun prerequisites and the unpublished package warning.",
+      "Use init, add, and update commands with Bun, npm, pnpm, or Yarn. Configure framework, shared UI, guidance, cwd, and registry options. Preview changes with dry-run. Review safe overwrites, force behavior, and prerequisites.",
   },
   {
     title: "Layout and typography",

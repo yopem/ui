@@ -73,9 +73,6 @@ test("@a11y CLI guide documents commands, options, and safe updates", async ({
     await expect(main).toContainText(text)
 
   await expect(main).toContainText(
-    "The CLI and Oxlint plugin are not published yet.",
-  )
-  await expect(main).toContainText(
     "The update command rejects modified files unless you pass --force.",
   )
   await expect(
@@ -169,7 +166,6 @@ test("CLI guide has machine-readable documentation and discovery links", async (
     "AGENTS.md",
     "Noninteractive init skips guidance by default.",
     "Init preserves text outside the marked Yopem UI section.",
-    "not published yet",
   ])
     expect(guide).toContain(text)
 
