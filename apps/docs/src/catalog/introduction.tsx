@@ -206,7 +206,7 @@ export function Introduction() {
           <ShowcaseCard
             title="Form validation"
             slug="form"
-            description="Inputs, labels, and built-in validation."
+            description="Use inputs and labels with built-in validation."
             surface="muted"
             wide
           >
@@ -223,7 +223,7 @@ export function Introduction() {
           <ShowcaseCard
             title="Accordion"
             slug="accordion"
-            description="Answers that open when you need them."
+            description="Expand a section to read its answer."
             wide
           >
             <AccordionPreview />
@@ -238,7 +238,7 @@ export function Introduction() {
           <ShowcaseCard
             title="Select"
             slug="select"
-            description="Choose a framework with pointer or keyboard."
+            description="Choose a framework with a pointer or keyboard."
             surface="muted"
           >
             <SelectPreview />
@@ -255,7 +255,7 @@ export function Introduction() {
           <ShowcaseCard
             title="Buttons"
             slug="button"
-            description="Different styles. Clear actions."
+            description="Use different button styles for different actions."
           >
             <Stack>
               <Button render={<Link to="/docs/installation" />}>
@@ -277,7 +277,7 @@ export function Introduction() {
           <ShowcaseCard
             title="Email preferences"
             slug="switch"
-            description="Settings you can change with one switch."
+            description="Change email settings with one switch."
           >
             <SwitchPreview />
           </ShowcaseCard>

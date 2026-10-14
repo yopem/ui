@@ -32,7 +32,7 @@ export function createLlms(
 
   return `# Yopem UI
 
-> Yopem UI provides source-owned, accessible React 19 components with StyleX and Base UI. Copy source into your project. Change copied components without a component package dependency.
+> Yopem UI provides accessible React 19 components with StyleX and Base UI. Copy source into your project. Edit it there. Your copied components do not depend on a component package.
 
 ## Installation
 
@@ -55,9 +55,9 @@ Then run \`bunx --bun @yopem-ui/cli update button\`.
 Use \`update base\` to update installed shared files.
 Init and add keep local source changes; update reports modified files as conflicts.
 Save local changes before using \`--force\` with add or update. Force can remove your changes.
-Dry runs validate and preview changes without writes or package-manager commands.
+Dry runs check and preview changes. They do not write files or run package-manager commands.
 The \`ui.json\` manifest tracks installed files, hashes, registry URLs, and item versions.
-The CLI uses the project's package manager and keeps compatible dependency specifications.
+The CLI uses the project's package manager and keeps existing dependency specifications when they are compatible.
 
 Use \`--registry <URL>\` to select another registry for one command.
 Registry URLs require HTTPS, except local HTTP. Do not include credentials, query strings, or fragments.
@@ -146,7 +146,7 @@ export function createComponentText(
 ) {
   const preview = data.previewSource
     ? `\`\`\`tsx\n${data.previewSource.trim()}\n\`\`\``
-    : "No preview. See Usage below."
+    : "See Usage below for an example. No preview is available."
 
   const api = data.api
     .map((part) => {

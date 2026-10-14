@@ -8,7 +8,7 @@ export { sourceImportReplacements } from "./source-files"
 
 export const apiNotes = [
   "The generator extracts props from canonical source and installed dependency declarations. It includes inherited HTML and React props. source identifies each property's declaration.",
-  "An omitted default means the declaration or wrapper has no identified default. It does not mean the value is false. Reviewed wrapper defaults supplement defaults from parameter initializers and upstream JSDoc.",
+  "A missing default means the generator and reviewed wrapper notes did not identify one. It does not mean the value is false. Reviewed wrapper defaults supplement defaults from parameter initializers and upstream JSDoc.",
   "required means required in every props branch. propVariants lists requirements for each branch of union APIs, such as Calendar. Named dependency types in signatures keep their TypeScript names.",
   "Copy every file listed on the component page into src. Include shared source dependencies. Run the listed npm install command. Configure the standard @/* alias as shown in the installation guide.",
 ]
@@ -57,7 +57,7 @@ function describePart(name: string, kind: string, description: string) {
   if (description) return description
 
   if (kind === "namespace")
-    return "Provides unstyled Base UI exports for custom composition. API entries with dotted names below describe the exported parts."
+    return "Provides unstyled Base UI exports for custom composition. The API entries below use dotted names for the exported parts."
 
   if (kind === "type")
     return "Exported TypeScript type. Its signature and property table describe the accepted values."
@@ -89,7 +89,7 @@ function describePart(name: string, kind: string, description: string) {
 
   return (
     purpose ??
-    "Provides a component part. Combine it with other parts as described in the usage notes. See accepted props below."
+    "Provides a component part. Follow the usage notes to combine it with other parts. See the accepted props below."
   )
 }
 

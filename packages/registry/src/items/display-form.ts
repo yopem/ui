@@ -377,7 +377,7 @@ const definitions: Definition[] = [
     api: ["toggleVariants", "Toggle", "ToggleVariantProps", "TogglePrimitive"],
     categories: ["controls"],
     description:
-      "Provides a pressed control with two states and visual variants.",
+      "Provides a control with pressed and unpressed states and visual variants.",
     name: "toggle",
     title: "Toggle",
   },

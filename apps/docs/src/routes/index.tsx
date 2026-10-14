@@ -4,7 +4,7 @@ import { Introduction } from "@/catalog/introduction"
 import { createSeo } from "@/lib/seo"
 
 const description =
-  "Use accessible React components with StyleX. Copy complete source into your project. Change it without a component package dependency."
+  "Use accessible React components with StyleX. Copy complete source into your project. Edit it without depending on a component package."
 
 export const Route = createFileRoute("/")({
   head: () =>

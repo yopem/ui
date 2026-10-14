@@ -356,8 +356,8 @@ export function Panel() {
 The rule recognizes import aliases, lexical scope, dot access, string-literal
 bracket access, and dynamic style functions. It skips exported objects, objects
 passed to other code, destructured objects, and dynamic property access. It also
-skips declarations with spreads or computed keys because their use cannot be
-verified in the file.
+skips declarations with spreads or computed keys because it cannot verify their
+use in the file.
 
 Enable it as a warning or error. This rule has no options.
 
@@ -425,7 +425,7 @@ Set `source` to your atoms module if you use a custom wrapper.
 `no-restyle` and `enforce-styling-methods` identify components through their
 imports. Default sources are `@/components/ui/`, `@registry/components/ui/`, and
 `@yopem-ui/ui`. Source patterns match an exact import or an import that starts
-with the pattern. Import aliases and namespace imports are supported.
+with the pattern. The rules support import aliases and namespace imports.
 
 Set `componentSources` and `styleComponents` when you use custom import paths or
 component names. These arrays replace their defaults. Include every source and

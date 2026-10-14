@@ -44,7 +44,7 @@ const usageNoteValues = {
   ],
   card: [
     "Compose CardHeader, CardTitle, CardDescription, CardPanel and CardFooter inside Card.",
-    "CardContent is an alias for CardPanel. Use separator on CardHeader or CardFooter for a divider and matching spacing. CardFrame parts add an outer frame.",
+    "CardContent is an alias for CardPanel. Use separator on CardHeader or CardFooter to add a divider and matching spacing. CardFrame parts add an outer frame.",
   ],
   empty: [
     "Use EmptyHeader with EmptyMedia, EmptyTitle and EmptyDescription, followed by EmptyContent for recovery actions.",
@@ -92,11 +92,11 @@ const usageNoteValues = {
   ],
   bleed: [
     "The global reset sets border-box sizing and zero minimum inline size. Consumer xstyle overrides these defaults.",
-    "Place Bleed inside a padded region to extend content to its inline edges. Avoid using it as a page-width wrapper; Container handles that case.",
+    "Place Bleed inside a padded region to extend content to its inline edges. Use Container instead of Bleed for a page-width wrapper.",
   ],
   float: [
     "The global reset sets border-box sizing and zero minimum inline size. Consumer xstyle overrides these defaults.",
-    "Position the parent and use Float to place a badge or action over one corner. Keep interactive content accessible from the keyboard.",
+    "Position the parent. Use Float to place a badge or action over one corner. Keep interactive content accessible from the keyboard.",
   ],
   wrap: [
     "The global reset sets border-box sizing and zero minimum inline size. Consumer xstyle overrides these defaults.",
@@ -176,7 +176,7 @@ const usageNoteValues = {
   ],
   textarea: [
     "Pair Textarea with a visible label and use rows to set the initial height.",
-    "The control renders Base UI Field.Control as a textarea. unstyled removes only the outer wrapper styles. It keeps the textarea styles. String sizes select visual size. The control accepts numeric size, but this does not set rows. Use rows explicitly. className styles the outer wrapper.",
+    "Textarea renders Base UI Field.Control as a textarea. unstyled removes only the outer wrapper styles. It keeps the textarea styles. String sizes select visual size. The control accepts numeric size, but this does not set rows. Use rows explicitly. className styles the outer wrapper.",
   ],
   label: [
     "Use Label with htmlFor matching the control's id.",
@@ -224,7 +224,7 @@ const usageNoteValues = {
   ],
   progress: [
     "Compose ProgressLabel, ProgressTrack with ProgressIndicator, and ProgressValue inside Progress.",
-    "Use a numeric value for known completion. Use null for indeterminate progress. Label the task, not only its percentage.",
+    "Use a numeric value when you know how much of the task is complete. Use null for indeterminate progress. Label the task, not only its percentage.",
   ],
   "number-field": [
     "Compose NumberFieldGroup with NumberFieldDecrement, NumberFieldInput and NumberFieldIncrement inside NumberField.",
@@ -243,7 +243,7 @@ const usageNoteValues = {
     "multiple allows more than one selected item. The group supplies size and variant to its items. ToggleGroupSeparator divides adjacent sections.",
   ],
   toolbar: [
-    "Compose ToolbarButton, ToolbarLink and ToolbarInput inside Toolbar, grouping related actions with ToolbarGroup.",
+    "Compose ToolbarButton, ToolbarLink and ToolbarInput inside Toolbar. Group related actions with ToolbarGroup.",
     "Toolbar manages focus movement between controls. Set an accessible label. Use ToolbarSeparator between action groups.",
   ],
   accordion: [
@@ -347,7 +347,7 @@ export const usageNotes = new Map<string, [string, ...string[]]>(
 
 const ownPropNoteValues = {
   xstyle:
-    "The component applies StyleX styles after this part's defaults and variants. xstyle accepts style objects, conditional arrays, themes, and dynamic styles.",
+    "The component applies the supplied StyleX styles after this part's defaults and variants. xstyle accepts style objects, conditional arrays, themes, and dynamic styles.",
   controlXstyle:
     "StyleX overrides and scoped themes for the decorative control wrapper. xstyle targets the native input or textarea.",
   children: "Content rendered inside this part.",
@@ -394,8 +394,7 @@ const ownPropNoteValues = {
   bottomStickOnMobile: "Aligns the popup to the bottom edge on narrow screens.",
   scrollFade: "Shows fades at the edges of scrollable content.",
   scrollable: "Wraps panel content in the scrolling area when true.",
-  allowSelection:
-    "Permits text selection in this drawer section. The section is not only a drag region.",
+  allowSelection: "Allows text selection in this drawer section.",
   showBar: "Shows the drawer's drag indicator.",
   position:
     "Selects the drawer edge or toast placement. See this part's allowed values.",

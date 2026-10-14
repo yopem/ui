@@ -20,7 +20,7 @@ function LintGuide() {
   return (
     <GuidePage
       title="Lint rules"
-      description="Check component usage and StyleX styles. Learn each rule with accepted examples, rejected examples, and configuration options."
+      description="Check component usage and StyleX styles. Compare examples that pass or fail each rule. Choose its configuration options."
       source={lintSource}
       Content={LintContent}
     />

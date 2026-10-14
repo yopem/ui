@@ -121,7 +121,7 @@ export const Route = createFileRoute("/components/")({
   head: () =>
     createSeo({
       description:
-        "Examine live component previews. Copy complete Yopem UI StyleX source.",
+        "Try live component previews. Copy complete Yopem UI StyleX source.",
       path: "/components",
       title: "Components · Yopem UI",
     }),

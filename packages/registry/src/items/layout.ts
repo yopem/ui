@@ -162,7 +162,7 @@ const definitions: Definition[] = [
     api: ["HeadingTag", "HeadingProps", "Heading"],
     categories: ["typography"],
     description:
-      "Renders a styled h2 heading by default. Uses different h1 through h6 sizes and supports xstyle overrides.",
+      "Renders a styled h2 heading by default. The h1 through h6 headings have different sizes. Use xstyle to override styles.",
     name: "heading",
     title: "Heading",
   },

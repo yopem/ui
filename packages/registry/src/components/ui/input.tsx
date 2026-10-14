@@ -182,7 +182,7 @@ export type InputProps = StyleXComponentProps<
     size?: "sm" | "default" | "lg" | number
     unstyled?: boolean
     nativeInput?: boolean
-    /** Applies StyleX styles to the decorative wrapper, including Group item geometry. */
+    /** Applies StyleX styles to the decorative wrapper, including its borders and corner radii in a Group. */
     controlXstyle?: StyleXProps["xstyle"]
   }
 >

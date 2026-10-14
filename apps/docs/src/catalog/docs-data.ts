@@ -50,7 +50,7 @@ export const guidePages = [
     title: "CLI",
     url: "/docs/cli",
     content:
-      "Use init, add, and update commands with Bun, npm, pnpm, or Yarn. Configure framework, shared UI, guidance, cwd, and registry options. Preview changes with dry-run. Review safe overwrites, force behavior, and prerequisites.",
+      "Use init, add, and update with Bun, npm, pnpm, or Yarn. Set framework, shared UI, guidance, cwd, and registry options. Preview changes with dry-run. Check prerequisites. Learn when commands keep or overwrite files, including force behavior.",
   },
   {
     title: "Layout and typography",
@@ -62,13 +62,13 @@ export const guidePages = [
     title: "Styling with StyleX",
     url: "/docs/styling",
     content:
-      "Create responsive styles with StyleX and semantic tokens. Apply styles through xstyle after component defaults. Use StyleX props or className for integration.",
+      "Create responsive styles with StyleX and semantic tokens. Apply styles through xstyle after component defaults. Use StyleX props or className to apply styles from other sources.",
   },
   {
     title: "Lint rules",
     url: "/docs/lint",
     content:
-      "Configure all seven Yopem UI Oxlint rules with accepted and rejected code examples. Use prefer-layout-primitives for semantic layout and typography. Configure no-restyle, enforce-styling-methods, static-stylex, and no-raw-stylex-colors. Enable no-unused-stylex-styles or atoms when needed. Learn rule defaults, options, component imports, and file overrides.",
+      "Configure all seven Yopem UI Oxlint rules. Compare code examples that pass or fail each rule. Use prefer-layout-primitives for semantic layout and typography. Configure no-restyle, enforce-styling-methods, static-stylex, and no-raw-stylex-colors. Enable no-unused-stylex-styles or atoms when needed. Learn rule defaults, options, component imports, and file overrides.",
   },
   {
     title: "Theming",
@@ -80,7 +80,7 @@ export const guidePages = [
     title: "Introduction",
     url: "/",
     content:
-      "Use source-owned React components with StyleX and Base UI. Initialize your project with the CLI. Install component source with the CLI.",
+      "Copy React component source into your project. Edit it there. Components use StyleX and Base UI. Initialize your project with the CLI. Then install component source.",
   },
   {
     title: "Getting started",

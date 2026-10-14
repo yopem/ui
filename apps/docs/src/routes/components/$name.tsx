@@ -166,7 +166,7 @@ function ComponentPage() {
             <PreviewPanel preview={item.preview} source={data.previewSource} />
           ) : (
             <Text xstyle={styles.paragraph6}>
-              Use the composition in Usage below to start with {item.title}.
+              Start with the {item.title} example in Usage below.
             </Text>
           )}
           <Heading
@@ -214,9 +214,10 @@ function ComponentPage() {
             id="api-reference"
           />
           <Text xstyle={styles.paragraph9}>
-            The generator reads canonical TypeScript source. Only component and
-            Base UI props appear below. Required identifies a required property,
-            not a required component.
+            The generator reads the component TypeScript source. Only component
+            and Base UI props appear below. The Required column shows whether
+            you must supply a property. It does not mean you must use the
+            component.
           </Text>
           <ComponentApi key={name} parts={data.api} />
         </DocsBody>
