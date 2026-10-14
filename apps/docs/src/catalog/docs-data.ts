@@ -6,31 +6,6 @@ import { usageSnippets } from "./usage"
 const compositionItemValues = {
   "date-picker": ["calendar", "popover", "button"],
   navigation: ["radio-group", "tabs"],
-  layout: [
-    "box",
-    "flex",
-    "stack",
-    "hstack",
-    "vstack",
-    "grid",
-    "center",
-    "container",
-    "absolute-center",
-    "bleed",
-    "float",
-    "wrap",
-    "link",
-    "text",
-    "blockquote",
-    "em",
-    "highlight",
-    "mark",
-    "prose",
-    "codeblock",
-    "heading",
-    "button",
-    "label",
-  ],
 }
 
 export const compositionItems = new Map(Object.entries(compositionItemValues))

@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router"
 
 import { GuidePage } from "@/catalog/guide-content"
+import { LayoutExamples } from "@/catalog/layout-examples"
 import LayoutContent from "@/content/layout.mdx"
 import layoutSource from "@/content/layout.mdx?raw"
 import { createSeo } from "@/lib/seo"
@@ -16,6 +17,8 @@ export const Route = createFileRoute("/docs/layout")({
   component: LayoutGuide,
 })
 
+const components = { LayoutExamples }
+
 function LayoutGuide() {
   return (
     <GuidePage
@@ -23,6 +26,7 @@ function LayoutGuide() {
       description="Choose a layout or text component. Use its native semantics to build a readable page."
       source={layoutSource}
       Content={LayoutContent}
+      components={components}
     />
   )
 }

@@ -11,7 +11,6 @@ const layoutSlugs = new Set([
   "frame",
   "grid",
   "hstack",
-  "layout",
   "stack",
   "vstack",
   "wrap",

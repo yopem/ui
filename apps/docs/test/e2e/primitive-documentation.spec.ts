@@ -49,6 +49,22 @@ test("@a11y layout guide lists components and preserves legacy links", async ({
   expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([])
 })
 
+test("layout section has no duplicate overview page", async ({ page }) => {
+  await page.goto("/components", { waitUntil: "domcontentloaded" })
+  await expect(page.locator('a[href="/components/layout"]')).toHaveCount(0)
+
+  const sitemap = await page.request.get("/sitemap.xml")
+  expect(await sitemap.text()).not.toContain("/components/layout")
+
+  const guide = await page.request.get("/docs/layout.md")
+  const guideText = await guide.text()
+  expect(guideText).not.toContain("catalog/layout-examples")
+  expect(guideText).toContain("/docs/layout#live-layout-examples")
+
+  const response = await page.goto("/components/layout")
+  expect(response?.status()).toBe(404)
+})
+
 test("@a11y styling guide teaches StyleX overrides", async ({ page }) => {
   await page.goto("/docs/styling", { waitUntil: "domcontentloaded" })
   await expect(

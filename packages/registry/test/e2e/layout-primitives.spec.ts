@@ -11,11 +11,10 @@ async function openLayoutPreview(
     (value) => localStorage.setItem("yopem-ui-theme", value),
     theme,
   )
-  await page.goto("/components/layout")
+  await page.goto("/docs/layout")
+  await page.getByText("Show live layout examples", { exact: true }).click()
   await expect(page.getByTestId("layout-root")).toBeVisible()
-  await expect(
-    page.getByRole("button", { name: /^Copy .* usage$/ }).first(),
-  ).toBeEnabled()
+  await expect(page.getByTestId("inspect-refs")).toBeEnabled()
 }
 
 test.describe("layout and typography primitives", () => {

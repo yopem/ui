@@ -82,7 +82,6 @@ const previewDescriptionValues = {
   input: "Single-line text entry",
   "input-group": "Search field with icon addon",
   kbd: "Keyboard shortcut keycaps",
-  layout: "Composable layout primitives",
   link: "Link to component catalog",
   marquee: "Pauseable scrolling content",
   menu: "Playback actions menu",

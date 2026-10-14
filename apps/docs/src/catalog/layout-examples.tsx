@@ -74,7 +74,7 @@ function renderFourthHeading(props: ComponentProps<"h2">) {
   return <Heading render={<h4>{props.children}</h4>} {...props} />
 }
 
-export function Preview() {
+export function LayoutExamples() {
   const linkRef = useRef<HTMLAnchorElement>(null)
   const nameRef = useRef<HTMLInputElement>(null)
   const textRef = useRef<HTMLParagraphElement>(null)
