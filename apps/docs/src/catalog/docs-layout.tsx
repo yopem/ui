@@ -14,7 +14,7 @@ import { Link as UiLink } from "@registry/components/ui/link"
 import { useEventCallback } from "@registry/hooks/use-event-callback"
 import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
-import { Link, useHydrated } from "@tanstack/react-router"
+import { Link, useHydrated, useLocation } from "@tanstack/react-router"
 import { MenuIcon } from "lucide-react"
 import { useState } from "react"
 
@@ -22,6 +22,7 @@ import { BrandLogo } from "@/components/brand-logo"
 
 import { DocsNavigation } from "./docs-navigation"
 import { GlobalSearch } from "./global-search"
+import { navigationPages } from "./navigation"
 import { ThemeToggle } from "./theme-toggle"
 
 const primitiveStyles = stylex.create({
@@ -94,6 +95,10 @@ export function DocumentationLayout({
   children: ReactNode
   navigation?: boolean
 }) {
+  const pathname = useLocation({ select: (location) => location.pathname })
+  const pageIndex = navigationPages.findIndex((page) => page.url === pathname)
+  const previous = navigationPages[pageIndex - 1]
+  const next = navigationPages[pageIndex + 1]
   const hydrated = useHydrated()
   const [mobileOpen, setMobileOpen] = useState(false)
 
@@ -157,6 +162,34 @@ export function DocumentationLayout({
           xstyle={primitiveStyles.main}
         >
           {children}
+          {pageIndex >= 0 ? (
+            <Box
+              render={<nav />}
+              aria-label="Documentation pages"
+              xstyle={styles.pageNavigation}
+            >
+              {previous ? (
+                <Link
+                  to={previous.url}
+                  rel="prev"
+                  {...stylex.props(styles.pageLink)}
+                >
+                  Previous: {previous.name}
+                </Link>
+              ) : (
+                <Box />
+              )}
+              {next ? (
+                <Link
+                  to={next.url}
+                  rel="next"
+                  {...stylex.props(styles.pageLink)}
+                >
+                  Next: {next.name}
+                </Link>
+              ) : null}
+            </Box>
+          ) : null}
         </Box>
       </Grid>
     </Box>
@@ -164,6 +197,30 @@ export function DocumentationLayout({
 }
 
 const styles = stylex.create({
+  pageNavigation: {
+    display: "flex",
+    flexWrap: "wrap",
+    justifyContent: "space-between",
+    gap: "1rem",
+    maxInlineSize: "72rem",
+    marginInline: "auto",
+    paddingBlock: "1rem 3rem",
+    paddingInline: {
+      default: "2.5rem",
+      "@media (max-width: 767.98px)": "1.25rem",
+    },
+  },
+  pageLink: {
+    color: tokens["--foreground"],
+    textDecoration: "none",
+    padding: "0.75rem",
+    borderRadius: tokens["--radius-md"],
+    ":hover": { backgroundColor: tokens["--accent"] },
+    ":focus-visible": {
+      outline: `2px solid ${tokens["--ring"]}`,
+      outlineOffset: 2,
+    },
+  },
   brand: {
     alignItems: "center",
     color: tokens["--foreground"],
