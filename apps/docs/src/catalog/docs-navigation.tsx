@@ -6,6 +6,7 @@ import {
 } from "@registry/components/ui/collapsible"
 import { Link as UiLink } from "@registry/components/ui/link"
 import { ScrollArea } from "@registry/components/ui/scroll-area"
+import { useEventCallback } from "@registry/hooks/use-event-callback"
 import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import { Link, useLocation } from "@tanstack/react-router"
@@ -13,6 +14,8 @@ import { ChevronDownIcon } from "lucide-react"
 import { useState } from "react"
 
 import { navigationGroups } from "./navigation"
+
+const exactActiveOptions = { exact: true }
 
 const primitiveStyles = stylex.create({
   documentationNavigation: { flex: 1, minBlockSize: 0 },
@@ -73,6 +76,17 @@ export function DocsNavigation({ onNavigate }: { onNavigate?: () => void }) {
 
   const openGroups = new Set(state.openGroups)
 
+  const handleGroupOpenChange = useEventCallback(
+    (name: string, open: boolean) => {
+      setState({
+        pathname,
+        openGroups: open
+          ? [...state.openGroups, name]
+          : state.openGroups.filter((groupName) => groupName !== name),
+      })
+    },
+  )
+
   return (
     <ScrollArea
       aria-label="Documentation navigation"
@@ -87,50 +101,14 @@ export function DocsNavigation({ onNavigate }: { onNavigate?: () => void }) {
       >
         <Box render={<ul />} xstyle={primitiveStyles.ul}>
           {navigationGroups.map((group) => (
-            <Box render={<li />} key={group.name}>
-              <Collapsible
-                open={openGroups.has(group.name)}
-                onOpenChange={(open) =>
-                  setState({
-                    pathname,
-                    openGroups: open
-                      ? [...state.openGroups, group.name]
-                      : state.openGroups.filter((name) => name !== group.name),
-                  })
-                }
-              >
-                <CollapsibleTrigger xstyle={styles.group}>
-                  {group.name}
-                  <ChevronDownIcon
-                    aria-hidden="true"
-                    size={14}
-                    {...stylex.props(styles.chevron)}
-                  />
-                </CollapsibleTrigger>
-                <CollapsiblePanel>
-                  <Box render={<ul />} xstyle={primitiveStyles.ul}>
-                    {group.pages.map((item) => (
-                      <Box render={<li />} key={item.url}>
-                        <Link
-                          to={item.url}
-                          activeOptions={{ exact: true }}
-                          aria-current={
-                            pathname === item.url ? "page" : undefined
-                          }
-                          onClick={onNavigate}
-                          {...stylex.props(
-                            styles.link,
-                            pathname === item.url && styles.active,
-                          )}
-                        >
-                          {item.name}
-                        </Link>
-                      </Box>
-                    ))}
-                  </Box>
-                </CollapsiblePanel>
-              </Collapsible>
-            </Box>
+            <DocsNavigationGroup
+              key={group.name}
+              group={group}
+              pathname={pathname}
+              open={openGroups.has(group.name)}
+              onOpenChange={handleGroupOpenChange}
+              onNavigate={onNavigate}
+            />
           ))}
           <Box render={<li />} xstyle={primitiveStyles.li2}>
             Resources
@@ -147,6 +125,59 @@ export function DocsNavigation({ onNavigate }: { onNavigate?: () => void }) {
         </Box>
       </Box>
     </ScrollArea>
+  )
+}
+
+export function DocsNavigationGroup({
+  group,
+  pathname,
+  open,
+  onOpenChange,
+  onNavigate,
+}: {
+  group: (typeof navigationGroups)[number]
+  pathname: string
+  open: boolean
+  onOpenChange: (name: string, open: boolean) => void
+  onNavigate?: () => void
+}) {
+  const handleOpenChange = useEventCallback((nextOpen: boolean) => {
+    onOpenChange(group.name, nextOpen)
+  })
+
+  return (
+    <Box render={<li />}>
+      <Collapsible open={open} onOpenChange={handleOpenChange}>
+        <CollapsibleTrigger xstyle={styles.group}>
+          {group.name}
+          <ChevronDownIcon
+            aria-hidden="true"
+            size={14}
+            {...stylex.props(styles.chevron)}
+          />
+        </CollapsibleTrigger>
+        <CollapsiblePanel>
+          <Box render={<ul />} xstyle={primitiveStyles.ul}>
+            {group.pages.map((item) => (
+              <Box render={<li />} key={item.url}>
+                <Link
+                  to={item.url}
+                  activeOptions={exactActiveOptions}
+                  aria-current={pathname === item.url ? "page" : undefined}
+                  onClick={onNavigate}
+                  {...stylex.props(
+                    styles.link,
+                    pathname === item.url && styles.active,
+                  )}
+                >
+                  {item.name}
+                </Link>
+              </Box>
+            ))}
+          </Box>
+        </CollapsiblePanel>
+      </Collapsible>
+    </Box>
   )
 }
 
