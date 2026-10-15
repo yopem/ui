@@ -31,13 +31,17 @@ for (const [manager, runner, install, localRunner] of managers) {
       await expect(button).toHaveAttribute("aria-pressed", "true")
     }
 
+    await page.reload()
+    await expect(
+      switches.first().getByRole("button", { name: manager, exact: true }),
+    ).toHaveAttribute("aria-pressed", "true")
+
     const command = `${runner} @yopem-ui/cli init`
     await expect(main.locator("pre").first()).toHaveText(command)
     await main
-      .getByRole("button", {
-        name: "Copy Initialize project with CLI",
-        exact: true,
-      })
+      .getByTestId("copyable-code")
+      .first()
+      .getByRole("button", { name: "Copy Code", exact: true })
       .click()
     await expect
       .poll(() => page.evaluate(() => navigator.clipboard.readText()))
@@ -46,6 +50,24 @@ for (const [manager, runner, install, localRunner] of managers) {
     await expect(page.getByRole("main").locator("pre").first()).toContainText(
       `${runner} @yopem-ui/cli init --framework react-router`,
     )
+    await page.goto("/docs/getting-started")
+
+    const componentCommand = main
+      .getByTestId("copyable-code")
+      .filter({ hasText: "@yopem-ui/cli add button" })
+
+    await componentCommand
+      .getByRole("button", { name: manager, exact: true })
+      .click()
+    await expect(componentCommand.locator("pre")).toHaveText(
+      `${runner} @yopem-ui/cli add button`,
+    )
+    await componentCommand
+      .getByRole("button", { name: "Copy Code", exact: true })
+      .click()
+    await expect
+      .poll(() => page.evaluate(() => navigator.clipboard.readText()))
+      .toBe(`${runner} @yopem-ui/cli add button`)
     await page.goto("/docs/lint")
     await page
       .getByRole("group", { name: "Package manager" })
@@ -102,6 +124,54 @@ for (const [manager, runner, install, localRunner] of managers) {
       }),
       contentType: "image/png",
     })
+  })
+}
+
+for (const storage of ["invalid", "blocked", "read-only"] as const) {
+  test(`package manager handles ${storage} browser storage`, async ({
+    page,
+  }) => {
+    await page.addInitScript((mode) => {
+      if (mode === "invalid") {
+        localStorage.setItem("yopem-package-manager", "unsupported")
+      } else {
+        if (mode === "read-only") {
+          localStorage.setItem("yopem-package-manager", "pnpm")
+        } else {
+          Object.defineProperty(Storage.prototype, "getItem", {
+            value() {
+              throw new DOMException("Storage unavailable", "SecurityError")
+            },
+          })
+        }
+
+        Object.defineProperty(Storage.prototype, "setItem", {
+          value() {
+            throw new DOMException("Storage unavailable", "SecurityError")
+          },
+        })
+      }
+    }, storage)
+    await page.goto("/docs/installation")
+
+    const group = page
+      .getByRole("main")
+      .getByRole("group", { name: "Package manager" })
+      .first()
+
+    await expect(
+      group.getByRole("button", {
+        name: storage === "read-only" ? "pnpm" : "Bun",
+        exact: true,
+      }),
+    ).toHaveAttribute("aria-pressed", "true")
+    await group.getByRole("button", { name: "npm", exact: true }).click()
+    await expect(
+      group.getByRole("button", { name: "npm", exact: true }),
+    ).toHaveAttribute("aria-pressed", "true")
+    await expect(page.getByRole("main").locator("pre").first()).toHaveText(
+      "npx @yopem-ui/cli init",
+    )
   })
 }
 

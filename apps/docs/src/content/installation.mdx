@@ -1,36 +1,51 @@
-## Initialize project
+Set up Yopem UI once per project. After these checks, continue with
+[Getting started](/docs/getting-started#2-choose-a-component) to choose a
+component.
 
-Start with a React and TypeScript project. Run `bunx --bun @yopem-ui/cli init`
-from the project root:
+## Before you start
 
-<InstallationCommands />
+Use an existing React and TypeScript project with one of these frameworks:
 
-The init command detects Vite React, React Router, TanStack Router, TanStack
-Start, Next.js App Router, or Astro. It supports React Router client mode and
-framework mode. It installs shared source, StyleX dependencies, and the Oxlint
-plugin. It configures the `@/*` alias, build plugins, and root styles. It keeps
-existing project code. If configuration is unsupported or conflicts with
-required settings, the command stops with an error. It does not overwrite that
-configuration.
+- Vite React
+- React Router with Vite, in client mode or framework mode
+- TanStack Router or TanStack Start
+- Next.js App Router
+- Astro
 
-If your project has multiple supported frameworks, use `--framework` as shown
-above. Accepted values are `vite`, `react-router`, `tanstack-router`,
-`tanstack-start`, `next`, and `astro`. The command detects React Router client
-mode from `react-router` or `react-router-dom`. It detects framework mode from
+Next.js requires Node 24 or later and webpack. The CLI does not support Next.js
+Pages Router, React Router RSC mode, or other build tools.
+
+## 1. Run init
+
+Run this command from your project root. Yopem UI supports Bun, npm, pnpm, and
+Yarn 2 or later.
+
+```sh
+bunx --bun @yopem-ui/cli init
+```
+
+The CLI detects your framework and installs shared source, StyleX dependencies,
+and the Oxlint plugin. It configures the `@/*` alias, build plugins, and root
+styles. Vite integrations use Rolldown Babel.
+
+The command keeps existing project code. If configuration conflicts with
+required settings or is unsupported, it stops with an error instead of
+overwriting that configuration.
+
+### If your project has multiple frameworks
+
+Select the framework explicitly:
+
+```sh
+bunx --bun @yopem-ui/cli init --framework react-router
+```
+
+Accepted values are `vite`, `react-router`, `tanstack-router`, `tanstack-start`,
+`next`, and `astro`. The CLI detects React Router client mode from
+`react-router` or `react-router-dom`. It detects framework mode from
 `@react-router/dev`.
 
-Vite integrations use Rolldown Babel. Next.js App Router requires Node 24 or
-later and webpack. The init command does not support React Router RSC mode,
-Next.js Pages Router, or other build tools. The CLI reads registry files from
-`https://ui.yopem.com/r` by default. It records installed files in `ui.json`.
-
-Select a package manager above a command block. All command blocks use the same
-selection. Yarn commands require modern Yarn (version 2 or later).
-
-- Bun: bunx --bun @yopem-ui/cli init
-- npm: npx @yopem-ui/cli init
-- pnpm: pnpm dlx @yopem-ui/cli init
-- Yarn: yarn dlx @yopem-ui/cli init
+## 2. Check global styles
 
 Import the installed `styles.css` once from your application root. Its reset
 sets `box-sizing: border-box` and `min-inline-size: 0` for elements and
@@ -39,10 +54,13 @@ defaults.
 
 <span id="check" />
 
-## Verify and continue
+## 3. Check your build
 
-Run your project's production build. Check that it completes without StyleX or
-CSS extraction errors. Check your app with Oxlint:
+Run your project's production build. StyleX compiles styles during the build;
+installing its runtime package alone is not enough. Fix any StyleX or CSS
+extraction errors before adding components.
+
+Run Oxlint from your project root:
 
 ```sh
 bunx oxlint .
@@ -50,10 +68,16 @@ bunx oxlint .
 
 See the [lint rules](/docs/lint) for configuration.
 
-Then [add your first component](/docs/getting-started) with the CLI. See the
-[CLI guide](/docs/cli) for commands, options, registry settings, and safe
-updates.
+## Add your first component
 
-Static light mode does not need a provider. Add theme switching only if
-necessary. See the [theming guide](/docs/theming) for dark mode, custom themes,
-and CSP nonces.
+Browse [Components](/components) and choose what your app needs. Each component
+page includes its install command and usage examples.
+
+See [Getting started](/docs/getting-started#2-choose-a-component) for the
+install and usage steps.
+
+For more CLI options, see the [CLI guide](/docs/cli). The default registry is
+`https://ui.yopem.com/r`. The CLI records installed files in `ui.json`.
+
+Theme switching is optional. Static light mode does not need a provider. See
+[Theming](/docs/theming) for dark mode, custom themes, and CSP nonces.

@@ -67,7 +67,7 @@ test("@a11y component code blocks preserve shell highlighting", async ({
 })
 
 for (const [guide, format, content, codeTitle] of [
-  ["installation", "shell", "bunx", "Initialize project with CLI"],
+  ["installation", "shell", "bunx", "Code"],
   ["lint", "JSON", '"jsPlugins"', "Code"],
   ["getting-started", "TSX", "import", "Code"],
 ]) {
@@ -173,12 +173,9 @@ test("MDX guides render sections, anchors, and copyable snippets", async ({
   await context.grantPermissions(["clipboard-read", "clipboard-write"])
   await page.setViewportSize({ width: 1600, height: 900 })
   await page.goto("/docs/getting-started")
-  await expect(
-    page.getByRole("heading", { name: "What you need" }),
-  ).toBeVisible()
-  await expect(
-    page.getByRole("link", { name: "2. Install Button" }),
-  ).toHaveAttribute("href", "#2-install-button")
+  await expect(page.getByRole("heading", { level: 1 })).toBeVisible()
+  const installSection = page.locator("#install-button")
+  await expect(installSection).toHaveCount(1)
 
   const snippet = page
     .getByTestId("copyable-code")
@@ -190,7 +187,34 @@ test("MDX guides render sections, anchors, and copyable snippets", async ({
   await expect
     .poll(() => page.evaluate(() => navigator.clipboard.readText()))
     .toBe(code)
-  await expect(page.locator("#install-button")).toHaveCount(1)
+})
+
+test("first component setup connects to installation and back", async ({
+  page,
+}, testInfo) => {
+  await page.goto("/docs/getting-started")
+  const main = page.getByRole("main")
+  await main.locator('a[href="/docs/installation"]').first().click()
+  await page.waitForURL("**/docs/installation")
+  await expect(main.getByTestId("copyable-code").first()).toContainText(
+    "@yopem-ui/cli init",
+  )
+  await main
+    .locator('a[href="/docs/getting-started#2-choose-a-component"]')
+    .last()
+    .click()
+  await page.waitForURL("**/docs/getting-started#2-choose-a-component")
+  await expect(page.locator('[id="2-choose-a-component"]')).toBeInViewport()
+  await expect(main.locator('a[href="/components"]').first()).toBeVisible()
+  await expect(
+    main
+      .getByTestId("copyable-code")
+      .filter({ hasText: "@yopem-ui/cli add button" }),
+  ).toBeVisible()
+  await testInfo.attach("first-component-after-setup", {
+    body: await page.screenshot({ animations: "disabled" }),
+    contentType: "image/png",
+  })
 })
 
 test("theming guide renders copyable configuration", async ({ page }) => {

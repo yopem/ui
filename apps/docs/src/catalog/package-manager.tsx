@@ -10,7 +10,12 @@ import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import { useHydrated } from "@tanstack/react-router"
 import { TerminalIcon } from "lucide-react"
-import { createContext, useContext, useState } from "react"
+import {
+  createContext,
+  useContext,
+  useState,
+  useSyncExternalStore,
+} from "react"
 
 import {
   convertPackageManagerCommand,
@@ -31,12 +36,59 @@ const managerValues = {
   Yarn: ["Yarn"],
 }
 
+function createPackageManagerStore() {
+  let manager: PackageManager | undefined
+  let notify: (() => void) | undefined
+
+  return {
+    getSnapshot(this: void) {
+      if (manager) return manager
+
+      try {
+        const saved = localStorage.getItem("yopem-package-manager")
+
+        return managers.find((item) => item === saved) ?? "Bun"
+      } catch {
+        return "Bun"
+      }
+    },
+    select(this: void, value: PackageManager) {
+      manager = value
+
+      try {
+        localStorage.setItem("yopem-package-manager", value)
+      } catch {
+        // Keep the selection in memory when browser storage is unavailable.
+      }
+
+      notify?.()
+    },
+    subscribe(this: void, callback: () => void) {
+      notify = callback
+
+      return () => {
+        notify = undefined
+      }
+    },
+  }
+}
+
+function getServerPackageManager(): PackageManager {
+  return "Bun"
+}
+
 export function PackageManagerProvider({ children }: { children: ReactNode }) {
-  const [manager, select] = useState<PackageManager>("Bun")
+  const [store] = useState(createPackageManagerStore)
+
+  const manager = useSyncExternalStore(
+    store.subscribe,
+    store.getSnapshot,
+    getServerPackageManager,
+  )
 
   return (
     <PackageManagerContext value={manager}>
-      <PackageManagerSelectionContext value={select}>
+      <PackageManagerSelectionContext value={store.select}>
         {children}
       </PackageManagerSelectionContext>
     </PackageManagerContext>

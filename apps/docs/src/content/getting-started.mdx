@@ -1,48 +1,43 @@
-## What you need
+Yopem UI copies component source into your React and TypeScript project. You can
+edit those files directly. There is no runtime component package.
 
-- A React application that uses TypeScript.
-- React Router with Vite, TanStack Start, Next.js, or Astro.
-- Permission to add packages and files to the project.
-
-Yopem has no runtime component package. Initialize StyleX once. Then install
-component source with the CLI.
+Set up your project once. Then choose the components your app needs.
 
 <span id="setup" />
 
-## 1. Set up StyleX
+## 1. Set up your project
 
-Run init from your project root:
+Follow the [installation guide](/docs/installation) to configure StyleX for your
+framework. It covers supported projects, the init command, and build checks.
+Return here when your app completes a production build.
 
-```sh
-bunx --bun @yopem-ui/cli init
-```
-
-The command installs shared packages, the source alias, tokens, global styles,
-and build configuration. See the [installation guide](/docs/installation) for
-supported frameworks.
-
-Continue only after your app completes a production build. StyleX compiles
-styles during the build. Installing only its runtime package is not enough.
+If you already completed installation, choose a component below. You do not need
+to run init again.
 
 <span id="install-button" />
 
-## 2. Install Button
+## 2. Choose a component
 
-Run add from your project root:
+Browse [Components](/components) and open the component you want. Each page has
+an install command, live previews, and usage examples.
+
+Run its install command from your project root. For example, if you choose
+[Button](/components/button):
 
 ```sh
 bunx --bun @yopem-ui/cli add button
 ```
 
-The CLI installs Button, required shared files, and dependencies. See the
-[Button documentation](/components/button) for usage and API details.
+The CLI copies the selected component source and installs its dependencies.
 
 <span id="use-button" />
 
-## 3. Use Button
+## 3. Use your component
 
-Import Button from the local file that the CLI installed. The init command maps
-`@/*` to `src/*`.
+Copy a usage example from the component page into your app. Import from the
+local file that the CLI installed. The init command maps `@/*` to `src/*`.
+
+For Button, a usage example looks like this:
 
 **src/components/save-button.tsx**
 
@@ -54,16 +49,18 @@ export function SaveButton() {
 }
 ```
 
-Render SaveButton. Check that it has padding, a border, a hover state, and a
-visible keyboard focus ring.
+Render `SaveButton` on a page in your app. Check its padding, border, and hover
+state. Press Tab to check that the keyboard focus ring is visible.
+
+If styles are missing, return to the
+[installation checks](/docs/installation#check).
 
 <span id="customize" />
 
-## 4. Customize it
+## Customize when needed
 
-Use variants for supported visual changes. Use `xstyle` for a local style
-override. Use tokens for design changes throughout the app. Edit the copied
-source to change component behavior.
+Check your component's documentation for variants and props. For a local style
+change, pass `xstyle`. This Button example changes its border radius:
 
 **src/components/save-button.tsx**
 
@@ -78,12 +75,13 @@ export function SaveButton() {
 }
 ```
 
-Keep accessible names, keyboard behavior, disabled states, and focus indicators
-when you edit component source.
+Use tokens to change styles throughout your app. Edit the copied source when you
+need to change behavior. Keep accessible names, keyboard behavior, disabled
+states, and focus indicators.
 
 ## Next steps
 
-- [**Add another component**](/components): Examine live previews. Copy only the
-  components that your app needs.
-- [**Customize your theme**](/docs/theming): Change colors, fonts, radii, dark
-  mode, or scoped themes.
+- [Button API and examples](/components/button): Find variants, sizes, and
+  props.
+- [Components](/components): Choose the next component for your app.
+- [Theming](/docs/theming): Change colors, fonts, radii, or dark mode.

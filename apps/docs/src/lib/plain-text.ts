@@ -2,13 +2,24 @@ import type { getDocumentation } from "@/catalog/docs.functions"
 
 const cacheControl = "public, max-age=3600"
 
-const cliRunners = `Use Bun, npm, pnpm, or modern Yarn (version 2 or later).
-Run the same CLI arguments with these commands:
+const cliRunners = `Yopem UI supports Bun, npm, pnpm, and Yarn 2 or later.
+Use one of these runners with the CLI arguments below:
 
-- Bun: bunx --bun @yopem-ui/cli init
-- npm: npx @yopem-ui/cli init
-- pnpm: pnpm dlx @yopem-ui/cli init
-- Yarn: yarn dlx @yopem-ui/cli init
+\`\`\`sh
+bunx --bun @yopem-ui/cli init
+\`\`\`
+
+\`\`\`sh
+npx @yopem-ui/cli init
+\`\`\`
+
+\`\`\`sh
+pnpm dlx @yopem-ui/cli init
+\`\`\`
+
+\`\`\`sh
+yarn dlx @yopem-ui/cli init
+\`\`\`
 `
 
 export function createLlms(
@@ -46,7 +57,8 @@ ${cliRunners}
 Preview setup with \`bunx --bun @yopem-ui/cli init --dry-run\`.
 Run \`bunx --bun @yopem-ui/cli init\` to install tokens, reset CSS, StyleX helpers, dependencies, and the Oxlint plugin.
 Init configures aliases, build plugins, and root styles. Conflicting configuration stops init.
-Then run \`bunx --bun @yopem-ui/cli add button\` to install component source and required dependencies.
+Choose a component from the [catalog](${url("/components")}). Each component page includes its install command and usage examples.
+For example, \`bunx --bun @yopem-ui/cli add button\` installs Button source and required dependencies.
 
 ## CLI updates and safety
 

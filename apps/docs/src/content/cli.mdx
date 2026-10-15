@@ -13,13 +13,7 @@ Vite integrations use Rolldown Babel. Next.js App Router requires Node 24 or
 later and webpack. React Router supports client mode and framework mode. The
 init command does not support React Router RSC mode or Next.js Pages Router.
 
-Select a package manager above a command block. All command blocks use the same
-selection. Yarn commands require modern Yarn (version 2 or later).
-
-- Bun: bunx --bun @yopem-ui/cli init
-- npm: npx @yopem-ui/cli init
-- pnpm: pnpm dlx @yopem-ui/cli init
-- Yarn: yarn dlx @yopem-ui/cli init
+The CLI supports Bun, npm, pnpm, and Yarn 2 or later.
 
 ## init
 
@@ -177,9 +171,8 @@ Pass `--registry <URL>` to use another registry. The setting applies to one
 command. The CLI does not store it in `ui.json`.
 
 URLs must use HTTPS, except HTTP on `localhost` or loopback addresses. Do not
-include credentials, query strings, or fragments. For local development, start
-this repository's docs server with `bun run dev`. Pass the local registry
-explicitly:
+include credentials, query strings, or fragments. For local development, pass
+the local registry explicitly:
 
 ```sh
 bunx --bun @yopem-ui/cli init --registry http://localhost:3100/r

@@ -114,6 +114,13 @@ Path aliases are `@registry/*` for registry source and `@/*` inside docs.
 
 ## Documentation writing
 
+- Consumer projects can use Bun, npm, pnpm, or Yarn 2 and later.
+- Put package-manager commands in shell code blocks, not inline text or lists.
+  Use the existing package-manager switcher. Keep CLI examples usable with all
+  four package managers. Save the selected manager in browser storage.
+  Keep the switcher usable when browser storage is unavailable.
+- Keep package-manager support explicit in machine-readable documentation.
+  The `/llms.txt` route uses `apps/docs/src/lib/plain-text.ts`.
 - Use ASD-STE100 Simplified Technical English for all documentation.
 - Use short sentences, active voice, and one topic per paragraph.
 - Keep procedural sentences to 20 words or fewer. Keep descriptive sentences

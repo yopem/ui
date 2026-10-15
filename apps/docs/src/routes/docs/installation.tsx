@@ -1,6 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router"
 
-import { CopyableCode } from "@/catalog/code-block"
 import { GuidePage } from "@/catalog/guide-content"
 import Content from "@/content/installation.mdx"
 import source from "@/content/installation.mdx?raw"
@@ -17,33 +16,13 @@ export const Route = createFileRoute("/docs/installation")({
   component: Installation,
 })
 
-function InstallationCommands() {
-  return (
-    <>
-      <CopyableCode
-        language="shellscript"
-        code="bunx --bun @yopem-ui/cli init"
-        title="Initialize project with CLI"
-      />
-      <CopyableCode
-        language="shellscript"
-        code="bunx --bun @yopem-ui/cli init --framework react-router"
-        title="Select framework with CLI"
-      />
-    </>
-  )
-}
-
-const installationComponents = { InstallationCommands }
-
 function Installation() {
   return (
     <GuidePage
       title="Installation"
-      description="Initialize supported frameworks with one CLI command."
+      description="Configure StyleX once, check your build, then add your first component."
       source={source}
       Content={Content}
-      components={installationComponents}
     />
   )
 }
