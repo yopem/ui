@@ -72,7 +72,7 @@ const styles = stylex.create({
     backgroundColor:
       "color-mix(in srgb, var(--popover), #000 calc(1% * max(0, var(--toast-index, 0))))",
     borderColor: tokens["--border"],
-    borderRadius: tokens["--radius-lg"],
+    borderRadius: tokens["--radius-md"],
     borderStyle: "solid",
     borderWidth: 1,
     boxShadow: "0 10px 15px -3px color-mix(in oklab, #000 5%, transparent)",
@@ -90,7 +90,7 @@ const styles = stylex.create({
     "--toast-scale": "calc(max(0, 1 - (var(--toast-index) * .1)))",
     "--toast-shrink": "calc(1 - var(--toast-scale))",
     "::before": {
-      borderRadius: "calc(var(--radius-lg, 0.625rem) - 1px)",
+      borderRadius: "calc(var(--radius-md) - 1px)",
       boxShadow: {
         default: "0 1px rgb(0 0 0 / 0.04)",
         [stylex.when.ancestor('[data-theme="dark"]', themeMarker)]:
@@ -263,12 +263,12 @@ const styles = stylex.create({
   anchoredTooltip: {
     borderRadius: tokens["--radius-md"],
     boxShadow: "0 4px 6px -1px color-mix(in oklab, #000 5%, transparent)",
-    "::before": { borderRadius: "calc(var(--radius-md, 0.5rem) - 1px)" },
+    "::before": { borderRadius: "calc(var(--radius-md) - 1px)" },
   },
   anchoredDefault: {
-    borderRadius: tokens["--radius-lg"],
+    borderRadius: tokens["--radius-md"],
     boxShadow: "0 10px 15px -3px color-mix(in oklab, #000 5%, transparent)",
-    "::before": { borderRadius: "calc(var(--radius-lg, 0.625rem) - 1px)" },
+    "::before": { borderRadius: "calc(var(--radius-md) - 1px)" },
   },
   tooltipContent: {
     paddingBlock: "0.25rem",

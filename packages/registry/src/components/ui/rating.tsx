@@ -19,7 +19,7 @@ const styles = stylex.create({
     backgroundColor: "transparent",
     borderStyle: "none",
     borderWidth: 0,
-    borderRadius: tokens["--radius-sm"],
+    borderRadius: tokens["--radius-md"],
     color: tokens["--muted-foreground"],
     cursor: { default: "pointer", "[data-disabled]": "not-allowed" },
     display: "inline-flex",

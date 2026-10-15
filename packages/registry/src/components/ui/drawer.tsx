@@ -264,45 +264,48 @@ const styles = stylex.create({
     "[data-nested-drawer-open]": { blockSize: "var(--height)" },
   },
   roundedBottom: {
-    borderStartEndRadius: "0.875rem",
-    borderStartStartRadius: "0.875rem",
+    borderStartEndRadius: "var(--radius-md)",
+    borderStartStartRadius: "var(--radius-md)",
     "::before": {
-      borderStartEndRadius: "calc(0.875rem - 1px)",
-      borderStartStartRadius: "calc(0.875rem - 1px)",
+      borderStartEndRadius: "calc(var(--radius-md) - 1px)",
+      borderStartStartRadius: "calc(var(--radius-md) - 1px)",
     },
   },
   roundedTop: {
-    borderEndEndRadius: "0.875rem",
-    borderEndStartRadius: "0.875rem",
+    borderEndEndRadius: "var(--radius-md)",
+    borderEndStartRadius: "var(--radius-md)",
     "::before": {
-      borderEndEndRadius: "calc(0.875rem - 1px)",
-      borderEndStartRadius: "calc(0.875rem - 1px)",
+      borderEndEndRadius: "calc(var(--radius-md) - 1px)",
+      borderEndStartRadius: "calc(var(--radius-md) - 1px)",
     },
   },
   roundedLeft: {
-    borderEndEndRadius: "0.875rem",
-    borderStartEndRadius: "0.875rem",
+    borderEndEndRadius: "var(--radius-md)",
+    borderStartEndRadius: "var(--radius-md)",
     "::before": {
-      borderEndEndRadius: "calc(0.875rem - 1px)",
-      borderStartEndRadius: "calc(0.875rem - 1px)",
+      borderEndEndRadius: "calc(var(--radius-md) - 1px)",
+      borderStartEndRadius: "calc(var(--radius-md) - 1px)",
     },
   },
   roundedRight: {
-    borderEndStartRadius: "0.875rem",
-    borderStartStartRadius: "0.875rem",
+    borderEndStartRadius: "var(--radius-md)",
+    borderStartStartRadius: "var(--radius-md)",
     "::before": {
-      borderEndStartRadius: "calc(0.875rem - 1px)",
-      borderStartStartRadius: "calc(0.875rem - 1px)",
+      borderEndStartRadius: "calc(var(--radius-md) - 1px)",
+      borderStartStartRadius: "calc(var(--radius-md) - 1px)",
     },
   },
   insetPopup: {
     "::before": { display: "none" },
     "@media (min-width: 640px)": {
       borderColor: tokens["--border"],
-      borderRadius: "0.875rem",
+      borderRadius: "var(--radius-md)",
       borderStyle: "solid",
       borderWidth: 1,
-      "::before": { borderRadius: "calc(0.875rem - 1px)", display: "block" },
+      "::before": {
+        borderRadius: "calc(var(--radius-md) - 1px)",
+        display: "block",
+      },
       "::after": { backgroundColor: "transparent" },
     },
   },
@@ -338,7 +341,7 @@ const styles = stylex.create({
       "@media (min-width: 640px)": {
         default: null,
         ':is([data-slot="drawer-popup"][data-variant="inset"] [data-slot="drawer-footer"])':
-          "calc(0.875rem - 1px)",
+          "calc(var(--radius-md) - 1px)",
       },
     },
     borderEndStartRadius: {
@@ -346,7 +349,7 @@ const styles = stylex.create({
       "@media (min-width: 640px)": {
         default: null,
         ':is([data-slot="drawer-popup"][data-variant="inset"] [data-slot="drawer-footer"])':
-          "calc(0.875rem - 1px)",
+          "calc(var(--radius-md) - 1px)",
       },
     },
     justifyContent: {
@@ -421,7 +424,7 @@ const styles = stylex.create({
   menu: { display: "flex", flexDirection: "column", margin: "-0.5rem" },
   menuItem: {
     alignItems: "center",
-    borderRadius: tokens["--radius-sm"],
+    borderRadius: tokens["--radius-md"],
     color: tokens["--foreground"],
     cursor: "default",
     display: "flex",
@@ -461,7 +464,7 @@ const styles = stylex.create({
   },
   choiceItem: {
     alignItems: "center",
-    borderRadius: tokens["--radius-sm"],
+    borderRadius: tokens["--radius-md"],
     color: tokens["--foreground"],
     cursor: "default",
     display: "grid",

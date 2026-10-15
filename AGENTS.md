@@ -205,6 +205,8 @@ artifacts; docs dev, registry build, and registry typecheck regenerate API data.
   overrides for intentional native boundaries. Docs migration is separate from
   enabling this rule; do not globally suppress checks to hide new violations.
 
+Rounded components use md (12px) by default. Use xstyle to change corner radii. Use controlXstyle for Input and Textarea wrappers. Keep circular indicators and edge-attached corners intact.
+
 ## Design system foundations
 
 - Use neutral light and dark surfaces. Use semantic color pairs for text and
@@ -215,8 +217,8 @@ artifacts; docs dev, registry build, and registry typecheck regenerate API data.
   The font tokens specify these families. Load both fonts in the application.
 - Use `tokens["--spacing"]` as the spacing unit. Its default is `0.25rem`.
   Stack, VStack, and HStack use four spacing units by default.
-- Use radius tokens. The defaults are `0.375rem` (sm), `0.5rem` (md),
-  `0.625rem` (lg and base), and `0.875rem` (xl).
+- Use radius tokens. The defaults are `0.5rem` (sm), `0.75rem` (md),
+  `1rem` (lg), and `1.5rem` (xl).
 - Keep light and dark themes complete. Define theme values in
   `packages/registry/src/styles/tokens.stylex.ts`. Keep StyleX theme object
   spreads in that module. Keep the theme marker and root styles intact.
@@ -351,11 +353,11 @@ Button xl text uses `1.125rem` (18px) below 640px and `1rem` (16px) at 640px and
 | Container maximum width | `90rem` | 1440px |
 | Container inline padding | `1rem` (4 spacing units) | 16px |
 | Button coarse-pointer target minimum | `2.75rem` | 44px |
-| `--radius` | `0.625rem` | 10px |
-| `--radius-sm` | `0.375rem` | 6px |
-| `--radius-md` | `0.5rem` | 8px |
-| `--radius-lg` | `0.625rem` | 10px |
-| `--radius-xl` | `0.875rem` | 14px |
+| `--radius` | `0.75rem` | 12px |
+| `--radius-sm` | `0.5rem` | 8px |
+| `--radius-md` | `0.75rem` | 12px |
+| `--radius-lg` | `1rem` | 16px |
+| `--radius-xl` | `1.5rem` | 24px |
 
 A fluid Container uses full width without a maximum width.
 

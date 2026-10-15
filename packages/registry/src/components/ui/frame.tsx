@@ -9,7 +9,7 @@ const styles = stylex.create({
   root: {
     backgroundColor:
       "color-mix(in oklab, var(--muted, currentColor) 72%, transparent)",
-    borderRadius: "1rem",
+    borderRadius: "var(--radius-md)",
     display: "flex",
     flexDirection: "column",
     padding: "0.25rem",
@@ -19,7 +19,7 @@ const styles = stylex.create({
     backgroundClip: "padding-box",
     backgroundColor: tokens["--background"],
     borderColor: tokens["--border"],
-    borderRadius: tokens["--radius-xl"],
+    borderRadius: tokens["--radius-md"],
     borderStyle: "solid",
     borderWidth: 1,
     boxShadow: {

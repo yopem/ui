@@ -1,8 +1,7 @@
 "use client"
 
-// oxlint-disable jsx-a11y/prefer-tag-over-role -- Button group uses div+role=group for styling; fieldset not appropriate
-
 import type { StyleXComponentProps } from "@registry/lib/stylex"
+// oxlint-disable jsx-a11y/prefer-tag-over-role -- Button group uses div+role=group for styling; fieldset not appropriate
 import type { ComponentProps, ReactNode } from "react"
 
 import { mergeProps } from "@base-ui/react/merge-props"
@@ -19,7 +18,7 @@ import { clsx } from "clsx"
 export const groupItemStyles = stylex.create({
   item: {
     "--group-item-border-bottom-right-radius": {
-      default: tokens["--radius-lg"],
+      default: tokens["--radius-md"],
       ':is([data-slot="group"][data-orientation="horizontal"] > [data-slot]:not([data-slot="separator"]):not(:last-child)):not(:dir(rtl))': 0,
       ':is([data-slot="group"][data-orientation="vertical"] > [data-slot]:not([data-slot="separator"]):not(:last-child)):not(:dir(rtl))': 0,
       ':is([data-slot="group"][data-orientation="horizontal"] > [data-slot]:not([data-slot="separator"]):not(:has(~ [data-slot]))):not(:dir(rtl))':
@@ -34,7 +33,7 @@ export const groupItemStyles = stylex.create({
         tokens["--radius"],
     },
     "--group-item-border-bottom-left-radius": {
-      default: tokens["--radius-lg"],
+      default: tokens["--radius-md"],
       ':is([data-slot="group"][data-orientation="horizontal"] > [data-slot]:not([data-slot="separator"]):not(:last-child)):dir(rtl)': 0,
       ':is([data-slot="group"][data-orientation="vertical"] > [data-slot]:not([data-slot="separator"]):not(:last-child)):dir(rtl)': 0,
       ':is([data-slot="group"][data-orientation="horizontal"] > [data-slot]:not([data-slot="separator"]):not(:has(~ [data-slot]))):dir(rtl)':
@@ -59,7 +58,7 @@ export const groupItemStyles = stylex.create({
       ':is([data-slot="group"][data-orientation="horizontal"] > [data-slot]:not([data-slot="separator"]):not(:first-child)):not(:dir(rtl))': 0,
     },
     "--group-item-border-top-right-radius": {
-      default: tokens["--radius-lg"],
+      default: tokens["--radius-md"],
       ':is([data-slot="group"][data-orientation="horizontal"] > [data-slot]:not([data-slot="separator"]):not(:last-child)):not(:dir(rtl))': 0,
       ':is([data-slot="group"][data-orientation="vertical"] > [data-slot]:not([data-slot="separator"]):not(:first-child)):not(:dir(rtl))': 0,
       ':is([data-slot="group"][data-orientation="horizontal"] > [data-slot]:not([data-slot="separator"]):not(:has(~ [data-slot]))):not(:dir(rtl))':
@@ -74,7 +73,7 @@ export const groupItemStyles = stylex.create({
         tokens["--radius"],
     },
     "--group-item-border-top-left-radius": {
-      default: tokens["--radius-lg"],
+      default: tokens["--radius-md"],
       ':is([data-slot="group"][data-orientation="horizontal"] > [data-slot]:not([data-slot="separator"]):not(:last-child)):dir(rtl)': 0,
       ':is([data-slot="group"][data-orientation="vertical"] > [data-slot]:not([data-slot="separator"]):not(:first-child)):dir(rtl)': 0,
       ':is([data-slot="group"][data-orientation="horizontal"] > [data-slot]:not([data-slot="separator"]):not(:has(~ [data-slot]))):dir(rtl)':
@@ -104,64 +103,64 @@ export const groupItemStyles = stylex.create({
     zIndex: "var(--group-item-z-index)",
     "::before": {
       "--group-item-before-border-bottom-right-radius": {
-        default: "calc(var(--radius-lg) - 1px)",
+        default: "calc(var(--radius-md) - 1px)",
         ':is([data-slot="group"][data-orientation="horizontal"] > [data-slot]:has(~ [data-slot])):not(:dir(rtl))': 0,
         ':is([data-slot="group"][data-orientation="vertical"] > [data-slot]:has(~ [data-slot])):not(:dir(rtl))': 0,
         ':is([data-slot="group"][data-orientation="horizontal"] > [data-slot]:not([data-slot="separator"]):not(:has(~ [data-slot]))):not(:dir(rtl))':
-          "calc(var(--radius-lg, 0.625rem) - 1px)",
+          "calc(var(--radius-md, 0.75rem) - 1px)",
         ':is([data-slot="group"][data-orientation="vertical"] > [data-slot]:not([data-slot="separator"]):not(:has(~ [data-slot]))):not(:dir(rtl))':
-          "calc(var(--radius-lg, 0.625rem) - 1px)",
+          "calc(var(--radius-md, 0.75rem) - 1px)",
         ':is([data-slot="group"][data-orientation="horizontal"] > [data-slot] ~ [data-slot]):dir(rtl)': 0,
         ':is([data-slot="group"][data-orientation="vertical"] > [data-slot]:has(~ [data-slot])):dir(rtl)': 0,
         ':is([data-slot="group"][data-orientation="horizontal"] > [data-slot]:not([data-slot="separator"]):not( [data-slot] ~ [data-slot] )):dir(rtl)':
-          "calc(var(--radius-lg, 0.625rem) - 1px)",
+          "calc(var(--radius-md, 0.75rem) - 1px)",
         ':is([data-slot="group"][data-orientation="vertical"] > [data-slot]:not([data-slot="separator"]):not(:has(~ [data-slot]))):dir(rtl)':
-          "calc(var(--radius-lg, 0.625rem) - 1px)",
+          "calc(var(--radius-md, 0.75rem) - 1px)",
       },
       "--group-item-before-border-bottom-left-radius": {
-        default: "calc(var(--radius-lg) - 1px)",
+        default: "calc(var(--radius-md) - 1px)",
         ':is([data-slot="group"][data-orientation="horizontal"] > [data-slot]:has(~ [data-slot])):dir(rtl)': 0,
         ':is([data-slot="group"][data-orientation="vertical"] > [data-slot]:has(~ [data-slot])):dir(rtl)': 0,
         ':is([data-slot="group"][data-orientation="horizontal"] > [data-slot]:not([data-slot="separator"]):not(:has(~ [data-slot]))):dir(rtl)':
-          "calc(var(--radius-lg, 0.625rem) - 1px)",
+          "calc(var(--radius-md, 0.75rem) - 1px)",
         ':is([data-slot="group"][data-orientation="vertical"] > [data-slot]:not([data-slot="separator"]):not(:has(~ [data-slot]))):dir(rtl)':
-          "calc(var(--radius-lg, 0.625rem) - 1px)",
+          "calc(var(--radius-md, 0.75rem) - 1px)",
         ':is([data-slot="group"][data-orientation="horizontal"] > [data-slot] ~ [data-slot]):not(:dir(rtl))': 0,
         ':is([data-slot="group"][data-orientation="vertical"] > [data-slot]:has(~ [data-slot])):not(:dir(rtl))': 0,
         ':is([data-slot="group"][data-orientation="horizontal"] > [data-slot]:not([data-slot="separator"]):not( [data-slot] ~ [data-slot] )):not(:dir(rtl))':
-          "calc(var(--radius-lg, 0.625rem) - 1px)",
+          "calc(var(--radius-md, 0.75rem) - 1px)",
         ':is([data-slot="group"][data-orientation="vertical"] > [data-slot]:not([data-slot="separator"]):not(:has(~ [data-slot]))):not(:dir(rtl))':
-          "calc(var(--radius-lg, 0.625rem) - 1px)",
+          "calc(var(--radius-md, 0.75rem) - 1px)",
       },
       "--group-item-before-border-top-right-radius": {
-        default: "calc(var(--radius-lg) - 1px)",
+        default: "calc(var(--radius-md) - 1px)",
         ':is([data-slot="group"][data-orientation="horizontal"] > [data-slot]:has(~ [data-slot])):not(:dir(rtl))': 0,
         ':is([data-slot="group"][data-orientation="vertical"] > [data-slot] ~ [data-slot]):not(:dir(rtl))': 0,
         ':is([data-slot="group"][data-orientation="horizontal"] > [data-slot]:not([data-slot="separator"]):not(:has(~ [data-slot]))):not(:dir(rtl))':
-          "calc(var(--radius-lg, 0.625rem) - 1px)",
+          "calc(var(--radius-md, 0.75rem) - 1px)",
         ':is([data-slot="group"][data-orientation="vertical"] > [data-slot]:not([data-slot="separator"]):not( [data-slot] ~ [data-slot] )):not(:dir(rtl))':
-          "calc(var(--radius-lg, 0.625rem) - 1px)",
+          "calc(var(--radius-md, 0.75rem) - 1px)",
         ':is([data-slot="group"][data-orientation="horizontal"] > [data-slot] ~ [data-slot]):dir(rtl)': 0,
         ':is([data-slot="group"][data-orientation="vertical"] > [data-slot] ~ [data-slot]):dir(rtl)': 0,
         ':is([data-slot="group"][data-orientation="horizontal"] > [data-slot]:not([data-slot="separator"]):not( [data-slot] ~ [data-slot] )):dir(rtl)':
-          "calc(var(--radius-lg, 0.625rem) - 1px)",
+          "calc(var(--radius-md, 0.75rem) - 1px)",
         ':is([data-slot="group"][data-orientation="vertical"] > [data-slot]:not([data-slot="separator"]):not( [data-slot] ~ [data-slot] )):dir(rtl)':
-          "calc(var(--radius-lg, 0.625rem) - 1px)",
+          "calc(var(--radius-md, 0.75rem) - 1px)",
       },
       "--group-item-before-border-top-left-radius": {
-        default: "calc(var(--radius-lg) - 1px)",
+        default: "calc(var(--radius-md) - 1px)",
         ':is([data-slot="group"][data-orientation="horizontal"] > [data-slot]:has(~ [data-slot])):dir(rtl)': 0,
         ':is([data-slot="group"][data-orientation="vertical"] > [data-slot] ~ [data-slot]):dir(rtl)': 0,
         ':is([data-slot="group"][data-orientation="horizontal"] > [data-slot]:not([data-slot="separator"]):not(:has(~ [data-slot]))):dir(rtl)':
-          "calc(var(--radius-lg, 0.625rem) - 1px)",
+          "calc(var(--radius-md, 0.75rem) - 1px)",
         ':is([data-slot="group"][data-orientation="vertical"] > [data-slot]:not([data-slot="separator"]):not( [data-slot] ~ [data-slot] )):dir(rtl)':
-          "calc(var(--radius-lg, 0.625rem) - 1px)",
+          "calc(var(--radius-md, 0.75rem) - 1px)",
         ':is([data-slot="group"][data-orientation="horizontal"] > [data-slot] ~ [data-slot]):not(:dir(rtl))': 0,
         ':is([data-slot="group"][data-orientation="vertical"] > [data-slot] ~ [data-slot]):not(:dir(rtl))': 0,
         ':is([data-slot="group"][data-orientation="horizontal"] > [data-slot]:not([data-slot="separator"]):not( [data-slot] ~ [data-slot] )):not(:dir(rtl))':
-          "calc(var(--radius-lg, 0.625rem) - 1px)",
+          "calc(var(--radius-md, 0.75rem) - 1px)",
         ':is([data-slot="group"][data-orientation="vertical"] > [data-slot]:not([data-slot="separator"]):not( [data-slot] ~ [data-slot] )):not(:dir(rtl))':
-          "calc(var(--radius-lg, 0.625rem) - 1px)",
+          "calc(var(--radius-md, 0.75rem) - 1px)",
       },
       "--group-item-before-right": {
         default: 0,
@@ -258,7 +257,7 @@ const styles = stylex.create({
         "color-mix(in oklab, var(--input, currentColor) 64%, transparent)",
     },
     borderColor: tokens["--input"],
-    borderRadius: tokens["--radius-lg"],
+    borderRadius: tokens["--radius-md"],
     borderStyle: "solid",
     borderWidth: 1,
     color: tokens["--muted-foreground"],
@@ -279,7 +278,7 @@ const styles = stylex.create({
     transitionProperty: "box-shadow",
     whiteSpace: "nowrap",
     "::before": {
-      borderRadius: "calc(var(--radius-lg) - 1px)",
+      borderRadius: "calc(var(--radius-md) - 1px)",
       boxShadow: {
         default: "0 1px color-mix(in oklab, #000 6%, transparent)",
         [stylex.when.ancestor('[data-theme="dark"]', themeMarker)]:

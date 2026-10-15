@@ -24,7 +24,7 @@ const styles = stylex.create({
     backgroundClip: "padding-box",
     backgroundColor: tokens["--popover"],
     borderColor: tokens["--border"],
-    borderRadius: tokens["--radius-lg"],
+    borderRadius: tokens["--radius-md"],
     borderStyle: "solid",
     borderWidth: 1,
     boxShadow: "0 10px 15px -3px color-mix(in oklab, #000 5%, transparent)",
@@ -34,7 +34,7 @@ const styles = stylex.create({
     position: "relative",
     transformOrigin: "var(--transform-origin)",
     "::before": {
-      borderRadius: "calc(var(--radius-lg, 0.625rem) - 1px)",
+      borderRadius: "calc(var(--radius-md) - 1px)",
       boxShadow: {
         default: "0 1px rgb(0 0 0 / 0.04)",
         [stylex.when.ancestor('[data-theme="dark"]', themeMarker)]:
@@ -55,7 +55,7 @@ const styles = stylex.create({
   },
   item: {
     alignItems: "center",
-    borderRadius: tokens["--radius-sm"],
+    borderRadius: tokens["--radius-md"],
     color: tokens["--foreground"],
     cursor: "default",
     display: "flex",
@@ -76,7 +76,7 @@ const styles = stylex.create({
   },
   choiceItem: {
     alignItems: "center",
-    borderRadius: tokens["--radius-sm"],
+    borderRadius: tokens["--radius-md"],
     color: tokens["--foreground"],
     cursor: "default",
     display: "grid",
@@ -185,7 +185,7 @@ const styles = stylex.create({
   },
   subTrigger: {
     alignItems: "center",
-    borderRadius: tokens["--radius-sm"],
+    borderRadius: tokens["--radius-md"],
     color: tokens["--foreground"],
     display: "flex",
     fontSize: { default: "1rem", "@media (min-width: 640px)": "0.875rem" },

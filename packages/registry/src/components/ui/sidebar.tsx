@@ -190,7 +190,8 @@ const styles = stylex.create({
       default: null,
       "@media (min-width: 800px)": {
         default: null,
-        ':is([data-slot="sidebar"][data-variant="inset"] ~ *)': "0.75rem",
+        ':is([data-slot="sidebar"][data-variant="inset"] ~ *)':
+          tokens["--radius-md"],
       },
     },
     margin: {
@@ -329,7 +330,7 @@ const styles = stylex.create({
         "2rem",
     },
     alignItems: "center",
-    borderRadius: tokens["--radius-lg"],
+    borderRadius: tokens["--radius-md"],
     color: {
       default: tokens["--sidebar-foreground"],
       ":hover": tokens["--sidebar-accent-foreground"],
@@ -467,7 +468,7 @@ const styles = stylex.create({
   },
   skeletonIcon: {
     blockSize: "1rem",
-    borderRadius: tokens["--radius-lg"],
+    borderRadius: tokens["--radius-md"],
     inlineSize: "1rem",
   },
   widths: (sidebarWidth: string, sidebarWidthIcon: string) => ({
@@ -501,7 +502,7 @@ const styles = stylex.create({
   subButton: {
     alignItems: "center",
     blockSize: { default: "2rem", "@media (min-width: 640px)": "1.75rem" },
-    borderRadius: tokens["--radius-lg"],
+    borderRadius: tokens["--radius-md"],
     color: tokens["--sidebar-foreground"],
     display: "flex",
     gap: "0.5rem",

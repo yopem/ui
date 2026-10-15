@@ -23,7 +23,7 @@ const styles = stylex.create({
   compact: {
     display: { default: "block", "@media (min-width: 1280px)": "none" },
     backgroundColor: tokens["--muted"],
-    borderRadius: tokens["--radius-lg"],
+    borderRadius: tokens["--radius-md"],
     fontSize: "0.8125rem",
     marginBlockEnd: "2rem",
     padding: "0.875rem 1rem",

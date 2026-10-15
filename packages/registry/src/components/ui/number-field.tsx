@@ -45,7 +45,7 @@ const styles = stylex.create({
         "color-mix(in oklab, var(--input, currentColor) 32%, transparent)",
     },
     borderColor: tokens["--input"],
-    borderRadius: tokens["--radius-lg"],
+    borderRadius: tokens["--radius-md"],
     borderStyle: "solid",
     borderWidth: 1,
     boxShadow: "0 1px 2px color-mix(in oklab, #000 5%, transparent)",
@@ -109,12 +109,12 @@ const styles = stylex.create({
     },
   },
   decrement: {
-    borderEndStartRadius: "calc(var(--radius-large, .625rem) - 1px)",
-    borderStartStartRadius: "calc(var(--radius-large, .625rem) - 1px)",
+    borderEndStartRadius: "calc(var(--radius-md) - 1px)",
+    borderStartStartRadius: "calc(var(--radius-md) - 1px)",
   },
   increment: {
-    borderEndEndRadius: "calc(var(--radius-large, .625rem) - 1px)",
-    borderStartEndRadius: "calc(var(--radius-large, .625rem) - 1px)",
+    borderEndEndRadius: "calc(var(--radius-md) - 1px)",
+    borderStartEndRadius: "calc(var(--radius-md) - 1px)",
   },
   input: {
     backgroundColor: "transparent",

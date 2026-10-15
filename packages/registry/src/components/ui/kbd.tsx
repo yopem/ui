@@ -10,7 +10,7 @@ const styles = stylex.create({
     alignItems: "center",
     backgroundColor: tokens["--muted"],
     blockSize: "1.25rem",
-    borderRadius: "0.25rem",
+    borderRadius: "var(--radius-md)",
     color: tokens["--muted-foreground"],
     display: "inline-flex",
     fontFamily: tokens["--font-sans"],

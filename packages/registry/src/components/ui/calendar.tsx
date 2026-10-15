@@ -36,7 +36,7 @@ const styles = stylex.create({
   root: {
     "--calendar-range-start": 0,
     "--calendar-range-end": 0,
-    "--calendar-range-radius": tokens["--radius-lg"],
+    "--calendar-range-radius": tokens["--radius-md"],
     "--calendar-selected-background": tokens["--primary"],
     "--calendar-selected-color": tokens["--primary-foreground"],
     "--calendar-today-content": "none",
@@ -50,7 +50,7 @@ const styles = stylex.create({
   button: {
     alignItems: "center",
     blockSize: "var(--cell-size)",
-    borderRadius: tokens["--radius-lg"],
+    borderRadius: tokens["--radius-md"],
     color: tokens["--foreground"],
     display: "flex",
     fontSize: { default: "1rem", "@media (min-width: 640px)": "0.875rem" },
@@ -140,7 +140,7 @@ const styles = stylex.create({
   dropdownRoot: {
     blockSize: { default: "2.25rem", "@media (min-width: 640px)": "2rem" },
     borderColor: tokens["--input"],
-    borderRadius: tokens["--radius-lg"],
+    borderRadius: tokens["--radius-md"],
     borderStyle: "solid",
     borderWidth: 1,
     boxShadow: "0 1px 2px color-mix(in oklab, #000 5%, transparent)",

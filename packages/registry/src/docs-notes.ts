@@ -9,6 +9,7 @@ const usageNoteValues = {
     "Object queries accept min, max, and pointer (coarse or fine). Minimum widths are inclusive. Maximum widths are exclusive. Server snapshots return false. matchMedia change listeners update the client. They unsubscribe when the component unmounts or the query changes.",
   ],
   base: [
+    "Rounded surfaces use md (12px). Use xstyle to change corner radii. Use controlXstyle for Input and Textarea wrappers. Circular indicators keep their shape.",
     "Copy the base files. Configure StyleX in your bundler. Import styles/styles.css once. Native StyleX tokens provide light defaults. You do not need a provider, script, or font package.",
     "Change tokens in tokens.stylex.ts. Create complete light and dark themes in that file. The optional theme item saves light, dark, and system preferences. styles.css contains reset, reduced-motion policy, and required upstream viewport rules. It does not contain theme values.",
     "The documentation copies components into src/components/ui and uses the standard @/* alias for src. Keep this alias in TypeScript, your bundler, and StyleX.",

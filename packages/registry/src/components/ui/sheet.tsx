@@ -110,7 +110,7 @@ const styles = stylex.create({
     "::before": { display: "none" },
     "@media (min-width: 640px)": {
       borderColor: tokens["--border"],
-      borderRadius: "0.875rem",
+      borderRadius: "var(--radius-md)",
       borderStyle: "solid",
       borderWidth: 1,
     },
@@ -145,7 +145,7 @@ const styles = stylex.create({
       "@media (min-width: 640px)": {
         default: null,
         ':is([data-slot="sheet-popup"][data-variant="inset"] [data-slot="sheet-footer"])':
-          "calc(0.875rem - 1px)",
+          "calc(var(--radius-md) - 1px)",
       },
     },
     borderEndStartRadius: {
@@ -153,7 +153,7 @@ const styles = stylex.create({
       "@media (min-width: 640px)": {
         default: null,
         ':is([data-slot="sheet-popup"][data-variant="inset"] [data-slot="sheet-footer"])':
-          "calc(0.875rem - 1px)",
+          "calc(var(--radius-md) - 1px)",
       },
     },
     justifyContent: {

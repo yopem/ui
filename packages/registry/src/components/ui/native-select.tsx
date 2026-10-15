@@ -15,7 +15,7 @@ const styles = stylex.create({
       "[aria-invalid]":
         "color-mix(in oklab, var(--destructive, currentColor) 36%, transparent)",
     },
-    borderRadius: tokens["--radius-lg"],
+    borderRadius: tokens["--radius-md"],
     borderStyle: "solid",
     borderWidth: 1,
     color: tokens["--foreground"],

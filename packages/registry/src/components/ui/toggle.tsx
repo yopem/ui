@@ -11,7 +11,7 @@ import { clsx } from "clsx"
 const styles = stylex.create({
   root: {
     alignItems: "center",
-    borderRadius: tokens["--radius-lg"],
+    borderRadius: tokens["--radius-md"],
     borderStyle: "solid",
     borderWidth: 1,
     color: tokens["--foreground"],

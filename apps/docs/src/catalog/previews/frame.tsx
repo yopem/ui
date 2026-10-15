@@ -29,7 +29,7 @@ const styles = stylex.create({
   },
 })
 
-export function Preview() {
+export function Preview({ embedded = false }: { embedded?: boolean }) {
   return (
     <Frame xstyle={styles.frame}>
       <FrameHeader>
@@ -37,7 +37,10 @@ export function Preview() {
         <FrameDescription>Brief description about the section</FrameDescription>
       </FrameHeader>
       <FramePanel>
-        <Heading render={<h2>Section title</h2>} xstyle={styles.h2} />
+        <Heading
+          render={embedded ? <h4>Section title</h4> : <h2>Section title</h2>}
+          xstyle={styles.h2}
+        />
         <Text xstyle={styles.paragraph}>Section description</Text>
       </FramePanel>
       <FrameFooter>

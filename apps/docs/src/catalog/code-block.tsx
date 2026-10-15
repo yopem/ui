@@ -50,7 +50,7 @@ const primitiveStyles = stylex.create({
     borderColor: tokens["--border"],
     borderStyle: "solid",
     borderWidth: 1,
-    borderRadius: tokens["--radius-sm"],
+    borderRadius: tokens["--radius-md"],
     color: tokens["--accent-foreground"],
     cursor: "pointer",
     fontSize: "0.75rem",
@@ -82,7 +82,7 @@ const primitiveStyles = stylex.create({
     borderColor: tokens["--border"],
     borderStyle: "solid",
     borderWidth: 1,
-    borderRadius: tokens["--radius-lg"],
+    borderRadius: tokens["--radius-md"],
     marginBlock: "1.5rem",
 
     overflow: "hidden",
@@ -97,7 +97,7 @@ const primitiveStyles = stylex.create({
     borderColor: tokens["--border"],
     borderStyle: "solid",
     borderWidth: 1,
-    borderRadius: tokens["--radius-lg"],
+    borderRadius: tokens["--radius-md"],
     marginBlock: "1.5rem",
 
     overflow: "hidden",
@@ -114,7 +114,7 @@ const primitiveStyles = stylex.create({
     borderColor: tokens["--border"],
     borderStyle: "solid",
     borderWidth: 1,
-    borderRadius: tokens["--radius-sm"],
+    borderRadius: tokens["--radius-md"],
     color: tokens["--foreground"],
     cursor: {
       default: "pointer",

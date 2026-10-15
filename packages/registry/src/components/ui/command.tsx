@@ -49,7 +49,7 @@ const styles = stylex.create({
     backgroundClip: "padding-box",
     backgroundColor: tokens["--popover"],
     borderColor: tokens["--border"],
-    borderRadius: "0.875rem",
+    borderRadius: "var(--radius-md)",
     borderStyle: "solid",
     borderWidth: 1,
     boxShadow: "0 10px 15px -3px color-mix(in oklab, #000 5%, transparent)",
@@ -73,7 +73,7 @@ const styles = stylex.create({
     "::before": {
       backgroundColor:
         "color-mix(in oklab, var(--muted, transparent) 72%, transparent)",
-      borderRadius: "calc(0.875rem - 1px)",
+      borderRadius: "calc(var(--radius-md) - 1px)",
       boxShadow: {
         default: "0 1px rgb(0 0 0 / 0.04)",
         [stylex.when.ancestor('[data-theme="dark"]', themeMarker)]:
@@ -104,7 +104,7 @@ const styles = stylex.create({
     backgroundClip: "padding-box",
     backgroundColor: tokens["--popover"],
     borderColor: tokens["--border"],
-    borderRadius: "0.75rem 0.75rem 0 0",
+    borderRadius: "var(--radius-md) var(--radius-md) 0 0",
     borderStyle: "solid",
     borderWidth: 1,
     borderBlockEndWidth: 0,
@@ -114,8 +114,8 @@ const styles = stylex.create({
     minBlockSize: 0,
     position: "relative",
     "::before": {
-      borderStartEndRadius: "calc(0.75rem - 1px)",
-      borderStartStartRadius: "calc(0.75rem - 1px)",
+      borderStartEndRadius: "calc(var(--radius-md) - 1px)",
+      borderStartStartRadius: "calc(var(--radius-md) - 1px)",
       content: '""',
       inset: 0,
       pointerEvents: "none",
@@ -138,8 +138,8 @@ const styles = stylex.create({
     borderBlockStartColor: tokens["--border"],
     borderBlockStartStyle: "solid",
     borderBlockStartWidth: 1,
-    borderEndEndRadius: "calc(0.875rem - 1px)",
-    borderEndStartRadius: "calc(0.875rem - 1px)",
+    borderEndEndRadius: "calc(var(--radius-md) - 1px)",
+    borderEndStartRadius: "calc(var(--radius-md) - 1px)",
     color: tokens["--muted-foreground"],
     display: "flex",
     fontSize: "0.75rem",

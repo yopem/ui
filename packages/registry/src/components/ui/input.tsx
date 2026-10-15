@@ -31,7 +31,7 @@ const styles = stylex.create({
       ':has([aria-invalid="true"]):has(:focus-visible)':
         "color-mix(in oklab, var(--destructive, currentColor) 36%, transparent)",
     },
-    borderRadius: "var(--radius-lg)",
+    borderRadius: "var(--radius-md)",
     borderStyle: "solid",
     borderWidth: 1,
     boxShadow: {
@@ -64,7 +64,7 @@ const styles = stylex.create({
     position: "relative",
     transitionProperty: "box-shadow",
     "::before": {
-      borderRadius: "calc(var(--radius-lg) - 1px)",
+      borderRadius: "calc(var(--radius-md) - 1px)",
       boxShadow: {
         default:
           "var(--input-control-inset-shadow, var(--button-outline-inset-shadow))",

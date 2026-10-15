@@ -27,7 +27,7 @@ const styles = stylex.create({
     borderColor: tokens["--border"],
     borderStyle: "solid",
     borderWidth: 1,
-    borderRadius: tokens["--radius-lg"],
+    borderRadius: tokens["--radius-md"],
   },
   tableContainer: {
     // Let ScrollArea control scrolling instead of the Table wrapper.
@@ -101,7 +101,7 @@ const styles = stylex.create({
     paddingInline: "0.75rem",
     backgroundColor: tokens["--code"],
     color: tokens["--code-foreground"],
-    borderRadius: tokens["--radius-sm"],
+    borderRadius: tokens["--radius-md"],
   },
   code3: {
     fontFamily: tokens["--font-mono"],

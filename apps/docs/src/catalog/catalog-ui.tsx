@@ -18,7 +18,7 @@ const styles = stylex.create({
   scrollArea: {
     backgroundColor: tokens["--background"],
     borderColor: tokens["--border"],
-    borderRadius: tokens["--radius-lg"],
+    borderRadius: tokens["--radius-md"],
     borderStyle: "solid",
     borderWidth: 1,
     minBlockSize: "12rem",

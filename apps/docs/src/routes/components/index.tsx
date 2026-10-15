@@ -43,7 +43,7 @@ const styles = stylex.create({
   searchComponents: {
     backgroundColor: tokens["--background"],
     borderColor: tokens["--input"],
-    borderRadius: tokens["--radius-lg"],
+    borderRadius: tokens["--radius-md"],
     borderStyle: "solid",
     borderWidth: 1,
     color: tokens["--foreground"],
@@ -104,7 +104,7 @@ const styles = stylex.create({
   empty: {
     alignItems: "center",
     borderColor: tokens["--border"],
-    borderRadius: tokens["--radius-xl"],
+    borderRadius: tokens["--radius-md"],
     borderStyle: "dashed",
     borderWidth: 1,
     display: "flex",

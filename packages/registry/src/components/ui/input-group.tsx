@@ -1,8 +1,7 @@
 "use client"
 
-// oxlint-disable jsx-a11y/prefer-tag-over-role -- input-group uses div+role=group intentionally; fieldset semantics not appropriate
-
 import type { StyleXComponentProps } from "@registry/lib/stylex"
+// oxlint-disable jsx-a11y/prefer-tag-over-role -- input-group uses div+role=group intentionally; fieldset semantics not appropriate
 import type { ComponentProps, MouseEvent } from "react"
 
 import { Input, type InputProps } from "@registry/components/ui/input"
@@ -29,7 +28,7 @@ const styles = stylex.create({
       ':has(input[aria-invalid="true"], textarea[aria-invalid="true"]):has(input:focus-visible, textarea:focus-visible)':
         "color-mix(in oklab, var(--destructive, currentColor) 36%, transparent)",
     },
-    borderRadius: tokens["--radius-lg"],
+    borderRadius: tokens["--radius-md"],
     borderStyle: "solid",
     borderWidth: 1,
     boxShadow: {

@@ -41,7 +41,7 @@ const styles = stylex.create({
   pauseButton: {
     backgroundColor: tokens["--background"],
     borderColor: tokens["--input"],
-    borderRadius: tokens["--radius-sm"],
+    borderRadius: tokens["--radius-md"],
     borderStyle: "solid",
     borderWidth: 1,
     color: tokens["--foreground"],

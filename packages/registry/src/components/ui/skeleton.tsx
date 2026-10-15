@@ -25,7 +25,7 @@ const styles = stylex.create({
     },
     backgroundPosition: "0 0",
     backgroundSize: "200% 100%",
-    borderRadius: tokens["--radius-sm"],
+    borderRadius: tokens["--radius-md"],
   },
 })
 

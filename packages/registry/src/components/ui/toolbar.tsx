@@ -11,7 +11,7 @@ const styles = stylex.create({
   root: {
     backgroundColor: tokens["--card"],
     borderColor: tokens["--border"],
-    borderRadius: tokens["--radius-xl"],
+    borderRadius: tokens["--radius-md"],
     borderStyle: "solid",
     borderWidth: 1,
     color: tokens["--card-foreground"],

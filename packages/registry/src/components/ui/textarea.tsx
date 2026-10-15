@@ -19,7 +19,7 @@ const styles = stylex.create({
         "color-mix(in oklab, var(--input, currentColor) 32%, transparent)",
     },
     borderColor: tokens["--input"],
-    borderRadius: tokens["--radius-lg"],
+    borderRadius: tokens["--radius-md"],
     borderStyle: "solid",
     borderWidth: 1,
     boxShadow: "0 1px 2px color-mix(in oklab, #000 5%, transparent)",

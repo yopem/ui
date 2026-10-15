@@ -25,7 +25,10 @@ const items = [
 export function Preview() {
   return (
     <Combobox items={items}>
-      <ComboboxInput aria-label="Select a item" placeholder="Select a item…" />
+      <ComboboxInput
+        aria-label="Select a fruit"
+        placeholder="Select a fruit…"
+      />
       <ComboboxPopup>
         <ComboboxEmpty>No items found.</ComboboxEmpty>
         <ComboboxList>

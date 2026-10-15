@@ -153,7 +153,7 @@ Default Button and Input text uses \`1rem\` (16px) below 640px and \`0.875rem\` 
 Button xs text uses \`0.875rem\` (14px) below 640px and \`0.75rem\` (12px) at 640px and above.
 Button xl text uses \`1.125rem\` (18px) below 640px and \`1rem\` (16px) at 640px and above.
 
-Rounded components use md (12px) by default. Set radius to none, sm, md, lg, xl, or full. Consumer xstyle takes precedence. Input and Textarea apply radius to their wrappers before controlXstyle. Keep circular indicators and edge-attached corners intact.
+Rounded components use md (12px) by default. Use xstyle to change corner radii. Use controlXstyle for Input and Textarea wrappers. Keep circular indicators and edge-attached corners intact.
 
 ### Layout and radius sizes
 

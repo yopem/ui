@@ -13,7 +13,7 @@ const styles = stylex.create({
     backgroundClip: "padding-box",
     backgroundColor: tokens["--card"],
     borderColor: tokens["--border"],
-    borderRadius: "1rem",
+    borderRadius: "var(--radius-md)",
     borderStyle: "solid",
     borderWidth: 1,
     boxShadow: "var(--button-outline-shadow)",
@@ -22,7 +22,7 @@ const styles = stylex.create({
     flexDirection: "column",
     position: "relative",
     "::before": {
-      borderRadius: "calc(1rem - 1px)",
+      borderRadius: "calc(var(--radius-md) - 1px)",
       boxShadow: {
         default: "var(--button-outline-inset-shadow)",
         [stylex.when.ancestor('[data-theme="dark"]', themeMarker)]:
@@ -41,7 +41,7 @@ const styles = stylex.create({
   frame: {
     backgroundColor: tokens["--card"],
     borderColor: tokens["--border"],
-    borderRadius: "1rem",
+    borderRadius: "var(--radius-md)",
     borderStyle: "solid",
     borderWidth: 1,
     boxShadow: "var(--button-outline-shadow)",
@@ -52,7 +52,7 @@ const styles = stylex.create({
     "::before": {
       backgroundColor:
         "color-mix(in oklab, var(--muted, transparent) 72%, transparent)",
-      borderRadius: "calc(1rem - 1px)",
+      borderRadius: "calc(var(--radius-md) - 1px)",
       boxShadow: {
         default: "var(--button-outline-inset-shadow)",
         [stylex.when.ancestor('[data-theme="dark"]', themeMarker)]:

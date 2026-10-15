@@ -1,14 +1,14 @@
 "use client"
 
-import { Box } from "@registry/components/ui/box"
 import { Marquee } from "@registry/components/ui/marquee"
+import { Link } from "@tanstack/react-router"
 
 export function Preview() {
   return (
     <Marquee>
-      <Box render={<span />}>Design systems</Box>
-      <Box render={<span />}>Accessible components</Box>
-      <Box render={<span />}>Reusable source</Box>
+      <Link to="/docs/layout">Design systems</Link>
+      <Link to="/components">Accessible components</Link>
+      <Link to="/docs/getting-started">Reusable source</Link>
     </Marquee>
   )
 }

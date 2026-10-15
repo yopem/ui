@@ -454,6 +454,9 @@ earlier entries. Components merge consumer styles after defaults and variants.
   blocks.
 - Prefer logical properties such as `marginInline` and `inlineSize`.
 - Use semantic tokens for colors, spacing, typography, and radius.
+- Rounded surfaces default to md (12px). Use xstyle to change border radius. Use
+  controlXstyle for Input and Textarea wrappers. Keep circular indicators
+  intact.
 - Keep StyleX object shapes static. Do not add spreads or computed keys except
   supported StyleX `when` conditions.
 - Style owned slots explicitly. Do not add broad SVG or descendant selectors.

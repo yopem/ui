@@ -86,7 +86,7 @@ const styles = stylex.create({
     borderColor: tokens["--border"],
     borderStyle: "solid",
     borderWidth: 1,
-    borderRadius: tokens["--radius-lg"],
+    borderRadius: tokens["--radius-md"],
     paddingBlock: "1rem",
     paddingInline: "1rem",
     marginBlock: "1rem",
@@ -94,7 +94,7 @@ const styles = stylex.create({
   summary: {
     cursor: "pointer",
     fontWeight: 600,
-    borderRadius: tokens["--radius-sm"],
+    borderRadius: tokens["--radius-md"],
     outlineColor: {
       ":is(:focus-visible, [data-focus-visible])": tokens["--ring"],
     },

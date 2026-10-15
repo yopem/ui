@@ -42,7 +42,7 @@ const styles = stylex.create({
     borderRadius: {
       default: null,
       ':is([data-slot="table-container"][data-variant="card"] [data-slot="table-body"])':
-        tokens["--radius-xl"],
+        tokens["--radius-md"],
     },
     boxShadow: {
       default: null,

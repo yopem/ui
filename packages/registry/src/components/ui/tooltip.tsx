@@ -34,7 +34,7 @@ const styles = stylex.create({
     transformOrigin: "var(--transform-origin)",
     transitionProperty: "width, height, scale, opacity",
     "::before": {
-      borderRadius: "calc(var(--radius-md, 0.5rem) - 1px)",
+      borderRadius: "calc(var(--radius-md) - 1px)",
       boxShadow: {
         default: "0 1px rgb(0 0 0 / 0.04)",
         [stylex.when.ancestor('[data-theme="dark"]', themeMarker)]:

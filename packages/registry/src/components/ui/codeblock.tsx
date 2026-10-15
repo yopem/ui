@@ -13,7 +13,7 @@ const styles = stylex.create({
   root: {
     backgroundColor: tokens["--code"],
     borderColor: tokens["--border"],
-    borderRadius: tokens["--radius-lg"],
+    borderRadius: tokens["--radius-md"],
     borderStyle: "solid",
     borderWidth: 1,
     color: tokens["--code-foreground"],
@@ -33,7 +33,7 @@ const styles = stylex.create({
   button: {
     backgroundColor: "transparent",
     borderColor: tokens["--border"],
-    borderRadius: tokens["--radius-sm"],
+    borderRadius: tokens["--radius-md"],
     borderStyle: "solid",
     borderWidth: 1,
     color: tokens["--foreground"],
