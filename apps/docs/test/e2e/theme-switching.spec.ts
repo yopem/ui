@@ -1,5 +1,106 @@
 import { expect, test } from "@playwright/test"
 
+for (const { systemTheme, savedTheme, blockedStorage, expectedTheme } of [
+  {
+    systemTheme: "dark",
+    savedTheme: null,
+    blockedStorage: false,
+    expectedTheme: "dark",
+  },
+  {
+    systemTheme: "light",
+    savedTheme: "dark",
+    blockedStorage: false,
+    expectedTheme: "dark",
+  },
+  {
+    systemTheme: "dark",
+    savedTheme: "light",
+    blockedStorage: false,
+    expectedTheme: "light",
+  },
+  {
+    systemTheme: "dark",
+    savedTheme: "invalid",
+    blockedStorage: false,
+    expectedTheme: "dark",
+  },
+  {
+    systemTheme: "dark",
+    savedTheme: null,
+    blockedStorage: true,
+    expectedTheme: "dark",
+  },
+] as const) {
+  test(`theme paints before deferred scripts with system ${systemTheme}, saved ${savedTheme}, and blocked storage ${blockedStorage}`, async ({
+    page,
+  }, testInfo) => {
+    const errors: string[] = []
+    page.on("pageerror", (error) => errors.push(error.message))
+    await page.emulateMedia({ colorScheme: systemTheme })
+    await page.addInitScript(
+      ({ savedTheme, blockedStorage }) => {
+        if (blockedStorage) {
+          Object.defineProperty(window, "localStorage", {
+            get() {
+              throw new DOMException("Storage is blocked", "SecurityError")
+            },
+          })
+        } else if (savedTheme !== null) {
+          localStorage.setItem("yopem-ui-theme", savedTheme)
+        }
+      },
+      { savedTheme, blockedStorage },
+    )
+    await page.route("**/*", async (route) => {
+      const resourceType = route.request().resourceType()
+
+      if (resourceType === "script") return route.abort()
+
+      if (resourceType !== "document") return route.continue()
+
+      const response = await route.fetch()
+      const html = await response.text()
+
+      // Model Rocket Loader while hydration scripts remain unavailable.
+      const body = html.replace(
+        /<script\b([^>]*)>/gi,
+        (tag: string, attributes: string) => {
+          if (/\bdata-cfasync=["']false["']/i.test(attributes)) return tag
+
+          return `<script type="text/plain"${attributes.replace(/\stype\s*=/i, " data-deferred-type=")}>`
+        },
+      )
+
+      await route.fulfill({ response, body })
+    })
+
+    await page.goto("/components/button")
+
+    for (const visit of ["first-visit", "hard-reload"]) {
+      if (visit === "hard-reload") await page.reload()
+      await expect(page.locator("h1").first()).toBeVisible()
+      await expect(page.locator("html")).toHaveAttribute(
+        "data-theme",
+        expectedTheme,
+      )
+      await expect(page.locator("html")).toHaveCSS(
+        "color-scheme",
+        expectedTheme,
+      )
+      await expect(
+        page.getByRole("button", { name: /Switch to (dark|light) theme/ }),
+      ).toBeDisabled()
+      await testInfo.attach(`theme-${visit}`, {
+        body: await page.screenshot(),
+        contentType: "image/png",
+      })
+    }
+
+    expect(errors).toEqual([])
+  })
+}
+
 for (const path of [
   "/",
   "/components",

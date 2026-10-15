@@ -17,6 +17,7 @@ const usageNoteValues = {
   theme: [
     "Install base first. Copy the two optional theme runtime files and their use-event-callback hook dependency. Pass the same configuration to ThemeProvider, ThemeScript, and getRootThemeProps.",
     "Create custom themes with StyleX in tokens.stylex.ts. Call createThemeConfig in your existing root layout. You do not need another configuration file. Use the same storageKey and defaultTheme in the provider and initial-paint script.",
+    'ThemeScript must run before the first paint. Its data-cfasync="false" attribute prevents Cloudflare Rocket Loader from deferring theme selection.',
   ],
   spinner: [
     "Use Spinner beside a loading label or inside a pending action.",

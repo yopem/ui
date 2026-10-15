@@ -226,6 +226,7 @@ Use identical theme configuration in root props, ThemeScript, and ThemeProvider.
 Use matching \`defaultTheme\` and \`storageKey\` values in the script and provider.
 Pass the CSP nonce to ThemeScript when required.
 Keep \`theme.tsx\` server-safe. Only \`theme-provider.tsx\` is a client entry.
+Keep ThemeScript synchronous. Keep its \`data-cfasync="false"\` attribute to prevent Rocket Loader deferral.
 
 Preserve Base UI keyboard behavior, focus management, dismissal, and disabled states.
 Provide accessible names for controls. Keep visible focus styles and form labels.

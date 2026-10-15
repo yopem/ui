@@ -223,7 +223,8 @@ artifacts; docs dev, registry build, and registry typecheck regenerate API data.
 - Keep theme configuration identical in root props, ThemeScript, and
   ThemeProvider. Keep defaultTheme and storageKey values identical.
   Pass the CSP nonce to ThemeScript when required. Keep `theme.tsx` server-safe.
-  Only `theme-provider.tsx` is a client entry.
+  Only `theme-provider.tsx` is a client entry. Keep ThemeScript synchronous.
+  Keep its `data-cfasync="false"` attribute to prevent Rocket Loader deferral.
 - Use Field, Fieldset, Form, and Label for form structure. Use the matching
   input, selection, and validation components instead of new control systems.
 - Use Dialog, AlertDialog, Sheet, Drawer, Popover, Tooltip, PreviewCard, Menu,

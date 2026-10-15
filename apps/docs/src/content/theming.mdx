@@ -135,6 +135,9 @@ export function ThemePicker() {
 }
 ```
 
+ThemeScript must run before the first paint. It uses `data-cfasync="false"` to
+prevent Cloudflare Rocket Loader from deferring theme selection.
+
 ThemeScript and ThemeProvider must use the same defaults. If your Content
 Security Policy blocks inline scripts, pass its permitted per-request nonce to
 ThemeScript.

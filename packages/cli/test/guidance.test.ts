@@ -245,6 +245,8 @@ function checkGuidance(text: string, shared = false) {
     "controlXstyle",
     "className",
     "data-slot",
+    "ThemeScript",
+    'data-cfasync="false"',
     "Tailwind",
     "cva",
   ])
