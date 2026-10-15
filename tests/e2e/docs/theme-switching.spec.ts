@@ -117,7 +117,9 @@ for (const path of [
 
       page.on("pageerror", (error) => errors.push(error.message))
       await page.emulateMedia({ colorScheme: systemTheme })
-      await page.goto(path)
+      const response = await page.goto(path)
+      expect(response?.status(), path).toBe(200)
+      await expect(page.locator("h1").first()).toBeVisible()
       await expect(
         page.getByRole("button", { name: "Search documentation", exact: true }),
       ).toBeEnabled()

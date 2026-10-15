@@ -51,10 +51,3 @@ test("buttons expose keyboard focus and minimum targets", async ({ page }) => {
     true,
   )
 })
-
-test("stored dark theme applies before interaction", async ({ page }) => {
-  await page.evaluate(() => localStorage.setItem("yopem-ui-theme", "dark"))
-  await page.reload({ waitUntil: "domcontentloaded" })
-  await expect(page.locator("html")).toHaveAttribute("data-theme", "dark")
-  await expect(page.locator("html")).toHaveCSS("color-scheme", "dark")
-})

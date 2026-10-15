@@ -5,15 +5,8 @@
     "noEmit": true,
     "types": ["bun", "node"],
     "paths": {
-      "@registry/*": ["./src/*"],
-      "@docs/*": ["../../apps/docs/src/*"],
-      "@docs-test/*": ["../../apps/docs/test/*"]
+      "@registry/*": ["./src/*"]
     }
   },
-  "include": [
-    "src/**/*.ts",
-    "src/**/*.tsx",
-    "test/**/*.ts",
-    "playwright.config.ts"
-  ]
+  "include": ["src/**/*.ts", "src/**/*.tsx"]
 }

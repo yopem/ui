@@ -16,10 +16,10 @@ bun run lint            # oxlint
 bun run fmt              # format with oxfmt
 bun run fmt:check        # verify formatting
 bun run typecheck        # typecheck registry and docs
-bun run test             # CLI and Oxlint Bun suites through Turbo
-bun run test:e2e          # docs and registry Playwright suites through Turbo
-bun run test:a11y        # docs and registry accessibility suites through Turbo
-bun test packages/cli     # CLI tests without browsers
+bun run test             # CLI and Oxlint Bun tests from tests/
+bun run test:e2e          # docs and registry Playwright tests
+bun run test:a11y        # docs and registry accessibility tests
+bun test ./tests/cli      # CLI tests without browsers
 bun run build            # registry and docs production build
 ```
 
@@ -54,16 +54,15 @@ accessibility, and production build.
   - `src/theme/` — optional theme config, script, provider, and hook.
   - `src/build.ts` — writes unversioned and versioned registry items, docs, and
     JSON schemas, then copies them into the docs public directory.
-- `packages/cli/test/` — CLI tests using `bun:test`, without browser fixtures.
-- `packages/oxlint-plugin/test/` — lint rule tests using `bun:test`.
-- `apps/docs/test/e2e/` — documentation navigation, HTTP, and accessibility
-  checks. Config lives in `apps/docs/playwright.config.ts`.
-- `packages/registry/test/e2e/` — component interactions, previews, and
-  accessibility checks. Config lives in `packages/registry/playwright.config.ts`.
-- Tests, runner dependencies, and configuration belong to their owning
-  workspace. Root test scripts use Turborepo to run each phase in parallel.
-- Browser suites share the built docs fixture, using fixed test ports: docs
-  `3100`, registry `3101`. Do not change ports to bypass an occupied server.
+- `tests/cli/` — CLI tests using `bun:test`, without browser fixtures.
+- `tests/oxlint-plugin/` — lint rule tests using `bun:test`.
+- `tests/e2e/docs/` — documentation navigation, HTTP, and accessibility checks.
+- `tests/e2e/registry/` — component interactions, previews, and accessibility checks.
+- Tests and runner dependencies belong to the repository root.
+  `playwright.config.ts` provides one browser runner and one docs server.
+  `tests/tsconfig.json` checks all test files.
+- Browser tests use the built docs fixture on port `3100`.
+  Do not change ports to bypass an occupied server.
 
 Path aliases are `@registry/*` for registry source and `@/*` inside docs.
 

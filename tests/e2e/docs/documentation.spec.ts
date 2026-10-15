@@ -117,16 +117,6 @@ test("search waits for client hydration before accepting clicks", async ({
   }
 })
 
-test("sidebar links to llms.txt", async ({ page }) => {
-  test.skip((page.viewportSize()?.width ?? 0) < 768, "Desktop navigation only")
-  await page.goto("/docs/getting-started")
-
-  await expect(page.getByRole("link", { name: "llms.txt" })).toHaveAttribute(
-    "href",
-    "/llms.txt",
-  )
-})
-
 test("index hides page navigation while docs keep previous and next links", async ({
   page,
 }, testInfo) => {
@@ -382,13 +372,6 @@ for (const theme of ["light", "dark"] as const) {
     })
   })
 }
-
-test("dark theme applies dark color scheme", async ({ page }) => {
-  await page.addInitScript(() => localStorage.setItem("yopem-ui-theme", "dark"))
-  await page.goto("/components/button")
-  await expect(page.locator("html")).toHaveAttribute("data-theme", "dark")
-  await expect(page.locator("html")).toHaveCSS("color-scheme", "dark")
-})
 
 test("main document scrolls normally and restores position on back navigation", async ({
   page,

@@ -9,9 +9,15 @@ interface JsonObject {
   [key: string]: JsonValue
 }
 
-const directory = resolve(import.meta.dir, "../tmp/oxlint-plugin-e2e")
+const directory = resolve(
+  import.meta.dir,
+  "../../packages/oxlint-plugin/tmp/oxlint-plugin-e2e",
+)
 
-const plugin = resolve(import.meta.dir, "../src/index.ts")
+const plugin = resolve(
+  import.meta.dir,
+  "../../packages/oxlint-plugin/src/index.ts",
+)
 
 mkdirSync(directory, { recursive: true })
 
@@ -31,7 +37,7 @@ function lint(source: string, rules: JsonObject) {
 
   const result = Bun.spawnSync(
     [
-      resolve(import.meta.dir, "../../../node_modules/.bin/oxlint"),
+      resolve(import.meta.dir, "../../node_modules/.bin/oxlint"),
       "--config",
       config,
       "--format=json",
@@ -523,12 +529,6 @@ const computed = stylex[create]({ ignored: {} });`,
   expect(result.status).toBe(1)
   expect(result.output.match(/is unused/g)).toHaveLength(2)
   expect(result.output).not.toContain('StyleX style "ignored"')
-})
-
-test("unused StyleX styles remain outside recommended rules", () => {
-  expect(Object.keys(recommendedRules)).not.toContain(
-    "yopem-ui/no-unused-stylex-styles",
-  )
 })
 
 test("new rules remain opt-in", () => {

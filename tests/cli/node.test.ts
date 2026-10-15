@@ -1,3 +1,6 @@
+import type { JsonValue } from "@cli/install"
+
+import { isRecord, isString } from "@cli/install"
 import { expect, test } from "bun:test"
 import { spawnSync } from "node:child_process"
 import { createHash } from "node:crypto"
@@ -15,11 +18,7 @@ import { tmpdir } from "node:os"
 import { join, resolve } from "node:path"
 import { pathToFileURL } from "node:url"
 
-import type { JsonValue } from "@/install"
-
-import { isRecord, isString } from "@/install"
-
-const cliRoot = resolve(import.meta.dirname, "..")
+const cliRoot = resolve(import.meta.dirname, "../../packages/cli")
 
 function command(
   command: string,
@@ -380,9 +379,11 @@ if (typeof runCli !== "function") throw new Error("Missing runCli export")
     }
   } finally {
     await server.stop(true)
-    mkdirSync(join(cliRoot, "test-results"), { recursive: true })
+    mkdirSync(resolve(import.meta.dirname, "../../test-results/cli"), {
+      recursive: true,
+    })
     writeFileSync(
-      join(cliRoot, "test-results/node-packed.log"),
+      resolve(import.meta.dirname, "../../test-results/cli/node-packed.log"),
       logs.join("\n\n"),
     )
     rmSync(root, { recursive: true, force: true })

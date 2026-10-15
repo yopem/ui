@@ -1,3 +1,8 @@
+import type { InstallOptions } from "@cli/install"
+
+import { runCli } from "@cli/cli"
+import { initProject } from "@cli/init"
+import { installItem } from "@cli/install"
 import { afterAll, expect, test } from "bun:test"
 import { createHash } from "node:crypto"
 import {
@@ -12,15 +17,9 @@ import {
 import { tmpdir } from "node:os"
 import { basename, join, resolve } from "node:path"
 
-import type { InstallOptions } from "@/install"
-
-import { runCli } from "@/cli"
-import { initProject } from "@/init"
-import { installItem } from "@/install"
-
 import { snapshot } from "./files"
 
-const results = resolve(import.meta.dirname, "../test-results")
+const results = resolve(import.meta.dirname, "../../test-results/cli")
 
 const evidence: object[] = []
 
@@ -570,7 +569,7 @@ for (const state of ["new", "conflicts", "force"] as const) {
       const child = Bun.spawn(
         [
           "bun",
-          resolve(import.meta.dirname, "../src/cli.ts"),
+          resolve(import.meta.dirname, "../../packages/cli/src/cli.ts"),
           state === "new" ? "add" : "update",
           "--dry-run",
           "button",

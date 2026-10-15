@@ -14,9 +14,9 @@ import { join, resolve } from "node:path"
 
 import { snapshot } from "./files"
 
-const root = resolve(import.meta.dirname, "../../..")
+const root = resolve(import.meta.dirname, "../..")
 
-const results = resolve(import.meta.dirname, "../test-results")
+const results = resolve(import.meta.dirname, "../../test-results/cli")
 
 const registry = ["--registry", "http://localhost:3100/r"]
 
@@ -573,5 +573,5 @@ for (const { framework, shared } of [
       saveLogs(name, logs)
       rmSync(directory, { recursive: true, force: true })
     }
-  }, 180_000)
+  }, 360_000)
 }

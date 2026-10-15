@@ -1,3 +1,5 @@
+import { initProject } from "@cli/init"
+import { installItem } from "@cli/install"
 import { expect, spyOn, test } from "bun:test"
 import { createHash } from "node:crypto"
 import {
@@ -16,10 +18,7 @@ import * as fs from "node:fs/promises"
 import { tmpdir } from "node:os"
 import { basename, join, resolve } from "node:path"
 
-import { initProject } from "@/init"
-import { installItem } from "@/install"
-
-const results = resolve(import.meta.dirname, "../test-results")
+const results = resolve(import.meta.dirname, "../../test-results/cli")
 
 function integrity(content: string) {
   return `sha256-${createHash("sha256").update(content).digest("base64")}`

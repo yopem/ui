@@ -1,3 +1,4 @@
+import { runCli } from "@cli/cli"
 import { expect, setDefaultTimeout, test } from "bun:test"
 import {
   mkdtempSync,
@@ -9,9 +10,7 @@ import {
 import { tmpdir } from "node:os"
 import { join, resolve } from "node:path"
 
-import { runCli } from "@/cli"
-
-const repositoryRoot = resolve(import.meta.dirname, "../../..")
+const repositoryRoot = resolve(import.meta.dirname, "../..")
 
 setDefaultTimeout(30_000)
 
@@ -111,13 +110,13 @@ for (const framework of ["next", "astro", "tanstack-start"] as const) {
       expect(readFileSync(join(root, `apps/web/${config}`), "utf8")).toBe(
         configured,
       )
-      mkdirSync(resolve(import.meta.dirname, "../test-results"), {
+      mkdirSync(resolve(import.meta.dirname, "../../test-results/cli"), {
         recursive: true,
       })
       writeFileSync(
         resolve(
           import.meta.dirname,
-          `../test-results/${framework}-shared-config.txt`,
+          `../../test-results/cli/${framework}-shared-config.txt`,
         ),
         configured,
       )

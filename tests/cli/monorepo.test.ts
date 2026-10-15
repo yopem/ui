@@ -1,3 +1,5 @@
+import { runCli } from "@cli/cli"
+import { packageRunner } from "@cli/project"
 import { expect, setDefaultTimeout, test } from "bun:test"
 import { spawnSync } from "node:child_process"
 import {
@@ -11,10 +13,7 @@ import {
 import { tmpdir } from "node:os"
 import { join, resolve } from "node:path"
 
-import { runCli } from "@/cli"
-import { packageRunner } from "@/project"
-
-const repositoryRoot = resolve(import.meta.dirname, "../../..")
+const repositoryRoot = resolve(import.meta.dirname, "../..")
 
 setDefaultTimeout(30_000)
 
@@ -191,11 +190,14 @@ test("shared UI init, add, repeat and modified update stay workspace-local", asy
         "utf8",
       ),
     ).toBe(button)
-    mkdirSync(resolve(import.meta.dirname, "../test-results"), {
+    mkdirSync(resolve(import.meta.dirname, "../../test-results/cli"), {
       recursive: true,
     })
     writeFileSync(
-      resolve(import.meta.dirname, "../test-results/shared-vite-config.txt"),
+      resolve(
+        import.meta.dirname,
+        "../../test-results/cli/shared-vite-config.txt",
+      ),
       config,
     )
   } finally {

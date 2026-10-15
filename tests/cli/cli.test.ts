@@ -4,10 +4,13 @@ import { mkdtempSync, readFileSync, readdirSync, rmSync } from "node:fs"
 import { tmpdir } from "node:os"
 import { join, resolve } from "node:path"
 
-const cli = resolve(import.meta.dirname, "../src/cli.ts")
+const cli = resolve(import.meta.dirname, "../../packages/cli/src/cli.ts")
 
 const manifest: { version: string } = JSON.parse(
-  readFileSync(resolve(import.meta.dirname, "../package.json"), "utf8"),
+  readFileSync(
+    resolve(import.meta.dirname, "../../packages/cli/package.json"),
+    "utf8",
+  ),
 )
 
 for (const args of [[], ["--help"], ["-h"], ["--version"], ["-v"]]) {

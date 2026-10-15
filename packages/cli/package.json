@@ -50,7 +50,6 @@
     "access": "public"
   },
   "scripts": {
-    "test": "bun test ./test",
     "typecheck": "tsc --noEmit",
     "build": "bun build ./src/cli.ts ./src/init.ts ./src/install.ts ./src/project.ts --target=node --outdir=dist --external=typescript-api --external=semver && tsc --project tsconfig.build.json",
     "prepack": "bun run build"

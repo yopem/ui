@@ -1,0 +1,12 @@
+{
+  "extends": "@yopem/typescript-config/base",
+  "compilerOptions": {
+    "noEmit": true,
+    "types": ["bun", "node"],
+    "paths": {
+      "@registry/*": ["../packages/registry/src/*"],
+      "@cli/*": ["../packages/cli/src/*"]
+    }
+  },
+  "include": ["**/*.ts", "../playwright.config.ts"]
+}

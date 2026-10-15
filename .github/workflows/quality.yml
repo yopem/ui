@@ -23,6 +23,12 @@ jobs:
           filters: |
             docs:
               - 'apps/docs/**'
+              - 'packages/registry/**'
+              - 'tests/e2e/**'
+              - 'playwright.config.ts'
+              - 'tests/tsconfig.json'
+              - 'package.json'
+              - 'bun.lock'
       - uses: oven-sh/setup-bun@v2
       - uses: actions/setup-node@v4
         with:
@@ -38,6 +44,5 @@ jobs:
       - run: bun run test
       - run: bunx playwright install --with-deps chromium
         if: steps.changes.outputs.docs == 'true'
-        working-directory: apps/docs
       - run: bun run test:e2e && bun run test:a11y
         if: steps.changes.outputs.docs == 'true'

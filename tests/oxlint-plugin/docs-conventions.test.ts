@@ -3,7 +3,7 @@ import { spawnSync } from "node:child_process"
 import { mkdtempSync, rmSync, writeFileSync } from "node:fs"
 import { join, resolve } from "node:path"
 
-const root = resolve(import.meta.dirname, "../../..")
+const root = resolve(import.meta.dirname, "../..")
 
 const oxlint = join(root, "node_modules/.bin/oxlint")
 

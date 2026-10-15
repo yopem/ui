@@ -3,7 +3,7 @@ import { spawnSync } from "node:child_process"
 import { mkdirSync, writeFileSync } from "node:fs"
 import { resolve } from "node:path"
 
-const root = resolve(import.meta.dirname, "../../..")
+const root = resolve(import.meta.dirname, "../..")
 
 test("release dry run packs both public packages with resolved catalogs", () => {
   const result = spawnSync("bun", ["run", "release", "--dry-run"], {
@@ -13,11 +13,11 @@ test("release dry run packs both public packages with resolved catalogs", () => 
   })
 
   const output = `${result.stdout}${result.stderr}`
-  mkdirSync(resolve(import.meta.dirname, "../test-results"), {
+  mkdirSync(resolve(import.meta.dirname, "../../test-results/cli"), {
     recursive: true,
   })
   writeFileSync(
-    resolve(import.meta.dirname, "../test-results/release-dry-run.log"),
+    resolve(import.meta.dirname, "../../test-results/cli/release-dry-run.log"),
     output,
   )
   expect(result.status, output).toBe(0)

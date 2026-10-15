@@ -1,4 +1,7 @@
 {
   "extends": "@yopem/typescript-config/base",
-  "files": []
+  "compilerOptions": {
+    "types": ["node"]
+  },
+  "files": ["playwright.config.ts"]
 }

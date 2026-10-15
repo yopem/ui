@@ -1,3 +1,5 @@
+import { runCli } from "@cli/cli"
+import { installItem } from "@cli/install"
 import { afterAll, expect, test } from "bun:test"
 import { createHash } from "node:crypto"
 import {
@@ -12,10 +14,7 @@ import {
 import { tmpdir } from "node:os"
 import { join, resolve } from "node:path"
 
-import { runCli } from "@/cli"
-import { installItem } from "@/install"
-
-const results = resolve(import.meta.dirname, "../test-results")
+const results = resolve(import.meta.dirname, "../../test-results/cli")
 
 const logs: string[] = []
 

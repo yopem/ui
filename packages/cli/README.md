@@ -182,7 +182,7 @@ before you run CLI tests:
 ```sh
 bun run registry:build
 bun run --cwd packages/oxlint-plugin build
-bun test packages/cli
+bun test ./tests/cli
 ```
 
 Build the CLI before packing it:
@@ -197,32 +197,31 @@ The `prepack` script builds Node.js JavaScript in `dist`. Published packages
 contain this output, not TypeScript source. Repository development still uses
 Bun. End users do not run the build script.
 
-Run `bun test packages/cli/test/node.test.ts` for packed Node.js checks. These
-checks remove Bun from the CLI process PATH. They verify manager commands, dry
-runs, repeated installs, and real npm, pnpm, and Yarn installations. They
-require Node.js, all three package managers, and network access. Evidence is in
-`test-results/node-packed.log`.
+Run `bun test tests/cli/node.test.ts` for packed Node.js checks. These checks
+remove Bun from the CLI process PATH. They verify manager commands, dry runs,
+repeated installs, and real npm, pnpm, and Yarn installations. They require
+Node.js, all three package managers, and network access. Evidence is in
+`test-results/cli/node-packed.log`.
 
-The `bun run --cwd packages/cli test` command also runs the CLI suite. Tests use
-`bun:test`, not browsers. Packaged installation checks explicitly pass a local
-`--registry`. They serve registry JSON with Bun if port 3100 has no registry
-server.
+Run CLI tests from the repository root. Tests use `bun:test`, not browsers.
+Packaged installation checks explicitly pass a local `--registry`. They serve
+registry JSON with Bun if port 3100 has no registry server.
 
 Registry network tests use isolated local Bun servers. They cover successful
 workflows, header and body stalls, malformed JSON, and HTTP and network
 failures. Tests save command logs and configuration artifacts in
-`packages/cli/test-results/`.
+`test-results/cli/`.
 
-Run `bun test packages/cli/test/dry-run.test.ts` for real fixture project
-checks. These checks use local registries and complete file and directory
-snapshots. They cover dependency-call tracking, conflict and force previews,
-shared import prefixes, validation failures, and CLI argument rules. Tests save
-snapshot and preview evidence in `step5-dry-run.json` in the results directory.
+Run `bun test tests/cli/dry-run.test.ts` for real fixture project checks. These
+checks use local registries and complete file and directory snapshots. They
+cover dependency-call tracking, conflict and force previews, shared import
+prefixes, validation failures, and CLI argument rules. Tests save snapshot and
+preview evidence in `step5-dry-run.json` in the results directory.
 
-Run `bun test packages/cli/test/public.test.ts` for packed CLI production
-checks. These checks cover help, version matching, dry-run previews, init,
-Button installation, lint, and builds. They use Vite and Next.js App Router
-apps, including shared UI workspaces. Next.js checks require Node.js. Fixture
+Run `bun test tests/cli/public.test.ts` for packed CLI production checks. These
+checks cover help, version matching, dry-run previews, init, Button
+installation, lint, and builds. They use Vite and Next.js App Router apps,
+including shared UI workspaces. Next.js checks require Node.js. Fixture
 dependencies require network access. Tests verify build artifacts and compiled
 StyleX CSS. They save evidence in `packaged-*.log`, `packaged-*.html`, and
 `packaged-*.css`.

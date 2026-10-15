@@ -1,3 +1,5 @@
+import { initProject } from "@cli/init"
+import { installItem } from "@cli/install"
 import { expect, setDefaultTimeout, test } from "bun:test"
 import { spawnSync } from "node:child_process"
 import {
@@ -12,10 +14,7 @@ import {
 import { tmpdir } from "node:os"
 import { join, resolve } from "node:path"
 
-import { initProject } from "@/init"
-import { installItem } from "@/install"
-
-const repositoryRoot = resolve(import.meta.dirname, "../../..")
+const repositoryRoot = resolve(import.meta.dirname, "../..")
 
 setDefaultTimeout(30_000)
 

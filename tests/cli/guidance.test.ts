@@ -1,3 +1,5 @@
+import { runCli } from "@cli/cli"
+import { initProject } from "@cli/init"
 import { afterAll, beforeAll, expect, test } from "bun:test"
 import { createHash } from "node:crypto"
 import {
@@ -14,9 +16,6 @@ import { tmpdir } from "node:os"
 import { join, resolve } from "node:path"
 import * as ts from "typescript-api"
 
-import { runCli } from "@/cli"
-import { initProject } from "@/init"
-
 import { snapshot } from "./files"
 
 const begin = "<!-- BEGIN:yopem-ui-design -->"
@@ -25,9 +24,9 @@ const end = "<!-- END:yopem-ui-design -->"
 
 const evidence: object[] = []
 
-const results = resolve(import.meta.dirname, "../test-results")
+const results = resolve(import.meta.dirname, "../../test-results/cli")
 
-const packageRoot = resolve(import.meta.dirname, "..")
+const packageRoot = resolve(import.meta.dirname, "../../packages/cli")
 
 const packedRoot = mkdtempSync(join(tmpdir(), "yopem-guidance-packed-"))
 

@@ -1,3 +1,6 @@
+import { runCli } from "@cli/cli"
+import { initProject } from "@cli/init"
+import { installItem } from "@cli/install"
 import { afterAll, expect, test } from "bun:test"
 import { createHash } from "node:crypto"
 import {
@@ -10,15 +13,11 @@ import {
 import { tmpdir } from "node:os"
 import { join, resolve } from "node:path"
 
-import { runCli } from "@/cli"
-import { initProject } from "@/init"
-import { installItem } from "@/install"
-
 import { snapshot } from "./files"
 
 const evidence: object[] = []
 
-const results = resolve(import.meta.dirname, "../test-results")
+const results = resolve(import.meta.dirname, "../../test-results/cli")
 
 function item(
   name: string,
