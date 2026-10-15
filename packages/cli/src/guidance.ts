@@ -40,7 +40,7 @@ Font tokens specify these families. Load both fonts in the application.
 
 Use \`tokens["--spacing"]\` for spacing. Its default is \`0.25rem\`.
 Stack, VStack, and HStack use four spacing units by default.
-Use radius tokens: sm \`0.375rem\`, md \`0.5rem\`, lg and base \`0.625rem\`, xl \`0.875rem\`.
+Use radius tokens: sm \`0.5rem\`, md \`0.75rem\`, lg \`1rem\`, xl \`1.5rem\`.
 
 ### Color values
 
@@ -153,6 +153,8 @@ Default Button and Input text uses \`1rem\` (16px) below 640px and \`0.875rem\` 
 Button xs text uses \`0.875rem\` (14px) below 640px and \`0.75rem\` (12px) at 640px and above.
 Button xl text uses \`1.125rem\` (18px) below 640px and \`1rem\` (16px) at 640px and above.
 
+Rounded components use md (12px) by default. Set radius to none, sm, md, lg, xl, or full. Consumer xstyle takes precedence. Input and Textarea apply radius to their wrappers before controlXstyle. Keep circular indicators and edge-attached corners intact.
+
 ### Layout and radius sizes
 
 | Setting | Default value | Pixel equivalent |
@@ -160,11 +162,11 @@ Button xl text uses \`1.125rem\` (18px) below 640px and \`1rem\` (16px) at 640px
 | Container maximum width | \`90rem\` | 1440px |
 | Container inline padding | \`1rem\` (4 spacing units) | 16px |
 | Button coarse-pointer target minimum | \`2.75rem\` | 44px |
-| \`--radius\` | \`0.625rem\` | 10px |
-| \`--radius-sm\` | \`0.375rem\` | 6px |
-| \`--radius-md\` | \`0.5rem\` | 8px |
-| \`--radius-lg\` | \`0.625rem\` | 10px |
-| \`--radius-xl\` | \`0.875rem\` | 14px |
+| \`--radius\` | \`0.75rem\` | 12px |
+| \`--radius-sm\` | \`0.5rem\` | 8px |
+| \`--radius-md\` | \`0.75rem\` | 12px |
+| \`--radius-lg\` | \`1rem\` | 16px |
+| \`--radius-xl\` | \`1.5rem\` | 24px |
 
 A fluid Container uses full width without a maximum width.
 

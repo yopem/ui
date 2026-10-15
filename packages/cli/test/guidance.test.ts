@@ -300,10 +300,10 @@ function checkGuidance(text: string, shared = false) {
   }
 
   expect(sourceValue(tokenFile, "lightValues", "--spacing")).toBe("0.25rem")
-  expect(sourceValue(tokenFile, "lightValues", "--radius-sm")).toBe("0.375rem")
-  expect(sourceValue(tokenFile, "lightValues", "--radius-md")).toBe("0.5rem")
-  expect(sourceValue(tokenFile, "lightValues", "--radius-lg")).toBe("0.625rem")
-  expect(sourceValue(tokenFile, "lightValues", "--radius-xl")).toBe("0.875rem")
+  expect(sourceValue(tokenFile, "lightValues", "--radius-sm")).toBe("0.5rem")
+  expect(sourceValue(tokenFile, "lightValues", "--radius-md")).toBe("0.75rem")
+  expect(sourceValue(tokenFile, "lightValues", "--radius-lg")).toBe("1rem")
+  expect(sourceValue(tokenFile, "lightValues", "--radius-xl")).toBe("1.5rem")
 
   for (const units of [
     0, 0.5, 1, 1.5, 2, 3, 4, 5, 6, 8, 10, 12, 16, 20, 24, 32,
