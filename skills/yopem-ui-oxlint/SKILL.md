@@ -90,14 +90,18 @@ these repairs. Fix the source contract instead of weakening checks.
 
 ### Layout and semantic elements
 
-Use `Box render={<section />}` for sections, and preserve list tags through
-`render`. Use `Text` for paragraphs and `Heading render={<h1 />}` through h6 for
-headings. Use `Box render={<pre />}` for generic preformatted content. Codeblock
-adds a wrapper and toolbar; it cannot replace every native pre ref.
+Use `Box render={<section />}` for sections. Use List for ul and
+`List render={<ol />}` for ordered lists, with ListItem for li. Use Strong for
+importance and Figcaption inside `Box render={<figure />}` for figure captions.
+Use `Text` for paragraphs and `Heading render={<h1 />}` through h6 for headings.
+Use `Box render={<pre />}` for generic preformatted content. Codeblock adds a
+wrapper and toolbar; it cannot replace every native pre ref.
 
 The rule checks supported native tags regardless of styling or props. Native
 markup inside `render` is permitted. Native controls, tables, SVG, metadata,
 anchors, `strong`, and inline `code` are not default replacement targets.
+Component guidance also recommends List, ListItem, Strong, and Figcaption. These
+recommendations do not expand the rule's supported native tags.
 
 Use narrow file overrides for primitive implementations or non-DOM JSX
 renderers. A filename or `data-slot` does not create an automatic exemption. Do

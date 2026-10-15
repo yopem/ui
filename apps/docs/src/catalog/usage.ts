@@ -1,5 +1,118 @@
 // Standalone TSX files use the standard @ alias for src.
 const usageSnippetValues = {
+  "aspect-ratio": `"use client"
+
+import { AspectRatio } from "@/components/ui/aspect-ratio"
+import { Grid } from "@/components/ui/grid"
+import { Text } from "@/components/ui/text"
+import { tokens } from "@/styles/tokens.stylex"
+import * as stylex from "@stylexjs/stylex"
+
+const styles = stylex.create({
+  examples: {
+    alignItems: "start",
+    gap: \`calc(\${tokens["--spacing"]} * 4)\`,
+    gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
+    inlineSize: "24rem",
+    maxInlineSize: "100%",
+  },
+  label: {
+    color: tokens["--muted-foreground"],
+    fontSize: "0.75rem",
+    lineHeight: 1,
+  },
+  surface: {
+    alignItems: "center",
+    display: "flex",
+    justifyContent: "center",
+    backgroundColor: tokens["--muted"],
+    borderRadius: tokens["--radius-md"],
+  },
+  wide: { aspectRatio: 2 },
+})
+
+export function Preview() {
+  return (
+    <Grid xstyle={styles.examples}>
+      <AspectRatio xstyle={styles.surface}>
+        <Text xstyle={styles.label}>16:9</Text>
+      </AspectRatio>
+      <AspectRatio
+        ratio={1}
+        xstyle={styles.surface}
+      >
+        <Text xstyle={styles.label}>1:1</Text>
+      </AspectRatio>
+      <AspectRatio
+        ratio={0}
+        xstyle={styles.surface}
+      >
+        <Text xstyle={styles.label}>Fallback</Text>
+      </AspectRatio>
+      <AspectRatio
+        xstyle={[styles.surface, styles.wide]}
+      >
+        <Text xstyle={styles.label}>2:1</Text>
+      </AspectRatio>
+    </Grid>
+  )
+}
+`,
+  list: `"use client"
+
+import { List, ListItem } from "@/components/ui/list"
+import { Stack } from "@/components/ui/stack"
+
+export function Preview() {
+  return (
+    <Stack>
+      <List>
+        <ListItem>Field notebook</ListItem>
+        <ListItem>Water sample kit</ListItem>
+      </List>
+      <List render={<ol start={3} reversed />}>
+        <ListItem value={7}>Record observations.</ListItem>
+        <ListItem>Return equipment.</ListItem>
+      </List>
+    </Stack>
+  )
+}
+`,
+  strong: `"use client"
+
+import { Strong } from "@/components/ui/strong"
+import { Text } from "@/components/ui/text"
+
+export function Preview() {
+  return (
+    <Text>
+      <Strong>Keep the path clear.</Strong> Leave room for other visitors.
+    </Text>
+  )
+}
+`,
+  figcaption: `"use client"
+
+import { Box } from "@/components/ui/box"
+import { Figcaption } from "@/components/ui/figcaption"
+
+export function Preview() {
+  return (
+    <Box render={<figure />}>
+      <svg viewBox="0 0 240 80" width="100%" height="80">
+        <title>Route from the station to the observation point</title>
+        <path d="M20 60H100V20H220" fill="none" stroke="currentColor" />
+        <circle cx="20" cy="60" r="5" fill="currentColor" />
+        <circle cx="220" cy="20" r="5" fill="currentColor" />
+      </svg>
+      <Figcaption>
+        Survey route from the station to the observation point.
+      </Figcaption>
+    </Box>
+  )
+}
+`,
+
   "use-event-callback": `"use client"
 
 import { Button } from "@/components/ui/button"

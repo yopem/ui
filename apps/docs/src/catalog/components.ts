@@ -35,6 +35,10 @@ const compositionOverrides = new Map<
 const previewDescriptionValues = {
   "use-event-callback": "Stable handler reading the latest count",
   "use-media-query": "Live viewport breakpoint matches",
+  "aspect-ratio": "Default, square, fallback, and custom ratios",
+  list: "Unordered and reversed ordered lists",
+  strong: "Important text within a paragraph",
+  figcaption: "Route diagram with a caption",
   accordion: "Expandable sections",
   "absolute-center": "Centered overlay content",
   bleed: "Full-bleed content within padding",

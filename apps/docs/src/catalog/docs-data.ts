@@ -56,7 +56,7 @@ export const guidePages = [
     title: "Layout and typography",
     url: "/docs/layout",
     content:
-      "Choose semantic layout and typography components. Use Box, Flex, Stack, HStack, VStack, Grid, Center, Container, AbsoluteCenter, Bleed, Float, and Wrap. Use Link, Text, Blockquote, Em, Highlight, Mark, Prose, Codeblock, and Heading for content. Keep native elements and refs where required.",
+      "Choose semantic layout and typography components. Use Box, Flex, Stack, HStack, VStack, Grid, Center, Container, AbsoluteCenter, AspectRatio, Bleed, Float, and Wrap. Use Link, List, Text, Blockquote, Em, Strong, Figcaption, Highlight, Mark, Prose, Codeblock, and Heading for content. Keep native elements and refs where required.",
   },
   {
     title: "Styling with StyleX",

@@ -78,6 +78,8 @@ the same spelling. Read the required item's exports and compound parts.
 | Status, loading, completion, and measurements | `alert`, `toast`, `empty`, `spinner`, `skeleton`, `progress`, `meter`, `checkmark` |
 | Identity, metadata, and data                  | `avatar`, `badge`, `stat`, `table`, `kbd`                                          |
 | Content and control structure                 | `card`, `frame`, `group`, `separator`, `scroll-area`                               |
+| Media proportions, lists, and captions        | `aspect-ratio`, `list`, `figcaption`                                               |
+| Semantic importance                           | `strong`                                                                           |
 | Moving content                                | `marquee`                                                                          |
 
 Use framework links for application navigation. Native anchors remain valid.
@@ -244,14 +246,15 @@ uses that alias pattern: `DrawerContent` is not `DrawerPopup`.
 ## Build layouts with primitives
 
 All layout primitives accept native attributes, events, refs, `className`, and
-`xstyle`. Only Box supports `render`; the others render fixed div elements.
-There are no `gap`, `direction`, `align`, `columns`, `as`, or `asChild` props.
-Choose the closest layout primitive first. Use StyleX through `xstyle` only for
-layout requirements that its defaults and supported composition cannot meet.
+`xstyle`. Box and List support `render`; other layout primitives render fixed
+div elements. There are no `gap`, `direction`, `align`, `columns`, `as`, or
+`asChild` props. Choose the closest layout primitive first. Use StyleX through
+`xstyle` only for layout requirements that its defaults and supported
+composition cannot meet.
 
 | Primitive      | Default and purpose                                                                                                     |
 | -------------- | ----------------------------------------------------------------------------------------------------------------------- |
-| Box            | Generic div. Use `render` for sections, landmarks, lists, inline spans, or generic preformatted content.                |
+| Box            | Generic div. Use `render` for sections, landmarks, figures, inline spans, or generic preformatted content.              |
 | Flex           | Flex row; no gap or wrapping. Use for custom alignment and direction.                                                   |
 | Stack          | Flex column; children stretch; gap four spacing units.                                                                  |
 | VStack         | Flex column; children center across the column; gap four spacing units.                                                 |
@@ -264,6 +267,16 @@ layout requirements that its defaults and supported composition cannot meet.
 | Float          | Absolute corner/edge placement in a positioned parent. Default `placement="top-end"`; z-index 1.                        |
 | Wrap           | Flex row with wrapping, centered cross-axis alignment, and a two-unit gap.                                              |
 
+AspectRatio renders a div with CSS `aspectRatio`. Its optional numeric `ratio`
+defaults to `16 / 9`. Nonpositive and nonfinite values use the default. It does
+not clip or automatically size children. Set child dimensions through their own
+attributes or styles when needed.
+
+Import List and ListItem from `@/components/ui/list`. List renders ul by
+default. Use `List render={<ol start={3} reversed />}` for ordered lists through
+Base UI `useRender`. Keep native `start` and `reversed` attributes on ol.
+ListItem renders li. Neither component has an `ordered` or `as` prop.
+
 Float placements combine `top`, `middle`, or `bottom` with `start`, `center`, or
 `end`, such as `bottom-start`. Start/end follow text direction. Float does not
 move badges halfway outside the parent automatically.
@@ -274,8 +287,8 @@ leaves the other axis unspecified.
 
 Preserve semantic HTML with Box around fixed layout elements. Put labels,
 landmark attributes, and tag-specific refs on the correct rendered element. Keep
-native controls, tables, metadata, SVG, custom elements, `strong`, and inline
-`code` where no equivalent applies. Do not wrap primitive internals recursively.
+native controls, tables, metadata, SVG, custom elements, and inline `code` where
+no equivalent applies. Do not wrap primitive internals recursively.
 
 ### Spacing and responsive layout
 
@@ -372,6 +385,8 @@ Heading supports `render`. Do not invent `size`, `weight`, `level`, `as`, or
 | Heading    | h2 by default; line height `1.25`, weight 600, zero margin. Use `render={<h1 />}` through h6.                                   |
 | Blockquote | Block quotation; italic, muted foreground, line height `1.65`, inline-start border. Native `cite` does not display attribution. |
 | Em         | Inline semantic stress with italic text; inherits font size, weight, and line height.                                           |
+| Strong     | Semantic strong; weight 600; inherits surrounding font family, size, line height, and color.                                    |
+| Figcaption | Semantic figcaption; muted text, `0.875rem` font size, line height `1.5`.                                                       |
 | Mark       | Inline marked text; accent surface/foreground pair and small radius.                                                            |
 | Highlight  | Inline span; required string `query`; wraps matching text with Mark.                                                            |
 | Prose      | Div with maximum width `68ch` and line height `1.7`; no automatic descendant styling or content spacing.                        |
@@ -388,8 +403,13 @@ Heading supports `render`. Do not invent `size`, `weight`, `level`, `as`, or
 
 Choose heading levels from document structure, not visual size. A Text paragraph
 must not contain headings, other paragraphs, layout containers, or Codeblock.
-Keep block content inside Prose or layout primitives. Native `strong` and inline
-`code` remain valid. Text inside Prose keeps its own typography defaults.
+Keep block content inside Prose or layout primitives. Use Strong for semantic
+importance. Native inline `code` remains valid. Text inside Prose keeps its own
+typography defaults.
+
+Place Figcaption inside `Box render={<figure />}` with its associated content.
+There is no Figure primitive. Strong and Figcaption accept native attributes,
+refs, `className`, and `xstyle`; neither supports `render`.
 
 Highlight matches literal substrings without case sensitivity, including within
 supplied child elements. It does not split the query into terms or match across

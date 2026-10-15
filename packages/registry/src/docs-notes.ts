@@ -56,6 +56,19 @@ const usageNoteValues = {
     "Use Frame to group FramePanel sections with a shared FrameHeader and FrameFooter.",
     "FrameTitle and FrameDescription label the group. Keep interactive controls inside the panels rather than making the entire frame clickable.",
   ],
+  "aspect-ratio": [
+    "AspectRatio renders a full-width div with native CSS aspect-ratio. The default ratio is 16/9. Nonpositive and nonfinite ratios use the default. Content is not clipped. Use xstyle to override the ratio or width.",
+  ],
+  list: [
+    "List renders ul by default. Use render={<ol />} for an ordered list. Compose ListItem children inside either list. Native ordered-list attributes include start, reversed, and type. ListItem supports value. Native attributes, events, refs, className, and xstyle remain available.",
+    "List supplies markers, zero margins, and six spacing units of inline-start padding. ListItem adds no visual defaults. Use xstyle to change list spacing or markers.",
+  ],
+  strong: [
+    "Strong renders native strong text for semantic importance. It inherits surrounding typography and color, with weight 600. Use xstyle to override these defaults.",
+  ],
+  figcaption: [
+    "Place Figcaption first or last inside a native figure. It uses the muted foreground and sans font tokens, 0.875rem text, 1.5 line height, and zero margins. Use xstyle to override these defaults.",
+  ],
   box: [
     "Start with Box for generic containers. It renders a div by default. The global reset sets border-box sizing and zero minimum inline size. It adds no padding, border, or background. Use an element or callback with the Base UI render prop for composition. Put element-specific attributes, handlers, and refs on the rendered element.",
     "Use xstyle for StyleX overrides and className for external CSS integration. Native attributes and refs follow the selected tag, including input size, image dimensions, and meta content.",

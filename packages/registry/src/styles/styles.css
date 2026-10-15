@@ -62,8 +62,8 @@
     appearance: button;
   }
 
-  ol,
-  ul,
+  ol:not([data-slot="list"]),
+  ul:not([data-slot="list"]),
   menu {
     list-style: none;
   }

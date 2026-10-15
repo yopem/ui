@@ -11,6 +11,34 @@ interface Definition {
 
 const definitions: Definition[] = [
   {
+    api: ["AspectRatioProps", "AspectRatio"],
+    categories: ["layout"],
+    description: "Sets a native aspect ratio on a full-width div.",
+    name: "aspect-ratio",
+    title: "AspectRatio",
+  },
+  {
+    api: ["ListProps", "List", "ListItemProps", "ListItem"],
+    categories: ["typography"],
+    description: "Renders semantic lists with native list items.",
+    name: "list",
+    title: "List",
+  },
+  {
+    api: ["StrongProps", "Strong"],
+    categories: ["typography"],
+    description: "Marks text with semantic importance and semibold weight.",
+    name: "strong",
+    title: "Strong",
+  },
+  {
+    api: ["FigcaptionProps", "Figcaption"],
+    categories: ["typography"],
+    description: "Renders a muted caption for a native figure.",
+    name: "figcaption",
+    title: "Figcaption",
+  },
+  {
     api: ["BoxElement", "BoxProps", "Box"],
     categories: ["layout"],
     description:
@@ -171,7 +199,7 @@ const definitions: Definition[] = [
 export const layoutItems: SourceItem[] = definitions.map(
   ({ api, categories, description, name, registryDependencies, title }) => ({
     categories,
-    dependencies: ["box", "heading", "link"].includes(name)
+    dependencies: ["box", "heading", "link", "list"].includes(name)
       ? ["@base-ui/react@^1.7.0"]
       : [],
     description,

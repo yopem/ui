@@ -20,6 +20,10 @@ test("machine-readable documentation exposes formats and public resources", asyn
   for (const [url, contentType] of [
     ["/components.md", "text/markdown"],
     ["/components/button.md", "text/markdown"],
+    ["/components/aspect-ratio.md", "text/markdown"],
+    ["/components/list.md", "text/markdown"],
+    ["/components/strong.md", "text/markdown"],
+    ["/components/figcaption.md", "text/markdown"],
     ["/docs/installation.md", "text/markdown"],
     ["/docs/styling.md", "text/markdown"],
     ["/docs/lint.md", "text/markdown"],
@@ -50,6 +54,10 @@ test("machine-readable documentation exposes formats and public resources", asyn
 
   for (const path of [
     "/components/button.md",
+    "/components/aspect-ratio.md",
+    "/components/list.md",
+    "/components/strong.md",
+    "/components/figcaption.md",
     "/docs/cli.md",
     "/docs/layout.md",
     "/docs/theming.md",

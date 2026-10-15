@@ -2,6 +2,7 @@ import { catalog } from "./components"
 
 const layoutSlugs = new Set([
   "absolute-center",
+  "aspect-ratio",
   "bleed",
   "box",
   "center",
@@ -20,12 +21,15 @@ const typographySlugs = new Set([
   "blockquote",
   "codeblock",
   "em",
+  "figcaption",
   "heading",
   "highlight",
   "kbd",
   "link",
+  "list",
   "mark",
   "prose",
+  "strong",
   "text",
 ])
 

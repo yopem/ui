@@ -176,7 +176,7 @@ artifacts; docs dev, registry build, and registry typecheck regenerate API data.
   children, elements with refs/events, and prop spreads. Preserve all native
   attributes, keyboard behavior, accessible semantics, and ref types.
 - Start with Box (div by default, border-box sizing, minimum inline size zero).
-  Use `Box render={<section />}` for semantic landmarks, lists, inline spans, and generic preformatted
+  Use `Box render={<section />}` for semantic landmarks, inline spans, and generic preformatted
   content. Do not replace semantic elements with an unqualified div.
 - Choose Flex for custom direction/alignment; Stack or VStack for columns with
   four spacing units; HStack for rows with centered cross-axis alignment and four
@@ -185,10 +185,19 @@ artifacts; docs dev, registry build, and registry typecheck regenerate API data.
   width), AbsoluteCenter within a positioned parent, Bleed to extend into inline
   padding, Float over a parent's corner, and Wrap for wrapping rows. Customize
   layout through `xstyle`, not native wrappers with duplicated layout styles.
+- Use AspectRatio for a div with CSS `aspectRatio`. Its optional numeric `ratio` defaults to `16 / 9`.
+  Nonpositive and nonfinite ratios use the default. It does not clip or automatically size children.
+- Use List for unordered lists and `List render={<ol />}` for ordered lists through Base UI `useRender`.
+  Put native `start` and `reversed` attributes on the rendered ol.
+  Use ListItem for li elements. Both exports come from the `list` module.
+- AspectRatio, List, ListItem, Strong, and Figcaption accept `xstyle`, `className`, native attributes, events, and refs.
 - Use Text for paragraphs with token-based typography defaults and `xstyle`
   overrides. Use Heading (`h2` by default) with `render={<h1 />}` through `h6`
   for semantic levels with different default sizes.
-  Use Blockquote for long quotations, Em for emphasis, and Mark for marked text.
+  Use Blockquote for long quotations, Em for emphasis, Strong for importance, and Mark for marked text.
+  Strong renders strong with weight 600 and inherits surrounding typography.
+  Use Figcaption inside `Box render={<figure />}` for figure captions; there is no Figure primitive.
+  Figcaption renders figcaption with muted text, `0.875rem` font size, and `1.5` line height.
   Choose Highlight for matching words and Prose for readable long-form content.
 - Use Codeblock intentionally for code displays. Its div wrapper, toolbar, and
   internal pre mean it cannot blindly replace a native pre or its ref/events.
@@ -196,11 +205,12 @@ artifacts; docs dev, registry build, and registry typecheck regenerate API data.
   remain valid for native navigation/downloads. Do not require registry Link or
   apply its default styling contracts to framework links.
 - Native controls, tables, document metadata, SVG, custom elements, and text tags
-  without an equivalent (such as strong and inline code) remain valid. Keep
+  without an equivalent (such as inline code) remain valid. Keep
   native markup inside primitive implementations and non-DOM JSX renderers;
   exempt those files in lint configuration rather than recursive wrappers.
 - The recommended `prefer-layout-primitives` rule checks supported native tags
-  regardless of their props; it does not infer layout intent from CSS. Use file
+  regardless of their props; it does not infer layout intent from CSS.
+  Component selection guidance does not expand the rule's supported native tags. Use file
   overrides for intentional native boundaries. Docs migration is separate from
   enabling this rule; do not globally suppress checks to hide new violations.
 

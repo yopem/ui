@@ -7,10 +7,11 @@
 
 Start with Box when you need a wrapper. Use Stack for vertical groups and HStack
 for horizontal groups. Use Flex for custom alignment and Grid for columns.
-Container limits the width of page content and centers it. Use Text and Heading
-for semantic text instead of a generic Box. Use TanStack Router Link for
-application navigation. Registry Link is optional. Select a component below to
-see a live preview. Copy its source as necessary.
+Container limits the width of page content and centers it. Use AspectRatio to
+reserve space for media. Use List and ListItem for ordered or unordered lists.
+Use Text and Heading for semantic text instead of a generic Box. Use TanStack
+Router Link for application navigation. Registry Link is optional. Select a
+component below to see a live preview. Copy its source as necessary.
 
 The global reset sets border-box sizing and zero minimum inline size for all
 elements and pseudo-elements. Box adds no padding, border, or background.
@@ -24,8 +25,9 @@ sizes are h1 2.25rem, h2 1.5rem, h3 1.25rem, h4 1.125rem, h5 1rem, and h6
 components. Other tags use the h2 size. Use `xstyle` to override typography.
 
 Em, Mark, and Highlight inherit surrounding font size, font family, weight, and
-line height. Blockquote keeps its border, italic style, muted color, and
-spacing. Prose keeps its readable width and 1.7 line height.
+line height. Strong marks important text with weight 600. Figcaption provides a
+muted caption for a figure. Blockquote keeps its border, italic style, muted
+color, and spacing. Prose keeps its readable width and 1.7 line height.
 
 - [Box](/components/box): Uses `div` by default. The `render` prop selects a
   semantic element with tag-specific events and refs. The global reset sets box
@@ -45,6 +47,8 @@ spacing. Prose keeps its readable width and 1.7 line height.
   maximum width and padding.
 - [Absolute Center](/components/absolute-center): Center content within a
   positioned parent.
+- [Aspect Ratio](/components/aspect-ratio): Reserve space with a width-to-height
+  ratio. The default is 16:9. Invalid ratios use the default.
 - [Bleed](/components/bleed): Extend content into a parent's inline padding.
 - [Float](/components/float): Position content over a parent's corner.
 - [Wrap](/components/wrap): Arranges items in rows that wrap.
@@ -54,6 +58,10 @@ spacing. Prose keeps its readable width and 1.7 line height.
   defaults and xstyle overrides.
 - [Blockquote](/components/blockquote): Long-form quotation.
 - [Em](/components/em): Emphasized text.
+- [Strong](/components/strong): Important text.
+- [Figcaption](/components/figcaption): Caption inside a figure.
+- [List](/components/list): Unordered list by default. Use ListItem for each
+  item. Use `render={<ol />}` for an ordered list.
 - [Highlight](/components/highlight): Highlight matching words.
 - [Mark](/components/mark): Marked text.
 - [Prose](/components/prose): Readable long-form content.
@@ -78,6 +86,17 @@ Link uses native navigation by default. Use TanStack Router Link directly for
 application navigation. You can use native anchors and framework links. You do
 not need to wrap them in registry Link. If you use registry Link, pass a
 framework Link through `render` to keep framework navigation.
+
+List uses `ul` by default. Use `render={<ol start={3} reversed />}` for a
+reversed ordered list. Set `value` on ListItem to change an ordered item's
+number.
+
+Place Strong inside text to mark importance. Place Figcaption first or last
+inside a figure. Use `Box render={<figure />}` to keep figure semantics.
+
+AspectRatio uses `ratio={16 / 9}` by default. Zero, negative, and non-finite
+ratios use the default. Use `xstyle` to change `aspectRatio`. Keep content
+within the reserved space.
 
 ### Semantic components
 

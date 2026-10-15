@@ -199,13 +199,23 @@ Preserve semantic elements, native attributes, events, and ref types.
 - Use AbsoluteCenter inside a positioned parent.
 - Use Bleed to extend into inline padding. Use Float over a parent's corner.
 - Use Wrap for wrapping rows. Customize layout with \`xstyle\`.
+- Use AspectRatio for a div with CSS \`aspectRatio\`. Its optional numeric \`ratio\` defaults to \`16 / 9\`.
+- Nonpositive and nonfinite ratios use the default. AspectRatio does not clip or automatically size children.
+- Use List for unordered lists. Use \`List render={<ol />}\` for ordered lists through Base UI \`useRender\`.
+- Put native \`start\` and \`reversed\` attributes on the rendered ol.
+- Use ListItem for li elements. Import List and ListItem from the same \`list\` module.
+- AspectRatio, List, ListItem, Strong, and Figcaption accept \`xstyle\`, \`className\`, native attributes, events, and refs.
 - Use Text for paragraphs. Use Heading for semantic headings.
 - Heading defaults to h2. Use \`render={<h1 />}\` through h6 for other levels.
-- Use Blockquote for quotations, Em for emphasis, and Mark for marked text.
+- Use Blockquote for quotations, Em for emphasis, Strong for importance, and Mark for marked text.
+- Strong renders strong with weight 600 and inherits surrounding typography.
+- Use Figcaption inside \`Box render={<figure />}\` for figure captions. There is no Figure primitive.
+- Figcaption renders figcaption with muted text, \`0.875rem\` font size, and \`1.5\` line height.
 - Use Highlight for matching words. Use Prose for readable long-form content.
 - Use Codeblock for code displays. Its wrapper, toolbar, and internal pre cannot replace every native pre.
 - Use framework links for application navigation. Native anchors remain valid for navigation and downloads.
-- Keep native controls, tables, metadata, SVG, custom elements, strong, and inline code where no equivalent applies.
+- Keep native controls, tables, metadata, SVG, custom elements, and inline code where no equivalent applies.
+- Component selection guidance does not expand the lint rule's supported native tags.
 - Keep native markup inside primitive implementations. Do not wrap primitives recursively.
 
 ### Component selection
