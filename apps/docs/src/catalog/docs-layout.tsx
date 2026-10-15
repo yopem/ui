@@ -13,6 +13,7 @@ import { Grid } from "@registry/components/ui/grid"
 import { Link as UiLink } from "@registry/components/ui/link"
 import { useEventCallback } from "@registry/hooks/use-event-callback"
 import { tokens } from "@registry/styles/tokens.stylex"
+import { RiGithubFill } from "@remixicon/react"
 import * as stylex from "@stylexjs/stylex"
 import { Link, useHydrated, useLocation } from "@tanstack/react-router"
 import { MenuIcon } from "lucide-react"
@@ -143,6 +144,21 @@ export function DocumentationLayout({
         </Link>
         <GlobalSearch />
         <ThemeToggle />
+        <Button
+          variant="ghost"
+          size="icon"
+          title="GitHub"
+          render={
+            <a
+              href="https://github.com/yopem/ui"
+              aria-label="GitHub"
+              target="_blank"
+              rel="noopener noreferrer"
+            />
+          }
+        >
+          <RiGithubFill aria-hidden size={20} />
+        </Button>
       </Box>
       <Grid
         xstyle={[

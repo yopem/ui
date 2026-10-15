@@ -1,6 +1,21 @@
 import AxeBuilder from "@axe-core/playwright"
 import { expect, test } from "@playwright/test"
 
+test("header GitHub link supports keyboard navigation", async ({
+  page,
+}, testInfo) => {
+  await page.goto("/components/button")
+  const link = page.getByRole("banner").getByRole("link", { name: "GitHub" })
+
+  await expect(link).toBeVisible()
+  await expect(link).toHaveAttribute("href", "https://github.com/yopem/ui")
+  await link.focus()
+  await expect(link).toBeFocused()
+  await expect(link).toHaveAttribute("target", "_blank")
+  await expect(link).toHaveAttribute("rel", "noopener noreferrer")
+  await page.screenshot({ path: testInfo.outputPath("github-navigation.png") })
+})
+
 const groups = ["Setup", "Components", "Layout", "Typography", "Hooks"]
 
 test("@a11y grouped navigation preserves inventory, keyboard collapse, and mobile dismissal", async ({
