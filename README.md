@@ -80,6 +80,31 @@ export function Profile() {
 See [styling](https://ui.yopem.com/docs/styling) and
 [lint rules](https://ui.yopem.com/docs/lint) for details.
 
+## Agent skills
+
+This repository provides three skills for AI coding agents:
+
+- [yopem-ui](skills/yopem-ui/SKILL.md): Component selection and composition,
+  layout, typography, StyleX, themes, and accessibility.
+- [yopem-ui-cli](skills/yopem-ui-cli/SKILL.md): Init, source updates, shared UI
+  workspaces, and registry safety with Bun, npm, pnpm, and Yarn 2 or later.
+- [yopem-ui-oxlint](skills/yopem-ui-oxlint/SKILL.md): Plugin setup, rule
+  policies, and diagnostic repairs.
+
+Install with the Skills CLI. Choose the command for your package manager:
+
+```sh
+bunx --bun skills add yopem/ui
+npx skills add yopem/ui
+pnpm dlx skills add yopem/ui
+yarn dlx skills add yopem/ui
+```
+
+Select the required skills and target agent in the installer. Yarn requires
+version 2 or later. To install from a local checkout, replace `yopem/ui` with
+its path. Skills guide the agent; they do not install components or configure
+Oxlint. Follow the CLI skill to set up the project.
+
 ## Development
 
 ```sh

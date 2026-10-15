@@ -376,6 +376,17 @@ instructions in `AGENTS.md`. Do not add a root `DESIGN.md`.
 - Write consumer guidance in the target app directory, including shared UI setup.
   Preserve text outside the Yopem UI managed block. Do not write both files.
 
+## Agent skills
+
+Consumer agent skills live in `skills/yopem-ui/`, `skills/yopem-ui-cli/`, and
+`skills/yopem-ui-oxlint/`. Their `SKILL.md` files are permitted tracked Markdown
+files. Keep skill instructions aligned with component APIs, CLI behavior, and
+Oxlint rules when those contracts change.
+
+Keep these skills usable outside this repository. Use consumer imports and
+public documentation links. Do not require repository-only aliases, paths, or
+commands. Keep installation instructions in `README.md`.
+
 ## Registry workflow
 
 - Whenever adding a new registry item or rule, update its documentation,

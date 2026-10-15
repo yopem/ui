@@ -54,7 +54,6 @@ routeTree.gen.ts
 .opencode/
 openspec/
 opencode.jsonc
-skills
 .gemini
 .agent/
 .github/prompts/
