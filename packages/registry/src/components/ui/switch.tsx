@@ -51,7 +51,10 @@ const styles = stylex.create({
     pointerEvents: "none",
     transform: {
       default: "translateX(0)",
-      "[data-checked]": "translateX(calc(100% - 2px))",
+      "[data-checked]": {
+        default: "translateX(0.875rem)",
+        "@media (min-width: 640px)": "translateX(0.625rem)",
+      },
     },
     transformOrigin: {
       default: "left center",

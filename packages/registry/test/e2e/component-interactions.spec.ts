@@ -166,12 +166,45 @@ test("collapsible exposes expanded state", async ({ page }) => {
   await expect(page.getByText("4829-1735-6621")).toBeVisible()
 })
 
-test("switch supports keyboard state changes", async ({ page }) => {
+test("switch supports keyboard state changes", async ({ page }, testInfo) => {
   await openPreview(page, "switch")
   const switchControl = page.getByRole("switch", { name: "Marketing emails" })
+  const thumb = switchControl.locator('[data-slot="switch-thumb"]')
+  const trackBounds = await switchControl.boundingBox()
+  const uncheckedBounds = await thumb.boundingBox()
+
+  if (!trackBounds || !uncheckedBounds) {
+    throw new Error("Switch and thumb must have visible bounds")
+  }
+
+  const startInset = uncheckedBounds.x - trackBounds.x
   await switchControl.focus()
   await page.keyboard.press("Space")
   await expect(switchControl).toBeChecked()
+  await expect
+    .poll(async () => {
+      const checkedBounds = await thumb.boundingBox()
+
+      if (!checkedBounds) return Infinity
+
+      const endInset =
+        trackBounds.x +
+        trackBounds.width -
+        checkedBounds.x -
+        checkedBounds.width
+
+      return Math.abs(endInset - startInset)
+    })
+    .toBeLessThan(1)
+  await testInfo.attach("checked-switch", {
+    body: await switchControl.screenshot(),
+    contentType: "image/png",
+  })
+  await page.keyboard.press("Space")
+  await expect(switchControl).not.toBeChecked()
+  await expect
+    .poll(async () => (await thumb.boundingBox())?.x)
+    .toBe(uncheckedBounds.x)
 })
 
 test("toggle supports keyboard state changes", async ({ page }) => {
