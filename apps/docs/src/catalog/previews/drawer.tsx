@@ -29,9 +29,9 @@ export function Preview() {
       </DrawerTrigger>
       <DrawerPopup showBar>
         <DrawerHeader xstyle={styles.drawerHeader}>
-          <DrawerTitle>Notifications</DrawerTitle>
+          <DrawerTitle>Station updates</DrawerTitle>
           <DrawerDescription>
-            This is the description of the drawer.
+            The east trail is open. Return borrowed equipment by 17:00.
           </DrawerDescription>
         </DrawerHeader>
         <DrawerFooter xstyle={styles.drawerFooter} variant="bare">

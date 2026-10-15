@@ -39,8 +39,8 @@ export function Preview() {
     <Form xstyle={styles.form} onSubmit={onSubmit}>
       <Field name="email">
         <FieldLabel>Email</FieldLabel>
-        <Input placeholder="you@example.com" required type="email" />
-        <FieldError>Please enter a valid email.</FieldError>
+        <Input placeholder="nora@example.com" required type="email" />
+        <FieldError>Enter an email address for reservation updates.</FieldError>
       </Field>
       <Button loading={loading} type="submit">
         Submit

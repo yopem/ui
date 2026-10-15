@@ -38,18 +38,22 @@ export function Preview() {
   return (
     <Tabs defaultValue="tab-1">
       <TabsList>
-        <TabsTab value="tab-1">Tab 1</TabsTab>
-        <TabsTab value="tab-2">Tab 2</TabsTab>
-        <TabsTab value="tab-3">Tab 3</TabsTab>
+        <TabsTab value="tab-1">Meeting point</TabsTab>
+        <TabsTab value="tab-2">Equipment</TabsTab>
+        <TabsTab value="tab-3">Return</TabsTab>
       </TabsList>
       <TabsPanel value="tab-1">
-        <Text xstyle={styles.paragraph}>Tab 1 content</Text>
+        <Text xstyle={styles.paragraph}>Meet at the east gate at 07:00.</Text>
       </TabsPanel>
       <TabsPanel value="tab-2">
-        <Text xstyle={styles.paragraph2}>Tab 2 content</Text>
+        <Text xstyle={styles.paragraph2}>
+          Bring binoculars and a waterproof notebook.
+        </Text>
       </TabsPanel>
       <TabsPanel value="tab-3">
-        <Text xstyle={styles.paragraph3}>Tab 3 content</Text>
+        <Text xstyle={styles.paragraph3}>
+          Return borrowed equipment before 17:00.
+        </Text>
       </TabsPanel>
     </Tabs>
   )

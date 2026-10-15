@@ -11,7 +11,7 @@ const styles = stylex.create({
 export function Preview() {
   return (
     <Box xstyle={styles.area}>
-      Notification card<Float>New</Float>
+      Trail notice<Float>New</Float>
     </Box>
   )
 }

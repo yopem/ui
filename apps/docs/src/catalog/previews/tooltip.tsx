@@ -11,7 +11,7 @@ export function Preview() {
       <TooltipTrigger render={<Button variant="outline" />}>
         Hover me
       </TooltipTrigger>
-      <TooltipPopup>Helpful hint</TooltipPopup>
+      <TooltipPopup>Keep this note in your field notebook.</TooltipPopup>
     </Tooltip>
   )
 }

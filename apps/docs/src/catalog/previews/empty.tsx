@@ -20,12 +20,14 @@ export function Preview() {
         <EmptyMedia variant="icon">
           <RouteIcon {...stylex.props(previewStyles.icon)} />
         </EmptyMedia>
-        <EmptyTitle>No upcoming meetings</EmptyTitle>
-        <EmptyDescription>Create a meeting to get started.</EmptyDescription>
+        <EmptyTitle>No field visits planned</EmptyTitle>
+        <EmptyDescription>
+          Reserve a visit to organize your next survey.
+        </EmptyDescription>
       </EmptyHeader>
       <EmptyContent>
         <Flex xstyle={styles.flex}>
-          <Button size="sm">Create meeting</Button>
+          <Button size="sm">Plan a visit</Button>
           <Button size="sm" variant="outline">
             <BookIcon {...stylex.props(previewStyles.icon2)} />
             View docs

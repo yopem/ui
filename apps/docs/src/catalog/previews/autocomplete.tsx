@@ -10,22 +10,22 @@ import {
 } from "@registry/components/ui/autocomplete"
 
 const items = [
-  { label: "Apple", value: "apple" },
-  { label: "Banana", value: "banana" },
-  { label: "Orange", value: "orange" },
-  { label: "Grape", value: "grape" },
-  { label: "Strawberry", value: "strawberry" },
-  { label: "Mango", value: "mango" },
-  { label: "Pineapple", value: "pineapple" },
-  { label: "Kiwi", value: "kiwi" },
-  { label: "Peach", value: "peach" },
-  { label: "Pear", value: "pear" },
+  { label: "Binoculars", value: "binoculars" },
+  { label: "Audio recorder", value: "audio-recorder" },
+  { label: "Compass", value: "compass" },
+  { label: "Field notebook", value: "field-notebook" },
+  { label: "Water bottle", value: "water-bottle" },
+  { label: "Sample jar", value: "sample-jar" },
+  { label: "Trail map", value: "trail-map" },
+  { label: "Rain cover", value: "rain-cover" },
+  { label: "Tripod", value: "tripod" },
+  { label: "Torch", value: "torch" },
 ]
 
 function AutocompleteOptions() {
   return (
     <AutocompletePopup>
-      <AutocompleteEmpty>No items found.</AutocompleteEmpty>
+      <AutocompleteEmpty>No equipment found.</AutocompleteEmpty>
       <AutocompleteList>
         {(item) => (
           <AutocompleteItem key={item.value} value={item}>
@@ -42,7 +42,7 @@ export function Preview() {
     <Autocomplete items={items}>
       <AutocompleteInput
         aria-label="Search items"
-        placeholder="Search items…"
+        placeholder="Search loan equipment…"
       />
       <AutocompleteOptions />
     </Autocomplete>

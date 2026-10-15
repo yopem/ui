@@ -6,7 +6,7 @@ const styles = stylex.create({ text: { maxInlineSize: "60ch" } })
 export function Preview() {
   return (
     <Text xstyle={styles.text}>
-      Text keeps body copy in a native p element.
+      The east trail follows the river for two kilometers.
     </Text>
   )
 }

@@ -6,7 +6,7 @@ import { Text } from "@registry/components/ui/text"
 export function Preview() {
   return (
     <Text>
-      We <Em>do</Em> care about the details.
+      Record the time <Em>before</Em> you start the survey.
     </Text>
   )
 }

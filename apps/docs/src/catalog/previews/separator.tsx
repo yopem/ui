@@ -31,21 +31,20 @@ export function Preview() {
   return (
     <Box xstyle={styles.box}>
       <Flex xstyle={styles.flex}>
-        <Heading render={<h4>coss ui</h4>} xstyle={styles.h4} />
+        <Heading render={<h4>Willow Creek station</h4>} xstyle={styles.h4} />
         <Text xstyle={styles.paragraph}>
-          Unstyled, accessible primitives for fast product UI and design
-          systems.
+          Equipment loans and observation records for local field groups.
         </Text>
       </Flex>
       <Separator xstyle={styles.separator} />
       <Flex xstyle={styles.flex2}>
-        <Box>Blog</Box>
+        <Box>Visits</Box>
         <Separator orientation="vertical" />
-        <Box>Docs</Box>
+        <Box>Maps</Box>
         <Separator orientation="vertical" />
-        <Box>Source</Box>
+        <Box>Records</Box>
         <Separator orientation="vertical" />
-        <Box>Releases</Box>
+        <Box>Notices</Box>
       </Flex>
     </Box>
   )

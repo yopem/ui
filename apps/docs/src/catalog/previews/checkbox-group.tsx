@@ -2,25 +2,25 @@ import { Checkbox } from "@registry/components/ui/checkbox"
 import { CheckboxGroup } from "@registry/components/ui/checkbox-group"
 import { Label } from "@registry/components/ui/label"
 
-const previewDefaultValue = ["next"]
+const previewDefaultValue = ["birdwatching"]
 
 export function Preview() {
   return (
     <CheckboxGroup
-      aria-label="Select frameworks"
+      aria-label="Select equipment"
       defaultValue={previewDefaultValue}
     >
       <Label>
-        <Checkbox value="next" />
-        Next.js
+        <Checkbox value="birdwatching" />
+        Birdwatching
       </Label>
       <Label>
-        <Checkbox value="vite" />
-        Vite
+        <Checkbox value="audio" />
+        Audio recording
       </Label>
       <Label>
-        <Checkbox value="astro" />
-        Astro
+        <Checkbox value="mapping" />
+        Trail mapping
       </Label>
     </CheckboxGroup>
   )

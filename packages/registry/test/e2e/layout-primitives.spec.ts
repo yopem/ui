@@ -488,7 +488,7 @@ for (const [name, tag] of [
     } else if (name === "mark") {
       await expect(element).toHaveCSS("padding-inline-start", "2px")
     } else if (name === "highlight") {
-      await expect(element.locator("mark")).toHaveText("accessible")
+      await expect(element.locator("mark")).toHaveText("heron")
     } else {
       await expect(element).toHaveCSS("font-size", "16px")
       await expect(element).toHaveCSS("line-height", "27.2px")

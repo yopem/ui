@@ -136,10 +136,8 @@ test("highlight marks matching text without losing surrounding words", async ({
 }) => {
   await page.goto("/components/highlight")
   const highlight = page.locator('[data-slot="highlight"]')
-  await expect(highlight.locator("mark")).toHaveText("accessible")
-  await expect(highlight).toContainText(
-    "Build accessible components for everyone.",
-  )
+  await expect(highlight.locator("mark")).toHaveText("heron")
+  await expect(highlight).toContainText(/.+heron.+/)
 })
 
 test("prose constrains long-form content", async ({ page }) => {
@@ -158,7 +156,7 @@ test("prose constrains long-form content", async ({ page }) => {
 test("@a11y steps expose active item as current step", async ({ page }) => {
   await page.goto("/components/steps")
   await expect(
-    page.locator('[data-slot="steps-item"]').filter({ hasText: "Preferences" }),
+    page.locator('[data-slot="steps-item"]').filter({ hasText: "Plan visit" }),
   ).toHaveAttribute("aria-current", "step")
   expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([])
 })
@@ -174,7 +172,7 @@ test("clipboard reports copied content", async ({ page, context }) => {
     page.locator('[data-slot="clipboard-status"]').first(),
   ).toHaveText("Copied to clipboard")
   expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(
-    "https://example.com",
+    "https://example.com/field-notes",
   )
   await expect(
     page.getByRole("button", { name: "Unavailable copy" }),
@@ -190,6 +188,6 @@ test("codeblock preserves source and copies it", async ({ page, context }) => {
   await page.getByRole("button", { name: "Copy code", exact: true }).click()
   await expect(page.getByText("Code copied.")).toBeVisible()
   expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(
-    "const answer = 42",
+    'const station = "Willow Creek"',
   )
 })

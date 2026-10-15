@@ -30,7 +30,7 @@ export function Preview() {
       <MenuTrigger render={<Button variant="outline" />}>Open menu</MenuTrigger>
       <MenuPopup>
         <MenuGroup>
-          <MenuGroupLabel>Playback</MenuGroupLabel>
+          <MenuGroupLabel>Field recordings</MenuGroupLabel>
           <MenuItem>
             <PlayIcon
               {...stylex.props(previewStyles.icon)}
@@ -67,13 +67,13 @@ export function Preview() {
         <MenuSeparator />
         <MenuCheckboxItem>Shuffle</MenuCheckboxItem>
         <MenuCheckboxItem>Repeat</MenuCheckboxItem>
-        <MenuCheckboxItem disabled>Enhanced Audio</MenuCheckboxItem>
+        <MenuCheckboxItem disabled>Wind reduction</MenuCheckboxItem>
         <MenuSeparator />
         <MenuGroup>
           <MenuGroupLabel>Sort by</MenuGroupLabel>
           <MenuRadioGroup>
-            <MenuRadioItem value="artist">Artist</MenuRadioItem>
-            <MenuRadioItem value="album">Album</MenuRadioItem>
+            <MenuRadioItem value="observer">Observer</MenuRadioItem>
+            <MenuRadioItem value="location">Location</MenuRadioItem>
             <MenuRadioItem value="title">Title</MenuRadioItem>
           </MenuRadioGroup>
         </MenuGroup>
@@ -81,25 +81,25 @@ export function Preview() {
         <MenuCheckboxItem variant="switch">Auto save</MenuCheckboxItem>
         <MenuSeparator />
         <MenuSub>
-          <MenuSubTrigger>Add to Playlist</MenuSubTrigger>
+          <MenuSubTrigger>Add to collection</MenuSubTrigger>
           <MenuSubPopup>
-            <MenuItem>Jazz</MenuItem>
+            <MenuItem>Dawn chorus</MenuItem>
             <MenuSub>
-              <MenuSubTrigger>Rock</MenuSubTrigger>
+              <MenuSubTrigger>Wetlands</MenuSubTrigger>
               <MenuSubPopup>
-                <MenuItem>Hard Rock</MenuItem>
-                <MenuItem>Soft Rock</MenuItem>
-                <MenuItem>Classic Rock</MenuItem>
+                <MenuItem>Reed bed</MenuItem>
+                <MenuItem>Footbridge</MenuItem>
+                <MenuItem>River bend</MenuItem>
                 <MenuSeparator />
-                <MenuItem>Metal</MenuItem>
-                <MenuItem>Punk</MenuItem>
-                <MenuItem>Grunge</MenuItem>
-                <MenuItem>Alternative</MenuItem>
-                <MenuItem>Indie</MenuItem>
-                <MenuItem>Electronic</MenuItem>
+                <MenuItem>North pool</MenuItem>
+                <MenuItem>South pool</MenuItem>
+                <MenuItem>Boardwalk</MenuItem>
+                <MenuItem>Meadow edge</MenuItem>
+                <MenuItem>Willow grove</MenuItem>
+                <MenuItem>Open water</MenuItem>
               </MenuSubPopup>
             </MenuSub>
-            <MenuItem>Pop</MenuItem>
+            <MenuItem>Woodland</MenuItem>
           </MenuSubPopup>
         </MenuSub>
         <MenuSeparator />

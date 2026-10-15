@@ -4,8 +4,6 @@ import { Highlight } from "@registry/components/ui/highlight"
 
 export function Preview() {
   return (
-    <Highlight query="accessible">
-      Build accessible components for everyone.
-    </Highlight>
+    <Highlight query="heron">A heron landed beside the reed bed.</Highlight>
   )
 }

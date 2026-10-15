@@ -6,9 +6,9 @@ import { Link } from "@tanstack/react-router"
 export function Preview() {
   return (
     <Marquee>
-      <Link to="/docs/layout">Design systems</Link>
-      <Link to="/components">Accessible components</Link>
-      <Link to="/docs/getting-started">Reusable source</Link>
+      <Link to="/docs/layout">Layout guide</Link>
+      <Link to="/components">Component catalog</Link>
+      <Link to="/docs/getting-started">Installation guide</Link>
     </Marquee>
   )
 }

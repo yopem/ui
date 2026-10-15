@@ -9,7 +9,11 @@ import { SearchIcon } from "lucide-react"
 export function Preview() {
   return (
     <InputGroup>
-      <InputGroupInput aria-label="Search" placeholder="Search" type="search" />
+      <InputGroupInput
+        aria-label="Search"
+        placeholder="Search field notes"
+        type="search"
+      />
       <InputGroupAddon>
         <SearchIcon {...stylex.props(previewStyles.icon)} aria-hidden="true" />
       </InputGroupAddon>

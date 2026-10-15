@@ -35,10 +35,10 @@ export function Preview() {
       <PopoverPopup xstyle={styles.popoverPopup}>
         <Box xstyle={styles.box}>
           <PopoverTitle xstyle={styles.popoverTitle}>
-            Send us feedback
+            Review the trail map
           </PopoverTitle>
           <PopoverDescription>
-            Let us know how we can improve.
+            Report a missing sign or a route that needs an update.
           </PopoverDescription>
         </Box>
         <Form xstyle={styles.form}>
@@ -46,7 +46,7 @@ export function Preview() {
             <Textarea
               aria-label="Send feedback"
               id="feedback"
-              placeholder="How can we improve?"
+              placeholder="Which trail needs attention?"
             />
           </Field>
           <Button type="submit">Send feedback</Button>

@@ -6,7 +6,7 @@ import { Text } from "@registry/components/ui/text"
 export function Preview() {
   return (
     <Text>
-      Remember to <Mark>save your work</Mark>.
+      Return equipment <Mark>before 17:00</Mark>.
     </Text>
   )
 }

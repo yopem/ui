@@ -19,20 +19,20 @@ const styles = stylex.create({
 export function Preview() {
   return (
     <Fieldset xstyle={styles.fieldset}>
-      <FieldsetLegend>Billing Details</FieldsetLegend>
+      <FieldsetLegend>Station membership</FieldsetLegend>
       <Field>
-        <FieldLabel>Company</FieldLabel>
-        <Input placeholder="Enter company name" type="text" />
+        <FieldLabel>Group</FieldLabel>
+        <Input placeholder="Willow Creek volunteers" type="text" />
         <FieldDescription>
-          The name that will appear on invoices.
+          The group that will use the equipment.
         </FieldDescription>
       </Field>
 
       <Field>
-        <FieldLabel>Tax ID</FieldLabel>
-        <Input placeholder="Enter tax identification number" type="text" />
+        <FieldLabel>Member ID</FieldLabel>
+        <Input placeholder="WC-2048" type="text" />
         <FieldDescription>
-          Your business tax identification number.
+          Find this code on your station membership card.
         </FieldDescription>
       </Field>
     </Fieldset>

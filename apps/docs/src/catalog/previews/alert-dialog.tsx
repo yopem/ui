@@ -14,14 +14,14 @@ export function Preview() {
   return (
     <AlertDialog>
       <AlertDialogTrigger render={<Button variant="destructive-outline" />}>
-        Delete Account
+        Delete field note
       </AlertDialogTrigger>
       <AlertDialogPopup>
         <AlertDialogHeader>
-          <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+          <AlertDialogTitle>Delete this field note?</AlertDialogTitle>
           <AlertDialogDescription>
-            This action cannot be undone. This will permanently delete your
-            account and remove your data from our servers.
+            This removes the note and its attached observations. You cannot
+            restore them after deletion.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
@@ -29,7 +29,7 @@ export function Preview() {
             Cancel
           </AlertDialogClose>
           <AlertDialogClose render={<Button variant="destructive" />}>
-            Delete Account
+            Delete field note
           </AlertDialogClose>
         </AlertDialogFooter>
       </AlertDialogPopup>

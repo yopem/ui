@@ -33,18 +33,20 @@ export function Preview({ embedded = false }: { embedded?: boolean }) {
   return (
     <Frame xstyle={styles.frame}>
       <FrameHeader>
-        <FrameTitle>Section header</FrameTitle>
-        <FrameDescription>Brief description about the section</FrameDescription>
+        <FrameTitle>Observation log</FrameTitle>
+        <FrameDescription>Notes from the wetland survey</FrameDescription>
       </FrameHeader>
       <FramePanel>
         <Heading
-          render={embedded ? <h4>Section title</h4> : <h2>Section title</h2>}
+          render={embedded ? <h4>East reed bed</h4> : <h2>East reed bed</h2>}
           xstyle={styles.h2}
         />
-        <Text xstyle={styles.paragraph}>Section description</Text>
+        <Text xstyle={styles.paragraph}>
+          Two herons were seen near the footbridge.
+        </Text>
       </FramePanel>
       <FrameFooter>
-        <Text xstyle={styles.paragraph2}>Footer</Text>
+        <Text xstyle={styles.paragraph2}>Recorded at 07:40</Text>
       </FrameFooter>
     </Frame>
   )

@@ -11,7 +11,7 @@ const styles = stylex.create({
 export function Preview() {
   return (
     <Box render={<section />} xstyle={styles.section}>
-      Content inside a semantic Box.
+      Equipment collection opens at 09:00.
     </Box>
   )
 }

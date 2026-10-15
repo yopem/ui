@@ -9,10 +9,17 @@ export function Preview({ embedded = false }: { embedded?: boolean }) {
     <Prose>
       <Heading
         render={
-          embedded ? <h4>Readable content</h4> : <h2>Readable content</h2>
+          embedded ? (
+            <h4>Before your field visit</h4>
+          ) : (
+            <h2>Before your field visit</h2>
+          )
         }
       />
-      <Text>Give long-form content room to breathe.</Text>
+      <Text>
+        Check the weather. Collect your kit. Tell the station which trail you
+        will use.
+      </Text>
     </Prose>
   )
 }

@@ -16,7 +16,7 @@ const styles = stylex.create({
 export function Preview() {
   return (
     <Box xstyle={styles.area}>
-      <AbsoluteCenter>Centered</AbsoluteCenter>
+      <AbsoluteCenter>Meeting point</AbsoluteCenter>
     </Box>
   )
 }

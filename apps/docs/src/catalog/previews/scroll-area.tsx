@@ -25,13 +25,13 @@ const styles = stylex.create({
   box2: { fontSize: "0.875rem", lineHeight: "calc(1.25 / 0.875)" },
 })
 
-const tags = Array.from({ length: 50 }, (_, i) => `v1.0.0-alpha.${i}`)
+const tags = Array.from({ length: 50 }, (_, i) => `Observation WC-${i + 101}`)
 
 export function Preview() {
   return (
     <ScrollArea xstyle={styles.scrollArea}>
       <Box xstyle={styles.box}>
-        <Heading render={<h4>Tags</h4>} xstyle={styles.h4} />
+        <Heading render={<h4>Field records</h4>} xstyle={styles.h4} />
         <Flex xstyle={styles.flex}>
           {tags.map((tag) => (
             <Box xstyle={styles.box2} key={tag}>

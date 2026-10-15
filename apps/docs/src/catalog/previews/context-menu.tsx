@@ -28,13 +28,13 @@ export function Preview() {
   return (
     <ContextMenu>
       <ContextMenuTrigger xstyle={styles.contextMenuTrigger}>
-        Right click here
+        Right-click a field note
       </ContextMenuTrigger>
       <ContextMenuPopup>
-        <ContextMenuItem>Back</ContextMenuItem>
-        <ContextMenuItem>Forward</ContextMenuItem>
+        <ContextMenuItem>Open note</ContextMenuItem>
+        <ContextMenuItem>Duplicate note</ContextMenuItem>
         <ContextMenuSeparator />
-        <ContextMenuItem>Reload</ContextMenuItem>
+        <ContextMenuItem>Copy note link</ContextMenuItem>
       </ContextMenuPopup>
     </ContextMenu>
   )

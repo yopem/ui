@@ -21,7 +21,7 @@ test("dialog opens from keyboard, closes with Escape, and restores focus", async
 
   await trigger.focus()
   await page.keyboard.press("Enter")
-  const dialog = page.getByRole("dialog", { name: "Edit profile" })
+  const dialog = page.getByRole("dialog", { name: "Edit reservation" })
   await expect(dialog).toBeVisible()
   await expect(page.getByRole("button", { name: "Close" })).toHaveCSS(
     "position",
@@ -43,10 +43,10 @@ test("command palette focuses input on open and restores trigger focus", async (
   await expect(trigger).not.toBeFocused()
   await trigger.focus()
   await page.keyboard.press("Enter")
-  const input = page.getByPlaceholder("Search for apps and commands...")
+  const input = page.getByPlaceholder("Search station tools...")
   await expect(input).toBeFocused()
-  await input.fill("Figma")
-  await page.getByRole("option", { name: /Figma/ }).click()
+  await input.fill("Field notebook")
+  await page.getByRole("option", { name: /Field notebook/ }).click()
   await expect(input).toBeHidden()
   await expect(trigger).toBeFocused()
   await trigger.click()
@@ -85,19 +85,19 @@ test("skeleton preview replaces loading placeholders", async ({ page }) => {
   await expect(
     page.getByRole("button", { name: "Copy Skeleton usage", exact: true }),
   ).toBeEnabled()
-  await expect(
-    page.getByRole("heading", { name: "Sarah Johnson" }),
-  ).toBeVisible({ timeout: 6000 })
-  await expect(
-    page.getByRole("heading", { name: "Mark Bennett Andersson" }),
-  ).toBeVisible({ timeout: 6000 })
+  await expect(page.getByRole("heading", { name: "Nora Ellis" })).toBeVisible({
+    timeout: 6000,
+  })
+  await expect(page.getByRole("heading", { name: "Ivo Chen" })).toBeVisible({
+    timeout: 6000,
+  })
   await expect(page.locator('[data-slot="skeleton"]')).toHaveCount(0)
 })
 
 test("tabs support arrow-key navigation", async ({ page }) => {
   await openPreview(page, "tabs")
-  const firstTab = page.getByRole("tab", { name: "Tab 1" })
-  const secondTab = page.getByRole("tab", { name: "Tab 2" })
+  const firstTab = page.getByRole("tab", { name: "Meeting point" })
+  const secondTab = page.getByRole("tab", { name: "Equipment" })
 
   await firstTab.focus()
   await page.keyboard.press("ArrowRight")
@@ -105,14 +105,14 @@ test("tabs support arrow-key navigation", async ({ page }) => {
 
   await page.keyboard.press("Enter")
   await expect(secondTab).toHaveAttribute("aria-selected", "true")
-  await expect(page.getByText("Tab 2 content")).toBeVisible()
+  await expect(page.getByRole("tabpanel")).toBeVisible()
 })
 
 test("checkbox toggles with Space", async ({ page }) => {
   await openPreview(page, "checkbox")
 
   const checkbox = page.getByRole("checkbox", {
-    name: "Accept terms and conditions",
+    name: "Include a printed trail map",
   })
 
   await checkbox.focus()
@@ -143,32 +143,38 @@ test("toast appears after trigger click", async ({ page }) => {
   await openPreview(page, "toast")
   await page.getByRole("button", { name: "Default Toast" }).click()
 
-  await expect(page.getByText("Event has been created")).toBeVisible()
+  await expect(
+    page.getByRole("heading", { name: "Field visit reserved", exact: true }),
+  ).toBeVisible()
 })
 
 test("accordion exposes expanded state", async ({ page }) => {
   await openPreview(page, "accordion")
-  const accordion = page.getByRole("button", { name: "What is Base UI?" })
+  const accordion = page.getByRole("button", { name: "What can I borrow?" })
   await accordion.focus()
   await page.keyboard.press("Enter")
   await expect(accordion).toHaveAttribute("aria-expanded", "true")
   await expect(
-    page.getByText("Base UI is a library", { exact: false }),
+    page.locator("[data-slot=accordion-panel]").first(),
   ).toBeVisible()
 })
 
 test("collapsible exposes expanded state", async ({ page }) => {
   await openPreview(page, "collapsible")
-  const collapsible = page.getByRole("button", { name: "Show recovery keys" })
+  const collapsible = page.getByRole("button", { name: "Show equipment codes" })
   await collapsible.focus()
   await page.keyboard.press("Space")
   await expect(collapsible).toHaveAttribute("aria-expanded", "true")
-  await expect(page.getByText("4829-1735-6621")).toBeVisible()
+  await expect(page.getByText("KIT-BIRD-014")).toBeVisible()
 })
 
 test("switch supports keyboard state changes", async ({ page }, testInfo) => {
   await openPreview(page, "switch")
-  const switchControl = page.getByRole("switch", { name: "Marketing emails" })
+
+  const switchControl = page.getByRole("switch", {
+    name: "Trail condition alerts",
+  })
+
   const thumb = switchControl.locator('[data-slot="switch-thumb"]')
   const trackBounds = await switchControl.boundingBox()
   const uncheckedBounds = await thumb.boundingBox()
@@ -217,24 +223,24 @@ test("toggle supports keyboard state changes", async ({ page }) => {
 
 test("radio group supports keyboard state changes", async ({ page }) => {
   await openPreview(page, "radio-group")
-  const next = page.getByRole("radio", { name: "Next.js" })
-  const vite = page.getByRole("radio", { name: "Vite" })
-  await next.focus()
+  const birdwatching = page.getByRole("radio", { name: "Birdwatching" })
+  const audio = page.getByRole("radio", { name: "Audio recording" })
+  await birdwatching.focus()
   await page.keyboard.press("ArrowDown")
-  await expect(vite).toBeChecked()
-  await expect(vite).toBeFocused()
+  await expect(audio).toBeChecked()
+  await expect(audio).toBeFocused()
 })
 
 test("select supports keyboard selection and restores focus", async ({
   page,
 }) => {
   await openPreview(page, "select")
-  const trigger = page.getByRole("combobox", { name: "Select framework" })
+  const trigger = page.getByRole("combobox", { name: "Select equipment" })
   await trigger.focus()
   await page.keyboard.press("ArrowDown")
   await expect(page.getByRole("listbox")).toBeVisible()
   await page.keyboard.press("ArrowDown")
   await page.keyboard.press("Enter")
-  await expect(trigger).toContainText("Vite")
+  await expect(trigger).toContainText("Audio recording")
   await expect(trigger).toBeFocused()
 })

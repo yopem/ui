@@ -51,7 +51,7 @@ import { Text } from "@/components/ui/text"
 import { Checkmark } from "@/components/ui/checkmark"
 
 export function Preview() {
-  return <Text><Checkmark /> Saved successfully</Text>
+  return <Text><Checkmark /> Observation saved</Text>
 }
 `,
   clipboard: `"use client"
@@ -61,7 +61,7 @@ import { Clipboard } from "@/components/ui/clipboard"
 export function Preview() {
   return (
     <>
-      <Clipboard value="https://example.com">Copy link</Clipboard>
+      <Clipboard value="https://example.com/field-notes">Copy link</Clipboard>
       <Clipboard aria-label="Unavailable copy" disabled value="not copied">
         Disabled copy
       </Clipboard>
@@ -75,7 +75,7 @@ import { Box } from "@/components/ui/box"
 import { Marquee } from "@/components/ui/marquee"
 
 export function Preview() {
-  return <Marquee><Box render={<span />}>Design systems</Box><Box render={<span />}>Accessible components</Box><Box render={<span />}>Reusable source</Box></Marquee>
+  return <Marquee><Box render={<span />}>Layout guide</Box><Box render={<span />}>Component catalog</Box><Box render={<span />}>Installation guide</Box></Marquee>
 }
 `,
   "native-select": `"use client"
@@ -129,7 +129,7 @@ export function Preview() {
 import { Stat, StatDescription, StatLabel, StatValue } from "@/components/ui/stat"
 
 export function Preview() {
-  return <Stat><StatLabel>Requests</StatLabel><StatValue>1,248</StatValue><StatDescription>Last 30 days</StatDescription></Stat>
+  return <Stat><StatLabel>Observations</StatLabel><StatValue>386</StatValue><StatDescription>This field season</StatDescription></Stat>
 }
 `,
   steps: `"use client"
@@ -137,7 +137,7 @@ export function Preview() {
 import { Steps, StepsItem } from "@/components/ui/steps"
 
 export function Preview() {
-  return <Steps><StepsItem status="completed">Account</StepsItem><StepsItem status="current">Preferences</StepsItem><StepsItem>Finish</StepsItem></Steps>
+  return <Steps><StepsItem status="completed">Choose equipment</StepsItem><StepsItem status="current">Plan visit</StepsItem><StepsItem>Confirm loan</StepsItem></Steps>
 }
 `,
   "absolute-center": `"use client"
@@ -149,7 +149,7 @@ import * as stylex from "@stylexjs/stylex"
 const styles = stylex.create({ area: { position: "relative", minBlockSize: "8rem", borderWidth: 1, borderStyle: "solid" } })
 
 export function Preview() {
-  return <Box xstyle={styles.area}><AbsoluteCenter>Centered</AbsoluteCenter></Box>
+  return <Box xstyle={styles.area}><AbsoluteCenter>Meeting point</AbsoluteCenter></Box>
 }
 `,
   bleed: `"use client"
@@ -161,7 +161,7 @@ import * as stylex from "@stylexjs/stylex"
 const styles = stylex.create({ area: { paddingInline: "2rem" } })
 
 export function Preview() {
-  return <Box xstyle={styles.area}><Bleed>Full-width content in a padded section</Bleed></Box>
+  return <Box xstyle={styles.area}><Bleed>Wetland route map</Bleed></Box>
 }
 `,
   blockquote: `"use client"
@@ -169,7 +169,7 @@ export function Preview() {
 import { Blockquote } from "@/components/ui/blockquote"
 
 export function Preview() {
-  return <Blockquote cite="https://example.com">Good design is as little design as possible.</Blockquote>
+  return <Blockquote cite="https://example.com">Leave a clear record so the next visitor can repeat your observation.</Blockquote>
 }
 `,
   codeblock: `"use client"
@@ -177,7 +177,7 @@ export function Preview() {
 import { Codeblock } from "@/components/ui/codeblock"
 
 export function Preview() {
-  return <Codeblock>{"const answer = 42"}</Codeblock>
+  return <Codeblock>{'const station = "Willow Creek"'}</Codeblock>
 }
 `,
   em: `"use client"
@@ -186,7 +186,7 @@ import { Text } from "@/components/ui/text"
 import { Em } from "@/components/ui/em"
 
 export function Preview() {
-  return <Text>We <Em>do</Em> care about the details.</Text>
+  return <Text>Record the time <Em>before</Em> you start the survey.</Text>
 }
 `,
   float: `"use client"
@@ -198,7 +198,7 @@ import * as stylex from "@stylexjs/stylex"
 const styles = stylex.create({ area: { position: "relative", minBlockSize: "8rem", padding: "2rem" } })
 
 export function Preview() {
-  return <Box xstyle={styles.area}>Notification card<Float>New</Float></Box>
+  return <Box xstyle={styles.area}>Trail notice<Float>New</Float></Box>
 }
 `,
   highlight: `"use client"
@@ -206,7 +206,7 @@ export function Preview() {
 import { Highlight } from "@/components/ui/highlight"
 
 export function Preview() {
-  return <Highlight query="accessible">Build accessible components for everyone.</Highlight>
+  return <Highlight query="heron">A heron landed beside the reed bed.</Highlight>
 }
 `,
   mark: `"use client"
@@ -215,7 +215,7 @@ import { Text } from "@/components/ui/text"
 import { Mark } from "@/components/ui/mark"
 
 export function Preview() {
-  return <Text>Remember to <Mark>save your work</Mark>.</Text>
+  return <Text>Return equipment <Mark>before 17:00</Mark>.</Text>
 }
 `,
   prose: `"use client"
@@ -225,7 +225,7 @@ import { Heading } from "@/components/ui/heading"
 import { Prose } from "@/components/ui/prose"
 
 export function Preview() {
-  return <Prose><Heading render={<h2 />}>Readable content</Heading><Text>Give long-form content room to breathe.</Text></Prose>
+  return <Prose><Heading render={<h2 />}>Before your field visit</Heading><Text>Check the weather. Collect your kit. Tell the station which trail you will use.</Text></Prose>
 }
 `,
   wrap: `"use client"
@@ -234,7 +234,7 @@ import { Box } from "@/components/ui/box"
 import { Wrap } from "@/components/ui/wrap"
 
 export function Preview() {
-  return <Wrap><Box render={<span />}>Design</Box><Box render={<span />}>Development</Box><Box render={<span />}>Accessibility</Box><Box render={<span />}>Documentation</Box></Wrap>
+  return <Wrap><Box render={<span />}>Birds</Box><Box render={<span />}>Water</Box><Box render={<span />}>Trails</Box><Box render={<span />}>Weather</Box></Wrap>
 }
 `,
   accordion: `"use client"
@@ -248,11 +248,11 @@ import {
 
 export function Preview() {
   return (
-    <Accordion defaultValue={["shipping"]}>
-      <AccordionItem value="shipping">
-        <AccordionTrigger>When will my order arrive?</AccordionTrigger>
+    <Accordion defaultValue={["collection"]}>
+      <AccordionItem value="collection">
+        <AccordionTrigger>When can I collect my kit?</AccordionTrigger>
         <AccordionPanel>
-          Orders arrive within five business days.
+          Collect reserved equipment at the station from 09:00.
         </AccordionPanel>
       </AccordionItem>
     </Accordion>
@@ -270,8 +270,8 @@ import {
 export function Preview() {
   return (
     <Alert>
-      <AlertTitle>Backup complete</AlertTitle>
-      <AlertDescription>Your files are ready to download.</AlertDescription>
+      <AlertTitle>Field notes exported</AlertTitle>
+      <AlertDescription>Download the archive before you leave the station.</AlertDescription>
     </Alert>
   )
 }
@@ -298,9 +298,9 @@ export function Preview() {
       </AlertDialogTrigger>
       <AlertDialogPopup>
         <AlertDialogHeader>
-          <AlertDialogTitle>Scheduled maintenance</AlertDialogTitle>
+          <AlertDialogTitle>Station closing time</AlertDialogTitle>
           <AlertDialogDescription>
-            Service will pause tonight at midnight.
+            Return loan equipment to the east desk before 17:00.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
@@ -324,15 +324,15 @@ import {
 
 export function Preview() {
   const items = [
-    { label: "Apple", value: "apple" },
-    { label: "Banana", value: "banana" },
+    { label: "Binoculars", value: "binoculars" },
+    { label: "Audio recorder", value: "audio-recorder" },
   ]
 
   return (
     <Autocomplete items={items}>
-      <AutocompleteInput aria-label="Fruit" placeholder="Choose a fruit" />
+      <AutocompleteInput aria-label="Equipment" placeholder="Choose equipment" />
       <AutocompletePopup>
-        <AutocompleteEmpty>No fruit found.</AutocompleteEmpty>
+        <AutocompleteEmpty>No equipment found.</AutocompleteEmpty>
         <AutocompleteList>
           {(item) => (
             <AutocompleteItem key={item.value} value={item}>
@@ -356,8 +356,8 @@ import {
 export function Preview() {
   return (
     <Avatar>
-      <AvatarImage src="/avatar.jpg" alt="Alex Rivera" />
-      <AvatarFallback aria-label="Alex Rivera">AR</AvatarFallback>
+      <AvatarImage src="/avatar.jpg" alt="Nora Ellis" />
+      <AvatarFallback aria-label="Nora Ellis">NE</AvatarFallback>
     </Avatar>
   )
 }
@@ -367,7 +367,7 @@ export function Preview() {
 import { Badge } from "@/components/ui/badge"
 
 export function Preview() {
-  return <Badge>Published</Badge>
+  return <Badge>Reserved</Badge>
 }
 `,
   breadcrumb: `"use client"
@@ -403,8 +403,8 @@ import { Button } from "@/components/ui/button"
 
 export function Preview() {
   return (
-    <Button type="button" onClick={() => window.alert("Hello!")}>
-      Say hello
+    <Button type="button" onClick={() => window.alert("Your kit is ready.")}>
+      Check reservation
     </Button>
   )
 }
@@ -435,11 +435,11 @@ export function Preview() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Starter plan</CardTitle>
-        <CardDescription>For personal projects.</CardDescription>
+        <CardTitle>Field station pass</CardTitle>
+        <CardDescription>For local observation groups.</CardDescription>
       </CardHeader>
-      <CardPanel>Includes three projects and 1 GB of storage.</CardPanel>
-      <CardFooter>No credit card required.</CardFooter>
+      <CardPanel>Includes equipment loans and access to the reference library.</CardPanel>
+      <CardFooter>Equipment must return before the station closes.</CardFooter>
     </Card>
   )
 }
@@ -452,8 +452,8 @@ import { Label } from "@/components/ui/label"
 export function Preview() {
   return (
     <Label>
-      <Checkbox name="terms" />
-      Accept terms and conditions
+      <Checkbox name="trail-map" />
+      Include a printed trail map
     </Label>
   )
 }
@@ -466,12 +466,12 @@ import { Label } from "@/components/ui/label"
 
 export function Preview() {
   return (
-    <CheckboxGroup aria-label="Email topics" defaultValue={["releases"]}>
+    <CheckboxGroup aria-label="Station updates" defaultValue={["releases"]}>
       <Label>
-        <Checkbox value="releases" /> Product releases
+        <Checkbox value="releases" /> Equipment arrivals
       </Label>
       <Label>
-        <Checkbox value="events" /> Events
+        <Checkbox value="events" /> Guided walks
       </Label>
     </CheckboxGroup>
   )
@@ -488,8 +488,8 @@ import {
 export function Preview() {
   return (
     <Collapsible>
-      <CollapsibleTrigger>Show shipping details</CollapsibleTrigger>
-      <CollapsiblePanel>Free shipping on orders over $50.</CollapsiblePanel>
+      <CollapsibleTrigger>Show collection details</CollapsibleTrigger>
+      <CollapsiblePanel>Collect your kit at the east entrance.</CollapsiblePanel>
     </Collapsible>
   )
 }
@@ -507,15 +507,15 @@ import {
 
 export function Preview() {
   const items = [
-    { label: "Apple", value: "apple" },
-    { label: "Banana", value: "banana" },
+    { label: "Binoculars", value: "binoculars" },
+    { label: "Audio recorder", value: "audio-recorder" },
   ]
 
   return (
     <Combobox items={items}>
-      <ComboboxInput aria-label="Fruit" placeholder="Choose a fruit" />
+      <ComboboxInput aria-label="Equipment" placeholder="Choose equipment" />
       <ComboboxPopup>
-        <ComboboxEmpty>No fruit found.</ComboboxEmpty>
+        <ComboboxEmpty>No equipment found.</ComboboxEmpty>
         <ComboboxList>
           {(item) => (
             <ComboboxItem key={item.value} value={item}>
@@ -541,7 +541,7 @@ import {
 
 export function Preview() {
   const items = [
-    { label: "New project", value: "new-project" },
+    { label: "New field note", value: "new-field-note" },
     { label: "Open settings", value: "settings" },
   ]
 
@@ -649,9 +649,9 @@ export function Preview() {
       </DialogTrigger>
       <DialogPopup>
         <DialogHeader>
-          <DialogTitle>Scheduled maintenance</DialogTitle>
+          <DialogTitle>Station closing time</DialogTitle>
           <DialogDescription>
-            Service will pause tonight at midnight.
+            Return loan equipment to the east desk before 17:00.
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>
@@ -684,9 +684,9 @@ export function Preview() {
       </DrawerTrigger>
       <DrawerPopup>
         <DrawerHeader>
-          <DrawerTitle>Scheduled maintenance</DrawerTitle>
+          <DrawerTitle>Station closing time</DrawerTitle>
           <DrawerDescription>
-            Service will pause tonight at midnight.
+            Return loan equipment to the east desk before 17:00.
           </DrawerDescription>
         </DrawerHeader>
         <DrawerFooter>
@@ -710,9 +710,9 @@ export function Preview() {
   return (
     <Empty>
       <EmptyHeader>
-        <EmptyTitle>No projects yet</EmptyTitle>
+        <EmptyTitle>No observations yet</EmptyTitle>
         <EmptyDescription>
-          Projects you create will appear here.
+          Saved field observations appear here.
         </EmptyDescription>
       </EmptyHeader>
     </Empty>
@@ -733,7 +733,7 @@ export function Preview() {
     <Field name="name">
       <FieldLabel>Name</FieldLabel>
       <Input autoComplete="name" />
-      <FieldDescription>Shown on your profile.</FieldDescription>
+      <FieldDescription>Use the name on your equipment reservation.</FieldDescription>
     </Field>
   )
 }
@@ -747,9 +747,9 @@ import { Input } from "@/components/ui/input"
 export function Preview() {
   return (
     <Fieldset>
-      <FieldsetLegend>Billing details</FieldsetLegend>
+      <FieldsetLegend>Station membership</FieldsetLegend>
       <Field name="company">
-        <FieldLabel>Company</FieldLabel>
+        <FieldLabel>Group</FieldLabel>
         <Input autoComplete="organization" />
       </Field>
     </Fieldset>
@@ -775,7 +775,7 @@ export function Preview() {
       <Field name="email">
         <FieldLabel>Email</FieldLabel>
         <Input name="email" type="email" autoComplete="email" required />
-        <FieldError>Please enter a valid email.</FieldError>
+        <FieldError>Enter an email address for reservation updates.</FieldError>
       </Field>
       <Button type="submit">Subscribe</Button>
     </Form>
@@ -797,11 +797,11 @@ export function Preview() {
   return (
     <Frame>
       <FrameHeader>
-        <FrameTitle>Account</FrameTitle>
-        <FrameDescription>Your current plan.</FrameDescription>
+        <FrameTitle>Station membership</FrameTitle>
+        <FrameDescription>Your equipment access.</FrameDescription>
       </FrameHeader>
-      <FramePanel>Starter plan</FramePanel>
-      <FrameFooter>Renews monthly.</FrameFooter>
+      <FramePanel>Volunteer pass</FramePanel>
+      <FrameFooter>Valid through the end of the season.</FrameFooter>
     </Frame>
   )
 }
@@ -816,7 +816,7 @@ const styles = stylex.create({ section: { padding: "1rem" } })
 export function Preview() {
   return (
     <Box render={<section />} xstyle={styles.section}>
-      Content inside a semantic Box.
+      Equipment collection opens at 09:00.
     </Box>
   )
 }
@@ -832,8 +832,8 @@ const styles = stylex.create({ row: { alignItems: "center", gap: "1rem" } })
 export function Preview() {
   return (
     <Flex xstyle={styles.row}>
-      <Box render={<span />}>First</Box>
-      <Box render={<span />}>Second</Box>
+      <Box render={<span />}>East gate</Box>
+      <Box render={<span />}>07:00</Box>
     </Flex>
   )
 }
@@ -846,8 +846,8 @@ import { VStack } from "@/components/ui/vstack"
 export function Preview() {
   return (
     <VStack>
-      <strong>Account ready</strong>
-      <Box render={<span />}>Nothing else is needed.</Box>
+      <strong>Kit ready</strong>
+      <Box render={<span />}>Collect it at the station desk.</Box>
     </VStack>
   )
 }
@@ -860,7 +860,7 @@ import { HStack } from "@/components/ui/hstack"
 export function Preview() {
   return (
     <HStack>
-      <Box render={<span />}>Inbox</Box>
+      <Box render={<span />}>Station messages</Box>
       <Box render={<span />} aria-label="unread messages">3</Box>
     </HStack>
   )
@@ -874,8 +874,8 @@ import { Stack } from "@/components/ui/stack"
 export function Preview() {
   return (
     <Stack>
-      <strong>Project status</strong>
-      <Box render={<span />}>All systems operational.</Box>
+      <strong>Equipment status</strong>
+      <Box render={<span />}>All loan kits have been checked.</Box>
     </Stack>
   )
 }
@@ -891,8 +891,8 @@ const styles = stylex.create({ columns: { gridTemplateColumns: "repeat(2, minmax
 export function Preview() {
   return (
     <Grid xstyle={styles.columns}>
-      <Box render={<span />}>Design</Box>
-      <Box render={<span />}>Engineering</Box>
+      <Box render={<span />}>Bird sightings</Box>
+      <Box render={<span />}>Water samples</Box>
     </Grid>
   )
 }
@@ -905,7 +905,7 @@ import * as stylex from "@stylexjs/stylex"
 const styles = stylex.create({ root: { minBlockSize: "8rem" } })
 
 export function Preview() {
-  return <Center xstyle={styles.root}>Centered content</Center>
+  return <Center xstyle={styles.root}>No observations selected</Center>
 }
 `,
   container: `"use client"
@@ -913,7 +913,7 @@ export function Preview() {
 import { Container } from "@/components/ui/container"
 
 export function Preview() {
-  return <Container>Content stays centered on wide screens.</Container>
+  return <Container>Check the station noticeboard before you start your survey.</Container>
 }
 `,
   link: `"use client"
@@ -937,7 +937,7 @@ export function Preview() {
 import { Text } from "@/components/ui/text"
 
 export function Preview() {
-  return <Text>Keep body copy in a native paragraph.</Text>
+  return <Text>The east trail follows the river for two kilometers.</Text>
 }
 `,
   heading: `"use client"
@@ -947,12 +947,12 @@ import { Heading } from "@/components/ui/heading"
 export function Preview() {
   return (
     <>
-      <Heading render={<h1 />}>Page title</Heading>
-      <Heading>Section title</Heading>
-      <Heading render={<h3 />}>Subsection title</Heading>
-      <Heading render={<h4 />}>Fourth-level title</Heading>
-      <Heading render={<h5 />}>Fifth-level title</Heading>
-      <Heading render={<h6 />}>Sixth-level title</Heading>
+      <Heading render={<h1 />}>Field station</Heading>
+      <Heading>Wetland survey</Heading>
+      <Heading render={<h3 />}>Bird observations</Heading>
+      <Heading render={<h4 />}>Reed bed</Heading>
+      <Heading render={<h5 />}>Morning count</Heading>
+      <Heading render={<h6 />}>Observer notes</Heading>
     </>
   )
 }
@@ -985,7 +985,7 @@ export function Preview() {
   return (
     <Field>
       <FieldLabel>Email</FieldLabel>
-      <Input type="email" autoComplete="email" placeholder="you@example.com" />
+      <Input type="email" autoComplete="email" placeholder="nora@example.com" />
     </Field>
   )
 }
@@ -1002,7 +1002,7 @@ import {
 export function Preview() {
   return (
     <InputGroup>
-      <InputGroupInput aria-label="Website address" placeholder="example.com" />
+      <InputGroupInput aria-label="Website address" placeholder="example.com/field-notes" />
       <InputGroupAddon>
         <InputGroupText>https://</InputGroupText>
       </InputGroupAddon>
@@ -1054,8 +1054,8 @@ export function Preview() {
       <MenuTrigger render={<Button variant="outline" />}>Actions</MenuTrigger>
       <MenuPopup>
         <MenuGroup>
-          <MenuItem onClick={() => window.alert("New project")}>
-            New project
+          <MenuItem onClick={() => window.alert("New field note")}>
+            New field note
           </MenuItem>
           <MenuItem onClick={() => window.alert("Open settings")}>
             Settings
@@ -1204,12 +1204,12 @@ export function Preview() {
   return (
     <Popover>
       <PopoverTrigger render={<Button variant="outline" />}>
-        Shipping info
+        Collection info
       </PopoverTrigger>
       <PopoverPopup>
-        <PopoverTitle>Delivery</PopoverTitle>
+        <PopoverTitle>Equipment collection</PopoverTitle>
         <PopoverDescription>
-          Orders arrive within five business days.
+          Collect reserved equipment at the station from 09:00.
         </PopoverDescription>
         <PopoverClose render={<Button variant="ghost" />}>Close</PopoverClose>
       </PopoverPopup>
@@ -1230,12 +1230,12 @@ import {
 export function Preview() {
   return (
     <PreviewCard>
-      <PreviewCardTrigger href="https://example.com">
-        Visit Example
+      <PreviewCardTrigger href="https://example.com/field-notes">
+        Willow Creek field notes
       </PreviewCardTrigger>
       <PreviewCardPopup>
-        <Heading render={<h2 />}>Example</Heading>
-        <Text>A sample website for documentation.</Text>
+        <Heading render={<h2 />}>Willow Creek field notes</Heading>
+        <Text>Explore observations from the wetland station.</Text>
       </PreviewCardPopup>
     </PreviewCard>
   )
@@ -1256,12 +1256,12 @@ import { Radio, RadioGroup } from "@/components/ui/radio-group"
 
 export function Preview() {
   return (
-    <RadioGroup aria-label="Delivery speed" defaultValue="standard">
+    <RadioGroup aria-label="Collection time" defaultValue="morning">
       <Label>
-        <Radio value="standard" /> Standard
+        <Radio value="morning" /> Morning
       </Label>
       <Label>
-        <Radio value="express" /> Express
+        <Radio value="afternoon" /> Afternoon
       </Label>
     </RadioGroup>
   )
@@ -1278,9 +1278,9 @@ const styles = stylex.create({ viewport: { blockSize: "12rem" } })
 export function Preview() {
   return (
     <ScrollArea xstyle={styles.viewport}>
-      <Box render={<ul />} aria-label="Versions">
+      <Box render={<ul />} aria-label="Field records">
         {Array.from({ length: 30 }, (_, index) => (
-          <Box render={<li />} key={index}>Version 1.{index}</Box>
+          <Box render={<li />} key={index}>Observation WC-{index + 101}</Box>
         ))}
       </Box>
     </ScrollArea>
@@ -1300,13 +1300,13 @@ import {
 
 export function Preview() {
   const items = [
-    { label: "Vite", value: "vite" },
-    { label: "Astro", value: "astro" },
+    { label: "Audio recording", value: "audio" },
+    { label: "Trail mapping", value: "mapping" },
   ]
 
   return (
-    <Select defaultValue="vite" items={items}>
-      <SelectTrigger aria-label="Framework">
+    <Select defaultValue="audio" items={items}>
+      <SelectTrigger aria-label="Equipment">
         <SelectValue />
       </SelectTrigger>
       <SelectPopup>
@@ -1330,9 +1330,9 @@ import { Separator } from "@/components/ui/separator"
 export function Preview() {
   return (
     <>
-      <Text>Account settings</Text>
+      <Text>Equipment collection</Text>
       <Separator />
-      <Text>Notification settings</Text>
+      <Text>Return instructions</Text>
     </>
   )
 }
@@ -1359,9 +1359,9 @@ export function Preview() {
       </SheetTrigger>
       <SheetPopup>
         <SheetHeader>
-          <SheetTitle>Scheduled maintenance</SheetTitle>
+          <SheetTitle>Station closing time</SheetTitle>
           <SheetDescription>
-            Service will pause tonight at midnight.
+            Return loan equipment to the east desk before 17:00.
           </SheetDescription>
         </SheetHeader>
         <SheetFooter>
@@ -1421,7 +1421,7 @@ export function Preview() {
       <SidebarInset>
         <SidebarTrigger />
         <Heading render={<h1 />}>Home</Heading>
-        <Text>Your workspace.</Text>
+        <Text>Your field station workspace.</Text>
       </SidebarInset>
     </SidebarProvider>
   )
@@ -1470,7 +1470,7 @@ import { Switch } from "@/components/ui/switch"
 export function Preview() {
   return (
     <Label>
-      <Switch name="notifications" /> Enable notifications
+      <Switch name="notifications" /> Trail condition alerts
     </Label>
   )
 }
@@ -1490,16 +1490,16 @@ import {
 export function Preview() {
   return (
     <Table>
-      <TableCaption>Current projects</TableCaption>
+      <TableCaption>Field visits</TableCaption>
       <TableHeader>
         <TableRow>
-          <TableHead scope="col">Project</TableHead>
+          <TableHead scope="col">Visit</TableHead>
           <TableHead scope="col">Status</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
         <TableRow>
-          <TableCell>Website</TableCell>
+          <TableCell>Dawn bird count</TableCell>
           <TableCell>Active</TableCell>
         </TableRow>
       </TableBody>
@@ -1520,12 +1520,12 @@ export function Preview() {
   return (
     <Tabs defaultValue="account">
       <TabsList aria-label="Settings">
-        <TabsTab value="account">Account</TabsTab>
-        <TabsTab value="notifications">Notifications</TabsTab>
+        <TabsTab value="account">Visit details</TabsTab>
+        <TabsTab value="notifications">Station updates</TabsTab>
       </TabsList>
-      <TabsPanel value="account">Manage your profile.</TabsPanel>
+      <TabsPanel value="account">Check your meeting point and collection time.</TabsPanel>
       <TabsPanel value="notifications">
-        Choose which updates to receive.
+        Choose which trail notices to receive.
       </TabsPanel>
     </Tabs>
   )
@@ -1540,7 +1540,7 @@ export function Preview() {
   return (
     <Field>
       <FieldLabel>Message</FieldLabel>
-      <Textarea placeholder="How can we help?" />
+      <Textarea placeholder="What did you observe on the trail?" />
     </Field>
   )
 }
@@ -1566,8 +1566,8 @@ function ShowToastButton() {
     <Button
       onClick={() =>
         toastManager.add({
-          title: "Event created",
-          description: "Your event is ready to share.",
+          title: "Field visit reserved",
+          description: "Your equipment will be ready at the station desk.",
         })
       }
     >
@@ -1651,7 +1651,7 @@ export function Preview() {
         <TooltipTrigger render={<Button variant="outline" />}>
           Save
         </TooltipTrigger>
-        <TooltipPopup>Save your changes.</TooltipPopup>
+        <TooltipPopup>Save this field observation.</TooltipPopup>
       </Tooltip>
     </TooltipProvider>
   )

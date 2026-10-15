@@ -47,19 +47,27 @@ export interface Group {
 }
 
 const suggestions: Item[] = [
-  { label: "Linear", shortcut: "⌘L", value: "linear" },
-  { label: "Figma", shortcut: "⌘F", value: "figma" },
-  { label: "Slack", shortcut: "⌘S", value: "slack" },
-  { label: "YouTube", shortcut: "⌘Y", value: "youtube" },
-  { label: "Raycast", shortcut: "⌘R", value: "raycast" },
+  { label: "Loan register", shortcut: "⌘L", value: "loan-register" },
+  { label: "Field notebook", shortcut: "⌘F", value: "field-notebook" },
+  { label: "Station messages", shortcut: "⌘S", value: "station-messages" },
+  {
+    label: "Yearly observations",
+    shortcut: "⌘Y",
+    value: "yearly-observations",
+  },
+  { label: "Route library", shortcut: "⌘R", value: "route-library" },
 ]
 
 const commands: Item[] = [
-  { label: "Clipboard History", shortcut: "⌘⇧C", value: "clipboard-history" },
-  { label: "Import Extension", shortcut: "⌘I", value: "import-extension" },
-  { label: "Create Snippet", shortcut: "⌘N", value: "create-snippet" },
-  { label: "System Preferences", shortcut: "⌘,", value: "system-preferences" },
-  { label: "Window Management", shortcut: "⌘⇧W", value: "window-management" },
+  { label: "Copy observation", shortcut: "⌘⇧C", value: "copy-observation" },
+  { label: "Import recording", shortcut: "⌘I", value: "import-recording" },
+  { label: "New field note", shortcut: "⌘N", value: "new-field-note" },
+  {
+    label: "Station preferences",
+    shortcut: "⌘,",
+    value: "station-preferences",
+  },
+  { label: "Walk schedule", shortcut: "⌘⇧W", value: "walk-schedule" },
 ]
 
 const groupedItems: Group[] = [
@@ -110,7 +118,7 @@ export function Preview() {
       </CommandDialogTrigger>
       <CommandDialogPopup>
         <Command items={groupedItems}>
-          <CommandInput placeholder="Search for apps and commands..." />
+          <CommandInput placeholder="Search station tools..." />
           <CommandPanel>
             <CommandEmpty>No results found.</CommandEmpty>
             <CommandList>

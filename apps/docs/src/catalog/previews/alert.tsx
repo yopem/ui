@@ -13,10 +13,10 @@ const styles = stylex.create({
 export function Preview() {
   return (
     <Alert>
-      <AlertTitle>Heads up!</AlertTitle>
+      <AlertTitle>Trail access changed</AlertTitle>
       <AlertDescription>
         <Text xstyle={styles.text}>
-          Describe what can be done about it here.
+          Use the east entrance while the river bridge is closed.
         </Text>
       </AlertDescription>
     </Alert>

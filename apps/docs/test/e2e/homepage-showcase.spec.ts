@@ -134,71 +134,85 @@ for (const theme of ["light", "dark"] as const) {
       page,
     }) => {
       await openHomepage(page)
-      const project = showcase(page, "card")
-      await project
+      const reservation = showcase(page, "card")
+      await reservation
         .getByRole("textbox", { name: "Name", exact: true })
-        .fill("Example project")
+        .fill("Wetland survey")
       await expect(
-        project.getByRole("textbox", { name: "Name", exact: true }),
-      ).toHaveValue("Example project")
-      await project.getByRole("combobox").click()
-      await page.getByRole("option", { name: "Vite", exact: true }).click()
-      await expect(project.getByRole("combobox")).toContainText("Vite")
+        reservation.getByRole("textbox", { name: "Name", exact: true }),
+      ).toHaveValue("Wetland survey")
+      await reservation.getByRole("combobox").click()
+      await page
+        .getByRole("option", { name: "Audio recording", exact: true })
+        .click()
+      await expect(reservation.getByRole("combobox")).toContainText(
+        "Audio recording",
+      )
 
       const tabs = showcase(page, "tabs")
       await tabs.scrollIntoViewIfNeeded()
-      await tabs.getByRole("tab", { name: "Tab 1", exact: true }).focus()
+      await tabs
+        .getByRole("tab", { name: "Meeting point", exact: true })
+        .focus()
       await page.keyboard.press("ArrowRight")
       await expect(
-        tabs.getByRole("tab", { name: "Tab 2", exact: true }),
+        tabs.getByRole("tab", { name: "Equipment", exact: true }),
       ).toBeFocused()
       await page.keyboard.press("Enter")
       await expect(
-        tabs.getByRole("tab", { name: "Tab 2", exact: true }),
+        tabs.getByRole("tab", { name: "Equipment", exact: true }),
       ).toHaveAttribute("aria-selected", "true")
       await expect(tabs.getByRole("tabpanel")).toBeVisible()
 
-      await project.getByRole("button", { name: "Deploy", exact: true }).click()
-      await expect(project.getByRole("status")).toBeVisible()
+      await reservation
+        .getByRole("button", { name: "Reserve kit", exact: true })
+        .click()
+      await expect(reservation.getByRole("status")).toBeVisible()
       await expect(
-        tabs.getByRole("tab", { name: "Tab 2", exact: true }),
+        tabs.getByRole("tab", { name: "Equipment", exact: true }),
       ).toHaveAttribute("aria-selected", "true")
 
       const radios = showcase(page, "radio-group")
       await radios.scrollIntoViewIfNeeded()
-      await radios.getByRole("radio", { name: /Next.js/ }).focus()
+      await radios.getByRole("radio", { name: /Birdwatching/ }).focus()
       await page.keyboard.press("ArrowDown")
-      await expect(radios.getByRole("radio", { name: /Vite/ })).toBeChecked()
+      await expect(
+        radios.getByRole("radio", { name: /Audio recording/ }),
+      ).toBeChecked()
       const checkboxes = showcase(page, "checkbox-group")
       await checkboxes.scrollIntoViewIfNeeded()
 
-      const vite = checkboxes.getByRole("checkbox", {
-        name: "Vite",
+      const audio = checkboxes.getByRole("checkbox", {
+        name: "Audio recording",
         exact: true,
       })
 
-      await vite.focus()
+      await audio.focus()
       await page.keyboard.press("Space")
-      await expect(vite).toBeChecked()
+      await expect(audio).toBeChecked()
       await expect(
-        checkboxes.getByRole("checkbox", { name: "Next.js", exact: true }),
+        checkboxes.getByRole("checkbox", { name: "Birdwatching", exact: true }),
       ).toBeChecked()
-      await expect(project.getByRole("combobox")).toContainText("Vite")
+      await expect(reservation.getByRole("combobox")).toContainText(
+        "Audio recording",
+      )
 
       await showcase(page, "combobox").scrollIntoViewIfNeeded()
-      const fruit = showcase(page, "combobox").getByRole("combobox")
-      await fruit.fill("no-such-fruit")
+      const equipment = showcase(page, "combobox").getByRole("combobox")
+      await equipment.fill("no-such-equipment")
       await expect(page.getByRole("option")).toHaveCount(0)
-      await fruit.fill("Ban")
-      await page.getByRole("option", { name: "Banana", exact: true }).click()
-      await expect(fruit).toHaveValue("Banana")
+      await equipment.fill("Audio")
+      await page
+        .getByRole("option", { name: "Audio recorder", exact: true })
+        .click()
+      await expect(equipment).toHaveValue("Audio recorder")
 
       const marquee = showcase(page, "marquee")
       await marquee.scrollIntoViewIfNeeded()
-      await marquee.getByRole("link", { name: "Design systems" }).focus()
+      await marquee.getByRole("link", { name: "Layout guide" }).focus()
       await page.keyboard.press("Tab")
       await expect(
-        marquee.getByRole("link", { name: "Accessible components" }),
+        marquee.getByRole("link", { name: "Component catalog" }),
       ).toBeFocused()
     })
 
@@ -293,7 +307,7 @@ for (const theme of ["light", "dark"] as const) {
       await dialogTrigger.press("Enter")
 
       const dialog = page.getByRole("dialog", {
-        name: "Edit profile",
+        name: "Edit reservation",
         exact: true,
       })
 

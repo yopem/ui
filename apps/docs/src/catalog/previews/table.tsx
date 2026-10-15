@@ -70,87 +70,89 @@ const styles = stylex.create({
 export function Preview() {
   return (
     <Table>
-      <TableCaption>A list of current projects.</TableCaption>
+      <TableCaption>Equipment reservations for the field station.</TableCaption>
       <TableHeader>
         <TableRow>
-          <TableHead>Project</TableHead>
+          <TableHead>Visit</TableHead>
           <TableHead>Status</TableHead>
-          <TableHead>Team</TableHead>
-          <TableHead xstyle={styles.tableHead}>Budget</TableHead>
+          <TableHead>Group</TableHead>
+          <TableHead xstyle={styles.tableHead}>Deposit</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
         <TableRow>
-          <TableCell xstyle={styles.tableCell}>Website Redesign</TableCell>
+          <TableCell xstyle={styles.tableCell}>Dawn bird count</TableCell>
           <TableCell>
             <Badge variant="outline">
               <Box render={<span />} aria-hidden="true" xstyle={styles.span} />
               Paid
             </Badge>
           </TableCell>
-          <TableCell>Frontend Team</TableCell>
-          <TableCell xstyle={styles.tableCell2}>$12,500</TableCell>
+          <TableCell>Reed watchers</TableCell>
+          <TableCell xstyle={styles.tableCell2}>$120</TableCell>
         </TableRow>
         <TableRow>
-          <TableCell xstyle={styles.tableCell3}>Mobile App</TableCell>
+          <TableCell xstyle={styles.tableCell3}>River sound survey</TableCell>
           <TableCell>
             <Badge variant="outline">
               <Box render={<span />} aria-hidden="true" xstyle={styles.span2} />
               Unpaid
             </Badge>
           </TableCell>
-          <TableCell>Mobile Team</TableCell>
-          <TableCell xstyle={styles.tableCell4}>$8,750</TableCell>
+          <TableCell>Listening group</TableCell>
+          <TableCell xstyle={styles.tableCell4}>$80</TableCell>
         </TableRow>
         <TableRow>
-          <TableCell xstyle={styles.tableCell5}>API Integration</TableCell>
+          <TableCell xstyle={styles.tableCell5}>Water sample round</TableCell>
           <TableCell>
             <Badge variant="outline">
               <Box render={<span />} aria-hidden="true" xstyle={styles.span3} />
               Pending
             </Badge>
           </TableCell>
-          <TableCell>Backend Team</TableCell>
-          <TableCell xstyle={styles.tableCell6}>$5,200</TableCell>
+          <TableCell>Water volunteers</TableCell>
+          <TableCell xstyle={styles.tableCell6}>$60</TableCell>
         </TableRow>
         <TableRow>
-          <TableCell xstyle={styles.tableCell7}>Database Migration</TableCell>
+          <TableCell xstyle={styles.tableCell7}>Meadow survey</TableCell>
           <TableCell>
             <Badge variant="outline">
               <Box render={<span />} aria-hidden="true" xstyle={styles.span4} />
               Paid
             </Badge>
           </TableCell>
-          <TableCell>DevOps Team</TableCell>
-          <TableCell xstyle={styles.tableCell8}>$3,800</TableCell>
+          <TableCell>Meadow group</TableCell>
+          <TableCell xstyle={styles.tableCell8}>$40</TableCell>
         </TableRow>
         <TableRow>
-          <TableCell xstyle={styles.tableCell9}>User Dashboard</TableCell>
+          <TableCell xstyle={styles.tableCell9}>Trail sign check</TableCell>
           <TableCell>
             <Badge variant="outline">
               <Box render={<span />} aria-hidden="true" xstyle={styles.span5} />
               Paid
             </Badge>
           </TableCell>
-          <TableCell>UX Team</TableCell>
-          <TableCell xstyle={styles.tableCell10}>$7,200</TableCell>
+          <TableCell>Trail stewards</TableCell>
+          <TableCell xstyle={styles.tableCell10}>$50</TableCell>
         </TableRow>
         <TableRow>
-          <TableCell xstyle={styles.tableCell11}>Security Audit</TableCell>
+          <TableCell xstyle={styles.tableCell11}>
+            Night wildlife watch
+          </TableCell>
           <TableCell>
             <Badge variant="outline">
               <Box render={<span />} aria-hidden="true" xstyle={styles.span6} />
               Failed
             </Badge>
           </TableCell>
-          <TableCell>Security Team</TableCell>
-          <TableCell xstyle={styles.tableCell12}>$2,100</TableCell>
+          <TableCell>Night observers</TableCell>
+          <TableCell xstyle={styles.tableCell12}>$90</TableCell>
         </TableRow>
       </TableBody>
       <TableFooter>
         <TableRow>
-          <TableCell colSpan={3}>Total Budget</TableCell>
-          <TableCell xstyle={styles.tableCell13}>$39,550</TableCell>
+          <TableCell colSpan={3}>Total deposits</TableCell>
+          <TableCell xstyle={styles.tableCell13}>$440</TableCell>
         </TableRow>
       </TableFooter>
     </Table>

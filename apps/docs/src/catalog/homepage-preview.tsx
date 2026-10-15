@@ -49,10 +49,13 @@ export function HomepagePreview({ item }: { item: CatalogItem }) {
 export function HomepageHeadingPreview() {
   return (
     <Stack>
-      <Heading render={<h4>Page title</h4>} xstyle={styles.pageHeading} />
-      <Heading render={<h5>Section title</h5>} xstyle={styles.sectionHeading} />
+      <Heading render={<h4>Field station</h4>} xstyle={styles.pageHeading} />
       <Heading
-        render={<h6>Subsection title</h6>}
+        render={<h5>Wetland survey</h5>}
+        xstyle={styles.sectionHeading}
+      />
+      <Heading
+        render={<h6>Bird observations</h6>}
         xstyle={styles.subsectionHeading}
       />
     </Stack>
@@ -65,7 +68,7 @@ export function HomepageLabelPreview() {
   return (
     <Stack>
       <Label htmlFor={id}>Email address</Label>
-      <Input id={id} placeholder="you@example.com" type="email" />
+      <Input id={id} placeholder="nora@example.com" type="email" />
     </Stack>
   )
 }

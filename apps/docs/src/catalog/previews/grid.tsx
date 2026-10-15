@@ -12,8 +12,8 @@ const styles = stylex.create({
 export function Preview() {
   return (
     <Grid xstyle={styles.grid}>
-      <Box render={<span />}>Design</Box>
-      <Box render={<span />}>Engineering</Box>
+      <Box render={<span />}>Bird sightings</Box>
+      <Box render={<span />}>Water samples</Box>
     </Grid>
   )
 }

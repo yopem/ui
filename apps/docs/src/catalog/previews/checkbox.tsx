@@ -4,8 +4,8 @@ import { Label } from "@registry/components/ui/label"
 export function Preview() {
   return (
     <Label>
-      <Checkbox aria-label="Accept terms and conditions" />
-      Accept terms and conditions
+      <Checkbox aria-label="Include a printed trail map" />
+      Include a printed trail map
     </Label>
   )
 }

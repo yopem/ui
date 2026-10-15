@@ -6,7 +6,7 @@ import { Text } from "@registry/components/ui/text"
 export function Preview() {
   return (
     <Text>
-      <Checkmark /> Saved successfully
+      <Checkmark /> Observation saved
     </Text>
   )
 }

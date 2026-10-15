@@ -31,7 +31,7 @@ test("component docs show live preview and copyable source", async ({
   await context.grantPermissions(["clipboard-read", "clipboard-write"])
   await page.goto("/components/button")
   await expect(
-    page.getByRole("button", { name: "Button", exact: true }),
+    page.getByRole("button", { name: "Reserve kit", exact: true }),
   ).toBeVisible()
   await page
     .getByRole("button", { name: "Copy Clickable default action source" })

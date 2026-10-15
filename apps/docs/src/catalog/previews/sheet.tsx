@@ -20,9 +20,9 @@ const styles = stylex.create({
   sheetPanel: { display: "grid", gap: "calc(0.25rem * 4)" },
 })
 
-const profileFields = [
-  { defaultValue: "Margaret Welsh", label: "Name" },
-  { defaultValue: "@maggie.welsh", label: "Username" },
+const visitFields = [
+  { defaultValue: "Nora Ellis", label: "Name" },
+  { defaultValue: "East reed bed", label: "Location" },
 ]
 
 export function Preview() {
@@ -33,14 +33,14 @@ export function Preview() {
       </SheetTrigger>
       <SheetPopup>
         <SheetHeader>
-          <SheetTitle>Edit profile</SheetTitle>
+          <SheetTitle>Edit field visit</SheetTitle>
           <SheetDescription>
-            Make changes to your profile here. Click save when you&apos;re done.
+            Set the contact name and survey location for the station log.
           </SheetDescription>
         </SheetHeader>
         <Form xstyle={styles.form}>
           <SheetPanel xstyle={styles.sheetPanel}>
-            {profileFields.map(({ defaultValue, label }) => (
+            {visitFields.map(({ defaultValue, label }) => (
               <Field key={label}>
                 <FieldLabel>{label}</FieldLabel>
                 <Input defaultValue={defaultValue} type="text" />

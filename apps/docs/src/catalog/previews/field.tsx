@@ -9,8 +9,10 @@ export function Preview() {
   return (
     <Field>
       <FieldLabel>Name</FieldLabel>
-      <Input placeholder="Enter your name" type="text" />
-      <FieldDescription>Visible on your profile</FieldDescription>
+      <Input placeholder="Nora Ellis" type="text" />
+      <FieldDescription>
+        Use the name on your equipment reservation.
+      </FieldDescription>
     </Field>
   )
 }

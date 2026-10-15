@@ -12,7 +12,7 @@ export function Preview() {
     <HStack>
       <Switch id={id} aria-labelledby={labelId} />
       <Label id={labelId} htmlFor={id}>
-        Marketing emails
+        Trail condition alerts
       </Label>
     </HStack>
   )

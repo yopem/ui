@@ -21,9 +21,9 @@ const styles = stylex.create({
   dialogPanel: { display: "grid", gap: "calc(0.25rem * 4)" },
 })
 
-const profileFields = [
-  { defaultValue: "Margaret Welsh", label: "Name" },
-  { defaultValue: "@maggie.welsh", label: "Username" },
+const reservationFields = [
+  { defaultValue: "Nora Ellis", label: "Name" },
+  { defaultValue: "Wetland listening walk", label: "Visit" },
 ]
 
 export function Preview() {
@@ -34,14 +34,15 @@ export function Preview() {
       </DialogTrigger>
       <DialogPopup xstyle={styles.dialogPopup}>
         <DialogHeader>
-          <DialogTitle>Edit profile</DialogTitle>
+          <DialogTitle>Edit reservation</DialogTitle>
           <DialogDescription>
-            Make changes to your profile here. Click save when you&apos;re done.
+            Update the visitor name and field visit before you collect
+            equipment.
           </DialogDescription>
         </DialogHeader>
         <Form xstyle={styles.form}>
           <DialogPanel xstyle={styles.dialogPanel}>
-            {profileFields.map((field) => (
+            {reservationFields.map((field) => (
               <Field key={field.label}>
                 <FieldLabel>{field.label}</FieldLabel>
                 <Input defaultValue={field.defaultValue} type="text" />

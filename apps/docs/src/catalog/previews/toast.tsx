@@ -5,8 +5,8 @@ import { toastManager } from "@registry/components/ui/toast"
 
 function handleClick() {
   toastManager.add({
-    description: "Monday, January 3rd at 6:00pm",
-    title: "Event has been created",
+    description: "East gate · Saturday at 07:00",
+    title: "Field visit reserved",
   })
 }
 

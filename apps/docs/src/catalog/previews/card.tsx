@@ -44,21 +44,21 @@ const styles = stylex.create({
   },
 })
 
-const frameworkOptions = [
-  { label: "Next.js", value: "next" },
-  { label: "Vite", value: "vite" },
-  { label: "Remix", value: "remix" },
-  { label: "Astro", value: "astro" },
+const kitOptions = [
+  { label: "Birdwatching", value: "birdwatching" },
+  { label: "Audio recording", value: "audio" },
+  { label: "Water sampling", value: "water" },
+  { label: "Trail mapping", value: "mapping" },
 ]
 
-function FrameworkSelect() {
+function KitSelect() {
   return (
-    <Select defaultValue="next" items={frameworkOptions}>
+    <Select defaultValue="birdwatching" items={kitOptions}>
       <SelectTrigger>
         <SelectValue />
       </SelectTrigger>
       <SelectPopup>
-        {frameworkOptions.map(({ label, value }) => (
+        {kitOptions.map(({ label, value }) => (
           <SelectItem key={value} value={value}>
             {label}
           </SelectItem>
@@ -68,19 +68,19 @@ function FrameworkSelect() {
   )
 }
 
-function ProjectForm() {
+function ReservationForm() {
   return (
     <Form xstyle={styles.form}>
       <Field>
         <FieldLabel>Name</FieldLabel>
-        <Input placeholder="Name of your project" type="text" />
+        <Input placeholder="Morning wetland survey" type="text" />
       </Field>
       <Field>
-        <FieldLabel>Framework</FieldLabel>
-        <FrameworkSelect />
+        <FieldLabel>Equipment</FieldLabel>
+        <KitSelect />
       </Field>
       <Button xstyle={styles.button} type="submit">
-        Deploy
+        Reserve kit
       </Button>
     </Form>
   )
@@ -90,17 +90,19 @@ export function Preview() {
   return (
     <Card xstyle={styles.card}>
       <CardHeader>
-        <CardTitle>Create project</CardTitle>
-        <CardDescription>Deploy your new project in one-click.</CardDescription>
+        <CardTitle>Reserve a field kit</CardTitle>
+        <CardDescription>
+          Choose equipment for your next field visit.
+        </CardDescription>
       </CardHeader>
       <CardPanel>
-        <ProjectForm />
+        <ReservationForm />
       </CardPanel>
       <CardFooter>
         <Flex xstyle={styles.flex}>
           <CircleAlertIcon {...stylex.props(previewStyles.preview5)} />
           <Text xstyle={styles.inheritedText}>
-            This will take a few seconds to complete.
+            Collect your kit from the station desk.
           </Text>
         </Flex>
       </CardFooter>

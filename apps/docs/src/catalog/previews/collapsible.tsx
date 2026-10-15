@@ -53,7 +53,7 @@ export function Preview() {
   return (
     <Collapsible>
       <CollapsibleTrigger xstyle={styles.collapsibleTrigger}>
-        Show recovery keys
+        Show equipment codes
         <ChevronDownIcon
           {...stylex.props(previewStyles.preview1, previewStyles.chevron)}
         />
@@ -61,13 +61,13 @@ export function Preview() {
       <CollapsiblePanel>
         <Box render={<ul />} xstyle={styles.ul}>
           <Box render={<li />} xstyle={styles.li}>
-            4829-1735-6621
+            KIT-BIRD-014
           </Box>
           <Box render={<li />} xstyle={styles.li2}>
-            9182-6407-5532
+            KIT-AUDIO-028
           </Box>
           <Box render={<li />} xstyle={styles.li3}>
-            3051-7924-9018
+            KIT-MAP-006
           </Box>
         </Box>
       </CollapsiblePanel>

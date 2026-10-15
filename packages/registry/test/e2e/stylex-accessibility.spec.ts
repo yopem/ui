@@ -8,7 +8,7 @@ test.beforeEach(async ({ page }) => {
     page.getByRole("button", { name: "Copy Button usage" }),
   ).toBeEnabled()
   await expect(
-    page.getByRole("button", { name: "Button", exact: true }),
+    page.getByRole("button", { name: "Reserve kit", exact: true }),
   ).toBeVisible()
 })
 
@@ -26,7 +26,7 @@ test("@a11y Button vertical slice has no detectable accessibility violations", a
 })
 
 test("buttons expose keyboard focus and minimum targets", async ({ page }) => {
-  const buttons = page.getByRole("button", { name: "Button", exact: true })
+  const buttons = page.getByRole("button", { name: "Reserve kit", exact: true })
   const count = await buttons.count()
   expect(count).toBeGreaterThan(0)
 

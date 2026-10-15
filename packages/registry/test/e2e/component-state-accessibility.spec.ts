@@ -2,18 +2,18 @@ import AxeBuilder from "@axe-core/playwright"
 import { expect, test } from "@playwright/test"
 
 const cases = [
-  ["alert-dialog", "Are you absolutely sure?"],
-  ["dialog", "Edit profile"],
-  ["drawer", "Notifications"],
-  ["menu", "Play"],
-  ["popover", "Send us feedback"],
-  ["preview-card", "coss.com/ui"],
-  ["select", "Astro"],
-  ["sheet", "Edit profile"],
-  ["tooltip", "Helpful hint"],
+  "alert-dialog",
+  "dialog",
+  "drawer",
+  "menu",
+  "popover",
+  "preview-card",
+  "select",
+  "sheet",
+  "tooltip",
 ] as const
 
-for (const [component, visibleText] of cases) {
+for (const component of cases) {
   test(`@a11y ${component} open state has no detectable accessibility violations`, async ({
     page,
   }) => {
@@ -24,7 +24,7 @@ for (const [component, visibleText] of cases) {
     ).toBeEnabled()
 
     if (component === "alert-dialog")
-      await page.getByRole("button", { name: "Delete Account" }).click()
+      await page.getByRole("button", { name: "Delete field note" }).click()
     else if (component === "dialog")
       await page.getByRole("button", { name: "Open Dialog" }).click()
     else if (component === "drawer")
@@ -34,15 +34,21 @@ for (const [component, visibleText] of cases) {
     else if (component === "popover")
       await page.getByRole("button", { name: "Open Popover" }).click()
     else if (component === "preview-card")
-      await page.getByRole("button", { name: "coss.com/ui" }).focus()
+      await page
+        .getByRole("button", { name: "Willow Creek field notes" })
+        .focus()
     else if (component === "select")
-      await page.getByRole("combobox", { name: "Select framework" }).click()
+      await page.getByRole("combobox", { name: "Select equipment" }).click()
     else if (component === "sheet")
       await page.getByRole("button", { name: "Open Sheet" }).click()
     else await page.getByRole("button", { name: "Hover me" }).hover()
 
     await expect(
-      page.getByText(visibleText, { exact: false }).last(),
+      page
+        .locator(
+          `[data-slot="${component === "preview-card" ? "preview-card-content" : `${component}-popup`}"]`,
+        )
+        .last(),
     ).toBeVisible()
 
     const result = await new AxeBuilder({ page })
@@ -108,10 +114,10 @@ test("@a11y context menu keyboard alternative opens an accessible menu", async (
   await expect(
     page.getByRole("button", { name: "Copy Context Menu usage" }),
   ).toBeEnabled()
-  const trigger = page.getByText("Right click here", { exact: true })
+  const trigger = page.getByText("Right-click a field note", { exact: true })
   await trigger.focus()
   await page.keyboard.press("Shift+F10")
-  await expect(page.getByRole("menuitem", { name: "Back" })).toBeVisible()
+  await expect(page.getByRole("menuitem", { name: "Open note" })).toBeVisible()
 
   const result = await new AxeBuilder({ page })
     .exclude("pre.shiki")

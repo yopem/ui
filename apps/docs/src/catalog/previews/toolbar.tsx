@@ -42,9 +42,9 @@ const styles = stylex.create({
 })
 
 const items = [
-  { label: "Helvetica", value: "helvetica" },
-  { label: "Arial", value: "arial" },
-  { label: "Times New Roman", value: "times-new-roman" },
+  { label: "Inter", value: "inter" },
+  { label: "IBM Plex Mono", value: "ibm-plex-mono" },
+  { label: "Georgia", value: "georgia" },
 ]
 
 const previewDefaultValue = ["left"]
@@ -135,7 +135,7 @@ export function Preview() {
         </ToolbarGroup>
         <ToolbarSeparator />
         <ToolbarGroup>
-          <Select defaultValue="helvetica" items={items}>
+          <Select defaultValue="inter" items={items}>
             <Tooltip>
               <TooltipTrigger
                 render={

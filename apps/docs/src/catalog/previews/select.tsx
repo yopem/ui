@@ -8,19 +8,23 @@ import {
 } from "@registry/components/ui/select"
 
 const items = [
-  { label: "Next.js", value: "next" },
-  { label: "Vite", value: "vite" },
-  { label: "Astro", value: "astro" },
+  { label: "Birdwatching", value: "birdwatching" },
+  { label: "Audio recording", value: "audio" },
+  { label: "Trail mapping", value: "mapping" },
 ]
 
 const portalProps = {
-  render: <Box aria-label="Framework options" render={<section />} />,
+  render: <Box aria-label="Equipment options" render={<section />} />,
 }
 
 export function Preview() {
   return (
-    <Select aria-label="Select framework" defaultValue="next" items={items}>
-      <SelectTrigger aria-label="Select framework">
+    <Select
+      aria-label="Select equipment"
+      defaultValue="birdwatching"
+      items={items}
+    >
+      <SelectTrigger aria-label="Select equipment">
         <SelectValue />
       </SelectTrigger>
       <SelectPopup portalProps={portalProps}>

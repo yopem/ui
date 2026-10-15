@@ -47,29 +47,32 @@ export function Preview() {
   return (
     <PreviewCard>
       <PreviewCardTrigger render={<Button variant="ghost" />}>
-        coss.com/ui
+        Willow Creek field notes
       </PreviewCardTrigger>
       <PreviewCardPopup>
         <Flex xstyle={styles.flex}>
           <Flex xstyle={styles.flex2}>
-            <Heading render={<h2>coss.com/ui</h2>} xstyle={styles.h2} />
+            <Heading
+              render={<h2>Willow Creek field notes</h2>}
+              xstyle={styles.h2}
+            />
             <Text xstyle={styles.paragraph}>
-              Beautifully designed components that you can copy and paste into
-              your apps.
+              A shared notebook of bird sightings, water samples, and trail
+              observations from the station.
             </Text>
           </Flex>
           <Flex xstyle={styles.flex3}>
             <Flex xstyle={styles.flex4}>
               <Box render={<span />} aria-hidden="true" xstyle={styles.span} />
-              <Box render={<span />}>TypeScript</Box>
+              <Box render={<span />}>Field archive</Box>
             </Flex>
             <Flex xstyle={styles.flex5}>
               <StarIcon {...stylex.props(previewStyles.preview8)} />
-              <Box render={<span />}>58.2k</Box>
+              <Box render={<span />}>246</Box>
             </Flex>
             <Flex xstyle={styles.flex6}>
               <CornerUpLeftIcon {...stylex.props(previewStyles.preview8)} />
-              <Box render={<span />}>5.1k</Box>
+              <Box render={<span />}>32</Box>
             </Flex>
           </Flex>
         </Flex>

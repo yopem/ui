@@ -8,7 +8,7 @@ const styles = stylex.create({
 export function Preview() {
   return (
     <Container xstyle={styles.narrow}>
-      Content stays centered and readable as the viewport grows.
+      Check the station noticeboard before you start your survey.
     </Container>
   )
 }

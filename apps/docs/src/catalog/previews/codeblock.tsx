@@ -3,5 +3,5 @@
 import { Codeblock } from "@registry/components/ui/codeblock"
 
 export function Preview() {
-  return <Codeblock>{"const answer = 42"}</Codeblock>
+  return <Codeblock>{'const station = "Willow Creek"'}</Codeblock>
 }

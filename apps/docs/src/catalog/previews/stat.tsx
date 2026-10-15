@@ -10,9 +10,9 @@ import {
 export function Preview() {
   return (
     <Stat>
-      <StatLabel>Requests</StatLabel>
-      <StatValue>1,248</StatValue>
-      <StatDescription>Last 30 days</StatDescription>
+      <StatLabel>Observations</StatLabel>
+      <StatValue>386</StatValue>
+      <StatDescription>This field season</StatDescription>
     </Stat>
   )
 }

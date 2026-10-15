@@ -14,20 +14,21 @@ export function Preview() {
   const items = [
     {
       content:
-        "Base UI is a library of high-quality unstyled React components for design systems and web apps.",
+        "The field station lends binoculars, audio recorders, and trail maps.",
       id: "1",
-      title: "What is Base UI?",
+      title: "What can I borrow?",
     },
     {
       content:
-        "Head to the \"Quick start\" guide in the docs. If you've used unstyled libraries before, you'll feel at home.",
+        "Choose an available kit and a collection date. Staff will confirm your reservation.",
       id: "2",
-      title: "How do I get started?",
+      title: "How do I reserve equipment?",
     },
     {
-      content: "Of course! Base UI is free and open source.",
+      content:
+        "Yes. Contact the station before your return date to check availability.",
       id: "3",
-      title: "Can I use it for my project?",
+      title: "Can I extend a loan?",
     },
   ]
 
