@@ -1,5 +1,36 @@
 # @yopem-ui/cli
 
+## 0.3.0
+
+### Minor Changes
+
+- [`ed1a945`](https://github.com/yopem/ui/commit/ed1a945ab7bd3f8bc6ee0f17b0b60cf92e9e3a80)
+  Thanks [@karyanayandi](https://github.com/karyanayandi)! - feat(ui): add
+  AspectRatio, List, Strong, and Figcaption
+
+  - Added AspectRatio for divs with CSS aspectRatio. Default ratio is 16:9.
+  - Introduced List and ListItem for semantic unordered and ordered lists.
+  - Added Strong for marking important text with weight 600.
+  - Introduced Figcaption for muted captions inside figures.
+  - Updated documentation and examples for new components.
+  - Adjusted lint rules and guidance to include new primitives.
+  - Ensured accessibility and semantic correctness in tests.
+
+### Patch Changes
+
+- [`78bd55f`](https://github.com/yopem/ui/commit/78bd55fb0cb978bc64f65818d2340e0f4ec148a7)
+  Thanks [@karyanayandi](https://github.com/karyanayandi)! - feat(cli): update
+  radius token values
+
+  - Change radius token values to new defaults:
+    - sm: 0.5rem (8px)
+    - md: 0.75rem (12px)
+    - lg: 1rem (16px)
+    - xl: 1.5rem (24px)
+  - Update guidance documentation to reflect new radius values.
+  - Add note about rounded components using md (12px) by default.
+  - Update tests to validate the new radius token values.
+
 ## 0.2.0
 
 ### Minor Changes
