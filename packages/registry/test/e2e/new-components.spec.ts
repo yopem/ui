@@ -25,7 +25,9 @@ test("@a11y rating supports keyboard selection and announces selected value", as
   expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([])
 })
 
-test("native select keeps form and keyboard behavior", async ({ page }) => {
+test("@a11y native select keeps aligned fields and keyboard behavior", async ({
+  page,
+}, testInfo) => {
   await page.goto("/components/native-select", {
     waitUntil: "domcontentloaded",
   })
@@ -35,12 +37,81 @@ test("native select keeps form and keyboard behavior", async ({ page }) => {
 
   const select = page.getByRole("combobox", { name: "Theme", exact: true })
   await expect(select).toHaveValue("system")
+  await select.click()
+  await page.keyboard.press("Escape")
   await select.focus()
   await page.keyboard.press("End")
   await expect(select).toHaveValue("dark")
-  await expect(
-    page.getByRole("combobox", { name: "Disabled theme" }),
-  ).toBeDisabled()
+  const disabledSelect = page.getByRole("combobox", { name: "Disabled theme" })
+  await expect(disabledSelect).toBeDisabled()
+
+  const selectBox = await select.boundingBox()
+  const disabledBox = await disabledSelect.boundingBox()
+  expect(selectBox).not.toBeNull()
+  expect(disabledBox).not.toBeNull()
+  expect(selectBox?.x).toBe(disabledBox?.x)
+  expect(selectBox?.width).toBe(disabledBox?.width)
+
+  for (const name of ["Theme", "Disabled theme"]) {
+    const label = page.getByText(name, { exact: true })
+    const control = page.getByRole("combobox", { name, exact: true })
+    const labelBox = await label.boundingBox()
+    const controlBox = await control.boundingBox()
+    expect(labelBox).not.toBeNull()
+    expect(controlBox).not.toBeNull()
+
+    if (labelBox && controlBox) {
+      expect(labelBox.y + labelBox.height).toBeLessThan(controlBox.y)
+      expect(labelBox.x).toBe(controlBox.x)
+    }
+  }
+
+  const icon = page.locator('[data-slot="native-select-icon"]').first()
+  await expect(icon).toBeVisible()
+  await expect(icon).toHaveAttribute("aria-hidden", "true")
+  const chevronBox = await icon.locator("path").boundingBox()
+
+  const textInset = await select.evaluate((element) => {
+    const style = getComputedStyle(element)
+
+    return (
+      Number.parseFloat(style.paddingInlineStart) +
+      Number.parseFloat(style.borderInlineStartWidth)
+    )
+  })
+
+  expect(chevronBox).not.toBeNull()
+
+  if (selectBox && chevronBox) {
+    const arrowInset =
+      selectBox.x + selectBox.width - chevronBox.x - chevronBox.width
+
+    expect(Math.abs(arrowInset - textInset)).toBeLessThanOrEqual(2)
+  }
+
+  await select.scrollIntoViewIfNeeded()
+  expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([])
+  await page.screenshot({
+    path: testInfo.outputPath("native-select.png"),
+    scale: "css",
+  })
+
+  await select
+    .locator("..")
+    .evaluate((element) => element.setAttribute("dir", "rtl"))
+  const rtlSelectBox = await select.boundingBox()
+  const rtlIconBox = await icon.boundingBox()
+  expect(rtlSelectBox).not.toBeNull()
+  expect(rtlIconBox).not.toBeNull()
+
+  if (rtlSelectBox && rtlIconBox) {
+    expect(rtlIconBox.x).toBeLessThan(rtlSelectBox.x + rtlSelectBox.width / 2)
+  }
+
+  await page.screenshot({
+    path: testInfo.outputPath("native-select-rtl.png"),
+    scale: "css",
+  })
 })
 
 test("marquee can be paused and resumed", async ({ page }) => {

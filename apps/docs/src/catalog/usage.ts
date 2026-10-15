@@ -80,25 +80,34 @@ export function Preview() {
 `,
   "native-select": `"use client"
 
+import { Field } from "@/components/ui/field"
+import { Label } from "@/components/ui/label"
 import { NativeSelect } from "@/components/ui/native-select"
+import { Stack } from "@/components/ui/stack"
+import * as stylex from "@stylexjs/stylex"
+
+const styles = stylex.create({
+  fields: { inlineSize: "20rem", maxInlineSize: "100%" },
+})
 
 export function Preview() {
   return (
-    <>
-      <label>
-        Theme{" "}
-        <NativeSelect defaultValue="system">
+    <Stack xstyle={styles.fields}>
+      <Field>
+        <Label htmlFor="native-select-theme">Theme</Label>
+        <NativeSelect id="native-select-theme" defaultValue="system">
           <option value="system">System</option>
           <option value="light">Light</option>
           <option value="dark">Dark</option>
         </NativeSelect>
-      </label>
-      <label>
-        Disabled theme <NativeSelect disabled defaultValue="system">
+      </Field>
+      <Field disabled>
+        <Label htmlFor="native-select-disabled-theme">Disabled theme</Label>
+        <NativeSelect id="native-select-disabled-theme" disabled defaultValue="system">
           <option value="system">System</option>
         </NativeSelect>
-      </label>
-    </>
+      </Field>
+    </Stack>
   )
 }
 `,
