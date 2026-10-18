@@ -10,7 +10,10 @@ test("@a11y CLI guide documents commands, options, and safe updates", async ({
     main.getByRole("heading", { name: "CLI", exact: true, level: 1 }),
   ).toBeVisible()
 
-  const options = main.getByRole("table")
+  const options = main.getByRole("table").filter({
+    has: page.getByRole("columnheader", { name: "Option", exact: true }),
+  })
+
   await expect(options).toBeVisible()
   await expect(options.getByRole("columnheader")).toHaveText([
     "Option",

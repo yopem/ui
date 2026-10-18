@@ -153,7 +153,7 @@ for (const [path, previous, next] of [
   ["/components", "/docs/lint", "/components/accordion"],
   ["/components/tooltip", "/components/toolbar", "/components/absolute-center"],
   ["/components/wrap", "/components/vstack", "/components/blockquote"],
-  ["/components/text", "/components/prose", "/components/use-event-callback"],
+  ["/components/text", "/components/strong", "/components/use-event-callback"],
   ["/components/use-media-query", "/components/use-event-callback", null],
 ] as const) {
   test(`global page sequence at ${path}`, async ({ page }) => {

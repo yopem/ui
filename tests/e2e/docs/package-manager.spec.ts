@@ -240,8 +240,26 @@ test("lint Markdown preserves raw commands", async ({ request }) => {
   expect(rawSource).toContain("npm exec -- @yopem-ui/cli init")
 })
 
-test("SSR command selection defaults to Bun", async ({ request }) => {
-  const response = await request.get("/docs/installation")
-  expect(response.ok()).toBe(true)
-  expect(await response.text()).toContain("bunx --bun @yopem-ui/cli init")
+test.describe("server-rendered package manager", () => {
+  test.use({ javaScriptEnabled: false })
+
+  test("SSR command selection defaults to Bun", async ({ page }, testInfo) => {
+    const response = await page.goto("/docs/installation")
+    expect(response?.ok()).toBe(true)
+    const main = page.getByRole("main")
+
+    await expect(main.locator("pre").first()).toHaveText(
+      "bunx --bun @yopem-ui/cli init",
+    )
+    await expect(
+      main
+        .getByRole("group", { name: "Package manager" })
+        .first()
+        .getByRole("button", { name: "Bun", exact: true }),
+    ).toHaveAttribute("aria-pressed", "true")
+    await testInfo.attach("ssr-installation", {
+      body: await page.content(),
+      contentType: "text/html",
+    })
+  })
 })
