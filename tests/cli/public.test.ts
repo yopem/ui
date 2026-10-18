@@ -163,6 +163,7 @@ async function previewPackedCli(
   project: string,
   args: string[],
   snapshotRoot = project,
+  buttonPath = "src/components/ui/button.tsx",
 ) {
   const before = snapshot(snapshotRoot)
 
@@ -175,7 +176,7 @@ async function previewPackedCli(
     "--dry-run",
   )
 
-  expect(output).toContain("src/components/ui/button.tsx")
+  expect(output.split("\n")).toContain(`Write ${buttonPath}`)
   expect(output).toContain("No files written")
   expect(output).not.toContain("Installed ")
   expect(output).toContain("Runtime dependencies:")
@@ -549,6 +550,7 @@ for (const { framework, shared } of [
           ...(shared ? ["--cwd", "../../packages/ui"] : []),
         ],
         project,
+        shared ? "components/ui/button.tsx" : "src/components/ui/button.tsx",
       )
       await run(
         logs,
