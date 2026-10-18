@@ -779,6 +779,7 @@ child = subprocess.Popen(sys.argv[2:], stdin=slave, stdout=slave, stderr=slave)
 os.close(slave)
 output = bytearray()
 sent = False
+directories_sent = False
 deadline = time.monotonic() + 25
 while time.monotonic() < deadline:
     ready, _, _ = select.select([master], [], [], 0.1)
@@ -798,6 +799,9 @@ while time.monotonic() < deadline:
             else:
                 os.write(master, b'\\x04' if sys.argv[1] == 'EOF' else (sys.argv[1] + '\\n').encode())
             sent = True
+        if not directories_sent and b'Customize directories' in output:
+            os.write(master, b'\\n')
+            directories_sent = True
     if child.poll() is not None and not ready:
         break
 else:

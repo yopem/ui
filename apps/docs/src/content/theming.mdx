@@ -69,6 +69,9 @@ To let users select light, dark, and system modes, copy these two files:
 
 <ThemeFiles />
 
+These examples use manual-copy paths. Fresh CLI init uses a `themes` directory.
+For CLI installations, use the theme path from `ui.json` in these imports.
+
 Add the script before hydration. Wrap your app with the provider. This example
 keeps the TanStack Start head and script components. For another SSR framework,
 change only those framework-specific imports.

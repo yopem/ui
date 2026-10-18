@@ -72,6 +72,57 @@ bunx --bun @yopem-ui/cli add button
 The command installs component source, required shared files, and dependencies.
 It records installed files and their hashes in `ui.json`.
 
+## Source directories
+
+Interactive init asks whether to customize source directories. Press Enter to
+keep the defaults. Choose yes to set each directory.
+
+Init checks the target project for a `src` directory. Without `src`, it removes
+the `src/` prefix from the defaults below. Noninteractive init uses detected
+defaults without a prompt.
+
+Init saves the directories in `ui.json`. You can also set `paths` before init.
+This example changes UI component and hook directories:
+
+```json
+{
+  "version": 1,
+  "files": {},
+  "paths": {
+    "ui": "src/design-system/ui",
+    "hooks": "src/shared/hooks"
+  }
+}
+```
+
+Paths are relative to the project that contains `ui.json`. Use forward slashes.
+Keep existing manifest fields when you add `paths`.
+
+| Key          | Default directory   |
+| ------------ | ------------------- |
+| `components` | `src/components`    |
+| `ui`         | `src/components/ui` |
+| `hooks`      | `src/hooks`         |
+| `lib`        | `src/lib`           |
+| `styles`     | `src/styles`        |
+| `theme`      | `src/themes`        |
+
+Missing keys keep their defaults. The `ui` directory is independent of
+`components`. Set `ui` to change the destination for UI components.
+
+For shared workspaces, init checks the UI package for `src`. It saves directory
+choices in that package's `ui.json`. The `sourceRoot` field records the import
+alias root: `src` or `.`.
+
+Add and update use these directories and rewrite copied source imports. Paths
+must stay inside the project. Directories can overlap. The CLI rejects file
+destination conflicts.
+
+Set each path before you install files in that directory. The CLI does not move
+tracked files. It rejects changed destinations for tracked files. Existing
+tracked layouts keep their current directories, including the earlier
+`src/theme` directory.
+
 ## update
 
 Review local changes before you update an installed item:

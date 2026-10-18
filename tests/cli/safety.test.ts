@@ -604,9 +604,7 @@ for (const conflict of [false, true]) {
         await operation
         const ui = JSON.parse(project.read("packages/ui/package.json"))
         expect(ui.dependencies.react).toBe(`installed-${calls}`)
-        expect(ui.exports["./components/ui/*"]).toBe(
-          "./src/components/ui/*.tsx",
-        )
+        expect(ui.exports["./components/ui/*"]).toBe("./components/ui/*.tsx")
         expect(ui.sideEffects).toEqual(["**/*.css"])
       }
 

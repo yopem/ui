@@ -187,6 +187,47 @@ yarn dlx @yopem-ui/cli add theme
 
 Root wiring remains manual. Follow the theming guide and the `yopem-ui` skill.
 
+## Select source directories
+
+Interactive init offers optional directory customization. Press Enter to keep
+detected defaults. Choose yes to set each directory. Noninteractive init keeps
+detected defaults without a prompt.
+
+Init uses `src/` defaults only when the target project has a `src` directory.
+Without `src`, defaults are `components`, `components/ui`, `hooks`, `lib`,
+`styles`, and `themes`. Shared init checks the UI package, not the app.
+
+Init saves choices in `ui.json`. You can also set `paths` before init:
+
+```json
+{
+  "version": 1,
+  "files": {},
+  "paths": {
+    "components": "src/components",
+    "ui": "src/design-system/ui",
+    "hooks": "src/shared/hooks",
+    "lib": "src/lib",
+    "styles": "src/styles",
+    "theme": "src/themes"
+  }
+}
+```
+
+Paths are project-relative directories with forward slashes. Missing keys keep
+their defaults. The default UI directory is `src/components/ui`. The `ui` key is
+independent of `components`. Preserve existing manifest tracking fields. The
+`sourceRoot` field records the import alias root: `src` or `.`. Existing tracked
+layouts keep their paths, including the earlier `src/theme` directory.
+
+Init configures base files and build settings for these paths. Add and update
+use them for file destinations and copied imports. For shared workspaces, edit
+the UI package's `ui.json`. Paths must stay inside the project. Directories can
+overlap. The CLI rejects file destination conflicts.
+
+Set each path before you install files in that directory. The CLI rejects
+changed destinations for tracked files. It does not move existing source files.
+
 ## Use a shared workspace
 
 Create a named UI package in the same workspace before init. From the workspace

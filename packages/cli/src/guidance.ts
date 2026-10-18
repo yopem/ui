@@ -8,7 +8,16 @@ const begin = "<!-- BEGIN:yopem-ui-design -->"
 
 const end = "<!-- END:yopem-ui-design -->"
 
-export function designGuidance(content: string, importPrefix = "@/") {
+export function designGuidance(
+  content: string,
+  importPrefix = "@/",
+  imports = {
+    components: `${importPrefix}components/ui`,
+    tokens: `${importPrefix}styles/tokens.stylex`,
+    lib: `${importPrefix}lib/stylex`,
+    css: `${importPrefix}styles/styles.css`,
+  },
+) {
   const block = `${begin}
 ## Yopem UI design system
 
@@ -18,10 +27,10 @@ Yopem UI provides source-owned React components with TypeScript, Base UI, and St
 Init installs only base files. Install each component before you use it.
 Use the installed source and component documentation as the API reference.
 
-- Import components from \`${importPrefix}components/ui/<name>\`.
-- Import semantic tokens from \`${importPrefix}styles/tokens.stylex\`.
-- Import StyleX helpers from \`${importPrefix}lib/stylex\`.
-- Keep \`${importPrefix}styles/styles.css\` loaded at the application root.
+- Import components from \`${imports.components}/<name>\`.
+- Import semantic tokens from \`${imports.tokens}\`.
+- Import StyleX helpers from \`${imports.lib}\`.
+- Keep \`${imports.css}\` loaded at the application root.
 - Keep the \`@stylex;\` directive and CSS layer order intact.
 - Use named function exports for React components.
 - Keep \`"use client"\` in client components.

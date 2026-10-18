@@ -27,6 +27,10 @@ The `init` command installs tokens, reset CSS, and StyleX helpers. It configures
 build plugins, aliases, and root styles. It stops if existing configuration
 conflicts with required settings.
 
+Interactive init offers optional custom folders for components, hooks, styles,
+and themes. The CLI saves choices in `ui.json` for later add and update
+commands.
+
 Use `--dry-run` with `init`, `add`, or `update` to validate and preview changes.
 A dry run does not write files or run a package manager. The init preview lists
 absolute target paths, configuration changes, manifest exports and scripts,

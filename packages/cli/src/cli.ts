@@ -5,11 +5,11 @@ import { resolve } from "node:path"
 import { createInterface } from "node:readline"
 
 import type { InitOptions } from "./init.js"
-import type { JsonValue } from "./install.js"
+import type { InstallPaths, JsonValue } from "./install.js"
 
 import { isGuidance } from "./guidance.js"
 import { initProject } from "./init.js"
-import { installItem, isRecord, isString } from "./install.js"
+import { installItem, isRecord, isString, resolveInitPaths } from "./install.js"
 
 const usage =
   "Usage: yopem-ui [--help | --version] | init [--framework vite|tanstack-router|tanstack-start|react-router|next|astro] [--ui <path>] [--guidance design|agents|none] [--dry-run] [--cwd <path>] [--registry <URL>] | <add|update> <name> [--force] [--dry-run] [--cwd <path>] [--registry <URL>]"
@@ -27,7 +27,11 @@ function isFramework(
   )
 }
 
-async function promptGuidance() {
+async function promptInit(
+  root: string,
+  options: InitOptions,
+  selectedGuidance: InitOptions["guidance"],
+) {
   const input = createInterface({
     input: process.stdin,
     output: process.stdout,
@@ -38,28 +42,87 @@ async function promptGuidance() {
   }
 
   process.once("SIGINT", cancel)
+  input.on("SIGINT", cancel)
+  const answers = input[Symbol.asyncIterator]()
+
+  async function answer(prompt: string, stage: string) {
+    process.stdout.write(prompt)
+    const next = await answers.next()
+
+    if (next.done)
+      throw new Error(`${stage} selection cancelled; no files changed`)
+
+    return next.value.trim()
+  }
 
   try {
-    console.info(
-      "Design system guidance:\n1. DESIGN.md\n2. Update AGENTS.md\n3. Do nothing (default)",
-    )
-    process.stdout.write("Choose [3]: ")
+    let guidance = selectedGuidance
 
-    for await (const answer of input) {
-      switch (answer.trim()) {
-        case "1":
-          return "design"
-        case "2":
-          return "agents"
-        case "":
-        case "3":
-          return "none"
-        default:
-          process.stdout.write("Enter 1, 2, or 3. Choose [3]: ")
+    if (guidance === undefined) {
+      console.info(
+        "Design system guidance:\n1. DESIGN.md\n2. Update AGENTS.md\n3. Do nothing (default)",
+      )
+      let prompt = "Choose [3]: "
+
+      while (guidance === undefined) {
+        switch (await answer(prompt, "Guidance")) {
+          case "1":
+            guidance = "design"
+            break
+          case "2":
+            guidance = "agents"
+            break
+          case "":
+          case "3":
+            guidance = "none"
+            break
+          default:
+            prompt = "Enter 1, 2, or 3. Choose [3]: "
+        }
       }
     }
 
-    throw new Error("Guidance selection cancelled; no files changed")
+    if (options.paths !== undefined) return { guidance, paths: options.paths }
+
+    const defaults = await resolveInitPaths(root, options.importPrefix)
+    let customize = await answer("Customize directories? [y/N]: ", "Directory")
+
+    while (!["", "n", "no", "y", "yes"].includes(customize.toLowerCase())) {
+      customize = await answer("Customize directories? [y/N]: ", "Directory")
+    }
+
+    if (!["y", "yes"].includes(customize.toLowerCase()))
+      return { guidance, paths: undefined }
+
+    const paths: Partial<InstallPaths> = {}
+
+    for (const key of [
+      "components",
+      "ui",
+      "hooks",
+      "lib",
+      "styles",
+      "theme",
+    ] as const) {
+      while (true) {
+        const value = await answer(
+          `${key} [${defaults.paths[key]}]: `,
+          "Directory",
+        )
+
+        const candidate = { ...paths, [key]: value || defaults.paths[key] }
+
+        try {
+          await resolveInitPaths(root, options.importPrefix, candidate)
+          paths[key] = candidate[key]
+          break
+        } catch (cause) {
+          console.error(cause instanceof Error ? cause.message : cause)
+        }
+      }
+    }
+
+    return { guidance, paths }
   } finally {
     process.off("SIGINT", cancel)
     input.close()
@@ -142,20 +205,22 @@ export async function runCli(args: string[], options: InitOptions = {}) {
     )
       throw new Error(usage)
 
-    const guidance =
-      selectedGuidance ??
-      (metadata.main && process.stdin.isTTY && process.stdout.isTTY
-        ? await promptGuidance()
-        : "none")
+    const ui = flags.get("--ui") ?? options.ui
+
+    const { guidance, paths } =
+      metadata.main && process.stdin.isTTY && process.stdout.isTTY
+        ? await promptInit(resolve(cwd, ui ?? "."), options, selectedGuidance)
+        : { guidance: selectedGuidance ?? "none", paths: options.paths }
 
     const result = await initProject({
       ...options,
       cwd,
       registryUrl,
       guidance,
+      paths,
       dryRun: flags.has("--dry-run") || options.dryRun,
       onWarning,
-      ui: flags.get("--ui") ?? options.ui,
+      ui,
       framework: isFramework(framework) ? framework : options.framework,
     })
 

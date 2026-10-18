@@ -383,6 +383,14 @@ instructions in `AGENTS.md`. Do not add a root `DESIGN.md`.
   aligned with this file and canonical registry source in the same change.
 - Update CLI guidance tests when generated instructions or file behavior change.
   Do not copy repository-only paths or development commands into consumer files.
+- CLI `ui.json` accepts optional project-relative `paths` for `components`,
+  `ui`, `hooks`, `lib`, `styles`, and `theme`. Missing keys keep default source
+  directories. Init offers opt-in directory prompts. Fresh init uses `src/`
+  defaults only when the target package has `src`; its theme directory is
+  `themes`. Persist the detected import alias root in `sourceRoot`. Preserve
+  existing tracked layouts. The `ui` directory is independent of `components`.
+  Keep install destinations, copied imports, init configuration, and shared
+  exports aligned.
 - CLI init offers three opt-in choices: `DESIGN.md`, update `AGENTS.md`, or
   do nothing. Noninteractive init does nothing unless `--guidance` selects a file.
 - Write consumer guidance in the target app directory, including shared UI setup.

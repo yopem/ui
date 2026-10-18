@@ -100,7 +100,7 @@ for (const framework of ["next", "astro", "tanstack-start"] as const) {
         ).toContain('"@acme/ui/*"')
         expect(
           readFileSync(join(root, "apps/web/postcss.config.cjs"), "utf8"),
-        ).toContain("../../packages/ui/src")
+        ).toContain("../../packages/ui/components")
       } else {
         expect(configured).toContain('"@acme/ui/*"')
         expect(configured).toContain("yopemUISource")

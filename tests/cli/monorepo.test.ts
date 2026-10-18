@@ -124,7 +124,7 @@ test("shared UI init, add, repeat and modified update stay workspace-local", asy
     })
     const config = readFileSync(join(root, "apps/web/vite.config.ts"), "utf8")
     expect(config).toContain('"@acme/ui/*"')
-    expect(config).toContain("../../packages/ui/src")
+    expect(config).toContain("../../packages/ui/components")
     expect(readFileSync(join(root, "apps/web/src/main.tsx"), "utf8")).toContain(
       'from "@acme/ui/styles/tokens.stylex"',
     )
@@ -134,11 +134,9 @@ test("shared UI init, add, repeat and modified update stay workspace-local", asy
     )
 
     expect(manifest.sideEffects).toEqual(["**/*.css"])
-    expect(manifest.exports["./components/ui/*"]).toBe(
-      "./src/components/ui/*.tsx",
-    )
+    expect(manifest.exports["./components/ui/*"]).toBe("./components/ui/*.tsx")
     expect(manifest.exports["./styles/tokens.stylex"]).toBe(
-      "./src/styles/tokens.stylex.ts",
+      "./styles/tokens.stylex.ts",
     )
     expect(calls.some((call) => call.cwd === join(root, "packages/ui"))).toBe(
       true,
@@ -157,7 +155,7 @@ test("shared UI init, add, repeat and modified update stay workspace-local", asy
     })
 
     const button = readFileSync(
-      join(root, "packages/ui/src/components/ui/button.tsx"),
+      join(root, "packages/ui/components/ui/button.tsx"),
       "utf8",
     )
 
@@ -171,7 +169,7 @@ test("shared UI init, add, repeat and modified update stay workspace-local", asy
     expect(readFileSync(join(root, "apps/web/vite.config.ts"), "utf8")).toBe(
       config,
     )
-    put("packages/ui/src/components/ui/button.tsx", `${button}\n`)
+    put("packages/ui/components/ui/button.tsx", `${button}\n`)
     expect(
       runCli(["update", "button", "--cwd", "packages/ui"], {
         cwd: root,
@@ -185,10 +183,7 @@ test("shared UI init, add, repeat and modified update stay workspace-local", asy
       fetcher,
     })
     expect(
-      readFileSync(
-        join(root, "packages/ui/src/components/ui/button.tsx"),
-        "utf8",
-      ),
+      readFileSync(join(root, "packages/ui/components/ui/button.tsx"), "utf8"),
     ).toBe(button)
     mkdirSync(resolve(import.meta.dirname, "../../test-results/cli"), {
       recursive: true,

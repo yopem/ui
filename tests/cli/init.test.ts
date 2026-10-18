@@ -162,6 +162,8 @@ for (const fixture of [
     }
 
     try {
+      const sourcePrefix = fixture.layout.startsWith("src/") ? "src/" : ""
+
       const dependencies = new Map<string, string>([
         [fixture.dependency, "*"],
         ["react", "*"],
@@ -183,7 +185,7 @@ for (const fixture of [
         fixture.config,
         fixture.framework === "astro"
           ? 'import { defineConfig } from "astro/config"\nexport default defineConfig({ integrations: [] })\n'
-          : 'export default { plugins: [], resolve: { alias: { "@": "./src" } } }\n',
+          : `export default { plugins: [], resolve: { alias: { "@": "${sourcePrefix ? "./src" : "."}" } } }\n`,
       )
       put(
         fixture.layout,
@@ -241,7 +243,7 @@ for (const fixture of [
       expect(lint.rules["yopem-ui/prefer-layout-primitives"]).toBe("error")
       expect(lint.rules["yopem-ui/no-raw-stylex-colors"]).toBe("error")
       expect(lint.overrides).toContainEqual({
-        files: ["src/components/ui/**/*.{tsx,jsx}"],
+        files: [`${sourcePrefix}components/ui/**/*.{tsx,jsx}`],
         rules: {
           "yopem-ui/enforce-styling-methods": "off",
           "yopem-ui/no-restyle": "off",
@@ -257,9 +259,11 @@ for (const fixture of [
       expect(config).not.toContain("@stylexjs/unplugin")
       expect(config).not.toContain("babel.config.cjs")
       expect(
-        readFileSync(join(root, "src/styles/styles.css"), "utf8"),
+        readFileSync(join(root, `${sourcePrefix}styles/styles.css`), "utf8"),
       ).toContain("@stylex;")
-      expect(existsSync(join(root, "src/styles/stylex.css"))).toBe(false)
+      expect(existsSync(join(root, `${sourcePrefix}styles/stylex.css`))).toBe(
+        false,
+      )
       expect(readFileSync(join(root, fixture.layout), "utf8")).not.toContain(
         "stylex.css",
       )

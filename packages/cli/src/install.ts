@@ -63,6 +63,7 @@ interface RegistryItem {
 interface Provenance {
   registryUrl: string
   items: Record<string, string>
+  target?: string
 }
 
 interface Manifest {
@@ -70,6 +71,176 @@ interface Manifest {
   files: Record<string, string>
   importPrefix?: string
   provenance?: Record<string, Provenance>
+  paths?: Partial<InstallPaths>
+  sourceRoot?: "." | "src"
+}
+
+export interface InstallPaths {
+  components: string
+  ui: string
+  hooks: string
+  lib: string
+  styles: string
+  theme: string
+}
+
+const defaultPaths: InstallPaths = {
+  components: "src/components",
+  ui: "src/components/ui",
+  hooks: "src/hooks",
+  lib: "src/lib",
+  styles: "src/styles",
+  theme: "src/theme",
+}
+
+const pathKeys = [
+  "ui",
+  "components",
+  "hooks",
+  "lib",
+  "styles",
+  "theme",
+] as const
+
+function readPaths(value: JsonValue | Partial<InstallPaths> | undefined) {
+  if (value === undefined) return undefined
+
+  if (
+    !isRecord(value) ||
+    Object.keys(value).some((key) => !Object.hasOwn(defaultPaths, key))
+  )
+    throw new Error("Invalid ui.json paths")
+  const paths: Partial<InstallPaths> = {}
+
+  for (const key of pathKeys) {
+    if (!Object.hasOwn(value, key)) continue
+    const directory = value[key]
+
+    if (!isString(directory)) throw new Error("Invalid ui.json paths")
+    safePath(`${directory}/file`)
+    paths[key] = directory
+  }
+
+  return paths
+}
+
+export function mapTargetPath(
+  target: string,
+  paths: InstallPaths,
+  sourceRoot: "." | "src" = "src",
+) {
+  const key = pathKeys.find((key) => {
+    const canonical = `@/${key === "ui" ? "components/ui" : key}`
+
+    return target === canonical || target.startsWith(`${canonical}/`)
+  })
+
+  if (!key) {
+    const path = targetPath(target)
+
+    return sourceRoot === "." ? target.slice(2) : path
+  }
+
+  const canonical = `@/${key === "ui" ? "components/ui" : key}`
+
+  if (target !== canonical) targetPath(target)
+
+  return `${paths[key]}${target.slice(canonical.length)}`
+}
+
+export function mapImportPath(
+  target: string,
+  paths: InstallPaths,
+  prefix: string,
+  sourceRoot: "." | "src" = "src",
+) {
+  const key = pathKeys.find((key) => {
+    const canonical = `@/${key === "ui" ? "components/ui" : key}`
+
+    return target === canonical || target.startsWith(`${canonical}/`)
+  })
+
+  if (!key) return `${prefix}/${target.slice(2)}`
+  const canonical = `@/${key === "ui" ? "components/ui" : key}`
+  const directory = paths[key]
+
+  if (sourceRoot === ".")
+    return `${prefix}/${directory}${target.slice(canonical.length)}`
+
+  const imported = directory.startsWith("src/")
+    ? directory.slice(4)
+    : `${prefix === "@" ? "../" : ""}${directory}`
+
+  return `${prefix}/${imported}${target.slice(canonical.length)}`
+}
+
+async function resolvePaths(
+  root: string,
+  importPrefix: string | undefined,
+  overrides: Partial<InstallPaths> | undefined,
+  init: boolean,
+) {
+  const content = (await existingFile(root, "ui.json"))
+    ? await readFile(join(root, "ui.json"), "utf8")
+    : null
+
+  const manifest = readManifest(content)
+  const prefix = importPrefix ?? manifest.importPrefix ?? "@"
+
+  if (!validImportPrefix(prefix))
+    throw new Error(`Invalid import prefix: ${String(prefix)}`)
+
+  const tracked = Object.keys(manifest.files).length > 0
+  let sourceRoot = manifest.sourceRoot ?? "src"
+  let defaults = defaultPaths
+
+  if (init && !tracked) {
+    if (manifest.sourceRoot === undefined) {
+      const src = await lstat(join(root, "src")).catch((cause: unknown) => {
+        if (
+          cause instanceof Error &&
+          "code" in cause &&
+          cause.code === "ENOENT"
+        )
+          return null
+        throw cause
+      })
+
+      sourceRoot = src?.isDirectory() ? "src" : "."
+    }
+
+    const directory = sourceRoot === "src" ? "src/" : ""
+    defaults = {
+      components: `${directory}components`,
+      ui: `${directory}components/ui`,
+      hooks: `${directory}hooks`,
+      lib: `${directory}lib`,
+      styles: `${directory}styles`,
+      theme: `${directory}themes`,
+    }
+  }
+
+  return {
+    paths: { ...defaults, ...manifest.paths, ...readPaths(overrides) },
+    importPrefix: prefix,
+    sourceRoot,
+  }
+}
+
+export async function resolveInstallPaths(
+  root: string,
+  importPrefix?: string,
+  overrides?: Partial<InstallPaths>,
+) {
+  return await resolvePaths(root, importPrefix, overrides, false)
+}
+
+export async function resolveInitPaths(
+  root: string,
+  importPrefix?: string,
+  overrides?: Partial<InstallPaths>,
+) {
+  return await resolvePaths(root, importPrefix, overrides, true)
 }
 
 export interface InstallPreview {
@@ -95,6 +266,8 @@ export interface InstallOptions {
   dryRun?: boolean
   force?: boolean
   importPrefix?: string
+  paths?: Partial<InstallPaths>
+  sourceRoot?: "." | "src"
   mode?: "add" | "update"
   registryUrl?: string
   requestTimeoutMs?: number
@@ -192,7 +365,9 @@ async function registryItemJson(
   }
 }
 
-export function isRecord(value: JsonValue | undefined): value is JsonObject {
+export function isRecord(
+  value: JsonValue | Partial<InstallPaths> | undefined,
+): value is JsonObject {
   // oxlint-disable-next-line quality/no-runtime-typeof -- SAFETY: reject primitives before reading untrusted registry JSON.
   return typeof value === "object" && value !== null && !Array.isArray(value)
 }
@@ -366,12 +541,19 @@ function readManifest(content: string | null): Manifest {
     throw new Error("Invalid ui.json")
   }
 
+  const paths = readPaths(value.paths)
+
+  if (
+    value.sourceRoot !== undefined &&
+    value.sourceRoot !== "." &&
+    value.sourceRoot !== "src"
+  )
+    throw new Error("Invalid source root in ui.json")
   const files: Record<string, string> = {}
 
   for (const [path, integrity] of Object.entries(value.files)) {
     if (
-      path !== targetPath(`@/${path.slice(4)}`) ||
-      !path.startsWith("src/") ||
+      path !== safePath(path).join("/") ||
       !isString(integrity) ||
       !hashPattern.test(integrity)
     ) {
@@ -411,13 +593,25 @@ function readManifest(content: string | null): Manifest {
         items[name] = version
       }
 
-      provenance[path] = { registryUrl: origin.registryUrl, items }
+      if (origin.target !== undefined) {
+        if (!isString(origin.target))
+          throw new Error("Invalid ui.json provenance target")
+        targetPath(origin.target)
+      }
+
+      provenance[path] = {
+        registryUrl: origin.registryUrl,
+        items,
+        ...(origin.target !== undefined && { target: origin.target }),
+      }
     }
   }
 
   return {
     version: 1,
     files,
+    ...(paths !== undefined && { paths }),
+    ...(value.sourceRoot !== undefined && { sourceRoot: value.sourceRoot }),
     ...(value.provenance !== undefined && { provenance }),
     ...(value.importPrefix !== undefined && {
       importPrefix: value.importPrefix,
@@ -662,6 +856,50 @@ export async function planInstall(name: string, options: InstallOptions = {}) {
     throw new Error("Cannot change import prefix with tracked files")
   }
 
+  const overrides = readPaths(options.paths)
+  const paths = { ...defaultPaths, ...manifest.paths, ...overrides }
+  const sourceRoot = options.sourceRoot ?? manifest.sourceRoot ?? "src"
+
+  if (
+    options.sourceRoot !== undefined &&
+    options.sourceRoot !== "." &&
+    options.sourceRoot !== "src"
+  )
+    throw new Error("Invalid source root")
+
+  if (
+    sourceRoot !== (manifest.sourceRoot ?? "src") &&
+    Object.keys(manifest.files).length > 0
+  )
+    throw new Error("Cannot change source root with tracked files")
+
+  for (const tracked of Object.keys(manifest.files)) {
+    const target =
+      manifest.provenance?.[tracked]?.target ??
+      (tracked.startsWith("src/") ? `@/${tracked.slice(4)}` : undefined)
+
+    if (target && mapTargetPath(target, paths, sourceRoot) !== tracked)
+      throw new Error(
+        `Cannot change install paths with tracked file: ${tracked}`,
+      )
+  }
+
+  const importPaths = { ...paths }
+
+  for (const key of pathKeys) {
+    importPaths[key] = mapImportPath(
+      `@/${key === "ui" ? "components/ui" : key}`,
+      paths,
+      importPrefix,
+      sourceRoot,
+    )
+  }
+
+  if (overrides !== undefined)
+    manifest.paths = { ...manifest.paths, ...overrides }
+
+  if (options.sourceRoot !== undefined) manifest.sourceRoot = sourceRoot
+
   if (options.importPrefix !== undefined) manifest.importPrefix = importPrefix
   const items = new Map<string, RegistryItem>()
   const visiting = new Set<string>()
@@ -703,10 +941,31 @@ export async function planInstall(name: string, options: InstallOptions = {}) {
       devDependencies.add(dependency)
 
     for (const file of item.files) {
-      const path = targetPath(file.target)
-      const content = file.content.replace(/(["'`])@\//g, `$1${importPrefix}/`)
+      const path = mapTargetPath(file.target, paths, sourceRoot)
+
+      const content = file.content.replace(
+        /(["'`])@\/([^"'`\s]*)/g,
+        (_match: string, quote: string, specifier: string) => {
+          return `${quote}${mapImportPath(`@/${specifier}`, paths, importPrefix, sourceRoot)}`
+        },
+      )
+
       const transformed = { ...file, content, integrity: hash(content) }
       const previous = files.get(path)
+
+      if (previous && previous.target !== file.target) {
+        throw new Error(`Install path collision: ${path}`)
+      }
+
+      for (const other of files.keys()) {
+        if (other.startsWith(`${path}/`) || path.startsWith(`${other}/`))
+          throw new Error(`Install path collision: ${path} and ${other}`)
+      }
+
+      const originTarget = manifest.provenance?.[path]?.target
+
+      if (originTarget && originTarget !== file.target)
+        throw new Error(`Install path collision with tracked file: ${path}`)
 
       if (previous && previous.integrity !== transformed.integrity) {
         throw new Error(`Conflicting registry files: ${path}`)
@@ -741,7 +1000,11 @@ export async function planInstall(name: string, options: InstallOptions = {}) {
     }
 
     manifest.provenance ??= {}
-    manifest.provenance[path] = { registryUrl, items: ownership }
+    manifest.provenance[path] = {
+      registryUrl,
+      items: ownership,
+      target: files.get(path)!.target,
+    }
   }
 
   const currentFiles = await Promise.all(
@@ -823,6 +1086,8 @@ export async function planInstall(name: string, options: InstallOptions = {}) {
   return {
     root,
     run,
+    paths,
+    importPaths,
     changes,
     installed,
     skipped,

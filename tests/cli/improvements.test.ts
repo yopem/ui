@@ -353,7 +353,7 @@ for (const framework of [
               file.path ===
                 join(
                   shared ? join(project.root, "packages/ui") : project.root,
-                  "src/styles/styles.css",
+                  shared ? "styles/styles.css" : "src/styles/styles.css",
                 ) && file.action === "write",
           ),
         ).toBe(true)
@@ -430,6 +430,7 @@ test("provenance tracks transitive and overlapping owners, warns registry switch
     expect(tracked.provenance["src/lib/button.ts"]).toEqual({
       registryUrl: project.options.registryUrl,
       items: { shared: "2.0.0", button: "1.0.0" },
+      target: "@/lib/button.ts",
     })
     const before = snapshot(project.root)
     const registryUrl = project.options.registryUrl.replace("/r", "/other")

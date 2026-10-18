@@ -17,6 +17,9 @@ import {
   isRecord,
   isString,
   planInstall,
+  resolveInitPaths,
+  mapTargetPath,
+  mapImportPath,
   writeFiles,
 } from "./install.js"
 import {
@@ -37,6 +40,14 @@ type Framework =
 interface SharedUI {
   name: string
   source: string
+  sourceRoot: "." | "src"
+  aliases: Record<string, string[]>
+}
+
+interface RootImports {
+  css: string
+  tokens: string
+  lib: string
 }
 
 interface Edit {
@@ -255,6 +266,7 @@ function addAlias(
   config: ts.ObjectLiteralExpression,
   path: string,
   edits: Edit[],
+  sourceRoot: "." | "src" = "src",
 ) {
   const resolve = property(config, "resolve")
 
@@ -299,7 +311,9 @@ function addAlias(
   const destination = declaration?.initializer?.getText(source) ?? value
 
   if (
-    !/["'](?:\.\/)?src(?:\/|["'])/.test(destination) &&
+    !(sourceRoot === "src"
+      ? /["'](?:\.\/)?src(?:\/|["'])/.test(destination)
+      : /["']\.\/?["']/.test(destination)) &&
     value !== "yopemSource"
   ) {
     throw new Error(`Incompatible @ alias in ${path}`)
@@ -309,7 +323,9 @@ function addAlias(
 
   if (
     ts.isStringLiteral(aliasValue) &&
-    /^(?:\.\/)?src\/?$/.test(aliasValue.text)
+    (sourceRoot === "src"
+      ? /^(?:\.\/)?src\/?$/.test(aliasValue.text)
+      : /^\.\/?$/.test(aliasValue.text))
   ) {
     edits.push({
       start: current.initializer.getStart(source),
@@ -371,7 +387,11 @@ function staticLiteral(node: ts.Expression): boolean {
   return false
 }
 
-function migrateBabel(content: string, path: string) {
+function migrateBabel(
+  content: string,
+  path: string,
+  tokenPath = "src/styles/tokens.stylex.ts",
+) {
   if (path === ".babelrc" || path === ".babelrc.json") {
     const config: JsonValue = JSON.parse(content)
 
@@ -429,7 +449,7 @@ function migrateBabel(content: string, path: string) {
 
   const legacy =
     content.includes("function expandLocalSpreads(") &&
-    content.includes("/src/styles/tokens.stylex.ts")
+    content.includes(`/${tokenPath}`)
 
   if (
     !legacy &&
@@ -604,14 +624,26 @@ function stylexSetup(
   babelPlugins: string[] = [],
   babelPresets: string[] = [],
   shared?: SharedUI,
+  directories: string[] = [],
+  sourceRoot: "." | "src" = "src",
 ) {
   return `import babel from "@rolldown/plugin-babel"
 import { createRequire as yopemCreateRequire } from "node:module"
 import { fileURLToPath as yopemFileURLToPath } from "node:url"
 
-const yopemSource = yopemFileURLToPath(new URL("./src", import.meta.url))${shared ? `\nconst yopemUISource = yopemFileURLToPath(new URL(${JSON.stringify(shared.source)}, import.meta.url))` : ""}
+const yopemSource = yopemFileURLToPath(new URL(${JSON.stringify(sourceRoot === "src" ? "./src" : ".")}, import.meta.url))${shared ? `\nconst yopemUISource = yopemFileURLToPath(new URL(${JSON.stringify(shared.source)}, import.meta.url))` : ""}
 const yopemBabelPlugins = [${babelPlugins.join(", ")}${babelPlugins.length ? ", " : ""}["@stylexjs/babel-plugin", {
-  aliases: { "@/*": [yopemSource + "/*"]${shared ? `, ${JSON.stringify(`${shared.name}/*`)}: [yopemUISource + "/*"]` : ""} },
+  aliases: { "@/*": [yopemSource + "/*"]${
+    shared
+      ? `, ${JSON.stringify(`${shared.name}/*`)}: [yopemUISource + "/*"]` +
+        Object.entries(shared.aliases)
+          .map(
+            ([name, targets]) =>
+              `, ${JSON.stringify(name)}: [yopemFileURLToPath(new URL(${JSON.stringify(targets[0])}, import.meta.url))]`,
+          )
+          .join("")
+      : ""
+  } },
   dev: process.env.NODE_ENV !== "production",
   runtimeInjection: false,
   treeshakeCompensation: true,
@@ -619,7 +651,7 @@ const yopemBabelPlugins = [${babelPlugins.join(", ")}${babelPlugins.length ? ", 
 }]]${babelPresets.length ? `\nconst yopemBabelPresets = [${babelPresets.join(", ")}]` : ""}
 const yopemPostcssPlugin = yopemCreateRequire(import.meta.url)("@stylexjs/postcss-plugin")({
   cwd: yopemFileURLToPath(new URL(".", import.meta.url)),
-  include: ["src/**/*.{js,jsx,ts,tsx}", "app/**/*.{js,jsx,ts,tsx}"${shared ? ', yopemUISource + "/**/*.{js,jsx,ts,tsx}"' : ""}],
+  include: ["src/**/*.{js,jsx,ts,tsx}", "app/**/*.{js,jsx,ts,tsx}"${directories.map((path) => `, ${JSON.stringify(path)}`).join("")}${shared?.sourceRoot === "src" ? ', yopemUISource + "/**/*.{js,jsx,ts,tsx}"' : ""}],
   babelConfig: {
     babelrc: false,
     parserOpts: { plugins: ["typescript", "jsx"] },
@@ -753,13 +785,17 @@ function viteConfig(
   babelConfig: ReturnType<typeof migrateBabel>,
   postcssPlugins: string[],
   shared?: SharedUI,
+  directories: string[] = [],
+  sourceRoot: "." | "src" = "src",
 ) {
   content = stripLegacyConfig(content, path)
 
   if (content.includes("stylex.vite(") || hasYopemStylexConfig(content)) {
     if (
       shared &&
-      (!content.includes(JSON.stringify(`${shared.name}/*`)) ||
+      (!Object.keys(shared.aliases).every((alias) =>
+        content.includes(JSON.stringify(alias)),
+      ) ||
         !content.includes(JSON.stringify(shared.source)))
     )
       throw new Error(
@@ -796,12 +832,18 @@ function viteConfig(
     addProperty(source, config, `plugins: [${entries.join(", ")}]`, edits)
   }
 
-  addAlias(source, config, path, edits)
+  addAlias(source, config, path, edits, sourceRoot)
   addStylexPostcss(source, config, path, edits, postcssPlugins)
   edits.push({
     start: 0,
     end: 0,
-    text: stylexSetup(babelConfig.plugins, babelConfig.presets, shared),
+    text: stylexSetup(
+      babelConfig.plugins,
+      babelConfig.presets,
+      shared,
+      directories,
+      sourceRoot,
+    ),
   })
 
   return applyEdits(content, edits)
@@ -813,6 +855,8 @@ function astroConfig(
   babelConfig: ReturnType<typeof migrateBabel>,
   postcssPlugins: string[],
   shared?: SharedUI,
+  directories: string[] = [],
+  sourceRoot: "." | "src" = "src",
 ) {
   content = stripLegacyConfig(content, path)
   const source = parsed(path, content)
@@ -840,7 +884,9 @@ function astroConfig(
   if (alreadyConfigured) {
     if (
       shared &&
-      (!content.includes(JSON.stringify(`${shared.name}/*`)) ||
+      (!Object.keys(shared.aliases).every((alias) =>
+        content.includes(JSON.stringify(alias)),
+      ) ||
         !content.includes(JSON.stringify(shared.source)))
     )
       throw new Error(
@@ -894,7 +940,7 @@ function astroConfig(
     )
   } else {
     const nested = objectValue(vite, path)
-    addAlias(source, nested, path, edits)
+    addAlias(source, nested, path, edits, sourceRoot)
     addStylexPostcss(source, nested, path, edits, postcssPlugins)
     const plugins = property(nested, "plugins")
 
@@ -922,13 +968,14 @@ function astroConfig(
   edits.push({
     start: 0,
     end: 0,
-    text: `${reactImport ? "" : 'import react from "@astrojs/react"\n'}${stylexSetup(babelConfig.plugins, babelConfig.presets, shared)}`,
+    text: `${reactImport ? "" : 'import react from "@astrojs/react"\n'}${stylexSetup(babelConfig.plugins, babelConfig.presets, shared, directories, sourceRoot)}`,
   })
 
   return applyEdits(content, edits)
 }
 
-function tsconfig(content: string, path: string) {
+function tsconfig(content: string, path: string, sourceRoot: "." | "src") {
+  const aliasTarget = sourceRoot === "src" ? "./src/*" : "./*"
   const source = ts.parseJsonText(path, content)
 
   if (hasParseErrors(source)) throw new Error(`Cannot parse ${path}`)
@@ -950,7 +997,7 @@ function tsconfig(content: string, path: string) {
     addProperty(
       source,
       config,
-      '"compilerOptions": { "noEmit": true, "allowImportingTsExtensions": true, "paths": { "@/*": ["./src/*"] } }',
+      `"compilerOptions": { "noEmit": true, "allowImportingTsExtensions": true, "paths": { "@/*": [${JSON.stringify(aliasTarget)}] } }`,
       edits,
     )
   } else {
@@ -978,18 +1025,30 @@ function tsconfig(content: string, path: string) {
     const paths = property(options, "paths")
 
     if (!paths) {
-      addProperty(source, options, '"paths": { "@/*": ["./src/*"] }', edits)
+      addProperty(
+        source,
+        options,
+        `"paths": { "@/*": [${JSON.stringify(aliasTarget)}] }`,
+        edits,
+      )
     } else {
       const aliases = objectValue(paths, path)
       const alias = property(aliases, "@/*")
 
       if (!alias) {
-        addProperty(source, aliases, '"@/*": ["./src/*"]', edits)
+        addProperty(
+          source,
+          aliases,
+          `"@/*": [${JSON.stringify(aliasTarget)}]`,
+          edits,
+        )
       } else if (
         !ts.isArrayLiteralExpression(alias.initializer) ||
         alias.initializer.elements.length !== 1 ||
         !ts.isStringLiteral(alias.initializer.elements[0]) ||
-        !["./src/*", "src/*"].includes(alias.initializer.elements[0].text)
+        ![aliasTarget, aliasTarget.slice(2)].includes(
+          alias.initializer.elements[0].text,
+        )
       ) {
         throw new Error(`Incompatible @/* alias in ${path}`)
       }
@@ -999,10 +1058,10 @@ function tsconfig(content: string, path: string) {
   return applyEdits(content, edits)
 }
 
-function reactEntry(content: string, path: string, prefix = "@") {
+function reactEntry(content: string, path: string, imports: RootImports) {
   if (content.includes("themeMarker") || content.includes("rootStyles.html")) {
     if (
-      !content.includes(`"${prefix}/styles/styles.css"`) ||
+      !content.includes(`"${imports.css}"`) ||
       !content.includes("rootStyles.html") ||
       !content.includes('dataset.theme = "light"')
     ) {
@@ -1013,16 +1072,16 @@ function reactEntry(content: string, path: string, prefix = "@") {
   }
 
   const source = parsed(path, content)
-  const imports = source.statements.filter(ts.isImportDeclaration)
+  const declarations = source.statements.filter(ts.isImportDeclaration)
 
-  if (!imports.length) throw new Error(`No React imports in ${path}`)
-  const last = imports.at(-1)!
+  if (!declarations.length) throw new Error(`No React imports in ${path}`)
+  const last = declarations.at(-1)!
 
   return applyEdits(content, [
     {
       start: 0,
       end: 0,
-      text: `import "${prefix}/styles/styles.css"\nimport * as stylex from "@stylexjs/stylex"\nimport { lightTheme, rootStyles, themeMarker } from "${prefix}/styles/tokens.stylex"\n`,
+      text: `import "${imports.css}"\nimport * as stylex from "@stylexjs/stylex"\nimport { lightTheme, rootStyles, themeMarker } from "${imports.tokens}"\n`,
     },
     {
       start: last.end,
@@ -1036,11 +1095,11 @@ function jsxLayout(
   content: string,
   path: string,
   framework: "next" | "tanstack-start" | "react-router",
-  prefix = "@",
+  imports: RootImports,
 ) {
   if (content.includes("stylexProps(") || content.includes("rootStyles.html")) {
     if (
-      !content.includes(`"${prefix}/styles/styles.css"`) ||
+      !content.includes(`"${imports.css}"`) ||
       !content.includes("rootStyles.html") ||
       !content.includes("rootStyles.body")
     ) {
@@ -1140,20 +1199,20 @@ function jsxLayout(
     })
   }
 
-  const css = `import "${prefix}/styles/styles.css"\n`
+  const css = `import "${imports.css}"\n`
   edits.push({
     start: 0,
     end: 0,
-    text: `${css}import { stylexProps } from "${prefix}/lib/stylex"\nimport { lightTheme, rootStyles, themeMarker } from "${prefix}/styles/tokens.stylex"\n`,
+    text: `${css}import { stylexProps } from "${imports.lib}"\nimport { lightTheme, rootStyles, themeMarker } from "${imports.tokens}"\n`,
   })
 
   return applyEdits(content, edits)
 }
 
-function astroLayout(content: string, path: string, prefix = "@") {
+function astroLayout(content: string, path: string, imports: RootImports) {
   if (content.includes("yopemHtml.className")) {
     if (
-      !content.includes(`"${prefix}/styles/styles.css"`) ||
+      !content.includes(`"${imports.css}"`) ||
       !content.includes("yopemBody.className")
     ) {
       throw new Error(`Incomplete Yopem layout in ${path}`)
@@ -1193,7 +1252,7 @@ function astroLayout(content: string, path: string, prefix = "@") {
     {
       start: end,
       end,
-      text: `${content.includes(`"${prefix}/styles/styles.css"`) ? "" : `\nimport "${prefix}/styles/styles.css"`}\nimport * as stylex from "@stylexjs/stylex"\nimport { lightTheme, rootStyles, themeMarker } from "${prefix}/styles/tokens.stylex"\n\nconst yopemHtml = stylex.props(themeMarker, lightTheme, rootStyles.html)\nconst yopemBody = stylex.props(rootStyles.body)`,
+      text: `${content.includes(`"${imports.css}"`) ? "" : `\nimport "${imports.css}"`}\nimport * as stylex from "@stylexjs/stylex"\nimport { lightTheme, rootStyles, themeMarker } from "${imports.tokens}"\n\nconst yopemHtml = stylex.props(themeMarker, lightTheme, rootStyles.html)\nconst yopemBody = stylex.props(rootStyles.body)`,
     },
   ]
 
@@ -1246,7 +1305,12 @@ function astroLayout(content: string, path: string, prefix = "@") {
   return applyEdits(content, edits)
 }
 
-function nextBabel(esm: boolean, shared?: SharedUI) {
+function nextBabel(
+  esm: boolean,
+  shared: SharedUI | undefined,
+  tokenPath: string,
+  sourceRoot: "." | "src",
+) {
   const header = esm
     ? `import { createRequire } from "node:module"
 import { dirname } from "node:path"
@@ -1265,7 +1329,7 @@ function expandLocalSpreads({ types: t }) {
     visitor: {
       Program: {
         enter(program, state) {
-          if (!state.filename?.replaceAll("\\\\", "/").endsWith("/src/styles/tokens.stylex.ts")) return
+          if (!state.filename?.replaceAll("\\\\", "/").endsWith(${JSON.stringify(`/${tokenPath}`)})) return
           program.traverse({
             ObjectExpression(path) {
               path.node.properties = path.node.properties.flatMap((property) => {
@@ -1284,7 +1348,17 @@ function expandLocalSpreads({ types: t }) {
 }
 
 ${esm ? 'export const presets = ["next/babel"]\nexport const plugins = [' : 'module.exports = {\n  presets: ["next/babel"],\n  plugins: ['}expandLocalSpreads, ["@stylexjs/babel-plugin", {
-  aliases: { "@/*": [path.join(__dirname, "src/*")]${shared ? `, ${JSON.stringify(`${shared.name}/*`)}: [path.join(__dirname, ${JSON.stringify(`${shared.source}*`)})]` : ""} },
+  aliases: { "@/*": [path.join(__dirname, ${JSON.stringify(sourceRoot === "src" ? "src/*" : "*")})]${
+    shared
+      ? `, ${JSON.stringify(`${shared.name}/*`)}: [path.join(__dirname, ${JSON.stringify(`${shared.source}*`)})]` +
+        Object.entries(shared.aliases)
+          .map(
+            ([name, targets]) =>
+              `, ${JSON.stringify(name)}: [path.join(__dirname, ${JSON.stringify(targets[0])})]`,
+          )
+          .join("")
+      : ""
+  } },
   dev: process.env.NODE_ENV !== "production",
   runtimeInjection: false,
   treeshakeCompensation: true,
@@ -1326,7 +1400,7 @@ function nextConfig(content: string, path: string, name: string) {
   return applyEdits(content, edits)
 }
 
-function nextPostcss(shared?: SharedUI) {
+function nextPostcss(shared?: SharedUI, directories: string[] = []) {
   return `// Next loads this PostCSS config synchronously through CommonJS.
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const babelConfig = require("./babel.config.js")
@@ -1334,7 +1408,7 @@ const babelConfig = require("./babel.config.js")
 module.exports = {
   plugins: {
     "@stylexjs/postcss-plugin": {
-      include: ["src/**/*.{js,jsx,ts,tsx}", "app/**/*.{js,jsx,ts,tsx}", "pages/**/*.{js,jsx,ts,tsx}"${shared ? `, require("node:path").join(__dirname, ${JSON.stringify(`${shared.source}**/*.{js,jsx,ts,tsx}`)})` : ""}],
+      include: ["src/**/*.{js,jsx,ts,tsx}", "app/**/*.{js,jsx,ts,tsx}", "pages/**/*.{js,jsx,ts,tsx}"${directories.map((path) => `, ${JSON.stringify(path)}`).join("")}${shared?.sourceRoot === "src" ? `, require("node:path").join(__dirname, ${JSON.stringify(`${shared.source}**/*.{js,jsx,ts,tsx}`)})` : ""}],
       babelConfig: {
         babelrc: false,
         parserOpts: { plugins: ["typescript", "jsx"] },
@@ -1353,6 +1427,7 @@ function postcss(
   path: string,
   esm: boolean,
   shared?: SharedUI,
+  directories: string[] = [],
 ) {
   if (content.includes('"@stylexjs/postcss-plugin"')) return content
   const source = parsed(path, content)
@@ -1383,7 +1458,7 @@ function postcss(
     source,
     plugins,
     `"@stylexjs/postcss-plugin": {
-      include: ["src/**/*.{js,jsx,ts,tsx}", "app/**/*.{js,jsx,ts,tsx}", "pages/**/*.{js,jsx,ts,tsx}"${shared ? `, ${esm ? "yopemRequire" : "require"}("node:path").resolve(${esm ? 'yopemRequire("node:url").fileURLToPath(new URL(".", import.meta.url))' : "__dirname"}, ${JSON.stringify(`${shared.source}**/*.{js,jsx,ts,tsx}`)})` : ""}],
+      include: ["src/**/*.{js,jsx,ts,tsx}", "app/**/*.{js,jsx,ts,tsx}", "pages/**/*.{js,jsx,ts,tsx}"${directories.map((path) => `, ${JSON.stringify(path)}`).join("")}${shared?.sourceRoot === "src" ? `, ${esm ? "yopemRequire" : "require"}("node:path").resolve(${esm ? 'yopemRequire("node:url").fileURLToPath(new URL(".", import.meta.url))' : "__dirname"}, ${JSON.stringify(`${shared.source}**/*.{js,jsx,ts,tsx}`)})` : ""}],
       babelConfig: { babelrc: false, parserOpts: { plugins: ["typescript", "jsx"] }, plugins: yopemBabelConfig.plugins },
       useCSSLayers: true,
     }`,
@@ -1408,7 +1483,7 @@ const lintRules = {
   "yopem-ui/static-stylex": "error",
 }
 
-function lintConfig(content: string, shared?: SharedUI) {
+function lintConfig(content: string, uiPath: string, componentSource: string) {
   const config: JsonValue = JSON.parse(content)
 
   if (!object(config)) throw new Error("Invalid .oxlintrc.json")
@@ -1421,7 +1496,7 @@ function lintConfig(content: string, shared?: SharedUI) {
   }
 
   const componentOverride = {
-    files: ["src/components/ui/**/*.{tsx,jsx}"],
+    files: [`${uiPath}/**/*.{tsx,jsx}`],
     rules: Object.fromEntries(
       Object.keys(lintRules).map((name) => [name, "off"]),
     ),
@@ -1440,7 +1515,7 @@ function lintConfig(content: string, shared?: SharedUI) {
 
   const configuredRules: JsonObject = { ...lintRules, ...rules }
 
-  if (shared) {
+  if (componentSource !== "@/components/ui/") {
     for (const name of [
       "yopem-ui/enforce-styling-methods",
       "yopem-ui/no-restyle",
@@ -1468,9 +1543,7 @@ function lintConfig(content: string, shared?: SharedUI) {
         level,
         {
           ...options,
-          componentSources: [
-            ...new Set([...sources, `${shared.name}/components/ui/`]),
-          ],
+          componentSources: [...new Set([...sources, componentSource])],
         },
       ]
     }
@@ -1622,7 +1695,78 @@ export async function initProject(
 
     shared = {
       name: uiManifest.name,
-      source: `${relative(root, join(uiRoot, "src")).replaceAll("\\", "/")}/`,
+      source: "",
+      sourceRoot: "src",
+      aliases: {},
+    }
+  }
+
+  const { paths, importPrefix, sourceRoot } = await resolveInitPaths(
+    uiRoot,
+    shared?.name,
+    options.paths,
+  )
+
+  const appSourceRoot = shared
+    ? (await resolveInitPaths(root)).sourceRoot
+    : sourceRoot
+
+  if (shared) {
+    shared.sourceRoot = sourceRoot
+    shared.source = `${relative(root, resolve(uiRoot, sourceRoot)).replaceAll("\\", "/")}/`
+  }
+
+  const imports = {
+    css: mapImportPath("@/styles/styles.css", paths, importPrefix, sourceRoot),
+    tokens: mapImportPath(
+      "@/styles/tokens.stylex",
+      paths,
+      importPrefix,
+      sourceRoot,
+    ),
+    lib: mapImportPath("@/lib/stylex", paths, importPrefix, sourceRoot),
+  }
+
+  const cssPath = mapTargetPath("@/styles/styles.css", paths)
+
+  const uiPath = relative(
+    root,
+    join(uiRoot, mapTargetPath("@/components/ui", paths)),
+  ).replaceAll("\\", "/")
+
+  const componentSource = `${mapImportPath("@/components/ui", paths, importPrefix, sourceRoot)}/`
+
+  const directories = [
+    ...(appSourceRoot === "." ? ["*.{js,jsx,ts,tsx}"] : []),
+    ...new Set(
+      Object.values(paths)
+        .filter(
+          (path) =>
+            shared?.sourceRoot === "." ||
+            (path !== "src" && !path.startsWith("src/")),
+        )
+        .map(
+          (path) =>
+            `${relative(root, join(uiRoot, path)).replaceAll("\\", "/")}/**/*.{js,jsx,ts,tsx}`,
+        ),
+    ),
+  ]
+
+  if (shared) {
+    for (const canonical of [
+      "@/components",
+      "@/components/ui",
+      "@/hooks",
+      "@/lib",
+      "@/styles",
+      "@/theme",
+    ]) {
+      const target = mapTargetPath(canonical, paths)
+
+      if (target === "src" || target.startsWith("src/")) continue
+      shared.aliases[
+        `${mapImportPath(canonical, paths, importPrefix, sourceRoot)}/*`
+      ] = [`${relative(root, join(uiRoot, target)).replaceAll("\\", "/")}/*`]
     }
   }
 
@@ -1664,7 +1808,13 @@ export async function initProject(
     const path = options.guidance === "design" ? "DESIGN.md" : "AGENTS.md"
     await plan(
       path,
-      (content) => designGuidance(content, shared ? `${shared.name}/` : "@/"),
+      (content) =>
+        designGuidance(content, `${importPrefix}/`, {
+          components: componentSource.slice(0, -1),
+          tokens: imports.tokens,
+          lib: imports.lib,
+          css: imports.css,
+        }),
       "",
       "Yopem UI design system guidance; preserve content outside the managed block",
     )
@@ -1700,7 +1850,11 @@ export async function initProject(
 
     if (babelPath) {
       const content = await readFile(join(root, babelPath), "utf8")
-      babelConfig = migrateBabel(content, babelPath)
+      babelConfig = migrateBabel(
+        content,
+        babelPath,
+        mapTargetPath("@/styles/tokens.stylex.ts", paths),
+      )
       retired.set(babelPath, content)
     }
 
@@ -1718,11 +1872,33 @@ export async function initProject(
       ? "tsconfig.app.json"
       : "tsconfig.json"
 
-  await plan(tsPath, (content) => tsconfig(content, tsPath))
-  await plan(".oxlintrc.json", (content) => lintConfig(content, shared), "{}")
+  await plan(tsPath, (content) => tsconfig(content, tsPath, appSourceRoot))
+  await plan(
+    ".oxlintrc.json",
+    (content) => lintConfig(content, uiPath, componentSource),
+    "{}",
+  )
 
   if (shared) {
     const prefix = relative(root, uiRoot).replaceAll("\\", "/")
+
+    const exportPaths = (
+      [
+        ["@/components", "/*", ".tsx"],
+        ["@/components/ui", "/*", ".tsx"],
+        ["@/hooks", "/*", ".ts"],
+        ["@/lib", "/*", ".ts"],
+        ["@/styles/tokens.stylex", "", ".ts"],
+        ["@/styles/styles.css", "", ""],
+        ["@/theme", "/*", ".tsx"],
+      ] as const
+    ).map(
+      ([canonical, pattern, extension]) =>
+        [
+          `.${mapImportPath(canonical, paths, importPrefix, sourceRoot).slice(importPrefix.length)}${pattern}`,
+          `./${mapTargetPath(canonical, paths)}${pattern}${extension}`,
+        ] as const,
+    )
 
     await plan(
       `${prefix}/package.json`,
@@ -1736,15 +1912,7 @@ export async function initProject(
           throw new Error("Shared UI package requires object exports")
         const exports = object(value.exports) ? { ...value.exports } : {}
 
-        const paths = {
-          "./components/ui/*": "./src/components/ui/*.tsx",
-          "./lib/*": "./src/lib/*.ts",
-          "./styles/tokens.stylex": "./src/styles/tokens.stylex.ts",
-          "./styles/styles.css": "./src/styles/styles.css",
-          "./theme/*": "./src/theme/*.tsx",
-        }
-
-        for (const [path, target] of Object.entries(paths)) {
+        for (const [path, target] of exportPaths) {
           if (exports[path] !== undefined && exports[path] !== target)
             throw new Error(`Conflicting UI package export: ${path}`)
           exports[path] = target
@@ -1764,7 +1932,7 @@ export async function initProject(
           : `${JSON.stringify({ ...value, exports, sideEffects }, null, 2)}\n`
       },
       undefined,
-      "Shared UI exports: ./components/ui/*, ./lib/*, ./styles/tokens.stylex, ./styles/styles.css, ./theme/*; CSS side effects",
+      `Shared UI exports: ${exportPaths.map(([path]) => path).join(", ")}; CSS side effects`,
     )
   }
 
@@ -1789,7 +1957,15 @@ export async function initProject(
     ])
 
     await plan(config, (content) =>
-      astroConfig(content, config, babelConfig, postcssPlugins, shared),
+      astroConfig(
+        content,
+        config,
+        babelConfig,
+        postcssPlugins,
+        shared,
+        directories,
+        appSourceRoot,
+      ),
     )
 
     const layout = await chooseFile(root, [
@@ -1797,7 +1973,7 @@ export async function initProject(
       "src/layouts/layout.astro",
     ])
 
-    await plan(layout, (content) => astroLayout(content, layout, shared?.name))
+    await plan(layout, (content) => astroLayout(content, layout, imports))
 
     for (const name of ["@astrojs/react", "react", "react-dom"]) {
       if (!(name in dependencies)) runtimeDependencies.push(name)
@@ -1827,9 +2003,7 @@ export async function initProject(
       "app/layout.tsx",
     ])
 
-    await plan(layout, (content) =>
-      jsxLayout(content, layout, "next", shared?.name),
-    )
+    await plan(layout, (content) => jsxLayout(content, layout, "next", imports))
 
     const babel = await chooseFile(
       root,
@@ -1847,7 +2021,13 @@ export async function initProject(
       throw new Error(`Unsupported Babel configuration: ${babel}`)
     }
 
-    const babelContent = nextBabel(manifest.type === "module", shared)
+    const babelContent = nextBabel(
+      manifest.type === "module",
+      shared,
+      mapTargetPath("@/styles/tokens.stylex.ts", paths),
+      appSourceRoot,
+    )
+
     await plan(
       babel,
       (content) => {
@@ -1869,7 +2049,8 @@ export async function initProject(
     await plan(
       postcssPath,
       (content) =>
-        postcssPath === "postcss.config.cjs" && content === nextPostcss(shared)
+        postcssPath === "postcss.config.cjs" &&
+        content === nextPostcss(shared, directories)
           ? content
           : postcss(
               content,
@@ -1877,8 +2058,9 @@ export async function initProject(
               postcssPath.endsWith(".mjs") ||
                 (postcssPath.endsWith(".js") && manifest.type === "module"),
               shared,
+              directories,
             ),
-      nextPostcss(shared),
+      nextPostcss(shared, directories),
     )
     devDependencies.splice(
       0,
@@ -1899,7 +2081,15 @@ export async function initProject(
     ])
 
     await plan(config, (content) =>
-      viteConfig(content, config, babelConfig, postcssPlugins, shared),
+      viteConfig(
+        content,
+        config,
+        babelConfig,
+        postcssPlugins,
+        shared,
+        directories,
+        appSourceRoot,
+      ),
     )
 
     if (
@@ -1914,7 +2104,7 @@ export async function initProject(
       )
 
       await plan(layout, (content) =>
-        jsxLayout(content, layout, framework, shared?.name),
+        jsxLayout(content, layout, framework, imports),
       )
     } else {
       const entry = await chooseFile(root, [
@@ -1922,16 +2112,22 @@ export async function initProject(
         "src/main.jsx",
         "src/index.tsx",
         "src/index.jsx",
+        "main.tsx",
+        "main.jsx",
+        "index.tsx",
+        "index.jsx",
       ])
 
-      await plan(entry, (content) => reactEntry(content, entry, shared?.name))
+      await plan(entry, (content) => reactEntry(content, entry, imports))
     }
   }
 
   const basePlan = await planInstall("base", {
     ...options,
     cwd: uiRoot,
-    importPrefix: shared?.name,
+    paths,
+    sourceRoot,
+    importPrefix,
     dryRun: true,
     run: uiRun,
   })
@@ -1942,12 +2138,8 @@ export async function initProject(
 
   if (conflict) throw new Error(conflict.reason)
 
-  if (
-    !basePlan.changes.get("src/styles/styles.css")?.after?.includes("@stylex;")
-  ) {
-    throw new Error(
-      "Add @stylex; to src/styles/styles.css before configuring StyleX",
-    )
+  if (!basePlan.changes.get(cssPath)?.after?.includes("@stylex;")) {
+    throw new Error(`Add @stylex; to ${cssPath} before configuring StyleX`)
   }
 
   const runtimeRequirements =
@@ -2089,14 +2281,8 @@ export async function initProject(
     const baseResult = await applyInstall(baseApplicationPlan, options)
     baseInstalled = true
 
-    if (
-      !(await readFile(join(uiRoot, "src/styles/styles.css"), "utf8")).includes(
-        "@stylex;",
-      )
-    ) {
-      throw new Error(
-        "Add @stylex; to src/styles/styles.css before configuring StyleX",
-      )
+    if (!(await readFile(join(uiRoot, cssPath), "utf8")).includes("@stylex;")) {
+      throw new Error(`Add @stylex; to ${cssPath} before configuring StyleX`)
     }
 
     if (!(await existingFile(root, "package.json")))

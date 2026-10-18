@@ -47,6 +47,18 @@ identify one framework. The `init` and `add` commands keep local changes to
 installed source. The `update` command rejects modified files unless you pass
 `--force`. The CLI records installed files and their hashes in `ui.json`.
 
+## Custom folders
+
+Interactive init offers optional custom folders for components, UI components,
+hooks, libraries, styles, and themes. Press Enter to keep the defaults. Choose
+yes to set each folder.
+
+The CLI saves choices in `ui.json`. Add and update use these folders and rewrite
+copied source imports. Noninteractive init uses defaults without a prompt.
+
+Choose folders before you install files in them. The CLI does not move tracked
+files when you change folders.
+
 ## Design system guidance
 
 Interactive init asks where to write design system guidance:
