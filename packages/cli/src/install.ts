@@ -15,7 +15,12 @@ import {
 } from "node:fs/promises"
 import { dirname, join, relative } from "node:path"
 
-import { isPackageName, packageRunner, pendingDependencies } from "./project.js"
+import {
+  isPackageName,
+  packageRunner,
+  pendingDependencies,
+  readPackage,
+} from "./project.js"
 
 const defaultRegistryUrl = "https://ui.yopem.com/r"
 
@@ -637,7 +642,7 @@ interface StagedFile {
 export async function writeFiles(
   root: string,
   changes: ReadonlyMap<string, FileChange>,
-  prepare?: () => Promise<void>,
+  prepare?: () => Promise<void | ReadonlyMap<string, FileChange>>,
 ) {
   const staged: StagedFile[] = []
   const committed: StagedFile[] = []
@@ -681,10 +686,11 @@ export async function writeFiles(
     return failures
   }
 
-  try {
+  async function stage(entries: ReadonlyMap<string, FileChange>) {
+    const start = staged.length
     staged.push(
       ...(await Promise.all(
-        [...changes].map(async ([path, change]): Promise<StagedFile> => {
+        [...entries].map(async ([path, change]): Promise<StagedFile> => {
           const exists = await existingFile(root, path)
           const before = exists ? await readFile(join(root, path)) : null
 
@@ -711,7 +717,7 @@ export async function writeFiles(
       )),
     )
 
-    for (const file of staged) {
+    for (const file of staged.slice(start)) {
       if (!file.changed) continue
       const parent = dirname(join(root, file.path))
       await mkdir(parent, { recursive: true })
@@ -732,8 +738,13 @@ export async function writeFiles(
         await chmod(path, file.mode!)
       }
     }
+  }
 
-    await prepare?.()
+  try {
+    await stage(changes)
+    const additional = await prepare?.()
+
+    if (additional) await stage(additional)
 
     await Promise.all(
       staged.map((file) => verify(file, file.before, file.mode)),
@@ -1081,9 +1092,61 @@ export async function planInstall(name: string, options: InstallOptions = {}) {
     action: manifestText === manifestAfter ? "skip" : "write",
   })
 
+  const packageManifest = await readPackage(root)
+  const exportPaths = new Map<string, string>()
+
+  if (packageManifest.name === importPrefix) {
+    for (const [path, file] of files) {
+      if (!/^@\/(?:components|lib)\/[^/]+\/index\.tsx?$/.test(file.target))
+        continue
+
+      const specifier = mapImportPath(
+        file.target.replace(/\/index\.tsx?$/, ""),
+        paths,
+        importPrefix,
+        sourceRoot,
+      )
+
+      exportPaths.set(`.${specifier.slice(importPrefix.length)}`, `./${path}`)
+    }
+  }
+
+  if (exportPaths.size) {
+    if (
+      packageManifest.exports !== undefined &&
+      (!isRecord(packageManifest.exports) ||
+        Object.keys(packageManifest.exports).some(
+          (path) => !path.startsWith("."),
+        ))
+    )
+      throw new Error("Shared UI package requires subpath object exports")
+
+    for (const [path, target] of exportPaths) {
+      const current = isRecord(packageManifest.exports)
+        ? packageManifest.exports[path]
+        : undefined
+
+      if (current !== undefined && current !== target)
+        throw new Error(`Conflicting UI package export: ${path}`)
+    }
+
+    previewFiles.push({
+      path: "package.json",
+      action: [...exportPaths].some(
+        ([path, target]) =>
+          !isRecord(packageManifest.exports) ||
+          packageManifest.exports[path] !== target,
+      )
+        ? "write"
+        : "skip",
+    })
+  }
+
   const pending = await pendingDependencies(root, dependencies, devDependencies)
 
   return {
+    packageManifest,
+    exportPaths,
     root,
     run,
     paths,
@@ -1129,6 +1192,17 @@ export async function applyInstall(
 
   try {
     await writeFiles(root, changes, async () => {
+      if (plan.exportPaths.size) {
+        const current = await readPackage(root)
+
+        if (
+          current.name !== plan.packageManifest.name ||
+          JSON.stringify(current.exports) !==
+            JSON.stringify(plan.packageManifest.exports)
+        )
+          throw new Error("UI package exports changed during installation")
+      }
+
       if (preview.dependencies.length) {
         dependenciesStarted = true
         await run(["add", ...preview.dependencies], root)
@@ -1138,6 +1212,28 @@ export async function applyInstall(
         dependenciesStarted = true
         await run(["add", "-d", ...preview.devDependencies], root)
       }
+
+      if (!plan.exportPaths.size) return
+      const before = await readFile(join(root, "package.json"), "utf8")
+      const current: JsonValue = JSON.parse(before)
+
+      if (
+        !isRecord(current) ||
+        current.name !== plan.packageManifest.name ||
+        JSON.stringify(current.exports) !==
+          JSON.stringify(plan.packageManifest.exports)
+      )
+        throw new Error("UI package exports changed during installation")
+      const exports = isRecord(current.exports) ? { ...current.exports } : {}
+
+      for (const [path, target] of plan.exportPaths) exports[path] = target
+
+      const after =
+        JSON.stringify(current.exports) === JSON.stringify(exports)
+          ? before
+          : `${JSON.stringify({ ...current, exports }, null, 2)}\n`
+
+      return new Map([["package.json", { before, after }]])
     })
   } catch (cause) {
     if (!dependenciesStarted) throw cause

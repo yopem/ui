@@ -36,6 +36,26 @@ Use the installed source and component documentation as the API reference.
 - Keep \`"use client"\` in client components.
 - Preserve public exports, consumer props, refs, \`className\`, and \`data-slot\` values.
 
+### Editor authentication
+
+Install optional server helpers with the matching package manager:
+
+\`\`\`sh
+bunx --bun @yopem-ui/cli add editor-auth
+npx @yopem-ui/cli add editor-auth
+pnpm dlx @yopem-ui/cli add editor-auth
+yarn dlx @yopem-ui/cli add editor-auth
+\`\`\`
+
+Import these helpers from \`${imports.lib.replace(/\/stylex$/, "/editor-auth")}\` on the server only.
+Select the OpenAuth or Better Auth adapter for the host application's existing service.
+OpenAuth defaults to \`https://auth.yopem.com\` and requires an explicit audience.
+Better Auth uses the host session getter. Do not create another account system.
+Require a separate document policy. Only an explicit true result grants access.
+Check trusted origins and CSRF tokens in host routes. Keep tokens out of URLs and logs.
+JWT verification does not guarantee immediate revocation.
+These helpers do not deploy AI, upload, persistence, or collaboration services.
+
 ### Visual foundations
 
 Use neutral light and dark surfaces with semantic color pairs.

@@ -244,6 +244,11 @@ Rounded components use md (12px) by default. Use xstyle to change corner radii. 
 - Use existing navigation, feedback, data display, and utility components.
   Check registry metadata and component documentation before adding substitutes.
 
+- Keep editor authentication helpers in `packages/editor/src/server` and out of
+  browser imports. Publish them through the `editor-auth` registry item.
+  Require an explicit OpenAuth audience and a separate document policy.
+  Keep origin and CSRF checks in host routes. Never put tokens in URLs or logs.
+
 ### Color values
 
 These are Yopem UI defaults from `tokens.stylex.ts`.

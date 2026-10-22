@@ -47,6 +47,12 @@ export function getRequiredItems(slug: string, previewSource = "") {
 
 export const guidePages = [
   {
+    title: "Editor authentication",
+    url: "/docs/editor-auth",
+    content:
+      "Install server helpers with Bun, npm, pnpm, or Yarn. Connect existing OpenAuth and Better Auth services. Verify identity and check document authorization separately. Configure trusted origins, CSRF protection, and backend service policies.",
+  },
+  {
     title: "CLI",
     url: "/docs/cli",
     content:

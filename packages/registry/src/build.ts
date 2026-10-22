@@ -1,6 +1,7 @@
 import { sourceItems } from "@registry/items/index"
 import { registryItemSchema, registrySchema } from "@registry/schema"
 import { rewriteImports } from "@registry/source-files"
+import { resolveSourcePath } from "@registry/source-path"
 import { createHash } from "node:crypto"
 import { cp, mkdir, readFile, rm, writeFile } from "node:fs/promises"
 import { dirname, resolve } from "node:path"
@@ -35,7 +36,7 @@ const items = await Promise.all(
     const files = await Promise.all(
       sourceItem.files.map(async (file) => {
         const content = rewriteImports(
-          await readFile(resolve(root, "src", file.path), "utf8"),
+          await readFile(resolveSourcePath(file.path), "utf8"),
         )
 
         return { ...file, content, integrity: integrity(content) }

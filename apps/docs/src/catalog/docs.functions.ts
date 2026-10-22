@@ -7,7 +7,10 @@ import { getDocumentationItems, getRequiredItems } from "./docs-data"
 import { usageSnippets } from "./usage"
 
 const sources = import.meta.glob<string>(
-  "../../../../packages/registry/src/**/*.{ts,tsx,css}",
+  [
+    "../../../../packages/registry/src/**/*.{ts,tsx,css}",
+    "../../../../packages/editor/src/**/*.{ts,tsx}",
+  ],
   {
     query: "?raw",
     import: "default",
@@ -107,7 +110,13 @@ export async function getDocumentation({ data }: { data: string }) {
     })),
     files: await Promise.all(
       files.map(async (file) => {
-        const load = sources[`../../../../packages/registry/src/${file.path}`]
+        const sourcePath = file.path.startsWith("lib/editor-auth/")
+          ? `../../../../packages/editor/src/server/${file.path.slice("lib/editor-auth/".length)}`
+          : file.path.startsWith("components/editor/")
+            ? `../../../../packages/editor/src/${file.path.slice("components/editor/".length)}`
+            : `../../../../packages/registry/src/${file.path}`
+
+        const load = sources[sourcePath]
 
         if (!load) throw new Error(`Missing canonical source: ${file.path}`)
 

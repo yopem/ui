@@ -4,6 +4,7 @@ import { format } from "oxfmt"
 import ts from "typescript-api"
 
 import { sourceItems } from "./items/index"
+import { resolveSourcePath } from "./source-path"
 
 const root = dirname(fileURLToPath(import.meta.url))
 
@@ -35,7 +36,7 @@ export function extractDocs() {
   const files = sourceItems.flatMap((item) =>
     item.files
       .filter((file) => /\.tsx?$/.test(file.path))
-      .map((file) => resolve(root, file.path)),
+      .map((file) => resolveSourcePath(file.path)),
   )
 
   const program = ts.createProgram([...new Set(files)], parsed.options)
@@ -86,7 +87,11 @@ export function extractDocs() {
     const path = node.getSourceFile().fileName.replaceAll("\\", "/")
     const dependency = path.lastIndexOf("node_modules/")
 
-    return dependency >= 0 ? path.slice(dependency + 13) : relative(root, path)
+    return dependency >= 0
+      ? path.slice(dependency + 13)
+      : relative(root, path)
+          .replace(/^\.\.\/\.\.\/editor\/src\/server\//, "lib/editor-auth/")
+          .replace(/^\.\.\/\.\.\/editor\/src\//, "components/editor/")
   }
 
   function defaults(node: ts.Node, seen = new Set<ts.Node>()) {
@@ -459,9 +464,17 @@ export function extractDocs() {
   return sourceItems.map((item) => ({
     name: item.name,
     parts: item.files
-      .filter((file) => /\.tsx?$/.test(file.path))
+      .filter(
+        (file) =>
+          /\.tsx?$/.test(file.path) &&
+          (item.name === "editor"
+            ? file.path === "components/editor/index.ts"
+            : item.name === "editor-auth"
+              ? file.path === "lib/editor-auth/index.ts"
+              : true),
+      )
       .flatMap((file) => {
-        const source = program.getSourceFile(resolve(root, file.path))
+        const source = program.getSourceFile(resolveSourcePath(file.path))
         const symbol = source && checker.getSymbolAtLocation(source)
 
         if (!symbol) throw new Error(`Cannot extract ${file.path}`)

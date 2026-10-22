@@ -53,6 +53,13 @@ except for local HTTP. It must not contain credentials, query strings, or
 fragments. The CLI rejects redirects. See
 [installation](https://ui.yopem.com/docs/installation).
 
+## Editor authentication
+
+Server helpers connect existing OpenAuth and Better Auth services. They keep
+document authorization separate from authentication. See
+[editor authentication](https://ui.yopem.com/docs/editor-auth) for installation
+and security requirements.
+
 ## Styling
 
 Use `Box` for generic containers. Use its `render` prop to select a semantic

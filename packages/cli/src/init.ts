@@ -1886,6 +1886,8 @@ export async function initProject(
       [
         ["@/components", "/*", ".tsx"],
         ["@/components/ui", "/*", ".tsx"],
+        ["@/components/editor", "", "/index.ts"],
+        ["@/lib/editor-auth", "", "/index.ts"],
         ["@/hooks", "/*", ".ts"],
         ["@/lib", "/*", ".ts"],
         ["@/styles/tokens.stylex", "", ".ts"],
@@ -1907,7 +1909,9 @@ export async function initProject(
 
         if (
           !object(value) ||
-          (value.exports !== undefined && !object(value.exports))
+          (value.exports !== undefined &&
+            (!object(value.exports) ||
+              Object.keys(value.exports).some((path) => !path.startsWith("."))))
         )
           throw new Error("Shared UI package requires object exports")
         const exports = object(value.exports) ? { ...value.exports } : {}

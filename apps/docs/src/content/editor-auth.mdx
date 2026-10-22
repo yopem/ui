@@ -1,0 +1,139 @@
+## Scope
+
+Connect editor services to your existing OpenAuth or Better Auth backend. Select
+one adapter for each endpoint. Keep authentication separate from document
+access. These helpers do not create accounts, login routes, or a session
+database.
+
+The helpers use Web Request and Headers APIs. Use them inside Cloudflare
+Workers, Bun, Node, or an existing backend with a Web Request adapter.
+
+## Installation
+
+[Initialize your project](/docs/installation) before you add these server
+helpers. Use the switcher to select Bun, npm, pnpm, or Yarn 2 and later.
+
+```sh
+bunx --bun @yopem-ui/cli add editor-auth
+```
+
+The CLI copies server helpers into your configured library directory. It
+installs JOSE and Zod. Do not import server helpers into browser components.
+
+## OpenAuth
+
+Use `createOpenAuthAuthentication` for OpenAuth access tokens. Its default
+issuer is `https://auth.yopem.com`. Set `audience` to the OAuth client ID used
+by your application. The adapter checks the signature, issuer, audience, expiry,
+and user subject. It accepts ES256 access tokens.
+
+```ts
+import { createOpenAuthAuthentication } from "@/lib/editor-auth"
+
+export function createAuthentication(clientId: string) {
+  return createOpenAuthAuthentication({
+    issuer: "https://auth.yopem.com",
+    audience: clientId,
+  })
+}
+```
+
+Send the access token in the Authorization header with the Bearer scheme. Do not
+send refresh tokens to editor services. Do not derive trusted issuer URLs from
+requests or token claims.
+
+The Yopem OpenAuth subject supplies the user ID through `properties.id`. The
+adapter uses this ID, not the mutable token subject hash. Another OpenAuth
+issuer must provide the same user-subject shape.
+
+OpenAuth access tokens can remain valid after a refresh token is removed. Use
+current backend policy to check account status and document access. Token
+verification alone does not prove that access remains permitted.
+
+## Better Auth
+
+Use your existing server auth instance. Pass its session getter to
+`createBetterAuthAuthentication`. Do not create another auth instance for the
+editor.
+
+```ts
+import { createBetterAuthAuthentication } from "@/lib/editor-auth"
+import { auth } from "@/lib/auth"
+
+export const authenticate = createBetterAuthAuthentication({
+  getSession(input) {
+    return auth.api.getSession(input)
+  },
+})
+```
+
+The adapter passes request headers to the session getter. It sets
+`disableCookieCache` to true and rejects missing or expired sessions. Your host
+backend remains responsible for session storage and cookie refresh.
+
+Better Auth bearer sessions require its bearer plugin. They are not OpenAuth
+JWTs. Choose the matching adapter explicitly. Do not fall back to another
+provider after verification fails.
+
+## Document authorization
+
+Supply a document policy from your application. Only an explicit true result
+grants access. Provider names remain part of identity; do not link accounts by
+email automatically.
+
+```ts
+import {
+  authorizeEditorRequest,
+  type EditorAuthentication,
+  type EditorAuthorizationInput,
+} from "@/lib/editor-auth"
+
+export async function checkDocumentWrite(
+  request: Request,
+  documentId: string,
+  authenticate: EditorAuthentication,
+  policy: (input: EditorAuthorizationInput) => Promise<boolean>,
+) {
+  const result = await authorizeEditorRequest({
+    request,
+    documentId,
+    action: "document:write",
+    authenticate,
+    policy,
+  })
+
+  if (result.status === "rejected") {
+    return new Response(null, { status: result.statusCode })
+  }
+
+  return Response.json({ userId: result.identity.userId })
+}
+```
+
+The example checks access only. It does not save a document. Run document
+writes, AI requests, uploads, and collaboration joins only after authorization
+succeeds. Use the matching action for each operation.
+
+Invalid authentication returns 401. A denied policy returns 403. Authentication
+or policy failures return 503. A signed admin role does not bypass document
+policy.
+
+## Route security
+
+These helpers do not implement HTTP route security. Check exact trusted origins
+before cookie-authenticated mutations. Validate CSRF tokens through your
+backend. Reject untrusted WebSocket origins before collaboration joins.
+
+Do not use wildcard credentialed CORS. Do not put access or refresh tokens in
+WebSocket URLs, query strings, or logs. Recheck access during long collaboration
+sessions and after permission changes.
+
+## Service boundaries
+
+The adapters do not provide AI models, upload storage, document persistence, or
+collaboration servers. Configure these services in your backend. Their
+deployment requires application-specific storage, provider, and
+document-permission rules.
+
+See the [OpenAuth source](https://github.com/yopem/auth) and
+[Better Auth documentation](https://better-auth.com/docs) for host setup.

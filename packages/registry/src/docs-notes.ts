@@ -1,5 +1,13 @@
 // These notes describe Yopem's composition choices, not only the upstream types.
 const usageNoteValues = {
+  "editor-auth": [
+    "Import server helpers from @/lib/editor-auth. Keep them outside browser components. Use an existing OpenAuth or Better Auth service.",
+    "Use createOpenAuthAuthentication with an explicit audience. The default issuer is https://auth.yopem.com. Identity uses properties.id, not the mutable subject hash.",
+    "Pass the existing session getter to createBetterAuthAuthentication. The adapter disables cookie caching. The host controls session storage and cookie refresh.",
+    "Call authorizeEditorRequest with a separate document policy. Only an explicit true result grants access. Check route origins and CSRF tokens separately.",
+    "JWT verification does not guarantee immediate revocation. These helpers do not deploy AI, upload, persistence, or collaboration services.",
+  ],
+
   "use-event-callback": [
     "The returned function keeps its identity. It calls the latest committed callback. Arguments, return values, promises, and errors do not change.",
     "Use it only for event handlers and effect callbacks. Do not call it during render. A call before the first commit throws an error. Insertion effects publish updates. Aborted renders do not replace the committed callback.",

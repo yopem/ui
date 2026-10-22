@@ -1,5 +1,7 @@
 /** Import aliases used in the copyable source files served by the registry. */
 export const sourceImportReplacements = [
+  ["@yopem-ui/editor/server", "@/lib/editor-auth"],
+  ["@yopem-ui/editor", "@/components/editor"],
   ["@registry/components/ui/", "@/components/ui/"],
   ["@registry/hooks/", "@/hooks/"],
   ["@registry/lib/", "@/lib/"],
