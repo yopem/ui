@@ -1,6 +1,7 @@
 import type { ComponentProps } from "react"
 
 import { Box } from "@registry/components/ui/box"
+import { tokens } from "@registry/styles/tokens.stylex"
 import { createHighlighterCoreSync } from "@shikijs/core"
 import { createJavaScriptRegexEngine } from "@shikijs/engine-javascript"
 import astro from "@shikijs/langs/astro"
@@ -39,6 +40,10 @@ function getCodeLanguage(title: string) {
 
 function highlightCode(code: string, title: string, language?: string) {
   return highlighter.codeToHtml(code, {
+    // The upstream light orange does not meet the text contrast requirement.
+    colorReplacements: {
+      "github-light": { "#e36209": tokens["--code-foreground"] },
+    },
     defaultColor: "light-dark()",
     lang: language
       ? highlighter.getLoadedLanguages().includes(language)
