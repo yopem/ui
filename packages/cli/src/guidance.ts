@@ -62,7 +62,10 @@ Keep \`EditorFormatButton\`, \`EditorHistoryButton\`, \`EditorBlockButton\`, \`E
 \`EditorIndentButton\`, \`EditorLinkControl\`, and \`EditorTableButton\` inside their root.
 Choose controls as children of \`EditorToolbar\`. Each root keeps separate document state and history.
 Use \`EditorTableMenu\` for row, column, header, merge, and split actions.
-Discard saved table selections after document content changes.
+Register \`EditorTablePresentationExtension\` for bounded tables and persisted cell presentation.
+Compose \`EditorTableDimensions\`, \`EditorTableCellPresentation\`, and \`EditorTableResizeControls\` inside the root.
+Validate external table JSON and HTML before conversion. Reject invalid updates without removing existing content.
+Discard saved table selections after document content changes. Preserve resize cancellation, history, and RTL keyboard behavior.
 \`EditorContent\` shares the root accessible name and read-only state.
 Pass additional Lexical extensions through \`extensions\` on EditorRoot or Editor.
 Keep that list stable. Remount the root when the extension configuration changes.

@@ -6,8 +6,11 @@
   "exports": {
     ".": "./src/index.ts",
     "./server": "./src/server/index.ts",
+    "./table-controls": "./src/table-controls.tsx",
+    "./table-presentation": "./src/table-presentation.ts",
     "./table-presentation-schema": "./src/table-presentation-schema.ts",
-    "./table-controls": "./src/table-controls.tsx"
+    "./table-presentation-controls": "./src/table-presentation-controls.tsx",
+    "./table-resize": "./src/table-resize.tsx"
   },
   "scripts": {
     "typecheck": "tsc --noEmit"
@@ -28,6 +31,7 @@
     "@yopem-ui/registry": "workspace:*",
     "jose": "catalog:",
     "lexical": "catalog:",
+    "lucide-react": "catalog:",
     "zod": "catalog:"
   },
   "devDependencies": {

@@ -34,3 +34,28 @@ export type { EditorLinkControlProps } from "./link-control"
 export { EditorTableMenu } from "./table-controls"
 
 export type { EditorTableMenuProps } from "./table-controls"
+
+export {
+  EditorTableDimensions,
+  EditorTableCellPresentation,
+} from "./table-presentation-controls"
+
+export { EditorTableResizeControls } from "./table-resize"
+
+export {
+  EditorTablePresentationExtension,
+  editorTablePresentationHTML,
+  createEditorTablePresentationHTMLConfig,
+  TABLE_PRESENTATION_ERROR_COMMAND,
+} from "./table-presentation"
+
+export {
+  parseTablePresentationJSON,
+  validateTablePresentationHTML,
+  validateTableGeometry,
+  TABLE_MIN_COLUMN_WIDTH,
+  TABLE_MAX_COLUMN_WIDTH,
+  TABLE_MAX_ROWS,
+  TABLE_MAX_COLUMNS,
+  TABLE_MAX_CELLS,
+} from "./table-presentation-schema"

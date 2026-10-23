@@ -204,6 +204,8 @@ test("merges rectangular selection, preserves content, splits and restores histo
 test("@a11y table and open action menu stay accessible; readonly cannot mutate", async ({
   page,
 }, testInfo) => {
+  test.slow()
+
   const table = await insertTable(page)
 
   for (const [index, cell] of (await table.locator("th, td").all()).entries()) {

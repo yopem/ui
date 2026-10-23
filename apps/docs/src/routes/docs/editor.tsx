@@ -3,6 +3,7 @@ import { createFileRoute } from "@tanstack/react-router"
 import { EditorCompositionExamples } from "@/catalog/editor-composition-examples"
 import { EditorExamples } from "@/catalog/editor-examples"
 import { EditorExtensionExamples } from "@/catalog/editor-extension-examples"
+import { EditorTableExamples } from "@/catalog/editor-table-examples"
 import { GuidePage } from "@/catalog/guide-content"
 import EditorContent from "@/content/editor.mdx"
 import editorSource from "@/content/editor.mdx?raw"
@@ -23,6 +24,7 @@ const components = {
   EditorExamples,
   EditorCompositionExamples,
   EditorExtensionExamples,
+  EditorTableExamples,
 }
 
 function EditorGuide() {

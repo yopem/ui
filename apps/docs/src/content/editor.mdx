@@ -4,9 +4,10 @@ Editor provides core rich text editing with Lexical, React, and StyleX. Use the
 toolbar or keyboard shortcuts to format text. Use lists and history controls to
 organize and revise content.
 
-This foundation does not provide full Plate open-source parity. Media,
+This editor does not provide full Plate open-source parity. Media,
 collaboration, and the complete Plate plugin set remain outside this scope. The
-preset supports table insertion and table actions.
+preset includes table insertion and table actions. Compose additional table
+controls for dimensions, presentation, and column resizing.
 
 ## Installation
 
@@ -138,15 +139,71 @@ Use [editor authentication](/docs/editor-auth) to connect existing OpenAuth or
 Better Auth services to your backend. The editor does not authenticate users or
 save documents automatically.
 
-## Table actions
+## Tables
 
 Use `EditorTableMenu` to insert or delete rows and columns. It also changes
-headers, merges selected cells, splits merged cells, and deletes tables. The
-preset includes this control. Add it inside `EditorToolbar` for custom
-composition. Read-only mode disables table actions.
+headers, merges selected cells, splits merged cells, and deletes tables.
+`EditorTableDimensions` inserts a table with selected dimensions.
 
-Select cells with the pointer or keyboard before a table action. Saved table
-selections become invalid after document content changes.
+Register `EditorTablePresentationExtension` to validate table updates and retain
+cell presentation. Add `EditorTableCellPresentation` for backgrounds and
+borders. Add `EditorTableResizeControls` for column width controls.
+
+<EditorTableExamples />
+
+```tsx
+"use client"
+
+import {
+  EditorRoot,
+  EditorContent,
+  EditorToolbar,
+  EditorTableMenu,
+  EditorTableDimensions,
+  EditorTableCellPresentation,
+  EditorTableResizeControls,
+  EditorTablePresentationExtension,
+} from "@/components/editor"
+
+const extensions = [EditorTablePresentationExtension]
+
+export function TableNotes() {
+  return (
+    <EditorRoot ariaLabel="Table notes" extensions={extensions}>
+      <EditorToolbar>
+        <EditorTableMenu />
+      </EditorToolbar>
+      <EditorTableDimensions />
+      <EditorTableCellPresentation />
+      <EditorContent />
+      <EditorTableResizeControls />
+    </EditorRoot>
+  )
+}
+```
+
+Drag a column separator to change its width. Focus a separator for keyboard
+control. Left and Right change width. Home and End select the width limits.
+Escape cancels a drag. Right-to-left layout reverses horizontal movement.
+Read-only mode disables editing and cancels active resizing.
+
+Table limits are 50 rows, 50 columns, and 2500 covered cells across the
+document. Merged cells count toward this limit. Column widths range from 48 to
+640 pixels. Invalid updates preserve the previous document instead of removing
+table data.
+
+Call `parseTablePresentationJSON` before you load external table JSON. Call
+`validateTablePresentationHTML` before you convert external table HTML. These
+functions check table limits and geometry. They do not replace application
+validation or HTML sanitization. Use the configured editor nodes for conversion.
+
+Register `TABLE_PRESENTATION_ERROR_COMMAND` to report rejected clipboard input.
+Store its cleanup function through the Lexical extension lifecycle. The example
+reports errors without changing existing content.
+
+The example supports two host shortcuts. `Alt+Shift+R` changes read-only mode.
+`Alt+Shift+N` replaces the document. Saved table selections become invalid after
+content changes. Table JSON and HTML reload controls exercise serialization.
 
 ## Initial state and read-only content
 

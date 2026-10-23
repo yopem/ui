@@ -270,8 +270,14 @@ Rounded components use md (12px) by default. Use xstyle to change corner radii. 
   Use Lexical document state, not Slate state. Do not imply Plate plugin or
   document compatibility. Keep editor styles in StyleX. Preserve native editing,
   selection, clipboard, history, keyboard input, and accessible control names.
-  Use EditorTableMenu for table actions. Discard saved link and table
-  selections after document content changes. Keep the
+  Discard saved link and table selections after document content changes. Use
+  EditorTableMenu for table actions. Register EditorTablePresentationExtension
+  for bounded geometry and persisted cell borders. Compose EditorTableDimensions,
+  EditorTableCellPresentation, and EditorTableResizeControls inside EditorRoot.
+  Keep table validation pure and shared with import paths. Reject invalid table
+  updates without removing existing content. Preserve native table clipboard,
+  merged spans, resize cancellation, history, and right-to-left keyboard behavior.
+  Keep the
   `editor-content` slot. Base CSS resets Lexical's native text wrappers only;
   StyleX supplies the text theme.
 - Keep editor authentication helpers in `packages/editor/src/server` and out of
