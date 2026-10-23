@@ -144,6 +144,10 @@ Canonical sources live under `packages/registry/src/`. Never hand-edit
 TanStack-generated route files. `bun run registry:build` regenerates registry
 artifacts; docs dev, registry build, and registry typecheck regenerate API data.
 
+## Code comments
+
+Do not add code comments or JSDoc. Preserve existing comments.
+
 ## Component conventions
 
 - Preserve Base UI behavior, public exports, consumer props, `className`, and

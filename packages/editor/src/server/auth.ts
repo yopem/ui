@@ -38,8 +38,6 @@ export type EditorAuthorizationResult =
   | { status: "authorized"; identity: EditorIdentity }
   | { status: "rejected"; statusCode: 401 | 403 | 503 }
 
-// Only true grants access. Return "unavailable" for policy outages.
-// Hosts must enforce route origin and CSRF rules.
 export async function authorizeEditorRequest<Decision>(options: {
   request: Request
   documentId: string

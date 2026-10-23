@@ -40,7 +40,6 @@ function getCodeLanguage(title: string) {
 
 function highlightCode(code: string, title: string, language?: string) {
   return highlighter.codeToHtml(code, {
-    // The upstream light orange does not meet the text contrast requirement.
     colorReplacements: {
       "github-light": { "#e36209": tokens["--code-foreground"] },
     },
