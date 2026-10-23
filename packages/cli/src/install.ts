@@ -16,6 +16,7 @@ import {
 import { dirname, join, relative } from "node:path"
 
 import {
+  exportTargetMatches,
   isPackageName,
   packageRunner,
   pendingDependencies,
@@ -1097,11 +1098,10 @@ export async function planInstall(name: string, options: InstallOptions = {}) {
 
   if (packageManifest.name === importPrefix) {
     for (const [path, file] of files) {
-      if (!/^@\/(?:components|lib)\/[^/]+\/index\.tsx?$/.test(file.target))
-        continue
+      if (!/\.tsx?$/.test(file.target)) continue
 
       const specifier = mapImportPath(
-        file.target.replace(/\/index\.tsx?$/, ""),
+        file.target.replace(/(?:\/index)?\.tsx?$/, ""),
         paths,
         importPrefix,
         sourceRoot,
@@ -1111,7 +1111,9 @@ export async function planInstall(name: string, options: InstallOptions = {}) {
     }
   }
 
-  if (exportPaths.size) {
+  const checkExports = exportPaths.size > 0
+
+  if (checkExports) {
     if (
       packageManifest.exports !== undefined &&
       (!isRecord(packageManifest.exports) ||
@@ -1126,8 +1128,46 @@ export async function planInstall(name: string, options: InstallOptions = {}) {
         ? packageManifest.exports[path]
         : undefined
 
-      if (current !== undefined && current !== target)
-        throw new Error(`Conflicting UI package export: ${path}`)
+      if (current !== undefined) {
+        if (!exportTargetMatches(current, target))
+          throw new Error(`Conflicting UI package export: ${path}`)
+        exportPaths.delete(path)
+        continue
+      }
+
+      const pattern = Object.keys(packageManifest.exports ?? {})
+        .filter((key) => {
+          const star = key.indexOf("*")
+
+          return (
+            star >= 0 &&
+            key.lastIndexOf("*") === star &&
+            path.startsWith(key.slice(0, star)) &&
+            path.endsWith(key.slice(star + 1)) &&
+            path.length >= key.length - 1
+          )
+        })
+        .sort(
+          (left, right) =>
+            right.indexOf("*") - left.indexOf("*") ||
+            right.length - left.length,
+        )[0]
+
+      if (pattern && isRecord(packageManifest.exports)) {
+        const wildcard = path.slice(
+          pattern.indexOf("*"),
+          path.length - (pattern.length - pattern.indexOf("*") - 1),
+        )
+
+        if (
+          exportTargetMatches(
+            packageManifest.exports[pattern],
+            target,
+            wildcard,
+          )
+        )
+          exportPaths.delete(path)
+      }
     }
 
     previewFiles.push({
@@ -1147,6 +1187,7 @@ export async function planInstall(name: string, options: InstallOptions = {}) {
   return {
     packageManifest,
     exportPaths,
+    checkExports,
     root,
     run,
     paths,
@@ -1192,7 +1233,7 @@ export async function applyInstall(
 
   try {
     await writeFiles(root, changes, async () => {
-      if (plan.exportPaths.size) {
+      if (plan.checkExports) {
         const current = await readPackage(root)
 
         if (
@@ -1213,7 +1254,7 @@ export async function applyInstall(
         await run(["add", "-d", ...preview.devDependencies], root)
       }
 
-      if (!plan.exportPaths.size) return
+      if (!plan.checkExports) return
       const before = await readFile(join(root, "package.json"), "utf8")
       const current: JsonValue = JSON.parse(before)
 
@@ -1224,6 +1265,8 @@ export async function applyInstall(
           JSON.stringify(plan.packageManifest.exports)
       )
         throw new Error("UI package exports changed during installation")
+
+      if (!plan.exportPaths.size) return
       const exports = isRecord(current.exports) ? { ...current.exports } : {}
 
       for (const [path, target] of plan.exportPaths) exports[path] = target

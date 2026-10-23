@@ -93,6 +93,8 @@ test("packed CLI exposes shared editor roots to external workspace consumers", a
       const lib = custom ? "src/services" : "src/lib"
       const editorKey = `./${components.slice(4)}/editor`
       const authKey = `./${lib.slice(4)}/editor-auth`
+      const helperKey = `${editorKey}/table-presentation-schema`
+      const helperTarget = `./${components}/editor/table-presentation-schema.ts`
       await putJson(workspace, "package.json", {
         private: true,
         workspaces: ["apps/*", "packages/*"],
@@ -102,7 +104,15 @@ test("packed CLI exposes shared editor roots to external workspace consumers", a
         name: "@acme/ui",
         type: "module",
         sideEffects: ["./keep.css"],
-        exports: { "./keep": "./keep.ts" },
+        exports: custom
+          ? {
+              "./keep": "./keep.ts",
+              [`./${components.slice(4)}/*`]: {
+                types: `./${components}/*.tsx`,
+                default: `./${components}/*.tsx`,
+              },
+            }
+          : { "./keep": "./keep.ts" },
         dependencies: { react: "^19.2.0", "react-dom": "^19.2.0" },
       })
       await mkdir(join(ui, "src"), { recursive: true })
@@ -162,8 +172,9 @@ test("packed CLI exposes shared editor roots to external workspace consumers", a
       ])
 
       const initialized: {
-        exports: Record<string, string>
+        exports: Record<string, JsonValue>
         sideEffects: string[]
+        dependencies: Record<string, string>
       } = await Bun.file(join(ui, "package.json")).json()
 
       expect(initialized.exports[editorKey]).toBe(
@@ -172,6 +183,17 @@ test("packed CLI exposes shared editor roots to external workspace consumers", a
       expect(initialized.exports[authKey]).toBe(`./${lib}/editor-auth/index.ts`)
       expect(initialized.sideEffects).toEqual(["./keep.css", "**/*.css"])
 
+      const componentWildcard = `./${components.slice(4)}/*`
+      const wildcardBefore = initialized.exports[componentWildcard]
+      const helperWildcard = `${editorKey}/*`
+      const helperConditions = { types: helperTarget, default: helperTarget }
+      initialized.exports["./keep-conditions"] = { default: "./keep.ts" }
+
+      if (custom)
+        initialized.exports[helperWildcard] = {
+          types: `./${components}/editor/*.ts`,
+          default: `./${components}/editor/*.ts`,
+        }
       delete initialized.exports[editorKey]
       delete initialized.exports[authKey]
       await putJson(ui, "package.json", initialized)
@@ -197,6 +219,22 @@ test("packed CLI exposes shared editor roots to external workspace consumers", a
         "--registry",
         `${server.url}r`,
       ])
+
+      const helperInstalled: typeof initialized = await Bun.file(
+        join(ui, "package.json"),
+      ).json()
+
+      expect(helperInstalled.exports[componentWildcard]).toEqual(wildcardBefore)
+      expect(helperInstalled.exports["./keep-conditions"]).toEqual({
+        default: "./keep.ts",
+      })
+
+      if (custom) {
+        expect(helperInstalled.exports[helperKey]).toBeUndefined()
+        expect(helperInstalled.exports[helperWildcard]).toEqual(
+          initialized.exports[helperWildcard],
+        )
+      } else expect(helperInstalled.exports[helperKey]).toBe(helperTarget)
       await run(ui, [
         ...command,
         "add",
@@ -209,7 +247,55 @@ test("packed CLI exposes shared editor roots to external workspace consumers", a
         "src/check.tsx",
         `import { Editor, EditorRoot, EditorContent, EditorFormatButton } from "@acme/ui/${components.slice(4)}/editor"\nimport { createOpenAuthAuthentication, createBetterAuthAuthentication, authorizeEditorRequest } from "@acme/ui/${lib.slice(4)}/editor-auth"\nexport const parts = [Editor, EditorRoot, EditorContent, EditorFormatButton, createOpenAuthAuthentication, createBetterAuthAuthentication, authorizeEditorRequest]\n`,
       )
+      await put(
+        app,
+        "src/geometry.ts",
+        `import { validateTableGeometry } from "@acme/ui/${components.slice(4)}/editor/table-presentation-schema"\nconst geometry = validateTableGeometry([[{ colSpan: 2 }], [{}, {}]])\nif (geometry.columns !== 2 || geometry.rows !== 2 || geometry.cells !== 4) throw new Error("Invalid geometry")\nlet rejected = false\ntry { validateTableGeometry([[{ colSpan: 51 }]]) } catch { rejected = true }\nif (!rejected) throw new Error("Missing geometry bound")\n`,
+      )
       await run(app, ["bunx", "--no-install", "tsc", "--noEmit"])
+      await run(app, ["bun", "src/geometry.ts"])
+
+      const external = join(
+        directory,
+        custom ? "external-custom" : "external-default",
+      )
+
+      await putJson(external, "package.json", {
+        name: "external-app",
+        type: "module",
+        dependencies: { "@acme/ui": `file:${ui}` },
+      })
+      await putJson(external, "tsconfig.json", {
+        compilerOptions: {
+          target: "ES2022",
+          module: "ESNext",
+          moduleResolution: "Bundler",
+          strict: true,
+          skipLibCheck: true,
+          noEmit: true,
+        },
+        include: ["geometry.ts"],
+      })
+      await put(
+        external,
+        "geometry.ts",
+        await readFile(join(app, "src/geometry.ts"), "utf8"),
+      )
+      await run(external, ["bun", "install"])
+      await run(external, [
+        "bun",
+        join(workspace, "node_modules/typescript/bin/tsc"),
+        "--noEmit",
+      ])
+      await run(external, ["bun", "geometry.ts"])
+      await run(external, [
+        "bun",
+        "build",
+        "./geometry.ts",
+        "--target=node",
+        "--outfile=geometry.mjs",
+      ])
+      await run(external, ["node", "geometry.mjs"])
 
       const installed: typeof initialized = await Bun.file(
         join(ui, "package.json"),
@@ -219,6 +305,20 @@ test("packed CLI exposes shared editor roots to external workspace consumers", a
       expect(installed.sideEffects).toEqual(initialized.sideEffects)
       delete installed.exports[editorKey]
       delete installed.exports[authKey]
+      delete installed.exports[helperKey]
+      await putJson(ui, "package.json", installed)
+      const updateBefore = await readFile(join(ui, "package.json"), "utf8")
+      await run(ui, [
+        ...command,
+        "update",
+        "editor",
+        "--dry-run",
+        "--registry",
+        `${server.url}r`,
+      ])
+      expect(await readFile(join(ui, "package.json"), "utf8")).toBe(
+        updateBefore,
+      )
       await putJson(ui, "package.json", installed)
       await run(ui, [
         ...command,
@@ -236,51 +336,101 @@ test("packed CLI exposes shared editor roots to external workspace consumers", a
       ])
       await run(app, ["bunx", "--no-install", "tsc", "--noEmit"])
 
+      await run(app, ["bun", "src/geometry.ts"])
+
+      const preserved: typeof initialized = await Bun.file(
+        join(ui, "package.json"),
+      ).json()
+
+      preserved.exports[helperKey] = helperConditions
+      await putJson(ui, "package.json", preserved)
+      await run(ui, [
+        ...command,
+        "update",
+        "editor",
+        "--registry",
+        `${server.url}r`,
+      ])
+
       const conflict: typeof initialized = await Bun.file(
         join(ui, "package.json"),
       ).json()
 
+      expect(conflict.exports[helperKey]).toEqual(helperConditions)
+
       await putJson(results, `${custom ? "custom" : "default"}.json`, conflict)
-      conflict.exports[editorKey] = "./private.ts"
-      await putJson(ui, "package.json", conflict)
-      const conflictBefore = await readFile(join(ui, "package.json"), "utf8")
 
-      const sourceBefore = await readFile(
-        join(ui, components, "editor/index.ts"),
-        "utf8",
-      )
+      for (const conflictKey of [editorKey, helperKey]) {
+        const conflicting = {
+          ...conflict,
+          dependencies: { ...conflict.dependencies },
+          exports: {
+            ...conflict.exports,
+            [conflictKey]:
+              conflictKey === editorKey
+                ? "./private.ts"
+                : { types: helperTarget, default: "./private.ts" },
+          },
+        }
 
-      const trackingBefore = await readFile(join(ui, "ui.json"), "utf8")
-      const lockBefore = await readFile(join(workspace, "bun.lock"), "utf8")
+        delete conflicting.dependencies.zod
+        await putJson(ui, "package.json", conflicting)
+        const conflictBefore = await readFile(join(ui, "package.json"), "utf8")
 
-      for (const mode of ["add", "update"]) {
-        await run(
-          ui,
-          [...command, mode, "editor", "--registry", `${server.url}r`],
-          false,
+        const sourceBefore = await readFile(
+          join(ui, components, "editor/index.ts"),
+          "utf8",
         )
-        await run(
-          ui,
-          [
-            ...command,
-            mode,
-            "editor",
-            "--dry-run",
-            "--registry",
-            `${server.url}r`,
-          ],
-          false,
+
+        const helperBefore = await readFile(
+          join(ui, components, "editor/table-presentation-schema.ts"),
+          "utf8",
         )
-        expect(await readFile(join(ui, "package.json"), "utf8")).toBe(
-          conflictBefore,
-        )
-        expect(
-          await readFile(join(ui, components, "editor/index.ts"), "utf8"),
-        ).toBe(sourceBefore)
-        expect(await readFile(join(ui, "ui.json"), "utf8")).toBe(trackingBefore)
-        expect(await readFile(join(workspace, "bun.lock"), "utf8")).toBe(
-          lockBefore,
-        )
+
+        const trackingBefore = await readFile(join(ui, "ui.json"), "utf8")
+        const lockBefore = await readFile(join(workspace, "bun.lock"), "utf8")
+
+        for (const mode of ["add", "update"]) {
+          expect(
+            await run(
+              ui,
+              [...command, mode, "editor", "--registry", `${server.url}r`],
+              false,
+            ),
+          ).toContain(`Conflicting UI package export: ${conflictKey}`)
+          expect(
+            await run(
+              ui,
+              [
+                ...command,
+                mode,
+                "editor",
+                "--dry-run",
+                "--registry",
+                `${server.url}r`,
+              ],
+              false,
+            ),
+          ).toContain(`Conflicting UI package export: ${conflictKey}`)
+          expect(await readFile(join(ui, "package.json"), "utf8")).toBe(
+            conflictBefore,
+          )
+          expect(
+            await readFile(join(ui, components, "editor/index.ts"), "utf8"),
+          ).toBe(sourceBefore)
+          expect(
+            await readFile(
+              join(ui, components, "editor/table-presentation-schema.ts"),
+              "utf8",
+            ),
+          ).toBe(helperBefore)
+          expect(await readFile(join(ui, "ui.json"), "utf8")).toBe(
+            trackingBefore,
+          )
+          expect(await readFile(join(workspace, "bun.lock"), "utf8")).toBe(
+            lockBefore,
+          )
+        }
       }
     }
   } finally {

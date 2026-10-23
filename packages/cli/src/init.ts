@@ -23,6 +23,7 @@ import {
   writeFiles,
 } from "./install.js"
 import {
+  exportTargetMatches,
   isPackageName,
   packageRunner,
   pendingDependencies,
@@ -1923,9 +1924,10 @@ export async function initProject(
         const exports = object(value.exports) ? { ...value.exports } : {}
 
         for (const [path, target] of exportPaths) {
-          if (exports[path] !== undefined && exports[path] !== target)
-            throw new Error(`Conflicting UI package export: ${path}`)
-          exports[path] = target
+          if (exports[path] !== undefined) {
+            if (!exportTargetMatches(exports[path], target))
+              throw new Error(`Conflicting UI package export: ${path}`)
+          } else exports[path] = target
         }
 
         const sideEffects =
@@ -2340,8 +2342,21 @@ export async function initProject(
           !object(before) ||
           !object(after) ||
           !object(value) ||
+          !object(after.exports)
+        )
+          throw new Error("UI package exports changed during installation")
+
+        const expectedExports = baseApplicationPlan.exportPaths.size
+          ? Object.assign(
+              {},
+              before.exports,
+              Object.fromEntries(baseApplicationPlan.exportPaths),
+            )
+          : before.exports
+
+        if (
           value.name !== before.name ||
-          JSON.stringify(value.exports) !== JSON.stringify(before.exports) ||
+          JSON.stringify(value.exports) !== JSON.stringify(expectedExports) ||
           JSON.stringify(value.sideEffects) !==
             JSON.stringify(before.sideEffects)
         )
@@ -2349,7 +2364,7 @@ export async function initProject(
 
         edits.set(path, {
           before: current,
-          after: `${JSON.stringify({ ...value, exports: after.exports, sideEffects: after.sideEffects }, null, 2)}\n`,
+          after: `${JSON.stringify({ ...value, exports: Object.assign({}, expectedExports, after.exports), sideEffects: after.sideEffects }, null, 2)}\n`,
         })
       }
     }

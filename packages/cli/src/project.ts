@@ -20,6 +20,27 @@ export function isPackageName(value: unknown): value is string {
   )
 }
 
+export function exportTargetMatches(
+  value: JsonValue | undefined,
+  target: string,
+  wildcard?: string,
+): boolean {
+  if (isString(value))
+    return (
+      (wildcard === undefined ? value : value.replaceAll("*", wildcard)) ===
+      target
+    )
+
+  if (!isRecord(value)) return false
+
+  const conditions = Object.values(value)
+
+  return (
+    conditions.length > 0 &&
+    conditions.every((entry) => exportTargetMatches(entry, target, wildcard))
+  )
+}
+
 export async function readPackage(root: string): Promise<JsonObject> {
   if (!(await existingFile(root, "package.json"))) return {}
 
