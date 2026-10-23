@@ -615,3 +615,26 @@ https://ui.yopem.com/docs/editor-store for protocol and deployment limits.
 
 HTTP callbacks receive cancellation through `Request.signal`. Storage checks
 deadlines before driver calls. Synchronous work cannot be stopped.
+
+## Editor style composition
+
+Import editor parts from `@/components/editor` after editor installation. Keep
+style controls inside `EditorRoot` and `EditorToolbar`. Use
+`EditorAlignmentButton`, `EditorFontColorControl`,
+`EditorBackgroundColorControl`, `EditorFontFamilyControl`,
+`EditorFontSizeControl`, and `EditorFontWeightControl` for text presentation.
+Use `EditorLineHeightControl` and `EditorFirstLineIndentControl` for block
+styles. Keep `EditorIndentButton` for block indentation.
+
+Register `EditorBlockPresentationExtension` in a stable mount-time extension
+array, including read-only roots. Import pure codecs from
+`@/components/editor/block-presentation` for server use. Pass only the
+`editorBlockPresentation` NodeState payload to `parseEditorBlockPresentation`.
+Line height accepts unitless 1 through 4. First-line indentation accepts
+nonnegative values through 160px or 10em/rem. JSON and HTML preserve validated
+values. Keep host HTML sanitization and native conversion hooks.
+
+Use `EditorClearFormattingButton` to remove presentation. Keep content, links,
+list nesting, table structure, and unrelated NodeState. Saved style selections
+expire after document changes. See
+[editor composition](https://ui.yopem.com/docs/editor.md).

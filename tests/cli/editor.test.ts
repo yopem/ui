@@ -106,7 +106,27 @@ test("packed CLI installs complete editor source from generated registry", async
         join(root, "packages/registry/dist/r/docs/editor.json"),
       ).json()
 
-    for (const name of ["Editor", "EditorProps"])
+    for (const name of [
+      "Editor",
+      "EditorProps",
+      "EditorAlignmentButton",
+      "EditorFontColorControl",
+      "EditorBackgroundColorControl",
+      "EditorFontFamilyControl",
+      "EditorFontSizeControl",
+      "EditorFontWeightControl",
+      "EditorLineHeightControl",
+      "EditorFirstLineIndentControl",
+      "EditorClearFormattingButton",
+      "EditorAlignmentButtonProps",
+      "EditorStyleControlProps",
+      "EditorBlockPresentation",
+      "parseEditorBlockPresentation",
+      "$getEditorBlockPresentation",
+      "editorBlockPresentationState",
+      "EditorBlockPresentationExtension",
+      "createEditorBlockPresentationHTMLConfig",
+    ])
       expect(
         documentation.parts.find((part) => part.name === name)?.importPath,
       ).toBe("@/components/editor")
@@ -117,7 +137,18 @@ test("packed CLI installs complete editor source from generated registry", async
       return file.target.slice("@/components/editor/".length)
     })
 
-    expect(canonical).not.toBeEmpty()
+    expect(canonical).toEqual(
+      expect.arrayContaining([
+        "style-controls.tsx",
+        "block-presentation.ts",
+        "block-presentation-extension.ts",
+      ]),
+    )
+    expect(
+      inventory.dependencies.some((dependency) =>
+        dependency.startsWith("zod@^"),
+      ),
+    ).toBe(true)
     expect(
       inventory.dependencies.filter(
         (dependency) =>
@@ -199,7 +230,7 @@ test("packed CLI installs complete editor source from generated registry", async
       )
       await writeFile(
         join(project, "src/check.tsx"),
-        `import { Editor } from "${prefix}/${components.slice(4)}/editor"\nexport const editor = <Editor ariaLabel="Content" id="content" className={["custom", "editor"].join("-")} xstyle={[]} ref={null} />\n`,
+        `import { Editor, EditorRoot, EditorContent, EditorToolbar, EditorLineHeightControl, EditorFirstLineIndentControl, EditorBlockPresentationExtension, parseEditorBlockPresentation } from "${prefix}/${components.slice(4)}/editor"\nconst extensions = [EditorBlockPresentationExtension]\nexport const editor = <Editor ariaLabel="Content" id="content" className={["custom", "editor"].join("-")} xstyle={[]} ref={null} />\nexport const styled = <EditorRoot extensions={extensions}><EditorToolbar><EditorLineHeightControl /><EditorFirstLineIndentControl /></EditorToolbar><EditorContent /></EditorRoot>\nexport const presentation = parseEditorBlockPresentation({ lineHeight: "2", textIndent: "24px" })\n`,
       )
       await writeFile(
         join(project, "tsconfig.json"),

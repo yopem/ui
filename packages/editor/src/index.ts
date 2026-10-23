@@ -59,3 +59,35 @@ export {
   TABLE_MAX_COLUMNS,
   TABLE_MAX_CELLS,
 } from "./table-presentation-schema"
+
+export {
+  EditorAlignmentButton,
+  EditorFontColorControl,
+  EditorBackgroundColorControl,
+  EditorFontFamilyControl,
+  EditorFontSizeControl,
+  EditorFontWeightControl,
+  EditorLineHeightControl,
+  EditorFirstLineIndentControl,
+  EditorClearFormattingButton,
+} from "./style-controls"
+
+export type {
+  EditorAlignmentButtonProps,
+  EditorStyleControlProps,
+} from "./style-controls"
+
+export {
+  $getEditorBlockPresentation,
+  editorBlockPresentationState,
+  parseEditorBlockPresentation,
+  isEditorLineHeight,
+  isEditorStyleLength,
+} from "./block-presentation"
+
+export type { EditorBlockPresentation } from "./block-presentation"
+
+export {
+  EditorBlockPresentationExtension,
+  createEditorBlockPresentationHTMLConfig,
+} from "./block-presentation-extension"

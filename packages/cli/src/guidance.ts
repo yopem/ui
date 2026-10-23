@@ -70,6 +70,17 @@ Discard saved table selections after document content changes. Preserve resize c
 Pass additional Lexical extensions through \`extensions\` on EditorRoot or Editor.
 Keep that list stable. Remount the root when the extension configuration changes.
 
+Use \`EditorAlignmentButton\` and the font color, background, family, size, and weight controls for text presentation.
+Use \`EditorLineHeightControl\` and \`EditorFirstLineIndentControl\` for block styles.
+Keep \`EditorIndentButton\` for block indentation.
+Register \`EditorBlockPresentationExtension\` in the stable mount-time extension list, including read-only roots.
+Import pure codecs from \`${imports.editor}/block-presentation\` without loading React.
+Pass only the \`editorBlockPresentation\` NodeState payload to \`parseEditorBlockPresentation\`.
+Line height accepts unitless 1 through 4. First-line indent accepts 0 through 160px or 10em/rem.
+Keep validated values in JSON and HTML. Preserve native HTML hooks and host sanitization.
+Use \`EditorClearFormattingButton\` to clear presentation without deleting content, links, list nesting, tables, or unrelated NodeState.
+Saved style selections expire after content changes. Keep controls inside their root.
+
 ### Editor authentication
 
 Install optional server helpers with the matching package manager:

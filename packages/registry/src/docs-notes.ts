@@ -1,6 +1,10 @@
 // These notes describe Yopem's composition choices, not only the upstream types.
 const usageNoteValues = {
   editor: [
+    "Use public style controls inside EditorRoot and EditorToolbar. Register EditorBlockPresentationExtension in a stable mount-time array, including read-only roots.",
+    "Use EditorIndentButton for block indentation and EditorFirstLineIndentControl for first-line indentation. Line height accepts unitless 1 through 4. First-line indent accepts nonnegative values through 160px or 10em/rem.",
+    "Import pure codecs from @/components/editor/block-presentation. Pass the editorBlockPresentation NodeState payload to parseEditorBlockPresentation. JSON and HTML preserve validated block styles. Keep host HTML sanitization.",
+    "Clear formatting keeps content, links, list nesting, table structure, and unrelated NodeState. Saved style selections expire after content changes.",
     "Use Editor for the preset. Compose EditorRoot, EditorToolbar, EditorContent, and individual controls for custom interfaces. Import all parts from @/components/editor. Each root keeps separate state and history.",
     "Import Editor from @/components/editor. Keep all editor files together. Generic UI components stay in components/ui.",
     "Use ariaLabel for an accessible name. Use initialState for initial Lexical JSON and onChange for content updates. Remount to load another document.",

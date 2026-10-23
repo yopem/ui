@@ -10,7 +10,8 @@
     "./table-presentation": "./src/table-presentation.ts",
     "./table-presentation-schema": "./src/table-presentation-schema.ts",
     "./table-presentation-controls": "./src/table-presentation-controls.tsx",
-    "./table-resize": "./src/table-resize.tsx"
+    "./table-resize": "./src/table-resize.tsx",
+    "./block-presentation": "./src/block-presentation.ts"
   },
   "scripts": {
     "typecheck": "tsc --noEmit"

@@ -280,6 +280,19 @@ Rounded components use md (12px) by default. Use xstyle to change corner radii. 
   Keep the
   `editor-content` slot. Base CSS resets Lexical's native text wrappers only;
   StyleX supplies the text theme.
+- Compose editor style controls inside EditorRoot and EditorToolbar. Keep
+  EditorBlockPresentationExtension in a stable mount-time extension array,
+  including read-only roots. Use EditorIndentButton for block indentation and
+  EditorFirstLineIndentControl for first-line indentation. Use font color,
+  background, family, size, weight, line-height, alignment, and clear controls
+  instead of custom formatting handlers. Saved selections expire after content
+  changes. Keep native host-event cancellation and history behavior intact.
+  Pure block-presentation helpers must remain independent of React. Validate
+  lineHeight (unitless 1 through 4) and textIndent (0 through 160px or 10em/rem).
+  Keep these values in JSON NodeState and native HTML conversion hooks. Preserve
+  converter priority, child callbacks, and export slots. Keep host HTML
+  sanitization. Clear formatting must keep content, links, list nesting, table
+  structure, and unrelated NodeState.
 - Keep editor authentication helpers in `packages/editor/src/server` and out of
   the browser entry. The `editor-auth` registry item copies them to the consumer
   library directory. Support existing OpenAuth and Better Auth services. Do not

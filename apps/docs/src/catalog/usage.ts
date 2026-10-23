@@ -9,17 +9,26 @@ import {
   EditorFormatButton,
   EditorHistoryButton,
   EditorBlockButton,
+  EditorLineHeightControl,
+  EditorFirstLineIndentControl,
+  EditorClearFormattingButton,
+  EditorBlockPresentationExtension,
 } from "@/components/editor"
+
+const extensions = [EditorBlockPresentationExtension]
 
 export function Preview() {
   return (
-    <EditorRoot ariaLabel="Composed editor">
+    <EditorRoot ariaLabel="Composed editor" extensions={extensions}>
       <EditorToolbar aria-label="Custom formatting">
         <EditorFormatButton format="bold" />
         <EditorFormatButton format="italic" />
         <EditorHistoryButton action="undo" />
         <EditorHistoryButton action="redo" />
         <EditorBlockButton block="h2" />
+        <EditorLineHeightControl />
+        <EditorFirstLineIndentControl />
+        <EditorClearFormattingButton />
       </EditorToolbar>
       <EditorContent placeholder="Write your notes…" />
     </EditorRoot>

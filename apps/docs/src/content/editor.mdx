@@ -104,6 +104,104 @@ the Lexical instance. Use `useEditorState` for current text formats, history
 availability, root name, and read-only state. These hooks require `EditorRoot`.
 This composition API does not provide Plate plugin or document compatibility.
 
+## Text and block styles
+
+Select text before you open a style control. Keep all controls inside their
+`EditorRoot`. Saved selections become invalid after document changes.
+
+<EditorStyleExample />
+
+```tsx
+"use client"
+
+import {
+  EditorRoot,
+  EditorContent,
+  EditorToolbar,
+  EditorAlignmentButton,
+  EditorFontColorControl,
+  EditorBackgroundColorControl,
+  EditorFontFamilyControl,
+  EditorFontSizeControl,
+  EditorFontWeightControl,
+  EditorLineHeightControl,
+  EditorFirstLineIndentControl,
+  EditorClearFormattingButton,
+  EditorBlockPresentationExtension,
+} from "@/components/editor"
+
+const extensions = [EditorBlockPresentationExtension]
+
+export function StyledNotes() {
+  return (
+    <EditorRoot ariaLabel="Styled notes" extensions={extensions}>
+      <EditorToolbar aria-label="Text styles">
+        <EditorAlignmentButton alignment="start" />
+        <EditorAlignmentButton alignment="center" />
+        <EditorAlignmentButton alignment="end" />
+        <EditorAlignmentButton alignment="justify" />
+        <EditorFontColorControl />
+        <EditorBackgroundColorControl />
+        <EditorFontFamilyControl />
+        <EditorFontSizeControl />
+        <EditorFontWeightControl />
+        <EditorLineHeightControl />
+        <EditorFirstLineIndentControl />
+        <EditorClearFormattingButton />
+      </EditorToolbar>
+      <EditorContent />
+    </EditorRoot>
+  )
+}
+```
+
+Keep the extension array outside the component. Register
+`EditorBlockPresentationExtension` once at mount time, including read-only
+editors. This Lexical extension does not require React.
+
+Use `EditorIndentButton` for block indentation. Use
+`EditorFirstLineIndentControl` for first-line indentation. Line height accepts
+unitless values from 1 through 4. First-line indentation accepts nonnegative
+values through 160px or 10em/rem.
+
+Font controls apply inline text styles. Colors accept theme palette values or
+3-, 6-, and 8-digit hexadecimal values. Families accept Inter, Arial, Georgia,
+IBM Plex Mono, serif, sans-serif, and monospace. Font sizes accept positive
+values through 160px or 10em/rem. Font weights accept 100 through 900 in steps
+of 100. Invalid values do not change the document.
+
+Clear formatting removes selected text marks, inline styles, alignment, and
+managed block styles. It keeps content, links, node types, list nesting, table
+structure, direction, and unrelated NodeState. At a caret, it clears typing
+styles without changing existing text. Undo restores formatting changes.
+
+### Block presentation storage
+
+Import pure helpers from `@/components/editor/block-presentation` for server
+codecs. `parseEditorBlockPresentation` accepts the payload at
+`node.$.editorBlockPresentation`, not the complete serialized node.
+
+```ts
+import { parseEditorBlockPresentation } from "@/components/editor/block-presentation"
+
+const presentation = parseEditorBlockPresentation({
+  lineHeight: "2",
+  textIndent: "24px",
+})
+```
+
+The result always contains `lineHeight` and `textIndent` strings. Invalid fields
+become empty strings independently. Unknown fields are removed. Read live state
+with `$getEditorBlockPresentation` inside a Lexical read or update. Write
+validated state with `$setState` and `editorBlockPresentationState`. Keep other
+NodeState entries unchanged.
+
+The extension preserves these values in Lexical JSON and HTML. Its HTML hooks
+keep native converter priority, child callbacks, and export slots. For custom
+block classes, use `createEditorBlockPresentationHTMLConfig` with every
+supported class. Combine its maps with host HTML overrides. These hooks do not
+sanitize HTML. Keep host HTML sanitization in place.
+
 ## Add Lexical extensions
 
 Pass Lexical extensions through `EditorRoot` or the `Editor` preset. Define the
