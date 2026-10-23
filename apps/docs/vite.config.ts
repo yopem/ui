@@ -10,6 +10,8 @@ import { resolve } from "node:path"
 import remarkGfm from "remark-gfm"
 import { defineConfig } from "vite"
 
+import { createPrerenderGuard } from "./scripts/prerender-guard"
+
 const root = resolve(import.meta.dirname, "../..")
 
 const stylexOptions = {
@@ -138,6 +140,7 @@ const config = defineConfig({
     nitro({
       preset: "static",
       hooks: {
+        ...createPrerenderGuard(),
         "prerender:generate"(route) {
           if (route.route === "/404" && route.error?.status === 404) {
             route.error = undefined
@@ -149,14 +152,18 @@ const config = defineConfig({
         autoSubfolderIndex: false,
         crawlLinks: true,
         failOnError: true,
-        concurrency: 4,
+        concurrency: 1,
         ignore: ["/stylex", "/docs/primitives", "/api/og"],
         routes: [
           "/",
           "/404",
+          "/components",
           "/components.md",
+          "/components/label",
           "/components/label.md",
+          "/components/sidebar",
           "/components/sidebar.md",
+          "/docs/",
           "/index.md",
           "/api/search.json",
           "/llms.txt",
@@ -172,7 +179,11 @@ const config = defineConfig({
             .filter(
               (name) => name.endsWith(".tsx") && name !== "primitives.tsx",
             )
-            .map((name) => `/docs/${name.replace(/\.tsx$/, "")}.md`),
+            .flatMap((name) => {
+              const slug = name.replace(/\.tsx$/, "")
+
+              return [`/docs/${slug}`, `/docs/${slug}.md`]
+            }),
         ],
       },
       rolldownConfig: {
