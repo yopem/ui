@@ -86,6 +86,25 @@ Keep validated values in JSON and HTML. Preserve native HTML hooks and host sani
 Use \`EditorClearFormattingButton\` to clear presentation without deleting content, links, list nesting, tables, or unrelated NodeState.
 Saved style selections expire after content changes. Keep controls inside their root.
 
+### Editor code
+
+Install optional native code editing:
+
+\`\`\`sh
+bunx --bun @yopem-ui/cli add editor-code
+npx @yopem-ui/cli add editor-code
+pnpm dlx @yopem-ui/cli add editor-code
+yarn dlx @yopem-ui/cli add editor-code
+\`\`\`
+
+Import optional parts from \`${imports.editor}/code\`.
+Register \`EditorCodeExtension\` when you create \`EditorRoot\`.
+Keep \`EditorContent\` as the editable surface. Do not replace native code nodes with \`Codeblock\`.
+Put \`EditorCodeLanguage\`, \`EditorCodeCopyButton\`, \`EditorCodeToggle\`, and \`EditorCodeStatus\` inside \`EditorCodeToolbar\`.
+Select one code block before using its controls. Copy can run read-only; mutation cannot.
+Line numbers and wrapping turn each other off. Lexical JSON preserves these choices.
+Keep native code keyboard behavior and serializers. Discard targets after host document changes.
+
 ### Editor authentication
 
 Install optional server helpers with the matching package manager:

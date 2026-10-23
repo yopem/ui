@@ -114,7 +114,9 @@ const config = defineConfig({
   },
   optimizeDeps: { exclude: ["@resvg/resvg-js"] },
   resolve: { dedupe: ["react", "react-dom"], tsconfigPaths: true },
-  ssr: { noExternal: ["@base-ui/react", "@base-ui/utils"] },
+  ssr: {
+    noExternal: ["@base-ui/react", "@base-ui/utils", "lexical", /^@lexical\//],
+  },
   plugins: [
     devtools({ injectSource: { enabled: false } }),
     babel({ plugins: stylexPlugins }),

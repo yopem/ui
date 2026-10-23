@@ -92,6 +92,8 @@ test("packed CLI exposes shared editor roots to external workspace consumers", a
       const components = custom ? "src/widgets" : "src/components"
       const lib = custom ? "src/services" : "src/lib"
       const editorKey = `./${components.slice(4)}/editor`
+      const codeKey = `${editorKey}/code`
+      const codeTarget = `./${components}/editor/code.ts`
       const authKey = `./${lib.slice(4)}/editor-auth`
       const helperKey = `${editorKey}/table-presentation-schema`
       const helperTarget = `./${components}/editor/table-presentation-schema.ts`
@@ -202,7 +204,7 @@ test("packed CLI exposes shared editor roots to external workspace consumers", a
       await run(ui, [
         ...command,
         "add",
-        "editor",
+        "editor-code",
         "--dry-run",
         "--registry",
         `${server.url}r`,
@@ -215,7 +217,7 @@ test("packed CLI exposes shared editor roots to external workspace consumers", a
       await run(ui, [
         ...command,
         "add",
-        "editor",
+        "editor-code",
         "--registry",
         `${server.url}r`,
       ])
@@ -230,11 +232,16 @@ test("packed CLI exposes shared editor roots to external workspace consumers", a
       })
 
       if (custom) {
+        expect(helperInstalled.exports[codeKey]).toBeUndefined()
         expect(helperInstalled.exports[helperKey]).toBeUndefined()
         expect(helperInstalled.exports[helperWildcard]).toEqual(
           initialized.exports[helperWildcard],
         )
-      } else expect(helperInstalled.exports[helperKey]).toBe(helperTarget)
+      } else {
+        expect(helperInstalled.exports[helperKey]).toBe(helperTarget)
+        expect(helperInstalled.exports[codeKey]).toBe(codeTarget)
+      }
+
       await run(ui, [
         ...command,
         "add",
@@ -245,7 +252,7 @@ test("packed CLI exposes shared editor roots to external workspace consumers", a
       await put(
         app,
         "src/check.tsx",
-        `import { Editor, EditorRoot, EditorContent, EditorFormatButton } from "@acme/ui/${components.slice(4)}/editor"\nimport { createOpenAuthAuthentication, createBetterAuthAuthentication, authorizeEditorRequest } from "@acme/ui/${lib.slice(4)}/editor-auth"\nexport const parts = [Editor, EditorRoot, EditorContent, EditorFormatButton, createOpenAuthAuthentication, createBetterAuthAuthentication, authorizeEditorRequest]\n`,
+        `import { Editor, EditorRoot, EditorContent, EditorFormatButton } from "@acme/ui/${components.slice(4)}/editor"\nimport { EditorCodeExtension, EditorCodeToolbar, EditorCodeLanguage, EditorCodeCopyButton, EditorCodeToggle, EditorCodeStatus } from "@acme/ui/${components.slice(4)}/editor/code"\nimport { createOpenAuthAuthentication, createBetterAuthAuthentication, authorizeEditorRequest } from "@acme/ui/${lib.slice(4)}/editor-auth"\nexport const parts = [Editor, EditorRoot, EditorContent, EditorFormatButton, EditorCodeExtension, EditorCodeToolbar, EditorCodeLanguage, EditorCodeCopyButton, EditorCodeToggle, EditorCodeStatus, createOpenAuthAuthentication, createBetterAuthAuthentication, authorizeEditorRequest]\n`,
       )
       await put(
         app,
@@ -263,23 +270,37 @@ test("packed CLI exposes shared editor roots to external workspace consumers", a
       await putJson(external, "package.json", {
         name: "external-app",
         type: "module",
-        dependencies: { "@acme/ui": `file:${ui}` },
+        dependencies: {
+          "@acme/ui": `file:${ui}`,
+          react: "^19.3.0",
+          "react-dom": "^19.3.0",
+        },
+        devDependencies: {
+          "@types/react": "^19.3.0",
+          "@types/react-dom": "^19.3.0",
+        },
       })
       await putJson(external, "tsconfig.json", {
         compilerOptions: {
           target: "ES2022",
           module: "ESNext",
           moduleResolution: "Bundler",
+          jsx: "react-jsx",
           strict: true,
           skipLibCheck: true,
           noEmit: true,
         },
-        include: ["geometry.ts"],
+        include: ["geometry.ts", "check.ts"],
       })
       await put(
         external,
         "geometry.ts",
         await readFile(join(app, "src/geometry.ts"), "utf8"),
+      )
+      await put(
+        external,
+        "check.ts",
+        await readFile(join(app, "src/check.tsx"), "utf8"),
       )
       await run(external, ["bun", "install"])
       await run(external, [
@@ -304,6 +325,7 @@ test("packed CLI exposes shared editor roots to external workspace consumers", a
       expect(installed.exports["./keep"]).toBe("./keep.ts")
       expect(installed.sideEffects).toEqual(initialized.sideEffects)
       delete installed.exports[editorKey]
+      delete installed.exports[codeKey]
       delete installed.exports[authKey]
       delete installed.exports[helperKey]
       await putJson(ui, "package.json", installed)
@@ -311,7 +333,7 @@ test("packed CLI exposes shared editor roots to external workspace consumers", a
       await run(ui, [
         ...command,
         "update",
-        "editor",
+        "editor-code",
         "--dry-run",
         "--registry",
         `${server.url}r`,
@@ -323,7 +345,7 @@ test("packed CLI exposes shared editor roots to external workspace consumers", a
       await run(ui, [
         ...command,
         "update",
-        "editor",
+        "editor-code",
         "--registry",
         `${server.url}r`,
       ])

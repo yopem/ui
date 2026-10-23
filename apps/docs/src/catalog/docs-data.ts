@@ -62,7 +62,7 @@ export const guidePages = [
     title: "Editor",
     url: "/docs/editor",
     content:
-      "Use the Lexical editor foundation for core rich text, keyboard and toolbar formatting, lists, undo and redo, read-only content, and JSON output. Install source with Bun, npm, pnpm, or Yarn. Lexical JSON is not compatible with Slate or Plate JSON. This scope does not provide full Plate parity.",
+      "Use the Lexical editor foundation for rich text, formatting, lists, history, and JSON output. Add optional native code editing with syntax colors, language controls, and clipboard support. Install source with Bun, npm, pnpm, or Yarn. Lexical JSON is not compatible with Slate or Plate JSON. This scope does not provide full Plate parity.",
   },
   {
     title: "CLI",

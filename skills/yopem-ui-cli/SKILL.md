@@ -129,6 +129,25 @@ external table JSON and HTML before conversion. Invalid updates must preserve
 existing content. Discard saved table selections after document changes.
 Preserve resize cancellation, history, and right-to-left keyboard behavior.
 
+### Optional native code editing
+
+```sh
+bunx --bun @yopem-ui/cli add editor-code
+npx @yopem-ui/cli add editor-code
+pnpm dlx @yopem-ui/cli add editor-code
+yarn dlx @yopem-ui/cli add editor-code
+```
+
+Import parts from `@/components/editor/code`, or the configured shared editor
+path. Register `EditorCodeExtension` when you create `EditorRoot`. Keep
+`EditorContent` as the editable surface. Do not replace native code nodes with
+Codeblock. Put `EditorCodeLanguage`, `EditorCodeCopyButton`, `EditorCodeToggle`,
+and `EditorCodeStatus` inside `EditorCodeToolbar`. Select one code block before
+using its controls. Copy can run read-only; mutation cannot. Line numbers and
+wrapping turn each other off. Lexical JSON preserves these choices. Keep native
+code keyboard behavior and serializers. Discard saved targets after host
+document changes.
+
 ### Optional editor authentication
 
 Install server helpers with the matching package manager:

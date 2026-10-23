@@ -1,5 +1,46 @@
 // Standalone TSX files use the standard @ alias for src.
 const usageSnippetValues = {
+  "editor-code": `"use client"
+
+import {
+  EditorRoot,
+  EditorContent,
+  EditorBlockButton,
+  EditorIndentButton,
+  EditorHistoryButton,
+} from "@/components/editor"
+import {
+  EditorCodeExtension,
+  EditorCodeToolbar,
+  EditorCodeLanguage,
+  EditorCodeCopyButton,
+  EditorCodeToggle,
+  EditorCodeStatus,
+} from "@/components/editor/code"
+
+const extensions = [EditorCodeExtension]
+
+export function CodeNotesEditor() {
+  return (
+    <EditorRoot ariaLabel="Code notes" extensions={extensions}>
+      <EditorCodeToolbar aria-label="Code tools">
+        <EditorBlockButton block="code" />
+        <EditorBlockButton block="paragraph" />
+        <EditorCodeLanguage />
+        <EditorCodeCopyButton />
+        <EditorCodeToggle setting="wrap" />
+        <EditorCodeToggle setting="lineNumbers" />
+        <EditorIndentButton direction="indent" />
+        <EditorIndentButton direction="outdent" />
+        <EditorHistoryButton action="undo" />
+        <EditorHistoryButton action="redo" />
+        <EditorCodeStatus />
+      </EditorCodeToolbar>
+      <EditorContent placeholder="Write code here." />
+    </EditorRoot>
+  )
+}
+`,
   editor: `"use client"
 
 import {

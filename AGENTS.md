@@ -299,6 +299,15 @@ Rounded components use md (12px) by default. Use xstyle to change corner radii. 
   converter priority, child callbacks, and export slots. Keep host HTML
   sanitization. Clear formatting must keep content, links, list nesting, table
   structure, and unrelated NodeState.
+- Use the optional `editor-code` item for native code editing. Register
+  `EditorCodeExtension` when you create `EditorRoot`. Keep `EditorContent` as the
+  editable surface. Do not replace native code nodes with Codeblock. Put
+  `EditorCodeLanguage`, `EditorCodeCopyButton`, `EditorCodeToggle`, and
+  `EditorCodeStatus` inside `EditorCodeToolbar`. Select one code block before
+  using its controls. Copy can run read-only; mutation cannot. Line numbers and
+  wrapping turn each other off. Lexical JSON preserves these view choices.
+  Keep native code keyboard behavior and serializers. Discard saved code
+  targets after host document changes.
 - Keep editor authentication helpers in `packages/editor/src/server` and out of
   the browser entry. The `editor-auth` registry item copies them to the consumer
   library directory. Support existing OpenAuth and Better Auth services. Do not

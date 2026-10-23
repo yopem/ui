@@ -11,14 +11,16 @@
     "./table-presentation-schema": "./src/table-presentation-schema.ts",
     "./table-presentation-controls": "./src/table-presentation-controls.tsx",
     "./table-resize": "./src/table-resize.tsx",
-    "./block-presentation": "./src/block-presentation.ts"
+    "./block-presentation": "./src/block-presentation.ts",
+    "./code": "./src/code.ts"
   },
   "scripts": {
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@base-ui/react": "catalog:",
-    "@lexical/code": "^0.52.0",
+    "@lexical/code": "catalog:",
+    "@lexical/code-prism": "^0.52.0",
     "@lexical/extension": "^0.52.0",
     "@lexical/history": "^0.52.0",
     "@lexical/link": "^0.52.0",

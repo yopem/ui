@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router"
 
+import { EditorCodeExamples } from "@/catalog/editor-code-examples"
 import { EditorCompositionExamples } from "@/catalog/editor-composition-examples"
 import { EditorExamples } from "@/catalog/editor-examples"
 import { EditorExtensionExamples } from "@/catalog/editor-extension-examples"
@@ -22,6 +23,7 @@ export const Route = createFileRoute("/docs/editor")({
 })
 
 const components = {
+  EditorCodeExamples,
   EditorExamples,
   EditorCompositionExamples,
   EditorExtensionExamples,

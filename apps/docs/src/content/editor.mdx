@@ -328,6 +328,85 @@ The example supports two host shortcuts. `Alt+Shift+R` changes read-only mode.
 `Alt+Shift+N` replaces the document. Saved table selections become invalid after
 content changes. Table JSON and HTML reload controls exercise serialization.
 
+## Code editing
+
+Install the optional code item. Use the existing package-manager switcher.
+
+```sh
+bunx --bun @yopem-ui/cli add editor-code
+```
+
+The item includes Editor and the native Prism extension. The base Editor item
+does not install Prism.
+
+Add `EditorCodeExtension` when you create `EditorRoot`. Keep `EditorContent` as
+the editable surface. Do not replace native code nodes with `Codeblock`.
+
+<EditorCodeExamples />
+
+```tsx
+"use client"
+
+import {
+  EditorRoot,
+  EditorContent,
+  EditorBlockButton,
+  EditorIndentButton,
+  EditorHistoryButton,
+} from "@/components/editor"
+import {
+  EditorCodeExtension,
+  EditorCodeToolbar,
+  EditorCodeLanguage,
+  EditorCodeCopyButton,
+  EditorCodeToggle,
+  EditorCodeStatus,
+} from "@/components/editor/code"
+
+const extensions = [EditorCodeExtension]
+
+export function CodeNotesEditor() {
+  return (
+    <EditorRoot ariaLabel="Code notes" extensions={extensions}>
+      <EditorCodeToolbar aria-label="Code tools">
+        <EditorBlockButton block="code" />
+        <EditorBlockButton block="paragraph" />
+        <EditorCodeLanguage />
+        <EditorCodeCopyButton />
+        <EditorCodeToggle setting="wrap" />
+        <EditorCodeToggle setting="lineNumbers" />
+        <EditorIndentButton direction="indent" />
+        <EditorIndentButton direction="outdent" />
+        <EditorHistoryButton action="undo" />
+        <EditorHistoryButton action="redo" />
+        <EditorCodeStatus />
+      </EditorCodeToolbar>
+      <EditorContent placeholder="Write code here." />
+    </EditorRoot>
+  )
+}
+```
+
+Select text in one code block before using its controls. Language choices use
+installed native grammars. Unspecified code has no syntax colors. Imported
+languages outside this list remain unchanged.
+
+Use Tab to indent code. Use Shift+Tab to remove indentation. Outdent also
+removes up to two leading spaces. Enter keeps native indentation. At the end,
+leave two empty lines. Press Enter again to leave code. Escape has no
+code-specific action.
+
+Enable line numbers for unwrapped lines. Enable wrapping to turn line numbers
+off. Enabling line numbers turns wrapping off. Lexical JSON stores these
+choices. HTML and Markdown use native code output.
+
+Copy uses the host clipboard. `EditorCodeStatus` reports success or an error.
+The browser must permit clipboard writes. Copy remains available in read-only
+mode. Language and view changes require an editable editor.
+
+Document changes while a code control has focus clear its saved target. Select
+code again to use the controls. Controls do not restore saved text ranges.
+
 ## Initial state and read-only content
 
 Pass Lexical JSON or its JSON string to `initialState` when the editor mounts.

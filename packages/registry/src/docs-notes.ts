@@ -14,6 +14,15 @@ const usageNoteValues = {
     "Validate external table JSON and HTML before conversion. Tables support 50 rows, 50 columns, and 2500 covered cells across the document. Invalid updates preserve existing content. Saved table selections become invalid after document changes.",
     "The editor provides a foundation, not full Plate feature parity. Collaboration, media uploads, comments, and document conversion are not included.",
   ],
+  "editor-code": [
+    "Add EditorCodeExtension to EditorRoot extensions. Import optional code parts from @/components/editor/code. Keep EditorContent as the native editable surface.",
+    "Put EditorCodeLanguage, EditorCodeCopyButton, EditorCodeToggle, and EditorCodeStatus inside EditorCodeToolbar. Add EditorBlockButton and EditorIndentButton from the base editor as needed.",
+    "Select one code block before using its controls. Document changes without an active code selection clear the target. Controls never restore saved ranges.",
+    "Language choices use installed Prism grammars. Unknown imported languages remain unchanged. Unspecified code has no syntax colors.",
+    "Line numbers and wrapping are separate view choices. Each choice turns the other off. Lexical JSON stores both choices; HTML and Markdown keep native code output.",
+    "Tab indents code. Shift+Tab removes indentation. Outdent also removes up to two leading spaces. Native Enter keeps indentation; two empty final lines permit an exit on the next Enter. Escape has no code-specific action.",
+    "Copy uses the host clipboard. EditorCodeStatus reports success or an error. Copy remains available in read-only mode. Mutation controls require an editable editor.",
+  ],
   "editor-store": [
     "Import server helpers from @/lib/editor-store. Apply one copied SQL migration for D1 or PostgreSQL.",
     "Supply existing authentication, separate document policies, complete Lexical validation, exact origins, and host CSRF verification. No account or ACL service is included.",
