@@ -91,6 +91,7 @@ export function createDocumentService(
     work: (
       signal: AbortSignal,
       checkDeadline: (uncertain?: boolean) => void,
+      deadline: number,
     ) => Promise<T>,
   ) {
     documentId(id)
@@ -145,7 +146,7 @@ export function createDocumentService(
       if (decision !== true)
         throw new DocumentError(decision === false ? "denied" : "unavailable")
 
-      return await work(signal, checkDeadline)
+      return await work(signal, checkDeadline, deadline)
     } catch (error) {
       if (error instanceof DocumentError) throw error
       throw new DocumentError(signal.aborted ? "aborted" : "unavailable")
@@ -161,11 +162,11 @@ export function createDocumentService(
         id,
         context,
         "document:read",
-        async function read(signal, checkDeadline) {
+        async function read(signal, checkDeadline, deadline) {
           checkDeadline()
 
           const rows = await withinSignal(
-            track(driver.read(id, signal)),
+            track(driver.read(id, signal, deadline)),
             signal,
           )
 
@@ -194,7 +195,7 @@ export function createDocumentService(
         input.documentId,
         context,
         input.change.kind === "delete" ? "document:delete" : "document:write",
-        async function mutate(signal, checkDeadline) {
+        async function mutate(signal, checkDeadline, deadline) {
           const expected = parseExpected(input.expected)
 
           if (input.change.kind === "delete" && !expected.generation)
@@ -220,6 +221,10 @@ export function createDocumentService(
           checkDeadline()
 
           const digest = await documentDigest({
+            actor: {
+              provider: context.identity.provider,
+              userId: context.identity.userId,
+            },
             documentId: input.documentId,
             expected:
               input.expected.kind === "absent" ? "absent" : input.expected.etag,
@@ -232,7 +237,7 @@ export function createDocumentService(
           checkDeadline()
 
           const current = await withinSignal(
-            track(driver.read(input.documentId, signal)),
+            track(driver.read(input.documentId, signal, deadline)),
             signal,
           )
 
@@ -264,7 +269,7 @@ export function createDocumentService(
 
           try {
             output = await withinSignal(
-              track(driver.mutate(prepared, signal)),
+              track(driver.mutate(prepared, signal, deadline)),
               signal,
             )
           } catch (error) {

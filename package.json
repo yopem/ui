@@ -27,7 +27,9 @@
     "test:a11y": "bun run build && FULL_A11Y=1 PLAYWRIGHT_PRODUCTION=1 playwright test --project=chromium --grep @a11y",
     "lint": "oxlint lint .",
     "fmt": "oxfmt fmt .",
-    "fmt:check": "oxfmt --check ."
+    "fmt:check": "oxfmt --check .",
+    "test:postgres-native": "bun --tsconfig-override tests/tsconfig.json tests/editor-document-stores/postgres-native.integration.ts",
+    "test:postgres-native:node": "bun build --target=node --format=esm --packages=external --tsconfig-override tests/tsconfig.json tests/editor-document-stores/postgres-native.integration.ts --outfile=./test-results/postgres-native.mjs && node ./test-results/postgres-native.mjs"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.13.0",
@@ -51,6 +53,7 @@
     "oxfmt": "^0.72.0",
     "oxlint": "catalog:",
     "oxlint-tsgolint": "^7.0.2004",
+    "pg": "^8.23.1",
     "pkg-pr-new": "^0.0.91",
     "turbo": "^2.11.7",
     "typescript": "catalog:",

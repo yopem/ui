@@ -124,8 +124,9 @@ Use optional editor-store server source for D1 or PostgreSQL snapshots.
 Import it from \`${imports.lib.replace(/\/stylex$/, "/editor-store")}\` on the server only.
 Apply one copied SQL migration. Supply complete Lexical validation and separate document policies, including deletion.
 Configure exact trusted origins and host CSRF verification. Never add accounts or implicit document grants.
-Retry uncertain writes with identical operation IDs and preconditions.
+Retry uncertain writes with identical operation IDs, preconditions, authentication provider, and user ID.
 HTTP callbacks receive cancellation through \`Request.signal\`. Storage checks deadlines before driver calls.
+PostgreSQL checks remaining time before each statement.
 See https://ui.yopem.com/docs/editor-store for the HTTP protocol and deployment limits.
 
 ### Visual foundations

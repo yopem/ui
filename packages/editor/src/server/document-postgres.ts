@@ -30,6 +30,7 @@ export function createPostgresDocumentService(
   async function transaction<T>(
     id: string,
     signal: AbortSignal,
+    deadline: number,
     work: (
       query: (
         text: string,
@@ -37,9 +38,19 @@ export function createPostgresDocumentService(
       ) => Promise<unknown[]>,
     ) => Promise<T>,
   ) {
-    signal.throwIfAborted()
+    checkDeadline()
     let released = false
     let client: DocumentPgClient | undefined
+
+    function checkDeadline() {
+      signal.throwIfAborted()
+
+      const remaining = deadline - Date.now()
+
+      if (remaining <= 0) throw new DocumentError("aborted")
+
+      return remaining
+    }
 
     function destroy() {
       if (client && !released) {
@@ -56,7 +67,7 @@ export function createPostgresDocumentService(
       .then(function connected(value) {
         client = value
 
-        if (signal.aborted) destroy()
+        if (signal.aborted || Date.now() >= deadline) destroy()
 
         return value
       })
@@ -75,12 +86,23 @@ export function createPostgresDocumentService(
       text: string,
       values: (string | number | null)[] = [],
     ) {
-      signal.throwIfAborted()
+      checkDeadline()
 
       if (!client || released) throw new DocumentError("aborted")
 
+      if (text !== "BEGIN") {
+        await withinSignal(
+          client.query({
+            text: "SELECT set_config('statement_timeout',$1,true),set_config('lock_timeout',$1,true)",
+            values: [String(checkDeadline())],
+            query_timeout: checkDeadline(),
+          }),
+          signal,
+        )
+      }
+
       const result = await withinSignal(
-        client.query({ text, values, query_timeout: config.timeoutMs }),
+        client.query({ text, values, query_timeout: checkDeadline() }),
         signal,
       )
 
@@ -92,10 +114,6 @@ export function createPostgresDocumentService(
     try {
       began = true
       await query("BEGIN", [])
-      await query(
-        "SELECT set_config('statement_timeout',$1,true),set_config('lock_timeout',$1,true)",
-        [String(config.timeoutMs)],
-      )
       await query("SELECT pg_advisory_xact_lock(hashtextextended($1,0))", [id])
       const result = await work(query)
       await query("COMMIT", [])
@@ -105,13 +123,15 @@ export function createPostgresDocumentService(
     } finally {
       signal.removeEventListener("abort", destroy)
 
+      if (Date.now() >= deadline || signal.aborted) destroy()
+
       if (client && !released) {
         if (began && !committed) {
           try {
             await client.query({
               text: "ROLLBACK",
               values: [],
-              query_timeout: config.timeoutMs,
+              query_timeout: checkDeadline(),
             })
           } catch {
             destroy()
@@ -127,15 +147,16 @@ export function createPostgresDocumentService(
   }
 
   const driver: DocumentDriver = {
-    read(id, signal) {
-      return transaction(id, signal, function read(query) {
+    read(id, signal, deadline = Date.now() + config.timeoutMs) {
+      return transaction(id, signal, deadline, function read(query) {
         return query(postgresSql(readDocumentSql), [id])
       })
     },
-    mutate(input, signal) {
+    mutate(input, signal, deadline = Date.now() + config.timeoutMs) {
       return transaction(
         input.documentId,
         signal,
+        deadline,
         async function mutate(query) {
           const results: unknown[][] = []
 

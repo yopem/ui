@@ -102,6 +102,20 @@ for (const dialect of ["d1", "postgres"] as const) {
       return (await session.prepare(text).all()).results
     }
 
+    test("operation receipt binds authenticated actor", async function actor() {
+      const input = save("app:actor-binding", { kind: "absent" }, "actor")
+      record(await service.mutate(input, context()))
+      expect(
+        service.mutate(input, {
+          ...context(),
+          identity: { provider: "openauth", userId: "another-user" },
+        }),
+      ).rejects.toMatchObject({ code: "operation-reuse" })
+      expect((await service.read(input.documentId, context()))?.revision).toBe(
+        "1",
+      )
+    }, 60000)
+
     test("authenticated HTTP lifecycle and strict write boundaries", async function http() {
       const identity = { provider: "openauth", userId: "user" } as const
       let expiry: number | undefined

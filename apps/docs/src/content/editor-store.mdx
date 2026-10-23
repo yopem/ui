@@ -101,7 +101,9 @@ HTTP callbacks receive a Request with the handler cancellation signal. Headers,
 cookies, and credentials remain intact. Body ownership transfers once.
 
 The handler checks deadlines after callbacks. Storage checks deadlines before
-driver calls and after validation.
+driver calls and after validation. Drivers receive an optional absolute deadline
+in Unix epoch milliseconds. PostgreSQL sets statement, lock, and query budgets
+from the remaining time.
 
 Synchronous work cannot be stopped. After a dispatched write, an expired
 deadline produces an uncertain result.
@@ -133,8 +135,9 @@ preconditions return 428. Failed CAS returns 412.
 
 Every write requires `Idempotency-Key`: 16–128 ASCII letters, digits,
 underscores, or hyphens. `crypto.randomUUID()` is valid. Keep the same operation
-ID, body, method, and precondition for retries. Different payloads with one
-operation ID return 409.
+ID, body, method, and precondition for retries. Keep the same authentication
+provider and user ID. Changed actors or payloads with one operation ID
+return 409.
 
 Successful writes return 200 with the original operation record and ETag. A
 replay can return a historical receipt after later writes. Success proves that
@@ -165,6 +168,10 @@ prune generations. Receipts and tombstones have no expiry. Host quotas, backups,
 monitoring, and an explicit retry-retention policy are required. Database growth
 is not bounded by the snapshot limit.
 
+Receipt digests include the authentication provider and user ID. Earlier
+actor-free digests are incompatible. Do not upgrade a database with unresolved
+retries from that format.
+
 D1 requires a native binding with `withSession("first-primary")`, prepared
 statements, and atomic batch. Local tests use actual workerd-backed Miniflare
 D1. Remote D1 staging remains unverified. There is no D1 REST write adapter.
@@ -178,9 +185,10 @@ Workers require `nodejs_compat`, supported `pg`, cache-disabled Hyperdrive, and
 request-local connection ownership. End request-local pools in `finally`. This
 topology is not runtime-proven here.
 
-Local PostgreSQL tests use PGlite's real PostgreSQL WASM engine. They do not
-prove TCP driver behavior, TLS, independent connections, server restarts, or
-Hyperdrive. Run those checks before production deployment.
+Local PostgreSQL checks use PGlite and PostgreSQL 18.6. Native Bun and bundled
+Node tests use verified TLS and independent connections. They cover CAS races,
+ABA, actor-bound retries, expiry, and uncertain commits. Remote PostgreSQL,
+server restarts, and Hyperdrive remain unverified.
 
 Yjs heads reject snapshot reads and writes. Collaboration needs its own
 migration and protocol. Assets, cross-store transactions, uploads, AI, account

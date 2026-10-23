@@ -48,10 +48,15 @@ export type DocumentResult =
   | { status: "conflict" }
 
 export interface DocumentDriver {
-  read(documentId: string, signal: AbortSignal): Promise<unknown[]>
+  read(
+    documentId: string,
+    signal: AbortSignal,
+    deadline?: number,
+  ): Promise<unknown[]>
   mutate(
     input: PreparedDocumentMutation,
     signal: AbortSignal,
+    deadline?: number,
   ): Promise<{ receipt: unknown[]; head: unknown[] }>
 }
 

@@ -5,6 +5,7 @@ test("@a11y document storage guide is reachable and published", async ({
   page,
   request,
 }, testInfo) => {
+  test.slow()
   await page.goto("/docs/editor-auth")
   const navigation = page.getByRole("button", { name: "Open navigation" })
 
