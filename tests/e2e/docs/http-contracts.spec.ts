@@ -302,7 +302,9 @@ test("static navigation needs no server functions", async ({ page }) => {
   await page.goto("/components/button")
   await page.getByRole("link", { name: "UI", exact: true }).click()
   await page.waitForURL((url) => url.pathname === "/")
-  await expect(page.getByRole("heading", { level: 1 })).toBeVisible()
+  await expect(
+    page.getByRole("main").locator('a[href="/components/accordion"]'),
+  ).toBeVisible()
   await page.getByRole("button", { name: "Search documentation" }).click()
   const search = page.getByRole("dialog", { name: "Search documentation" })
   await expect(search).toBeVisible()
