@@ -19,7 +19,11 @@ export type EditorIdentity = z.infer<typeof identitySchema>
 export type EditorAction = z.infer<typeof actionSchema>
 
 export type AuthenticationResult =
-  | { status: "authenticated"; identity: EditorIdentity }
+  | {
+      status: "authenticated"
+      identity: EditorIdentity
+      credentialExpiresAt?: number
+    }
   | { status: "unauthenticated" }
   | { status: "unavailable" }
 
@@ -35,7 +39,11 @@ export interface EditorAuthorizationInput {
 }
 
 export type EditorAuthorizationResult =
-  | { status: "authorized"; identity: EditorIdentity }
+  | {
+      status: "authorized"
+      identity: EditorIdentity
+      credentialExpiresAt?: number
+    }
   | { status: "rejected"; statusCode: 401 | 403 | 503 }
 
 export async function authorizeEditorRequest<Decision>(options: {
@@ -67,6 +75,16 @@ export async function authorizeEditorRequest<Decision>(options: {
       return { status: "rejected", statusCode: 401 }
     }
 
+    const { credentialExpiresAt } = authentication
+
+    if (
+      credentialExpiresAt !== undefined &&
+      (!Number.isSafeInteger(credentialExpiresAt) ||
+        credentialExpiresAt <= Date.now())
+    ) {
+      return { status: "rejected", statusCode: 401 }
+    }
+
     const allowed = await options.policy({
       request: options.request,
       identity: authentication.identity,
@@ -78,6 +96,17 @@ export async function authorizeEditorRequest<Decision>(options: {
       return { status: "rejected", statusCode: 503 }
 
     if (allowed !== true) return { status: "rejected", statusCode: 403 }
+
+    if (credentialExpiresAt !== undefined) {
+      if (credentialExpiresAt <= Date.now())
+        return { status: "rejected", statusCode: 401 }
+
+      return {
+        status: "authorized",
+        identity: authentication.identity,
+        credentialExpiresAt,
+      }
+    }
 
     return { status: "authorized", identity: authentication.identity }
   } catch {

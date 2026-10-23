@@ -4,7 +4,7 @@ import type { AuthenticationResult } from "./auth"
 
 export type BetterAuthSessionGetter<Session> = (input: {
   headers: Headers
-  query: { disableCookieCache: true }
+  query: { disableCookieCache: true; disableRefresh: true }
 }) => Promise<Session>
 
 const sessionSchema = z.object({
@@ -26,13 +26,14 @@ export function createBetterAuthAuthentication<Session>(options: {
     try {
       const result = await options.getSession({
         headers: request.headers,
-        query: { disableCookieCache: true },
+        query: { disableCookieCache: true, disableRefresh: true },
       })
 
       const session = sessionSchema.safeParse(result)
 
       if (
         !session.success ||
+        !Number.isSafeInteger(session.data.session.expiresAt.getTime()) ||
         session.data.session.expiresAt.getTime() <= Date.now()
       ) {
         return { status: "unauthenticated" }
@@ -41,6 +42,7 @@ export function createBetterAuthAuthentication<Session>(options: {
       return {
         status: "authenticated",
         identity: { provider: "better-auth", userId: session.data.user.id },
+        credentialExpiresAt: session.data.session.expiresAt.getTime(),
       }
     } catch {
       return { status: "unavailable" }

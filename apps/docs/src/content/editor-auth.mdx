@@ -69,8 +69,9 @@ export const authenticate = createBetterAuthAuthentication({
 ```
 
 The adapter passes request headers to the session getter. It sets
-`disableCookieCache` to true and rejects missing or expired sessions. Your host
-backend remains responsible for session storage and cookie refresh.
+`disableCookieCache` and `disableRefresh` to true and rejects missing or expired
+sessions. Verification does not extend session expiry. Host auth routes remain
+responsible for refresh. Session storage remains a host responsibility.
 
 Better Auth bearer sessions require its bearer plugin. They are not OpenAuth
 JWTs. Choose the matching adapter explicitly. Do not fall back to another
@@ -118,6 +119,23 @@ succeeds. Use the matching action for each operation.
 Invalid authentication returns 401. A denied policy returns 403. Authentication
 or policy failures return 503. A signed admin role does not bypass document
 policy.
+
+## Credential expiry
+
+Successful `AuthenticationResult` and `EditorAuthorizationResult` values have
+optional `credentialExpiresAt` metadata. This field contains Unix epoch
+milliseconds, not seconds. Both built-in adapters supply verified expiry.
+OpenAuth requires integer JWT `exp` seconds with a safe millisecond conversion.
+Better Auth supplies the verified session expiry.
+
+`authorizeEditorRequest` forwards valid expiry without changing identity.
+Supplied expiry must be a safe integer later than the current time. Invalid or
+expired metadata returns 401, including expiry during the policy check. Legacy
+HTTP authenticators can omit this field.
+
+Future collaboration ticket issuers must require verified expiry. Missing
+metadata must not become an arbitrary ticket lifetime. These helpers do not
+implement tickets or guarantee immediate session revocation.
 
 ## Route security
 

@@ -134,7 +134,9 @@ The item copies helpers into the configured library directory. Its default
 import is `@/lib/editor-auth`. Keep it out of browser components. Connect an
 existing OpenAuth or Better Auth service. OpenAuth requires an explicit
 audience; its default issuer is `https://auth.yopem.com`. Better Auth receives
-the host session getter. Require separate document authorization and host route
+the host session getter without session refresh. Both adapters supply verified
+`credentialExpiresAt` in Unix epoch milliseconds. Require verified expiry for
+collaboration tickets. Require separate document authorization and host route
 origin and CSRF checks. These helpers do not create accounts or deploy services.
 
 ## Initialize safely

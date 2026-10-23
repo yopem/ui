@@ -81,4 +81,13 @@ adapters. Keep server imports out of browser components. Require a separate
 document policy and route origin and CSRF checks. See the
 [authentication guide](https://ui.yopem.com/docs/editor-auth).
 
+Both adapters supply `credentialExpiresAt` as Unix epoch milliseconds.
+Authorization rejects invalid or expired metadata, including expiry during a
+policy check. Legacy HTTP authenticators can omit this field. Collaboration
+ticket issuers must require verified expiry. These helpers do not implement
+tickets or guarantee immediate session revocation.
+
+Better Auth verification disables cookie caching and session refresh. Host auth
+routes remain responsible for refresh.
+
 All editor tests live under the repository's root `tests/` directory.

@@ -279,7 +279,10 @@ Rounded components use md (12px) by default. Use xstyle to change corner radii. 
   create a second account system. Require an explicit OpenAuth audience and a
   separate document policy. Keep origin and CSRF checks in host server routes.
   Do not treat a valid token or an admin role as document access. Never put
-  tokens in query strings, WebSocket URLs, or logs.
+  tokens in query strings, WebSocket URLs, or logs. Forward verified
+  `credentialExpiresAt` in Unix epoch milliseconds. Reject supplied expired
+  metadata before and after document policy checks. Better Auth verification
+  must not refresh sessions. Collaboration tickets must require verified expiry.
 
 ### Color values
 

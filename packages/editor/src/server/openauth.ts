@@ -10,6 +10,7 @@ export interface OpenAuthAuthenticationOptions {
 }
 
 const subjectSchema = z.object({
+  exp: z.number().int().positive(),
   mode: z.literal("access"),
   type: z.literal("user"),
   properties: z.object({
@@ -77,9 +78,19 @@ export function createOpenAuthAuthentication(
 
       if (!subject.success) return { status: "unauthenticated" }
 
+      const credentialExpiresAt = subject.data.exp * 1000
+
+      if (
+        !Number.isSafeInteger(credentialExpiresAt) ||
+        credentialExpiresAt <= Date.now()
+      ) {
+        return { status: "unauthenticated" }
+      }
+
       return {
         status: "authenticated",
         identity: { provider: "openauth", userId: subject.data.properties.id },
+        credentialExpiresAt,
       }
     } catch (error) {
       if (

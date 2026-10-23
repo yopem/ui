@@ -155,7 +155,10 @@ Install the separate `editor-auth` item for server integration. Import its
 helpers from `@/lib/editor-auth`, or the configured shared library path. Select
 OpenAuth or Better Auth explicitly. Keep these imports out of browser code.
 OpenAuth defaults to `https://auth.yopem.com` and requires an accepted audience.
-Better Auth uses the host application's session getter. It does not create auth
+Better Auth uses the host application's session getter without session refresh.
+Both adapters supply verified `credentialExpiresAt` in Unix epoch milliseconds.
+Authorization rejects supplied expired metadata before and after policy checks.
+Collaboration tickets must require verified expiry. These helpers do not create
 accounts or a database.
 
 Require a separate document policy. Only an explicit true result grants access.
