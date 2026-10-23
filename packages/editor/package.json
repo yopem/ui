@@ -6,7 +6,8 @@
   "exports": {
     ".": "./src/index.ts",
     "./server": "./src/server/index.ts",
-    "./table-presentation-schema": "./src/table-presentation-schema.ts"
+    "./table-presentation-schema": "./src/table-presentation-schema.ts",
+    "./table-controls": "./src/table-controls.tsx"
   },
   "scripts": {
     "typecheck": "tsc --noEmit"

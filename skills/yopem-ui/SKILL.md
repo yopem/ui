@@ -144,6 +144,9 @@ Add `EditorListButton`, `EditorIndentButton`, `EditorLinkControl`, or
 Preserve keyboard behavior, URL validation, read-only state, refs, and consumer
 props. This API does not accept Slate documents or Plate plugins.
 
+Use `EditorTableMenu` for row, column, header, merge, and split actions. Discard
+saved table selections after document changes.
+
 Pass additional Lexical extensions through `extensions` on EditorRoot or Editor.
 Keep the extension list stable. Treat it as initial configuration. Remount the
 root when the list changes. Use Lexical registration cleanup for custom

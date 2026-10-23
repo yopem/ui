@@ -117,7 +117,14 @@ export const editorStyles = stylex.create({
       pointerEvents: "none",
     },
   },
-  tableWrapper: { overflowX: "auto", maxInlineSize: "100%" },
+  tableWrapper: {
+    overflowX: "auto",
+    maxInlineSize: "100%",
+    outlineColor: tokens["--ring"],
+    outlineStyle: { default: "none", ":focus-visible": "solid" },
+    outlineWidth: 2,
+    outlineOffset: 2,
+  },
   table: { borderCollapse: "collapse", inlineSize: "100%" },
   cell: {
     borderWidth: 1,
@@ -128,7 +135,13 @@ export const editorStyles = stylex.create({
     verticalAlign: "top",
   },
   header: { backgroundColor: tokens["--muted"], fontWeight: 600 },
-  selected: { backgroundColor: tokens["--accent"] },
+  selected: {
+    backgroundColor: tokens["--accent"],
+    outlineColor: tokens["--primary"],
+    outlineStyle: "solid",
+    outlineWidth: 2,
+    outlineOffset: -2,
+  },
 })
 
 export const editorTheme = {

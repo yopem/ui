@@ -30,3 +30,7 @@ export type {
 export { EditorLinkControl } from "./link-control"
 
 export type { EditorLinkControlProps } from "./link-control"
+
+export { EditorTableMenu } from "./table-controls"
+
+export type { EditorTableMenuProps } from "./table-controls"

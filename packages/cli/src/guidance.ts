@@ -61,6 +61,8 @@ Import these parts from \`${imports.editor}\` after the same editor installation
 Keep \`EditorFormatButton\`, \`EditorHistoryButton\`, \`EditorBlockButton\`, \`EditorListButton\`,
 \`EditorIndentButton\`, \`EditorLinkControl\`, and \`EditorTableButton\` inside their root.
 Choose controls as children of \`EditorToolbar\`. Each root keeps separate document state and history.
+Use \`EditorTableMenu\` for row, column, header, merge, and split actions.
+Discard saved table selections after document content changes.
 \`EditorContent\` shares the root accessible name and read-only state.
 Pass additional Lexical extensions through \`extensions\` on EditorRoot or Editor.
 Keep that list stable. Remount the root when the extension configuration changes.

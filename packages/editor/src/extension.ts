@@ -3,6 +3,7 @@ import type {
   AnyLexicalExtensionArgument,
   EditorState,
   LexicalEditor,
+  NodeKey,
   SerializedEditorState,
   TextFormatType,
 } from "lexical"
@@ -13,10 +14,11 @@ import { LinkExtension, LinkNode } from "@lexical/link"
 import { CheckListExtension, ListExtension } from "@lexical/list"
 import { registerMarkdownShortcuts, TRANSFORMERS } from "@lexical/markdown"
 import { RichTextExtension } from "@lexical/rich-text"
-import { TableExtension } from "@lexical/table"
+import { TableExtension, TableNode } from "@lexical/table"
 import {
   $getSelection,
   $isRangeSelection,
+  $nodesOfType,
   CAN_REDO_COMMAND,
   CAN_UNDO_COMMAND,
   COMMAND_PRIORITY_LOW,
@@ -119,9 +121,30 @@ export function createEditorSetup({
     register(instance) {
       editor = instance
 
+      function configureTableViewport(key: NodeKey) {
+        const element = instance.getElementByKey(key)
+
+        if (!element || element.matches("table")) return
+        element.tabIndex = 0
+        element.setAttribute("role", "group")
+        element.setAttribute("aria-label", "Table content")
+        element.setAttribute("data-slot", "editor-table-scroll")
+      }
+
       return mergeRegister(
         instance.registerRootListener((root) => {
           instance.setEditable(root !== null && currentEditable)
+
+          if (root)
+            instance.getEditorState().read(() => {
+              for (const table of $nodesOfType(TableNode))
+                configureTableViewport(table.getKey())
+            })
+        }),
+        instance.registerMutationListener(TableNode, (mutations) => {
+          for (const [key, mutation] of mutations) {
+            if (mutation !== "destroyed") configureTableViewport(key)
+          }
         }),
         registerMarkdownShortcuts(instance, TRANSFORMERS),
         instance.registerNodeTransform(LinkNode, (node) => {

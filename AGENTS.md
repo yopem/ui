@@ -270,7 +270,8 @@ Rounded components use md (12px) by default. Use xstyle to change corner radii. 
   Use Lexical document state, not Slate state. Do not imply Plate plugin or
   document compatibility. Keep editor styles in StyleX. Preserve native editing,
   selection, clipboard, history, keyboard input, and accessible control names.
-  Discard saved link ranges after document content changes. Keep the
+  Use EditorTableMenu for table actions. Discard saved link and table
+  selections after document content changes. Keep the
   `editor-content` slot. Base CSS resets Lexical's native text wrappers only;
   StyleX supplies the text theme.
 - Keep editor authentication helpers in `packages/editor/src/server` and out of

@@ -4,9 +4,9 @@ Editor provides core rich text editing with Lexical, React, and StyleX. Use the
 toolbar or keyboard shortcuts to format text. Use lists and history controls to
 organize and revise content.
 
-This foundation does not provide full Plate open-source parity. Advanced table
-editing, media, collaboration, and the complete Plate plugin set are outside
-this scope. The preset supports basic table insertion.
+This foundation does not provide full Plate open-source parity. Media,
+collaboration, and the complete Plate plugin set remain outside this scope. The
+preset supports table insertion and table actions.
 
 ## Installation
 
@@ -137,6 +137,16 @@ lifecycle.
 Use [editor authentication](/docs/editor-auth) to connect existing OpenAuth or
 Better Auth services to your backend. The editor does not authenticate users or
 save documents automatically.
+
+## Table actions
+
+Use `EditorTableMenu` to insert or delete rows and columns. It also changes
+headers, merges selected cells, splits merged cells, and deletes tables. The
+preset includes this control. Add it inside `EditorToolbar` for custom
+composition. Read-only mode disables table actions.
+
+Select cells with the pointer or keyboard before a table action. Saved table
+selections become invalid after document content changes.
 
 ## Initial state and read-only content
 

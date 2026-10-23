@@ -4,8 +4,9 @@ const usageNoteValues = {
     "Use Editor for the preset. Compose EditorRoot, EditorToolbar, EditorContent, and individual controls for custom interfaces. Import all parts from @/components/editor. Each root keeps separate state and history.",
     "Import Editor from @/components/editor. Keep all editor files together. Generic UI components stay in components/ui.",
     "Use ariaLabel for an accessible name. Use initialState for initial Lexical JSON and onChange for content updates. Remount to load another document.",
-    "Set editable to false for read-only content. Validate saved JSON before storage or publication. Keep all Lexical dependencies at 0.52.0.",
+    "Set editable to false for read-only content. Validate saved JSON before storage or publication. Keep Lexical packages on one compatible version.",
     "Use xstyle, className, refs, and native attributes on Editor and EditorRoot. Link controls discard saved ranges after document content changes.",
+    "Use EditorTableMenu for row, column, header, merge, and split actions. Saved table selections become invalid after document changes.",
     "The editor provides a foundation, not full Plate feature parity. Collaboration, media uploads, comments, and document conversion are not included.",
   ],
   "editor-auth": [

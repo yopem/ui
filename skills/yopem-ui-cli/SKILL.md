@@ -119,6 +119,9 @@ Add `EditorListButton`, `EditorIndentButton`, `EditorLinkControl`, or
 Preserve keyboard behavior, URL validation, read-only state, refs, and consumer
 props. This API does not accept Slate documents or Plate plugins.
 
+Use `EditorTableMenu` for row, column, header, merge, and split actions. Discard
+saved table selections after document changes.
+
 ### Optional editor authentication
 
 Install server helpers with the matching package manager:

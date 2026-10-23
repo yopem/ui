@@ -13,6 +13,7 @@ import {
 } from "./controls"
 import { EditorLinkControl } from "./link-control"
 import { EditorRoot, EditorContent } from "./root"
+import { EditorTableMenu } from "./table-controls"
 
 export function Editor({ placeholder, ...props }: EditorProps) {
   return (
@@ -38,6 +39,7 @@ export function Editor({ placeholder, ...props }: EditorProps) {
         <EditorIndentButton direction="outdent" />
         <EditorLinkControl />
         <EditorTableButton />
+        <EditorTableMenu />
       </EditorToolbar>
       <EditorContent placeholder={placeholder} />
     </EditorRoot>
