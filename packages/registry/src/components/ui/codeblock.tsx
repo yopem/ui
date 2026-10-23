@@ -3,6 +3,7 @@
 import type { StyleXComponentProps } from "@registry/lib/stylex"
 import type { ComponentProps } from "react"
 
+import { ScrollArea } from "@registry/components/ui/scroll-area"
 import { useEventCallback } from "@registry/hooks/use-event-callback"
 import { mergeStylexProps, stylexProps } from "@registry/lib/stylex"
 import { tokens } from "@registry/styles/tokens.stylex"
@@ -53,9 +54,11 @@ const styles = stylex.create({
     color: tokens["--muted-foreground"],
     fontSize: "0.8125rem",
   },
+  codePane: {
+    padding: tokens["--spacing"],
+  },
   pre: {
     margin: 0,
-    overflowX: "auto",
     paddingBlock: "1rem",
     paddingInline: "1rem",
     whiteSpace: "pre",
@@ -116,15 +119,17 @@ export function Codeblock({
           </output>
         ) : null}
       </div>
-      <pre
-        ref={codeRef}
-        data-slot="codeblock-pre"
-        {...stylex.props(styles.pre)}
-      >
-        <code data-slot="codeblock-code" {...stylex.props(styles.code)}>
-          {children}
-        </code>
-      </pre>
+      <ScrollArea aria-label="Code" xstyle={styles.codePane}>
+        <pre
+          ref={codeRef}
+          data-slot="codeblock-pre"
+          {...stylex.props(styles.pre)}
+        >
+          <code data-slot="codeblock-code" {...stylex.props(styles.code)}>
+            {children}
+          </code>
+        </pre>
+      </ScrollArea>
     </div>
   )
 }

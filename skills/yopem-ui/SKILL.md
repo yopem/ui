@@ -521,6 +521,7 @@ supplied child elements. It does not split the query into terms or match across
 separate text nodes. Empty queries leave the content readable without marks. Its
 `xstyle` targets the outer span, not generated Mark elements.
 
+The Codeblock code pane accepts keyboard focus for horizontal scrolling.
 Codeblock has no `language`, `filename`, `showLineNumbers`, or `preProps` props.
 Supply string children. It does not provide syntax highlighting. Its ref,
 events, and `xstyle` target the outer div, not the internal pre. Use

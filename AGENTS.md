@@ -217,8 +217,9 @@ Do not add code comments or JSDoc. Preserve existing comments.
   Use Figcaption inside `Box render={<figure />}` for figure captions; there is no Figure primitive.
   Figcaption renders figcaption with muted text, `0.875rem` font size, and `1.5` line height.
   Choose Highlight for matching words and Prose for readable long-form content.
-- Use Codeblock intentionally for code displays. Its div wrapper, toolbar, and
-  internal pre mean it cannot blindly replace a native pre or its ref/events.
+- Use Codeblock intentionally for code displays. Its code pane accepts keyboard
+  focus for horizontal scrolling. Its div wrapper, toolbar, and internal pre
+  mean it cannot blindly replace a native pre or its ref/events.
 - Link is excluded: prefer TanStack Router Link for app navigation; native anchors
   remain valid for native navigation/downloads. Do not require registry Link or
   apply its default styling contracts to framework links.

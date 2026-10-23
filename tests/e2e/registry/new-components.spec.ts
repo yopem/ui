@@ -179,15 +179,70 @@ test("clipboard reports copied content", async ({ page, context }) => {
   ).toBeDisabled()
 })
 
-test("codeblock preserves source and copies it", async ({ page, context }) => {
+test("codeblock preserves source, copy and keyboard access", async ({
+  page,
+  context,
+}, info) => {
   await context.grantPermissions(["clipboard-read", "clipboard-write"])
   await page.goto("/components/codeblock", { waitUntil: "domcontentloaded" })
   await expect(
     page.getByRole("button", { name: "Copy Codeblock usage", exact: true }),
   ).toBeEnabled()
+
+  const source =
+    'const station = { name: "Willow Creek", region: "North Ridge", equipment: ["weather sensor", "field camera", "water sampler"] }'
+
+  await expect(page.locator('[data-slot="codeblock-code"]')).toHaveText(source)
   await page.getByRole("button", { name: "Copy code", exact: true }).click()
-  await expect(page.getByText("Code copied.")).toBeVisible()
-  expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(
-    'const station = "Willow Creek"',
-  )
+  await expect(page.locator('[data-slot="codeblock-status"]')).toBeVisible()
+  expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(source)
+  await page
+    .getByRole("button", { name: "Copy code", exact: true })
+    .press("Tab")
+  const viewport = page.getByRole("group", { name: "Code", exact: true })
+
+  const preview = page.getByRole("group", {
+    name: "Formatted source code with copy action live preview",
+    exact: true,
+  })
+
+  await expect(viewport).toBeFocused()
+
+  for (const width of [1440, 768, 390]) {
+    await page.setViewportSize({ width, height: 900 })
+    await expect
+      .poll(() =>
+        viewport.evaluate(
+          (element) => element.scrollWidth > element.clientWidth,
+        ),
+      )
+      .toBe(true)
+
+    const before = await viewport.evaluate((element) =>
+      Math.abs(element.scrollLeft),
+    )
+
+    await expect
+      .poll(() =>
+        preview.evaluate(
+          (element) => element.scrollWidth <= element.clientWidth + 1,
+        ),
+      )
+      .toBe(true)
+    await page.keyboard.press("ArrowRight")
+    await expect
+      .poll(() => viewport.evaluate((element) => Math.abs(element.scrollLeft)))
+      .toBeGreaterThan(before)
+    expect(
+      await page.evaluate(
+        () => document.documentElement.scrollWidth <= window.innerWidth + 1,
+      ),
+    ).toBe(true)
+    await info.attach(`codeblock-keyboard-${width}.png`, {
+      body: await page
+        .locator('[data-slot="codeblock"]')
+        .screenshot({ scale: "css" }),
+      contentType: "image/png",
+    })
+  }
 })

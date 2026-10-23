@@ -220,7 +220,7 @@ export const layoutItems: SourceItem[] = definitions.map(
     registryDependencies: [
       "base",
       ...(registryDependencies ?? []),
-      ...(name === "codeblock" ? ["use-event-callback"] : []),
+      ...(name === "codeblock" ? ["use-event-callback", "scroll-area"] : []),
     ],
     title,
     type: "registry:ui" as const,

@@ -334,7 +334,7 @@ Preserve semantic elements, native attributes, events, and ref types.
 - Use Figcaption inside \`Box render={<figure />}\` for figure captions. There is no Figure primitive.
 - Figcaption renders figcaption with muted text, \`0.875rem\` font size, and \`1.5\` line height.
 - Use Highlight for matching words. Use Prose for readable long-form content.
-- Use Codeblock for code displays. Its wrapper, toolbar, and internal pre cannot replace every native pre.
+- Use Codeblock for code displays. Its code pane accepts keyboard focus for horizontal scrolling. Its wrapper, toolbar, and internal pre cannot replace every native pre.
 - Use framework links for application navigation. Native anchors remain valid for navigation and downloads.
 - Keep native controls, tables, metadata, SVG, custom elements, and inline code where no equivalent applies.
 - Component selection guidance does not expand the lint rule's supported native tags.
