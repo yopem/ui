@@ -25,7 +25,7 @@ import {
   mergeRegister,
   setDOMUnmanaged,
 } from "lexical"
-import { GripVertical } from "lucide-react"
+import { GripHorizontal, GripVertical } from "lucide-react"
 import { useState, useSyncExternalStore } from "react"
 
 import { useEditor, useEditorState } from "./root"
@@ -35,6 +35,12 @@ import {
   TABLE_MAX_COLUMN_WIDTH,
   TABLE_MIN_COLUMN_WIDTH,
 } from "./table-presentation"
+
+const ariaNumbers = new Intl.NumberFormat("en-US", {
+  notation: "standard",
+  useGrouping: false,
+  maximumSignificantDigits: 21,
+})
 
 function $columnWidths(editor: LexicalEditor, table: TableNode) {
   const root = editor.getElementByKey(table.getKey())
@@ -75,6 +81,7 @@ interface ResizeColumn {
 interface ResizeSnapshot {
   tableKey: NodeKey
   columns: ResizeColumn[]
+  rows: { key: string; index: number; width: number }[]
 }
 
 function createResizeStore(editor: LexicalEditor) {
@@ -117,11 +124,26 @@ function createResizeStore(editor: LexicalEditor) {
         }
       }
 
+      const rows = table
+        .getChildren()
+        .filter($isTableRowNode)
+        .map((row, index) => ({
+          key: row.getKey(),
+          index,
+          width: row.getHeight() ?? 0,
+        }))
+
       const previous = snapshot
 
       if (
         previous?.tableKey === table.getKey() &&
         previous.columns.length === columns.length &&
+        previous.rows.length === rows.length &&
+        rows.every(
+          (row, index) =>
+            row.key === previous.rows[index]?.key &&
+            row.width === previous.rows[index]?.width,
+        ) &&
         columns.every(
           (column, index) =>
             column.key === previous.columns[index]?.key &&
@@ -129,7 +151,7 @@ function createResizeStore(editor: LexicalEditor) {
         )
       )
         return
-      snapshot = { tableKey: table.getKey(), columns }
+      snapshot = { tableKey: table.getKey(), columns, rows }
     })
   }
 
@@ -177,6 +199,7 @@ function setWidth(
   key: NodeKey,
   index: number,
   width: number,
+  rowKey?: NodeKey,
 ) {
   if (!editor.isEditable()) return
   editor.update(
@@ -187,9 +210,22 @@ function setWidth(
       if (
         !$isTableNode(table) ||
         !table.isAttached() ||
-        index >= table.getColumnCount()
+        (!rowKey && index >= table.getColumnCount())
       )
         return
+
+      if (rowKey) {
+        const row = $getNodeByKey(rowKey)
+
+        if (
+          $isTableRowNode(row) &&
+          row.getParent()?.is(table) &&
+          Number.isFinite(width)
+        )
+          row.setHeight(Math.max(0, width))
+
+        return
+      }
 
       const widths = $columnWidths(editor, table)
 
@@ -200,14 +236,170 @@ function setWidth(
   )
 }
 
-function ColumnResizeSeparator({
+function prepareResize(
+  editor: LexicalEditor,
+  tableKey: NodeKey,
+  index: number,
+  handle: HTMLElement,
+  table: HTMLElement,
+  rowKey?: NodeKey,
+) {
+  const document = handle.ownerDocument
+
+  if (rowKey) {
+    const row = editor.getElementByKey(rowKey)
+
+    if (!row) return null
+
+    const initial = editor.getEditorState().read(() => {
+      const node = $getNodeByKey(rowKey)
+
+      return $isTableRowNode(node) ? (node.getHeight() ?? 0) : 0
+    })
+
+    const original = row.style.height
+    const measured = row.getBoundingClientRect().height
+
+    return {
+      initial,
+      preview(delta: number) {
+        const next = Math.max(0, Math.round(measured + delta))
+        row.style.height = `${next}px`
+
+        return next
+      },
+      restore(changed: boolean) {
+        row.style.height = original
+
+        if (changed)
+          editor.getEditorState().read(() => {
+            const current = $getNodeByKey(rowKey)
+
+            if ($isTableRowNode(current))
+              row.style.height =
+                current.getHeight() === undefined
+                  ? ""
+                  : `${current.getHeight()}px`
+          })
+      },
+    }
+  }
+
+  const widths = editor.getEditorState().read(() => {
+    const node = $getNodeByKey(tableKey)
+
+    return $isTableNode(node) ? $columnWidths(editor, node) : []
+  })
+
+  let group = table.querySelector("colgroup")
+  const temporary = !group
+
+  if (!group) {
+    group = document.createElement("colgroup")
+    setDOMUnmanaged(group)
+
+    for (const value of widths) {
+      const column = document.createElement("col")
+      column.style.width = `${value}px`
+      group.append(column)
+    }
+
+    table.prepend(group)
+  }
+
+  const col = group.querySelectorAll("col")[index]
+
+  if (!col) {
+    if (temporary) group.remove()
+
+    return null
+  }
+
+  const column = col
+  const tableElement = table
+  const columnGroup = group
+  const original = column.style.width
+  const originalSize = table.style.inlineSize
+  const originalLayout = table.style.tableLayout
+
+  const cellStyles = Array.from(
+    table.querySelectorAll<HTMLElement>("td, th"),
+    (cell) => ({
+      cell,
+      minimum: cell.style.minInlineSize,
+      wrap: cell.style.overflowWrap,
+    }),
+  )
+
+  for (const { cell } of cellStyles) {
+    cell.style.minInlineSize = "0"
+    cell.style.overflowWrap = "anywhere"
+  }
+
+  table.style.tableLayout = "fixed"
+  const total = widths.reduce((sum, value) => sum + value, 0)
+  table.style.inlineSize = `${total}px`
+
+  const direction =
+    document.defaultView?.getComputedStyle(handle).direction === "rtl" ? -1 : 1
+
+  const initial = widths[index] ?? TABLE_MIN_COLUMN_WIDTH
+
+  return {
+    initial,
+    preview(delta: number) {
+      const next = clampTableColumnWidth(initial + delta * direction)
+      column.style.width = `${next}px`
+      tableElement.style.inlineSize = `${total + next - initial}px`
+
+      return next
+    },
+    restore(changed: boolean) {
+      column.style.width = original
+      tableElement.style.inlineSize = originalSize
+      tableElement.style.tableLayout = originalLayout
+
+      for (const { cell, minimum, wrap } of cellStyles) {
+        cell.style.minInlineSize = minimum
+        cell.style.overflowWrap = wrap
+      }
+
+      if (temporary) columnGroup.remove()
+
+      if (changed)
+        editor.getEditorState().read(() => {
+          const node = $getNodeByKey(tableKey)
+
+          if (!$isTableNode(node) || !node.isAttached()) return
+          const current = node.getColWidths()
+
+          for (const [position, element] of tableElement
+            .querySelectorAll("col")
+            .entries()) {
+            const value = current?.[position]
+
+            if (value !== undefined) element.style.width = `${value}px`
+          }
+
+          tableElement.style.inlineSize = current
+            ? `${current.reduce((sum, value) => sum + value, 0)}px`
+            : originalSize
+          tableElement.style.tableLayout = current ? "fixed" : originalLayout
+        })
+    },
+  }
+}
+
+function TableResizeSeparator({
   tableKey,
   index,
   width,
+  rowKey,
 }: {
   tableKey: NodeKey
   index: number
   width: number
+  rowKey?: NodeKey
 }) {
   const editor = useEditor()
   const { editable } = useEditorState()
@@ -217,6 +409,25 @@ function ColumnResizeSeparator({
       if (!element) return
       const handle = element
       let cancelDrag: (() => void) | undefined
+
+      function syncRowAriaNumbers() {
+        if (!rowKey) return
+        editor.getEditorState().read(() => {
+          const row = $getNodeByKey(rowKey)
+
+          if (!$isTableRowNode(row)) return
+          const value = row.getHeight() ?? 0
+          handle.setAttribute("aria-valuenow", ariaNumbers.format(value))
+          handle.setAttribute(
+            "aria-valuemin",
+            ariaNumbers.format(Math.min(0, value)),
+          )
+          handle.setAttribute(
+            "aria-valuemax",
+            ariaNumbers.format(Number.MAX_VALUE),
+          )
+        })
+      }
 
       function start(event: PointerEvent) {
         if (!editor.isEditable() || event.button !== 0) return
@@ -231,68 +442,18 @@ function ColumnResizeSeparator({
 
         if (!table) return
 
-        const widths = editor.getEditorState().read(() => {
-          const node = $getNodeByKey(tableKey)
-
-          return $isTableNode(node) ? $columnWidths(editor, node) : []
-        })
-
-        let group = table.querySelector("colgroup")
-        const temporary = !group
-
-        if (!group) {
-          group = document.createElement("colgroup")
-          setDOMUnmanaged(group)
-
-          for (const value of widths) {
-            const column = document.createElement("col")
-            column.style.width = `${value}px`
-            group.append(column)
-          }
-
-          table.prepend(group)
-        }
-
-        const col = group.querySelectorAll("col")[index]
-
-        if (!col) {
-          if (temporary) group.remove()
-
-          return
-        }
-
-        const column = col
-        const tableElement = table
-        const columnGroup = group
-        const original = column.style.width
-        const originalSize = table.style.inlineSize
-        const originalLayout = table.style.tableLayout
-
-        const cellStyles = Array.from(
-          table.querySelectorAll<HTMLElement>("td, th"),
-          (cell) => ({
-            cell,
-            minimum: cell.style.minInlineSize,
-            wrap: cell.style.overflowWrap,
-          }),
+        const prepared = prepareResize(
+          editor,
+          tableKey,
+          index,
+          handle,
+          table,
+          rowKey,
         )
 
-        for (const { cell } of cellStyles) {
-          cell.style.minInlineSize = "0"
-          cell.style.overflowWrap = "anywhere"
-        }
-
-        table.style.tableLayout = "fixed"
-        const total = widths.reduce((sum, value) => sum + value, 0)
-        table.style.inlineSize = `${total}px`
-
-        const direction =
-          document.defaultView?.getComputedStyle(handle).direction === "rtl"
-            ? -1
-            : 1
-
-        const initial = widths[index] ?? TABLE_MIN_COLUMN_WIDTH
-
+        if (!prepared) return
+        const preview = prepared
+        const initial = preview.initial
         let contentChanged = false
         let next = initial
         let finished = false
@@ -306,46 +467,14 @@ function ColumnResizeSeparator({
 
           if (handle.hasPointerCapture(event.pointerId))
             handle.releasePointerCapture(event.pointerId)
-          column.style.width = original
-          tableElement.style.inlineSize = originalSize
-          tableElement.style.tableLayout = originalLayout
-
-          for (const { cell, minimum, wrap } of cellStyles) {
-            cell.style.minInlineSize = minimum
-            cell.style.overflowWrap = wrap
-          }
-
-          if (temporary) columnGroup.remove()
+          preview.restore(contentChanged)
           cancelDrag = undefined
 
-          if (contentChanged) {
-            editor.getEditorState().read(() => {
-              const node = $getNodeByKey(tableKey)
-
-              if (!$isTableNode(node) || !node.isAttached()) return
-              const current = node.getColWidths()
-
-              for (const [position, element] of tableElement
-                .querySelectorAll("col")
-                .entries()) {
-                const value = current?.[position]
-
-                if (value !== undefined) element.style.width = `${value}px`
-              }
-
-              tableElement.style.inlineSize = current
-                ? `${current.reduce((sum, value) => sum + value, 0)}px`
-                : originalSize
-              tableElement.style.tableLayout = current
-                ? "fixed"
-                : originalLayout
-            })
-
-            return
-          }
+          if (contentChanged) return
 
           if (commit && editor.isEditable()) {
-            if (next !== initial) setWidth(editor, tableKey, index, next)
+            if (next !== initial)
+              setWidth(editor, tableKey, index, next, rowKey)
 
             if (handle.isConnected) handle.focus({ preventScroll: true })
           }
@@ -372,17 +501,17 @@ function ColumnResizeSeparator({
           (move) => {
             if (move.pointerId !== event.pointerId) return
 
-            if (!editor.isEditable() || !col.isConnected) {
+            if (!editor.isEditable() || !table.isConnected) {
               finish(false)
 
               return
             }
 
-            next = clampTableColumnWidth(
-              initial + (move.clientX - event.clientX) * direction,
+            next = preview.preview(
+              rowKey
+                ? move.clientY - event.clientY
+                : move.clientX - event.clientX,
             )
-            col.style.width = `${next}px`
-            table.style.inlineSize = `${total + next - initial}px`
           },
           { signal },
         )
@@ -422,6 +551,12 @@ function ColumnResizeSeparator({
         })
       }
 
+      syncRowAriaNumbers()
+
+      const unregisterAria = rowKey
+        ? editor.registerUpdateListener(syncRowAriaNumbers)
+        : undefined
+
       element.addEventListener("pointerdown", start)
 
       return mergeRegister(
@@ -430,6 +565,7 @@ function ColumnResizeSeparator({
         }),
         editor.registerRootListener(() => cancelDrag?.()),
         () => {
+          unregisterAria?.()
           cancelDrag?.()
           element.removeEventListener("pointerdown", start)
         },
@@ -439,17 +575,25 @@ function ColumnResizeSeparator({
 
   return (
     <Stack>
-      <Text>{`Column ${index + 1}: ${width}px`}</Text>
+      <Text>{`${rowKey ? "Row minimum" : "Column"} ${index + 1}: ${width}px`}</Text>
       <Separator
-        orientation="vertical"
-        aria-label={`Column ${index + 1} width`}
-        aria-valuemin={TABLE_MIN_COLUMN_WIDTH}
-        aria-valuemax={TABLE_MAX_COLUMN_WIDTH}
-        aria-valuenow={width}
-        aria-valuetext={`${width} pixels`}
+        orientation={rowKey ? "horizontal" : "vertical"}
+        aria-label={
+          rowKey
+            ? `Row ${index + 1} minimum height`
+            : `Column ${index + 1} width`
+        }
+        aria-valuemin={rowKey ? undefined : TABLE_MIN_COLUMN_WIDTH}
+        aria-valuemax={rowKey ? undefined : TABLE_MAX_COLUMN_WIDTH}
+        aria-valuenow={rowKey ? undefined : width}
+        aria-valuetext={
+          rowKey
+            ? `Stored minimum ${width} pixels; content can make the row taller`
+            : `${width} pixels`
+        }
         aria-disabled={!editable}
         tabIndex={0}
-        xstyle={styles.separator}
+        xstyle={[styles.separator, rowKey !== undefined && styles.rowSeparator]}
         ref={connect}
         onKeyDown={(event) => {
           if (!editor.isEditable()) return
@@ -463,15 +607,26 @@ function ColumnResizeSeparator({
 
           switch (event.key) {
             case "Home":
-              next = TABLE_MIN_COLUMN_WIDTH
+              next = rowKey ? 0 : TABLE_MIN_COLUMN_WIDTH
               break
             case "End":
+              if (rowKey) return
               next = TABLE_MAX_COLUMN_WIDTH
               break
+            case "ArrowUp":
+              if (!rowKey) return
+              next -= 10
+              break
+            case "ArrowDown":
+              if (!rowKey) return
+              next += 10
+              break
             case "ArrowLeft":
+              if (rowKey) return
               next += rtl ? 10 : -10
               break
             case "ArrowRight":
+              if (rowKey) return
               next += rtl ? -10 : 10
               break
             default:
@@ -479,10 +634,14 @@ function ColumnResizeSeparator({
           }
 
           event.preventDefault()
-          setWidth(editor, tableKey, index, next)
+          setWidth(editor, tableKey, index, next, rowKey)
         }}
       >
-        <GripVertical aria-hidden="true" size={18} />
+        {rowKey ? (
+          <GripHorizontal aria-hidden="true" size={18} />
+        ) : (
+          <GripVertical aria-hidden="true" size={18} />
+        )}
       </Separator>
     </Stack>
   )
@@ -502,22 +661,38 @@ export function EditorTableResizeControls() {
   if (!snapshot) return null
 
   return (
-    <Fieldset aria-label="Table column widths">
-      <Wrap>
-        {snapshot.columns.map((column) => (
-          <ColumnResizeSeparator
-            key={column.key}
-            tableKey={snapshot.tableKey}
-            index={column.index}
-            width={column.width}
-          />
-        ))}
-      </Wrap>
-    </Fieldset>
+    <Stack>
+      <Fieldset aria-label="Table column widths">
+        <Wrap>
+          {snapshot.columns.map((column) => (
+            <TableResizeSeparator
+              key={column.key}
+              tableKey={snapshot.tableKey}
+              index={column.index}
+              width={column.width}
+            />
+          ))}
+        </Wrap>
+      </Fieldset>
+      <Fieldset aria-label="Table row minimum heights">
+        <Wrap>
+          {snapshot.rows.map((row) => (
+            <TableResizeSeparator
+              key={row.key}
+              tableKey={snapshot.tableKey}
+              rowKey={row.key}
+              index={row.index}
+              width={row.width}
+            />
+          ))}
+        </Wrap>
+      </Fieldset>
+    </Stack>
   )
 }
 
 const styles = stylex.create({
+  rowSeparator: { cursor: "row-resize" },
   separator: {
     display: "flex",
     alignItems: "center",

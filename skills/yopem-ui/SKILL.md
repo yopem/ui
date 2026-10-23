@@ -147,10 +147,16 @@ props. This API does not accept Slate documents or Plate plugins.
 Use `EditorTableMenu` for row, column, header, merge, and split actions.
 Register `EditorTablePresentationExtension` for bounded tables and persisted
 cell presentation. Add `EditorTableDimensions`, `EditorTableCellPresentation`,
-and `EditorTableResizeControls` inside `EditorRoot`. Validate external table
-JSON and HTML before conversion. Invalid updates must preserve existing content.
-Discard saved table selections after document changes. Preserve resize
-cancellation, history, and right-to-left keyboard behavior.
+and `EditorTableResizeControls` inside `EditorRoot`. Use
+`EditorTableBackgroundControls` and `EditorTableBorderControls` for separate
+controls. Border actions support individual logical edges, inside, outside, all,
+none, and reset. Shared merged edges are indivisible. Row resizing stores native
+minimum height, not fixed content height. Keep `data-editor-row-height` in
+exported HTML to preserve finite native heights. Keep table scrolling bounded in
+both directions and keyboard-accessible. Validate external table JSON and HTML
+before conversion. Invalid updates must preserve existing content. Discard saved
+table selections after document changes. Preserve resize cancellation, history,
+and right-to-left keyboard behavior.
 
 Pass additional Lexical extensions through `extensions` on EditorRoot or Editor.
 Keep the extension list stable. Treat it as initial configuration. Remount the

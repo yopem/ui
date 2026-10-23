@@ -274,6 +274,12 @@ Rounded components use md (12px) by default. Use xstyle to change corner radii. 
   EditorTableMenu for table actions. Register EditorTablePresentationExtension
   for bounded geometry and persisted cell borders. Compose EditorTableDimensions,
   EditorTableCellPresentation, and EditorTableResizeControls inside EditorRoot.
+  Use EditorTableBackgroundControls and EditorTableBorderControls separately when needed.
+  Border controls support logical edges and inside, outside, all, none, and reset actions.
+  Shared merged edges are indivisible. Mirror updates across the complete shared edge.
+  Row resizing stores native row minimum height. Content can increase visible height.
+  Keep `data-editor-row-height` in exported HTML to preserve finite native heights.
+  Keep table scrolling bounded in both directions and keyboard-accessible.
   Keep table validation pure and shared with import paths. Reject invalid table
   updates without removing existing content. Preserve native table clipboard,
   merged spans, resize cancellation, history, and right-to-left keyboard behavior.

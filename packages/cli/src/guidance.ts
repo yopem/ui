@@ -64,6 +64,11 @@ Choose controls as children of \`EditorToolbar\`. Each root keeps separate docum
 Use \`EditorTableMenu\` for row, column, header, merge, and split actions.
 Register \`EditorTablePresentationExtension\` for bounded tables and persisted cell presentation.
 Compose \`EditorTableDimensions\`, \`EditorTableCellPresentation\`, and \`EditorTableResizeControls\` inside the root.
+Use \`EditorTableBackgroundControls\` and \`EditorTableBorderControls\` for separate controls.
+Border controls support individual and rectangle edges. Shared merged edges are indivisible.
+Row resizing stores minimum height. Content can make rows taller.
+Keep \`data-editor-row-height\` in exported HTML to preserve finite native heights.
+Keep table scrolling bounded in both directions and keyboard-accessible.
 Validate external table JSON and HTML before conversion. Reject invalid updates without removing existing content.
 Discard saved table selections after document content changes. Preserve resize cancellation, history, and RTL keyboard behavior.
 \`EditorContent\` shares the root accessible name and read-only state.

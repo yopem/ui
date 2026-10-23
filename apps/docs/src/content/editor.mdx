@@ -245,7 +245,32 @@ headers, merges selected cells, splits merged cells, and deletes tables.
 
 Register `EditorTablePresentationExtension` to validate table updates and retain
 cell presentation. Add `EditorTableCellPresentation` for backgrounds and
-borders. Add `EditorTableResizeControls` for column width controls.
+borders. Use `EditorTableBorderControls` separately for individual and rectangle
+edges. Add `EditorTableResizeControls` for column widths and row minimum
+heights.
+
+Tall tables scroll inside a keyboard-focusable area.
+
+Row height is a stored minimum. Content can make a row taller. Pointer resizing
+starts from visible row height. Keyboard resizing changes the stored minimum.
+Use Home to clear the minimum. Up and Down change it by 10 pixels. Merged cell
+edges are indivisible. Changes apply to each complete shared edge. Border
+controls mirror adjacent edges. This prevents hidden borders from hiding a new
+solid edge. Legacy solid and hidden border values remain valid. Per-edge values
+use top, bottom, start, and end.
+
+Merge uses a solid edge when any perimeter segment is solid. Otherwise, merge
+keeps hidden edges only when all perimeter segments are hidden. Split keeps
+perimeter edges and resets new inside edges.
+
+Saved border metadata remains unchanged during display. Solid edges take display
+precedence over conflicting hidden edges. HTML uses `data-editor-border` for
+border metadata. Import rejects unsupported border CSS instead of removing it.
+
+HTML stores native row heights in `data-editor-row-height`. Keep this attribute
+when processing exported tables. CSS alone can change imported values.
+`parseTableRowHeightHTML` reads this attribute. It returns `undefined` for
+missing or invalid metadata.
 
 <EditorTableExamples />
 

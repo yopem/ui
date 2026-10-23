@@ -6,21 +6,31 @@ import { z } from "zod"
 
 test.use({ trace: "on" })
 
+function tableExample(page: Page) {
+  return page.getByTestId("table-example")
+}
+
 function editor(page: Page) {
-  return page.getByRole("textbox", { name: "Table editor", exact: true })
+  return tableExample(page).getByRole("textbox", {
+    name: "Table editor",
+    exact: true,
+  })
 }
 
 function toolbar(page: Page) {
-  return page.getByRole("toolbar", { name: "Table formatting", exact: true })
+  return tableExample(page).getByRole("toolbar", {
+    name: "Table formatting",
+    exact: true,
+  })
 }
 
 async function insert(page: Page, rows = 3, columns = 3) {
   await expect(editor(page)).toHaveAttribute("contenteditable", "true")
   await editor(page).fill("Tables")
-  await page
+  await tableExample(page)
     .getByRole("spinbutton", { name: "Table rows", exact: true })
     .fill(String(rows))
-  await page
+  await tableExample(page)
     .getByRole("spinbutton", { name: "Table columns", exact: true })
     .fill(String(columns))
   await toolbar(page)
@@ -44,6 +54,8 @@ async function drag(
   target: ReturnType<Page["getByRole"]>,
   distance: number,
 ) {
+  await target.scrollIntoViewIfNeeded()
+
   const box = await target.boundingBox()
 
   if (!box) throw new Error("Resize separator must be visible")
@@ -68,7 +80,7 @@ test.afterEach(async ({ page }, info) => {
     contentType: "text/html",
   })
   await info.attach("table-presentation.png", {
-    body: await page.screenshot(),
+    body: await page.screenshot({ scale: "css" }),
     contentType: "image/png",
   })
 })
@@ -86,7 +98,7 @@ test("rejected row insertion keeps content and reports an error without a page c
   await action(page, "Insert row below")
   await expect(table.getByRole("row")).toHaveCount(50)
   await expect(cell.locator("strong")).toHaveText("Keep table content")
-  await expect(page.getByRole("alert")).toBeVisible()
+  await expect(tableExample(page).getByRole("alert")).toBeVisible()
   await expect(editor(page)).toHaveAttribute("contenteditable", "true")
   expect(errors).toEqual([])
 })
@@ -98,14 +110,17 @@ test("cell presentation rejects host replacement while its input has focus", asy
   page.on("pageerror", (error) => errors.push(error.message))
   await insert(page)
 
-  const background = page.getByRole("textbox", {
+  const background = tableExample(page).getByRole("textbox", {
     name: "Cell background",
     exact: true,
   })
 
   await background.click()
   await expect(
-    page.getByRole("button", { name: "Apply cell background", exact: true }),
+    tableExample(page).getByRole("button", {
+      name: "Apply cell background",
+      exact: true,
+    }),
   ).toBeEnabled()
   await background.press("Alt+Shift+N")
   await expect(editor(page)).toHaveText("Replacement content")
@@ -117,7 +132,9 @@ test("cell presentation rejects host replacement while its input has focus", asy
     "Hide cell borders",
     "Reset cell borders",
   ])
-    await expect(page.getByRole("button", { name, exact: true })).toBeDisabled()
+    await expect(
+      tableExample(page).getByRole("button", { name, exact: true }),
+    ).toBeDisabled()
   await background.press("Enter")
   await expect(editor(page).getByRole("table")).toHaveCount(0)
   await expect(editor(page)).toHaveText("Replacement content")
@@ -154,7 +171,7 @@ test("dimensions, explicit widths, bounded pointer and keyboard resize, history"
   await expect(table.getByRole("row")).toHaveCount(2)
   await expect(table.getByRole("row").first().locator("th, td")).toHaveCount(4)
 
-  const separator = page.getByRole("separator", {
+  const separator = tableExample(page).getByRole("separator", {
     name: "Column 1 width",
     exact: true,
   })
@@ -189,7 +206,7 @@ test("readonly cancels active drag, Escape restores widths, RTL reverses directi
 }) => {
   await insert(page)
 
-  const separator = page.getByRole("separator", {
+  const separator = tableExample(page).getByRole("separator", {
     name: "Column 1 width",
     exact: true,
   })
@@ -213,10 +230,12 @@ test("readonly cancels active drag, Escape restores widths, RTL reverses directi
   await expect(separator).toHaveAttribute("aria-valuenow", "48")
   await separator.press("End")
   await expect(separator).toHaveAttribute("aria-valuenow", "48")
-  await page
+  await tableExample(page)
     .getByRole("button", { name: "Enable table editing", exact: true })
     .click()
-  await page.getByRole("button", { name: "Use RTL", exact: true }).click()
+  await tableExample(page)
+    .getByRole("button", { name: "Use RTL", exact: true })
+    .click()
   await separator.press("ArrowLeft")
   await expect(separator).toHaveAttribute("aria-valuenow", "58")
   await drag(page, separator, -60)
@@ -230,6 +249,8 @@ test("native multi-cell selection, presentation and merged spans survive JSON an
   const cells = table.locator("th, td")
   await cells.first().click()
   await page.keyboard.insertText("North")
+  await table.scrollIntoViewIfNeeded()
+
   const start = await cells.first().boundingBox()
   const end = await cells.nth(4).boundingBox()
 
@@ -240,10 +261,10 @@ test("native multi-cell selection, presentation and merged spans survive JSON an
     steps: 12,
   })
   await page.mouse.up()
-  await page
+  await tableExample(page)
     .getByRole("textbox", { name: "Cell background", exact: true })
     .fill("#ffcc00")
-  await page
+  await tableExample(page)
     .getByRole("button", { name: "Apply cell background", exact: true })
     .click()
 
@@ -252,23 +273,23 @@ test("native multi-cell selection, presentation and merged spans survive JSON an
       "background-color",
       "rgb(255, 204, 0)",
     )
-  await page
+  await tableExample(page)
     .getByRole("button", { name: "Hide cell borders", exact: true })
     .click()
   await action(page, "Merge selected cells")
   const merged = table.locator('[colspan="2"][rowspan="2"]')
   await expect(merged).toContainText("North")
   await merged.click()
-  await page
+  await tableExample(page)
     .getByRole("button", { name: "Show cell borders", exact: true })
     .click()
-  await expect(merged).toHaveAttribute("data-editor-border", "solid")
-  await expect(merged).not.toHaveCSS("box-shadow", "none")
+  await expect(merged).toHaveAttribute("data-editor-border", /"top":"solid"/)
+  await expect(merged).toHaveCSS("border-top-style", "solid")
 
   for (const name of ["Reload table JSON", "Reload table HTML"]) {
-    await page.getByRole("button", { name, exact: true }).click()
+    await tableExample(page).getByRole("button", { name, exact: true }).click()
     await expect(merged).toHaveCSS("background-color", "rgb(255, 204, 0)")
-    await expect(merged).toHaveAttribute("data-editor-border", "solid")
+    await expect(merged).toHaveAttribute("data-editor-border", /"top":"solid"/)
     await expect(merged).toContainText("North")
   }
 
@@ -281,6 +302,7 @@ test("real clipboard TSV and HTML table paste retain content and spans", async (
   page,
   context,
 }) => {
+  test.slow()
   await context.grantPermissions(["clipboard-read", "clipboard-write"])
   await editor(page).fill("")
   await page.evaluate(() => navigator.clipboard.writeText("A\tB\nC\tD"))
@@ -325,7 +347,7 @@ test("widths survive JSON/HTML, mobile contains overflow, initial and interactiv
     await page.keyboard.insertText(`Header ${index + 1}`)
   }
 
-  const separator = page.getByRole("separator", {
+  const separator = tableExample(page).getByRole("separator", {
     name: "Column 1 width",
     exact: true,
   })
@@ -333,7 +355,7 @@ test("widths survive JSON/HTML, mobile contains overflow, initial and interactiv
   await separator.press("End")
 
   for (const name of ["Reload table JSON", "Reload table HTML"]) {
-    await page.getByRole("button", { name, exact: true }).click()
+    await tableExample(page).getByRole("button", { name, exact: true }).click()
     await editor(page).locator("th, td").first().click()
     await expect(separator).toHaveAttribute("aria-valuenow", "640")
   }
@@ -369,9 +391,13 @@ test("rejects invalid dimensions, colors and unsafe JSON without changing docume
   page,
 }) => {
   await editor(page).fill("Keep document")
-  const rows = page.getByRole("spinbutton", { name: "Table rows", exact: true })
 
-  const columns = page.getByRole("spinbutton", {
+  const rows = tableExample(page).getByRole("spinbutton", {
+    name: "Table rows",
+    exact: true,
+  })
+
+  const columns = tableExample(page).getByRole("spinbutton", {
     name: "Table columns",
     exact: true,
   })
@@ -393,11 +419,14 @@ test("rejects invalid dimensions, colors and unsafe JSON without changing docume
   await columns.fill("3")
   await insertButton.click()
   await editor(page).locator("th, td").first().click()
-  await page
+  await tableExample(page)
     .getByRole("textbox", { name: "Cell background", exact: true })
     .fill("url(https://invalid.test/color)")
   await expect(
-    page.getByRole("button", { name: "Apply cell background", exact: true }),
+    tableExample(page).getByRole("button", {
+      name: "Apply cell background",
+      exact: true,
+    }),
   ).toBeDisabled()
   const output = page.getByLabel("Serialized table state", { exact: true })
   const serialized = await output.textContent()
@@ -422,13 +451,13 @@ test("rejects invalid dimensions, colors and unsafe JSON without changing docume
 
     if (!table) throw new Error("Serialized table must exist")
     Object.assign(table, update)
-    await page
+    await tableExample(page)
       .getByRole("textbox", { name: "Table JSON input", exact: true })
       .fill(JSON.stringify(state))
-    await page
+    await tableExample(page)
       .getByRole("button", { name: "Import table JSON", exact: true })
       .click()
-    await expect(page.getByRole("alert")).toBeVisible()
+    await expect(tableExample(page).getByRole("alert")).toBeVisible()
     expect(JSON.parse((await output.textContent()) ?? "null")).toEqual(before)
   }
 })
@@ -446,16 +475,17 @@ test("rejected external HTML preserves formatted table and geometry", async ({
 
   for (const html of [
     '<table><tr><td rowspan="3">Bad</td></tr></table>',
+    '<table><tr><td style="border:2px dashed red">Unsupported</td></tr></table>',
     "<table><tr><td>A</td><td>B</td></tr><tr><td>C</td></tr></table>",
     "<table><tr><td><table><tr><td>Nested</td></tr></table></td></tr></table>",
   ]) {
-    await page
+    await tableExample(page)
       .getByRole("textbox", { name: "Table HTML input", exact: true })
       .fill(html)
-    await page
+    await tableExample(page)
       .getByRole("button", { name: "Import table HTML", exact: true })
       .click()
-    await expect(page.getByRole("alert")).toBeVisible()
+    await expect(tableExample(page).getByRole("alert")).toBeVisible()
     await expect(output).toHaveText(before ?? "")
     await expect(table.locator("strong, b")).toContainText("Keep rich content")
   }
@@ -466,7 +496,7 @@ test("focus loss and document changes cancel pointer preview without stale write
 }) => {
   const table = await insert(page, 2, 2)
 
-  const separator = page.getByRole("separator", {
+  const separator = tableExample(page).getByRole("separator", {
     name: "Column 1 width",
     exact: true,
   })

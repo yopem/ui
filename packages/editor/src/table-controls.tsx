@@ -9,9 +9,7 @@ import {
   $getTableRowIndexFromTableCellNode,
   $insertTableColumnAtSelection,
   $insertTableRowAtSelection,
-  $mergeCells,
   $setTableRowIsHeader,
-  $unmergeCell,
   TableCellHeaderStates,
 } from "@lexical/table"
 import { Button } from "@registry/components/ui/button"
@@ -27,6 +25,10 @@ import { HISTORY_PUSH_TAG } from "lexical"
 import { useRef, useState, useSyncExternalStore } from "react"
 
 import { $getTableContext, createEditorTableBookmark } from "./table-bookmark"
+import {
+  $mergeTableCellsWithBorders,
+  $unmergeTableCellWithBorders,
+} from "./table-presentation"
 
 export type EditorTableMenuProps = ComponentProps<typeof ToolbarButton>
 
@@ -217,8 +219,9 @@ export function EditorTableMenu({
         <MenuItem
           disabled={unavailable || !capabilities.merge}
           onClick={() =>
-            applyAction(({ cells }) => {
-              if (cells.length > 1) $mergeCells(cells)?.selectEnd()
+            applyAction(({ cells, table }) => {
+              if (cells.length > 1)
+                $mergeTableCellsWithBorders(table, cells)?.selectEnd()
             })
           }
         >
@@ -228,7 +231,7 @@ export function EditorTableMenu({
           disabled={unavailable || !capabilities.split}
           onClick={() =>
             applyAction(() => {
-              $unmergeCell()
+              $unmergeTableCellWithBorders()
             })
           }
         >

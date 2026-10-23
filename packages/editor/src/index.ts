@@ -38,6 +38,8 @@ export type { EditorTableMenuProps } from "./table-controls"
 export {
   EditorTableDimensions,
   EditorTableCellPresentation,
+  EditorTableBackgroundControls,
+  EditorTableBorderControls,
 } from "./table-presentation-controls"
 
 export { EditorTableResizeControls } from "./table-resize"
@@ -53,12 +55,22 @@ export {
   parseTablePresentationJSON,
   validateTablePresentationHTML,
   validateTableGeometry,
+  getTableSpanGeometry,
+  getTableEdgeGroups,
+  tableBorderSchema,
+  parseTableBorderHTML,
+  parseTableRowHeightHTML,
+  readTableBorderHTML,
   TABLE_MIN_COLUMN_WIDTH,
   TABLE_MAX_COLUMN_WIDTH,
   TABLE_MAX_ROWS,
   TABLE_MAX_COLUMNS,
   TABLE_MAX_CELLS,
 } from "./table-presentation-schema"
+
+export type { TableBorder, TableBorderEdge } from "./table-presentation-schema"
+
+export type { TableBorderOperation } from "./table-presentation"
 
 export {
   EditorAlignmentButton,

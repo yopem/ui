@@ -10,7 +10,7 @@ const usageNoteValues = {
     "Use ariaLabel for an accessible name. Use initialState for initial Lexical JSON and onChange for content updates. Remount to load another document.",
     "Set editable to false for read-only content. Validate saved JSON before storage or publication. Keep Lexical packages on one compatible version.",
     "Use xstyle, className, refs, and native attributes on Editor and EditorRoot. Link controls discard saved ranges after document content changes.",
-    "Use EditorTableMenu for row, column, header, merge, and split actions. Register EditorTablePresentationExtension for bounded tables and persisted cell presentation. Add EditorTableDimensions, EditorTableCellPresentation, and EditorTableResizeControls inside EditorRoot.",
+    "Use EditorTableMenu for row, column, header, merge, and split actions. Register EditorTablePresentationExtension for bounded tables and persisted cell presentation. Add EditorTableDimensions, EditorTableCellPresentation, and EditorTableResizeControls inside EditorRoot. Use EditorTableBackgroundControls and EditorTableBorderControls separately when needed. Border controls support logical edges and rectangle actions. Shared merged edges are indivisible. Row resizing stores minimum height. Content can make rows taller.",
     "Validate external table JSON and HTML before conversion. Tables support 50 rows, 50 columns, and 2500 covered cells across the document. Invalid updates preserve existing content. Saved table selections become invalid after document changes.",
     "The editor provides a foundation, not full Plate feature parity. Collaboration, media uploads, comments, and document conversion are not included.",
   ],

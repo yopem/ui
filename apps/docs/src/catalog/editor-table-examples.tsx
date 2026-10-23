@@ -22,7 +22,8 @@ import {
   TABLE_PRESENTATION_ERROR_COMMAND,
 } from "@yopem-ui/editor/table-presentation"
 import {
-  EditorTableCellPresentation,
+  EditorTableBackgroundControls,
+  EditorTableBorderControls,
   EditorTableDimensions,
 } from "@yopem-ui/editor/table-presentation-controls"
 import {
@@ -232,7 +233,8 @@ export function EditorTableExamples() {
           <EditorTableMenu />
           <EditorTableDimensions />
         </EditorToolbar>
-        <EditorTableCellPresentation />
+        <EditorTableBackgroundControls />
+        <EditorTableBorderControls />
         <EditorContent />
         <EditorTableResizeControls />
         <TableRoundTripControls />

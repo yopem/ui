@@ -6,23 +6,25 @@ import {
 } from "@lexical/table"
 import { Button } from "@registry/components/ui/button"
 import { Field, FieldLabel } from "@registry/components/ui/field"
+import { Fieldset } from "@registry/components/ui/fieldset"
 import { Input } from "@registry/components/ui/input"
+import { NativeSelect } from "@registry/components/ui/native-select"
 import { Wrap } from "@registry/components/ui/wrap"
 import {
   $insertNodes,
-  $setState,
   HISTORY_PUSH_TAG,
   mergeRegister,
   type LexicalEditor,
 } from "lexical"
-import { useState, useSyncExternalStore } from "react"
+import { useId, useState, useSyncExternalStore } from "react"
 
 import { useEditor, useEditorState } from "./root"
 import { $getTableContext, createEditorTableBookmark } from "./table-bookmark"
 import {
   $getSelectedTableCells,
   isTableBackground,
-  tableCellBorderState,
+  $setTableBorders,
+  type TableBorderOperation,
   TABLE_MAX_CELLS,
   TABLE_MAX_COLUMNS,
   TABLE_MAX_ROWS,
@@ -102,6 +104,11 @@ export function EditorTableDimensions() {
   )
 }
 
+const cellPresentationStates = new WeakMap<
+  LexicalEditor,
+  ReturnType<typeof createCellPresentationState>
+>()
+
 function createCellPresentationState(editor: LexicalEditor) {
   const bookmark = createEditorTableBookmark(editor)
 
@@ -142,10 +149,20 @@ function createCellPresentationState(editor: LexicalEditor) {
   }
 }
 
-export function EditorTableCellPresentation() {
+function useTablePresentation() {
   const editor = useEditor()
   const { editable } = useEditorState()
-  const [selection] = useState(() => createCellPresentationState(editor))
+
+  const [selection] = useState(() => {
+    const existing = cellPresentationStates.get(editor)
+
+    if (existing) return existing
+    const state = createCellPresentationState(editor)
+    cellPresentationStates.set(editor, state)
+
+    return state
+  })
+
   const { bookmark } = selection
 
   const available = useSyncExternalStore(
@@ -154,7 +171,6 @@ export function EditorTableCellPresentation() {
     selection.getServerSnapshot,
   )
 
-  const [background, setBackground] = useState("#ffffff")
   const unavailable = !editable || !available
 
   function save() {
@@ -162,7 +178,7 @@ export function EditorTableCellPresentation() {
   }
 
   function apply(
-    action: (cell: ReturnType<typeof $getSelectedTableCells>[number]) => void,
+    action: (context: NonNullable<ReturnType<typeof $getTableContext>>) => void,
   ) {
     if (!editor.isEditable() || !bookmark.getSnapshot()) return
     let tableKey: string | undefined
@@ -174,7 +190,7 @@ export function EditorTableCellPresentation() {
         if (!context) return
         tableKey = context.table.getKey()
 
-        for (const cell of context.cells) action(cell)
+        action(context)
       },
       {
         tag: HISTORY_PUSH_TAG,
@@ -187,6 +203,24 @@ export function EditorTableCellPresentation() {
       },
     )
   }
+
+  return { unavailable, editable, save, bookmark, apply }
+}
+
+export function EditorTableCellPresentation() {
+  return (
+    <Wrap>
+      <EditorTableBackgroundControls />
+      <EditorTableBorderControls />
+    </Wrap>
+  )
+}
+
+export function EditorTableBackgroundControls() {
+  const { unavailable, editable, save, bookmark, apply } =
+    useTablePresentation()
+
+  const [background, setBackground] = useState("#ffffff")
 
   return (
     <Wrap
@@ -209,44 +243,115 @@ export function EditorTableCellPresentation() {
       <Button
         disabled={unavailable || !isTableBackground(background)}
         onMouseDown={(event) => event.preventDefault()}
-        onClick={() => apply((cell) => cell.setBackgroundColor(background))}
+        onClick={() =>
+          apply(({ cells }) => {
+            for (const cell of cells) cell.setBackgroundColor(background)
+          })
+        }
       >
         Apply cell background
       </Button>
       <Button
         disabled={unavailable}
         onMouseDown={(event) => event.preventDefault()}
-        onClick={() => apply((cell) => cell.setBackgroundColor(null))}
+        onClick={() =>
+          apply(({ cells }) => {
+            for (const cell of cells) cell.setBackgroundColor(null)
+          })
+        }
       >
         Reset cell background
       </Button>
-      <Button
-        disabled={unavailable}
-        onMouseDown={(event) => event.preventDefault()}
-        onClick={() =>
-          apply((cell) => $setState(cell, tableCellBorderState, "solid"))
-        }
-      >
-        Show cell borders
-      </Button>
-      <Button
-        disabled={unavailable}
-        onMouseDown={(event) => event.preventDefault()}
-        onClick={() =>
-          apply((cell) => $setState(cell, tableCellBorderState, "hidden"))
-        }
-      >
-        Hide cell borders
-      </Button>
-      <Button
-        disabled={unavailable}
-        onMouseDown={(event) => event.preventDefault()}
-        onClick={() =>
-          apply((cell) => $setState(cell, tableCellBorderState, null))
-        }
-      >
-        Reset cell borders
-      </Button>
     </Wrap>
+  )
+}
+
+export function EditorTableBorderControls() {
+  const { unavailable, save, bookmark, apply } = useTablePresentation()
+  const borderStyleId = useId()
+  const [border, setBorder] = useState<"solid" | "hidden" | null>("solid")
+
+  function applyBorder(
+    operation: TableBorderOperation,
+    value: "solid" | "hidden" | null = "solid",
+  ) {
+    apply(({ table, cells }) =>
+      $setTableBorders(table, cells, operation, value),
+    )
+  }
+
+  return (
+    <Fieldset
+      aria-label="Cell borders"
+      onPointerDownCapture={save}
+      onFocusCapture={() => {
+        if (!bookmark.getSnapshot()) save()
+      }}
+      onBlurCapture={(event) => {
+        if (!event.currentTarget.contains(event.relatedTarget)) bookmark.clear()
+      }}
+    >
+      <Field>
+        <FieldLabel htmlFor={borderStyleId}>Border edge style</FieldLabel>
+        <NativeSelect
+          id={borderStyleId}
+          value={border ?? "reset"}
+          disabled={unavailable}
+          onChange={(event) => {
+            const value = event.currentTarget.value
+
+            if (value === "solid" || value === "hidden") setBorder(value)
+            else setBorder(null)
+          }}
+        >
+          <option value="solid">Solid</option>
+          <option value="hidden">Hidden</option>
+          <option value="reset">Default</option>
+        </NativeSelect>
+      </Field>
+      <Wrap>
+        {(
+          [
+            ["top", "Top cell border"],
+            ["bottom", "Bottom cell border"],
+            ["start", "Start cell border"],
+            ["end", "End cell border"],
+            ["outside", "Outside cell borders"],
+            ["inside", "Inside cell borders"],
+            ["none", "No cell borders"],
+          ] as const
+        ).map(([operation, label]) => (
+          <Button
+            key={operation}
+            disabled={unavailable}
+            onMouseDown={(event) => event.preventDefault()}
+            onClick={() => applyBorder(operation, border)}
+          >
+            {label}
+          </Button>
+        ))}
+        <Button
+          disabled={unavailable}
+          onMouseDown={(event) => event.preventDefault()}
+          onClick={() => applyBorder("all")}
+        >
+          Show cell borders
+        </Button>
+        <Button
+          disabled={unavailable}
+          onMouseDown={(event) => event.preventDefault()}
+          onClick={() => applyBorder("none")}
+        >
+          Hide cell borders
+        </Button>
+        <Button
+          disabled={unavailable}
+          onMouseDown={(event) => event.preventDefault()}
+          onClick={() => applyBorder("reset")}
+        >
+          Reset cell borders
+        </Button>
+      </Wrap>
+    </Fieldset>
   )
 }

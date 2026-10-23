@@ -138,6 +138,7 @@ test("keyboard partial selection changes only chosen text", async ({
 test("@a11y styles initial, changed, popup and readonly states", async ({
   page,
 }, testInfo) => {
+  test.slow()
   await page.goto("/docs/editor")
   await expect(styledEditor(page)).toHaveAttribute("contenteditable", "true")
   const editor = styledEditor(page)

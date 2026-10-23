@@ -119,7 +119,9 @@ export const editorStyles = stylex.create({
   },
   tableWrapper: {
     overflowX: "auto",
+    overflowY: "auto",
     maxInlineSize: "100%",
+    maxBlockSize: "70dvh",
     outlineColor: tokens["--ring"],
     outlineStyle: { default: "none", ":focus-visible": "solid" },
     outlineWidth: 2,

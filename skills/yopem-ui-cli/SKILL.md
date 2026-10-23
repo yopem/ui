@@ -123,10 +123,11 @@ The same installation provides `EditorTableMenu` for row, column, header, merge,
 and split actions. Register `EditorTablePresentationExtension` for bounded
 tables and persisted cell presentation. Compose `EditorTableDimensions`,
 `EditorTableCellPresentation`, and `EditorTableResizeControls` inside
-`EditorRoot`. Validate external table JSON and HTML before conversion. Invalid
-updates must preserve existing content. Discard saved table selections after
-document changes. Preserve resize cancellation, history, and right-to-left
-keyboard behavior.
+`EditorRoot`. Keep `data-editor-row-height` in exported HTML to preserve finite
+native heights. Keep table scrolling bounded and keyboard-accessible. Validate
+external table JSON and HTML before conversion. Invalid updates must preserve
+existing content. Discard saved table selections after document changes.
+Preserve resize cancellation, history, and right-to-left keyboard behavior.
 
 ### Optional editor authentication
 

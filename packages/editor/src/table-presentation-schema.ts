@@ -16,15 +16,35 @@ export const TABLE_MAX_NODES = 10_000
 
 export const TABLE_MAX_INPUT_BYTES = 1_048_576
 
+export function parseTableRowHeightHTML(value: string | null) {
+  if (
+    value === null ||
+    value.length > 32 ||
+    !/^[+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:e[+-]?\d+)?$/i.test(value)
+  )
+    return undefined
+  const height = Number(value)
+
+  return Number.isFinite(height) ? height : undefined
+}
+
 export interface TableSpan {
   colSpan?: number
   rowSpan?: number
 }
 
-export function validateTableGeometry(rows: readonly (readonly TableSpan[])[]) {
+export function getTableSpanGeometry(rows: readonly (readonly TableSpan[])[]) {
   if (!rows.length || rows.length > TABLE_MAX_ROWS)
     throw new Error("Invalid table row count.")
   const occupied = Array.from({ length: rows.length }, () => new Set<number>())
+
+  const placements: {
+    row: number
+    column: number
+    rowSpan: number
+    colSpan: number
+  }[] = []
+
   let columns = 0
   let cells = 0
 
@@ -52,6 +72,7 @@ export function validateTableGeometry(rows: readonly (readonly TableSpan[])[]) {
         rowIndex + rowSpan > rows.length
       )
         throw new Error("Table span exceeds bounds.")
+      placements.push({ row: rowIndex, column, rowSpan, colSpan })
       cells += colSpan * rowSpan
 
       if (cells > TABLE_MAX_CELLS) throw new Error("Table exceeds cell budget.")
@@ -74,7 +95,73 @@ export function validateTableGeometry(rows: readonly (readonly TableSpan[])[]) {
   if (!columns || occupied.some((slots) => slots.size !== columns))
     throw new Error("Table contains holes.")
 
-  return { rows: rows.length, columns, cells }
+  return { rows: rows.length, columns, cells, placements }
+}
+
+export function getTableEdgeGroups(
+  placements: ReturnType<typeof getTableSpanGeometry>["placements"],
+) {
+  const lines = new Map<
+    string,
+    { index: number; edge: TableBorderEdge; start: number; end: number }[]
+  >()
+
+  function add(
+    line: string,
+    index: number,
+    edge: TableBorderEdge,
+    start: number,
+    end: number,
+  ) {
+    const entries = lines.get(line) ?? []
+    entries.push({ index, edge, start, end })
+    lines.set(line, entries)
+  }
+
+  for (const [index, slot] of placements.entries()) {
+    add(`h:${slot.row}`, index, "top", slot.column, slot.column + slot.colSpan)
+    add(
+      `h:${slot.row + slot.rowSpan}`,
+      index,
+      "bottom",
+      slot.column,
+      slot.column + slot.colSpan,
+    )
+    add(`v:${slot.column}`, index, "start", slot.row, slot.row + slot.rowSpan)
+    add(
+      `v:${slot.column + slot.colSpan}`,
+      index,
+      "end",
+      slot.row,
+      slot.row + slot.rowSpan,
+    )
+  }
+
+  const groups: { index: number; edge: TableBorderEdge }[][] = []
+
+  for (const entries of lines.values()) {
+    entries.sort((left, right) => left.start - right.start)
+    let end = -1
+    let group: { index: number; edge: TableBorderEdge }[] = []
+
+    for (const entry of entries) {
+      if (entry.start >= end) {
+        group = []
+        groups.push(group)
+      }
+
+      group.push({ index: entry.index, edge: entry.edge })
+      end = entry.start >= end ? entry.end : Math.max(end, entry.end)
+    }
+  }
+
+  return groups
+}
+
+export function validateTableGeometry(rows: readonly (readonly TableSpan[])[]) {
+  const { rows: rowCount, columns, cells } = getTableSpanGeometry(rows)
+
+  return { rows: rowCount, columns, cells }
 }
 
 export function isTablePresentationBackground(value: string) {
@@ -85,6 +172,32 @@ export function isTablePresentationBackground(value: string) {
 
   return match?.slice(1).every((channel) => Number(channel) <= 255) ?? false
 }
+
+export const tableBorderEdgeSchema = z.enum(["solid", "hidden"]).nullable()
+
+export const tableBorderSchema = z.union([
+  tableBorderEdgeSchema,
+  z.strictObject({
+    top: tableBorderEdgeSchema,
+    bottom: tableBorderEdgeSchema,
+    start: tableBorderEdgeSchema,
+    end: tableBorderEdgeSchema,
+  }),
+])
+
+export type TableBorder = z.infer<typeof tableBorderSchema>
+
+export type TableBorderEdge = "top" | "bottom" | "start" | "end"
+
+export function parseTableBorderHTML(value: string | null): TableBorder {
+  if (value === null || value === "solid" || value === "hidden") return value
+
+  if (value.length > 128) throw new Error("Table border exceeds size limit.")
+
+  return tableBorderSchema.parse(JSON.parse(value))
+}
+
+const rowSchema = z.object({ height: z.number().optional() })
 
 const nodeSchema = z.object({
   type: z.string(),
@@ -107,7 +220,7 @@ const cellSchema = z.object({
     .optional(),
   $: z
     .object({
-      yopemTableBorder: z.enum(["solid", "hidden"]).nullable().optional(),
+      yopemTableBorder: tableBorderSchema.optional(),
     })
     .optional(),
 })
@@ -149,6 +262,8 @@ export const tablePresentationDocumentSchema = z
           throw new Error("Invalid table structure.")
 
         if (node.type === "tablecell") cellSchema.parse(entry.value)
+
+        if (node.type === "tablerow") rowSchema.parse(entry.value)
 
         if (node.type === "table") {
           const presentation = tableSchema.parse(entry.value)
@@ -215,6 +330,42 @@ export function parseTablePresentationJSON(input: string) {
   return input
 }
 
+export function readTableBorderHTML(cell: HTMLElement) {
+  const border = cell.getAttribute("data-editor-border")
+
+  for (const side of [
+    "top",
+    "bottom",
+    "left",
+    "right",
+    "inline-start",
+    "inline-end",
+    "block-start",
+    "block-end",
+  ]) {
+    const style = cell.style.getPropertyValue(`border-${side}-style`)
+    const size = cell.style.getPropertyValue(`border-${side}-width`)
+
+    const color = cell.style
+      .getPropertyValue(`border-${side}-color`)
+      .toLowerCase()
+
+    if (
+      (style && style !== "solid" && style !== "hidden") ||
+      (style === "hidden" && !border) ||
+      (size && size !== "1px") ||
+      (color && !["black", "rgb(0, 0, 0)", "currentcolor"].includes(color))
+    )
+      throw new Error("Unsupported table border CSS.")
+  }
+
+  for (const property of cell.style)
+    if (property.startsWith("border") && /radius|image/.test(property))
+      throw new Error("Unsupported table border CSS.")
+
+  return parseTableBorderHTML(border)
+}
+
 export function validateTablePresentationHTML(document: Document) {
   const elements = document.querySelectorAll("*")
 
@@ -241,11 +392,26 @@ export function validateTablePresentationHTML(document: Document) {
     if (table.parentElement?.closest("table"))
       throw new Error("Nested tables are not supported.")
 
-    const rows = Array.from(table.rows, (row) =>
-      Array.from(row.cells, (cell) => {
+    const rows = Array.from(table.rows, (row) => {
+      const value = row.getAttribute("data-editor-row-height")
+
+      const height =
+        value === null
+          ? row.style.height
+            ? row.style.height.endsWith("px")
+              ? (parseTableRowHeightHTML(row.style.height.slice(0, -2)) ?? NaN)
+              : NaN
+            : undefined
+          : parseTableRowHeightHTML(value)
+
+      if (value !== null && height === undefined)
+        throw new Error("Invalid table row height metadata.")
+      rowSchema.parse({ height })
+
+      return Array.from(row.cells, (cell) => {
         const width = cell.style.width
         const backgroundColor = cell.style.backgroundColor
-        const border = cell.getAttribute("data-editor-border")
+        const border = readTableBorderHTML(cell)
 
         return cellSchema.parse({
           type: "tablecell",
@@ -259,8 +425,8 @@ export function validateTablePresentationHTML(document: Document) {
           backgroundColor: backgroundColor || null,
           $: { yopemTableBorder: border },
         })
-      }),
-    )
+      })
+    })
 
     const geometry = validateTableGeometry(rows)
 
