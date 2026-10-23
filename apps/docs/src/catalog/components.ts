@@ -33,6 +33,7 @@ const compositionOverrides = new Map<
 ])
 
 const previewDescriptionValues = {
+  editor: "Core rich text editing with Lexical",
   "use-event-callback": "Stable handler reading the latest count",
   "use-media-query": "Live viewport breakpoint matches",
   "aspect-ratio": "Default, square, fallback, and custom ratios",

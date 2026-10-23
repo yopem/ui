@@ -4,16 +4,39 @@
   "private": true,
   "type": "module",
   "exports": {
+    ".": "./src/index.ts",
     "./server": "./src/server/index.ts"
   },
   "scripts": {
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@base-ui/react": "catalog:",
+    "@lexical/code": "^0.52.0",
+    "@lexical/extension": "^0.52.0",
+    "@lexical/history": "^0.52.0",
+    "@lexical/link": "^0.52.0",
+    "@lexical/list": "^0.52.0",
+    "@lexical/markdown": "^0.52.0",
+    "@lexical/react": "^0.52.0",
+    "@lexical/rich-text": "^0.52.0",
+    "@lexical/selection": "^0.52.0",
+    "@lexical/table": "^0.52.0",
+    "@stylexjs/stylex": "catalog:",
+    "@yopem-ui/registry": "workspace:*",
     "jose": "catalog:",
+    "lexical": "catalog:",
     "zod": "catalog:"
   },
   "devDependencies": {
-    "@types/bun": "catalog:"
+    "@types/bun": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:"
+  },
+  "peerDependencies": {
+    "react": "catalog:peer",
+    "react-dom": "catalog:peer"
   }
 }

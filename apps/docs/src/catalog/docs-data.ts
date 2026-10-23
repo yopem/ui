@@ -53,6 +53,12 @@ export const guidePages = [
       "Install server helpers with Bun, npm, pnpm, or Yarn. Connect existing OpenAuth and Better Auth services. Verify identity and check document authorization separately. Configure trusted origins, CSRF protection, and backend service policies.",
   },
   {
+    title: "Editor",
+    url: "/docs/editor",
+    content:
+      "Use the Lexical editor foundation for core rich text, keyboard and toolbar formatting, lists, undo and redo, read-only content, and JSON output. Install source with Bun, npm, pnpm, or Yarn. Lexical JSON is not compatible with Slate or Plate JSON. This scope does not provide full Plate parity.",
+  },
+  {
     title: "CLI",
     url: "/docs/cli",
     content:

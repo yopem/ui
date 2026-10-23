@@ -1811,6 +1811,12 @@ export async function initProject(
       (content) =>
         designGuidance(content, `${importPrefix}/`, {
           components: componentSource.slice(0, -1),
+          editor: mapImportPath(
+            "@/components/editor",
+            paths,
+            importPrefix,
+            sourceRoot,
+          ),
           tokens: imports.tokens,
           lib: imports.lib,
           css: imports.css,

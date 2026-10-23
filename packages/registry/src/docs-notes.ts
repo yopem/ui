@@ -1,5 +1,13 @@
 // These notes describe Yopem's composition choices, not only the upstream types.
 const usageNoteValues = {
+  editor: [
+    "Use Editor for the preset. Compose EditorRoot, EditorToolbar, EditorContent, and individual controls for custom interfaces. Import all parts from @/components/editor. Each root keeps separate state and history.",
+    "Import Editor from @/components/editor. Keep all editor files together. Generic UI components stay in components/ui.",
+    "Use ariaLabel for an accessible name. Use initialState for initial Lexical JSON and onChange for content updates. Remount to load another document.",
+    "Set editable to false for read-only content. Validate saved JSON before storage or publication. Keep all Lexical dependencies at 0.52.0.",
+    "Use xstyle, className, refs, and native attributes on Editor and EditorRoot. Link controls discard saved ranges after document content changes.",
+    "The editor provides a foundation, not full Plate feature parity. Collaboration, media uploads, comments, and document conversion are not included.",
+  ],
   "editor-auth": [
     "Import server helpers from @/lib/editor-auth. Keep them outside browser components. Use an existing OpenAuth or Better Auth service.",
     "Use createOpenAuthAuthentication with an explicit audience. The default issuer is https://auth.yopem.com. Identity uses properties.id, not the mutable subject hash.",
@@ -7,7 +15,6 @@ const usageNoteValues = {
     "Call authorizeEditorRequest with a separate document policy. Only an explicit true result grants access. Check route origins and CSRF tokens separately.",
     "JWT verification does not guarantee immediate revocation. These helpers do not deploy AI, upload, persistence, or collaboration services.",
   ],
-
   "use-event-callback": [
     "The returned function keeps its identity. It calls the latest committed callback. Arguments, return values, promises, and errors do not change.",
     "Use it only for event handlers and effect callbacks. Do not call it during render. A call before the first commit throws an error. Insertion effects publish updates. Aborted renders do not replace the committed callback.",

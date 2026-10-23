@@ -13,6 +13,7 @@ export function designGuidance(
   importPrefix = "@/",
   imports = {
     components: `${importPrefix}components/ui`,
+    editor: `${importPrefix}components/editor`,
     tokens: `${importPrefix}styles/tokens.stylex`,
     lib: `${importPrefix}lib/stylex`,
     css: `${importPrefix}styles/styles.css`,
@@ -35,6 +36,34 @@ Use the installed source and component documentation as the API reference.
 - Use named function exports for React components.
 - Keep \`"use client"\` in client components.
 - Preserve public exports, consumer props, refs, \`className\`, and \`data-slot\` values.
+
+### Editor source
+
+Install the editor with the CLI before you use it:
+
+\`\`\`sh
+bunx --bun @yopem-ui/cli add editor
+npx @yopem-ui/cli add editor
+pnpm dlx @yopem-ui/cli add editor
+yarn dlx @yopem-ui/cli add editor
+\`\`\`
+
+Import the named \`Editor\` component from \`${imports.editor}\`.
+The editor uses Lexical 0.52.0 and registry StyleX UI components.
+Keep all copied editor files together. Keep generic UI components in the UI directory.
+The editor directory follows \`paths.components\`, not \`paths.ui\`.
+Use \`initialState\` for initial Lexical JSON and \`onChange\` for content updates.
+Use \`ariaLabel\` for an accessible name. Set \`editable={false}\` for read-only content.
+Validate saved JSON before storage or publication.
+The editor provides a foundation, not full Plate feature parity.
+Use \`Editor\` for the preset. Compose \`EditorRoot\`, \`EditorToolbar\`, and \`EditorContent\` for custom interfaces.
+Import these parts from \`${imports.editor}\` after the same editor installation.
+Keep \`EditorFormatButton\`, \`EditorHistoryButton\`, \`EditorBlockButton\`, \`EditorListButton\`,
+\`EditorIndentButton\`, \`EditorLinkControl\`, and \`EditorTableButton\` inside their root.
+Choose controls as children of \`EditorToolbar\`. Each root keeps separate document state and history.
+\`EditorContent\` shares the root accessible name and read-only state.
+Pass additional Lexical extensions through \`extensions\` on EditorRoot or Editor.
+Keep that list stable. Remount the root when the extension configuration changes.
 
 ### Editor authentication
 

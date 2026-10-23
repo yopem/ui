@@ -184,7 +184,6 @@ test("packed CLI exposes shared authentication roots to external workspace consu
       expect(initialized.exports[authKey]).toBe(`./${lib}/editor-auth/index.ts`)
       expect(initialized.sideEffects).toEqual(["./keep.css", "**/*.css"])
 
-      // Recreate an already initialized package from before folder exports.
       delete initialized.exports[authKey]
       await putJson(ui, "package.json", initialized)
       const before = await readFile(join(ui, "package.json"), "utf8")
@@ -497,12 +496,12 @@ test("authentication guidance preserves user instructions and configured library
   const content = designGuidance("User instructions\n")
   expect(content).toContain("@/lib/editor-auth")
   expect(content).toContain("add editor-auth")
-  expect(content).not.toMatch(/add editor(?:\s|$)/)
   expect(content.startsWith("User instructions\n")).toBe(true)
   expect(designGuidance(content)).toBe(content)
 
   const custom = designGuidance("", "@acme/ui/", {
     components: "@acme/ui/controls",
+    editor: "@acme/ui/widgets/editor",
     tokens: "@acme/ui/styles/tokens.stylex",
     lib: "@acme/ui/services/stylex",
     css: "@acme/ui/styles/styles.css",

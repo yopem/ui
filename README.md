@@ -53,10 +53,24 @@ except for local HTTP. It must not contain credentials, query strings, or
 fragments. The CLI rejects redirects. See
 [installation](https://ui.yopem.com/docs/installation).
 
-## Editor authentication
+## Rich-text editor
 
-Server helpers connect existing OpenAuth and Better Auth services. They keep
-document authorization separate from authentication. See
+The editor uses Lexical, registry UI controls, and StyleX. Install its source
+with your package manager:
+
+```sh
+bunx --bun @yopem-ui/cli add editor
+npx @yopem-ui/cli add editor
+pnpm dlx @yopem-ui/cli add editor
+yarn dlx @yopem-ui/cli add editor
+```
+
+Use the preset or compose editor parts. Store documents as Lexical JSON, not
+Slate JSON. See the [editor guide](https://ui.yopem.com/docs/editor) for
+supported features. This editor does not yet provide full Plate parity.
+
+Optional server helpers connect existing OpenAuth and Better Auth services. They
+keep document authorization separate from authentication. See
 [editor authentication](https://ui.yopem.com/docs/editor-auth) for installation
 and security requirements.
 

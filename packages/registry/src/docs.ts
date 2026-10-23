@@ -150,13 +150,15 @@ export function createComponentDocs(
                   : ""),
             ),
         importPath:
-          item.files
-            .find(
-              (file) =>
-                file.path === part.source ||
-                file.path.endsWith(`${item.name}.tsx`),
-            )
-            ?.target.replace(/\.tsx?$/, "") ?? null,
+          item.name === "editor"
+            ? "@/components/editor"
+            : (item.files
+                .find(
+                  (file) =>
+                    file.path === part.source ||
+                    file.path.endsWith(`${item.name}.tsx`),
+                )
+                ?.target.replace(/\.tsx?$/, "") ?? null),
         props: part.props.map((index) => {
           const prop = properties[index]
 

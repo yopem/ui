@@ -60,6 +60,83 @@ The CLI uses the selected manager for runtime and development dependencies. It
 maps npm dependency commands to `install` and development flags to `-D`. Shared
 workspace references also use the selected manager's syntax.
 
+## Install the rich-text editor
+
+Initialize StyleX before you add the editor. Use the matching package manager:
+
+```sh
+bunx --bun @yopem-ui/cli add editor
+npx @yopem-ui/cli add editor
+pnpm dlx @yopem-ui/cli add editor
+yarn dlx @yopem-ui/cli add editor
+```
+
+The registry item copies Lexical editor source and its UI dependencies. Use
+Lexical JSON for document state. Do not pass Slate documents or Plate plugins.
+Read the [editor guide](https://ui.yopem.com/docs/editor.md) for supported
+features.
+
+### Editor composition
+
+Install the `editor` item before you use either the preset or public parts. The
+same installation copies all composition source files and UI dependencies.
+Import `Editor` from `@/components/editor` for the preset. Import `EditorRoot`,
+`EditorToolbar`, and `EditorContent` from the same copied source for custom UI.
+Keep each toolbar and surface inside one root. Each root keeps separate history
+and document state. Root `ariaLabel` and `editable` apply to its content.
+
+```tsx
+"use client"
+
+import {
+  EditorRoot,
+  EditorContent,
+  EditorToolbar,
+  EditorFormatButton,
+  EditorHistoryButton,
+  EditorBlockButton,
+} from "@/components/editor"
+
+export function ComposedNotes() {
+  return (
+    <EditorRoot ariaLabel="Composed editor">
+      <EditorToolbar aria-label="Custom formatting">
+        <EditorFormatButton format="bold" />
+        <EditorFormatButton format="italic" />
+        <EditorHistoryButton action="undo" />
+        <EditorHistoryButton action="redo" />
+        <EditorBlockButton block="h2" />
+      </EditorToolbar>
+      <EditorContent placeholder="Write your notes…" />
+    </EditorRoot>
+  )
+}
+```
+
+Add `EditorListButton`, `EditorIndentButton`, `EditorLinkControl`, or
+`EditorTableButton` when needed. Use `useEditor` for Lexical commands and
+`useEditorState` for text formats and history availability inside the root.
+Preserve keyboard behavior, URL validation, read-only state, refs, and consumer
+props. This API does not accept Slate documents or Plate plugins.
+
+### Optional editor authentication
+
+Install server helpers with the matching package manager:
+
+```sh
+bunx --bun @yopem-ui/cli add editor-auth
+npx @yopem-ui/cli add editor-auth
+pnpm dlx @yopem-ui/cli add editor-auth
+yarn dlx @yopem-ui/cli add editor-auth
+```
+
+The item copies helpers into the configured library directory. Its default
+import is `@/lib/editor-auth`. Keep it out of browser components. Connect an
+existing OpenAuth or Better Auth service. OpenAuth requires an explicit
+audience; its default issuer is `https://auth.yopem.com`. Better Auth receives
+the host session getter. Require separate document authorization and host route
+origin and CSRF checks. These helpers do not create accounts or deploy services.
+
 ## Initialize safely
 
 Preview first:

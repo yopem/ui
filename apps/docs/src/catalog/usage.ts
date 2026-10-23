@@ -1,5 +1,31 @@
 // Standalone TSX files use the standard @ alias for src.
 const usageSnippetValues = {
+  editor: `"use client"
+
+import {
+  EditorRoot,
+  EditorContent,
+  EditorToolbar,
+  EditorFormatButton,
+  EditorHistoryButton,
+  EditorBlockButton,
+} from "@/components/editor"
+
+export function Preview() {
+  return (
+    <EditorRoot ariaLabel="Composed editor">
+      <EditorToolbar aria-label="Custom formatting">
+        <EditorFormatButton format="bold" />
+        <EditorFormatButton format="italic" />
+        <EditorHistoryButton action="undo" />
+        <EditorHistoryButton action="redo" />
+        <EditorBlockButton block="h2" />
+      </EditorToolbar>
+      <EditorContent placeholder="Write your notes…" />
+    </EditorRoot>
+  )
+}
+`,
   "aspect-ratio": `"use client"
 
 import { AspectRatio } from "@/components/ui/aspect-ratio"

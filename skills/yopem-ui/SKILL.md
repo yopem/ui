@@ -64,6 +64,7 @@ the same spelling. Read the required item's exports and compound parts.
 | --------------------------------------------- | ---------------------------------------------------------------------------------- |
 | Actions, copying, and grouped commands        | `button`, `clipboard`, `toggle`, `toggle-group`, `toolbar`                         |
 | Text entry and form structure                 | `input`, `textarea`, `input-group`, `label`, `field`, `fieldset`, `form`           |
+| Rich-text editing                             | `editor`                                                                           |
 | Independent choices and settings              | `checkbox`, `checkbox-group`, `switch`                                             |
 | One option or popup selection                 | `radio-group`, `native-select`, `select`                                           |
 | Searchable values or text suggestions         | `combobox`, `autocomplete`                                                         |
@@ -82,6 +83,11 @@ the same spelling. Read the required item's exports and compound parts.
 | Semantic importance                           | `strong`                                                                           |
 | Moving content                                | `marquee`                                                                          |
 
+Use Editor for rich-text entry. Install the `editor` registry item before use.
+Keep its document state in Lexical JSON. Slate documents and Plate plugins are
+not compatible. Use the installed source and editor documentation for supported
+features. Do not assume full Plate parity.
+
 Use framework links for application navigation. Native anchors remain valid.
 `variant="link"` changes Button appearance, not its element or navigation
 behavior.
@@ -94,6 +100,68 @@ Use `SidebarProvider` around Sidebar parts. Use `ToastProvider` and
 `toastManager` for toast notifications. Do not invent a `Toast` root. Install
 `menu`, not a separate dropdown-menu item. Compose date pickers from `calendar`
 and a suitable popup; there is no separate date-picker item.
+
+### Editor composition
+
+Install the `editor` item before you use either the preset or public parts. The
+same installation copies all composition source files and UI dependencies.
+Import `Editor` from `@/components/editor` for the preset. Import `EditorRoot`,
+`EditorToolbar`, and `EditorContent` from the same copied source for custom UI.
+Keep each toolbar and surface inside one root. Each root keeps separate history
+and document state. Root `ariaLabel` and `editable` apply to its content.
+
+```tsx
+"use client"
+
+import {
+  EditorRoot,
+  EditorContent,
+  EditorToolbar,
+  EditorFormatButton,
+  EditorHistoryButton,
+  EditorBlockButton,
+} from "@/components/editor"
+
+export function ComposedNotes() {
+  return (
+    <EditorRoot ariaLabel="Composed editor">
+      <EditorToolbar aria-label="Custom formatting">
+        <EditorFormatButton format="bold" />
+        <EditorFormatButton format="italic" />
+        <EditorHistoryButton action="undo" />
+        <EditorHistoryButton action="redo" />
+        <EditorBlockButton block="h2" />
+      </EditorToolbar>
+      <EditorContent placeholder="Write your notes…" />
+    </EditorRoot>
+  )
+}
+```
+
+Add `EditorListButton`, `EditorIndentButton`, `EditorLinkControl`, or
+`EditorTableButton` when needed. Use `useEditor` for Lexical commands and
+`useEditorState` for text formats and history availability inside the root.
+Preserve keyboard behavior, URL validation, read-only state, refs, and consumer
+props. This API does not accept Slate documents or Plate plugins.
+
+Pass additional Lexical extensions through `extensions` on EditorRoot or Editor.
+Keep the extension list stable. Treat it as initial configuration. Remount the
+root when the list changes. Use Lexical registration cleanup for custom
+behavior.
+
+### Editor authentication
+
+Install the separate `editor-auth` item for server integration. Import its
+helpers from `@/lib/editor-auth`, or the configured shared library path. Select
+OpenAuth or Better Auth explicitly. Keep these imports out of browser code.
+OpenAuth defaults to `https://auth.yopem.com` and requires an accepted audience.
+Better Auth uses the host application's session getter. It does not create auth
+accounts or a database.
+
+Require a separate document policy. Only an explicit true result grants access.
+Check route origins and CSRF tokens in the host backend. Do not put tokens in
+URLs or logs. JWT verification does not guarantee immediate revocation. See the
+[authentication guide](https://ui.yopem.com/docs/editor-auth.md).
 
 ### Buttons and controls
 

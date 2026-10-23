@@ -41,6 +41,10 @@ accessibility, and production build.
     routes. Run `bun run generate-routes` after route changes; never edit
     `routeTree.gen.ts`.
   - `src/styles.css` — docs application global styles only.
+- `packages/editor/` — canonical Lexical editor source and editor utilities.
+  Reuse registry UI controls and semantic StyleX tokens. Do not add Tailwind.
+  Publish editor source through the registry so the CLI can copy it.
+  Keep all editor tests under root `tests/`, not inside this package.
 - `packages/registry/` — canonical copyable source and registry generator.
   - `src/components/ui/` — canonical component implementations.
   - `src/items/` — registry metadata, dependencies, files, docs, and exports.
@@ -138,7 +142,8 @@ Path aliases are `@registry/*` for registry source and `@/*` inside docs.
 
 ## Source-of-truth and generated files
 
-Canonical sources live under `packages/registry/src/`. Never hand-edit
+Canonical sources live under `packages/registry/src/` and `packages/editor/src/`.
+Keep editor code in the editor package. Never hand-edit
 `packages/registry/dist/`, `apps/docs/public/r/`,
 `apps/docs/public/schema/`, `packages/registry/src/docs.generated.json`, or
 TanStack-generated route files. `bun run registry:build` regenerates registry
@@ -256,11 +261,25 @@ Rounded components use md (12px) by default. Use xstyle to change corner radii. 
   management, dismissal, accessible names, and keyboard behavior intact.
 - Use existing navigation, feedback, data display, and utility components.
   Check registry metadata and component documentation before adding substitutes.
-
+- Use Editor for rich-text entry. Keep editor behavior and utilities in
+  `packages/editor`. Keep reusable UI primitives in the registry UI directory.
+  Expose small composable editor parts and a ready-to-use preset. Keep provider,
+  editable surface, toolbar, and feature controls separate. Document each public
+  part. Make CLI source dependencies match those parts. Keep consumer skills
+  aligned with both preset use and custom composition.
+  Use Lexical document state, not Slate state. Do not imply Plate plugin or
+  document compatibility. Keep editor styles in StyleX. Preserve native editing,
+  selection, clipboard, history, keyboard input, and accessible control names.
+  Discard saved link ranges after document content changes. Keep the
+  `editor-content` slot. Base CSS resets Lexical's native text wrappers only;
+  StyleX supplies the text theme.
 - Keep editor authentication helpers in `packages/editor/src/server` and out of
-  browser imports. Publish them through the `editor-auth` registry item.
-  Require an explicit OpenAuth audience and a separate document policy.
-  Keep origin and CSRF checks in host routes. Never put tokens in URLs or logs.
+  the browser entry. The `editor-auth` registry item copies them to the consumer
+  library directory. Support existing OpenAuth and Better Auth services. Do not
+  create a second account system. Require an explicit OpenAuth audience and a
+  separate document policy. Keep origin and CSRF checks in host server routes.
+  Do not treat a valid token or an admin role as document access. Never put
+  tokens in query strings, WebSocket URLs, or logs.
 
 ### Color values
 

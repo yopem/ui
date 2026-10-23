@@ -87,6 +87,16 @@
 }
 
 @layer yopem-base {
+  [data-slot="editor-content"] mark {
+    background-color: transparent;
+    color: inherit;
+  }
+
+  [data-slot="editor-content"] :is(sub, sup) {
+    font-size: inherit;
+    vertical-align: baseline;
+  }
+
   @media (prefers-reduced-motion: reduce) {
     [data-slot] {
       animation-duration: 0.01ms !important;

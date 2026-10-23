@@ -18,7 +18,8 @@ bunx --bun @yopem-ui/cli add editor-auth
 ```
 
 The CLI copies server helpers into your configured library directory. It
-installs JOSE and Zod. Do not import server helpers into browser components.
+installs JOSE and Zod. The editor UI remains a separate registry item. Do not
+import server helpers into browser components.
 
 ## OpenAuth
 
@@ -135,5 +136,6 @@ collaboration servers. Configure these services in your backend. Their
 deployment requires application-specific storage, provider, and
 document-permission rules.
 
-See the [OpenAuth source](https://github.com/yopem/auth) and
+See the [editor guide](/docs/editor) for client composition and Lexical document
+state. See the [OpenAuth source](https://github.com/yopem/auth) and
 [Better Auth documentation](https://better-auth.com/docs) for host setup.

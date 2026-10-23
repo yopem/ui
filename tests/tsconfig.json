@@ -6,6 +6,7 @@
     "types": ["bun", "node"],
     "paths": {
       "@registry/*": ["../packages/registry/src/*"],
+      "@editor/*": ["../packages/editor/src/*"],
       "@cli/*": ["../packages/cli/src/*"],
       "@workspace/*": ["../*"]
     }

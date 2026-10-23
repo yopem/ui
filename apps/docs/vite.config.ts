@@ -37,6 +37,7 @@ const stylexPostcssPlugin: unknown = loadStylexPostcss({
   include: [
     "src/**/*.{js,jsx,ts,tsx}",
     "../../packages/registry/src/**/*.{js,jsx,ts,tsx}",
+    "../../packages/editor/src/**/*.{js,jsx,ts,tsx}",
   ],
   babelConfig: {
     babelrc: false,

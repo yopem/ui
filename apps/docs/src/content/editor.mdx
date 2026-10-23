@@ -1,0 +1,186 @@
+## Foundation scope
+
+Editor provides core rich text editing with Lexical, React, and StyleX. Use the
+toolbar or keyboard shortcuts to format text. Use lists and history controls to
+organize and revise content.
+
+This foundation does not provide full Plate open-source parity. Advanced table
+editing, media, collaboration, and the complete Plate plugin set are outside
+this scope. The preset supports basic table insertion.
+
+## Installation
+
+[Initialize your project](/docs/installation) before you add Editor. Run the
+command from your application directory. Use the switcher to select Bun, npm,
+pnpm, or Yarn 2 and later.
+
+```sh
+bunx --bun @yopem-ui/cli add editor
+```
+
+The CLI copies Editor source and installs its dependencies. Keep your
+application's StyleX build integration and root styles enabled. See the
+[component reference](/components/editor) for source files and dependencies.
+
+## Usage
+
+Import Editor from the copied source.
+
+```tsx
+"use client"
+
+import { Editor } from "@/components/editor"
+
+export function NotesEditor() {
+  return <Editor ariaLabel="Notes" placeholder="Write your notes…" />
+}
+```
+
+`onChange` receives the Lexical `EditorState` and `LexicalEditor` instance. Call
+`state.toJSON()` to obtain the document for storage. The example below displays
+this output without saving it to a server.
+
+## Live examples
+
+Select text before you use a formatting control. Use Ctrl+B or Command+B for
+bold text. Use Ctrl+I or Command+I for italic text. Use the list controls to
+change the current block. Use Undo and Redo to review changes.
+
+<EditorExamples />
+
+## Compose editor parts
+
+Use `Editor` for the preset toolbar and editable surface. Use public parts to
+choose controls, order them, or add application controls. Each `EditorRoot`
+keeps its own document and history.
+
+`EditorRoot` accepts `initialState`, `onChange`, `editable`, and `ariaLabel`.
+`EditorContent` shares the root name and read-only state. It accepts native
+editable attributes, a ref, `className`, `xstyle`, and an optional placeholder.
+`EditorToolbar` provides keyboard navigation and accepts children. Its default
+name uses the root name followed by `formatting`.
+
+<EditorCompositionExamples />
+
+```tsx
+"use client"
+
+import {
+  EditorRoot,
+  EditorContent,
+  EditorToolbar,
+  EditorFormatButton,
+  EditorHistoryButton,
+  EditorBlockButton,
+} from "@/components/editor"
+
+export function ComposedNotes() {
+  return (
+    <EditorRoot ariaLabel="Composed editor">
+      <EditorToolbar aria-label="Custom formatting">
+        <EditorFormatButton format="bold" />
+        <EditorFormatButton format="italic" />
+        <EditorHistoryButton action="undo" />
+        <EditorHistoryButton action="redo" />
+        <EditorBlockButton block="h2" />
+      </EditorToolbar>
+      <EditorContent placeholder="Write your notes…" />
+    </EditorRoot>
+  )
+}
+```
+
+Choose `EditorFormatButton` for Lexical text formats. Use `EditorBlockButton`
+for paragraph, h1 through h6, quote, or code blocks. Use `EditorHistoryButton`
+for undo or redo. Use `EditorListButton` with bullet, number, or check.
+`EditorIndentButton` accepts indent or outdent. `EditorLinkControl` validates
+link URLs. `EditorTableButton` inserts a three-row, three-column table.
+
+Controls accept native control props, refs, `className`, and `xstyle`. A
+consumer `onClick` can prevent the command with `event.preventDefault()`. Keep
+controls and the editable surface inside their `EditorRoot`. Use `useEditor` for
+the Lexical instance. Use `useEditorState` for current text formats, history
+availability, root name, and read-only state. These hooks require `EditorRoot`.
+This composition API does not provide Plate plugin or document compatibility.
+
+## Add Lexical extensions
+
+Pass Lexical extensions through `EditorRoot` or the `Editor` preset. Define the
+extension list outside the component. Extensions can register nodes, commands,
+and cleanup functions through the Lexical lifecycle.
+
+<EditorExtensionExamples />
+
+The live example registers a custom note command.
+
+Use **Replace document** to load a new editor state. With **Link** open, press
+`Alt+Shift+R` to apply a host update. Saved link selections become invalid after
+content changes.
+
+This example enables the first-party autofocus extension:
+
+```tsx
+import { AutoFocusExtension } from "@lexical/extension"
+import { Editor, type EditorProps } from "@/components/editor"
+
+const extensions = [AutoFocusExtension]
+
+export function AppEditor(props: EditorProps) {
+  return <Editor {...props} extensions={extensions} />
+}
+```
+
+Treat extensions as initial configuration. Remount the editor when you change
+the extension list. Existing Plate plugins cannot run inside this Lexical
+lifecycle.
+
+Use [editor authentication](/docs/editor-auth) to connect existing OpenAuth or
+Better Auth services to your backend. The editor does not authenticate users or
+save documents automatically.
+
+## Initial state and read-only content
+
+Pass Lexical JSON or its JSON string to `initialState` when the editor mounts.
+The prop sets initial content; it is not a controlled value. Set
+`editable={false}` to display read-only content. Give each editor a distinct
+`ariaLabel`. The default accessible name is `Rich text editor`.
+
+```tsx
+import { Editor } from "@/components/editor"
+import type { EditorProps } from "@/components/editor"
+
+export function SavedNotes({
+  initialState,
+}: Pick<EditorProps, "initialState">) {
+  return (
+    <Editor
+      ariaLabel="Saved notes"
+      editable={false}
+      initialState={initialState}
+    />
+  )
+}
+```
+
+## Storage and migration
+
+Lexical JSON is not compatible with Slate or Plate JSON. Do not pass a Slate
+document to `initialState`. Convert existing content to supported Lexical nodes
+before you load it. Keep a backup of the original document during migration.
+
+Validate documents at your application's storage boundaries. This example does
+not provide persistence, migration, or server validation. Only load node types
+that your editor registers.
+
+## API
+
+| Prop           | Type                                                  | Default            |
+| -------------- | ----------------------------------------------------- | ------------------ |
+| `initialState` | `SerializedEditorState` or `string`                   | Empty document     |
+| `onChange`     | `(state: EditorState, editor: LexicalEditor) => void` | Not set            |
+| `editable`     | `boolean`                                             | `true`             |
+| `ariaLabel`    | `string`                                              | `Rich text editor` |
+| `placeholder`  | `string`                                              | Component default  |
+
+`Editor`, `EditorProps`, and the document model use the Lexical foundation. See
+the [component reference](/components/editor) for the generated API.

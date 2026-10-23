@@ -24,6 +24,7 @@ jobs:
             docs:
               - 'apps/docs/**'
               - 'packages/registry/**'
+              - 'packages/editor/**'
               - 'tests/e2e/**'
               - 'playwright.config.ts'
               - 'tests/tsconfig.json'
