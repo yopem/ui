@@ -35,6 +35,16 @@ function getServerSnapshot() {
   return false
 }
 
+function writeClipboard(value: string) {
+  if (typeof navigator === "undefined" || !navigator.clipboard?.writeText) {
+    throw new Error(
+      "Clipboard unavailable. Select the code and copy it manually.",
+    )
+  }
+
+  return navigator.clipboard.writeText(value)
+}
+
 export function useCopyToClipboard({
   timeout = 2000,
   onCopy,
@@ -57,13 +67,7 @@ export function useCopyToClipboard({
     status.setCopied(false)
 
     try {
-      if (typeof navigator === "undefined" || !navigator.clipboard?.writeText) {
-        throw new Error(
-          "Clipboard unavailable. Select the code and copy it manually.",
-        )
-      }
-
-      await navigator.clipboard.writeText(value)
+      await writeClipboard(value)
       status.setCopied(true, timeout)
       onCopy?.()
     } catch {

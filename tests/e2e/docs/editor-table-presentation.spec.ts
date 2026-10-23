@@ -478,6 +478,7 @@ test("rejected external HTML preserves formatted table and geometry", async ({
     '<table><tr><td style="border:2px dashed red">Unsupported</td></tr></table>',
     "<table><tr><td>A</td><td>B</td></tr><tr><td>C</td></tr></table>",
     "<table><tr><td><table><tr><td>Nested</td></tr></table></td></tr></table>",
+    " ".repeat(1_048_577),
   ]) {
     await tableExample(page)
       .getByRole("textbox", { name: "Table HTML input", exact: true })
@@ -489,6 +490,18 @@ test("rejected external HTML preserves formatted table and geometry", async ({
     await expect(output).toHaveText(before ?? "")
     await expect(table.locator("strong, b")).toContainText("Keep rich content")
   }
+
+  await tableExample(page)
+    .getByRole("textbox", { name: "Table HTML input", exact: true })
+    .fill(
+      "<table><tr><td><p><strong>Imported content</strong></p></td></tr></table>",
+    )
+  await tableExample(page)
+    .getByRole("button", { name: "Import table HTML", exact: true })
+    .click()
+  await expect(tableExample(page).getByRole("alert")).toHaveCount(0)
+  await expect(table.getByRole("row")).toHaveCount(1)
+  await expect(table.locator("strong, b")).toHaveText("Imported content")
 })
 
 test("focus loss and document changes cancel pointer preview without stale writes", async ({

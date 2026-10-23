@@ -287,26 +287,37 @@ test("copy buttons copy usage, not installation commands", async ({
   ).toBeVisible()
 })
 
-test("clipboard failures explain manual copying", async ({ page }) => {
-  await page.addInitScript(() => {
-    Object.defineProperty(navigator, "clipboard", {
-      configurable: true,
-      value: {
-        writeText: () => Promise.reject(new Error("Clipboard blocked")),
-      },
+for (const failure of ["unavailable", "blocked"] as const) {
+  test(`clipboard ${failure} preserves source and reports failure`, async ({
+    page,
+  }) => {
+    await page.addInitScript((mode) => {
+      Object.defineProperty(navigator, "clipboard", {
+        configurable: true,
+        value:
+          mode === "unavailable"
+            ? undefined
+            : {
+                writeText: () => Promise.reject(new Error("Clipboard blocked")),
+              },
+      })
+    }, failure)
+    await page.goto("/components/button")
+
+    const copy = page.getByRole("button", {
+      name: "Copy Button usage",
+      exact: true,
     })
+
+    const block = page.getByTestId("copyable-code").filter({ has: copy })
+    await expect(copy).toBeEnabled()
+    await copy.click()
+    await expect(block.getByRole("status")).not.toBeEmpty()
+    await expect(block.locator("pre")).toBeVisible()
+    await expect(block.locator("pre")).not.toBeEmpty()
+    await expect(copy).toBeEnabled()
   })
-  await page.goto("/components/button")
-  await expect(
-    page.getByRole("button", { name: "Copy Button usage", exact: true }),
-  ).toBeEnabled()
-  await page
-    .getByRole("button", { name: "Copy Button usage", exact: true })
-    .click()
-  await expect(
-    page.getByRole("status").filter({ hasText: /copy|clipboard/i }),
-  ).toContainText(/select|manual|blocked|failed|could not|couldn't/i)
-})
+}
 
 test("StyleX search opens, finds a component, and navigates", async ({
   page,

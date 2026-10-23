@@ -43,6 +43,21 @@ import { useRef, useState } from "react"
 
 const tableExtensions = [EditorTablePresentationExtension]
 
+function parseTableExampleHTML(editor: LexicalEditor, html: string) {
+  if (new TextEncoder().encode(html).byteLength > TABLE_MAX_INPUT_BYTES) {
+    throw new Error("HTML exceeds size limit.")
+  }
+
+  const Parser = editor.getRootElement()?.ownerDocument.defaultView?.DOMParser
+
+  if (!Parser) throw new Error("HTML import is unavailable.")
+
+  const document = new Parser().parseFromString(html, "text/html")
+  validateTablePresentationHTML(document)
+
+  return document
+}
+
 function TableRoundTripControls() {
   const editor = useEditor()
   const { editable } = useEditorState()
@@ -137,23 +152,7 @@ function TableRoundTripControls() {
           if (!editor.isEditable()) return
 
           try {
-            if (
-              new TextEncoder().encode(htmlInput).byteLength >
-              TABLE_MAX_INPUT_BYTES
-            )
-              throw new Error("HTML exceeds size limit.")
-
-            const Parser =
-              editor.getRootElement()?.ownerDocument.defaultView?.DOMParser
-
-            if (!Parser) throw new Error("HTML import is unavailable.")
-
-            const document = new Parser().parseFromString(
-              htmlInput,
-              "text/html",
-            )
-
-            validateTablePresentationHTML(document)
+            const document = parseTableExampleHTML(editor, htmlInput)
             editor.update(() => {
               const nodes = $generateNodesFromDOM(editor, document)
               $getRoot()

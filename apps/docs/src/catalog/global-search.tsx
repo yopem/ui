@@ -146,12 +146,10 @@ export function GlobalSearch() {
     try {
       const data = await searchClient.search(trimmedQuery)
 
-      const parsed = searchResultsSchema.safeParse(data)
-
-      if (!parsed.success) throw new Error("Invalid search response")
+      const parsed = searchResultsSchema.parse(data)
 
       if (!controller.signal.aborted) {
-        setResults(parsed.data)
+        setResults(parsed)
         setStatus("ready")
       }
     } catch {
