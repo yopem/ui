@@ -47,6 +47,7 @@ export const navigationGroups = [
       { name: "Layout and typography", url: "/docs/layout" },
       { name: "Editor", url: "/docs/editor" },
       { name: "Editor authentication", url: "/docs/editor-auth" },
+      { name: "Editor document storage", url: "/docs/editor-store" },
       { name: "Styling with StyleX", url: "/docs/styling" },
       { name: "Lint rules", url: "/docs/lint" },
     ],

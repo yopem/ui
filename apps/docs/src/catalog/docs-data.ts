@@ -47,6 +47,12 @@ export function getRequiredItems(slug: string, previewSource = "") {
 
 export const guidePages = [
   {
+    title: "Editor document storage",
+    url: "/docs/editor-store",
+    content:
+      "Install server storage with Bun, npm, pnpm, or Yarn. Use authenticated HTTP GET, PUT, DELETE with D1 or PostgreSQL. Supply document policy, exact origins, CSRF checks, schema validation, conditional ETags, and stable operation IDs.",
+  },
+  {
     title: "Editor authentication",
     url: "/docs/editor-auth",
     content:

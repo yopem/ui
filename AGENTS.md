@@ -485,3 +485,15 @@ Read `docs/README.md` inside that installed package first, then read the relevan
 
 This block is written and re-added by `turbo` before repository-scoped commands when an AI agent is detected. In the Turborepo source repository, its template is defined in `crates/turborepo-cli/src/cli/agent_guidance.rs`. Removing the managed block while updates are enabled means a later qualifying invocation will add it again. Set `"agentGuidance": false` in the root `turbo.json` or `turbo.jsonc` to opt out; this does not remove an existing block. Keep the block committed with your work to avoid an uncommitted change on the next agent invocation.
 <!-- END:turborepo-agent-rules -->
+
+## Editor document storage
+
+Use the separate `editor-store` server library for D1 or PostgreSQL snapshots.
+Apply one copied SQL migration before use. Supply existing authentication,
+complete Lexical validation, and host document policies, including deletion.
+Use exact trusted origins and host CSRF verification for HTTP writes.
+Keep operation IDs and preconditions unchanged when a write result is uncertain.
+HTTP callbacks receive cancellation through `Request.signal`. Storage checks
+deadlines before driver calls. Synchronous work cannot be stopped.
+Do not add accounts, ACL tables, or implicit document grants.
+See https://ui.yopem.com/docs/editor-store for protocol and deployment limits.

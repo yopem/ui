@@ -10,6 +10,12 @@ const usageNoteValues = {
     "Validate external table JSON and HTML before conversion. Tables support 50 rows, 50 columns, and 2500 covered cells across the document. Invalid updates preserve existing content. Saved table selections become invalid after document changes.",
     "The editor provides a foundation, not full Plate feature parity. Collaboration, media uploads, comments, and document conversion are not included.",
   ],
+  "editor-store": [
+    "Import server helpers from @/lib/editor-store. Apply one copied SQL migration for D1 or PostgreSQL.",
+    "Supply existing authentication, separate document policies, complete Lexical validation, exact origins, and host CSRF verification. No account or ACL service is included.",
+    "Use exact ETags and stable operation IDs. Retry uncertain writes with identical inputs. Receipts can return historical results.",
+    "Keep generation records, receipts, and tombstones. Supply host quotas and backups. PGlite tests do not prove PostgreSQL TCP or Hyperdrive behavior.",
+  ],
   "editor-auth": [
     "Import server helpers from @/lib/editor-auth. Keep them outside browser components. Use an existing OpenAuth or Better Auth service.",
     "Use createOpenAuthAuthentication with an explicit audience. The default issuer is https://auth.yopem.com. Identity uses properties.id, not the mutable subject hash.",

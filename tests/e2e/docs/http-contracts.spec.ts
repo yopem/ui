@@ -155,14 +155,15 @@ test("public registry inventory ships source, dependencies, and documentation", 
     }
 
     if (item.type === "registry:ui" || item.type === "registry:hook") {
-      const target =
-        item.type === "registry:hook"
-          ? `@/hooks/${item.name}.ts`
-          : `@/components/ui/${item.name}.tsx`
+      const directory = item.type === "registry:hook" ? "hooks" : "components"
+      const sourceFiles = item.files.filter((file) => file.type === item.type)
 
-      expect(item.files).toEqual(
-        expect.arrayContaining([expect.objectContaining({ target })]),
-      )
+      expect(sourceFiles.length, item.name).toBeGreaterThan(0)
+
+      for (const file of sourceFiles) {
+        expect(file.path.startsWith(`${directory}/`), file.path).toBe(true)
+        expect(file.target, file.path).toBe(`@/${file.path}`)
+      }
     }
 
     if (item.name === "container")
@@ -230,7 +231,7 @@ test("public registry inventory ships source, dependencies, and documentation", 
     expect(docs.status(), path).toBe(200)
     const examples = (await docs.text()).split("## API reference")[0]
     expect(examples, path).not.toContain("@registry/")
-    expect(examples, path).toMatch(/from "@\/(?:components\/ui|hooks)\//)
+    expect(examples, path).toMatch(/from "@\/(?:components|hooks)\//)
   }
 
   for (const name of ["use-event-callback", "use-media-query"]) {

@@ -9,9 +9,13 @@ export const sourceImportReplacements = [
   ["@registry/theme/", "@/theme/"],
 ] as const
 
-export function rewriteImports(content: string) {
+export function rewriteImports(content: string, path = "") {
+  const source = path.startsWith("lib/editor-store/")
+    ? content.replaceAll('from "./auth"', 'from "@/lib/editor-auth/auth"')
+    : content
+
   return sourceImportReplacements.reduce(
     (result, [source, target]) => result.replaceAll(source, target),
-    content,
+    source,
   )
 }

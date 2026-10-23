@@ -17,6 +17,18 @@ export function resolveSourcePath(path: string) {
       path.slice("components/editor/".length),
     )
 
+  if (path === "lib/editor-auth/index.ts")
+    return resolve(root, "../../editor/src/server/auth-index.ts")
+
+  if (path.startsWith("lib/editor-store/"))
+    return resolve(
+      root,
+      "../../editor/src/server",
+      path === "lib/editor-store/index.ts"
+        ? "document-index.ts"
+        : path.slice("lib/editor-store/".length),
+    )
+
   if (path.startsWith("lib/editor-auth/"))
     return resolve(
       root,

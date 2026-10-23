@@ -8,6 +8,7 @@ const identitySchema = z.object({
 const actionSchema = z.enum([
   "document:read",
   "document:write",
+  "document:delete",
   "ai:invoke",
   "upload:create",
   "collab:read",

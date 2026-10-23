@@ -37,6 +37,7 @@ const items = await Promise.all(
       sourceItem.files.map(async (file) => {
         const content = rewriteImports(
           await readFile(resolveSourcePath(file.path), "utf8"),
+          file.path,
         )
 
         return { ...file, content, integrity: integrity(content) }

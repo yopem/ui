@@ -1,0 +1,187 @@
+## Scope
+
+Use this server library for portable Lexical snapshots. Select D1 or PostgreSQL.
+Keep existing accounts and authentication services.
+
+## Install
+
+Use Bun, npm, pnpm, or Yarn 2 and later. Select your package manager in this
+command block.
+
+```sh
+bunx --bun @yopem-ui/cli add editor-store
+```
+
+The registry also installs `editor-auth`. It copies TypeScript source and both
+SQL migrations into your library directory.
+
+Apply only your database dialect's `migrations/*/0001-document-snapshots.sql`.
+Back up existing data first. Use a D1 migration batch or a PostgreSQL migration
+transaction. No automatic or destructive migration runs.
+
+Import server helpers from `@/lib/editor-store`. Import existing authentication
+adapters from `@/lib/editor-auth`. Do not import these libraries into browser
+components.
+
+## Configure the host
+
+Both storage factories require `policy`, `validateState`, `maxConcurrent`, and
+`timeoutMs`. Only literal `true` permits access. Supply separate policies for
+`document:read`, `document:write`, and `document:delete`. The library does not
+create application documents or grant access from stored rows.
+
+`validateState(state, schemaVersion)` must validate the complete supported
+Lexical schema. Check node types, versions, custom nodes, and explicit schema
+versions. A JSON check or root-envelope check is insufficient. Keep older
+validators while old receipts remain readable. Unsupported saved heads cannot be
+replaced or deleted.
+
+```ts
+import {
+  createD1DocumentService,
+  createDocumentHttpHandler,
+} from "@/lib/editor-store"
+import {
+  authentication,
+  csrf,
+  documentPolicy,
+  snapshotPolicy,
+  validateLexicalState,
+} from "@/server/editor-policy"
+
+export function documentRoute(
+  binding: Parameters<typeof createD1DocumentService>[0],
+) {
+  const service = createD1DocumentService(binding, {
+    policy: snapshotPolicy,
+    validateState: validateLexicalState,
+    maxConcurrent: 8,
+    timeoutMs: 5000,
+  })
+
+  return createDocumentHttpHandler({
+    origin: "https://editor.example",
+    basePath: "/documents/",
+    authenticate: authentication,
+    policy: documentPolicy,
+    verifyCsrf: csrf,
+    service,
+    maxConcurrent: 8,
+    timeoutMs: 5000,
+  })
+}
+```
+
+The imports from `@/server/editor-policy` are host implementations, not supplied
+services. Use the existing OpenAuth or Better Auth adapter for `authentication`.
+Keep an explicit OpenAuth audience. Better Auth verification must not refresh
+sessions.
+
+Forward verified `credentialExpiresAt` in Unix epoch milliseconds.
+Authentication checks expiry before and after the HTTP policy. Storage deadlines
+also stop work at credential expiry. Optional missing expiry does not imply a
+durable credential or collaboration ticket.
+
+Both HTTP and storage policies run on retries. Each remains mandatory. Neither
+policy is atomic with SQL commit. Immediate revocation requires a separate host
+permission fence.
+
+Configure one exact serialized HTTP or HTTPS origin without a trailing slash.
+Write requests require that exact `Origin`. Missing, null, multiple, subdomain,
+and cross-origin values fail closed. The request URL must use the same origin.
+Configure trusted proxies to preserve it. Reject ambiguous paths before proxy
+URL normalization.
+
+`verifyCsrf` receives request, authenticated identity, token, and cancellation
+signal. Verify `X-CSRF-Token` against the host session. Only literal `true`
+passes. False returns 403; other results and failures return 503. There is no
+built-in CSRF token or authentication service.
+
+HTTP callbacks receive a Request with the handler cancellation signal. Headers,
+cookies, and credentials remain intact. Body ownership transfers once.
+
+The handler checks deadlines after callbacks. Storage checks deadlines before
+driver calls and after validation.
+
+Synchronous work cannot be stopped. After a dispatched write, an expired
+deadline produces an uncertain result.
+
+Reuse each handler and storage service when the backend permits it. Capacity
+limits apply to one factory instance. Request-local factories do not enforce
+application-wide quotas.
+
+## HTTP protocol
+
+Use `GET`, `PUT`, or `DELETE` at `/documents/namespace:value`. IDs contain
+unchanged ASCII letters, digits, underscores, hyphens, and colons. Maximum ID
+length is 256 bytes. Percent encodings, slashes, query strings, and fragments
+are rejected. Do not send credentials in URLs.
+
+GET returns a snapshot and strong `ETag`. Missing documents and tombstones
+return 404 after authorization. Responses use `Cache-Control: no-store`. This
+handler does not provide CORS or conditional GET caching.
+
+PUT requires `Content-Type: application/json`. Its exact body is
+`{ "schemaVersion": 1, "state": <Lexical JSON> }`. Unknown outer fields fail.
+HTTP body size is at most 1 MiB, including its envelope. UTF-8, nesting, value
+count, and text limits also apply. Canonical saved state must fit 1 MiB.
+
+Use `If-None-Match: *` to create or recreate a deleted document. Use one exact
+strong `If-Match` ETag to update. DELETE requires `If-Match` and no body. Do not
+combine preconditions, send lists, use weak ETags, or use `If-Match: *`. Missing
+preconditions return 428. Failed CAS returns 412.
+
+Every write requires `Idempotency-Key`: 16–128 ASCII letters, digits,
+underscores, or hyphens. `crypto.randomUUID()` is valid. Keep the same operation
+ID, body, method, and precondition for retries. Different payloads with one
+operation ID return 409.
+
+Successful writes return 200 with the original operation record and ETag. A
+replay can return a historical receipt after later writes. Success proves that
+operation committed, not that its result remains current. Read again to obtain
+the current head.
+
+An uncertain write returns 503 with
+`{ "error": "uncertain", "retry": "same-operation" }`. Lost HTTP connections are
+also uncertain. Never infer rollback from a timeout, abort, or network error.
+Retry the identical operation after fresh authentication and policy checks. Do
+not generate a new operation ID for that retry.
+
+Invalid requests return 400, origin or policy denial returns 403, and missing
+authentication returns 401. Unsupported methods return 405. Invalid media types
+return 415; excessive HTTP bodies return 413. Provider, deadline, capacity, or
+corrupt-storage failures return safe 503 errors. Error responses do not expose
+SQL, credentials, or stack traces.
+
+## Storage and deployment limits
+
+CAS uses a random generation and exact signed64 decimal revision. Tombstones
+retain generation and revision. Recreation starts a new generation. Never use
+object-store ETags as document preconditions.
+
+Permanent generation keys prevent reuse. Durable receipts store canonical
+request digests and full result snapshots. Failed CAS stores no receipt. Never
+prune generations. Receipts and tombstones have no expiry. Host quotas, backups,
+monitoring, and an explicit retry-retention policy are required. Database growth
+is not bounded by the snapshot limit.
+
+D1 requires a native binding with `withSession("first-primary")`, prepared
+statements, and atomic batch. Local tests use actual workerd-backed Miniflare
+D1. Remote D1 staging remains unverified. There is no D1 REST write adapter.
+
+PostgreSQL accepts a structural `pg` Pool interface. Install the host driver
+separately. Use a writable primary, verified TLS, finite pool size, and finite
+connection timeout. Each transaction owns one checked-out client. Abort destroys
+that client. End the pool during host shutdown.
+
+Workers require `nodejs_compat`, supported `pg`, cache-disabled Hyperdrive, and
+request-local connection ownership. End request-local pools in `finally`. This
+topology is not runtime-proven here.
+
+Local PostgreSQL tests use PGlite's real PostgreSQL WASM engine. They do not
+prove TCP driver behavior, TLS, independent connections, server restarts, or
+Hyperdrive. Run those checks before production deployment.
+
+Yjs heads reject snapshot reads and writes. Collaboration needs its own
+migration and protocol. Assets, cross-store transactions, uploads, AI, account
+services, and built-in ACL tables are outside this library.

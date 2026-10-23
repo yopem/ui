@@ -9,7 +9,7 @@ import { usageSnippets } from "./usage"
 const sources = import.meta.glob<string>(
   [
     "../../../../packages/registry/src/**/*.{ts,tsx,css}",
-    "../../../../packages/editor/src/**/*.{ts,tsx}",
+    "../../../../packages/editor/src/**/*.{ts,tsx,sql}",
   ],
   {
     query: "?raw",
@@ -110,11 +110,15 @@ export async function getDocumentation({ data }: { data: string }) {
     })),
     files: await Promise.all(
       files.map(async (file) => {
-        const sourcePath = file.path.startsWith("lib/editor-auth/")
-          ? `../../../../packages/editor/src/server/${file.path.slice("lib/editor-auth/".length)}`
-          : file.path.startsWith("components/editor/")
-            ? `../../../../packages/editor/src/${file.path.slice("components/editor/".length)}`
-            : `../../../../packages/registry/src/${file.path}`
+        const sourcePath = file.path.startsWith("lib/editor-store/")
+          ? `../../../../packages/editor/src/server/${file.path === "lib/editor-store/index.ts" ? "document-index.ts" : file.path.slice("lib/editor-store/".length)}`
+          : file.path === "lib/editor-auth/index.ts"
+            ? "../../../../packages/editor/src/server/auth-index.ts"
+            : file.path.startsWith("lib/editor-auth/")
+              ? `../../../../packages/editor/src/server/${file.path.slice("lib/editor-auth/".length)}`
+              : file.path.startsWith("components/editor/")
+                ? `../../../../packages/editor/src/${file.path.slice("components/editor/".length)}`
+                : `../../../../packages/registry/src/${file.path}`
 
         const load = sources[sourcePath]
 
@@ -123,7 +127,7 @@ export async function getDocumentation({ data }: { data: string }) {
         return {
           path: file.path,
           target: `src/${file.path}`,
-          content: rewriteImports(await load()),
+          content: rewriteImports(await load(), file.path),
         }
       }),
     ),

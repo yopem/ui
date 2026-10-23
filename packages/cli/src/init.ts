@@ -1895,6 +1895,7 @@ export async function initProject(
         ["@/components/ui", "/*", ".tsx"],
         ["@/components/editor", "", "/index.ts"],
         ["@/lib/editor-auth", "", "/index.ts"],
+        ["@/lib/editor-store", "", "/index.ts"],
         ["@/hooks", "/*", ".ts"],
         ["@/lib", "/*", ".ts"],
         ["@/styles/tokens.stylex", "", ".ts"],

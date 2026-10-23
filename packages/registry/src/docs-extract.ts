@@ -90,6 +90,10 @@ export function extractDocs() {
     return dependency >= 0
       ? path.slice(dependency + 13)
       : relative(root, path)
+          .replace(
+            /^\.\.\/\.\.\/editor\/src\/server\/document-/,
+            "lib/editor-store/document-",
+          )
           .replace(/^\.\.\/\.\.\/editor\/src\/server\//, "lib/editor-auth/")
           .replace(/^\.\.\/\.\.\/editor\/src\//, "components/editor/")
   }
@@ -469,9 +473,11 @@ export function extractDocs() {
           /\.tsx?$/.test(file.path) &&
           (item.name === "editor"
             ? file.path === "components/editor/index.ts"
-            : item.name === "editor-auth"
-              ? file.path === "lib/editor-auth/index.ts"
-              : true),
+            : item.name === "editor-store"
+              ? file.path === "lib/editor-store/index.ts"
+              : item.name === "editor-auth"
+                ? file.path === "lib/editor-auth/index.ts"
+                : true),
       )
       .flatMap((file) => {
         const source = program.getSourceFile(resolveSourcePath(file.path))

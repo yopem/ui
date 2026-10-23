@@ -93,6 +93,25 @@ Check trusted origins and CSRF tokens in host routes. Keep tokens out of URLs an
 JWT verification does not guarantee immediate revocation.
 These helpers do not deploy AI, upload, persistence, or collaboration services.
 
+### Editor document storage
+
+Install optional document storage with the matching package manager:
+
+\`\`\`sh
+bunx --bun @yopem-ui/cli add editor-store
+npx @yopem-ui/cli add editor-store
+pnpm dlx @yopem-ui/cli add editor-store
+yarn dlx @yopem-ui/cli add editor-store
+\`\`\`
+
+Use optional editor-store server source for D1 or PostgreSQL snapshots.
+Import it from \`${imports.lib.replace(/\/stylex$/, "/editor-store")}\` on the server only.
+Apply one copied SQL migration. Supply complete Lexical validation and separate document policies, including deletion.
+Configure exact trusted origins and host CSRF verification. Never add accounts or implicit document grants.
+Retry uncertain writes with identical operation IDs and preconditions.
+HTTP callbacks receive cancellation through \`Request.signal\`. Storage checks deadlines before driver calls.
+See https://ui.yopem.com/docs/editor-store for the HTTP protocol and deployment limits.
+
 ### Visual foundations
 
 Use neutral light and dark surfaces with semantic color pairs.
