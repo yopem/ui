@@ -2,10 +2,12 @@
   "extends": "@yopem/typescript-config/base",
   "compilerOptions": {
     "noEmit": true,
+    "resolveJsonModule": true,
     "types": ["bun", "node"],
     "paths": {
       "@registry/*": ["../packages/registry/src/*"],
-      "@cli/*": ["../packages/cli/src/*"]
+      "@cli/*": ["../packages/cli/src/*"],
+      "@workspace/*": ["../*"]
     }
   },
   "include": ["**/*.ts", "../playwright.config.ts"]

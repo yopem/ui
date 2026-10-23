@@ -1,8 +1,10 @@
 import type { SourceItem } from "@registry/items/types"
 
+import { editorDependency } from "@registry/editor-dependencies"
+
 export const editorAuthItem: SourceItem = {
   categories: ["utility"],
-  dependencies: ["jose@6.2.13", "zod@^4.6.5"],
+  dependencies: [editorDependency("jose"), editorDependency("zod")],
   description:
     "Connects editor backends to existing OpenAuth and Better Auth services.",
   devDependencies: [],

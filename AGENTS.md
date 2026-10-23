@@ -144,6 +144,15 @@ Canonical sources live under `packages/registry/src/`. Never hand-edit
 TanStack-generated route files. `bun run registry:build` regenerates registry
 artifacts; docs dev, registry build, and registry typecheck regenerate API data.
 
+## Dependency versions
+
+Use caret ranges for dependency versions. Preserve `workspace:` and `catalog:`
+references, including peer references. Keep npm aliases and use inner caret ranges.
+Use a catalog only for dependencies used in at least two package manifests.
+Keep single-manifest dependencies in that manifest. Do not change package versions
+or `packageManager` values to caret ranges. Do not update resolved versions for
+policy-only changes.
+
 ## Code comments
 
 Do not add code comments or JSDoc. Preserve existing comments.

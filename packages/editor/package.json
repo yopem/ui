@@ -10,7 +10,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "jose": "6.2.13",
+    "jose": "catalog:",
     "zod": "catalog:"
   },
   "devDependencies": {
