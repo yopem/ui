@@ -21,7 +21,7 @@
     "@lexical/react": "^0.52.0",
     "@lexical/rich-text": "^0.52.0",
     "@lexical/selection": "^0.52.0",
-    "@lexical/table": "^0.52.0",
+    "@lexical/table": "catalog:",
     "@stylexjs/stylex": "catalog:",
     "@yopem-ui/registry": "workspace:*",
     "jose": "catalog:",

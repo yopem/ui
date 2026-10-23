@@ -9,6 +9,24 @@ import {
   type RangeSelection,
 } from "lexical"
 
+export function $isValidBookmarkPoint(point: RangeSelection["anchor"]) {
+  const node = $getNodeByKey(point.key)
+
+  const size =
+    point.type === "text" && $isTextNode(node)
+      ? node.getTextContentSize()
+      : point.type === "element" && $isElementNode(node)
+        ? node.getChildrenSize()
+        : -1
+
+  return (
+    node?.isAttached() === true &&
+    Number.isInteger(point.offset) &&
+    point.offset >= 0 &&
+    point.offset <= size
+  )
+}
+
 export function createEditorSelectionBookmark(editor: LexicalEditor) {
   let saved: RangeSelection | null = null
   let unregister: (() => void) | undefined
@@ -48,21 +66,7 @@ export function createEditorSelectionBookmark(editor: LexicalEditor) {
     if (!saved || !unregister) return false
 
     for (const point of [saved.anchor, saved.focus]) {
-      const node = $getNodeByKey(point.key)
-
-      const size =
-        point.type === "text" && $isTextNode(node)
-          ? node.getTextContentSize()
-          : point.type === "element" && $isElementNode(node)
-            ? node.getChildrenSize()
-            : -1
-
-      if (
-        !node?.isAttached() ||
-        !Number.isInteger(point.offset) ||
-        point.offset < 0 ||
-        point.offset > size
-      ) {
+      if (!$isValidBookmarkPoint(point)) {
         clear()
 
         return false
