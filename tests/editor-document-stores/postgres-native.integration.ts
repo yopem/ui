@@ -1,11 +1,13 @@
 import type {
   DocumentContext,
   DocumentMutation,
+  JsonValue,
 } from "@editor/server/document-model"
 import type { DocumentPgPool } from "@editor/server/document-postgres"
 import type { IncomingHttpHeaders } from "node:http"
 
 import { createDocumentHttpHandler } from "@editor/server/document-http"
+import { canonical } from "@editor/server/document-model"
 import { createPostgresDocumentService } from "@editor/server/document-postgres"
 import { createOpenAuthAuthentication } from "@editor/server/openauth"
 import { exportJWK, generateKeyPair, SignJWT } from "jose"
@@ -18,6 +20,8 @@ import { resolve } from "node:path"
 import { setTimeout as delay } from "node:timers/promises"
 import { Pool } from "pg"
 import { z } from "zod"
+
+import { nativeSnapshots } from "./native-snapshots"
 
 const fixture = process.env.EDITOR_PG_FIXTURE
 
@@ -171,6 +175,46 @@ try {
   } finally {
     clients.forEach((client) => client.release())
   }
+
+  const examples = nativeSnapshots()
+
+  const allowedSnapshots = new Set(
+    examples.map((example) => canonical(example.state)),
+  )
+
+  const nativeService = createPostgresDocumentService(pool, {
+    ...config,
+    validateState(value: JsonValue, version: number) {
+      return version === 1 && allowedSnapshots.has(canonical(value))
+    },
+  })
+
+  for (const example of examples) {
+    const raw = JSON.stringify(example.state)
+    assert(new TextEncoder().encode(raw).length <= 1048576)
+
+    const mutation: DocumentMutation = {
+      ...save(example.documentId),
+      change: { kind: "save", schemaVersion: 1, state: raw },
+    }
+
+    const result = await nativeService.mutate(mutation, context())
+    assert.equal(result.status, "committed")
+
+    if (result.status !== "committed")
+      throw new Error("Native snapshot did not commit")
+    assert.equal(result.record.mode, "snapshot")
+    assert.deepEqual(result.record.state, example.state)
+    assert.deepEqual(
+      (await nativeService.read(example.documentId, context()))?.state,
+      example.state,
+    )
+    assert.deepEqual(await nativeService.mutate(mutation, context()), result)
+  }
+
+  checks.push(
+    "native 50x50 tables, full cell presentation, and long paragraphs persist and replay",
+  )
 
   const race = await Promise.all([
     service.mutate(save("app:race"), context()),
@@ -411,6 +455,7 @@ try {
     method: string,
     overrides: Record<string, string> = {},
     body?: string,
+    documentId = "app:http",
   ) {
     return new Promise<{
       status: number
@@ -418,7 +463,7 @@ try {
       body: string
     }>((accept, reject) => {
       const req = request(
-        `${origin}/documents/app:http`,
+        `${origin}/documents/${documentId}`,
         {
           method,
           ca,
@@ -529,6 +574,32 @@ try {
   assert.equal((await service.read("app:http", context()))?.deleted, true)
   checks.push(
     "real verified HTTPS GET PUT DELETE with local signed JWT/JWKS policy Origin CSRF expiry and durable denial checks",
+  )
+
+  for (const example of examples) {
+    const documentId = `${example.documentId}:https`
+
+    const headers = {
+      "if-none-match": "*",
+      "idempotency-key": crypto.randomUUID(),
+    }
+
+    const body = JSON.stringify({ schemaVersion: 1, state: example.state })
+    const first = await http("PUT", headers, body, documentId)
+    assert.equal(first.status, 200)
+    const read = await http("GET", {}, undefined, documentId)
+    assert.equal(read.status, 200)
+    assert.deepEqual(
+      z.object({ state: z.json() }).parse(JSON.parse(read.body)).state,
+      example.state,
+    )
+    const retried = await http("PUT", headers, body, documentId)
+    assert.equal(retried.status, 200)
+    assert.equal(retried.headers.etag, first.headers.etag)
+  }
+
+  checks.push(
+    "native snapshot boundaries preserve state and retry ETags over signed verified HTTPS",
   )
 
   for (const phase of [

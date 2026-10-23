@@ -52,7 +52,8 @@ closes its pools, and closes its HTTP servers. It does not stop PostgreSQL or
 change server configuration.
 
 The checks cover independent connections, CAS races, receipts, actor binding,
-tombstones, generations, and signed64 revisions. HTTPS checks cover signed
+tombstones, generations, and signed64 revisions. Native documents cover 50 × 50
+tables, cell presentation, and long paragraphs. HTTPS checks cover signed
 authentication, policy, Origin, CSRF, expired credentials, and GET/PUT/DELETE.
 Deadline checks block the event loop after actual driver responses and check
 later SQL dispatch. They also check query and acquisition cancellation,

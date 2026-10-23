@@ -123,6 +123,7 @@ yarn dlx @yopem-ui/cli add editor-store
 Use optional editor-store server source for D1 or PostgreSQL snapshots.
 Import it from \`${imports.lib.replace(/\/stylex$/, "/editor-store")}\` on the server only.
 Apply one copied SQL migration. Supply complete Lexical validation and separate document policies, including deletion.
+Keep snapshots within 1 MiB, 131072 JSON values, and 64 nested objects or arrays.
 Configure exact trusted origins and host CSRF verification. Never add accounts or implicit document grants.
 Retry uncertain writes with identical operation IDs, preconditions, authentication provider, and user ID.
 HTTP callbacks receive cancellation through \`Request.signal\`. Storage checks deadlines before driver calls.

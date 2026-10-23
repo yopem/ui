@@ -14,12 +14,15 @@ import type { Pool } from "pg"
 
 import { createD1DocumentService } from "@editor/server/document-d1"
 import { createDocumentHttpHandler } from "@editor/server/document-http"
+import { canonical } from "@editor/server/document-model"
 import { createPostgresDocumentService } from "@editor/server/document-postgres"
 import { PGlite } from "@electric-sql/pglite"
 import { afterAll, beforeAll, describe, expect, test } from "bun:test"
 import { Miniflare } from "miniflare"
 import { readFile } from "node:fs/promises"
 import { z } from "zod"
+
+import { nativeSnapshots } from "./native-snapshots"
 
 function pgCompatibility(pool: Pool): DocumentPgPool {
   return pool
@@ -101,6 +104,49 @@ for (const dialect of ["d1", "postgres"] as const) {
 
       return (await session.prepare(text).all()).results
     }
+
+    test("native snapshot boundaries persist and replay without data loss", async function nativeBoundary() {
+      const examples = nativeSnapshots()
+
+      const allowed = new Set(
+        examples.map((example) => canonical(example.state)),
+      )
+
+      const config = {
+        ...configuration(),
+        validateState(value: JsonValue, version: number) {
+          return version === 1 && allowed.has(canonical(value))
+        },
+      }
+
+      const nativeService =
+        dialect === "d1"
+          ? createD1DocumentService(binding, config)
+          : createPostgresDocumentService(pool, config)
+
+      for (const example of examples) {
+        const raw = JSON.stringify(example.state)
+        expect(new TextEncoder().encode(raw).length).toBeLessThanOrEqual(
+          1048576,
+        )
+
+        const input: DocumentMutation = {
+          documentId: example.documentId,
+          operationId: crypto.randomUUID(),
+          expected: { kind: "absent" },
+          change: { kind: "save", schemaVersion: 1, state: raw },
+        }
+
+        const saved = record(await nativeService.mutate(input, context()))
+        expect(saved.state).toEqual(example.state)
+        expect(
+          (await nativeService.read(example.documentId, context()))?.state,
+        ).toEqual(example.state)
+        expect(record(await nativeService.mutate(input, context()))).toEqual(
+          saved,
+        )
+      }
+    }, 60000)
 
     test("operation receipt binds authenticated actor", async function actor() {
       const input = save("app:actor-binding", { kind: "absent" }, "actor")
@@ -761,7 +807,7 @@ for (const dialect of ["d1", "postgres"] as const) {
       waiting.resolve(true)
       await waiting.promise
     }, 60000)
-    test("state depth, node and text budgets reject without changing head", async function stateBudgets() {
+    test("state depth, value and byte budgets reject without changing head", async function stateBudgets() {
       const id = "tenant:budgets"
 
       const a = record(
@@ -769,40 +815,46 @@ for (const dialect of ["d1", "postgres"] as const) {
       )
 
       const inputs = [
-        '{"root":{"type":"root","children":[' +
-          Array.from({ length: 10 }, () =>
-            JSON.stringify({ type: "text", text: "x".repeat(100000) }),
-          ).join(",") +
-          '],"extra":[' +
-          Array.from({ length: 2500 }, () => "1e20").join(",") +
-          "]}}",
-        state("x".repeat(100001)),
-        '{"root":{"type":"root","children":[],"deep":' +
-          "[".repeat(65) +
-          "0" +
-          "]".repeat(65) +
-          "}}",
-        JSON.stringify({
-          root: {
-            type: "root",
-            children: Array.from({ length: 7000 }, () => ({
-              type: "text",
-              text: "x",
-            })),
-          },
-        }),
+        {
+          raw:
+            '{"root":{"type":"root","children":[' +
+            Array.from({ length: 10 }, () =>
+              JSON.stringify({ type: "text", text: "x".repeat(100000) }),
+            ).join(",") +
+            '],"extra":[' +
+            Array.from({ length: 2500 }, () => "1e20").join(",") +
+            "]}}",
+          code: "budget",
+        },
+        { raw: state("x".repeat(1048576)), code: "invalid" },
+        {
+          raw:
+            '{"root":{"type":"root","children":[],"deep":' +
+            "[".repeat(65) +
+            "0" +
+            "]".repeat(65) +
+            "}}",
+          code: "budget",
+        },
+        {
+          raw: JSON.stringify({
+            root: { type: "root", children: [] },
+            extra: Array.from({ length: 131073 }, () => 0),
+          }),
+          code: "budget",
+        },
       ]
 
-      for (const raw of inputs)
+      for (const input of inputs)
         expect(
           service.mutate(
             {
               ...save(id, { kind: "etag", etag: a.etag }, "B"),
-              change: { kind: "save", schemaVersion: 1, state: raw },
+              change: { kind: "save", schemaVersion: 1, state: input.raw },
             },
             context(),
           ),
-        ).rejects.toMatchObject({ code: "budget" })
+        ).rejects.toMatchObject({ code: input.code })
       expect((await service.read(id, context()))?.etag).toBe(a.etag)
     }, 60000)
 

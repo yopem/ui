@@ -127,6 +127,8 @@ PUT requires `Content-Type: application/json`. Its exact body is
 `{ "schemaVersion": 1, "state": <Lexical JSON> }`. Unknown outer fields fail.
 HTTP body size is at most 1 MiB, including its envelope. UTF-8, nesting, value
 count, and text limits also apply. Canonical saved state must fit 1 MiB.
+Snapshots permit at most 131072 JSON values and 64 nested objects or arrays.
+Native 50 × 50 tables and cell presentation can fit within these bounds.
 
 Use `If-None-Match: *` to create or recreate a deleted document. Use one exact
 strong `If-Match` ETag to update. DELETE requires `If-Match` and no body. Do not

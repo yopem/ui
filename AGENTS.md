@@ -510,6 +510,7 @@ This block is written and re-added by `turbo` before repository-scoped commands 
 Use the separate `editor-store` server library for D1 or PostgreSQL snapshots.
 Apply one copied SQL migration before use. Supply existing authentication,
 complete Lexical validation, and host document policies, including deletion.
+Keep snapshots within 1 MiB, 131072 JSON values, and 64 nested objects or arrays.
 Use exact trusted origins and host CSRF verification for HTTP writes.
 Keep operation IDs, preconditions, provider, and user ID unchanged on uncertain retries.
 HTTP callbacks receive cancellation through `Request.signal`. Storage checks

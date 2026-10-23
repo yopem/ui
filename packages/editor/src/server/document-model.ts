@@ -187,16 +187,16 @@ export function boundedState(
   while (pending.length) {
     const value = pending.pop()
 
-    if (++nodes > 20000) throw new DocumentError("budget")
+    if (++nodes > 131072) throw new DocumentError("budget")
     const text = z.string().safeParse(value)
 
-    if (text.success && text.data.length > 100000)
+    if (text.success && text.data.length > 1048576)
       throw new DocumentError("budget")
 
     if (value instanceof Object) {
       const children = Object.values(value)
 
-      if (children.length + pending.length + nodes > 20000)
+      if (children.length + pending.length + nodes > 131072)
         throw new DocumentError("budget")
       pending.push(...children)
     }
