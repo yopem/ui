@@ -18,6 +18,7 @@ import { editorDocumentItem } from "@registry/items/editor-document"
 import { editorFootnotesItem } from "@registry/items/editor-footnotes"
 import { editorMathItem } from "@registry/items/editor-math"
 import { editorMediaItem } from "@registry/items/editor-media"
+import { editorReviewItem } from "@registry/items/editor-review"
 import { editorStoreItem } from "@registry/items/editor-store"
 import { editorTocItem } from "@registry/items/editor-toc"
 import { editorTypeaheadItem } from "@registry/items/editor-typeahead"
@@ -53,5 +54,6 @@ export const sourceItems = [
   editorTocItem,
   editorDocumentItem,
   editorStoreItem,
+  editorReviewItem,
   editorTypeaheadItem,
 ]

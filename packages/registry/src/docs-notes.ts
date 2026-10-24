@@ -130,6 +130,16 @@ const usageNoteValues = {
     "Resolve private relative routes against a trusted HTTPS same-origin delivery origin. Native media needs existing cookie authentication. Never put tokens in URLs.",
     "Keep terminal probes and lifetime reservations. Fixture validators do not prove production scanning. See /docs/editor-assets.",
   ],
+  "editor-review": [
+    "Install editor-review separately. Use EditorReviewPreset for a complete editor. For custom composition, create one controller per root and add its extension to the stable root extension list.",
+    "Place EditorReviewProvider inside EditorRoot. EditorReviewRichComposer creates its own root. EditorReviewRichContent renders validated content without an EditorRoot.",
+    "Set viewer from verified host identity. Serialized author IDs are attribution only and do not grant access. Check each action and target on the server.",
+    "Host can is synchronous. Allow an action only when policy returns literal true. visible=false hides review UI; it does not redact or delete state.",
+    "Review data uses root NodeState yopemReview and text NodeState yopemSuggestion. Use parseReviewDocument at IO boundaries. Register MarkNode in every reader that loads review state.",
+    "Untrusted JSON with trusted=false loses review metadata and MarkNode wrappers but keeps ordinary text and unrelated NodeState. Set trusted=true only after host verification.",
+    "Suggestions cover inline text. The diff control changes one paragraph, up to 2048 graphemes and 4096 UTF-16 units. Structural changes are unsupported.",
+    "Paste inserts plain text only. Rich HTML paste is rejected. Pasted review metadata is not preserved. editor-document does not read review formats.",
+  ],
   "editor-auth": [
     "Import server helpers from @/lib/editor-auth. Keep them outside browser components. Use an existing OpenAuth or Better Auth service.",
     "Use createOpenAuthAuthentication with an explicit audience. The default issuer is https://auth.yopem.com. Identity uses properties.id, not the mutable subject hash.",

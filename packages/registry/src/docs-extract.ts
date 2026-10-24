@@ -523,10 +523,13 @@ export function extractDocs() {
                                           "components/editor/document/index.ts",
                                           "components/editor/document/static.tsx",
                                         ].includes(file.path)
-                                      : item.name === "editor-typeahead"
+                                      : item.name === "editor-review"
                                         ? file.path ===
-                                          "components/editor/typeahead-index.ts"
-                                        : true),
+                                          "components/editor/review.tsx"
+                                        : item.name === "editor-typeahead"
+                                          ? file.path ===
+                                            "components/editor/typeahead-index.ts"
+                                          : true),
       )
       .flatMap((file) => {
         const source = program.getSourceFile(resolveSourcePath(file.path))
