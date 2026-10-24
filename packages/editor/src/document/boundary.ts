@@ -5,10 +5,17 @@ import {
   isEditorStyleLength,
 } from "@yopem-ui/editor/block-presentation"
 import {
+  editorMathFromHTMLAttributes,
+  type EditorMathValue,
+} from "@yopem-ui/editor/math-model"
+import { renderEditorMath } from "@yopem-ui/editor/math-render"
+import { decodeMention, mentionPlainText } from "@yopem-ui/editor/mention-codec"
+import {
   parseTableBorderHTML,
   parseTableRowHeightHTML,
 } from "@yopem-ui/editor/table-presentation-schema"
 import { fromHtml } from "hast-util-from-html"
+import { toHtml } from "hast-util-to-html"
 import { z } from "zod"
 
 import { checkTableGrid, documentStateSchema } from "./state"
@@ -307,6 +314,84 @@ export function textOf(node: RootContent): string {
   return node.tagName === "br" ? "\n" : node.children.map(textOf).join("")
 }
 
+export function documentMathChildren(value: EditorMathValue) {
+  const result = renderEditorMath(value)
+
+  if (!result.ok) return [{ type: "text" as const, value: value.tex }]
+
+  const tree = parseHTMLSyntax(result.html)
+  checkTree(tree)
+
+  return tree.children.map((node) => {
+    if (node.type === "doctype")
+      throw new DocumentError(["Invalid generated math HTML."])
+
+    return node
+  })
+}
+
+export function canonicalDocumentNode(node: Element) {
+  const properties = node.properties
+
+  const math =
+    properties.dataEditorMath !== undefined ||
+    properties.dataEditorTex !== undefined
+
+  const mention =
+    properties.dataMentionId !== undefined ||
+    properties.dataMentionLabel !== undefined
+
+  if (!math && !mention) return null
+
+  if (math && mention)
+    throw new DocumentError(["Conflicting canonical metadata."])
+
+  if (math) {
+    const value = editorMathFromHTMLAttributes({
+      "data-editor-math": z.string().parse(properties.dataEditorMath),
+      "data-editor-tex": z.string().parse(properties.dataEditorTex),
+    })
+
+    if (
+      node.tagName !== (value.kind === "inline" ? "span" : "div") ||
+      Object.keys(properties).some(
+        (key) => !["dataEditorMath", "dataEditorTex"].includes(key),
+      ) ||
+      !(
+        (node.children.every((child) => child.type === "text") &&
+          textOf(node) === value.tex) ||
+        toHtml({ type: "root", children: node.children }) ===
+          toHtml({ type: "root", children: documentMathChildren(value) })
+      )
+    )
+      throw new DocumentError(["Invalid canonical math HTML."])
+
+    return { type: "math" as const, value }
+  }
+
+  const identity = decodeMention({
+    id: properties.dataMentionId,
+    label: properties.dataMentionLabel,
+  })
+
+  if (
+    !identity ||
+    node.tagName !== "span" ||
+    Object.keys(properties).some(
+      (key) =>
+        !["dataMentionId", "dataMentionLabel", "dir", "style"].includes(key),
+    ) ||
+    (properties.dir !== undefined && properties.dir !== "auto") ||
+    node.children.some((child) => child.type !== "text") ||
+    textOf(node) !== mentionPlainText(identity)
+  )
+    throw new DocumentError(["Invalid canonical mention HTML."])
+
+  if (properties.style) safeDocumentStyle(String(properties.style))
+
+  return { type: "mention" as const, value: identity }
+}
+
 export function validateHTMLTree(tree: Root, generated = false) {
   checkTree(tree)
   let tableSlots = 0
@@ -321,6 +406,8 @@ export function validateHTMLTree(tree: Root, generated = false) {
 
     if (node.type !== "element")
       throw new DocumentError([`Unsupported HTML node: ${node.type}.`])
+
+    if (canonicalDocumentNode(node)) return
 
     if (
       (node.tagName === "colgroup" && parent !== "table") ||

@@ -53,7 +53,7 @@ export async function getEditorDocumentation(slug: string) {
       ...(part.item === "editor-document"
         ? [
             "Import DocumentStatic from the separate document/static entry. No EditorRoot is required.",
-            "Unsupported media, mentions, math, and review formats fail before document replacement. Canonical readers remain an outstanding interoperability gap.",
+            "Register math and mention nodes before import. Media and review formats fail before document replacement. Saved mention identities do not grant access.",
           ]
         : []),
       ...(part.item === "editor-math"

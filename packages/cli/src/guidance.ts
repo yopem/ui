@@ -165,8 +165,12 @@ Register EditorDocumentClipboardExtension at root creation in a stable extension
 Call registerDocumentPaste after creation. Keep its cleanup in the host lifecycle.
 Register EditorBlocksExtension for live callout and toggle imports.
 Invalid, stale, cancelled, and read-only imports keep current content. Streams commit once after EOF.
-Media, mentions, math, and review formats fail closed before document replacement.
-Canonical codecs and registered readers remain an outstanding interoperability gap, including optional math and typeahead integration.
+Register math and mention nodes before importing their representations.
+Markdown supports TeX delimiters with canonical HTML fallback when required for fidelity.
+Static and standalone HTML use native MathML.
+Mentions use the validated identity codec.
+Saved mention identities do not grant access.
+Media and review formats fail closed before document replacement.
 Keep native clipboard priorities, host vetoes, and host HTML sanitization.
 Host MIME handlers that consume data must validate their own output.
 

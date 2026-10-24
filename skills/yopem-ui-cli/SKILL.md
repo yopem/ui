@@ -543,7 +543,11 @@ Validate complete documents before replacement. Keep host HTML sanitization.
 Retain canonical block metadata, table borders, and `data-editor-row-height`.
 Failed imports preserve existing content. Stream imports commit only at EOF.
 Abort stale requests. Cancellation cannot stop a noncooperative producer.
-Mention, math, media, and review nodes remain unsupported by these readers.
+Register math and mention nodes before importing their representations.
+Markdown supports TeX delimiters with canonical HTML fallback when required for fidelity.
+Static and standalone HTML use native MathML.
+Mentions use the validated identity codec.
+Saved mention identities do not grant access. Media and review nodes remain unsupported.
 Do not use conversion to remove unknown nodes or formatting without approval.
 See https://ui.yopem.com/components/editor-document for supported formats.
 

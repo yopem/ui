@@ -16,6 +16,7 @@ import {
 import { EditorBlocksExtension } from "@yopem-ui/editor/blocks"
 import {
   EditorDocumentClipboardExtension,
+  documentNodes,
   downloadDocument,
   exportDocument,
   importDocument,
@@ -23,10 +24,18 @@ import {
   streamMarkdown,
 } from "@yopem-ui/editor/document"
 import { DocumentStatic } from "@yopem-ui/editor/document/static"
-import { UNDO_COMMAND } from "lexical"
+import { UNDO_COMMAND, defineExtension } from "lexical"
 import { useRef, useState } from "react"
 
+const documentModelExtension = defineExtension({
+  name: "example/document-models",
+  nodes: documentNodes.filter((node) =>
+    ["editor-math", "mention"].includes(node.getType()),
+  ),
+})
+
 const extensions = [
+  documentModelExtension,
   EditorDocumentClipboardExtension,
   EditorBlocksExtension,
   EditorBlockPresentationExtension,

@@ -4,7 +4,11 @@ import type { CSSProperties, ReactNode } from "react"
 import { Box } from "@registry/components/ui/box"
 import { createElement } from "react"
 
-import { safeDocumentStyle } from "./boundary"
+import {
+  canonicalDocumentNode,
+  documentMathChildren,
+  safeDocumentStyle,
+} from "./boundary"
 import { $exportTree, createDocumentEditor } from "./convert"
 import { parseDocument } from "./index"
 
@@ -63,10 +67,17 @@ function renderNode(node: RootContent, key: number): ReactNode {
     )
   }
 
+  const canonical = canonicalDocumentNode(node)
+
+  const children =
+    canonical?.type === "math"
+      ? documentMathChildren(canonical.value)
+      : node.children
+
   return createElement(
     node.tagName,
     Object.fromEntries(properties),
-    ...node.children.map(renderNode),
+    ...children.map(renderNode),
   )
 }
 

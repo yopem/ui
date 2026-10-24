@@ -7,10 +7,12 @@ export const editorDocumentItem: SourceItem = {
   dependencies: [
     editorDependency("@lexical/headless"),
     editorDependency("@types/hast"),
+    editorDependency("katex"),
     editorDependency("hast-util-from-html"),
     editorDependency("hast-util-to-html"),
     editorDependency("remark-parse"),
     editorDependency("remark-gfm"),
+    editorDependency("remark-math"),
     editorDependency("remark-rehype"),
     editorDependency("rehype-remark"),
     editorDependency("remark-stringify"),
@@ -35,19 +37,28 @@ export const editorDocumentItem: SourceItem = {
       "DocumentStatic",
     ],
     usage:
-      "Import portable helpers from @/components/editor/document. Import DocumentStatic from @/components/editor/document/static. Register EditorDocumentClipboardExtension at root creation. Keep registerDocumentPaste cleanup in the host lifecycle. Register EditorBlocksExtension for live callouts and toggles. See /docs/editor.",
+      "Import portable helpers from @/components/editor/document. Import DocumentStatic from @/components/editor/document/static. Register EditorDocumentClipboardExtension at root creation. Keep registerDocumentPaste cleanup in the host lifecycle. Register EditorBlocksExtension for live callouts and toggles. Register the math and mention nodes before importing those representations. Mention identities do not grant access. See /docs/editor.",
   },
   files: [
-    "index.ts",
-    "boundary.ts",
-    "convert.ts",
-    "state.ts",
-    "static.tsx",
-  ].map((file) => ({
-    path: `components/editor/document/${file}`,
-    target: `@/components/editor/document/${file}`,
-    type: "registry:ui",
-  })),
+    ...["index.ts", "boundary.ts", "convert.ts", "state.ts", "static.tsx"].map(
+      (file) => ({
+        path: `components/editor/document/${file}`,
+        target: `@/components/editor/document/${file}`,
+        type: "registry:ui" as const,
+      }),
+    ),
+    ...[
+      "math-model.ts",
+      "math-node.ts",
+      "math-render.ts",
+      "mention-codec.ts",
+      "mention-node.ts",
+    ].map((file) => ({
+      path: `components/editor/${file}`,
+      target: `@/components/editor/${file}`,
+      type: "registry:ui" as const,
+    })),
+  ],
   name: "editor-document",
   peerDependencies: ["react@>=19 <20", "react-dom@>=19 <20"],
   registryDependencies: ["editor", "editor-blocks"],

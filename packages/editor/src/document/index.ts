@@ -6,6 +6,8 @@ import {
 } from "@lexical/clipboard"
 import { getPeerDependencyFromEditor } from "@lexical/extension"
 import { validateEditorBlocksJSON } from "@yopem-ui/editor/blocks-model"
+import { editorMathNodeSchema } from "@yopem-ui/editor/math-model"
+import { mentionNodeSchema } from "@yopem-ui/editor/mention-codec"
 import {
   tablePresentationDocumentSchema,
   parseTableBorderHTML,
@@ -71,8 +73,15 @@ const presentationNodes = new Set([
   "tablecell",
 ])
 
+const nativeFormatSchema = z.union([
+  z.number().int().min(0).max(2047),
+  z.enum(["", "left", "right", "center", "justify", "start", "end"]),
+])
+
 const nodeSchema = z.strictObject({
   type: z.enum([
+    "editor-math",
+    "mention",
     "editor-callout",
     "editor-toggle",
     "editor-toggle-summary",
@@ -93,6 +102,9 @@ const nodeSchema = z.strictObject({
     "tablerow",
     "tablecell",
   ]),
+  kind: z.enum(["inline", "block"]).optional(),
+  tex: z.string().optional(),
+  identity: z.unknown().optional(),
   appearance: z.unknown().optional(),
   icon: z.unknown().optional(),
   open: z.unknown().optional(),
@@ -101,10 +113,7 @@ const nodeSchema = z.strictObject({
   children: z.array(z.unknown()).optional(),
   direction: z.enum(["ltr", "rtl"]).nullable().optional(),
   format: z
-    .union([
-      z.number().int().min(0).max(2047),
-      z.enum(["", "left", "right", "center", "justify", "start", "end"]),
-    ])
+    .union([nativeFormatSchema, z.number().int().min(0).max(65535)])
     .optional(),
   indent: z.number().int().min(0).max(64).optional(),
   text: z.string().optional(),
@@ -160,6 +169,8 @@ const nodeFields = new Map(
     quote: elementFields,
     heading: [...elementFields, "tag"],
     code: [...elementFields, "language"],
+    "editor-math": ["kind", "tex"],
+    mention: [...textFields, "identity"],
     text: textFields,
     tab: textFields,
     "code-highlight": [...textFields, "highlightType"],
@@ -277,9 +288,25 @@ function validateJSON(source: string) {
     if (tableSlots > 2500)
       throw new DocumentError(["Document exceeds 2500 table slots."])
 
-    const leaf = ["text", "tab", "code-highlight", "linebreak"].includes(
-      node.type,
+    if (
+      node.type !== "mention" &&
+      node.format !== undefined &&
+      !nativeFormatSchema.safeParse(node.format).success
     )
+      throw new DocumentError(["Invalid native text format."])
+
+    if (node.type === "editor-math") editorMathNodeSchema.parse(node)
+
+    if (node.type === "mention") mentionNodeSchema.parse(node)
+
+    const leaf = [
+      "text",
+      "tab",
+      "code-highlight",
+      "linebreak",
+      "mention",
+      "editor-math",
+    ].includes(node.type)
 
     if (!leaf && !node.children)
       throw new DocumentError([`Missing children on ${node.type}.`])
@@ -399,6 +426,7 @@ export function importDocument(
 ) {
   if (!editor.isEditable()) throw new DocumentError(["Document is readonly."])
   const document = parseDocument(source, format)
+  validatePasteTarget(editor, document)
   const serialized = JSON.stringify(document)
   let state: ReturnType<LexicalEditor["parseEditorState"]>
 
@@ -777,9 +805,15 @@ function $importDocumentJSON(
       const node = nodeSchema.parse(value)
 
       if (
-        ["text", "tab", "linebreak", "code-highlight", "link"].includes(
-          node.type,
-        )
+        [
+          "text",
+          "tab",
+          "linebreak",
+          "code-highlight",
+          "link",
+          "mention",
+        ].includes(node.type) ||
+        (node.type === "editor-math" && node.kind === "inline")
       ) {
         if (!inline) {
           inline = []

@@ -45,6 +45,20 @@ import {
   isEditorCalloutIcon,
 } from "@yopem-ui/editor/blocks-model"
 import {
+  editorMathFromMarkdown,
+  editorMathToMarkdown,
+  type EditorMathValue,
+} from "@yopem-ui/editor/math-model"
+import {
+  EditorMathNode,
+  $createEditorMathNode,
+} from "@yopem-ui/editor/math-node"
+import {
+  mentionMarkdown,
+  parseMentionMarkdown,
+} from "@yopem-ui/editor/mention-codec"
+import { MentionNode, $createMentionNode } from "@yopem-ui/editor/mention-node"
+import {
   parseTableBorderHTML,
   parseTableRowHeightHTML,
 } from "@yopem-ui/editor/table-presentation-schema"
@@ -62,12 +76,15 @@ import {
 } from "lexical"
 import rehypeRemark from "rehype-remark"
 import remarkGfm from "remark-gfm"
+import remarkMath from "remark-math"
 import remarkParse from "remark-parse"
 import remarkRehype from "remark-rehype"
 import remarkStringify from "remark-stringify"
 import { unified } from "unified"
 
 import {
+  canonicalDocumentNode,
+  documentMathChildren,
   checkText,
   checkTree,
   DocumentError,
@@ -85,6 +102,8 @@ import {
 } from "./state"
 
 export const documentNodes = [
+  EditorMathNode,
+  MentionNode,
   CalloutNode,
   ToggleNode,
   ToggleSummaryNode,
@@ -116,7 +135,7 @@ export function markdownTree(source: string): Root {
 
   if (source.includes("\0"))
     throw new DocumentError(["Markdown source contains a NULL character."])
-  const parser = unified().use(remarkParse).use(remarkGfm)
+  const parser = unified().use(remarkParse).use(remarkGfm).use(remarkMath)
   const tree = parser.parse(source)
   checkTree(tree)
 
@@ -141,6 +160,7 @@ export function markdownTree(source: string): Root {
   }
 
   visit(tree)
+  convertMarkdownFeatures(tree, source)
 
   const hast = unified()
     .use(remarkRehype, { allowDangerousHtml: true })
@@ -149,6 +169,85 @@ export function markdownTree(source: string): Root {
   const parsed = parseHTMLSyntax(toHtml(hast, { allowDangerousHtml: true }))
 
   return validateHTMLTree(parsed, true)
+}
+
+interface MarkdownFeatureNode {
+  type: string
+  value?: string
+  url?: string
+  meta?: string | null
+  data?: unknown
+  children?: MarkdownFeatureNode[]
+  position?: { start: { offset?: number }; end: { offset?: number } }
+}
+
+function convertMarkdownFeatures(node: MarkdownFeatureNode, source: string) {
+  if (["code", "inlineCode", "html"].includes(node.type)) return
+  const children = node.children
+
+  if (!children) return
+
+  for (const [index, child] of children.entries()) {
+    const previous = children[index - 1]
+
+    if (child.type === "math" || child.type === "inlineMath") {
+      if (child.meta)
+        throw new DocumentError(["Math fence metadata is unsupported."])
+
+      const value = editorMathFromMarkdown(
+        editorMathToMarkdown({
+          kind: child.type === "math" ? "block" : "inline",
+          tex: child.value ?? "",
+        }),
+      )
+
+      child.type = "html"
+      child.value = toHtml(
+        element(
+          value.kind === "inline" ? "span" : "div",
+          [{ type: "text", value: value.tex }],
+          {
+            dataEditorMath: value.kind,
+            dataEditorTex: value.tex,
+          },
+        ),
+      )
+      delete child.children
+      delete child.data
+      continue
+    }
+
+    if (child.type === "link" && child.url?.startsWith("mention:")) {
+      const end = child.position?.end.offset
+      const start = child.position?.start.offset
+
+      const identity =
+        previous?.type === "text" &&
+        previous.value?.endsWith("@") &&
+        start !== undefined &&
+        end !== undefined
+          ? parseMentionMarkdown(source.slice(start - 1, end))
+          : null
+
+      if (!identity || !previous)
+        throw new DocumentError(["Invalid canonical mention Markdown."])
+      previous.value = previous.value?.slice(0, -1)
+
+      if (previous.position?.end.offset !== undefined)
+        previous.position.end.offset -= 1
+      child.type = "html"
+      child.value = toHtml(
+        element("span", [{ type: "text", value: `@${identity.label}` }], {
+          dataMentionId: identity.id,
+          dataMentionLabel: identity.label,
+        }),
+      )
+      delete child.children
+      continue
+    }
+
+    convertMarkdownFeatures(child, source)
+  }
 }
 
 const textFormats = new Map<string, TextFormatType>(
@@ -190,14 +289,34 @@ export function $importTree(tree: Root) {
     formats: readonly TextFormatType[] = [],
     inheritedStyle = "",
   ): LexicalNode[] {
-    if (node.type === "text") {
-      const text = $createTextNode(node.value).setStyle(inheritedStyle)
+    const canonical =
+      node.type === "element" ? canonicalDocumentNode(node) : null
+
+    if (canonical?.type === "math") {
+      if (formats.length || inheritedStyle)
+        throw new DocumentError(["Math text presentation cannot be retained."])
+
+      return [$createEditorMathNode(canonical.value)]
+    }
+
+    if (node.type === "text" || canonical?.type === "mention") {
+      const textStyle = safeDocumentStyle(
+        [inheritedStyle, node.type === "element" ? node.properties.style : ""]
+          .filter(Boolean)
+          .join("; "),
+      )
+
+      const text = (
+        canonical?.type === "mention"
+          ? $createMentionNode(canonical.value)
+          : $createTextNode(node.type === "text" ? node.value : "")
+      ).setStyle(textStyle)
 
       for (const format of new Set(formats)) text.toggleFormat(format)
 
       const casing =
         /(?:^|;)\s*text-transform:\s*(lowercase|uppercase|capitalize)(?:;|$)/.exec(
-          inheritedStyle,
+          textStyle,
         )?.[1]
 
       if (
@@ -207,7 +326,7 @@ export function $importTree(tree: Root) {
       )
         text.toggleFormat(casing)
       text.setStyle(
-        inheritedStyle
+        textStyle
           .replace(/(?:^|;)\s*text-transform:[^;]+/g, "")
           .replace(/^;\s*/, ""),
       )
@@ -660,19 +779,41 @@ export function $exportTree(markdown = false): Root {
     if (!$isElementNode(node) && Object.keys(state).length)
       throw new DocumentError(["Inline NodeState requires JSON export."])
 
+    if (node instanceof EditorMathNode) {
+      const value = node.getValue()
+
+      return element(
+        value.kind === "inline" ? "span" : "div",
+        [{ type: "text", value: value.tex }],
+        {
+          dataEditorMath: value.kind,
+          dataEditorTex: value.tex,
+        },
+      )
+    }
+
     if ($isLineBreakNode(node)) return element("br")
 
     if ($isTextNode(node)) {
       if (
-        node.getType() !== "text" ||
-        node.getMode() !== "normal" ||
-        node.getDetail() !== 0
+        (node.getType() !== "text" && !(node instanceof MentionNode)) ||
+        node.getMode() !== (node instanceof MentionNode ? "token" : "normal") ||
+        node.getDetail() !== 0 ||
+        node.getFormat() > 2047
       )
         throw new DocumentError(["Native text metadata requires JSON export."])
 
       let output: ElementContent = {
         type: "text",
         value: node.getTextContent(),
+      }
+
+      if (node instanceof MentionNode) {
+        const identity = node.getIdentity()
+        output = element("span", [output], {
+          dataMentionId: identity.id,
+          dataMentionLabel: identity.label,
+        })
       }
 
       const tags: [TextFormatType, string][] = [
@@ -984,8 +1125,26 @@ export function $exportTree(markdown = false): Root {
   return { type: "root", children: $getRoot().getChildren().map(convert) }
 }
 
-export function treeHTML(tree: Root) {
-  const html = toHtml(tree)
+export function treeHTML(tree: Root, typeset = true) {
+  function display(node: RootContent): ElementContent {
+    if (node.type === "doctype")
+      throw new DocumentError(["Unsupported document doctype."])
+
+    if (node.type !== "element") return node
+    const canonical = canonicalDocumentNode(node)
+
+    return {
+      ...node,
+      children:
+        canonical?.type === "math"
+          ? documentMathChildren(canonical.value)
+          : node.children.map(display),
+    }
+  }
+
+  const html = toHtml(
+    typeset ? { ...tree, children: tree.children.map(display) } : tree,
+  )
 
   if (html.includes("\r"))
     throw new DocumentError(["Carriage-return text requires JSON export."])
@@ -995,13 +1154,23 @@ export function treeHTML(tree: Root) {
 }
 
 export function treeMarkdown(tree: Root) {
-  const html = treeHTML(tree)
+  const html = treeHTML(tree, false).replaceAll("\n", "&#10;")
+  let hasMath = false
 
   function needsHTML(node: RootContent, preformatted = false): boolean {
     if (node.type === "text")
-      return !preformatted && /[\t\n\f]| {2}/.test(node.value)
+      return !preformatted && /[\t\n\f$]| {2}/.test(node.value)
 
     if (node.type !== "element") return false
+    const canonical = canonicalDocumentNode(node)
+
+    if (canonical?.type === "math") {
+      hasMath = true
+
+      return mathMarkdown(canonical.value) === null
+    }
+
+    if (canonical?.type === "mention") return Boolean(node.properties.style)
     const literalWhitespace = preformatted || node.tagName === "pre"
     const first = node.children[0]
     const last = node.children.at(-1)
@@ -1084,9 +1253,79 @@ export function treeMarkdown(tree: Root) {
   for (const node of tree.children) flatten(node)
 
   const processor = unified()
-    .use(rehypeRemark)
+    .use(rehypeRemark, {
+      handlers: {
+        div(state, node) {
+          const canonical = canonicalDocumentNode(node)
+
+          if (canonical?.type === "math")
+            return {
+              type: "html",
+              value: mathMarkdown(canonical.value) ?? toHtml(node),
+            }
+
+          return state.all(node)
+        },
+        span(state, node) {
+          const canonical = canonicalDocumentNode(node)
+
+          if (canonical?.type === "math")
+            return {
+              type: "html",
+              value: mathMarkdown(canonical.value) ?? toHtml(node),
+            }
+
+          if (canonical?.type === "mention")
+            return { type: "html", value: mentionMarkdown(canonical.value) }
+
+          return state.all(node)
+        },
+      },
+    })
     .use(remarkGfm)
     .use(remarkStringify)
 
-  return processor.stringify(processor.runSync(tree))
+  const output = processor.stringify(processor.runSync(tree))
+
+  if (hasMath) {
+    function snapshot(input: Root) {
+      const editor = createDocumentEditor()
+      editor.update(() => $importTree(input), { discrete: true })
+
+      return JSON.stringify(editor.getEditorState().toJSON())
+    }
+
+    try {
+      if (snapshot(tree) !== snapshot(markdownTree(output))) return html + "\n"
+    } catch {
+      return html + "\n"
+    }
+  }
+
+  return output
+}
+
+function mathMarkdown(value: EditorMathValue) {
+  try {
+    if (value.tex.includes("|") || value.tex.includes("\r")) return null
+    const fragment = editorMathToMarkdown(value)
+    const tree = unified().use(remarkParse).use(remarkMath).parse(fragment)
+    const children: MarkdownFeatureNode[] = tree.children
+    const first = children[0]
+    const math = first?.type === "paragraph" ? first.children?.[0] : first
+
+    if (
+      children.length !== 1 ||
+      (first?.type === "paragraph" && first.children?.length !== 1) ||
+      math?.type !== (value.kind === "inline" ? "inlineMath" : "math") ||
+      !("value" in math) ||
+      math.value !== value.tex ||
+      (math.type === "math" && math.meta)
+    )
+      return null
+
+    return fragment
+  } catch {
+    return null
+  }
 }
