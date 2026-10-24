@@ -51,7 +51,7 @@ export function EditorToolbar({
   )
 }
 
-function EditorCommandButton({
+export function EditorCommandButton({
   children,
   disabled,
   onClick,

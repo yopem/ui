@@ -56,7 +56,15 @@
     "./server/collaboration": "./src/server/collaboration-index.ts",
     "./server/collaboration/bun": "./src/server/collaboration-bun.ts",
     "./server/collaboration/node": "./src/server/collaboration-node.ts",
-    "./server/collaboration/worker": "./src/server/collaboration-do.ts"
+    "./server/collaboration/worker": "./src/server/collaboration-do.ts",
+    "./review": "./src/review.tsx",
+    "./review-codecs": "./src/review-codecs.ts",
+    "./review-diff": "./src/review-diff.ts",
+    "./review-extension": "./src/review-extension.ts",
+    "./review-html": "./src/review-html.ts",
+    "./review-model": "./src/review-model.ts",
+    "./review-richtext": "./src/review-richtext.ts",
+    "./review-richtext-native": "./src/review-richtext-native.ts"
   },
   "scripts": {
     "typecheck": "tsc --noEmit"

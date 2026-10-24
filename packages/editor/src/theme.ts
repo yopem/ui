@@ -44,6 +44,18 @@ export const editorStyles = stylex.create({
     borderRadius: tokens["--radius-md"],
     paddingInline: "0.125em",
   },
+  mark: {
+    backgroundColor: tokens["--accent"],
+    color: tokens["--accent-foreground"],
+    borderRadius: tokens["--radius-sm"],
+    paddingInline: "0.125em",
+  },
+  markOverlap: {
+    textDecoration: "underline",
+    textDecorationColor: tokens["--ring"],
+    textDecorationThickness: "2px",
+    textUnderlineOffset: "0.125em",
+  },
   uppercase: { textTransform: "uppercase" },
   lowercase: { textTransform: "lowercase" },
   capitalize: { textTransform: "capitalize" },
@@ -188,6 +200,8 @@ export const editorTheme = {
   quote: stylex.props(editorStyles.quote).className,
   code: stylex.props(editorStyles.code).className,
   link: stylex.props(editorStyles.link).className,
+  mark: stylex.props(editorStyles.mark).className,
+  markOverlap: stylex.props(editorStyles.markOverlap).className,
   list: {
     ul: stylex.props(editorStyles.ul).className,
     ol: stylex.props(editorStyles.ol).className,
