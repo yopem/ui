@@ -26,7 +26,8 @@
     "./math/model": "./src/math-model.ts",
     "./document": "./src/document/index.ts",
     "./document/static": "./src/document/static.tsx",
-    "./block-presentation-extension": "./src/block-presentation-extension.ts"
+    "./block-presentation-extension": "./src/block-presentation-extension.ts",
+    "./server/ai": "./src/server/ai/index.ts"
   },
   "scripts": {
     "typecheck": "tsc --noEmit"

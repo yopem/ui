@@ -27,10 +27,10 @@ The host must compile StyleX for this package and the registry sources. Load
 registry tokens, reset styles, Inter, and IBM Plex Mono in the host app.
 
 The foundation includes text formats, history, blocks, lists, links, Markdown
-shortcuts, indentation, and table insertion. It does not include collaboration,
-media uploads, drag handles, slash menus, comments, document conversion, or full
-table editing controls. Treat saved JSON as untrusted input. Validate it before
-storage or publication.
+shortcuts, indentation, and table controls. Optional modules add code editing,
+callouts, toggles, typeahead, math, and document conversion.
+Register each optional extension when you create the root.
+Treat saved JSON as untrusted input. Validate it before storage or publication.
 
 ## Composition
 
@@ -89,5 +89,16 @@ tickets or guarantee immediate session revocation.
 
 Better Auth verification disables cookie caching and session refresh. Host auth
 routes remain responsible for refresh.
+
+## Server AI core
+
+The server AI module provides OpenAI, Anthropic, and Workers AI adapters.
+Keep credentials and model choices on the host server.
+Supply document authorization, verified credential expiry, CSRF checks, and quotas.
+Use an exact trusted HTTPS origin.
+Workers AI uses Cloudflare's OpenAI-compatible Chat Completions endpoint.
+Choose a compatible model and set explicit input, output, and time limits.
+Cancellation does not prove that provider billing stopped.
+These adapters do not create accounts or deploy routes.
 
 All editor tests live under the repository's root `tests/` directory.
