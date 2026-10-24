@@ -669,6 +669,9 @@ Markdown supports TeX delimiters with canonical HTML fallback when required for 
 Static and standalone HTML use native MathML.
 Mentions use the validated identity codec.
 Saved mention identities do not grant access.
-Media and review formats fail closed before document replacement.
+Media JSON and canonical tagged figure HTML preserve native media metadata.
+Markdown uses canonical HTML for media. Register MediaExtension for live rendering.
+Use MediaNode in headless readers. Reject media URL credentials, queries, and fragments.
+Review formats fail closed before document replacement.
 Keep native clipboard priorities, host vetoes, and host HTML sanitization.
 Host MIME handlers that consume data must validate their own output.

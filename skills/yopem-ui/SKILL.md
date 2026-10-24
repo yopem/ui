@@ -751,7 +751,11 @@ Register math and mention nodes before importing their representations.
 Markdown supports TeX delimiters with canonical HTML fallback when required for fidelity.
 Static and standalone HTML use native MathML.
 Mentions use the validated identity codec.
-Saved mention identities do not grant access. Media and review nodes remain unsupported.
+Saved mention identities do not grant access. Media JSON and canonical
+tagged figure HTML retain native metadata. Markdown uses canonical HTML for
+media. Register `MediaExtension` for live rendering or `MediaNode` in headless
+readers. Media URLs cannot contain credentials, queries, or fragments.
+Review nodes remain unsupported.
 Do not silently remove unknown nodes or formatting during conversion.
 See https://ui.yopem.com/components/editor-document for supported formats.
 

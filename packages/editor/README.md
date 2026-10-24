@@ -28,7 +28,8 @@ registry tokens, reset styles, Inter, and IBM Plex Mono in the host app.
 
 The foundation includes text formats, history, blocks, lists, links, Markdown
 shortcuts, indentation, and table controls. Optional modules add code editing,
-callouts, toggles, typeahead, math, and document conversion. Register each
+callouts, toggles, typeahead, math, columns, dates, media, and document
+conversion. Register each
 optional extension when you create the root. Treat saved JSON as untrusted
 input. Validate it before storage or publication.
 
@@ -73,6 +74,17 @@ refs, `className`, and `xstyle`. Prevent the consumer click event to stop a
 command. `EditorContent` shares the root accessible name and read-only state.
 `useEditor` exposes the Lexical instance. `useEditorState` exposes text formats,
 history availability, the accessible name, and read-only state.
+
+## Media conversion
+
+Install `editor-document` separately for document conversion. Portable readers
+include the pure `MediaNode` codec. Register `MediaExtension` from `editor-media`
+for live rendering. `MediaContent` also renders validated media without a root.
+
+Media JSON and canonical tagged figure HTML retain native metadata. Markdown
+uses canonical HTML fallback. Conversion rejects media URL credentials, queries,
+and fragments. It does not resolve private routes or configure asset access.
+Hosts must supply authentication, delivery policies, and validated upload callbacks.
 
 ## Optional code formatting
 

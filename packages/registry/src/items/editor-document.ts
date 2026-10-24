@@ -37,16 +37,26 @@ export const editorDocumentItem: SourceItem = {
       "DocumentStatic",
     ],
     usage:
-      "Import portable helpers from @/components/editor/document. Import DocumentStatic from @/components/editor/document/static. Register EditorDocumentClipboardExtension at root creation. Keep registerDocumentPaste cleanup in the host lifecycle. Register EditorBlocksExtension for live callouts and toggles. Register the math and mention nodes before importing those representations. Mention identities do not grant access. See /docs/editor.",
+      "Import portable helpers from @/components/editor/document. Import DocumentStatic from @/components/editor/document/static. Register EditorDocumentClipboardExtension at root creation. Keep registerDocumentPaste cleanup in the host lifecycle. Register EditorBlocksExtension for live callouts and toggles. Register math, mention, and media nodes before importing their representations. Use MediaExtension for live media rendering. Media Markdown uses canonical HTML. Reject media URL queries and fragments. Mention identities do not grant access. See /docs/editor.",
   },
   files: [
-    ...["index.ts", "boundary.ts", "convert.ts", "state.ts", "static.tsx"].map(
-      (file) => ({
-        path: `components/editor/document/${file}`,
-        target: `@/components/editor/document/${file}`,
-        type: "registry:ui" as const,
-      }),
-    ),
+    ...[
+      "index.ts",
+      "boundary.ts",
+      "convert.ts",
+      "media.ts",
+      "state.ts",
+      "static.tsx",
+    ].map((file) => ({
+      path: `components/editor/document/${file}`,
+      target: `@/components/editor/document/${file}`,
+      type: "registry:ui" as const,
+    })),
+    ...["schema.ts", "html.ts", "model.ts"].map((file) => ({
+      path: `components/editor/media/${file}`,
+      target: `@/components/editor/media/${file}`,
+      type: "registry:ui" as const,
+    })),
     ...[
       "math-model.ts",
       "math-node.ts",

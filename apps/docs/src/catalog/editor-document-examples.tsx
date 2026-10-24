@@ -24,6 +24,7 @@ import {
   streamMarkdown,
 } from "@yopem-ui/editor/document"
 import { DocumentStatic } from "@yopem-ui/editor/document/static"
+import { MediaExtension } from "@yopem-ui/editor/media"
 import { UNDO_COMMAND, defineExtension } from "lexical"
 import { useRef, useState } from "react"
 
@@ -36,6 +37,7 @@ const documentModelExtension = defineExtension({
 
 const extensions = [
   documentModelExtension,
+  MediaExtension,
   EditorDocumentClipboardExtension,
   EditorBlocksExtension,
   EditorBlockPresentationExtension,

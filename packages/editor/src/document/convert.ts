@@ -53,6 +53,8 @@ import {
   EditorMathNode,
   $createEditorMathNode,
 } from "@yopem-ui/editor/math-node"
+import { serializeMediaHtml } from "@yopem-ui/editor/media/html"
+import { MediaNode, $createMediaNode } from "@yopem-ui/editor/media/model"
 import {
   mentionMarkdown,
   parseMentionMarkdown,
@@ -102,6 +104,7 @@ import {
 } from "./state"
 
 export const documentNodes = [
+  MediaNode,
   EditorMathNode,
   MentionNode,
   CalloutNode,
@@ -270,6 +273,7 @@ function append(parent: ElementNode, children: LexicalNode[]) {
   for (const child of children) {
     if (
       ($isTableCellNode(parent) || parent.getType() === "root") &&
+      !(child instanceof MediaNode) &&
       (!$isElementNode(child) || child.isInline())
     ) {
       const last = parent.getLastChild()
@@ -291,6 +295,13 @@ export function $importTree(tree: Root) {
   ): LexicalNode[] {
     const canonical =
       node.type === "element" ? canonicalDocumentNode(node) : null
+
+    if (canonical?.type === "media") {
+      if (formats.length || inheritedStyle)
+        throw new DocumentError(["Media text presentation cannot be retained."])
+
+      return [$createMediaNode(canonical.value)]
+    }
 
     if (canonical?.type === "math") {
       if (formats.length || inheritedStyle)
@@ -779,6 +790,16 @@ export function $exportTree(markdown = false): Root {
     if (!$isElementNode(node) && Object.keys(state).length)
       throw new DocumentError(["Inline NodeState requires JSON export."])
 
+    if (node instanceof MediaNode) {
+      const figure = parseHTMLSyntax(serializeMediaHtml(node.getMedia()))
+        .children[0]
+
+      if (figure?.type !== "element")
+        throw new DocumentError(["Invalid generated media HTML."])
+
+      return figure
+    }
+
     if (node instanceof EditorMathNode) {
       const value = node.getValue()
 
@@ -1169,6 +1190,8 @@ export function treeMarkdown(tree: Root) {
 
       return mathMarkdown(canonical.value) === null
     }
+
+    if (canonical?.type === "media") return true
 
     if (canonical?.type === "mention") return Boolean(node.properties.style)
     const literalWhitespace = preformatted || node.tagName === "pre"

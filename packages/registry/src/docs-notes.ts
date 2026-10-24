@@ -4,7 +4,7 @@ const usageNoteValues = {
     "Register MediaExtension in a stable extensions array. Compose MediaInsertControl inside EditorToolbar. MediaContent can render validated media without EditorRoot.",
     "Use HTTPS URLs without credentials. Provide image alt text and media captions. Provider embeds use exact supported hosts and canonical URLs.",
     "Supply a bounded, abort-aware host upload callback. Uploads require host authorization and validation. This item does not configure private asset delivery.",
-    "Register MediaNode in every document reader. Native tagged figure HTML preserves media metadata. Install editor-document separately for generic conversion.",
+    "Register MediaNode in every document reader. Document conversion preserves canonical media metadata and tagged figure HTML. Media conversion rejects URL queries and fragments.",
   ],
   "editor-columns": [
     "Register EditorColumnsExtension in a stable extensions array. Compose the preset or focused controls inside EditorToolbar. Layouts contain two through four rich-text columns. Nested column groups are rejected; nested rich blocks remain native.",
@@ -28,7 +28,7 @@ const usageNoteValues = {
     "Standalone color variables require mounted theme context and an opaque host surface. Partially transparent surfaces and context-relative color variables fail. Fonts use local fallbacks.",
     "Document limits are independent: 1 MiB UTF-8, depth 64, 65,536 structures, 50 rows, 50 columns, and 2,500 table slots.",
     "Preserve row-height metadata and supported NodeState. Streams commit only at EOF; failed or stale imports keep current content.",
-    "Media, mention nodes, math nodes, and review formats are unsupported. Imports reject these formats before document replacement.",
+    "Register math, mention, and media nodes before import. Media Markdown uses canonical tagged HTML. Review formats remain unsupported and fail before replacement.",
     "These formats require canonical codecs and registered readers. Plain text and ordinary strikethrough do not carry these semantics.",
     "Persisted code-view booleans require JSON; HTML and Markdown report diagnostics.",
     "Markdown uses HTML fallback to retain whitespace. Use JSON for native text with carriage returns or invalid HTML characters. JSON escapes retain these values in metadata.",

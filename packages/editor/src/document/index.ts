@@ -49,6 +49,7 @@ import {
   treeHTML,
   treeMarkdown,
 } from "./convert"
+import { documentMediaSchema } from "./media"
 import { checkTableGrid, documentStateSchema } from "./state"
 
 export { DocumentError, documentLimits } from "./boundary"
@@ -80,6 +81,7 @@ const nativeFormatSchema = z.union([
 
 const nodeSchema = z.strictObject({
   type: z.enum([
+    "yopem-media",
     "editor-math",
     "mention",
     "editor-callout",
@@ -105,6 +107,7 @@ const nodeSchema = z.strictObject({
   kind: z.enum(["inline", "block"]).optional(),
   tex: z.string().optional(),
   identity: z.unknown().optional(),
+  media: z.unknown().optional(),
   appearance: z.unknown().optional(),
   icon: z.unknown().optional(),
   open: z.unknown().optional(),
@@ -170,6 +173,7 @@ const nodeFields = new Map(
     heading: [...elementFields, "tag"],
     code: [...elementFields, "language"],
     "editor-math": ["kind", "tex"],
+    "yopem-media": ["media"],
     mention: [...textFields, "identity"],
     text: textFields,
     tab: textFields,
@@ -299,7 +303,10 @@ function validateJSON(source: string) {
 
     if (node.type === "mention") mentionNodeSchema.parse(node)
 
+    if (node.type === "yopem-media") documentMediaSchema.parse(node.media)
+
     const leaf = [
+      "yopem-media",
       "text",
       "tab",
       "code-highlight",
@@ -335,7 +342,23 @@ function validateJSON(source: string) {
     if (node.backgroundColor)
       safeDocumentStyle(`background-color: ${node.backgroundColor}`)
 
-    for (const child of node.children ?? []) pendingNodes.push(child)
+    for (const child of node.children ?? []) {
+      const parsedChild = nodeSchema.parse(child)
+
+      if (
+        parsedChild.type === "yopem-media" &&
+        ![
+          "root",
+          "quote",
+          "editor-callout",
+          "editor-toggle-body",
+          "listitem",
+          "tablecell",
+        ].includes(node.type)
+      )
+        throw new DocumentError(["Media requires a block container."])
+      pendingNodes.push(child)
+    }
   }
 
   if (nodeSchema.parse(document.data.root).type !== "root")

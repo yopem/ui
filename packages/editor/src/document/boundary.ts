@@ -9,6 +9,7 @@ import {
   type EditorMathValue,
 } from "@yopem-ui/editor/math-model"
 import { renderEditorMath } from "@yopem-ui/editor/math-render"
+import { serializeMediaHtml } from "@yopem-ui/editor/media/html"
 import { decodeMention, mentionPlainText } from "@yopem-ui/editor/mention-codec"
 import {
   parseTableBorderHTML,
@@ -18,6 +19,7 @@ import { fromHtml } from "hast-util-from-html"
 import { toHtml } from "hast-util-to-html"
 import { z } from "zod"
 
+import { documentMediaSchema } from "./media"
 import { checkTableGrid, documentStateSchema } from "./state"
 
 export class DocumentError extends Error {
@@ -341,10 +343,25 @@ export function canonicalDocumentNode(node: Element) {
     properties.dataMentionId !== undefined ||
     properties.dataMentionLabel !== undefined
 
-  if (!math && !mention) return null
+  const media = properties.dataYopemMedia !== undefined
 
-  if (math && mention)
+  if (!math && !mention && !media) return null
+
+  if (Number(math) + Number(mention) + Number(media) > 1)
     throw new DocumentError(["Conflicting canonical metadata."])
+
+  if (media) {
+    const value = documentMediaSchema.parse(
+      JSON.parse(z.string().parse(properties.dataYopemMedia)),
+    )
+
+    const expected = parseHTMLSyntax(serializeMediaHtml(value))
+
+    if (node.tagName !== "figure" || toHtml(node) !== toHtml(expected))
+      throw new DocumentError(["Invalid canonical media HTML."])
+
+    return { type: "media" as const, value }
+  }
 
   if (math) {
     const value = editorMathFromHTMLAttributes({
@@ -407,7 +424,18 @@ export function validateHTMLTree(tree: Root, generated = false) {
     if (node.type !== "element")
       throw new DocumentError([`Unsupported HTML node: ${node.type}.`])
 
-    if (canonicalDocumentNode(node)) return
+    const canonicalNode = canonicalDocumentNode(node)
+
+    if (canonicalNode) {
+      if (
+        canonicalNode.type === "media" &&
+        parent !== undefined &&
+        !["blockquote", "aside", "div", "li", "td", "th"].includes(parent)
+      )
+        throw new DocumentError(["Media requires a block container."])
+
+      return
+    }
 
     if (
       (node.tagName === "colgroup" && parent !== "table") ||

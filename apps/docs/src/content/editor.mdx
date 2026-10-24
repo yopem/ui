@@ -505,12 +505,15 @@ Use `documentNodes` when you create a custom headless editor. Imports reject a
 target that cannot keep the parsed fields and children.
 
 HTML import accepts supported document fragments, not arbitrary webpages. Active
-HTML, unknown styles, unsafe links, media, and unsupported nodes produce errors.
+HTML, unknown styles, unsafe links, unmarked media, and unsupported nodes produce errors.
 Register math and mention nodes before importing their representations.
 Markdown supports TeX delimiters with canonical HTML fallback when required for fidelity.
 Static and standalone HTML use native MathML.
 Mention Markdown uses the validated identity codec. Saved identities do not grant access.
-Media and review formats remain unsupported. Plain text does not carry those semantics.
+Media JSON and canonical tagged figure HTML retain native metadata. Markdown
+uses canonical HTML for media. Register `MediaExtension` for live rendering or
+`MediaNode` in headless readers. Media URLs cannot contain credentials, queries,
+or fragments. Review formats remain unsupported. Plain text does not carry those semantics.
 Handle `DocumentError.diagnostics` at the host boundary. JSON retains supported NodeState. HTML and Markdown retain supported element
 NodeState. Persisted code-view booleans require JSON; HTML and Markdown report
 diagnostics.
