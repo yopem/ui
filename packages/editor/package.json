@@ -89,14 +89,17 @@
     "remark-rehype": "^11.1.2",
     "remark-stringify": "^11.0.0",
     "unified": "^11.0.5",
+    "ws": "catalog:",
     "y-protocols": "catalog:",
     "yjs": "catalog:",
     "zod": "catalog:"
   },
   "devDependencies": {
     "@types/bun": "catalog:",
+    "@types/node": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
+    "@types/ws": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:"
   },
