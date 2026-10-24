@@ -1,5 +1,7 @@
 import type { getDocumentation } from "@/catalog/docs.functions"
 
+import { editorParts } from "@/catalog/editor-parts"
+
 const cacheControl = "public, max-age=3600"
 
 const cliRunners = `Yopem UI supports Bun, npm, pnpm, and Yarn 2 or later.
@@ -138,12 +140,18 @@ See the lint guide for rule defaults, options, and file overrides.
 ${guideLinks}
 - [Components](${url("/components.md")}): Browse all components
 
+## Editor
+
+- [Editor overview](${url("/editor.md")})
+${editorParts.map((part) => `- [${part.name}](${url(`/editor/${part.slug}.md`)}): ${part.description}`).join("\n")}
+
 ## Components
 
 ${componentLinks}
 
 ## Machine-readable resources
 
+- [Editor parts inventory](${url("/api/editor.json")}): Public editor parts, install items, and documentation URLs
 - [Registry index](${url("/r/registry.json")}): Component registry metadata
 - [Component documentation JSON](${url("/r/docs/button.json")}): Description, usage, and API data; replace button with the registry item name
 - [Registry schema](${url("/schema/registry.json")}): Registry index JSON schema
@@ -154,7 +162,10 @@ ${componentLinks}
 
 export function createComponentText(
   title: string,
-  data: Awaited<ReturnType<typeof getDocumentation>>,
+  data: Pick<
+    Awaited<ReturnType<typeof getDocumentation>>,
+    "description" | "previewSource" | "usage" | "notes" | "api" | "installNames"
+  >,
 ) {
   const preview = data.previewSource
     ? `\`\`\`tsx\n${data.previewSource.trim()}\n\`\`\``
@@ -173,7 +184,7 @@ export function createComponentText(
     })
     .join("\n\n")
 
-  return `# ${title}\n\n${data.description}\n\n## Installation\n\n${cliRunners}\nRun \`bunx --bun @yopem-ui/cli init\` in a supported project.\nThen run \`bunx --bun @yopem-ui/cli add <component>\`.\nThe init command configures StyleX.\nThe add command installs required source files and dependencies.\n\n## Preview\n\n${preview}\n\n## Usage\n\n${data.notes.join("\n\n")}\n\n\`\`\`tsx\n${data.usage.trim()}\n\`\`\`\n\n## API reference\n\n${api}\n`
+  return `# ${title}\n\n${data.description}\n\n## Installation\n\n${cliRunners}\nRun \`bunx --bun @yopem-ui/cli init\` in a supported project.\nInstall the source:\n\n\`\`\`sh\n${data.installNames.map((name) => `bunx --bun @yopem-ui/cli add ${name}`).join("\n")}\n\`\`\`\nThe init command configures StyleX.\nThe add command installs required source files and dependencies.\n\n## Preview\n\n${preview}\n\n## Usage\n\n${data.notes.join("\n\n")}\n\n\`\`\`tsx\n${data.usage.trim()}\n\`\`\`\n\n## API reference\n\n${api}\n`
 }
 
 export function createGuideText(page: { content: string; title: string }) {

@@ -41,6 +41,12 @@ accessibility, and production build.
     `@registry/components/ui/*`. Public usage snippets and manual guide examples
     import copied components from `@/components/ui/*`.
   - `src/catalog/previews/` — curated live previews shown in component docs.
+  - `/editor` lists public editor React parts. Register each shipped part in
+    `src/catalog/editor-parts.ts`. Add its focused live example under
+    `src/catalog/editor-previews/`. Set the correct install item and consumer
+    import. The inventory supplies navigation, search, Markdown, and sitemap
+    entries. `/api/editor.json` publishes this inventory. Add new feature parts
+    in their implementation scope. Do not register UI that does not exist.
   - `src/routes/` — catalog, guide, API, SEO, and machine-readable
     routes. Run `bun run generate-routes` after route changes; never edit
     `routeTree.gen.ts`.

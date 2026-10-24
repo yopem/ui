@@ -1,4 +1,5 @@
 import { catalog } from "./components"
+import { editorParts } from "./editor-parts"
 
 const layoutSlugs = new Set([
   "absolute-center",
@@ -45,11 +46,21 @@ export const navigationGroups = [
       { name: "CLI", url: "/docs/cli" },
       { name: "Theming", url: "/docs/theming" },
       { name: "Layout and typography", url: "/docs/layout" },
-      { name: "Editor", url: "/docs/editor" },
-      { name: "Editor authentication", url: "/docs/editor-auth" },
-      { name: "Editor document storage", url: "/docs/editor-store" },
       { name: "Styling with StyleX", url: "/docs/styling" },
       { name: "Lint rules", url: "/docs/lint" },
+    ],
+  },
+  {
+    name: "Editor",
+    pages: [
+      { name: "Overview", url: "/editor" },
+      { name: "Composition guide", url: "/docs/editor" },
+      { name: "Authentication", url: "/docs/editor-auth" },
+      { name: "Document storage", url: "/docs/editor-store" },
+      ...editorParts.map((part) => ({
+        name: part.name,
+        url: `/editor/${part.slug}`,
+      })),
     ],
   },
   ...catalogGroups.map((name) => ({
@@ -68,7 +79,11 @@ export const navigationGroups = [
                 ? "Typography"
                 : "Components"
 
-          return group === name
+          return (
+            group === name &&
+            item.slug !== "editor" &&
+            !item.slug.startsWith("editor-")
+          )
         })
         .map((item) => ({ name: item.title, url: `/components/${item.slug}` })),
     ],

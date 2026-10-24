@@ -13,7 +13,11 @@ test("editor guide is linked and published in public inventories", async ({
 
   if (await navigation.isVisible()) await navigation.click()
 
-  await page.getByRole("link", { name: "Editor", exact: true }).first().click()
+  await page.getByRole("button", { name: "Editor", exact: true }).click()
+  await page
+    .getByRole("link", { name: "Composition guide", exact: true })
+    .first()
+    .click()
   await expect(page).toHaveURL(/\/docs\/editor$/)
   await expect(
     page.getByRole("heading", { name: "Editor", level: 1 }),

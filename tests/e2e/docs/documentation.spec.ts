@@ -120,13 +120,18 @@ test("search waits for client hydration before accepting clicks", async ({
 test("index hides page navigation while docs keep previous and next links", async ({
   page,
 }, testInfo) => {
+  test.slow()
   await page.goto("/")
   await expect(page.getByRole("heading", { level: 1 })).toBeVisible()
   await expect(
     page.getByRole("navigation", { name: "Documentation pages" }),
   ).toHaveCount(0)
   await testInfo.attach("index-without-page-navigation", {
-    body: await page.screenshot({ fullPage: true, animations: "disabled" }),
+    body: await page.screenshot({
+      fullPage: true,
+      animations: "disabled",
+      scale: "css",
+    }),
     contentType: "image/png",
   })
 

@@ -211,6 +211,7 @@ const styles = stylex.create({
   },
   link: {
     display: "block",
+    overflowWrap: "anywhere",
     color: tokens["--muted-foreground"],
     paddingBlock: "0.5rem",
     paddingInline: "0.75rem",

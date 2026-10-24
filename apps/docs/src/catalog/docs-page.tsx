@@ -61,6 +61,7 @@ const styles = stylex.create({
     lineHeight: 1.1,
     marginBlock: "0 1rem",
     textWrap: "balance",
+    overflowWrap: "anywhere",
   },
   paragraph: {
     color: tokens["--muted-foreground"],

@@ -11,6 +11,7 @@ import remarkGfm from "remark-gfm"
 import { defineConfig } from "vite"
 
 import { createPrerenderGuard } from "./scripts/prerender-guard"
+import { editorParts } from "./src/catalog/editor-parts"
 
 const root = resolve(import.meta.dirname, "../..")
 
@@ -128,7 +129,7 @@ const config = defineConfig({
         server.middlewares.use((request, _response, next) => {
           if (
             request.method === "GET" &&
-            /^\/(?:components(?:\/[^/?]+)?|docs\/[^/?]+|index)\.md(?:\?|$)/.test(
+            /^\/(?:(?:components|editor)(?:\/[^/?]+)?|docs\/[^/?]+|index)\.md(?:\?|$)/.test(
               request.url ?? "",
             )
           )
@@ -159,6 +160,13 @@ const config = defineConfig({
           "/404",
           "/components",
           "/components.md",
+          "/editor",
+          "/editor.md",
+          "/api/editor.json",
+          ...editorParts.flatMap((part) => [
+            `/editor/${part.slug}`,
+            `/editor/${part.slug}.md`,
+          ]),
           "/components/label",
           "/components/label.md",
           "/components/sidebar",

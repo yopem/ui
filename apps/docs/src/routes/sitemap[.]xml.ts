@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router"
 
 import { catalog } from "@/catalog/components"
 import { guidePages } from "@/catalog/docs-data"
+import { editorParts } from "@/catalog/editor-parts"
 import { createSitemap } from "@/lib/seo"
 
 export const Route = createFileRoute("/sitemap.xml")({
@@ -11,6 +12,8 @@ export const Route = createFileRoute("/sitemap.xml")({
         new Response(
           createSitemap([
             "/components",
+            "/editor",
+            ...editorParts.map((part) => `/editor/${part.slug}`),
             ...guidePages.map((page) => page.url),
             ...catalog.map((item) => `/components/${item.slug}`),
           ]),
