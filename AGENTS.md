@@ -18,10 +18,14 @@ bun run fmt:check        # verify formatting
 bun run typecheck        # typecheck registry and docs
 bun run test             # CLI and Oxlint Bun tests from tests/
 bun run test:e2e          # docs and registry Playwright tests
+bun run test:editor-callout-clipboard
 bun run test:a11y        # docs and registry accessibility tests
 bun test ./tests/cli      # CLI tests without browsers
 bun run build            # registry and docs production build
 ```
+
+The clipboard command writes its browser report to
+`test-results/editor-callout-clipboard/`.
 
 After changes, run `bun run lint && bun run fmt:check && bun run typecheck` plus
 focused E2E tests for affected behavior. Before release work, run the full gate
@@ -528,3 +532,15 @@ deadlines before driver calls. PostgreSQL checks remaining time before each stat
 Synchronous work cannot be stopped.
 Do not add accounts, ACL tables, or implicit document grants.
 See https://ui.yopem.com/docs/editor-store for protocol and deployment limits.
+
+## Optional editor blocks
+
+Register `EditorBlocksExtension` for native callouts and toggles.
+Compose focused block controls inside `EditorToolbar`.
+Keep server imports on `@/components/editor/blocks-model`.
+Validate block metadata and structure before document replacement.
+Read-only disclosure must not change saved state or history.
+
+Keep rich toggle titles outside the native summary control.
+Keep title links usable when closed.
+Keep the native details body, empty disclosure control, and content slot together.

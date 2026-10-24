@@ -14,6 +14,9 @@ const usageNoteValues = {
     "Validate external table JSON and HTML before conversion. Tables support 50 rows, 50 columns, and 2500 covered cells across the document. Invalid updates preserve existing content. Saved table selections become invalid after document changes.",
     "The editor provides a foundation, not full Plate feature parity. Collaboration, media uploads, comments, and document conversion are not included.",
   ],
+  "editor-blocks": [
+    "Register EditorBlocksExtension in a stable extensions array. Compose focused controls inside EditorToolbar. Import server-safe models from @/components/editor/blocks-model. Validate JSON and HTML before document replacement. Read-only disclosure changes local visibility only.",
+  ],
   "editor-code": [
     "Add EditorCodeExtension to EditorRoot extensions. Import optional code parts from @/components/editor/code. Keep EditorContent as the native editable surface.",
     "Put EditorCodeLanguage, EditorCodeCopyButton, EditorCodeToggle, and EditorCodeStatus inside EditorCodeToolbar. Add EditorBlockButton and EditorIndentButton from the base editor as needed.",
@@ -175,7 +178,7 @@ const usageNoteValues = {
     "Prose uses the sans font token, foreground color token, 1rem text, and 1.7 line height. It supplies a readable width for long-form content. Compose semantic headings, paragraphs and lists inside it.",
   ],
   codeblock: [
-    "Codeblock preserves code whitespace and allows horizontal scrolling. Supply a language label outside the block when context is not obvious.",
+    "Codeblock preserves code whitespace and allows horizontal scrolling. Its code pane accepts keyboard focus. Supply a language label outside the block when context is not obvious.",
   ],
   heading: [
     "Heading renders h2 by default. It uses the heading font token and foreground color token. Default sizes are h1 2.25rem, h2 1.5rem, h3 1.25rem, h4 1.125rem, h5 1rem, and h6 0.875rem. Other defaults are weight 600, 1.25 line height, -0.025em letter spacing, and zero margins. Use render={<h1 />} through render={<h6 />} to select semantic levels. The Base UI render prop also supports callbacks and custom components. Sizes follow the rendered native heading tag, including callbacks and custom components. Other rendered tags use the h2 size. Use xstyle to override the size.",

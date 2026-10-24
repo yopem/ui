@@ -248,6 +248,7 @@ function checkGuidance(text: string, shared = false) {
     "EditorCodeCopyButton",
     "EditorCodeToggle",
     "EditorCodeStatus",
+    "EditorBlocksExtension",
     "stylex.create",
     "stylex.props",
     "stylexProps",
@@ -267,14 +268,22 @@ function checkGuidance(text: string, shared = false) {
   expect(managed).toContain(
     shared ? "@acme/ui/components/editor/code" : "@/components/editor/code",
   )
+  expect(managed).toContain(
+    shared
+      ? "@acme/ui/components/editor/blocks-model"
+      : "@/components/editor/blocks-model",
+  )
 
   for (const command of [
     "bunx --bun @yopem-ui/cli",
     "npx @yopem-ui/cli",
     "pnpm dlx @yopem-ui/cli",
     "yarn dlx @yopem-ui/cli",
-  ])
+  ]) {
     expect(managed).toContain(`${command} add editor-code`)
+    expect(managed).toContain(`${command} add editor-blocks`)
+  }
+
   expect(managed).toContain(
     shared ? "@acme/ui/styles/tokens.stylex" : "@/styles/tokens.stylex",
   )

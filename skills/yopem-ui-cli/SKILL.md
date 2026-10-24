@@ -76,6 +76,27 @@ Lexical JSON for document state. Do not pass Slate documents or Plate plugins.
 Read the [editor guide](https://ui.yopem.com/docs/editor.md) for supported
 features.
 
+### Optional editor blocks
+
+Install optional callout and toggle source with the matching package manager:
+
+```sh
+bunx --bun @yopem-ui/cli add editor-blocks
+npx @yopem-ui/cli add editor-blocks
+pnpm dlx @yopem-ui/cli add editor-blocks
+yarn dlx @yopem-ui/cli add editor-blocks
+```
+
+The item includes `editor` as a registry dependency. Register
+`EditorBlocksExtension` from `@/components/editor/blocks` in a stable extension
+array. Compose focused controls inside `EditorToolbar`. Import server-safe
+models from `@/components/editor/blocks-model`. Validate block JSON and HTML
+before document replacement. Reject unsupported content without changing the
+current document. Read-only disclosure changes local visibility, not saved state
+or history. Keep rich toggle titles outside the native summary control. Keep
+title links usable when closed. Keep the native details body, empty disclosure
+control, and content slot together.
+
 ### Editor composition
 
 Install the `editor` item before you use either the preset or public parts. The

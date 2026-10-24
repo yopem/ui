@@ -453,3 +453,86 @@ that your editor registers.
 
 `Editor`, `EditorProps`, and the document model use the Lexical foundation. See
 the [component reference](/components/editor) for the generated API.
+
+## Optional callouts and toggles
+
+Install the optional source files with the package-manager switcher.
+
+```sh
+bunx --bun @yopem-ui/cli add editor-blocks
+```
+
+Register `EditorBlocksExtension` before you load documents with these nodes.
+Keep the extension array stable. The default editor does not register these
+nodes.
+
+```tsx
+import { EditorRoot, EditorContent, EditorToolbar } from "@/components/editor"
+import {
+  EditorBlocksExtension,
+  EditorBlocksControls,
+} from "@/components/editor/blocks"
+
+const extensions = [EditorBlocksExtension]
+
+export function BlockNotes() {
+  return (
+    <EditorRoot extensions={extensions} ariaLabel="Block notes">
+      <EditorToolbar aria-label="Blocks">
+        <EditorBlocksControls />
+      </EditorToolbar>
+      <EditorContent />
+    </EditorRoot>
+  )
+}
+```
+
+<EditorBlocksExample />
+
+Compose `EditorCalloutButton`, `EditorToggleButton`, and
+`EditorRemoveBlockButton` separately when needed. Use
+`EditorCalloutAppearanceButton` for neutral, info, success, warning, or
+destructive appearance. Use `EditorCalloutIconControl` for plain-text icons.
+Icons cannot contain markup or control characters. Use `EditorDisclosureButton`
+to change the selected toggle state. Insertion requires a collapsed selection.
+Removal keeps existing child content.
+
+Toggle summaries contain rich inline text. Toggle bodies contain native blocks,
+including nested toggles. Press Enter in an editable summary to enter its body.
+Focus the summary marker to change disclosure with Enter or Space. Read-only
+disclosure changes local visibility, not saved state or history.
+
+### Document schema
+
+Import server-safe models and validators from
+`@/components/editor/blocks-model`. All four nodes use Lexical element fields
+and version `1`. `editor-callout` adds `appearance` and `icon` fields.
+`appearance` accepts neutral, info, success, warning, or destructive. `icon`
+accepts up to 32 UTF-16 units of plain text, including emoji joiners.
+`editor-toggle` adds a boolean `open` field. Its children must be
+`editor-toggle-summary` followed by `editor-toggle-body`. Summary and body nodes
+have no additional fields.
+
+HTML uses `aside[data-editor-callout]` with `data-appearance` and `data-icon`.
+Toggle HTML uses `section[data-editor-toggle]` with two children. The first
+child is `div[data-editor-toggle-summary]` for the rich title. The second child
+is `details[data-editor-toggle-body]` with the native `open` attribute. The
+details element contains an empty `summary[data-editor-toggle-control]` and
+`div[data-editor-toggle-content]`. The control uses the plain title as its
+accessible name, or `Toggle content` for an empty title. Title links stay
+outside the disclosure control and remain visible when closed. Import also
+accepts the earlier marked details, summary, and body-div structure. The icon
+attribute stores metadata. Rendering shows the icon outside the editable child
+slot.
+
+Call `validateEditorBlocksJSON` before Lexical JSON parsing. Call
+`validateEditorBlocksHTML` before HTML conversion. These validators check block
+metadata, structure, depth, and size limits. They do not replace host
+sanitization, complete node validation, or document access checks. Reject
+unsupported content before replacing the current document. Keep table and
+block-presentation validators active when those extensions are installed. Do not
+remove unknown nodes or convert them to text.
+
+Browser parity checks remain required for clipboard, cross-block selection,
+history, and assistive technology. This feature does not provide Plate document
+compatibility or full Plate parity.

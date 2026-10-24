@@ -105,6 +105,25 @@ Select one code block before using its controls. Copy can run read-only; mutatio
 Line numbers and wrapping turn each other off. Lexical JSON preserves these choices.
 Keep native code keyboard behavior and serializers. Discard targets after host document changes.
 
+### Optional editor blocks
+
+Install optional callout and toggle source with the matching package manager:
+
+\`\`\`sh
+bunx --bun @yopem-ui/cli add editor-blocks
+npx @yopem-ui/cli add editor-blocks
+pnpm dlx @yopem-ui/cli add editor-blocks
+yarn dlx @yopem-ui/cli add editor-blocks
+\`\`\`
+
+Register \`EditorBlocksExtension\` from \`${imports.editor}/blocks\` in a stable extension array.
+Compose focused callout and toggle controls inside \`EditorToolbar\`.
+Import server-safe models from \`${imports.editor}/blocks-model\`.
+Validate block JSON and HTML before document replacement. Reject unsupported content without changing the current document.
+Read-only disclosure changes local visibility, not saved state or history.
+Keep rich toggle titles outside the native summary control. Keep title links usable when closed.
+Keep the native details body, empty disclosure control, and content slot together.
+
 ### Editor authentication
 
 Install optional server helpers with the matching package manager:

@@ -668,3 +668,15 @@ Use `EditorClearFormattingButton` to remove presentation. Keep content, links,
 list nesting, table structure, and unrelated NodeState. Saved style selections
 expire after document changes. See
 [editor composition](https://ui.yopem.com/docs/editor.md).
+
+## Optional editor blocks
+
+Install `editor-blocks` for native Lexical callouts and toggles. Register
+`EditorBlocksExtension` from `@/components/editor/blocks` in a stable extension
+array. Compose focused controls inside `EditorToolbar`. Import server-safe
+models from `@/components/editor/blocks-model`. Validate block JSON and HTML
+before document replacement. Reject unsupported content without changing the
+current document. Read-only disclosure changes local visibility, not saved state
+or history. Keep rich toggle titles outside the native summary control. Keep
+title links usable when closed. Keep the native details body, empty disclosure
+control, and content slot together.

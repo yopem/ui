@@ -249,15 +249,42 @@ test("packed CLI exposes shared editor roots to external workspace consumers", a
         "--registry",
         `${server.url}r`,
       ])
+      await run(ui, [
+        ...command,
+        "add",
+        "editor-blocks",
+        "--registry",
+        `${server.url}r`,
+      ])
+
+      const blockExports: typeof initialized = await Bun.file(
+        join(ui, "package.json"),
+      ).json()
+
+      const blocksKey = `${editorKey}/blocks`
+      const blockControlsKey = `${editorKey}/blocks-controls`
+
+      if (custom) {
+        expect(blockExports.exports[blocksKey]).toBeUndefined()
+        expect(blockExports.exports[blockControlsKey]).toBe(
+          `./${components}/editor/blocks-controls.tsx`,
+        )
+      } else {
+        expect(blockExports.exports[blocksKey]).toBe(
+          `./${components}/editor/blocks.ts`,
+        )
+        expect(blockExports.exports[blockControlsKey]).toBeUndefined()
+      }
+
       await put(
         app,
         "src/check.tsx",
-        `import { Editor, EditorRoot, EditorContent, EditorFormatButton } from "@acme/ui/${components.slice(4)}/editor"\nimport { EditorCodeExtension, EditorCodeToolbar, EditorCodeLanguage, EditorCodeCopyButton, EditorCodeToggle, EditorCodeStatus } from "@acme/ui/${components.slice(4)}/editor/code"\nimport { createOpenAuthAuthentication, createBetterAuthAuthentication, authorizeEditorRequest } from "@acme/ui/${lib.slice(4)}/editor-auth"\nexport const parts = [Editor, EditorRoot, EditorContent, EditorFormatButton, EditorCodeExtension, EditorCodeToolbar, EditorCodeLanguage, EditorCodeCopyButton, EditorCodeToggle, EditorCodeStatus, createOpenAuthAuthentication, createBetterAuthAuthentication, authorizeEditorRequest]\n`,
+        `import { Editor, EditorRoot, EditorContent, EditorFormatButton } from "@acme/ui/${components.slice(4)}/editor"\nimport { EditorCodeExtension, EditorCodeToolbar, EditorCodeLanguage, EditorCodeCopyButton, EditorCodeToggle, EditorCodeStatus } from "@acme/ui/${components.slice(4)}/editor/code"\nimport { EditorBlocksExtension, EditorBlocksControls, EditorBlockTypeButton } from "@acme/ui/${components.slice(4)}/editor/blocks"\nimport { EditorCalloutIconControl } from "@acme/ui/${components.slice(4)}/editor/blocks-controls"\nimport { createOpenAuthAuthentication, createBetterAuthAuthentication, authorizeEditorRequest } from "@acme/ui/${lib.slice(4)}/editor-auth"\nexport const parts = [Editor, EditorRoot, EditorContent, EditorFormatButton, EditorCodeExtension, EditorCodeToolbar, EditorCodeLanguage, EditorCodeCopyButton, EditorCodeToggle, EditorCodeStatus, EditorBlocksExtension, EditorBlocksControls, EditorBlockTypeButton, EditorCalloutIconControl, createOpenAuthAuthentication, createBetterAuthAuthentication, authorizeEditorRequest]\n`,
       )
       await put(
         app,
         "src/geometry.ts",
-        `import { validateTableGeometry } from "@acme/ui/${components.slice(4)}/editor/table-presentation-schema"\nconst geometry = validateTableGeometry([[{ colSpan: 2 }], [{}, {}]])\nif (geometry.columns !== 2 || geometry.rows !== 2 || geometry.cells !== 4) throw new Error("Invalid geometry")\nlet rejected = false\ntry { validateTableGeometry([[{ colSpan: 51 }]]) } catch { rejected = true }\nif (!rejected) throw new Error("Missing geometry bound")\n`,
+        `import { validateTableGeometry } from "@acme/ui/${components.slice(4)}/editor/table-presentation-schema"\nimport { CalloutNode, ToggleNode, validateEditorBlocksJSON } from "@acme/ui/${components.slice(4)}/editor/blocks-model"\nif (Reflect.has(globalThis, "document") || CalloutNode.getType() !== "editor-callout" || ToggleNode.getType() !== "editor-toggle") throw new Error("Invalid headless block model")\nvalidateEditorBlocksJSON({ root: { type: "root", children: [] } })\nconst geometry = validateTableGeometry([[{ colSpan: 2 }], [{}, {}]])\nif (geometry.columns !== 2 || geometry.rows !== 2 || geometry.cells !== 4) throw new Error("Invalid geometry")\nlet rejected = false\ntry { validateTableGeometry([[{ colSpan: 51 }]]) } catch { rejected = true }\nif (!rejected) throw new Error("Missing geometry bound")\n`,
       )
       await run(app, ["bunx", "--no-install", "tsc", "--noEmit"])
       await run(app, ["bun", "src/geometry.ts"])

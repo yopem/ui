@@ -479,7 +479,9 @@ export function extractDocs() {
                 ? file.path === "lib/editor-auth/index.ts"
                 : item.name === "editor-code"
                   ? file.path === "components/editor/code.ts"
-                  : true),
+                  : item.name === "editor-blocks"
+                    ? file.path === "components/editor/blocks.ts"
+                    : true),
       )
       .flatMap((file) => {
         const source = program.getSourceFile(resolveSourcePath(file.path))

@@ -26,6 +26,7 @@ jobs:
               - 'packages/registry/**'
               - 'packages/editor/**'
               - 'tests/e2e/**'
+              - 'tests/editor-callout-clipboard/**'
               - 'playwright.config.ts'
               - 'tests/tsconfig.json'
               - 'package.json'
@@ -45,5 +46,12 @@ jobs:
       - run: bun run test
       - run: bunx playwright install --with-deps chromium
         if: steps.changes.outputs.docs == 'true'
+      - run: bun run test:editor-callout-clipboard
+        if: steps.changes.outputs.docs == 'true'
+      - uses: actions/upload-artifact@v4
+        if: always() && steps.changes.outputs.docs == 'true'
+        with:
+          name: editor-callout-clipboard
+          path: test-results/editor-callout-clipboard
       - run: bun run test:e2e && bun run test:a11y
         if: steps.changes.outputs.docs == 'true'

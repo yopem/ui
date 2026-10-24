@@ -12,22 +12,26 @@
     "./table-presentation-controls": "./src/table-presentation-controls.tsx",
     "./table-resize": "./src/table-resize.tsx",
     "./block-presentation": "./src/block-presentation.ts",
-    "./code": "./src/code.ts"
+    "./code": "./src/code.ts",
+    "./blocks": "./src/blocks.ts",
+    "./blocks-model": "./src/blocks-model.ts",
+    "./blocks-extension": "./src/blocks-extension.ts"
   },
   "scripts": {
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@base-ui/react": "catalog:",
+    "@lexical/clipboard": "catalog:",
     "@lexical/code": "catalog:",
     "@lexical/code-prism": "^0.52.0",
-    "@lexical/extension": "^0.52.0",
-    "@lexical/history": "^0.52.0",
+    "@lexical/extension": "catalog:",
+    "@lexical/history": "catalog:",
     "@lexical/link": "^0.52.0",
-    "@lexical/list": "^0.52.0",
+    "@lexical/list": "catalog:",
     "@lexical/markdown": "^0.52.0",
     "@lexical/react": "^0.52.0",
-    "@lexical/rich-text": "^0.52.0",
+    "@lexical/rich-text": "catalog:",
     "@lexical/selection": "^0.52.0",
     "@lexical/table": "catalog:",
     "@stylexjs/stylex": "catalog:",
