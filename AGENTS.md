@@ -689,3 +689,16 @@ Table-of-contents links target headings in the current editor only.
 Register feature nodes in every reader and validate complete documents at IO boundaries.
 Generic document converters do not yet support footnote or table-of-contents nodes.
 Reject unsupported content without removing the current document.
+
+## Optional whole-block selection
+
+Install `editor-block-selection` separately.
+Create one stable controller with `createEditorBlockSelection`.
+Compose `EditorBlockSelection` inside `EditorRoot`.
+Use the gutter and actions for keyboard selection and movement.
+Use drag handles for pointer movement. Keep keyboard movement available.
+Require synchronous literal `true` from `authorizeCut` before native cut.
+Preserve native MIME handlers and higher-priority host cancellation.
+Require literal `true` from custom document validation.
+Content, selection, and read-only changes expire saved operations.
+Authorize persisted document writes separately.

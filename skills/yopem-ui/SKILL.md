@@ -847,3 +847,17 @@ Table-of-contents links target the current editor only.
 Base contents controls do not require typeahead. Add `editorTocSlashCommand` only to a configured slash controller.
 Register feature nodes in each reader. Model fragment codecs do not validate complete host documents.
 Generic `editor-document` conversion does not yet support footnotes or contents nodes.
+
+## Optional whole-block selection
+
+Install `editor-block-selection` separately.
+Create one stable controller with `createEditorBlockSelection`.
+Compose `EditorBlockSelection` inside `EditorRoot`.
+Use the gutter and actions for keyboard selection and movement.
+Use drag handles for pointer movement. Keep keyboard movement available.
+Require synchronous literal `true` from `authorizeCut` before native cut.
+Preserve native MIME handlers and higher-priority host cancellation.
+Require literal `true` from custom document validation.
+Content, selection, and read-only changes expire saved operations.
+Authorize persisted document writes separately.
+Import parts from `@/components/editor/block-selection-index`.

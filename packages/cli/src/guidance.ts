@@ -168,6 +168,15 @@ Supply bounded, abort-aware host uploads with server authorization and validatio
 Private asset delivery needs explicit same-origin host integration. Never put tokens in media URLs.
 Register MediaNode in every reader. Generic editor-document conversion does not yet support media.
 
+### Optional whole-block selection
+
+Install editor-block-selection separately. Import parts from \`${imports.editor}/block-selection-index\`.
+Create one stable createEditorBlockSelection controller. Compose EditorBlockSelection inside EditorRoot.
+Use the gutter and actions for keyboard movement. Keep keyboard movement available beside drag handles.
+Native cut requires synchronous literal true from authorizeCut. Preserve native MIME handlers and higher-priority host cancellation.
+Custom document validation must return literal true. Content, selection, and read-only changes expire saved operations.
+Authorize persisted document writes separately.
+
 ### Optional footnotes and table of contents
 
 Install each item separately:

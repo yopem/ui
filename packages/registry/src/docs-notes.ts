@@ -1,5 +1,10 @@
 // These notes describe Yopem's composition choices, not only the upstream types.
 const usageNoteValues = {
+  "editor-block-selection": [
+    "Create one stable controller. Render EditorBlockSelection inside EditorRoot. Select and move top-level blocks with the gutter, drag handles, or keyboard actions.",
+    "Native cut requires synchronous literal-true host approval. Preserve native MIME export and higher-priority host cancellation. Document validation must also return literal true.",
+    "Content, selection, and read-only changes expire saved operations. Keep host authorization for persisted writes. Validate custom document schemas before local mutations.",
+  ],
   "editor-toc": [
     "Register EditorTocExtension in a stable root extension array. Compose controls inside EditorToolbar. Entries follow current document headings.",
     "Navigation stays within the current editor. Register EditorTocNode in host readers. Generic editor-document conversion does not support table-of-contents nodes.",

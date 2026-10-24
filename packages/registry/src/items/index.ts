@@ -1,6 +1,7 @@
 import { displayFormItems } from "@registry/items/display-form"
 import { editorItem } from "@registry/items/editor"
 import { editorAuthItem } from "@registry/items/editor-auth"
+import { editorBlockSelectionItem } from "@registry/items/editor-block-selection"
 import { editorBlocksItem } from "@registry/items/editor-blocks"
 import { editorCodeItem } from "@registry/items/editor-code"
 import { editorCodeFormatItem } from "@registry/items/editor-code-format"
@@ -33,6 +34,7 @@ export const sourceItems = [
   editorColumnsItem,
   editorDateItem,
   editorCodeFormatItem,
+  editorBlockSelectionItem,
   editorFootnotesItem,
   editorTocItem,
   editorDocumentItem,

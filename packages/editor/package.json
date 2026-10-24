@@ -51,7 +51,8 @@
     "./toc-model": "./src/toc-model.ts",
     "./toc-node": "./src/toc-node.tsx",
     "./ai": "./src/ai-controls.tsx",
-    "./ai/client": "./src/ai-client.ts"
+    "./ai/client": "./src/ai-client.ts",
+    "./block-selection": "./src/block-selection-index.ts"
   },
   "scripts": {
     "typecheck": "tsc --noEmit"
