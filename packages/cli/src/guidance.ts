@@ -71,6 +71,8 @@ Keep \`data-editor-row-height\` in exported HTML to preserve finite native heigh
 Keep table scrolling bounded in both directions and keyboard-accessible.
 Validate external table JSON and HTML before conversion. Reject invalid updates without removing existing content.
 Discard saved table selections after document content changes. Preserve resize cancellation, history, and RTL keyboard behavior.
+Render checklist items as native list items with separate checkbox controls.
+Keep native list semantics, keyboard input, history, and read-only behavior.
 \`EditorContent\` shares the root accessible name and read-only state.
 Pass additional Lexical extensions through \`extensions\` on EditorRoot or Editor.
 Keep that list stable. Remount the root when the extension configuration changes.

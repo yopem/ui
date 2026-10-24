@@ -98,6 +98,22 @@ export const editorStyles = stylex.create({
       cursor: "pointer",
     },
   },
+  checkControl: {
+    position: "absolute",
+    insetInlineStart: 0,
+    insetBlockStart: tokens["--spacing"],
+    inlineSize: `calc(${tokens["--spacing"]} * 4)`,
+    blockSize: `calc(${tokens["--spacing"]} * 4)`,
+    margin: 0,
+    accentColor: tokens["--primary"],
+    cursor: "pointer",
+    ":focus-visible": {
+      outlineColor: tokens["--ring"],
+      outlineStyle: "solid",
+      outlineWidth: 2,
+      outlineOffset: 2,
+    },
+  },
   checked: {
     "::before": {
       backgroundColor: tokens["--primary"],

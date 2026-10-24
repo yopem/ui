@@ -294,6 +294,8 @@ Rounded components use md (12px) by default. Use xstyle to change corner radii. 
   Keep table validation pure and shared with import paths. Reject invalid table
   updates without removing existing content. Preserve native table clipboard,
   merged spans, resize cancellation, history, and right-to-left keyboard behavior.
+  Render checklist items as native list items with separate checkbox controls.
+  Keep native list semantics, keyboard input, history, and read-only behavior.
   Keep the
   `editor-content` slot. Base CSS resets Lexical's native text wrappers only;
   StyleX supplies the text theme.

@@ -15,6 +15,7 @@ import { CheckListExtension, ListExtension } from "@lexical/list"
 import { registerMarkdownShortcuts, TRANSFORMERS } from "@lexical/markdown"
 import { RichTextExtension } from "@lexical/rich-text"
 import { TableExtension, TableNode } from "@lexical/table"
+import * as stylex from "@stylexjs/stylex"
 import {
   $getSelection,
   $isRangeSelection,
@@ -27,7 +28,8 @@ import {
   mergeRegister,
 } from "lexical"
 
-import { editorTheme } from "./theme"
+import { createChecklistAccessibilityExtension } from "./checklist-accessibility"
+import { editorStyles, editorTheme } from "./theme"
 
 export interface EditorProps extends Omit<StackProps, "children" | "onChange"> {
   extensions?: readonly AnyLexicalExtensionArgument[]
@@ -113,6 +115,9 @@ export function createEditorSetup({
       HistoryExtension,
       ListExtension,
       CheckListExtension,
+      createChecklistAccessibilityExtension(
+        stylex.props(editorStyles.checkControl).className ?? "",
+      ),
       configExtension(LinkExtension, { validateUrl: isSafeLink }),
       CodeExtension,
       TableExtension,
