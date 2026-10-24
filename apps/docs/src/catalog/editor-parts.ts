@@ -1,3 +1,5 @@
+import { editorTypeaheadParts } from "./editor-typeahead-parts"
+
 export const editorParts = [
   {
     name: "Editor",
@@ -236,6 +238,7 @@ export const editorParts = [
     item: "editor-blocks",
     description: "Compose callout and toggle controls with history actions.",
   },
+  ...editorTypeaheadParts,
 ] as const
 
 export function getEditorPart(slug: string) {

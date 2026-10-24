@@ -1,0 +1,43 @@
+{
+  "definedBeforeImplementation": true,
+  "native": [
+    "stable snapshot identity",
+    "real subscription cleanup",
+    "search/category/page bounds",
+    "canonical visible candidate insertion only",
+    "cancel and reopen",
+    "document mutation invalidates bookmark",
+    "readonly closes and blocks mutation",
+    "missing selection",
+    "unknown or filtered identity",
+    "Unicode single insertion",
+    "history update and clear"
+  ],
+  "browser": [
+    "custom inline composition retains contenteditable focus",
+    "native IME owns input; no secondary query input",
+    "group labels and flat option ordering",
+    "active descendant points at mounted option",
+    "pointer selection prevents editor blur",
+    "arrow/Enter/Escape/Tab behavior",
+    "custom item contents and consumer attributes",
+    "empty/loading/error status",
+    "toolbar roving focus reaches emoji trigger",
+    "separate popover/search/category/list/item/paging/history composition",
+    "Escape returns trigger focus",
+    "insertion returns editor focus",
+    "readonly while open",
+    "selection loss after host replacement",
+    "two independent editors",
+    "unmount/remount cleanup",
+    "undo/redo and native clipboard"
+  ],
+  "artifacts": [
+    "Playwright trace and report",
+    "axe closed/open/search/empty states",
+    "1440/768/390 screenshots in light/dark",
+    "saved JSON and clipboard HTML/plaintext",
+    "real OS IME manual receipt"
+  ],
+  "execution": "Native tests private only. Production build, browser, axe, responsive and IME acceptance remain parent-owned."
+}

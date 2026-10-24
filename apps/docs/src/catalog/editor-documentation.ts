@@ -3,16 +3,26 @@ import { rewriteImports } from "@registry/source-files"
 import { getDocumentation } from "./docs.functions"
 import { getEditorPart } from "./editor-parts"
 
-const previewSources = import.meta.glob<string>("./editor-previews/*.tsx", {
-  query: "?raw",
-  import: "default",
-})
+const previewSources = import.meta.glob<string>(
+  ["./editor-previews/*.tsx", "./editor-preview-compositions/*.tsx"],
+  { query: "?raw", import: "default" },
+)
 
 export async function getEditorDocumentation(slug: string) {
   const part = getEditorPart(slug)
 
   if (!part) return null
-  const load = previewSources[`./editor-previews/${part.slug}.tsx`]
+  let sourcePath = `./editor-previews/${part.slug}.tsx`
+
+  if (part.name.startsWith("EditorInlineCombobox"))
+    sourcePath = "./editor-preview-compositions/inline-combobox.tsx"
+  else if (
+    part.name.startsWith("EditorEmoji") &&
+    part.name !== "EditorEmojiMenu"
+  )
+    sourcePath = "./editor-preview-compositions/emoji.tsx"
+
+  const load = previewSources[sourcePath]
 
   if (!load) throw new Error(`Missing editor preview: ${part.name}`)
 
@@ -43,6 +53,14 @@ export async function getEditorDocumentation(slug: string) {
       ...(part.item === "editor-code"
         ? [
             "Select one code block before using code controls. Copy also works in read-only editors.",
+          ]
+        : []),
+      ...(part.item === "editor-typeahead"
+        ? [
+            "Import optional parts from @/components/editor/typeahead-index. Keep one controller and its extension array stable for each root.",
+            "Compose inline parts around one native editable surface. Keep candidate objects in controller order.",
+            "Place EditorEmojiPicker inside EditorEmojiPopoverContent and EditorEmojiPopover. Use EditorEmojiMenu for the toolbar preset.",
+            "The mention loader registers MentionNode. Other readers must register the canonical node through a Lexical extension.",
           ]
         : []),
       ...(part.item === "editor-blocks"

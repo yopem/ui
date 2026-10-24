@@ -1,0 +1,74 @@
+{
+  "baseline": "fb010e05670d628964862ed7284d53e279d1c2c2",
+  "plate": "32142be14e71684bc39bf41f405086ad387feecf",
+  "portable": [
+    "slash start and empty block",
+    "slash middle and after text rejected",
+    "code and link excluded",
+    "UTF-16 anchor offsets",
+    "mention identity bounds and controls",
+    "mention JSON token roundtrip",
+    "mention text and Markdown codec roundtrip",
+    "maximum-length Unicode identity survives percent-encoded Markdown",
+    "encoded Markdown input stays bounded",
+    "malformed codec fail closed",
+    "unsafe profile URLs rejected",
+    "emoji aliases and names",
+    "emoji ZWJ and tone preserved",
+    "timestamp rejected",
+    "host emoji validation",
+    "async abort debounce errors empty oversized duplicate results",
+    "out-of-order results",
+    "dirty update and host state replacement",
+    "readonly and disposal",
+    "native slash operations and custom action",
+    "query typing recaptures anchor",
+    "emoji categories and complete paged browsing",
+    "bounded frequency counts and clear",
+    "duplicate custom emoji IDs rejected"
+  ],
+  "browser_parent_required": [
+    "arrow Home End Enter Escape and pointer",
+    "caret stays editor during results",
+    "aria listbox active descendant",
+    "mention native movement delete backspace clipboard history",
+    "emoji native edit clipboard history",
+    "real composition IME",
+    "RTL and punctuation",
+    "unmount while request pending",
+    "two independent roots",
+    "axe loading empty error and results",
+    "screenshots 1440 768 390"
+  ],
+  "operation_ids": [
+    "emoji-history",
+    "emoji-inline",
+    "emoji-picker",
+    "mention-boundaries",
+    "mention-insert",
+    "mention-trigger",
+    "slash-menu",
+    "slash-select"
+  ],
+  "portable_files": [
+    "tests/editor-typeahead/command.test.ts",
+    "tests/editor-typeahead/core.test.ts",
+    "tests/editor-typeahead/emoji-history.test.ts",
+    "tests/editor-typeahead/emoji-inventory.test.ts",
+    "tests/editor-typeahead/lifecycle.test.ts",
+    "tests/editor-typeahead/mention-serialization.test.ts"
+  ],
+  "browser_files": [
+    "tests/e2e/docs/editor-typeahead-native.spec.ts",
+    "tests/e2e/docs/editor-typeahead-results.spec.ts",
+    "tests/e2e/docs/editor-typeahead-workflows.spec.ts",
+    "tests/e2e/docs/editor-typeahead.spec.ts"
+  ],
+  "packed_consumers": [
+    "default",
+    "custom",
+    "shared UI package",
+    "external shared app"
+  ],
+  "inventory_note": "Planned cases are not a passing-test report. Read sealed handoff and logs for executed checks."
+}

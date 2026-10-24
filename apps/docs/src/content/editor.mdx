@@ -536,3 +536,347 @@ remove unknown nodes or convert them to text.
 Browser parity checks remain required for clipboard, cross-block selection,
 history, and assistive technology. This feature does not provide Plate document
 compatibility or full Plate parity.
+
+## Optional typeahead
+
+Install the optional source item. The base Editor does not enable typeahead.
+
+```sh
+bunx --bun @yopem-ui/cli add editor-typeahead
+```
+
+Create one controller for each root. Keep its extension array stable for the
+mounted root. EditorTypeahead renders the editable surface and suggestions. Do
+not add EditorContent beside this preset. Use custom command arrays at
+controller creation. Each command needs a description and a real action. Command
+actions run in a Lexical update. Use native Lexical operations in these actions.
+Do not perform asynchronous document changes in command actions.
+
+```tsx
+"use client"
+
+import { useState } from "react"
+import { EditorRoot } from "@/components/editor"
+import {
+  createEditorTypeahead,
+  EditorTypeahead,
+} from "@/components/editor/typeahead-index"
+
+export function CommandEditor() {
+  const [controller] = useState(() => createEditorTypeahead())
+  const [extensions] = useState(() => [controller.extension])
+  return (
+    <EditorRoot extensions={extensions} ariaLabel="Commands">
+      <EditorTypeahead controller={controller} />
+    </EditorRoot>
+  )
+}
+```
+
+Type `/` at the start of a text block. Select native paragraphs, headings,
+lists, checklists, quotes, code blocks, or tables. Unavailable custom commands
+remain hidden. AI, media, review, and other unsupported actions are not listed.
+Use Arrow Up, Arrow Down, Home, End, and Enter to select results. Use Escape to
+close suggestions. The caret stays in the editor. Pointer selection does not
+focus a search input. Queries inside links and code are excluded. Slash queries
+after existing block text are excluded.
+
+Supply `mentions.load(query, signal)` to enable mention search. Missing loaders
+disable mention queries. Keep mention options fixed for each root. Return at
+most 50 identities, each with a unique `id` and a `label`. IDs allow Unicode
+letters, numbers, and `_.:@-`. IDs and labels have a 128 UTF-16-unit limit.
+Labels reject control and directional override characters. Unicode joiners
+remain valid. Queries have a 64 UTF-16-unit limit. The default debounce is 150
+milliseconds, bounded to 0 through 1000 milliseconds. The loader must honor
+`signal`. Stale responses cannot insert content or move focus. Loading, empty,
+and error states have status announcements. Diagnostic callbacks receive codes,
+not server error details. An optional `profileURL(id)` resolver accepts only
+HTTPS URLs without credentials. The resolver supplies live mention profile
+links. Do not put authentication tokens in profile URLs. Exported HTML does not
+contain these URLs. The resolver is host code. Serialized identities never grant
+document access or prove an account exists.
+
+<EditorTypeaheadExample />
+
+### Emoji inventory
+
+Type a colon followed by an alias, then select a result. Search names or
+underscore-separated aliases. A timestamp such as `12:30` does not open
+suggestions. This workflow does not automatically expand closed shortcodes.
+Compose `EditorEmojiMenu` inside EditorToolbar for the default emoji popup. Use
+`EditorEmojiPicker` as the panel inside a composed `EditorEmojiPopover`. Focus
+the editor before you open the toolbar picker. The inventory uses MIT-licensed
+`emojibase-data` 18.0.0 English names and emojibase aliases. It includes the
+published base entries and skin variants. Unicode rendering depends on the
+operating system font. The package version does not promise support for future
+Unicode releases. Supply `emoji` and `filterEmoji` for host inventories. The
+picker accepts `inventory` and `filter`. Enable `resolveJsonModule` in
+TypeScript for the JSON dataset. Inventories have a 10000-entry limit and
+require unique IDs. Validate host lists with `parseEditorEmojiInventory`. Each
+custom value must contain one emoji grapheme, not an image or HTML. Use the
+category selector and page controls to browse the complete inventory. Pass
+`controller.emojiHistory` to the picker to share inline and toolbar usage
+counts. Frequently used entries have a 50-entry memory limit. Clear history with
+the picker control. History is local to the supplied store. No browser storage
+or account synchronization is automatic. Hosts can subscribe to the store for
+their own storage policy. Search returns at most 50 results per page. Insertion
+preserves native UTF-16 offsets, ZWJ sequences, and skin tones.
+
+### Persisted mentions and document IO
+
+Register `MentionNode` in every reader of documents that contain mentions,
+including read-only roots and server converters. The controller extension
+registers this node only when `mentions.load` is set. Other readers must
+register the node in a separate Lexical extension. Unknown mention nodes must
+produce diagnostics. Do not silently discard unknown nodes. `decodeMention`
+validates identities. `mentionNodeSchema` validates mention fields and native
+text fields. It preserves other JSON fields. `encodeMention` throws for invalid
+identities. `mentionPlainText` returns the visible label with its `@` prefix.
+Plain-text import does not invent an identity. `mentionMarkdown` and
+`parseMentionMarkdown` use an encoded `@[label](mention:id)` representation.
+This format is not a profile link. Register it explicitly in the host Markdown
+converter. `MentionNode.importDOM` reads validated span identity attributes.
+Invalid HTML falls back to visible text. `MentionNode.exportDOM` writes text and
+identity attributes without HTML injection or serialized profile URLs. These
+HTML and Markdown codecs preserve identity and visible text. General text-format
+conversion needs the host IO integration. Keep host HTML sanitization. JSON
+import rejects invalid mention nodes instead of removing content. No generic
+document converter is enabled by this item. Coordinate converter registration
+before accepting mention documents.
+
+Use a stable extension for readers without a mention loader. Do not pass a
+`nodes` prop to `EditorRoot`.
+
+```tsx
+import { EditorContent, EditorRoot } from "@/components/editor"
+import { MentionNode } from "@/components/editor/typeahead-index"
+import { defineExtension } from "lexical"
+
+const MentionReaderExtension = defineExtension({
+  name: "app/mention-reader",
+  nodes: [MentionNode],
+})
+const readerExtensions = [MentionReaderExtension]
+
+export function MentionReader() {
+  return (
+    <EditorRoot
+      extensions={readerExtensions}
+      editable={false}
+      ariaLabel="Mention reader"
+    >
+      <EditorContent />
+    </EditorRoot>
+  )
+}
+```
+
+The mention schema does not validate complete documents, CSS declarations, or
+host NodeState. Keep host document and CSS validation.
+
+### HTTP integration example
+
+Supply an existing authenticated search endpoint through the host loader. No
+account database or search backend is included. The example endpoint below is an
+integration fixture, not a production service.
+
+<EditorHTTPTypeaheadExample />
+
+## Composed typeahead parts
+
+Import these parts from `@/components/editor/typeahead-index`. Create one stable
+controller and one mount-time extension array per editor. Keep the controller,
+inventory, filter, and history stable until unmount.
+
+Map every current suggestion once, in controller order. Do not reorder or hide
+active candidates. Use `useEditorInlineCombobox` to read current results and
+controller actions. Use `useEditorEmojiPicker` to read picker state and actions.
+Both hooks require their matching provider.
+
+The native editable surface owns query text, selection, clipboard, and IME.
+There is no Slate input node or secondary inline search field. The emoji search
+field belongs to the popup, not the document.
+
+### EditorInlineCombobox
+
+Provide one stable native suggestion controller to composed parts.
+
+### EditorInlineComboboxInput
+
+Render EditorContent as the native editable surface. Do not add a second search
+input.
+
+### EditorInlineComboboxContent
+
+Anchor suggestions to the native selection without moving focus.
+
+### EditorInlineComboboxList
+
+Connect the listbox and active option to the editable surface.
+
+### EditorInlineComboboxItem
+
+Render a current controller item. Preserve its pointer selection and keyboard
+identity.
+
+### EditorInlineComboboxEmpty
+
+Show content when search has no results.
+
+### EditorInlineComboboxStatus
+
+Announce loading and failure states without exposing backend errors.
+
+### EditorInlineComboboxGroup
+
+Group current results with the house CommandGroup.
+
+### EditorInlineComboboxGroupLabel
+
+Name a result group with the house CommandGroupLabel.
+
+### EditorInlineComboboxRow
+
+Arrange custom option content in a house HStack without extra ARIA roles.
+
+### EditorTypeahead
+
+Render the default suggestion preset from the public compound parts.
+
+### EditorEmojiPopover
+
+Provide a stable picker controller and capture the editor selection when the
+popup opens.
+
+### EditorEmojiToolbarButton
+
+Open the picker through a house ToolbarButton. Put it inside EditorToolbar.
+
+### EditorEmojiPopoverContent
+
+Render the house popup with dismissal and focus return.
+
+### EditorEmojiPicker
+
+Render a searchable picker panel inside EditorEmojiPopoverContent. Supply
+children to change its controls.
+
+### EditorEmojiSearch
+
+Search English names and aliases through the house CommandInput.
+
+### EditorEmojiCategory
+
+Select a category or frequently used emoji through NativeSelect.
+
+### EditorEmojiList
+
+Render the current page. Supply children for custom item content.
+
+### EditorEmojiItem
+
+Insert one current Unicode candidate at the captured selection.
+
+### EditorEmojiEmpty
+
+Show content when the picker has no results.
+
+### EditorEmojiPrevious
+
+Move to the previous page of results.
+
+### EditorEmojiNext
+
+Move to the next page of results.
+
+### EditorEmojiClearHistory
+
+Clear the bounded in-memory frequency history.
+
+### EditorEmojiClearSearch
+
+Clear the popup search without changing document content.
+
+### EditorEmojiPreview
+
+Show the highlighted Unicode emoji, name, and aliases.
+
+### EditorEmojiMenu
+
+Compose the default toolbar trigger, popup, and picker panel.
+
+<EditorEmojiMenuExample />
+
+### Custom inline composition
+
+```tsx
+import {
+  EditorInlineCombobox,
+  EditorInlineComboboxInput,
+  EditorInlineComboboxContent,
+  EditorInlineComboboxList,
+  EditorInlineComboboxItem,
+  EditorInlineComboboxEmpty,
+  EditorInlineComboboxStatus,
+  useEditorInlineCombobox,
+  type EditorTypeaheadController,
+} from "@/components/editor/typeahead-index"
+
+function Suggestions() {
+  const { state } = useEditorInlineCombobox()
+  return (
+    <EditorInlineComboboxContent aria-label="Suggestions">
+      <EditorInlineComboboxList aria-label="Suggestions">
+        {state.items.map((item) => (
+          <EditorInlineComboboxItem key={item.id} item={item} />
+        ))}
+      </EditorInlineComboboxList>
+      <EditorInlineComboboxEmpty />
+      <EditorInlineComboboxStatus />
+    </EditorInlineComboboxContent>
+  )
+}
+
+function InlineParts({
+  controller,
+}: {
+  controller: EditorTypeaheadController
+}) {
+  return (
+    <EditorInlineCombobox controller={controller}>
+      <EditorInlineComboboxInput />
+      <Suggestions />
+    </EditorInlineCombobox>
+  )
+}
+```
+
+Use these parts inside EditorRoot with the controller extension registered. Do
+not also render EditorContent when EditorInlineComboboxInput supplies the
+surface.
+
+### Custom emoji composition
+
+```tsx
+<EditorToolbar>
+  <EditorEmojiPopover history={controller.emojiHistory}>
+    <EditorEmojiToolbarButton>Emoji</EditorEmojiToolbarButton>
+    <EditorEmojiPopoverContent>
+      <EditorEmojiPicker>
+        <EditorEmojiSearch />
+        <EditorEmojiCategory />
+        <EditorEmojiList />
+        <EditorEmojiEmpty />
+        <EditorEmojiPrevious />
+        <EditorEmojiNext />
+        <EditorEmojiClearHistory />
+      </EditorEmojiPicker>
+    </EditorEmojiPopoverContent>
+  </EditorEmojiPopover>
+</EditorToolbar>
+```
+
+Cancel returns focus to the trigger. Successful insertion returns focus to the
+editor. Document changes invalidate the captured selection. Read-only mode
+closes the popup and blocks insertion. The picker does not restore a selection
+after content changes.

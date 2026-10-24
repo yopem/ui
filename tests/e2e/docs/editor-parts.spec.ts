@@ -4,7 +4,7 @@ import { editorParts } from "@workspace/apps/docs/src/catalog/editor-parts"
 import { z } from "zod"
 
 for (const part of editorParts.filter(
-  (part) => part.item !== "editor-blocks",
+  (part) => part.item !== "editor-blocks" && part.item !== "editor-typeahead",
 )) {
   test(`${part.name} preview and public resources @a11y`, async ({
     page,
@@ -362,7 +362,9 @@ for (const item of new Set(editorParts.map((part) => part.item))) {
           ? "@/components/editor/code"
           : part.item === "editor-blocks"
             ? "@/components/editor/blocks"
-            : "@/components/editor",
+            : part.item === "editor-typeahead"
+              ? "@/components/editor/typeahead-index"
+              : "@/components/editor",
       )
       expect(copied).not.toContain("@yopem-ui/editor")
       await page.reload()
