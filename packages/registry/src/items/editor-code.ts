@@ -23,10 +23,11 @@ export const editorCodeItem: SourceItem = {
     "code-controls.tsx",
     "code-editor.tsx",
     "code-languages.ts",
+    "LICENSE.md",
   ].map((file) => ({
     path: `components/editor/${file}`,
     target: `@/components/editor/${file}`,
-    type: "registry:ui",
+    type: file === "LICENSE.md" ? "registry:lib" : "registry:ui",
   })),
   docs: {
     api: [

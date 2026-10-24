@@ -10,6 +10,7 @@ const sources = import.meta.glob<string>(
   [
     "../../../../packages/registry/src/**/*.{ts,tsx,css}",
     "../../../../packages/editor/src/**/*.{ts,tsx,sql}",
+    "../../../../packages/editor/LICENSE.md",
   ],
   {
     query: "?raw",
@@ -115,17 +116,20 @@ export async function getDocumentation({ data }: { data: string }) {
     })),
     files: await Promise.all(
       files.map(async (file) => {
-        const sourcePath = file.path.startsWith("lib/editor-collaboration/")
-          ? `../../../../packages/editor/src/server/${file.path === "lib/editor-collaboration/index.ts" ? "collaboration-index.ts" : file.path.slice("lib/editor-collaboration/".length)}`
-          : file.path.startsWith("lib/editor-store/")
-            ? `../../../../packages/editor/src/server/${file.path === "lib/editor-store/index.ts" ? "document-index.ts" : file.path.slice("lib/editor-store/".length)}`
-            : file.path === "lib/editor-auth/index.ts"
-              ? "../../../../packages/editor/src/server/auth-index.ts"
-              : file.path.startsWith("lib/editor-auth/")
-                ? `../../../../packages/editor/src/server/${file.path.slice("lib/editor-auth/".length)}`
-                : file.path.startsWith("components/editor/")
-                  ? `../../../../packages/editor/src/${file.path.slice("components/editor/".length)}`
-                  : `../../../../packages/registry/src/${file.path}`
+        const sourcePath =
+          file.path === "components/editor/LICENSE.md"
+            ? "../../../../packages/editor/LICENSE.md"
+            : file.path.startsWith("lib/editor-collaboration/")
+              ? `../../../../packages/editor/src/server/${file.path === "lib/editor-collaboration/index.ts" ? "collaboration-index.ts" : file.path.slice("lib/editor-collaboration/".length)}`
+              : file.path.startsWith("lib/editor-store/")
+                ? `../../../../packages/editor/src/server/${file.path === "lib/editor-store/index.ts" ? "document-index.ts" : file.path.slice("lib/editor-store/".length)}`
+                : file.path === "lib/editor-auth/index.ts"
+                  ? "../../../../packages/editor/src/server/auth-index.ts"
+                  : file.path.startsWith("lib/editor-auth/")
+                    ? `../../../../packages/editor/src/server/${file.path.slice("lib/editor-auth/".length)}`
+                    : file.path.startsWith("components/editor/")
+                      ? `../../../../packages/editor/src/${file.path.slice("components/editor/".length)}`
+                      : `../../../../packages/registry/src/${file.path}`
 
         const load = sources[sourcePath]
 

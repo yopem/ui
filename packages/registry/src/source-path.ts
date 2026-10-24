@@ -10,6 +10,9 @@ export function resolveSourcePath(path: string) {
   )
     throw new Error(`Invalid source path: ${path}`)
 
+  if (path === "components/editor/LICENSE.md")
+    return resolve(root, "../../editor/LICENSE.md")
+
   if (path.startsWith("components/editor/"))
     return resolve(
       root,
