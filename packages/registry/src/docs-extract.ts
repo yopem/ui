@@ -479,11 +479,13 @@ export function extractDocs() {
                 ? file.path === "lib/editor-auth/index.ts"
                 : item.name === "editor-code"
                   ? file.path === "components/editor/code.ts"
-                  : item.name === "editor-blocks"
-                    ? file.path === "components/editor/blocks.ts"
-                    : item.name === "editor-typeahead"
-                      ? file.path === "components/editor/typeahead-index.ts"
-                      : true),
+                  : item.name === "editor-math"
+                    ? file.path === "components/editor/math.ts"
+                    : item.name === "editor-blocks"
+                      ? file.path === "components/editor/blocks.ts"
+                      : item.name === "editor-typeahead"
+                        ? file.path === "components/editor/typeahead-index.ts"
+                        : true),
       )
       .flatMap((file) => {
         const source = program.getSourceFile(resolveSourcePath(file.path))

@@ -16,7 +16,14 @@
     "./blocks": "./src/blocks.ts",
     "./blocks-model": "./src/blocks-model.ts",
     "./blocks-extension": "./src/blocks-extension.ts",
-    "./typeahead": "./src/typeahead-index.ts"
+    "./typeahead": "./src/typeahead-index.ts",
+    "./math": "./src/math.ts",
+    "./math-model": "./src/math-model.ts",
+    "./math-render": "./src/math-render.ts",
+    "./math-extension": "./src/math-extension.ts",
+    "./math-node": "./src/math-node.ts",
+    "./math-controls": "./src/math-controls.tsx",
+    "./math/model": "./src/math-model.ts"
   },
   "scripts": {
     "typecheck": "tsc --noEmit"
@@ -36,11 +43,13 @@
     "@lexical/rich-text": "catalog:",
     "@lexical/selection": "^0.52.0",
     "@lexical/table": "catalog:",
+    "@lexical/utils": "catalog:",
     "@stylexjs/stylex": "catalog:",
     "@yopem-ui/registry": "workspace:*",
     "emojibase": "^18.0.0",
     "emojibase-data": "^18.0.0",
     "jose": "catalog:",
+    "katex": "catalog:",
     "lexical": "catalog:",
     "lucide-react": "catalog:",
     "zod": "catalog:"

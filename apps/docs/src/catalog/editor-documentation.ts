@@ -50,6 +50,11 @@ export async function getEditorDocumentation(slug: string) {
         : [
             "Place controls and EditorContent inside EditorRoot. Keep extension arrays stable when the editor mounts.",
           ]),
+      ...(part.item === "editor-math"
+        ? [
+            "Register EditorMathExtension in a stable extension array. Import pure validation from @/components/editor/math-model. Validate complete documents before replacement.",
+          ]
+        : []),
       ...(part.item === "editor-code"
         ? [
             "Select one code block before using code controls. Copy also works in read-only editors.",

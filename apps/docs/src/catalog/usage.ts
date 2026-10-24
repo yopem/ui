@@ -1,5 +1,21 @@
 // Standalone TSX files use the standard @ alias for src.
 const usageSnippetValues = {
+  "editor-math": `"use client"
+
+import { EditorContent, EditorRoot, EditorToolbar } from "@/components/editor"
+import { EditorMathControls, EditorMathExtension } from "@/components/editor/math"
+
+const extensions = [EditorMathExtension]
+
+export function Preview() {
+  return (
+    <EditorRoot extensions={extensions} ariaLabel="Math editor">
+      <EditorToolbar aria-label="Equation controls"><EditorMathControls /></EditorToolbar>
+      <EditorContent placeholder="Enter text, then insert an equation" />
+    </EditorRoot>
+  )
+}
+`,
   "editor-blocks": `"use client"
 
 import { EditorRoot, EditorContent, EditorToolbar } from "@/components/editor"

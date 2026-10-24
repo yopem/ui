@@ -3,6 +3,7 @@ import { editorItem } from "@registry/items/editor"
 import { editorAuthItem } from "@registry/items/editor-auth"
 import { editorBlocksItem } from "@registry/items/editor-blocks"
 import { editorCodeItem } from "@registry/items/editor-code"
+import { editorMathItem } from "@registry/items/editor-math"
 import { editorStoreItem } from "@registry/items/editor-store"
 import { editorTypeaheadItem } from "@registry/items/editor-typeahead"
 import { foundationItems } from "@registry/items/foundation"
@@ -19,6 +20,7 @@ export const sourceItems = [
   editorItem,
   editorAuthItem,
   editorBlocksItem,
+  editorMathItem,
   editorCodeItem,
   editorStoreItem,
   editorTypeaheadItem,

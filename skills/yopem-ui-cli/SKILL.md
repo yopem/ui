@@ -522,3 +522,33 @@ useEditorEmojiPicker. Keep inventory, filter, and history stable until unmount.
 Keep inline and emoji options at least 44px high for coarse pointers.
 EditorTypeahead renders the editable surface and suggestions. Do not add
 EditorContent beside this preset.
+
+## Optional editor math
+
+Install `editor-math` for inline and block TeX equations. Register
+`EditorMathExtension` in a stable extensions array. Compose `EditorMathControls`
+inside `EditorToolbar`. Use `EditorMathControl kind="inline"` or `kind="block"`
+to insert an equation. Omit `kind` to edit one selected equation.
+Use `EditorMathPreview` for the current expression.
+Select equations with pointer input or keyboard focus. Apply
+changes, cancel changes, or delete the selected equation. Host document changes
+expire saved targets. Read-only roots cannot change equations.
+
+```sh
+bunx --bun @yopem-ui/cli add editor-math
+npx @yopem-ui/cli add editor-math
+pnpm dlx @yopem-ui/cli add editor-math
+yarn dlx @yopem-ui/cli add editor-math
+```
+
+KaTeX renders native MathML. No stylesheet, font, CDN, or service import is
+required. Browser MathML support controls visual output. Keep a visible error
+for invalid TeX. Trust features and user macros are not supported. TeX has a
+4096-character limit. Use `math-model` for pure JSON, HTML attribute, and
+Markdown fragment codecs. Use `math-node` for native Lexical JSON and HTML
+conversion. JSON uses type `editor-math`, version `1`, kind `inline` or `block`,
+and `tex`. HTML uses `span` for inline math and `div` for block math. Both
+elements require `data-editor-math` and `data-editor-tex`. Exported text
+contains TeX, not rendered HTML. Sanitize host HTML before import. Validate
+metadata before replacing document content. These fragment codecs do not parse
+complete documents or Plate state.

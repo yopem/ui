@@ -1,3 +1,4 @@
+import { editorMathParts } from "./editor-math-parts"
 import { editorTypeaheadParts } from "./editor-typeahead-parts"
 
 export const editorParts = [
@@ -238,6 +239,7 @@ export const editorParts = [
     item: "editor-blocks",
     description: "Compose callout and toggle controls with history actions.",
   },
+  ...editorMathParts,
   ...editorTypeaheadParts,
 ] as const
 

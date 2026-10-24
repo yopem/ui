@@ -34,6 +34,7 @@ const compositionOverrides = new Map<
 
 const previewDescriptionValues = {
   editor: "Core rich text editing with Lexical",
+  "editor-math": "Native inline and block TeX equations",
   "editor-blocks": "Native callouts and disclosures",
 
   "editor-typeahead": "Native suggestions and composed emoji controls",

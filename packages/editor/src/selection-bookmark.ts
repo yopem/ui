@@ -29,6 +29,7 @@ export function $isValidBookmarkPoint(point: RangeSelection["anchor"]) {
 
 export function createEditorSelectionBookmark(editor: LexicalEditor) {
   let saved: RangeSelection | null = null
+  let revision = 0
   let unregister: (() => void) | undefined
   const listeners = new Set<() => void>()
 
@@ -83,7 +84,10 @@ export function createEditorSelectionBookmark(editor: LexicalEditor) {
 
     unregister ??= editor.registerUpdateListener(
       ({ dirtyElements, dirtyLeaves }) => {
-        if (dirtyElements.size > 0 || dirtyLeaves.size > 0) clear()
+        if (dirtyElements.size > 0 || dirtyLeaves.size > 0) {
+          revision += 1
+          clear()
+        }
       },
     )
 
@@ -93,6 +97,7 @@ export function createEditorSelectionBookmark(editor: LexicalEditor) {
       if (listeners.size === 0) {
         unregister?.()
         unregister = undefined
+        revision += 1
         clear()
       }
     }
@@ -106,5 +111,17 @@ export function createEditorSelectionBookmark(editor: LexicalEditor) {
     return false
   }
 
-  return { capture, clear, restore, subscribe, getSnapshot, getServerSnapshot }
+  function getRevision() {
+    return revision
+  }
+
+  return {
+    capture,
+    clear,
+    restore,
+    subscribe,
+    getSnapshot,
+    getServerSnapshot,
+    getRevision,
+  }
 }

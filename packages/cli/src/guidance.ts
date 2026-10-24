@@ -133,6 +133,27 @@ Read picker state with useEditorEmojiPicker. Keep inventory, filter, and history
 Keep inline and emoji options at least 44px high for coarse pointers.
 EditorTypeahead renders the editable surface and suggestions. Do not add EditorContent beside this preset.
 
+### Optional editor math
+
+Install optional native TeX equations:
+
+\`\`\`sh
+bunx --bun @yopem-ui/cli add editor-math
+npx @yopem-ui/cli add editor-math
+pnpm dlx @yopem-ui/cli add editor-math
+yarn dlx @yopem-ui/cli add editor-math
+\`\`\`
+
+Register \`EditorMathExtension\` from \`${imports.editor}/math\` in a stable extension array.
+Compose \`EditorMathControls\` inside \`EditorToolbar\`.
+Use \`EditorMathControl\` with an explicit kind for insertion, or no kind for editing.
+Use \`EditorMathPreview\` for live MathML output.
+Import pure codecs from \`${imports.editor}/math-model\`.
+Keep \`data-editor-math\` and \`data-editor-tex\` in native HTML exports.
+Reject unsupported math before document replacement. Host changes expire saved targets.
+KaTeX uses native MathML without external stylesheets, fonts, or services.
+Trust features and user macros are not supported.
+
 ### Optional editor blocks
 
 Install optional callout and toggle source with the matching package manager:

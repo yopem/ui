@@ -21,6 +21,9 @@ const usageNoteValues = {
     "Validate external table JSON and HTML before conversion. Tables support 50 rows, 50 columns, and 2500 covered cells across the document. Invalid updates preserve existing content. Saved table selections become invalid after document changes.",
     "The editor provides a foundation, not full Plate feature parity. Collaboration, media uploads, comments, and document conversion are not included.",
   ],
+  "editor-math": [
+    "Register EditorMathExtension before insertion. Native MathML requires no CSS or font assets. Import pure codecs from math-model. Validate host HTML before import. TeX is bounded to 4096 characters; trust features and macros are not supported.",
+  ],
   "editor-blocks": [
     "Register EditorBlocksExtension in a stable extensions array. Compose focused controls inside EditorToolbar. Import server-safe models from @/components/editor/blocks-model. Validate JSON and HTML before document replacement. Read-only disclosure changes local visibility only.",
   ],
