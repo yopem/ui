@@ -52,7 +52,8 @@
     "./toc-node": "./src/toc-node.tsx",
     "./ai": "./src/ai-controls.tsx",
     "./ai/client": "./src/ai-client.ts",
-    "./block-selection": "./src/block-selection-index.ts"
+    "./block-selection": "./src/block-selection-index.ts",
+    "./server/collaboration": "./src/server/collaboration-index.ts"
   },
   "scripts": {
     "typecheck": "tsc --noEmit"
