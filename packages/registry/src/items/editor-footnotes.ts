@@ -1,0 +1,75 @@
+import type { SourceItem } from "@registry/items/types"
+
+import { editorDependency } from "@registry/editor-dependencies"
+
+export const editorFootnotesItem: SourceItem = {
+  name: "editor-footnotes",
+  title: "Editor footnotes",
+  type: "registry:ui",
+  categories: ["input"],
+  description:
+    "Adds native footnote references, rich definitions, backlinks, and identifier suggestions.",
+  dependencies: [
+    editorDependency("@lexical/utils"),
+    editorDependency("@types/hast"),
+    editorDependency("@types/mdast"),
+    editorDependency("hast-util-from-html"),
+    editorDependency("remark-gfm"),
+    editorDependency("remark-parse"),
+    editorDependency("remark-stringify"),
+    editorDependency("unified"),
+    editorDependency("zod"),
+  ],
+  devDependencies: [],
+  peerDependencies: [],
+  registryDependencies: [
+    "editor",
+    "box",
+    "button",
+    "command",
+    "hstack",
+    "popover",
+    "preview-card",
+    "stack",
+    "text",
+  ],
+  files: [
+    "footnote.ts",
+    "footnote-model.ts",
+    "footnote-node.tsx",
+    "footnote-commands.ts",
+    "footnote-runtime.ts",
+    "footnote-state.ts",
+    "footnote-extension.ts",
+    "footnote-controls.tsx",
+    "footnote-clipboard.ts",
+    "footnote-typeahead.tsx",
+  ].map((file) => ({
+    path: `components/editor/${file}`,
+    target: `@/components/editor/${file}`,
+    type: "registry:ui",
+  })),
+  docs: {
+    api: [
+      "EditorFootnoteExtension",
+      "EditorFootnoteClipboardExtension",
+      "EditorFootnoteControls",
+      "EditorFootnoteControlsProps",
+      "EditorFootnoteInsertControl",
+      "EditorFootnoteRemoveControl",
+      "EditorFootnoteRenumberControl",
+      "EditorFootnoteBacklinks",
+      "createEditorFootnoteTypeahead",
+      "EditorFootnoteTypeahead",
+      "EditorFootnoteTypeaheadProps",
+      "EditorFootnoteTypeaheadController",
+      "EditorFootnoteTypeaheadSnapshot",
+      "EditorFootnoteReferenceNode",
+      "EditorFootnoteDefinitionNode",
+      "validateEditorFootnotesJSON",
+      "validateEditorFootnotesHTML",
+    ],
+    usage:
+      "Import parts from @/components/editor/footnote. Register EditorFootnoteExtension in a stable root extension array. Compose controls inside EditorToolbar. The optional typeahead controller supplies its extension and owns EditorContent through EditorFootnoteTypeahead. Do not add a second editable surface. Register both footnote nodes in every document reader. Identifier codecs do not validate complete documents or grant access. Generic editor-document conversion does not yet support footnotes.",
+  },
+}

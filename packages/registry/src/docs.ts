@@ -152,31 +152,34 @@ export function createComponentDocs(
         importPath:
           item.name === "editor"
             ? "@/components/editor"
-            : [
-                  "editor-code",
-                  "editor-columns",
-                  "editor-date",
-                  "editor-media",
-                ].includes(item.name)
-              ? `@/components/editor/${item.name.slice(7)}`
-              : item.name === "editor-math"
-                ? "@/components/editor/math"
-                : item.name === "editor-blocks" &&
-                    part.source !== "components/editor/blocks-model.ts"
-                  ? "@/components/editor/blocks"
-                  : item.name === "editor-document"
-                    ? part.name === "DocumentStatic"
-                      ? "@/components/editor/document/static"
-                      : "@/components/editor/document"
-                    : item.name === "editor-typeahead"
-                      ? "@/components/editor/typeahead-index"
-                      : (item.files
-                          .find(
-                            (file) =>
-                              file.path === part.source ||
-                              file.path.endsWith(`${item.name}.tsx`),
-                          )
-                          ?.target.replace(/\.tsx?$/, "") ?? null),
+            : item.name === "editor-footnotes"
+              ? "@/components/editor/footnote"
+              : [
+                    "editor-code",
+                    "editor-columns",
+                    "editor-date",
+                    "editor-media",
+                    "editor-toc",
+                  ].includes(item.name)
+                ? `@/components/editor/${item.name.slice(7)}`
+                : item.name === "editor-math"
+                  ? "@/components/editor/math"
+                  : item.name === "editor-blocks" &&
+                      part.source !== "components/editor/blocks-model.ts"
+                    ? "@/components/editor/blocks"
+                    : item.name === "editor-document"
+                      ? part.name === "DocumentStatic"
+                        ? "@/components/editor/document/static"
+                        : "@/components/editor/document"
+                      : item.name === "editor-typeahead"
+                        ? "@/components/editor/typeahead-index"
+                        : (item.files
+                            .find(
+                              (file) =>
+                                file.path === part.source ||
+                                file.path.endsWith(`${item.name}.tsx`),
+                            )
+                            ?.target.replace(/\.tsx?$/, "") ?? null),
         props: part.props.map((index) => {
           const prop = properties[index]
 

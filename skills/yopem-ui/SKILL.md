@@ -833,3 +833,17 @@ elements require `data-editor-math` and `data-editor-tex`. Exported text
 contains TeX, not rendered HTML. Sanitize host HTML before import. Validate
 metadata before replacing document content. These fragment codecs do not parse
 complete documents or Plate state.
+
+## Optional footnotes and table of contents
+
+Install `editor-footnotes` and `editor-toc` separately.
+Import parts from `@/components/editor/footnote` and `@/components/editor/toc`.
+Keep feature extensions stable when the root mounts.
+Compose controls inside `EditorToolbar`.
+`EditorFootnoteTypeahead` owns the editable surface. Do not add adjacent `EditorContent`.
+Keep repeated and unresolved references and duplicate definitions.
+Renumber a selected duplicate explicitly. Do not silently rewrite identifiers.
+Table-of-contents links target the current editor only.
+Base contents controls do not require typeahead. Add `editorTocSlashCommand` only to a configured slash controller.
+Register feature nodes in each reader. Model fragment codecs do not validate complete host documents.
+Generic `editor-document` conversion does not yet support footnotes or contents nodes.

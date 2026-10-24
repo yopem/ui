@@ -43,7 +43,13 @@
     "./media/html": "./src/media/html.ts",
     "./media/model": "./src/media/model.ts",
     "./selection-bookmark": "./src/selection-bookmark.ts",
-    "./collaboration": "./src/collaboration.ts"
+    "./collaboration": "./src/collaboration.ts",
+    "./footnote": "./src/footnote.ts",
+    "./footnote-model": "./src/footnote-model.ts",
+    "./footnote-node": "./src/footnote-node.tsx",
+    "./toc": "./src/toc.ts",
+    "./toc-model": "./src/toc-model.ts",
+    "./toc-node": "./src/toc-node.tsx"
   },
   "scripts": {
     "typecheck": "tsc --noEmit"

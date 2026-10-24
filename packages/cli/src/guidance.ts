@@ -168,6 +168,30 @@ Supply bounded, abort-aware host uploads with server authorization and validatio
 Private asset delivery needs explicit same-origin host integration. Never put tokens in media URLs.
 Register MediaNode in every reader. Generic editor-document conversion does not yet support media.
 
+### Optional footnotes and table of contents
+
+Install each item separately:
+
+\`\`\`sh
+bunx --bun @yopem-ui/cli add editor-footnotes
+bunx --bun @yopem-ui/cli add editor-toc
+npx @yopem-ui/cli add editor-footnotes
+npx @yopem-ui/cli add editor-toc
+pnpm dlx @yopem-ui/cli add editor-footnotes
+pnpm dlx @yopem-ui/cli add editor-toc
+yarn dlx @yopem-ui/cli add editor-footnotes
+yarn dlx @yopem-ui/cli add editor-toc
+\`\`\`
+
+Import parts from \`${imports.editor}/footnote\` and \`${imports.editor}/toc\`.
+Keep EditorFootnoteExtension and EditorTocExtension in stable root extension arrays.
+Compose EditorFootnoteControls or EditorTocControls inside EditorToolbar. EditorFootnoteTypeahead owns the editable surface.
+Do not add adjacent EditorContent. Preserve repeated and unresolved references and duplicate definitions.
+Renumber a selected duplicate explicitly. Do not silently rewrite identifiers.
+Table-of-contents links target the current editor. Base controls do not require typeahead.
+Register feature nodes in every reader. Validate complete host documents at IO boundaries.
+Generic editor-document conversion does not yet support footnotes or table-of-contents nodes.
+
 ### Optional editor columns and dates
 
 Install optional source with your selected package manager:

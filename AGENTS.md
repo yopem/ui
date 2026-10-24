@@ -675,3 +675,17 @@ Use MediaNode in headless readers. Reject media URL credentials, queries, and fr
 Review formats fail closed before document replacement.
 Keep native clipboard priorities, host vetoes, and host HTML sanitization.
 Host MIME handlers that consume data must validate their own output.
+
+## Optional editor footnotes and contents
+
+Install `editor-footnotes` and `editor-toc` separately.
+Register their extensions in stable root extension arrays.
+Compose focused controls inside `EditorToolbar`.
+`EditorFootnoteTypeahead` owns the editable surface. Do not add adjacent `EditorContent`.
+Preserve repeated references, unresolved references, and duplicate definitions.
+Renumber a selected duplicate explicitly. Do not silently rewrite identifiers.
+Table-of-contents links target headings in the current editor only.
+`editorTocSlashCommand` is an optional host slash action. Base contents controls do not require typeahead.
+Register feature nodes in every reader and validate complete documents at IO boundaries.
+Generic document converters do not yet support footnote or table-of-contents nodes.
+Reject unsupported content without removing the current document.

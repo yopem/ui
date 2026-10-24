@@ -1,5 +1,14 @@
 // These notes describe Yopem's composition choices, not only the upstream types.
 const usageNoteValues = {
+  "editor-toc": [
+    "Register EditorTocExtension in a stable root extension array. Compose controls inside EditorToolbar. Entries follow current document headings.",
+    "Navigation stays within the current editor. Register EditorTocNode in host readers. Generic editor-document conversion does not support table-of-contents nodes.",
+  ],
+  "editor-footnotes": [
+    "Register EditorFootnoteExtension in a stable root extension array. Keep rich definitions and references in the native document. Compose controls inside EditorToolbar.",
+    "The optional typeahead owns the editable surface. Keep its controller stable until unmount. Do not add EditorContent beside EditorFootnoteTypeahead.",
+    "Register footnote nodes in every host reader. Validate complete documents before replacement. Generic editor-document conversion does not support footnotes.",
+  ],
   "editor-media": [
     "Register MediaExtension in a stable extensions array. Compose MediaInsertControl inside EditorToolbar. MediaContent can render validated media without EditorRoot.",
     "Use HTTPS URLs without credentials. Provide image alt text and media captions. Provider embeds use exact supported hosts and canonical URLs.",
