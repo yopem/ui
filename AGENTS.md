@@ -281,6 +281,7 @@ Rounded components use md (12px) by default. Use xstyle to change corner radii. 
   Use Lexical document state, not Slate state. Do not imply Plate plugin or
   document compatibility. Keep editor styles in StyleX. Preserve native editing,
   selection, clipboard, history, keyboard input, and accessible control names.
+  Reject empty rich clipboard insertions without removing selected content.
   Discard saved link and table selections after document content changes. Use
   EditorTableMenu for table actions. Register EditorTablePresentationExtension
   for bounded geometry and persisted cell borders. Compose EditorTableDimensions,

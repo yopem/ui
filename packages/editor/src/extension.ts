@@ -29,6 +29,7 @@ import {
 } from "lexical"
 
 import { createChecklistAccessibilityExtension } from "./checklist-accessibility"
+import { registerEditorClipboardGuard } from "./clipboard-guard"
 import { editorStyles, editorTheme } from "./theme"
 
 export interface EditorProps extends Omit<StackProps, "children" | "onChange"> {
@@ -137,6 +138,7 @@ export function createEditorSetup({
       }
 
       return mergeRegister(
+        registerEditorClipboardGuard(instance),
         instance.registerRootListener((root) => {
           instance.setEditable(root !== null && currentEditable)
 
