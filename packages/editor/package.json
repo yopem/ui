@@ -55,7 +55,8 @@
     "./block-selection": "./src/block-selection-index.ts",
     "./server/collaboration": "./src/server/collaboration-index.ts",
     "./server/collaboration/bun": "./src/server/collaboration-bun.ts",
-    "./server/collaboration/node": "./src/server/collaboration-node.ts"
+    "./server/collaboration/node": "./src/server/collaboration-node.ts",
+    "./server/collaboration/worker": "./src/server/collaboration-do.ts"
   },
   "scripts": {
     "typecheck": "tsc --noEmit"
