@@ -59,6 +59,7 @@ const usageNoteValues = {
     "Emoji search uses the complete published English emojibase-data inventory and skin variants. Hosts can supply validated single-grapheme inventories.",
   ],
   editor: [
+    "Compose EditorAiRoot, EditorAiTrigger, and EditorAiPanel inside EditorRoot. Supply explicit same-origin endpoint, documentId, and host headers. Review untrusted text before approval. Stale or failed proposals cannot apply.",
     "Use public style controls inside EditorRoot and EditorToolbar. Register EditorBlockPresentationExtension in a stable mount-time array, including read-only roots.",
     "Use EditorIndentButton for block indentation and EditorFirstLineIndentControl for first-line indentation. Line height accepts unitless 1 through 4. First-line indent accepts nonnegative values through 160px or 10em/rem.",
     "Import pure codecs from @/components/editor/block-presentation. Pass the editorBlockPresentation NodeState payload to parseEditorBlockPresentation. JSON and HTML preserve validated block styles. Keep host HTML sanitization.",
@@ -70,7 +71,7 @@ const usageNoteValues = {
     "Use xstyle, className, refs, and native attributes on Editor and EditorRoot. Link controls discard saved ranges after document content changes.",
     "Use EditorTableMenu for row, column, header, merge, and split actions. Register EditorTablePresentationExtension for bounded tables and persisted cell presentation. Add EditorTableDimensions, EditorTableCellPresentation, and EditorTableResizeControls inside EditorRoot. Use EditorTableBackgroundControls and EditorTableBorderControls separately when needed. Border controls support logical edges and rectangle actions. Shared merged edges are indivisible. Row resizing stores minimum height. Content can make rows taller.",
     "Validate external table JSON and HTML before conversion. Tables support 50 rows, 50 columns, and 2500 covered cells across the document. Invalid updates preserve existing content. Saved table selections become invalid after document changes.",
-    "The editor provides a foundation, not full Plate feature parity. Collaboration, media uploads, and comments are not included. Install editor-document separately for supported document conversion.",
+    "The base editor provides core editing, not full Plate feature parity. Keep collaboration, media uploads, review, and document conversion in separate optional integrations. Install editor-document for supported conversion.",
   ],
   "editor-math": [
     "Register EditorMathExtension before insertion. Native MathML requires no CSS or font assets. Import pure codecs from math-model. Validate host HTML before import. TeX is bounded to 4096 characters; trust features and macros are not supported.",

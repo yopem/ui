@@ -1,11 +1,7 @@
 import AxeBuilder from "@axe-core/playwright"
 import { expect, test } from "@playwright/test"
 
-for (const slug of [
-  "math-control",
-  "math-controls",
-  "math-preview",
-])
+for (const slug of ["math-control", "math-controls", "math-preview"])
   test(`@a11y optional ${slug} has usable documentation`, async ({
     page,
   }, testInfo) => {

@@ -1,0 +1,80 @@
+export const editorReviewParts = [
+  {
+    name: "EditorReviewPreset",
+    slug: "review-preset",
+    item: "editor-review",
+    description: "Use the complete optional inline review editor.",
+  },
+  {
+    name: "EditorReviewProvider",
+    slug: "review-provider",
+    item: "editor-review",
+    description: "Connect host identity and current action policies.",
+  },
+  {
+    name: "EditorReviewModeControl",
+    slug: "review-mode-control",
+    item: "editor-review",
+    description: "Enable bounded inline suggestion tracking.",
+  },
+  {
+    name: "EditorReviewCreateControl",
+    slug: "review-create-control",
+    item: "editor-review",
+    description: "Create a rich discussion for selected text.",
+  },
+  {
+    name: "EditorReviewReplyForm",
+    slug: "review-reply-form",
+    item: "editor-review",
+    description: "Add a native rich reply to one thread.",
+  },
+  {
+    name: "EditorReviewDiffControl",
+    slug: "review-diff-control",
+    item: "editor-review",
+    description: "Propose bounded paragraph text replacements.",
+  },
+  {
+    name: "EditorReviewPanel",
+    slug: "review-panel",
+    item: "editor-review",
+    description: "Show discussions and inline suggestions.",
+  },
+  {
+    name: "EditorReviewThread",
+    slug: "review-thread",
+    item: "editor-review",
+    description: "Read and manage one anchored discussion.",
+  },
+  {
+    name: "EditorReviewComment",
+    slug: "review-comment",
+    item: "editor-review",
+    description: "Read, edit, or delete one discussion comment.",
+  },
+  {
+    name: "EditorReviewDecisionControls",
+    slug: "review-decision-controls",
+    item: "editor-review",
+    description: "Accept or reject suggestions with current host permission.",
+  },
+  {
+    name: "EditorReviewRichComposer",
+    slug: "review-rich-composer",
+    item: "editor-review",
+    description: "Edit bounded native rich discussion content.",
+  },
+  {
+    name: "EditorReviewRichContent",
+    slug: "review-rich-content",
+    item: "editor-review",
+    description: "Read validated rich discussion content.",
+  },
+  {
+    name: "EditorReviewKeyboardControl",
+    slug: "review-keyboard-control",
+    item: "editor-review",
+    description: "Apply keyboard formatting to selected discussion text.",
+  },
+] as const

@@ -587,6 +587,41 @@ Keep title links usable when closed.
 Keep the native details body, empty disclosure control, and content slot together.
 
 
+## Optional editor review
+
+Install `editor-review` separately from `editor`.
+Use `EditorReviewPreset` for a complete editor or compose review parts inside `EditorRoot`.
+Keep one review controller and extension per root in a stable mount-time array.
+Supply a verified viewer and a synchronous host policy for every action.
+Allow an action only when current policy returns literal `true`.
+Serialized author IDs do not grant access. Recheck every action on the server.
+`visible=false` hides review UI. It does not redact or delete review state.
+Review state uses root NodeState `yopemReview` and text NodeState `yopemSuggestion`.
+Use `parseReviewDocument` at IO boundaries. Register `MarkNode` in every reader that loads review state.
+Untrusted input loses review metadata. Trust it only after host verification.
+Review suggestions are inline only. Text diffs support one paragraph, 2048 graphemes, and 4096 UTF-16 units.
+Paste inserts plain text only. Rich HTML paste is rejected. Pasted review metadata is not preserved.
+The separate `editor-document` readers do not import review formats.
+See https://ui.yopem.com/components/editor-review for API and limits.
+
+## Editor AI proposals
+
+Install optional `editor-ai` server source separately from `editor` client source.
+Import server helpers from `@/lib/editor-ai`. Never import them into browser code.
+Compose `EditorAiRoot`, `EditorAiTrigger`, and `EditorAiPanel` inside `EditorRoot`.
+Supply an explicit same-origin endpoint, documentId, and current host authentication and CSRF headers.
+Without configuration, AI controls render nothing. No default endpoint or model exists.
+Review progressive untrusted plain text. Approval requires explicit completion and clean EOF.
+Content, format, style, non-null selection, and read-only changes invalidate proposals.
+A null selection retains the saved target for dialog use.
+Remount EditorAiRoot when host code discards the saved target.
+Approval makes one local history update. Authorize document writes separately.
+Supply existing OpenAuth or Better Auth, verified expiry, exact HTTPS Origin, CSRF verification, and durable host quota.
+Require literal true from the document policy for `ai:invoke`. This permission never grants `document:write`.
+Keep provider credentials and model selection on the server. Never retry paid requests automatically.
+Keep tokens out of browser storage, URLs, and logs. Cancellation does not prove that billing stops.
+See https://ui.yopem.com/docs/editor-ai for provider schema and deployment limits.
+
 ## Optional editor typeahead
 
 Install `editor-typeahead` separately. Import optional parts from the copied editor `typeahead-index` module.
@@ -631,7 +666,23 @@ Keep native audio, video, file, and iframe controls usable in read-only roots.
 Supply bounded, abort-aware host uploads with server authorization and validation.
 Private assets require explicit same-origin delivery integration. Never put tokens in media URLs.
 Register `MediaNode` in every reader. Preserve native tagged figure HTML.
-Generic document conversion remains unsupported until deliberate media codec integration.
+Registered media supports validated JSON, canonical tagged HTML, and Markdown HTML fallback.
+Conversion rejects relative URLs, URL credentials, queries, and fragments.
+Private delivery still requires host authorization and a trusted URL resolver.
+
+## Optional editor footnotes and contents
+
+Install `editor-footnotes` and `editor-toc` separately.
+Register their extensions in stable root extension arrays.
+Compose focused controls inside `EditorToolbar`.
+`EditorFootnoteTypeahead` owns the editable surface. Do not add adjacent `EditorContent`.
+Preserve repeated references, unresolved references, and duplicate definitions.
+Renumber a selected duplicate explicitly. Do not silently rewrite identifiers.
+Table-of-contents links target headings in the current editor only.
+`editorTocSlashCommand` is an optional host slash action. Base contents controls do not require typeahead.
+Register feature nodes in every reader and validate complete documents at IO boundaries.
+Generic document converters do not yet support footnote or table-of-contents nodes.
+Reject unsupported content without removing the current document.
 
 ## Optional editor columns and dates
 
@@ -704,19 +755,21 @@ Review formats fail closed before document replacement.
 Keep native clipboard priorities, host vetoes, and host HTML sanitization.
 Host MIME handlers that consume data must validate their own output.
 
-## Optional editor footnotes and contents
+## Editor private assets
 
-Install `editor-footnotes` and `editor-toc` separately.
-Register their extensions in stable root extension arrays.
-Compose focused controls inside `EditorToolbar`.
-`EditorFootnoteTypeahead` owns the editable surface. Do not add adjacent `EditorContent`.
-Preserve repeated references, unresolved references, and duplicate definitions.
-Renumber a selected duplicate explicitly. Do not silently rewrite identifiers.
-Table-of-contents links target headings in the current editor only.
-`editorTocSlashCommand` is an optional host slash action. Base contents controls do not require typeahead.
-Register feature nodes in every reader and validate complete documents at IO boundaries.
-Generic document converters do not yet support footnote or table-of-contents nodes.
-Reject unsupported content without removing the current document.
+Use the separate `editor-assets` server library with D1 or PostgreSQL and private R2 or S3.
+Apply matching dialect migrations 0001, 0002, and 0003 in order.
+Keep authentication, verified expiry, document and asset policy, exact origins, and CSRF checks in the host.
+Reuse factory instances. Supply quotas, bounded structural decoders, security scanners, and recurring cleanup with complete inventory cycles.
+Do not treat fixture validators or signatures as production scanners.
+Asset repositories do not receive request cancellation. PostgreSQL timeouts are per statement, not cumulative; pool waits need host limits.
+D1 batches and R2 binding calls cannot be interrupted through this API. S3 fetches receive cancellation signals.
+Keep immutable attempts, fences, terminal probes, and permanent lifetime reservations.
+Resolve private relative asset routes against an explicit trusted HTTPS same-origin delivery origin.
+Validate the exact document and asset route. Native media requires existing same-origin cookie authentication.
+Never put tokens in URLs, return bucket keys, or use public bucket fallbacks.
+Keep provider credentials and server imports out of browser entries. This item adds no media UI nodes or accounts.
+See https://ui.yopem.com/docs/editor-assets for migration, callback, delivery, and deployment limits.
 
 ## Optional whole-block selection
 

@@ -122,6 +122,29 @@ Import \`prettierEditorCodeFormatter\` from \`${imports.editor}/code-format\`.
 Pass it through the \`formatter\` prop. Syntax colors support more languages than this adapter can format.
 Cancellation discards results but cannot stop synchronous parsing. The adapter does not change your repository formatter.
 
+### Optional editor review
+
+Install the optional \`editor-review\` item:
+
+\`\`\`sh
+bunx --bun @yopem-ui/cli add editor-review
+npx @yopem-ui/cli add editor-review
+pnpm dlx @yopem-ui/cli add editor-review
+yarn dlx @yopem-ui/cli add editor-review
+\`\`\`
+
+Import \`EditorReviewPreset\` and \`EditorReviewHost\` from \`${imports.editor}/review\`.
+The preset supplies its own root and editable surface. For custom composition, create one controller per root and add its extension to the stable root extension list.
+Place \`EditorReviewProvider\` inside \`EditorRoot\`.
+Set \`viewer\` from a verified host identity. Require synchronous \`can(action, targetId, viewer)\` and literal \`true\` for each allowed action.
+Serialized author IDs are attribution only. They do not grant access. Check every action again on the server before saving.
+\`visible=false\` hides review UI. It does not redact or delete review state. Review permission does not grant document writes.
+Review state uses root NodeState \`yopemReview\` and text NodeState \`yopemSuggestion\`. Use \`parseReviewDocument\` at IO boundaries.
+The review extension registers \`MarkNode\` in its editor. Register \`MarkNode\` in every external reader that loads review data.
+Suggestions cover inline text. The diff control changes one paragraph, up to 2048 graphemes and 4096 UTF-16 units. Structural suggestions are not supported.
+Paste inserts plain text only. Rich HTML paste is rejected. Pasted review metadata is not preserved. \`editor-document\` does not import review formats.
+See https://ui.yopem.com/components/editor-review for API and limits.
+
 ### Optional editor typeahead
 
 Install the optional \`editor-typeahead\` item before use.
@@ -166,7 +189,8 @@ MediaContent renders validated media without EditorRoot. Use HTTPS URLs without 
 Keep native playback, file links, and iframe controls usable in read-only roots.
 Supply bounded, abort-aware host uploads with server authorization and validation.
 Private asset delivery needs explicit same-origin host integration. Never put tokens in media URLs.
-Register MediaNode in every reader. Generic editor-document conversion does not yet support media.
+Register MediaNode in every reader. editor-document supports validated native JSON, canonical tagged HTML, and Markdown HTML fallback.
+Conversion rejects relative URLs, URL credentials, queries, and fragments. Private delivery still requires host authorization and a trusted URL resolver.
 
 ### Optional whole-block selection
 
@@ -291,6 +315,21 @@ Read-only disclosure changes local visibility, not saved state or history.
 Keep rich toggle titles outside the native summary control. Keep title links usable when closed.
 Keep the native details body, empty disclosure control, and content slot together.
 
+### Editor AI proposals
+
+Install optional editor-ai server source separately from editor client source.
+Import server helpers from \`${imports.lib.replace(/\/stylex$/, "/editor-ai")}\` on the server only.
+Compose EditorAiRoot, EditorAiTrigger, and EditorAiPanel inside EditorRoot.
+Supply an explicit same-origin endpoint, documentId, and current authentication and CSRF headers.
+Review untrusted plain text before approval. Require explicit completion and clean EOF.
+Content, format, style, non-null selection, and read-only changes invalidate proposals.
+A null selection retains the saved target for dialog use. Remount EditorAiRoot when host code discards the saved target.
+Approval makes one local history update. Authorize document writes separately.
+Supply existing authentication, verified expiry, literal-true document policy, exact HTTPS Origin, CSRF verification, and durable quota.
+AI invocation never grants document write access. Keep model selection and credentials on the server.
+Never retry paid requests automatically. Keep tokens out of URLs, logs, and browser storage.
+See https://ui.yopem.com/docs/editor-ai for schema and deployment limits.
+
 ### Editor authentication
 
 Install optional server helpers with the matching package manager:
@@ -313,6 +352,27 @@ Require a separate document policy. Only an explicit true result grants access.
 Check trusted origins and CSRF tokens in host routes. Keep tokens out of URLs and logs.
 JWT verification does not guarantee immediate revocation.
 These helpers do not deploy AI, upload, persistence, or collaboration services.
+
+### Editor document storage
+
+Install optional document storage with the matching package manager:
+
+\`\`\`sh
+bunx --bun @yopem-ui/cli add editor-store
+npx @yopem-ui/cli add editor-store
+pnpm dlx @yopem-ui/cli add editor-store
+yarn dlx @yopem-ui/cli add editor-store
+\`\`\`
+
+Use optional editor-store server source for D1 or PostgreSQL snapshots.
+Import it from \`${imports.lib.replace(/\/stylex$/, "/editor-store")}\` on the server only.
+Apply one copied SQL migration. Supply complete Lexical validation and separate document policies, including deletion.
+Keep snapshots within 1 MiB, 131072 JSON values, and 64 nested objects or arrays.
+Configure exact trusted origins and host CSRF verification. Never add accounts or implicit document grants.
+Retry uncertain writes with identical operation IDs, preconditions, authentication provider, and user ID.
+HTTP callbacks receive cancellation through \`Request.signal\`. Storage checks deadlines before driver calls.
+PostgreSQL checks remaining time before each statement.
+See https://ui.yopem.com/docs/editor-store for the HTTP protocol and deployment limits.
 
 ### Editor collaboration
 
@@ -381,27 +441,6 @@ Validate the exact document and asset route. Native media requires existing same
 Never put tokens in URLs or use a public bucket fallback. Keep provider credentials on the host.
 Fixture validators are not production scanners. This item adds no media UI nodes or accounts.
 See https://ui.yopem.com/docs/editor-assets for callback and deployment limits.
-
-### Editor document storage
-
-Install optional document storage with the matching package manager:
-
-\`\`\`sh
-bunx --bun @yopem-ui/cli add editor-store
-npx @yopem-ui/cli add editor-store
-pnpm dlx @yopem-ui/cli add editor-store
-yarn dlx @yopem-ui/cli add editor-store
-\`\`\`
-
-Use optional editor-store server source for D1 or PostgreSQL snapshots.
-Import it from \`${imports.lib.replace(/\/stylex$/, "/editor-store")}\` on the server only.
-Apply one copied SQL migration. Supply complete Lexical validation and separate document policies, including deletion.
-Keep snapshots within 1 MiB, 131072 JSON values, and 64 nested objects or arrays.
-Configure exact trusted origins and host CSRF verification. Never add accounts or implicit document grants.
-Retry uncertain writes with identical operation IDs, preconditions, authentication provider, and user ID.
-HTTP callbacks receive cancellation through \`Request.signal\`. Storage checks deadlines before driver calls.
-PostgreSQL checks remaining time before each statement.
-See https://ui.yopem.com/docs/editor-store for the HTTP protocol and deployment limits.
 
 ### Visual foundations
 

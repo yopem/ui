@@ -505,18 +505,19 @@ Use `documentNodes` when you create a custom headless editor. Imports reject a
 target that cannot keep the parsed fields and children.
 
 HTML import accepts supported document fragments, not arbitrary webpages. Active
-HTML, unknown styles, unsafe links, unmarked media, and unsupported nodes produce errors.
-Register math and mention nodes before importing their representations.
-Markdown supports TeX delimiters with canonical HTML fallback when required for fidelity.
-Static and standalone HTML use native MathML.
-Mention Markdown uses the validated identity codec. Saved identities do not grant access.
-Media JSON and canonical tagged figure HTML retain native metadata. Markdown
-uses canonical HTML for media. Register `MediaExtension` for live rendering or
-`MediaNode` in headless readers. Media URLs cannot contain credentials, queries,
-or fragments. Review formats remain unsupported. Plain text does not carry those semantics.
-Handle `DocumentError.diagnostics` at the host boundary. JSON retains supported NodeState. HTML and Markdown retain supported element
-NodeState. Persisted code-view booleans require JSON; HTML and Markdown report
-diagnostics.
+HTML, unknown styles, unsafe links, unmarked media, and unsupported nodes
+produce errors. Register math and mention nodes before importing their
+representations. Markdown supports TeX delimiters with canonical HTML fallback
+when required for fidelity. Static and standalone HTML use native MathML.
+Mention Markdown uses the validated identity codec. Saved identities do not
+grant access. Media JSON and canonical tagged figure HTML retain native
+metadata. Markdown uses canonical HTML for media. Register `MediaExtension` for
+live rendering or `MediaNode` in headless readers. Media URLs cannot contain
+credentials, queries, or fragments. Review formats remain unsupported. Plain
+text does not carry those semantics. Handle `DocumentError.diagnostics` at the
+host boundary. JSON retains supported NodeState. HTML and Markdown retain
+supported element NodeState. Persisted code-view booleans require JSON; HTML and
+Markdown report diagnostics.
 
 Markdown uses HTML fallback to retain whitespace. Use JSON for native text with
 carriage returns or invalid HTML characters. JSON escapes retain these values in
@@ -676,6 +677,29 @@ remove unknown nodes or convert them to text.
 Browser parity checks remain required for clipboard, cross-block selection,
 history, and assistive technology. This feature does not provide Plate document
 compatibility or full Plate parity.
+
+## Optional host AI setup
+
+Supply your own same-origin AI endpoint, document ID, and CSRF verifier. No
+endpoint is configured. See the [AI host guide](/docs/editor-ai) for optional
+server source.
+
+Compose `EditorAiRoot`, `EditorAiTrigger`, and `EditorAiPanel` inside
+`EditorRoot`. Without configuration, AI parts render nothing.
+
+The host supplies authentication headers through `config.headers`. Keep
+credentials out of URLs, logs, and storage.
+
+Generate and Copilot insert after the saved range. Rewrite replaces the saved
+range. Review plain text before approval.
+
+Content, selection, format, style, and read-only changes invalidate proposals.
+Errors never apply partial output or retry paid requests.
+
+Approval changes local editor state. The host must separately authorize document
+writes.
+
+<EditorAiExample />
 
 ## Optional typeahead
 
@@ -1021,6 +1045,51 @@ editor. Document changes invalidate the captured selection. Read-only mode
 closes the popup and blocks insertion. The picker does not restore a selection
 after content changes.
 
+## Optional columns and dates
+
+Install the optional source items with the package-manager switcher.
+
+```sh
+bunx --bun @yopem-ui/cli add editor-columns
+bunx --bun @yopem-ui/cli add editor-date
+```
+
+Register `EditorColumnsExtension` and `EditorDateExtension` in a stable
+extensions array. Compose `EditorColumnsControls` and `EditorDateControls`
+inside `EditorToolbar`. Import these parts from `@/components/editor/columns`
+and `@/components/editor/date`.
+
+<EditorColumnsExample />
+
+Columns support two through four rich-text containers. Rich blocks can contain
+native nested content. Nested column groups are not supported. Select a column
+before you change its layout, size, or position. The house Slider supports
+pointer and keyboard resizing. Remove deletes the selected group and its
+content. Read-only roots cannot change columns.
+
+<EditorDateExample />
+
+Store dates as validated `YYYY-MM-DD` strings, not timestamps. The house
+Calendar inserts dates and edits native date nodes. Use
+`editorDateFromLocalDate` for local calendar values. Do not convert local dates
+through UTC timestamps.
+
+Import pure codecs from `@/components/editor/columns-model` and
+`@/components/editor/date-model`. These entries do not import React or native
+Lexical nodes. Keep all five copied modules for each feature and the core editor
+selection helpers. Shared UI packages must export both feature barrels and both
+model modules at their configured component paths.
+
+Generic `editor-document` converters do not support columns or date nodes. Keep
+these nodes in native Lexical documents until deliberate codec integration
+exists. Do not flatten these nodes during conversion. Validate complete host
+documents before replacement. These feature validators check their own
+contracts, not every host node type.
+
+See [Editor columns](/components/editor-columns) and
+[Editor date](/components/editor-date) for complete consumer examples. Runtime,
+clipboard, and accessibility checks have not run for this source change.
+
 ## Optional editor math
 
 Install `editor-math` for inline and block TeX equations. Register
@@ -1050,3 +1119,123 @@ complete documents or Plate state.
 
 See [Editor math](/components/editor-math) for the live preview and composable
 example.
+
+## Optional inline review
+
+Install `editor-review` separately. The item depends on `editor` and adds native
+review threads, rich comments, and bounded text suggestions.
+
+```sh
+bunx --bun @yopem-ui/cli add editor-review
+```
+
+<EditorReviewExample />
+
+`EditorReviewPreset` supplies its own root, toolbar, and editable surface. For
+custom composition, create one `createEditorReview` controller per root. Keep
+its extension in a stable root extension array. Place `EditorReviewProvider`
+inside that root.
+
+Set `viewer` from an identity verified by your host. Supply a synchronous
+`can(action, targetId, viewer)` callback. Allow an action only when current host
+policy returns literal `true`. Check each action again on the server before
+saving. Serialized author IDs are attribution only. They do not grant access.
+`visible` hides review UI. It does not redact or delete review state. Set
+`replyWhileReadonly` only when your document policy allows discussion edits on
+read-only content.
+
+Review data uses `yopemReview` on the Lexical root and `yopemSuggestion` on text
+nodes. `parseReviewDocument` validates trusted review state or strips review
+data from untrusted input. Set `trusted=true` only for host-authenticated data.
+Register `MarkNode` in every reader that opens review documents. The review
+extension registers it in its own editor. The `editor-document` item does not
+import review formats.
+
+Review supports inline text suggestions, not structural edits. The diff control
+changes one paragraph with at most 2048 graphemes and 4096 UTF-16 units. Rich
+comments use validated review content. Editor paste inserts plain text only.
+Rich HTML paste is rejected. Pasted review metadata is not preserved.
+
+See [Editor review](/components/editor-review) for API and examples.
+
+## Optional media
+
+Install `editor-media` separately for images, video, audio, files, and provider
+embeds.
+
+```sh
+bunx --bun @yopem-ui/cli add editor-media
+```
+
+Register `MediaExtension` in a stable root extension array. Compose
+`MediaInsertControl` inside `EditorToolbar`. Select media to change its caption,
+alignment, or image width. Read-only roots retain native playback and file
+links.
+
+Use HTTPS URLs without credentials. Give images useful alt text. Supply captions
+and transcript links when your content requires them. Embedded providers use
+canonical URLs from exact supported hosts.
+
+`MediaContent` renders validated `parseMedia` data without an `EditorRoot`. Use
+it for a standalone media view. Keep upload services and provider credentials on
+the host server.
+
+Supply a bounded, abort-aware host upload callback through `createMediaUpload`.
+Authorize each upload on the server. Validate content before publication.
+Cancellation does not prove that a server write stopped.
+
+This item does not configure private asset storage or delivery. A private asset
+route needs existing same-origin authentication and explicit host integration.
+Do not put bearer tokens in media URLs. Never use a public bucket as fallback.
+
+Register `MediaNode` in each document reader. Native tagged figure HTML uses the
+media codec. Generic `editor-document` converters retain canonical media JSON
+and tagged HTML. Markdown uses canonical HTML fallback. Register
+`MediaExtension` for live rendering. Do not flatten unmarked or invalid media
+during conversion.
+
+See [Editor media](/components/editor-media) for the live composition and API.
+
+## Optional footnotes
+
+Install `editor-footnotes` separately for native references and rich
+definitions.
+
+```sh
+bunx --bun @yopem-ui/cli add editor-footnotes
+```
+
+Register `EditorFootnoteExtension` in a stable root extension array. Compose
+`EditorFootnoteControls` inside `EditorToolbar`. `EditorFootnoteTypeahead` owns
+its editable surface. Do not place `EditorContent` beside this preset.
+
+References and definitions keep identifiers. Backlinks navigate within the
+current editor. Renumber duplicate definitions explicitly. The command assigns
+an unused identifier to the selected duplicate. Register footnote nodes in every
+reader. Validate complete documents at host boundaries. The focused footnote
+codec does not validate an entire host document.
+
+Generic `editor-document` converters do not support footnotes yet. Reject these
+representations without removing current content.
+
+See [Editor footnotes](/components/editor-footnotes) for controls and examples.
+
+## Optional table of contents
+
+Install `editor-toc` separately for heading-derived navigation.
+
+```sh
+bunx --bun @yopem-ui/cli add editor-toc
+```
+
+Register `EditorTocExtension` in a stable root extension array. Compose
+`EditorTocControls` inside `EditorToolbar`. Inserted contents follow current
+headings. Navigation stays within the current editor.
+
+Use `editorTocSlashCommand` only when your host installs and composes slash
+commands. Basic table-of-contents controls do not require typeahead.
+
+Register `EditorTocNode` in every reader. Generic `editor-document` converters
+do not support this node yet. Reject unsupported content without replacement.
+
+See [Editor table of contents](/components/editor-toc) for its focused controls.

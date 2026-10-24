@@ -252,7 +252,12 @@ function checkGuidance(text: string, shared = false) {
     "EditorCodeToggle",
     "EditorCodeStatus",
     "EditorBlocksExtension",
-
+    "EditorReviewPreset",
+    "EditorReviewHost",
+    "EditorReviewProvider",
+    "yopemReview",
+    "yopemSuggestion",
+    "MarkNode",
     "createEditorTypeahead",
     "EditorTypeahead",
     "EditorEmojiPicker",
@@ -291,6 +296,9 @@ function checkGuidance(text: string, shared = false) {
       ? "@acme/ui/components/editor/blocks-model"
       : "@/components/editor/blocks-model",
   )
+  expect(managed).toContain(
+    shared ? "@acme/ui/components/editor/review" : "@/components/editor/review",
+  )
 
   for (const command of [
     "bunx --bun @yopem-ui/cli",
@@ -300,6 +308,7 @@ function checkGuidance(text: string, shared = false) {
   ]) {
     expect(managed).toContain(`${command} add editor-code`)
     expect(managed).toContain(`${command} add editor-blocks`)
+    expect(managed).toContain(`${command} add editor-review`)
   }
 
   expect(managed).toContain(

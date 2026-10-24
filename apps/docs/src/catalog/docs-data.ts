@@ -53,6 +53,18 @@ export const guidePages = [
       "Install collaboration with Bun, npm, pnpm, or Yarn. Use Durable Objects with D1 or PostgreSQL with host WebSocket upgrades. Supply existing authentication, verified expiry, document policy, exact origins, CSRF, and complete schema validation. Keep Worker adapters separate from portable server imports. Preserve bounded history and offline drafts.",
   },
   {
+    title: "Editor AI",
+    url: "/docs/editor-ai",
+    content:
+      "Install optional AI server source with Bun, npm, pnpm, or Yarn. Supply existing authentication, exact HTTPS origin, CSRF verification, document policy, durable quota, and host-selected provider configuration. Review untrusted text before approval. AI invocation never grants document writes.",
+  },
+  {
+    title: "Editor assets",
+    url: "/docs/editor-assets",
+    content:
+      "Install private asset server source with Bun, npm, pnpm, or Yarn. Use D1 or PostgreSQL and private R2 or S3. Supply verified expiry, document and asset policy, exact origins, CSRF, quotas, bounded scanners, and scheduled cleanup. Native delivery requires same-origin cookies.",
+  },
+  {
     title: "Editor document storage",
     url: "/docs/editor-store",
     content:
@@ -68,7 +80,7 @@ export const guidePages = [
     title: "Editor",
     url: "/docs/editor",
     content:
-      "Use the Lexical editor foundation for rich text, formatting, lists, history, and JSON output. Add optional native code editing with syntax colors, language controls, and clipboard support. Install source with Bun, npm, pnpm, or Yarn. Lexical JSON is not compatible with Slate or Plate JSON. This scope does not provide full Plate parity.",
+      "Use the Lexical editor foundation for rich text, formatting, lists, history, and JSON output. Add optional native code editing, inline equations, callouts, typeahead, rich-text columns, calendar dates, comments, and bounded text suggestions. Supply a verified identity and a synchronous per-action review policy. Review data does not grant access. Install source with Bun, npm, pnpm, or Yarn. Lexical JSON is not compatible with Slate or Plate JSON. This scope does not provide full Plate parity.",
   },
   {
     title: "CLI",

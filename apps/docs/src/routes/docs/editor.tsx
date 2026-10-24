@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router"
 
+import { EditorAiExample } from "@/catalog/editor-ai-example"
 import { EditorBlocksExample } from "@/catalog/editor-blocks-example"
 import { EditorCodeExamples } from "@/catalog/editor-code-examples"
 import { EditorCompositionExamples } from "@/catalog/editor-composition-examples"
@@ -14,6 +15,9 @@ import {
   EditorEmojiMenuExample,
 } from "@/catalog/editor-typeahead-examples"
 import { GuidePage } from "@/catalog/guide-content"
+import { Preview as EditorColumnsExample } from "@/catalog/previews/editor-columns"
+import { Preview as EditorDateExample } from "@/catalog/previews/editor-date"
+import { Preview as EditorReviewExample } from "@/catalog/previews/editor-review"
 import EditorContent from "@/content/editor.mdx"
 import editorSource from "@/content/editor.mdx?raw"
 import { createSeo } from "@/lib/seo"
@@ -30,7 +34,11 @@ export const Route = createFileRoute("/docs/editor")({
 })
 
 const components = {
+  EditorAiExample,
   EditorBlocksExample,
+  EditorReviewExample,
+  EditorColumnsExample,
+  EditorDateExample,
   EditorCodeExamples,
   EditorExamples,
   EditorDocumentExamples,

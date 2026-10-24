@@ -4,6 +4,10 @@ import { rewriteImports } from "@registry/source-files"
 import { z } from "zod"
 
 import { getDocumentationItems, getRequiredItems } from "./docs-data"
+import {
+  getEditorPreviewSource,
+  type EditorPreviewFixture,
+} from "./editor-preview-source"
 import { usageSnippets } from "./usage"
 
 const sources = import.meta.glob<string>(
@@ -18,10 +22,27 @@ const sources = import.meta.glob<string>(
   },
 )
 
-const previewSources = import.meta.glob<string>(
-  ["./previews/*.tsx", "./editor-previews/code-preset.tsx"],
-  { query: "?raw", import: "default" },
-)
+const previewSources = import.meta.glob<string>("./previews/*.tsx", {
+  query: "?raw",
+  import: "default",
+})
+
+const completeEditorPreviews = new Map<
+  string,
+  [path: string, fixture?: EditorPreviewFixture]
+>([
+  ["editor-code", ["./editor-previews/code-preset.tsx"]],
+  ["editor-block-selection", ["./editor-previews/block-selection.tsx"]],
+  ["editor-review", ["./editor-preview-compositions/review.tsx"]],
+  ["editor-media", ["./editor-preview-compositions/media.tsx"]],
+  ["editor-columns", ["./editor-example-compositions/column.tsx", "column"]],
+  ["editor-date", ["./editor-example-compositions/date.tsx", "date"]],
+  [
+    "editor-footnotes",
+    ["./editor-example-compositions/footnote.tsx", "footnote"],
+  ],
+  ["editor-toc", ["./editor-example-compositions/toc.tsx", "toc"]],
+])
 
 const documentationSources = import.meta.glob<(typeof componentDocs)[number]>(
   "../../public/r/docs/*.json",
@@ -46,16 +67,14 @@ export async function getDocumentation({ data }: { data: string }) {
     }),
   )
 
-  const previewLoader =
-    previewSources[
-      slug === "editor-code"
-        ? "./editor-previews/code-preset.tsx"
-        : `./previews/${slug}.tsx`
-    ]
+  const previewLoader = previewSources[`./previews/${slug}.tsx`]
+  const completePreview = completeEditorPreviews.get(slug)
 
-  const previewSource = previewLoader
-    ? rewriteImports(await previewLoader())
-    : null
+  const previewSource = completePreview
+    ? await getEditorPreviewSource(...completePreview)
+    : previewLoader
+      ? rewriteImports(await previewLoader())
+      : null
 
   const allItems = getRequiredItems(slug, previewSource ?? "")
 
@@ -66,7 +85,7 @@ export async function getDocumentation({ data }: { data: string }) {
   ]
 
   const api = items
-    .filter((item) => item.type === "registry:ui")
+    .filter((item) => item.type === "registry:ui" || item.name === "editor-ai")
     .flatMap((item) => {
       const reference = docs.find((entry) => entry.name === item.name)
 
@@ -119,17 +138,21 @@ export async function getDocumentation({ data }: { data: string }) {
         const sourcePath =
           file.path === "components/editor/LICENSE.md"
             ? "../../../../packages/editor/LICENSE.md"
-            : file.path.startsWith("lib/editor-collaboration/")
-              ? `../../../../packages/editor/src/server/${file.path === "lib/editor-collaboration/index.ts" ? "collaboration-index.ts" : file.path.slice("lib/editor-collaboration/".length)}`
-              : file.path.startsWith("lib/editor-store/")
-                ? `../../../../packages/editor/src/server/${file.path === "lib/editor-store/index.ts" ? "document-index.ts" : file.path.slice("lib/editor-store/".length)}`
-                : file.path === "lib/editor-auth/index.ts"
-                  ? "../../../../packages/editor/src/server/auth-index.ts"
-                  : file.path.startsWith("lib/editor-auth/")
-                    ? `../../../../packages/editor/src/server/${file.path.slice("lib/editor-auth/".length)}`
-                    : file.path.startsWith("components/editor/")
-                      ? `../../../../packages/editor/src/${file.path.slice("components/editor/".length)}`
-                      : `../../../../packages/registry/src/${file.path}`
+            : file.path.startsWith("lib/editor-ai/")
+              ? `../../../../packages/editor/src/server/ai/${file.path.slice("lib/editor-ai/".length)}`
+              : file.path.startsWith("lib/editor-collaboration/")
+                ? `../../../../packages/editor/src/server/${file.path === "lib/editor-collaboration/index.ts" ? "collaboration-index.ts" : file.path.slice("lib/editor-collaboration/".length)}`
+                : file.path.startsWith("lib/editor-assets/")
+                  ? `../../../../packages/editor/src/server/${file.path === "lib/editor-assets/index.ts" ? "asset-index.ts" : file.path.slice("lib/editor-assets/".length)}`
+                  : file.path.startsWith("lib/editor-store/")
+                    ? `../../../../packages/editor/src/server/${file.path === "lib/editor-store/index.ts" ? "document-index.ts" : file.path.slice("lib/editor-store/".length)}`
+                    : file.path === "lib/editor-auth/index.ts"
+                      ? "../../../../packages/editor/src/server/auth-index.ts"
+                      : file.path.startsWith("lib/editor-auth/")
+                        ? `../../../../packages/editor/src/server/${file.path.slice("lib/editor-auth/".length)}`
+                        : file.path.startsWith("components/editor/")
+                          ? `../../../../packages/editor/src/${file.path.slice("components/editor/".length)}`
+                          : `../../../../packages/registry/src/${file.path}`
 
         const load = sources[sourcePath]
 

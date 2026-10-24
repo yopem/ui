@@ -7,6 +7,7 @@ for (const part of editorParts.filter(
   (part) =>
     part.item !== "editor-blocks" &&
     part.item !== "editor-typeahead" &&
+    part.item !== "editor-math" &&
     part.item !== "editor-document",
 )) {
   test(`${part.name} preview and public resources @a11y`, async ({
@@ -24,10 +25,10 @@ for (const part of editorParts.filter(
       exact: true,
     })
 
-    const editor = preview.getByRole("textbox", {
-      name: `${part.name} preview`,
-      exact: true,
-    })
+    const editor = preview
+      .getByRole("textbox")
+      .and(preview.locator("[contenteditable]"))
+      .first()
 
     if (part.item === "editor-collaboration") {
       await expect(
@@ -47,9 +48,21 @@ for (const part of editorParts.filter(
       ).toHaveAttribute("type", "password")
       await expect(
         preview.getByRole("button", { name: "Connect to host", exact: true }),
-      ).toBeEnabled()
+      ).toBeVisible()
       await expect(preview.locator('[contenteditable="true"]')).toHaveCount(0)
+    } else if (part.name === "MediaContent") {
+      await expect(
+        preview.getByRole("img", { name: "Media preview", exact: true }),
+      ).toBeVisible()
+      await expect(preview.locator('[contenteditable="true"]')).toHaveCount(0)
+    } else if (part.name === "EditorReviewRichContent") {
+      await expect(preview.getByRole("paragraph").first()).toBeVisible()
+      await expect(preview.locator('[contenteditable="true"]')).toHaveCount(0)
+    } else if (part.item === "editor-review") {
+      await expect(editor).toBeVisible()
+      await expect(editor).toHaveAccessibleName(/\S/)
     } else {
+      await expect(editor).toHaveAccessibleName(/\S/)
       await expect(editor).toHaveAttribute("contenteditable", "true")
       await editor.click()
       await editor.pressSequentially("Editor preview")

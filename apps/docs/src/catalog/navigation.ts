@@ -55,9 +55,12 @@ export const navigationGroups = [
     pages: [
       { name: "Overview", url: "/editor" },
       { name: "Composition guide", url: "/docs/editor" },
+      { name: "Inline review", url: "/components/editor-review" },
       { name: "Authentication", url: "/docs/editor-auth" },
+      { name: "AI proposals", url: "/docs/editor-ai" },
       { name: "Document storage", url: "/docs/editor-store" },
       { name: "Collaboration", url: "/docs/editor-collaboration" },
+      { name: "Private assets", url: "/docs/editor-assets" },
       ...editorParts.map((part) => ({
         name: part.name,
         url: `/editor/${part.slug}`,

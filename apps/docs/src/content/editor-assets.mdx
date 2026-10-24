@@ -1,0 +1,182 @@
+## Install server source
+
+Install the optional server library. This item does not add editor media nodes
+or upload controls.
+
+```sh
+bunx --bun @yopem-ui/cli add editor-assets
+```
+
+The command also copies `editor-store` and `editor-auth`. The package-manager
+switcher supports Bun, npm, pnpm, and Yarn 2 or later.
+
+Import helpers from `@/lib/editor-assets` on the server only. Custom library
+paths change this import. Shared workspaces use their package exports.
+
+Keep provider credentials in host secrets. Never import server helpers from
+editor UI, browser entries, or client components.
+
+## Apply migrations
+
+Use one database dialect. Apply `0001-document-snapshots.sql` from
+`editor-store` first. Apply `0002-private-assets.sql`, then
+`0003-general-assets.sql` from `editor-assets`. Existing asset databases need
+only migration 0003.
+
+Back up data. Stop asset writes before migration. Apply each complete migration
+atomically. Use a D1 transaction batch or a PostgreSQL transaction. Do not mix
+dialects or execute SQLite statements individually during uploads.
+
+Migration 0003 preserves existing image rows, digests, attempts, claims, and
+lifetime reservations. Do not delete terminal rows, document generations, or
+quota history. Use logical document deletion. Asset triggers fence document
+generation changes and tombstones.
+
+Existing ready assets remain readable after the same document generation changes
+to Yjs mode. Cleanup retains these live assets. New uploads and promotion
+require snapshot mode. A deleted document or changed generation does not retain
+old assets.
+
+## Compose host services
+
+Create one repository with `createD1AssetRepository` or
+`createPostgresAssetRepository`. Create one object adapter with
+`createR2Objects` or `createS3Objects`. Pass both to `createAssetHttpHandler`.
+Reuse factory instances across requests so process capacity limits remain
+meaningful.
+
+The host must supply these `AssetConfig` fields:
+
+- `authenticate`: existing OpenAuth or Better Auth verification with verified
+  `credentialExpiresAt` in Unix epoch milliseconds.
+- `policy`: document and asset authorization for `upload:create`, `upload:read`,
+  and `upload:delete`.
+- `verifyCsrf`: host CSRF verification for writes.
+- `allowedOrigins`: exact trusted HTTPS origins.
+- `validateImage`: bounded image structure, dimensions, decode, and security
+  checks.
+- `maxConcurrent`, `timeoutMs`, `maxFileBytes`, `maxTotalBytes`, `maxAttempts`,
+  `maxPending`, and `cleanupIntervalMs`: explicit capacity limits.
+
+File limits cannot exceed 10 MiB. Concurrent file buffers cannot exceed 16 MiB.
+Operation timeouts cannot exceed 30 seconds.
+
+Authentication is not document access. Do not create another account system or
+grant access from an admin role alone. Better Auth verification must not refresh
+sessions. OpenAuth verification requires an explicit audience. Auth and CSRF
+callbacks receive cancellation through `Request.signal`. Policy and scan
+callbacks also receive an explicit signal. Honor cancellation. Bound synchronous
+callback work; signals cannot stop blocking code. The handler checks wall-clock
+expiry and operation deadlines before later storage dispatch.
+
+Handler repository calls receive an operation signal and absolute deadline.
+Failed uploads use a fresh deadline for terminalization to fence late object
+writes. Cleanup and reconciliation accept an optional `deadline` in Unix epoch
+milliseconds. D1 batches and R2 binding calls cannot be interrupted after
+dispatch. The handler checks their signal and deadline before and after each
+call. PostgreSQL sets query and statement timeouts from the remaining operation
+budget. It bounds the caller's pool wait and destroys late clients. The pool
+driver cannot cancel its internal wait. Each pending wait holds a capacity slot
+until it settles. S3 fetches receive the signal. Configure host pool and request
+limits. Do not infer document-store driver guarantees for assets.
+
+Use private buckets with versioning and object lock disabled. Object retention
+can prevent cleanup. Verify these settings in the deployment; configuration
+values are not infrastructure proof. Keep `allowLoopback` unset in production.
+Supply real Miniflare or Workers bindings directly for D1 and R2. Keep S3
+credentials, region, bucket, and endpoint on the host server.
+
+## Upload and read
+
+Mount `handle(request)` at `/editor/documents/:documentId/assets` and its
+asset-ID suffix. Supply the trusted external HTTPS request URL. Do not trust
+arbitrary forwarding headers or rewrite URLs from client origins.
+
+POST accepts raw bytes at the collection route. Supply exact `Content-Type`,
+`Origin`, `X-Editor-Request: 1`, and host CSRF credentials. `X-File-Name` is
+optional. Successful uploads return status 201 with `{ assetId, url }`. The URL
+is a private relative application route, not a bucket URL or storage key.
+
+GET reads one asset. DELETE terminalizes one asset and requires the same write
+protections. OPTIONS validates explicit-origin preflight. HEAD is not supported.
+Failures return a JSON `code`. Treat timeout, disconnection, or status 503 as
+uncertain effects, not rollback proof.
+
+PNG, JPEG, and WebP require built-in signatures and the host image validator.
+Optional `admissions` enable explicit audio, video, or opaque file MIME entries.
+Each entry requires `kind`, canonical `mediaType`, `maxBytes`, `signature`, and
+asynchronous `validate`. Audio supports WAV, MPEG, and Ogg. Video supports WebM
+and MP4. Both host callbacks are mandatory. Prefix checks and fixture validators
+are not production decoders or antivirus scanners. Reject unknown MIME values,
+MIME parameters, encoded bodies, invalid structure, and failed security scans.
+
+Audio and video use validated inline MIME delivery. Opaque files always use
+attachment, octet-stream, and nosniff. HTML and SVG cannot gain inline delivery.
+Raster images retain attachment disposition. Responses use private/no-store.
+Never cache private bytes in a shared cache.
+
+GET supports one decimal byte range, including suffix and open-end forms.
+Preserve bytes, Content-Length, and Content-Range through middleware. Do not
+compress ranged responses. Full-body reads verify SHA-256. Partial reads depend
+on immutable attempts and provider range metadata.
+
+## Parent media callback contract
+
+Keep upload callbacks in the host application. Pass cancellation, raw bytes,
+MIME, filename, and host CSRF credentials to authenticated POST. Validate the
+returned UUID and relative path before passing results to parent media code.
+Require the exact document route and returned asset ID. Reject query strings,
+fragments, credentials, protocol-relative paths, and unexpected routes.
+
+Resolve the validated relative path against an explicit trusted HTTPS
+application delivery origin. Require the resolved origin to equal the
+application's authenticated delivery origin. Do not use a browser-controlled
+base URL, public bucket fallback, or arbitrary remote URL. Return only the
+opaque asset ID and validated HTTPS delivery URL to the media node resolver.
+Keep server credentials and bucket keys out of editor state and callback
+results.
+
+Native image, audio, video, and download requests need the host's authenticated
+same-origin cookie session. Use Secure and HttpOnly cookies with the correct
+Path and SameSite policy. Native elements cannot add bearer headers. Bearer-only
+hosts need a separate authenticated native-delivery design. Never put tokens in
+URLs or add a bearer-to-cookie exchange implicitly.
+
+Missing-Origin GET admission requires same-origin Fetch Metadata and permitted
+mode/destination/user combinations. Native audio/video also require an exact
+same-origin Referer and a matching persisted media kind. Use same-origin
+application links for downloads. Pasted address-bar URLs, no-referrer downloads,
+and missing metadata fail closed. Explicit origins must exactly match
+configuration. Metadata is not authentication; every read still checks identity
+and policy. Already delivered bytes cannot be revoked. Immediate external-policy
+revocation requires a host fence.
+
+## Schedule cleanup
+
+Run `cleanup({ batchSize, signal })` from a trusted host schedule. Run
+`reconcile({ limit, cursor, signal })` repeatedly with its returned cursor.
+Persist cursors and schedule complete inventory cycles. Do not expose cleanup as
+an unauthenticated public route. Investigate reported unknown objects;
+reconciliation preserves them.
+
+SQL reserves immutable attempts before PUT. Promotion checks document generation
+and database time. Fenced cleanup handles uncertain and late PUT results. Keep
+terminal probes for repeated deletion. Quota includes all retained attempts and
+reserved bytes permanently. This is a lifetime admission budget, not reusable
+storage capacity. Add host tenant quotas where required. Do not reset
+reservations to admit more uploads.
+
+## Deployment checks
+
+Test existing identity services, per-document and per-asset policy, CSRF, exact
+origins, quotas, real scanners, and recurring cleanup before release. Test
+worker termination and late PUT reconciliation. Use supported request/background
+lifetimes; do not rely on untracked isolate work. Configure Workers bindings and
+host secrets. Generate binding types for the deployed configuration. Enable host
+logs and traces without credentials or private asset contents.
+
+Local fixtures do not prove deployed IAM, bucket privacy, versioning, regional
+failures, or remote outages. Native Chromium fixtures do not prove Firefox,
+Safari, every codec, or production identity-provider hosting. Validate the host
+production build, accessibility, deployed resources, and production scanners
+before release.

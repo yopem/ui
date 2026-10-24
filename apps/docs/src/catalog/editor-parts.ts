@@ -1,6 +1,14 @@
+import { editorAiParts } from "./editor-ai-parts"
+import { editorBlockSelectionParts } from "./editor-block-selection-parts"
 import { editorCodeParts } from "./editor-code-parts"
 import { editorCollaborationParts } from "./editor-collaboration-parts"
+import { editorColumnsParts } from "./editor-columns-parts"
+import { editorDateParts } from "./editor-date-parts"
+import { editorFootnoteParts } from "./editor-footnote-parts"
 import { editorMathParts } from "./editor-math-parts"
+import { editorMediaParts } from "./editor-media-parts"
+import { editorReviewParts } from "./editor-review-parts"
+import { editorTocParts } from "./editor-toc-parts"
 import { editorTypeaheadParts } from "./editor-typeahead-parts"
 
 export const editorParts = [
@@ -220,7 +228,15 @@ export const editorParts = [
       "Render validated HTML with native disclosure and safe title links.",
   },
   ...editorMathParts,
+  ...editorFootnoteParts,
+  ...editorTocParts,
+  ...editorMediaParts,
+  ...editorColumnsParts,
+  ...editorDateParts,
+  ...editorReviewParts,
+  ...editorAiParts,
   ...editorCollaborationParts,
+  ...editorBlockSelectionParts,
   ...editorTypeaheadParts,
 ] as const
 

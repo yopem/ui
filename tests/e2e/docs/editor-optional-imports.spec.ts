@@ -1,0 +1,31 @@
+import { expect, test } from "@playwright/test"
+import { z } from "zod"
+
+const documentationSchema = z.object({
+  parts: z.array(
+    z.object({ name: z.string(), importPath: z.string().nullable() }),
+  ),
+})
+
+const cases = [
+  ["editor-code-format", "formatEditorCode", "code-format"],
+  ["editor-columns", "EditorColumnsControls", "columns"],
+  ["editor-date", "EditorDateControls", "date"],
+  ["editor-footnotes", "EditorFootnoteControls", "footnote"],
+  ["editor-toc", "EditorTocControls", "toc"],
+] as const
+
+for (const [item, name, module] of cases) {
+  test(`${item} publishes its consumer entry`, async ({ request }) => {
+    const response = await request.get(`/r/docs/${item}.json`)
+
+    expect(response.status()).toBe(200)
+    expect(response.headers()["content-type"]).toContain("application/json")
+
+    const document = documentationSchema.parse(await response.json())
+    const entry = document.parts.find((part) => part.name === name)
+
+    expect(entry).toBeDefined()
+    expect(entry?.importPath).toBe(`@/components/editor/${module}`)
+  })
+}

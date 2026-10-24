@@ -10,34 +10,6 @@ description: >-
 
 # Yopem UI CLI
 
-## Editor collaboration
-
-Use separate `add` calls for each required item. Add
-`editor-collaboration` for browser parts and `editor-collaboration-server` for
-generic server helpers. Add only the matching runtime item:
-`editor-collaboration-worker`, `editor-collaboration-bun`, or
-`editor-collaboration-node`. Do not combine item names in one CLI command. Use
-one package-manager switcher block per item in consumer docs.
-
-Import browser parts from `@/components/editor/collaboration` and generic
-server helpers from `@/lib/editor-collaboration`. Import adapters directly from
-`@/lib/editor-collaboration/collaboration-do`,
-`@/lib/editor-collaboration/collaboration-bun`, and
-`@/lib/editor-collaboration/collaboration-node`. Keep these entries out of
-browser and generic server barrels.
-
-The Bun adapter returns handlers for `Bun.serve` and supports host TLS. The
-Node adapter uses `node:http`; bind it privately behind a trusted HTTPS/WSS
-proxy. Hosts still supply verified authentication expiry, an exact HTTPS
-origin, CSRF checks, literal-true document policies, real SQL transactions, and
-a schema-complete initializer.
-
-Keep binary document frames and bounded text readiness, delivery, and ACK
-controls. Recipient rechecks do not make revocation atomic with database writes.
-History has a fixed bound and no automatic compaction. Do not replay uncertain
-offline drafts. Do not claim runtime or deployment validation from source
-publication. See https://ui.yopem.com/docs/editor-collaboration.
-
 ## Inspect before running commands
 
 Read the project's instructions, `package.json`, lockfile, TypeScript settings,
@@ -213,6 +185,36 @@ Pass it through the `formatter` prop. Syntax colors support more languages than
 this adapter can format. Cancellation cannot stop synchronous parsing. The
 adapter does not change your repository formatter.
 
+### Optional editor review
+
+```sh
+bunx --bun @yopem-ui/cli add editor-review
+npx @yopem-ui/cli add editor-review
+pnpm dlx @yopem-ui/cli add editor-review
+yarn dlx @yopem-ui/cli add editor-review
+```
+
+Import `EditorReviewPreset` and `EditorReviewHost` from
+`@/components/editor/review`, or use the configured shared editor path. The
+preset supplies its own root and editable surface. For custom composition,
+create one controller per root and add its extension to the stable root
+extension list. Place `EditorReviewProvider` inside `EditorRoot`.
+
+Set `viewer` from a verified host identity. Supply a synchronous `can` policy.
+Allow an action only when current policy returns literal `true`. Serialized
+author IDs do not grant access. Check each action again on the server before
+saving. `visible=false` hides review UI. It does not redact or delete state.
+
+Review state uses root NodeState `yopemReview` and text NodeState
+`yopemSuggestion`. Validate imported state with `parseReviewDocument`. Register
+`MarkNode` in every reader that loads review state. Untrusted input loses review
+metadata. Trust it only after host verification.
+
+Review suggestions are inline only. Text diffs support one paragraph, 2048
+graphemes, and 4096 UTF-16 units. Paste inserts plain text only. Rich HTML paste
+is rejected. Pasted review metadata is not preserved. `editor-document` does not
+import review formats. See https://ui.yopem.com/components/editor-review for
+public contracts and limits.
 
 ### Optional editor authentication
 
@@ -511,6 +513,34 @@ HTTP callbacks receive cancellation through `Request.signal`. Storage checks
 deadlines before driver calls. PostgreSQL checks remaining time before each
 statement. Synchronous work cannot be stopped.
 
+## Editor collaboration
+
+Use separate `add` calls for each required item. Add `editor-collaboration` for
+browser parts and `editor-collaboration-server` for generic server helpers. Add
+only the matching runtime item: `editor-collaboration-worker`,
+`editor-collaboration-bun`, or `editor-collaboration-node`. Do not combine item
+names in one CLI command. Use one package-manager switcher block per item in
+consumer docs.
+
+Import browser parts from `@/components/editor/collaboration` and generic server
+helpers from `@/lib/editor-collaboration`. Import adapters directly from
+`@/lib/editor-collaboration/collaboration-do`,
+`@/lib/editor-collaboration/collaboration-bun`, and
+`@/lib/editor-collaboration/collaboration-node`. Keep these entries out of
+browser and generic server barrels.
+
+The Bun adapter returns handlers for `Bun.serve` and supports host TLS. The Node
+adapter uses `node:http`; bind it privately behind a trusted HTTPS/WSS proxy.
+Hosts still supply verified authentication expiry, an exact HTTPS origin, CSRF
+checks, literal-true document policies, real SQL transactions, and a
+schema-complete initializer.
+
+Keep binary document frames and bounded text readiness, delivery, and ACK
+controls. Recipient rechecks do not make revocation atomic with database writes.
+History has a fixed bound and no automatic compaction. Do not replay uncertain
+offline drafts. Do not claim runtime or deployment validation from source
+publication. See https://ui.yopem.com/docs/editor-collaboration.
+
 ## Editor style composition
 
 Import editor parts from `@/components/editor` after editor installation. Keep
@@ -533,6 +563,27 @@ Use `EditorClearFormattingButton` to remove presentation. Keep content, links,
 list nesting, table structure, and unrelated NodeState. Saved style selections
 expire after document changes. See
 [editor composition](https://ui.yopem.com/docs/editor.md).
+
+## Editor AI proposals
+
+Install optional `editor-ai` server source separately from `editor` client
+source. Import server helpers from `@/lib/editor-ai`. Never import them into
+browser code. Compose `EditorAiRoot`, `EditorAiTrigger`, and `EditorAiPanel`
+inside `EditorRoot`. Supply an explicit same-origin endpoint, documentId, and
+current host authentication and CSRF headers. Without configuration, AI controls
+render nothing. No default endpoint or model exists. Review progressive
+untrusted plain text. Approval requires explicit completion and clean EOF.
+Content, format, style, non-null selection, and read-only changes invalidate
+proposals. A null selection retains the saved target for dialog use. Remount
+EditorAiRoot when host code discards the saved target. Approval makes one local
+history update. Authorize document writes separately. Supply existing OpenAuth
+or Better Auth, verified expiry, exact HTTPS Origin, CSRF verification, and
+durable host quota. Require literal true from the document policy for
+`ai:invoke`. This permission never grants `document:write`. Keep provider
+credentials and model selection on the server. Never retry paid requests
+automatically. Keep tokens out of browser storage, URLs, and logs. Cancellation
+does not prove that billing stops. See https://ui.yopem.com/docs/editor-ai for
+provider schema and deployment limits.
 
 ## Optional editor typeahead
 
@@ -570,8 +621,9 @@ EditorContent beside this preset.
 
 ## Optional editor document conversion
 
-Install `editor-document` for JSON, HTML, Markdown, and static output.
-This item installs `editor` and `editor-blocks`. Base editor installs exclude these codecs.
+Install `editor-document` for JSON, HTML, Markdown, and static output. This item
+installs `editor` and `editor-blocks`. Base editor installs exclude these
+codecs.
 
 ```sh
 bunx --bun @yopem-ui/cli add editor-document
@@ -580,37 +632,51 @@ pnpm dlx @yopem-ui/cli add editor-document
 yarn dlx @yopem-ui/cli add editor-document
 ```
 
-Import portable helpers from `@/components/editor/document`.
-Import `DocumentStatic` from `@/components/editor/document/static`.
-Register `EditorDocumentClipboardExtension` in the stable root extension array.
-Call `registerDocumentPaste` after editor creation. Retain its cleanup callback.
+Import portable helpers from `@/components/editor/document`. Import
+`DocumentStatic` from `@/components/editor/document/static`. Register
+`EditorDocumentClipboardExtension` in the stable root extension array. Call
+`registerDocumentPaste` after editor creation. Retain its cleanup callback.
 Validate complete documents before replacement. Keep host HTML sanitization.
 Retain canonical block metadata, table borders, and `data-editor-row-height`.
 Failed imports preserve existing content. Stream imports commit only at EOF.
 Abort stale requests. Cancellation cannot stop a noncooperative producer.
-Register math and mention nodes before importing their representations.
-Markdown supports TeX delimiters with canonical HTML fallback when required for fidelity.
-Static and standalone HTML use native MathML.
-Mentions use the validated identity codec.
-Saved mention identities do not grant access. Media JSON and canonical
-tagged figure HTML retain native metadata. Markdown uses canonical HTML for
-media. Register `MediaExtension` for live rendering or `MediaNode` in headless
-readers. Media URLs cannot contain credentials, queries, or fragments.
-Review nodes remain unsupported.
-Do not use conversion to remove unknown nodes or formatting without approval.
-See https://ui.yopem.com/components/editor-document for supported formats.
+Register math and mention nodes before importing their representations. Markdown
+supports TeX delimiters with canonical HTML fallback when required for fidelity.
+Static and standalone HTML use native MathML. Mentions use the validated
+identity codec. Saved mention identities do not grant access. Media JSON and
+canonical tagged figure HTML retain native metadata. Markdown uses canonical
+HTML for media. Register `MediaExtension` for live rendering or `MediaNode` in
+headless readers. Media URLs cannot contain credentials, queries, or fragments.
+Review nodes remain unsupported. Do not use conversion to remove unknown nodes
+or formatting without approval. See
+https://ui.yopem.com/components/editor-document for supported formats.
 
 ## Optional editor media
 
-Install `editor-media` separately. Import parts from `@/components/editor/media`.
-Register `MediaExtension` in a stable root extension array.
-Compose `MediaInsertControl` inside `EditorToolbar`.
-`MediaContent` renders validated `parseMedia` data without `EditorRoot`.
-Use HTTPS URLs without credentials. Supply alt text and captions for your content.
+Install `editor-media` separately. Import parts from
+`@/components/editor/media`. Register `MediaExtension` in a stable root
+extension array. Compose `MediaInsertControl` inside `EditorToolbar`.
+`MediaContent` renders validated `parseMedia` data without `EditorRoot`. Use
+HTTPS URLs without credentials. Supply alt text and captions for your content.
 Keep native playback, file links, and iframe controls usable in read-only roots.
-Supply bounded, abort-aware host uploads with server authorization and validation.
-Private assets need explicit same-origin delivery integration. Never put tokens in media URLs.
-Register `MediaNode` in document readers. Do not flatten unsupported media during conversion.
+Supply bounded, abort-aware host uploads with server authorization and
+validation. Private assets need explicit same-origin delivery integration. Never
+put tokens in media URLs. Register `MediaNode` in document readers. Do not
+flatten unsupported media during conversion.
+
+## Optional footnotes and table of contents
+
+Install `editor-footnotes` and `editor-toc` separately. Import parts from
+`@/components/editor/footnote` and `@/components/editor/toc`. Keep feature
+extensions stable when the root mounts. Compose controls inside `EditorToolbar`.
+`EditorFootnoteTypeahead` owns the editable surface. Do not add adjacent
+`EditorContent`. Keep repeated and unresolved references and duplicate
+definitions. Renumber a selected duplicate explicitly. Do not silently rewrite
+identifiers. Table-of-contents links target the current editor only. Base
+contents controls do not require typeahead. Add `editorTocSlashCommand` only to
+a configured slash controller. Register feature nodes in each reader. Model
+fragment codecs do not validate complete host documents. Generic
+`editor-document` conversion does not yet support footnotes or contents nodes.
 
 ## Optional editor columns and dates
 
@@ -675,30 +741,35 @@ contains TeX, not rendered HTML. Sanitize host HTML before import. Validate
 metadata before replacing document content. These fragment codecs do not parse
 complete documents or Plate state.
 
-## Optional footnotes and table of contents
+## Editor private assets
 
-Install `editor-footnotes` and `editor-toc` separately.
-Import parts from `@/components/editor/footnote` and `@/components/editor/toc`.
-Keep feature extensions stable when the root mounts.
-Compose controls inside `EditorToolbar`.
-`EditorFootnoteTypeahead` owns the editable surface. Do not add adjacent `EditorContent`.
-Keep repeated and unresolved references and duplicate definitions.
-Renumber a selected duplicate explicitly. Do not silently rewrite identifiers.
-Table-of-contents links target the current editor only.
-Base contents controls do not require typeahead. Add `editorTocSlashCommand` only to a configured slash controller.
-Register feature nodes in each reader. Model fragment codecs do not validate complete host documents.
-Generic `editor-document` conversion does not yet support footnotes or contents nodes.
+Use the separate `editor-assets` server library with D1 or PostgreSQL and
+private R2 or S3. Apply matching dialect migrations 0001, 0002, and 0003 in
+order. Keep authentication, verified expiry, document and asset policy, exact
+origins, and CSRF checks in the host. Reuse factory instances. Supply quotas,
+bounded structural decoders, security scanners, and recurring cleanup with
+complete inventory cycles. Do not treat fixture validators or signatures as
+production scanners. Keep immutable attempts, fences, terminal probes, and
+permanent lifetime reservations. Resolve private relative asset routes against
+an explicit trusted HTTPS same-origin delivery origin. Validate the exact
+document and asset route. Native media requires existing same-origin cookie
+authentication. Never put tokens in URLs, return bucket keys, or use public
+bucket fallbacks. Keep provider credentials and server imports out of browser
+entries. This item adds no media UI nodes or accounts. See
+https://ui.yopem.com/docs/editor-assets for migration, callback, delivery, and
+deployment limits. Asset repositories do not receive request cancellation.
+PostgreSQL timeouts apply per statement, not cumulatively. Configure host limits
+for pool waits. D1 batches and R2 binding calls cannot be interrupted through
+this API. S3 fetches receive cancellation signals.
 
 ## Optional whole-block selection
 
-Install `editor-block-selection` separately.
-Create one stable controller with `createEditorBlockSelection`.
-Compose `EditorBlockSelection` inside `EditorRoot`.
-Use the gutter and actions for keyboard selection and movement.
-Use drag handles for pointer movement. Keep keyboard movement available.
-Require synchronous literal `true` from `authorizeCut` before native cut.
-Preserve native MIME handlers and higher-priority host cancellation.
-Require literal `true` from custom document validation.
-Content, selection, and read-only changes expire saved operations.
-Authorize persisted document writes separately.
+Install `editor-block-selection` separately. Create one stable controller with
+`createEditorBlockSelection`. Compose `EditorBlockSelection` inside
+`EditorRoot`. Use the gutter and actions for keyboard selection and movement.
+Use drag handles for pointer movement. Keep keyboard movement available. Require
+synchronous literal `true` from `authorizeCut` before native cut. Preserve
+native MIME handlers and higher-priority host cancellation. Require literal
+`true` from custom document validation. Content, selection, and read-only
+changes expire saved operations. Authorize persisted document writes separately.
 Import parts from `@/components/editor/block-selection-index`.

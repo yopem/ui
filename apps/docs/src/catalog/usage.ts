@@ -1,5 +1,13 @@
 // Standalone TSX files use the standard @ alias for src.
 const usageSnippetValues = {
+  "editor-code-format": `"use client"
+
+import { EditorCode } from "@/components/editor/code"
+import { prettierEditorCodeFormatter } from "@/components/editor/code-format"
+
+export function FormattedCodeEditor() {
+  return <EditorCode formatter={prettierEditorCodeFormatter} />
+}`,
   "editor-media": `"use client"
 
 import { EditorContent, EditorRoot, EditorToolbar } from "@/components/editor"
@@ -17,6 +25,43 @@ export function MediaEditor() {
         <MediaInsertControl kind="file" />
         <MediaInsertControl kind="embed" />
       </EditorToolbar>
+      <EditorContent />
+    </EditorRoot>
+  )
+}`,
+  "editor-footnotes": `"use client"
+
+import { EditorRoot, EditorToolbar } from "@/components/editor"
+import {
+  EditorFootnoteControls,
+  EditorFootnoteExtension,
+  EditorFootnoteTypeahead,
+} from "@/components/editor/footnote"
+
+const extensions = [EditorFootnoteExtension]
+
+export function FootnoteEditor() {
+  return (
+    <EditorRoot extensions={extensions} ariaLabel="Footnote editor">
+      <EditorToolbar aria-label="Footnote controls"><EditorFootnoteControls /></EditorToolbar>
+      <EditorFootnoteTypeahead />
+    </EditorRoot>
+  )
+}`,
+  "editor-toc": `"use client"
+
+import { EditorContent, EditorRoot, EditorToolbar } from "@/components/editor"
+import {
+  EditorTocControls,
+  EditorTocExtension,
+} from "@/components/editor/toc"
+
+const extensions = [EditorTocExtension]
+
+export function TableOfContentsEditor() {
+  return (
+    <EditorRoot extensions={extensions} ariaLabel="Heading editor">
+      <EditorToolbar aria-label="Table of contents controls"><EditorTocControls /></EditorToolbar>
       <EditorContent />
     </EditorRoot>
   )
@@ -51,14 +96,22 @@ export function DateEditor() {
     </EditorRoot>
   )
 }`,
-  "editor-code-format": `"use client"
+  "editor-review": `"use client"
 
-import { EditorCode } from "@/components/editor/code"
-import { prettierEditorCodeFormatter } from "@/components/editor/code-format"
+import {
+  EditorReviewPreset,
+  type EditorReviewHost,
+} from "@/components/editor/review"
 
-export function FormattedCodeEditor() {
-  return <EditorCode formatter={prettierEditorCodeFormatter} />
-}`,
+export function ReviewEditor({ host }: { host: EditorReviewHost }) {
+  return <EditorReviewPreset host={host} ariaLabel="Document review" />
+}
+`,
+  "editor-ai": `import { createEditorAiHandler } from "@/lib/editor-ai"
+import { editorAiOptions } from "@/server/editor-ai-policy"
+
+export const POST = createEditorAiHandler(editorAiOptions)`,
+
   "editor-document": `import { DocumentStatic } from "@/components/editor/document/static"
 
 export function DocumentExample() {

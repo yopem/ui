@@ -1,0 +1,222 @@
+## Scope
+
+Use optional server source to stream text proposals. Keep existing accounts and
+document policies. No endpoint, model, credentials, or generation runs by
+default.
+
+Generate and Copilot insert after the saved range. Rewrite replaces the saved
+range. Copilot requires an explicit request. It is not a background completion
+loop.
+
+## Install
+
+Use Bun, npm, pnpm, or Yarn 2 and later. Select your package manager in this
+command block.
+
+```sh
+bunx --bun @yopem-ui/cli add editor-ai
+```
+
+This item installs `editor-auth`, not the editor client. Install the client
+separately.
+
+```sh
+bunx --bun @yopem-ui/cli add editor
+```
+
+Import server helpers from `@/lib/editor-ai`. Import client parts from
+`@/components/editor`. Never import server libraries into browser components.
+Custom and shared layouts use their configured import paths.
+
+## Configure the server
+
+Mount `createEditorAiHandler` at a dedicated host route. Supply every security
+callback and limit. Use existing OpenAuth or Better Auth authentication. Keep an
+explicit OpenAuth audience. Better Auth verification must not refresh sessions.
+
+Require verified `credentialExpiresAt` in Unix epoch milliseconds in the host
+authenticator. The AI handler rejects missing, invalid, or expired metadata.
+Supplied expiry can only shorten the request deadline.
+
+Require literal `true` from the document policy for `ai:invoke`. This action
+never grants `document:write`. Approval changes local editor state, not server
+permissions.
+
+```ts
+import { createEditorAiHandler, createOpenAiProvider } from "@/lib/editor-ai"
+import {
+  authenticateEditor,
+  editorPolicy,
+  verifyEditorCsrf,
+  reserveEditorAiBudget,
+} from "@/server/editor-policy"
+
+export function createAiRoute(config: {
+  origin: string
+  apiKey: string
+  model: string
+  system: string
+  maxTokens: number
+}) {
+  return createEditorAiHandler({
+    trustedOrigin: config.origin,
+    provider: createOpenAiProvider({
+      apiKey: config.apiKey,
+      model: config.model,
+      system: config.system,
+      maxTokens: config.maxTokens,
+    }),
+    authenticate: authenticateEditor,
+    policy: editorPolicy,
+    verifyCsrf: verifyEditorCsrf,
+    reserve: reserveEditorAiBudget,
+    maxDurationMs: 60000,
+    maxInputBytes: 131072,
+    maxOutputBytes: 1048576,
+  })
+}
+```
+
+The policy imports are required host implementations, not supplied services. The
+server API snippet also requires host-defined `editorAiOptions` from
+`@/server/editor-ai-policy`. Load model configuration and credentials from
+server configuration. Never accept them from the browser.
+
+Configure one exact serialized HTTPS origin without a trailing slash. POST
+requires matching `Origin`, JSON, `X-Editor-Request: 1`, and literal `true` from
+`verifyCsrf`. Validate the CSRF token against the current host session. Do not
+use a constant token in production. CORS permits only the configured origin and
+fixed headers. Preflight does not authorize generation.
+
+`reserve` receives trusted identity, documentId, maxTokens, and signal.
+Atomically reserve durable rate, concurrency, and cost capacity before returning
+`reserved`. Return `denied` for exhausted capacity. Return `unavailable` when
+the reservation cannot be checked. Bound unauthenticated traffic at the host or
+proxy before expensive authentication.
+
+Authentication, policy, CSRF, body reads, reservation, and provider I/O share
+the absolute deadline. Callbacks receive the linked Request signal. Honor
+cancellation and bound external calls. Body ownership transfers once without a
+tee. Do not consume the body in security callbacks. Promise racing cannot stop
+noncooperative callbacks or synchronous work. Keep capacity until outstanding
+work settles. Expire durable concurrency leases conservatively. No automatic
+refund, retry, or proof of stopped provider billing exists. Immediate policy
+revocation requires a separate host permission fence.
+
+## Select a provider
+
+`createOpenAiProvider` uses Chat Completions, not Responses. The selected model
+must support system messages, `max_completion_tokens`, `n: 1`, and streamed chat
+completion chunks. Completion requires `stop` and `[DONE]`. Tool calls,
+refusals, truncation, and other finish reasons fail closed.
+
+`createAnthropicProvider` uses Messages with `max_tokens` and streaming. Only
+text blocks are supported. Completion requires `end_turn` and `message_stop`.
+Thinking, tools, token-limit stops, and malformed events fail closed.
+
+`createWorkersAiProvider` requires accountId and `schema: "chat-completions"`.
+It uses Cloudflare's OpenAI-compatible HTTPS `/ai/v1/chat/completions` endpoint,
+not a Worker binding. Choose a model that supports the stated chat fields and
+streamed deltas. Current Gemma 4 documentation supports these input fields. This
+does not establish compatibility with every Workers AI model. Legacy
+response-field streams, embeddings, images, audio, and prompt-only models are
+unsupported.
+
+Review current model schema, system-role support, context budget, retention,
+region, consent, moderation, and pricing before deployment. Token limits are not
+input-token estimates. Supply model-specific input budgets in the host.
+Credentials use fixed provider HTTPS endpoints. Redirects fail instead of
+forwarding credentials. Provider failures expose fixed codes, not provider
+bodies, prompts, secrets, or exceptions.
+
+## Compose the client
+
+```tsx
+import {
+  EditorAiRoot,
+  EditorAiTrigger,
+  EditorAiPanel,
+} from "@/components/editor"
+
+export function AiControls({
+  endpoint,
+  documentId,
+  headers,
+}: {
+  endpoint: string
+  documentId: string
+  headers: () => Promise<HeadersInit>
+}) {
+  return (
+    <EditorAiRoot config={{ endpoint, documentId, headers }}>
+      <EditorAiTrigger operation="generate" />
+      <EditorAiTrigger operation="rewrite" />
+      <EditorAiTrigger operation="copilot" />
+      <EditorAiPanel />
+    </EditorAiRoot>
+  )
+}
+```
+
+Place these controls inside `EditorRoot`. Supply current authentication and CSRF
+headers through the callback. The same-origin client sends cookies with
+`credentials: "same-origin"`. Cross-origin endpoints, URL credentials, query
+strings, fragments, and redirects fail closed. There is no cross-origin
+fallback. Keep tokens out of browser storage, URLs, and logs.
+
+The client timeout includes asynchronous header acquisition and body reads. The
+default timeout is 60 seconds. The maximum is 120 seconds. Changing endpoint or
+documentId remounts the AI session. Remount `EditorRoot` when loading another
+document.
+
+Output remains progressive untrusted plain text. The client does not execute
+HTML, Markdown, links, or tools. Approval requires an explicit complete event
+and clean EOF. Errors clear partial output. Content, format, style, non-null
+selection, and read-only changes invalidate proposals. A null selection retains
+the saved target for dialog use. Remount EditorAiRoot when host code discards
+that target. Close, cancel, unmount, deadline, and request replacement cancel
+pending work. Approval restores the bookmark, inserts literal text, and makes
+one history update. Base UI Dialog provides keyboard focus management and
+dismissal.
+
+## Try your host endpoint
+
+This example makes real requests only after explicit host configuration. It does
+not simulate generation or provide authentication services. Use an authorized
+document and a valid host CSRF token. Requests can incur charges.
+
+<EditorAiExample />
+
+## Protocol and limits
+
+POST JSON contains documentId, operation, instruction, selectedText, and
+context. Rewrite requires selectedText. IDs permit 256 UTF-16 units. Instruction
+permits 16,384 UTF-16 units. Context and selectedText each permit 32,768.
+Request bytes are bounded at 128 KiB. Proposal bytes are bounded at 1 MiB.
+Upstream and client SSE wire limits are 2 MiB. Frame limits are 64 KiB of UTF-8
+bytes. Provider constructors permit 1 through 32,768 output tokens. Select a
+supported model budget.
+
+Success sends `text` events with a text field, then `complete` with
+`version: 1`. Stream failures send an `error` event with a fixed code. HTTP
+errors use 400, 401, 403, 405, 413, 415, 429, or 503 before streaming starts.
+After HTTP 200, clients must check stream events and clean EOF. No automatic
+retry occurs for rate limits, transport failures, timeouts, or truncation.
+
+## Validation limits
+
+Synthetic SSE interception proves only client protocol behavior. Owned HTTPS
+handler tests with a native HTTP provider fixture prove local streaming and
+cancellation contracts. Neither fixture proves real inference, provider
+availability, provider billing, or deployment safety. Verify focused browser
+interaction, accessibility, production rendering, proxy buffering, and target
+runtime behavior before deployment. Run paid-provider checks only in an
+explicitly approved environment.
+
+See the [server API](/components/editor-ai), [client API](/components/editor),
+and [authentication guide](/docs/editor-auth). Provider references:
+[OpenAI](https://developers.openai.com/api/reference/resources/chat/subresources/completions/methods/create),
+[Anthropic](https://platform.claude.com/docs/en/api/messages),
+[Workers AI compatibility](https://developers.cloudflare.com/workers-ai/configuration/open-ai-compatibility/),
+and
+[Workers AI Gemma 4](https://developers.cloudflare.com/workers-ai/models/gemma-4-26b-a4b-it/).

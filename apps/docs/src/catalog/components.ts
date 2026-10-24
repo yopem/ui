@@ -34,7 +34,14 @@ const compositionOverrides = new Map<
 
 const previewDescriptionValues = {
   editor: "Core rich text editing with Lexical",
+  "editor-block-selection": "Select, move, copy, and cut top-level blocks",
+  "editor-review": "Inline discussions and bounded text suggestions",
   "editor-math": "Native inline and block TeX equations",
+  "editor-columns": "Bounded native rich-text columns",
+  "editor-date": "Timezone-safe inline calendar dates",
+  "editor-footnotes": "Native references, rich definitions, and backlinks",
+  "editor-toc": "Live heading-derived table of contents",
+  "editor-media": "Validated image, video, audio, file, and embed content",
   "editor-blocks": "Native callouts and disclosures",
   "editor-document": "Validated document import and export",
 
@@ -153,6 +160,7 @@ export const catalog: CatalogItem[] = Object.entries(modules)
     }
   })
   .concat(
+    { name: "EditorAiServer", slug: "editor-ai", title: "Editor AI server" },
     { name: "Label", slug: "label", title: "Label" },
     { name: "Sidebar", slug: "sidebar", title: "Sidebar" },
   )
