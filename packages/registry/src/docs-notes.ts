@@ -120,6 +120,10 @@ const usageNoteValues = {
     "Use exact ETags and stable operation IDs. Retry uncertain writes with identical inputs. Receipts can return historical results.",
     "Keep generation records, receipts, and tombstones. Supply host quotas and backups. PGlite tests do not prove PostgreSQL TCP or Hyperdrive behavior.",
   ],
+  "editor-ai": [
+    "Keep this entry server-only. Supply a host-selected model and credentials. AI invocation never grants document write access.",
+    "Require existing authentication, a literal-true document policy, exact HTTPS Origin, CSRF verification, verified credential expiry, and durable quota reservation. Never retry paid requests automatically.",
+  ],
   "editor-auth": [
     "Import server helpers from @/lib/editor-auth. Keep them outside browser components. Use an existing OpenAuth or Better Auth service.",
     "Use createOpenAuthAuthentication with an explicit audience. The default issuer is https://auth.yopem.com. Identity uses properties.id, not the mutable subject hash.",

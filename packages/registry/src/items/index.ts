@@ -1,5 +1,6 @@
 import { displayFormItems } from "@registry/items/display-form"
 import { editorItem } from "@registry/items/editor"
+import { editorAiItem } from "@registry/items/editor-ai"
 import { editorAuthItem } from "@registry/items/editor-auth"
 import { editorBlockSelectionItem } from "@registry/items/editor-block-selection"
 import { editorBlocksItem } from "@registry/items/editor-blocks"
@@ -31,6 +32,7 @@ export const sourceItems = [
   ...displayFormItems,
   ...remainingItems,
   editorItem,
+  editorAiItem,
   editorAuthItem,
   editorBlocksItem,
   editorMathItem,

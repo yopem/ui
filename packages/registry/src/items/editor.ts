@@ -1,6 +1,7 @@
 import type { SourceItem } from "@registry/items/types"
 
 import { editorDependency } from "@registry/editor-dependencies"
+import { registryDependency } from "@registry/registry-dependencies"
 
 export const editorItem: SourceItem = {
   categories: ["input"],
@@ -20,7 +21,6 @@ export const editorItem: SourceItem = {
     editorDependency("@lexical/selection"),
     editorDependency("@lexical/table"),
     editorDependency("lucide-react"),
-    editorDependency("zod"),
   ],
   description:
     "Provides a source-owned rich text editor with Lexical and StyleX UI components.",
@@ -28,6 +28,14 @@ export const editorItem: SourceItem = {
   docs: {
     api: [
       "Editor",
+      "EditorAiRoot",
+      "EditorAiTrigger",
+      "EditorAiPanel",
+      "EditorAiConfig",
+      "EditorAiInput",
+      "EditorAiOperation",
+      "requestEditorAi",
+      "readEditorAiProposal",
       "EditorProps",
       "EditorStateSnapshot",
       "EditorRoot",
@@ -107,6 +115,9 @@ export const editorItem: SourceItem = {
     "controls.tsx",
     "link-control.tsx",
     "selection-bookmark.ts",
+    "ai-client.ts",
+    "ai-session.ts",
+    "ai-controls.tsx",
     "table-controls.tsx",
     "table-bookmark.ts",
     "table-presentation.ts",
@@ -122,11 +133,15 @@ export const editorItem: SourceItem = {
     type: "registry:ui",
   })),
   name: "editor",
-  peerDependencies: ["react@>=19 <20", "react-dom@>=19 <20"],
+  peerDependencies: [
+    registryDependency("react"),
+    registryDependency("react-dom"),
+  ],
   registryDependencies: [
     "base",
     "box",
     "button",
+    "dialog",
     "field",
     "fieldset",
     "input",

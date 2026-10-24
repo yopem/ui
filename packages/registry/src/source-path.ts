@@ -20,6 +20,16 @@ export function resolveSourcePath(path: string) {
   if (path === "lib/editor-auth/index.ts")
     return resolve(root, "../../editor/src/server/auth-index.ts")
 
+  if (path.startsWith("lib/editor-ai/"))
+    return resolve(
+      root,
+      "../../editor/src/server/ai",
+      path.slice("lib/editor-ai/".length),
+    )
+
+  if (path === "lib/editor-auth/index.ts")
+    return resolve(root, "../../editor/src/server/auth-index.ts")
+
   if (path.startsWith("lib/editor-collaboration/"))
     return resolve(
       root,

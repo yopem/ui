@@ -103,3 +103,13 @@ export {
   EditorBlockPresentationExtension,
   createEditorBlockPresentationHTMLConfig,
 } from "./block-presentation-extension"
+
+export { EditorAiRoot, EditorAiTrigger, EditorAiPanel } from "./ai-controls"
+
+export { requestEditorAi, readEditorAiProposal } from "./ai-client"
+
+export type {
+  EditorAiConfig,
+  EditorAiInput,
+  EditorAiOperation,
+} from "./ai-client"
