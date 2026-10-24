@@ -22,7 +22,7 @@
     "start": "bun run --cwd apps/docs start",
     "preview": "bun run --cwd apps/docs preview",
     "typecheck": "bun run --filter '*' typecheck && tsc --project tests/tsconfig.json",
-    "test": "bun run registry:build && bun run --cwd packages/oxlint-plugin build && bun test ./tests/cli ./tests/oxlint-plugin ./tests/editor-auth ./tests/editor-selection ./tests/editor-tables ./tests/editor-document-stores ./tests/editor-styles ./tests/editor-code ./tests/editor-docs ./tests/docs-build ./tests/editor-typeahead",
+    "test": "bun run registry:build && bun run --cwd packages/oxlint-plugin build && bun test ./tests/cli ./tests/oxlint-plugin ./tests/editor-auth ./tests/editor-selection ./tests/editor-tables ./tests/editor-document-stores ./tests/editor-styles ./tests/editor-code ./tests/editor-docs ./tests/docs-build ./tests/editor-typeahead ./tests/editor-document",
     "test:e2e": "bun run build && PLAYWRIGHT_PRODUCTION=1 playwright test",
     "test:editor-callout-clipboard": "bun tests/editor-callout-clipboard/run.mjs",
     "test:editor-checklist": "node tests/editor-checklist/run.mjs",
@@ -31,7 +31,9 @@
     "fmt": "oxfmt fmt .",
     "fmt:check": "oxfmt --check .",
     "test:postgres-native": "bun --tsconfig-override tests/tsconfig.json tests/editor-document-stores/postgres-native.integration.ts",
-    "test:postgres-native:node": "bun build --target=node --format=esm --packages=external --tsconfig-override tests/tsconfig.json tests/editor-document-stores/postgres-native.integration.ts --outfile=./test-results/postgres-native.mjs && node ./test-results/postgres-native.mjs"
+    "test:postgres-native:node": "bun build --target=node --format=esm --packages=external --tsconfig-override tests/tsconfig.json tests/editor-document-stores/postgres-native.integration.ts --outfile=./test-results/postgres-native.mjs && node ./test-results/postgres-native.mjs",
+    "test:document:standalone": "bun test ./tests/editor-document-browser/standalone.test.ts ./tests/editor-document-browser/accessible-blocks.test.ts",
+    "test:editor-document-clipboard": "bun tests/editor-document-clipboard/run.mjs"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.13.0",
@@ -41,6 +43,7 @@
     "@lexical/clipboard": "catalog:",
     "@lexical/code": "catalog:",
     "@lexical/extension": "catalog:",
+    "@lexical/headless": "catalog:",
     "@lexical/history": "catalog:",
     "@lexical/html": "catalog:",
     "@lexical/link": "catalog:",
@@ -49,6 +52,7 @@
     "@lexical/table": "catalog:",
     "@lexical/utils": "catalog:",
     "@playwright/test": "^1.63.0",
+    "@stylexjs/stylex": "catalog:",
     "@types/bun": "catalog:",
     "@types/node": "catalog:",
     "@types/pg": "^8.23.1",
@@ -61,6 +65,7 @@
     "katex": "catalog:",
     "lefthook": "^2.2.1",
     "lexical": "catalog:",
+    "linkedom": "^0.18.14",
     "miniflare": "^5.20260930.0-alpha",
     "oxfmt": "^0.72.0",
     "oxlint": "catalog:",
@@ -105,7 +110,8 @@
     "zod": "^4.6.5",
     "@lexical/link": "^0.52.0",
     "@lexical/utils": "^0.52.0",
-    "katex": "^0.16.22"
+    "katex": "^0.16.22",
+    "@lexical/headless": "^0.52.0"
   },
   "catalogs": {
     "peer": {

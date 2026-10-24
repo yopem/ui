@@ -119,6 +119,21 @@ Use Heading, Text, Blockquote, Em, Mark, Highlight, Prose, and Codeblock for con
 Keep framework links for application navigation. Native anchors remain valid for navigation and downloads.
 Use existing form and overlay components. Preserve Base UI keyboard behavior, focus management, accessible names, and reduced motion.
 
+
+## Optional document I/O
+
+Install \`editor-document\` for JSON, HTML, Markdown, streaming, and static output.
+It includes \`editor\` and \`editor-blocks\`. Base editor installs do not include document codecs.
+Use \`@/components/editor/document\` for portable helpers and \`document/static\` for React output.
+Register EditorDocumentClipboardExtension at root creation in a stable extensions array.
+Call registerDocumentPaste after creation. Keep its cleanup in the host lifecycle.
+Register EditorBlocksExtension for live callout and toggle imports.
+Unsupported structures fail before document replacement.
+Media, mention nodes, math nodes, and review formats remain unsupported.
+Canonical codecs and registered readers remain an outstanding interoperability gap, including optional math and typeahead integration.
+Plain text and ordinary strikethrough do not carry these semantics. Code view state requires JSON.
+Use Bun, npm, pnpm, or Yarn 2 and later with the CLI runners above.
+
 ## Themes and lint rules
 
 Use neutral light and dark surfaces with semantic color pairs.

@@ -1,5 +1,22 @@
 // These notes describe Yopem's composition choices, not only the upstream types.
 const usageNoteValues = {
+  "editor-document": [
+    "Register EditorDocumentClipboardExtension at root creation in a stable extensions array. Call registerDocumentPaste after creation and keep its cleanup in the host lifecycle. Duplicate registrations fail.",
+    "Use the document subpath for validated JSON, HTML, and Markdown. Import DocumentStatic from document/static separately.",
+    "Custom headless editors use documentNodes. Imports verify the parsed target before replacing the document.",
+    "Links retain safe relations and use _self or _blank targets. The codec rejects opener relations.",
+    "Standalone color variables require mounted theme context and an opaque host surface. Partially transparent surfaces and context-relative color variables fail. Fonts use local fallbacks.",
+    "Document limits are independent: 1 MiB UTF-8, depth 64, 65,536 structures, 50 rows, 50 columns, and 2,500 table slots.",
+    "Preserve row-height metadata and supported NodeState. Streams commit only at EOF; failed or stale imports keep current content.",
+    "Media, mention nodes, math nodes, and review formats are unsupported. Imports reject these formats before document replacement.",
+    "These formats require canonical codecs and registered readers. Plain text and ordinary strikethrough do not carry these semantics.",
+    "Persisted code-view booleans require JSON; HTML and Markdown report diagnostics.",
+    "Markdown uses HTML fallback to retain whitespace. Use JSON for native text with carriage returns or invalid HTML characters. JSON escapes retain these values in metadata.",
+    "Install editor-document separately. It includes editor and editor-blocks without a circular dependency.",
+    "Register EditorBlocksExtension for live callouts and toggles. Keep canonical appearance, icon, summary, body, and open state.",
+    "Empty fragments yield every 256 frames. Supply cancellation for unbounded producers; no chunk or deadline limit applies.",
+    "Canonical table and block validators keep separate 10000-node budgets. Storage separately counts up to 131072 JSON values.",
+  ],
   "editor-typeahead": [
     "Use EditorInlineCombobox with Input, Content, List, Item, Empty, Status, Group, GroupLabel, and Row parts. EditorInlineComboboxInput renders EditorContent. Do not add a second query input. Keep every current item in controller order. Read state with useEditorInlineCombobox. Compose EditorEmojiPopover, EditorEmojiToolbarButton, EditorEmojiPopoverContent, and EditorEmojiPicker inside EditorToolbar. EditorEmojiPicker is the panel. EditorEmojiMenu is the complete toolbar preset. Compose EditorEmojiSearch, EditorEmojiCategory, EditorEmojiList, EditorEmojiItem, EditorEmojiEmpty, EditorEmojiPrevious, EditorEmojiNext, and EditorEmojiClearHistory. Read picker state with useEditorEmojiPicker. Keep inventory, filter, and history stable until unmount. ",
     "Keep one stable controller and mount-time extension array per root. EditorTypeahead renders the editable surface and suggestions. Do not add EditorContent beside this preset. Compose EditorEmojiMenu inside EditorToolbar.",
@@ -19,7 +36,7 @@ const usageNoteValues = {
     "Use xstyle, className, refs, and native attributes on Editor and EditorRoot. Link controls discard saved ranges after document content changes.",
     "Use EditorTableMenu for row, column, header, merge, and split actions. Register EditorTablePresentationExtension for bounded tables and persisted cell presentation. Add EditorTableDimensions, EditorTableCellPresentation, and EditorTableResizeControls inside EditorRoot. Use EditorTableBackgroundControls and EditorTableBorderControls separately when needed. Border controls support logical edges and rectangle actions. Shared merged edges are indivisible. Row resizing stores minimum height. Content can make rows taller.",
     "Validate external table JSON and HTML before conversion. Tables support 50 rows, 50 columns, and 2500 covered cells across the document. Invalid updates preserve existing content. Saved table selections become invalid after document changes.",
-    "The editor provides a foundation, not full Plate feature parity. Collaboration, media uploads, comments, and document conversion are not included.",
+    "The editor provides a foundation, not full Plate feature parity. Collaboration, media uploads, and comments are not included. Install editor-document separately for supported document conversion.",
   ],
   "editor-math": [
     "Register EditorMathExtension before insertion. Native MathML requires no CSS or font assets. Import pure codecs from math-model. Validate host HTML before import. TeX is bounded to 4096 characters; trust features and macros are not supported.",

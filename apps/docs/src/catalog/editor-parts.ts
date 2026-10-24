@@ -239,6 +239,13 @@ export const editorParts = [
     item: "editor-blocks",
     description: "Compose callout and toggle controls with history actions.",
   },
+  {
+    name: "DocumentStatic",
+    slug: "document-static",
+    item: "editor-document",
+    description:
+      "Render validated HTML with native disclosure and safe title links.",
+  },
   ...editorMathParts,
   ...editorTypeaheadParts,
 ] as const

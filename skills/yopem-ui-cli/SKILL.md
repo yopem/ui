@@ -523,16 +523,40 @@ Keep inline and emoji options at least 44px high for coarse pointers.
 EditorTypeahead renders the editable surface and suggestions. Do not add
 EditorContent beside this preset.
 
+## Optional editor document conversion
+
+Install `editor-document` for JSON, HTML, Markdown, and static output.
+This item installs `editor` and `editor-blocks`. Base editor installs exclude these codecs.
+
+```sh
+bunx --bun @yopem-ui/cli add editor-document
+npx @yopem-ui/cli add editor-document
+pnpm dlx @yopem-ui/cli add editor-document
+yarn dlx @yopem-ui/cli add editor-document
+```
+
+Import portable helpers from `@/components/editor/document`.
+Import `DocumentStatic` from `@/components/editor/document/static`.
+Register `EditorDocumentClipboardExtension` in the stable root extension array.
+Call `registerDocumentPaste` after editor creation. Retain its cleanup callback.
+Validate complete documents before replacement. Keep host HTML sanitization.
+Retain canonical block metadata, table borders, and `data-editor-row-height`.
+Failed imports preserve existing content. Stream imports commit only at EOF.
+Abort stale requests. Cancellation cannot stop a noncooperative producer.
+Mention, math, media, and review nodes remain unsupported by these readers.
+Do not use conversion to remove unknown nodes or formatting without approval.
+See https://ui.yopem.com/components/editor-document for supported formats.
+
 ## Optional editor math
 
 Install `editor-math` for inline and block TeX equations. Register
 `EditorMathExtension` in a stable extensions array. Compose `EditorMathControls`
 inside `EditorToolbar`. Use `EditorMathControl kind="inline"` or `kind="block"`
-to insert an equation. Omit `kind` to edit one selected equation.
-Use `EditorMathPreview` for the current expression.
-Select equations with pointer input or keyboard focus. Apply
-changes, cancel changes, or delete the selected equation. Host document changes
-expire saved targets. Read-only roots cannot change equations.
+to insert an equation. Omit `kind` to edit one selected equation. Use
+`EditorMathPreview` for the current expression. Select equations with pointer
+input or keyboard focus. Apply changes, cancel changes, or delete the selected
+equation. Host document changes expire saved targets. Read-only roots cannot
+change equations.
 
 ```sh
 bunx --bun @yopem-ui/cli add editor-math

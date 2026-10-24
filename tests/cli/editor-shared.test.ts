@@ -257,9 +257,30 @@ test("packed CLI exposes shared editor roots to external workspace consumers", a
         `${server.url}r`,
       ])
 
+      await run(ui, [
+        ...command,
+        "add",
+        "editor-document",
+        "--registry",
+        `${server.url}r`,
+      ])
+
       const blockExports: typeof initialized = await Bun.file(
         join(ui, "package.json"),
       ).json()
+
+      expect(blockExports.exports[`${editorKey}/document`]).toBe(
+        `./${components}/editor/document/index.ts`,
+      )
+
+      if (custom)
+        expect(blockExports.exports[`${editorKey}/document/static`]).toBe(
+          `./${components}/editor/document/static.tsx`,
+        )
+      else
+        expect(
+          blockExports.exports[`${editorKey}/document/static`],
+        ).toBeUndefined()
 
       const blocksKey = `${editorKey}/blocks`
       const blockControlsKey = `${editorKey}/blocks-controls`
@@ -279,12 +300,12 @@ test("packed CLI exposes shared editor roots to external workspace consumers", a
       await put(
         app,
         "src/check.tsx",
-        `import { Editor, EditorRoot, EditorContent, EditorFormatButton } from "@acme/ui/${components.slice(4)}/editor"\nimport { EditorCodeExtension, EditorCodeToolbar, EditorCodeLanguage, EditorCodeCopyButton, EditorCodeToggle, EditorCodeStatus } from "@acme/ui/${components.slice(4)}/editor/code"\nimport { EditorBlocksExtension, EditorBlocksControls, EditorBlockTypeButton } from "@acme/ui/${components.slice(4)}/editor/blocks"\nimport { EditorCalloutIconControl } from "@acme/ui/${components.slice(4)}/editor/blocks-controls"\nimport { createOpenAuthAuthentication, createBetterAuthAuthentication, authorizeEditorRequest } from "@acme/ui/${lib.slice(4)}/editor-auth"\nexport const parts = [Editor, EditorRoot, EditorContent, EditorFormatButton, EditorCodeExtension, EditorCodeToolbar, EditorCodeLanguage, EditorCodeCopyButton, EditorCodeToggle, EditorCodeStatus, EditorBlocksExtension, EditorBlocksControls, EditorBlockTypeButton, EditorCalloutIconControl, createOpenAuthAuthentication, createBetterAuthAuthentication, authorizeEditorRequest]\n`,
+        `import { DocumentStatic } from "@acme/ui/${components.slice(4)}/editor/document/static"\nimport { parseDocument } from "@acme/ui/${components.slice(4)}/editor/document"\nexport const portableDocument = parseDocument("<p>Document</p>", "html")\nexport const staticDocument = DocumentStatic\nimport { Editor, EditorRoot, EditorContent, EditorFormatButton } from "@acme/ui/${components.slice(4)}/editor"\nimport { EditorCodeExtension, EditorCodeToolbar, EditorCodeLanguage, EditorCodeCopyButton, EditorCodeToggle, EditorCodeStatus } from "@acme/ui/${components.slice(4)}/editor/code"\nimport { EditorBlocksExtension, EditorBlocksControls, EditorBlockTypeButton } from "@acme/ui/${components.slice(4)}/editor/blocks"\nimport { EditorCalloutIconControl } from "@acme/ui/${components.slice(4)}/editor/blocks-controls"\nimport { createOpenAuthAuthentication, createBetterAuthAuthentication, authorizeEditorRequest } from "@acme/ui/${lib.slice(4)}/editor-auth"\nexport const parts = [Editor, EditorRoot, EditorContent, EditorFormatButton, EditorCodeExtension, EditorCodeToolbar, EditorCodeLanguage, EditorCodeCopyButton, EditorCodeToggle, EditorCodeStatus, EditorBlocksExtension, EditorBlocksControls, EditorBlockTypeButton, EditorCalloutIconControl, createOpenAuthAuthentication, createBetterAuthAuthentication, authorizeEditorRequest]\n`,
       )
       await put(
         app,
         "src/geometry.ts",
-        `import { validateTableGeometry } from "@acme/ui/${components.slice(4)}/editor/table-presentation-schema"\nimport { CalloutNode, ToggleNode, validateEditorBlocksJSON } from "@acme/ui/${components.slice(4)}/editor/blocks-model"\nif (Reflect.has(globalThis, "document") || CalloutNode.getType() !== "editor-callout" || ToggleNode.getType() !== "editor-toggle") throw new Error("Invalid headless block model")\nvalidateEditorBlocksJSON({ root: { type: "root", children: [] } })\nconst geometry = validateTableGeometry([[{ colSpan: 2 }], [{}, {}]])\nif (geometry.columns !== 2 || geometry.rows !== 2 || geometry.cells !== 4) throw new Error("Invalid geometry")\nlet rejected = false\ntry { validateTableGeometry([[{ colSpan: 51 }]]) } catch { rejected = true }\nif (!rejected) throw new Error("Missing geometry bound")\n`,
+        `import { parseDocument } from "@acme/ui/${components.slice(4)}/editor/document"\nconst document = parseDocument('<details data-editor-toggle=""><summary>Summary</summary><div data-editor-toggle-body=""><p>Body</p></div></details>', "html")\nif (document.root.children[0]?.type !== "editor-toggle") throw new Error("Missing native toggle")\nimport { validateTableGeometry } from "@acme/ui/${components.slice(4)}/editor/table-presentation-schema"\nimport { CalloutNode, ToggleNode, validateEditorBlocksJSON } from "@acme/ui/${components.slice(4)}/editor/blocks-model"\nif (Reflect.has(globalThis, "document") || CalloutNode.getType() !== "editor-callout" || ToggleNode.getType() !== "editor-toggle") throw new Error("Invalid headless block model")\nvalidateEditorBlocksJSON({ root: { type: "root", children: [] } })\nconst geometry = validateTableGeometry([[{ colSpan: 2 }], [{}, {}]])\nif (geometry.columns !== 2 || geometry.rows !== 2 || geometry.cells !== 4) throw new Error("Invalid geometry")\nlet rejected = false\ntry { validateTableGeometry([[{ colSpan: 51 }]]) } catch { rejected = true }\nif (!rejected) throw new Error("Missing geometry bound")\n`,
       )
       await run(app, ["bunx", "--no-install", "tsc", "--noEmit"])
       await run(app, ["bun", "src/geometry.ts"])

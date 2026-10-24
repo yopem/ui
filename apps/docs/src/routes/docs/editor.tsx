@@ -3,6 +3,7 @@ import { createFileRoute } from "@tanstack/react-router"
 import { EditorBlocksExample } from "@/catalog/editor-blocks-example"
 import { EditorCodeExamples } from "@/catalog/editor-code-examples"
 import { EditorCompositionExamples } from "@/catalog/editor-composition-examples"
+import { EditorDocumentExamples } from "@/catalog/editor-document-examples"
 import { EditorExamples } from "@/catalog/editor-examples"
 import { EditorExtensionExamples } from "@/catalog/editor-extension-examples"
 import { EditorStyleExample } from "@/catalog/editor-style-examples"
@@ -32,6 +33,7 @@ const components = {
   EditorBlocksExample,
   EditorCodeExamples,
   EditorExamples,
+  EditorDocumentExamples,
   EditorCompositionExamples,
   EditorExtensionExamples,
   EditorTableExamples,

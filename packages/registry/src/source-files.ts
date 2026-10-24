@@ -1,5 +1,15 @@
 /** Import aliases used in the copyable source files served by the registry. */
 export const sourceImportReplacements = [
+  ["@yopem-ui/editor/document/static", "@/components/editor/document/static"],
+  ["@yopem-ui/editor/document", "@/components/editor/document"],
+  [
+    "@yopem-ui/editor/block-presentation",
+    "@/components/editor/block-presentation",
+  ],
+  [
+    "@yopem-ui/editor/table-presentation-schema",
+    "@/components/editor/table-presentation-schema",
+  ],
   ["@yopem-ui/editor/math/model", "@/components/editor/math-model"],
   ["@yopem-ui/editor/server", "@/lib/editor-auth"],
   ["@yopem-ui/editor/typeahead", "@/components/editor/typeahead-index"],

@@ -1,5 +1,11 @@
 // Standalone TSX files use the standard @ alias for src.
 const usageSnippetValues = {
+  "editor-document": `import { DocumentStatic } from "@/components/editor/document/static"
+
+export function DocumentExample() {
+  return <DocumentStatic html="<p>Document</p>" />
+}`,
+
   "editor-math": `"use client"
 
 import { EditorContent, EditorRoot, EditorToolbar } from "@/components/editor"

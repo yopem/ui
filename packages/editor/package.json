@@ -23,7 +23,10 @@
     "./math-extension": "./src/math-extension.ts",
     "./math-node": "./src/math-node.ts",
     "./math-controls": "./src/math-controls.tsx",
-    "./math/model": "./src/math-model.ts"
+    "./math/model": "./src/math-model.ts",
+    "./document": "./src/document/index.ts",
+    "./document/static": "./src/document/static.tsx",
+    "./block-presentation-extension": "./src/block-presentation-extension.ts"
   },
   "scripts": {
     "typecheck": "tsc --noEmit"
@@ -34,6 +37,7 @@
     "@lexical/code": "catalog:",
     "@lexical/code-prism": "^0.52.0",
     "@lexical/extension": "catalog:",
+    "@lexical/headless": "catalog:",
     "@lexical/history": "catalog:",
     "@lexical/html": "catalog:",
     "@lexical/link": "catalog:",
@@ -45,13 +49,22 @@
     "@lexical/table": "catalog:",
     "@lexical/utils": "catalog:",
     "@stylexjs/stylex": "catalog:",
+    "@types/hast": "^3.0.5",
     "@yopem-ui/registry": "workspace:*",
     "emojibase": "^18.0.0",
     "emojibase-data": "^18.0.0",
+    "hast-util-from-html": "^2.0.3",
+    "hast-util-to-html": "^9.0.5",
     "jose": "catalog:",
     "katex": "catalog:",
     "lexical": "catalog:",
     "lucide-react": "catalog:",
+    "rehype-remark": "^10.0.1",
+    "remark-gfm": "^4.0.1",
+    "remark-parse": "^11.0.0",
+    "remark-rehype": "^11.1.2",
+    "remark-stringify": "^11.0.0",
+    "unified": "^11.0.5",
     "zod": "catalog:"
   },
   "devDependencies": {

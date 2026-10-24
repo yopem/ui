@@ -431,6 +431,116 @@ export function SavedNotes({
 }
 ```
 
+## Document import and export
+
+Install the optional document item with your selected package manager.
+
+```sh
+bunx --bun @yopem-ui/cli add editor-document
+```
+
+This item includes editor and editor-blocks. Base editor installs do not include
+document codecs. Keep every copied file, including `document/state.ts` and both
+pure presentation helpers.
+
+Import portable helpers from `@/components/editor/document`. This entry does not
+load React, UI components, or a DOM library. Import `DocumentStatic` separately
+from `@/components/editor/document/static` for React server or client rendering.
+
+<EditorDocumentExamples />
+
+Pass the Lexical editor from `useEditor` inside `EditorRoot`. Call the helper
+from a host event handler.
+
+```ts
+import type { LexicalEditor } from "lexical"
+import {
+  importDocument,
+  exportDocument,
+  parseDocument,
+  htmlDocument,
+} from "@/components/editor/document"
+
+export function replaceNotes(editor: LexicalEditor) {
+  importDocument(editor, "# Notes", "markdown")
+  const markdown = exportDocument(editor, "markdown")
+  const validatedState = parseDocument(markdown, "markdown")
+  const standalone = htmlDocument(editor, "Notes")
+  return { markdown, validatedState, standalone }
+}
+```
+
+`parseDocument` validates without changing a live editor. `importDocument`
+replaces editable content after validation and adds one undo step. Invalid input
+keeps the previous state. JSON uses native Lexical state, not Slate state.
+
+Use `documentNodes` when you create a custom headless editor. Imports reject a
+target that cannot keep the parsed fields and children.
+
+HTML import accepts supported document fragments, not arbitrary webpages. Active
+HTML, unknown styles, unsafe links, media, and unsupported nodes produce errors.
+Mention nodes, math nodes, and review formats are not supported. These formats
+require canonical codecs and registered readers before integration. This
+interoperability gap remains open, including the optional math and typeahead
+items. Plain text and ordinary strikethrough do not carry mention, math, or
+review semantics. Handle `DocumentError.diagnostics` at the host boundary. JSON
+retains safe unrelated NodeState. HTML and Markdown retain supported element
+NodeState. Persisted code-view booleans require JSON; HTML and Markdown report
+diagnostics.
+
+Markdown uses HTML fallback to retain whitespace. Use JSON for native text with
+carriage returns or invalid HTML characters. JSON escapes retain these values in
+metadata.
+
+Links keep supplied safe relations. Blank-window links add `noopener` and
+`noreferrer`. Use `_self` or `_blank` for link targets. Do not use `opener`
+relations. Empty link titles and relations use native null defaults.
+
+Tables retain spans, edge borders, row metadata, widths, and supported block
+styles. Keep `data-editor-row-height`; native CSS can clamp finite row heights.
+Markdown uses safe HTML when plain Markdown cannot retain supported metadata.
+
+Each document has separate limits: 1 MiB UTF-8, depth 64, and 65,536 structural
+objects or arrays. Tables also have 50-row, 50-column, and 2,500-slot limits. A
+valid 50-by-50 table can still exceed another document limit.
+
+`exportDocument` returns fragments or Markdown source. It keeps CSS variable
+references for the host renderer. Use standalone HTML for a theme-independent
+file.
+
+`htmlDocument` produces escaped standalone HTML. Mounted editors supply
+validated selected color variables and their foreground/background pair.
+Unresolved color variables fail when theme context is absent. Headless exports
+without variables use black text and a white background. Supply an opaque host
+surface for mounted exports. Partially transparent surfaces produce an error.
+Color variables with context-relative values, such as `currentColor`, produce an
+error. Standalone files name Inter and IBM Plex Mono with local fallbacks; they
+do not download fonts.
+
+Use `downloadDocument(editor, "html", ownerDocument)` for HTML files. Use
+`"markdown"` for Markdown files. `DocumentStatic` validates its HTML fragment
+before rendering. It does not load editing controls or bypass sanitization.
+
+`streamMarkdown` accepts an async text iterator and an optional abort signal. It
+commits once after verified EOF. Cancellation, source failure, read-only
+changes, and stale content preserve the current document. Progress is
+provisional text, not committed editor state. Cleanup requests cannot stop an
+uncooperative producer.
+
+Register `EditorDocumentClipboardExtension` in the stable editor extension
+array. Call `registerDocumentPaste` after editor creation. Keep its cleanup in
+the host lifecycle. Cleanup restores native clipboard import. The helper
+requires the extension and rejects duplicate registration.
+
+Native defaults select JSON before HTML. The boundary validates complete JSON
+and HTML fragments before default paste imports. Invalid or foreign JSON can use
+a valid HTML fallback. Without that fallback, the boundary blocks default text
+and URI imports. Invalid HTML stops import without document changes.
+
+Host command vetoes, MIME handler order, and MIME priorities keep native
+behavior. Host MIME handlers that consume data must validate their own output.
+Direct imports without `PASTE_TAG` and drop handlers keep native behavior.
+
 ## Storage and migration
 
 Lexical JSON is not compatible with Slate or Plate JSON. Do not pass a Slate
@@ -886,11 +996,11 @@ after content changes.
 Install `editor-math` for inline and block TeX equations. Register
 `EditorMathExtension` in a stable extensions array. Compose `EditorMathControls`
 inside `EditorToolbar`. Use `EditorMathControl kind="inline"` or `kind="block"`
-to insert an equation. Omit `kind` to edit one selected equation.
-Use `EditorMathPreview` for the current expression.
-Select equations with pointer input or keyboard focus. Apply
-changes, cancel changes, or delete the selected equation. Host document changes
-expire saved targets. Read-only roots cannot change equations.
+to insert an equation. Omit `kind` to edit one selected equation. Use
+`EditorMathPreview` for the current expression. Select equations with pointer
+input or keyboard focus. Apply changes, cancel changes, or delete the selected
+equation. Host document changes expire saved targets. Read-only roots cannot
+change equations.
 
 ```sh
 bunx --bun @yopem-ui/cli add editor-math

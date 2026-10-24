@@ -4,7 +4,10 @@ import { editorParts } from "@workspace/apps/docs/src/catalog/editor-parts"
 import { z } from "zod"
 
 for (const part of editorParts.filter(
-  (part) => part.item !== "editor-blocks" && part.item !== "editor-typeahead",
+  (part) =>
+    part.item !== "editor-blocks" &&
+    part.item !== "editor-typeahead" &&
+    part.item !== "editor-document",
 )) {
   test(`${part.name} preview and public resources @a11y`, async ({
     page,

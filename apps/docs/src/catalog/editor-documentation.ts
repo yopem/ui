@@ -45,11 +45,17 @@ export async function getEditorDocumentation(slug: string) {
     previewSource: usage,
     api,
     notes: [
-      ...(part.name === "Editor"
+      ...(part.name === "Editor" || part.name === "DocumentStatic"
         ? []
         : [
             "Place controls and EditorContent inside EditorRoot. Keep extension arrays stable when the editor mounts.",
           ]),
+      ...(part.item === "editor-document"
+        ? [
+            "Import DocumentStatic from the separate document/static entry. No EditorRoot is required.",
+            "Unsupported media, mentions, math, and review formats fail before document replacement. Canonical readers remain an outstanding interoperability gap.",
+          ]
+        : []),
       ...(part.item === "editor-math"
         ? [
             "Register EditorMathExtension in a stable extension array. Import pure validation from @/components/editor/math-model. Validate complete documents before replacement.",

@@ -154,6 +154,22 @@ Reject unsupported math before document replacement. Host changes expire saved t
 KaTeX uses native MathML without external stylesheets, fonts, or services.
 Trust features and user macros are not supported.
 
+### Optional editor document I/O
+
+Install \`editor-document\` separately for JSON, HTML, Markdown, streaming, and static output.
+It depends on \`editor\` and \`editor-blocks\`. Base editor installs do not include document codecs.
+Import helpers from \`${imports.editor}/document\` and DocumentStatic from \`${imports.editor}/document/static\`.
+DocumentStatic needs no EditorRoot. Keep every copied helper, including \`document/state.ts\` and canonical presentation codecs.
+Keep \`@types/hast\` as a direct consumer dependency.
+Register EditorDocumentClipboardExtension at root creation in a stable extensions array.
+Call registerDocumentPaste after creation. Keep its cleanup in the host lifecycle.
+Register EditorBlocksExtension for live callout and toggle imports.
+Invalid, stale, cancelled, and read-only imports keep current content. Streams commit once after EOF.
+Media, mentions, math, and review formats fail closed before document replacement.
+Canonical codecs and registered readers remain an outstanding interoperability gap, including optional math and typeahead integration.
+Keep native clipboard priorities, host vetoes, and host HTML sanitization.
+Host MIME handlers that consume data must validate their own output.
+
 ### Optional editor blocks
 
 Install optional callout and toggle source with the matching package manager:

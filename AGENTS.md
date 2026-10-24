@@ -610,3 +610,19 @@ HTML uses `span` for inline math and `div` for block math.
 Both elements require `data-editor-math` and `data-editor-tex`. Exported text contains TeX, not rendered HTML.
 Sanitize host HTML before import. Validate metadata before replacing document content.
 These fragment codecs do not parse complete documents or Plate state.
+
+## Optional editor document I/O
+
+Install `editor-document` separately for JSON, HTML, Markdown, streaming, and static output.
+It depends on `editor` and `editor-blocks`. Base editor installs do not include document codecs.
+Import helpers from `@/components/editor/document` and DocumentStatic from `@/components/editor/document/static`.
+DocumentStatic needs no EditorRoot. Keep every copied helper, including `document/state.ts` and canonical presentation codecs.
+Keep `@types/hast` as a direct consumer dependency.
+Register EditorDocumentClipboardExtension at root creation in a stable extensions array.
+Call registerDocumentPaste after creation. Keep its cleanup in the host lifecycle.
+Register EditorBlocksExtension for live callout and toggle imports.
+Invalid, stale, cancelled, and read-only imports keep current content. Streams commit once after EOF.
+Media, mentions, math, and review formats fail closed before document replacement.
+Canonical codecs and registered readers remain an outstanding interoperability gap, including optional math and typeahead integration.
+Keep native clipboard priorities, host vetoes, and host HTML sanitization.
+Host MIME handlers that consume data must validate their own output.
