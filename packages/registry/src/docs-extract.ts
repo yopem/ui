@@ -94,6 +94,14 @@ export function extractDocs() {
             /^\.\.\/\.\.\/editor\/src\/server\/document-/,
             "lib/editor-store/document-",
           )
+          .replace(
+            /^\.\.\/\.\.\/editor\/src\/server\/collaboration-index\.ts$/,
+            "lib/editor-collaboration/index.ts",
+          )
+          .replace(
+            /^\.\.\/\.\.\/editor\/src\/server\/(collaboration[-/])/,
+            "lib/editor-collaboration/$1",
+          )
           .replace(/^\.\.\/\.\.\/editor\/src\/server\//, "lib/editor-auth/")
           .replace(/^\.\.\/\.\.\/editor\/src\//, "components/editor/")
   }
@@ -474,6 +482,7 @@ export function extractDocs() {
           ([
             "editor-columns",
             "editor-date",
+            "editor-collaboration",
             "editor-media",
             "editor-toc",
           ].includes(item.name)
@@ -484,25 +493,30 @@ export function extractDocs() {
                 ? file.path === "components/editor/footnote.ts"
                 : item.name === "editor"
                   ? file.path === "components/editor/index.ts"
-                  : item.name === "editor-store"
-                    ? file.path === "lib/editor-store/index.ts"
-                    : item.name === "editor-auth"
-                      ? file.path === "lib/editor-auth/index.ts"
-                      : item.name === "editor-code"
-                        ? file.path === "components/editor/code.ts"
-                        : item.name === "editor-math"
-                          ? file.path === "components/editor/math.ts"
-                          : item.name === "editor-blocks"
-                            ? file.path === "components/editor/blocks.ts"
-                            : item.name === "editor-document"
-                              ? [
-                                  "components/editor/document/index.ts",
-                                  "components/editor/document/static.tsx",
-                                ].includes(file.path)
-                              : item.name === "editor-typeahead"
-                                ? file.path ===
-                                  "components/editor/typeahead-index.ts"
-                                : true),
+                  : item.name === "editor-collaboration-server"
+                    ? file.path === "lib/editor-collaboration/index.ts"
+                    : item.name === "editor-collaboration-worker"
+                      ? file.path ===
+                        "lib/editor-collaboration/collaboration-do.ts"
+                      : item.name === "editor-store"
+                        ? file.path === "lib/editor-store/index.ts"
+                        : item.name === "editor-auth"
+                          ? file.path === "lib/editor-auth/index.ts"
+                          : item.name === "editor-code"
+                            ? file.path === "components/editor/code.ts"
+                            : item.name === "editor-math"
+                              ? file.path === "components/editor/math.ts"
+                              : item.name === "editor-blocks"
+                                ? file.path === "components/editor/blocks.ts"
+                                : item.name === "editor-document"
+                                  ? [
+                                      "components/editor/document/index.ts",
+                                      "components/editor/document/static.tsx",
+                                    ].includes(file.path)
+                                  : item.name === "editor-typeahead"
+                                    ? file.path ===
+                                      "components/editor/typeahead-index.ts"
+                                    : true),
       )
       .flatMap((file) => {
         const source = program.getSourceFile(resolveSourcePath(file.path))

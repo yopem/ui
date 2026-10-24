@@ -5,6 +5,11 @@ import { editorBlockSelectionItem } from "@registry/items/editor-block-selection
 import { editorBlocksItem } from "@registry/items/editor-blocks"
 import { editorCodeItem } from "@registry/items/editor-code"
 import { editorCodeFormatItem } from "@registry/items/editor-code-format"
+import { editorCollaborationItem } from "@registry/items/editor-collaboration"
+import { editorCollaborationBunItem } from "@registry/items/editor-collaboration-bun"
+import { editorCollaborationNodeItem } from "@registry/items/editor-collaboration-node"
+import { editorCollaborationServerItem } from "@registry/items/editor-collaboration-server"
+import { editorCollaborationWorkerItem } from "@registry/items/editor-collaboration-worker"
 import { editorColumnsItem } from "@registry/items/editor-columns"
 import { editorDateItem } from "@registry/items/editor-date"
 import { editorDocumentItem } from "@registry/items/editor-document"
@@ -30,6 +35,11 @@ export const sourceItems = [
   editorBlocksItem,
   editorMathItem,
   editorMediaItem,
+  editorCollaborationItem,
+  editorCollaborationBunItem,
+  editorCollaborationNodeItem,
+  editorCollaborationServerItem,
+  editorCollaborationWorkerItem,
   editorCodeItem,
   editorColumnsItem,
   editorDateItem,

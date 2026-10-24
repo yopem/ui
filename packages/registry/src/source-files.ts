@@ -17,6 +17,19 @@ export const sourceImportReplacements = [
     "@/components/editor/table-presentation-schema",
   ],
   ["@yopem-ui/editor/math/model", "@/components/editor/math-model"],
+  [
+    "@yopem-ui/editor/server/collaboration/bun",
+    "@/lib/editor-collaboration/collaboration-bun",
+  ],
+  [
+    "@yopem-ui/editor/server/collaboration/node",
+    "@/lib/editor-collaboration/collaboration-node",
+  ],
+  [
+    "@yopem-ui/editor/server/collaboration/worker",
+    "@/lib/editor-collaboration/collaboration-do",
+  ],
+  ["@yopem-ui/editor/server/collaboration", "@/lib/editor-collaboration"],
   ["@yopem-ui/editor/server", "@/lib/editor-auth"],
   ["@yopem-ui/editor/typeahead", "@/components/editor/typeahead-index"],
   ["@yopem-ui/editor", "@/components/editor"],
@@ -28,9 +41,17 @@ export const sourceImportReplacements = [
 ] as const
 
 export function rewriteImports(content: string, path = "") {
+  const serverSource = path.startsWith("lib/editor-collaboration/")
+    ? content.replace(
+        /from "\.\/(auth|document-[a-z0-9-]+)"/g,
+        (_match, module: string) =>
+          `from "@/lib/${module === "auth" ? "editor-auth" : "editor-store"}/${module}"`,
+      )
+    : content
+
   const source = path.startsWith("lib/editor-store/")
     ? content.replaceAll('from "./auth"', 'from "@/lib/editor-auth/auth"')
-    : content
+    : serverSource
 
   return sourceImportReplacements.reduce(
     (result, [source, target]) => result.replaceAll(source, target),

@@ -88,6 +88,32 @@ const usageNoteValues = {
     "Tab indents code. Shift+Tab removes indentation. Outdent also removes up to two leading spaces. Native Enter keeps indentation; two empty final lines permit an exit on the next Enter. Escape has no code-specific action.",
     "Copy uses the host clipboard. EditorCodeStatus reports success or an error. Copy remains available in read-only mode. Mutation controls require an editable editor.",
   ],
+  "editor-collaboration": [
+    "Connect Lexical/Yjs editing to configured host services. Keep one stable controller and extension per root.",
+    "Supply same-origin ticket and secure socket routes. Authentication does not grant document access.",
+    "Connection state and host read-only state both control editing. Discarded local drafts require explicit host action.",
+    "Use the custom editor-v1 transport. This protocol is not compatible with y-websocket.",
+  ],
+  "editor-collaboration-server": [
+    "Import generic server helpers from @/lib/editor-collaboration. Supply existing authentication and separate document policies.",
+    "Apply the PostgreSQL snapshot, collaboration, and runtime migrations in order. Supply a disposable schema-complete initializer.",
+    "Require verified expiry, exact HTTPS origins, CSRF checks, and literal true from document policies.",
+    "Retain generation and receipt records. Host transaction fences must control immediate revocation. History has fixed bounds without compaction.",
+  ],
+  "editor-collaboration-worker": [
+    "Install this item separately for Durable Objects. Import the Worker adapter only in Worker server code.",
+    "Apply the D1 snapshot and canonical-guard migrations. Route each document to one stable Durable Object name.",
+    "Persist updates before delivery. Supply complete document validation, host authorization, and decoder execution limits.",
+    "Online reset and generation replacement are not supported. Use a separate offline migration process.",
+  ],
+  "editor-collaboration-bun": [
+    "Import the Bun adapter from @/lib/editor-collaboration/collaboration-bun. Supply configured server options and trusted HTTPS termination.",
+    "Keep this entry outside browser and generic server bundles. Native disconnect and backpressure behavior require runtime checks.",
+  ],
+  "editor-collaboration-node": [
+    "Import the Node adapter from @/lib/editor-collaboration/collaboration-node. Keep its listener private behind a trusted TLS proxy.",
+    "Supply existing authentication, exact origins, CSRF verification, and document policies. Keep tokens outside socket URLs and logs.",
+  ],
   "editor-store": [
     "Import server helpers from @/lib/editor-store. Apply one copied SQL migration for D1 or PostgreSQL.",
     "Supply existing authentication, separate document policies, complete Lexical validation, exact origins, and host CSRF verification. No account or ACL service is included.",
