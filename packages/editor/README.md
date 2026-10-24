@@ -28,9 +28,9 @@ registry tokens, reset styles, Inter, and IBM Plex Mono in the host app.
 
 The foundation includes text formats, history, blocks, lists, links, Markdown
 shortcuts, indentation, and table controls. Optional modules add code editing,
-callouts, toggles, typeahead, math, and document conversion.
-Register each optional extension when you create the root.
-Treat saved JSON as untrusted input. Validate it before storage or publication.
+callouts, toggles, typeahead, math, and document conversion. Register each
+optional extension when you create the root. Treat saved JSON as untrusted
+input. Validate it before storage or publication.
 
 ## Composition
 
@@ -92,13 +92,21 @@ routes remain responsible for refresh.
 
 ## Server AI core
 
-The server AI module provides OpenAI, Anthropic, and Workers AI adapters.
-Keep credentials and model choices on the host server.
-Supply document authorization, verified credential expiry, CSRF checks, and quotas.
-Use an exact trusted HTTPS origin.
-Workers AI uses Cloudflare's OpenAI-compatible Chat Completions endpoint.
-Choose a compatible model and set explicit input, output, and time limits.
-Cancellation does not prove that provider billing stopped.
-These adapters do not create accounts or deploy routes.
+The server AI module provides OpenAI, Anthropic, and Workers AI adapters. Keep
+credentials and model choices on the host server. Supply document authorization,
+verified credential expiry, CSRF checks, and quotas. Use an exact trusted HTTPS
+origin. Workers AI uses Cloudflare's OpenAI-compatible Chat Completions
+endpoint. Choose a compatible model and set explicit input, output, and time
+limits. Cancellation does not prove that provider billing stopped. These
+adapters do not create accounts or deploy routes.
+
+## Server assets
+
+The server assets module supports private R2 and S3 objects. Use D1 or
+PostgreSQL for durable upload records. Reuse repository and handler instances.
+Apply document and asset migrations in order. Provide existing authentication,
+document policy, CSRF checks, quotas, and bounded file validation. Configure
+scheduled cleanup and private, unversioned buckets. Cancellation does not prove
+that an object write stopped.
 
 All editor tests live under the repository's root `tests/` directory.

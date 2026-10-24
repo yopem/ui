@@ -22,7 +22,7 @@
     "start": "bun run --cwd apps/docs start",
     "preview": "bun run --cwd apps/docs preview",
     "typecheck": "bun run --filter '*' typecheck && tsc --project tests/tsconfig.json",
-    "test": "bun run registry:build && bun run --cwd packages/oxlint-plugin build && bun test ./tests/cli ./tests/oxlint-plugin ./tests/editor-auth ./tests/editor-selection ./tests/editor-tables ./tests/editor-document-stores ./tests/editor-styles ./tests/editor-code ./tests/editor-docs ./tests/docs-build ./tests/editor-typeahead ./tests/editor-document ./tests/editor-ai",
+    "test": "bun run registry:build && bun run --cwd packages/oxlint-plugin build && bun test ./tests/cli ./tests/oxlint-plugin ./tests/editor-auth ./tests/editor-selection ./tests/editor-tables ./tests/editor-document-stores ./tests/editor-styles ./tests/editor-code ./tests/editor-docs ./tests/docs-build ./tests/editor-typeahead ./tests/editor-document ./tests/editor-ai ./tests/editor-assets/assets.spec.ts ./tests/editor-assets/deadlines.test.ts ./tests/editor-assets-deadlines/postgres-deadline.spec.ts",
     "test:e2e": "bun run build && PLAYWRIGHT_PRODUCTION=1 playwright test",
     "test:editor-callout-clipboard": "bun tests/editor-callout-clipboard/run.mjs",
     "test:editor-checklist": "node tests/editor-checklist/run.mjs",
@@ -33,7 +33,8 @@
     "test:postgres-native": "bun --tsconfig-override tests/tsconfig.json tests/editor-document-stores/postgres-native.integration.ts",
     "test:postgres-native:node": "bun build --target=node --format=esm --packages=external --tsconfig-override tests/tsconfig.json tests/editor-document-stores/postgres-native.integration.ts --outfile=./test-results/postgres-native.mjs && node ./test-results/postgres-native.mjs",
     "test:document:standalone": "bun test ./tests/editor-document-browser/standalone.test.ts ./tests/editor-document-browser/accessible-blocks.test.ts",
-    "test:editor-document-clipboard": "bun tests/editor-document-clipboard/run.mjs"
+    "test:editor-document-clipboard": "bun tests/editor-document-clipboard/run.mjs",
+    "test:editor-assets-browser": "bun test ./tests/editor-assets/browser-security.spec.ts ./tests/editor-assets/browser.spec.ts ./tests/editor-assets/general-browser.spec.ts"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.14.0",
