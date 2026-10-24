@@ -57,6 +57,17 @@ export function CodeNotesEditor() {
   )
 }
 `,
+  "editor-typeahead": `"use client"
+
+import { useState } from "react"
+import { EditorRoot } from "@/components/editor"
+import { createEditorTypeahead, EditorTypeahead } from "@/components/editor/typeahead-index"
+
+export function CommandEditor() {
+  const [controller] = useState(() => createEditorTypeahead())
+  const [extensions] = useState(() => [controller.extension])
+  return <EditorRoot extensions={extensions} ariaLabel="Commands"><EditorTypeahead controller={controller} /></EditorRoot>
+}`,
   editor: `"use client"
 
 import {

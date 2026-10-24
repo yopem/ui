@@ -157,13 +157,15 @@ export function createComponentDocs(
               : item.name === "editor-blocks" &&
                   part.source !== "components/editor/blocks-model.ts"
                 ? "@/components/editor/blocks"
-                : (item.files
-                    .find(
-                      (file) =>
-                        file.path === part.source ||
-                        file.path.endsWith(`${item.name}.tsx`),
-                    )
-                    ?.target.replace(/\.tsx?$/, "") ?? null),
+                : item.name === "editor-typeahead"
+                  ? "@/components/editor/typeahead-index"
+                  : (item.files
+                      .find(
+                        (file) =>
+                          file.path === part.source ||
+                          file.path.endsWith(`${item.name}.tsx`),
+                      )
+                      ?.target.replace(/\.tsx?$/, "") ?? null),
         props: part.props.map((index) => {
           const prop = properties[index]
 

@@ -4,6 +4,7 @@ import { editorAuthItem } from "@registry/items/editor-auth"
 import { editorBlocksItem } from "@registry/items/editor-blocks"
 import { editorCodeItem } from "@registry/items/editor-code"
 import { editorStoreItem } from "@registry/items/editor-store"
+import { editorTypeaheadItem } from "@registry/items/editor-typeahead"
 import { foundationItems } from "@registry/items/foundation"
 import { hookItems } from "@registry/items/hooks"
 import { layoutItems } from "@registry/items/layout"
@@ -20,4 +21,5 @@ export const sourceItems = [
   editorBlocksItem,
   editorCodeItem,
   editorStoreItem,
+  editorTypeaheadItem,
 ]

@@ -1,5 +1,12 @@
 // These notes describe Yopem's composition choices, not only the upstream types.
 const usageNoteValues = {
+  "editor-typeahead": [
+    "Use EditorInlineCombobox with Input, Content, List, Item, Empty, Status, Group, GroupLabel, and Row parts. EditorInlineComboboxInput renders EditorContent. Do not add a second query input. Keep every current item in controller order. Read state with useEditorInlineCombobox. Compose EditorEmojiPopover, EditorEmojiToolbarButton, EditorEmojiPopoverContent, and EditorEmojiPicker inside EditorToolbar. EditorEmojiPicker is the panel. EditorEmojiMenu is the complete toolbar preset. Compose EditorEmojiSearch, EditorEmojiCategory, EditorEmojiList, EditorEmojiItem, EditorEmojiEmpty, EditorEmojiPrevious, EditorEmojiNext, and EditorEmojiClearHistory. Read picker state with useEditorEmojiPicker. Keep inventory, filter, and history stable until unmount. ",
+    "Keep one stable controller and mount-time extension array per root. EditorTypeahead renders the editable surface and suggestions. Do not add EditorContent beside this preset. Compose EditorEmojiMenu inside EditorToolbar.",
+    "Supply a bounded, abort-aware host mention loader. Missing loaders disable mention queries. Identities do not grant access.",
+    "Register MentionNode in every reader. Use pure mention-codec helpers for IO. Register Markdown conversion explicitly and keep HTML sanitization.",
+    "Emoji search uses the complete published English emojibase-data inventory and skin variants. Hosts can supply validated single-grapheme inventories.",
+  ],
   editor: [
     "Use public style controls inside EditorRoot and EditorToolbar. Register EditorBlockPresentationExtension in a stable mount-time array, including read-only roots.",
     "Use EditorIndentButton for block indentation and EditorFirstLineIndentControl for first-line indentation. Line height accepts unitless 1 through 4. First-line indent accepts nonnegative values through 160px or 10em/rem.",

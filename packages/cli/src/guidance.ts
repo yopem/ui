@@ -104,6 +104,32 @@ Put \`EditorCodeLanguage\`, \`EditorCodeCopyButton\`, \`EditorCodeToggle\`, and 
 Select one code block before using its controls. Copy can run read-only; mutation cannot.
 Line numbers and wrapping turn each other off. Lexical JSON preserves these choices.
 Keep native code keyboard behavior and serializers. Discard targets after host document changes.
+### Optional editor typeahead
+
+Install the optional \`editor-typeahead\` item before use.
+Import \`createEditorTypeahead\`, \`EditorTypeahead\`, and \`EditorEmojiPicker\` from \`${imports.editor}/typeahead-index\`.
+Create one stable controller for each root. Keep custom command arrays stable at mount time.
+Add the controller extension to the root extension list. Render suggestions inside the same root.
+Supply a bounded, abort-aware mention loader. Missing loaders disable mention search.
+The controller registers \`MentionNode\` only when \`mentions.load\` is set.
+Keep mention options fixed for each root.
+Register \`MentionNode\` in all document readers. Use \`decodeMention\` from \`${imports.editor}/mention-codec\` for identity validation.
+Serialized identities do not prove account identity or grant access.
+Register mention Markdown and HTML conversion explicitly. Do not discard unknown nodes.
+Emoji uses the English emojibase-data inventory. Custom entries must contain one Unicode emoji grapheme.
+Use category and page controls to browse the full inventory. Validate host lists with \`parseEditorEmojiInventory\`.
+Pass \`controller.emojiHistory\` to the picker to share bounded memory counts. No automatic storage is included.
+See https://ui.yopem.com/components/editor-typeahead for limits and IO registration.
+
+Use EditorInlineCombobox with Input, Content, List, Item, Empty, Status, Group, GroupLabel, and Row parts.
+EditorInlineComboboxInput renders EditorContent. Do not add a second query input.
+Keep every current item in controller order. Read state with useEditorInlineCombobox.
+Compose EditorEmojiPopover, EditorEmojiToolbarButton, EditorEmojiPopoverContent, and EditorEmojiPicker inside EditorToolbar.
+EditorEmojiPicker is the panel. EditorEmojiMenu is the complete toolbar preset.
+Compose EditorEmojiSearch, EditorEmojiCategory, EditorEmojiList, EditorEmojiItem, EditorEmojiEmpty, EditorEmojiPrevious, EditorEmojiNext, EditorEmojiClearHistory, EditorEmojiClearSearch, and EditorEmojiPreview.
+Read picker state with useEditorEmojiPicker. Keep inventory, filter, and history stable until unmount.
+Keep inline and emoji options at least 44px high for coarse pointers.
+EditorTypeahead renders the editable surface and suggestions. Do not add EditorContent beside this preset.
 
 ### Optional editor blocks
 

@@ -680,3 +680,37 @@ current document. Read-only disclosure changes local visibility, not saved state
 or history. Keep rich toggle titles outside the native summary control. Keep
 title links usable when closed. Keep the native details body, empty disclosure
 control, and content slot together.
+
+## Optional editor typeahead
+
+Install `editor-typeahead` separately. Import optional parts from the copied
+editor `typeahead-index` module. Create one stable controller per root. Keep its
+extension and custom command arrays stable at mount time. Render
+`EditorTypeahead` inside that root. Compose `EditorEmojiMenu` inside
+EditorToolbar for search. Supply a bounded, abort-aware host mention loader.
+Missing loaders disable mentions. The controller registers `MentionNode` only
+when `mentions.load` is set. Keep mention options fixed for each root. Register
+`MentionNode` in every document reader. Use the pure `mention-codec` helpers for
+IO validation. Serialized identities do not grant access. Register Markdown
+conversion explicitly and keep host HTML sanitization. Use the full English
+emojibase-data inventory or validated host emoji graphemes. Search returns at
+most 50 results per page. Use category and page controls to browse the
+inventory. Validate host lists with `parseEditorEmojiInventory`. Pass
+`controller.emojiHistory` to the picker to share bounded memory counts. No
+automatic storage is included. See
+https://ui.yopem.com/components/editor-typeahead for public contracts and
+limits.
+
+Use EditorInlineCombobox with Input, Content, List, Item, Empty, Status, Group,
+GroupLabel, and Row parts. EditorInlineComboboxInput renders EditorContent. Do
+not add a second query input. Keep every current item in controller order. Read
+state with useEditorInlineCombobox. Compose EditorEmojiPopover,
+EditorEmojiToolbarButton, EditorEmojiPopoverContent, and EditorEmojiPicker
+inside EditorToolbar. EditorEmojiPicker is the panel. EditorEmojiMenu is the
+complete toolbar preset. Compose EditorEmojiSearch, EditorEmojiCategory,
+EditorEmojiList, EditorEmojiItem, EditorEmojiEmpty, EditorEmojiPrevious,
+EditorEmojiNext, and EditorEmojiClearHistory. Read picker state with
+useEditorEmojiPicker. Keep inventory, filter, and history stable until unmount.
+Keep inline and emoji options at least 44px high for coarse pointers.
+EditorTypeahead renders the editable surface and suggestions. Do not add
+EditorContent beside this preset.

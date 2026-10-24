@@ -481,7 +481,9 @@ export function extractDocs() {
                   ? file.path === "components/editor/code.ts"
                   : item.name === "editor-blocks"
                     ? file.path === "components/editor/blocks.ts"
-                    : true),
+                    : item.name === "editor-typeahead"
+                      ? file.path === "components/editor/typeahead-index.ts"
+                      : true),
       )
       .flatMap((file) => {
         const source = program.getSourceFile(resolveSourcePath(file.path))

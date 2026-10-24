@@ -249,6 +249,16 @@ function checkGuidance(text: string, shared = false) {
     "EditorCodeToggle",
     "EditorCodeStatus",
     "EditorBlocksExtension",
+
+    "createEditorTypeahead",
+    "EditorTypeahead",
+    "EditorEmojiPicker",
+    "EditorInlineCombobox",
+    "EditorInlineComboboxInput",
+    "EditorEmojiMenu",
+    "EditorEmojiToolbarButton",
+    "MentionNode",
+    "parseEditorEmojiInventory",
     "stylex.create",
     "stylex.props",
     "stylexProps",
@@ -288,6 +298,11 @@ function checkGuidance(text: string, shared = false) {
     shared ? "@acme/ui/styles/tokens.stylex" : "@/styles/tokens.stylex",
   )
   expect(managed).toContain(shared ? "@acme/ui/lib/stylex" : "@/lib/stylex")
+  expect(managed).toContain(
+    shared
+      ? "@acme/ui/components/editor/typeahead-index"
+      : "@/components/editor/typeahead-index",
+  )
   expect(managed).not.toContain("@registry/")
   expect(managed).toContain("Use Inter for body text and headings.")
   expect(managed).toContain("Use IBM Plex Mono for code and mono text.")
