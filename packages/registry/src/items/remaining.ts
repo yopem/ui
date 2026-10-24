@@ -1,5 +1,7 @@
 import type { SourceItem } from "@registry/items/types"
 
+import { registryDependency } from "@registry/registry-dependencies"
+
 interface Definition {
   api: string[]
   categories: string[]
@@ -523,9 +525,11 @@ export const remainingItems: SourceItem[] = definitions.map(
     categories,
     dependencies: [
       ...(name === "calendar"
-        ? ["@daypicker/react@^10.0.1"]
-        : ["@base-ui/react@^1.7.0"]),
-      ...(lucideComponents.has(name) ? ["lucide-react@^1.33.0"] : []),
+        ? [registryDependency("@daypicker/react")]
+        : [registryDependency("@base-ui/react")]),
+      ...(lucideComponents.has(name)
+        ? [registryDependency("lucide-react")]
+        : []),
     ],
     description,
     devDependencies: [],

@@ -24,7 +24,7 @@
   },
   "devDependencies": {
     "@babel/core": "catalog:",
-    "@babel/types": "^8.0.6",
+    "@babel/types": "^8.0.8",
     "@types/babel__core": "^7.20.5",
     "@types/bun": "catalog:",
     "@types/react": "catalog:",

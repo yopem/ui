@@ -1,12 +1,12 @@
+import * as Cloudflare from "@alchemy.run/cloudflare"
 import * as Alchemy from "alchemy"
-import * as Cloudflare from "alchemy/Cloudflare"
 import * as Output from "alchemy/Output"
 import { localState } from "alchemy/State/LocalState"
 import * as Effect from "effect/Effect"
 
 const buildEnvironment = {
   envVars: {
-    BUN_VERSION: { value: "1.4.2" },
+    BUN_VERSION: { value: "1.4.4" },
     NODE_VERSION: { value: "24" },
   },
 }

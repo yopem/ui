@@ -1,12 +1,17 @@
 import type { SourceItem } from "@registry/items/types"
 
+import { registryDependency } from "@registry/registry-dependencies"
+
 export const foundationItems: SourceItem[] = [
   {
     categories: ["foundation"],
-    dependencies: ["@stylexjs/stylex@^0.19.0", "clsx@^2.1.1"],
+    dependencies: [
+      registryDependency("@stylexjs/stylex"),
+      registryDependency("clsx"),
+    ],
     description:
       "Provides native StyleX tokens, themes, reset, and component styling helpers for Yopem UI.",
-    devDependencies: ["@types/react@^19.2.18"],
+    devDependencies: [registryDependency("@types/react")],
     docs: {
       api: [
         "lightValues",
@@ -95,7 +100,7 @@ export const foundationItems: SourceItem[] = [
   },
   {
     categories: ["feedback"],
-    dependencies: ["lucide-react@^1.33.0"],
+    dependencies: [registryDependency("lucide-react")],
     description: "Shows an accessible animated loading indicator.",
     devDependencies: [],
     docs: {
@@ -117,7 +122,7 @@ export const foundationItems: SourceItem[] = [
   },
   {
     categories: ["actions"],
-    dependencies: ["@base-ui/react@^1.7.0"],
+    dependencies: [registryDependency("@base-ui/react")],
     description:
       "Provides a button with variants, sizes, render composition, and loading state.",
     devDependencies: [],

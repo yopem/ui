@@ -1,5 +1,7 @@
 import type { SourceItem } from "@registry/items/types"
 
+import { registryDependency } from "@registry/registry-dependencies"
+
 interface Definition {
   api: string[]
   categories: string[]
@@ -200,7 +202,7 @@ export const layoutItems: SourceItem[] = definitions.map(
   ({ api, categories, description, name, registryDependencies, title }) => ({
     categories,
     dependencies: ["box", "heading", "link", "list"].includes(name)
-      ? ["@base-ui/react@^1.7.0"]
+      ? [registryDependency("@base-ui/react")]
       : [],
     description,
     devDependencies: [],

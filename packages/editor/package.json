@@ -51,6 +51,7 @@
     "@stylexjs/stylex": "catalog:",
     "@types/hast": "^3.0.5",
     "@yopem-ui/registry": "workspace:*",
+    "aws4fetch": "catalog:",
     "emojibase": "^18.0.0",
     "emojibase-data": "^18.0.0",
     "hast-util-from-html": "^2.0.3",
