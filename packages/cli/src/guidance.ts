@@ -149,6 +149,33 @@ Read picker state with useEditorEmojiPicker. Keep inventory, filter, and history
 Keep inline and emoji options at least 44px high for coarse pointers.
 EditorTypeahead renders the editable surface and suggestions. Do not add EditorContent beside this preset.
 
+### Optional editor columns and dates
+
+Install optional source with your selected package manager:
+
+\`\`\`sh
+bunx --bun @yopem-ui/cli add editor-columns
+bunx --bun @yopem-ui/cli add editor-date
+npx @yopem-ui/cli add editor-columns
+npx @yopem-ui/cli add editor-date
+pnpm dlx @yopem-ui/cli add editor-columns
+pnpm dlx @yopem-ui/cli add editor-date
+yarn dlx @yopem-ui/cli add editor-columns
+yarn dlx @yopem-ui/cli add editor-date
+\`\`\`
+
+Register \`EditorColumnsExtension\` from \`${imports.editor}/columns\` and \`EditorDateExtension\` from \`${imports.editor}/date\` in stable root arrays.
+Compose \`EditorColumnsControls\` and \`EditorDateControls\` inside \`EditorToolbar\`.
+Use focused column insert, layout, resize, move, and remove controls when needed.
+Columns contain two through four native rich-text containers. Nested column groups are not supported.
+Use the house Slider for resizing. Remove deletes the group and its content.
+The house Calendar inserts dates and edits native date nodes through \`EditorDateInline\`.
+Store validated YYYY-MM-DD strings without timezone conversion. Use \`editorDateFromLocalDate\` for local dates.
+Import pure codecs from \`${imports.editor}/columns-model\` and \`${imports.editor}/date-model\`.
+Keep all copied feature and core selection helpers. Shared packages must export both feature and model subpaths.
+Generic document converters do not support columns or dates. Never flatten these nodes silently.
+Supply complete host document validation; feature validators check only their own contracts.
+
 ### Optional editor math
 
 Install optional native TeX equations:

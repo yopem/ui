@@ -152,8 +152,10 @@ export function createComponentDocs(
         importPath:
           item.name === "editor"
             ? "@/components/editor"
-            : item.name === "editor-code"
-              ? "@/components/editor/code"
+            : ["editor-code", "editor-columns", "editor-date"].includes(
+                  item.name,
+                )
+              ? `@/components/editor/${item.name.slice(7)}`
               : item.name === "editor-math"
                 ? "@/components/editor/math"
                 : item.name === "editor-blocks" &&

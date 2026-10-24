@@ -592,6 +592,22 @@ Keep its JSON inventory, Markdown, search, navigation, and sitemap entries align
 State each example's limits. Do not call the house preset the full Plate EditorKit.
 Do not mark a mapped public workflow complete before its behavior is checked.
 
+## Optional editor columns and dates
+
+Install `editor-columns` and `editor-date` separately from the core editor.
+Register `EditorColumnsExtension` and `EditorDateExtension` in stable root extension arrays.
+Compose `EditorColumnsControls` and `EditorDateControls` inside `EditorToolbar`.
+Use focused column insert, layout, resize, move, and remove controls when needed.
+Columns contain two through four native rich-text containers. Nested column groups are not supported.
+Use the house Slider for resize controls. Remove deletes the group and its content.
+Use the house Calendar for date insertion and native date editing.
+`EditorDateNode` renders `EditorDateInline` with its current date and node key.
+Store validated YYYY-MM-DD dates without timestamp conversion. Convert local dates with `editorDateFromLocalDate`.
+Keep pure codecs in `columns-model` and `date-model`. These models do not import React or Lexical.
+Copy all feature helpers and keep core selection helpers. Shared packages must export feature and model subpaths.
+Keep generic document converters unsupported for these nodes until deliberate codec integration. Never flatten them silently.
+Feature validators check their own contracts. Supply complete host document validation at IO boundaries.
+
 ## Optional editor math
 
 Install `editor-math` for inline and block TeX equations.

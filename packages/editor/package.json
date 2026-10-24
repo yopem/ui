@@ -31,7 +31,13 @@
     "./block-presentation-extension": "./src/block-presentation-extension.ts",
     "./server/ai": "./src/server/ai/index.ts",
     "./server/assets": "./src/server/asset-index.ts",
-    "./code-format": "./src/code-format.ts"
+    "./code-format": "./src/code-format.ts",
+    "./columns": "./src/columns.ts",
+    "./columns/model": "./src/columns-model.ts",
+    "./columns-model": "./src/columns-model.ts",
+    "./date": "./src/date.ts",
+    "./date/model": "./src/date-model.ts",
+    "./date-model": "./src/date-model.ts"
   },
   "scripts": {
     "typecheck": "tsc --noEmit"

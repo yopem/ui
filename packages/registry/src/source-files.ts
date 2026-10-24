@@ -1,5 +1,7 @@
 /** Import aliases used in the copyable source files served by the registry. */
 export const sourceImportReplacements = [
+  ["@yopem-ui/editor/columns/model", "@/components/editor/columns-model"],
+  ["@yopem-ui/editor/date/model", "@/components/editor/date-model"],
   ["@yopem-ui/editor/document/static", "@/components/editor/document/static"],
   ["@yopem-ui/editor/document", "@/components/editor/document"],
   [

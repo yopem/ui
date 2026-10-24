@@ -1,5 +1,15 @@
 // These notes describe Yopem's composition choices, not only the upstream types.
 const usageNoteValues = {
+  "editor-columns": [
+    "Register EditorColumnsExtension in a stable extensions array. Compose the preset or focused controls inside EditorToolbar. Layouts contain two through four rich-text columns. Nested column groups are rejected; nested rich blocks remain native.",
+    "Resize adjacent columns with the house Slider. Keep native selection, history, cancellation, and read-only behavior. Import pure validation and fragment codecs from columns-model.",
+    "Generic editor-document converters do not support columns. Do not flatten column content during conversion. Validate complete host documents before replacement.",
+  ],
+  "editor-date": [
+    "Register EditorDateExtension in a stable extensions array. Compose EditorDateControls or EditorDateInsertControl inside EditorToolbar. EditorDateNode renders EditorDateInline for calendar editing.",
+    "Store YYYY-MM-DD calendar dates, not timestamps. Use date-model for pure validation and calendar conversion. Do not use UTC conversion for local calendar dates.",
+    "Generic editor-document converters do not support date nodes. Do not flatten date content during conversion. Validate host HTML before native import.",
+  ],
   "editor-code-format": [
     "Install this item only for the optional Prettier adapter. Base editor-code does not require Prettier. Repository formatting still uses Oxfmt.",
     "Pass prettierEditorCodeFormatter through the formatter prop. Supported formatting parsers are a subset of the syntax inventory. Cancellation cannot stop synchronous parsing.",

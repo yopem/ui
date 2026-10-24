@@ -755,6 +755,39 @@ Saved mention identities do not grant access. Media and review nodes remain unsu
 Do not silently remove unknown nodes or formatting during conversion.
 See https://ui.yopem.com/components/editor-document for supported formats.
 
+## Optional editor columns and dates
+
+Install the optional source items with your selected package manager.
+
+```sh
+bunx --bun @yopem-ui/cli add editor-columns
+bunx --bun @yopem-ui/cli add editor-date
+npx @yopem-ui/cli add editor-columns
+npx @yopem-ui/cli add editor-date
+pnpm dlx @yopem-ui/cli add editor-columns
+pnpm dlx @yopem-ui/cli add editor-date
+yarn dlx @yopem-ui/cli add editor-columns
+yarn dlx @yopem-ui/cli add editor-date
+```
+
+Register `EditorColumnsExtension` from `@/components/editor/columns` in a stable
+root extension array. Register `EditorDateExtension` from
+`@/components/editor/date` in that array. Compose `EditorColumnsControls` and
+`EditorDateControls` inside `EditorToolbar`. Use focused column insert, layout,
+resize, move, and remove controls when needed. Columns contain two through four
+native rich-text containers. Nested column groups are not supported. Use the
+house Slider for resizing. Remove deletes the group and its content. The house
+Calendar inserts dates and edits native date nodes through `EditorDateInline`.
+Store validated YYYY-MM-DD strings without timezone conversion. Use
+`editorDateFromLocalDate` for local dates. Import pure codecs from
+`@/components/editor/columns-model` and `@/components/editor/date-model`. Keep
+all copied feature and core selection helpers. Shared packages must export both
+feature and model subpaths. Generic document converters do not support columns
+or dates. Never flatten these nodes silently. Supply complete host document
+validation; feature validators check only their own contracts. See
+https://ui.yopem.com/components/editor-columns and
+https://ui.yopem.com/components/editor-date for composition.
+
 ## Optional editor math
 
 Install `editor-math` for inline and block TeX equations. Register

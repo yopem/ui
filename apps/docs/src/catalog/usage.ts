@@ -1,5 +1,35 @@
 // Standalone TSX files use the standard @ alias for src.
 const usageSnippetValues = {
+  "editor-columns": `"use client"
+
+import { EditorContent, EditorRoot, EditorToolbar } from "@/components/editor"
+import { EditorColumnsControls, EditorColumnsExtension } from "@/components/editor/columns"
+
+const extensions = [EditorColumnsExtension]
+
+export function ColumnsEditor() {
+  return (
+    <EditorRoot extensions={extensions} ariaLabel="Columns editor">
+      <EditorToolbar aria-label="Column controls"><EditorColumnsControls /></EditorToolbar>
+      <EditorContent />
+    </EditorRoot>
+  )
+}`,
+  "editor-date": `"use client"
+
+import { EditorContent, EditorRoot, EditorToolbar } from "@/components/editor"
+import { EditorDateControls, EditorDateExtension } from "@/components/editor/date"
+
+const extensions = [EditorDateExtension]
+
+export function DateEditor() {
+  return (
+    <EditorRoot extensions={extensions} ariaLabel="Date editor">
+      <EditorToolbar aria-label="Date controls"><EditorDateControls /></EditorToolbar>
+      <EditorContent />
+    </EditorRoot>
+  )
+}`,
   "editor-code-format": `"use client"
 
 import { EditorCode } from "@/components/editor/code"
