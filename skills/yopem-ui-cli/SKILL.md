@@ -169,6 +169,23 @@ wrapping turn each other off. Lexical JSON preserves these choices. Keep native
 code keyboard behavior and serializers. Discard saved targets after host
 document changes.
 
+Base editor-code does not require Prettier. Supply an `EditorCodeFormatter` for
+formatting controls. Without a formatter, the preset hides these controls.
+Install the separate adapter only when you want Prettier formatting:
+
+```sh
+bunx --bun @yopem-ui/cli add editor-code-format
+npx @yopem-ui/cli add editor-code-format
+pnpm dlx @yopem-ui/cli add editor-code-format
+yarn dlx @yopem-ui/cli add editor-code-format
+```
+
+Import `prettierEditorCodeFormatter` from `@/components/editor/code-format`.
+Pass it through the `formatter` prop. Syntax colors support more languages than
+this adapter can format. Cancellation cannot stop synchronous parsing. The
+adapter does not change your repository formatter.
+
+
 ### Optional editor authentication
 
 Install server helpers with the matching package manager:

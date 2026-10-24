@@ -407,6 +407,33 @@ mode. Language and view changes require an editable editor.
 Document changes while a code control has focus clear its saved target. Select
 code again to use the controls. Controls do not restore saved text ranges.
 
+### Optional code formatting
+
+Base `editor-code` does not require Prettier. The repository uses Oxfmt. Pass an
+explicit `EditorCodeFormatter` to `EditorCode` or `EditorCodeFormatButton`.
+Without a formatter, the preset does not show formatting controls. A host
+formatter can support any language that it can process safely.
+
+Install the separate adapter only when you want Prettier formatting.
+
+```sh
+bunx --bun @yopem-ui/cli add editor-code-format
+```
+
+```tsx
+import { EditorCode } from "@/components/editor/code"
+import { prettierEditorCodeFormatter } from "@/components/editor/code-format"
+
+export function FormattedCodeEditor() {
+  return <EditorCode formatter={prettierEditorCodeFormatter} />
+}
+```
+
+Formatting parsers cover fewer languages than the syntax inventory. Unsupported
+languages keep their content. Stale, cancelled, and read-only results cannot
+replace code. Cancellation cannot stop synchronous parser work. The adapter does
+not change your repository formatter.
+
 ## Initial state and read-only content
 
 Pass Lexical JSON or its JSON string to `initialState` when the editor mounts.

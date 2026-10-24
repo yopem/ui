@@ -1,6 +1,7 @@
 import { $isCodeNode, type CodeNode } from "@lexical/code"
 import { getCodeLanguages, getLanguageFriendlyName } from "@lexical/code-prism"
 import {
+  $createTextNode,
   $getNodeByKey,
   $getSelection,
   $getState,
@@ -8,9 +9,18 @@ import {
   $setState,
   createState,
   mergeRegister,
+  HISTORY_PUSH_TAG,
   SKIP_DOM_SELECTION_TAG,
   type LexicalEditor,
+  type RangeSelection,
 } from "lexical"
+
+import "./code-languages"
+
+export interface EditorCodeFormatter {
+  supports(language: string): boolean
+  format(text: string, language: string): string | Promise<string>
+}
 
 export const codeWrapState = createState("codeWrap", {
   parse: (value) => value !== false,
@@ -20,10 +30,9 @@ export const codeLineNumbersState = createState("codeLineNumbers", {
   parse: (value) => value === true,
 })
 
-export const editorCodeLanguages = getCodeLanguages().map((value) => ({
-  value,
-  label: getLanguageFriendlyName(value),
-}))
+export const editorCodeLanguages = getCodeLanguages()
+  .filter((value) => value !== "markup-templating")
+  .map((value) => ({ value, label: getLanguageFriendlyName(value) }))
 
 export function $getSelectedCode() {
   const selection = $getSelection()
@@ -52,7 +61,11 @@ export function createEditorCodeStore(editor: LexicalEditor) {
   let unregister: (() => void) | undefined
   let copyStatus = ""
   let generation = 0
+  let savedSelection: RangeSelection | null = null
   let controlsFocused = false
+  let formatStatus = ""
+  let formatRequest = 0
+  let formatting = false
 
   function notify() {
     for (const listener of listeners) listener()
@@ -60,6 +73,11 @@ export function createEditorCodeStore(editor: LexicalEditor) {
 
   function publish(code: CodeNode | null) {
     target = code
+    const selection = $getSelection()
+
+    if (!code) savedSelection = null
+    else if ($isRangeSelection(selection) && $getSelectedCode() === code)
+      savedSelection = selection.clone()
 
     const next = code
       ? {
@@ -81,6 +99,8 @@ export function createEditorCodeStore(editor: LexicalEditor) {
       return
     snapshot = next
     copyStatus = ""
+
+    if (!formatting) formatStatus = ""
     generation += 1
     notify()
   }
@@ -133,6 +153,9 @@ export function createEditorCodeStore(editor: LexicalEditor) {
     getServerSnapshot(this: void) {
       return null
     },
+    getFormatSnapshot(this: void) {
+      return formatStatus
+    },
     getCopySnapshot(this: void) {
       return copyStatus
     },
@@ -161,8 +184,21 @@ export function createEditorCodeStore(editor: LexicalEditor) {
               editorState.read(() => {
                 const selection = $getSelection()
 
+                const previousSelection = prevEditorState.read($getSelection)
+
+                if (
+                  formatting &&
+                  selection !== null &&
+                  !selection.is(previousSelection)
+                ) {
+                  generation += 1
+                }
+
                 if (dirty) {
+                  savedSelection = null
                   copyStatus = ""
+
+                  if (!formatting) formatStatus = ""
                   generation += 1
                   notify()
                 }
@@ -183,6 +219,7 @@ export function createEditorCodeStore(editor: LexicalEditor) {
             },
           ),
           editor.registerEditableListener(() => {
+            savedSelection = null
             editor.getEditorState().read(() => publish(resolve()))
           }),
         )
@@ -197,9 +234,13 @@ export function createEditorCodeStore(editor: LexicalEditor) {
           unregister = undefined
           generation += 1
           target = null
+          savedSelection = null
           controlsFocused = false
           snapshot = null
           copyStatus = ""
+          formatting = false
+          formatRequest += 1
+          formatStatus = ""
         }
       }
     },
@@ -235,6 +276,115 @@ export function createEditorCodeStore(editor: LexicalEditor) {
       }, revision)
     },
     readText,
+    cancelFormat() {
+      if (!formatting) return
+      formatting = false
+      formatRequest += 1
+      formatStatus = "Formatting canceled"
+      notify()
+    },
+    async format(formatter?: EditorCodeFormatter, revision = generation) {
+      if (formatting || revision !== generation || !snapshot?.editable)
+        return false
+      const language = snapshot.language
+
+      if (!formatter?.supports(language)) return false
+
+      const captured = editor.getEditorState().read(() => {
+        const code = resolve()
+        const selection = $getSelection() ?? savedSelection
+
+        if (!code || !$isRangeSelection(selection)) return null
+        const children = code.getChildren()
+        const key = code.getKey()
+
+        function offset(point: { key: string; offset: number }) {
+          if (point.key === key)
+            return children
+              .slice(0, point.offset)
+              .reduce((count, child) => count + child.getTextContentSize(), 0)
+          let count = 0
+
+          for (const child of children) {
+            if (child.getKey() === point.key) return count + point.offset
+            count += child.getTextContentSize()
+          }
+
+          return point.offset === 0 ? 0 : count
+        }
+
+        return {
+          text: code.getTextContent(),
+          anchor: offset(selection.anchor),
+          focus: offset(selection.focus),
+        }
+      })
+
+      if (!captured) return false
+      const request = ++formatRequest
+      formatting = true
+      formatStatus = "Formatting code"
+      notify()
+
+      try {
+        const text = await formatter.format(captured.text, language)
+
+        if (request !== formatRequest || !unregister) return false
+
+        if (
+          revision !== generation ||
+          !editor.isEditable() ||
+          readText(revision) !== captured.text
+        ) {
+          formatStatus = "Formatting discarded: code or selection changed"
+
+          return false
+        }
+
+        if (text === captured.text) {
+          formatStatus = "Code unchanged"
+
+          return false
+        }
+
+        let changed = false
+        editor.update(
+          () => {
+            const code = resolve()
+
+            if (revision !== generation || !editor.isEditable() || !code) return
+            const node = $createTextNode(text)
+            code.clear().append(node)
+            node.select(
+              Math.min(captured.anchor, text.length),
+              Math.min(captured.focus, text.length),
+            )
+            changed = true
+          },
+          { discrete: true, tag: ["yopem-code-control", HISTORY_PUSH_TAG] },
+        )
+
+        if (changed) editor.focus()
+        formatStatus = changed
+          ? "Code formatted"
+          : "Formatting discarded: target changed"
+
+        return changed
+      } catch (error) {
+        if (request === formatRequest)
+          formatStatus =
+            revision !== generation || !editor.isEditable()
+              ? "Formatting discarded: code or selection changed"
+              : `Formatting failed: ${error instanceof Error ? error.message : "Invalid code"}`
+
+        return false
+      } finally {
+        if (request === formatRequest) {
+          formatting = false
+          notify()
+        }
+      }
+    },
     async copy(revision = generation) {
       const text = readText(revision)
 

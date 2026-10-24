@@ -107,6 +107,21 @@ Put \`EditorCodeLanguage\`, \`EditorCodeCopyButton\`, \`EditorCodeToggle\`, and 
 Select one code block before using its controls. Copy can run read-only; mutation cannot.
 Line numbers and wrapping turn each other off. Lexical JSON preserves these choices.
 Keep native code keyboard behavior and serializers. Discard targets after host document changes.
+Base editor-code does not require Prettier. Supply an explicit \`EditorCodeFormatter\` for formatting controls.
+Without a formatter, \`EditorCode\` does not show \`EditorCodeFormatButton\`.
+Install the separate adapter only when you want Prettier formatting:
+
+\`\`\`sh
+bunx --bun @yopem-ui/cli add editor-code-format
+npx @yopem-ui/cli add editor-code-format
+pnpm dlx @yopem-ui/cli add editor-code-format
+yarn dlx @yopem-ui/cli add editor-code-format
+\`\`\`
+
+Import \`prettierEditorCodeFormatter\` from \`${imports.editor}/code-format\`.
+Pass it through the \`formatter\` prop. Syntax colors support more languages than this adapter can format.
+Cancellation discards results but cannot stop synchronous parsing. The adapter does not change your repository formatter.
+
 ### Optional editor typeahead
 
 Install the optional \`editor-typeahead\` item before use.

@@ -1,3 +1,4 @@
+import { editorCodeParts } from "./editor-code-parts"
 import { editorMathParts } from "./editor-math-parts"
 import { editorTypeaheadParts } from "./editor-typeahead-parts"
 
@@ -161,36 +162,7 @@ export const editorParts = [
     item: "editor",
     description: "Clear formatting without removing document content.",
   },
-  {
-    name: "EditorCodeToolbar",
-    slug: "code-toolbar",
-    item: "editor-code",
-    description: "Provide code selection state to code controls.",
-  },
-  {
-    name: "EditorCodeLanguage",
-    slug: "code-language",
-    item: "editor-code",
-    description: "Set the language of the selected code block.",
-  },
-  {
-    name: "EditorCodeCopyButton",
-    slug: "code-copy-button",
-    item: "editor-code",
-    description: "Copy the selected code block as plain text.",
-  },
-  {
-    name: "EditorCodeToggle",
-    slug: "code-toggle",
-    item: "editor-code",
-    description: "Switch wrapping or line numbers for selected code.",
-  },
-  {
-    name: "EditorCodeStatus",
-    slug: "code-status",
-    item: "editor-code",
-    description: "Announce code control results.",
-  },
+  ...editorCodeParts,
   {
     name: "EditorCalloutButton",
     slug: "callout-button",

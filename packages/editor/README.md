@@ -74,6 +74,36 @@ command. `EditorContent` shares the root accessible name and read-only state.
 `useEditor` exposes the Lexical instance. `useEditorState` exposes text formats,
 history availability, the accessible name, and read-only state.
 
+## Optional code formatting
+
+The repository uses Oxfmt. Base `editor-code` does not require Prettier. Supply
+an `EditorCodeFormatter` to use your own formatter. Without a formatter, the
+preset does not show formatting controls.
+
+Install `editor-code-format` only for the optional Prettier adapter.
+
+```sh
+bunx --bun @yopem-ui/cli add editor-code-format
+npx @yopem-ui/cli add editor-code-format
+pnpm dlx @yopem-ui/cli add editor-code-format
+yarn dlx @yopem-ui/cli add editor-code-format
+```
+
+Import `prettierEditorCodeFormatter` from the copied
+`@/components/editor/code-format` module. Pass it through the `formatter` prop
+on `EditorCode` or `EditorCodeFormatButton`. Syntax colors support more
+languages than this adapter can format. Cancellation discards results. It cannot
+stop synchronous parser work. This adapter does not change repository formatting
+tools.
+
+The optional code item statically registers Prism grammars. Check the final
+application bundle before deployment. Preserve the dependency notices in
+[LICENSE.md](./LICENSE.md).
+
+Keep one Lexical module identity in SSR. The docs Vite app includes `lexical`
+and `/^@lexical\//` in `ssr.noExternal`. Preserve existing entries. Verify each
+consumer framework build. This setting does not define Next.js or RSC support.
+
 ## Server authentication
 
 The separate `editor-auth` registry item supplies OpenAuth and Better Auth

@@ -3,13 +3,24 @@
 import type { StyleXComponentProps } from "@registry/lib/stylex"
 import type { ComponentProps } from "react"
 
+import { Box } from "@registry/components/ui/box"
 import { Button } from "@registry/components/ui/button"
 import { NativeSelect } from "@registry/components/ui/native-select"
 import { Toolbar, ToolbarButton } from "@registry/components/ui/toolbar"
 import { stylexProps } from "@registry/lib/stylex"
-import { createContext, use, useState, useSyncExternalStore } from "react"
+import {
+  createContext,
+  use,
+  useId,
+  useState,
+  useSyncExternalStore,
+} from "react"
 
-import { createEditorCodeStore, editorCodeLanguages } from "./code-model"
+import {
+  createEditorCodeStore,
+  editorCodeLanguages,
+  type EditorCodeFormatter,
+} from "./code-model"
 import { useEditor } from "./root"
 import { editorStyles } from "./theme"
 
@@ -151,6 +162,75 @@ export function EditorCodeLanguage({
   )
 }
 
+export type EditorCodeFormatButtonProps = ComponentProps<
+  typeof ToolbarButton
+> & {
+  formatter?: EditorCodeFormatter
+}
+
+export function EditorCodeFormatButton({
+  formatter,
+  children,
+  disabled,
+  onClick,
+  "aria-label": label = "Format code",
+  "aria-describedby": describedBy,
+  ...props
+}: EditorCodeFormatButtonProps) {
+  const store = useCodeStore()
+  const state = useCodeState()
+  const toolbarDisabled = use(CodeDisabledContext)
+  const id = useId()
+
+  const status = useSyncExternalStore(
+    store.subscribe,
+    store.getFormatSnapshot,
+    store.getCopyServerSnapshot,
+  )
+
+  const pending = status === "Formatting code"
+  const supported = formatter?.supports(state?.language ?? "") === true
+
+  const explanation = !supported
+    ? "Formatting is not supported for this language"
+    : "Format the whole code block. Activate again to cancel pending formatting."
+
+  function handleClick(
+    event: Parameters<NonNullable<EditorCodeFormatButtonProps["onClick"]>>[0],
+  ) {
+    const revision = store.getRevision()
+    onClick?.(event)
+
+    if (event.defaultPrevented || disabled || toolbarDisabled) return
+
+    if (pending) store.cancelFormat()
+    else void store.format(formatter, revision)
+  }
+
+  if (!formatter) return null
+
+  return (
+    <>
+      <ToolbarButton
+        render={<Button variant="ghost" size="sm" />}
+        {...props}
+        aria-label={pending ? "Cancel formatting" : label}
+        title={props.title ?? explanation}
+        aria-describedby={[describedBy, id].filter(Boolean).join(" ")}
+        disabled={
+          disabled === true || toolbarDisabled || !state?.editable || !supported
+        }
+        onClick={handleClick}
+      >
+        {pending ? "Cancel formatting" : (children ?? label)}
+      </ToolbarButton>
+      <Box render={<span />} id={id} hidden>
+        {explanation}
+      </Box>
+    </>
+  )
+}
+
 export type EditorCodeCopyButtonProps = ComponentProps<typeof ToolbarButton>
 
 export function EditorCodeCopyButton({
@@ -234,11 +314,19 @@ export function EditorCodeStatus({
 }: EditorCodeStatusProps) {
   const store = useCodeStore()
 
-  const status = useSyncExternalStore(
+  const copyStatus = useSyncExternalStore(
     store.subscribe,
     store.getCopySnapshot,
     store.getCopyServerSnapshot,
   )
+
+  const formatStatus = useSyncExternalStore(
+    store.subscribe,
+    store.getFormatSnapshot,
+    store.getCopyServerSnapshot,
+  )
+
+  const status = [copyStatus, formatStatus].filter(Boolean).join(". ")
 
   return (
     <output

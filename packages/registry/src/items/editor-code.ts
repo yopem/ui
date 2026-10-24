@@ -9,15 +9,20 @@ export const editorCodeItem: SourceItem = {
   categories: ["input"],
   description:
     "Adds native code editing, syntax colors, language selection, and code controls to EditorRoot.",
-  dependencies: [editorDependency("@lexical/code-prism")],
+  dependencies: [
+    editorDependency("@lexical/code-prism"),
+    editorDependency("prismjs"),
+  ],
   devDependencies: [],
   peerDependencies: [],
-  registryDependencies: ["editor", "native-select"],
+  registryDependencies: ["editor", "box", "native-select"],
   files: [
     "code.ts",
     "code-model.ts",
     "code-extension.ts",
     "code-controls.tsx",
+    "code-editor.tsx",
+    "code-languages.ts",
   ].map((file) => ({
     path: `components/editor/${file}`,
     target: `@/components/editor/${file}`,
@@ -26,6 +31,11 @@ export const editorCodeItem: SourceItem = {
   docs: {
     api: [
       "EditorCodeExtension",
+      "EditorCode",
+      "EditorCodeProps",
+      "EditorCodeFormatButton",
+      "EditorCodeFormatButtonProps",
+      "EditorCodeFormatter",
       "EditorCodeToolbar",
       "EditorCodeToolbarProps",
       "EditorCodeLanguage",
@@ -38,6 +48,6 @@ export const editorCodeItem: SourceItem = {
       "EditorCodeStatusProps",
     ],
     usage:
-      "Import code parts from @/components/editor/code. Add EditorCodeExtension to EditorRoot extensions. Put code controls inside EditorCodeToolbar. Keep EditorContent as the editable surface.",
+      "Import code parts from @/components/editor/code. Add EditorCodeExtension to EditorRoot extensions. Use EditorCode for the toolbar preset, or compose controls inside EditorCodeToolbar. Keep EditorContent as the editable surface. Supply an explicit formatter for formatting controls. Install editor-code-format only for the optional Prettier adapter. Base code editing does not require Prettier.",
   },
 }

@@ -321,7 +321,11 @@ Rounded components use md (12px) by default. Use xstyle to change corner radii. 
   using its controls. Copy can run read-only; mutation cannot. Line numbers and
   wrapping turn each other off. Lexical JSON preserves these view choices.
   Keep native code keyboard behavior and serializers. Discard saved code
-  targets after host document changes.
+  targets after host document changes. Base editor-code does not require
+  Prettier. Supply an explicit EditorCodeFormatter for formatting controls.
+  Install editor-code-format only for the optional prettierEditorCodeFormatter.
+  The repository uses Oxfmt. Formatting parsers support fewer languages than
+  syntax colors. Cancellation cannot stop synchronous parser work.
 - Keep editor authentication helpers in `packages/editor/src/server` and out of
   the browser entry. The `editor-auth` registry item copies them to the consumer
   library directory. Support existing OpenAuth and Better Auth services. Do not

@@ -17,10 +17,10 @@ const sources = import.meta.glob<string>(
   },
 )
 
-const previewSources = import.meta.glob<string>("./previews/*.tsx", {
-  query: "?raw",
-  import: "default",
-})
+const previewSources = import.meta.glob<string>(
+  ["./previews/*.tsx", "./editor-previews/code-preset.tsx"],
+  { query: "?raw", import: "default" },
+)
 
 const documentationSources = import.meta.glob<(typeof componentDocs)[number]>(
   "../../public/r/docs/*.json",
@@ -45,7 +45,12 @@ export async function getDocumentation({ data }: { data: string }) {
     }),
   )
 
-  const previewLoader = previewSources[`./previews/${slug}.tsx`]
+  const previewLoader =
+    previewSources[
+      slug === "editor-code"
+        ? "./editor-previews/code-preset.tsx"
+        : `./previews/${slug}.tsx`
+    ]
 
   const previewSource = previewLoader
     ? rewriteImports(await previewLoader())

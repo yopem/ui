@@ -243,6 +243,9 @@ function checkGuidance(text: string, shared = false) {
     "Prose",
     "Codeblock",
     "EditorCodeExtension",
+    "EditorCodeFormatter",
+    "EditorCodeFormatButton",
+    "prettierEditorCodeFormatter",
     "EditorCodeToolbar",
     "EditorCodeLanguage",
     "EditorCodeCopyButton",
@@ -277,6 +280,11 @@ function checkGuidance(text: string, shared = false) {
   )
   expect(managed).toContain(
     shared ? "@acme/ui/components/editor/code" : "@/components/editor/code",
+  )
+  expect(managed).toContain(
+    shared
+      ? "@acme/ui/components/editor/code-format"
+      : "@/components/editor/code-format",
   )
   expect(managed).toContain(
     shared

@@ -226,6 +226,43 @@ test("packed CLI exposes shared editor roots to external workspace consumers", a
         join(ui, "package.json"),
       ).json()
 
+      expect(helperInstalled.dependencies.prettier).toBeUndefined()
+      expect(
+        await Bun.file(join(ui, components, "editor/code-format.ts")).exists(),
+      ).toBe(false)
+
+      const beforeFormat = await readFile(join(ui, "package.json"), "utf8")
+
+      await run(ui, [
+        ...command,
+        "add",
+        "editor-code-format",
+        "--dry-run",
+        "--registry",
+        `${server.url}r`,
+      ])
+      expect(await readFile(join(ui, "package.json"), "utf8")).toBe(
+        beforeFormat,
+      )
+      expect(
+        await Bun.file(join(ui, components, "editor/code-format.ts")).exists(),
+      ).toBe(false)
+      await run(ui, [
+        ...command,
+        "add",
+        "editor-code-format",
+        "--registry",
+        `${server.url}r`,
+      ])
+
+      const withFormat: typeof initialized = await Bun.file(
+        join(ui, "package.json"),
+      ).json()
+
+      expect(withFormat.dependencies.prettier).toMatch(/^\^/)
+      expect(
+        await Bun.file(join(ui, components, "editor/code-format.ts")).exists(),
+      ).toBe(true)
       expect(helperInstalled.exports[componentWildcard]).toEqual(wildcardBefore)
       expect(helperInstalled.exports["./keep-conditions"]).toEqual({
         default: "./keep.ts",
@@ -305,7 +342,7 @@ test("packed CLI exposes shared editor roots to external workspace consumers", a
       await put(
         app,
         "src/geometry.ts",
-        `import { parseDocument } from "@acme/ui/${components.slice(4)}/editor/document"\nconst document = parseDocument('<details data-editor-toggle=""><summary>Summary</summary><div data-editor-toggle-body=""><p>Body</p></div></details>', "html")\nif (document.root.children[0]?.type !== "editor-toggle") throw new Error("Missing native toggle")\nimport { validateTableGeometry } from "@acme/ui/${components.slice(4)}/editor/table-presentation-schema"\nimport { CalloutNode, ToggleNode, validateEditorBlocksJSON } from "@acme/ui/${components.slice(4)}/editor/blocks-model"\nif (Reflect.has(globalThis, "document") || CalloutNode.getType() !== "editor-callout" || ToggleNode.getType() !== "editor-toggle") throw new Error("Invalid headless block model")\nvalidateEditorBlocksJSON({ root: { type: "root", children: [] } })\nconst geometry = validateTableGeometry([[{ colSpan: 2 }], [{}, {}]])\nif (geometry.columns !== 2 || geometry.rows !== 2 || geometry.cells !== 4) throw new Error("Invalid geometry")\nlet rejected = false\ntry { validateTableGeometry([[{ colSpan: 51 }]]) } catch { rejected = true }\nif (!rejected) throw new Error("Missing geometry bound")\n`,
+        `import { prettierEditorCodeFormatter, formatEditorCode } from "@acme/ui/${components.slice(4)}/editor/code-format"\nconst formattedCode = await formatEditorCode('{"value":1}', "json")\nif (!formattedCode.includes('"value": 1') || !prettierEditorCodeFormatter.supports("javascript") || prettierEditorCodeFormatter.supports("python")) throw new Error("Invalid optional formatter")\nimport { parseDocument } from "@acme/ui/${components.slice(4)}/editor/document"\nconst document = parseDocument('<details data-editor-toggle=""><summary>Summary</summary><div data-editor-toggle-body=""><p>Body</p></div></details>', "html")\nif (document.root.children[0]?.type !== "editor-toggle") throw new Error("Missing native toggle")\nimport { validateTableGeometry } from "@acme/ui/${components.slice(4)}/editor/table-presentation-schema"\nimport { CalloutNode, ToggleNode, validateEditorBlocksJSON } from "@acme/ui/${components.slice(4)}/editor/blocks-model"\nif (Reflect.has(globalThis, "document") || CalloutNode.getType() !== "editor-callout" || ToggleNode.getType() !== "editor-toggle") throw new Error("Invalid headless block model")\nvalidateEditorBlocksJSON({ root: { type: "root", children: [] } })\nconst geometry = validateTableGeometry([[{ colSpan: 2 }], [{}, {}]])\nif (geometry.columns !== 2 || geometry.rows !== 2 || geometry.cells !== 4) throw new Error("Invalid geometry")\nlet rejected = false\ntry { validateTableGeometry([[{ colSpan: 51 }]]) } catch { rejected = true }\nif (!rejected) throw new Error("Missing geometry bound")\n`,
       )
       await run(app, ["bunx", "--no-install", "tsc", "--noEmit"])
       await run(app, ["bun", "src/geometry.ts"])

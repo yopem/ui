@@ -30,7 +30,8 @@
     "./document/static": "./src/document/static.tsx",
     "./block-presentation-extension": "./src/block-presentation-extension.ts",
     "./server/ai": "./src/server/ai/index.ts",
-    "./server/assets": "./src/server/asset-index.ts"
+    "./server/assets": "./src/server/asset-index.ts",
+    "./code-format": "./src/code-format.ts"
   },
   "scripts": {
     "typecheck": "tsc --noEmit"

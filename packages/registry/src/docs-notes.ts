@@ -1,5 +1,9 @@
 // These notes describe Yopem's composition choices, not only the upstream types.
 const usageNoteValues = {
+  "editor-code-format": [
+    "Install this item only for the optional Prettier adapter. Base editor-code does not require Prettier. Repository formatting still uses Oxfmt.",
+    "Pass prettierEditorCodeFormatter through the formatter prop. Supported formatting parsers are a subset of the syntax inventory. Cancellation cannot stop synchronous parsing.",
+  ],
   "editor-document": [
     "Register EditorDocumentClipboardExtension at root creation in a stable extensions array. Call registerDocumentPaste after creation and keep its cleanup in the host lifecycle. Duplicate registrations fail.",
     "Use the document subpath for validated JSON, HTML, and Markdown. Import DocumentStatic from document/static separately.",
@@ -46,7 +50,8 @@ const usageNoteValues = {
   ],
   "editor-code": [
     "Add EditorCodeExtension to EditorRoot extensions. Import optional code parts from @/components/editor/code. Keep EditorContent as the native editable surface.",
-    "Put EditorCodeLanguage, EditorCodeCopyButton, EditorCodeToggle, and EditorCodeStatus inside EditorCodeToolbar. Add EditorBlockButton and EditorIndentButton from the base editor as needed.",
+    "Use EditorCode for the toolbar preset. Compose EditorCodeLanguage, EditorCodeFormatButton, EditorCodeCopyButton, EditorCodeToggle, and EditorCodeStatus inside EditorCodeToolbar.",
+    "Formatting needs an explicit EditorCodeFormatter. Unconfigured controls render nothing. Install editor-code-format only for the optional Prettier adapter. Stale, cancelled, and read-only results cannot replace code.",
     "Select one code block before using its controls. Document changes without an active code selection clear the target. Controls never restore saved ranges.",
     "Language choices use installed Prism grammars. Unknown imported languages remain unchanged. Unspecified code has no syntax colors.",
     "Line numbers and wrapping are separate view choices. Each choice turns the other off. Lexical JSON stores both choices; HTML and Markdown keep native code output.",

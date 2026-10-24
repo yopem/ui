@@ -1,5 +1,13 @@
 // Standalone TSX files use the standard @ alias for src.
 const usageSnippetValues = {
+  "editor-code-format": `"use client"
+
+import { EditorCode } from "@/components/editor/code"
+import { prettierEditorCodeFormatter } from "@/components/editor/code-format"
+
+export function FormattedCodeEditor() {
+  return <EditorCode formatter={prettierEditorCodeFormatter} />
+}`,
   "editor-document": `import { DocumentStatic } from "@/components/editor/document/static"
 
 export function DocumentExample() {
