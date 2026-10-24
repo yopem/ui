@@ -15,8 +15,8 @@ jobs:
       contents: read
       pull-requests: read
     steps:
-      - uses: actions/checkout@v4
-      - uses: dorny/paths-filter@v3
+      - uses: actions/checkout@v7
+      - uses: dorny/paths-filter@v4
         id: changes
         with:
           base: ${{ github.ref }}
@@ -32,11 +32,11 @@ jobs:
               - 'package.json'
               - 'bun.lock'
       - uses: oven-sh/setup-bun@v2
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
-          node-version: 22.20.0
+          node-version: 24.22.1
       - name: Install package managers for CLI tests
-        run: npm install --global npm@10.9.3 pnpm@10.18.3 yarn@1.22.22
+        run: npm install --global npm@12.2.1 pnpm@12.15.0 yarn@1.22.22
       - run: bun install --frozen-lockfile
       - run: bun run generate-routes
       - run: bun run --cwd packages/registry docs:generate
@@ -48,7 +48,7 @@ jobs:
         if: steps.changes.outputs.docs == 'true'
       - run: bun run test:editor-callout-clipboard
         if: steps.changes.outputs.docs == 'true'
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: always() && steps.changes.outputs.docs == 'true'
         with:
           name: editor-callout-clipboard
