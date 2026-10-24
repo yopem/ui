@@ -13,6 +13,7 @@ export const Route = createFileRoute("/sitemap.xml")({
           createSitemap([
             "/components",
             "/editor",
+            "/editor/examples",
             ...editorParts.map((part) => `/editor/${part.slug}`),
             ...guidePages.map((page) => page.url),
             ...catalog.map((item) => `/components/${item.slug}`),

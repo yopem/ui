@@ -579,6 +579,14 @@ Read picker state with useEditorEmojiPicker. Keep inventory, filter, and history
 Keep inline and emoji options at least 44px high for coarse pointers.
 EditorTypeahead renders the editable surface and suggestions. Do not add EditorContent beside this preset.
 
+## Editor examples
+
+Keep core example compositions in `apps/docs/src/catalog/editor-examples/`.
+Publish the gallery at `/editor/examples` with complete consumer source.
+Keep its JSON inventory, Markdown, search, navigation, and sitemap entries aligned.
+State each example's limits. Do not call the house preset the full Plate EditorKit.
+Do not mark a mapped public workflow complete before its behavior is checked.
+
 ## Optional editor math
 
 Install `editor-math` for inline and block TeX equations.

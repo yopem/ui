@@ -3,6 +3,7 @@ import { createFileRoute } from "@tanstack/react-router"
 import { createSearchAPI } from "fumadocs-core/search/server"
 
 import { guidePages } from "@/catalog/docs-data"
+import { getCoreEditorExamples } from "@/catalog/editor-examples-core"
 import { editorParts } from "@/catalog/editor-parts"
 import { getGuideSource } from "@/catalog/guide-sources"
 
@@ -17,6 +18,11 @@ const search = createSearchAPI("simple", {
       url: "/editor",
       content: "Composable Lexical editor parts",
     },
+    ...getCoreEditorExamples().map((example) => ({
+      title: example.title,
+      url: example.url,
+      content: `${example.description} ${example.limits}`,
+    })),
     ...editorParts.map((part) => ({
       title: part.name,
       url: `/editor/${part.slug}`,

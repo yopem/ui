@@ -163,6 +163,9 @@ const config = defineConfig({
           "/editor",
           "/editor.md",
           "/api/editor.json",
+          "/editor/examples",
+          "/editor/examples.md",
+          "/api/editor-examples.json",
           ...editorParts.flatMap((part) => [
             `/editor/${part.slug}`,
             `/editor/${part.slug}.md`,

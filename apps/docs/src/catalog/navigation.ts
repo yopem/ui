@@ -63,6 +63,10 @@ export const navigationGroups = [
       })),
     ],
   },
+  {
+    name: "Editor Examples",
+    pages: [{ name: "Core compositions", url: "/editor/examples" }],
+  },
   ...catalogGroups.map((name) => ({
     name,
     pages: [

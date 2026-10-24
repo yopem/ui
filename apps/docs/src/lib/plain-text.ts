@@ -158,6 +158,7 @@ ${guideLinks}
 ## Editor
 
 - [Editor overview](${url("/editor.md")})
+- [Core editor examples](${url("/editor/examples.md")}): Working compositions, consumer source, and current limits
 ${editorParts.map((part) => `- [${part.name}](${url(`/editor/${part.slug}.md`)}): ${part.description}`).join("\n")}
 
 ## Components
@@ -167,6 +168,7 @@ ${componentLinks}
 ## Machine-readable resources
 
 - [Editor parts inventory](${url("/api/editor.json")}): Public editor parts, install items, and documentation URLs
+- [Editor examples inventory](${url("/api/editor-examples.json")}): Core example URLs, install items, and current limits
 - [Registry index](${url("/r/registry.json")}): Component registry metadata
 - [Component documentation JSON](${url("/r/docs/button.json")}): Description, usage, and API data; replace button with the registry item name
 - [Registry schema](${url("/schema/registry.json")}): Registry index JSON schema
