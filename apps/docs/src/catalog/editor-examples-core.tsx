@@ -12,6 +12,8 @@ import * as stylex from "@stylexjs/stylex"
 
 import { BasicMarksExample } from "./editor-examples/basic-marks"
 import { BasicNodesExample } from "./editor-examples/basic-nodes"
+import { ColumnsExample } from "./editor-examples/columns-example"
+import { DateExample } from "./editor-examples/date-example"
 import { DefaultEditorExample } from "./editor-examples/editor-default"
 import { DisabledEditorExample } from "./editor-examples/editor-disabled"
 import { FullWidthEditorExample } from "./editor-examples/editor-full-width"
@@ -19,6 +21,8 @@ import { MinimalEditorExample } from "./editor-examples/installation-next-01-edi
 import { MarksSetupExample } from "./editor-examples/installation-next-02-marks"
 import { ElementsSetupExample } from "./editor-examples/installation-next-03-elements"
 import { LinkExample } from "./editor-examples/link"
+import { MathExample } from "./editor-examples/math-example"
+import { MediaExample } from "./editor-examples/media-example"
 
 const sources = import.meta.glob<string>("./editor-examples/*.tsx", {
   query: "?raw",
@@ -116,6 +120,50 @@ const examples = [
     limits:
       "Parent layout still bounds the width. This is not the full Plate EditorKit or a fullWidth editor variant.",
   },
+  {
+    slug: "equation",
+    sourceFile: "math-example",
+    title: "Equations",
+    Component: MathExample,
+    items: ["editor", "editor-math", "editor-typeahead"],
+    description:
+      "Edit inline and block equations. Use slash commands and combine math with native tables and code blocks.",
+    limits:
+      "TeX input has a 4096-character limit. Browser behavior and consumer installation remain unverified.",
+  },
+  {
+    slug: "column",
+    sourceFile: "columns-example",
+    title: "Columns",
+    Component: ColumnsExample,
+    items: ["editor", "editor-columns"],
+    description:
+      "Edit seeded left and right columns. Compare editable column borders with read-only mode.",
+    limits:
+      "Generic editor-document converters do not support column nodes. The native extension supports JSON and HTML conversion.",
+  },
+  {
+    slug: "date",
+    sourceFile: "date-example",
+    title: "Inline dates",
+    Component: DateExample,
+    items: ["editor", "editor-date"],
+    description:
+      "Choose a date in the inline calendar. Keep nearby text editable and use editor history.",
+    limits:
+      "Dates use YYYY-MM-DD values. Generic editor-document converters do not support date nodes.",
+  },
+  {
+    slug: "media",
+    sourceFile: "media-example",
+    title: "Media",
+    Component: MediaExample,
+    items: ["editor", "editor-media"],
+    description:
+      "Insert validated HTTPS media URLs. Edit image captions and widths. Render supported audio, video, file, and provider content.",
+    limits:
+      "A host must supply an upload callback. Host code sets size, type, and quota limits. Batch upload is not built in. Twitter embeds are not supported. Media JSON and tagged HTML keep metadata.",
+  },
 ] as const
 
 const styles = stylex.create({
@@ -133,15 +181,17 @@ export function getCoreEditorExampleSource(slug: string) {
   const example = examples.find((entry) => entry.slug === slug)
 
   if (!example) return null
-  const source = sources[`./editor-examples/${example.slug}.tsx`]
+  const sourceFile = "sourceFile" in example ? example.sourceFile : example.slug
+  const source = sources[`./editor-examples/${sourceFile}.tsx`]
 
-  if (!source) throw new Error(`Missing core editor example source: ${slug}`)
+  if (!source)
+    throw new Error(`Missing core editor example source: ${sourceFile}`)
 
   return {
     slug: example.slug,
     title: example.title,
     installNames: [...example.items],
-    filename: `${example.slug}.tsx`,
+    filename: `${sourceFile}.tsx`,
     source: rewriteImports(source),
     limits: example.limits,
     status: "internal-pending" as const,
