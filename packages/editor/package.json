@@ -49,7 +49,9 @@
     "./footnote-node": "./src/footnote-node.tsx",
     "./toc": "./src/toc.ts",
     "./toc-model": "./src/toc-model.ts",
-    "./toc-node": "./src/toc-node.tsx"
+    "./toc-node": "./src/toc-node.tsx",
+    "./ai": "./src/ai-controls.tsx",
+    "./ai/client": "./src/ai-client.ts"
   },
   "scripts": {
     "typecheck": "tsc --noEmit"
