@@ -33,6 +33,7 @@ export const sourceImportReplacements = [
   ["@yopem-ui/editor/ai/client", "@/components/editor/ai-client"],
   ["@yopem-ui/editor/ai", "@/components/editor/ai-controls"],
   ["@yopem-ui/editor/server/ai", "@/lib/editor-ai"],
+  ["@yopem-ui/editor/server/assets", "@/lib/editor-assets"],
   ["@yopem-ui/editor/server", "@/lib/editor-auth"],
   ["@yopem-ui/editor/typeahead", "@/components/editor/typeahead-index"],
   ["@yopem-ui/editor", "@/components/editor"],
@@ -44,13 +45,15 @@ export const sourceImportReplacements = [
 ] as const
 
 export function rewriteImports(content: string, path = "") {
-  const serverSource = path.startsWith("lib/editor-collaboration/")
-    ? content.replace(
-        /from "\.\/(auth|document-[a-z0-9-]+)"/g,
-        (_match, module: string) =>
-          `from "@/lib/${module === "auth" ? "editor-auth" : "editor-store"}/${module}"`,
-      )
-    : content
+  const serverSource =
+    path.startsWith("lib/editor-collaboration/") ||
+    path.startsWith("lib/editor-assets/")
+      ? content.replace(
+          /from "\.\/(auth|document-[a-z0-9-]+)"/g,
+          (_match, module: string) =>
+            `from "@/lib/${module === "auth" ? "editor-auth" : "editor-store"}/${module}"`,
+        )
+      : content
 
   const source = path.startsWith("lib/editor-store/")
     ? content.replaceAll('from "./auth"', 'from "@/lib/editor-auth/auth"')

@@ -124,6 +124,12 @@ const usageNoteValues = {
     "Keep this entry server-only. Supply a host-selected model and credentials. AI invocation never grants document write access.",
     "Require existing authentication, a literal-true document policy, exact HTTPS Origin, CSRF verification, verified credential expiry, and durable quota reservation. Never retry paid requests automatically.",
   ],
+  "editor-assets": [
+    "Import @/lib/editor-assets on the server only. Apply matching dialect migrations in order.",
+    "Supply existing authentication, verified expiry, document and asset policy, CSRF, exact origins, quotas, bounded scanners, and scheduled cleanup.",
+    "Resolve private relative routes against a trusted HTTPS same-origin delivery origin. Native media needs existing cookie authentication. Never put tokens in URLs.",
+    "Keep terminal probes and lifetime reservations. Fixture validators do not prove production scanning. See /docs/editor-assets.",
+  ],
   "editor-auth": [
     "Import server helpers from @/lib/editor-auth. Keep them outside browser components. Use an existing OpenAuth or Better Auth service.",
     "Use createOpenAuthAuthentication with an explicit audience. The default issuer is https://auth.yopem.com. Identity uses properties.id, not the mutable subject hash.",

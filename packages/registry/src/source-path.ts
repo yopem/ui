@@ -17,9 +17,6 @@ export function resolveSourcePath(path: string) {
       path.slice("components/editor/".length),
     )
 
-  if (path === "lib/editor-auth/index.ts")
-    return resolve(root, "../../editor/src/server/auth-index.ts")
-
   if (path.startsWith("lib/editor-ai/"))
     return resolve(
       root,
@@ -37,6 +34,15 @@ export function resolveSourcePath(path: string) {
       path === "lib/editor-collaboration/index.ts"
         ? "collaboration-index.ts"
         : path.slice("lib/editor-collaboration/".length),
+    )
+
+  if (path.startsWith("lib/editor-assets/"))
+    return resolve(
+      root,
+      "../../editor/src/server",
+      path === "lib/editor-assets/index.ts"
+        ? "asset-index.ts"
+        : path.slice("lib/editor-assets/".length),
     )
 
   if (path.startsWith("lib/editor-store/"))
