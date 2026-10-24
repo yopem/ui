@@ -1,5 +1,26 @@
 // Standalone TSX files use the standard @ alias for src.
 const usageSnippetValues = {
+  "editor-media": `"use client"
+
+import { EditorContent, EditorRoot, EditorToolbar } from "@/components/editor"
+import { MediaExtension, MediaInsertControl } from "@/components/editor/media"
+
+const extensions = [MediaExtension]
+
+export function MediaEditor() {
+  return (
+    <EditorRoot extensions={extensions} ariaLabel="Media editor">
+      <EditorToolbar aria-label="Media controls">
+        <MediaInsertControl kind="image" />
+        <MediaInsertControl kind="video" />
+        <MediaInsertControl kind="audio" />
+        <MediaInsertControl kind="file" />
+        <MediaInsertControl kind="embed" />
+      </EditorToolbar>
+      <EditorContent />
+    </EditorRoot>
+  )
+}`,
   "editor-columns": `"use client"
 
 import { EditorContent, EditorRoot, EditorToolbar } from "@/components/editor"

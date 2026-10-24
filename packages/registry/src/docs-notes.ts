@@ -1,5 +1,11 @@
 // These notes describe Yopem's composition choices, not only the upstream types.
 const usageNoteValues = {
+  "editor-media": [
+    "Register MediaExtension in a stable extensions array. Compose MediaInsertControl inside EditorToolbar. MediaContent can render validated media without EditorRoot.",
+    "Use HTTPS URLs without credentials. Provide image alt text and media captions. Provider embeds use exact supported hosts and canonical URLs.",
+    "Supply a bounded, abort-aware host upload callback. Uploads require host authorization and validation. This item does not configure private asset delivery.",
+    "Register MediaNode in every document reader. Native tagged figure HTML preserves media metadata. Install editor-document separately for generic conversion.",
+  ],
   "editor-columns": [
     "Register EditorColumnsExtension in a stable extensions array. Compose the preset or focused controls inside EditorToolbar. Layouts contain two through four rich-text columns. Nested column groups are rejected; nested rich blocks remain native.",
     "Resize adjacent columns with the house Slider. Keep native selection, history, cancellation, and read-only behavior. Import pure validation and fragment codecs from columns-model.",

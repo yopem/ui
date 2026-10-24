@@ -149,6 +149,25 @@ Read picker state with useEditorEmojiPicker. Keep inventory, filter, and history
 Keep inline and emoji options at least 44px high for coarse pointers.
 EditorTypeahead renders the editable surface and suggestions. Do not add EditorContent beside this preset.
 
+### Optional editor media
+
+Install the optional media item with your selected package manager:
+
+\`\`\`sh
+bunx --bun @yopem-ui/cli add editor-media
+npx @yopem-ui/cli add editor-media
+pnpm dlx @yopem-ui/cli add editor-media
+yarn dlx @yopem-ui/cli add editor-media
+\`\`\`
+
+Import optional parts from \`${imports.editor}/media\`.
+Register MediaExtension in a stable root extensions array. Compose MediaInsertControl inside EditorToolbar.
+MediaContent renders validated media without EditorRoot. Use HTTPS URLs without credentials.
+Keep native playback, file links, and iframe controls usable in read-only roots.
+Supply bounded, abort-aware host uploads with server authorization and validation.
+Private asset delivery needs explicit same-origin host integration. Never put tokens in media URLs.
+Register MediaNode in every reader. Generic editor-document conversion does not yet support media.
+
 ### Optional editor columns and dates
 
 Install optional source with your selected package manager:

@@ -37,7 +37,12 @@
     "./columns-model": "./src/columns-model.ts",
     "./date": "./src/date.ts",
     "./date/model": "./src/date-model.ts",
-    "./date-model": "./src/date-model.ts"
+    "./date-model": "./src/date-model.ts",
+    "./media": "./src/media.ts",
+    "./media/schema": "./src/media/schema.ts",
+    "./media/html": "./src/media/html.ts",
+    "./media/model": "./src/media/model.ts",
+    "./selection-bookmark": "./src/selection-bookmark.ts"
   },
   "scripts": {
     "typecheck": "tsc --noEmit"

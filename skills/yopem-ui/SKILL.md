@@ -755,6 +755,18 @@ Saved mention identities do not grant access. Media and review nodes remain unsu
 Do not silently remove unknown nodes or formatting during conversion.
 See https://ui.yopem.com/components/editor-document for supported formats.
 
+## Optional editor media
+
+Install `editor-media` separately. Import parts from `@/components/editor/media`.
+Register `MediaExtension` in a stable root extension array.
+Compose `MediaInsertControl` inside `EditorToolbar`.
+`MediaContent` renders validated `parseMedia` data without `EditorRoot`.
+Use HTTPS URLs without credentials. Supply alt text and captions for your content.
+Keep native playback, file links, and iframe controls usable in read-only roots.
+Supply bounded, abort-aware host uploads with server authorization and validation.
+Private assets need explicit same-origin delivery integration. Never put tokens in media URLs.
+Register `MediaNode` in document readers. Do not flatten unsupported media during conversion.
+
 ## Optional editor columns and dates
 
 Install the optional source items with your selected package manager.

@@ -471,7 +471,7 @@ export function extractDocs() {
       .filter(
         (file) =>
           /\.tsx?$/.test(file.path) &&
-          (["editor-columns", "editor-date"].includes(item.name)
+          (["editor-columns", "editor-date", "editor-media"].includes(item.name)
             ? file.path === `components/editor/${item.name.slice(7)}.ts`
             : item.name === "editor"
               ? file.path === "components/editor/index.ts"

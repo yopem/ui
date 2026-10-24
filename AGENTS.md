@@ -592,6 +592,19 @@ Keep its JSON inventory, Markdown, search, navigation, and sitemap entries align
 State each example's limits. Do not call the house preset the full Plate EditorKit.
 Do not mark a mapped public workflow complete before its behavior is checked.
 
+## Optional editor media
+
+Install `editor-media` separately. Import optional parts from the copied `media` module.
+Register `MediaExtension` in a stable extensions array.
+Compose `MediaInsertControl` inside `EditorToolbar`.
+`MediaContent` renders validated media without `EditorRoot`.
+Use HTTPS URLs without credentials and exact supported embed hosts.
+Keep native audio, video, file, and iframe controls usable in read-only roots.
+Supply bounded, abort-aware host uploads with server authorization and validation.
+Private assets require explicit same-origin delivery integration. Never put tokens in media URLs.
+Register `MediaNode` in every reader. Preserve native tagged figure HTML.
+Generic document conversion remains unsupported until deliberate media codec integration.
+
 ## Optional editor columns and dates
 
 Install `editor-columns` and `editor-date` separately from the core editor.

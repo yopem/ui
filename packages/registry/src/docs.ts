@@ -152,9 +152,12 @@ export function createComponentDocs(
         importPath:
           item.name === "editor"
             ? "@/components/editor"
-            : ["editor-code", "editor-columns", "editor-date"].includes(
-                  item.name,
-                )
+            : [
+                  "editor-code",
+                  "editor-columns",
+                  "editor-date",
+                  "editor-media",
+                ].includes(item.name)
               ? `@/components/editor/${item.name.slice(7)}`
               : item.name === "editor-math"
                 ? "@/components/editor/math"

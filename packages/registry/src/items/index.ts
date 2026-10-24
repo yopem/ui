@@ -8,6 +8,7 @@ import { editorColumnsItem } from "@registry/items/editor-columns"
 import { editorDateItem } from "@registry/items/editor-date"
 import { editorDocumentItem } from "@registry/items/editor-document"
 import { editorMathItem } from "@registry/items/editor-math"
+import { editorMediaItem } from "@registry/items/editor-media"
 import { editorStoreItem } from "@registry/items/editor-store"
 import { editorTypeaheadItem } from "@registry/items/editor-typeahead"
 import { foundationItems } from "@registry/items/foundation"
@@ -25,6 +26,7 @@ export const sourceItems = [
   editorAuthItem,
   editorBlocksItem,
   editorMathItem,
+  editorMediaItem,
   editorCodeItem,
   editorColumnsItem,
   editorDateItem,
