@@ -546,6 +546,34 @@ Synchronous work cannot be stopped.
 Do not add accounts, ACL tables, or implicit document grants.
 See https://ui.yopem.com/docs/editor-store for protocol and deployment limits.
 
+## Optional editor collaboration
+
+Install `editor-collaboration` for browser source and
+`editor-collaboration-server` for generic server source. Import browser parts
+from `@/components/editor/collaboration` and generic helpers from
+`@/lib/editor-collaboration`. Keep server imports out of browser bundles.
+
+Install only the required runtime item: `editor-collaboration-worker` for
+Durable Objects, `editor-collaboration-bun` for Bun, or
+`editor-collaboration-node` for Node. Import from
+`@/lib/editor-collaboration/collaboration-do`,
+`@/lib/editor-collaboration/collaboration-bun`, and
+`@/lib/editor-collaboration/collaboration-node` only in their matching runtime.
+Never export native entries from browser or generic server barrels.
+
+Reuse host authentication and require verified `credentialExpiresAt`, an exact
+HTTPS origin, CSRF checks, literal-true document policies, real SQL
+transactions, and a schema-complete initializer. Bind the Node `node:http`
+server privately behind a trusted HTTPS/WSS proxy. Bun can use host TLS.
+
+Keep binary document frames and bounded text readiness, delivery, and ACK
+controls for the custom `editor-v1` protocol. Ordinary WebSocket send completion
+does not confirm durable delivery. Recheck each recipient. Rechecks do not make
+revocation atomic with database writes. Keep history bounded to 256 updates and
+1 MiB; no automatic compaction is supplied. Do not replay uncertain offline
+drafts automatically. These source contracts do not establish runtime or
+deployment validation.
+
 ## Optional editor blocks
 
 Register `EditorBlocksExtension` for native callouts and toggles.

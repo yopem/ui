@@ -10,6 +10,34 @@ description: >-
 
 # Yopem UI CLI
 
+## Editor collaboration
+
+Use separate `add` calls for each required item. Add
+`editor-collaboration` for browser parts and `editor-collaboration-server` for
+generic server helpers. Add only the matching runtime item:
+`editor-collaboration-worker`, `editor-collaboration-bun`, or
+`editor-collaboration-node`. Do not combine item names in one CLI command. Use
+one package-manager switcher block per item in consumer docs.
+
+Import browser parts from `@/components/editor/collaboration` and generic
+server helpers from `@/lib/editor-collaboration`. Import adapters directly from
+`@/lib/editor-collaboration/collaboration-do`,
+`@/lib/editor-collaboration/collaboration-bun`, and
+`@/lib/editor-collaboration/collaboration-node`. Keep these entries out of
+browser and generic server barrels.
+
+The Bun adapter returns handlers for `Bun.serve` and supports host TLS. The
+Node adapter uses `node:http`; bind it privately behind a trusted HTTPS/WSS
+proxy. Hosts still supply verified authentication expiry, an exact HTTPS
+origin, CSRF checks, literal-true document policies, real SQL transactions, and
+a schema-complete initializer.
+
+Keep binary document frames and bounded text readiness, delivery, and ACK
+controls. Recipient rechecks do not make revocation atomic with database writes.
+History has a fixed bound and no automatic compaction. Do not replay uncertain
+offline drafts. Do not claim runtime or deployment validation from source
+publication. See https://ui.yopem.com/docs/editor-collaboration.
+
 ## Inspect before running commands
 
 Read the project's instructions, `package.json`, lockfile, TypeScript settings,

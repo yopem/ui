@@ -101,6 +101,37 @@ Use `SidebarProvider` around Sidebar parts. Use `ToastProvider` and
 `menu`, not a separate dropdown-menu item. Compose date pickers from `calendar`
 and a suitable popup; there is no separate date-picker item.
 
+### Editor collaboration
+
+Install `editor-collaboration` for browser parts and
+`editor-collaboration-server` for generic server helpers. Import browser parts
+from `@/components/editor/collaboration` and server helpers from
+`@/lib/editor-collaboration`.
+
+Install only the matching runtime item: `editor-collaboration-worker` for
+Durable Objects, `editor-collaboration-bun` for Bun, or
+`editor-collaboration-node` for Node. Import from
+`@/lib/editor-collaboration/collaboration-do`,
+`@/lib/editor-collaboration/collaboration-bun`, or
+`@/lib/editor-collaboration/collaboration-node` as appropriate. Keep these
+imports out of browser and generic server barrels.
+
+Create one collaboration controller and stable extension array per root.
+Compose `EditorCollaborationRoot` inside `EditorRoot` and keep
+`EditorContent` as the editable surface. Use native per-client history.
+
+Supply existing authentication with verified expiry, an exact HTTPS origin,
+CSRF checks, literal-true document policies, real SQL transactions, and a
+schema-complete initializer. Bun can use host TLS. Bind the Node `node:http`
+server privately behind a trusted HTTPS/WSS proxy.
+
+Keep binary document frames and bounded text readiness, delivery, and ACK
+controls for `editor-v1`. Ordinary WebSocket send completion does not confirm
+durable delivery. Recipient checks do not make revocation atomic with writes.
+History is bounded, with no automatic compaction. Do not replay offline drafts
+with uncertain outcomes. This guide does not confirm runtime or deployment
+validation. See https://ui.yopem.com/docs/editor-collaboration.
+
 ### Editor composition
 
 Install the `editor` item before you use either the preset or public parts. The

@@ -1,0 +1,337 @@
+## Scope and status
+
+Use optional collaboration source with an existing authenticated host
+application. Choose Durable Objects with D1 or PostgreSQL with a Bun or Node
+adapter. This guide describes source contracts only. It does not confirm
+runtime or deployment validation.
+
+The client uses native Lexical Yjs bindings, per-client history, and remote
+cursors. Its custom `editor-v1` protocol uses binary document frames and bounded
+text controls for readiness, delivery, and acknowledgements. It is not a
+`y-websocket` service. Keep these protocol text controls; reject arbitrary text.
+
+No account system, ACL system, default endpoint, credentials, or deployment is
+included. No AI model is required. Configure any separate AI service explicitly
+on the host.
+
+## Install separate entries
+
+Use Bun, npm, pnpm, or Yarn 2 and later. Select your package manager in each
+command block. Run one CLI add in each block.
+
+```sh
+bunx --bun @yopem-ui/cli add editor-collaboration
+```
+
+The browser item installs `editor`, `box`, and `list` source dependencies. It
+copies only `collaboration.ts`, `collaboration-client.ts`, and
+`collaboration-controls.tsx`. Import browser parts from
+`@/components/editor/collaboration`. Keep ordinary editor imports on
+`@/components/editor`.
+
+```sh
+bunx --bun @yopem-ui/cli add editor-collaboration-server
+```
+
+The server item installs `editor-store` and `editor-auth` dependencies. Import
+generic helpers from `@/lib/editor-collaboration` on the server only. Keep this
+generic entry separate from browser and runtime-specific imports.
+
+```sh
+bunx --bun @yopem-ui/cli add editor-collaboration-worker
+```
+
+Install the Worker item only for Durable Objects. Import
+`EditorCollaborationRoom` from
+`@/lib/editor-collaboration/collaboration-do` in Workers only. Keep Worker types
+in the Worker compiler target. Do not import this entry into Node, Bun, or
+browser bundles.
+
+```sh
+bunx --bun @yopem-ui/cli add editor-collaboration-bun
+```
+
+Install the Bun item only for Bun. Import
+`createBunEditorCollaborationService` from
+`@/lib/editor-collaboration/collaboration-bun`. It returns `fetch` and
+`websocket` options for `Bun.serve`. Pass both handlers to `Bun.serve` with
+host-owned TLS and connection limits.
+
+```sh
+bunx --bun @yopem-ui/cli add editor-collaboration-node
+```
+
+Install the Node item only for Node. Import
+`createNodeEditorCollaborationService` from
+`@/lib/editor-collaboration/collaboration-node`. It returns a `node:http` server
+and a `close` function. Bind the server to a private interface behind a trusted
+HTTPS/WSS proxy. Do not expose its cleartext listener to untrusted networks.
+
+The Worker, Bun, and Node items include the server item as a registry dependency.
+Keep all runtime-specific imports out of browser and generic server barrels.
+
+## Supply host authorization
+
+Reuse existing OpenAuth or Better Auth authentication. Set an explicit OpenAuth
+audience. Better Auth verification must not refresh sessions. Forward verified
+`credentialExpiresAt` in Unix epoch milliseconds. Never derive expiry from
+unverified browser data.
+
+Supply external per-document policies for `collab:read`, `collab:write`, and
+`document:write`. Only literal `true` permits access. Authentication and stored
+document rows do not grant access. Snapshot promotion also requires document
+write permission. Keep deletion and offline migration behind separate host
+authorization.
+
+Configure one exact serialized HTTPS origin without a trailing slash. Both
+ticket and socket requests require the exact `Origin`. Verify `X-CSRF-Token` on
+ticket POST requests against the authenticated host session. The ticket request
+also requires `X-Editor-Permission` with `read` or `write`.
+
+Use an explicit base path, such as `/collaboration/`. The endpoints are
+`/collaboration/{encodedDocumentId}/ticket` and
+`/collaboration/{encodedDocumentId}/socket`. Do not add query parameters. Never
+put authentication tokens or tickets in URLs or logs. Tickets travel in the
+WebSocket subprotocol offer with `editor-v1`. Select only `editor-v1` in the
+upgrade response. Do not echo the ticket.
+
+Implement `revalidate` with current authentication, verified expiry, document
+generation, and current document policy. Run recipient checks before outbound
+delivery, not only when a sender connects. Keep these callbacks abort-aware and
+bounded. Recipient checks do not make revocation atomic with database commits
+or sends. Use a separate host fence when immediate revocation must be atomic.
+
+## Create a schema-complete initializer
+
+Use `createEditorCollaborationInitializer({ createEditor, validateState })`.
+`createEditor(schemaVersion)` must return a headless `LexicalEditorWithDispose`
+with the complete supported node schema. Use `buildEditorFromExtensions` with
+`HeadlessExtension` and host node extensions. Keep its native `dispose` cleanup.
+Use the same node classes, replacements, custom NodeState, and schema version
+as the browser document. Install the host headless editor dependencies explicitly.
+
+`validateState(state, schemaVersion)` must validate the complete document before
+promotion. An object check or root-envelope check is insufficient. Reject
+unsupported nodes, versions, metadata, and schema versions. The initializer
+disposes its temporary editor after encoding the native Yjs seed.
+
+```ts
+import { createEditorCollaborationInitializer } from "@/lib/editor-collaboration"
+import {
+  createSchemaEditor,
+  validateLexicalState,
+} from "@/server/editor-schema"
+
+export const initialize = createEditorCollaborationInitializer({
+  createEditor: createSchemaEditor,
+  validateState: validateLexicalState,
+})
+```
+
+The `@/server/editor-schema` module is host code, not supplied source. Create
+the canonical snapshot through authenticated document storage before
+collaboration admission. A read-only ticket cannot promote a snapshot document.
+Do not let browser content silently replace the canonical seed.
+
+## Durable Objects with D1
+
+Apply `editor-store/migrations/d1/0001-document-snapshots.sql` first. Apply
+`editor-collaboration/collaboration/0003-do-canonical.sql` next. Do not apply
+the PostgreSQL collaboration migrations to D1. Back up existing data before
+migrations.
+
+Create `createD1CollaborationCanonical(env.DB)` with the host D1 binding.
+Construct `EditorCollaborationRoom(ctx, options)` inside the host worker class.
+Supply `canonical`, `initialize`, `authenticate`, `policy`, `verifyCsrf`, and
+`revalidate`. Also supply `origin`, `basePath`, `timeoutMs`, and `revalidateMs`.
+The request timeout supports 1 through 30000 milliseconds. The revalidation
+interval supports 1000 through 30000 milliseconds.
+
+Use one stable SQLite-backed Durable Object identity per document. Forward
+authenticated host requests without removing Origin or WebSocket protocol
+headers. Delegate `fetch`, `webSocketMessage`, `webSocketClose`, and `alarm` to
+the room. Map host WebSocket error handling to room close cleanup. No room
+`webSocketError` method is supplied. Configure the host worker binding and
+SQLite Durable Object migration explicitly. The copied room is not a complete
+deployed worker entry point.
+
+The room creates its local SQL tables and manages hibernatable WebSocket
+attachments. D1 records canonical promotion and its coordinator. The room
+retains authoritative collaboration state. Promotion across D1 and Durable
+Object storage is not one transaction. Prepared state supports recovery; it does
+not prove rollback after an uncertain result. Keep document-to-room routing
+stable during recovery.
+
+The D1 migration blocks direct changes to promoted canonical documents. Use an
+explicit offline lifecycle migration for replacement or deletion. Do not remove
+its guards to bypass an error.
+
+## PostgreSQL with Bun or Node
+
+Apply `editor-store/migrations/postgres/0001-document-snapshots.sql` first.
+Apply `editor-collaboration/collaboration/0002-collaboration.sql` next. Apply
+`editor-collaboration/collaboration/0003-collaboration-runtime.sql` last. Do not
+apply `0003-do-canonical.sql` to PostgreSQL.
+
+Supply a real `CollaborationTransactions` adapter. Its
+`run(signal, deadline, work)` must execute `work(query)` on one database
+transaction. Keep commit, rollback, cancellation, driver limits, and pool wait
+limits in that adapter. Return binary columns as `Uint8Array`. Preserve integer
+revisions without precision loss. Do not claim rollback when commit
+acknowledgement is lost.
+
+Create one shared log, ticket store, and session handler for PostgreSQL.
+
+```ts
+import {
+  createPostgresCollaborationLog,
+  createPostgresCollaborationTicketStore,
+  createPostgresEditorCollaborationSessions,
+} from "@/lib/editor-collaboration"
+import { initialize } from "@/server/collaboration-initializer"
+import {
+  authentication,
+  csrf,
+  documentPolicy,
+  logPolicy,
+  revalidate,
+  transactions,
+} from "@/server/collaboration-host"
+
+const log = createPostgresCollaborationLog({
+  transactions,
+  policy: logPolicy,
+  timeoutMs: 5000,
+  maxConcurrent: 8,
+})
+const tickets = createPostgresCollaborationTicketStore({
+  transactions,
+  timeoutMs: 5000,
+})
+const sessions = createPostgresEditorCollaborationSessions({
+  transactions,
+  log,
+  tickets,
+  timeoutMs: 5000,
+  pollIntervalMs: 1000,
+  revalidate,
+})
+
+const collaborationOptions = {
+  origin: "https://editor.example",
+  basePath: "/collaboration/",
+  timeoutMs: 5000,
+  authenticate: authentication,
+  policy: documentPolicy,
+  verifyCsrf: csrf,
+  revalidate,
+  transactions,
+  log,
+  tickets,
+  sessions,
+  initialize,
+}
+```
+
+The host modules supply existing authentication, verified credential expiry,
+CSRF checks, literal-true document policies, real SQL transactions, and the
+schema-complete initializer. Do not treat these host requirements as bundled
+services.
+
+Create the native Bun service with
+`createBunEditorCollaborationService(collaborationOptions)`. Pass its `fetch`
+and `websocket` handlers unchanged to `Bun.serve`. Supply the hostname, port,
+TLS settings, and connection limits from host configuration. Bun supports
+host-supplied TLS.
+
+```ts
+import { createBunEditorCollaborationService } from "@/lib/editor-collaboration/collaboration-bun"
+
+const service = createBunEditorCollaborationService(collaborationOptions)
+```
+
+Create the native Node service with
+`createNodeEditorCollaborationService(collaborationOptions)`. The adapter uses
+`node:http` and `ws`; it does not provide TLS. Bind the server to a private
+interface behind a trusted HTTPS/WSS proxy. Preserve `Origin` and
+`Sec-WebSocket-Protocol` through the proxy. Apply external connection,
+handshake, header, body, idle, and rate limits.
+
+```ts
+import { createNodeEditorCollaborationService } from "@/lib/editor-collaboration/collaboration-node"
+
+const service = createNodeEditorCollaborationService(collaborationOptions)
+service.server.listen(3000, "127.0.0.1")
+```
+
+Call `service.close()` once during host shutdown after the listener starts.
+
+The native adapters perform the authenticated upgrade and forward socket
+lifecycle callbacks. They select only `editor-v1`, preserve message order, and
+bound queued messages and bytes. Do not add a second unauthenticated upgrade
+route. The protocol requires bounded text readiness, delivery, and ACK controls;
+ordinary WebSocket send completion does not confirm durable delivery.
+
+The sessions use durable PostgreSQL updates, tickets, leases, and presence rows.
+They poll persisted changes across processes and recheck each recipient. Persist
+accepted updates before broadcasting or reporting durable success. Do not
+replace delivery acknowledgements with ordinary WebSocket send completion.
+
+## Compose the browser
+
+Create one controller and one stable extension array per mounted editor root.
+Add `controller.extension` when creating `EditorRoot`. Compose
+`EditorCollaborationRoot` inside that root with the same controller. Keep
+`EditorContent` as the editable surface. Add `EditorCollaborationStatus`,
+`EditorCollaborationAwareness`, and `EditorCollaborationCursors` where needed.
+
+Pass explicit `documentId`, `permission`, `ticketUrl`, and `socketUrl` to
+`createEditorCollaboration`. Use same-origin HTTPS ticket and WSS socket URLs.
+Supply current host authentication and CSRF headers through `headers(signal)`.
+Keep credentials out of browser storage and URLs. Destroy the controller when
+the host removes the editor.
+
+Use ordinary `EditorHistoryButton` controls for native per-client undo and redo.
+Higher-priority host commands can veto history actions. Collaboration disables
+local HistoryExtension only for the collaborative root. Unrelated editors retain
+ordinary local history.
+
+Host read-only settings remain authoritative. Permission, initial
+reconciliation, and provider writable state must also permit editing.
+Disconnected, syncing, denied, and conflicted clients cannot enable editing
+through reconnect alone. Ticket `expiresAt` describes admission, not the
+credential lifetime. The server enforces session credential expiry and closes
+expired sessions.
+
+## Bounds and recovery
+
+Frames are limited to 65536 bytes. Encoded document state is limited to 61440
+bytes. Awareness payloads are limited to 4096 bytes. Rooms support at most 32
+clients. Additional structural, queue, delivery, and execution bounds can reject
+smaller inputs. Synchronous Yjs work cannot be interrupted. Callback
+cancellation requires host cooperation.
+
+Durable update history is bounded by 256 updates and 1 MiB of update bytes. No
+automatic compaction or online generation rotation is supplied. Plan an
+authorized offline migration before history reaches its limit. Do not delete
+history rows to force continued writes.
+
+Offline edits and pending writes can have uncertain durable outcomes. Do not
+automatically replay a local draft after reconnect. Use server coverage evidence
+before claiming that a pending change committed. Otherwise, keep the draft
+blocked and reconcile it explicitly outside the live session. Create a fresh
+controller and root after host reconciliation.
+
+Do not replace or import a complete document into an active collaboration root.
+Document replacement, schema changes, and generation changes require an explicit
+offline host workflow. No online import, automatic merge, cross-system rollback,
+or lossless offline replay is promised.
+
+## Verification required before deployment
+
+Run real two-client workflows with each selected database and runtime adapter.
+Check native history, cursors, host read-only, credential expiry, recipient
+revocation, and uncertain delivery. Check recovery after process loss and failed
+promotion acknowledgements. Check copied-source closure, worker isolation,
+accessibility, and production output. These checks remain required; this guide
+is not runtime evidence.

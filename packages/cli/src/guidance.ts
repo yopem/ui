@@ -314,6 +314,74 @@ Check trusted origins and CSRF tokens in host routes. Keep tokens out of URLs an
 JWT verification does not guarantee immediate revocation.
 These helpers do not deploy AI, upload, persistence, or collaboration services.
 
+### Editor collaboration
+
+Install browser source with the matching package manager:
+
+\`\`\`sh
+bunx --bun @yopem-ui/cli add editor-collaboration
+npx @yopem-ui/cli add editor-collaboration
+pnpm dlx @yopem-ui/cli add editor-collaboration
+yarn dlx @yopem-ui/cli add editor-collaboration
+\`\`\`
+
+Import browser parts from \`${imports.editor}/collaboration\`. Keep server code out of browser imports.
+
+Install generic server source separately:
+
+\`\`\`sh
+bunx --bun @yopem-ui/cli add editor-collaboration-server
+npx @yopem-ui/cli add editor-collaboration-server
+pnpm dlx @yopem-ui/cli add editor-collaboration-server
+yarn dlx @yopem-ui/cli add editor-collaboration-server
+\`\`\`
+
+Import generic helpers from \`${imports.lib.replace(/\/stylex$/, "/editor-collaboration")}\` on the server only.
+
+Install each required runtime item separately:
+
+\`\`\`sh
+bunx --bun @yopem-ui/cli add editor-collaboration-worker
+npx @yopem-ui/cli add editor-collaboration-worker
+pnpm dlx @yopem-ui/cli add editor-collaboration-worker
+yarn dlx @yopem-ui/cli add editor-collaboration-worker
+\`\`\`
+
+Use the Worker item only for Durable Objects. Import its room from \`${imports.lib.replace(/\/stylex$/, "/editor-collaboration")}/collaboration-do\` in Worker code only.
+
+\`\`\`sh
+bunx --bun @yopem-ui/cli add editor-collaboration-bun
+npx @yopem-ui/cli add editor-collaboration-bun
+pnpm dlx @yopem-ui/cli add editor-collaboration-bun
+yarn dlx @yopem-ui/cli add editor-collaboration-bun
+\`\`\`
+
+Use the Bun item only for Bun. Import \`createBunEditorCollaborationService\` from \`${imports.lib.replace(/\/stylex$/, "/editor-collaboration")}/collaboration-bun\`. Pass its \`fetch\` and \`websocket\` handlers to \`Bun.serve\` with host TLS and connection limits.
+
+\`\`\`sh
+bunx --bun @yopem-ui/cli add editor-collaboration-node
+npx @yopem-ui/cli add editor-collaboration-node
+pnpm dlx @yopem-ui/cli add editor-collaboration-node
+yarn dlx @yopem-ui/cli add editor-collaboration-node
+\`\`\`
+
+Use the Node item only for Node. Import \`createNodeEditorCollaborationService\` from \`${imports.lib.replace(/\/stylex$/, "/editor-collaboration")}/collaboration-node\`. Bind its \`node:http\` server privately behind a trusted HTTPS/WSS proxy.
+
+Keep native runtime imports out of browser and generic server barrels. Reuse host authentication with verified expiry, exact HTTPS origin, CSRF checks, literal-true document policies, real SQL transactions, and a schema-complete initializer. Keep binary document frames and bounded text readiness, delivery, and ACK controls. Recipient rechecks do not make revocation atomic with database writes. History is bounded; no automatic compaction is supplied. Do not replay uncertain offline drafts. See https://ui.yopem.com/docs/editor-collaboration for protocol and deployment limits.
+
+Use optional editor-assets server source for private R2 or S3 assets with D1 or PostgreSQL.
+Import it from \`${imports.lib.replace(/\/stylex$/, "/editor-assets")}\` on the server only.
+Apply matching dialect migrations 0001, 0002, and 0003 in order.
+Supply existing authentication, verified expiry, document and asset policy, exact origins, CSRF, quotas, and bounded scanners.
+Reuse factory instances. Schedule cleanup and complete inventory cycles. Keep lifetime reservations and terminal probes.
+Asset repositories do not receive request cancellation. PostgreSQL timeouts are per statement, not cumulative; pool waits need host limits.
+D1 batches and R2 binding calls cannot be interrupted through this API. S3 fetches receive cancellation signals.
+Resolve private relative routes against an explicit trusted HTTPS same-origin delivery origin.
+Validate the exact document and asset route. Native media requires existing same-origin cookies.
+Never put tokens in URLs or use a public bucket fallback. Keep provider credentials on the host.
+Fixture validators are not production scanners. This item adds no media UI nodes or accounts.
+See https://ui.yopem.com/docs/editor-assets for callback and deployment limits.
+
 ### Editor document storage
 
 Install optional document storage with the matching package manager:

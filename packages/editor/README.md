@@ -132,6 +132,25 @@ tickets or guarantee immediate session revocation.
 Better Auth verification disables cookie caching and session refresh. Host auth
 routes remain responsible for refresh.
 
+## Server collaboration
+
+The separate `editor-collaboration-server` item supplies ticket, session, and
+protocol helpers. Install `editor-collaboration-worker`,
+`editor-collaboration-bun`, or `editor-collaboration-node` for the selected
+runtime. Keep native runtime imports out of browser and generic server entries.
+
+Reuse host authentication with verified expiry, an exact HTTPS origin, CSRF
+checks, literal-true document policies, real SQL transactions, and a
+schema-complete initializer. Bun can use host TLS. The Node adapter uses
+`node:http`; bind it privately behind a trusted HTTPS/WSS proxy. Recipient
+rechecks do not make revocation atomic with database writes.
+
+The `editor-v1` protocol uses binary document frames and bounded text readiness,
+delivery, and ACK controls. History is bounded; no automatic compaction or
+online generation rotation is supplied. Do not replay offline drafts with
+uncertain durable outcomes. This source guide does not claim runtime or
+deployment validation.
+
 ## Server AI core
 
 The server AI module provides OpenAI, Anthropic, and Workers AI adapters. Keep

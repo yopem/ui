@@ -29,10 +29,32 @@ for (const part of editorParts.filter(
       exact: true,
     })
 
-    await expect(editor).toHaveAttribute("contenteditable", "true")
-    await editor.click()
-    await editor.pressSequentially("Editor preview")
-    await expect(editor).toContainText("Editor preview")
+    if (part.item === "editor-collaboration") {
+      await expect(
+        preview.getByRole("textbox", { name: "Document ID", exact: true }),
+      ).toBeVisible()
+      await expect(
+        preview.getByRole("textbox", { name: "Ticket endpoint", exact: true }),
+      ).toBeVisible()
+      await expect(
+        preview.getByRole("textbox", {
+          name: "WebSocket endpoint",
+          exact: true,
+        }),
+      ).toBeVisible()
+      await expect(
+        preview.getByLabel("CSRF token", { exact: true }),
+      ).toHaveAttribute("type", "password")
+      await expect(
+        preview.getByRole("button", { name: "Connect to host", exact: true }),
+      ).toBeEnabled()
+      await expect(preview.locator('[contenteditable="true"]')).toHaveCount(0)
+    } else {
+      await expect(editor).toHaveAttribute("contenteditable", "true")
+      await editor.click()
+      await editor.pressSequentially("Editor preview")
+      await expect(editor).toContainText("Editor preview")
+    }
 
     if (part.name === "EditorLinkControl") {
       await editor.press("ControlOrMeta+a")

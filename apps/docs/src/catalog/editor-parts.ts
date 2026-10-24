@@ -1,4 +1,5 @@
 import { editorCodeParts } from "./editor-code-parts"
+import { editorCollaborationParts } from "./editor-collaboration-parts"
 import { editorMathParts } from "./editor-math-parts"
 import { editorTypeaheadParts } from "./editor-typeahead-parts"
 
@@ -219,6 +220,7 @@ export const editorParts = [
       "Render validated HTML with native disclosure and safe title links.",
   },
   ...editorMathParts,
+  ...editorCollaborationParts,
   ...editorTypeaheadParts,
 ] as const
 

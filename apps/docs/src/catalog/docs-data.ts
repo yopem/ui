@@ -47,6 +47,12 @@ export function getRequiredItems(slug: string, previewSource = "") {
 
 export const guidePages = [
   {
+    title: "Editor collaboration",
+    url: "/docs/editor-collaboration",
+    content:
+      "Install collaboration with Bun, npm, pnpm, or Yarn. Use Durable Objects with D1 or PostgreSQL with host WebSocket upgrades. Supply existing authentication, verified expiry, document policy, exact origins, CSRF, and complete schema validation. Keep Worker adapters separate from portable server imports. Preserve bounded history and offline drafts.",
+  },
+  {
     title: "Editor document storage",
     url: "/docs/editor-store",
     content:

@@ -57,6 +57,7 @@ export const navigationGroups = [
       { name: "Composition guide", url: "/docs/editor" },
       { name: "Authentication", url: "/docs/editor-auth" },
       { name: "Document storage", url: "/docs/editor-store" },
+      { name: "Collaboration", url: "/docs/editor-collaboration" },
       ...editorParts.map((part) => ({
         name: part.name,
         url: `/editor/${part.slug}`,
