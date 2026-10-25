@@ -385,7 +385,7 @@ const examples = [
   {
     slug: "native-collaboration",
     sourceFile: "public-native-collaboration",
-    workflowIds: [],
+    workflowIds: ["collaboration"],
     title: "Host-authorized Hocuspocus and WebRTC rooms",
     description:
       "Change or generate persisted room IDs. View separate server and peer states with host-verified identities and permissions.",
@@ -399,7 +399,7 @@ const examples = [
       "label",
     ],
     limits:
-      "Requires an authorized HTTPS grant endpoint, trusted WSS Hocuspocus hosting and authoritative one-time room initialization. WebRTC requires explicit trusted-writer signaling and allows nine peers. Only room IDs enter browser storage. Hocuspocus sync is not proof of durable storage, and peer discovery is not a connection. Native transports do not provide editor-v1 durable ACKs, per-frame host policy or atomic revocation. Host services, identity isolation, SDK disposal, SSR, clipboard, focus and accessibility remain unverified.",
+      "Requires an authorized HTTPS grant endpoint, trusted WSS Hocuspocus hosting and authoritative one-time room initialization. Returned seeded metadata is not proof of initialization. New tabs reuse the stored room ID; existing tabs do not follow room changes automatically. WebRTC requires explicit trusted-writer signaling and allows nine peers. Only room IDs enter browser storage. Hocuspocus sync is not proof of durable storage, and peer discovery is not a connection. Native transports do not provide editor-v1 durable ACKs, per-frame host policy or atomic revocation. Source coverage includes configured native transport operations, not deployed services or verified concurrency. Host enforcement, identities, SDK disposal, SSR, clipboard, focus and accessibility remain deferred.",
   },
   {
     slug: "public-collaboration",
