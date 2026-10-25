@@ -104,7 +104,8 @@
     "./cursor-overlay": "./src/cursor-overlay.tsx",
     "./cursor-overlay/store": "./src/cursor-overlay-store.ts",
     "./drawing": "./src/drawing.ts",
-    "./drawing/model": "./src/drawing-model.ts"
+    "./drawing/model": "./src/drawing-model.ts",
+    "./drawing/browser": "./src/drawing-browser.tsx"
   },
   "scripts": {
     "typecheck": "tsc --noEmit"
