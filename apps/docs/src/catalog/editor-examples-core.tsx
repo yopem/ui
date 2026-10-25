@@ -362,14 +362,14 @@ const examples = [
   {
     slug: "public-cursors",
     sourceFile: "public-cursors",
-    workflowIds: [],
-    title: "Native cursor and toolbar selection paint",
+    workflowIds: ["cursor-overlay"],
+    title: "Native drop caret and configured AI selection",
     description:
-      "Paint native drag carets and retain browser ranges during toolbar focus without adding document data.",
+      "Paint native drag carets and retain selected text while a toolbar control or configured AI panel has focus. The editor works before AI setup.",
     Component: PublicCursorsExample,
-    items: ["editor-cursor-overlay"],
+    items: ["editor-cursor-overlay", "hstack"],
     limits:
-      "Paint follows native selection and drop geometry without changing saved state. Toolbar focus retention is not AI authorization or acceptance. Cross-frame geometry, cleanup, pointer behavior and accessibility remain unverified. This partial workflow earns no full cursor-overlay credit.",
+      "Paint does not grant AI authorization or proposal approval. AI needs an explicit same-origin endpoint, document ID, current CSRF headers, and host permission. Geometry, cleanup, native drag, real-provider behavior and accessibility remain unverified. Mapped credit covers source operations only, not runtime acceptance.",
   },
   {
     slug: "public-floating-toolbar",
