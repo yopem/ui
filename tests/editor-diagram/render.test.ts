@@ -1,5 +1,6 @@
 import { createEditorDiagramMetadata } from "@editor/diagram-model"
 import {
+  assertEditorDiagramRenderActive,
   renderEditorDiagram,
   sanitizeEditorDiagramSvg,
   type EditorDiagramRenderInput,
@@ -21,6 +22,48 @@ afterEach(() => {
 })
 
 describe("editor diagram rendering", () => {
+  test("checks cancellation and wall-clock budgets before SDK dispatch", () => {
+    const signal = new AbortController().signal
+    expect(() =>
+      assertEditorDiagramRenderActive(signal, Date.now() + 60000),
+    ).not.toThrow()
+    expect(() =>
+      assertEditorDiagramRenderActive(AbortSignal.abort(), Date.now() + 60000),
+    ).toThrow()
+
+    for (const deadline of [0, NaN, Infinity, Date.now() + 0.5])
+      expect(() => assertEditorDiagramRenderActive(signal, deadline)).toThrow()
+  })
+
+  test("observes renderer rejection when dispatch cancels its request", async () => {
+    const controller = new AbortController()
+
+    const pending = renderEditorDiagram(
+      {
+        diagram: createEditorDiagramMetadata("mermaid"),
+        source: "flowchart LR\nA --> B",
+        signal: controller.signal,
+        deadlineAt: Date.now() + 1000,
+      },
+      () => {
+        controller.abort("cancelled")
+
+        return Promise.reject(new Error("SDK dispatch rejected."))
+      },
+    )
+
+    let rejection: unknown
+
+    try {
+      await pending
+    } catch (cause) {
+      rejection = cause
+    }
+
+    expect(rejection).toBeInstanceOf(Error)
+    await new Promise<void>((resolve) => setTimeout(resolve, 0))
+  })
+
   test("sanitizes an SVG document without changing its diagram text", () => {
     const svg = sanitizeEditorDiagramSvg(safeSvg)
 

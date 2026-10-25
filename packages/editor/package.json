@@ -93,7 +93,11 @@
     "./diagram/html": "./src/diagram-html.ts",
     "./diagram/model": "./src/diagram-model.ts",
     "./diagram/render": "./src/diagram-render.ts",
-    "./diagram/state": "./src/diagram-state.ts"
+    "./diagram/state": "./src/diagram-state.ts",
+    "./diagram/renderers/mermaid": "./src/diagram-renderers/mermaid.browser.ts",
+    "./diagram/renderers/plantuml": "./src/diagram-renderers/plantuml.browser.ts",
+    "./diagram/renderers/graphviz": "./src/diagram-renderers/graphviz.ts",
+    "./diagram/renderers/flowchart": "./src/diagram-renderers/flowchart.browser.ts"
   },
   "scripts": {
     "typecheck": "tsc --noEmit"

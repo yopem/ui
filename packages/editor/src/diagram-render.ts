@@ -220,7 +220,10 @@ export type EditorDiagramTransport = (
   init?: RequestInit,
 ) => Promise<Response>
 
-function throwIfAborted(signal: AbortSignal, deadlineAt: number) {
+export function assertEditorDiagramRenderActive(
+  signal: AbortSignal,
+  deadlineAt: number,
+) {
   if (signal.aborted)
     throw new Error(
       signal.reason === "deadline"
@@ -228,12 +231,14 @@ function throwIfAborted(signal: AbortSignal, deadlineAt: number) {
         : "Diagram rendering was cancelled.",
     )
 
-  if (Date.now() >= deadlineAt) throw new Error("Diagram rendering timed out.")
+  if (!Number.isSafeInteger(deadlineAt) || Date.now() >= deadlineAt)
+    throw new Error("Diagram rendering timed out.")
 }
 
 function untilAbort<T>(pending: Promise<T>, signal: AbortSignal): Promise<T> {
   return new Promise((resolve, reject) => {
     function abort() {
+      signal.removeEventListener("abort", abort)
       reject(
         new Error(
           signal.reason === "deadline"
@@ -243,6 +248,11 @@ function untilAbort<T>(pending: Promise<T>, signal: AbortSignal): Promise<T> {
       )
     }
 
+    pending
+      .then(resolve, reject)
+      .finally(() => signal.removeEventListener("abort", abort))
+      .catch(() => undefined)
+
     if (signal.aborted) {
       abort()
 
@@ -250,10 +260,6 @@ function untilAbort<T>(pending: Promise<T>, signal: AbortSignal): Promise<T> {
     }
 
     signal.addEventListener("abort", abort, { once: true })
-    pending
-      .then(resolve, reject)
-      .finally(() => signal.removeEventListener("abort", abort))
-      .catch(() => undefined)
   })
 }
 
@@ -620,16 +626,19 @@ export async function renderEditorDiagram(
 
   try {
     if (input.signal.aborted) cancel()
-    throwIfAborted(controller.signal, input.deadlineAt)
+    assertEditorDiagramRenderActive(controller.signal, input.deadlineAt)
 
-    const result = renderer({ ...input, signal: controller.signal })
-    throwIfAborted(controller.signal, input.deadlineAt)
+    const pending = Promise.resolve(
+      renderer({ ...input, signal: controller.signal }),
+    )
 
-    const svg = await untilAbort(Promise.resolve(result), controller.signal)
-    throwIfAborted(controller.signal, input.deadlineAt)
+    if (Date.now() >= input.deadlineAt) controller.abort("deadline")
+
+    const svg = await untilAbort(pending, controller.signal)
+    assertEditorDiagramRenderActive(controller.signal, input.deadlineAt)
 
     const safeSvg = sanitizeEditorDiagramSvg(svg)
-    throwIfAborted(controller.signal, input.deadlineAt)
+    assertEditorDiagramRenderActive(controller.signal, input.deadlineAt)
     completed = true
 
     return safeSvg
@@ -665,7 +674,7 @@ async function readBoundedSvg(response: Response, signal: AbortSignal) {
 
   try {
     while (true) {
-      throwIfAborted(signal, Number.MAX_SAFE_INTEGER)
+      assertEditorDiagramRenderActive(signal, Number.MAX_SAFE_INTEGER)
       const result = await untilAbort(reader.read(), signal)
 
       if (result.done) {
