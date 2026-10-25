@@ -6,7 +6,11 @@ import type {
 } from "@yopem-ui/editor/word-clipboard-model"
 
 import { Box } from "@registry/components/ui/box"
+import { Button } from "@registry/components/ui/button"
+import { Field, FieldLabel } from "@registry/components/ui/field"
+import { Form } from "@registry/components/ui/form"
 import { Heading } from "@registry/components/ui/heading"
+import { Input } from "@registry/components/ui/input"
 import { Stack } from "@registry/components/ui/stack"
 import { Text } from "@registry/components/ui/text"
 import {
@@ -30,7 +34,7 @@ import {
   EditorWordClipboardExtension,
   registerWordClipboardPaste,
 } from "@yopem-ui/editor/word-clipboard"
-import { useState } from "react"
+import { useId, useState, type FormEvent } from "react"
 import { z } from "zod"
 
 const extensions = [
@@ -109,6 +113,91 @@ function createImageResolver(
   }
 }
 
+const imageLookupSchema = z.strictObject({
+  source: z.string().min(1).max(2048),
+  url: z.string().min(1).max(2048),
+  alt: z.string().min(1).max(2000),
+})
+
+function WordImageLookup({
+  onConfigure,
+}: {
+  readonly onConfigure: (mapping: PublicWordClipboardImageMapping) => void
+}) {
+  const sourceId = useId()
+  const urlId = useId()
+  const altId = useId()
+  const [error, setError] = useState("")
+  const [configured, setConfigured] = useState(false)
+
+  function configure(event: FormEvent<HTMLFormElement>) {
+    if (event.defaultPrevented) return
+    event.preventDefault()
+    const fields = new FormData(event.currentTarget)
+
+    const parsed = imageLookupSchema.safeParse({
+      source: fields.get("source"),
+      url: fields.get("url"),
+      alt: fields.get("alt"),
+    })
+
+    if (!parsed.success) {
+      setError(
+        "Supply a bounded exact source, HTTPS URL, and alternative text.",
+      )
+
+      return
+    }
+
+    try {
+      onConfigure({
+        source: parsed.data.source,
+        media: { kind: "image", url: parsed.data.url, alt: parsed.data.alt },
+      })
+      setError("")
+      setConfigured(true)
+    } catch {
+      setError(
+        "Use an approved HTTPS image URL without credentials, queries, or fragments.",
+      )
+    }
+  }
+
+  return (
+    <Form onSubmit={configure}>
+      <Stack>
+        <Text>
+          This local fixture maps one exact Word source to a host-approved
+          image. Apply the lookup to reset this local document. Setup makes no
+          image request. Hosts must authorize and scan images before they supply
+          a mapping.
+        </Text>
+        <Field>
+          <FieldLabel htmlFor={sourceId}>Exact Word image source</FieldLabel>
+          <Input id={sourceId} name="source" required maxLength={2048} />
+        </Field>
+        <Field>
+          <FieldLabel htmlFor={urlId}>Approved HTTPS image URL</FieldLabel>
+          <Input id={urlId} name="url" type="url" required maxLength={2048} />
+        </Field>
+        <Field>
+          <FieldLabel htmlFor={altId}>
+            Approved image alternative text
+          </FieldLabel>
+          <Input id={altId} name="alt" required maxLength={2000} />
+        </Field>
+        <Button type="submit" variant="outline">
+          Apply image lookup and reset
+        </Button>
+        {error ? <Text role="alert">{error}</Text> : null}
+        {configured ? (
+          <Box render={<output />}>Image lookup configured.</Box>
+        ) : null}
+      </Stack>
+    </Form>
+  )
+}
+
 function WordClipboardControls({ resolveImage }: WordClipboardControlsProps) {
   const editor = useEditor()
   const [error, setError] = useState("")
@@ -155,24 +244,55 @@ export interface PublicWordClipboardExampleProps {
 export function PublicWordClipboardExample({
   imageMappings,
 }: PublicWordClipboardExampleProps) {
-  const [resolveImage] = useState(() => createImageResolver(imageMappings))
+  const titleId = useId()
+  const [editable, setEditable] = useState(true)
+
+  const [session, setSession] = useState(() => ({
+    generation: 0,
+    resolveImage: createImageResolver(imageMappings),
+  }))
+
+  function configureImage(mapping: PublicWordClipboardImageMapping) {
+    const resolveImage = createImageResolver([mapping])
+    setSession((current) => ({
+      generation: current.generation + 1,
+      resolveImage,
+    }))
+  }
+
+  function toggleEditable() {
+    setEditable((current) => !current)
+  }
 
   return (
     <Box
-      render={<section aria-labelledby="public-word-clipboard-title" />}
+      render={<section aria-labelledby={titleId} />}
       data-testid="public-word-clipboard"
     >
       <Stack>
-        <Heading id="public-word-clipboard-title">Word clipboard paste</Heading>
+        <Heading id={titleId}>Word clipboard paste</Heading>
         <Text>
           Paste supported Word text, lists, and tables. Formatting uses a
           bounded subset. Images stay rejected unless the host supplies exact,
           validated mappings before root creation. Keep mappings fixed until
           remount.
         </Text>
-        <EditorRoot ariaLabel="Word clipboard editor" extensions={extensions}>
+        {imageMappings === undefined ? (
+          <WordImageLookup onConfigure={configureImage} />
+        ) : null}
+        <Button variant="outline" onClick={toggleEditable}>
+          {editable
+            ? "Make Word clipboard editor read-only"
+            : "Make Word clipboard editor editable"}
+        </Button>
+        <EditorRoot
+          key={session.generation}
+          ariaLabel="Word clipboard editor"
+          editable={editable}
+          extensions={extensions}
+        >
           <EditorContent placeholder="Paste content copied from Word…" />
-          <WordClipboardControls resolveImage={resolveImage} />
+          <WordClipboardControls resolveImage={session.resolveImage} />
         </EditorRoot>
       </Stack>
     </Box>

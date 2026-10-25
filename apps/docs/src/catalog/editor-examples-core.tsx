@@ -618,14 +618,14 @@ const examples = [
   {
     slug: "public-word-clipboard",
     sourceFile: "public-word-clipboard",
-    workflowIds: [],
+    workflowIds: ["docx"],
     title: "Bounded Word clipboard fragments",
     Component: PublicWordClipboardExample,
     items: ["editor-word-clipboard"],
     description:
       "Insert supported Office HTML as a native fragment. Preserve clipboard policies, list presentation, native history, and visible import errors.",
     limits:
-      "Images need a synchronous trusted host resolver. No image source is fetched automatically. This subset does not preserve Word page layout. Native Word capture, host policy, history, and browser acceptance remain pending.",
+      "The optional local image lookup resets this document and never fetches the raw Word source. Hosts must approve and scan mapped HTTPS images. The unchanged pinned HTML fixture has incomplete capture provenance and remains execution-unverified. Unsupported RTF, VML, page layout, and fragment links reject. Native Word capture, host policy, history, and browser acceptance remain deferred.",
   },
   {
     slug: "public-docx",

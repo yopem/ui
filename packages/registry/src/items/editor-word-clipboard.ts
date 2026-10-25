@@ -23,6 +23,8 @@ export const editorWordClipboardItem: SourceItem = {
     "editor-document",
     "editor-list-presentation",
     "editor-media",
+    "field",
+    "form",
     "heading",
   ],
   files: ["word-clipboard.ts", "word-clipboard-model.ts"].map((file) => ({
