@@ -119,6 +119,7 @@ Load \`${imports.editor}/drawing-browser\` and the SDK stylesheet inside a frame
 Self-host SDK fonts under an approved same-origin path. Preserve SDK/font notices and restrict fallback font resources through CSP.
 Register one runtime per root and run its cleanup. Concurrent runtimes must share the global asset path.
 Keep scenes within 512 KiB and 2000 supported elements. Reject files, images, link targets, custom metadata, and unsupported types.
+Read-only roots can open saved scenes in view mode. They cannot insert or apply drawing edits.
 Validate drafts and sanitize SVG before download. Generic document conversion does not support drawing nodes.
 SDK/transitive dependency advisories and SSR/browser/accessibility acceptance remain unresolved. Do not claim production safety.
 Install optional \`editor-cursor-overlay\` separately. Import \`EditorCursorOverlay\` from \`${imports.editor}/cursor-overlay\`.

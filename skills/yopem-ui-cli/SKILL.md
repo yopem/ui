@@ -1029,7 +1029,8 @@ fonts and preserve SDK and font notices. Restrict fallback font resources
 through CSP. Register one drawing runtime per root and run its cleanup.
 Concurrent runtimes must share the asset path. Keep scenes within 512 KiB and
 2000 supported shapes. Files, images, link targets, and custom metadata reject.
-Validate drafts and sanitize SVG before download. Generic document conversion
-does not support these nodes. SDK dependency advisories and
+Read-only roots can open saved scenes in view mode. They cannot insert or apply
+drawing edits. Validate drafts and sanitize SVG before download. Generic
+document conversion does not support these nodes. SDK dependency advisories and
 runtime/SSR/accessibility acceptance remain unresolved. Do not claim production
 safety.

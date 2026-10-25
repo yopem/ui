@@ -220,10 +220,25 @@ function EditorDrawingView({
   })
 
   function openEditor() {
-    if (!editor.isEditable()) return
+    const serializedScene = JSON.stringify(scene)
+
+    const current = editor.getEditorState().read(() => {
+      const node = $getNodeByKey(nodeKey)
+
+      return (
+        $isEditorDrawingNode(node) &&
+        node.isAttached() &&
+        JSON.stringify(node.getScene()) === serializedScene
+      )
+    })
+
+    if (!current) {
+      setError("Drawing changed. Close and reopen its controls.")
+
+      return
+    }
 
     const sequence = ++loadSequence.current
-    const serializedScene = JSON.stringify(scene)
     origin.current = serializedScene
     originState.current = editor.getEditorState()
     draft.current = scene
@@ -410,8 +425,8 @@ function EditorDrawingView({
       <Stack>
         <Text>{`Drawing with ${scene.elements.length} elements`}</Text>
         <Stack xstyle={styles.toolbar}>
-          <Button disabled={!editable} onClick={openEditor}>
-            Edit drawing
+          <Button onClick={openEditor}>
+            {editable ? "Edit drawing" : "View drawing"}
           </Button>
         </Stack>
         {error ? (
@@ -421,7 +436,7 @@ function EditorDrawingView({
         ) : null}
         <Dialog open={open} onOpenChange={changeOpen}>
           <DialogPopup
-            aria-label="Edit drawing"
+            aria-label={editable ? "Edit drawing" : "View drawing"}
             showCloseButton={false}
             bottomStickOnMobile={false}
             portalProps={{
@@ -430,7 +445,9 @@ function EditorDrawingView({
             xstyle={styles.dialog}
           >
             <DialogHeader>
-              <DialogTitle>Edit drawing</DialogTitle>
+              <DialogTitle>
+                {editable ? "Edit drawing" : "View drawing"}
+              </DialogTitle>
               <DialogDescription>
                 Unsupported files and embedded URLs are rejected. Apply saves
                 one editor history step.

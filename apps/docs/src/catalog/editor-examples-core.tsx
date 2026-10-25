@@ -338,14 +338,14 @@ const examples = [
   {
     slug: "public-drawing",
     sourceFile: "public-drawing",
-    workflowIds: [],
-    title: "Configured bounded drawing scenes",
+    workflowIds: ["excalidraw"],
+    title: "Seeded drawing edit and read-only view",
     description:
-      "Edit restricted Excalidraw drafts with explicit local SDK assets and sanitized SVG export. Runtime acceptance is deferred.",
+      "Insert seeded rectangle and ellipse shapes, edit their native scene, and reopen saved drawings in read-only view. SDK assets require explicit approval.",
     Component: EditorDrawingClient,
     items: ["editor-drawing"],
     limits:
-      "Requires browser-only SDK loading, approved same-origin assets and the SDK stylesheet. Files, images, links, custom metadata and unsupported element types reject. Generic document conversion is unsupported. SDK and dependency-audit acceptance remain required. No complete mapped Excalidraw workflow credit.",
+      "Requires browser-only SDK loading, approved same-origin assets and the SDK stylesheet. Files, images, links, custom metadata and unsupported element types reject. Generic document conversion is unsupported. SDK, drawing history, read-only viewing, accessibility and dependency-audit acceptance remain deferred. The credit covers mapped source operations only, not unrestricted Excalidraw or verified runtime equivalence.",
   },
   {
     slug: "public-collaboration",

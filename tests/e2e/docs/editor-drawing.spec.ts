@@ -184,3 +184,88 @@ test("read-only editor prevents drawing insertion and clears a configured runtim
 
   expect(accessibility.violations).toEqual([])
 })
+
+test("seeded rectangle and ellipse persist through editing and read-only viewing", async ({
+  page,
+}, testInfo) => {
+  test.slow()
+  const errors: string[] = []
+  page.on("pageerror", (error) => errors.push(error.message))
+  const example = await openDrawingExample(page)
+  await example
+    .getByRole("button", { name: "Insert shape fixture", exact: true })
+    .click()
+  const drawing = example.locator("figure[data-editor-drawing]")
+  await expect(drawing).toHaveCount(1)
+  const initial = await drawing.getAttribute("data-editor-drawing-scene")
+
+  if (initial === null) throw new Error("Missing fixture scene metadata")
+  expect(JSON.parse(initial)).toMatchObject({
+    elements: [
+      { id: "fixture-rectangle", type: "rectangle" },
+      { id: "fixture-ellipse", type: "ellipse" },
+    ],
+  })
+  await example
+    .getByRole("button", { name: "Edit drawing", exact: true })
+    .click()
+  const dialog = page.getByRole("dialog", { name: "Edit drawing", exact: true })
+  await expect(dialog.locator("canvas").last()).toBeVisible()
+  await dialog.getByTestId("toolbar-rectangle").click()
+  const bounds = await dialog.locator("canvas").last().boundingBox()
+
+  if (!bounds) throw new Error("Drawing canvas is unavailable")
+  await page.mouse.move(bounds.x + 60, bounds.y + 60)
+  await page.mouse.down()
+  await page.mouse.move(bounds.x + 180, bounds.y + 130, { steps: 8 })
+  await page.mouse.up()
+  await dialog
+    .getByRole("button", { name: "Apply drawing", exact: true })
+    .click()
+  await expect(dialog).toBeHidden()
+  await expect
+    .poll(() => drawing.getAttribute("data-editor-drawing-scene"))
+    .not.toBe(initial)
+  const saved = await drawing.getAttribute("data-editor-drawing-scene")
+
+  if (saved === null) throw new Error("Missing saved fixture scene metadata")
+  await example
+    .getByRole("checkbox", { name: "Read-only editor", exact: true })
+    .check()
+  await expect(
+    example.getByRole("button", { name: "Insert shape fixture", exact: true }),
+  ).toBeDisabled()
+  await example
+    .getByRole("button", { name: "View drawing", exact: true })
+    .click()
+  const viewer = page.getByRole("dialog", { name: "View drawing", exact: true })
+  await expect(viewer.locator("canvas").last()).toBeVisible()
+  await expect(
+    viewer.getByRole("button", { name: "Apply drawing", exact: true }),
+  ).toBeDisabled()
+  await page.keyboard.press("r")
+  await expect(drawing).toHaveAttribute("data-editor-drawing-scene", saved)
+  const axe = await new AxeBuilder({ page }).analyze()
+  expect(axe.violations).toEqual([])
+  await testInfo.attach("drawing-read-only-view.png", {
+    body: await page.screenshot({ scale: "css" }),
+    contentType: "image/png",
+  })
+  await viewer
+    .getByRole("button", { name: "Cancel drawing", exact: true })
+    .click()
+  await expect(viewer).toBeHidden()
+  await expect(drawing).toHaveAttribute("data-editor-drawing-scene", saved)
+  await example
+    .getByRole("checkbox", { name: "Read-only editor", exact: true })
+    .uncheck()
+  await example
+    .getByRole("button", { name: "Edit drawing", exact: true })
+    .click()
+  await expect(dialog.locator("canvas").last()).toBeVisible()
+  await dialog
+    .getByRole("button", { name: "Cancel drawing", exact: true })
+    .click()
+  await expect(drawing).toHaveAttribute("data-editor-drawing-scene", saved)
+  expect(errors).toEqual([])
+})

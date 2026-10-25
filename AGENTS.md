@@ -1019,6 +1019,7 @@ Concurrent runtimes must share one asset path. Owned cleanup restores the previo
 Keep scenes within 512 KiB and 2000 supported native elements.
 Reject files, images, link targets, custom metadata, and unsupported element types.
 Validate draft output before replacing the saved drawing node.
+Read-only roots can open saved scenes in view mode. They cannot insert or apply drawing edits.
 Validate and sanitize SVG output before download.
 Generic document conversion does not support drawing nodes.
 

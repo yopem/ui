@@ -1,7 +1,9 @@
 "use client"
 
 import "@excalidraw/excalidraw/index.css"
+import { $insertNodeToNearestRoot } from "@lexical/utils"
 import { Box } from "@registry/components/ui/box"
+import { Button } from "@registry/components/ui/button"
 import { Checkbox } from "@registry/components/ui/checkbox"
 import { Input } from "@registry/components/ui/input"
 import { Label } from "@registry/components/ui/label"
@@ -13,20 +15,93 @@ import {
   EditorRoot,
   EditorToolbar,
   useEditor,
+  useEditorState,
 } from "@yopem-ui/editor"
-import { EditorDrawingExtension } from "@yopem-ui/editor/drawing"
+import {
+  $createEditorDrawingNode,
+  EditorDrawingExtension,
+  type EditorDrawingScene,
+} from "@yopem-ui/editor/drawing"
 import {
   EditorDrawingInsertButton,
   registerEditorDrawingRuntime,
 } from "@yopem-ui/editor/drawing/browser"
-import { useId, useState } from "react"
+import {
+  $getRoot,
+  $getSelection,
+  $isRangeSelection,
+  HISTORY_PUSH_TAG,
+} from "lexical"
+import { type MouseEvent, useId, useState } from "react"
 
 const extensions = [EditorDrawingExtension]
 
 const assetPath = "/assets/excalidraw/"
 
+const drawingDefaults = {
+  angle: 0,
+  strokeColor: "#000000",
+  backgroundColor: "transparent",
+  fillStyle: "solid",
+  strokeWidth: 2,
+  strokeStyle: "solid",
+  roughness: 0,
+  opacity: 100,
+  groupIds: [],
+  frameId: null,
+  roundness: null,
+  version: 1,
+  versionNonce: 1,
+  isDeleted: false,
+  boundElements: [],
+  updated: 1700000000000,
+  link: null,
+  locked: false,
+}
+
+const drawingFixture: EditorDrawingScene = {
+  elements: [
+    {
+      ...drawingDefaults,
+      id: "fixture-rectangle",
+      type: "rectangle",
+      x: 60,
+      y: 60,
+      width: 160,
+      height: 120,
+      seed: 11,
+    },
+    {
+      ...drawingDefaults,
+      id: "fixture-ellipse",
+      type: "ellipse",
+      x: 300,
+      y: 80,
+      width: 120,
+      height: 120,
+      seed: 12,
+    },
+  ],
+}
+
 function DrawingControls() {
   const editor = useEditor()
+  const { editable } = useEditorState()
+
+  function insertDrawingFixture(event: MouseEvent<HTMLButtonElement>) {
+    if (event.defaultPrevented || !editor.isEditable()) return
+
+    editor.update(
+      () => {
+        if (!editor.isEditable()) return
+        const node = $createEditorDrawingNode(drawingFixture)
+
+        if ($isRangeSelection($getSelection())) $insertNodeToNearestRoot(node)
+        else $getRoot().append(node)
+      },
+      { tag: HISTORY_PUSH_TAG },
+    )
+  }
 
   const [connect] = useState(
     () =>
@@ -39,6 +114,9 @@ function DrawingControls() {
     <Stack ref={connect}>
       <EditorToolbar aria-label="Drawing editor tools">
         <EditorDrawingInsertButton />
+        <Button disabled={!editable} onClick={insertDrawingFixture}>
+          Insert shape fixture
+        </Button>
         <EditorHistoryButton action="undo" />
         <EditorHistoryButton action="redo" />
       </EditorToolbar>
@@ -56,7 +134,9 @@ export function PublicDrawingExample() {
       <Stack>
         <Text>
           Draw with Excalidraw. Scenes keep bounded native shapes and text only.
-          Files and embedded URLs are rejected.
+          Insert the rectangle and ellipse fixture, then edit and reopen it.
+          Saved drawings can also open in read-only view mode. Files and
+          embedded URLs are rejected.
         </Text>
         <Text>
           Load the Excalidraw stylesheet before this module. Serve its fonts at
