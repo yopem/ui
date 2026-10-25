@@ -359,6 +359,39 @@ function incomingSize(frame: IncomingFrame) {
   return frame.data.byteLength
 }
 
+export type EditorCollaborationTransport = Pick<
+  EditorCollaborationProvider,
+  keyof EditorCollaborationProvider
+>
+
+export function createValidatedAwarenessFacade(
+  awarenessDoc: Awareness,
+): ProviderAwareness {
+  return {
+    getLocalState: () => {
+      const result = userStateSchema.safeParse(awarenessDoc.getLocalState())
+
+      return result.success ? result.data : null
+    },
+    getStates: () => {
+      const states = new Map<number, UserState>()
+
+      for (const [clientId, value] of awarenessDoc.getStates()) {
+        const state = userStateSchema.safeParse(value)
+
+        if (state.success) states.set(clientId, state.data)
+      }
+
+      return states
+    },
+    on: (_type, listener) => awarenessDoc.on("update", listener),
+    off: (_type, listener) => awarenessDoc.off("update", listener),
+    setLocalState: (state) => awarenessDoc.setLocalState(state),
+    setLocalStateField: (field, value) =>
+      awarenessDoc.setLocalStateField(field, value),
+  }
+}
+
 export class EditorCollaborationProvider implements Provider {
   readonly doc: Y.Doc
   readonly awareness: ProviderAwareness
@@ -450,31 +483,7 @@ export class EditorCollaborationProvider implements Provider {
     this.awarenessData = options.awarenessData ?? {}
     this.doc = new Y.Doc()
     this.awarenessDoc = new Awareness(this.doc)
-    this.awareness = {
-      getLocalState: () => {
-        const result = userStateSchema.safeParse(
-          this.awarenessDoc.getLocalState(),
-        )
-
-        return result.success ? result.data : null
-      },
-      getStates: () => {
-        const states = new Map<number, UserState>()
-
-        for (const [clientId, value] of this.awarenessDoc.getStates()) {
-          const state = userStateSchema.safeParse(value)
-
-          if (state.success) states.set(clientId, state.data)
-        }
-
-        return states
-      },
-      on: (_type, listener) => this.awarenessDoc.on("update", listener),
-      off: (_type, listener) => this.awarenessDoc.off("update", listener),
-      setLocalState: (state) => this.awarenessDoc.setLocalState(state),
-      setLocalStateField: (field, value) =>
-        this.awarenessDoc.setLocalStateField(field, value),
-    }
+    this.awareness = createValidatedAwarenessFacade(this.awarenessDoc)
     this.documentUpdateListener = this.onDocumentUpdate.bind(this)
     this.doc.on("update", this.documentUpdateListener)
     this.awarenessListener = this.onAwarenessUpdate.bind(this)

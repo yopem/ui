@@ -42,7 +42,7 @@ import * as Y from "yjs"
 
 import type {
   EditorCollaborationClientOptions,
-  EditorCollaborationSnapshot,
+  EditorCollaborationTransport,
 } from "./collaboration-client"
 
 import { EditorCollaborationProvider } from "./collaboration-client"
@@ -51,7 +51,7 @@ import { useEditor } from "./root"
 const collaborationBindings = new WeakMap<
   LexicalEditor,
   {
-    provider: EditorCollaborationProvider
+    provider: EditorCollaborationTransport
     mountCursors(element: HTMLElement): () => void
   }
 >()
@@ -67,30 +67,34 @@ const collaborationStyles = stylex.create({
   },
 })
 
-export interface EditorCollaborationController {
+export interface EditorCollaborationController<
+  Transport extends EditorCollaborationTransport = EditorCollaborationTransport,
+> {
   readonly document: Y.Doc
-  readonly provider: EditorCollaborationProvider
+  readonly provider: Transport
   readonly extension: AnyLexicalExtensionArgument
   destroy(): void
 }
 
-interface EditorCollaborationContextValue {
-  controller: EditorCollaborationController
-  snapshot: EditorCollaborationSnapshot
-}
-
 const EditorCollaborationContext =
-  createContext<EditorCollaborationContextValue | null>(null)
+  createContext<EditorCollaborationController | null>(null)
 
 export function createEditorCollaboration(
   options: EditorCollaborationClientOptions,
-): EditorCollaborationController {
-  const provider = new EditorCollaborationProvider(options)
+): EditorCollaborationController<EditorCollaborationProvider> {
+  return createEditorCollaborationWithProvider(
+    new EditorCollaborationProvider(options),
+    options.documentId,
+  )
+}
 
+export function createEditorCollaborationWithProvider<
+  Transport extends EditorCollaborationTransport,
+>(provider: Transport, documentId: string) {
   return {
     document: provider.doc,
     provider,
-    extension: EditorCollaborationExtension(provider, options.documentId),
+    extension: EditorCollaborationExtension(provider, documentId),
     destroy() {
       provider.destroy()
     },
@@ -98,7 +102,7 @@ export function createEditorCollaboration(
 }
 
 export function EditorCollaborationExtension(
-  provider: EditorCollaborationProvider,
+  provider: EditorCollaborationTransport,
   documentId: string,
 ): AnyLexicalExtensionArgument {
   return defineExtension({
@@ -487,10 +491,8 @@ export function EditorCollaborationRoot({
   controller,
   children,
 }: EditorCollaborationRootProps) {
-  const snapshot = useEditorCollaboration(controller)
-
   return (
-    <EditorCollaborationContext value={{ controller, snapshot }}>
+    <EditorCollaborationContext value={controller}>
       <Box xstyle={collaborationStyles.root}>{children}</Box>
     </EditorCollaborationContext>
   )
@@ -504,6 +506,8 @@ export function EditorCollaborationStatus() {
       "EditorCollaborationStatus must be inside EditorCollaborationRoot.",
     )
 
+  const snapshot = useEditorCollaboration(context)
+
   const label = {
     idle: "Not connected",
     connecting: "Connecting",
@@ -515,7 +519,7 @@ export function EditorCollaborationStatus() {
     conflict: "Document changed",
     uncertain: "Connection outcome is uncertain",
     error: "Connection unavailable",
-  }[context.snapshot.status]
+  }[snapshot.status]
 
   return (
     <Box render={<output />} aria-live="polite" aria-atomic="true">
@@ -532,9 +536,11 @@ export function EditorCollaborationAwareness() {
       "EditorCollaborationAwareness must be inside EditorCollaborationRoot.",
     )
 
+  const snapshot = useEditorCollaboration(context)
+
   return (
     <List aria-label="Collaborators">
-      {context.snapshot.peers.map((peer) => (
+      {snapshot.peers.map((peer) => (
         <ListItem key={peer.clientId}>{peer.name}</ListItem>
       ))}
     </List>
@@ -554,7 +560,7 @@ export function EditorCollaborationCursors() {
     if (!element) return
     const binding = collaborationBindings.get(editor)
 
-    if (!binding || binding.provider !== context?.controller.provider)
+    if (!binding || binding.provider !== context?.provider)
       throw new Error(
         "EditorCollaborationCursors requires its controller extension in EditorRoot.",
       )

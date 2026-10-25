@@ -35,7 +35,9 @@ export const editorCollaborationItem: SourceItem = {
   docs: {
     api: [
       "createEditorCollaboration",
+      "createEditorCollaborationWithProvider",
       "EditorCollaborationProvider",
+      "EditorCollaborationTransport",
       "EditorCollaborationExtension",
       "EditorCollaborationRoot",
       "EditorCollaborationStatus",
@@ -51,6 +53,6 @@ export const editorCollaborationItem: SourceItem = {
       "EditorCollaborationWebSocket",
     ],
     usage:
-      "Import optional parts from @/components/editor/collaboration. Keep one stable controller and extension array per root. Supply explicit same-origin ticket and secure socket routes. Install editor-collaboration-server separately. See /docs/editor-collaboration.",
+      "Import optional parts from @/components/editor/collaboration. Keep one stable controller and extension array per root. Use createEditorCollaborationWithProvider for a compatible transport. Supply explicit same-origin ticket and secure socket routes. Install editor-collaboration-server separately. See /docs/editor-collaboration.",
   },
 }

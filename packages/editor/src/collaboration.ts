@@ -3,12 +3,14 @@ export {
   type EditorCollaborationClientOptions,
   type EditorCollaborationPeer,
   type EditorCollaborationSnapshot,
+  type EditorCollaborationTransport,
   type EditorCollaborationConnectionStatus,
   type EditorCollaborationWebSocket,
 } from "./collaboration-client"
 
 export {
   createEditorCollaboration,
+  createEditorCollaborationWithProvider,
   EditorCollaborationAwareness,
   EditorCollaborationCursors,
   EditorCollaborationExtension,
