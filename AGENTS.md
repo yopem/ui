@@ -948,7 +948,10 @@ Register its extension at root creation. Wrap `EditorContent` with `EditorBlockM
 Right-click a block or press Shift+F10. Keep native selection, clipboard policies, history, and host event cancellation.
 Configured `authorizeAction` must return literal `true`. Stale or pending document targets reject actions.
 Supply explicit `onAskAI` and `onCodeDrawing` callbacks when needed. These callbacks do not grant document access.
-No service or Add Comment action is supplied. The gallery omits unconfigured host actions and earns no full block-menu equivalence credit.
+Supply `onAddComment` with an `authorizeAction` policy for the Add comment action.
+The policy must return literal `true`. The callback owns review UI, focus, and storage.
+The controller passes frozen block context. It does not restore the captured selection for this action.
+No default service is supplied. The gallery omits unconfigured host actions and earns no full block-menu equivalence credit.
 
 ## Optional editor diagrams
 

@@ -50,6 +50,7 @@ export type EditorBlockMenuAction =
   | "align-justify"
   | "ask-ai"
   | "code-drawing"
+  | "add-comment"
 
 export interface EditorBlockMenuContext {
   readonly blockKey: NodeKey
@@ -65,6 +66,7 @@ export interface EditorBlockMenuOptions {
   ) => boolean
   onAskAI?: (context: EditorBlockMenuContext) => void | Promise<void>
   onCodeDrawing?: (context: EditorBlockMenuContext) => void | Promise<void>
+  onAddComment?: (context: EditorBlockMenuContext) => void | Promise<void>
 }
 
 export interface EditorBlockMenuSnapshot {
@@ -74,12 +76,14 @@ export interface EditorBlockMenuSnapshot {
   readonly canTransform: boolean
   readonly canAskAI: boolean
   readonly canCodeDrawing: boolean
+  readonly canAddComment: boolean
 }
 
 interface TargetRecord {
   readonly context: EditorBlockMenuContext
   readonly revision: number
   readonly index: number
+  readonly selection: ReturnType<typeof $getSelection>
 }
 
 const editableActions = new Set<EditorBlockMenuAction>([
@@ -165,6 +169,9 @@ export function createEditorBlockMenu(options: EditorBlockMenuOptions = {}) {
     canTransform: false,
     canAskAI: options.onAskAI !== undefined,
     canCodeDrawing: options.onCodeDrawing !== undefined,
+    canAddComment:
+      options.onAddComment !== undefined &&
+      options.authorizeAction !== undefined,
   }
 
   let snapshot = serverSnapshot
@@ -235,6 +242,7 @@ export function createEditorBlockMenu(options: EditorBlockMenuOptions = {}) {
           }),
           revision,
           index,
+          selection: selection?.clone() ?? null,
         },
         canTransform: transformableBlocks.has(block.getType()),
       }
@@ -274,8 +282,29 @@ export function createEditorBlockMenu(options: EditorBlockMenuOptions = {}) {
     })
   }
 
+  function selectionMatches(record: TargetRecord) {
+    const currentEditor = editor
+
+    if (!currentEditor) return false
+
+    return currentEditor.read("pending", () => {
+      const selection = $getSelection()
+
+      return record.selection?.is(selection) ?? selection === null
+    })
+  }
+
   function approved(action: EditorBlockMenuAction, record: TargetRecord) {
-    if (target !== record || !currentTarget(record)) return false
+    const requiresCurrentSelection = action === "add-comment"
+
+    if (
+      target !== record ||
+      !currentTarget(record) ||
+      (requiresCurrentSelection && !selectionMatches(record))
+    )
+      return false
+
+    if (requiresCurrentSelection && !options.authorizeAction) return false
 
     if (editableActions.has(action) && !editor?.isEditable()) return false
 
@@ -288,7 +317,11 @@ export function createEditorBlockMenu(options: EditorBlockMenuOptions = {}) {
       }
     }
 
-    return target === record && currentTarget(record) !== null
+    return (
+      target === record &&
+      currentTarget(record) !== null &&
+      (!requiresCurrentSelection || selectionMatches(record))
+    )
   }
 
   function restoreSelection() {
@@ -419,10 +452,30 @@ export function createEditorBlockMenu(options: EditorBlockMenuOptions = {}) {
   async function run(action: EditorBlockMenuAction) {
     const record = target
 
-    if (!record || !approved(action, record)) return false
+    if (!record) return false
+
+    if (!approved(action, record)) {
+      if (action === "add-comment") bookmark?.clear()
+
+      return false
+    }
+
     const currentEditor = editor
 
     if (!currentEditor) return false
+
+    if (action === "add-comment") {
+      if (!options.onAddComment) return false
+      bookmark?.clear()
+
+      try {
+        await options.onAddComment(record.context)
+
+        return true
+      } catch {
+        return false
+      }
+    }
 
     if (action === "ask-ai") {
       if (!options.onAskAI) return false
@@ -513,6 +566,9 @@ export function createEditorBlockMenu(options: EditorBlockMenuOptions = {}) {
             ...serverSnapshot,
             canAskAI: options.onAskAI !== undefined,
             canCodeDrawing: options.onCodeDrawing !== undefined,
+            canAddComment:
+              options.onAddComment !== undefined &&
+              options.authorizeAction !== undefined,
           })
         },
       )

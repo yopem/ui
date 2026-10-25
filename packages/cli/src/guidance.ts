@@ -86,7 +86,9 @@ Preserve the saved-range guard. Content changes and read-only transitions invali
 Install optional \`editor-block-menu\` separately. Import from \`${imports.editor}/block-menu-index\`.
 Create one stable controller per root. Register its extension and wrap \`EditorContent\` with \`EditorBlockMenu\`.
 Right-click or press Shift+F10. Configured action policy must return literal true; stale targets reject.
-Supply explicit Ask AI and Code Drawing callbacks. No default service or Add Comment action is supplied.
+Supply explicit Ask AI and Code Drawing callbacks. No default service is supplied.
+For Add comment, supply onAddComment and an authorizeAction policy that returns literal true.
+The comment callback owns review UI, focus, and storage. The controller does not restore its captured selection for this action.
 Callbacks do not grant document access. Preserve native selection, clipboard policies, history, and host event cancellation.
 Install optional \`editor-diagram\` separately. Import from \`${imports.editor}/diagram\`.
 Register \`EditorDiagramExtension\` once. Compose \`EditorDiagramRoot\` inside \`EditorRoot\` with explicit renderers.

@@ -84,7 +84,19 @@ export function EditorBlockMenu({
 
       if (!captured) event.preventDefault()
     },
-    finalFocus: () => editor.getRootElement() ?? false,
+    finalFocus: () => {
+      const root = editor.getRootElement()
+      const activeElement = root?.ownerDocument.activeElement
+
+      if (
+        activeElement?.closest(
+          'dialog[open], [role="dialog"], [role="alertdialog"]',
+        )
+      )
+        return false
+
+      return root ?? false
+    },
   }))
 
   const editDisabled = !snapshot.editable
@@ -240,7 +252,9 @@ export function EditorBlockMenu({
             Align justify
           </EditorBlockMenuItem>
         </ContextMenuGroup>
-        {(snapshot.canAskAI || snapshot.canCodeDrawing) && (
+        {(snapshot.canAskAI ||
+          snapshot.canCodeDrawing ||
+          snapshot.canAddComment) && (
           <>
             <ContextMenuSeparator />
             <ContextMenuGroup>
@@ -256,6 +270,14 @@ export function EditorBlockMenu({
                   controller={controller}
                 >
                   Code drawing
+                </EditorBlockMenuItem>
+              )}
+              {snapshot.canAddComment && (
+                <EditorBlockMenuItem
+                  action="add-comment"
+                  controller={controller}
+                >
+                  Add comment
                 </EditorBlockMenuItem>
               )}
             </ContextMenuGroup>
