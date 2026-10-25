@@ -29,6 +29,10 @@ import { ElementsSetupExample } from "./editor-examples/installation-next-03-ele
 import { LinkExample } from "./editor-examples/link"
 import { MathExample } from "./editor-examples/math-example"
 import { MediaExample } from "./editor-examples/media-example"
+import {
+  ControlledEditorExample,
+  MultipleEditorsExample,
+} from "./editor-examples/public-hosts"
 
 const sources = import.meta.glob<string>("./editor-examples/*.tsx", {
   query: "?raw",
@@ -169,6 +173,28 @@ const examples = [
       "Insert validated HTTPS media URLs. Edit image captions and widths. Render supported audio, video, file, and provider content.",
     limits:
       "A host must supply an upload callback. Host code sets size, type, and quota limits. Batch upload is not built in. Twitter embeds are not supported. Media JSON and tagged HTML keep metadata.",
+  },
+  {
+    slug: "controlled",
+    sourceFile: "public-hosts",
+    title: "Controlled document replacement",
+    Component: ControlledEditorExample,
+    items: ["editor"],
+    description:
+      "Replace or reset a native document. Return focus to its start or end. Edit a document after local async initialization.",
+    limits:
+      "Replacement keeps local undo history. Async initialization uses a fixed local Promise, not persistence or a network service.",
+  },
+  {
+    slug: "multiple-editors",
+    sourceFile: "public-hosts",
+    title: "Independent editors",
+    Component: MultipleEditorsExample,
+    items: ["editor"],
+    description:
+      "Edit two independent roots. Keep their formatting, history, content, and read-only state separate.",
+    limits:
+      "The roots do not share document state. This is not a collaboration example.",
   },
 ] as const
 
