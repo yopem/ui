@@ -67,6 +67,7 @@ const usageNoteValues = {
     "Pass prettierEditorCodeFormatter through the formatter prop. Supported formatting parsers are a subset of the syntax inventory. Cancellation cannot stop synchronous parsing.",
   ],
   "editor-document": [
+    "Plain horizontalrule JSON, hr HTML, and Markdown thematic breaks are supported by reader source. Register HorizontalRuleExtension for live imports. Rules require block containers; unsupported rule presentation rejects instead of being discarded. DocumentStatic uses the house Separator. Runtime validation remains deferred.",
     "Use registerDocumentPaste with { markdown: true } only for opt-in validated Markdown fragments at the native caret. Lexical JSON and HTML retain priority. Default text/plain paste stays native. Empty or unsupported fragments keep selected content.",
     "Register EditorDocumentClipboardExtension at root creation in a stable extensions array. Call registerDocumentPaste after creation and keep its cleanup in the host lifecycle. Duplicate registrations fail.",
     "Use the document subpath for validated JSON, HTML, and Markdown. Import DocumentStatic from document/static separately.",

@@ -7,6 +7,11 @@ import {
   CodeNode,
   CodeHighlightNode,
 } from "@lexical/code"
+import {
+  $createHorizontalRuleNode,
+  $isHorizontalRuleNode,
+  HorizontalRuleNode,
+} from "@lexical/extension"
 import { createHeadlessEditor } from "@lexical/headless"
 import { $createLinkNode, $isLinkNode, LinkNode } from "@lexical/link"
 import {
@@ -104,6 +109,7 @@ import {
 } from "./state"
 
 export const documentNodes = [
+  HorizontalRuleNode,
   MediaNode,
   EditorMathNode,
   MentionNode,
@@ -147,7 +153,6 @@ export function markdownTree(source: string): Root {
     "imageReference",
     "footnoteDefinition",
     "footnoteReference",
-    "thematicBreak",
   ])
 
   function visit(node: {
@@ -390,6 +395,22 @@ export function $importTree(tree: Root) {
       return node.children.flatMap((child) => convert(child, formats, style))
 
     if (tag === "br") return [$createLineBreakNode()]
+
+    if (tag === "hr") {
+      if (
+        node.children.length ||
+        Object.keys(node.properties).length ||
+        formats.length ||
+        style
+      ) {
+        throw new DocumentError([
+          "Horizontal rule presentation requires JSON or is unsupported.",
+        ])
+      }
+
+      return [$createHorizontalRuleNode()]
+    }
+
     let output: ElementNode
 
     switch (tag) {
@@ -814,6 +835,8 @@ export function $exportTree(markdown = false): Root {
     }
 
     if ($isLineBreakNode(node)) return element("br")
+
+    if ($isHorizontalRuleNode(node)) return element("hr")
 
     if ($isTextNode(node)) {
       if (

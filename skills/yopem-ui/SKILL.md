@@ -1037,3 +1037,8 @@ Base Markdown shortcuts remain separate. Additional rules support checklist and
 nested quote prefixes, horizontal rules, and fixed smart text substitutions.
 Code remains literal. Fractions require word boundaries. Check native input
 policies, IME, history, and clipboard before production use.
+
+Document readers support plain native horizontal rules. Register
+`HorizontalRuleExtension` for live imports. Keep rules in block containers.
+Unsupported presentation rejects instead of being discarded. Static output uses
+the house Separator. Conversion workflows remain runtime-unverified.

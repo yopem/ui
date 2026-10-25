@@ -85,6 +85,7 @@ Use existing controls as children. Select native text, then use Alt+F10 to focus
 Preserve the saved-range guard. Content changes and read-only transitions invalidate the target.
 Install optional \`editor-autoformat\` separately. Import \`EditorAutoformatExtension\` from \`${imports.editor}/autoformat\`.
 Keep it in a stable root array. It adds non-base transformers without repeating the base Markdown registration.
+Document readers support plain horizontal rules. Register HorizontalRuleExtension before live imports. Unsupported rule presentation rejects.
 Use word boundaries for fractions and retain line-start quote prefixes. Keep code literal and preserve host input, composition, clipboard, and history behavior.
 Install optional \`editor-editing-rules\` separately. Create one stable \`createEditorEditingRulesExtension\` per root.
 Use Mod+Enter to exit the containing root block; add Shift to insert before it.

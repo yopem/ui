@@ -850,3 +850,9 @@ It adds checklist, nested quote, horizontal-rule, and fixed smart text substitut
 Keep code literal, native history, host input policies, and composition behavior.
 Fraction shortcuts require a word boundary. Line-start quote prefixes stay available.
 Native clipboard, IME, overlapping substitutions, and inline-code history remain unverified.
+
+
+Native document readers also support plain `horizontalrule` nodes and semantic `hr` HTML.
+Register `HorizontalRuleExtension` before live rule imports.
+Rules require block containers. Reject unrelated rule metadata or presentation instead of discarding it.
+DocumentStatic renders rules through the house Separator. Rule conversion workflows remain runtime-unverified.

@@ -94,6 +94,7 @@ const nodeSchema = z.strictObject({
     "paragraph",
     "text",
     "linebreak",
+    "horizontalrule",
     "tab",
     "heading",
     "quote",
@@ -181,6 +182,7 @@ const nodeFields = new Map(
     tab: textFields,
     "code-highlight": [...textFields, "highlightType"],
     linebreak: [],
+    horizontalrule: [],
     link: [...elementFields, "url", "title", "target", "rel"],
     list: [...elementFields, "listType", "start", "tag"],
     listitem: [...elementFields, "value", "checked"],
@@ -313,6 +315,7 @@ function validateJSON(source: string) {
       "tab",
       "code-highlight",
       "linebreak",
+      "horizontalrule",
       "mention",
       "editor-math",
     ].includes(node.type)
@@ -348,7 +351,7 @@ function validateJSON(source: string) {
       const parsedChild = nodeSchema.parse(child)
 
       if (
-        parsedChild.type === "yopem-media" &&
+        ["yopem-media", "horizontalrule"].includes(parsedChild.type) &&
         ![
           "root",
           "quote",
@@ -358,7 +361,7 @@ function validateJSON(source: string) {
           "tablecell",
         ].includes(node.type)
       )
-        throw new DocumentError(["Media requires a block container."])
+        throw new DocumentError(["Media and rules require a block container."])
       pendingNodes.push(child)
     }
   }

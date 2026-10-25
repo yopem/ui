@@ -5,6 +5,7 @@ import { editorDependency } from "@registry/editor-dependencies"
 export const editorDocumentItem: SourceItem = {
   categories: ["input"],
   dependencies: [
+    editorDependency("@lexical/extension"),
     editorDependency("@lexical/headless"),
     editorDependency("@types/hast"),
     editorDependency("katex"),
@@ -71,7 +72,7 @@ export const editorDocumentItem: SourceItem = {
   ],
   name: "editor-document",
   peerDependencies: ["react@>=19 <20", "react-dom@>=19 <20"],
-  registryDependencies: ["editor", "editor-blocks"],
+  registryDependencies: ["editor", "editor-blocks", "separator"],
   title: "Editor document",
   type: "registry:ui",
 }

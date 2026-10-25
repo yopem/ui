@@ -1,5 +1,6 @@
 "use client"
 
+import { HorizontalRuleExtension } from "@lexical/extension"
 import { Box } from "@registry/components/ui/box"
 import { Button } from "@registry/components/ui/button"
 import { Label } from "@registry/components/ui/label"
@@ -36,6 +37,7 @@ const documentModelExtension = defineExtension({
 })
 
 const extensions = [
+  HorizontalRuleExtension,
   documentModelExtension,
   MediaExtension,
   EditorDocumentClipboardExtension,

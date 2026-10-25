@@ -1325,3 +1325,9 @@ a word boundary. Guillemet shortcuts require preceding text or whitespace.
 The extension does not repeat the base Markdown transformers. Native code text
 stays literal. History, composition, overlapping inputs, and browser clipboard
 workflows require deferred checks.
+
+Document readers support plain native horizontal rules in JSON, HTML, and
+Markdown. Register `HorizontalRuleExtension` before live rule imports. Missing
+registrations reject imports without replacing current content. Rule
+presentation metadata is not converted. Static rules use the house Separator.
+These conversion workflows require deferred runtime validation.

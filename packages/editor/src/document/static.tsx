@@ -2,6 +2,7 @@ import type { RootContent } from "hast"
 import type { CSSProperties, ReactNode } from "react"
 
 import { Box } from "@registry/components/ui/box"
+import { Separator } from "@registry/components/ui/separator"
 import { createElement } from "react"
 
 import {
@@ -27,6 +28,8 @@ function renderNode(node: RootContent, key: number): ReactNode {
   if (node.type === "text") return node.value
 
   if (node.type !== "element") return null
+
+  if (node.tagName === "hr") return <Separator key={key} render={<hr />} />
   const properties = new Map<string, StaticProperties[string]>([["key", key]])
 
   for (const [name, value] of Object.entries(node.properties)) {
