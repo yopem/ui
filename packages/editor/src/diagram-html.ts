@@ -91,7 +91,7 @@ export function createEditorDiagramHTMLConfig(
     return {
       ...output,
       after(element) {
-        return apply(output.after ? output.after(element) : element)
+        return apply(output.after ? output.after.call(node, element) : element)
       },
     }
   })
