@@ -425,7 +425,13 @@ Compose EditorAiMenuRoot, EditorAiMenuTrigger, EditorAiMenuContent, and EditorAi
 EditorAiMenuContent owns the editable surface. Do not add EditorContent beside it.
 The menu keeps twelve truncated chat messages until its root unmounts. Remount on document or viewer changes. No server chat storage is supplied.
 Comments require the current review controller and literal-true host policy. AI permission never grants review access.
-Rich Markdown approval, selected-text context overrides, and shadow-root insert-below are not supplied.
+Selected-text context actions respect prevented host events.
+Supply synchronous markdownInsertion for optional validated Markdown approval.
+Install editor-document and call $insertDocumentFragment inside the supplied update.
+Return literal true only after insertion succeeds. Failed insertion keeps the proposal open.
+Register required nodes before rich insertion. MDX remains literal source.
+Below insertion requires a supported native block container.
+Runtime acceptance remains deferred.
 Supply an explicit same-origin endpoint, documentId, and current authentication and CSRF headers.
 Review untrusted plain text before approval. Require explicit completion and clean EOF.
 Content, format, style, non-null selection, and read-only changes invalidate proposals.

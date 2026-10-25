@@ -179,6 +179,54 @@ pending work. Approval restores the bookmark, inserts literal text, and makes
 one history update. Base UI Dialog provides keyboard focus management and
 dismissal.
 
+## Optional Markdown approval
+
+The command menu can use an explicit Markdown insertion adapter. Install its
+client source and the separate document converter.
+
+```sh
+bunx --bun @yopem-ui/cli add editor-ai-menu
+```
+
+```sh
+bunx --bun @yopem-ui/cli add editor-document
+```
+
+Compose this wrapper inside configured `EditorAiRoot` and `EditorRoot`. Keep
+`EditorAiMenuContent` as the only editable surface.
+
+```tsx
+"use client"
+
+import type { ReactNode } from "react"
+
+import { EditorAiMenuRoot } from "@/components/editor/ai-menu"
+import { $insertDocumentFragment } from "@/components/editor/document"
+
+function insertMarkdown(source: string) {
+  $insertDocumentFragment(source)
+  return true
+}
+
+export function AiMarkdownMenu({ children }: { children: ReactNode }) {
+  return (
+    <EditorAiMenuRoot markdownInsertion={insertMarkdown}>
+      {children}
+    </EditorAiMenuRoot>
+  )
+}
+```
+
+The callback runs synchronously inside the approval update. Return literal
+`true` only after insertion succeeds. Do not start another editor update. The
+converter checks fragments and target node registrations before insertion.
+Unsupported content keeps the proposal open. Literal-source insertion remains
+available. MDX is never evaluated.
+
+This adapter does not grant document-write permission. Save through the host
+policy. Composition, native history, and nested insertion checks remain
+deferred.
+
 ## Try your host endpoint
 
 This example makes real requests only after explicit host configuration. It does

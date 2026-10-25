@@ -222,6 +222,42 @@ test("toolbar Ask AI preserves selected text while opening the menu", async ({
   await expect(editor).toHaveText("Selected source")
 })
 
+test("selected-text context action preserves selection and host event veto", async ({
+  page,
+}) => {
+  let calls = 0
+  let requestBody = ""
+  await page.route("**/__fixture-ai", async (route) => {
+    calls++
+    requestBody = route.request().postData() ?? ""
+    await route.fulfill({
+      contentType: "text/event-stream",
+      body: eventStream("Unused"),
+    })
+  })
+  const { editor } = await mountPublicAi(page)
+  await editor.fill("Selected source")
+  await editor.press("ControlOrMeta+a")
+  await editor.click({ button: "right", modifiers: ["Alt"] })
+  const dialog = page.getByRole("dialog", { name: "AI command menu" })
+  await expect(dialog).toBeHidden()
+  expect(calls).toBe(0)
+
+  await editor.click({ button: "right" })
+  await expect(dialog).toBeVisible()
+  const search = dialog.getByRole("textbox", { name: "Search AI commands" })
+  await search.fill("Improve")
+  await search.press("Enter")
+  await expect(
+    dialog.locator('[data-slot="editor-ai-menu-status"]'),
+  ).toHaveAttribute("data-state", "ready")
+  await expect
+    .poll(() => requestBody)
+    .toContain('"selectedText":"Selected source"')
+  await expect(editor).toHaveText("Selected source")
+  expect(calls).toBe(1)
+})
+
 test("Stop aborts a pending request and keeps document unchanged", async ({
   page,
 }) => {
@@ -392,7 +428,7 @@ test("review comments require explicit approval and support rejection", async ({
   await expect(editor).toHaveText("Review this sentence")
 })
 
-test("Markdown and MDX samples insert as text and never execute markup", async ({
+test("Markdown and MDX source fallback stays literal and never executes markup", async ({
   page,
 }) => {
   let calls = 0
@@ -407,7 +443,9 @@ test("Markdown and MDX samples insert as text and never execute markup", async (
   await editor.click()
   await editor.press("ControlOrMeta+j")
   let dialog = await openCommand(page, "Markdown sample")
-  await dialog.getByRole("button", { name: "Insert at caret" }).click()
+  await dialog
+    .getByRole("button", { name: "Insert source as plain text" })
+    .click()
   await expect(editor).toContainText("## Markdown source")
   await expect(editor.locator("h2")).toHaveCount(0)
   await expect(dialog).toBeHidden()
@@ -415,10 +453,64 @@ test("Markdown and MDX samples insert as text and never execute markup", async (
   await editor.click()
   await editor.press("ControlOrMeta+j")
   dialog = await openCommand(page, "MDX sample")
-  await dialog.getByRole("button", { name: "Insert at caret" }).click()
+  await dialog
+    .getByRole("button", { name: "Insert source as plain text" })
+    .click()
   await expect(editor).toContainText("<Callout />")
   await expect(editor.locator("callout")).toHaveCount(0)
   expect(calls).toBe(2)
+})
+
+test("Markdown approval inserts validated rich structure in one undo step", async ({
+  page,
+}) => {
+  await installAiResponse(
+    page,
+    "# Generated heading\n\n**Approved rich text**\n\n- first\n- second",
+  )
+  const { editor, example } = await mountPublicAi(page)
+  await editor.fill("Original")
+  await editor.press("End")
+  await editor.press("ControlOrMeta+j")
+  const dialog = await openCommand(page, "Markdown sample")
+  await expect(
+    dialog.getByRole("button", { name: "Insert Markdown" }),
+  ).toBeEnabled()
+  await dialog.getByRole("button", { name: "Insert Markdown" }).click()
+  await expect(editor.locator("h1")).toHaveText("Generated heading")
+  await expect(editor.locator("strong")).toHaveText("Approved rich text")
+  await expect(editor.locator("ul li")).toHaveCount(2)
+  await expect(editor).toContainText("Original")
+  await expect(dialog).toBeHidden()
+
+  await example
+    .getByRole("toolbar", { name: "AI tools" })
+    .getByRole("button", { name: "Undo" })
+    .click()
+  await expect(editor.locator("h1")).toHaveCount(0)
+  await expect(editor).toHaveText("Original")
+})
+
+test("rejected Markdown keeps document intact and offers explicit source fallback", async ({
+  page,
+}) => {
+  await installAiResponse(page, "<script>alert(1)</script>")
+  const { editor } = await mountPublicAi(page)
+  await editor.fill("Original")
+  await editor.press("End")
+  await editor.press("ControlOrMeta+j")
+  const dialog = await openCommand(page, "Markdown sample")
+  await dialog.getByRole("button", { name: "Insert Markdown" }).click()
+  await expect(dialog.getByRole("alert")).toBeVisible()
+  await expect(editor).toHaveText("Original")
+  await expect(
+    dialog.locator('[data-slot="editor-ai-menu-status"]'),
+  ).toHaveAttribute("data-state", "ready")
+  await dialog
+    .getByRole("button", { name: "Insert source as plain text" })
+    .click()
+  await expect(editor).toContainText("<script>alert(1)</script>")
+  await expect(editor.locator("script")).toHaveCount(0)
 })
 
 test("host setup removes the CSRF input and starts no inference", async ({

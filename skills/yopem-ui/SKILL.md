@@ -1204,8 +1204,14 @@ plain text explicitly. Review comments require the current review controller and
 literal-true host policy. Twelve truncated chat messages stay in memory across
 closes until the menu root unmounts. Remount on document or viewer changes. No
 server chat storage is supplied. Null selection retains the dialog target.
-Remount EditorAiRoot to discard it. Rich Markdown approval, selected-text
-context overrides, and shadow-root insert-below are not supplied.
+Remount EditorAiRoot to discard it. Selected-text context actions respect
+prevented host events. Supply synchronous markdownInsertion for optional
+validated Markdown approval. Install editor-document and call
+$insertDocumentFragment inside the supplied update. Return literal true only
+after insertion succeeds. Failed insertion keeps the proposal open. Register
+required nodes before rich insertion. MDX remains literal source. Below
+insertion requires a supported native block container. Runtime acceptance
+remains deferred.
 
 ### Native cursor overlays
 

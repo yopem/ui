@@ -24,6 +24,7 @@ import {
   EditorAiMenuRoot,
   EditorAiMenuTrigger,
 } from "@yopem-ui/editor/ai/menu"
+import { $insertDocumentFragment } from "@yopem-ui/editor/document"
 import {
   createEditorReview,
   EditorReviewPanel,
@@ -87,7 +88,13 @@ function PublicAiEditor({
   return (
     <EditorReviewProvider controller={review} host={reviewHost}>
       <EditorAiRoot config={config}>
-        <EditorAiMenuRoot>
+        <EditorAiMenuRoot
+          markdownInsertion={(source) => {
+            $insertDocumentFragment(source)
+
+            return true
+          }}
+        >
           <EditorToolbar aria-label="AI tools">
             <EditorAiMenuTrigger />
             <EditorHistoryButton action="undo" />
@@ -97,6 +104,9 @@ function PublicAiEditor({
           <EditorAiMenuContent
             aria-label="Public AI editor"
             placeholder="Select text, press Mod+J, or press Space in an empty block."
+            onContextMenu={(event) => {
+              if (event.altKey) event.preventDefault()
+            }}
           />
           <EditorReviewPanel />
         </EditorAiMenuRoot>
