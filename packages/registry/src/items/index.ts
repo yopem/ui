@@ -43,6 +43,7 @@ import { editorSearchItem } from "@registry/items/editor-search"
 import { editorStoreItem } from "@registry/items/editor-store"
 import { editorTocItem } from "@registry/items/editor-toc"
 import { editorTypeaheadItem } from "@registry/items/editor-typeahead"
+import { editorWordClipboardItem } from "@registry/items/editor-word-clipboard"
 import { foundationItems } from "@registry/items/foundation"
 import { hookItems } from "@registry/items/hooks"
 import { layoutItems } from "@registry/items/layout"
@@ -75,6 +76,7 @@ export const sourceItems = [
   editorFootnotesItem,
   editorTocItem,
   editorCsvItem,
+  editorWordClipboardItem,
   editorSearchItem,
   editorFloatingToolbarItem,
   editorAutoformatItem,

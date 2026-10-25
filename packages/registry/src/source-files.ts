@@ -95,6 +95,11 @@ export const sourceImportReplacements = [
     "@/lib/editor-collaboration/collaboration-do",
   ],
   ["@yopem-ui/editor/server/collaboration", "@/lib/editor-collaboration"],
+  [
+    "@yopem-ui/editor/word-clipboard-model",
+    "@/components/editor/word-clipboard-model",
+  ],
+  ["@yopem-ui/editor/word-clipboard", "@/components/editor/word-clipboard"],
   ["@yopem-ui/editor/ai/menu", "@/components/editor/ai-menu"],
   ["@yopem-ui/editor/ai/client", "@/components/editor/ai-client"],
   ["@yopem-ui/editor/ai", "@/components/editor/ai-controls"],

@@ -1,5 +1,12 @@
 // These notes describe Yopem's composition choices, not only the upstream types.
 const usageNoteValues = {
+  "editor-word-clipboard": [
+    "Register EditorWordClipboardExtension in a stable extensions array. Call registerDocumentPaste and registerWordClipboardPaste after creation. Run both cleanups on unmount.",
+    "This optional feature inserts a bounded Word HTML fragment. DOCX file import is a separate feature. No full Word layout or native-capture acceptance is claimed.",
+    "Keep native Lexical JSON and host MIME policies. Unsupported, empty, stale, composing, and read-only imports must keep current content. Host resolver side effects cannot be rolled back.",
+    "Images reject by default. Supply a stable synchronous resolver for already trusted media and register MediaExtension. Never fetch untrusted file or network image sources automatically.",
+    "Promise and thenable resolver results reject. Normalize only supported Office CSS. Keep explicit errors for metadata that the native document cannot retain.",
+  ],
   "editor-ai-menu": [
     "Compose EditorAiMenuRoot inside configured EditorAiRoot and EditorRoot. EditorAiMenuContent owns the editable surface. Do not add a second EditorContent.",
     "Supply an explicit same-origin host endpoint, document ID, and current authentication and CSRF headers. No provider or service is selected automatically.",
