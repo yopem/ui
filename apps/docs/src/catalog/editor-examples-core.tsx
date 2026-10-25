@@ -41,6 +41,7 @@ import {
   ControlledEditorExample,
   MultipleEditorsExample,
 } from "./editor-examples/public-hosts"
+import { PublicNativeEditingExample } from "./editor-examples/public-native-editing"
 import { PublicPlaceholderExample } from "./editor-examples/public-placeholder"
 import { ReadOnlyEditorExample } from "./editor-examples/public-readonly"
 import { PublicReviewExample } from "./editor-examples/public-review"
@@ -426,6 +427,18 @@ const examples = [
       "Apply selected-block alignment, text and background colors, indentation, and line height. Save and reload styled native JSON and HTML.",
     limits:
       "These controls use native Lexical state. Saved roundtrips stay in local component memory and are not host persistence. Public-example behavior remains unverified.",
+  },
+  {
+    slug: "public-native-editing",
+    sourceFile: "public-native-editing",
+    workflowIds: ["basic-blocks", "list", "list-classic", "autoformat"],
+    title: "Native blocks, lists, and Markdown shortcuts",
+    Component: PublicNativeEditingExample,
+    items: ["editor", "heading"],
+    description:
+      "Compose heading, quote, horizontal-rule, list, checklist, indentation, presentation, history, and native Markdown shortcut controls.",
+    limits:
+      "This uses the installed Lexical transformers, not a second overlapping shortcut registration. Nested quote operations, richer list marker/start controls, checklist/rule shortcuts, and smart symbol/quote/fraction substitutions remain incomplete. These source workflows are not runtime-verified.",
   },
   {
     slug: "public-scale",
