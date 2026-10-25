@@ -113,6 +113,7 @@
   "dependencies": {
     "@base-ui/react": "catalog:",
     "@excalidraw/excalidraw": "^0.18.1",
+    "@hocuspocus/provider": "^4.7.1",
     "@hpcc-js/wasm-graphviz": "^1.30.0",
     "@lexical/clipboard": "catalog:",
     "@lexical/code": "catalog:",
@@ -159,6 +160,7 @@
     "unified": "^11.0.5",
     "ws": "catalog:",
     "y-protocols": "catalog:",
+    "y-webrtc": "^10.3.0",
     "yjs": "catalog:",
     "zod": "catalog:"
   },
