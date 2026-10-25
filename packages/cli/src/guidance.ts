@@ -423,6 +423,8 @@ Compose EditorAiRoot, EditorAiTrigger, and EditorAiPanel inside EditorRoot.
 Install optional \`editor-ai-menu\` separately. Import from \`${imports.editor}/ai-menu\`.
 Compose EditorAiMenuRoot, EditorAiMenuTrigger, EditorAiMenuContent, and EditorAiMenuPanel inside configured EditorAiRoot.
 EditorAiMenuContent owns the editable surface. Do not add EditorContent beside it.
+Pass \`render={<EditorTypeahead controller={controller} />}\` to compose typeahead into the same surface.
+Install editor-typeahead for this composition. Keep the controller and root extensions stable.
 Compose EditorAiInlinePreview from \`${imports.editor}/ai-menu-preview\` inside EditorAiRoot for bounded escaped proposal text beside the saved range.
 The preview changes no document state. Keep explicit approval controls.
 The menu keeps twelve truncated chat messages until its root unmounts. Remount on document or viewer changes. No server chat storage is supplied.

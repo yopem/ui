@@ -5,10 +5,13 @@ import type {
   ComponentProps,
   Dispatch,
   KeyboardEvent as ReactKeyboardEvent,
+  MouseEvent as ReactMouseEvent,
+  ReactElement,
   ReactNode,
   SetStateAction,
 } from "react"
 
+import { useRender } from "@base-ui/react/use-render"
 import { Box } from "@registry/components/ui/box"
 import { Button } from "@registry/components/ui/button"
 import {
@@ -793,17 +796,28 @@ export function EditorAiMenuTrigger({
   )
 }
 
-export function EditorAiMenuContent(props: EditorContentProps) {
-  const { onKeyDownCapture, onContextMenu, ...contentProps } = props
+export interface EditorAiMenuContentProps extends EditorContentProps {
+  render?: ReactElement
+}
+
+export function EditorAiMenuContent({
+  render,
+  ref,
+  onKeyDownCapture,
+  onContextMenu,
+  ...contentProps
+}: EditorAiMenuContentProps) {
   const { session } = useAi()
   const editor = useEditor()
   const bookmark = useMenuBookmark()
   const { editable } = useEditorState()
 
-  return (
-    <EditorContent
-      {...contentProps}
-      onKeyDownCapture={(event) => {
+  return useRender({
+    render: render ?? <EditorContent />,
+    ref: ref ?? null,
+    props: {
+      ...contentProps,
+      onKeyDownCapture: (event: ReactKeyboardEvent<HTMLDivElement>) => {
         onKeyDownCapture?.(event)
 
         if (
@@ -845,8 +859,8 @@ export function EditorAiMenuContent(props: EditorContentProps) {
           event.preventDefault()
           openAiMenu(session, editor, bookmark, "generate")
         }
-      }}
-      onContextMenu={(event) => {
+      },
+      onContextMenu: (event: ReactMouseEvent<HTMLDivElement>) => {
         onContextMenu?.(event)
 
         if (event.defaultPrevented || !editable) return
@@ -856,9 +870,9 @@ export function EditorAiMenuContent(props: EditorContentProps) {
 
         event.preventDefault()
         openAiMenu(session, editor, bookmark, selected ? "rewrite" : "generate")
-      }}
-    />
-  )
+      },
+    },
+  })
 }
 
 function EditorAiMenuDialog({ review }: { review?: EditorReviewBinding }) {

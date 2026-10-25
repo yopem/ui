@@ -1237,20 +1237,23 @@ EditorAiMenuPanel inside configured EditorAiRoot. Import EditorAiInlinePreview
 from `@/components/editor/ai-menu-preview` for bounded escaped proposal text
 beside the saved range. It changes no document state. Keep explicit approval
 controls. EditorAiMenuContent owns the editable surface. Do not add
-EditorContent beside it. Supply an explicit same-origin host endpoint, document
-ID, and current authentication and CSRF headers. Only explicit user requests
-start inference. Approve cleanly completed plain text explicitly. Review
-comments require the current review controller and literal-true host policy.
-Twelve truncated chat messages stay in memory across closes until the menu root
-unmounts. Remount on document or viewer changes. No server chat storage is
-supplied. Null selection retains the dialog target. Remount EditorAiRoot to
-discard it. Selected-text context actions respect prevented host events. Supply
-synchronous markdownInsertion for optional validated Markdown approval. Install
-editor-document and call $insertDocumentFragment inside the supplied update.
-Return literal true only after insertion succeeds. Failed insertion keeps the
-proposal open. Register required nodes before rich insertion. MDX remains
-literal source. Below insertion requires a supported native block container.
-Runtime acceptance remains deferred.
+EditorContent beside it. Pass
+`render={<EditorTypeahead controller={controller} />}` to compose typeahead into
+that surface. Install editor-typeahead for this composition. Keep the controller
+and root extensions stable. Supply an explicit same-origin host endpoint,
+document ID, and current authentication and CSRF headers. Only explicit user
+requests start inference. Approve cleanly completed plain text explicitly.
+Review comments require the current review controller and literal-true host
+policy. Twelve truncated chat messages stay in memory across closes until the
+menu root unmounts. Remount on document or viewer changes. No server chat
+storage is supplied. Null selection retains the dialog target. Remount
+EditorAiRoot to discard it. Selected-text context actions respect prevented host
+events. Supply synchronous markdownInsertion for optional validated Markdown
+approval. Install editor-document and call $insertDocumentFragment inside the
+supplied update. Return literal true only after insertion succeeds. Failed
+insertion keeps the proposal open. Register required nodes before rich
+insertion. MDX remains literal source. Below insertion requires a supported
+native block container. Runtime acceptance remains deferred.
 
 ### Native cursor overlays
 

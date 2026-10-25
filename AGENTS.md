@@ -1027,6 +1027,8 @@ Never put credentials in diagram URLs. Configure headers explicitly.
 Install `editor-ai-menu` for configured commands and bounded local chat.
 Compose EditorAiMenuRoot, EditorAiMenuTrigger, EditorAiMenuContent, and EditorAiMenuPanel inside configured EditorAiRoot.
 EditorAiMenuContent owns the editable surface. Do not add EditorContent beside it.
+Pass `render={<EditorTypeahead controller={controller} />}` to compose typeahead into the same surface.
+Install editor-typeahead for this composition. Keep the controller and root extensions stable.
 Compose EditorAiInlinePreview inside EditorAiRoot for bounded escaped proposal text beside the saved range.
 Import it from the copied `ai-menu-preview` module. It changes no document state and does not replace approval controls.
 Supply an explicit same-origin host endpoint, document ID, and current authentication and CSRF headers.

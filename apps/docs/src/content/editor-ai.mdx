@@ -207,6 +207,68 @@ Install the separate `editor-floating-toolbar` item before using this selection
 entry. No request starts when the toolbar opens or the preview mounts. Explicit
 commands still require host authentication, document policy, and CSRF checks.
 
+## Compose one editable surface
+
+Install the optional typeahead source with the AI menu.
+
+```sh
+bunx --bun @yopem-ui/cli add editor-ai-menu
+```
+
+```sh
+bunx --bun @yopem-ui/cli add editor-typeahead
+```
+
+Pass a typeahead element to the `render` prop. Do not add a second editable
+surface. Create the controller and extension array once for each root.
+
+```tsx
+"use client"
+
+import type { EditorAiConfig } from "@/components/editor/ai-client"
+
+import { EditorAiRoot, EditorRoot, EditorToolbar } from "@/components/editor"
+import {
+  EditorAiMenuContent,
+  EditorAiMenuPanel,
+  EditorAiMenuRoot,
+  EditorAiMenuTrigger,
+} from "@/components/editor/ai-menu"
+import {
+  createEditorTypeahead,
+  editorEmojiInventory,
+  EditorTypeahead,
+} from "@/components/editor/typeahead-index"
+import { useState } from "react"
+
+export function AiTypeaheadEditor({ config }: { config: EditorAiConfig }) {
+  const [controller] = useState(() =>
+    createEditorTypeahead({ emoji: editorEmojiInventory }),
+  )
+  const [extensions] = useState(() => [controller.extension])
+
+  return (
+    <EditorRoot extensions={extensions} ariaLabel="AI and emoji editor">
+      <EditorAiRoot config={config}>
+        <EditorAiMenuRoot>
+          <EditorToolbar aria-label="AI toolbar">
+            <EditorAiMenuTrigger />
+          </EditorToolbar>
+          <EditorAiMenuContent
+            render={<EditorTypeahead controller={controller} />}
+          />
+          <EditorAiMenuPanel />
+        </EditorAiMenuRoot>
+      </EditorAiRoot>
+    </EditorRoot>
+  )
+}
+```
+
+Supply current host configuration. This composition starts no inference without
+an explicit request. Native keyboard, composition, focus, and host veto checks
+remain deferred.
+
 ## Optional Markdown approval
 
 The command menu can use an explicit Markdown insertion adapter. Install its
