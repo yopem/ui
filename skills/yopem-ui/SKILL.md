@@ -1109,3 +1109,11 @@ stale selections cannot change lists.
 Optional `editor-document` retains validated list markers and signed starts in
 JSON, HTML, Markdown, and static output. Markdown uses canonical HTML when
 native Markdown cannot retain list presentation.
+
+Install optional `editor-editable-card` separately. Import parts from
+`@/components/editor/editable-card`. Register `EditorEditableCardExtension` at
+root creation. Compose `EditorEditableCardInsertButton` inside `EditorToolbar`.
+Keep native Tab order. Local fields and nested notes are transient and reset
+after card removal or import. The nested editor has independent history. JSON
+stores only type and version. Generic document conversion does not support
+cards.

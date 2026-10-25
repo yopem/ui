@@ -83,6 +83,11 @@ Use the pure \`search-model\` module outside React. Preserve host input cancella
 Install optional \`editor-floating-toolbar\` separately. Compose \`EditorFloatingToolbar\` inside \`EditorRoot\` beside \`EditorContent\`.
 Use existing controls as children. Select native text, then use Alt+F10 to focus the toolbar. Escape returns keyboard focus.
 Preserve the saved-range guard. Content changes and read-only transitions invalidate the target.
+Install optional \`editor-editable-card\` separately for native cards with transient local form state.
+Import from \`${imports.editor}/editable-card\`. Register \`EditorEditableCardExtension\` in a stable extensions array.
+Compose \`EditorEditableCardInsertButton\` inside \`EditorToolbar\`. Keep native browser Tab order.
+Nested editor state and history are independent. JSON stores only the card type and version.
+Removal, import, and undo restoration reset local fields and notes. Generic document conversion does not support cards.
 Install optional \`editor-list-presentation\` separately for native list markers and signed starts.
 Register \`EditorListPresentationExtension\` at root creation. Compose marker and start controls inside \`EditorToolbar\`.
 Preserve \`yopemListMarker\` NodeState, \`data-editor-list-marker\`, and native ordered-list \`start\` attributes.

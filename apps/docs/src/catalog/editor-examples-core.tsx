@@ -36,6 +36,7 @@ import { CsvEditorExample } from "./editor-examples/public-csv"
 import { PublicDemoHostExample } from "./editor-examples/public-demo-host"
 import { PublicDocumentExamples } from "./editor-examples/public-document"
 import { PublicDocxExample } from "./editor-examples/public-docx"
+import { PublicEditableVoidsExample } from "./editor-examples/public-editable-voids"
 import { PublicEditingRulesExample } from "./editor-examples/public-editing-rules"
 import { PublicFloatingToolbarExample } from "./editor-examples/public-floating-toolbar"
 import { PublicFootnotesExample } from "./editor-examples/public-footnotes"
@@ -57,6 +58,7 @@ import { PublicScaleExample } from "./editor-examples/public-scale"
 import { PublicSearchExample } from "./editor-examples/public-search"
 import { PublicSelectionExample } from "./editor-examples/public-selection"
 import { PublicStylesExample } from "./editor-examples/public-styles"
+import { PublicTabbableExample } from "./editor-examples/public-tabbable"
 import { PublicTablesExample } from "./editor-examples/public-tables"
 import { PublicTocExample } from "./editor-examples/public-toc"
 import { PublicTypeaheadExample } from "./editor-examples/public-typeahead"
@@ -68,6 +70,28 @@ const sources = import.meta.glob<string>("./editor-examples/*.tsx", {
 })
 
 const examples = [
+  {
+    slug: "public-editable-voids",
+    workflowIds: ["editable-voids"],
+    title: "Editable native cards",
+    Component: PublicEditableVoidsExample,
+    items: ["editor-editable-card", "box", "button", "stack"],
+    description:
+      "Insert a native card with local fields and an independent nested editor.",
+    limits:
+      "Local card state is transient. JSON stores only the node type and version. Removal or import resets local fields. This workflow is not runtime-verified.",
+  },
+  {
+    slug: "public-tabbable",
+    workflowIds: ["tabbable"],
+    title: "Native Tab workflows",
+    Component: PublicTabbableExample,
+    items: ["editor-editable-card", "box", "button", "stack"],
+    description:
+      "Move through card controls with native Tab order. Keep list and code editing in independent roots.",
+    limits:
+      "Nested editor history is independent. Browser Tab order and keyboard acceptance remain unverified.",
+  },
   {
     slug: "basic-marks",
     title: "Basic marks",

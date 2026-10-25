@@ -1436,3 +1436,14 @@ Markdown cannot retain list presentation. Register
 `EditorListPresentationExtension` in live readers for custom marker rendering.
 Conflicting marker attributes, CSS, and NodeState reject before document
 replacement.
+
+## Editable cards
+
+Install optional `editor-editable-card` for native cards with local form
+controls and an independent nested editor. Register
+`EditorEditableCardExtension` at root creation. Compose
+`EditorEditableCardInsertButton` inside `EditorToolbar`. Use native Tab order
+through the controls. Outer read-only state disables the local controls. Local
+fields and nested notes are transient. JSON stores only type and version.
+Removal, import, and undo restoration reset local values. Generic document
+conversion does not support cards.

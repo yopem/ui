@@ -6,6 +6,12 @@ const usageNoteValues = {
     "Markers affect one native list. Nested lists keep their own markers. Checklists do not use custom markers.",
     "Keep yopemListMarker NodeState, data-editor-list-marker, and native ol start attributes in compatible readers.",
   ],
+  "editor-editable-card": [
+    "Register one stable EditorEditableCardExtension per root. Compose EditorEditableCardInsertButton inside EditorToolbar.",
+    "Cards use native inputs, radio controls, and a separate nested editor. Browser Tab order remains native.",
+    "JSON stores only type and version. Local fields and nested content are transient. Removal, import, and undo restoration reset them.",
+    "Outer read-only state disables local controls. Generic document conversion does not support card nodes. Runtime checks remain pending.",
+  ],
   "editor-docx": [
     "Install this optional item for bounded native Word document conversion.",
     "Compose EditorDocxImportControl, EditorDocxExportControl, or EditorDocxControls inside EditorRoot. Keep portable functions separate from client controls.",

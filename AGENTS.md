@@ -908,3 +908,12 @@ Keep pure codecs in `list-presentation-model`.
 
 Optional `editor-document` retains validated list markers and signed starts in JSON, HTML, Markdown, and static output.
 Markdown uses canonical HTML when native Markdown cannot retain list presentation.
+
+## Optional editable cards
+
+Install `editor-editable-card` separately. Register `EditorEditableCardExtension` in a stable root extensions array.
+Compose `EditorEditableCardInsertButton` inside `EditorToolbar`.
+Keep native browser Tab order through form controls and the nested editor.
+The nested editor has independent state and history. Local fields and notes are transient.
+JSON stores only type and version. Removal, import, and undo restoration reset local values.
+Outer read-only state disables local controls. Generic document conversion does not support cards.

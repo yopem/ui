@@ -184,9 +184,11 @@ export function EditorEditableCardView({ editor }: { editor: LexicalEditor }) {
         <Stack xstyle={styles.content}>
           <Text>Card fields and nested text stay local to this preview.</Text>
           <Text>They are not saved in the outer document.</Text>
+          <Text>Visibility does not change document access.</Text>
           <Box xstyle={styles.note}>
             <EditorRoot ariaLabel="Card note editor" editable={editable}>
               <EditorContent
+                tabIndex={0}
                 placeholder="Write a card note…"
                 xstyle={styles.noteContent}
               />

@@ -6,6 +6,7 @@ import { editorCollaborationParts } from "./editor-collaboration-parts"
 import { editorColumnsParts } from "./editor-columns-parts"
 import { editorDateParts } from "./editor-date-parts"
 import { editorDocxParts } from "./editor-docx-parts"
+import { editorEditableCardParts } from "./editor-editable-card-parts"
 import { editorFloatingToolbarParts } from "./editor-floating-toolbar-parts"
 import { editorFootnoteParts } from "./editor-footnote-parts"
 import { editorLabelsParts } from "./editor-labels-parts"
@@ -240,6 +241,7 @@ export const editorParts = [
   ...editorColumnsParts,
   ...editorDateParts,
   ...editorDocxParts,
+  ...editorEditableCardParts,
   ...editorLabelsParts,
   ...editorListPresentationParts,
   ...editorReviewParts,

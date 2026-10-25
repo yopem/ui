@@ -1,6 +1,15 @@
 /** Import aliases used in the copyable source files served by the registry. */
 export const sourceImportReplacements = [
   [
+    "@yopem-ui/editor/editable-card/model",
+    "@/components/editor/editable-card-model",
+  ],
+  [
+    "@yopem-ui/editor/editable-card/node",
+    "@/components/editor/editable-card-node",
+  ],
+  ["@yopem-ui/editor/editable-card", "@/components/editor/editable-card"],
+  [
     "@yopem-ui/editor/list-presentation/model",
     "@/components/editor/list-presentation-model",
   ],

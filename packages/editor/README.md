@@ -184,3 +184,12 @@ replacement. It does not preserve complete Word page layout, images, macros,
 headers, or footers. Independent archive and decoded-data limits are 1 MiB.
 Native deflate support is required for compressed input. Word clipboard cleanup
 is separate. Runtime and real-file checks remain deferred.
+
+Optional `editor-editable-card` adds native cards with local form snapshots and
+an independent nested editor. Register `EditorEditableCardExtension` at root
+creation. Compose `EditorEditableCardInsertButton` inside `EditorToolbar`.
+Browser Tab order stays native. Outer read-only state disables local controls.
+Card fields, visibility, and nested notes are transient. Visibility does not
+change document access. JSON stores only type and version. Removal, import, and
+undo restoration reset local values. Generic document conversion does not
+support cards. Runtime acceptance remains deferred.

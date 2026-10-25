@@ -24,6 +24,19 @@ export function ListEditor() {
     </EditorRoot>
   )
 }`,
+  "editor-editable-card": `import { EditorContent, EditorRoot, EditorToolbar } from "@/components/editor"
+import { EditorEditableCardExtension, EditorEditableCardInsertButton } from "@/components/editor/editable-card"
+
+const extensions = [EditorEditableCardExtension]
+
+export function CardEditor() {
+  return (
+    <EditorRoot extensions={extensions}>
+      <EditorToolbar><EditorEditableCardInsertButton /></EditorToolbar>
+      <EditorContent />
+    </EditorRoot>
+  )
+}`,
   "editor-docx": `import { EditorBlockPresentationExtension, EditorContent, EditorRoot, EditorTablePresentationExtension } from "@/components/editor"
 import { EditorDocxControls } from "@/components/editor/docx-controls"
 

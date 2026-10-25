@@ -499,50 +499,58 @@ export function extractDocs() {
                   "components/editor/list-presentation.tsx",
                   "components/editor/list-presentation-model.ts",
                 ].includes(file.path)
-              : item.name === "editor-docx"
+              : item.name === "editor-editable-card"
                 ? [
-                    "components/editor/docx.ts",
-                    "components/editor/docx-controls.tsx",
+                    "components/editor/editable-card.ts",
+                    "components/editor/editable-card-view.tsx",
+                    "components/editor/editable-card-model.ts",
+                    "components/editor/editable-card-node.tsx",
                   ].includes(file.path)
-                : item.name === "editor-block-selection"
-                  ? file.path === "components/editor/block-selection-index.ts"
-                  : item.name === "editor-footnotes"
-                    ? file.path === "components/editor/footnote.ts"
-                    : item.name === "editor"
-                      ? file.path === "components/editor/index.ts"
-                      : item.name === "editor-collaboration-server"
-                        ? file.path === "lib/editor-collaboration/index.ts"
-                        : item.name === "editor-collaboration-worker"
-                          ? file.path ===
-                            "lib/editor-collaboration/collaboration-do.ts"
-                          : item.name === "editor-ai"
-                            ? file.path === "lib/editor-ai/index.ts"
-                            : item.name === "editor-assets"
-                              ? file.path === "lib/editor-assets/index.ts"
-                              : item.name === "editor-store"
-                                ? file.path === "lib/editor-store/index.ts"
-                                : item.name === "editor-auth"
-                                  ? file.path === "lib/editor-auth/index.ts"
-                                  : item.name === "editor-code"
-                                    ? file.path === "components/editor/code.ts"
-                                    : item.name === "editor-math"
+                : item.name === "editor-docx"
+                  ? [
+                      "components/editor/docx.ts",
+                      "components/editor/docx-controls.tsx",
+                    ].includes(file.path)
+                  : item.name === "editor-block-selection"
+                    ? file.path === "components/editor/block-selection-index.ts"
+                    : item.name === "editor-footnotes"
+                      ? file.path === "components/editor/footnote.ts"
+                      : item.name === "editor"
+                        ? file.path === "components/editor/index.ts"
+                        : item.name === "editor-collaboration-server"
+                          ? file.path === "lib/editor-collaboration/index.ts"
+                          : item.name === "editor-collaboration-worker"
+                            ? file.path ===
+                              "lib/editor-collaboration/collaboration-do.ts"
+                            : item.name === "editor-ai"
+                              ? file.path === "lib/editor-ai/index.ts"
+                              : item.name === "editor-assets"
+                                ? file.path === "lib/editor-assets/index.ts"
+                                : item.name === "editor-store"
+                                  ? file.path === "lib/editor-store/index.ts"
+                                  : item.name === "editor-auth"
+                                    ? file.path === "lib/editor-auth/index.ts"
+                                    : item.name === "editor-code"
                                       ? file.path ===
-                                        "components/editor/math.ts"
-                                      : item.name === "editor-blocks"
+                                        "components/editor/code.ts"
+                                      : item.name === "editor-math"
                                         ? file.path ===
-                                          "components/editor/blocks.ts"
-                                        : item.name === "editor-document"
-                                          ? [
-                                              "components/editor/document/index.ts",
-                                              "components/editor/document/static.tsx",
-                                            ].includes(file.path)
-                                          : item.name === "editor-review"
-                                            ? file.path ===
-                                              "components/editor/review.tsx"
-                                            : item.name === "editor-typeahead"
+                                          "components/editor/math.ts"
+                                        : item.name === "editor-blocks"
+                                          ? file.path ===
+                                            "components/editor/blocks.ts"
+                                          : item.name === "editor-document"
+                                            ? [
+                                                "components/editor/document/index.ts",
+                                                "components/editor/document/static.tsx",
+                                              ].includes(file.path)
+                                            : item.name === "editor-review"
                                               ? file.path ===
-                                                "components/editor/typeahead-index.ts"
-                                              : true),
+                                                "components/editor/review.tsx"
+                                              : item.name === "editor-typeahead"
+                                                ? file.path ===
+                                                  "components/editor/typeahead-index.ts"
+                                                : true),
       )
       .flatMap((file) => {
         const source = program.getSourceFile(resolveSourcePath(file.path))
