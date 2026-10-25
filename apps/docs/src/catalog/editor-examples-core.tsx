@@ -29,6 +29,7 @@ import { ElementsSetupExample } from "./editor-examples/installation-next-03-ele
 import { LinkExample } from "./editor-examples/link"
 import { MathExample } from "./editor-examples/math-example"
 import { MediaExample } from "./editor-examples/media-example"
+import { PublicAiExample } from "./editor-examples/public-ai"
 import { PublicAutoformatExample } from "./editor-examples/public-autoformat"
 import { PublicBlockMenuExample } from "./editor-examples/public-block-menu"
 import { PublicBlocksExample } from "./editor-examples/public-blocks"
@@ -73,6 +74,17 @@ const sources = import.meta.glob<string>("./editor-examples/*.tsx", {
 })
 
 const examples = [
+  {
+    slug: "public-ai",
+    workflowIds: [],
+    title: "Configured AI command menu",
+    Component: PublicAiExample,
+    items: ["editor-ai-menu"],
+    description:
+      "Configure an authenticated host before commands, local chat, completed text approval, or authorized review comments.",
+    limits:
+      "No default endpoint, model, credentials, or server chat storage exists. Twelve truncated messages stay until the root unmounts. Null selection retains the dialog target. Selected-text context menus stay native, rich Markdown approval and nested shadow-root insert-below are absent. Full mapped AI equivalence is not credited; runtime acceptance remains deferred.",
+  },
   {
     slug: "public-code-drawing",
     workflowIds: [],

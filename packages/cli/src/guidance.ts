@@ -393,6 +393,12 @@ Keep the native details body, empty disclosure control, and content slot togethe
 Install optional editor-ai server source separately from editor client source.
 Import server helpers from \`${imports.lib.replace(/\/stylex$/, "/editor-ai")}\` on the server only.
 Compose EditorAiRoot, EditorAiTrigger, and EditorAiPanel inside EditorRoot.
+Install optional \`editor-ai-menu\` separately. Import from \`${imports.editor}/ai-menu\`.
+Compose EditorAiMenuRoot, EditorAiMenuTrigger, EditorAiMenuContent, and EditorAiMenuPanel inside configured EditorAiRoot.
+EditorAiMenuContent owns the editable surface. Do not add EditorContent beside it.
+The menu keeps twelve truncated chat messages until its root unmounts. Remount on document or viewer changes. No server chat storage is supplied.
+Comments require the current review controller and literal-true host policy. AI permission never grants review access.
+Rich Markdown approval, selected-text context overrides, and shadow-root insert-below are not supplied.
 Supply an explicit same-origin endpoint, documentId, and current authentication and CSRF headers.
 Review untrusted plain text before approval. Require explicit completion and clean EOF.
 Content, format, style, non-null selection, and read-only changes invalidate proposals.

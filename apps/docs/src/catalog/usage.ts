@@ -1,5 +1,23 @@
 // Standalone TSX files use the standard @ alias for src.
 const usageSnippetValues = {
+  "editor-ai-menu": `import type { EditorAiConfig } from "@/components/editor/ai-client"
+
+import { EditorAiRoot, EditorRoot, EditorToolbar } from "@/components/editor"
+import { EditorAiMenuRoot, EditorAiMenuTrigger, EditorAiMenuContent, EditorAiMenuPanel } from "@/components/editor/ai-menu"
+
+export function ConfiguredAiMenu({ config }: { config: EditorAiConfig }) {
+  return (
+    <EditorRoot ariaLabel="Configured AI editor">
+      <EditorAiRoot config={config}>
+        <EditorAiMenuRoot>
+          <EditorToolbar><EditorAiMenuTrigger /></EditorToolbar>
+          <EditorAiMenuContent />
+          <EditorAiMenuPanel />
+        </EditorAiMenuRoot>
+      </EditorAiRoot>
+    </EditorRoot>
+  )
+}`,
   "editor-diagram-mermaid": `import { editorDiagramMermaidRenderer } from "@/components/editor/diagram-renderers/mermaid.browser"
 
 export const renderers = { mermaid: editorDiagramMermaidRenderer }`,

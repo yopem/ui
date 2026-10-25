@@ -701,6 +701,37 @@ writes.
 
 <EditorAiExample />
 
+## Optional AI command menu
+
+```sh
+bunx --bun @yopem-ui/cli add editor-ai-menu
+```
+
+Compose `EditorAiMenuRoot`, `EditorAiMenuTrigger`, and `EditorAiMenuPanel`
+inside configured `EditorAiRoot`. Use `EditorAiMenuContent` as the only editable
+surface inside that menu root.
+
+Open commands with the trigger, Mod+J, empty-block Space, or an unselected
+context action. The menu filters commands and supports explicit chat requests.
+No provider request runs before host configuration and a request action.
+
+Approve completed plain text with replacement or top-level insertion below.
+Review comments require the current review controller and its host policy. No AI
+permission grants document write or review access.
+
+The root retains twelve truncated chat messages in memory across menu closes.
+Unmount the root to clear them. Remount on document or viewer changes. No server
+chat storage is supplied.
+
+A null selection retains the saved dialog target. Remount `EditorAiRoot` to
+explicitly discard it. Selected-text context menus stay native. Rich Markdown
+approval and insert-below inside shadow roots are not supplied.
+
+This configured example uses a local review viewer and create-only policy.
+Replace both with verified host values. Runtime acceptance remains deferred.
+
+<EditorAiMenuExample />
+
 ## Optional typeahead
 
 Install the optional source item. The base Editor does not enable typeahead.

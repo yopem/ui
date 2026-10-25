@@ -12,6 +12,8 @@ export async function getEditorDocumentation(slug: string) {
     sourcePath = "./editor-examples/public-placeholder.tsx"
   else if (part.item === "editor-floating-toolbar")
     sourcePath = "./editor-examples/public-floating-toolbar.tsx"
+  else if (part.item === "editor-ai-menu")
+    sourcePath = "./editor-examples/public-ai.tsx"
   else if (part.item === "editor-diagram")
     sourcePath = "./editor-preview-compositions/diagram.tsx"
   else if (part.item === "editor-list-presentation")
@@ -102,6 +104,13 @@ export async function getEditorDocumentation(slug: string) {
             "Approve only completed plain-text proposals. Content, non-null selection, format, style, and read-only changes invalidate proposals.",
             "A null selection retains the saved target for dialog use. Remount EditorAiRoot when host code discards that target.",
             "Authorize document saves separately. AI invocation does not grant document write access.",
+          ]
+        : []),
+      ...(part.item === "editor-ai-menu"
+        ? [
+            "EditorAiMenuContent owns the editable surface. Do not add EditorContent beside it.",
+            "Compose all parts inside configured EditorAiRoot and EditorAiMenuRoot. Review comments require the current review controller and its policy.",
+            "Twelve truncated chat messages remain in local memory until the menu root unmounts. Remount on document or viewer changes. No server chat storage is supplied.",
           ]
         : []),
       ...(part.item === "editor-review"

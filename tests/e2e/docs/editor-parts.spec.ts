@@ -50,9 +50,18 @@ for (const part of editorParts.filter(
         preview.getByRole("button", { name: "Connect to host", exact: true }),
       ).toBeVisible()
       await expect(preview.locator('[contenteditable="true"]')).toHaveCount(0)
-    } else if (part.item === "editor-copilot") {
+    } else if (
+      part.item === "editor-copilot" ||
+      part.item === "editor-ai-menu"
+    ) {
       await expect(
-        preview.getByRole("button", { name: "Configure Copilot", exact: true }),
+        preview.getByRole("button", {
+          name:
+            part.item === "editor-ai-menu"
+              ? "Configure AI"
+              : "Configure Copilot",
+          exact: true,
+        }),
       ).toBeVisible()
       await expect(
         preview.getByRole("textbox", { name: "Host endpoint", exact: true }),

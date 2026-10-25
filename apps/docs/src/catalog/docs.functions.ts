@@ -52,6 +52,7 @@ const completeEditorPreviews = new Map<
   ["editor-block-menu", ["./editor-examples/public-block-menu.tsx"]],
   ["editor-copilot", ["./editor-examples/public-copilot.tsx"]],
   ["editor-diagram", ["./editor-preview-compositions/diagram.tsx"]],
+  ["editor-ai-menu", ["./editor-examples/public-ai.tsx"]],
   ["editor-docx", ["./editor-examples/public-docx.tsx"]],
   ["editor-labels", ["./editor-examples/public-labels.tsx"]],
   ["editor-block-placeholder", ["./editor-examples/public-placeholder.tsx"]],

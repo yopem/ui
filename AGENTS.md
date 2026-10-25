@@ -962,3 +962,17 @@ Mermaid requires Node 22.12 or later for its tooling.
 Host endpoints need current authentication, document authorization, exact Origin,
 CSRF verification, and execution limits. No default endpoint or renderer exists.
 Never put credentials in diagram URLs. Configure headers explicitly.
+
+
+## Optional AI command menu
+
+Install `editor-ai-menu` for configured commands and bounded local chat.
+Compose EditorAiMenuRoot, EditorAiMenuTrigger, EditorAiMenuContent, and EditorAiMenuPanel inside configured EditorAiRoot.
+EditorAiMenuContent owns the editable surface. Do not add EditorContent beside it.
+Supply an explicit same-origin host endpoint, document ID, and current authentication and CSRF headers.
+Only explicit user requests start inference. Approve cleanly completed plain text explicitly.
+Review comments require the current review controller and literal-true host policy.
+Twelve truncated chat messages stay in memory across closes until the menu root unmounts.
+Remount on document or viewer changes. No server chat storage is supplied.
+Null selection retains the dialog target. Remount EditorAiRoot to discard it.
+Rich Markdown approval, selected-text context overrides, and shadow-root insert-below are not supplied.
