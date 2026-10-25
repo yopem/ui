@@ -1,6 +1,9 @@
 "use client"
 
-import type { WordClipboardImageResolver } from "@yopem-ui/editor/word-clipboard-model"
+import type {
+  WordClipboardImage,
+  WordClipboardImageResolver,
+} from "@yopem-ui/editor/word-clipboard-model"
 
 import { Box } from "@registry/components/ui/box"
 import { Heading } from "@registry/components/ui/heading"
@@ -17,12 +20,18 @@ import {
 } from "@yopem-ui/editor"
 import { registerDocumentPaste } from "@yopem-ui/editor/document"
 import { EditorListPresentationExtension } from "@yopem-ui/editor/list-presentation"
+import {
+  mediaSchema,
+  parseMedia,
+  type MediaInput,
+} from "@yopem-ui/editor/media"
 import { MediaExtension } from "@yopem-ui/editor/media"
 import {
   EditorWordClipboardExtension,
   registerWordClipboardPaste,
 } from "@yopem-ui/editor/word-clipboard"
 import { useState } from "react"
+import { z } from "zod"
 
 const extensions = [
   EditorBlockPresentationExtension,
@@ -32,8 +41,72 @@ const extensions = [
   EditorWordClipboardExtension,
 ]
 
+const maxImageMappings = 50
+
+const maxImageMappingSourceLength = 1_048_576
+
+const imageMappingsSchema = z
+  .array(
+    z.strictObject({
+      source: z.string().min(1).max(maxImageMappingSourceLength),
+      media: mediaSchema,
+    }),
+  )
+  .max(maxImageMappings)
+  .optional()
+
+export interface PublicWordClipboardImageMapping {
+  readonly source: string
+  readonly media: MediaInput
+}
+
 interface WordClipboardControlsProps {
   readonly resolveImage?: WordClipboardImageResolver
+}
+
+function createImageResolver(
+  imageMappings: readonly PublicWordClipboardImageMapping[] | undefined,
+): WordClipboardImageResolver | undefined {
+  const parsed = imageMappingsSchema.safeParse(imageMappings)
+
+  if (!parsed.success) throw new Error("Invalid Word image mappings.")
+  const mappings = parsed.data
+
+  if (!mappings?.length) return undefined
+
+  const mediaBySource = new Map<string, MediaInput>()
+  let totalSourceLength = 0
+
+  for (const mapping of mappings) {
+    if (mediaBySource.has(mapping.source))
+      throw new Error("Word image mappings need unique source keys.")
+
+    totalSourceLength += mapping.source.length
+
+    if (totalSourceLength > maxImageMappingSourceLength)
+      throw new Error("Word image mapping sources exceed the host limit.")
+
+    let media: MediaInput
+
+    try {
+      media = parseMedia(mapping.media)
+
+      if (media.kind !== "image")
+        throw new Error("Word image mapping must resolve to an image.")
+    } catch {
+      throw new Error("Word image mappings need validated image media.")
+    }
+
+    mediaBySource.set(mapping.source, media)
+  }
+
+  return function resolveImage(image: WordClipboardImage) {
+    const media = mediaBySource.get(image.source)
+
+    if (!media) throw new Error("Word image is not approved by the host.")
+
+    return media
+  }
 }
 
 function WordClipboardControls({ resolveImage }: WordClipboardControlsProps) {
@@ -76,12 +149,14 @@ function WordClipboardControls({ resolveImage }: WordClipboardControlsProps) {
 }
 
 export interface PublicWordClipboardExampleProps {
-  readonly resolveImage?: WordClipboardImageResolver
+  readonly imageMappings?: readonly PublicWordClipboardImageMapping[]
 }
 
 export function PublicWordClipboardExample({
-  resolveImage,
+  imageMappings,
 }: PublicWordClipboardExampleProps) {
+  const [resolveImage] = useState(() => createImageResolver(imageMappings))
+
   return (
     <Box
       render={<section aria-labelledby="public-word-clipboard-title" />}
@@ -90,9 +165,10 @@ export function PublicWordClipboardExample({
       <Stack>
         <Heading id="public-word-clipboard-title">Word clipboard paste</Heading>
         <Text>
-          Paste text, lists, and tables copied from Word. Inline styles and
-          paragraph indentation use a bounded subset. Images require an explicit
-          host resolver.
+          Paste supported Word text, lists, and tables. Formatting uses a
+          bounded subset. Images stay rejected unless the host supplies exact,
+          validated mappings before root creation. Keep mappings fixed until
+          remount.
         </Text>
         <EditorRoot ariaLabel="Word clipboard editor" extensions={extensions}>
           <EditorContent placeholder="Paste content copied from Word…" />
