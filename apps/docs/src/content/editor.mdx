@@ -693,8 +693,9 @@ credentials out of URLs, logs, and storage.
 Generate and Copilot insert after the saved range. Rewrite replaces the saved
 range. Review plain text before approval.
 
-Content, selection, format, style, and read-only changes invalidate proposals.
-Errors never apply partial output or retry paid requests.
+Content, non-null selection, format, style, and read-only changes invalidate
+proposals. A null selection retains the dialog target. Remount `EditorAiRoot` to
+discard it. Errors never apply partial output or retry paid requests.
 
 Approval changes local editor state. The host must separately authorize document
 writes.
