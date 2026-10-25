@@ -2,6 +2,7 @@
 
 import type { EditorAiConfig } from "@yopem-ui/editor/ai/client"
 import type { EditorReviewHost } from "@yopem-ui/editor/review"
+import type { KeyboardEvent } from "react"
 
 import { Box } from "@registry/components/ui/box"
 import { Button } from "@registry/components/ui/button"
@@ -29,6 +30,36 @@ import {
   EditorReviewProvider,
 } from "@yopem-ui/editor/review"
 import { useId, useRef, useState } from "react"
+
+const initialState = JSON.stringify({
+  root: {
+    type: "root",
+    version: 1,
+    direction: null,
+    format: "",
+    indent: 0,
+    children: [
+      {
+        type: "paragraph",
+        version: 1,
+        direction: null,
+        format: "",
+        indent: 0,
+        children: [
+          {
+            type: "text",
+            version: 1,
+            detail: 0,
+            format: 0,
+            mode: "normal",
+            style: "",
+            text: "Select this sentence to improve it, ask a question, or draft a review comment.",
+          },
+        ],
+      },
+    ],
+  },
+})
 
 const reviewViewer = { id: "public-ai-reviewer", name: "Example reviewer" }
 
@@ -81,6 +112,7 @@ export function PublicAiExample() {
   const csrfRef = useRef<HTMLInputElement>(null)
   const [config, setConfig] = useState<EditorAiConfig>()
   const [error, setError] = useState("")
+  const [editable, setEditable] = useState(true)
   const [review] = useState(createEditorReview)
   const [extensions] = useState(() => [review.extension])
 
@@ -110,8 +142,32 @@ export function PublicAiExample() {
     }
   }
 
+  function toggleEditable() {
+    setEditable((current) => !current)
+  }
+
+  function handleHostShortcut(event: KeyboardEvent<HTMLElement>) {
+    if (
+      event.defaultPrevented ||
+      event.repeat ||
+      event.nativeEvent.isComposing ||
+      !event.altKey ||
+      !event.shiftKey ||
+      event.ctrlKey ||
+      event.metaKey ||
+      event.key.toLowerCase() !== "r"
+    )
+      return
+    event.preventDefault()
+    toggleEditable()
+  }
+
   return (
-    <Box render={<section />} aria-label="AI host setup">
+    <Box
+      render={<section />}
+      aria-label="AI host setup"
+      onKeyDownCapture={handleHostShortcut}
+    >
       <Stack>
         {config ? (
           <Text>Host request settings are configured for this example.</Text>
@@ -149,18 +205,19 @@ export function PublicAiExample() {
             required
           />
         </Field>
-        <Field>
-          <FieldLabel htmlFor={`${fieldId}-csrf`}>Host CSRF token</FieldLabel>
-          <Input
-            id={`${fieldId}-csrf`}
-            aria-label="Host CSRF token"
-            type="password"
-            autoComplete="off"
-            ref={csrfRef}
-            disabled={config !== undefined}
-            required
-          />
-        </Field>
+        {!config ? (
+          <Field>
+            <FieldLabel htmlFor={`${fieldId}-csrf`}>Host CSRF token</FieldLabel>
+            <Input
+              id={`${fieldId}-csrf`}
+              aria-label="Host CSRF token"
+              type="password"
+              autoComplete="off"
+              ref={csrfRef}
+              required
+            />
+          </Field>
+        ) : null}
         <Button disabled={config !== undefined} onClick={configure}>
           Configure AI
         </Button>
@@ -171,9 +228,24 @@ export function PublicAiExample() {
           saved author ID does not grant access.
         </Text>
         {config ? (
-          <EditorRoot ariaLabel="Public AI editor" extensions={extensions}>
-            <PublicAiEditor config={config} review={review} />
-          </EditorRoot>
+          <>
+            <Text>
+              Use Alt+Shift+R to change host read-only state, including while a
+              proposal has focus. Markdown and MDX sample commands return
+              literal source. They do not execute markup.
+            </Text>
+            <Button variant="outline" onClick={toggleEditable}>
+              {editable ? "Make AI editor read-only" : "Restore AI editing"}
+            </Button>
+            <EditorRoot
+              ariaLabel="Public AI editor"
+              editable={editable}
+              extensions={extensions}
+              initialState={initialState}
+            >
+              <PublicAiEditor config={config} review={review} />
+            </EditorRoot>
+          </>
         ) : (
           <Text>Configure the host before opening the editor.</Text>
         )}

@@ -193,6 +193,7 @@ test("empty-block Space and unselected context action open the menu", async ({
 }) => {
   await installAiResponse(page, "Unused")
   const { editor } = await mountPublicAi(page)
+  await editor.fill("")
   await editor.click()
   await editor.press("Space")
   let dialog = page.getByRole("dialog", { name: "AI command menu" })
@@ -418,4 +419,63 @@ test("Markdown and MDX samples insert as text and never execute markup", async (
   await expect(editor).toContainText("<Callout />")
   await expect(editor.locator("callout")).toHaveCount(0)
   expect(calls).toBe(2)
+})
+
+test("host setup removes the CSRF input and starts no inference", async ({
+  page,
+}) => {
+  const calls = await installAiResponse(page, "Unused proposal")
+  const { setup, editor } = await mountPublicAi(page)
+  await expect(setup.getByLabel("Host CSRF token")).toHaveCount(0)
+  await expect(editor).toContainText("Select this sentence")
+  await expect(editor).toHaveAttribute("contenteditable", "true")
+  expect(calls()).toBe(0)
+})
+
+test("host read-only changes expire ready approval and preserve the document", async ({
+  page,
+}) => {
+  const calls = await installAiResponse(page, "Must not be approved")
+  const { editor, setup } = await mountPublicAi(page)
+  await editor.fill("Keep this source")
+  await editor.press("ControlOrMeta+a")
+  await editor.press("ControlOrMeta+j")
+  const dialog = await openCommand(page, "Improve")
+  await expect(
+    dialog.getByRole("button", { name: "Replace selection", exact: true }),
+  ).toBeEnabled()
+  await page.keyboard.press("Alt+Shift+r")
+  await expect(editor).toHaveAttribute("contenteditable", "false")
+  await expect(editor).toHaveText("Keep this source")
+
+  if (await dialog.isVisible()) {
+    await expect(
+      dialog.getByRole("button", {
+        name: "Replace selection",
+        exact: true,
+        disabled: false,
+      }),
+    ).toHaveCount(0)
+    await page.keyboard.press("Escape")
+  }
+
+  await expect(dialog).toBeHidden()
+  await expect(
+    setup.getByRole("button", { name: "Ask AI", exact: true }),
+  ).toBeDisabled()
+  await editor.click()
+  await page.keyboard.press("ControlOrMeta+j")
+  await expect(dialog).toBeHidden()
+  await expect(editor).toHaveText("Keep this source")
+  expect(calls()).toBe(1)
+  await setup
+    .getByRole("button", { name: "Restore AI editing", exact: true })
+    .click()
+  await expect(editor).toHaveAttribute("contenteditable", "true")
+  await expect(
+    setup.getByRole("button", { name: "Ask AI", exact: true }),
+  ).toBeEnabled()
+  await expect(editor).toHaveText("Keep this source")
+  const results = await new AxeBuilder({ page }).analyze()
+  expect(results.violations).toEqual([])
 })
