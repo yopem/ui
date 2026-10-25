@@ -20,6 +20,8 @@ import {
 } from "./document/boundary"
 import { documentMediaSchema } from "./document/media"
 import {
+  EDITOR_LIST_START_MAX,
+  EDITOR_LIST_START_MIN,
   editorListMarkerSchema,
   parseEditorListStart,
   type EditorListMarker,
@@ -60,9 +62,15 @@ interface WordListParagraph {
   readonly item: Element
 }
 
-interface OfficeListDefinition {
-  readonly marker: EditorListMarker
-  readonly type: "bullet" | "number"
+interface OfficeListDescriptors {
+  tabStop?: number | null
+  marginLeft?: number
+  textIndent?: number
+}
+
+interface OfficeListDefinition extends Readonly<OfficeListDescriptors> {
+  readonly marker?: EditorListMarker
+  readonly type?: "bullet" | "number"
   readonly start?: number
 }
 
@@ -94,6 +102,20 @@ const maxWordImages = 50
 const maxListLevel = 64
 
 const maxOfficeListDefinitions = 256
+
+const wordBulletMarkers = new Map<string, EditorListMarker>([
+  ["•", "disc"],
+  ["·", "disc"],
+  ["-", "disc"],
+  ["o", "circle"],
+  ["○", "circle"],
+  ["◦", "circle"],
+  ["▪", "square"],
+  ["■", "square"],
+  ["□", "square"],
+  ["\uf0b7", "disc"],
+  ["\uf02d", "disc"],
+])
 
 const wordImageStyleProperties = new Set(["width", "height"])
 
@@ -605,6 +627,7 @@ function parseOfficeStyleSheet(source: string) {
           )
         )
           throw new DocumentError(["Unsupported Word list definition."])
+        validateOfficeListIdentifiers(declarations)
       } else {
         const level = Number(levelValue)
 
@@ -685,6 +708,29 @@ function parseOfficeStyleSheet(source: string) {
   return { rules, lists, hasListRules }
 }
 
+function validateOfficeListIdentifiers(
+  declarations: ReadonlyMap<string, string>,
+) {
+  for (const [property, value] of declarations) {
+    const validListId =
+      property === "mso-list-id" &&
+      /^\d{1,10}$/.test(value) &&
+      Number.isSafeInteger(Number(value)) &&
+      Number(value) >= 0 &&
+      Number(value) <= EDITOR_LIST_START_MAX
+
+    const validTemplateIds =
+      property === "mso-list-template-ids" &&
+      /^-?\d{1,11}$/.test(value) &&
+      Number.isSafeInteger(Number(value)) &&
+      Number(value) >= EDITOR_LIST_START_MIN &&
+      Number(value) <= EDITOR_LIST_START_MAX
+
+    if (!validListId && !validTemplateIds)
+      throw new DocumentError(["Invalid Word list identifier."])
+  }
+}
+
 function parseOfficeListDefinition(
   declarations: ReadonlyMap<string, string>,
   level: number,
@@ -692,6 +738,11 @@ function parseOfficeListDefinition(
   let format: string | undefined
   let markerText: string | undefined
   let start: number | undefined
+  let tabStop: number | null | undefined
+  let marginLeft: number | undefined
+  let textIndent: number | undefined
+  let fontFamily: string | undefined
+  let bidiFontFamily: string | undefined
 
   for (const [property, value] of declarations) {
     if (property === "mso-level-number-format") format = value.toLowerCase()
@@ -700,26 +751,56 @@ function parseOfficeListDefinition(
       if (!/^\d{1,10}$/.test(value))
         throw new DocumentError(["Invalid Word list start."])
       start = parseEditorListStart(Number(value))
-    } else
+    } else if (property === "mso-level-tab-stop")
+      tabStop = parseOfficeListTabStop(value, level)
+    else if (property === "mso-level-number-position") {
+      if (value.toLowerCase() !== "left")
+        throw new DocumentError(["Unsupported Word list number position."])
+    } else if (property === "margin-left")
+      marginLeft = parseOfficeListMargin(value, level)
+    else if (property === "text-indent")
+      textIndent = parseOfficeListTextIndent(value)
+    else if (property === "font-family")
+      fontFamily = parseOfficeSymbolFont(value)
+    else if (property === "mso-bidi-font-family")
+      bidiFontFamily = parseOfficeSymbolFont(value)
+    else
       throw new DocumentError([
         `Unsupported Word list definition property: ${property}.`,
       ])
   }
 
-  if (!format || !markerText)
-    throw new DocumentError(["Word list definition is incomplete."])
+  if (
+    (fontFamily !== undefined || bidiFontFamily !== undefined) &&
+    (fontFamily !== "Symbol" ||
+      bidiFontFamily !== "Symbol" ||
+      format !== "bullet")
+  )
+    throw new DocumentError(["Unsupported Word list font metadata."])
+
+  const descriptors: OfficeListDescriptors = {}
+
+  if (tabStop !== undefined) descriptors.tabStop = tabStop
+
+  if (marginLeft !== undefined) descriptors.marginLeft = marginLeft
+
+  if (textIndent !== undefined) descriptors.textIndent = textIndent
+
+  if (format === undefined) {
+    if (
+      markerText !== undefined ||
+      start !== undefined ||
+      Object.keys(descriptors).length === 0
+    )
+      throw new DocumentError(["Word list definition is incomplete."])
+
+    return descriptors
+  }
 
   if (format === "bullet") {
-    const marker = new Map<string, EditorListMarker>([
-      ["•", "disc"],
-      ["·", "disc"],
-      ["o", "circle"],
-      ["○", "circle"],
-      ["◦", "circle"],
-      ["▪", "square"],
-      ["■", "square"],
-      ["□", "square"],
-    ]).get(markerText.trim())
+    if (markerText === undefined)
+      throw new DocumentError(["Word list definition is incomplete."])
+    const marker = wordBulletMarkers.get(markerText)
 
     if (!marker)
       throw new DocumentError(["Unsupported Word bullet marker definition."])
@@ -727,7 +808,7 @@ function parseOfficeListDefinition(
     if (start !== undefined)
       throw new DocumentError(["Bullet lists cannot define a start value."])
 
-    return { marker, type: "bullet" }
+    return { marker, type: "bullet", ...descriptors }
   }
 
   const formats = new Map<string, EditorListMarker>([
@@ -740,10 +821,62 @@ function parseOfficeListDefinition(
 
   const marker = formats.get(format)
 
-  if (!marker || markerText.trim() !== `%${level}.`)
+  if (!marker || (markerText !== undefined && markerText !== `%${level}.`))
     throw new DocumentError(["Unsupported Word ordered marker definition."])
 
-  return { marker, type: "number", start }
+  if (start === undefined) return { marker, type: "number", ...descriptors }
+
+  return { marker, type: "number", start, ...descriptors }
+}
+
+function parseOfficeListTabStop(value: string, level: number) {
+  if (value.toLowerCase() === "none") {
+    if (level !== 1) throw new DocumentError(["Invalid Word list tab stop."])
+
+    return null
+  }
+
+  const expected = (level - 1) * 36
+
+  if (expected === 0 || parseOfficePointValue(value) !== expected)
+    throw new DocumentError(["Invalid Word list tab stop."])
+
+  return expected
+}
+
+function parseOfficeListMargin(value: string, level: number) {
+  const expected = 24 + (level - 1) * 36
+
+  if (parseOfficePointValue(value) !== expected)
+    throw new DocumentError(["Invalid Word list margin."])
+
+  return expected
+}
+
+function parseOfficeListTextIndent(value: string) {
+  if (parseOfficePointValue(value) !== -24)
+    throw new DocumentError(["Invalid Word list text indentation."])
+
+  return -24
+}
+
+function parseOfficePointValue(value: string) {
+  const match = /^(-?\d+(?:\.\d+)?)pt$/i.exec(value)
+
+  if (!match?.[1]) throw new DocumentError(["Invalid Word list length."])
+  const amount = Number(match[1])
+
+  if (!Number.isFinite(amount) || Math.abs(amount) > 4096)
+    throw new DocumentError(["Invalid Word list length."])
+
+  return amount
+}
+
+function parseOfficeSymbolFont(value: string) {
+  if (!/^(?:Symbol|"Symbol"|'Symbol')$/i.test(value))
+    throw new DocumentError(["Unsupported Word list font metadata."])
+
+  return "Symbol"
 }
 
 function officeCssString(value: string) {
@@ -754,10 +887,14 @@ function officeCssString(value: string) {
     if (last !== first || value.length < 2)
       throw new DocumentError(["Invalid Word CSS string."])
 
-    return value.slice(1, -1)
-  }
+    value = value.slice(1, -1)
+  } else if (last === '"' || last === "'")
+    throw new DocumentError(["Invalid Word CSS string."])
 
-  if (!/^[\w%.,·•▪◦○o□■-]+$/u.test(value))
+  if (
+    value.length > 32 ||
+    (!wordBulletMarkers.has(value) && !/^%[1-9]\d?\.$/.test(value))
+  )
     throw new DocumentError(["Invalid Word CSS string."])
 
   return value
@@ -910,7 +1047,9 @@ function normalizeStyle(
   let listMargin: number | undefined
 
   function assignIndent(value: string) {
-    const next = parseWordIndent(value)
+    const next = list
+      ? parseWordListIndent(value, list.level)
+      : parseWordIndent(value)
 
     if (list) {
       if (next !== list.level)
@@ -933,6 +1072,13 @@ function normalizeStyle(
     if (property === "mso-list") {
       if (!list)
         throw new DocumentError(["Word list metadata requires a paragraph."])
+      continue
+    }
+
+    if (property === "tab-stops") {
+      if (!list)
+        throw new DocumentError(["Word tab stops require a list paragraph."])
+      parseWordListTabStops(value, list.level)
       continue
     }
 
@@ -1033,6 +1179,44 @@ function parseWordIndent(value: string) {
   return indent
 }
 
+function parseWordListIndent(value: string, level: number) {
+  const match = /^([+-]?\d+(?:\.\d+)?)(pt|in|px)$/i.exec(value)
+
+  if (!match?.[1] || !match[2])
+    throw new DocumentError(["Unsupported Word paragraph indentation."])
+  const amount = Number(match[1])
+  const unit = match[2].toLowerCase()
+
+  if (!Number.isFinite(amount) || amount < 0)
+    throw new DocumentError(["Invalid Word paragraph indentation."])
+
+  const points =
+    unit === "pt" ? amount : unit === "in" ? amount * 72 : amount * 0.75
+
+  const officeMargin = 24 + (level - 1) * 36
+  const legacyMargin = level * 36
+
+  if (points !== officeMargin && points !== legacyMargin)
+    throw new DocumentError(["Word list indentation does not match its level."])
+
+  return level
+}
+
+function parseWordListTabStops(value: string, level: number) {
+  const match = /^list\s+(\d+(?:\.\d+)?)pt$/i.exec(value)
+  const expected = (level - 1) * 36
+
+  if (
+    !match?.[1] ||
+    expected === 0 ||
+    !Number.isFinite(Number(match[1])) ||
+    Number(match[1]) !== expected
+  )
+    throw new DocumentError(["Unsupported Word list tab stops."])
+
+  return expected
+}
+
 function readWordListParagraph(
   node: Element,
   rules: readonly OfficeStyleRule[],
@@ -1053,12 +1237,18 @@ function readWordListParagraph(
   if (stylesheet.hasListRules && !definition)
     throw new DocumentError(["Word list reference has no matching definition."])
 
+  validateWordListParagraphMetadata(declarations, definition, info.level)
   const marker = removeWordListMarker(node.children, rules, definition)
 
   let resolvedInfo = info
 
   if (definition) {
-    resolvedInfo = { ...info, marker: definition.marker, type: definition.type }
+    if (definition.type && definition.marker)
+      resolvedInfo = {
+        ...info,
+        marker: definition.marker,
+        type: definition.type,
+      }
 
     if (definition.start !== undefined)
       resolvedInfo = { ...resolvedInfo, initialStart: definition.start }
@@ -1075,17 +1265,11 @@ function readWordListParagraph(
   const item = createElement("li", children, properties)
 
   if (
-    definition &&
+    definition?.type &&
+    definition.marker &&
     (marker.type !== definition.type || marker.marker !== definition.marker)
   )
     throw new DocumentError(["Word list marker conflicts with its definition."])
-
-  if (
-    definition?.start !== undefined &&
-    marker.start !== undefined &&
-    marker.start !== definition.start
-  )
-    throw new DocumentError(["Word list start conflicts with its definition."])
 
   const normalizedInfo: WordListInfo = {
     ...resolvedInfo,
@@ -1093,10 +1277,53 @@ function readWordListParagraph(
     type: marker.type,
   }
 
-  if (marker.start !== undefined)
+  if ("start" in marker && marker.start !== undefined)
     return { info: { ...normalizedInfo, start: marker.start }, item }
 
   return { info: normalizedInfo, item }
+}
+
+function validateWordListParagraphMetadata(
+  declarations: ReadonlyMap<string, string>,
+  definition: OfficeListDefinition | undefined,
+  level: number,
+) {
+  if (!definition) return
+
+  for (const property of ["margin-left", "mso-para-margin-left"]) {
+    const value = declarations.get(property)
+
+    if (
+      value !== undefined &&
+      definition.marginLeft !== undefined &&
+      parseOfficePointValue(value) !== definition.marginLeft
+    )
+      throw new DocumentError([
+        "Word list margin conflicts with its definition.",
+      ])
+  }
+
+  const textIndent = declarations.get("text-indent")
+
+  if (
+    textIndent !== undefined &&
+    definition.textIndent !== undefined &&
+    parseOfficePointValue(textIndent) !== definition.textIndent
+  )
+    throw new DocumentError([
+      "Word list text indentation conflicts with its definition.",
+    ])
+
+  const tabStops = declarations.get("tab-stops")
+
+  if (tabStops !== undefined) {
+    const tabStop = parseWordListTabStops(tabStops, level)
+
+    if (definition.tabStop !== undefined && definition.tabStop !== tabStop)
+      throw new DocumentError([
+        "Word list tab stops conflict with its definition.",
+      ])
+  }
 }
 
 function parseWordListInfo(value: string): WordListInfo {
@@ -1134,6 +1361,11 @@ function removeWordListMarker(
   rules: readonly OfficeStyleRule[],
   definition?: OfficeListDefinition,
 ) {
+  const definedMarker =
+    definition?.type && definition.marker
+      ? { type: definition.type, marker: definition.marker }
+      : null
+
   let markerSpan: string | undefined
   let commentMarker: string | undefined
   let start = -1
@@ -1195,7 +1427,7 @@ function removeWordListMarker(
   const first = keep[0]
 
   if (first?.type !== "text") {
-    if (definition) return { children: keep, ...definition }
+    if (definedMarker) return { children: keep, ...definedMarker }
     throw new DocumentError(["Word list marker is missing."])
   }
 
@@ -1205,7 +1437,7 @@ function removeWordListMarker(
     )
 
   if (!match?.[1]) {
-    if (definition) return { children: keep, ...definition }
+    if (definedMarker) return { children: keep, ...definedMarker }
     throw new DocumentError(["Word list marker is unsupported."])
   }
 
@@ -1269,16 +1501,7 @@ function parseWordMarker(source: string) {
     return { type: "number" as const, marker: "decimal" as const, start }
   }
 
-  const symbol = new Map<string, EditorListMarker>([
-    ["•", "disc"],
-    ["·", "disc"],
-    ["o", "circle"],
-    ["○", "circle"],
-    ["◦", "circle"],
-    ["▪", "square"],
-    ["■", "square"],
-    ["□", "square"],
-  ]).get(marker)
+  const symbol = wordBulletMarkers.get(marker)
 
   if (symbol) return { type: "bullet" as const, marker: symbol }
 
@@ -1406,6 +1629,15 @@ function buildWordLists(entries: readonly WordListParagraph[]) {
         (info.start === undefined && info.initialStart === frame.initialStart))
 
     if (!compatible) {
+      if (
+        info.initialStart !== undefined &&
+        info.start !== undefined &&
+        info.start !== info.initialStart
+      )
+        throw new DocumentError([
+          "Word list start conflicts with its definition.",
+        ])
+
       stack.length = info.level - 1
 
       const listProperties: Properties = {
