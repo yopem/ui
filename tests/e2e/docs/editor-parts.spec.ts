@@ -55,6 +55,12 @@ for (const part of editorParts.filter(
         preview.getByRole("img", { name: "Media preview", exact: true }),
       ).toBeVisible()
       await expect(preview.locator('[contenteditable="true"]')).toHaveCount(0)
+    } else if (part.name === "EditorSearchRoot") {
+      await expect(editor).toHaveAttribute("aria-readonly", "true")
+      await expect(editor).toHaveAttribute("contenteditable", "false")
+      await expect(
+        preview.getByRole("searchbox", { name: "Search editor" }),
+      ).toBeVisible()
     } else if (part.name === "EditorReviewRichContent") {
       await expect(preview.getByRole("paragraph").first()).toBeVisible()
       await expect(preview.locator('[contenteditable="true"]')).toHaveCount(0)

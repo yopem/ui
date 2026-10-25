@@ -40,6 +40,7 @@ import {
   MultipleEditorsExample,
 } from "./editor-examples/public-hosts"
 import { ReadOnlyEditorExample } from "./editor-examples/public-readonly"
+import { PublicSearchExample } from "./editor-examples/public-search"
 import { PublicSelectionExample } from "./editor-examples/public-selection"
 import { PublicStylesExample } from "./editor-examples/public-styles"
 import { PublicTablesExample } from "./editor-examples/public-tables"
@@ -218,6 +219,18 @@ const examples = [
       "Save immutable snapshots. Inspect an earlier revision without changing the current document. Compare inserted, removed, and updated blocks and text.",
     limits:
       "History stays in memory and holds at most 20 snapshots, each within 1 MiB and 200 top-level blocks. Long or multiline text uses whole-block differences. No server history is configured.",
+  },
+  {
+    slug: "search",
+    sourceFile: "public-search",
+    workflowIds: ["find-replace"],
+    title: "Search with transient highlights",
+    Component: PublicSearchExample,
+    items: ["editor-search"],
+    description:
+      "Search live text, move through bounded matches with keyboard or pointer controls, and keep document content and undo history unchanged.",
+    limits:
+      "The pinned find-replace example exposes search only. No replacement operation exists. Matches do not cross styled TextNodes. Query/result bounds do not make document scanning constant-time. Runtime, read-only geometry, and overlay cleanup remain unverified.",
   },
   {
     slug: "public-typeahead",

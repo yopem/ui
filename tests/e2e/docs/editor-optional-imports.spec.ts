@@ -13,6 +13,8 @@ const cases = [
   ["editor-date", "EditorDateControls", "date"],
   ["editor-footnotes", "EditorFootnoteControls", "footnote"],
   ["editor-toc", "EditorTocControls", "toc"],
+  ["editor-search", "EditorSearchRoot", "search"],
+  ["editor-search", "findEditorSearchMatches", "search-model"],
 ] as const
 
 for (const [item, name, module] of cases) {

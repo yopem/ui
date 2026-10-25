@@ -1,5 +1,35 @@
 // Standalone TSX files use the standard @ alias for src.
 const usageSnippetValues = {
+  "editor-search": `"use client"
+
+import { EditorContent, EditorRoot } from "@/components/editor"
+import { HStack } from "@/components/ui/hstack"
+import {
+  EditorSearchRoot,
+  EditorSearchInput,
+  EditorSearchPreviousButton,
+  EditorSearchNextButton,
+  EditorSearchStatus,
+  EditorSearchViewport,
+} from "@/components/editor/search"
+
+export function SearchableEditor() {
+  return (
+    <EditorRoot ariaLabel="Searchable editor">
+      <EditorSearchRoot>
+        <HStack>
+          <EditorSearchInput />
+          <EditorSearchPreviousButton />
+          <EditorSearchNextButton />
+          <EditorSearchStatus />
+        </HStack>
+        <EditorSearchViewport>
+          <EditorContent />
+        </EditorSearchViewport>
+      </EditorSearchRoot>
+    </EditorRoot>
+  )
+}`,
   "editor-csv": `"use client"
 
 import { EditorContent, EditorRoot } from "@/components/editor"

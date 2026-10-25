@@ -75,6 +75,11 @@ Install optional \`editor-csv\` for bounded CSV clipboard imports. Register \`Ed
 Use \`pasteTsv:false\` on \`EditorTablePresentationExtension\` when CSV owns tab-containing input. HTML validation stays active.
 Keep native JSON/HTML clipboard priority and HIGH/CRITICAL host paste policy. Reject malformed CSV before mutation.
 CSV limits are 1 MiB, 50 rows, 50 columns, and 2500 cells. Plain text needs a comma and multiple lines; explicit \`text/csv\` also supports one row.
+Install optional \`editor-search\` separately. Compose \`EditorSearchRoot\` inside \`EditorRoot\`.
+Place \`EditorContent\` inside \`EditorSearchViewport\`. Compose input, previous/next, and status controls.
+Search changes transient overlays and selection, not document content. It does not replace text.
+Bound queries to 64 Unicode code points and results to 200 within-TextNode matches. Matches do not cross styled nodes.
+Use the pure \`search-model\` module outside React. Preserve host input cancellation and read-only navigation.
 Validate external table JSON and HTML before conversion. Reject invalid updates without removing existing content.
 Discard saved table selections after document content changes. Preserve resize cancellation, history, and RTL keyboard behavior.
 Render checklist items as native list items with separate checkbox controls.

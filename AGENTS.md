@@ -799,3 +799,12 @@ HTML table validation stays active.
 Reject invalid quotes, unequal row widths, and inputs above 1 MiB or 50 by 50 cells before mutation.
 Plain-text detection requires a comma and multiple lines. Explicit `text/csv` also supports one row.
 CSV data remains text. Do not evaluate formulas or render field HTML.
+
+## Optional editor search
+
+Install `editor-search` separately. Compose `EditorSearchRoot` inside `EditorRoot`.
+Place `EditorContent` inside `EditorSearchViewport`. Use the input, previous, next, and status parts.
+Search uses transient overlays and native selection. It does not replace or persist text.
+Queries use at most 64 Unicode code points. Results contain at most 200 within-TextNode matches.
+Matches do not cross styled TextNode boundaries. Scanning depends on document size.
+Use the pure `search-model` module outside React. Keep native input cancellation and read-only navigation.

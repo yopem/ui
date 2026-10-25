@@ -8,7 +8,9 @@ export async function getEditorDocumentation(slug: string) {
   if (!part) return null
   let sourcePath = `./editor-previews/${part.slug}.tsx`
 
-  if (part.name.startsWith("EditorInlineCombobox"))
+  if (part.item === "editor-search")
+    sourcePath = "./editor-preview-compositions/search.tsx"
+  else if (part.name.startsWith("EditorInlineCombobox"))
     sourcePath = "./editor-preview-compositions/inline-combobox.tsx"
   else if (part.name === "MediaInsertControl")
     sourcePath = "./editor-preview-compositions/media.tsx"

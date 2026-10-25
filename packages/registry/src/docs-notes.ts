@@ -5,6 +5,11 @@ const usageNoteValues = {
     "Native cut requires synchronous literal-true host approval. Preserve native MIME export and higher-priority host cancellation. Document validation must also return literal true.",
     "Content, selection, and read-only changes expire saved operations. Keep host authorization for persisted writes. Validate custom document schemas before local mutations.",
   ],
+  "editor-search": [
+    "Install editor-search separately. Compose its root inside EditorRoot and place EditorContent inside EditorSearchViewport.",
+    "Queries use at most 64 Unicode code points. Search returns at most 200 overlapping matches within individual TextNodes. Matches do not cross styled node boundaries.",
+    "Search uses transient range overlays. It does not replace text or change saved content. Use the pure search-model module outside React. Document-size scanning, focus, read-only navigation, and geometry still need runtime validation.",
+  ],
   "editor-csv": [
     "Register EditorCsvExtension in a stable root extension array. Native Lexical JSON and HTML keep clipboard priority. HIGH and CRITICAL host handlers keep control.",
     "Use pasteTsv:false on EditorTablePresentationExtension when CSV owns tab-containing input. This keeps native table geometry and HTML validation active.",

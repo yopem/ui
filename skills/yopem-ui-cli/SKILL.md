@@ -789,3 +789,13 @@ malformed quotes, unequal row widths, and inputs above 1 MiB or 50 by 50 cells
 before content changes. Plain text needs a comma and multiple lines. Explicit
 `text/csv` also supports one row. Fields remain plain text. Do not evaluate
 formulas or render HTML.
+
+## Optional editor search
+
+Install `editor-search` separately. Compose `EditorSearchRoot` inside
+`EditorRoot`. Place `EditorContent` inside `EditorSearchViewport`. Use the
+input, previous/next, and status parts. Search does not replace text or persist
+highlights. Queries use at most 64 Unicode code points. Results contain at most
+200 matches within individual TextNodes, not across styled nodes. Use
+`@/components/editor/search-model` for pure helpers outside React. Preserve host
+cancellation and read-only navigation.

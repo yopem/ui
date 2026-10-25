@@ -8,6 +8,7 @@ import { editorFootnoteParts } from "./editor-footnote-parts"
 import { editorMathParts } from "./editor-math-parts"
 import { editorMediaParts } from "./editor-media-parts"
 import { editorReviewParts } from "./editor-review-parts"
+import { editorSearchParts } from "./editor-search-parts"
 import { editorTocParts } from "./editor-toc-parts"
 import { editorTypeaheadParts } from "./editor-typeahead-parts"
 
@@ -238,6 +239,7 @@ export const editorParts = [
   ...editorCollaborationParts,
   ...editorBlockSelectionParts,
   ...editorTypeaheadParts,
+  ...editorSearchParts,
 ] as const
 
 export function getEditorPart(slug: string) {
