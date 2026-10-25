@@ -81,7 +81,10 @@
     "./docx/client": "./src/docx-controls.tsx",
     "./list-presentation": "./src/list-presentation.tsx",
     "./list-presentation/model": "./src/list-presentation-model.ts",
-    "./list-presentation/extension": "./src/list-presentation-extension.ts"
+    "./list-presentation/extension": "./src/list-presentation-extension.ts",
+    "./editable-card": "./src/editable-card.ts",
+    "./editable-card/model": "./src/editable-card-model.ts",
+    "./editable-card/node": "./src/editable-card-node.tsx"
   },
   "scripts": {
     "typecheck": "tsc --noEmit"
