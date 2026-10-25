@@ -828,3 +828,12 @@ from `@/components/editor/block-placeholder`. Mount one layer beside
 apply only to focused, editable, empty root elements. Use native node types or
 heading tags as label keys. Placeholder text stays outside document content and
 serializers. Preserve native focus, history, and host classes.
+
+## Optional native Markdown fragment paste
+
+Pass `{ markdown: true }` to `registerDocumentPaste` to insert validated
+Markdown at the caret. Keep `EditorDocumentClipboardExtension` in the stable
+root extensions array. Keep registration cleanup in the host lifecycle. Lexical
+JSON and HTML have priority. Without this option, plain-text paste stays native.
+Rejected empty or unsupported fragments keep selected content. Higher-priority
+host vetoes still apply.

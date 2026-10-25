@@ -1,6 +1,8 @@
 import type { BaseSelection, LexicalEditor, LexicalNode } from "lexical"
 
 import {
+  $generateNodesFromSerializedNodes,
+  $insertGeneratedNodes,
   ClipboardImportExtension,
   DEFAULT_IMPORT_MIME_TYPE,
 } from "@lexical/clipboard"
@@ -753,6 +755,7 @@ const pasteRegistrations = new WeakMap<
   {
     onError: (error: DocumentError) => void
     rejected: WeakSet<DataTransfer>
+    markdown: boolean
   }
 >()
 
@@ -942,18 +945,75 @@ function $importDocumentHTML(
   return next()
 }
 
+function $importDocumentMarkdown(
+  data: string,
+  selection: BaseSelection,
+  next: () => boolean,
+) {
+  const editor = $getEditor()
+  const registration = pasteRegistrations.get(editor)
+
+  if (!registration?.markdown || !$hasUpdateTag(PASTE_TAG)) return next()
+
+  if (!editor.isEditable()) return true
+
+  try {
+    const document = parseDocument(data, "markdown")
+
+    const fragment = document.root.children
+    const first = fragment[0] ? nodeSchema.parse(fragment[0]) : undefined
+
+    if (
+      !data.trim() ||
+      !fragment.length ||
+      (fragment.length === 1 &&
+        first?.type === "paragraph" &&
+        !first.children?.length)
+    )
+      throw new DocumentError(["Markdown fragment is empty."])
+
+    validatePasteTarget(editor, document)
+    const nodes = $generateNodesFromSerializedNodes(fragment)
+
+    if (!nodes.length) throw new DocumentError(["Markdown fragment is empty."])
+
+    $insertGeneratedNodes(editor, nodes, selection)
+  } catch (error) {
+    registration.onError(
+      error instanceof DocumentError
+        ? error
+        : new DocumentError(["Invalid clipboard Markdown."]),
+    )
+  }
+
+  return true
+}
+
 function $importDocumentText(
-  _data: string,
-  _selection: BaseSelection,
+  data: string,
+  selection: BaseSelection,
   next: () => boolean,
   dataTransfer: DataTransfer,
+  allowMarkdown = true,
 ) {
   const registration = pasteRegistrations.get($getEditor())
 
   if ($hasUpdateTag(PASTE_TAG) && registration?.rejected.has(dataTransfer))
     return true
 
+  if (allowMarkdown && registration?.markdown && $hasUpdateTag(PASTE_TAG))
+    return $importDocumentMarkdown(data, selection, next)
+
   return next()
+}
+
+function $importDocumentURI(
+  data: string,
+  selection: BaseSelection,
+  next: () => boolean,
+  dataTransfer: DataTransfer,
+) {
+  return $importDocumentText(data, selection, next, dataTransfer, false)
 }
 
 export const EditorDocumentClipboardExtension = defineExtension({
@@ -968,7 +1028,7 @@ export const EditorDocumentClipboardExtension = defineExtension({
       "application/x-lexical-editor": $importDocumentJSON,
       "text/html": $importDocumentHTML,
       "text/plain": $importDocumentText,
-      "text/uri-list": $importDocumentText,
+      "text/uri-list": $importDocumentURI,
     })) {
       const stack = output?.$importMimeType[mime]
       const index = stack?.indexOf(handler) ?? -1
@@ -985,6 +1045,17 @@ export const EditorDocumentClipboardExtension = defineExtension({
       stack.splice(1, 0, handler)
     }
 
+    const markdownStack = output?.$importMimeType["text/markdown"]
+    const markdownIndex = markdownStack?.indexOf($importDocumentMarkdown) ?? -1
+
+    if (!markdownStack || markdownIndex < 0)
+      throw new DocumentError([
+        "Markdown clipboard import middleware is unavailable.",
+      ])
+
+    markdownStack.splice(markdownIndex, 1)
+    markdownStack.unshift($importDocumentMarkdown)
+
     return () => {
       pasteRegistrations.delete(editor)
     }
@@ -994,9 +1065,11 @@ export const EditorDocumentClipboardExtension = defineExtension({
       $importMimeType: {
         "application/x-lexical-editor": [$importDocumentJSON],
         "text/html": [$importDocumentHTML],
+        "text/markdown": [$importDocumentMarkdown],
         "text/plain": [$importDocumentText],
-        "text/uri-list": [$importDocumentText],
+        "text/uri-list": [$importDocumentURI],
       },
+      priority: { "text/markdown": 15 },
     }),
   ],
 })
@@ -1004,6 +1077,7 @@ export const EditorDocumentClipboardExtension = defineExtension({
 export function registerDocumentPaste(
   editor: LexicalEditor,
   onError: (error: DocumentError) => void,
+  options: { markdown?: boolean } = {},
 ) {
   if (
     !getPeerDependencyFromEditor<typeof EditorDocumentClipboardExtension>(
@@ -1017,7 +1091,13 @@ export function registerDocumentPaste(
 
   if (pasteRegistrations.has(editor))
     throw new DocumentError(["Document paste is already registered."])
-  const registration = { onError, rejected: new WeakSet<DataTransfer>() }
+
+  const registration = {
+    onError,
+    rejected: new WeakSet<DataTransfer>(),
+    markdown: options.markdown === true,
+  }
+
   pasteRegistrations.set(editor, registration)
 
   const unregister = editor.registerCommand(

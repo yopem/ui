@@ -1296,3 +1296,17 @@ Only focused, editable, empty root elements receive hints. Empty labels disable
 a hint. The hint stays outside native document content and serializers. A
 separate live status supplies its label. Native focus, cleanup, history,
 screen-reader announcements, and visual behavior still need runtime checks.
+
+## Native Markdown fragment paste
+
+Register `EditorDocumentClipboardExtension` before the root mounts. Pass
+`{ markdown: true }` as the third `registerDocumentPaste` argument to parse
+Markdown paste at the caret. Keep the registration cleanup in the host
+lifecycle.
+
+Lexical JSON and HTML keep priority over Markdown. Plain-text paste stays native
+unless the option is enabled. The importer validates the complete fragment
+before native insertion. It does not replace the entire document. Empty or
+unsupported Markdown keeps selected content. Higher-priority host vetoes and
+read-only behavior remain in place. Native MIME ordering, nested insertions,
+history, and browser clipboard compatibility still need deferred checks.

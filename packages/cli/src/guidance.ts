@@ -305,6 +305,9 @@ DocumentStatic needs no EditorRoot. Keep every copied helper, including \`docume
 Keep \`@types/hast\` as a direct consumer dependency.
 Register EditorDocumentClipboardExtension at root creation in a stable extensions array.
 Call registerDocumentPaste after creation. Keep its cleanup in the host lifecycle.
+Opt in with \`{ markdown: true }\` only for validated Markdown fragments at the native caret.
+Keep Lexical JSON and HTML priority. Default text/plain paste stays native.
+Reject empty or unsupported fragments without removing selected content.
 Register EditorBlocksExtension for live callout and toggle imports.
 Invalid, stale, cancelled, and read-only imports keep current content. Streams commit once after EOF.
 Register math and mention nodes before importing their representations.

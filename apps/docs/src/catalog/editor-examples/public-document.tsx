@@ -19,6 +19,7 @@ import {
   streamMarkdown,
 } from "@yopem-ui/editor/document"
 import { DocumentStatic } from "@yopem-ui/editor/document/static"
+import { COMMAND_PRIORITY_HIGH, PASTE_COMMAND, defineExtension } from "lexical"
 import { useRef, useState } from "react"
 import { z } from "zod"
 
@@ -261,15 +262,20 @@ function failureMessage(cause: unknown, fallback: string) {
 function useDocumentPasteRegistration(
   onError: (message: string) => void,
   onDisconnect?: () => void,
+  options?: { markdown?: boolean },
 ) {
   const editor = useEditor()
 
   const [connect] = useState(
     () =>
       function connect() {
-        const unregister = registerDocumentPaste(editor, (failure) => {
-          onError(failure.message)
-        })
+        const unregister = registerDocumentPaste(
+          editor,
+          (failure) => {
+            onError(failure.message)
+          },
+          options,
+        )
 
         return () => {
           unregister()
@@ -374,8 +380,12 @@ function MarkdownControls() {
   const [sourceRevision, setSourceRevision] = useState(0)
   const [html, setHTML] = useState("")
   const [markdownOutput, setMarkdownOutput] = useState("")
+  const [copied, setCopied] = useState(false)
   const [error, setError] = useState("")
-  const connect = useDocumentPasteRegistration(setError)
+
+  const connect = useDocumentPasteRegistration(setError, undefined, {
+    markdown: true,
+  })
 
   function run(action: () => void) {
     try {
@@ -383,6 +393,27 @@ function MarkdownControls() {
       setError("")
     } catch (failure) {
       setError(failureMessage(failure, "Markdown conversion failed."))
+    }
+  }
+
+  async function copyMarkdown() {
+    try {
+      if (window.ClipboardItem?.supports?.("text/markdown")) {
+        await navigator.clipboard.write([
+          new window.ClipboardItem({
+            "text/markdown": new Blob([markdown], { type: "text/markdown" }),
+            "text/plain": new Blob([markdown], { type: "text/plain" }),
+          }),
+        ])
+      } else {
+        await navigator.clipboard.writeText(markdown)
+      }
+
+      setCopied(true)
+      setError("")
+    } catch (failure) {
+      setCopied(false)
+      setError(failureMessage(failure, "Markdown clipboard write failed."))
     }
   }
 
@@ -406,6 +437,7 @@ function MarkdownControls() {
         value={markdown}
         onChange={(event) => {
           setMarkdown(event.target.value)
+          setCopied(false)
           setSourceRevision((revision) => revision + 1)
         }}
       />
@@ -416,6 +448,10 @@ function MarkdownControls() {
           ariaLabel="Markdown raw syntax preview"
         />
       </Box>
+      <Button onClick={copyMarkdown}>Copy Markdown clipboard sample</Button>
+      {copied ? (
+        <Box render={<output />}>Markdown clipboard sample copied.</Box>
+      ) : null}
       <Button
         onClick={() => {
           run(() => importDocument(editor, markdown, "markdown"))
@@ -440,7 +476,47 @@ function MarkdownControls() {
   )
 }
 
+function createMarkdownPastePolicy() {
+  let blocked = false
+
+  return {
+    extension: defineExtension({
+      name: "example/markdown-paste-policy",
+      register(editor) {
+        return editor.registerCommand(
+          PASTE_COMMAND,
+          (event) => {
+            if (!blocked) return false
+            event?.preventDefault()
+
+            return true
+          },
+          COMMAND_PRIORITY_HIGH,
+        )
+      },
+    }),
+    toggle() {
+      blocked = !blocked
+
+      return blocked
+    },
+  }
+}
+
 export function PublicDocumentMarkdownExample() {
+  const [policy] = useState(createMarkdownPastePolicy)
+  const [extensions] = useState(() => [...documentExtensions, policy.extension])
+  const [blocked, setBlocked] = useState(false)
+  const [editable, setEditable] = useState(true)
+
+  function togglePaste() {
+    setBlocked(policy.toggle())
+  }
+
+  function toggleEditable() {
+    setEditable((value) => !value)
+  }
+
   return (
     <Box
       render={<section aria-labelledby="public-document-markdown-title" />}
@@ -451,10 +527,23 @@ export function PublicDocumentMarkdownExample() {
           Markdown document import
         </Heading>
         <Text>
-          Import supported Markdown into Lexical. Export it as Markdown or HTML,
-          then read the HTML with the standalone static renderer.
+          Paste supported Markdown at the caret or import it as a document.
+          Export it as Markdown or HTML, then read the HTML with the standalone
+          static renderer.
         </Text>
-        <EditorRoot ariaLabel="Markdown editor" extensions={documentExtensions}>
+        <Button onClick={togglePaste} aria-pressed={blocked}>
+          {blocked ? "Allow Markdown paste" : "Block Markdown paste"}
+        </Button>
+        <Button onClick={toggleEditable} aria-pressed={!editable}>
+          {editable
+            ? "Make Markdown editor read-only"
+            : "Enable Markdown editing"}
+        </Button>
+        <EditorRoot
+          ariaLabel="Markdown editor"
+          extensions={extensions}
+          editable={editable}
+        >
           <EditorContent placeholder="Imported Markdown appears here…" />
           <MarkdownControls />
         </EditorRoot>
