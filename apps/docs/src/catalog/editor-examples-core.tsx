@@ -30,6 +30,7 @@ import { LinkExample } from "./editor-examples/link"
 import { MathExample } from "./editor-examples/math-example"
 import { MediaExample } from "./editor-examples/media-example"
 import { PublicBlocksExample } from "./editor-examples/public-blocks"
+import { PublicCodeExample } from "./editor-examples/public-code"
 import { CsvEditorExample } from "./editor-examples/public-csv"
 import { PublicFootnotesExample } from "./editor-examples/public-footnotes"
 import { VersionHistoryExample } from "./editor-examples/public-history"
@@ -212,6 +213,18 @@ const examples = [
       "Save immutable snapshots. Inspect an earlier revision without changing the current document. Compare inserted, removed, and updated blocks and text.",
     limits:
       "History stays in memory and holds at most 20 snapshots, each within 1 MiB and 200 top-level blocks. Long or multiline text uses whole-block differences. No server history is configured.",
+  },
+  {
+    slug: "public-code",
+    sourceFile: "public-code",
+    workflowIds: ["code-block"],
+    title: "Native code editing and formatting",
+    Component: PublicCodeExample,
+    items: ["editor-code", "editor-code-format"],
+    description:
+      "Edit seeded JavaScript, Python, and CSS blocks. Select configured languages, copy code with feedback, and format supported JavaScript with local history.",
+    limits:
+      "The language control is a native select, not a search field. Its empty option is Unspecified, not Auto or Plain Text. The optional Prettier adapter does not support Python. Static grammar loading has a material bundle cost.",
   },
   {
     slug: "public-footnotes",
