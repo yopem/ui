@@ -131,7 +131,7 @@ const examples = [
   },
   {
     slug: "public-block-menu",
-    workflowIds: [],
+    workflowIds: ["block-menu"],
     title: "Native block context actions",
     Component: PublicBlockMenuExample,
     items: [
@@ -145,7 +145,7 @@ const examples = [
     description:
       "Use native context actions, policy-bound comments, configured AI proposals, and captured-target diagram insertion.",
     limits:
-      "The reviewer and permission controls are local fixtures, not authorization services. AI needs an existing authenticated host with CSRF and document policy. Captured targets expire on content or read-only changes. Diagram source insertion has no configured renderer. Full pinned block-menu equivalence is not credited. Runtime acceptance is deferred.",
+      "The reviewer and permission switches are local fixtures, not authorization services. AI and SVG rendering require explicit authenticated host endpoints, document policy, CSRF, and quotas. Setup sends no requests. Captured targets expire on content or read-only changes. Comment permission changes clear saved review targets. Source coverage includes the configured context actions; renderer, policy, history, consumer, and browser acceptance remain deferred.",
   },
   {
     slug: "public-copilot",

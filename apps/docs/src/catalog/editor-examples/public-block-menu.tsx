@@ -5,8 +5,13 @@ import type {
   EditorBlockMenuActionPreparation,
   EditorBlockMenuContext,
 } from "@yopem-ui/editor/block-menu"
+import type {
+  EditorDiagramRenderInput,
+  EditorDiagramRenderer,
+  EditorDiagramRenderers,
+} from "@yopem-ui/editor/diagram"
 import type { EditorReviewHost } from "@yopem-ui/editor/review"
-import type { ChangeEvent } from "react"
+import type { ChangeEvent, KeyboardEvent } from "react"
 
 import { Box } from "@registry/components/ui/box"
 import { Button } from "@registry/components/ui/button"
@@ -22,6 +27,7 @@ import { Field, FieldLabel } from "@registry/components/ui/field"
 import { Input } from "@registry/components/ui/input"
 import { Stack } from "@registry/components/ui/stack"
 import { Text } from "@registry/components/ui/text"
+import { ToolbarButton } from "@registry/components/ui/toolbar"
 import {
   EditorAiPanel,
   EditorAiRoot,
@@ -30,6 +36,7 @@ import {
   EditorHistoryButton,
   EditorRoot,
   EditorToolbar,
+  useEditor,
 } from "@yopem-ui/editor"
 import { validateEditorAiConfig } from "@yopem-ui/editor/ai/client"
 import {
@@ -37,10 +44,14 @@ import {
   EditorBlockMenu,
 } from "@yopem-ui/editor/block-menu"
 import {
+  $createEditorDiagramCodeNode,
+  createEditorDiagramHttpRenderer,
   EditorDiagramDeleteButton,
+  EditorDiagramDownloadButton,
   EditorDiagramExtension,
-  EditorDiagramInsertButton,
   EditorDiagramKindSelect,
+  EditorDiagramPreview,
+  EditorDiagramRenderButton,
   EditorDiagramRoot,
   EditorDiagramStatus,
   EditorDiagramToolbar,
@@ -52,6 +63,12 @@ import {
   EditorReviewPanel,
   EditorReviewProvider,
 } from "@yopem-ui/editor/review"
+import {
+  $getRoot,
+  $getSelection,
+  $isRangeSelection,
+  HISTORY_PUSH_TAG,
+} from "lexical"
 import { useId, useState, useSyncExternalStore } from "react"
 
 function subscribeToNoPreparation(_listener: () => void) {
@@ -105,15 +122,46 @@ const initialState = JSON.stringify({
   },
 })
 
+function createExampleReviewHost(commentsAllowed: boolean): EditorReviewHost {
+  return {
+    viewer: reviewViewer,
+    visible: true,
+    replyWhileReadonly: false,
+    can(action, _targetId, viewer) {
+      return (
+        action === "create" && viewer.id === reviewViewer.id && commentsAllowed
+      )
+    },
+  }
+}
+
 function createMenuHostState() {
   let commentsAllowed = true
   let aiAllowed = false
   let aiConfigured = false
+  let diagramsAllowed = true
+  let currentDiagramRenderer: EditorDiagramRenderer | undefined
 
   const targets = new Map<
     "ask-ai" | "code-drawing",
     EditorBlockMenuActionPreparation
   >()
+
+  const renderDiagram: EditorDiagramRenderer = (
+    input: EditorDiagramRenderInput,
+  ) => {
+    if (!diagramsAllowed || !currentDiagramRenderer)
+      throw new Error("Diagram renderer is unavailable.")
+
+    return currentDiagramRenderer(input)
+  }
+
+  const diagramRenderers: EditorDiagramRenderers = {
+    mermaid: renderDiagram,
+    plantuml: renderDiagram,
+    graphviz: renderDiagram,
+    flowchart: renderDiagram,
+  }
 
   return {
     allowsComments() {
@@ -125,14 +173,30 @@ function createMenuHostState() {
     allowsAiRequest() {
       return aiConfigured && aiAllowed
     },
+    allowsDiagrams() {
+      return diagramsAllowed
+    },
     setCommentsAllowed(value: boolean) {
       commentsAllowed = value
     },
     setAiAllowed(value: boolean) {
       aiAllowed = value
     },
+    setDiagramsAllowed(value: boolean) {
+      diagramsAllowed = value
+    },
+    setDiagramRenderer(this: void, renderer: EditorDiagramRenderer) {
+      currentDiagramRenderer = renderer
+    },
+    diagramRenderers,
     markAiConfigured() {
       aiConfigured = true
+    },
+    isCurrentTarget(
+      action: "ask-ai" | "code-drawing",
+      target: EditorBlockMenuActionPreparation,
+    ) {
+      return targets.get(action) === target
     },
     replaceTarget(
       action: "ask-ai" | "code-drawing",
@@ -149,6 +213,83 @@ function createMenuHostState() {
   }
 }
 
+function DiagramInsertControl({
+  disabled,
+  hostState,
+  preparation,
+  onInserted,
+}: {
+  disabled: boolean
+  hostState: ReturnType<typeof createMenuHostState>
+  preparation: EditorBlockMenuActionPreparation | null
+  onInserted: (preparation: EditorBlockMenuActionPreparation) => void
+}) {
+  const editor = useEditor()
+
+  return (
+    <ToolbarButton
+      render={<Button variant="ghost" size="sm" />}
+      aria-label="Insert diagram"
+      disabled={disabled || !preparation?.getSnapshot()}
+      onClick={(event) => {
+        if (event.defaultPrevented) return
+
+        if (
+          !preparation ||
+          !hostState.isCurrentTarget("code-drawing", preparation) ||
+          !hostState.allowsDiagrams() ||
+          !editor.isEditable() ||
+          !preparation.restoreSelection()
+        ) {
+          event.preventDefault()
+
+          return
+        }
+
+        let inserted = false
+
+        editor.update(
+          () => {
+            if (
+              event.defaultPrevented ||
+              !hostState.isCurrentTarget("code-drawing", preparation) ||
+              !hostState.allowsDiagrams() ||
+              !editor.isEditable() ||
+              !preparation.getSnapshot() ||
+              $getRoot().isDirty()
+            )
+              return
+
+            const code = $createEditorDiagramCodeNode(
+              "mermaid",
+              "graph TD\n  A[Start] --> B[Finish]",
+              "both",
+            )
+
+            const selection = $getSelection()
+
+            if ($isRangeSelection(selection)) selection.insertNodes([code])
+            else $getRoot().append(code)
+            code.selectStart()
+            inserted = true
+          },
+          { discrete: true, tag: HISTORY_PUSH_TAG },
+        )
+
+        if (!inserted) {
+          event.preventDefault()
+
+          return
+        }
+
+        onInserted(preparation)
+      }}
+    >
+      Insert diagram
+    </ToolbarButton>
+  )
+}
+
 export function PublicBlockMenuExample() {
   const fieldId = useId()
   const [editable, setEditable] = useState(true)
@@ -159,6 +300,12 @@ export function PublicBlockMenuExample() {
   const [aiCsrf, setAiCsrf] = useState("")
   const [aiConfig, setAiConfig] = useState<EditorAiConfig>()
   const [aiError, setAiError] = useState("")
+  const [diagramsAllowed, setDiagramsAllowed] = useState(true)
+  const [diagramEndpoint, setDiagramEndpoint] = useState("")
+  const [diagramDocumentId, setDiagramDocumentId] = useState("")
+  const [diagramCsrf, setDiagramCsrf] = useState("")
+  const [diagramConfigured, setDiagramConfigured] = useState(false)
+  const [diagramError, setDiagramError] = useState("")
 
   const [commentContext, setCommentContext] =
     useState<EditorBlockMenuContext | null>(null)
@@ -182,25 +329,23 @@ export function PublicBlockMenuExample() {
       : commentContext.blockText
     : ""
 
-  const [reviewHost] = useState<EditorReviewHost>(() => ({
-    viewer: reviewViewer,
-    visible: true,
-    replyWhileReadonly: false,
-    can(action, _targetId, viewer) {
-      return (
-        action === "create" &&
-        viewer.id === reviewViewer.id &&
-        hostState.allowsComments()
-      )
-    },
-  }))
+  const [reviewHost, setReviewHost] = useState(() =>
+    createExampleReviewHost(true),
+  )
 
   const [setup] = useState(() => {
     const review = createEditorReview()
 
     const controller = createEditorBlockMenu({
       authorizeAction(action) {
-        return action !== "ask-ai" || hostState.allowsAiSetup()
+        if (action === "ask-ai") return hostState.allowsAiSetup() === true
+
+        if (action === "code-drawing")
+          return hostState.allowsDiagrams() === true
+
+        if (action === "add-comment") return hostState.allowsComments() === true
+
+        return true
       },
       onAskAI(_context, preparation) {
         hostState.replaceTarget("ask-ai", preparation)
@@ -220,6 +365,8 @@ export function PublicBlockMenuExample() {
     return {
       controller,
       review,
+      diagramRenderers: hostState.diagramRenderers,
+      setDiagramRenderer: hostState.setDiagramRenderer,
       extensions: [
         EditorDiagramExtension,
         review.extension,
@@ -227,6 +374,29 @@ export function PublicBlockMenuExample() {
       ],
     }
   })
+
+  function updateCommentPermission(checked: boolean | "indeterminate") {
+    const allowed = checked === true
+    hostState.setCommentsAllowed(allowed)
+    setCommentsAllowed(allowed)
+    setReviewHost(createExampleReviewHost(allowed))
+  }
+
+  function handleHostKeyDown(event: KeyboardEvent<HTMLDivElement>) {
+    if (
+      event.defaultPrevented ||
+      event.nativeEvent.isComposing ||
+      !event.altKey ||
+      !event.shiftKey ||
+      event.ctrlKey ||
+      event.metaKey ||
+      event.key.toLowerCase() !== "c"
+    )
+      return
+
+    event.preventDefault()
+    updateCommentPermission(!hostState.allowsComments())
+  }
 
   function updateAiEndpoint(event: ChangeEvent<HTMLInputElement>) {
     setAiEndpoint(event.target.value)
@@ -274,6 +444,76 @@ export function PublicBlockMenuExample() {
     setAiAllowed(allowed)
   }
 
+  function updateDiagramEndpoint(event: ChangeEvent<HTMLInputElement>) {
+    setDiagramEndpoint(event.target.value)
+  }
+
+  function updateDiagramDocumentId(event: ChangeEvent<HTMLInputElement>) {
+    setDiagramDocumentId(event.target.value)
+  }
+
+  function updateDiagramCsrf(event: ChangeEvent<HTMLInputElement>) {
+    setDiagramCsrf(event.target.value)
+  }
+
+  function updateDiagramPermission(checked: boolean | "indeterminate") {
+    const allowed = checked === true
+    hostState.setDiagramsAllowed(allowed)
+    hostState.refreshTarget("code-drawing")
+    setDiagramsAllowed(allowed)
+  }
+
+  function configureDiagram() {
+    const documentId = diagramDocumentId.trim()
+    const csrfToken = diagramCsrf
+
+    const localHttpHost =
+      window.location.protocol === "http:" &&
+      ["localhost", "127.0.0.1", "[::1]"].includes(window.location.hostname)
+
+    try {
+      if (
+        !hostState.allowsDiagrams() ||
+        !documentId ||
+        documentId.length > 256 ||
+        !csrfToken.trim() ||
+        csrfToken.length > 4096 ||
+        (window.location.protocol !== "https:" && !localHttpHost)
+      )
+        throw new Error("Diagram host setup is invalid.")
+
+      const renderer = createEditorDiagramHttpRenderer(
+        diagramEndpoint,
+        (input, init) => {
+          const headers = new Headers(init?.headers)
+
+          headers.set("x-editor-document-id", documentId)
+          headers.set("x-csrf-token", csrfToken)
+
+          return fetch(input, { ...init, headers })
+        },
+      )
+
+      setup.setDiagramRenderer(renderer)
+      setDiagramConfigured(true)
+      setDiagramCsrf("")
+      setDiagramError("")
+    } catch {
+      setDiagramError(
+        "Use a same-origin HTTPS path, document ID, and current CSRF token.",
+      )
+    }
+  }
+
+  function finishDiagramInsertion(
+    preparation: EditorBlockMenuActionPreparation,
+  ) {
+    if (!hostState.isCurrentTarget("code-drawing", preparation)) return
+
+    hostState.replaceTarget("code-drawing", null)
+    setDiagramPreparation(null)
+  }
+
   function closeAiContext() {
     hostState.replaceTarget("ask-ai", null)
     setAiPreparation(null)
@@ -291,13 +531,14 @@ export function PublicBlockMenuExample() {
   }
 
   return (
-    <Stack>
+    <Stack onKeyDown={handleHostKeyDown}>
       <Text>
         Right-click selected text or press Shift+F10. Menu actions open local
         controls. Review policy gates comment creation. AI setup and current
         permission gate requests. The menu never starts an AI request. Replace
         the example reviewer and permission switches with verified host identity
-        and policy.
+        and policy. Alt+Shift+C changes the local comment permission while the
+        composer is open.
       </Text>
       <Field>
         <FieldLabel htmlFor={`${fieldId}-comments`}>
@@ -307,11 +548,7 @@ export function PublicBlockMenuExample() {
           id={`${fieldId}-comments`}
           aria-label="Host currently permits comments"
           checked={commentsAllowed}
-          onCheckedChange={(checked) => {
-            const allowed = checked === true
-            hostState.setCommentsAllowed(allowed)
-            setCommentsAllowed(allowed)
-          }}
+          onCheckedChange={updateCommentPermission}
         />
       </Field>
       <Field>
@@ -323,6 +560,17 @@ export function PublicBlockMenuExample() {
           aria-label="Host currently permits AI requests"
           checked={aiAllowed}
           onCheckedChange={updateAiPermission}
+        />
+      </Field>
+      <Field>
+        <FieldLabel htmlFor={`${fieldId}-diagram-permission`}>
+          Diagram action permission
+        </FieldLabel>
+        <Checkbox
+          id={`${fieldId}-diagram-permission`}
+          aria-label="Host currently permits diagram actions"
+          checked={diagramsAllowed}
+          onCheckedChange={updateDiagramPermission}
         />
       </Field>
       <Text>
@@ -378,6 +626,64 @@ export function PublicBlockMenuExample() {
         Configure AI host
       </Button>
       {aiError ? <Text role="alert">{aiError}</Text> : null}
+      <Text>
+        Set an explicit same-origin HTTPS endpoint, document ID, and CSRF token.
+        Loopback HTTP works for local testing. Setup sends no request. Activate
+        Render to send bounded source to the host. The host must check
+        authentication, current permission, document access, CSRF, and quota.
+      </Text>
+      <Field>
+        <FieldLabel htmlFor={`${fieldId}-diagram-endpoint`}>
+          Diagram host endpoint
+        </FieldLabel>
+        <Input
+          id={`${fieldId}-diagram-endpoint`}
+          aria-label="Diagram host endpoint"
+          value={diagramEndpoint}
+          disabled={diagramConfigured || !diagramsAllowed}
+          onChange={updateDiagramEndpoint}
+        />
+      </Field>
+      <Field>
+        <FieldLabel htmlFor={`${fieldId}-diagram-document`}>
+          Diagram document ID
+        </FieldLabel>
+        <Input
+          id={`${fieldId}-diagram-document`}
+          aria-label="Diagram document ID"
+          value={diagramDocumentId}
+          disabled={diagramConfigured || !diagramsAllowed}
+          onChange={updateDiagramDocumentId}
+        />
+      </Field>
+      <Field>
+        <FieldLabel htmlFor={`${fieldId}-diagram-csrf`}>
+          Diagram CSRF token
+        </FieldLabel>
+        <Input
+          id={`${fieldId}-diagram-csrf`}
+          aria-label="Diagram CSRF token"
+          type="password"
+          autoComplete="off"
+          maxLength={4096}
+          value={diagramCsrf}
+          disabled={diagramConfigured || !diagramsAllowed}
+          onChange={updateDiagramCsrf}
+        />
+      </Field>
+      <Button
+        disabled={
+          diagramConfigured ||
+          !diagramsAllowed ||
+          !diagramEndpoint ||
+          !diagramDocumentId ||
+          !diagramCsrf
+        }
+        onClick={configureDiagram}
+      >
+        Configure diagram renderer
+      </Button>
+      {diagramError ? <Text role="alert">{diagramError}</Text> : null}
       <Button variant="outline" onClick={toggleEditable}>
         {editable
           ? "Make block menu editor read-only"
@@ -394,35 +700,48 @@ export function PublicBlockMenuExample() {
             <EditorHistoryButton action="undo" />
             <EditorHistoryButton action="redo" />
           </EditorToolbar>
-          <EditorDiagramRoot>
+          <EditorDiagramRoot
+            disabled={!diagramsAllowed}
+            renderers={setup.diagramRenderers}
+          >
             {diagramToolsOpen ? (
-              <Stack>
-                <Text>
-                  Insertion restores the captured block selection. This example
-                  has no renderer. Edit native diagram source only.
-                </Text>
-                <EditorDiagramToolbar aria-label="Block menu diagram controls">
-                  <EditorDiagramInsertButton
-                    disabled={!diagramPreparationValid}
-                    onClick={(event) => {
-                      if (
-                        event.defaultPrevented ||
-                        diagramPreparation?.restoreSelection()
-                      )
-                        return
-
-                      event.preventDefault()
-                    }}
-                  />
-                  <EditorDiagramKindSelect />
-                  <EditorDiagramViewModeSelect />
-                  <EditorDiagramDeleteButton />
-                  <EditorDiagramStatus />
-                </EditorDiagramToolbar>
-                <Button variant="outline" onClick={closeDiagramTools}>
-                  Close diagram tools
-                </Button>
-              </Stack>
+              <Box
+                render={<section />}
+                aria-label="Code drawing action context"
+              >
+                <Stack>
+                  {!diagramConfigured ? (
+                    <Box render={<output />}>
+                      Configure the host before rendering. No request is sent
+                      during setup.
+                    </Box>
+                  ) : null}
+                  <EditorDiagramToolbar aria-label="Block menu diagram controls">
+                    <DiagramInsertControl
+                      disabled={
+                        !diagramPreparationValid ||
+                        !diagramsAllowed ||
+                        !editable
+                      }
+                      hostState={hostState}
+                      onInserted={finishDiagramInsertion}
+                      preparation={diagramPreparation}
+                    />
+                    <EditorDiagramKindSelect />
+                    <EditorDiagramViewModeSelect />
+                    <EditorDiagramRenderButton
+                      disabled={!diagramConfigured || !diagramsAllowed}
+                    />
+                    <EditorDiagramDownloadButton />
+                    <EditorDiagramDeleteButton />
+                    <EditorDiagramStatus />
+                  </EditorDiagramToolbar>
+                  <EditorDiagramPreview />
+                  <Button variant="outline" onClick={closeDiagramTools}>
+                    Close diagram tools
+                  </Button>
+                </Stack>
+              </Box>
             ) : null}
             <EditorBlockMenu controller={setup.controller}>
               <EditorContent placeholder="Enter block content" />

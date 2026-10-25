@@ -90,6 +90,7 @@ test("selected-text right-click opens authorized comment composer, preserves foc
     .getByRole("textbox", { name: "New comment", exact: true })
     .fill("Review this selected text")
   await dialog.getByRole("button", { name: "Add comment", exact: true }).click()
+  await dialog.getByRole("button", { name: "Close", exact: true }).click()
 
   const review = page.getByRole("complementary", {
     name: "Document review",
@@ -133,11 +134,8 @@ test("comment policy and host event cancellation prevent creation; Cancel keeps 
     exact: true,
   })
 
-  await expect(dialog).toBeVisible()
-  await expect(
-    dialog.getByRole("button", { name: "Comment on selection", exact: true }),
-  ).toBeDisabled()
-  await dialog.getByRole("button", { name: "Close", exact: true }).click()
+  await expect(dialog).toHaveCount(0)
+  await expect(editor).toHaveText("No comment without permission")
   await comments.check()
 
   menu = await openForBlock(page, editor)
@@ -159,14 +157,15 @@ test("comment policy and host event cancellation prevent creation; Cancel keeps 
   await dialog
     .getByRole("textbox", { name: "New comment", exact: true })
     .fill("Discard this draft")
-  await comments.uncheck()
+  await page.keyboard.press("Alt+Shift+C")
   await expect(
     dialog.getByRole("button", { name: "Add comment", exact: true }),
   ).toBeDisabled()
-  await comments.check()
   await dialog
     .getByRole("button", { name: "Cancel comment", exact: true })
     .click()
+  await dialog.getByRole("button", { name: "Close", exact: true }).click()
+  await comments.check()
   await expect(
     page
       .getByRole("complementary", { name: "Document review", exact: true })
