@@ -78,7 +78,10 @@
     "./labels/model": "./src/labels-model.ts",
     "./labels/node": "./src/labels-node.ts",
     "./docx": "./src/docx.ts",
-    "./docx/client": "./src/docx-controls.tsx"
+    "./docx/client": "./src/docx-controls.tsx",
+    "./list-presentation": "./src/list-presentation.tsx",
+    "./list-presentation/model": "./src/list-presentation-model.ts",
+    "./list-presentation/extension": "./src/list-presentation-extension.ts"
   },
   "scripts": {
     "typecheck": "tsc --noEmit"
