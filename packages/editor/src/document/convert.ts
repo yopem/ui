@@ -49,6 +49,7 @@ import {
   isEditorCalloutAppearance,
   isEditorCalloutIcon,
 } from "@yopem-ui/editor/blocks-model"
+import { parseEditorListStartHTML } from "@yopem-ui/editor/list-presentation/model"
 import {
   editorMathFromMarkdown,
   editorMathToMarkdown,
@@ -91,6 +92,8 @@ import { unified } from "unified"
 
 import {
   canonicalDocumentNode,
+  documentListMarker,
+  documentListType,
   documentMathChildren,
   checkText,
   checkTree,
@@ -524,18 +527,17 @@ export function $importTree(tree: Root) {
 
       case "ul":
       case "ol": {
-        const tasks = node.children.some(
-          (child) =>
-            child.type === "element" &&
-            child.children.some(
-              (item) => item.type === "element" && item.tagName === "input",
-            ),
-        )
+        const listType = documentListType(node)
 
-        output = $createListNode(
-          tasks ? "check" : tag === "ol" ? "number" : "bullet",
-          Number(node.properties.start ?? 1),
-        )
+        const start =
+          node.properties.start === undefined
+            ? 1
+            : parseEditorListStartHTML(String(node.properties.start))
+
+        if (!listType || start === undefined)
+          throw new DocumentError(["Invalid list metadata."])
+
+        output = $createListNode(listType, start)
         break
       }
 
@@ -593,6 +595,10 @@ export function $importTree(tree: Root) {
         ? JSON.parse(String(node.properties.dataEditorState))
         : {},
     )
+
+    const listMarker = documentListMarker(node)
+
+    if (listMarker !== undefined) stateInput.yopemListMarker = listMarker
 
     if (blockPresentation)
       stateInput.editorBlockPresentation = blockPresentation
@@ -678,6 +684,10 @@ export function $importTree(tree: Root) {
         (part) =>
           !/^\s*(?:line-height|text-indent|padding-inline-start|text-align):/.test(
             part,
+          ) &&
+          !(
+            (tag === "ul" || tag === "ol") &&
+            /^\s*list-style-type:/.test(part)
           ) &&
           !(tag === "tr" && /^\s*height:/.test(part)) &&
           !(
@@ -968,6 +978,9 @@ export function $exportTree(markdown = false): Root {
     } else if ($isListNode(node)) {
       tag = node.getListType() === "number" ? "ol" : "ul"
 
+      if (state.yopemListMarker !== undefined)
+        properties.dataEditorListMarker = state.yopemListMarker
+
       if (tag === "ol" && node.getStart() !== 1)
         properties.start = node.getStart()
     } else if ($isListItemNode(node)) tag = "li"
@@ -1025,7 +1038,11 @@ export function $exportTree(markdown = false): Root {
     const extraState = Object.fromEntries(
       Object.entries(state).filter(
         ([key]) =>
-          !["editorBlockPresentation", "yopemTableBorder"].includes(key),
+          ![
+            "editorBlockPresentation",
+            "yopemTableBorder",
+            "yopemListMarker",
+          ].includes(key),
       ),
     )
 
@@ -1069,6 +1086,9 @@ export function $exportTree(markdown = false): Root {
           : "",
         presentation?.textIndent
           ? `text-indent: ${presentation.textIndent}`
+          : "",
+        state.yopemListMarker
+          ? `list-style-type: ${state.yopemListMarker}`
           : "",
         indent ? `padding-inline-start: ${indent * 2}em` : "",
       ]

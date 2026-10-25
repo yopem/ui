@@ -8,6 +8,11 @@ import {
 } from "@lexical/clipboard"
 import { getPeerDependencyFromEditor } from "@lexical/extension"
 import { validateEditorBlocksJSON } from "@yopem-ui/editor/blocks-model"
+import {
+  EDITOR_LIST_START_MAX,
+  EDITOR_LIST_START_MIN,
+  isEditorListMarkerForType,
+} from "@yopem-ui/editor/list-presentation/model"
 import { editorMathNodeSchema } from "@yopem-ui/editor/math-model"
 import { mentionNodeSchema } from "@yopem-ui/editor/mention-codec"
 import {
@@ -136,7 +141,12 @@ const nodeSchema = z.strictObject({
   target: z.string().nullable().optional(),
   rel: z.string().nullable().optional(),
   listType: z.enum(["number", "bullet", "check"]).optional(),
-  start: z.number().int().min(-2147483647).max(2147483647).optional(),
+  start: z
+    .number()
+    .int()
+    .min(EDITOR_LIST_START_MIN)
+    .max(EDITOR_LIST_START_MAX)
+    .optional(),
   value: z.number().int().min(-2147483647).max(2147483647).optional(),
   checked: z.boolean().optional(),
   colSpan: z.number().int().min(1).max(50).optional(),
@@ -261,6 +271,22 @@ function validateJSON(source: string) {
     if (node.$?.yopemTableBorder !== undefined && node.type !== "tablecell")
       throw new DocumentError(["Table border state requires tablecell."])
 
+    if (
+      node.$?.yopemListMarker !== undefined &&
+      (node.type !== "list" ||
+        node.listType === undefined ||
+        !isEditorListMarkerForType(node.$.yopemListMarker, node.listType))
+    )
+      throw new DocumentError(["List marker does not match list type."])
+
+    if (
+      node.type === "list" &&
+      node.start !== undefined &&
+      node.start !== 1 &&
+      node.listType !== "number"
+    )
+      throw new DocumentError(["Ordered list start requires a numbered list."])
+
     if (node.$?.editorBlockPresentation && !presentationNodes.has(node.type))
       throw new DocumentError(["Block presentation requires a text block."])
 
@@ -335,9 +361,23 @@ function validateJSON(source: string) {
     )
       throw new DocumentError(["Invalid format value."])
 
-    if (node.style) safeDocumentStyle(node.style)
+    if (node.style) {
+      const style = safeDocumentStyle(node.style)
 
-    if (node.textStyle) safeDocumentStyle(node.textStyle)
+      if (
+        style.split("; ").some((value) => value.startsWith("list-style-type:"))
+      )
+        throw new DocumentError(["List marker requires list NodeState."])
+    }
+
+    if (node.textStyle) {
+      const style = safeDocumentStyle(node.textStyle)
+
+      if (
+        style.split("; ").some((value) => value.startsWith("list-style-type:"))
+      )
+        throw new DocumentError(["List marker requires list NodeState."])
+    }
 
     if (node.url && !safeDocumentURL(node.url))
       throw new DocumentError(["Unsafe link URL."])

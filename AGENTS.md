@@ -905,3 +905,6 @@ Starts accept signed 32-bit integers, including zero. Invalid drafts do not chan
 Keep `yopemListMarker` NodeState, `data-editor-list-marker`, and native `ol` start attributes.
 Compose host HTML hooks with `createEditorListPresentationHTMLConfig`.
 Keep pure codecs in `list-presentation-model`.
+
+Optional `editor-document` retains validated list markers and signed starts in JSON, HTML, Markdown, and static output.
+Markdown uses canonical HTML when native Markdown cannot retain list presentation.

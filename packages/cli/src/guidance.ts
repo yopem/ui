@@ -87,6 +87,8 @@ Install optional \`editor-list-presentation\` separately for native list markers
 Register \`EditorListPresentationExtension\` at root creation. Compose marker and start controls inside \`EditorToolbar\`.
 Preserve \`yopemListMarker\` NodeState, \`data-editor-list-marker\`, and native ordered-list \`start\` attributes.
 Checklists keep their native behavior. Custom HTML readers must compose existing converters instead of replacing them.
+Optional \`editor-document\` retains validated markers and signed starts in JSON, HTML, Markdown, and static output.
+Markdown uses canonical HTML when native Markdown cannot retain list presentation.
 Install optional \`editor-docx\` separately for bounded semantic Word files.
 Import portable functions from \`${imports.editor}/docx\` and client controls from \`${imports.editor}/docx-controls\`.
 Compose \`EditorDocxImportControl\`, \`EditorDocxExportControl\`, or \`EditorDocxControls\` inside \`EditorRoot\`.

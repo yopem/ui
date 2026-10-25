@@ -1,6 +1,7 @@
 import type { SourceItem } from "@registry/items/types"
 
 import { editorDependency } from "@registry/editor-dependencies"
+import { registryDependency } from "@registry/registry-dependencies"
 
 export const editorDocumentItem: SourceItem = {
   categories: ["input"],
@@ -38,7 +39,7 @@ export const editorDocumentItem: SourceItem = {
       "DocumentStatic",
     ],
     usage:
-      "Import portable helpers from @/components/editor/document. Import DocumentStatic from @/components/editor/document/static. Register EditorDocumentClipboardExtension at root creation. Keep registerDocumentPaste cleanup in the host lifecycle. Register EditorBlocksExtension for live callouts and toggles. Register math, mention, and media nodes before importing their representations. Use MediaExtension for live media rendering. Media Markdown uses canonical HTML. Reject media URL queries and fragments. Mention identities do not grant access. See /docs/editor.",
+      "Import portable helpers from @/components/editor/document. Import DocumentStatic from @/components/editor/document/static. Register EditorDocumentClipboardExtension at root creation. Keep registerDocumentPaste cleanup in the host lifecycle. Register EditorBlocksExtension for live callouts and toggles. Register math, mention, and media nodes before importing their representations. Use EditorListPresentationExtension for live custom list markers. Preserve yopemListMarker and native ordered starts in document readers. Use MediaExtension for live media rendering. Media Markdown uses canonical HTML. Reject media URL queries and fragments. Mention identities do not grant access. See /docs/editor.",
   },
   files: [
     ...[
@@ -64,6 +65,8 @@ export const editorDocumentItem: SourceItem = {
       "math-render.ts",
       "mention-codec.ts",
       "mention-node.ts",
+      "list-presentation-model.ts",
+      "list-presentation-extension.ts",
     ].map((file) => ({
       path: `components/editor/${file}`,
       target: `@/components/editor/${file}`,
@@ -71,7 +74,10 @@ export const editorDocumentItem: SourceItem = {
     })),
   ],
   name: "editor-document",
-  peerDependencies: ["react@>=19 <20", "react-dom@>=19 <20"],
+  peerDependencies: [
+    registryDependency("react"),
+    registryDependency("react-dom"),
+  ],
   registryDependencies: ["editor", "editor-blocks", "separator"],
   title: "Editor document",
   type: "registry:ui",

@@ -1429,3 +1429,10 @@ integers, including zero. Invalid drafts do not change saved content. Preserve
 `yopemListMarker` NodeState, `data-editor-list-marker`, and native `ol` start
 attributes in compatible readers. Compose existing HTML hooks with
 `createEditorListPresentationHTMLConfig`.
+
+Optional `editor-document` retains validated markers and signed starts in JSON,
+HTML, Markdown, and static output. Markdown uses canonical HTML when native
+Markdown cannot retain list presentation. Register
+`EditorListPresentationExtension` in live readers for custom marker rendering.
+Conflicting marker attributes, CSS, and NodeState reject before document
+replacement.

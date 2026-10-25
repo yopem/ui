@@ -914,3 +914,7 @@ native list. Nested lists and checklists keep their own behavior. Preserve
 `yopemListMarker` NodeState, `data-editor-list-marker`, and native ordered-list
 `start` attributes. Starts accept signed 32-bit integers. Invalid drafts and
 stale selections cannot change lists.
+
+Optional `editor-document` retains validated list markers and signed starts in
+JSON, HTML, Markdown, and static output. Markdown uses canonical HTML when
+native Markdown cannot retain list presentation.

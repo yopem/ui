@@ -5,6 +5,12 @@ import {
   isEditorStyleLength,
 } from "@yopem-ui/editor/block-presentation"
 import {
+  editorListMarkerSchema,
+  isEditorListMarkerForType,
+  parseEditorListMarkerHTML,
+  parseEditorListStartHTML,
+} from "@yopem-ui/editor/list-presentation/model"
+import {
   editorMathFromHTMLAttributes,
   type EditorMathValue,
 } from "@yopem-ui/editor/math-model"
@@ -164,18 +170,20 @@ export function safeDocumentStyle(source: string) {
             ? isEditorLineHeight(value)
             : property === "text-indent"
               ? isEditorStyleLength(value, 160)
-              : /^border-(?:(?:top|bottom|left|right|inline-start|inline-end|block-start|block-end)-)?(?:style|width|color)$/.test(
-                    property,
-                  )
-                ? property.endsWith("style")
-                  ? /^(?:solid|hidden)$/.test(value)
-                  : property.endsWith("width")
-                    ? value === "1px"
-                    : /^(?:black|rgb\(0, 0, 0\)|currentcolor)$/i.test(value)
-                : property === "height"
-                  ? cssRules.get(property)?.test(value) &&
-                    Number.isFinite(Number(value.slice(0, -2)))
-                  : cssRules.get(property)?.test(value)
+              : property === "list-style-type"
+                ? editorListMarkerSchema.safeParse(value).success
+                : /^border-(?:(?:top|bottom|left|right|inline-start|inline-end|block-start|block-end)-)?(?:style|width|color)$/.test(
+                      property,
+                    )
+                  ? property.endsWith("style")
+                    ? /^(?:solid|hidden)$/.test(value)
+                    : property.endsWith("width")
+                      ? value === "1px"
+                      : /^(?:black|rgb\(0, 0, 0\)|currentcolor)$/i.test(value)
+                  : property === "height"
+                    ? cssRules.get(property)?.test(value) &&
+                      Number.isFinite(Number(value.slice(0, -2)))
+                    : cssRules.get(property)?.test(value)
 
     if (separator < 1 || !valid)
       throw new DocumentError([`Unsupported or unsafe CSS: ${property}.`])
@@ -298,6 +306,7 @@ const attributes = new Set([
   "disabled",
   "dataEditorIndent",
   "dataEditorBlockPresentation",
+  "dataEditorListMarker",
   "dataEditorBorder",
   "dataEditorHeaderState",
   "dataEditorRowHeight",
@@ -409,6 +418,68 @@ export function canonicalDocumentNode(node: Element) {
   if (properties.style) safeDocumentStyle(String(properties.style))
 
   return { type: "mention" as const, value: identity }
+}
+
+export function documentListType(node: Element) {
+  if (node.tagName !== "ul" && node.tagName !== "ol") return undefined
+
+  const tasks = node.children.some(
+    (child) =>
+      child.type === "element" &&
+      child.children.some(
+        (item) => item.type === "element" && item.tagName === "input",
+      ),
+  )
+
+  return tasks ? "check" : node.tagName === "ol" ? "number" : "bullet"
+}
+
+export function documentListMarker(node: Element) {
+  const type = documentListType(node)
+  const attribute = node.properties.dataEditorListMarker
+  const style = safeDocumentStyle(String(node.properties.style ?? ""))
+
+  const declaration = style
+    .split("; ")
+    .find((item) => item.startsWith("list-style-type:"))
+
+  const listStyleType = declaration?.slice("list-style-type:".length).trim()
+
+  const state =
+    node.properties.dataEditorState === undefined
+      ? documentStateSchema.parse({})
+      : documentStateSchema.parse(
+          JSON.parse(String(node.properties.dataEditorState)),
+        )
+
+  const marker = parseEditorListMarkerHTML({
+    marker: attribute === undefined ? null : String(attribute),
+    listStyleType: listStyleType ?? "",
+  })
+
+  if (
+    attribute !== undefined &&
+    listStyleType !== undefined &&
+    marker !== listStyleType
+  )
+    throw new DocumentError(["Conflicting list marker metadata."])
+
+  if (
+    state.yopemListMarker !== undefined &&
+    marker !== undefined &&
+    state.yopemListMarker !== marker
+  )
+    throw new DocumentError(["Conflicting list marker metadata."])
+
+  const resolved = marker ?? state.yopemListMarker
+
+  if (
+    resolved !== undefined &&
+    (!type || !isEditorListMarkerForType(resolved, type))
+  )
+    throw new DocumentError(["List marker does not match list type."])
+
+  return resolved
 }
 
 export function validateHTMLTree(tree: Root, generated = false) {
@@ -650,6 +721,7 @@ export function validateHTMLTree(tree: Root, generated = false) {
           open: ["details"],
           tabIndex: ["summary"],
           ariaLabel: ["summary"],
+          dataEditorListMarker: ["ul", "ol"],
           dataEditorIndent: [
             "aside",
             "section",
@@ -867,14 +939,15 @@ export function validateHTMLTree(tree: Root, generated = false) {
 
       if (
         key === "start" &&
-        (!Number.isSafeInteger(Number(value)) ||
-          Math.abs(Number(value)) > 2147483647)
+        parseEditorListStartHTML(String(value)) === undefined
       )
         throw new DocumentError(["Invalid list start."])
 
       if (key === "dir" && !["ltr", "rtl"].includes(String(value)))
         throw new DocumentError(["Invalid direction."])
     }
+
+    documentListMarker(node)
 
     if (node.tagName === "a")
       validateDocumentLink(node.properties.target, node.properties.rel)

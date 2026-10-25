@@ -25,6 +25,7 @@ import {
   streamMarkdown,
 } from "@yopem-ui/editor/document"
 import { DocumentStatic } from "@yopem-ui/editor/document/static"
+import { EditorListPresentationExtension } from "@yopem-ui/editor/list-presentation/extension"
 import { MediaExtension } from "@yopem-ui/editor/media"
 import { UNDO_COMMAND, defineExtension } from "lexical"
 import { useRef, useState } from "react"
@@ -44,6 +45,7 @@ const extensions = [
   EditorBlocksExtension,
   EditorBlockPresentationExtension,
   EditorTablePresentationExtension,
+  EditorListPresentationExtension,
 ]
 
 function DocumentControls({

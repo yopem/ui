@@ -6,6 +6,10 @@ import {
   isEditorStyleLength,
 } from "@yopem-ui/editor/block-presentation"
 import {
+  editorListMarkerSchema,
+  editorListMarkerState,
+} from "@yopem-ui/editor/list-presentation/model"
+import {
   tableBorderSchema,
   validateTableGeometry,
 } from "@yopem-ui/editor/table-presentation-schema"
@@ -27,6 +31,7 @@ export const documentStateSchema = z
   .object({
     editorBlockPresentation: presentationSchema.optional(),
     yopemTableBorder: tableBorderSchema.optional(),
+    yopemListMarker: editorListMarkerSchema.optional(),
     codeWrap: z.boolean().optional(),
     codeLineNumbers: z.boolean().optional(),
   })
@@ -59,8 +64,15 @@ export function setDocumentState(
   if (state.yopemTableBorder !== undefined)
     $setState(node, borderState, state.yopemTableBorder)
 
+  if (state.yopemListMarker !== undefined)
+    $setState(node, editorListMarkerState, state.yopemListMarker)
+
   for (const [key, value] of Object.entries(state)) {
-    if (key === "editorBlockPresentation" || key === "yopemTableBorder")
+    if (
+      key === "editorBlockPresentation" ||
+      key === "yopemTableBorder" ||
+      key === "yopemListMarker"
+    )
       continue
     $setState(
       node,
