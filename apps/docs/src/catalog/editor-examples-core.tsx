@@ -36,6 +36,7 @@ import { PublicBlockMenuExample } from "./editor-examples/public-block-menu"
 import { PublicBlocksExample } from "./editor-examples/public-blocks"
 import { PublicCodeExample } from "./editor-examples/public-code"
 import { PublicCodeDrawingExample } from "./editor-examples/public-code-drawing"
+import { PublicCollaborationExample } from "./editor-examples/public-collaboration"
 import { PublicCopilotExample } from "./editor-examples/public-copilot"
 import { CsvEditorExample } from "./editor-examples/public-csv"
 import { PublicCursorsExample } from "./editor-examples/public-cursors"
@@ -345,6 +346,18 @@ const examples = [
     items: ["editor-drawing"],
     limits:
       "Requires browser-only SDK loading, approved same-origin assets and the SDK stylesheet. Files, images, links, custom metadata and unsupported element types reject. Generic document conversion is unsupported. SDK and dependency-audit acceptance remain required. No complete mapped Excalidraw workflow credit.",
+  },
+  {
+    slug: "public-collaboration",
+    sourceFile: "public-collaboration",
+    workflowIds: [],
+    title: "Two-client host-configured collaboration",
+    Component: PublicCollaborationExample,
+    items: ["editor-collaboration", "field"],
+    description:
+      "Connect two independent Lexical roots to one initialized host document. Inspect separate connection states and control each root's read-only state.",
+    limits:
+      "This custom editor-v1 transport does not implement Hocuspocus or WebRTC. Both roots use one browser session. Matching schema, host policies, and initialized storage are required. Sync, history, cleanup, and accessibility remain unverified. Full mapped collaboration equivalence is not credited.",
   },
   {
     slug: "public-cursors",
