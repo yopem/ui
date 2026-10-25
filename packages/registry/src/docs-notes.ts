@@ -5,6 +5,11 @@ const usageNoteValues = {
     "Native cut requires synchronous literal-true host approval. Preserve native MIME export and higher-priority host cancellation. Document validation must also return literal true.",
     "Content, selection, and read-only changes expire saved operations. Keep host authorization for persisted writes. Validate custom document schemas before local mutations.",
   ],
+  "editor-csv": [
+    "Register EditorCsvExtension in a stable root extension array. Native Lexical JSON and HTML keep clipboard priority. HIGH and CRITICAL host handlers keep control.",
+    "Use pasteTsv:false on EditorTablePresentationExtension when CSV owns tab-containing input. This keeps native table geometry and HTML validation active.",
+    "CSV input is limited to 1 MiB, 50 rows, 50 columns, and 2500 cells. Reject malformed quotes and unequal row widths before document replacement.",
+  ],
   "editor-toc": [
     "Register EditorTocExtension in a stable root extension array. Compose controls inside EditorToolbar. Entries follow current document headings.",
     "Navigation stays within the current editor. Register EditorTocNode in host readers. Generic editor-document conversion does not support table-of-contents nodes.",

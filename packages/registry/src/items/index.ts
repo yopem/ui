@@ -13,6 +13,7 @@ import { editorCollaborationNodeItem } from "@registry/items/editor-collaboratio
 import { editorCollaborationServerItem } from "@registry/items/editor-collaboration-server"
 import { editorCollaborationWorkerItem } from "@registry/items/editor-collaboration-worker"
 import { editorColumnsItem } from "@registry/items/editor-columns"
+import { editorCsvItem } from "@registry/items/editor-csv"
 import { editorDateItem } from "@registry/items/editor-date"
 import { editorDocumentItem } from "@registry/items/editor-document"
 import { editorFootnotesItem } from "@registry/items/editor-footnotes"
@@ -52,6 +53,7 @@ export const sourceItems = [
   editorBlockSelectionItem,
   editorFootnotesItem,
   editorTocItem,
+  editorCsvItem,
   editorDocumentItem,
   editorStoreItem,
   editorReviewItem,

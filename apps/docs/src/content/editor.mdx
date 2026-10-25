@@ -1239,3 +1239,29 @@ Register `EditorTocNode` in every reader. Generic `editor-document` converters
 do not support this node yet. Reject unsupported content without replacement.
 
 See [Editor table of contents](/components/editor-toc) for its focused controls.
+
+## Optional CSV paste
+
+Install `editor-csv` separately for native CSV tables.
+
+```sh
+bunx --bun @yopem-ui/cli add editor-csv
+```
+
+Register `EditorCsvExtension` in a stable root extension array. Import it from
+`@/components/editor/csv`. Use `parseEditorCsv` from
+`@/components/editor/csv-model` without an editor.
+
+CSV supports quoted commas, escaped quotes, and multiline fields. Each row must
+have the same number of fields. Limits are 1 MiB, 50 rows, 50 columns, and 2500
+cells. Invalid input keeps selected content. Native cell line breaks use LF.
+
+Plain-text detection requires a comma and multiple lines. Explicit `text/csv`
+also supports one row. Native Lexical JSON and HTML keep clipboard priority.
+HIGH and CRITICAL host paste handlers keep control. The parser does not evaluate
+formulas or render HTML.
+
+Set `pasteTsv` to `false` when CSV handles fields that contain tab characters.
+Configure this value on `EditorTablePresentationExtension`. HTML table
+validation remains active. See [CSV paste](/components/editor-csv) for the
+composition and API.

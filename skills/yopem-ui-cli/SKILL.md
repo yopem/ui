@@ -773,3 +773,15 @@ native MIME handlers and higher-priority host cancellation. Require literal
 `true` from custom document validation. Content, selection, and read-only
 changes expire saved operations. Authorize persisted document writes separately.
 Import parts from `@/components/editor/block-selection-index`.
+
+## Optional CSV paste
+
+Install `editor-csv` separately. Register `EditorCsvExtension` in a stable root
+extension array. Use `parseEditorCsv` from `@/components/editor/csv-model` for
+pure parsing. Keep native Lexical JSON/HTML priority and HIGH/CRITICAL host
+paste vetoes. Configure `EditorTablePresentationExtension` with `pasteTsv:false`
+when CSV owns tab-containing input. HTML validation stays active. Reject
+malformed quotes, unequal row widths, and inputs above 1 MiB or 50 by 50 cells
+before content changes. Plain text needs a comma and multiple lines. Explicit
+`text/csv` also supports one row. Fields remain plain text. Do not evaluate
+formulas or render HTML.

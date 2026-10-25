@@ -69,6 +69,10 @@ Border controls support individual and rectangle edges. Shared merged edges are 
 Row resizing stores minimum height. Content can make rows taller.
 Keep \`data-editor-row-height\` in exported HTML to preserve finite native heights.
 Keep table scrolling bounded in both directions and keyboard-accessible.
+Install optional \`editor-csv\` for bounded CSV clipboard imports. Register \`EditorCsvExtension\` in a stable root extensions array.
+Use \`pasteTsv:false\` on \`EditorTablePresentationExtension\` when CSV owns tab-containing input. HTML validation stays active.
+Keep native JSON/HTML clipboard priority and HIGH/CRITICAL host paste policy. Reject malformed CSV before mutation.
+CSV limits are 1 MiB, 50 rows, 50 columns, and 2500 cells. Plain text needs a comma and multiple lines; explicit \`text/csv\` also supports one row.
 Validate external table JSON and HTML before conversion. Reject invalid updates without removing existing content.
 Discard saved table selections after document content changes. Preserve resize cancellation, history, and RTL keyboard behavior.
 Render checklist items as native list items with separate checkbox controls.

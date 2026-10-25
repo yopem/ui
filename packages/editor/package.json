@@ -64,7 +64,9 @@
     "./review-html": "./src/review-html.ts",
     "./review-model": "./src/review-model.ts",
     "./review-richtext": "./src/review-richtext.ts",
-    "./review-richtext-native": "./src/review-richtext-native.ts"
+    "./review-richtext-native": "./src/review-richtext-native.ts",
+    "./csv": "./src/csv.ts",
+    "./csv/model": "./src/csv-model.ts"
   },
   "scripts": {
     "typecheck": "tsc --noEmit"

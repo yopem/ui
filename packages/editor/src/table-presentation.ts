@@ -481,7 +481,7 @@ function tableCellImport(): DOMConversionMap {
   return { td: conversion, th: conversion }
 }
 
-function registerTablePaste(editor: LexicalEditor) {
+function registerTablePaste(editor: LexicalEditor, pasteTsv: boolean) {
   return editor.registerCommand(
     PASTE_COMMAND,
     (event) => {
@@ -568,7 +568,8 @@ function registerTablePaste(editor: LexicalEditor) {
         return false
       }
 
-      if (!text.includes("\t")) return false
+      if (!pasteTsv || data.getData("text/csv") || !text.includes("\t"))
+        return false
       event.preventDefault()
 
       const rows = text
@@ -750,6 +751,7 @@ export function registerTablePresentationValidation(editor: LexicalEditor) {
 
 export const EditorTablePresentationExtension = defineExtension({
   name: "@yopem-ui/editor/table-presentation",
+  config: { pasteTsv: true },
   dependencies: [TableExtension],
   html: editorTablePresentationHTML,
   init(editorConfig) {
@@ -770,9 +772,9 @@ export const EditorTablePresentationExtension = defineExtension({
 
     editorConfig.onError = handleTableError
   },
-  register(editor) {
+  register(editor, config) {
     return mergeRegister(
-      registerTablePaste(editor),
+      registerTablePaste(editor, config.pasteTsv),
       editor.registerUpdateListener(({ editorState, dirtyElements }) => {
         if (editor._headless) return
         editorState.read(() => {

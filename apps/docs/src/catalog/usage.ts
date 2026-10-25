@@ -1,5 +1,24 @@
 // Standalone TSX files use the standard @ alias for src.
 const usageSnippetValues = {
+  "editor-csv": `"use client"
+
+import { EditorContent, EditorRoot } from "@/components/editor"
+import { EditorCsvExtension } from "@/components/editor/csv"
+import { EditorTablePresentationExtension } from "@/components/editor/table-presentation"
+import { configExtension } from "lexical"
+
+const extensions = [
+  configExtension(EditorTablePresentationExtension, { pasteTsv: false }),
+  EditorCsvExtension,
+]
+
+export function CsvTableEditor() {
+  return (
+    <EditorRoot extensions={extensions} ariaLabel="CSV editor">
+      <EditorContent />
+    </EditorRoot>
+  )
+}`,
   "editor-code-format": `"use client"
 
 import { EditorCode } from "@/components/editor/code"

@@ -12,6 +12,7 @@ export type EditorPreviewFixture = keyof typeof fixtureIdentifiers
 const previewSources = import.meta.glob<string>(
   [
     "./editor-previews/*.tsx",
+    "./editor-examples/*.tsx",
     "./editor-preview-compositions/*.tsx",
     "./editor-example-compositions/{column,date,footnote,toc}.tsx",
     "./editor-example-fixtures/{column,date,footnote,toc}.ts",

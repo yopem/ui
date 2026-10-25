@@ -490,6 +490,7 @@ export function extractDocs() {
             "editor-collaboration",
             "editor-media",
             "editor-toc",
+            "editor-csv",
           ].includes(item.name)
             ? file.path === `components/editor/${item.name.slice(7)}.ts`
             : item.name === "editor-block-selection"

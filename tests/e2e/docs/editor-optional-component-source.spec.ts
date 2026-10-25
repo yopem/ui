@@ -2,6 +2,7 @@ import { expect, test } from "@playwright/test"
 
 const examples = [
   { item: "editor-code", entry: "code", identifier: "EditorCode" },
+  { item: "editor-csv", entry: "csv", identifier: "EditorCsvExtension" },
   {
     item: "editor-columns",
     entry: "columns",

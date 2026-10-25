@@ -42,6 +42,7 @@ const completeEditorPreviews = new Map<
     ["./editor-example-compositions/footnote.tsx", "footnote"],
   ],
   ["editor-toc", ["./editor-example-compositions/toc.tsx", "toc"]],
+  ["editor-csv", ["./editor-examples/public-csv.tsx"]],
 ])
 
 const documentationSources = import.meta.glob<(typeof componentDocs)[number]>(

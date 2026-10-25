@@ -29,6 +29,7 @@ import { ElementsSetupExample } from "./editor-examples/installation-next-03-ele
 import { LinkExample } from "./editor-examples/link"
 import { MathExample } from "./editor-examples/math-example"
 import { MediaExample } from "./editor-examples/media-example"
+import { CsvEditorExample } from "./editor-examples/public-csv"
 import { VersionHistoryExample } from "./editor-examples/public-history"
 import {
   ControlledEditorExample,
@@ -207,6 +208,17 @@ const examples = [
       "Save immutable snapshots. Inspect an earlier revision without changing the current document. Compare inserted, removed, and updated blocks and text.",
     limits:
       "History stays in memory and holds at most 20 snapshots, each within 1 MiB and 200 top-level blocks. Long or multiline text uses whole-block differences. No server history is configured.",
+  },
+  {
+    slug: "csv",
+    sourceFile: "public-csv",
+    title: "CSV clipboard tables",
+    Component: CsvEditorExample,
+    items: ["editor-csv"],
+    description:
+      "Paste rectangular CSV data into native tables. Preserve quoted fields, local history, read-only behavior, and host paste vetoes.",
+    limits:
+      "Input is limited to 1 MiB and 50 by 50 cells. Rows must have equal widths. JSON and HTML keep clipboard priority. Formulas remain plain text.",
   },
 ] as const
 

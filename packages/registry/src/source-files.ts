@@ -4,6 +4,7 @@ export const sourceImportReplacements = [
     "@yopem-ui/editor/block-selection",
     "@/components/editor/block-selection-index",
   ],
+  ["@yopem-ui/editor/csv/model", "@/components/editor/csv-model"],
   ["@yopem-ui/editor/columns/model", "@/components/editor/columns-model"],
   ["@yopem-ui/editor/date/model", "@/components/editor/date-model"],
   ["@yopem-ui/editor/document/static", "@/components/editor/document/static"],

@@ -783,3 +783,17 @@ Preserve native MIME handlers and higher-priority host cancellation.
 Require literal `true` from custom document validation.
 Content, selection, and read-only changes expire saved operations.
 Authorize persisted document writes separately.
+
+
+## Optional editor CSV
+
+Install `editor-csv` for bounded native CSV clipboard imports.
+Register `EditorCsvExtension` in a stable root extension array.
+Use the pure `csv-model` entry for parsing without an editor.
+Native Lexical JSON and HTML keep clipboard priority.
+Keep HIGH and CRITICAL host paste policies intact.
+Set `pasteTsv:false` on `EditorTablePresentationExtension` when CSV handles tab-containing fields.
+HTML table validation stays active.
+Reject invalid quotes, unequal row widths, and inputs above 1 MiB or 50 by 50 cells before mutation.
+Plain-text detection requires a comma and multiple lines. Explicit `text/csv` also supports one row.
+CSV data remains text. Do not evaluate formulas or render field HTML.
