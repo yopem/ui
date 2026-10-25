@@ -43,6 +43,7 @@ import {
   ControlledEditorExample,
   MultipleEditorsExample,
 } from "./editor-examples/public-hosts"
+import { PublicIframeExample } from "./editor-examples/public-iframe"
 import { PublicNativeEditingExample } from "./editor-examples/public-native-editing"
 import { PublicPersistedExample } from "./editor-examples/public-persisted"
 import { PublicPlaceholderExample } from "./editor-examples/public-placeholder"
@@ -431,6 +432,27 @@ const examples = [
       "Apply selected-block alignment, text and background colors, indentation, and line height. Save and reload styled native JSON and HTML.",
     limits:
       "These controls use native Lexical state. Saved roundtrips stay in local component memory and are not host persistence. Public-example behavior remains unverified.",
+  },
+  {
+    slug: "public-iframe",
+    sourceFile: "public-iframe",
+    workflowIds: ["iframe"],
+    title: "Same-origin responsive iframe editor",
+    Component: PublicIframeExample,
+    items: [
+      "editor",
+      "box",
+      "field",
+      "heading",
+      "input",
+      "slider",
+      "stack",
+      "text",
+    ],
+    description:
+      "Mount a fresh native editor in a script-disabled same-origin frame, copy host styles and theme markers, change its bounded width, and copy text back to the parent.",
+    limits:
+      "This is a layout boundary, not a security sandbox. It copies owned stylesheet nodes and watches host theme/head changes, not arbitrary CSSOM-only edits. CSP, fonts, frame focus, native clipboard, observer cleanup, and nested-frame accessibility remain unverified.",
   },
   {
     slug: "public-persisted",
