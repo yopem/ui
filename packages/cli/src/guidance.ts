@@ -80,6 +80,9 @@ Place \`EditorContent\` inside \`EditorSearchViewport\`. Compose input, previous
 Search changes transient overlays and selection, not document content. It does not replace text.
 Bound queries to 64 Unicode code points and results to 200 within-TextNode matches. Matches do not cross styled nodes.
 Use the pure \`search-model\` module outside React. Preserve host input cancellation and read-only navigation.
+Install optional \`editor-floating-toolbar\` separately. Compose \`EditorFloatingToolbar\` inside \`EditorRoot\` beside \`EditorContent\`.
+Use existing controls as children. Select native text, then use Alt+F10 to focus the toolbar. Escape returns keyboard focus.
+Preserve the saved-range guard. Content changes and read-only transitions invalidate the target.
 Validate external table JSON and HTML before conversion. Reject invalid updates without removing existing content.
 Discard saved table selections after document content changes. Preserve resize cancellation, history, and RTL keyboard behavior.
 Render checklist items as native list items with separate checkbox controls.

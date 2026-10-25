@@ -8,7 +8,9 @@ export async function getEditorDocumentation(slug: string) {
   if (!part) return null
   let sourcePath = `./editor-previews/${part.slug}.tsx`
 
-  if (part.item === "editor-search")
+  if (part.item === "editor-floating-toolbar")
+    sourcePath = "./editor-examples/public-floating-toolbar.tsx"
+  else if (part.item === "editor-search")
     sourcePath = "./editor-preview-compositions/search.tsx"
   else if (part.name.startsWith("EditorInlineCombobox"))
     sourcePath = "./editor-preview-compositions/inline-combobox.tsx"

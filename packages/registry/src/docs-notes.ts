@@ -5,6 +5,11 @@ const usageNoteValues = {
     "Native cut requires synchronous literal-true host approval. Preserve native MIME export and higher-priority host cancellation. Document validation must also return literal true.",
     "Content, selection, and read-only changes expire saved operations. Keep host authorization for persisted writes. Validate custom document schemas before local mutations.",
   ],
+  "editor-floating-toolbar": [
+    "Install editor-floating-toolbar separately. Compose EditorFloatingToolbar inside EditorRoot beside EditorContent. Use existing editor controls as children.",
+    "Select text to open the non-modal toolbar. Press Alt+F10 to focus the first enabled control. Escape returns keyboard focus to the editor.",
+    "Document changes, collapsed ranges, and read-only transitions invalidate the target. Native focus, nested popups, pointer selection, collision geometry, and cleanup require deferred runtime validation.",
+  ],
   "editor-search": [
     "Install editor-search separately. Compose its root inside EditorRoot and place EditorContent inside EditorSearchViewport.",
     "Queries use at most 64 Unicode code points. Search returns at most 200 overlapping matches within individual TextNodes. Matches do not cross styled node boundaries.",

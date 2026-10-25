@@ -808,3 +808,13 @@ Search uses transient overlays and native selection. It does not replace or pers
 Queries use at most 64 Unicode code points. Results contain at most 200 within-TextNode matches.
 Matches do not cross styled TextNode boundaries. Scanning depends on document size.
 Use the pure `search-model` module outside React. Keep native input cancellation and read-only navigation.
+
+
+## Optional editor floating toolbar
+
+Install `editor-floating-toolbar` separately.
+Compose `EditorFloatingToolbar` inside EditorRoot beside EditorContent.
+Use existing editor controls as children. Select native text to open it.
+Press Alt+F10 to focus its first enabled button. Escape returns keyboard focus.
+Keep the saved-range guard. Content changes and read-only transitions invalidate targets.
+Native focus, nested popups, pointer geometry, RTL, and cleanup require runtime checks.

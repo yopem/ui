@@ -44,6 +44,10 @@ const completeEditorPreviews = new Map<
   ["editor-toc", ["./editor-example-compositions/toc.tsx", "toc"]],
   ["editor-csv", ["./editor-examples/public-csv.tsx"]],
   ["editor-search", ["./editor-preview-compositions/search.tsx"]],
+  [
+    "editor-floating-toolbar",
+    ["./editor-examples/public-floating-toolbar.tsx"],
+  ],
 ])
 
 const documentationSources = import.meta.glob<(typeof componentDocs)[number]>(

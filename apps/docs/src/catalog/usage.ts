@@ -1,5 +1,22 @@
 // Standalone TSX files use the standard @ alias for src.
 const usageSnippetValues = {
+  "editor-floating-toolbar": `"use client"
+
+import { EditorRoot, EditorContent, EditorFormatButton } from "@/components/editor"
+import { EditorFloatingToolbar } from "@/components/editor/floating-toolbar"
+
+export function FloatingEditorExample() {
+  return (
+    <EditorRoot ariaLabel="Rich text document">
+      <EditorFloatingToolbar aria-label="Text formatting">
+        <EditorFormatButton format="bold" />
+        <EditorFormatButton format="italic" />
+      </EditorFloatingToolbar>
+      <EditorContent />
+    </EditorRoot>
+  )
+}`,
+
   "editor-search": `"use client"
 
 import { EditorContent, EditorRoot } from "@/components/editor"

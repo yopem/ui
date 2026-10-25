@@ -33,6 +33,7 @@ import { PublicBlocksExample } from "./editor-examples/public-blocks"
 import { PublicCodeExample } from "./editor-examples/public-code"
 import { CsvEditorExample } from "./editor-examples/public-csv"
 import { PublicDocumentExamples } from "./editor-examples/public-document"
+import { PublicFloatingToolbarExample } from "./editor-examples/public-floating-toolbar"
 import { PublicFootnotesExample } from "./editor-examples/public-footnotes"
 import { VersionHistoryExample } from "./editor-examples/public-history"
 import {
@@ -220,6 +221,18 @@ const examples = [
       "Save immutable snapshots. Inspect an earlier revision without changing the current document. Compare inserted, removed, and updated blocks and text.",
     limits:
       "History stays in memory and holds at most 20 snapshots, each within 1 MiB and 200 top-level blocks. Long or multiline text uses whole-block differences. No server history is configured.",
+  },
+  {
+    slug: "public-floating-toolbar",
+    sourceFile: "public-floating-toolbar",
+    workflowIds: ["floating-toolbar"],
+    title: "Selection-anchored floating controls",
+    Component: PublicFloatingToolbarExample,
+    items: ["editor-floating-toolbar"],
+    description:
+      "Select native text, focus the floating toolbar with Alt+F10, change marks or heading type, and preserve saved-range validation.",
+    limits:
+      "This composition demonstrates native formatting, scripts, and heading controls. Nested link/equation popups, review and host AI actions are not composed here. Pointer, focus, geometry, RTL, read-only and accessibility remain unverified.",
   },
   {
     slug: "public-review",

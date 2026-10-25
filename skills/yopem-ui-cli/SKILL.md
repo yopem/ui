@@ -799,3 +799,12 @@ highlights. Queries use at most 64 Unicode code points. Results contain at most
 200 matches within individual TextNodes, not across styled nodes. Use
 `@/components/editor/search-model` for pure helpers outside React. Preserve host
 cancellation and read-only navigation.
+
+## Optional floating editor controls
+
+Install `editor-floating-toolbar` separately. Import `EditorFloatingToolbar`
+from the copied `@/components/editor/floating-toolbar` module. Compose it inside
+EditorRoot beside EditorContent. Use existing editor controls as children.
+Select native text to open the toolbar. Press Alt+F10 to focus its first enabled
+button. Keep the saved-range guard. Document changes and read-only transitions
+invalidate the target.

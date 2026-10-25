@@ -68,7 +68,8 @@
     "./csv": "./src/csv.ts",
     "./csv/model": "./src/csv-model.ts",
     "./search": "./src/search.tsx",
-    "./search-model": "./src/search-model.ts"
+    "./search-model": "./src/search-model.ts",
+    "./floating-toolbar": "./src/floating-toolbar.tsx"
   },
   "scripts": {
     "typecheck": "tsc --noEmit"
