@@ -29,6 +29,7 @@ export const editorMediaItem: SourceItem = {
       "$createMediaNode",
       "$insertMedia",
       "mediaKinds",
+      "mediaSchema",
       "parseMedia",
       "parseProvider",
       "safeMediaUrl",
@@ -36,7 +37,7 @@ export const editorMediaItem: SourceItem = {
       "createMediaUpload",
     ],
     usage:
-      "Register MediaExtension in a stable extensions array. Compose MediaInsertControl inside EditorToolbar. MediaContent renders validated media without EditorRoot. Supply a host upload callback when required. Use HTTPS URLs without credentials. This item does not add generic document conversion or private asset delivery.",
+      "Register MediaExtension in a stable extensions array. Compose MediaInsertControl inside EditorToolbar. MediaContent renders validated media without EditorRoot. Supply a host upload callback when required. Validate boundary inputs with mediaSchema before calling parseMedia. Use HTTPS URLs without credentials. This item does not add generic document conversion or private asset delivery.",
   },
   files: [
     "media.ts",

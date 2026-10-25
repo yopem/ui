@@ -10,6 +10,7 @@ export type { SerializedMediaNode } from "./media/model"
 
 export {
   mediaKinds,
+  mediaSchema,
   parseMedia,
   parseProvider,
   safeMediaUrl,

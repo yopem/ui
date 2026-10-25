@@ -106,7 +106,7 @@ export function parseProvider(value: string) {
   return { provider, url: prefix + id }
 }
 
-const mediaSchema = z.object({
+export const mediaSchema = z.object({
   kind: z.enum(mediaKinds),
   url: z.string().transform(safeMediaUrl),
   alt: z.string().max(2000).default(""),
