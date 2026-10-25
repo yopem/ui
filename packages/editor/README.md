@@ -202,3 +202,23 @@ one grapheme. Escape cancels. Automatic requests require host permission and
 user opt-in. No endpoint or model is supplied. Keep document authorization and
 quotas on your server. Cancellation does not prove provider billing stops.
 Native focus, IME, accessibility, and provider acceptance remain deferred.
+
+## Native diagrams
+
+Install `editor-diagram` for native code metadata, per-node previews, and
+composed controls. Supply explicit renderers. No endpoint or engine is
+configured by default. Native JSON and marked code HTML keep the metadata.
+Generic document conversion rejects it. Download currently supports SVG, not PNG
+or PDF.
+
+The four engine adapters are separate browser-only entries and registry items.
+Do not import SDK adapters into SSR routes. Use `renderEditorDiagram` for direct
+calls to enforce budgets and sanitize returned SVG. Source filters are not SDK
+sandboxes. Cancellation cannot interrupt synchronous layout or all queued work.
+Validate SDK, CSP, worker, WebAssembly, and lifecycle compatibility before use.
+Mermaid tooling needs Node 22.12 or later and has a material package footprint.
+
+Host rendering requires authentication, document permission, exact Origin, CSRF,
+and execution limits. Put secrets in host configuration, not in diagram URLs.
+See https://ui.yopem.com/editor/diagram-root for composition and API details.
+Engine and browser checks remain deferred while executable validation is paused.

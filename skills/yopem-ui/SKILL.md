@@ -1135,3 +1135,24 @@ the menu. Right-click or press Shift+F10. Configured policy must return literal
 require separate authorization. No default service or Add Comment action is
 supplied. Preserve native selection, clipboard policy, history, and host event
 cancellation.
+
+## Native diagram controls
+
+Install `editor-diagram` separately. Import controls from
+`@/components/editor/diagram`. Register `EditorDiagramExtension` in a stable
+extensions array. Compose `EditorDiagramRoot` inside `EditorRoot` with explicit
+renderers. Use focused Toolbar, InsertButton, KindSelect, ViewModeSelect,
+RenderButton, DownloadButton, DeleteButton, Status, and Preview parts.
+
+Native JSON and marked code HTML keep metadata. Generic document conversion
+rejects it. Source stays visible until a matching sanitized SVG image loads.
+Only SVG download is supplied. Install optional Mermaid, PlantUML, Graphviz, and
+Flowchart adapters as separate registry items. Import SDK adapters only in
+browser-only entries, never SSR routes. Use `renderEditorDiagram` for direct
+calls. It checks budgets and sanitizes SVG. Source filters are supported
+subsets, not SDK sandboxes. Cancellation cannot stop synchronous SDK work.
+Validate engine, CSP, WebAssembly, and lifecycle compatibility before
+deployment. Host endpoints need authentication, document authorization, exact
+Origin, CSRF, and execution limits. Never put credentials in diagram URLs.
+Supply headers explicitly. See https://ui.yopem.com/editor/diagram-root for
+composition and API details.

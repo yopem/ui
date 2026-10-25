@@ -88,6 +88,13 @@ Create one stable controller per root. Register its extension and wrap \`EditorC
 Right-click or press Shift+F10. Configured action policy must return literal true; stale targets reject.
 Supply explicit Ask AI and Code Drawing callbacks. No default service or Add Comment action is supplied.
 Callbacks do not grant document access. Preserve native selection, clipboard policies, history, and host event cancellation.
+Install optional \`editor-diagram\` separately. Import from \`${imports.editor}/diagram\`.
+Register \`EditorDiagramExtension\` once. Compose \`EditorDiagramRoot\` inside \`EditorRoot\` with explicit renderers.
+Native JSON and marked code HTML keep diagram metadata. Generic document converters reject it. SVG download is supplied; PNG and PDF are absent.
+Install engine adapters separately: \`editor-diagram-mermaid\`, \`editor-diagram-plantuml\`, \`editor-diagram-graphviz\`, or \`editor-diagram-flowchart\`.
+Import SDK adapters only from browser-only entries, never SSR routes. Use \`renderEditorDiagram\` for direct calls and SVG sanitization.
+Source filters are supported subsets, not SDK sandboxes. Cancellation cannot stop synchronous SDK work or every queued operation.
+Host endpoints need authentication, document permission, exact Origin, CSRF verification, and execution limits. Configure headers explicitly; never use credential URLs.
 Install optional \`editor-copilot\` separately. Import \`EditorCopilot\` from \`${imports.editor}/copilot\`.
 Render inside \`EditorRoot\` with a stable same-origin endpoint, document ID, and current authentication and CSRF headers.
 Control+Space requests a paragraph-end completion. Tab accepts completed text; Mod+Right accepts one grapheme. Escape cancels.

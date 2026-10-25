@@ -12,6 +12,8 @@ export async function getEditorDocumentation(slug: string) {
     sourcePath = "./editor-examples/public-placeholder.tsx"
   else if (part.item === "editor-floating-toolbar")
     sourcePath = "./editor-examples/public-floating-toolbar.tsx"
+  else if (part.item === "editor-diagram")
+    sourcePath = "./editor-preview-compositions/diagram.tsx"
   else if (part.item === "editor-list-presentation")
     sourcePath = "./editor-examples/public-list-presentation.tsx"
   else if (part.item === "editor-block-menu")

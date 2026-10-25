@@ -67,6 +67,8 @@ for (const [name, entry, helpers] of [
     }
 
     if (name === "editor-diagram") {
+      expect(item.registryDependencies).toContain("native-select")
+      expect(item.registryDependencies).not.toContain("editor-code")
       expect(
         item.dependencies.some((dependency) =>
           /mermaid|plantuml|wasm-graphviz|flowchart\.js/u.test(dependency),

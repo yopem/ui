@@ -1,3 +1,5 @@
+import { editorDiagramParts } from "@/catalog/editor-diagram-parts"
+
 import { editorAiParts } from "./editor-ai-parts"
 import { editorBlockMenuParts } from "./editor-block-menu-parts"
 import { editorBlockPlaceholderParts } from "./editor-block-placeholder-parts"
@@ -21,6 +23,7 @@ import { editorTocParts } from "./editor-toc-parts"
 import { editorTypeaheadParts } from "./editor-typeahead-parts"
 
 export const editorParts = [
+  ...editorDiagramParts,
   {
     name: "Editor",
     slug: "preset",

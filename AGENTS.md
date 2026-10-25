@@ -936,3 +936,29 @@ Right-click a block or press Shift+F10. Keep native selection, clipboard policie
 Configured `authorizeAction` must return literal `true`. Stale or pending document targets reject actions.
 Supply explicit `onAskAI` and `onCodeDrawing` callbacks when needed. These callbacks do not grant document access.
 No service or Add Comment action is supplied. The gallery omits unconfigured host actions and earns no full block-menu equivalence credit.
+
+## Optional editor diagrams
+
+Install `editor-diagram` for native diagram code and composed controls.
+Register `EditorDiagramExtension` in a stable root extensions array.
+Compose `EditorDiagramRoot` inside `EditorRoot`. Supply explicit renderers.
+Use its Toolbar, InsertButton, KindSelect, ViewModeSelect, RenderButton,
+DownloadButton, DeleteButton, Status, and Preview parts.
+
+Native JSON and marked code HTML keep diagram metadata.
+Generic document conversion rejects this metadata.
+Keep source visible until the matching sanitized SVG image loads.
+Per-node previews keep independent selection paths. Only SVG download is supplied.
+
+Install optional engine adapters separately: `editor-diagram-mermaid`,
+`editor-diagram-plantuml`, `editor-diagram-graphviz`, or `editor-diagram-flowchart`.
+Import SDK adapters only from browser-only entries. Do not import them into SSR routes.
+Source filters are supported subsets, not SDK sandboxes.
+Use `renderEditorDiagram` for direct calls. It bounds and sanitizes returned SVG.
+Cancellation cannot stop synchronous engine work or all queued operations.
+Validate the chosen SDK, CSP, workers, WebAssembly, and lifecycle before deployment.
+Mermaid requires Node 22.12 or later for its tooling.
+
+Host endpoints need current authentication, document authorization, exact Origin,
+CSRF verification, and execution limits. No default endpoint or renderer exists.
+Never put credentials in diagram URLs. Configure headers explicitly.

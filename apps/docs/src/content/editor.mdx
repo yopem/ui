@@ -1474,3 +1474,76 @@ callbacks when needed. Authorize these operations separately on your server. No
 service or Add Comment action is supplied. The gallery omits unconfigured host
 actions. Full pinned block-menu equivalence and native runtime acceptance remain
 incomplete.
+
+## Native diagrams
+
+Install the optional diagram controls.
+
+```sh
+bunx --bun @yopem-ui/cli add editor-diagram
+```
+
+Register `EditorDiagramExtension` when you create the root. Compose controls
+inside `EditorDiagramRoot` and `EditorRoot`. See
+[EditorDiagramRoot](/editor/diagram-root) for the complete consumer composition.
+
+Select native diagram code before changing its kind or view. Source stays
+visible until a matching sanitized SVG image loads. Each diagram keeps its own
+preview and keyboard selection path. Download exports the current SVG. PNG and
+PDF export are not supplied.
+
+The configured example also uses optional code controls and fields.
+
+```sh
+bunx --bun @yopem-ui/cli add editor-code
+```
+
+```sh
+bunx --bun @yopem-ui/cli add field
+```
+
+<EditorDiagramExample />
+
+This example requires an explicit same-origin host endpoint, document ID, and
+CSRF token. No renderer or service is selected automatically. The host must
+verify authentication, document permission, exact Origin, CSRF, and execution
+limits before rendering. Configure secrets on the host, not in diagram URLs.
+
+Native Lexical JSON and marked code HTML keep diagram metadata. The optional
+`editor-document` converters reject this metadata. They do not silently flatten
+it.
+
+### Optional browser engines
+
+Install only the selected engine adapter. Use a separate command for each item.
+
+```sh
+bunx --bun @yopem-ui/cli add editor-diagram-mermaid
+```
+
+```sh
+bunx --bun @yopem-ui/cli add editor-diagram-plantuml
+```
+
+```sh
+bunx --bun @yopem-ui/cli add editor-diagram-graphviz
+```
+
+```sh
+bunx --bun @yopem-ui/cli add editor-diagram-flowchart
+```
+
+These adapters use genuine SDKs. Import them only from a browser-only entry. Do
+not import them into an SSR route. Pass the selected functions through
+`EditorDiagramRoot`'s `renderers` prop. Keep this configuration stable until
+unmount.
+
+For direct calls, use `renderEditorDiagram`. It checks request budgets and
+sanitizes returned SVG. Source filters reject unsupported resource directives.
+They are not SDK sandboxes. Post-render sanitization cannot undo SDK side
+effects.
+
+Cancellation cannot stop synchronous layout or all queued SDK work. Check the
+engine's CSP, worker, WebAssembly, and cleanup requirements. Mermaid tooling
+requires Node 22.12 or later. Its package has a material installation footprint.
+Actual application bundle size and engine compatibility remain unverified.

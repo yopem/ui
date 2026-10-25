@@ -1,5 +1,41 @@
 // Standalone TSX files use the standard @ alias for src.
 const usageSnippetValues = {
+  "editor-diagram-mermaid": `import { editorDiagramMermaidRenderer } from "@/components/editor/diagram-renderers/mermaid.browser"
+
+export const renderers = { mermaid: editorDiagramMermaidRenderer }`,
+  "editor-diagram-plantuml": `import { editorDiagramPlantUmlRenderer } from "@/components/editor/diagram-renderers/plantuml.browser"
+
+export const renderers = { plantuml: editorDiagramPlantUmlRenderer }`,
+  "editor-diagram-graphviz": `import { editorDiagramGraphvizRenderer } from "@/components/editor/diagram-renderers/graphviz"
+
+export const renderers = { graphviz: editorDiagramGraphvizRenderer }`,
+  "editor-diagram-flowchart": `import { editorDiagramFlowchartRenderer } from "@/components/editor/diagram-renderers/flowchart.browser"
+
+export const renderers = { flowchart: editorDiagramFlowchartRenderer }`,
+  "editor-diagram": `import { EditorContent, EditorRoot } from "@/components/editor"
+import { EditorDiagramExtension, EditorDiagramRoot, EditorDiagramToolbar, EditorDiagramInsertButton, EditorDiagramKindSelect, EditorDiagramViewModeSelect, EditorDiagramRenderButton, EditorDiagramDownloadButton, EditorDiagramDeleteButton, EditorDiagramStatus, EditorDiagramPreview, type EditorDiagramRenderers } from "@/components/editor/diagram"
+
+const extensions = [EditorDiagramExtension]
+
+export function DiagramEditor({ renderers }: { renderers: EditorDiagramRenderers }) {
+  return (
+    <EditorRoot ariaLabel="Diagram editor" extensions={extensions}>
+      <EditorDiagramRoot renderers={renderers}>
+        <EditorDiagramToolbar>
+          <EditorDiagramInsertButton />
+          <EditorDiagramKindSelect />
+          <EditorDiagramViewModeSelect />
+          <EditorDiagramRenderButton />
+          <EditorDiagramDownloadButton />
+          <EditorDiagramDeleteButton />
+        </EditorDiagramToolbar>
+        <EditorContent />
+        <EditorDiagramStatus />
+        <EditorDiagramPreview />
+      </EditorDiagramRoot>
+    </EditorRoot>
+  )
+}`,
   "editor-block-behavior": `"use client"
 
 import { EditorContent, EditorRoot } from "@/components/editor"

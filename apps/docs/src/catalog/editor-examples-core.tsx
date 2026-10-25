@@ -33,6 +33,7 @@ import { PublicAutoformatExample } from "./editor-examples/public-autoformat"
 import { PublicBlockMenuExample } from "./editor-examples/public-block-menu"
 import { PublicBlocksExample } from "./editor-examples/public-blocks"
 import { PublicCodeExample } from "./editor-examples/public-code"
+import { PublicCodeDrawingExample } from "./editor-examples/public-code-drawing"
 import { PublicCopilotExample } from "./editor-examples/public-copilot"
 import { CsvEditorExample } from "./editor-examples/public-csv"
 import { PublicDemoHostExample } from "./editor-examples/public-demo-host"
@@ -72,6 +73,17 @@ const sources = import.meta.glob<string>("./editor-examples/*.tsx", {
 })
 
 const examples = [
+  {
+    slug: "public-code-drawing",
+    workflowIds: [],
+    title: "Configured native diagrams",
+    Component: PublicCodeDrawingExample,
+    items: ["editor-diagram", "editor-code", "field"],
+    description:
+      "Edit native diagram source and render it with an explicitly configured authenticated host endpoint.",
+    limits:
+      "No default endpoint or engine exists. Optional browser SDK adapters require separate installation. SVG download is supplied; PNG and PDF are absent. Generic document conversion rejects diagram metadata. Engine, SSR, CSP, and browser acceptance remain deferred; full mapped equivalence is not credited.",
+  },
   {
     slug: "public-block-menu",
     workflowIds: [],

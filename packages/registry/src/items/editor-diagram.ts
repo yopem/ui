@@ -18,7 +18,7 @@ export const editorDiagramItem: SourceItem = {
     registryDependency("react"),
     registryDependency("react-dom"),
   ],
-  registryDependencies: ["editor", "editor-code", "form"],
+  registryDependencies: ["editor", "native-select"],
   files: [
     "diagram.ts",
     "diagram-controls.tsx",
