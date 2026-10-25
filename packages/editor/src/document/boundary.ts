@@ -126,7 +126,7 @@ const cssRules = new Map(
     "font-size":
       /^(?:[1-9]\d?(?:\.\d+)?)(?:px|pt)$|^(?:[0-3](?:\.\d+)?)(?:rem|em)$/,
     "font-family":
-      /^(?:Arial|Helvetica|Georgia|Inter|monospace|serif|sans-serif|"IBM Plex Mono"|'IBM Plex Mono'|IBM Plex Mono)$/i,
+      /^(?:(["']?)(?:Arial|Helvetica|Georgia|Inter|Calibri|Cambria|Cambria Math|Times New Roman|Symbol|IBM Plex Mono)\1(?:\s*,\s*(?:monospace|serif|sans-serif))?|monospace|serif|sans-serif)$/i,
     "font-weight": /^(?:normal|bold|[1-9]00)$/,
     "font-style": /^(?:normal|italic)$/,
     "text-decoration": /^(?:none|underline|line-through)$/,

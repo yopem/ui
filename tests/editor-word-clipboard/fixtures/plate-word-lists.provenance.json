@@ -1,0 +1,9 @@
+{
+  "source": "https://raw.githubusercontent.com/udecode/plate/32142be14e71684bc39bf41f405086ad387feecf/apps/www/src/__tests__/package-integration/docx/lists.html",
+  "commit": "32142be14e71684bc39bf41f405086ad387feecf",
+  "sha256": "e997f7402ecb5fca0c33c5bde6071b5ee54b599818c82fef3b74b6ce5b670fb0",
+  "bytes": 33250,
+  "license": "MIT",
+  "notice": "LICENSE.md",
+  "classification": "Public Word 15-shaped HTML. Original capture steps, Word build, OS and companion MIME payload are not known."
+}

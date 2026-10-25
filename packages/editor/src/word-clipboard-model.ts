@@ -42,7 +42,7 @@ export type WordClipboardImageResolver = (
 ) => MediaInput
 
 interface OfficeStyleRule {
-  readonly className: string
+  readonly className?: string
   readonly tagName?: string
   readonly declarations: ReadonlyMap<string, string>
 }
@@ -103,6 +103,8 @@ const maxListLevel = 64
 
 const maxOfficeListDefinitions = 256
 
+const maxOfficeStyleRules = 256
+
 const wordBulletMarkers = new Map<string, EditorListMarker>([
   ["•", "disc"],
   ["·", "disc"],
@@ -138,6 +140,28 @@ const officeStyleMetadata = new Set([
   "mso-protection",
   "mso-style-id",
   "mso-style-name",
+  "mso-style-parent",
+  "mso-style-link",
+  "mso-style-next",
+  "mso-style-priority",
+  "mso-style-unhide",
+  "mso-style-qformat",
+  "mso-style-noshow",
+  "mso-style-locked",
+  "mso-style-type",
+  "mso-default-props",
+  "mso-ascii-font-family",
+  "mso-hansi-font-family",
+  "mso-fareast-font-family",
+  "mso-bidi-font-family",
+  "mso-ascii-theme-font",
+  "mso-hansi-theme-font",
+  "mso-fareast-theme-font",
+  "mso-bidi-theme-font",
+  "mso-ansi-font-size",
+  "mso-bidi-font-size",
+  "mso-themecolor",
+  "mso-outline-level",
   "tab-interval",
 ])
 
@@ -401,7 +425,7 @@ export function normalizeWordClipboardHTML(
 
       if (tagName === "img") return [makeImage(node)]
 
-      const classes = classNames(node.properties)
+      const classes = classNames(node.properties, rules)
       const shell = ["html", "body", "head"].includes(tagName)
 
       const section =
@@ -533,6 +557,9 @@ function readOfficeStyleRules(root: Root): OfficeStylesheet {
     if (node.tagName.toLowerCase() === "style") {
       const stylesheet = parseOfficeStyleSheet(textContent(node))
       rules.push(...stylesheet.rules)
+
+      if (rules.length > maxOfficeStyleRules)
+        throw new DocumentError(["Word style rules exceed the limit."])
       hasListRules ||= stylesheet.hasListRules
 
       for (const [key, definition] of stylesheet.lists) {
@@ -661,6 +688,18 @@ function parseOfficeStyleSheet(source: string) {
 
     {
       for (const value of selector.split(",")) {
+        if (rules.length >= maxOfficeStyleRules)
+          throw new DocumentError(["Word style rules exceed the limit."])
+
+        const tag = /^(p|li|h[1-6]|span|table|tr|td|th|ol|ul)$/i.exec(
+          value.trim(),
+        )
+
+        if (tag?.[1]) {
+          rules.push({ tagName: tag[1].toLowerCase(), declarations })
+          continue
+        }
+
         const match =
           /^(?:(p|div|li|h[1-6]|span|table|tr|td|th)\s*)?\.([A-Za-z][A-Za-z0-9_-]*)$/i.exec(
             value.trim(),
@@ -670,7 +709,7 @@ function parseOfficeStyleSheet(source: string) {
           throw new DocumentError(["Unsupported Word clipboard CSS selector."])
         const className = match[2]
 
-        if (!className || !wordClasses.test(className))
+        if (!className || !/^[A-Za-z][A-Za-z0-9_-]{0,127}$/.test(className))
           throw new DocumentError(["Unsupported Word clipboard CSS class."])
 
         if (/^(?:Word)?Section\d+$/i.test(className)) {
@@ -956,12 +995,12 @@ function validateInertOfficeAtRule(
 }
 
 function declarationsFor(node: Element, rules: readonly OfficeStyleRule[]) {
-  const classes = new Set(classNames(node.properties))
+  const classes = new Set(classNames(node.properties, rules))
   const declarations = new Map<string, string>()
 
   for (const rule of rules) {
     if (
-      classes.has(rule.className) &&
+      (!rule.className || classes.has(rule.className)) &&
       (!rule.tagName || rule.tagName === node.tagName.toLowerCase())
     )
       for (const [property, value] of rule.declarations)
@@ -993,7 +1032,7 @@ function declarationsFor(node: Element, rules: readonly OfficeStyleRule[]) {
   return declarations
 }
 
-function classNames(properties: Properties) {
+function classNames(properties: Properties, rules: readonly OfficeStyleRule[]) {
   const source = properties.className
 
   if (source === undefined) return []
@@ -1005,7 +1044,13 @@ function classNames(properties: Properties) {
     ])
     .parse(source)
 
-  if (values.some((value) => !wordClasses.test(value)))
+  if (
+    values.some(
+      (value) =>
+        !wordClasses.test(value) &&
+        !rules.some((rule) => rule.className === value),
+    )
+  )
     throw new DocumentError(["Unsupported Word clipboard class."])
 
   return values
@@ -1033,6 +1078,101 @@ function parseDeclarations(source: string, rejectConflicts = false) {
   }
 
   return declarations
+}
+
+function normalizeOfficeMetadata(
+  property: string,
+  value: string,
+  source: ReadonlyMap<string, string>,
+  text: Map<string, string>,
+) {
+  if (value.length > 128 || /[{}<>\\\\]|(?:url|expression)\s*\(/i.test(value))
+    throw new DocumentError(["Invalid Word style metadata."])
+
+  if (/^mso-(?:ascii|hansi|fareast|bidi)-font-family$/.test(property)) {
+    safeDocumentStyle(`font-family: ${value}`)
+
+    if (property === "mso-ascii-font-family" && !source.has("font-family"))
+      text.set("font-family", value)
+
+    return
+  }
+
+  if (property === "mso-ansi-font-size" || property === "mso-bidi-font-size") {
+    safeDocumentStyle(`font-size: ${value}`)
+
+    if (property === "mso-ansi-font-size" && !source.has("font-size"))
+      text.set("font-size", value)
+
+    return
+  }
+
+  if (property === "tab-interval") {
+    parseOfficeSpacing(value)
+
+    return
+  }
+
+  let valid = false
+
+  if (
+    /^mso-style-(?:unhide|qformat|noshow|locked)$/.test(property) ||
+    property === "mso-default-props"
+  )
+    valid = /^(?:yes|no)$/i.test(value)
+  else if (property === "mso-style-id" || property === "mso-style-priority")
+    valid = /^\d{1,4}$/.test(value)
+  else if (/^mso-style-(?:name|parent|link|next)$/.test(property)) {
+    const quoted = /^(["'])([\s\S]*)\1$/.exec(value)
+    const name = quoted?.[2] ?? value
+    valid = /^[\p{L}\p{N} ._-]{0,128}$/u.test(name)
+  } else if (/^mso-(?:ascii|hansi|fareast|bidi)-theme-font$/.test(property))
+    valid = /^(?:major|minor)-(?:latin|fareast|bidi)$/i.test(value)
+  else if (/^mso-(?:ansi|bidi|fareast)-language$/.test(property))
+    valid = /^(?:[a-z]{2,8}(?:-[a-z0-9]{1,8}){0,3}|x-none)$/i.test(value)
+  else if (property === "mso-pagination")
+    valid =
+      /^(?:widow-orphan(?:\s+lines-together)?|lines-together|none)$/i.test(
+        value,
+      )
+  else if (property === "mso-protection")
+    valid = /^(?:locked|unlocked|yes|no)$/i.test(value)
+  else if (property === "mso-style-type") valid = value === "export-only"
+  else if (property === "mso-outline-level") valid = /^[1-6]$/.test(value)
+  else if (property === "mso-themecolor")
+    valid =
+      /^(?:accent[1-6]|text[12]|background[12]|hyperlink|followedhyperlink)$/i.test(
+        value,
+      ) && source.has("color")
+
+  if (!valid) throw new DocumentError([`Unsupported Word style: ${property}.`])
+}
+
+function parseOfficeSpacing(value: string) {
+  if (value === "0") return 0
+  const match = /^([+-]?\d+(?:\.\d+)?)(pt|px|in|cm|mm)$/i.exec(value)
+
+  if (value.length > 64 || !match?.[1] || !match[2])
+    throw new DocumentError(["Invalid Word paragraph spacing."])
+  const amount = Number(match[1])
+  const unit = match[2].toLowerCase()
+
+  const points =
+    amount *
+    (unit === "in"
+      ? 72
+      : unit === "cm"
+        ? 72 / 2.54
+        : unit === "mm"
+          ? 72 / 25.4
+          : unit === "px"
+            ? 0.75
+            : 1)
+
+  if (!Number.isFinite(points) || points < 0 || points > 4096)
+    throw new DocumentError(["Invalid Word paragraph spacing."])
+
+  return points
 }
 
 function normalizeStyle(
@@ -1082,7 +1222,21 @@ function normalizeStyle(
       continue
     }
 
-    if (officeStyleMetadata.has(property)) continue
+    if (officeStyleMetadata.has(property)) {
+      normalizeOfficeMetadata(property, value, source, text)
+      continue
+    }
+
+    if (["margin-top", "margin-right", "margin-bottom"].includes(property)) {
+      parseOfficeSpacing(value)
+      continue
+    }
+
+    if (property === "page-break-after") {
+      if (value !== "avoid" && value !== "auto")
+        throw new DocumentError(["Unsupported Word page break metadata."])
+      continue
+    }
 
     if (shell && shellStyleMetadata.has(property)) continue
 
@@ -1126,6 +1280,7 @@ function normalizeStyle(
 }
 
 function normalizeTextIndent(value: string, list: boolean) {
+  if (/^[+-]?0(?:\.0+)?(?:pt|px|em|rem|cm|mm|in)?$/i.test(value)) return null
   const match = /^(-?\d+(?:\.\d+)?)(pt|px|em|rem)$/i.exec(value)
 
   if (!match) {
@@ -1154,21 +1309,7 @@ function normalizeTextIndent(value: string, list: boolean) {
 }
 
 function parseWordIndent(value: string) {
-  const match = /^([+-]?\d+(?:\.\d+)?)(pt|in|px)$/i.exec(value)
-
-  if (!match)
-    throw new DocumentError(["Unsupported Word paragraph indentation."])
-  const amount = Number(match[1])
-  const unit = match[2]?.toLowerCase()
-
-  if (!Number.isFinite(amount) || amount < 0 || !unit)
-    throw new DocumentError(["Invalid Word paragraph indentation."])
-
-  if (amount === 0) return 0
-
-  const points =
-    unit === "pt" ? amount : unit === "in" ? amount * 72 : amount * 0.75
-
+  const points = parseOfficeSpacing(value)
   const indent = points / 36
 
   if (!Number.isInteger(indent) || indent > 64)
