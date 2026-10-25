@@ -1,5 +1,6 @@
 import AxeBuilder from "@axe-core/playwright"
 import { expect, test } from "@playwright/test"
+import { readFile } from "node:fs/promises"
 
 test.describe("Integrated playground workflows", () => {
   test.beforeEach(async ({ page }) => {
@@ -15,6 +16,89 @@ test.describe("Integrated playground workflows", () => {
         exact: true,
       }),
     ).toHaveAttribute("contenteditable", "true")
+  })
+
+  test("AI menu shares the slash surface and waits for explicit requests", async ({
+    page,
+  }) => {
+    const requests: string[] = []
+    page.on("request", (request) => {
+      if (request.url().includes("/api/editor-ai")) requests.push(request.url())
+    })
+
+    const workspace = page.getByTestId("public-playground-workspace")
+
+    const editor = workspace.getByRole("textbox", {
+      name: "Integrated playground editor",
+      exact: true,
+    })
+
+    await workspace
+      .getByRole("button", { name: "Insert table", exact: true })
+      .click()
+    await expect(editor.getByRole("table")).toBeVisible()
+    await workspace
+      .getByRole("textbox", { name: "Host endpoint" })
+      .fill(`${new URL(page.url()).origin}/api/editor-ai`)
+    await workspace
+      .getByRole("textbox", { name: "Host document ID" })
+      .fill("playground-document")
+    await workspace
+      .getByRole("textbox", { name: "Host CSRF token" })
+      .fill("playground-csrf")
+    await workspace
+      .getByRole("button", { name: "Configure AI menu", exact: true })
+      .click()
+
+    await expect(
+      workspace.getByRole("textbox", { name: "Host CSRF token" }),
+    ).toHaveCount(0)
+    await expect(workspace.locator('[contenteditable="true"]')).toHaveCount(1)
+    await expect(editor.getByRole("table")).toBeVisible()
+    await workspace.getByRole("button", { name: "Undo", exact: true }).click()
+    await expect(editor.getByRole("table")).toHaveCount(0)
+
+    await editor.press("ControlOrMeta+End")
+    await editor.press("End")
+    await editor.press("Enter")
+    await editor.press("/")
+    await expect(
+      workspace.getByRole("listbox", { name: "Editor suggestions" }),
+    ).toBeVisible()
+    await expect(
+      workspace.getByRole("option", { name: "Callout" }),
+    ).toBeVisible()
+    await editor.press("Escape")
+    await editor
+      .locator("p")
+      .first()
+      .click({
+        button: "right",
+        modifiers: ["Alt"],
+      })
+    await expect(
+      workspace.getByRole("dialog", { name: "AI command menu" }),
+    ).toHaveCount(0)
+
+    await editor.locator("p").first().selectText()
+    await editor.press("ControlOrMeta+j")
+
+    const dialog = workspace.getByRole("dialog", {
+      name: "AI command menu",
+      exact: true,
+    })
+
+    await expect(dialog).toBeVisible()
+    await expect(dialog.getByRole("button", { name: "Improve" })).toBeEnabled()
+    await expect(editor).toContainText("native Lexical features")
+    await expect.poll(() => requests.length).toBe(0)
+
+    await page.keyboard.press("Alt+Shift+r")
+    await expect(editor).toHaveAttribute("contenteditable", "false")
+    await expect(
+      dialog.getByRole("textbox", { name: "Search AI commands" }),
+    ).toBeDisabled()
+    await expect.poll(() => requests.length).toBe(0)
   })
 
   test("normal workspace: edits seeded content, inserts a table, and searches", async ({
@@ -76,11 +160,15 @@ test.describe("Integrated playground workflows", () => {
       exact: true,
     })
 
-    await expect(localizedEditor).toHaveText("Unsaved draft")
+    await expect(localizedEditor).toHaveAttribute("contenteditable", "true")
+    await expect(localizedEditor).not.toContainText("Unsaved draft")
+    await expect(localizedEditor.locator("h1")).toHaveText("集成原生编辑器")
+    await expect(localizedEditor).toHaveAttribute("lang", "zh-CN")
     await workspace
       .getByRole("button", { name: "Copilot", exact: true })
       .click()
-    await expect(localizedEditor).toHaveCount(0)
+    await expect(localizedEditor).toHaveAttribute("contenteditable", "true")
+    await expect(localizedEditor.locator("h1")).toHaveText("集成原生编辑器")
     await workspace
       .getByRole("button", { name: "English", exact: true })
       .click()
@@ -91,7 +179,10 @@ test.describe("Integrated playground workflows", () => {
       exact: true,
     })
 
-    await expect(normalEditor.locator("h1")).toHaveCount(1)
+    await expect(normalEditor.locator("h1")).toHaveText(
+      "Integrated native editor",
+    )
+    await expect(normalEditor).toHaveAttribute("lang", "en")
     await expect(normalEditor).not.toContainText("Unsaved draft")
   })
 
@@ -127,6 +218,7 @@ test.describe("Integrated playground workflows", () => {
     for (const name of [
       "Indent",
       "Outdent",
+      "First-line indent",
       "Bullet list",
       "Numbered list",
       "Checklist",
@@ -265,14 +357,16 @@ test.describe("Integrated playground workflows", () => {
     await expect(insertFixture).toHaveCount(0)
   })
 
-  test("playground does not expose unsupported whole-document roundtrips", async ({
+  test("playground exports native JSON without unsupported imports", async ({
     page,
-  }) => {
+  }, testInfo) => {
     const workspace = page.getByTestId("public-playground-workspace")
 
     for (const name of [
       "Save local JSON",
       "Load local JSON",
+      "Load native JSON",
+      "Import native JSON",
       "Save local HTML",
       "Load local HTML",
       "Export HTML",
@@ -283,6 +377,26 @@ test.describe("Integrated playground workflows", () => {
       await expect(
         workspace.getByRole("button", { name, exact: true }),
       ).toHaveCount(0)
+
+    await page.context().grantPermissions(["clipboard-read", "clipboard-write"])
+    await workspace
+      .getByRole("button", { name: "Copy native JSON", exact: true })
+      .click()
+    const copied = await page.evaluate(() => navigator.clipboard.readText())
+    expect(copied).toContain('"type": "editor-columns-group"')
+    expect(copied).toContain('"type": "editor-date"')
+    expect(copied).toContain('"type": "editor-footnote-reference"')
+    expect(copied).toContain('"yopemReview"')
+
+    const downloadPromise = page.waitForEvent("download")
+    await workspace
+      .getByRole("button", { name: "Download native JSON", exact: true })
+      .click()
+    const download = await downloadPromise
+    expect(download.suggestedFilename()).toBe("public-playground-native.json")
+    const path = testInfo.outputPath(download.suggestedFilename())
+    await download.saveAs(path)
+    expect(await readFile(path, "utf8")).toBe(copied)
   })
 
   test("review workspace: local policy enables comment creation", async ({
@@ -300,7 +414,7 @@ test.describe("Integrated playground workflows", () => {
     })
 
     await expect(editor.locator("mark")).toContainText("Review anchor")
-    await editor.press("ControlOrMeta+a")
+    await editor.locator("p").first().selectText()
     await workspace
       .getByRole("button", { name: "Comment on selection", exact: true })
       .click()
@@ -332,6 +446,12 @@ test.describe("Integrated playground workflows", () => {
     await expect(
       workspace.getByText("No endpoint is configured.", { exact: true }),
     ).toBeVisible()
+    await expect(
+      workspace.getByRole("textbox", {
+        name: "Integrated playground editor",
+        exact: true,
+      }),
+    ).toHaveAttribute("contenteditable", "true")
     await workspace
       .getByRole("textbox", { name: "Host endpoint", exact: true })
       .fill("https://invalid.example/api/ai")
@@ -350,7 +470,7 @@ test.describe("Integrated playground workflows", () => {
         name: "Integrated playground editor",
         exact: true,
       }),
-    ).toHaveCount(0)
+    ).toHaveAttribute("contenteditable", "true")
     await expect.poll(() => requests.length).toBe(0)
 
     const sameOriginEndpoint = `${new URL(page.url()).origin}/api/editor-ai`
@@ -367,6 +487,42 @@ test.describe("Integrated playground workflows", () => {
       }),
     ).toHaveAttribute("contenteditable", "true")
     await expect.poll(() => requests.length).toBe(0)
+  })
+
+  test("forced layout retains converted content behind a required first heading", async ({
+    page,
+  }) => {
+    const workspace = page.getByTestId("public-playground-workspace")
+    await workspace
+      .getByRole("button", { name: "Forced layout", exact: true })
+      .click()
+
+    const editor = workspace.getByRole("textbox", {
+      name: "Integrated playground editor",
+      exact: true,
+    })
+
+    await expect(editor).toHaveAttribute("contenteditable", "true")
+    const title = editor.locator("h1").first()
+    const original = await title.innerText()
+    await title.selectText()
+    await workspace.getByRole("button", { name: "Quote", exact: true }).click()
+    await expect
+      .poll(() =>
+        editor
+          .locator(":scope > :first-child")
+          .evaluate((element) => element.tagName),
+      )
+      .toBe("H1")
+    await expect(editor.locator("blockquote")).toContainText(original)
+    await editor.locator("h1").first().fill("Required document title")
+    await expect(editor.locator("blockquote")).toContainText(original)
+
+    const report = await new AxeBuilder({ page })
+      .include('[data-testid="public-playground-workspace"]')
+      .analyze()
+
+    expect(report.violations).toEqual([])
   })
 
   test("responsive states: editor stays contained and accessible", async ({

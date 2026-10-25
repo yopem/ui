@@ -1,6 +1,7 @@
 "use client"
 
 import "@excalidraw/excalidraw/index.css"
+import type { EditorAiConfig } from "@yopem-ui/editor/ai/client"
 import type { EditorCopilotConfig } from "@yopem-ui/editor/copilot"
 import type {
   EditorReviewAction,
@@ -25,6 +26,7 @@ import { Stack } from "@registry/components/ui/stack"
 import { Text } from "@registry/components/ui/text"
 import { Wrap } from "@registry/components/ui/wrap"
 import {
+  EditorAiRoot,
   EditorAlignmentButton,
   EditorBackgroundColorControl,
   EditorBlockButton,
@@ -52,7 +54,16 @@ import {
   useEditor,
   useEditorState,
 } from "@yopem-ui/editor"
+import { EditorAiInlinePreview } from "@yopem-ui/editor/ai-menu-preview"
 import { validateEditorAiConfig } from "@yopem-ui/editor/ai/client"
+import {
+  EditorAiMenuContent,
+  EditorAiMenuPanel,
+  EditorAiMenuRoot,
+  EditorAiMenuTrigger,
+} from "@yopem-ui/editor/ai/menu"
+import { EditorAutoformatExtension } from "@yopem-ui/editor/autoformat"
+import { EditorBlockBehaviorExtension } from "@yopem-ui/editor/block-behavior"
 import {
   EditorCalloutAppearanceButton,
   EditorCalloutButton,
@@ -80,12 +91,14 @@ import {
   INSERT_EDITOR_COLUMNS_COMMAND,
 } from "@yopem-ui/editor/columns"
 import { EditorCopilot } from "@yopem-ui/editor/copilot"
+import { EditorCursorOverlay } from "@yopem-ui/editor/cursor-overlay"
 import {
   EditorDateControls,
   EditorDateExtension,
   EditorDateNode,
   INSERT_EDITOR_DATE_COMMAND,
 } from "@yopem-ui/editor/date"
+import { registerDocumentPaste } from "@yopem-ui/editor/document"
 import {
   $createEditorDrawingNode,
   EditorDrawingExtension,
@@ -95,6 +108,7 @@ import {
   EditorDrawingInsertButton,
   registerEditorDrawingRuntime,
 } from "@yopem-ui/editor/drawing/browser"
+import { EditorFloatingToolbar } from "@yopem-ui/editor/floating-toolbar"
 import {
   EditorFootnoteControls,
   EditorFootnoteExtension,
@@ -141,6 +155,10 @@ import {
   EditorTypeahead,
 } from "@yopem-ui/editor/typeahead"
 import {
+  EditorWordClipboardExtension,
+  registerWordClipboardPaste,
+} from "@yopem-ui/editor/word-clipboard"
+import {
   $getRoot,
   $getSelection,
   $isParagraphNode,
@@ -149,7 +167,13 @@ import {
   HISTORY_PUSH_TAG,
   RootNode,
 } from "lexical"
-import { useId, useState, type MouseEvent } from "react"
+import {
+  useId,
+  useState,
+  type KeyboardEvent as ReactKeyboardEvent,
+  type MouseEvent,
+  type ReactNode,
+} from "react"
 
 type Locale = "en" | "cn"
 
@@ -163,6 +187,25 @@ type Variant =
 const copy = {
   en: {
     editor: "Integrated playground editor",
+    resetNotice:
+      "Changing locale or variant resets this local document and host setup.",
+    seedTitle: "Integrated native editor",
+    seedIntro: "This sample combines ",
+    seedFeatures: "native Lexical features",
+    seedOutro: " with local review state.",
+    seedKeyboard: "Keyboard and pointer editing",
+    seedHistory: "Native undo and redo",
+    seedEquation: "Equation: ",
+    seedDate: " · Review date: ",
+    seedFirstColumn: "First column",
+    seedSecondColumn: "Second column",
+    seedNote: "See note ",
+    seedFootnote: "Native footnote definition.",
+    seedAnchor: "Review anchor for the local sample.",
+    seedEnd: "End of sample.",
+    seedComment: "The sample keeps this review anchor in native Lexical state.",
+    seedClassic: "Classic ordered item",
+    seedForcedLayout: "Forced layout paragraph seed",
     placeholder: "Edit the native Lexical sample. Type / for block commands.",
     toolbar: "Integrated editor tools",
     codeToolbar: "Code tools",
@@ -189,7 +232,22 @@ const copy = {
       "Review controls use a local fixture policy, not authentication.",
     noEndpoint: "No endpoint is configured.",
     hostPolicy:
-      "Use a same-origin endpoint. Its host must check current authentication, origin, CSRF, document access, authorized model, and quota. Client checks do not grant access.",
+      "The server must check current authentication, exact Origin, CSRF, document access, ai:invoke permission, model, and quota. Client setup grants no permission.",
+    configureAiMenu: "Configure AI menu",
+    selectionAiCommands: "Selection AI commands",
+    askAboutSelection: "Ask about selection",
+    readOnlyShortcut: "Press Alt+Shift+R to toggle editor read-only state.",
+    makeReadOnly: "Make editor read-only",
+    enableEditing: "Enable editor editing",
+    wordPasteNotice:
+      "Word paste uses bounded conversion. Images are rejected without a trusted host resolver.",
+    nativeJsonNotice:
+      "Copy or download native Lexical JSON. Import stays unavailable because no full validator covers every playground node.",
+    copyNativeJson: "Copy native JSON",
+    downloadNativeJson: "Download native JSON",
+    nativeJsonCopied: "Native JSON copied.",
+    nativeJsonCopyError: "Clipboard access is unavailable.",
+    nativeJsonDownloaded: "Native JSON download started.",
     endpoint: "Host endpoint",
     documentId: "Host document ID",
     csrf: "Host CSRF token",
@@ -201,6 +259,24 @@ const copy = {
   },
   cn: {
     editor: "集成编辑器",
+    resetNotice: "切换语言或变体会重置本地文档和主机配置。",
+    seedTitle: "集成原生编辑器",
+    seedIntro: "此示例将",
+    seedFeatures: "原生 Lexical 功能",
+    seedOutro: "与本地审阅状态组合。",
+    seedKeyboard: "键盘和指针编辑",
+    seedHistory: "原生撤销和重做",
+    seedEquation: "公式：",
+    seedDate: " · 审阅日期：",
+    seedFirstColumn: "第一列",
+    seedSecondColumn: "第二列",
+    seedNote: "参见脚注 ",
+    seedFootnote: "原生脚注定义。",
+    seedAnchor: "本地示例的审阅锚点。",
+    seedEnd: "示例结束。",
+    seedComment: "此示例将审阅锚点保存在原生 Lexical 状态中。",
+    seedClassic: "经典有序列表项",
+    seedForcedLayout: "强制布局段落示例",
     placeholder: "编辑原生 Lexical 示例。输入 / 查看块命令。",
     toolbar: "集成编辑器工具",
     codeToolbar: "代码工具",
@@ -224,7 +300,21 @@ const copy = {
     localPolicy: "审阅控件使用本地示例策略，不代表身份验证。",
     noEndpoint: "尚未配置端点。",
     hostPolicy:
-      "请使用同源端点。主机必须检查当前身份验证、来源、CSRF、文档访问权限、授权模型和配额。客户端检查不会授予访问权限。",
+      "服务器必须检查当前身份、精确来源、CSRF、文档访问权限、ai:invoke 权限、模型和配额。客户端设置不会授予权限。",
+    configureAiMenu: "配置 AI 菜单",
+    selectionAiCommands: "选择文本的 AI 命令",
+    askAboutSelection: "询问所选内容",
+    readOnlyShortcut: "按 Alt+Shift+R 切换编辑器只读状态。",
+    makeReadOnly: "将编辑器设为只读",
+    enableEditing: "启用编辑器",
+    wordPasteNotice: "Word 粘贴使用受限转换。没有可信主机解析器时会拒绝图像。",
+    nativeJsonNotice:
+      "复制或下载原生 Lexical JSON。缺少覆盖所有示例节点的完整验证器，因此不提供导入。",
+    copyNativeJson: "复制原生 JSON",
+    downloadNativeJson: "下载原生 JSON",
+    nativeJsonCopied: "已复制原生 JSON。",
+    nativeJsonCopyError: "剪贴板不可用。",
+    nativeJsonDownloaded: "已开始下载原生 JSON。",
     endpoint: "主机端点",
     documentId: "主机文档 ID",
     csrf: "主机 CSRF 令牌",
@@ -234,6 +324,124 @@ const copy = {
       "Copilot 没有默认端点。在段落末尾按 Control+Space 请求文本。",
   },
 } satisfies Record<Locale, Record<string, string>>
+
+function AiMenuComposition({
+  config,
+  children,
+}: {
+  config?: EditorAiConfig
+  children: ReactNode
+}) {
+  if (!config) return children
+
+  return (
+    <EditorAiRoot config={config}>
+      <EditorAiMenuRoot>{children}</EditorAiMenuRoot>
+    </EditorAiRoot>
+  )
+}
+
+function PlaygroundAiParts({
+  locale,
+  review,
+}: {
+  locale: Locale
+  review: ReturnType<typeof createEditorReview>
+}) {
+  const editor = useEditor()
+  const binding = review.forEditor(editor)
+  const labels = copy[locale]
+
+  return (
+    <>
+      <EditorAiMenuPanel review={binding} />
+      <EditorFloatingToolbar aria-label={labels.selectionAiCommands}>
+        <EditorAiMenuTrigger>{labels.askAboutSelection}</EditorAiMenuTrigger>
+      </EditorFloatingToolbar>
+      <EditorAiInlinePreview />
+    </>
+  )
+}
+
+function NativeJsonControls({ locale }: { locale: Locale }) {
+  const editor = useEditor()
+  const labels = copy[locale]
+  const [message, setMessage] = useState("")
+
+  function serializeNativeState() {
+    return JSON.stringify(editor.getEditorState().toJSON(), null, 2)
+  }
+
+  async function copyNativeJson() {
+    try {
+      await navigator.clipboard.writeText(serializeNativeState())
+      setMessage(labels.nativeJsonCopied)
+    } catch {
+      setMessage(labels.nativeJsonCopyError)
+    }
+  }
+
+  function downloadNativeJson() {
+    const url = URL.createObjectURL(
+      new Blob([serializeNativeState()], { type: "application/json" }),
+    )
+
+    const link = document.createElement("a")
+    link.href = url
+    link.download = "public-playground-native.json"
+    document.body.append(link)
+    link.click()
+    link.remove()
+    window.setTimeout(() => URL.revokeObjectURL(url), 0)
+    setMessage(labels.nativeJsonDownloaded)
+  }
+
+  return (
+    <Stack>
+      <Text>{labels.nativeJsonNotice}</Text>
+      <HStack>
+        <Button onClick={copyNativeJson}>{labels.copyNativeJson}</Button>
+        <Button onClick={downloadNativeJson}>
+          {labels.downloadNativeJson}
+        </Button>
+      </HStack>
+      {message ? <Box render={<output />}>{message}</Box> : null}
+    </Stack>
+  )
+}
+
+function WordClipboardRegistration({ locale }: { locale: Locale }) {
+  const editor = useEditor()
+  const labels = copy[locale]
+  const [error, setError] = useState("")
+
+  const [connect] = useState(
+    () =>
+      function connect() {
+        const onError = (failure: Error) => setError(failure.message)
+        const unregisterDocument = registerDocumentPaste(editor, onError)
+
+        try {
+          const unregisterWord = registerWordClipboardPaste(editor, onError)
+
+          return () => {
+            unregisterWord()
+            unregisterDocument()
+          }
+        } catch (cause) {
+          unregisterDocument()
+          throw cause
+        }
+      },
+  )
+
+  return (
+    <Stack ref={connect}>
+      <Text>{labels.wordPasteNotice}</Text>
+      {error ? <Text role="alert">{error}</Text> : null}
+    </Stack>
+  )
+}
 
 const anchorId = "public-playground-anchor"
 
@@ -288,162 +496,179 @@ const reviewHost: EditorReviewHost = {
   can: reviewerCan,
 }
 
-const initialState = JSON.stringify(
-  parseReviewDocument(
-    {
-      root: {
-        ...elementFields,
-        type: "root",
-        $: {
-          yopemReview: {
-            version: 1,
-            threads: [
-              {
-                id: anchorId,
-                resolved: false,
-                comments: [
-                  {
-                    id: "public-playground-comment",
-                    author: reviewAuthor,
-                    text: "The sample keeps this review anchor in native Lexical state.",
-                    createdAt: 1,
-                    updatedAt: 1,
-                  },
-                ],
-              },
-            ],
+function createInitialState(locale: Locale) {
+  const labels = copy[locale]
+
+  return JSON.stringify(
+    parseReviewDocument(
+      {
+        root: {
+          ...elementFields,
+          type: "root",
+          $: {
+            yopemReview: {
+              version: 1,
+              threads: [
+                {
+                  id: anchorId,
+                  resolved: false,
+                  comments: [
+                    {
+                      id: "public-playground-comment",
+                      author: reviewAuthor,
+                      text: labels.seedComment,
+                      createdAt: 1,
+                      updatedAt: 1,
+                    },
+                  ],
+                },
+              ],
+            },
           },
-        },
-        children: [
-          heading("Integrated native editor"),
-          paragraph([
-            textNode("This sample combines "),
-            textNode("native Lexical features", 1),
-            textNode(" with local review state."),
-          ]),
-          {
-            ...elementFields,
-            type: "list",
-            listType: "bullet",
-            tag: "ul",
-            start: 1,
-            children: [
-              {
-                ...elementFields,
-                type: "listitem",
-                value: 1,
-                children: [textNode("Keyboard and pointer editing")],
-              },
-              {
-                ...elementFields,
-                type: "listitem",
-                value: 2,
-                children: [textNode("Native undo and redo")],
-              },
-            ],
-          },
-          {
-            ...elementFields,
-            type: "code",
-            language: "typescript",
-            children: [textNode("const answer: number = 42;")],
-          },
-          paragraph([
-            textNode("Equation: "),
-            { type: "editor-math", version: 1, kind: "inline", tex: "E=mc^2" },
-            textNode(" · Review date: "),
-            { type: "editor-date", version: 1, date: "2025-01-15" },
-          ]),
-          {
-            type: "editor-columns-group",
-            version: 1,
-            direction: null,
-            format: "",
-            indent: 0,
-            layout: [50, 50],
-            children: [
-              {
-                type: "editor-column",
-                version: 1,
-                direction: null,
-                format: "",
-                indent: 0,
-                children: [paragraph([textNode("First column")])],
-              },
-              {
-                type: "editor-column",
-                version: 1,
-                direction: null,
-                format: "",
-                indent: 0,
-                children: [paragraph([textNode("Second column")])],
-              },
-            ],
-          },
-          paragraph([
-            textNode("See note "),
-            { type: "editor-footnote-reference", version: 1, identifier: "1" },
-            textNode("."),
-          ]),
-          {
-            type: "editor-footnote-definition",
-            version: 1,
-            identifier: "1",
-            direction: null,
-            format: "",
-            indent: 0,
-            children: [paragraph([textNode("Native footnote definition.")])],
-          },
-          paragraph([
+          children: [
+            heading(labels.seedTitle),
+            paragraph([
+              textNode(labels.seedIntro),
+              textNode(labels.seedFeatures, 1),
+              textNode(labels.seedOutro),
+            ]),
             {
-              type: "mark",
+              ...elementFields,
+              type: "list",
+              listType: "bullet",
+              tag: "ul",
+              start: 1,
+              children: [
+                {
+                  ...elementFields,
+                  type: "listitem",
+                  value: 1,
+                  children: [textNode(labels.seedKeyboard)],
+                },
+                {
+                  ...elementFields,
+                  type: "listitem",
+                  value: 2,
+                  children: [textNode(labels.seedHistory)],
+                },
+              ],
+            },
+            {
+              ...elementFields,
+              type: "code",
+              language: "typescript",
+              children: [textNode("const answer: number = 42;")],
+            },
+            paragraph([
+              textNode(labels.seedEquation),
+              {
+                type: "editor-math",
+                version: 1,
+                kind: "inline",
+                tex: "E=mc^2",
+              },
+              textNode(labels.seedDate),
+              { type: "editor-date", version: 1, date: "2025-01-15" },
+            ]),
+            {
+              type: "editor-columns-group",
               version: 1,
               direction: null,
               format: "",
               indent: 0,
-              ids: [anchorId],
-              children: [textNode("Review anchor for the local sample.")],
+              layout: [50, 50],
+              children: [
+                {
+                  type: "editor-column",
+                  version: 1,
+                  direction: null,
+                  format: "",
+                  indent: 0,
+                  children: [paragraph([textNode(labels.seedFirstColumn)])],
+                },
+                {
+                  type: "editor-column",
+                  version: 1,
+                  direction: null,
+                  format: "",
+                  indent: 0,
+                  children: [paragraph([textNode(labels.seedSecondColumn)])],
+                },
+              ],
             },
-          ]),
-          paragraph([textNode("End of sample.")]),
-        ],
+            paragraph([
+              textNode(labels.seedNote),
+              {
+                type: "editor-footnote-reference",
+                version: 1,
+                identifier: "1",
+              },
+              textNode("."),
+            ]),
+            {
+              type: "editor-footnote-definition",
+              version: 1,
+              identifier: "1",
+              direction: null,
+              format: "",
+              indent: 0,
+              children: [paragraph([textNode(labels.seedFootnote)])],
+            },
+            paragraph([
+              {
+                type: "mark",
+                version: 1,
+                direction: null,
+                format: "",
+                indent: 0,
+                ids: [anchorId],
+                children: [textNode(labels.seedAnchor)],
+              },
+            ]),
+            paragraph([textNode(labels.seedEnd)]),
+          ],
+        },
       },
+      true,
+    ),
+  )
+}
+
+function createListClassicInitialState(locale: Locale) {
+  return JSON.stringify({
+    root: {
+      ...elementFields,
+      type: "root",
+      children: [
+        {
+          ...elementFields,
+          type: "list",
+          listType: "number",
+          tag: "ol",
+          start: -2,
+          children: [
+            {
+              ...elementFields,
+              type: "listitem",
+              value: -2,
+              children: [textNode(copy[locale].seedClassic)],
+            },
+          ],
+        },
+      ],
     },
-    true,
-  ),
-)
+  })
+}
 
-const listClassicInitialState = JSON.stringify({
-  root: {
-    ...elementFields,
-    type: "root",
-    children: [
-      {
-        ...elementFields,
-        type: "list",
-        listType: "number",
-        tag: "ol",
-        start: -2,
-        children: [
-          {
-            ...elementFields,
-            type: "listitem",
-            value: -2,
-            children: [textNode("Classic ordered item")],
-          },
-        ],
-      },
-    ],
-  },
-})
-
-const forcedLayoutInitialState = JSON.stringify({
-  root: {
-    ...elementFields,
-    type: "root",
-    children: [paragraph([textNode("Forced layout paragraph seed")])],
-  },
-})
+function createForcedLayoutInitialState(locale: Locale) {
+  return JSON.stringify({
+    root: {
+      ...elementFields,
+      type: "root",
+      children: [paragraph([textNode(copy[locale].seedForcedLayout)])],
+    },
+  })
+}
 
 const forcedLayoutExtension = defineExtension({
   name: "@docs/public-playground/forced-layout",
@@ -451,15 +676,32 @@ const forcedLayoutExtension = defineExtension({
     return editor.registerNodeTransform(RootNode, (root) => {
       const first = root.getFirstChild()
 
+      if (!first) {
+        root.append($createHeadingNode("h1"))
+
+        return
+      }
+
       if ($isParagraphNode(first)) {
-        const heading = $createHeadingNode("h1")
+        const heading = $createHeadingNode("h1").updateFromJSON({
+          ...first.exportJSON(),
+          tag: "h1",
+        })
+
+        heading.setStyle(first.getStyle())
         heading.append(...first.getChildren())
         first.replace(heading)
 
         return
       }
 
-      if ($isHeadingNode(first) && first.getTag() !== "h1") first.setTag("h1")
+      if ($isHeadingNode(first)) {
+        if (first.getTag() !== "h1") first.setTag("h1")
+
+        return
+      }
+
+      first.insertBefore($createHeadingNode("h1"))
     })
   },
 })
@@ -669,10 +911,12 @@ function DrawingControls({
 function PlaygroundEditor({
   locale,
   variant,
+  aiMenuConfig,
   copilotConfig,
 }: {
   locale: Locale
   variant: Variant
+  aiMenuConfig?: EditorAiConfig
   copilotConfig?: EditorCopilotConfig
 }) {
   const labels = copy[locale]
@@ -700,18 +944,43 @@ function PlaygroundEditor({
     MediaExtension,
     EditorFootnoteExtension,
     EditorListPresentationExtension,
+    ...(variant === "drawing" ? [] : [EditorWordClipboardExtension]),
+    ...(variant === "listClassic" || variant === "drawing"
+      ? []
+      : [EditorAutoformatExtension, EditorBlockBehaviorExtension]),
     ...(variant === "forced-layout" ? [forcedLayoutExtension] : []),
     ...(variant === "drawing" ? [EditorDrawingExtension] : []),
     review.extension,
     typeahead.extension,
   ])
 
-  const editorInitialState =
+  const [editorInitialState] = useState(() =>
     variant === "listClassic"
-      ? listClassicInitialState
+      ? createListClassicInitialState(locale)
       : variant === "forced-layout"
-        ? forcedLayoutInitialState
-        : initialState
+        ? createForcedLayoutInitialState(locale)
+        : createInitialState(locale),
+  )
+
+  function handleHostShortcut(event: ReactKeyboardEvent<HTMLDivElement>) {
+    if (
+      event.defaultPrevented ||
+      event.repeat ||
+      event.nativeEvent.isComposing ||
+      !event.altKey ||
+      !event.shiftKey ||
+      event.ctrlKey ||
+      event.metaKey ||
+      event.key.toLowerCase() !== "r"
+    )
+      return
+    event.preventDefault()
+    setReadOnly((current) => !current)
+  }
+
+  function handleHostContextMenu(event: MouseEvent<HTMLDivElement>) {
+    if (event.altKey) event.preventDefault()
+  }
 
   return (
     <>
@@ -745,14 +1014,18 @@ function PlaygroundEditor({
       ) : null}
       <EditorRoot
         ariaLabel={labels.editor}
-        editable={variant !== "drawing" || !readOnly}
+        editable={!readOnly}
         extensions={extensions}
         initialState={editorInitialState}
+        onKeyDownCapture={handleHostShortcut}
       >
         <EditorReviewProvider controller={review} host={reviewHost}>
           {variant === "drawing" ? (
             <>
-              <EditorContent placeholder={labels.placeholder} />
+              <EditorContent
+                lang={locale === "cn" ? "zh-CN" : "en"}
+                placeholder={labels.placeholder}
+              />
               {assetsReady ? (
                 <DrawingControls labels={labels} />
               ) : (
@@ -760,135 +1033,170 @@ function PlaygroundEditor({
               )}
             </>
           ) : (
-            <>
-              <EditorToolbar aria-label={labels.toolbar}>
-                <EditorFormatButton format="bold">
-                  {locale === "en" ? "Bold" : "加粗"}
-                </EditorFormatButton>
-                <EditorFormatButton format="italic">
-                  {locale === "en" ? "Italic" : "斜体"}
-                </EditorFormatButton>
-                <EditorFormatButton format="underline">
-                  {locale === "en" ? "Underline" : "下划线"}
-                </EditorFormatButton>
-                <EditorAlignmentButton alignment="left" />
-                <EditorAlignmentButton alignment="center" />
-                <EditorAlignmentButton alignment="right" />
-                {variant === "listClassic" ? (
-                  <>
-                    <EditorListMarkerControl />
-                    <EditorListStartControl />
-                  </>
-                ) : (
-                  <>
-                    <EditorIndentButton direction="indent" />
-                    <EditorIndentButton direction="outdent" />
-                    <EditorListButton listType="bullet" />
-                    <EditorListButton listType="number" />
-                    <EditorListButton listType="check" />
-                  </>
-                )}
-                <EditorFirstLineIndentControl />
-                <EditorFontColorControl />
-                <EditorBackgroundColorControl />
-                <EditorFontFamilyControl />
-                <EditorFontSizeControl />
-                <EditorFontWeightControl />
-                <EditorClearFormattingButton />
-                <EditorBlockButton block="h1" />
-                {variant === "forced-layout" ? (
-                  <EditorBlockButton block="paragraph" />
-                ) : null}
-                <EditorBlockButton block="h2" />
-                <EditorBlockButton block="quote" />
-                <EditorBlockButton block="code" />
-                <EditorLinkControl />
-                <EditorTableButton />
-                <EditorTableMenu />
-                <EditorCalloutButton />
-                <EditorToggleButton />
-                <EditorDisclosureButton />
-                {editorCalloutAppearances.map((appearance) => (
-                  <EditorCalloutAppearanceButton
-                    key={appearance}
-                    appearance={appearance}
-                  />
-                ))}
-                <EditorColumnsControls />
-                <EditorDateControls initialDate="2025-01-15" />
-                <EditorMathControl kind="inline" />
-                <EditorMathControl kind="block" />
-                <EditorFootnoteControls />
-                {mediaKinds.map((kind) => (
-                  <MediaInsertControl key={kind} kind={kind} />
-                ))}
-                <EditorHistoryButton action="undo" />
-                <EditorHistoryButton action="redo" />
-              </EditorToolbar>
-              <EditorCodeToolbar aria-label={labels.codeToolbar}>
-                <EditorCodeLanguage
-                  aria-label={locale === "en" ? "Code language" : "代码语言"}
-                />
-                <EditorCodeCopyButton
-                  aria-label={locale === "en" ? "Copy code" : "复制代码"}
-                />
-                <EditorCodeToggle
-                  setting="wrap"
-                  aria-label={locale === "en" ? "Wrap code" : "自动换行"}
-                />
-                <EditorCodeToggle
-                  setting="lineNumbers"
-                  aria-label={locale === "en" ? "Line numbers" : "行号"}
-                />
-                <EditorCodeStatus />
-              </EditorCodeToolbar>
-              <EditorTableDimensions />
-              <EditorTableResizeControls />
-              <EditorTableCellPresentation />
-              <EditorReviewModeControl />
-              <EditorReviewCreateControl />
-              <EditorReviewDiffControl />
-              <EditorSearchRoot initialQuery="review">
-                <Stack>
-                  <EditorSearchInput
-                    aria-label={labels.search}
-                    placeholder={labels.searchPlaceholder}
-                  />
-                  <HStack>
-                    <EditorSearchPreviousButton>
-                      {labels.previous}
-                    </EditorSearchPreviousButton>
-                    <EditorSearchNextButton>
-                      {labels.next}
-                    </EditorSearchNextButton>
-                    <EditorSearchStatus />
-                  </HStack>
-                  <EditorSearchViewport>
-                    <EditorTypeahead
-                      controller={typeahead}
-                      placeholder={labels.placeholder}
+            <AiMenuComposition config={aiMenuConfig}>
+              <>
+                <Text>{labels.readOnlyShortcut}</Text>
+                <EditorToolbar aria-label={labels.toolbar}>
+                  {aiMenuConfig ? <EditorAiMenuTrigger /> : null}
+                  <EditorFormatButton format="bold">
+                    {locale === "en" ? "Bold" : "加粗"}
+                  </EditorFormatButton>
+                  <EditorFormatButton format="italic">
+                    {locale === "en" ? "Italic" : "斜体"}
+                  </EditorFormatButton>
+                  <EditorFormatButton format="underline">
+                    {locale === "en" ? "Underline" : "下划线"}
+                  </EditorFormatButton>
+                  <EditorAlignmentButton alignment="left" />
+                  <EditorAlignmentButton alignment="center" />
+                  <EditorAlignmentButton alignment="right" />
+                  {variant === "listClassic" ? (
+                    <>
+                      <EditorListMarkerControl />
+                      <EditorListStartControl />
+                    </>
+                  ) : (
+                    <>
+                      <EditorIndentButton direction="indent" />
+                      <EditorIndentButton direction="outdent" />
+                      <EditorListButton listType="bullet" />
+                      <EditorListButton listType="number" />
+                      <EditorListButton listType="check" />
+                    </>
+                  )}
+                  {variant !== "listClassic" ? (
+                    <EditorFirstLineIndentControl />
+                  ) : null}
+                  <EditorFontColorControl />
+                  <EditorBackgroundColorControl />
+                  <EditorFontFamilyControl />
+                  <EditorFontSizeControl />
+                  <EditorFontWeightControl />
+                  <EditorClearFormattingButton />
+                  <EditorBlockButton block="h1" />
+                  {variant === "forced-layout" ? (
+                    <EditorBlockButton block="paragraph" />
+                  ) : null}
+                  <EditorBlockButton block="h2" />
+                  <EditorBlockButton block="quote" />
+                  <EditorBlockButton block="code" />
+                  <EditorLinkControl />
+                  <EditorTableButton />
+                  <EditorTableMenu />
+                  <EditorCalloutButton />
+                  <EditorToggleButton />
+                  <EditorDisclosureButton />
+                  {editorCalloutAppearances.map((appearance) => (
+                    <EditorCalloutAppearanceButton
+                      key={appearance}
+                      appearance={appearance}
                     />
-                  </EditorSearchViewport>
-                </Stack>
-              </EditorSearchRoot>
-              <EditorReviewPanel />
-              {variant === "copilot" && copilotConfig ? (
-                <EditorCopilot config={copilotConfig} />
-              ) : null}
-            </>
+                  ))}
+                  <EditorColumnsControls />
+                  <EditorDateControls initialDate="2025-01-15" />
+                  <EditorMathControl kind="inline" />
+                  <EditorMathControl kind="block" />
+                  <EditorFootnoteControls />
+                  {mediaKinds.map((kind) => (
+                    <MediaInsertControl key={kind} kind={kind} />
+                  ))}
+                  <EditorHistoryButton action="undo" />
+                  <EditorHistoryButton action="redo" />
+                  <Button
+                    onClick={() => setReadOnly((current) => !current)}
+                    variant="outline"
+                  >
+                    {readOnly ? labels.enableEditing : labels.makeReadOnly}
+                  </Button>
+                </EditorToolbar>
+                <NativeJsonControls locale={locale} />
+                <WordClipboardRegistration locale={locale} />
+                <EditorCodeToolbar aria-label={labels.codeToolbar}>
+                  <EditorCodeLanguage
+                    aria-label={locale === "en" ? "Code language" : "代码语言"}
+                  />
+                  <EditorCodeCopyButton
+                    aria-label={locale === "en" ? "Copy code" : "复制代码"}
+                  />
+                  <EditorCodeToggle
+                    setting="wrap"
+                    aria-label={locale === "en" ? "Wrap code" : "自动换行"}
+                  />
+                  <EditorCodeToggle
+                    setting="lineNumbers"
+                    aria-label={locale === "en" ? "Line numbers" : "行号"}
+                  />
+                  <EditorCodeStatus />
+                </EditorCodeToolbar>
+                <EditorTableDimensions />
+                <EditorTableResizeControls />
+                <EditorTableCellPresentation />
+                <EditorReviewModeControl />
+                <EditorReviewCreateControl />
+                <EditorReviewDiffControl />
+                <EditorSearchRoot
+                  initialQuery={locale === "cn" ? "审阅" : "review"}
+                >
+                  <Stack>
+                    <EditorSearchInput
+                      aria-label={labels.search}
+                      placeholder={labels.searchPlaceholder}
+                    />
+                    <HStack>
+                      <EditorSearchPreviousButton>
+                        {labels.previous}
+                      </EditorSearchPreviousButton>
+                      <EditorSearchNextButton>
+                        {labels.next}
+                      </EditorSearchNextButton>
+                      <EditorSearchStatus />
+                    </HStack>
+                    <EditorSearchViewport>
+                      {aiMenuConfig ? (
+                        <EditorAiMenuContent
+                          aria-label={labels.editor}
+                          lang={locale === "cn" ? "zh-CN" : "en"}
+                          onContextMenu={handleHostContextMenu}
+                          placeholder={labels.placeholder}
+                          render={<EditorTypeahead controller={typeahead} />}
+                        />
+                      ) : (
+                        <EditorTypeahead
+                          aria-label={labels.editor}
+                          lang={locale === "cn" ? "zh-CN" : "en"}
+                          controller={typeahead}
+                          onContextMenu={handleHostContextMenu}
+                          placeholder={labels.placeholder}
+                        />
+                      )}
+                    </EditorSearchViewport>
+                  </Stack>
+                </EditorSearchRoot>
+                <EditorReviewPanel />
+                {aiMenuConfig ? (
+                  <PlaygroundAiParts locale={locale} review={review} />
+                ) : null}
+                {variant === "copilot" && copilotConfig ? (
+                  <EditorCopilot config={copilotConfig} />
+                ) : null}
+              </>
+            </AiMenuComposition>
           )}
+          {variant !== "drawing" ? <EditorCursorOverlay /> : null}
         </EditorReviewProvider>
       </EditorRoot>
     </>
   )
 }
 
-function CopilotSetup({
+function HostAiSetup({
   locale,
+  mode,
   onConfigure,
 }: {
   locale: Locale
-  onConfigure: (config: EditorCopilotConfig) => void
+  mode: "ai-menu" | "copilot"
+  onConfigure: (config: EditorAiConfig) => void
 }) {
   const labels = copy[locale]
   const fieldId = useId()
@@ -904,7 +1212,7 @@ function CopilotSetup({
       return
     }
 
-    const config: EditorCopilotConfig = {
+    const config: EditorAiConfig = {
       endpoint,
       documentId,
       headers: () => ({ "x-csrf-token": csrf }),
@@ -963,7 +1271,7 @@ function CopilotSetup({
         disabled={!endpoint || !documentId || !csrf.trim()}
         onClick={configure}
       >
-        {labels.configure}
+        {mode === "ai-menu" ? labels.configureAiMenu : labels.configure}
       </Button>
       {error ? <Text role="alert">{error}</Text> : null}
     </Stack>
@@ -973,10 +1281,20 @@ function CopilotSetup({
 export function PublicPlaygroundExample() {
   const [locale, setLocale] = useState<Locale>("en")
   const [variant, setVariant] = useState<Variant>("normal")
+  const [aiMenuConfig, setAiMenuConfig] = useState<EditorAiConfig>()
   const [copilotConfig, setCopilotConfig] = useState<EditorCopilotConfig>()
   const labels = copy[locale]
 
+  function chooseLocale(next: Locale) {
+    if (next === locale) return
+    setAiMenuConfig(undefined)
+    setCopilotConfig(undefined)
+    setLocale(next)
+  }
+
   function chooseVariant(next: Variant) {
+    if (next === variant) return
+    setAiMenuConfig(undefined)
     setCopilotConfig(undefined)
     setVariant(next)
   }
@@ -985,19 +1303,20 @@ export function PublicPlaygroundExample() {
     <Box data-testid="public-playground-workspace">
       <Stack>
         <Text>{labels.localPolicy}</Text>
+        <Text>{labels.resetNotice}</Text>
         <Fieldset aria-label={locale === "en" ? "Locale" : "语言"}>
           <Wrap>
             <Button
               aria-label="English"
               aria-pressed={locale === "en"}
-              onClick={() => setLocale("en")}
+              onClick={() => chooseLocale("en")}
             >
               English
             </Button>
             <Button
               aria-label="简体中文"
               aria-pressed={locale === "cn"}
-              onClick={() => setLocale("cn")}
+              onClick={() => chooseLocale("cn")}
             >
               简体中文
             </Button>
@@ -1034,15 +1353,28 @@ export function PublicPlaygroundExample() {
           </Wrap>
         </Fieldset>
         {variant === "copilot" && !copilotConfig ? (
-          <CopilotSetup locale={locale} onConfigure={setCopilotConfig} />
-        ) : (
-          <PlaygroundEditor
-            key={`${variant}-${copilotConfig ? "configured" : "unconfigured"}`}
+          <HostAiSetup
+            key={`${variant}-${locale}`}
             locale={locale}
-            variant={variant}
-            copilotConfig={copilotConfig}
+            mode="copilot"
+            onConfigure={(config) => setCopilotConfig(config)}
           />
-        )}
+        ) : null}
+        {variant !== "copilot" && variant !== "drawing" && !aiMenuConfig ? (
+          <HostAiSetup
+            key={`${variant}-${locale}`}
+            locale={locale}
+            mode="ai-menu"
+            onConfigure={setAiMenuConfig}
+          />
+        ) : null}
+        <PlaygroundEditor
+          key={`${variant}-${locale}`}
+          aiMenuConfig={aiMenuConfig}
+          copilotConfig={copilotConfig}
+          locale={locale}
+          variant={variant}
+        />
         {variant === "copilot" ? <Text>{labels.copilotNotice}</Text> : null}
       </Stack>
     </Box>

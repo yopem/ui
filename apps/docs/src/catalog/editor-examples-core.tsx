@@ -83,7 +83,7 @@ const sources = import.meta.glob<string>("./editor-examples/*.tsx", {
 const examples = [
   {
     slug: "public-playground",
-    workflowIds: [],
+    workflowIds: ["playground", "playground-source"],
     title: "Integrated native playground",
     Component: EditorPlaygroundClient,
     items: [
@@ -101,11 +101,18 @@ const examples = [
       "editor-copilot",
       "editor-list-presentation",
       "editor-drawing",
+      "editor-ai-menu",
+      "editor-floating-toolbar",
+      "editor-cursor-overlay",
+      "editor-word-clipboard",
+      "editor-document",
+      "editor-autoformat",
+      "editor-block-behavior",
     ],
     description:
-      "Compose native editing, tables, code, typeahead, review, search, and configured Copilot in one document.",
+      "Compose localized native documents, tables, code, one typeahead and AI surface, review, search, and configured Copilot. Switch classic-list, first-heading, and browser drawing variants.",
     limits:
-      "English and Chinese shell labels are partial localization. Variant changes reset the document; locale changes retain it. Classic-list uses native list controls, not Plate list transforms. Forced layout normalizes only the first paragraph or heading. Drawing requires browser-only SDK loading, installed fonts and CSP approval. Complete document conversion is unsupported. Review uses a local fixture policy. No AI endpoint or host authority is supplied. Runtime acceptance is deferred; full mapped playground coverage is not credited.",
+      "English and Chinese seeds are normalized separately; optional control labels can remain English. Locale or variant changes reset the local document and host setup. Classic-list omits extra indentation, modern-list controls and extended input shortcuts; native nested lists remain. Forced layout retains content while requiring a first H1. Drawing requires browser-only SDK loading, installed fonts and CSP approval. Native JSON can be copied or downloaded, but full-schema import is unavailable. Word conversion is bounded and images reject by default. Review uses a local fixture policy. AI and Copilot require explicit authenticated host configuration and make no automatic request during setup. Source coverage is not runtime, localization, conversion, SDK, security, accessibility or verified-parity acceptance.",
   },
   {
     slug: "public-ai",
