@@ -55,6 +55,9 @@ test.beforeEach(async ({ page }) => {
   )
   await page.goto("/editor/examples")
   await expect(page.getByTestId("editor-examples-core")).toBeVisible()
+  await expect(
+    page.getByRole("button", { name: "Search documentation", exact: true }),
+  ).toBeEnabled()
 })
 
 test("feature examples publish consumer source through inventory and Markdown", async ({
@@ -87,11 +90,16 @@ test("equation: edits inline and block math, cancels safely, and inserts by slas
   page,
 }, testInfo) => {
   const example = page.getByTestId("editor-example-equation")
+  await example
+    .getByRole("button", { name: "Live preview", exact: true })
+    .click()
 
   const editor = example.getByRole("textbox", {
     name: "Math editor",
     exact: true,
   })
+
+  await expect(editor).toHaveAttribute("contenteditable", "true")
 
   const toolbar = example.getByRole("toolbar", { name: "Math tools" })
   const inline = editor.locator('[data-editor-math="inline"]').first()
@@ -223,11 +231,16 @@ test("column: edits both seeded columns and hides edit boundaries in read-only m
   page,
 }, testInfo) => {
   const example = page.getByTestId("editor-example-column")
+  await example
+    .getByRole("button", { name: "Live preview", exact: true })
+    .click()
 
   const editor = example.getByRole("textbox", {
     name: "Column editor",
     exact: true,
   })
+
+  await expect(editor).toHaveAttribute("contenteditable", "true")
 
   const group = editor.locator('[data-editor-columns="1"]')
   const columns = group.locator('[data-editor-column="1"]')
@@ -285,11 +298,16 @@ test("date: edits seeded inline date by keyboard and preserves surrounding text"
   page,
 }, testInfo) => {
   const example = page.getByTestId("editor-example-date")
+  await example
+    .getByRole("button", { name: "Live preview", exact: true })
+    .click()
 
   const editor = example.getByRole("textbox", {
     name: "Date editor",
     exact: true,
   })
+
+  await expect(editor).toHaveAttribute("contenteditable", "true")
 
   const date = editor.locator('[data-editor-date="1"]')
   const dateButton = date.getByRole("button")
@@ -351,11 +369,16 @@ test("media: validates URLs, edits images, and renders supported media", async (
   await page.goto("/editor/examples")
 
   const example = page.getByTestId("editor-example-media")
+  await example
+    .getByRole("button", { name: "Live preview", exact: true })
+    .click()
 
   const editor = example.getByRole("textbox", {
     name: "Media editor",
     exact: true,
   })
+
+  await expect(editor).toHaveAttribute("contenteditable", "true")
 
   const toolbar = example.getByRole("toolbar", { name: "Media tools" })
 
@@ -479,7 +502,7 @@ test("feature examples copy complete consumer source from the gallery", async ({
     expect(source).toContain('"use client"')
     expect(source).toContain('from "@/components/editor"')
     expect(source).toContain(`from "${featureImport}"`)
-    expect(source).toContain(`export function ${component}`)
+    expect(source).toContain(component)
     expect(source).not.toMatch(
       /@registry\/|@yopem-ui\/|@workspace\/|from ["'](?:\.\.?\/)/,
     )

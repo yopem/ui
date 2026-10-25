@@ -1,8 +1,14 @@
 "use client"
 
 import { Box } from "@registry/components/ui/box"
+import { Button } from "@registry/components/ui/button"
 import { Clipboard } from "@registry/components/ui/clipboard"
 import { Codeblock } from "@registry/components/ui/codeblock"
+import {
+  Collapsible,
+  CollapsiblePanel,
+  CollapsibleTrigger,
+} from "@registry/components/ui/collapsible"
 import { Heading } from "@registry/components/ui/heading"
 import { Stack } from "@registry/components/ui/stack"
 import { Text } from "@registry/components/ui/text"
@@ -238,6 +244,10 @@ export function CoreEditorExamplesGallery() {
         acceptance and consumer installation checks have not run.
       </Text>
       <Text>
+        Open one live preview at a time. Closing a preview resets its local
+        document. Copy source without opening the preview.
+      </Text>
+      <Text>
         Install each example's listed registry items first. Keep the generated
         StyleX setup and application fonts loaded. Copy one complete file. Each
         file exports a named React component and includes its own seed when
@@ -263,19 +273,30 @@ export function CoreEditorExamplesGallery() {
                 <Text>{description}</Text>
                 <Text>{limits}</Text>
                 <Text>Required registry items: {items.join(", ")}</Text>
-                <Box xstyle={styles.preview}>
-                  <Component />
-                </Box>
+                <Collapsible>
+                  <CollapsibleTrigger render={<Button variant="outline" />}>
+                    Live preview
+                  </CollapsibleTrigger>
+                  <CollapsiblePanel>
+                    <Box xstyle={styles.preview}>
+                      <Component />
+                    </Box>
+                  </CollapsiblePanel>
+                </Collapsible>
                 <Clipboard
                   value={documentation.source}
                   aria-label="Copy source"
                 >
                   Copy source
                 </Clipboard>
-                <Box render={<details />} xstyle={styles.details}>
-                  <summary>View source</summary>
-                  <Codeblock>{documentation.source}</Codeblock>
-                </Box>
+                <Collapsible>
+                  <CollapsibleTrigger render={<Button variant="outline" />}>
+                    View source
+                  </CollapsibleTrigger>
+                  <CollapsiblePanel xstyle={styles.details}>
+                    <Codeblock>{documentation.source}</Codeblock>
+                  </CollapsiblePanel>
+                </Collapsible>
               </Stack>
             </Box>
           )

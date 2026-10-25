@@ -16,13 +16,20 @@ const slugs = [
 test.beforeEach(async ({ page }) => {
   await page.goto("/editor/examples")
   await expect(page.getByTestId("editor-examples-core")).toBeVisible()
+  await expect(
+    page.getByRole("button", { name: "Search documentation", exact: true }),
+  ).toBeEnabled()
 })
 
 test("basic-marks: composes marks with native keyboard input and history", async ({
   page,
 }, testInfo) => {
   const example = page.getByTestId("editor-example-basic-marks")
+  await example
+    .getByRole("button", { name: "Live preview", exact: true })
+    .click()
   const editor = example.getByRole("textbox")
+  await expect(editor).toHaveAttribute("contenteditable", "true")
   const toolbar = example.getByRole("toolbar")
   await editor.fill("Foundation")
   await editor.press("ControlOrMeta+a")
@@ -73,7 +80,11 @@ for (const slug of ["basic-nodes", "installation-next-03-elements"] as const) {
     page,
   }, testInfo) => {
     const example = page.getByTestId(`editor-example-${slug}`)
+    await example
+      .getByRole("button", { name: "Live preview", exact: true })
+      .click()
     const editor = example.getByRole("textbox")
+    await expect(editor).toHaveAttribute("contenteditable", "true")
     const toolbar = example.getByRole("toolbar")
     await expect(editor.locator("h1")).toBeVisible()
     await expect(editor.locator("blockquote")).toBeVisible()
@@ -106,7 +117,11 @@ test("basic-nodes: inserts native horizontal rule and supports history", async (
   page,
 }, testInfo) => {
   const example = page.getByTestId("editor-example-basic-nodes")
+  await example
+    .getByRole("button", { name: "Live preview", exact: true })
+    .click()
   const editor = example.getByRole("textbox")
+  await expect(editor).toHaveAttribute("contenteditable", "true")
   const toolbar = example.getByRole("toolbar")
   await editor.fill("Before rule")
   await editor.press("ControlOrMeta+End")
@@ -129,7 +144,11 @@ test("installation-next-01-editor: starts empty and accepts native rich text", a
   page,
 }) => {
   const example = page.getByTestId("editor-example-installation-next-01-editor")
+  await example
+    .getByRole("button", { name: "Live preview", exact: true })
+    .click()
   const editor = example.getByRole("textbox")
+  await expect(editor).toHaveAttribute("contenteditable", "true")
   await expect(editor).toHaveText("")
   await expect(example.getByRole("toolbar")).toHaveCount(0)
   await editor.fill("Minimal document")
@@ -142,7 +161,11 @@ test("installation-next-02-marks: seeded marks support keyboard toolbar operatio
   page,
 }) => {
   const example = page.getByTestId("editor-example-installation-next-02-marks")
+  await example
+    .getByRole("button", { name: "Live preview", exact: true })
+    .click()
   const editor = example.getByRole("textbox")
+  await expect(editor).toHaveAttribute("contenteditable", "true")
   const toolbar = example.getByRole("toolbar")
   await expect(editor.locator("strong, b")).toHaveText("Bold seed")
   await editor.fill("Keyboard selection")
@@ -166,7 +189,11 @@ test("link: creates, edits, removes, rejects unsafe URLs and cancels", async ({
   page,
 }, testInfo) => {
   const example = page.getByTestId("editor-example-link")
+  await example
+    .getByRole("button", { name: "Live preview", exact: true })
+    .click()
   const editor = example.getByRole("textbox")
+  await expect(editor).toHaveAttribute("contenteditable", "true")
   const linkButton = example.getByRole("button", { name: "Link", exact: true })
   await editor.fill("Link target")
   await editor.press("ControlOrMeta+a")
@@ -213,7 +240,12 @@ test("link: pastes safe URL over selected text through native clipboard", async 
   context,
 }) => {
   await context.grantPermissions(["clipboard-read", "clipboard-write"])
-  const editor = page.getByTestId("editor-example-link").getByRole("textbox")
+  const example = page.getByTestId("editor-example-link")
+  await example
+    .getByRole("button", { name: "Live preview", exact: true })
+    .click()
+  const editor = example.getByRole("textbox")
+  await expect(editor).toHaveAttribute("contenteditable", "true")
   await editor.fill("Keep selected text")
   await editor.press("ControlOrMeta+a")
   await page.evaluate(() =>
@@ -232,7 +264,11 @@ for (const slug of ["editor-default", "editor-full-width"] as const) {
     page,
   }) => {
     const example = page.getByTestId(`editor-example-${slug}`)
+    await example
+      .getByRole("button", { name: "Live preview", exact: true })
+      .click()
     const editor = example.getByRole("textbox")
+    await expect(editor).toHaveAttribute("contenteditable", "true")
     const toolbar = example.getByRole("toolbar")
     await editor.fill("Preset content")
     await toolbar
@@ -254,6 +290,9 @@ test("editor-disabled: prevents mutation and removes editor from tab order", asy
   page,
 }) => {
   const example = page.getByTestId("editor-example-editor-disabled")
+  await example
+    .getByRole("button", { name: "Live preview", exact: true })
+    .click()
   const editor = example.getByRole("textbox")
   await expect(editor).toHaveAttribute("contenteditable", "false")
   await expect(editor).toHaveAttribute("aria-disabled", "true")
@@ -289,6 +328,9 @@ for (const width of [390, 768, 1440]) {
 
     for (const slug of slugs) {
       const example = page.getByTestId(`editor-example-${slug}`)
+      await example
+        .getByRole("button", { name: "Live preview", exact: true })
+        .click()
       await expect(example.getByRole("textbox")).toBeVisible()
       const bounds = await example.boundingBox()
       expect(bounds).not.toBeNull()
@@ -309,7 +351,7 @@ for (const width of [390, 768, 1440]) {
     })
     expect(report.violations).toEqual([])
     await testInfo.attach(`core-${width}.png`, {
-      body: await page.screenshot({ fullPage: true }),
+      body: await page.screenshot({ fullPage: true, scale: "css" }),
       contentType: "image/png",
     })
   })
