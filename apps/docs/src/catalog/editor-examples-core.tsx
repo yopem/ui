@@ -59,7 +59,6 @@ import { PublicListPresentationExample } from "./editor-examples/public-list-pre
 import { PublicNativeEditingExample } from "./editor-examples/public-native-editing"
 import { PublicPersistedExample } from "./editor-examples/public-persisted"
 import { PublicPlaceholderExample } from "./editor-examples/public-placeholder"
-import { PublicPlaygroundExample } from "./editor-examples/public-playground"
 import { PublicPluginRulesExample } from "./editor-examples/public-plugin-rules"
 import { ReadOnlyEditorExample } from "./editor-examples/public-readonly"
 import { PublicReviewExample } from "./editor-examples/public-review"
@@ -72,6 +71,7 @@ import { PublicTablesExample } from "./editor-examples/public-tables"
 import { PublicTocExample } from "./editor-examples/public-toc"
 import { PublicTypeaheadExample } from "./editor-examples/public-typeahead"
 import { PublicWordClipboardExample } from "./editor-examples/public-word-clipboard"
+import { EditorPlaygroundClient } from "./editor-playground-client"
 
 const sources = import.meta.glob<string>("./editor-examples/*.tsx", {
   query: "?raw",
@@ -84,7 +84,7 @@ const examples = [
     slug: "public-playground",
     workflowIds: [],
     title: "Integrated native playground",
-    Component: PublicPlaygroundExample,
+    Component: EditorPlaygroundClient,
     items: [
       "editor",
       "editor-blocks",
@@ -98,11 +98,13 @@ const examples = [
       "editor-review",
       "editor-search",
       "editor-copilot",
+      "editor-list-presentation",
+      "editor-drawing",
     ],
     description:
       "Compose native editing, tables, code, typeahead, review, search, and configured Copilot in one document.",
     limits:
-      "English and Chinese shell labels are partial localization. Normal and configured Copilot variants remount the seed. Classic-list, forced-layout, drawing variants, and complete document conversion are absent. Review uses a local fixture policy. No AI endpoint or host authority is supplied. Runtime acceptance is deferred; full mapped playground coverage is not credited.",
+      "English and Chinese shell labels are partial localization. Variant changes reset the document; locale changes retain it. Classic-list uses native list controls, not Plate list transforms. Forced layout normalizes only the first paragraph or heading. Drawing requires browser-only SDK loading, installed fonts and CSP approval. Complete document conversion is unsupported. Review uses a local fixture policy. No AI endpoint or host authority is supplied. Runtime acceptance is deferred; full mapped playground coverage is not credited.",
   },
   {
     slug: "public-ai",

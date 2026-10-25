@@ -1,5 +1,6 @@
 "use client"
 
+import "@excalidraw/excalidraw/index.css"
 import type { EditorCopilotConfig } from "@yopem-ui/editor/copilot"
 import type {
   EditorReviewAction,
@@ -10,12 +11,16 @@ import type {
   MentionIdentity,
 } from "@yopem-ui/editor/typeahead"
 
+import { $createHeadingNode, $isHeadingNode } from "@lexical/rich-text"
+import { $insertNodeToNearestRoot } from "@lexical/utils"
 import { Box } from "@registry/components/ui/box"
 import { Button } from "@registry/components/ui/button"
+import { Checkbox } from "@registry/components/ui/checkbox"
 import { Field, FieldLabel } from "@registry/components/ui/field"
 import { Fieldset } from "@registry/components/ui/fieldset"
 import { HStack } from "@registry/components/ui/hstack"
 import { Input } from "@registry/components/ui/input"
+import { Label } from "@registry/components/ui/label"
 import { Stack } from "@registry/components/ui/stack"
 import { Text } from "@registry/components/ui/text"
 import { Wrap } from "@registry/components/ui/wrap"
@@ -23,6 +28,7 @@ import {
   EditorAlignmentButton,
   EditorBackgroundColorControl,
   EditorBlockButton,
+  EditorContent,
   EditorBlockPresentationExtension,
   EditorClearFormattingButton,
   EditorFirstLineIndentControl,
@@ -43,6 +49,8 @@ import {
   EditorTablePresentationExtension,
   EditorTableResizeControls,
   EditorToolbar,
+  useEditor,
+  useEditorState,
 } from "@yopem-ui/editor"
 import { validateEditorAiConfig } from "@yopem-ui/editor/ai/client"
 import {
@@ -79,12 +87,26 @@ import {
   INSERT_EDITOR_DATE_COMMAND,
 } from "@yopem-ui/editor/date"
 import {
+  $createEditorDrawingNode,
+  EditorDrawingExtension,
+  type EditorDrawingScene,
+} from "@yopem-ui/editor/drawing"
+import {
+  EditorDrawingInsertButton,
+  registerEditorDrawingRuntime,
+} from "@yopem-ui/editor/drawing/browser"
+import {
   EditorFootnoteControls,
   EditorFootnoteExtension,
   EditorFootnoteDefinitionNode,
   EditorFootnoteReferenceNode,
   INSERT_EDITOR_FOOTNOTE_COMMAND,
 } from "@yopem-ui/editor/footnote"
+import {
+  EditorListMarkerControl,
+  EditorListPresentationExtension,
+  EditorListStartControl,
+} from "@yopem-ui/editor/list-presentation"
 import {
   $insertEditorMath,
   EditorMathControl,
@@ -118,11 +140,25 @@ import {
   editorEmojiInventory,
   EditorTypeahead,
 } from "@yopem-ui/editor/typeahead"
-import { useId, useState } from "react"
+import {
+  $getRoot,
+  $getSelection,
+  $isParagraphNode,
+  $isRangeSelection,
+  defineExtension,
+  HISTORY_PUSH_TAG,
+  RootNode,
+} from "lexical"
+import { useId, useState, type MouseEvent } from "react"
 
 type Locale = "en" | "cn"
 
-type Variant = "normal" | "copilot"
+type Variant =
+  | "normal"
+  | "copilot"
+  | "listClassic"
+  | "forced-layout"
+  | "drawing"
 
 const copy = {
   en: {
@@ -136,6 +172,19 @@ const copy = {
     next: "Next match",
     normal: "Normal",
     copilot: "Copilot",
+    listClassic: "List classic",
+    forcedLayout: "Forced layout",
+    drawing: "Excalidraw",
+    drawingReadOnly: "Read-only drawing editor",
+    drawingAssets: "Self-hosted Excalidraw assets are installed",
+    drawingAssetPath: "Self-hosted Excalidraw asset path",
+    drawingNotice:
+      "Scenes keep bounded native shapes and text. Files and embedded URLs are not supported.",
+    drawingAssetNotice:
+      "This preview imports Excalidraw CSS. Serve SDK fonts at /assets/excalidraw/ and allow them in Content Security Policy. Missing local fonts can trigger fallback-host requests.",
+    drawingAssetGate:
+      "Confirm that self-hosted Excalidraw assets are installed to enable drawing tools.",
+    insertDrawingFixture: "Insert shape fixture",
     localPolicy:
       "Review controls use a local fixture policy, not authentication.",
     noEndpoint: "No endpoint is configured.",
@@ -161,6 +210,17 @@ const copy = {
     next: "下一处匹配",
     normal: "普通",
     copilot: "Copilot",
+    listClassic: "经典列表",
+    forcedLayout: "强制布局",
+    drawing: "Excalidraw",
+    drawingReadOnly: "只读绘图编辑器",
+    drawingAssets: "已安装自托管的 Excalidraw 资源",
+    drawingAssetPath: "自托管 Excalidraw 资源路径",
+    drawingNotice: "场景仅保存受限的原生形状和文本。不支持文件和嵌入式 URL。",
+    drawingAssetNotice:
+      "加载 Excalidraw 样式表。请从 /assets/excalidraw/ 提供 SDK 字体，并在内容安全策略中允许这些字体。本地字体缺失时，SDK 可能请求备用字体主机。",
+    drawingAssetGate: "请确认已安装自托管的 Excalidraw 资源，再启用绘图工具。",
+    insertDrawingFixture: "插入形状示例",
     localPolicy: "审阅控件使用本地示例策略，不代表身份验证。",
     noEndpoint: "尚未配置端点。",
     hostPolicy:
@@ -353,6 +413,105 @@ const initialState = JSON.stringify(
   ),
 )
 
+const listClassicInitialState = JSON.stringify({
+  root: {
+    ...elementFields,
+    type: "root",
+    children: [
+      {
+        ...elementFields,
+        type: "list",
+        listType: "number",
+        tag: "ol",
+        start: -2,
+        children: [
+          {
+            ...elementFields,
+            type: "listitem",
+            value: -2,
+            children: [textNode("Classic ordered item")],
+          },
+        ],
+      },
+    ],
+  },
+})
+
+const forcedLayoutInitialState = JSON.stringify({
+  root: {
+    ...elementFields,
+    type: "root",
+    children: [paragraph([textNode("Forced layout paragraph seed")])],
+  },
+})
+
+const forcedLayoutExtension = defineExtension({
+  name: "@docs/public-playground/forced-layout",
+  register(editor) {
+    return editor.registerNodeTransform(RootNode, (root) => {
+      const first = root.getFirstChild()
+
+      if ($isParagraphNode(first)) {
+        const heading = $createHeadingNode("h1")
+        heading.append(...first.getChildren())
+        first.replace(heading)
+
+        return
+      }
+
+      if ($isHeadingNode(first) && first.getTag() !== "h1") first.setTag("h1")
+    })
+  },
+})
+
+const drawingAssetPath = "/assets/excalidraw/"
+
+const drawingDefaults = {
+  angle: 0,
+  strokeColor: "#000000",
+  backgroundColor: "transparent",
+  fillStyle: "solid",
+  strokeWidth: 2,
+  strokeStyle: "solid",
+  roughness: 0,
+  opacity: 100,
+  groupIds: [],
+  frameId: null,
+  roundness: null,
+  version: 1,
+  versionNonce: 1,
+  isDeleted: false,
+  boundElements: [],
+  updated: 1700000000000,
+  link: null,
+  locked: false,
+}
+
+const drawingFixture: EditorDrawingScene = {
+  elements: [
+    {
+      ...drawingDefaults,
+      id: "playground-rectangle",
+      type: "rectangle",
+      x: 60,
+      y: 60,
+      width: 160,
+      height: 120,
+      seed: 11,
+    },
+    {
+      ...drawingDefaults,
+      id: "playground-ellipse",
+      type: "ellipse",
+      x: 300,
+      y: 80,
+      width: 120,
+      height: 120,
+      seed: 12,
+    },
+  ],
+}
+
 const mentionFixture = [
   { id: "docs-fixture-ada", label: "Ada Lovelace" },
   { id: "docs-fixture-grace", label: "Grace Hopper" },
@@ -463,6 +622,50 @@ const slashCommands: readonly EditorSlashCommand[] = [
   },
 ]
 
+function DrawingControls({
+  labels,
+}: {
+  labels: Pick<typeof copy.en, "insertDrawingFixture">
+}) {
+  const editor = useEditor()
+  const { editable } = useEditorState()
+
+  const [connect] = useState(
+    () =>
+      function registerDrawingRuntime() {
+        return registerEditorDrawingRuntime(editor, drawingAssetPath)
+      },
+  )
+
+  function insertDrawingFixture(event: MouseEvent<HTMLButtonElement>) {
+    if (event.defaultPrevented || !editor.isEditable()) return
+
+    editor.update(
+      () => {
+        if (!editor.isEditable()) return
+        const node = $createEditorDrawingNode(drawingFixture)
+
+        if ($isRangeSelection($getSelection())) $insertNodeToNearestRoot(node)
+        else $getRoot().append(node)
+      },
+      { tag: HISTORY_PUSH_TAG },
+    )
+  }
+
+  return (
+    <Stack ref={connect}>
+      <EditorToolbar aria-label="Drawing editor tools">
+        <EditorDrawingInsertButton />
+        <Button disabled={!editable} onClick={insertDrawingFixture}>
+          {labels.insertDrawingFixture}
+        </Button>
+        <EditorHistoryButton action="undo" />
+        <EditorHistoryButton action="redo" />
+      </EditorToolbar>
+    </Stack>
+  )
+}
+
 function PlaygroundEditor({
   locale,
   variant,
@@ -474,6 +677,9 @@ function PlaygroundEditor({
 }) {
   const labels = copy[locale]
   const [review] = useState(createEditorReview)
+  const [readOnly, setReadOnly] = useState(false)
+  const [assetsReady, setAssetsReady] = useState(false)
+  const assetPathId = useId()
 
   const [typeahead] = useState(() =>
     createEditorTypeahead({
@@ -493,119 +699,187 @@ function PlaygroundEditor({
     EditorDateExtension,
     MediaExtension,
     EditorFootnoteExtension,
+    EditorListPresentationExtension,
+    ...(variant === "forced-layout" ? [forcedLayoutExtension] : []),
+    ...(variant === "drawing" ? [EditorDrawingExtension] : []),
     review.extension,
     typeahead.extension,
   ])
 
+  const editorInitialState =
+    variant === "listClassic"
+      ? listClassicInitialState
+      : variant === "forced-layout"
+        ? forcedLayoutInitialState
+        : initialState
+
   return (
-    <EditorRoot
-      ariaLabel={labels.editor}
-      extensions={extensions}
-      initialState={initialState}
-    >
-      <EditorReviewProvider controller={review} host={reviewHost}>
-        <EditorToolbar aria-label={labels.toolbar}>
-          <EditorFormatButton format="bold">
-            {locale === "en" ? "Bold" : "加粗"}
-          </EditorFormatButton>
-          <EditorFormatButton format="italic">
-            {locale === "en" ? "Italic" : "斜体"}
-          </EditorFormatButton>
-          <EditorFormatButton format="underline">
-            {locale === "en" ? "Underline" : "下划线"}
-          </EditorFormatButton>
-          <EditorAlignmentButton alignment="left" />
-          <EditorAlignmentButton alignment="center" />
-          <EditorAlignmentButton alignment="right" />
-          <EditorIndentButton direction="indent" />
-          <EditorIndentButton direction="outdent" />
-          <EditorFirstLineIndentControl />
-          <EditorFontColorControl />
-          <EditorBackgroundColorControl />
-          <EditorFontFamilyControl />
-          <EditorFontSizeControl />
-          <EditorFontWeightControl />
-          <EditorClearFormattingButton />
-          <EditorBlockButton block="h1" />
-          <EditorBlockButton block="h2" />
-          <EditorBlockButton block="quote" />
-          <EditorBlockButton block="code" />
-          <EditorListButton listType="bullet" />
-          <EditorListButton listType="number" />
-          <EditorListButton listType="check" />
-          <EditorLinkControl />
-          <EditorTableButton />
-          <EditorTableMenu />
-          <EditorCalloutButton />
-          <EditorToggleButton />
-          <EditorDisclosureButton />
-          {editorCalloutAppearances.map((appearance) => (
-            <EditorCalloutAppearanceButton
-              key={appearance}
-              appearance={appearance}
+    <>
+      {variant === "drawing" ? (
+        <Stack>
+          <Text>{labels.drawingNotice}</Text>
+          <Text>{labels.drawingAssetNotice}</Text>
+          <Field>
+            <FieldLabel htmlFor={assetPathId}>
+              {labels.drawingAssetPath}
+            </FieldLabel>
+            <Input id={assetPathId} readOnly value={drawingAssetPath} />
+          </Field>
+          <Label>
+            <Checkbox
+              aria-label={labels.drawingReadOnly}
+              checked={readOnly}
+              onCheckedChange={(checked) => setReadOnly(checked === true)}
             />
-          ))}
-          <EditorColumnsControls />
-          <EditorDateControls initialDate="2025-01-15" />
-          <EditorMathControl kind="inline" />
-          <EditorMathControl kind="block" />
-          <EditorFootnoteControls />
-          {mediaKinds.map((kind) => (
-            <MediaInsertControl key={kind} kind={kind} />
-          ))}
-          <EditorHistoryButton action="undo" />
-          <EditorHistoryButton action="redo" />
-        </EditorToolbar>
-        <EditorCodeToolbar aria-label={labels.codeToolbar}>
-          <EditorCodeLanguage
-            aria-label={locale === "en" ? "Code language" : "代码语言"}
-          />
-          <EditorCodeCopyButton
-            aria-label={locale === "en" ? "Copy code" : "复制代码"}
-          />
-          <EditorCodeToggle
-            setting="wrap"
-            aria-label={locale === "en" ? "Wrap code" : "自动换行"}
-          />
-          <EditorCodeToggle
-            setting="lineNumbers"
-            aria-label={locale === "en" ? "Line numbers" : "行号"}
-          />
-          <EditorCodeStatus />
-        </EditorCodeToolbar>
-        <EditorTableDimensions />
-        <EditorTableResizeControls />
-        <EditorTableCellPresentation />
-        <EditorReviewModeControl />
-        <EditorReviewCreateControl />
-        <EditorReviewDiffControl />
-        <EditorSearchRoot initialQuery="review">
-          <Stack>
-            <EditorSearchInput
-              aria-label={labels.search}
-              placeholder={labels.searchPlaceholder}
+            {labels.drawingReadOnly}
+          </Label>
+          <Label>
+            <Checkbox
+              aria-label={labels.drawingAssets}
+              checked={assetsReady}
+              onCheckedChange={(checked) => setAssetsReady(checked === true)}
             />
-            <HStack>
-              <EditorSearchPreviousButton>
-                {labels.previous}
-              </EditorSearchPreviousButton>
-              <EditorSearchNextButton>{labels.next}</EditorSearchNextButton>
-              <EditorSearchStatus />
-            </HStack>
-            <EditorSearchViewport>
-              <EditorTypeahead
-                controller={typeahead}
-                placeholder={labels.placeholder}
-              />
-            </EditorSearchViewport>
-          </Stack>
-        </EditorSearchRoot>
-        <EditorReviewPanel />
-        {variant === "copilot" && copilotConfig ? (
-          <EditorCopilot config={copilotConfig} />
-        ) : null}
-      </EditorReviewProvider>
-    </EditorRoot>
+            {labels.drawingAssets}
+          </Label>
+        </Stack>
+      ) : null}
+      <EditorRoot
+        ariaLabel={labels.editor}
+        editable={variant !== "drawing" || !readOnly}
+        extensions={extensions}
+        initialState={editorInitialState}
+      >
+        <EditorReviewProvider controller={review} host={reviewHost}>
+          {variant === "drawing" ? (
+            <>
+              <EditorContent placeholder={labels.placeholder} />
+              {assetsReady ? (
+                <DrawingControls labels={labels} />
+              ) : (
+                <Text>{labels.drawingAssetGate}</Text>
+              )}
+            </>
+          ) : (
+            <>
+              <EditorToolbar aria-label={labels.toolbar}>
+                <EditorFormatButton format="bold">
+                  {locale === "en" ? "Bold" : "加粗"}
+                </EditorFormatButton>
+                <EditorFormatButton format="italic">
+                  {locale === "en" ? "Italic" : "斜体"}
+                </EditorFormatButton>
+                <EditorFormatButton format="underline">
+                  {locale === "en" ? "Underline" : "下划线"}
+                </EditorFormatButton>
+                <EditorAlignmentButton alignment="left" />
+                <EditorAlignmentButton alignment="center" />
+                <EditorAlignmentButton alignment="right" />
+                {variant === "listClassic" ? (
+                  <>
+                    <EditorListMarkerControl />
+                    <EditorListStartControl />
+                  </>
+                ) : (
+                  <>
+                    <EditorIndentButton direction="indent" />
+                    <EditorIndentButton direction="outdent" />
+                    <EditorListButton listType="bullet" />
+                    <EditorListButton listType="number" />
+                    <EditorListButton listType="check" />
+                  </>
+                )}
+                <EditorFirstLineIndentControl />
+                <EditorFontColorControl />
+                <EditorBackgroundColorControl />
+                <EditorFontFamilyControl />
+                <EditorFontSizeControl />
+                <EditorFontWeightControl />
+                <EditorClearFormattingButton />
+                <EditorBlockButton block="h1" />
+                {variant === "forced-layout" ? (
+                  <EditorBlockButton block="paragraph" />
+                ) : null}
+                <EditorBlockButton block="h2" />
+                <EditorBlockButton block="quote" />
+                <EditorBlockButton block="code" />
+                <EditorLinkControl />
+                <EditorTableButton />
+                <EditorTableMenu />
+                <EditorCalloutButton />
+                <EditorToggleButton />
+                <EditorDisclosureButton />
+                {editorCalloutAppearances.map((appearance) => (
+                  <EditorCalloutAppearanceButton
+                    key={appearance}
+                    appearance={appearance}
+                  />
+                ))}
+                <EditorColumnsControls />
+                <EditorDateControls initialDate="2025-01-15" />
+                <EditorMathControl kind="inline" />
+                <EditorMathControl kind="block" />
+                <EditorFootnoteControls />
+                {mediaKinds.map((kind) => (
+                  <MediaInsertControl key={kind} kind={kind} />
+                ))}
+                <EditorHistoryButton action="undo" />
+                <EditorHistoryButton action="redo" />
+              </EditorToolbar>
+              <EditorCodeToolbar aria-label={labels.codeToolbar}>
+                <EditorCodeLanguage
+                  aria-label={locale === "en" ? "Code language" : "代码语言"}
+                />
+                <EditorCodeCopyButton
+                  aria-label={locale === "en" ? "Copy code" : "复制代码"}
+                />
+                <EditorCodeToggle
+                  setting="wrap"
+                  aria-label={locale === "en" ? "Wrap code" : "自动换行"}
+                />
+                <EditorCodeToggle
+                  setting="lineNumbers"
+                  aria-label={locale === "en" ? "Line numbers" : "行号"}
+                />
+                <EditorCodeStatus />
+              </EditorCodeToolbar>
+              <EditorTableDimensions />
+              <EditorTableResizeControls />
+              <EditorTableCellPresentation />
+              <EditorReviewModeControl />
+              <EditorReviewCreateControl />
+              <EditorReviewDiffControl />
+              <EditorSearchRoot initialQuery="review">
+                <Stack>
+                  <EditorSearchInput
+                    aria-label={labels.search}
+                    placeholder={labels.searchPlaceholder}
+                  />
+                  <HStack>
+                    <EditorSearchPreviousButton>
+                      {labels.previous}
+                    </EditorSearchPreviousButton>
+                    <EditorSearchNextButton>
+                      {labels.next}
+                    </EditorSearchNextButton>
+                    <EditorSearchStatus />
+                  </HStack>
+                  <EditorSearchViewport>
+                    <EditorTypeahead
+                      controller={typeahead}
+                      placeholder={labels.placeholder}
+                    />
+                  </EditorSearchViewport>
+                </Stack>
+              </EditorSearchRoot>
+              <EditorReviewPanel />
+              {variant === "copilot" && copilotConfig ? (
+                <EditorCopilot config={copilotConfig} />
+              ) : null}
+            </>
+          )}
+        </EditorReviewProvider>
+      </EditorRoot>
+    </>
   )
 }
 
@@ -739,6 +1013,24 @@ export function PublicPlaygroundExample() {
             >
               {labels.copilot}
             </Button>
+            <Button
+              aria-pressed={variant === "listClassic"}
+              onClick={() => chooseVariant("listClassic")}
+            >
+              {labels.listClassic}
+            </Button>
+            <Button
+              aria-pressed={variant === "forced-layout"}
+              onClick={() => chooseVariant("forced-layout")}
+            >
+              {labels.forcedLayout}
+            </Button>
+            <Button
+              aria-pressed={variant === "drawing"}
+              onClick={() => chooseVariant("drawing")}
+            >
+              {labels.drawing}
+            </Button>
           </Wrap>
         </Fieldset>
         {variant === "copilot" && !copilotConfig ? (
@@ -751,7 +1043,7 @@ export function PublicPlaygroundExample() {
             copilotConfig={copilotConfig}
           />
         )}
-        <Text>{labels.copilotNotice}</Text>
+        {variant === "copilot" ? <Text>{labels.copilotNotice}</Text> : null}
       </Stack>
     </Box>
   )

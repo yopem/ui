@@ -95,6 +95,196 @@ test.describe("Integrated playground workflows", () => {
     await expect(normalEditor).not.toContainText("Unsaved draft")
   })
 
+  test("listClassic variant uses native markers and keeps control focus", async ({
+    page,
+  }) => {
+    const workspace = page.getByTestId("public-playground-workspace")
+    await workspace
+      .getByRole("button", { name: "List classic", exact: true })
+      .click()
+
+    const editor = workspace.getByRole("textbox", {
+      name: "Integrated playground editor",
+      exact: true,
+    })
+
+    const list = editor
+      .locator("ol")
+      .filter({ hasText: "Classic ordered item" })
+
+    const marker = workspace.getByRole("combobox", {
+      name: "List marker",
+      exact: true,
+    })
+
+    const start = workspace.getByRole("textbox", {
+      name: "Ordered list start",
+      exact: true,
+    })
+
+    await expect(editor).toContainText("Classic ordered item")
+
+    for (const name of [
+      "Indent",
+      "Outdent",
+      "Bullet list",
+      "Numbered list",
+      "Checklist",
+    ])
+      await expect(
+        workspace.getByRole("button", { name, exact: true }),
+      ).toHaveCount(0)
+    await expect(list).toHaveAttribute("start", "-2")
+    await editor.getByText("Classic ordered item", { exact: true }).click()
+    await expect(marker).toBeEnabled()
+    await marker.click()
+    await marker.selectOption("upper-roman")
+    await expect(marker).toBeFocused()
+    await expect(list).toHaveAttribute("data-editor-list-marker", "upper-roman")
+    await start.fill("0")
+    await expect(list).toHaveAttribute("start", "0")
+
+    await workspace.getByRole("button", { name: "Normal", exact: true }).click()
+    await expect(editor).not.toContainText("Classic ordered item")
+    await expect(
+      workspace.getByRole("button", { name: "Bullet list", exact: true }),
+    ).toBeVisible()
+  })
+
+  test("forced-layout variant normalizes first block to H1", async ({
+    page,
+  }) => {
+    const workspace = page.getByTestId("public-playground-workspace")
+    await workspace
+      .getByRole("button", { name: "Forced layout", exact: true })
+      .click()
+
+    const editor = workspace.getByRole("textbox", {
+      name: "Integrated playground editor",
+      exact: true,
+    })
+
+    const firstHeading = editor.locator(":scope > h1")
+
+    await expect(firstHeading).toHaveText("Forced layout paragraph seed")
+    await editor
+      .getByText("Forced layout paragraph seed", { exact: true })
+      .click()
+    await workspace
+      .getByRole("button", { name: "Paragraph", exact: true })
+      .click()
+    await expect(firstHeading).toHaveCount(1)
+    await expect(firstHeading).toHaveText("Forced layout paragraph seed")
+    await expect(editor.locator(":scope > p")).toHaveCount(0)
+  })
+
+  test("drawing variant gates runtime, honors read-only, and cleans up", async ({
+    page,
+  }) => {
+    const workspace = page.getByTestId("public-playground-workspace")
+    await workspace
+      .getByRole("button", { name: "Excalidraw", exact: true })
+      .click()
+
+    const editor = workspace.getByRole("textbox", {
+      name: "Integrated playground editor",
+      exact: true,
+    })
+
+    const assets = workspace.getByRole("checkbox", {
+      name: "Self-hosted Excalidraw assets are installed",
+      exact: true,
+    })
+
+    const insertFixture = workspace.getByRole("button", {
+      name: "Insert shape fixture",
+      exact: true,
+    })
+
+    await expect(assets).not.toBeChecked()
+    await expect(insertFixture).toHaveCount(0)
+    await assets.check()
+    await expect(insertFixture).toBeEnabled()
+    await insertFixture.click()
+    await expect(editor.locator("figure[data-editor-drawing]")).toHaveCount(1)
+
+    const preview = workspace.getByTestId("editor-drawing-preview")
+    await expect(preview).toContainText("Drawing with 2 elements")
+    await expect(
+      preview.getByRole("button", { name: "Edit drawing", exact: true }),
+    ).toBeVisible()
+
+    await workspace
+      .getByRole("checkbox", { name: "Read-only drawing editor", exact: true })
+      .check()
+    await expect(editor).toHaveAttribute("contenteditable", "false")
+    await expect(
+      workspace.getByRole("button", { name: "Insert drawing", exact: true }),
+    ).toBeDisabled()
+    await expect(insertFixture).toBeDisabled()
+    await preview
+      .getByRole("button", { name: "View drawing", exact: true })
+      .click()
+
+    const viewDialog = workspace.getByRole("dialog", {
+      name: "View drawing",
+      exact: true,
+    })
+
+    await expect(viewDialog).toBeVisible()
+
+    const report = await new AxeBuilder({ page })
+      .include('[role="dialog"]')
+      .analyze()
+
+    expect(report.violations).toEqual([])
+    await expect(
+      viewDialog.getByRole("button", { name: "Apply drawing", exact: true }),
+    ).toBeDisabled()
+    await viewDialog
+      .getByRole("button", { name: "Cancel drawing", exact: true })
+      .click()
+    await expect(viewDialog).toBeHidden()
+
+    await assets.uncheck()
+    await expect(editor.getByTestId("editor-drawing-preview")).toHaveCount(0)
+    await expect(editor).toContainText("Drawing with 2 elements")
+    await assets.check()
+    await expect(workspace.getByTestId("editor-drawing-preview")).toBeVisible()
+
+    await workspace.getByRole("button", { name: "Normal", exact: true }).click()
+    await workspace
+      .getByRole("button", { name: "Excalidraw", exact: true })
+      .click()
+    await expect(
+      workspace.getByRole("checkbox", {
+        name: "Self-hosted Excalidraw assets are installed",
+        exact: true,
+      }),
+    ).not.toBeChecked()
+    await expect(insertFixture).toHaveCount(0)
+  })
+
+  test("playground does not expose unsupported whole-document roundtrips", async ({
+    page,
+  }) => {
+    const workspace = page.getByTestId("public-playground-workspace")
+
+    for (const name of [
+      "Save local JSON",
+      "Load local JSON",
+      "Save local HTML",
+      "Load local HTML",
+      "Export HTML",
+      "Export Markdown",
+      "Import HTML",
+      "Import Markdown",
+    ])
+      await expect(
+        workspace.getByRole("button", { name, exact: true }),
+      ).toHaveCount(0)
+  })
+
   test("review workspace: local policy enables comment creation", async ({
     page,
   }) => {
