@@ -3,9 +3,12 @@ import {
   $createTextNode,
   $getRoot,
   $getSelection,
+  $isElementNode,
   $isRangeSelection,
   HISTORY_PUSH_TAG,
+  type ElementNode,
   type LexicalEditor,
+  type LexicalNode,
 } from "lexical"
 
 import {
@@ -32,6 +35,36 @@ function selectionKey() {
     : selection === null
       ? null
       : "non-range"
+}
+
+const blockContainers = new Set([
+  "root",
+  "quote",
+  "editor-callout",
+  "editor-toggle-body",
+  "tablecell",
+  "listitem",
+])
+
+function $getBlockInsertionTarget(node: LexicalNode) {
+  let current: LexicalNode | null = node
+
+  while (current && current !== $getRoot()) {
+    const parent: ElementNode | null = current.getParent()
+
+    if (!parent) return null
+
+    if (
+      $isElementNode(current) &&
+      !current.isInline() &&
+      blockContainers.has(parent.getType())
+    )
+      return { block: current, parent }
+
+    current = parent
+  }
+
+  return null
 }
 
 export interface EditorAiSnapshot {
@@ -144,6 +177,7 @@ export function createEditorAiSession(editor: LexicalEditor) {
       operation,
       status:
         editor.isEditable() &&
+        !editor.isComposing() &&
         bookmark.getSnapshot() &&
         (operation !== "rewrite" || selectedText.length > 0)
           ? "idle"
@@ -173,6 +207,7 @@ export function createEditorAiSession(editor: LexicalEditor) {
     if (
       snapshot.status !== "idle" ||
       !editor.isEditable() ||
+      editor.isComposing() ||
       !bookmark.getSnapshot()
     )
       return
@@ -218,11 +253,55 @@ export function createEditorAiSession(editor: LexicalEditor) {
     return applyProposal("below")
   }
 
+  function approveWith(insert: (text: string) => boolean) {
+    if (
+      snapshot.status !== "ready" ||
+      !snapshot.text ||
+      !editor.isEditable() ||
+      editor.isComposing() ||
+      !bookmark.getSnapshot()
+    )
+      return false
+    const text = snapshot.text
+    let applied = false
+
+    try {
+      editor.update(
+        () => {
+          if (!bookmark.restore()) return
+          const range = $getSelection()
+
+          if (!$isRangeSelection(range)) return
+
+          if (snapshot.operation !== "rewrite") {
+            const end = range.isBackward() ? range.anchor : range.focus
+            range.anchor.set(end.key, end.offset, end.type)
+            range.focus.set(end.key, end.offset, end.type)
+          }
+
+          applied = insert(text) === true
+        },
+        { tag: HISTORY_PUSH_TAG, discrete: true },
+      )
+    } catch {
+      return false
+    }
+
+    if (!applied) return false
+
+    approved = true
+    close()
+    editor.focus()
+
+    return true
+  }
+
   function applyProposal(mode: "replace" | "below") {
     if (
       snapshot.status !== "ready" ||
       !snapshot.text ||
       !editor.isEditable() ||
+      editor.isComposing() ||
       !bookmark.getSnapshot()
     )
       return false
@@ -237,12 +316,12 @@ export function createEditorAiSession(editor: LexicalEditor) {
 
         if (mode === "below") {
           const end = range.isBackward() ? range.anchor : range.focus
-          const block = end.getNode().getTopLevelElement()
+          const target = $getBlockInsertionTarget(end.getNode())
 
-          if (!block || block.getParent() !== $getRoot()) return
+          if (!target) return
           const paragraph = $createParagraphNode()
           paragraph.append($createTextNode(text))
-          block.insertAfter(paragraph)
+          target.block.insertAfter(paragraph)
           paragraph.selectEnd()
         } else {
           if (snapshot.operation !== "rewrite") {
@@ -258,12 +337,14 @@ export function createEditorAiSession(editor: LexicalEditor) {
       },
       { tag: HISTORY_PUSH_TAG, discrete: true },
     )
-    approved = applied
 
+    if (!applied) return false
+
+    approved = true
     close()
     editor.focus()
 
-    return applied
+    return true
   }
 
   function getSnapshot() {
@@ -283,6 +364,7 @@ export function createEditorAiSession(editor: LexicalEditor) {
     request,
     approve,
     approveBelow,
+    approveWith,
     getApproved,
   }
 }

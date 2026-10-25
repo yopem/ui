@@ -69,6 +69,7 @@ interface EditorAiMenuCommand {
   instruction: string
   operation: "generate" | "selection"
   review?: true
+  sourceFormat?: "markdown" | "mdx"
 }
 
 interface EditorAiChatMessage {
@@ -150,18 +151,24 @@ const commands: readonly EditorAiMenuCommand[] = [
     instruction:
       "Write a small Markdown source sample as plain text. Do not output HTML or executable code.",
     operation: "generate",
+    sourceFormat: "markdown",
   },
   {
     label: "MDX sample",
     instruction:
       "Write a small MDX source sample as plain text. Do not execute or evaluate MDX. Do not output HTML.",
     operation: "generate",
+    sourceFormat: "mdx",
   },
 ]
 
 const EditorAiMenuBookmarkContext = createContext<ReturnType<
   typeof createEditorSelectionBookmark
 > | null>(null)
+
+const EditorAiMenuMarkdownInsertionContext = createContext<
+  ((source: string) => boolean) | null
+>(null)
 
 const EditorAiMenuMessagesContext = createContext<EditorAiChatMessage[]>([])
 
@@ -186,7 +193,13 @@ function useMenuBookmark() {
   return bookmark
 }
 
-export function EditorAiMenuRoot({ children }: { children: ReactNode }) {
+export function EditorAiMenuRoot({
+  children,
+  markdownInsertion,
+}: {
+  children: ReactNode
+  markdownInsertion?: (source: string) => boolean
+}) {
   const editor = useEditor()
   const { session } = useAi()
   const [bookmark] = useState(() => createEditorSelectionBookmark(editor))
@@ -219,11 +232,15 @@ export function EditorAiMenuRoot({ children }: { children: ReactNode }) {
 
   return (
     <EditorAiMenuBookmarkContext.Provider value={bookmark}>
-      <EditorAiMenuMessagesContext.Provider value={messages}>
-        <EditorAiMenuMessagesDispatchContext.Provider value={setMessages}>
-          {children}
-        </EditorAiMenuMessagesDispatchContext.Provider>
-      </EditorAiMenuMessagesContext.Provider>
+      <EditorAiMenuMarkdownInsertionContext.Provider
+        value={markdownInsertion ?? null}
+      >
+        <EditorAiMenuMessagesContext.Provider value={messages}>
+          <EditorAiMenuMessagesDispatchContext.Provider value={setMessages}>
+            {children}
+          </EditorAiMenuMessagesDispatchContext.Provider>
+        </EditorAiMenuMessagesContext.Provider>
+      </EditorAiMenuMarkdownInsertionContext.Provider>
     </EditorAiMenuBookmarkContext.Provider>
   )
 }
@@ -242,6 +259,8 @@ function openAiMenu(
   bookmark: ReturnType<typeof createEditorSelectionBookmark>,
   operation?: "generate" | "rewrite",
 ) {
+  if (editor.isComposing()) return
+
   editor.getEditorState().read(() => bookmark.capture())
   session.open(operation ?? (selectedText(editor) ? "rewrite" : "generate"))
 }
@@ -252,7 +271,7 @@ function resetAiSession(
   bookmark: ReturnType<typeof createEditorSelectionBookmark>,
   operation: EditorAiOperation,
 ) {
-  if (!bookmark.getSnapshot()) return false
+  if (editor.isComposing() || !bookmark.getSnapshot()) return false
 
   let restored = false
 
@@ -535,7 +554,10 @@ interface EditorAiMenuActionsProps {
   bookmarkCaptured: boolean
   editable: boolean
   lastRequest: EditorAiMenuRequest | null
+  markdownAvailable: boolean
+  markdownError: string
   onApproveComment: () => void
+  onApproveMarkdown: () => void
   onApproveReplace: () => void
   onCancel: () => void
   onDiscard: () => void
@@ -598,7 +620,9 @@ type EditorAiMenuApprovalActionsProps = Pick<
   | "bookmarkCaptured"
   | "editable"
   | "lastRequest"
+  | "markdownAvailable"
   | "onApproveComment"
+  | "onApproveMarkdown"
   | "onApproveReplace"
   | "onDiscard"
   | "onInsertBelow"
@@ -611,7 +635,9 @@ function EditorAiMenuApprovalActions({
   bookmarkCaptured,
   editable,
   lastRequest,
+  markdownAvailable,
   onApproveComment,
+  onApproveMarkdown,
   onApproveReplace,
   onDiscard,
   onInsertBelow,
@@ -638,21 +664,35 @@ function EditorAiMenuApprovalActions({
         </Button>
       ) : (
         <>
+          {lastRequest?.command.sourceFormat === "markdown" &&
+          markdownAvailable ? (
+            <Button
+              type="button"
+              disabled={!editable || !bookmarkCaptured}
+              onClick={onApproveMarkdown}
+            >
+              Insert Markdown
+            </Button>
+          ) : null}
           <Button
             type="button"
             disabled={!editable || !bookmarkCaptured}
             onClick={onApproveReplace}
           >
-            {state.operation === "rewrite"
-              ? "Replace selection"
-              : "Insert at caret"}
+            {lastRequest?.command.sourceFormat
+              ? "Insert source as plain text"
+              : state.operation === "rewrite"
+                ? "Replace selection"
+                : "Insert at caret"}
           </Button>
           <Button
             type="button"
             disabled={!editable || !bookmarkCaptured}
             onClick={onInsertBelow}
           >
-            Insert below
+            {lastRequest?.command.sourceFormat
+              ? "Insert source below as plain text"
+              : "Insert below"}
           </Button>
         </>
       )}
@@ -667,7 +707,10 @@ function EditorAiMenuActions({
   bookmarkCaptured,
   editable,
   lastRequest,
+  markdownAvailable,
+  markdownError,
   onApproveComment,
+  onApproveMarkdown,
   onApproveReplace,
   onCancel,
   onDiscard,
@@ -681,6 +724,7 @@ function EditorAiMenuActions({
   return (
     <>
       {reviewError ? <Text role="alert">{reviewError}</Text> : null}
+      {markdownError ? <Text role="alert">{markdownError}</Text> : null}
       {lastRequest?.command.review &&
       state.status === "ready" &&
       !reviewCommentWithinLimit ? (
@@ -701,7 +745,9 @@ function EditorAiMenuActions({
           bookmarkCaptured={bookmarkCaptured}
           editable={editable}
           lastRequest={lastRequest}
+          markdownAvailable={markdownAvailable}
           onApproveComment={onApproveComment}
+          onApproveMarkdown={onApproveMarkdown}
           onApproveReplace={onApproveReplace}
           onDiscard={onDiscard}
           onInsertBelow={onInsertBelow}
@@ -803,16 +849,13 @@ export function EditorAiMenuContent(props: EditorContentProps) {
       onContextMenu={(event) => {
         onContextMenu?.(event)
 
-        if (
-          event.defaultPrevented ||
-          !editable ||
-          hasSelectedText(editor) ||
-          !selectContextBlock(editor, event.target)
-        )
-          return
+        if (event.defaultPrevented || !editable) return
+        const selected = hasSelectedText(editor)
+
+        if (!selected && !selectContextBlock(editor, event.target)) return
 
         event.preventDefault()
-        openAiMenu(session, editor, bookmark, "generate")
+        openAiMenu(session, editor, bookmark, selected ? "rewrite" : "generate")
       }}
     />
   )
@@ -821,6 +864,7 @@ export function EditorAiMenuContent(props: EditorContentProps) {
 function EditorAiMenuDialog({ review }: { review?: EditorReviewBinding }) {
   const editor = useEditor()
   const bookmark = useMenuBookmark()
+  const markdownInsertion = useContext(EditorAiMenuMarkdownInsertionContext)
   const { session, config, state } = useAi()
   const { editable } = useEditorState()
   const [targetOperation] = useState(state.operation)
@@ -834,6 +878,7 @@ function EditorAiMenuDialog({ review }: { review?: EditorReviewBinding }) {
   )
 
   const [reviewError, setReviewError] = useState("")
+  const [markdownError, setMarkdownError] = useState("")
   const normalizedQuery = query.trim().toLocaleLowerCase()
 
   const filteredCommands = commands.filter((command) =>
@@ -881,6 +926,7 @@ function EditorAiMenuDialog({ review }: { review?: EditorReviewBinding }) {
 
     setLastRequest(request)
     setReviewError("")
+    setMarkdownError("")
     void sendRequest(request, command.label)
   }
 
@@ -905,6 +951,7 @@ function EditorAiMenuDialog({ review }: { review?: EditorReviewBinding }) {
 
     setLastRequest(request)
     setReviewError("")
+    setMarkdownError("")
     setChatInput("")
     void sendRequest(request, prompt)
   }
@@ -933,6 +980,7 @@ function EditorAiMenuDialog({ review }: { review?: EditorReviewBinding }) {
       return
 
     setReviewError("")
+    setMarkdownError("")
     void sendRequest(lastRequest, `Retry: ${lastRequest.command.label}`)
   }
 
@@ -941,6 +989,7 @@ function EditorAiMenuDialog({ review }: { review?: EditorReviewBinding }) {
 
     setLastRequest(null)
     setReviewError("")
+    setMarkdownError("")
   }
 
   function approveComment() {
@@ -949,6 +998,7 @@ function EditorAiMenuDialog({ review }: { review?: EditorReviewBinding }) {
       !review.available("create") ||
       state.status !== "ready" ||
       !editable ||
+      editor.isComposing() ||
       !bookmark.getSnapshot()
     )
       return
@@ -1001,6 +1051,17 @@ function EditorAiMenuDialog({ review }: { review?: EditorReviewBinding }) {
     setActiveIndex(0)
   }
 
+  function approveMarkdown() {
+    if (!markdownInsertion) return
+
+    setMarkdownError("")
+
+    if (!session.approveWith(markdownInsertion))
+      setMarkdownError(
+        "Markdown was rejected. Insert source as plain text or discard the proposal.",
+      )
+  }
+
   function approveReplace() {
     session.approve()
   }
@@ -1023,9 +1084,10 @@ function EditorAiMenuDialog({ review }: { review?: EditorReviewBinding }) {
         <Stack>
           <DialogTitle>AI command menu</DialogTitle>
           <DialogDescription>
-            Review plain-text proposals. Nothing changes until you approve it.
-            Your host must authorize document saves. A null browser selection
-            during dialog focus remains ambiguous.
+            Review proposals. Optional Markdown approval uses validated document
+            conversion. Nothing changes until approval. Your host must authorize
+            document saves. A null browser selection during dialog focus remains
+            ambiguous.
           </DialogDescription>
           <EditorAiMenuSearch
             activeIndex={activeIndex}
@@ -1065,7 +1127,10 @@ function EditorAiMenuDialog({ review }: { review?: EditorReviewBinding }) {
             bookmarkCaptured={bookmarkCaptured}
             editable={editable}
             lastRequest={lastRequest}
+            markdownAvailable={markdownInsertion !== null}
+            markdownError={markdownError}
             onApproveComment={approveComment}
+            onApproveMarkdown={approveMarkdown}
             onApproveReplace={approveReplace}
             onCancel={cancelRequest}
             onDiscard={discard}
