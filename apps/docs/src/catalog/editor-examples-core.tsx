@@ -29,6 +29,7 @@ import { ElementsSetupExample } from "./editor-examples/installation-next-03-ele
 import { LinkExample } from "./editor-examples/link"
 import { MathExample } from "./editor-examples/math-example"
 import { MediaExample } from "./editor-examples/media-example"
+import { PublicBlocksExample } from "./editor-examples/public-blocks"
 import { CsvEditorExample } from "./editor-examples/public-csv"
 import { VersionHistoryExample } from "./editor-examples/public-history"
 import {
@@ -209,6 +210,18 @@ const examples = [
       "Save immutable snapshots. Inspect an earlier revision without changing the current document. Compare inserted, removed, and updated blocks and text.",
     limits:
       "History stays in memory and holds at most 20 snapshots, each within 1 MiB and 200 top-level blocks. Long or multiline text uses whole-block differences. No server history is configured.",
+  },
+  {
+    slug: "public-blocks",
+    sourceFile: "public-blocks",
+    workflowIds: ["callout", "toggle"],
+    title: "Callouts and nested disclosures",
+    Component: PublicBlocksExample,
+    items: ["editor", "editor-blocks", "editor-typeahead"],
+    description:
+      "Edit rich callouts, choose status and emoji icons, and compose nested disclosures with usable title links and local read-only disclosure.",
+    limits:
+      "Emoji choices use the local full inventory. Saved selections expire after document edits. JSON output is local inspection, not storage or host document authorization.",
   },
   {
     slug: "public-styles",
