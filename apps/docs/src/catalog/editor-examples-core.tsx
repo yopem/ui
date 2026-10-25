@@ -41,6 +41,7 @@ import {
 import { ReadOnlyEditorExample } from "./editor-examples/public-readonly"
 import { PublicSelectionExample } from "./editor-examples/public-selection"
 import { PublicStylesExample } from "./editor-examples/public-styles"
+import { PublicTablesExample } from "./editor-examples/public-tables"
 import { PublicTocExample } from "./editor-examples/public-toc"
 
 const sources = import.meta.glob<string>("./editor-examples/*.tsx", {
@@ -215,6 +216,18 @@ const examples = [
       "Save immutable snapshots. Inspect an earlier revision without changing the current document. Compare inserted, removed, and updated blocks and text.",
     limits:
       "History stays in memory and holds at most 20 snapshots, each within 1 MiB and 200 top-level blocks. Long or multiline text uses whole-block differences. No server history is configured.",
+  },
+  {
+    slug: "public-tables",
+    sourceFile: "public-tables",
+    workflowIds: ["table", "table-nomerge"],
+    title: "Rich tables and merge policy",
+    Component: PublicTablesExample,
+    items: ["editor"],
+    description:
+      "Edit native tables, resize rows and columns, change cell presentation, merge or split selections, and reload generated local JSON or HTML snapshots.",
+    limits:
+      "The second root disables house merges at mount time without flattening imported spans. Explicit splitting remains available. Snapshot controls accept only their generated local content, not untrusted external documents. Clipboard, geometry, history, and roundtrip acceptance remain unverified.",
   },
   {
     slug: "public-selection",
