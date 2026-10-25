@@ -1,4 +1,6 @@
 import {
+  $createParagraphNode,
+  $createTextNode,
   $getRoot,
   $getSelection,
   $isRangeSelection,
@@ -209,6 +211,14 @@ export function createEditorAiSession(editor: LexicalEditor) {
   }
 
   function approve() {
+    return applyProposal("replace")
+  }
+
+  function approveBelow() {
+    return applyProposal("below")
+  }
+
+  function applyProposal(mode: "replace" | "below") {
     if (
       snapshot.status !== "ready" ||
       !snapshot.text ||
@@ -225,18 +235,31 @@ export function createEditorAiSession(editor: LexicalEditor) {
 
         if (!$isRangeSelection(range)) return
 
-        if (snapshot.operation !== "rewrite") {
+        if (mode === "below") {
           const end = range.isBackward() ? range.anchor : range.focus
-          range.anchor.set(end.key, end.offset, end.type)
-          range.focus.set(end.key, end.offset, end.type)
+          const block = end.getNode().getTopLevelElement()
+
+          if (!block || block.getParent() !== $getRoot()) return
+          const paragraph = $createParagraphNode()
+          paragraph.append($createTextNode(text))
+          block.insertAfter(paragraph)
+          paragraph.selectEnd()
+        } else {
+          if (snapshot.operation !== "rewrite") {
+            const end = range.isBackward() ? range.anchor : range.focus
+            range.anchor.set(end.key, end.offset, end.type)
+            range.focus.set(end.key, end.offset, end.type)
+          }
+
+          range.insertRawText(text)
         }
 
-        range.insertRawText(text)
         applied = true
       },
       { tag: HISTORY_PUSH_TAG, discrete: true },
     )
     approved = applied
+
     close()
     editor.focus()
 
@@ -259,6 +282,7 @@ export function createEditorAiSession(editor: LexicalEditor) {
     cancel,
     request,
     approve,
+    approveBelow,
     getApproved,
   }
 }
