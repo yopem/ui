@@ -45,6 +45,14 @@ test("AI client API uses the copied public modules", async ({
     )
   }
 
+  expect(
+    menuApi.parts.find((part) => part.name === "EditorAiInlinePreview")
+      ?.importPath,
+  ).toBe("@/components/editor/ai-menu-preview")
+  expect(
+    menuApi.parts.some((part) => part.name === "createEditorCursorOverlay"),
+  ).toBe(false)
+
   await testInfo.attach("ai-client-imports", {
     body: JSON.stringify(
       api.parts.filter((part) =>

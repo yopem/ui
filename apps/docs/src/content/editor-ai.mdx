@@ -179,6 +179,34 @@ pending work. Approval restores the bookmark, inserts literal text, and makes
 one history update. Base UI Dialog provides keyboard focus management and
 dismissal.
 
+## Transient selection preview
+
+Compose these parts inside `EditorAiRoot` and `EditorAiMenuRoot`. The floating
+toolbar opens explicit commands for the current selection. The bounded inline
+preview shows escaped proposal text without changing document content or
+history. Keep complete proposal and approval controls in `EditorAiMenuPanel`.
+
+```tsx
+import { EditorAiInlinePreview } from "@/components/editor/ai-menu-preview"
+import { EditorAiMenuTrigger } from "@/components/editor/ai-menu"
+import { EditorFloatingToolbar } from "@/components/editor/floating-toolbar"
+
+export function AiSelectionEntry() {
+  return (
+    <>
+      <EditorFloatingToolbar aria-label="AI selection actions">
+        <EditorAiMenuTrigger>Ask about selection</EditorAiMenuTrigger>
+      </EditorFloatingToolbar>
+      <EditorAiInlinePreview />
+    </>
+  )
+}
+```
+
+Install the separate `editor-floating-toolbar` item before using this selection
+entry. No request starts when the toolbar opens or the preview mounts. Explicit
+commands still require host authentication, document policy, and CSRF checks.
+
 ## Optional Markdown approval
 
 The command menu can use an explicit Markdown insertion adapter. Install its

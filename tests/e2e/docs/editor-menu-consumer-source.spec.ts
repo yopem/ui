@@ -30,6 +30,7 @@ const aiMenu = {
     'from "@/components/editor"',
     'from "@/components/editor/ai-client"',
     'from "@/components/editor/ai-menu"',
+    'from "@/components/editor/ai-menu-preview"',
     'from "@/components/ui/form"',
   ],
   requiredIdentifiers: [
@@ -39,6 +40,7 @@ const aiMenu = {
     "EditorAiMenuTrigger",
     "EditorAiMenuContent",
     "EditorAiMenuPanel",
+    "EditorAiInlinePreview",
   ],
   forbiddenImports: [
     "@/catalog/",
@@ -54,6 +56,7 @@ const aiMenuParts = [
   { slug: "ai-menu-trigger", name: "EditorAiMenuTrigger" },
   { slug: "ai-menu-content", name: "EditorAiMenuContent" },
   { slug: "ai-menu-panel", name: "EditorAiMenuPanel" },
+  { slug: "ai-inline-preview", name: "EditorAiInlinePreview" },
 ]
 
 const sourceContracts = [

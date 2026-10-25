@@ -116,6 +116,7 @@ export const sourceImportReplacements = [
   ["@yopem-ui/editor/drawing/browser", "@/components/editor/drawing-browser"],
   ["@yopem-ui/editor/drawing/model", "@/components/editor/drawing-model"],
   ["@yopem-ui/editor/drawing", "@/components/editor/drawing"],
+  ["@yopem-ui/editor/ai-menu-preview", "@/components/editor/ai-menu-preview"],
   ["@yopem-ui/editor/ai/menu", "@/components/editor/ai-menu"],
   ["@yopem-ui/editor/ai/client", "@/components/editor/ai-client"],
   ["@yopem-ui/editor/ai", "@/components/editor/ai-controls"],

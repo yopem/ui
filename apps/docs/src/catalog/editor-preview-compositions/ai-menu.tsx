@@ -16,6 +16,7 @@ import {
   EditorRoot,
   EditorToolbar,
 } from "@yopem-ui/editor"
+import { EditorAiInlinePreview } from "@yopem-ui/editor/ai-menu-preview"
 import { validateEditorAiConfig } from "@yopem-ui/editor/ai/client"
 import {
   EditorAiMenuContent,
@@ -133,6 +134,7 @@ export function EditorAiMenuComposition() {
                       <EditorHistoryButton action="redo" />
                     </EditorToolbar>
                     <EditorAiMenuPanel />
+                    <EditorAiInlinePreview />
                     <EditorAiMenuContent
                       aria-label="AI menu editor"
                       placeholder="Select text, then open the AI menu."

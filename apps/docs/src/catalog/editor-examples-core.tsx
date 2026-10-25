@@ -108,14 +108,14 @@ const examples = [
   },
   {
     slug: "public-ai",
-    workflowIds: [],
+    workflowIds: ["ai"],
     title: "Configured AI command menu",
     Component: PublicAiExample,
-    items: ["editor-ai-menu", "editor-document"],
+    items: ["editor-ai-menu", "editor-document", "editor-floating-toolbar"],
     description:
       "Configure an authenticated host before commands, local chat, completed text approval, or authorized review comments.",
     limits:
-      "No default endpoint, model, credentials, or server chat storage exists. Twelve truncated messages stay until the root unmounts. Null selection retains the dialog target. Selected-text context menus respect host vetoes. Rich Markdown approval uses an explicit document adapter; unsupported content rejects and MDX stays literal. Below insertion requires a supported block container. Floating entry and inline stream rendering are absent. Full mapped AI equivalence is not credited; runtime acceptance remains deferred.",
+      "No default endpoint, model, credentials, or server chat storage exists. Twelve truncated messages stay until the root unmounts. Null selection retains the dialog target. Selected-text context menus respect host vetoes. Rich Markdown approval uses an explicit document adapter; unsupported content rejects and MDX stays literal. Below insertion requires a supported block container. Floating entry and bounded inline output do not change saved content before approval. Runtime, provider, history, and accessibility acceptance remain deferred.",
   },
   {
     slug: "public-code-drawing",

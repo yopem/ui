@@ -989,6 +989,8 @@ Never put credentials in diagram URLs. Configure headers explicitly.
 Install `editor-ai-menu` for configured commands and bounded local chat.
 Compose EditorAiMenuRoot, EditorAiMenuTrigger, EditorAiMenuContent, and EditorAiMenuPanel inside configured EditorAiRoot.
 EditorAiMenuContent owns the editable surface. Do not add EditorContent beside it.
+Compose EditorAiInlinePreview inside EditorAiRoot for bounded escaped proposal text beside the saved range.
+Import it from the copied `ai-menu-preview` module. It changes no document state and does not replace approval controls.
 Supply an explicit same-origin host endpoint, document ID, and current authentication and CSRF headers.
 Only explicit user requests start inference. Approve cleanly completed plain text explicitly.
 Review comments require the current review controller and literal-true host policy.

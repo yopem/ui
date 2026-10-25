@@ -101,6 +101,7 @@
     "./diagram/renderers/graphviz": "./src/diagram-renderers/graphviz.ts",
     "./diagram/renderers/flowchart": "./src/diagram-renderers/flowchart.browser.ts",
     "./ai/menu": "./src/ai-menu.tsx",
+    "./ai-menu-preview": "./src/ai-menu-preview.tsx",
     "./word-clipboard": "./src/word-clipboard.ts",
     "./word-clipboard-model": "./src/word-clipboard-model.ts",
     "./cursor-overlay": "./src/cursor-overlay.tsx",

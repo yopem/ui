@@ -423,6 +423,8 @@ Compose EditorAiRoot, EditorAiTrigger, and EditorAiPanel inside EditorRoot.
 Install optional \`editor-ai-menu\` separately. Import from \`${imports.editor}/ai-menu\`.
 Compose EditorAiMenuRoot, EditorAiMenuTrigger, EditorAiMenuContent, and EditorAiMenuPanel inside configured EditorAiRoot.
 EditorAiMenuContent owns the editable surface. Do not add EditorContent beside it.
+Compose EditorAiInlinePreview from \`${imports.editor}/ai-menu-preview\` inside EditorAiRoot for bounded escaped proposal text beside the saved range.
+The preview changes no document state. Keep explicit approval controls.
 The menu keeps twelve truncated chat messages until its root unmounts. Remount on document or viewer changes. No server chat storage is supplied.
 Comments require the current review controller and literal-true host policy. AI permission never grants review access.
 Selected-text context actions respect prevented host events.

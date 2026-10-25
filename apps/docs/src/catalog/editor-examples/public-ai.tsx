@@ -17,6 +17,7 @@ import {
   EditorToolbar,
   useEditor,
 } from "@yopem-ui/editor"
+import { EditorAiInlinePreview } from "@yopem-ui/editor/ai-menu-preview"
 import { validateEditorAiConfig } from "@yopem-ui/editor/ai/client"
 import {
   EditorAiMenuContent,
@@ -25,6 +26,7 @@ import {
   EditorAiMenuTrigger,
 } from "@yopem-ui/editor/ai/menu"
 import { $insertDocumentFragment } from "@yopem-ui/editor/document"
+import { EditorFloatingToolbar } from "@yopem-ui/editor/floating-toolbar"
 import {
   createEditorReview,
   EditorReviewPanel,
@@ -108,6 +110,10 @@ function PublicAiEditor({
               if (event.altKey) event.preventDefault()
             }}
           />
+          <EditorFloatingToolbar aria-label="Selection AI commands">
+            <EditorAiMenuTrigger>Ask about selection</EditorAiMenuTrigger>
+          </EditorFloatingToolbar>
+          <EditorAiInlinePreview />
           <EditorReviewPanel />
         </EditorAiMenuRoot>
       </EditorAiRoot>

@@ -25,10 +25,11 @@ const usageNoteValues = {
   "editor-ai-menu": [
     "Compose EditorAiMenuRoot inside configured EditorAiRoot and EditorRoot. EditorAiMenuContent owns the editable surface. Do not add a second EditorContent.",
     "Supply an explicit same-origin host endpoint, document ID, and current authentication and CSRF headers. No provider or service is selected automatically.",
-    "Commands and chat produce untrusted plain text. Approve only completed output. Replace and top-level insert-below use the saved selection and one history update.",
+    "Commands and chat produce untrusted plain text. Approve only completed output. Replace and insert-below use validated saved targets and one history update.",
+    "Compose EditorAiInlinePreview inside EditorAiRoot for a bounded escaped preview beside the saved range. The preview changes no saved content.",
     "The menu retains at most twelve truncated chat messages until its root unmounts. No server chat storage is supplied. Remount on document or viewer changes.",
     "AI comments require a current review controller and literal-true host authorization. AI permission never grants document writes or review permissions.",
-    "Null selection retains the dialog target. Remount EditorAiRoot to discard it explicitly. Rich Markdown approval, nested shadow-root insert-below, and selected-text native context-menu replacement are not supplied.",
+    "Null selection retains the dialog target. Remount EditorAiRoot to discard it explicitly. Supply synchronous markdownInsertion for validated rich Markdown and register each target node. MDX stays literal source.",
   ],
   "editor-diagram": [
     "Register EditorDiagramExtension once at root creation. Compose focused controls inside EditorDiagramRoot and EditorRoot.",

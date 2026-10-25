@@ -484,6 +484,11 @@ export function extractDocs() {
       .filter(
         (file) =>
           /\.tsx?$/.test(file.path) &&
+          (item.name !== "editor-ai-menu" ||
+            [
+              "components/editor/ai-menu.tsx",
+              "components/editor/ai-menu-preview.tsx",
+            ].includes(file.path)) &&
           (item.name.startsWith("editor-diagram-")
             ? /\/(?:mermaid\.browser|plantuml\.browser|graphviz|flowchart\.browser)\.ts$/.test(
                 file.path,

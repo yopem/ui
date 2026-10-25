@@ -19,6 +19,13 @@ export const editorAiMenuParts = [
     description: "Compose the native editable surface with AI entry shortcuts.",
   },
   {
+    name: "EditorAiInlinePreview",
+    slug: "ai-inline-preview",
+    item: "editor-ai-menu",
+    description:
+      "Show bounded transient proposal text beside its saved range without changing the document.",
+  },
+  {
     name: "EditorAiMenuPanel",
     slug: "ai-menu-panel",
     item: "editor-ai-menu",
