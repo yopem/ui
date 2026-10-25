@@ -59,6 +59,7 @@ import { PublicListPresentationExample } from "./editor-examples/public-list-pre
 import { PublicNativeEditingExample } from "./editor-examples/public-native-editing"
 import { PublicPersistedExample } from "./editor-examples/public-persisted"
 import { PublicPlaceholderExample } from "./editor-examples/public-placeholder"
+import { PublicPlaygroundExample } from "./editor-examples/public-playground"
 import { PublicPluginRulesExample } from "./editor-examples/public-plugin-rules"
 import { ReadOnlyEditorExample } from "./editor-examples/public-readonly"
 import { PublicReviewExample } from "./editor-examples/public-review"
@@ -79,6 +80,30 @@ const sources = import.meta.glob<string>("./editor-examples/*.tsx", {
 })
 
 const examples = [
+  {
+    slug: "public-playground",
+    workflowIds: [],
+    title: "Integrated native playground",
+    Component: PublicPlaygroundExample,
+    items: [
+      "editor",
+      "editor-blocks",
+      "editor-code",
+      "editor-typeahead",
+      "editor-math",
+      "editor-columns",
+      "editor-date",
+      "editor-media",
+      "editor-footnotes",
+      "editor-review",
+      "editor-search",
+      "editor-copilot",
+    ],
+    description:
+      "Compose native editing, tables, code, typeahead, review, search, and configured Copilot in one document.",
+    limits:
+      "English and Chinese shell labels are partial localization. Normal and configured Copilot variants remount the seed. Classic-list, forced-layout, drawing variants, and complete document conversion are absent. Review uses a local fixture policy. No AI endpoint or host authority is supplied. Runtime acceptance is deferred; full mapped playground coverage is not credited.",
+  },
   {
     slug: "public-ai",
     workflowIds: [],
