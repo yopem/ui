@@ -10,29 +10,61 @@ const nodeSchema = z.looseObject({
   listType: z.string().optional(),
   text: z.string().optional(),
   style: z.string().optional(),
+  start: z.number().optional(),
   $: z.looseObject({ yopemListMarker: z.string().optional() }).optional(),
   children: z.array(z.unknown()).optional(),
 })
 
-function nodesFor(source: string) {
+function rootFor(source: string) {
   const normalized = normalizeWordClipboardHTML(source)
 
   if (!normalized) throw new Error("Word HTML was not detected.")
-  const document = parseDocument(normalized, "html")
-  const pending = [nodeSchema.parse(document.root)]
+
+  return nodeSchema.parse(parseDocument(normalized, "html").root)
+}
+
+function nodesFor(source: string) {
   const nodes: z.infer<typeof nodeSchema>[] = []
 
-  while (pending.length) {
-    const node = pending.pop()
-
-    if (!node) continue
+  function visit(node: z.infer<typeof nodeSchema>) {
     nodes.push(node)
 
-    for (const child of node.children ?? [])
-      pending.push(nodeSchema.parse(child))
+    for (const child of node.children ?? []) visit(nodeSchema.parse(child))
   }
 
+  visit(rootFor(source))
+
   return nodes
+}
+
+function listStructureFor(source: string) {
+  const lists: {
+    type: string | undefined
+    marker: string | undefined
+    start: number | undefined
+    depth: number
+  }[] = []
+
+  function visit(node: z.infer<typeof nodeSchema>, parentDepth: number) {
+    const isList = node.type === "list"
+
+    if (isList)
+      lists.push({
+        type: node.listType,
+        marker: node.$?.yopemListMarker,
+        start: node.start,
+        depth: parentDepth,
+      })
+
+    const depth = parentDepth + Number(isList)
+
+    for (const child of node.children ?? [])
+      visit(nodeSchema.parse(child), depth)
+  }
+
+  visit(rootFor(source), 0)
+
+  return lists
 }
 
 const officeStyles = `<style>
@@ -61,30 +93,48 @@ span.Heading2Char {
 p.Compact {mso-style-name:Compact; margin-top:1.8pt; margin-bottom:1.8pt; font-family:"Cambria",serif;}
 </style>`
 
-test("pinned public Word list HTML retains headings, text and nested list markers", async () => {
+test("pinned public Word list HTML retains visible text and list structure", async () => {
   const source = await Bun.file(
     new URL("./fixtures/plate-word-lists.html", import.meta.url),
   ).text()
 
   const nodes = nodesFor(source)
 
+  const text = nodes
+    .filter((node) => node.type === "text")
+    .map((node) => node.text ?? "")
+    .join("")
+
   expect(
     nodes.some((node) => node.type === "heading" && node.tag === "h2"),
   ).toBe(true)
-  expect(
-    nodes.some((node) => node.type === "list" && node.listType === "number"),
-  ).toBe(true)
-  expect(
-    nodes.some((node) => node.type === "list" && node.listType === "bullet"),
-  ).toBe(true)
-  expect(nodes.some((node) => node.$?.yopemListMarker === "lower-alpha")).toBe(
-    true,
-  )
-  const text = nodes.map((node) => node.text ?? "").join("")
 
-  expect(text).toContain("Some nested lists")
-  expect(text).toContain("Sub paragraph")
-  expect(text).toContain("Different list adjacent to the one above.")
+  for (const phrase of [
+    "Some nested lists",
+    "one",
+    "two",
+    "a",
+    "b",
+    "Sub paragraph",
+    "three",
+    "four",
+    "Same list",
+    "Different list adjacent to the one above.",
+  ])
+    expect(text).toContain(phrase)
+
+  expect(text).not.toContain("1.")
+  expect(text).not.toContain("2.")
+  expect(text).not.toContain("a.")
+  expect(listStructureFor(source)).toEqual([
+    { type: "number", marker: "decimal", start: 1, depth: 0 },
+    { type: "number", marker: "lower-alpha", start: 1, depth: 1 },
+    { type: "bullet", marker: "disc", start: undefined, depth: 0 },
+    { type: "bullet", marker: "disc", start: undefined, depth: 1 },
+    { type: "bullet", marker: "disc", start: undefined, depth: 2 },
+    { type: "bullet", marker: "disc", start: undefined, depth: 0 },
+    { type: "bullet", marker: "disc", start: undefined, depth: 0 },
+  ])
 })
 
 test("declared Word character and heading styles retain supported typography", () => {

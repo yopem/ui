@@ -101,6 +101,8 @@ const maxWordImages = 50
 
 const maxListLevel = 64
 
+const maxWordMarkerDepth = 64
+
 const maxOfficeListDefinitions = 256
 
 const maxOfficeStyleRules = 256
@@ -173,6 +175,7 @@ const shellStyleMetadata = new Set([
   "margin-top",
   "page",
   "tab-interval",
+  "word-wrap",
 ])
 
 const wordClasses = /^(?:Mso[A-Za-z0-9_-]*|(?:Word)?Section\d+)$/i
@@ -447,6 +450,12 @@ export function normalizeWordClipboardHTML(
         throw new DocumentError([
           `Unsupported Word clipboard element: ${tagName}.`,
         ])
+
+      if (tagName === "a" && node.properties.name !== undefined) {
+        validateWordNamedAnchor(node)
+
+        return cleanChildren(node.children, inheritedTextStyle)
+      }
 
       const declarations = declarationsFor(node, rules)
       const listValue = declarations.get("mso-list")
@@ -1081,6 +1090,7 @@ function parseDeclarations(source: string, rejectConflicts = false) {
 }
 
 function normalizeOfficeMetadata(
+  tagName: string,
   property: string,
   value: string,
   source: ReadonlyMap<string, string>,
@@ -1139,6 +1149,8 @@ function normalizeOfficeMetadata(
     valid = /^(?:locked|unlocked|yes|no)$/i.test(value)
   else if (property === "mso-style-type") valid = value === "export-only"
   else if (property === "mso-outline-level") valid = /^[1-6]$/.test(value)
+  else if (property === "mso-bookmark")
+    valid = tagName === "span" && /^[A-Za-z_][A-Za-z0-9_-]{0,127}$/.test(value)
   else if (property === "mso-themecolor")
     valid =
       /^(?:accent[1-6]|text[12]|background[12]|hyperlink|followedhyperlink)$/i.test(
@@ -1222,8 +1234,13 @@ function normalizeStyle(
       continue
     }
 
+    if (property === "mso-bookmark") {
+      normalizeOfficeMetadata(tagName, property, value, source, text)
+      continue
+    }
+
     if (officeStyleMetadata.has(property)) {
-      normalizeOfficeMetadata(property, value, source, text)
+      normalizeOfficeMetadata(tagName, property, value, source, text)
       continue
     }
 
@@ -1235,6 +1252,12 @@ function normalizeStyle(
     if (property === "page-break-after") {
       if (value !== "avoid" && value !== "auto")
         throw new DocumentError(["Unsupported Word page break metadata."])
+      continue
+    }
+
+    if (shell && property === "word-wrap") {
+      if (!["break-word", "normal"].includes(value.toLowerCase()))
+        throw new DocumentError(["Unsupported Word wrapper word wrapping."])
       continue
     }
 
@@ -1509,48 +1532,102 @@ function removeWordListMarker(
 
   let markerSpan: string | undefined
   let commentMarker: string | undefined
-  let start = -1
-  let end = -1
-  const keep: ElementContent[] = []
 
-  for (const [index, child] of children.entries()) {
-    if (child.type !== "comment") continue
+  function stripMarkers(
+    nodes: readonly ElementContent[],
+    depth: number,
+  ): ElementContent[] {
+    if (depth > maxWordMarkerDepth)
+      throw new DocumentError(["Word list marker wrappers exceed the limit."])
+    const output: ElementContent[] = []
 
-    const value = child.value.trim().toLowerCase()
+    for (let index = 0; index < nodes.length; index += 1) {
+      const child = nodes[index]
 
-    if (value.includes("[if !supportlists]")) {
-      if (start >= 0) throw new DocumentError(["Invalid Word list marker."])
-      start = index
-    } else if (value.includes("[endif]")) {
-      if (start < 0 || end >= 0)
-        throw new DocumentError(["Invalid Word list marker."])
-      end = index
-    }
-  }
+      if (!child) continue
 
-  if (start >= 0 !== end >= 0 || (start >= 0 && end <= start))
-    throw new DocumentError(["Invalid Word list marker comments."])
+      if (child.type === "comment") {
+        const value = child.value.trim().toLowerCase()
 
-  if (start >= 0 && end >= 0)
-    commentMarker = markerText(children.slice(start + 1, end))
+        if (value === "[if !supportlists]") {
+          if (commentMarker !== undefined)
+            throw new DocumentError(["Word list has multiple marker comments."])
+          let end = index + 1
 
-  for (const [index, child] of children.entries()) {
-    if (start >= 0 && end >= 0 && index >= start && index <= end) continue
+          for (; end < nodes.length; end += 1) {
+            const candidate = nodes[end]
 
-    if (child.type === "element" && child.tagName.toLowerCase() === "span") {
-      const declarations = declarationsFor(child, rules)
-      const markerStyle = declarations.get("mso-list")
+            if (candidate?.type !== "comment") continue
+            const candidateValue = candidate.value.trim().toLowerCase()
 
-      if (markerStyle?.toLowerCase() === "ignore") {
-        if (markerSpan !== undefined)
-          throw new DocumentError(["Word list has multiple marker spans."])
-        markerSpan = markerText(child.children)
+            if (candidateValue === "[if !supportlists]")
+              throw new DocumentError(["Invalid Word list marker comments."])
+
+            if (candidateValue === "[endif]") break
+          }
+
+          if (end >= nodes.length)
+            throw new DocumentError(["Invalid Word list marker comments."])
+          commentMarker = markerText(
+            nodes.slice(index + 1, end),
+            rules,
+            depth + 1,
+          )
+          index = end
+          continue
+        }
+
+        if (value === "[endif]")
+          throw new DocumentError(["Invalid Word list marker comments."])
+
+        if (isBoundaryComment(child.value)) continue
+        throw new DocumentError(["Unsupported Word list marker comment."])
+      }
+
+      if (child.type !== "element") {
+        output.push(child)
         continue
       }
+
+      const tagName = child.tagName.toLowerCase()
+
+      if (tagName === "span") {
+        const declarations = declarationsFor(child, rules)
+        const markerStyle = declarations.get("mso-list")
+
+        if (markerStyle !== undefined) {
+          if (markerStyle.toLowerCase() !== "ignore")
+            throw new DocumentError(["Unsupported Word list marker style."])
+
+          if (markerSpan !== undefined)
+            throw new DocumentError(["Word list has multiple marker spans."])
+          validateWordMarkerElement(child, rules)
+          markerSpan = markerText(child.children, rules, depth + 1)
+          continue
+        }
+
+        validateWordMarkerElement(child, rules)
+        const nested = stripMarkers(child.children, depth + 1)
+
+        if (nested.length) output.push({ ...child, children: nested })
+        continue
+      }
+
+      if (tagName === "a" && child.properties.name !== undefined) {
+        validateWordNamedAnchor(child)
+        const nested = stripMarkers(child.children, depth + 1)
+
+        if (nested.length) output.push({ ...child, children: nested })
+        continue
+      }
+
+      output.push(child)
     }
 
-    if (child.type !== "comment") keep.push(child)
+    return output
   }
+
+  const keep = stripMarkers(children, 0)
 
   if (markerSpan !== undefined && commentMarker !== undefined) {
     if (normalizeMarkerText(markerSpan) !== normalizeMarkerText(commentMarker))
@@ -1559,40 +1636,162 @@ function removeWordListMarker(
 
   const rawMarker = markerSpan ?? commentMarker
 
-  if (rawMarker !== undefined) {
-    const parsed = parseWordMarker(rawMarker)
+  if (rawMarker !== undefined)
+    return { children: keep, ...parseWordMarker(rawMarker) }
 
-    return { children: keep, ...parsed }
+  function removeVisibleMarker(
+    nodes: readonly ElementContent[],
+    depth: number,
+  ): {
+    children: ElementContent[]
+    marker: ReturnType<typeof parseWordMarker>
+  } | null {
+    if (depth > maxWordMarkerDepth)
+      throw new DocumentError(["Word list marker wrappers exceed the limit."])
+
+    for (let index = 0; index < nodes.length; index += 1) {
+      const child = nodes[index]
+
+      if (!child) continue
+
+      if (child.type === "text") {
+        const match =
+          /^[\t \u00a0]*(\d{1,10}[.)\\]|[A-Za-z]{1,8}\.|[•·▪◦○o])(?:[\t \u00a0]+)?/u.exec(
+            child.value,
+          )
+
+        if (!match?.[1]) return null
+        const remaining = child.value.slice(match[0].length)
+
+        const output = [
+          ...nodes.slice(0, index),
+          ...(remaining ? [{ ...child, value: remaining }] : []),
+          ...nodes.slice(index + 1),
+        ]
+
+        return { children: output, marker: parseWordMarker(match[1]) }
+      }
+
+      if (child.type !== "element") return null
+      const tagName = child.tagName.toLowerCase()
+
+      if (tagName === "span") {
+        const nested = removeVisibleMarker(child.children, depth + 1)
+
+        if (!nested) return null
+
+        const output = [
+          ...nodes.slice(0, index),
+          ...(nested.children.length
+            ? [{ ...child, children: nested.children }]
+            : []),
+          ...nodes.slice(index + 1),
+        ]
+
+        return { children: output, marker: nested.marker }
+      }
+
+      if (tagName === "a" && child.properties.name !== undefined) {
+        validateWordNamedAnchor(child)
+        const nested = removeVisibleMarker(child.children, depth + 1)
+
+        if (!nested) return null
+
+        const output = [
+          ...nodes.slice(0, index),
+          ...(nested.children.length
+            ? [{ ...child, children: nested.children }]
+            : []),
+          ...nodes.slice(index + 1),
+        ]
+
+        return { children: output, marker: nested.marker }
+      }
+
+      return null
+    }
+
+    return null
   }
 
-  const first = keep[0]
+  const fallback = removeVisibleMarker(keep, 0)
 
-  if (first?.type !== "text") {
-    if (definedMarker) return { children: keep, ...definedMarker }
-    throw new DocumentError(["Word list marker is missing."])
-  }
+  if (fallback) return { children: fallback.children, ...fallback.marker }
 
-  const match =
-    /^[\t \u00a0]*(\d{1,10}[.)\\]|[A-Za-z]{1,8}\.|[•·▪◦○o])(?:[\t \u00a0]+)?/u.exec(
-      first.value,
-    )
+  if (definedMarker) return { children: keep, ...definedMarker }
 
-  if (!match?.[1]) {
-    if (definedMarker) return { children: keep, ...definedMarker }
-    throw new DocumentError(["Word list marker is unsupported."])
-  }
-
-  const parsed = parseWordMarker(match[1])
-  const remaining = first.value.slice(match[0].length)
-
-  const output = remaining
-    ? [{ ...first, value: remaining }, ...keep.slice(1)]
-    : keep.slice(1)
-
-  return { children: output, ...parsed }
+  throw new DocumentError(["Word list marker is missing."])
 }
 
-function markerText(nodes: readonly ElementContent[]): string {
+function validateWordMarkerElement(
+  node: Element,
+  rules: readonly OfficeStyleRule[],
+) {
+  const properties = node.properties
+
+  if (
+    Object.keys(properties).some(
+      (key) => !["className", "style", "lang", "xmlSpace"].includes(key),
+    )
+  )
+    throw new DocumentError([
+      "Word list marker contains unsupported attributes.",
+    ])
+
+  if (
+    (properties.lang !== undefined &&
+      !/^[A-Za-z]{2,8}(?:-[A-Za-z0-9]{1,8}){0,3}$/.test(
+        stringProperty(properties.lang),
+      )) ||
+    (properties.xmlSpace !== undefined &&
+      !["default", "preserve"].includes(stringProperty(properties.xmlSpace)))
+  )
+    throw new DocumentError(["Invalid Word list marker metadata."])
+
+  const declarations = declarationsFor(node, rules)
+
+  for (const [property, value] of declarations) {
+    if (property === "mso-list") {
+      if (value.toLowerCase() !== "ignore")
+        throw new DocumentError(["Unsupported Word list marker style."])
+      continue
+    }
+
+    if (property === "font") {
+      if (!/^7pt\s+(?:"Times New Roman"|'Times New Roman')$/i.test(value))
+        throw new DocumentError(["Unsupported Word list marker font."])
+      continue
+    }
+
+    if (textStyleProperties.has(property)) {
+      safeDocumentStyle(`${property}: ${value}`)
+      continue
+    }
+
+    if (property === "mso-bookmark" || officeStyleMetadata.has(property)) {
+      normalizeOfficeMetadata(
+        "span",
+        property,
+        value,
+        declarations,
+        new Map<string, string>(),
+      )
+      continue
+    }
+
+    throw new DocumentError(["Unsupported Word list marker style."])
+  }
+
+  return declarations.get("mso-list")
+}
+
+function markerText(
+  nodes: readonly ElementContent[],
+  rules: readonly OfficeStyleRule[],
+  depth: number,
+): string {
+  if (depth > maxWordMarkerDepth)
+    throw new DocumentError(["Word list marker wrappers exceed the limit."])
   let value = ""
 
   for (const node of nodes) {
@@ -1601,29 +1800,18 @@ function markerText(nodes: readonly ElementContent[]): string {
       continue
     }
 
-    if (node.type === "comment") continue
+    if (node.type === "comment") {
+      if (isBoundaryComment(node.value)) continue
+      throw new DocumentError(["Unsupported Word list marker comment."])
+    }
 
-    if (node.type !== "element")
+    if (node.type !== "element" || node.tagName.toLowerCase() !== "span")
       throw new DocumentError([
         "Word list marker contains unsupported content.",
       ])
 
-    if (node.tagName.toLowerCase() !== "span")
-      throw new DocumentError([
-        "Word list marker contains unsupported content.",
-      ])
-
-    const properties = node.properties
-
-    if (
-      Object.keys(properties).some(
-        (key) => !["className", "style"].includes(key),
-      )
-    )
-      throw new DocumentError([
-        "Word list marker contains unsupported attributes.",
-      ])
-    value += markerText(node.children)
+    validateWordMarkerElement(node, rules)
+    value += markerText(node.children, rules, depth + 1)
   }
 
   return value
@@ -1941,6 +2129,16 @@ function imageDimension(
     throw new DocumentError(["Word image dimensions exceed bounds."])
 
   return value
+}
+
+function validateWordNamedAnchor(node: Element) {
+  if (
+    Object.keys(node.properties).some((property) => property !== "name") ||
+    !/^[A-Za-z_][A-Za-z0-9_.:-]{0,127}$/.test(
+      stringProperty(node.properties.name),
+    )
+  )
+    throw new DocumentError(["Unsupported Word named anchor."])
 }
 
 function cleanProperties(
