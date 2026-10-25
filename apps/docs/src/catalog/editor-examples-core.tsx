@@ -117,14 +117,14 @@ const examples = [
   },
   {
     slug: "public-code-drawing",
-    workflowIds: [],
+    workflowIds: ["code-drawing"],
     title: "Configured native diagrams",
     Component: PublicCodeDrawingExample,
     items: ["editor-diagram", "editor-code", "field"],
     description:
-      "Edit native diagram source and render it with an explicitly configured authenticated host endpoint.",
+      "Edit native diagram source with live rendering after explicit host configuration. Change kind and view mode, download SVG, or delete the selected diagram.",
     limits:
-      "No default endpoint or engine exists. Optional browser SDK adapters require separate installation. SVG download is supplied; PNG and PDF are absent. Generic document conversion rejects diagram metadata. Engine, SSR, CSP, and browser acceptance remain deferred; full mapped equivalence is not credited.",
+      "No default endpoint or engine exists. Optional genuine browser SDK adapters require separate installation and CSP approval. SVG download is supplied; PNG and PDF are absent. Generic document conversion rejects diagram metadata. Credit covers configured client source operations only. Engine, SSR, CSP, stale-response, consumer and browser acceptance remain deferred.",
   },
   {
     slug: "public-block-menu",

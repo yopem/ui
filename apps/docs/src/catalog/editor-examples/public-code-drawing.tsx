@@ -36,7 +36,7 @@ import {
   EditorDiagramToolbar,
   EditorDiagramViewModeSelect,
 } from "@yopem-ui/editor/diagram"
-import { useState } from "react"
+import { useId, useState } from "react"
 
 const styles = stylex.create({
   state: { whiteSpace: "pre-wrap", overflowWrap: "anywhere" },
@@ -101,6 +101,7 @@ const initialState = JSON.stringify({
 })
 
 export function PublicCodeDrawingExample() {
+  const fieldId = useId()
   const [endpoint, setEndpoint] = useState("")
   const [documentId, setDocumentId] = useState("")
   const [csrf, setCsrf] = useState("")
@@ -173,14 +174,19 @@ export function PublicCodeDrawingExample() {
     <Stack>
       <Text>
         Supply an authorized same-origin SVG renderer. No endpoint or engine is
-        configured by default. The host must check document access, CSRF,
-        quotas, and rendering budgets. Source and errors remain visible if
-        rendering fails.
+        configured by default. After configuration, selected diagram code
+        renders automatically after 300 ms when no current preview exists.
+        Editing source or changing diagram type can trigger another render.
+        Requests send source to your host and may use its resources or service
+        quota. The host must check document access, CSRF, quotas, and rendering
+        budgets. Source and errors remain visible if rendering fails.
       </Text>
       <Field>
-        <FieldLabel>Diagram host endpoint</FieldLabel>
+        <FieldLabel htmlFor={`${fieldId}-endpoint`}>
+          Diagram host endpoint
+        </FieldLabel>
         <Input
-          aria-label="Diagram host endpoint"
+          id={`${fieldId}-endpoint`}
           value={endpoint}
           disabled={!!renderers}
           onChange={updateEndpoint}
@@ -188,18 +194,20 @@ export function PublicCodeDrawingExample() {
         />
       </Field>
       <Field>
-        <FieldLabel>Diagram document ID</FieldLabel>
+        <FieldLabel htmlFor={`${fieldId}-document`}>
+          Diagram document ID
+        </FieldLabel>
         <Input
-          aria-label="Diagram document ID"
+          id={`${fieldId}-document`}
           value={documentId}
           disabled={!!renderers}
           onChange={updateDocumentId}
         />
       </Field>
       <Field>
-        <FieldLabel>Diagram CSRF token</FieldLabel>
+        <FieldLabel htmlFor={`${fieldId}-csrf`}>Diagram CSRF token</FieldLabel>
         <Input
-          aria-label="Diagram CSRF token"
+          id={`${fieldId}-csrf`}
           type="password"
           autoComplete="off"
           value={csrf}
@@ -226,7 +234,7 @@ export function PublicCodeDrawingExample() {
             initialState={initialState}
             onChange={updateSerialized}
           >
-            <EditorDiagramRoot renderers={renderers}>
+            <EditorDiagramRoot renderers={renderers} autoRender>
               <EditorCodeToolbar aria-label="Diagram code tools">
                 <EditorCodeLanguage />
                 <EditorCodeCopyButton />
