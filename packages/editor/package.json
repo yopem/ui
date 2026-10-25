@@ -84,7 +84,9 @@
     "./list-presentation/extension": "./src/list-presentation-extension.ts",
     "./editable-card": "./src/editable-card.ts",
     "./editable-card/model": "./src/editable-card-model.ts",
-    "./editable-card/node": "./src/editable-card-node.tsx"
+    "./editable-card/node": "./src/editable-card-node.tsx",
+    "./copilot": "./src/copilot.tsx",
+    "./copilot/session": "./src/copilot-session.ts"
   },
   "scripts": {
     "typecheck": "tsc --noEmit"
