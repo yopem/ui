@@ -32,6 +32,7 @@ import { MediaExample } from "./editor-examples/media-example"
 import { PublicBlocksExample } from "./editor-examples/public-blocks"
 import { PublicCodeExample } from "./editor-examples/public-code"
 import { CsvEditorExample } from "./editor-examples/public-csv"
+import { PublicDemoHostExample } from "./editor-examples/public-demo-host"
 import { PublicDocumentExamples } from "./editor-examples/public-document"
 import { PublicEditingRulesExample } from "./editor-examples/public-editing-rules"
 import { PublicFloatingToolbarExample } from "./editor-examples/public-floating-toolbar"
@@ -427,6 +428,18 @@ const examples = [
       "Apply selected-block alignment, text and background colors, indentation, and line height. Save and reload styled native JSON and HTML.",
     limits:
       "These controls use native Lexical state. Saved roundtrips stay in local component memory and are not host persistence. Public-example behavior remains unverified.",
+  },
+  {
+    slug: "public-demo-host",
+    sourceFile: "public-demo-host",
+    workflowIds: ["demo-host"],
+    title: "Validated fixture host",
+    Component: PublicDemoHostExample,
+    items: ["editor", "button", "field", "input", "stack", "text"],
+    description:
+      "Validate a fixture ID before creating two fresh independent native documents. Reload explicitly and retain current documents after an invalid ID.",
+    limits:
+      "Four public fixture families are translated to local Lexical values. This is not the complete upstream fixture/value inventory and does not import Slate state. Independence, cloning, history, and copied-consumer workflows remain unverified.",
   },
   {
     slug: "public-native-editing",
