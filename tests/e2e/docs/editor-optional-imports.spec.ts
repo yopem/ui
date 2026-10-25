@@ -14,6 +14,13 @@ const cases = [
   ["editor-docx", "EditorDocxImportControl", "docx-controls"],
   ["editor-docx", "EditorDocxExportControl", "docx-controls"],
   ["editor-docx", "EditorDocxControls", "docx-controls"],
+  ["editor-word-clipboard", "EditorWordClipboardExtension", "word-clipboard"],
+  ["editor-word-clipboard", "registerWordClipboardPaste", "word-clipboard"],
+  [
+    "editor-word-clipboard",
+    "normalizeWordClipboardHTML",
+    "word-clipboard-model",
+  ],
   ["editor-code-format", "formatEditorCode", "code-format"],
   ["editor-columns", "EditorColumnsControls", "columns"],
   ["editor-date", "EditorDateControls", "date"],

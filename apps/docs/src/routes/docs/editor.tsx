@@ -8,6 +8,7 @@ import { EditorDocumentExamples } from "@/catalog/editor-document-examples"
 import { EditorExamples } from "@/catalog/editor-examples"
 import { PublicAiExample as EditorAiMenuExample } from "@/catalog/editor-examples/public-ai"
 import { PublicCodeDrawingExample as EditorDiagramExample } from "@/catalog/editor-examples/public-code-drawing"
+import { PublicWordClipboardExample } from "@/catalog/editor-examples/public-word-clipboard"
 import { EditorExtensionExamples } from "@/catalog/editor-extension-examples"
 import { EditorStyleExample } from "@/catalog/editor-style-examples"
 import { EditorTableExamples } from "@/catalog/editor-table-examples"
@@ -36,6 +37,7 @@ export const Route = createFileRoute("/docs/editor")({
 })
 
 const components = {
+  PublicWordClipboardExample,
   EditorAiMenuExample,
   EditorDiagramExample,
   EditorAiExample,

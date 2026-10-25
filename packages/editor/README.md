@@ -173,6 +173,20 @@ that an object write stopped.
 
 All editor tests live under the repository's root `tests/` directory.
 
+## Optional Word clipboard
+
+Use `editor-word-clipboard` for a bounded Office HTML fragment. Register
+`EditorWordClipboardExtension` at root creation. Run `registerDocumentPaste` and
+`registerWordClipboardPaste` after creation. Keep both cleanup functions. The
+feature preserves native MIME priority and does not replace the complete
+document. Images reject unless a synchronous host resolver returns validated
+media. Never fetch pasted file or network image URLs automatically.
+
+Unsupported or stale input keeps existing content. Host callback side effects
+cannot be rolled back. Native Word capture, structural fidelity, clipboard
+policy, history, and browser checks remain deferred. This subset does not
+preserve complete Word page layout.
+
 ## Optional Word files
 
 Use the separate `editor-docx` item for bounded semantic Word file conversion.

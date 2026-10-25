@@ -112,6 +112,14 @@ Preserve \`yopemListMarker\` NodeState, \`data-editor-list-marker\`, and native 
 Checklists keep their native behavior. Custom HTML readers must compose existing converters instead of replacing them.
 Optional \`editor-document\` retains validated markers and signed starts in JSON, HTML, Markdown, and static output.
 Markdown uses canonical HTML when native Markdown cannot retain list presentation.
+Install optional \`editor-word-clipboard\` separately for bounded Office HTML fragments.
+Import registration helpers from \`${imports.editor}/word-clipboard\` and pure normalization from \`${imports.editor}/word-clipboard-model\`.
+Register \`EditorWordClipboardExtension\` in a stable root extensions array.
+Call \`registerDocumentPaste\` and \`registerWordClipboardPaste\` after creation. Keep both cleanups in the host lifecycle.
+Preserve native JSON and host MIME priority. Invalid, empty, stale, composing, and read-only imports keep current content.
+Images reject by default. Supply a stable synchronous trusted-media resolver and register \`MediaExtension\` for resolved images.
+Never fetch pasted file or network image URLs automatically. Promise and thenable resolver results reject.
+Host callback side effects cannot be rolled back. This subset does not preserve complete Word page layout.
 Install optional \`editor-docx\` separately for bounded semantic Word files.
 Import portable functions from \`${imports.editor}/docx\` and client controls from \`${imports.editor}/docx-controls\`.
 Compose \`EditorDocxImportControl\`, \`EditorDocxExportControl\`, or \`EditorDocxControls\` inside \`EditorRoot\`.

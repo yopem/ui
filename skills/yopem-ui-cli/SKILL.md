@@ -872,6 +872,33 @@ labels-model for pure validation. Invalid node metadata rejects. Unknown,
 duplicate, and excess valid tokens become plain text. Labels grant no access.
 Generic document conversion does not support these nodes.
 
+## Optional Word clipboard
+
+Install the separate bounded Office HTML feature.
+
+```sh
+bunx --bun @yopem-ui/cli add editor-word-clipboard
+npx @yopem-ui/cli add editor-word-clipboard
+pnpm dlx @yopem-ui/cli add editor-word-clipboard
+yarn dlx @yopem-ui/cli add editor-word-clipboard
+```
+
+Register `EditorWordClipboardExtension` in a stable root extensions array.
+Import helpers from `@/components/editor/word-clipboard` and pure normalization
+from `@/components/editor/word-clipboard-model`. Call `registerDocumentPaste`
+and `registerWordClipboardPaste` after creation. Keep both cleanup functions. Do
+not change resolver options before remounting.
+
+Keep native JSON and host MIME priority. Unsupported or stale fragments must not
+remove selected content. Images reject by default. Supply a synchronous resolver
+for already trusted media. Register `MediaExtension` for resolved images. Never
+fetch pasted file or network image URLs automatically. Promises and thenables
+reject. Host callback side effects cannot be rolled back.
+
+This feature is separate from DOCX files. Full Word page layout and native
+capture acceptance are not supplied. See
+https://ui.yopem.com/components/editor-word-clipboard.
+
 ## Optional Word files
 
 Install the separate source item:

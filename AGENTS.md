@@ -878,6 +878,19 @@ Malformed node metadata rejects. Unknown, duplicate, and excess valid tokens bec
 Label identities do not grant access. Generic document conversion remains unsupported.
 Native clipboard, normalization, history, read-only, and accessibility checks are deferred.
 
+## Optional editor Word clipboard
+
+Install `editor-word-clipboard` separately for bounded Office HTML fragments.
+Register `EditorWordClipboardExtension` in a stable root extensions array.
+Call `registerDocumentPaste` and `registerWordClipboardPaste` after creation.
+Keep both cleanup functions in the host lifecycle.
+Import helpers from `@/components/editor/word-clipboard` and pure codecs from `@/components/editor/word-clipboard-model`.
+Keep native JSON and host MIME priority. Invalid or stale input must not remove selected content.
+Images reject by default. Supply a stable synchronous trusted-media resolver and register `MediaExtension` for resolved images.
+Never fetch untrusted pasted file or network image URLs automatically.
+Promises and thenables reject. Host callback side effects cannot be rolled back.
+The bounded subset does not preserve full Word layout. Native capture and runtime acceptance remain deferred.
+
 ## Optional editor DOCX
 
 Install `editor-docx` separately for bounded semantic Word file conversion.

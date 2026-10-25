@@ -44,6 +44,8 @@ const previewDescriptionValues = {
   "editor-media": "Validated image, video, audio, file, and embed content",
   "editor-blocks": "Native callouts and disclosures",
   "editor-document": "Validated document import and export",
+  "editor-word-clipboard":
+    "Bounded Word HTML fragments with native clipboard policies",
 
   "editor-typeahead": "Native suggestions and composed emoji controls",
   "use-event-callback": "Stable handler reading the latest count",

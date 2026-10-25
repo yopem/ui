@@ -1404,6 +1404,40 @@ accessibility validation remain deferred. See the
 [label picker](/editor/labels-picker) and [label option](/editor/labels-option)
 references.
 
+## Word clipboard fragments
+
+Install the separate clipboard item. File conversion does not install it.
+
+```sh
+bunx --bun @yopem-ui/cli add editor-word-clipboard
+```
+
+Register `EditorWordClipboardExtension` in a stable root extensions array. Call
+`registerDocumentPaste` and `registerWordClipboardPaste` after creation. Run
+both cleanup functions when the host unmounts. Keep resolver options unchanged
+until remounting.
+
+Import registration helpers from `@/components/editor/word-clipboard`. Import
+pure normalization and resolver types from
+`@/components/editor/word-clipboard-model`. Native Lexical JSON and host MIME
+policies keep their configured priority. This optional feature inserts a
+validated fragment. It does not replace the complete document.
+
+Images reject by default. Supply a synchronous resolver for already trusted
+media. Register `MediaExtension` before inserting resolved images. Never fetch
+local files or network URLs from pasted image metadata automatically. Promises
+and thenables reject. Host callback changes cannot be rolled back.
+
+Unsupported, stale, empty, composing, and read-only imports keep existing
+content. The supported Office HTML subset does not preserve complete Word page
+layout. Local fixtures are synthetic. Public fixture provenance and native Word
+acceptance remain incomplete.
+
+<PublicWordClipboardExample />
+
+See [the clipboard source item](/components/editor-word-clipboard) for complete
+consumer source.
+
 ## Word document files
 
 Install the optional file-conversion item. Use the package-manager switcher.

@@ -17,6 +17,11 @@ const examples = [
     identifier: "EditorFootnoteExtension",
   },
   { item: "editor-toc", entry: "toc", identifier: "EditorTocExtension" },
+  {
+    item: "editor-word-clipboard",
+    entry: "word-clipboard",
+    identifier: "registerWordClipboardPaste",
+  },
   { item: "editor-review", entry: "review", identifier: "createEditorReview" },
   {
     item: "editor-block-selection",

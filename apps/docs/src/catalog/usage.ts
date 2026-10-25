@@ -232,6 +232,40 @@ export function SearchableEditor() {
     </EditorRoot>
   )
 }`,
+  "editor-word-clipboard": `"use client"
+
+import { EditorBlockPresentationExtension, EditorContent, EditorRoot, EditorTablePresentationExtension, useEditor } from "@/components/editor"
+import { registerDocumentPaste } from "@/components/editor/document"
+import { EditorListPresentationExtension } from "@/components/editor/list-presentation"
+import { EditorWordClipboardExtension, registerWordClipboardPaste } from "@/components/editor/word-clipboard"
+import { Stack } from "@/components/ui/stack"
+import { Text } from "@/components/ui/text"
+import { useState } from "react"
+
+const extensions = [EditorBlockPresentationExtension, EditorTablePresentationExtension, EditorListPresentationExtension, EditorWordClipboardExtension]
+
+function ClipboardRegistration() {
+  const editor = useEditor()
+  const [error, setError] = useState("")
+  const [connect] = useState(() => function connect() {
+    function onError(failure: Error) { setError(failure.message) }
+    const removeDocument = registerDocumentPaste(editor, onError)
+    try {
+      const removeWord = registerWordClipboardPaste(editor, onError)
+      return () => { removeWord(); removeDocument() }
+    } catch (cause) { removeDocument(); throw cause }
+  })
+  return <Stack ref={connect}>{error ? <Text role="alert">{error}</Text> : null}</Stack>
+}
+
+export function WordClipboardEditor() {
+  return (
+    <EditorRoot ariaLabel="Word clipboard editor" extensions={extensions}>
+      <EditorContent placeholder="Paste Word content…" />
+      <ClipboardRegistration />
+    </EditorRoot>
+  )
+}`,
   "editor-csv": `"use client"
 
 import { EditorContent, EditorRoot } from "@/components/editor"

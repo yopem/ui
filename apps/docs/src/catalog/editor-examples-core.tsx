@@ -66,6 +66,7 @@ import { PublicTabbableExample } from "./editor-examples/public-tabbable"
 import { PublicTablesExample } from "./editor-examples/public-tables"
 import { PublicTocExample } from "./editor-examples/public-toc"
 import { PublicTypeaheadExample } from "./editor-examples/public-typeahead"
+import { PublicWordClipboardExample } from "./editor-examples/public-word-clipboard"
 
 const sources = import.meta.glob<string>("./editor-examples/*.tsx", {
   query: "?raw",
@@ -519,6 +520,18 @@ const examples = [
       "Set list markers and signed starts on independent nested native lists.",
     limits:
       "Local JSON/HTML controls are not an untrusted importer. Runtime and clipboard fidelity remain unverified.",
+  },
+  {
+    slug: "public-word-clipboard",
+    sourceFile: "public-word-clipboard",
+    workflowIds: [],
+    title: "Bounded Word clipboard fragments",
+    Component: PublicWordClipboardExample,
+    items: ["editor-word-clipboard"],
+    description:
+      "Insert supported Office HTML as a native fragment. Preserve clipboard policies, list presentation, native history, and visible import errors.",
+    limits:
+      "Images need a synchronous trusted host resolver. No image source is fetched automatically. This subset does not preserve Word page layout. Native Word capture, host policy, history, and browser acceptance remain pending.",
   },
   {
     slug: "public-docx",

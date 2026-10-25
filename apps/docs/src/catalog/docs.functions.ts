@@ -43,6 +43,7 @@ const completeEditorPreviews = new Map<
   ],
   ["editor-toc", ["./editor-example-compositions/toc.tsx", "toc"]],
   ["editor-csv", ["./editor-examples/public-csv.tsx"]],
+  ["editor-word-clipboard", ["./editor-examples/public-word-clipboard.tsx"]],
   ["editor-search", ["./editor-preview-compositions/search.tsx"]],
   [
     "editor-list-presentation",
