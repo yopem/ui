@@ -56,6 +56,7 @@
     "./ai/client": "./src/ai-client.ts",
     "./block-selection": "./src/block-selection-index.ts",
     "./server/collaboration": "./src/server/collaboration-index.ts",
+    "./server/native-grants": "./src/server/collaboration-native-grants.ts",
     "./server/collaboration/bun": "./src/server/collaboration-bun.ts",
     "./server/collaboration/node": "./src/server/collaboration-node.ts",
     "./server/collaboration/worker": "./src/server/collaboration-do.ts",
