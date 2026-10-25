@@ -310,6 +310,20 @@ test("packed CLI exposes shared editor roots to external workspace consumers", a
         `${server.url}r`,
       ])
 
+      await run(ui, [
+        ...command,
+        "add",
+        "editor-collaboration-native",
+        "--registry",
+        `${server.url}r`,
+      ])
+
+      await put(
+        app,
+        "src/native-collaboration.ts",
+        `import { createEditorNativeCollaboration, type EditorNativeCollaborationOptions } from "@acme/ui/${components.slice(4)}/editor/collaboration-native"\nimport { editorNativeRoomGrantSchema, validateEditorNativeRoomGrant } from "@acme/ui/${components.slice(4)}/editor/collaboration-native-model"\nexport function createNativeController(options: EditorNativeCollaborationOptions, createController: typeof import("@acme/ui/${components.slice(4)}/editor/collaboration").createEditorCollaborationWithProvider) {\n  return createController(createEditorNativeCollaboration(options), options.roomId)\n}\nconst now = Date.now()\nconst grant = editorNativeRoomGrantSchema.parse({ roomId: "workspace:fixture", generation: "a".repeat(64), seeded: true, permission: "read", credentialExpiresAt: now + 60000, hocuspocusToken: "fixture-token", displayName: "Reader", cursorColor: "#3466aa", peer: null })\nif (validateEditorNativeRoomGrant(grant, "workspace:fixture", now).permission !== "read" || typeof createEditorNativeCollaboration !== "function") throw new Error("Invalid native collaboration entry")\n`,
+      )
+
       const blockExports: typeof initialized = await Bun.file(
         join(ui, "package.json"),
       ).json()
@@ -383,7 +397,7 @@ test("packed CLI exposes shared editor roots to external workspace consumers", a
           skipLibCheck: true,
           noEmit: true,
         },
-        include: ["geometry.ts", "check.ts"],
+        include: ["geometry.ts", "check.ts", "native-collaboration.ts"],
       })
       await put(
         external,
@@ -394,6 +408,11 @@ test("packed CLI exposes shared editor roots to external workspace consumers", a
         external,
         "check.ts",
         await readFile(join(app, "src/check.tsx"), "utf8"),
+      )
+      await put(
+        external,
+        "native-collaboration.ts",
+        await readFile(join(app, "src/native-collaboration.ts"), "utf8"),
       )
       await run(external, ["bun", "install"])
       await run(external, [
@@ -410,6 +429,39 @@ test("packed CLI exposes shared editor roots to external workspace consumers", a
         "--outfile=geometry.mjs",
       ])
       await run(external, ["node", "geometry.mjs"])
+      await run(external, ["bun", "native-collaboration.ts"])
+      await run(external, [
+        "bun",
+        "build",
+        "./native-collaboration.ts",
+        "--target=node",
+        "--outfile=native-collaboration.mjs",
+      ])
+      await run(external, ["node", "native-collaboration.mjs"])
+
+      const nativeUpdateBefore = await readFile(
+        join(ui, "package.json"),
+        "utf8",
+      )
+
+      await run(ui, [
+        ...command,
+        "update",
+        "editor-collaboration-native",
+        "--dry-run",
+        "--registry",
+        `${server.url}r`,
+      ])
+      expect(await readFile(join(ui, "package.json"), "utf8")).toBe(
+        nativeUpdateBefore,
+      )
+      await run(ui, [
+        ...command,
+        "update",
+        "editor-collaboration-native",
+        "--registry",
+        `${server.url}r`,
+      ])
 
       const installed: typeof initialized = await Bun.file(
         join(ui, "package.json"),

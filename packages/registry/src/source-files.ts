@@ -83,6 +83,14 @@ export const sourceImportReplacements = [
   ],
   ["@yopem-ui/editor/math/model", "@/components/editor/math-model"],
   [
+    "@yopem-ui/editor/collaboration/native-model",
+    "@/components/editor/collaboration-native-model",
+  ],
+  [
+    "@yopem-ui/editor/collaboration/native",
+    "@/components/editor/collaboration-native",
+  ],
+  [
     "@yopem-ui/editor/server/collaboration/bun",
     "@/lib/editor-collaboration/collaboration-bun",
   ],

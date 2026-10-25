@@ -233,6 +233,15 @@ const usageNoteValues = {
     "Connection state and host read-only state both control editing. Discarded local drafts require explicit host action.",
     "Use the custom editor-v1 transport. This protocol is not compatible with y-websocket.",
   ],
+  "editor-collaboration-native": [
+    "Install native providers separately from the editor-v1 client. Keep one provider and controller per root.",
+    "Require an expiring host grant for the exact room and generation. The host must initialize the authoritative Yjs document once.",
+    "Keep credentials in memory. Persist only the nonsecret room ID. Never put credentials in URLs or logs.",
+    "Configure trusted WSS signaling explicitly. Enable WebRTC only for trusted writers. Its peer limit is nine.",
+    "Hocuspocus sync is a handshake, not a durable-write receipt. Peer discovery does not prove a connected peer.",
+    "Require host frame, awareness, and resource limits for the native SDKs. Review browser ICE networking and deployment policy.",
+    "Native peers do not provide per-frame host authorization, atomic revocation, or durable editor-v1 acknowledgements.",
+  ],
   "editor-collaboration-server": [
     "Import generic server helpers from @/lib/editor-collaboration. Supply existing authentication and separate document policies.",
     "Apply the PostgreSQL snapshot, collaboration, and runtime migrations in order. Supply a disposable schema-complete initializer.",
