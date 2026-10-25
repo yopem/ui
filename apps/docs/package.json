@@ -67,7 +67,7 @@
     "@effect/platform-bun": "^4.0.6",
     "@effect/platform-node": "^4.0.6",
     "@rolldown/plugin-babel": "^0.2.4",
-    "@stylexjs/babel-plugin": "^0.19.1",
+    "@stylexjs/babel-plugin": "catalog:",
     "@stylexjs/postcss-plugin": "^0.19.1",
     "@tanstack/devtools-vite": "^0.8.5",
     "@tanstack/router-cli": "^1.167.46",
