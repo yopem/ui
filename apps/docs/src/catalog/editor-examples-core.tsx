@@ -40,6 +40,7 @@ import {
   MultipleEditorsExample,
 } from "./editor-examples/public-hosts"
 import { ReadOnlyEditorExample } from "./editor-examples/public-readonly"
+import { PublicReviewExample } from "./editor-examples/public-review"
 import { PublicSearchExample } from "./editor-examples/public-search"
 import { PublicSelectionExample } from "./editor-examples/public-selection"
 import { PublicStylesExample } from "./editor-examples/public-styles"
@@ -219,6 +220,18 @@ const examples = [
       "Save immutable snapshots. Inspect an earlier revision without changing the current document. Compare inserted, removed, and updated blocks and text.",
     limits:
       "History stays in memory and holds at most 20 snapshots, each within 1 MiB and 200 top-level blocks. Long or multiline text uses whole-block differences. No server history is configured.",
+  },
+  {
+    slug: "public-review",
+    sourceFile: "public-review",
+    workflowIds: ["discussion"],
+    title: "Anchored discussions and inline suggestions",
+    Component: PublicReviewExample,
+    items: ["editor-review"],
+    description:
+      "Follow anchored threads, reply, resolve and reopen, add comments, suggest inline insert/delete/format changes, and accept or reject decisions with native history.",
+    limits:
+      "Profiles and synchronous policies are local fixtures, not authentication or server authorization. Suggestions are inline only. Review clipboard accepts plain text; rich HTML is rejected. Structural suggestions, lossless review conversion, persistence, and shared discussions are not provided. Runtime and accessibility remain unverified.",
   },
   {
     slug: "search",
