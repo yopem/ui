@@ -185,6 +185,29 @@ export function ExitBreakExample() {
   )
 }`,
 
+  "editor-drawing": `"use client"
+
+import "@excalidraw/excalidraw/index.css"
+import { EditorRoot, EditorContent, EditorToolbar, useEditor } from "@/components/editor"
+import { EditorDrawingExtension } from "@/components/editor/drawing"
+import { EditorDrawingInsertButton, registerEditorDrawingRuntime } from "@/components/editor/drawing-browser"
+import { Stack } from "@/components/ui/stack"
+import { useState } from "react"
+
+const extensions = [EditorDrawingExtension]
+
+function DrawingTools() {
+  const editor = useEditor()
+  const [connect] = useState(() => function connect() {
+    return registerEditorDrawingRuntime(editor, "/assets/excalidraw/")
+  })
+  return <Stack ref={connect}><EditorToolbar><EditorDrawingInsertButton /></EditorToolbar></Stack>
+}
+
+export function DrawingExample() {
+  return <EditorRoot extensions={extensions}><EditorContent /><DrawingTools /></EditorRoot>
+}`,
+
   "editor-cursor-overlay": `"use client"
 
 import { EditorRoot, EditorContent } from "@/components/editor"

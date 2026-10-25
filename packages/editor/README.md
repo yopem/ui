@@ -264,3 +264,27 @@ subscription. Use its cleanup or explicit disposal to remove owned listeners.
 This feature does not supply AI authorization or acceptance, remote presence, or
 a document policy. Cross-frame geometry, native pointer handling, and focus
 cleanup still require browser checks.
+
+## Optional drawing runtime
+
+Install `editor-drawing` separately from the base editor. Register
+`EditorDrawingExtension` in a stable root extensions array. Import pure scene
+validation from `@/components/editor/drawing-model`. Load `drawing-browser` and
+the Excalidraw stylesheet only inside a framework browser boundary. Register one
+runtime per root and keep its cleanup in the host lifecycle.
+
+Self-host the installed SDK fonts beneath an approved same-origin asset
+directory. Preserve the SDK and font notices. Restrict font resources through
+the host CSP. A missing local font can trigger an SDK fallback-host request
+without an appropriate CSP. Concurrent runtimes must share one asset path. Owned
+cleanup restores the previous global asset path.
+
+Keep scenes within 512 KiB and 2000 supported native elements. Reject files,
+images, link targets, custom metadata, and unsupported element types. Validate
+draft output before replacing the saved drawing node. Validate and sanitize SVG
+output before download. Generic document conversion does not support drawing
+nodes.
+
+Current SDK and transitive dependency advisories remain unresolved. Do not claim
+production safety from source checks. Browser, SSR, CSP, fonts, clipboard, SVG,
+history, and accessibility acceptance remain deferred.

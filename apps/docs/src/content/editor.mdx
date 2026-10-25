@@ -1637,3 +1637,37 @@ Native drag, focus routing, cross-frame geometry, and cleanup checks remain
 deferred. See the [cursor overlay reference](/editor/cursor-overlay).
 
 <PublicCursorsExample />
+
+## Optional bounded drawing scenes
+
+Install the drawing item separately.
+
+```sh
+bunx --bun @yopem-ui/cli add editor-drawing
+```
+
+Register `EditorDrawingExtension` in a stable extensions array. Load the
+separate `drawing-browser` entry and SDK stylesheet inside a framework browser
+boundary. Register one drawing runtime per root. Run its cleanup when that root
+unmounts.
+
+Self-host the installed SDK `dist/prod/fonts` directory before mounting a
+drawing runtime. For the example, serve that directory at
+`/assets/excalidraw/fonts/`. Use the installed SDK version and preserve its SDK
+and font notices. Use CSP to restrict fonts to approved origins. Missing local
+fonts can cause SDK fallback-host requests without an appropriate CSP.
+Concurrent runtimes must share the same asset path.
+
+Scenes admit at most 2000 supported native elements and 512 KiB of JSON. Files,
+images, link targets, custom metadata, and unsupported elements reject. Apply
+changes only after the complete draft passes validation. SVG download requires
+bounded scene validation and SVG sanitization. Generic document conversion does
+not support these nodes.
+
+The SDK and transitive dependencies have unresolved audit findings. Source
+presence does not establish production safety or full Excalidraw parity. SSR,
+font, CSP, draft, history, clipboard, export, and accessibility checks remain
+deferred. See the [drawing insert control](/editor/drawing-insert-button)
+reference.
+
+<EditorDrawingClient />

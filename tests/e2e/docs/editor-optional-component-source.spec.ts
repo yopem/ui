@@ -15,6 +15,11 @@ const examples = [
     identifier: "EditorColumnsExtension",
   },
   { item: "editor-date", entry: "date", identifier: "EditorDateExtension" },
+  {
+    item: "editor-drawing",
+    entry: "drawing",
+    identifier: "EditorDrawingInsertButton",
+  },
   { item: "editor-media", entry: "media", identifier: "MediaInsertControl" },
   {
     item: "editor-footnotes",

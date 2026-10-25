@@ -16,6 +16,7 @@ import { rewriteImports } from "@registry/source-files"
 import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 
+import { EditorDrawingClient } from "./editor-drawing-client"
 import { BasicMarksExample } from "./editor-examples/basic-marks"
 import { BasicNodesExample } from "./editor-examples/basic-nodes"
 import { ColumnsExample } from "./editor-examples/columns-example"
@@ -331,6 +332,18 @@ const examples = [
       "Exit native quote, code, and table root boundaries with modifier shortcuts. Use separate single-block or single-line input modes with bounded plain-text paste.",
     limits:
       "Single-paragraph modes apply only to a root with one paragraph and do not validate or flatten arbitrary documents. Single-line removes new pasted breaks, not existing content. Full autoformat, plugin-rules, placeholders and tabbable workflows are not provided. History, IME, native clipboard and accessibility are unverified.",
+  },
+  {
+    slug: "public-drawing",
+    sourceFile: "public-drawing",
+    workflowIds: [],
+    title: "Configured bounded drawing scenes",
+    description:
+      "Edit restricted Excalidraw drafts with explicit local SDK assets and sanitized SVG export. Runtime acceptance is deferred.",
+    Component: EditorDrawingClient,
+    items: ["editor-drawing"],
+    limits:
+      "Requires browser-only SDK loading, approved same-origin assets and the SDK stylesheet. Files, images, links, custom metadata and unsupported element types reject. Generic document conversion is unsupported. SDK and dependency-audit acceptance remain required. No complete mapped Excalidraw workflow credit.",
   },
   {
     slug: "public-cursors",

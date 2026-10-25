@@ -112,6 +112,13 @@ Preserve \`yopemListMarker\` NodeState, \`data-editor-list-marker\`, and native 
 Checklists keep their native behavior. Custom HTML readers must compose existing converters instead of replacing them.
 Optional \`editor-document\` retains validated markers and signed starts in JSON, HTML, Markdown, and static output.
 Markdown uses canonical HTML when native Markdown cannot retain list presentation.
+Install optional \`editor-drawing\` separately. Register \`EditorDrawingExtension\` in a stable root array.
+Load \`${imports.editor}/drawing-browser\` and the SDK stylesheet inside a framework browser boundary.
+Self-host SDK fonts under an approved same-origin path. Preserve SDK/font notices and restrict fallback font resources through CSP.
+Register one runtime per root and run its cleanup. Concurrent runtimes must share the global asset path.
+Keep scenes within 512 KiB and 2000 supported elements. Reject files, images, link targets, custom metadata, and unsupported types.
+Validate drafts and sanitize SVG before download. Generic document conversion does not support drawing nodes.
+SDK/transitive dependency advisories and SSR/browser/accessibility acceptance remain unresolved. Do not claim production safety.
 Install optional \`editor-cursor-overlay\` separately. Import \`EditorCursorOverlay\` from \`${imports.editor}/cursor-overlay\`.
 Compose it beside \`EditorContent\` inside \`EditorRoot\`. Keep native drag and drop.
 Paint uses the root owner document and saves no document state. Read-only transitions and document changes clear it.

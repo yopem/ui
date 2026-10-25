@@ -12,6 +12,8 @@ export async function getEditorDocumentation(slug: string) {
     sourcePath = "./editor-examples/public-placeholder.tsx"
   else if (part.item === "editor-floating-toolbar")
     sourcePath = "./editor-examples/public-floating-toolbar.tsx"
+  else if (part.item === "editor-drawing")
+    sourcePath = "./editor-examples/public-drawing.tsx"
   else if (part.item === "editor-cursor-overlay")
     sourcePath = "./editor-examples/public-cursors.tsx"
   else if (part.item === "editor-ai-menu")
@@ -95,6 +97,14 @@ export async function getEditorDocumentation(slug: string) {
         : [
             "Place controls and EditorContent inside EditorRoot. Keep extension arrays stable when the editor mounts.",
           ]),
+      ...(part.item === "editor-drawing"
+        ? [
+            "Register EditorDrawingExtension in a stable array. Load the separate browser entry and SDK stylesheet inside a framework browser boundary.",
+            "Self-host SDK fonts before mounting and restrict fallback font resources through CSP. Register one runtime per root and run its cleanup.",
+            "Scenes reject files, images, link targets, custom metadata and unsupported elements. Validate drafts and sanitize SVG before download.",
+            "SDK dependency advisories and runtime/accessibility acceptance remain unresolved. Generic document conversion does not support drawing nodes.",
+          ]
+        : []),
       ...(part.item === "editor-cursor-overlay"
         ? [
             "Place EditorCursorOverlay inside EditorRoot beside the editable surface. Native drag and drop stay unchanged.",

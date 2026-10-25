@@ -1207,3 +1207,17 @@ inside `EditorRoot` beside `EditorContent`. Keep native drag and drop. Overlay
 paint is not saved document state or AI authorization. The root owner document
 supplies the portal and native selection. Read-only transitions and document
 changes clear the paint.
+
+### Optional native drawing scenes
+
+Install `editor-drawing` separately. Register `EditorDrawingExtension` in a
+stable root array. Load `@/components/editor/drawing-browser` and the SDK
+stylesheet inside a framework browser boundary. Self-host the installed SDK
+fonts and preserve SDK and font notices. Restrict fallback font resources
+through CSP. Register one drawing runtime per root and run its cleanup.
+Concurrent runtimes must share the asset path. Keep scenes within 512 KiB and
+2000 supported shapes. Files, images, link targets, and custom metadata reject.
+Validate drafts and sanitize SVG before download. Generic document conversion
+does not support these nodes. SDK dependency advisories and
+runtime/SSR/accessibility acceptance remain unresolved. Do not claim production
+safety.

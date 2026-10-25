@@ -12,6 +12,7 @@ import { editorCopilotParts } from "./editor-copilot-parts"
 import { editorCursorOverlayParts } from "./editor-cursor-overlay-parts"
 import { editorDateParts } from "./editor-date-parts"
 import { editorDocxParts } from "./editor-docx-parts"
+import { editorDrawingParts } from "./editor-drawing-parts"
 import { editorEditableCardParts } from "./editor-editable-card-parts"
 import { editorFloatingToolbarParts } from "./editor-floating-toolbar-parts"
 import { editorFootnoteParts } from "./editor-footnote-parts"
@@ -262,6 +263,7 @@ export const editorParts = [
   ...editorSearchParts,
   ...editorFloatingToolbarParts,
   ...editorCursorOverlayParts,
+  ...editorDrawingParts,
   ...editorBlockPlaceholderParts,
 ] as const
 

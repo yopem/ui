@@ -5,6 +5,7 @@ import { EditorBlocksExample } from "@/catalog/editor-blocks-example"
 import { EditorCodeExamples } from "@/catalog/editor-code-examples"
 import { EditorCompositionExamples } from "@/catalog/editor-composition-examples"
 import { EditorDocumentExamples } from "@/catalog/editor-document-examples"
+import { EditorDrawingClient } from "@/catalog/editor-drawing-client"
 import { EditorExamples } from "@/catalog/editor-examples"
 import { PublicAiExample as EditorAiMenuExample } from "@/catalog/editor-examples/public-ai"
 import { PublicCodeDrawingExample as EditorDiagramExample } from "@/catalog/editor-examples/public-code-drawing"
@@ -40,6 +41,7 @@ export const Route = createFileRoute("/docs/editor")({
 const components = {
   PublicWordClipboardExample,
   PublicCursorsExample,
+  EditorDrawingClient,
   EditorAiMenuExample,
   EditorDiagramExample,
   EditorAiExample,

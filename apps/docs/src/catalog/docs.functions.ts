@@ -65,6 +65,7 @@ const completeEditorPreviews = new Map<
     ["./editor-examples/public-floating-toolbar.tsx"],
   ],
   ["editor-cursor-overlay", ["./editor-examples/public-cursors.tsx"]],
+  ["editor-drawing", ["./editor-examples/public-drawing.tsx"]],
 ])
 
 const documentationSources = import.meta.glob<(typeof componentDocs)[number]>(
