@@ -935,3 +935,12 @@ completed text; Mod+Right accepts one grapheme. Escape cancels. Require
 completion and clean EOF. Automatic requests require host and user opt-in and
 can incur charges. Keep document authorization, quota, provider credentials, and
 model selection on the server. Cancellation does not prove billing stops.
+
+Install optional `editor-block-menu`. Import `createEditorBlockMenu` and
+`EditorBlockMenu` from `@/components/editor/block-menu-index`. Keep one stable
+controller per root. Register its extension before wrapping `EditorContent` with
+the menu. Right-click or press Shift+F10. Configured policy must return literal
+`true`; stale or pending targets reject. Host Ask AI and Code Drawing callbacks
+require separate authorization. No default service or Add Comment action is
+supplied. Preserve native selection, clipboard policy, history, and host event
+cancellation.

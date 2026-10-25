@@ -37,6 +37,23 @@ export function CardEditor() {
     </EditorRoot>
   )
 }`,
+  "editor-block-menu": `import { useState } from "react"
+import { EditorContent, EditorRoot } from "@/components/editor"
+import { createEditorBlockMenu, EditorBlockMenu } from "@/components/editor/block-menu-index"
+
+export function BlockMenuEditor() {
+  const [setup] = useState(() => {
+    const controller = createEditorBlockMenu()
+    return { controller, extensions: [controller.extension] }
+  })
+  return (
+    <EditorRoot extensions={setup.extensions}>
+      <EditorBlockMenu controller={setup.controller}>
+        <EditorContent />
+      </EditorBlockMenu>
+    </EditorRoot>
+  )
+}`,
   "editor-copilot": `import { EditorContent, EditorRoot } from "@/components/editor"
 import { EditorCopilot, type EditorCopilotConfig } from "@/components/editor/copilot"
 

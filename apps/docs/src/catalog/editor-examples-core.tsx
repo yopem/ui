@@ -30,6 +30,7 @@ import { LinkExample } from "./editor-examples/link"
 import { MathExample } from "./editor-examples/math-example"
 import { MediaExample } from "./editor-examples/media-example"
 import { PublicAutoformatExample } from "./editor-examples/public-autoformat"
+import { PublicBlockMenuExample } from "./editor-examples/public-block-menu"
 import { PublicBlocksExample } from "./editor-examples/public-blocks"
 import { PublicCodeExample } from "./editor-examples/public-code"
 import { PublicCopilotExample } from "./editor-examples/public-copilot"
@@ -71,6 +72,17 @@ const sources = import.meta.glob<string>("./editor-examples/*.tsx", {
 })
 
 const examples = [
+  {
+    slug: "public-block-menu",
+    workflowIds: [],
+    title: "Native block context actions",
+    Component: PublicBlockMenuExample,
+    items: ["editor-block-menu"],
+    description:
+      "Right-click a block or use Shift+F10 for native clipboard, type, indentation, alignment, and history actions.",
+    limits:
+      "This composition does not supply Ask AI or Code Drawing host callbacks. Add Comment is absent. Full pinned block-menu equivalence is not credited. Runtime acceptance is deferred.",
+  },
   {
     slug: "public-copilot",
     workflowIds: ["copilot"],

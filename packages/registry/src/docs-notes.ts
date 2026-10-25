@@ -6,6 +6,13 @@ const usageNoteValues = {
     "Markers affect one native list. Nested lists keep their own markers. Checklists do not use custom markers.",
     "Keep yopemListMarker NodeState, data-editor-list-marker, and native ol start attributes in compatible readers.",
   ],
+  "editor-block-menu": [
+    "Create one stable controller per root. Register its extension before wrapping EditorContent with EditorBlockMenu.",
+    "Open with right-click or Shift+F10. Copy, duplicate, delete, conversion, indentation, and alignment use native editor operations.",
+    "Host action policy must return literal true. Pending document changes and stale targets reject actions.",
+    "Ask AI and Code Drawing require supplied host callbacks. No default service or Add Comment action is provided.",
+    "Native keyboard, selection, policy, clipboard, history, and accessibility checks remain deferred.",
+  ],
   "editor-copilot": [
     "Supply a stable configuration inside EditorRoot. No endpoint, credentials, or model is supplied.",
     "Control+Space requests a paragraph-end completion. Tab accepts all text; Mod+Right accepts one grapheme. Escape cancels.",

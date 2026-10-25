@@ -249,3 +249,22 @@ test("authorization cannot redirect the captured readonly block context", async 
   })
   editor.dispose()
 })
+
+test("rejected asynchronous host callbacks fail closed", async () => {
+  for (const action of ["ask-ai", "code-drawing"] as const) {
+    function rejectHostAction() {
+      return Promise.reject(new Error("Host rejected action"))
+    }
+
+    const { controller, editor } = setup({
+      onAskAI: rejectHostAction,
+      onCodeDrawing: rejectHostAction,
+    })
+
+    const before = editor.getEditorState().toJSON()
+    expect(controller.captureFromSelection()).toBe(true)
+    expect(await controller.run(action)).toBe(false)
+    expect(editor.getEditorState().toJSON()).toEqual(before)
+    editor.dispose()
+  }
+})

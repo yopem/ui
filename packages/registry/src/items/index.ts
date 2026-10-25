@@ -5,6 +5,7 @@ import { editorAssetsItem } from "@registry/items/editor-assets"
 import { editorAuthItem } from "@registry/items/editor-auth"
 import { editorAutoformatItem } from "@registry/items/editor-autoformat"
 import { editorBlockBehaviorItem } from "@registry/items/editor-block-behavior"
+import { editorBlockMenuItem } from "@registry/items/editor-block-menu"
 import { editorBlockPlaceholderItem } from "@registry/items/editor-block-placeholder"
 import { editorBlockSelectionItem } from "@registry/items/editor-block-selection"
 import { editorBlocksItem } from "@registry/items/editor-blocks"
@@ -72,6 +73,7 @@ export const sourceItems = [
   editorDocxItem,
   editorEditableCardItem,
   editorCopilotItem,
+  editorBlockMenuItem,
   editorListPresentationItem,
   editorLabelsItem,
   editorEditingRulesItem,

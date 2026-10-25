@@ -49,6 +49,7 @@ const completeEditorPreviews = new Map<
     ["./editor-examples/public-list-presentation.tsx"],
   ],
   ["editor-editable-card", ["./editor-examples/public-editable-voids.tsx"]],
+  ["editor-block-menu", ["./editor-examples/public-block-menu.tsx"]],
   ["editor-copilot", ["./editor-examples/public-copilot.tsx"]],
   ["editor-docx", ["./editor-examples/public-docx.tsx"]],
   ["editor-labels", ["./editor-examples/public-labels.tsx"]],

@@ -1,4 +1,5 @@
 import { editorAiParts } from "./editor-ai-parts"
+import { editorBlockMenuParts } from "./editor-block-menu-parts"
 import { editorBlockPlaceholderParts } from "./editor-block-placeholder-parts"
 import { editorBlockSelectionParts } from "./editor-block-selection-parts"
 import { editorCodeParts } from "./editor-code-parts"
@@ -244,6 +245,7 @@ export const editorParts = [
   ...editorDocxParts,
   ...editorEditableCardParts,
   ...editorCopilotParts,
+  ...editorBlockMenuParts,
   ...editorLabelsParts,
   ...editorListPresentationParts,
   ...editorReviewParts,

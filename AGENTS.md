@@ -927,3 +927,12 @@ Require explicit completion and clean EOF before acceptance. Invalidate stale do
 Automatic requests require host permission and user opt-in. They can incur charges.
 Keep host document policy, quota, provider credentials, and model selection on the server.
 Cancellation does not prove that billing stops. No default endpoint or model exists.
+
+## Optional block context actions
+
+Install `editor-block-menu` separately. Create one stable `createEditorBlockMenu` controller per root.
+Register its extension at root creation. Wrap `EditorContent` with `EditorBlockMenu` inside that root.
+Right-click a block or press Shift+F10. Keep native selection, clipboard policies, history, and host event cancellation.
+Configured `authorizeAction` must return literal `true`. Stale or pending document targets reject actions.
+Supply explicit `onAskAI` and `onCodeDrawing` callbacks when needed. These callbacks do not grant document access.
+No service or Add Comment action is supplied. The gallery omits unconfigured host actions and earns no full block-menu equivalence credit.

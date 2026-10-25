@@ -63,8 +63,8 @@ export interface EditorBlockMenuOptions {
     action: EditorBlockMenuAction,
     context: EditorBlockMenuContext,
   ) => boolean
-  onAskAI?: (context: EditorBlockMenuContext) => void
-  onCodeDrawing?: (context: EditorBlockMenuContext) => void
+  onAskAI?: (context: EditorBlockMenuContext) => void | Promise<void>
+  onCodeDrawing?: (context: EditorBlockMenuContext) => void | Promise<void>
 }
 
 export interface EditorBlockMenuSnapshot {
@@ -428,7 +428,7 @@ export function createEditorBlockMenu(options: EditorBlockMenuOptions = {}) {
       if (!options.onAskAI) return false
 
       try {
-        options.onAskAI(record.context)
+        await options.onAskAI(record.context)
 
         return true
       } catch {
@@ -440,7 +440,7 @@ export function createEditorBlockMenu(options: EditorBlockMenuOptions = {}) {
       if (!options.onCodeDrawing) return false
 
       try {
-        options.onCodeDrawing(record.context)
+        await options.onCodeDrawing(record.context)
 
         return true
       } catch {

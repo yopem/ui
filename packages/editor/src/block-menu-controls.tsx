@@ -40,7 +40,8 @@ function EditorBlockMenuItem({
 }) {
   const [activate] = useState(
     () =>
-      function activate() {
+      function activate(event: ReactMouseEvent) {
+        if (event.defaultPrevented) return
         void controller.run(action)
       },
   )

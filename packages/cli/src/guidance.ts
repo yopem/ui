@@ -83,6 +83,11 @@ Use the pure \`search-model\` module outside React. Preserve host input cancella
 Install optional \`editor-floating-toolbar\` separately. Compose \`EditorFloatingToolbar\` inside \`EditorRoot\` beside \`EditorContent\`.
 Use existing controls as children. Select native text, then use Alt+F10 to focus the toolbar. Escape returns keyboard focus.
 Preserve the saved-range guard. Content changes and read-only transitions invalidate the target.
+Install optional \`editor-block-menu\` separately. Import from \`${imports.editor}/block-menu-index\`.
+Create one stable controller per root. Register its extension and wrap \`EditorContent\` with \`EditorBlockMenu\`.
+Right-click or press Shift+F10. Configured action policy must return literal true; stale targets reject.
+Supply explicit Ask AI and Code Drawing callbacks. No default service or Add Comment action is supplied.
+Callbacks do not grant document access. Preserve native selection, clipboard policies, history, and host event cancellation.
 Install optional \`editor-copilot\` separately. Import \`EditorCopilot\` from \`${imports.editor}/copilot\`.
 Render inside \`EditorRoot\` with a stable same-origin endpoint, document ID, and current authentication and CSRF headers.
 Control+Space requests a paragraph-end completion. Tab accepts completed text; Mod+Right accepts one grapheme. Escape cancels.

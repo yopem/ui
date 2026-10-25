@@ -1461,3 +1461,16 @@ user opt-in. These requests can incur charges. Your server controls document
 policy, quota, credentials, and model selection. Cancellation does not prove
 billing stops. No endpoint or model is provided. Runtime, provider, focus, and
 accessibility checks remain deferred.
+
+## Block context actions
+
+Install `editor-block-menu` separately. Create one stable
+`createEditorBlockMenu` controller per root. Register its extension before
+wrapping `EditorContent` with `EditorBlockMenu`. Open with right-click or
+Shift+F10. Use native copy, duplicate, delete, block type, indentation, and
+alignment actions. Configured action policy must return literal `true`. Stale or
+pending document targets reject actions. Supply Ask AI and Code Drawing
+callbacks when needed. Authorize these operations separately on your server. No
+service or Add Comment action is supplied. The gallery omits unconfigured host
+actions. Full pinned block-menu equivalence and native runtime acceptance remain
+incomplete.
