@@ -105,6 +105,7 @@
   },
   "dependencies": {
     "@base-ui/react": "catalog:",
+    "@excalidraw/excalidraw": "^0.18.1",
     "@hpcc-js/wasm-graphviz": "^1.30.0",
     "@lexical/clipboard": "catalog:",
     "@lexical/code": "catalog:",
