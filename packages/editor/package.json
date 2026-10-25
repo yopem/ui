@@ -102,7 +102,9 @@
     "./word-clipboard": "./src/word-clipboard.ts",
     "./word-clipboard-model": "./src/word-clipboard-model.ts",
     "./cursor-overlay": "./src/cursor-overlay.tsx",
-    "./cursor-overlay/store": "./src/cursor-overlay-store.ts"
+    "./cursor-overlay/store": "./src/cursor-overlay-store.ts",
+    "./drawing": "./src/drawing.ts",
+    "./drawing/model": "./src/drawing-model.ts"
   },
   "scripts": {
     "typecheck": "tsc --noEmit"
