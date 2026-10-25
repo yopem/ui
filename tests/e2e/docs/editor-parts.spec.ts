@@ -50,6 +50,14 @@ for (const part of editorParts.filter(
         preview.getByRole("button", { name: "Connect to host", exact: true }),
       ).toBeVisible()
       await expect(preview.locator('[contenteditable="true"]')).toHaveCount(0)
+    } else if (part.name === "EditorLabelsOption") {
+      await expect(
+        preview.getByRole("group", { name: "Custom label options" }),
+      ).toBeVisible()
+      await expect(
+        preview.getByRole("checkbox", { name: "Editor", exact: true }),
+      ).toBeChecked()
+      await expect(preview.locator('[contenteditable="true"]')).toHaveCount(0)
     } else if (part.name === "MediaContent") {
       await expect(
         preview.getByRole("img", { name: "Media preview", exact: true }),

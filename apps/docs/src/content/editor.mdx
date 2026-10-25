@@ -1342,3 +1342,33 @@ Other block and expanded-selection handlers remain native.
 
 This is not the Plate rule runtime. Native keyboard boundaries and history
 require deferred checks.
+
+## Native label tokens
+
+Install the optional label source. The package-manager switcher supplies all
+four supported commands.
+
+```sh
+bunx --bun @yopem-ui/cli add editor-labels
+```
+
+Create one stable `createEditorLabelsExtension(options)` per root. Use
+`EditorLabelsPicker` for the preset. Compose `EditorLabelsOption` inside house
+`CheckboxGroup` for custom rows.
+
+Options admit one through 64 unique bounded strings. A label document admits at
+most ten tokens. Apply the application minimum count separately. The example
+requires one through ten selections from eleven options.
+
+Call `$replaceEditorLabels` inside `editor.update`. Replacement fails when the
+paragraph contains unrelated content. Register `EditorLabelNode` in every
+reader. Import pure validation from `@/components/editor/labels-model`.
+
+Malformed metadata rejects. Unknown, duplicate, and excess valid tokens become
+ordinary text. Serialized labels do not grant access. Generic document
+conversion does not support these nodes.
+
+Native clipboard, normalization, history, read-only, source-copy, and
+accessibility validation remain deferred. See the
+[label picker](/editor/labels-picker) and [label option](/editor/labels-option)
+references.

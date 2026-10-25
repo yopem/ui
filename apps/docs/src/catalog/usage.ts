@@ -11,6 +11,19 @@ export function BlockBehaviorExample() {
   return <EditorRoot ariaLabel="Block behavior" extensions={extensions}><EditorContent /></EditorRoot>
 }`,
 
+  "editor-labels": `"use client"
+
+import { EditorLabelsPicker } from "@/components/editor/labels"
+import { useState } from "react"
+
+const options = ["Editor", "Dialog", "Form"]
+
+export function LabelOptionsExample() {
+  const [value, setValue] = useState<readonly string[]>([])
+
+  return <EditorLabelsPicker aria-label="Available labels" options={options} value={value} onValueChange={setValue} />
+}
+`,
   "editor-autoformat": `"use client"
 
 import { EditorContent, EditorRoot } from "@/components/editor"

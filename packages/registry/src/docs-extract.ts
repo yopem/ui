@@ -486,6 +486,7 @@ export function extractDocs() {
           /\.tsx?$/.test(file.path) &&
           ([
             "editor-columns",
+            "editor-labels",
             "editor-date",
             "editor-collaboration",
             "editor-media",

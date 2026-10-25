@@ -73,7 +73,10 @@
     "./editing-rules": "./src/editing-rules.ts",
     "./block-placeholder": "./src/block-placeholder.tsx",
     "./autoformat": "./src/autoformat.ts",
-    "./block-behavior": "./src/block-behavior.ts"
+    "./block-behavior": "./src/block-behavior.ts",
+    "./labels": "./src/labels.ts",
+    "./labels/model": "./src/labels-model.ts",
+    "./labels/node": "./src/labels-node.ts"
   },
   "scripts": {
     "typecheck": "tsc --noEmit"

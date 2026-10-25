@@ -16,6 +16,12 @@ const usageNoteValues = {
     "The handler uses LOW priority. Higher-priority host handlers can preempt it. Read-only, composition, expanded selections, and other block types retain native handlers.",
     "This is not a replacement rule engine. Native nested quote, list, code, link, void, history, and arrow-affinity behavior remain runtime-unverified.",
   ],
+  "editor-labels": [
+    "Create a stable labels extension with one through 64 unique bounded options. Label editors admit up to ten tokens. Apply the host minimum count separately.",
+    "Replace only a label-only paragraph. Existing unrelated content makes replacement fail without removal. Unknown, duplicate, and excess valid tokens become text; malformed token metadata rejects.",
+    "Use EditorLabelsPicker as the checkbox preset. Compose EditorLabelsOption inside CheckboxGroup for custom options. Register EditorLabelNode in every reader. Pure codecs do not validate complete documents or grant access.",
+    "Generic document conversion does not support label tokens. Native clipboard, normalization, history, read-only behavior, and reader validation remain runtime-unverified.",
+  ],
   "editor-autoformat": [
     "Register EditorAutoformatExtension in the stable root extension array. It adds non-base transformers without duplicating the base Markdown registration.",
     "Type [ ] plus Space for a checklist, two through six > prefixes plus Space for nested quotes, and --- plus Enter for a horizontal rule. Text rules include smart quotes, arrows, comparisons, legal symbols, fractions, and Unicode script characters.",

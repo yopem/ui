@@ -865,3 +865,15 @@ Collapsed heading Enter makes the new half a paragraph. Converted nodes retain s
 The command uses LOW priority. Higher-priority host policies can preempt it.
 Other blocks, composition, read-only roots, and expanded selections keep native handlers.
 This is not the Plate rule runtime. Native boundary, metadata, and history checks remain deferred.
+
+
+## Optional editor labels
+
+Install `editor-labels` separately. Create a stable `createEditorLabelsExtension(options)` per root.
+Use `EditorLabelsPicker` for the preset or compose `EditorLabelsOption` inside `CheckboxGroup`.
+Options admit one through 64 unique bounded strings. Tokens admit at most ten labels.
+Apply application minimum counts in the host form. Replace only a label-only paragraph.
+Register `EditorLabelNode` in each reader. Use `labels-model` for pure validation.
+Malformed node metadata rejects. Unknown, duplicate, and excess valid tokens become text.
+Label identities do not grant access. Generic document conversion remains unsupported.
+Native clipboard, normalization, history, read-only, and accessibility checks are deferred.

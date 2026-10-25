@@ -860,3 +860,14 @@ Register it in a stable root extension array. Collapsed heading Enter makes the
 new half a paragraph. Higher-priority host handlers can preempt the LOW-priority
 rule. Other native handlers remain unchanged. Validate metadata, selection,
 composition, history, and nested contexts before production use.
+
+### Native label tokens
+
+Install optional `editor-labels`. Import parts from
+`@/components/editor/labels`. Keep `createEditorLabelsExtension(options)` stable
+for the root. Compose the picker or house CheckboxGroup options. Use one through
+64 unique options and at most ten tokens. Apply host minimum counts separately.
+Replace only label-only content. Register EditorLabelNode in each reader. Use
+labels-model for pure validation. Invalid node metadata rejects. Unknown,
+duplicate, and excess valid tokens become plain text. Labels grant no access.
+Generic document conversion does not support these nodes.

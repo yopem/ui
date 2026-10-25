@@ -171,6 +171,7 @@ export function createComponentDocs(
                         : [
                               "editor-code",
                               "editor-columns",
+                              "editor-labels",
                               "editor-date",
                               "editor-review",
                               "editor-collaboration",

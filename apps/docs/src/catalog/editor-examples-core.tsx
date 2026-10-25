@@ -44,6 +44,7 @@ import {
   MultipleEditorsExample,
 } from "./editor-examples/public-hosts"
 import { PublicIframeExample } from "./editor-examples/public-iframe"
+import { PublicLabelsExample } from "./editor-examples/public-labels"
 import { PublicNativeEditingExample } from "./editor-examples/public-native-editing"
 import { PublicPersistedExample } from "./editor-examples/public-persisted"
 import { PublicPlaceholderExample } from "./editor-examples/public-placeholder"
@@ -432,6 +433,28 @@ const examples = [
       "Apply selected-block alignment, text and background colors, indentation, and line height. Save and reload styled native JSON and HTML.",
     limits:
       "These controls use native Lexical state. Saved roundtrips stay in local component memory and are not host persistence. Public-example behavior remains unverified.",
+  },
+  {
+    slug: "public-labels",
+    sourceFile: "public-labels",
+    workflowIds: ["select-editor"],
+    title: "Validated native label-token editor",
+    Component: PublicLabelsExample,
+    items: [
+      "editor-labels",
+      "box",
+      "button",
+      "checkbox-group",
+      "fieldset",
+      "form",
+      "hstack",
+      "stack",
+      "text",
+    ],
+    description:
+      "Choose eleven fixed label options, validate one through ten selections, replace only label-only content, and switch between editable and read-only controls.",
+    limits:
+      "The pure codec permits an empty selection; the form applies its one-label minimum. Host options are fixed per mount. Label identities do not grant access. Generic document conversion is unsupported. Native clipboard, normalization, source closure, history, and accessibility remain untested.",
   },
   {
     slug: "public-iframe",

@@ -83,6 +83,10 @@ Use the pure \`search-model\` module outside React. Preserve host input cancella
 Install optional \`editor-floating-toolbar\` separately. Compose \`EditorFloatingToolbar\` inside \`EditorRoot\` beside \`EditorContent\`.
 Use existing controls as children. Select native text, then use Alt+F10 to focus the toolbar. Escape returns keyboard focus.
 Preserve the saved-range guard. Content changes and read-only transitions invalidate the target.
+Install optional \`editor-labels\` separately. Import the controls and stable \`createEditorLabelsExtension\` from \`${imports.editor}/labels\`.
+Use \`EditorLabelsPicker\` or compose \`EditorLabelsOption\` inside house \`CheckboxGroup\`. Admit one through 64 unique bounded options and at most ten tokens.
+Apply minimum counts in the host form. Replace only label-only content. Register \`EditorLabelNode\` in each reader and use \`${imports.editor}/labels-model\` for pure validation.
+Invalid node metadata rejects; unknown, duplicate, and excess valid tokens become text. Labels grant no access. Generic document conversion does not support them.
 Install optional \`editor-block-behavior\` separately. Import \`EditorBlockBehaviorExtension\` from \`${imports.editor}/block-behavior\`.
 Keep its extensions array stable. Collapsed heading Enter makes the new half a paragraph.
 Preserve higher-priority host policy, native selection, NodeState, composition, and history. Other block handlers stay native.
