@@ -31,6 +31,7 @@ import {
 } from "@registry/items/editor-diagram-renderers"
 import { editorDocumentItem } from "@registry/items/editor-document"
 import { editorDocxItem } from "@registry/items/editor-docx"
+import { editorDrawingItem } from "@registry/items/editor-drawing"
 import { editorEditableCardItem } from "@registry/items/editor-editable-card"
 import { editorEditingRulesItem } from "@registry/items/editor-editing-rules"
 import { editorFloatingToolbarItem } from "@registry/items/editor-floating-toolbar"
@@ -79,6 +80,7 @@ export const sourceItems = [
   editorCsvItem,
   editorWordClipboardItem,
   editorCursorOverlayItem,
+  editorDrawingItem,
   editorSearchItem,
   editorFloatingToolbarItem,
   editorAutoformatItem,

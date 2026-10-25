@@ -1,5 +1,14 @@
 // These notes describe Yopem's composition choices, not only the upstream types.
 const usageNoteValues = {
+  "editor-drawing": [
+    "Register EditorDrawingExtension in a stable root array. Load the separate browser entry and SDK stylesheet only in a browser boundary.",
+    "Serve the installed SDK fonts from an approved same-origin asset directory. Preserve upstream font and SDK notices and restrict font resources through CSP.",
+    "Register one runtime per editor and run its cleanup. Concurrent runtimes must use the same asset path; owned cleanup restores the previous path.",
+    "Scenes reject files, images, links, custom metadata and unsupported elements. Apply replaces one drawing node; cancellation leaves its saved scene unchanged.",
+    "SVG output requires bounded scene validation and shared SVG sanitization. Missing assets, SDK support and rejected exports produce errors instead of unverified downloads.",
+    "Audit the SDK and its transitive dependencies before release. Runtime, CSP, fonts, export, clipboard and accessibility acceptance remain deferred.",
+    "Generic editor-document conversion does not support drawing nodes. Source presence does not establish the complete mapped Excalidraw workflow.",
+  ],
   "editor-cursor-overlay": [
     "Compose EditorCursorOverlay inside EditorRoot beside EditorContent. Paint stays outside saved document state and uses the root owner document.",
     "Native drag and drop remain unchanged. Document changes and read-only transitions clear selection and caret paint.",
