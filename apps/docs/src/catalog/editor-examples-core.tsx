@@ -35,6 +35,7 @@ import {
   ControlledEditorExample,
   MultipleEditorsExample,
 } from "./editor-examples/public-hosts"
+import { PublicStylesExample } from "./editor-examples/public-styles"
 
 const sources = import.meta.glob<string>("./editor-examples/*.tsx", {
   query: "?raw",
@@ -210,6 +211,18 @@ const examples = [
       "History stays in memory and holds at most 20 snapshots, each within 1 MiB and 200 top-level blocks. Long or multiline text uses whole-block differences. No server history is configured.",
   },
   {
+    slug: "public-styles",
+    sourceFile: "public-styles",
+    workflowIds: ["text-align", "font", "indent", "line-height"],
+    title: "Text and block presentation",
+    Component: PublicStylesExample,
+    items: ["editor"],
+    description:
+      "Apply selected-block alignment, text and background colors, indentation, and line height. Save and reload styled native JSON and HTML.",
+    limits:
+      "These controls use native Lexical state. Saved roundtrips stay in local component memory and are not host persistence. Public-example behavior remains unverified.",
+  },
+  {
     slug: "csv",
     sourceFile: "public-csv",
     title: "CSV clipboard tables",
@@ -245,6 +258,8 @@ export function getCoreEditorExampleSource(slug: string) {
 
   return {
     slug: example.slug,
+    workflowIds:
+      "workflowIds" in example ? [...example.workflowIds] : [example.slug],
     title: example.title,
     installNames: [...example.items],
     filename: `${sourceFile}.tsx`,
@@ -255,13 +270,15 @@ export function getCoreEditorExampleSource(slug: string) {
 }
 
 export function getCoreEditorExamples() {
-  return examples.map(({ slug, title, description, limits, items }) => ({
-    slug,
-    title,
-    description,
-    limits,
-    installNames: [...items],
-    url: `/editor/examples#${slug}`,
+  return examples.map((example) => ({
+    slug: example.slug,
+    workflowIds:
+      "workflowIds" in example ? [...example.workflowIds] : [example.slug],
+    title: example.title,
+    description: example.description,
+    limits: example.limits,
+    installNames: [...example.items],
+    url: `/editor/examples#${example.slug}`,
   }))
 }
 
@@ -278,6 +295,7 @@ export function getCoreEditorExamplesMarkdown() {
         `## ${example.title}`,
         example.description,
         example.limits,
+        `Mapped workflows: ${example.workflowIds.join(", ")}`,
         `Required registry items: ${example.installNames.join(", ")}`,
         `\`\`\`tsx\n${documentation.source}\n\`\`\``,
       ].join("\n\n")
