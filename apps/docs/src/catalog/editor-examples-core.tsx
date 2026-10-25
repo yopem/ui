@@ -31,12 +31,14 @@ import { MathExample } from "./editor-examples/math-example"
 import { MediaExample } from "./editor-examples/media-example"
 import { PublicBlocksExample } from "./editor-examples/public-blocks"
 import { CsvEditorExample } from "./editor-examples/public-csv"
+import { PublicFootnotesExample } from "./editor-examples/public-footnotes"
 import { VersionHistoryExample } from "./editor-examples/public-history"
 import {
   ControlledEditorExample,
   MultipleEditorsExample,
 } from "./editor-examples/public-hosts"
 import { PublicStylesExample } from "./editor-examples/public-styles"
+import { PublicTocExample } from "./editor-examples/public-toc"
 
 const sources = import.meta.glob<string>("./editor-examples/*.tsx", {
   query: "?raw",
@@ -210,6 +212,30 @@ const examples = [
       "Save immutable snapshots. Inspect an earlier revision without changing the current document. Compare inserted, removed, and updated blocks and text.",
     limits:
       "History stays in memory and holds at most 20 snapshots, each within 1 MiB and 200 top-level blocks. Long or multiline text uses whole-block differences. No server history is configured.",
+  },
+  {
+    slug: "public-footnotes",
+    sourceFile: "public-footnotes",
+    workflowIds: ["footnote"],
+    title: "Rich footnotes and backlinks",
+    Component: PublicFootnotesExample,
+    items: ["editor-footnotes"],
+    description:
+      "Edit rich definitions, insert repeated references, inspect unresolved and duplicate identifiers, and return through backlinks.",
+    limits:
+      "References use fixed local identifiers, not host citations. Generic document converters do not support footnote nodes. Browser and clipboard acceptance remain unverified.",
+  },
+  {
+    slug: "public-toc",
+    sourceFile: "public-toc",
+    workflowIds: ["toc"],
+    title: "Live table of contents",
+    Component: PublicTocExample,
+    items: ["editor-toc"],
+    description:
+      "Insert a live heading overview, edit headings, navigate within the editor, and export HTML with matching anchor IDs.",
+    limits:
+      "TOC entries derive from current native headings. Generic document converters do not support TOC nodes. Export and focus workflows remain unverified.",
   },
   {
     slug: "public-blocks",
