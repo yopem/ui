@@ -1,7 +1,7 @@
 import { $createCodeNode, type CodeNode } from "@lexical/code"
 import { $createTextNode, $getState, $setState, createState } from "lexical"
 
-import { $getSelectedCode } from "./code-model"
+import { $getSelectedCode } from "./code-selection"
 import {
   createEditorDiagramMetadata,
   editorDiagramStateSchema,

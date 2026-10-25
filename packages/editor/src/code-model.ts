@@ -16,6 +16,9 @@ import {
 } from "lexical"
 
 import "./code-languages"
+import { $getSelectedCode } from "./code-selection"
+
+export { $getSelectedCode } from "./code-selection"
 
 export interface EditorCodeFormatter {
   supports(language: string): boolean
@@ -33,18 +36,6 @@ export const codeLineNumbersState = createState("codeLineNumbers", {
 export const editorCodeLanguages = getCodeLanguages()
   .filter((value) => value !== "markup-templating")
   .map((value) => ({ value, label: getLanguageFriendlyName(value) }))
-
-export function $getSelectedCode() {
-  const selection = $getSelection()
-
-  if (!$isRangeSelection(selection)) return null
-  const anchor = selection.anchor.getNode()
-  const focus = selection.focus.getNode()
-  const code = $isCodeNode(anchor) ? anchor : anchor.getParent()
-  const end = $isCodeNode(focus) ? focus : focus.getParent()
-
-  return $isCodeNode(code) && code === end ? code : null
-}
 
 export interface EditorCodeSnapshot {
   readonly key: string

@@ -19,6 +19,7 @@ export const editorCodeItem: SourceItem = {
   files: [
     "code.ts",
     "code-model.ts",
+    "code-selection.ts",
     "code-extension.ts",
     "code-controls.tsx",
     "code-editor.tsx",
