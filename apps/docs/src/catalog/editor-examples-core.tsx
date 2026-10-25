@@ -44,6 +44,7 @@ import { PublicDocumentExamples } from "./editor-examples/public-document"
 import { PublicDocxExample } from "./editor-examples/public-docx"
 import { PublicEditableVoidsExample } from "./editor-examples/public-editable-voids"
 import { PublicEditingRulesExample } from "./editor-examples/public-editing-rules"
+import { PublicExternalPreviewsExample } from "./editor-examples/public-external-previews"
 import { PublicFloatingToolbarExample } from "./editor-examples/public-floating-toolbar"
 import { PublicFootnotesExample } from "./editor-examples/public-footnotes"
 import { VersionHistoryExample } from "./editor-examples/public-history"
@@ -592,6 +593,18 @@ const examples = [
       "Choose eleven fixed label options, validate one through ten selections, replace only label-only content, and switch between editable and read-only controls.",
     limits:
       "The pure codec permits an empty selection; the form applies its one-label minimum. Host options are fixed per mount. Label identities do not grant access. Generic document conversion is unsupported. Native clipboard, normalization, source closure, history, and accessibility remain untested.",
+  },
+  {
+    slug: "public-external-previews",
+    sourceFile: "public-external-previews",
+    workflowIds: ["potion-iframe", "pro-iframe", "image-pro"],
+    title: "Opt-in public external preview shells",
+    Component: PublicExternalPreviewsExample,
+    items: ["box", "button", "heading", "input", "stack", "text"],
+    description:
+      "Load the public Potion and Pro iframe wrappers only after explicit consent. Use a bounded Pro example ID and remove each frame separately.",
+    limits:
+      "These wrappers embed third-party applications, not Lexical replacements or copied commercial source. Requests expose browser metadata. The sandbox, host CSP, and service framing policies can block functionality. Only public wrapper source receives coverage; live-service and accessibility checks are deferred.",
   },
   {
     slug: "public-iframe",
