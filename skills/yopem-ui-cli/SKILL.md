@@ -545,6 +545,43 @@ History has a fixed bound and no automatic compaction. Do not replay uncertain
 offline drafts. Do not claim runtime or deployment validation from source
 publication. See https://ui.yopem.com/docs/editor-collaboration.
 
+### Native collaboration grants
+
+Install `editor-collaboration-grants` in a separate one-item command:
+
+```sh
+bunx --bun @yopem-ui/cli add editor-collaboration-grants
+npx @yopem-ui/cli add editor-collaboration-grants
+pnpm dlx @yopem-ui/cli add editor-collaboration-grants
+yarn dlx @yopem-ui/cli add editor-collaboration-grants
+```
+
+This server-only item copies `collaboration-native-grants.ts` and
+`collaboration-native-model.ts` under `@/lib/editor-collaboration`. It depends
+on `editor-auth`, `editor-store`, and manifest-derived `zod`. It does not
+install native collaboration SDKs.
+
+Use `createEditorNativeGrantsHttpHandler` on the server. Configure one exact
+trusted HTTPS origin and POST path. Require the exact `Origin` header, existing
+authentication with verified `credentialExpiresAt`, CSRF approval, and literal
+`true` from the current room policy. Preserve opaque `userId` bytes.
+
+The handler reads one bounded request body. It gives callbacks isolated copies
+of the exact bytes. The provision callback receives a bounded copy of the
+current request, signal, and deadline. Noncooperative callbacks keep capacity
+until they settle.
+
+Provision the authoritative room seed once. Bind each grant to the exact room,
+generation, permission, and identity. Keep expiry within five minutes and at or
+below `maximumCredentialExpiresAt`. Verify Hocuspocus credentials against
+current host state. Returned `seeded` metadata does not prove durable seeding or
+scope enforcement.
+
+Issue peer credentials only to writers. Configure trusted WSS signaling and a
+nine-peer limit. Native Hocuspocus and WebRTC provide no `editor-v1` ACKs,
+per-frame host authorization, atomic revocation, or durability proof from sync.
+No account, ACL, endpoint, model, or token service is included.
+
 ## Editor style composition
 
 Import editor parts from `@/components/editor` after editor installation. Keep

@@ -152,6 +152,74 @@ online generation rotation is supplied. Do not replay offline drafts with
 uncertain durable outcomes. This source guide does not claim runtime or
 deployment validation.
 
+## Native collaboration grants
+
+Install the optional server-only registry source:
+
+```sh
+bunx --bun @yopem-ui/cli add editor-collaboration-grants
+npx @yopem-ui/cli add editor-collaboration-grants
+pnpm dlx @yopem-ui/cli add editor-collaboration-grants
+yarn dlx @yopem-ui/cli add editor-collaboration-grants
+```
+
+Import `createEditorNativeGrantsHttpHandler` and `EditorNativeGrantsHttpOptions`
+from `@/lib/editor-collaboration/collaboration-native-grants`. Import pure
+codecs from `@/lib/editor-collaboration/collaboration-native-model`.
+
+Use host-owned callback implementations. The host module below is not supplied.
+This composition shape does not create authentication, a room seed, or an
+endpoint by itself.
+
+```ts
+import type { EditorNativeGrantsHttpOptions } from "@/lib/editor-collaboration/collaboration-native-grants"
+
+import { createEditorNativeGrantsHttpHandler } from "@/lib/editor-collaboration/collaboration-native-grants"
+
+import {
+  authenticateExistingRequest,
+  authorizeNativeRoom,
+  hostTrustedOrigin,
+  provisionNativeRoomGrant,
+  verifyCsrfForRequest,
+} from "./native-grant-host"
+
+const options = {
+  origin: hostTrustedOrigin,
+  path: "/api/editor/native-grants",
+  timeoutMs: 5000,
+  maxConcurrent: 8,
+  authenticate: authenticateExistingRequest,
+  policy: authorizeNativeRoom,
+  verifyCsrf: verifyCsrfForRequest,
+  provision: provisionNativeRoomGrant,
+} satisfies EditorNativeGrantsHttpOptions
+
+export const nativeGrantHandler = createEditorNativeGrantsHttpHandler(options)
+```
+
+Use one exact trusted HTTPS origin, POST path, and matching `Origin` header.
+Require verified `credentialExpiresAt` from existing authentication. Require
+CSRF approval and literal `true` from the current room policy. Preserve opaque
+`userId` bytes without normalization.
+
+The handler reads one bounded request body. It gives each callback an isolated
+copy of the exact bounded bytes. The provision callback receives a bounded copy
+of the current request, signal, and deadline. Noncooperative callbacks keep
+capacity until they settle.
+
+Initialize each room once from authoritative host state. Bind every credential
+to the exact room, generation, permission, and identity. Keep expiry within five
+minutes and at or below `maximumCredentialExpiresAt`. Verify each Hocuspocus
+credential against current host state. Returned `seeded` metadata does not prove
+durable seeding or scope enforcement.
+
+Issue peer credentials only to writers. Configure explicit trusted WSS signaling
+and a nine-peer limit. Native Hocuspocus and WebRTC provide no `editor-v1`
+acknowledgements, per-frame host authorization, atomic revocation, or durability
+proof from sync. This item adds no account, ACL, endpoint, model, or token
+service.
+
 ## Server AI core
 
 The server AI module provides OpenAI, Anthropic, and Workers AI adapters. Keep

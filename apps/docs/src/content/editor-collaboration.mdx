@@ -2,8 +2,8 @@
 
 Use optional collaboration source with an existing authenticated host
 application. Choose Durable Objects with D1 or PostgreSQL with a Bun or Node
-adapter. This guide describes source contracts only. It does not confirm
-runtime or deployment validation.
+adapter. This guide describes source contracts only. It does not confirm runtime
+or deployment validation.
 
 The client uses native Lexical Yjs bindings, per-client history, and remote
 cursors. Its custom `editor-v1` protocol uses binary document frames and bounded
@@ -42,18 +42,16 @@ bunx --bun @yopem-ui/cli add editor-collaboration-worker
 ```
 
 Install the Worker item only for Durable Objects. Import
-`EditorCollaborationRoom` from
-`@/lib/editor-collaboration/collaboration-do` in Workers only. Keep Worker types
-in the Worker compiler target. Do not import this entry into Node, Bun, or
-browser bundles.
+`EditorCollaborationRoom` from `@/lib/editor-collaboration/collaboration-do` in
+Workers only. Keep Worker types in the Worker compiler target. Do not import
+this entry into Node, Bun, or browser bundles.
 
 ```sh
 bunx --bun @yopem-ui/cli add editor-collaboration-bun
 ```
 
-Install the Bun item only for Bun. Import
-`createBunEditorCollaborationService` from
-`@/lib/editor-collaboration/collaboration-bun`. It returns `fetch` and
+Install the Bun item only for Bun. Import `createBunEditorCollaborationService`
+from `@/lib/editor-collaboration/collaboration-bun`. It returns `fetch` and
 `websocket` options for `Bun.serve`. Pass both handlers to `Bun.serve` with
 host-owned TLS and connection limits.
 
@@ -67,8 +65,9 @@ Install the Node item only for Node. Import
 and a `close` function. Bind the server to a private interface behind a trusted
 HTTPS/WSS proxy. Do not expose its cleartext listener to untrusted networks.
 
-The Worker, Bun, and Node items include the server item as a registry dependency.
-Keep all runtime-specific imports out of browser and generic server barrels.
+The Worker, Bun, and Node items include the server item as a registry
+dependency. Keep all runtime-specific imports out of browser and generic server
+barrels.
 
 ## Supply host authorization
 
@@ -98,8 +97,8 @@ upgrade response. Do not echo the ticket.
 Implement `revalidate` with current authentication, verified expiry, document
 generation, and current document policy. Run recipient checks before outbound
 delivery, not only when a sender connects. Keep these callbacks abort-aware and
-bounded. Recipient checks do not make revocation atomic with database commits
-or sends. Use a separate host fence when immediate revocation must be atomic.
+bounded. Recipient checks do not make revocation atomic with database commits or
+sends. Use a separate host fence when immediate revocation must be atomic.
 
 ## Create a schema-complete initializer
 
@@ -107,8 +106,8 @@ Use `createEditorCollaborationInitializer({ createEditor, validateState })`.
 `createEditor(schemaVersion)` must return a headless `LexicalEditorWithDispose`
 with the complete supported node schema. Use `buildEditorFromExtensions` with
 `HeadlessExtension` and host node extensions. Keep its native `dispose` cleanup.
-Use the same node classes, replacements, custom NodeState, and schema version
-as the browser document. Install the host headless editor dependencies explicitly.
+Use the same node classes, replacements, custom NodeState, and schema version as
+the browser document. Install the host headless editor dependencies explicitly.
 
 `validateState(state, schemaVersion)` must validate the complete document before
 promotion. An object check or root-envelope check is insufficient. Reject
@@ -335,3 +334,99 @@ revocation, and uncertain delivery. Check recovery after process loss and failed
 promotion acknowledgements. Check copied-source closure, worker isolation,
 accessibility, and production output. These checks remain required; this guide
 is not runtime evidence.
+
+## Native Hocuspocus and WebRTC
+
+Use native providers separately from the custom `editor-v1` service. Keep
+credentials in memory. Store only the selected room ID.
+
+```sh
+bunx --bun @yopem-ui/cli add editor-collaboration-native
+```
+
+Import `createEditorNativeCollaboration` from
+`@/components/editor/collaboration-native` in browser code. Connect it through
+`createEditorCollaborationWithProvider` from the ordinary collaboration entry.
+Supply an explicit HTTPS grant URL and a trusted WSS socket URL. Use the same
+trusted origin for the grant and socket URLs. Supply explicit trusted WSS
+signaling URLs before enabling WebRTC. No default signaling service is
+configured.
+
+The provider requires a grant for the exact room and generation. It stages the
+authoritative Hocuspocus state before peer synchronization. The host must
+initialize the canonical room once, with a complete Lexical schema. Browser
+content must not become an implicit initial seed.
+
+Native grants expire after at most five minutes. Their expiry must not exceed
+the verified authentication expiry. Read-only grants must not contain peer
+credentials. WebRTC requires trusted writers and uses at most nine connections.
+The host must verify each credential, room, generation, permission, and expiry.
+
+### Publish the grant endpoint
+
+Install the portable server handler separately.
+
+```sh
+bunx --bun @yopem-ui/cli add editor-collaboration-grants
+```
+
+This item copies the handler and pure model, without browser or native SDK
+imports. Keep both copied modules on the server.
+
+```ts
+import { createEditorNativeGrantsHttpHandler } from "@/lib/editor-collaboration/collaboration-native-grants"
+import {
+  authenticateEditor,
+  documentPolicy,
+  provisionNativeRoom,
+  verifyEditorCsrf,
+} from "@/server/editor-host"
+
+export const nativeGrants = createEditorNativeGrantsHttpHandler({
+  origin: "https://app.example.com",
+  path: "/native-collaboration/grants",
+  timeoutMs: 10000,
+  maxConcurrent: 16,
+  authenticate: authenticateEditor,
+  policy: documentPolicy,
+  verifyCsrf: verifyEditorCsrf,
+  provision: provisionNativeRoom,
+})
+```
+
+The `@/server/editor-host` module is host code, not supplied source. Forward the
+original `Request` to `nativeGrants` from the configured POST route. Reuse the
+handler instance so its capacity limit stays active. Supply existing OpenAuth or
+Better Auth authentication with verified expiry. Approve CSRF and each document
+action with literal `true`. Preserve opaque identity provider and user ID values
+exactly.
+
+`provision` receives the verified identity, requested permission, cancellation
+signal, and effective deadline. It also receives the maximum permitted
+credential expiry. Return the authoritative generation, seed confirmation, and
+matching scoped credentials. Do not treat returned metadata as proof that the
+external server enforces those scopes. The Hocuspocus host must enforce them
+during authentication and document access. The peer host must control writer
+membership, awareness identity, and shared credential rotation.
+
+The handler reads the bounded request body once. Each host callback receives the
+same body bytes and linked cancellation signal. The effective deadline shortens
+when verified authentication expires. Callbacks that ignore cancellation retain
+capacity until they settle. Dispatched host work can have an uncertain outcome
+after cancellation.
+
+### Native transport limits
+
+Hocuspocus synchronization confirms a handshake, not durable storage. WebRTC
+discovery does not prove that a peer is connected. Native providers do not use
+`editor-v1` durable acknowledgements. They do not provide per-frame host
+authorization or atomic revocation. The host must bound frames, decoder work,
+awareness, storage, and connection resources. It must supply signaling, ICE
+policy, durable storage, TLS, and server-side revocation.
+
+Changing rooms must unmount the old roots before destroying their providers.
+Keep host read-only state separate from current provider write permission.
+Destroy providers and their owned documents during host cleanup. Check
+reconnect, expiry, room changes, separate identities, and disposal with the real
+selected services. These native workflows remain unverified under the current
+execution pause.

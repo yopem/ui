@@ -30,6 +30,9 @@ export function resolveSourcePath(path: string) {
   if (path === "lib/editor-auth/index.ts")
     return resolve(root, "../../editor/src/server/auth-index.ts")
 
+  if (path === "lib/editor-collaboration/collaboration-native-model.ts")
+    return resolve(root, "../../editor/src/collaboration-native-model.ts")
+
   if (path.startsWith("lib/editor-collaboration/"))
     return resolve(
       root,

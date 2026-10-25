@@ -14,6 +14,7 @@ import { editorCodeItem } from "@registry/items/editor-code"
 import { editorCodeFormatItem } from "@registry/items/editor-code-format"
 import { editorCollaborationItem } from "@registry/items/editor-collaboration"
 import { editorCollaborationBunItem } from "@registry/items/editor-collaboration-bun"
+import { editorCollaborationGrantsItem } from "@registry/items/editor-collaboration-grants"
 import { editorCollaborationNativeItem } from "@registry/items/editor-collaboration-native"
 import { editorCollaborationNodeItem } from "@registry/items/editor-collaboration-node"
 import { editorCollaborationServerItem } from "@registry/items/editor-collaboration-server"
@@ -68,6 +69,7 @@ export const sourceItems = [
   editorMediaItem,
   editorCollaborationItem,
   editorCollaborationBunItem,
+  editorCollaborationGrantsItem,
   editorCollaborationNativeItem,
   editorCollaborationNodeItem,
   editorCollaborationServerItem,

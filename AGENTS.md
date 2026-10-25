@@ -576,6 +576,44 @@ revocation atomic with database writes. Keep history bounded to 256 updates and
 drafts automatically. These source contracts do not establish runtime or
 deployment validation.
 
+### Native collaboration grants
+
+Install `editor-collaboration-grants` separately:
+
+```sh
+bunx --bun @yopem-ui/cli add editor-collaboration-grants
+npx @yopem-ui/cli add editor-collaboration-grants
+pnpm dlx @yopem-ui/cli add editor-collaboration-grants
+yarn dlx @yopem-ui/cli add editor-collaboration-grants
+```
+
+Import `createEditorNativeGrantsHttpHandler` and its option type from
+`@/lib/editor-collaboration/collaboration-native-grants` on the server only.
+Import pure grant codecs from
+`@/lib/editor-collaboration/collaboration-native-model`.
+
+Configure one exact trusted HTTPS origin and POST path. Require the exact
+`Origin` header. Reuse host authentication and require verified
+`credentialExpiresAt`, CSRF approval, and literal `true` from the current
+room policy. Preserve opaque `userId` bytes without normalization.
+
+The host provision callback receives a bounded copy of the current `Request`,
+its signal, and deadline. The handler reads the body once and gives each callback
+an isolated copy of the exact bounded bytes. Noncooperative callbacks keep
+capacity until they settle.
+
+Initialize each room once from authoritative host state. Bind each credential
+to the exact room, generation, permission, and identity. Keep expiry within
+five minutes and at or below `maximumCredentialExpiresAt`. Verify each
+Hocuspocus credential against current host state. Returned
+`seeded` metadata does not prove durable seeding or scope enforcement.
+
+Issue peer credentials only to writers. Configure explicit trusted WSS
+signaling and a nine-peer limit. Native Hocuspocus and WebRTC provide no
+`editor-v1` acknowledgements, per-frame host authorization, atomic revocation,
+or durability proof from sync. This item adds no account, ACL, endpoint, model,
+or token service.
+
 ## Optional editor blocks
 
 Register `EditorBlocksExtension` for native callouts and toggles.

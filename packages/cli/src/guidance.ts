@@ -543,6 +543,55 @@ Use the Node item only for Node. Import \`createNodeEditorCollaborationService\`
 
 Keep native runtime imports out of browser and generic server barrels. Reuse host authentication with verified expiry, exact HTTPS origin, CSRF checks, literal-true document policies, real SQL transactions, and a schema-complete initializer. Keep binary document frames and bounded text readiness, delivery, and ACK controls. Recipient rechecks do not make revocation atomic with database writes. History is bounded; no automatic compaction is supplied. Do not replay uncertain offline drafts. See https://ui.yopem.com/docs/editor-collaboration for protocol and deployment limits.
 
+### Native room grants
+
+Install the server-only source with one package manager:
+
+\`\`\`sh
+bunx --bun @yopem-ui/cli add editor-collaboration-grants
+npx @yopem-ui/cli add editor-collaboration-grants
+pnpm dlx @yopem-ui/cli add editor-collaboration-grants
+yarn dlx @yopem-ui/cli add editor-collaboration-grants
+\`\`\`
+
+Import \`createEditorNativeGrantsHttpHandler\` and \`EditorNativeGrantsHttpOptions\` from \`${imports.lib.replace(/\/stylex$/, "/editor-collaboration")}/collaboration-native-grants\` on the server only. Import pure grant codecs from \`${imports.lib.replace(/\/stylex$/, "/editor-collaboration")}/collaboration-native-model\`.
+
+\`\`\`ts
+import { createEditorNativeGrantsHttpHandler } from "${imports.lib.replace(/\/stylex$/, "/editor-collaboration")}/collaboration-native-grants"
+import type { EditorNativeGrantsHttpOptions } from "${imports.lib.replace(/\/stylex$/, "/editor-collaboration")}/collaboration-native-grants"
+import {
+  authenticateExistingRequest,
+  authorizeNativeRoom,
+  hostTrustedOrigin,
+  provisionNativeRoomGrant,
+  verifyCsrfForRequest,
+} from "./native-grant-host"
+
+const options = {
+  origin: hostTrustedOrigin,
+  path: "/api/editor/native-grants",
+  timeoutMs: 5000,
+  maxConcurrent: 8,
+  authenticate: authenticateExistingRequest,
+  policy: authorizeNativeRoom,
+  verifyCsrf: verifyCsrfForRequest,
+  provision: provisionNativeRoomGrant,
+} satisfies EditorNativeGrantsHttpOptions
+
+export const nativeGrantHandler =
+  createEditorNativeGrantsHttpHandler(options)
+\`\`\`
+
+The host module is required. The snippet is an API composition shape, not a complete endpoint or a room initializer.
+
+Use one exact trusted HTTPS origin, POST path, and matching \`Origin\` header. Require existing authentication with verified \`credentialExpiresAt\`. Require CSRF approval and literal \`true\` from the current room policy. Preserve opaque \`userId\` bytes without normalization.
+
+The handler reads the bounded body once. It gives each callback an isolated copy of the exact bounded bytes. The provision callback receives a bounded copy of the current request, signal, and deadline. Noncooperative callbacks keep capacity until they settle.
+
+Initialize each room once from authoritative host state. Bind every grant to the exact room, generation, permission, and identity. Keep expiry within five minutes and at or below \`maximumCredentialExpiresAt\`. Verify each Hocuspocus credential against current host state. Returned \`seeded\` metadata does not prove durable seeding or scope enforcement.
+
+Issue peer credentials only to writers. Configure explicit trusted WSS signaling and a nine-peer limit. Native Hocuspocus and WebRTC provide no \`editor-v1\` acknowledgements, per-frame host authorization, atomic revocation, or durability proof from sync. No account, ACL, endpoint, model, or token service is included.
+
 Use optional editor-assets server source for private R2 or S3 assets with D1 or PostgreSQL.
 Import it from \`${imports.lib.replace(/\/stylex$/, "/editor-assets")}\` on the server only.
 Apply matching dialect migrations 0001, 0002, and 0003 in order.

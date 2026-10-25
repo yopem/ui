@@ -185,53 +185,58 @@ export function createComponentDocs(
                           ? "@/lib/editor-assets"
                           : item.name === "editor-ai"
                             ? "@/lib/editor-ai"
-                            : item.name === "editor-collaboration-server"
-                              ? "@/lib/editor-collaboration"
-                              : item.name === "editor-collaboration-worker"
-                                ? "@/lib/editor-collaboration/collaboration-do"
-                                : item.name === "editor-block-selection"
-                                  ? "@/components/editor/block-selection-index"
-                                  : item.name === "editor-footnotes"
-                                    ? "@/components/editor/footnote"
-                                    : [
-                                          "editor-code",
-                                          "editor-columns",
-                                          "editor-labels",
-                                          "editor-date",
-                                          "editor-review",
-                                          "editor-collaboration",
-                                          "editor-media",
-                                          "editor-toc",
-                                          "editor-csv",
-                                          "editor-autoformat",
-                                          "editor-block-behavior",
-                                        ].includes(item.name)
-                                      ? `@/components/editor/${item.name.slice(7)}`
-                                      : item.name === "editor-math"
-                                        ? "@/components/editor/math"
-                                        : item.name === "editor-blocks" &&
-                                            part.source !==
-                                              "components/editor/blocks-model.ts"
-                                          ? "@/components/editor/blocks"
-                                          : item.name === "editor-document"
-                                            ? part.name === "DocumentStatic"
-                                              ? "@/components/editor/document/static"
-                                              : "@/components/editor/document"
-                                            : item.name === "editor-typeahead"
-                                              ? "@/components/editor/typeahead-index"
-                                              : (item.files
-                                                  .find(
-                                                    (file) =>
-                                                      file.path ===
-                                                        part.source ||
-                                                      file.path.endsWith(
-                                                        `${item.name}.tsx`,
-                                                      ),
-                                                  )
-                                                  ?.target.replace(
-                                                    /\.tsx?$/,
-                                                    "",
-                                                  ) ?? null),
+                            : item.name === "editor-collaboration-grants"
+                              ? part.source ===
+                                "lib/editor-collaboration/collaboration-native-model.ts"
+                                ? "@/lib/editor-collaboration/collaboration-native-model"
+                                : "@/lib/editor-collaboration/collaboration-native-grants"
+                              : item.name === "editor-collaboration-server"
+                                ? "@/lib/editor-collaboration"
+                                : item.name === "editor-collaboration-worker"
+                                  ? "@/lib/editor-collaboration/collaboration-do"
+                                  : item.name === "editor-block-selection"
+                                    ? "@/components/editor/block-selection-index"
+                                    : item.name === "editor-footnotes"
+                                      ? "@/components/editor/footnote"
+                                      : [
+                                            "editor-code",
+                                            "editor-columns",
+                                            "editor-labels",
+                                            "editor-date",
+                                            "editor-review",
+                                            "editor-collaboration",
+                                            "editor-media",
+                                            "editor-toc",
+                                            "editor-csv",
+                                            "editor-autoformat",
+                                            "editor-block-behavior",
+                                          ].includes(item.name)
+                                        ? `@/components/editor/${item.name.slice(7)}`
+                                        : item.name === "editor-math"
+                                          ? "@/components/editor/math"
+                                          : item.name === "editor-blocks" &&
+                                              part.source !==
+                                                "components/editor/blocks-model.ts"
+                                            ? "@/components/editor/blocks"
+                                            : item.name === "editor-document"
+                                              ? part.name === "DocumentStatic"
+                                                ? "@/components/editor/document/static"
+                                                : "@/components/editor/document"
+                                              : item.name === "editor-typeahead"
+                                                ? "@/components/editor/typeahead-index"
+                                                : (item.files
+                                                    .find(
+                                                      (file) =>
+                                                        file.path ===
+                                                          part.source ||
+                                                        file.path.endsWith(
+                                                          `${item.name}.tsx`,
+                                                        ),
+                                                    )
+                                                    ?.target.replace(
+                                                      /\.tsx?$/,
+                                                      "",
+                                                    ) ?? null),
         props: part.props.map((index) => {
           const prop = properties[index]
 

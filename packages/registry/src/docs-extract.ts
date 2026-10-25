@@ -83,8 +83,14 @@ export function extractDocs() {
       ? checker.getAliasedSymbol(symbol)
       : symbol
 
+  let copiedSourcePaths = new Map<string, string>()
+
   const source = (node: ts.Node) => {
     const path = node.getSourceFile().fileName.replaceAll("\\", "/")
+    const copiedPath = copiedSourcePaths.get(path)
+
+    if (copiedPath) return copiedPath
+
     const dependency = path.lastIndexOf("node_modules/")
 
     return dependency >= 0
@@ -478,163 +484,176 @@ export function extractDocs() {
     }
   }
 
-  return sourceItems.map((item) => ({
-    name: item.name,
-    parts: item.files
-      .filter(
-        (file) =>
-          /\.tsx?$/.test(file.path) &&
-          (item.name !== "editor-ai-menu" ||
-            [
-              "components/editor/ai-menu.tsx",
-              "components/editor/ai-menu-preview.tsx",
-            ].includes(file.path)) &&
-          (item.name.startsWith("editor-diagram-")
-            ? /\/(?:mermaid\.browser|plantuml\.browser|graphviz|flowchart\.browser)\.ts$/.test(
-                file.path,
-              )
-            : [
-                  "editor-diagram",
-                  "editor-columns",
-                  "editor-labels",
-                  "editor-date",
-                  "editor-collaboration",
-                  "editor-media",
-                  "editor-toc",
-                  "editor-csv",
-                ].includes(item.name)
-              ? file.path === `components/editor/${item.name.slice(7)}.ts`
-              : item.name === "editor-list-presentation"
-                ? [
-                    "components/editor/list-presentation.tsx",
-                    "components/editor/list-presentation-model.ts",
-                  ].includes(file.path)
-                : item.name === "editor-block-menu"
-                  ? file.path === "components/editor/block-menu-index.ts"
-                  : item.name === "editor-copilot"
-                    ? [
-                        "components/editor/copilot.tsx",
-                        "components/editor/copilot-session.ts",
-                      ].includes(file.path)
-                    : item.name === "editor-editable-card"
-                      ? [
-                          "components/editor/editable-card.ts",
-                          "components/editor/editable-card-view.tsx",
-                          "components/editor/editable-card-model.ts",
-                          "components/editor/editable-card-node.tsx",
-                        ].includes(file.path)
-                      : item.name === "editor-docx"
-                        ? [
-                            "components/editor/docx.ts",
-                            "components/editor/docx-controls.tsx",
-                          ].includes(file.path)
-                        : item.name === "editor-block-selection"
-                          ? file.path ===
-                            "components/editor/block-selection-index.ts"
-                          : item.name === "editor-footnotes"
-                            ? file.path === "components/editor/footnote.ts"
-                            : item.name === "editor"
-                              ? file.path === "components/editor/index.ts"
-                              : item.name === "editor-collaboration-server"
-                                ? file.path ===
-                                  "lib/editor-collaboration/index.ts"
-                                : item.name === "editor-collaboration-worker"
-                                  ? file.path ===
-                                    "lib/editor-collaboration/collaboration-do.ts"
-                                  : item.name === "editor-ai"
-                                    ? file.path === "lib/editor-ai/index.ts"
-                                    : item.name === "editor-assets"
-                                      ? file.path ===
-                                        "lib/editor-assets/index.ts"
-                                      : item.name === "editor-store"
-                                        ? file.path ===
-                                          "lib/editor-store/index.ts"
-                                        : item.name === "editor-auth"
-                                          ? file.path ===
-                                            "lib/editor-auth/index.ts"
-                                          : item.name === "editor-code"
-                                            ? file.path ===
-                                              "components/editor/code.ts"
-                                            : item.name === "editor-math"
-                                              ? file.path ===
-                                                "components/editor/math.ts"
-                                              : item.name === "editor-blocks"
-                                                ? file.path ===
-                                                  "components/editor/blocks.ts"
-                                                : item.name ===
-                                                    "editor-document"
-                                                  ? [
-                                                      "components/editor/document/index.ts",
-                                                      "components/editor/document/static.tsx",
-                                                    ].includes(file.path)
-                                                  : item.name ===
-                                                      "editor-review"
-                                                    ? file.path ===
-                                                      "components/editor/review.tsx"
-                                                    : item.name ===
-                                                        "editor-typeahead"
-                                                      ? file.path ===
-                                                        "components/editor/typeahead-index.ts"
-                                                      : true),
-      )
-      .flatMap((file) => {
-        const source = program.getSourceFile(resolveSourcePath(file.path))
-        const symbol = source && checker.getSymbolAtLocation(source)
+  return sourceItems.map((item) => {
+    copiedSourcePaths = new Map(
+      item.files.map((file) => [
+        resolveSourcePath(file.path).replaceAll("\\", "/"),
+        file.path,
+      ]),
+    )
 
-        if (!symbol) throw new Error(`Cannot extract ${file.path}`)
-
-        return checker.getExportsOfModule(symbol).flatMap((exported) => {
-          const result = part(exported, exported.name)
-          const target = resolveSymbol(exported)
-          const node = target.valueDeclaration ?? target.declarations?.[0]
-          const type = node && checker.getTypeOfSymbolAtLocation(target, node)
-
-          const memberTypes =
-            type && !exported.name.endsWith("Context")
-              ? result.kind === "value"
-                ? recordTypes(type)
-                : result.kind === "function" && exported.name.startsWith("use")
-                  ? type
-                      .getCallSignatures()
-                      .flatMap((signature) =>
-                        recordTypes(signature.getReturnType()),
-                      )
-                  : []
-              : []
-
-          const callableMembers = new Map<string, ReturnType<typeof part>>()
-
-          for (const memberType of memberTypes) {
-            for (const member of checker.getPropertiesOfType(memberType)) {
-              const callable = checker.getTypeOfSymbolAtLocation(member, node!)
-
-              if (
-                /^[A-Za-z_$][\w$]*$/.test(member.name) &&
-                !member
-                  .getJsDocTags(checker)
-                  .some((tag) => tag.name === "internal") &&
-                callable.getCallSignatures().length
-              )
-                callableMembers.set(
-                  member.name,
-                  part(member, `${exported.name}.${member.name}`, callable),
+    return {
+      name: item.name,
+      parts: item.files
+        .filter(
+          (file) =>
+            /\.tsx?$/.test(file.path) &&
+            (item.name !== "editor-ai-menu" ||
+              [
+                "components/editor/ai-menu.tsx",
+                "components/editor/ai-menu-preview.tsx",
+              ].includes(file.path)) &&
+            (item.name.startsWith("editor-diagram-")
+              ? /\/(?:mermaid\.browser|plantuml\.browser|graphviz|flowchart\.browser)\.ts$/.test(
+                  file.path,
                 )
-            }
-          }
+              : [
+                    "editor-diagram",
+                    "editor-columns",
+                    "editor-labels",
+                    "editor-date",
+                    "editor-collaboration",
+                    "editor-media",
+                    "editor-toc",
+                    "editor-csv",
+                  ].includes(item.name)
+                ? file.path === `components/editor/${item.name.slice(7)}.ts`
+                : item.name === "editor-list-presentation"
+                  ? [
+                      "components/editor/list-presentation.tsx",
+                      "components/editor/list-presentation-model.ts",
+                    ].includes(file.path)
+                  : item.name === "editor-block-menu"
+                    ? file.path === "components/editor/block-menu-index.ts"
+                    : item.name === "editor-copilot"
+                      ? [
+                          "components/editor/copilot.tsx",
+                          "components/editor/copilot-session.ts",
+                        ].includes(file.path)
+                      : item.name === "editor-editable-card"
+                        ? [
+                            "components/editor/editable-card.ts",
+                            "components/editor/editable-card-view.tsx",
+                            "components/editor/editable-card-model.ts",
+                            "components/editor/editable-card-node.tsx",
+                          ].includes(file.path)
+                        : item.name === "editor-docx"
+                          ? [
+                              "components/editor/docx.ts",
+                              "components/editor/docx-controls.tsx",
+                            ].includes(file.path)
+                          : item.name === "editor-block-selection"
+                            ? file.path ===
+                              "components/editor/block-selection-index.ts"
+                            : item.name === "editor-footnotes"
+                              ? file.path === "components/editor/footnote.ts"
+                              : item.name === "editor"
+                                ? file.path === "components/editor/index.ts"
+                                : item.name === "editor-collaboration-server"
+                                  ? file.path ===
+                                    "lib/editor-collaboration/index.ts"
+                                  : item.name === "editor-collaboration-worker"
+                                    ? file.path ===
+                                      "lib/editor-collaboration/collaboration-do.ts"
+                                    : item.name === "editor-ai"
+                                      ? file.path === "lib/editor-ai/index.ts"
+                                      : item.name === "editor-assets"
+                                        ? file.path ===
+                                          "lib/editor-assets/index.ts"
+                                        : item.name === "editor-store"
+                                          ? file.path ===
+                                            "lib/editor-store/index.ts"
+                                          : item.name === "editor-auth"
+                                            ? file.path ===
+                                              "lib/editor-auth/index.ts"
+                                            : item.name === "editor-code"
+                                              ? file.path ===
+                                                "components/editor/code.ts"
+                                              : item.name === "editor-math"
+                                                ? file.path ===
+                                                  "components/editor/math.ts"
+                                                : item.name === "editor-blocks"
+                                                  ? file.path ===
+                                                    "components/editor/blocks.ts"
+                                                  : item.name ===
+                                                      "editor-document"
+                                                    ? [
+                                                        "components/editor/document/index.ts",
+                                                        "components/editor/document/static.tsx",
+                                                      ].includes(file.path)
+                                                    : item.name ===
+                                                        "editor-review"
+                                                      ? file.path ===
+                                                        "components/editor/review.tsx"
+                                                      : item.name ===
+                                                          "editor-typeahead"
+                                                        ? file.path ===
+                                                          "components/editor/typeahead-index.ts"
+                                                        : true),
+        )
+        .flatMap((file) => {
+          const source = program.getSourceFile(resolveSourcePath(file.path))
+          const symbol = source && checker.getSymbolAtLocation(source)
 
-          const members =
-            result.kind === "namespace"
-              ? checker
-                  .getExportsOfModule(target)
-                  .map((member) =>
-                    part(member, `${exported.name}.${member.name}`),
+          if (!symbol) throw new Error(`Cannot extract ${file.path}`)
+
+          return checker.getExportsOfModule(symbol).flatMap((exported) => {
+            const result = part(exported, exported.name)
+            const target = resolveSymbol(exported)
+            const node = target.valueDeclaration ?? target.declarations?.[0]
+            const type = node && checker.getTypeOfSymbolAtLocation(target, node)
+
+            const memberTypes =
+              type && !exported.name.endsWith("Context")
+                ? result.kind === "value"
+                  ? recordTypes(type)
+                  : result.kind === "function" &&
+                      exported.name.startsWith("use")
+                    ? type
+                        .getCallSignatures()
+                        .flatMap((signature) =>
+                          recordTypes(signature.getReturnType()),
+                        )
+                    : []
+                : []
+
+            const callableMembers = new Map<string, ReturnType<typeof part>>()
+
+            for (const memberType of memberTypes) {
+              for (const member of checker.getPropertiesOfType(memberType)) {
+                const callable = checker.getTypeOfSymbolAtLocation(
+                  member,
+                  node!,
+                )
+
+                if (
+                  /^[A-Za-z_$][\w$]*$/.test(member.name) &&
+                  !member
+                    .getJsDocTags(checker)
+                    .some((tag) => tag.name === "internal") &&
+                  callable.getCallSignatures().length
+                )
+                  callableMembers.set(
+                    member.name,
+                    part(member, `${exported.name}.${member.name}`, callable),
                   )
-              : [...callableMembers.values()]
+              }
+            }
 
-          return [result, ...members]
-        })
-      }),
-  }))
+            const members =
+              result.kind === "namespace"
+                ? checker
+                    .getExportsOfModule(target)
+                    .map((member) =>
+                      part(member, `${exported.name}.${member.name}`),
+                    )
+                : [...callableMembers.values()]
+
+            return [result, ...members]
+          })
+        }),
+    }
+  })
 }
 
 export function compactDocs(docs: ReturnType<typeof extractDocs>) {

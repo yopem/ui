@@ -122,6 +122,10 @@ export const sourceImportReplacements = [
   ["@yopem-ui/editor/ai", "@/components/editor/ai-controls"],
   ["@yopem-ui/editor/server/ai", "@/lib/editor-ai"],
   ["@yopem-ui/editor/server/assets", "@/lib/editor-assets"],
+  [
+    "@yopem-ui/editor/server/native-grants",
+    "@/lib/editor-collaboration/collaboration-native-grants",
+  ],
   ["@yopem-ui/editor/server", "@/lib/editor-auth"],
   ["@yopem-ui/editor/typeahead", "@/components/editor/typeahead-index"],
   ["@yopem-ui/editor", "@/components/editor"],
@@ -143,9 +147,17 @@ export function rewriteImports(content: string, path = "") {
         )
       : content
 
+  const nativeGrantSource =
+    path === "lib/editor-collaboration/collaboration-native-grants.ts"
+      ? serverSource.replaceAll(
+          'from "@yopem-ui/editor/collaboration/native-model"',
+          'from "./collaboration-native-model"',
+        )
+      : serverSource
+
   const source = path.startsWith("lib/editor-store/")
     ? content.replaceAll('from "./auth"', 'from "@/lib/editor-auth/auth"')
-    : serverSource
+    : nativeGrantSource
 
   return sourceImportReplacements.reduce(
     (result, [source, target]) => result.replaceAll(source, target),

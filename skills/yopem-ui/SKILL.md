@@ -251,6 +251,43 @@ History is bounded, with no automatic compaction. Do not replay offline drafts
 with uncertain outcomes. This guide does not confirm runtime or deployment
 validation. See https://ui.yopem.com/docs/editor-collaboration.
 
+### Native collaboration grants
+
+Install `editor-collaboration-grants` separately:
+
+```sh
+bunx --bun @yopem-ui/cli add editor-collaboration-grants
+npx @yopem-ui/cli add editor-collaboration-grants
+pnpm dlx @yopem-ui/cli add editor-collaboration-grants
+yarn dlx @yopem-ui/cli add editor-collaboration-grants
+```
+
+Import `createEditorNativeGrantsHttpHandler` from
+`@/lib/editor-collaboration/collaboration-native-grants` on the server only.
+Import pure grant codecs from
+`@/lib/editor-collaboration/collaboration-native-model`.
+
+Configure one exact trusted HTTPS origin and POST path. Require the exact
+`Origin` header. Reuse host authentication with verified `credentialExpiresAt`,
+CSRF approval, and literal `true` from the current room policy. Preserve opaque
+`userId` bytes without normalization.
+
+The handler reads one bounded body and gives each callback an isolated copy of
+its exact bytes. The host provision callback receives a bounded copy of the
+current request, signal, and deadline. Noncooperative callbacks keep capacity
+until they settle.
+
+Initialize each room once from authoritative host state. Bind each grant to the
+exact room, generation, permission, and identity. Keep expiry within five
+minutes and at or below `maximumCredentialExpiresAt`. Verify each Hocuspocus
+credential against current host state. Returned `seeded` metadata does not prove
+durable seeding or scope enforcement.
+
+Issue peer credentials only to writers. Configure trusted WSS signaling and a
+nine-peer limit. Native Hocuspocus and WebRTC provide no `editor-v1` ACKs,
+per-frame host authorization, atomic revocation, or durability proof from sync.
+No account, ACL, endpoint, model, or token service is supplied.
+
 ### Buttons and controls
 
 Button variants are `default`, `secondary`, `outline`, `ghost`, `link`,
