@@ -44,6 +44,7 @@ import {
 import { PublicPlaceholderExample } from "./editor-examples/public-placeholder"
 import { ReadOnlyEditorExample } from "./editor-examples/public-readonly"
 import { PublicReviewExample } from "./editor-examples/public-review"
+import { PublicScaleExample } from "./editor-examples/public-scale"
 import { PublicSearchExample } from "./editor-examples/public-search"
 import { PublicSelectionExample } from "./editor-examples/public-selection"
 import { PublicStylesExample } from "./editor-examples/public-styles"
@@ -425,6 +426,26 @@ const examples = [
       "Apply selected-block alignment, text and background colors, indentation, and line height. Save and reload styled native JSON and HTML.",
     limits:
       "These controls use native Lexical state. Saved roundtrips stay in local component memory and are not host persistence. Public-example behavior remains unverified.",
+  },
+  {
+    slug: "public-scale",
+    sourceFile: "public-scale",
+    workflowIds: ["huge-document", "hundreds-editors"],
+    title: "Explicitly admitted scale fixtures",
+    Component: PublicScaleExample,
+    items: [
+      "editor",
+      "box",
+      "button",
+      "field",
+      "native-select",
+      "stack",
+      "text",
+    ],
+    description:
+      "Mount a bounded long document or many independent native roots only after a separate user action. Opening one fixture unmounts the other.",
+    limits:
+      "The caps are 500 paragraphs and 200 independent roots. These partial fixtures do not supply the pinned Slate engine/chunking controls, URL benchmark configuration, or frame statistics. No performance or capacity result is claimed. Memory-intensive deferred tests require RUN_EDITOR_SCALE=1.",
   },
   {
     slug: "csv",
