@@ -5,6 +5,11 @@ const examples = [
   { item: "editor-csv", entry: "csv", identifier: "EditorCsvExtension" },
   { item: "editor-search", entry: "search", identifier: "EditorSearchRoot" },
   {
+    item: "editor-cursor-overlay",
+    entry: "cursor-overlay",
+    identifier: "EditorCursorOverlay",
+  },
+  {
     item: "editor-columns",
     entry: "columns",
     identifier: "EditorColumnsExtension",

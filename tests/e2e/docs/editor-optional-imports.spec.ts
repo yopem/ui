@@ -27,6 +27,12 @@ const cases = [
   ["editor-footnotes", "EditorFootnoteControls", "footnote"],
   ["editor-toc", "EditorTocControls", "toc"],
   ["editor-search", "EditorSearchRoot", "search"],
+  ["editor-cursor-overlay", "EditorCursorOverlay", "cursor-overlay"],
+  [
+    "editor-cursor-overlay",
+    "createEditorCursorOverlay",
+    "cursor-overlay-store",
+  ],
   ["editor-search", "findEditorSearchMatches", "search-model"],
 ] as const
 

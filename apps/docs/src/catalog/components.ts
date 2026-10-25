@@ -46,6 +46,7 @@ const previewDescriptionValues = {
   "editor-document": "Validated document import and export",
   "editor-word-clipboard":
     "Bounded Word HTML fragments with native clipboard policies",
+  "editor-cursor-overlay": "Native drop carets and retained selection paint",
 
   "editor-typeahead": "Native suggestions and composed emoji controls",
   "use-event-callback": "Stable handler reading the latest count",

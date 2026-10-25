@@ -185,6 +185,20 @@ export function ExitBreakExample() {
   )
 }`,
 
+  "editor-cursor-overlay": `"use client"
+
+import { EditorRoot, EditorContent } from "@/components/editor"
+import { EditorCursorOverlay } from "@/components/editor/cursor-overlay"
+
+export function CursorEditor() {
+  return (
+    <EditorRoot ariaLabel="Cursor editor">
+      <EditorContent />
+      <EditorCursorOverlay />
+    </EditorRoot>
+  )
+}`,
+
   "editor-floating-toolbar": `"use client"
 
 import { EditorRoot, EditorContent, EditorFormatButton } from "@/components/editor"

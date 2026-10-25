@@ -1007,3 +1007,12 @@ closes until the menu root unmounts. Remount on document or viewer changes. No
 server chat storage is supplied. Null selection retains the dialog target.
 Remount EditorAiRoot to discard it. Rich Markdown approval, selected-text
 context overrides, and shadow-root insert-below are not supplied.
+
+### Native cursor overlays
+
+Install optional `editor-cursor-overlay` separately. Import
+`EditorCursorOverlay` from `@/components/editor/cursor-overlay`. Compose it
+inside `EditorRoot` beside `EditorContent`. Keep native drag and drop. Overlay
+paint is not saved document state or AI authorization. The root owner document
+supplies the portal and native selection. Read-only transitions and document
+changes clear the paint.

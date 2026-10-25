@@ -112,6 +112,11 @@ Preserve \`yopemListMarker\` NodeState, \`data-editor-list-marker\`, and native 
 Checklists keep their native behavior. Custom HTML readers must compose existing converters instead of replacing them.
 Optional \`editor-document\` retains validated markers and signed starts in JSON, HTML, Markdown, and static output.
 Markdown uses canonical HTML when native Markdown cannot retain list presentation.
+Install optional \`editor-cursor-overlay\` separately. Import \`EditorCursorOverlay\` from \`${imports.editor}/cursor-overlay\`.
+Compose it beside \`EditorContent\` inside \`EditorRoot\`. Keep native drag and drop.
+Paint uses the root owner document and saves no document state. Read-only transitions and document changes clear it.
+The store connects listeners on first subscription and removes them after final unsubscribe or disposal.
+Retained toolbar paint is not AI authorization, proposal approval, or remote collaboration presence.
 Install optional \`editor-word-clipboard\` separately for bounded Office HTML fragments.
 Import registration helpers from \`${imports.editor}/word-clipboard\` and pure normalization from \`${imports.editor}/word-clipboard-model\`.
 Register \`EditorWordClipboardExtension\` in a stable root extensions array.

@@ -9,6 +9,7 @@ import { editorCodeParts } from "./editor-code-parts"
 import { editorCollaborationParts } from "./editor-collaboration-parts"
 import { editorColumnsParts } from "./editor-columns-parts"
 import { editorCopilotParts } from "./editor-copilot-parts"
+import { editorCursorOverlayParts } from "./editor-cursor-overlay-parts"
 import { editorDateParts } from "./editor-date-parts"
 import { editorDocxParts } from "./editor-docx-parts"
 import { editorEditableCardParts } from "./editor-editable-card-parts"
@@ -260,6 +261,7 @@ export const editorParts = [
   ...editorTypeaheadParts,
   ...editorSearchParts,
   ...editorFloatingToolbarParts,
+  ...editorCursorOverlayParts,
   ...editorBlockPlaceholderParts,
 ] as const
 

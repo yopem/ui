@@ -37,6 +37,7 @@ import { PublicCodeExample } from "./editor-examples/public-code"
 import { PublicCodeDrawingExample } from "./editor-examples/public-code-drawing"
 import { PublicCopilotExample } from "./editor-examples/public-copilot"
 import { CsvEditorExample } from "./editor-examples/public-csv"
+import { PublicCursorsExample } from "./editor-examples/public-cursors"
 import { PublicDemoHostExample } from "./editor-examples/public-demo-host"
 import { PublicDocumentExamples } from "./editor-examples/public-document"
 import { PublicDocxExample } from "./editor-examples/public-docx"
@@ -330,6 +331,18 @@ const examples = [
       "Exit native quote, code, and table root boundaries with modifier shortcuts. Use separate single-block or single-line input modes with bounded plain-text paste.",
     limits:
       "Single-paragraph modes apply only to a root with one paragraph and do not validate or flatten arbitrary documents. Single-line removes new pasted breaks, not existing content. Full autoformat, plugin-rules, placeholders and tabbable workflows are not provided. History, IME, native clipboard and accessibility are unverified.",
+  },
+  {
+    slug: "public-cursors",
+    sourceFile: "public-cursors",
+    workflowIds: [],
+    title: "Native cursor and toolbar selection paint",
+    description:
+      "Paint native drag carets and retain browser ranges during toolbar focus without adding document data.",
+    Component: PublicCursorsExample,
+    items: ["editor-cursor-overlay"],
+    limits:
+      "Paint follows native selection and drop geometry without changing saved state. Toolbar focus retention is not AI authorization or acceptance. Cross-frame geometry, cleanup, pointer behavior and accessibility remain unverified. This partial workflow earns no full cursor-overlay credit.",
   },
   {
     slug: "public-floating-toolbar",

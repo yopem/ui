@@ -12,6 +12,8 @@ export async function getEditorDocumentation(slug: string) {
     sourcePath = "./editor-examples/public-placeholder.tsx"
   else if (part.item === "editor-floating-toolbar")
     sourcePath = "./editor-examples/public-floating-toolbar.tsx"
+  else if (part.item === "editor-cursor-overlay")
+    sourcePath = "./editor-examples/public-cursors.tsx"
   else if (part.item === "editor-ai-menu")
     sourcePath = "./editor-examples/public-ai.tsx"
   else if (part.item === "editor-diagram")
@@ -93,6 +95,13 @@ export async function getEditorDocumentation(slug: string) {
         : [
             "Place controls and EditorContent inside EditorRoot. Keep extension arrays stable when the editor mounts.",
           ]),
+      ...(part.item === "editor-cursor-overlay"
+        ? [
+            "Place EditorCursorOverlay inside EditorRoot beside the editable surface. Native drag and drop stay unchanged.",
+            "Paint uses the root owner document and does not enter document state. Read-only and content changes clear it.",
+            "Toolbar selection paint is not AI authorization, proposal acceptance, or remote presence.",
+          ]
+        : []),
       ...(part.item === "editor-block-placeholder"
         ? [
             "Mount one placeholder layer beside EditorContent inside EditorRoot. Keep labels fixed until unmount. Hints and the accessible status do not add document text.",

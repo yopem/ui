@@ -251,3 +251,16 @@ memory across closes until the menu root unmounts. Remount on document or viewer
 changes. No server chat storage is supplied. Null selection retains the dialog
 target. Remount EditorAiRoot to discard it. Rich Markdown approval,
 selected-text context overrides, and shadow-root insert-below are not supplied.
+
+## Native cursor paint
+
+Install `editor-cursor-overlay` for `EditorCursorOverlay` and its optional
+store. Compose it inside `EditorRoot` beside the editable surface. It paints
+native drop geometry and retained toolbar selections without saving overlay
+state. Native drag and drop remain unchanged. Read-only transitions and content
+changes clear the paint. The store creates no listeners until its first
+subscription. Use its cleanup or explicit disposal to remove owned listeners.
+
+This feature does not supply AI authorization or acceptance, remote presence, or
+a document policy. Cross-frame geometry, native pointer handling, and focus
+cleanup still require browser checks.
