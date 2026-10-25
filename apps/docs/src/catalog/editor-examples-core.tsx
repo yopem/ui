@@ -32,6 +32,7 @@ import { MediaExample } from "./editor-examples/media-example"
 import { PublicBlocksExample } from "./editor-examples/public-blocks"
 import { PublicCodeExample } from "./editor-examples/public-code"
 import { CsvEditorExample } from "./editor-examples/public-csv"
+import { PublicDocumentExamples } from "./editor-examples/public-document"
 import { PublicFootnotesExample } from "./editor-examples/public-footnotes"
 import { VersionHistoryExample } from "./editor-examples/public-history"
 import {
@@ -216,6 +217,32 @@ const examples = [
       "Save immutable snapshots. Inspect an earlier revision without changing the current document. Compare inserted, removed, and updated blocks and text.",
     limits:
       "History stays in memory and holds at most 20 snapshots, each within 1 MiB and 200 top-level blocks. Long or multiline text uses whole-block differences. No server history is configured.",
+  },
+  {
+    slug: "public-document",
+    sourceFile: "public-document",
+    workflowIds: [
+      "html",
+      "markdown",
+      "markdown-streaming",
+      "markdown-to-slate",
+      "preview-markdown",
+    ],
+    title: "HTML, Markdown, and local streaming",
+    Component: PublicDocumentExamples,
+    items: [
+      "editor-document",
+      "editor-code",
+      "heading",
+      "label",
+      "native-select",
+      "slider",
+      "textarea",
+    ],
+    description:
+      "Paste rich HTML, import validated source, inspect Markdown syntax, export rich and static output, and control a bounded local streaming producer that commits only at EOF.",
+    limits:
+      "The historical markdown-to-slate workflow maps to native Lexical output, not Slate migration. Streaming uses fixed local scenarios, not AI inference. Plain-text Markdown clipboard conversion remains unsupported; whole-document import is not paste. Cancellation cannot stop arbitrary host producers. Runtime and fidelity acceptance remain unverified.",
   },
   {
     slug: "public-tables",
