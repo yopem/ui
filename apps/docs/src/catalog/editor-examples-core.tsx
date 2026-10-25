@@ -44,6 +44,7 @@ import { PublicSelectionExample } from "./editor-examples/public-selection"
 import { PublicStylesExample } from "./editor-examples/public-styles"
 import { PublicTablesExample } from "./editor-examples/public-tables"
 import { PublicTocExample } from "./editor-examples/public-toc"
+import { PublicTypeaheadExample } from "./editor-examples/public-typeahead"
 
 const sources = import.meta.glob<string>("./editor-examples/*.tsx", {
   query: "?raw",
@@ -217,6 +218,26 @@ const examples = [
       "Save immutable snapshots. Inspect an earlier revision without changing the current document. Compare inserted, removed, and updated blocks and text.",
     limits:
       "History stays in memory and holds at most 20 snapshots, each within 1 MiB and 200 top-level blocks. Long or multiline text uses whole-block differences. No server history is configured.",
+  },
+  {
+    slug: "public-typeahead",
+    sourceFile: "public-typeahead",
+    workflowIds: ["emoji", "mention", "slash-command"],
+    title: "Full emoji, mentions, and slash actions",
+    Component: PublicTypeaheadExample,
+    items: [
+      "editor-typeahead",
+      "editor-toc",
+      "editor-blocks",
+      "editor-columns",
+      "editor-date",
+      "editor-math",
+      "editor-footnotes",
+    ],
+    description:
+      "Use the full local emoji inventory and shared bounded history, abortable fixture mention search, and slash actions for native blocks, columns, dates, equations, footnotes, and contents.",
+    limits:
+      "Mention identities are local documentation fixtures, not profile services or access grants. Date insertion uses fixed 2025-01-15. AI, upload, and drawing actions require missing host integrations and are omitted. IME, clipboard, focus, asynchronous query, and accessibility acceptance remain unverified.",
   },
   {
     slug: "public-document",
