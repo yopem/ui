@@ -28,6 +28,7 @@ import { $getTableContext, createEditorTableBookmark } from "./table-bookmark"
 import {
   $mergeTableCellsWithBorders,
   $unmergeTableCellWithBorders,
+  isTableMergeDisabled,
 } from "./table-presentation"
 
 export type EditorTableMenuProps = ComponentProps<typeof ToolbarButton>
@@ -74,7 +75,10 @@ export function EditorTableMenu({
       const context = $getTableContext()
       setCapabilities({
         table: context !== null,
-        merge: context !== null && context.cells.length > 1,
+        merge:
+          !isTableMergeDisabled(editor) &&
+          context !== null &&
+          context.cells.length > 1,
         split:
           context !== null &&
           (context.cell.getColSpan() > 1 || context.cell.getRowSpan() > 1),

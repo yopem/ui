@@ -46,6 +46,7 @@ export { EditorTableResizeControls } from "./table-resize"
 
 export {
   EditorTablePresentationExtension,
+  isTableMergeDisabled,
   editorTablePresentationHTML,
   createEditorTablePresentationHTMLConfig,
   TABLE_PRESENTATION_ERROR_COMMAND,

@@ -66,6 +66,8 @@ Register \`EditorTablePresentationExtension\` for bounded tables and persisted c
 Compose \`EditorTableDimensions\`, \`EditorTableCellPresentation\`, and \`EditorTableResizeControls\` inside the root.
 Use \`EditorTableBackgroundControls\` and \`EditorTableBorderControls\` for separate controls.
 Border controls support individual and rectangle edges. Shared merged edges are indivisible.
+Configure \`disableMerge:true\` at mount time to block house merge actions.
+Existing spans remain. Explicit splitting stays available. Native host mutations bypass this policy.
 Row resizing stores minimum height. Content can make rows taller.
 Keep \`data-editor-row-height\` in exported HTML to preserve finite native heights.
 Keep table scrolling bounded in both directions and keyboard-accessible.

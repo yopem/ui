@@ -66,6 +66,7 @@ export const editorItem: SourceItem = {
       "EditorTableBorderControls",
       "EditorTableResizeControls",
       "EditorTablePresentationExtension",
+      "isTableMergeDisabled",
       "editorTablePresentationHTML",
       "createEditorTablePresentationHTMLConfig",
       "parseTablePresentationJSON",

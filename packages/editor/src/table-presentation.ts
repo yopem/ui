@@ -32,6 +32,7 @@ import {
   $isElementNode,
   isHTMLElement,
   $getNodeByKey,
+  $getEditor,
   $setState,
   COMMAND_PRIORITY_HIGH,
   createState,
@@ -76,6 +77,24 @@ export const TABLE_PRESENTATION_ERROR_COMMAND = createCommand<Error>(
 )
 
 class TablePresentationError extends Error {}
+
+const disabledTableMerges = new WeakSet<LexicalEditor>()
+
+export function isTableMergeDisabled(editor: LexicalEditor) {
+  return disabledTableMerges.has(editor)
+}
+
+function registerTableMergePolicy(
+  editor: LexicalEditor,
+  disableMerge: boolean,
+) {
+  if (disableMerge) disabledTableMerges.add(editor)
+  else disabledTableMerges.delete(editor)
+
+  return () => {
+    disabledTableMerges.delete(editor)
+  }
+}
 
 export function clampTableColumnWidth(width: number) {
   return Math.round(
@@ -158,6 +177,7 @@ export function $mergeTableCellsWithBorders(
   table: TableNode,
   selected: TableCellNode[],
 ) {
+  if (isTableMergeDisabled($getEditor())) return null
   const { cells, geometry } = $tableCellGeometry(table)
 
   const slots = geometry.placements.flatMap((slot, index) =>
@@ -751,7 +771,7 @@ export function registerTablePresentationValidation(editor: LexicalEditor) {
 
 export const EditorTablePresentationExtension = defineExtension({
   name: "@yopem-ui/editor/table-presentation",
-  config: { pasteTsv: true },
+  config: { pasteTsv: true, disableMerge: false },
   dependencies: [TableExtension],
   html: editorTablePresentationHTML,
   init(editorConfig) {
@@ -774,6 +794,7 @@ export const EditorTablePresentationExtension = defineExtension({
   },
   register(editor, config) {
     return mergeRegister(
+      registerTableMergePolicy(editor, config.disableMerge),
       registerTablePaste(editor, config.pasteTsv),
       editor.registerUpdateListener(({ editorState, dirtyElements }) => {
         if (editor._headless) return

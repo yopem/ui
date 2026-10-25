@@ -150,6 +150,10 @@ external table JSON and HTML before conversion. Invalid updates must preserve
 existing content. Discard saved table selections after document changes.
 Preserve resize cancellation, history, and right-to-left keyboard behavior.
 
+Configure `disableMerge:true` on `EditorTablePresentationExtension` at mount
+time to block house merge actions. Existing spans remain. Explicit splitting
+stays available. Native host mutations bypass this policy.
+
 ### Optional native code editing
 
 ```sh

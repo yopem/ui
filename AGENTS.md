@@ -289,6 +289,8 @@ Rounded components use md (12px) by default. Use xstyle to change corner radii. 
   Use EditorTableBackgroundControls and EditorTableBorderControls separately when needed.
   Border controls support logical edges and inside, outside, all, none, and reset actions.
   Shared merged edges are indivisible. Mirror updates across the complete shared edge.
+  Configure `disableMerge:true` at mount time to block house merge actions.
+  Existing spans remain. Explicit splitting stays available. Native host mutations bypass this policy.
   Row resizing stores native row minimum height. Content can increase visible height.
   Keep `data-editor-row-height` in exported HTML to preserve finite native heights.
   Keep table scrolling bounded in both directions and keyboard-accessible.
