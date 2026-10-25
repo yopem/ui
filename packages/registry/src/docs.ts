@@ -178,6 +178,7 @@ export function createComponentDocs(
                               "editor-toc",
                               "editor-csv",
                               "editor-autoformat",
+                              "editor-block-behavior",
                             ].includes(item.name)
                           ? `@/components/editor/${item.name.slice(7)}`
                           : item.name === "editor-math"

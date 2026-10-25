@@ -856,3 +856,12 @@ Native document readers also support plain `horizontalrule` nodes and semantic `
 Register `HorizontalRuleExtension` before live rule imports.
 Rules require block containers. Reject unrelated rule metadata or presentation instead of discarding it.
 DocumentStatic renders rules through the house Separator. Rule conversion workflows remain runtime-unverified.
+
+
+## Optional editor block behavior
+
+Install `editor-block-behavior` separately. Register `EditorBlockBehaviorExtension` in a stable root extension array.
+Collapsed heading Enter makes the new half a paragraph. Converted nodes retain serialized NodeState.
+The command uses LOW priority. Higher-priority host policies can preempt it.
+Other blocks, composition, read-only roots, and expanded selections keep native handlers.
+This is not the Plate rule runtime. Native boundary, metadata, and history checks remain deferred.

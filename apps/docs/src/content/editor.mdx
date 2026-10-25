@@ -1331,3 +1331,14 @@ Markdown. Register `HorizontalRuleExtension` before live rule imports. Missing
 registrations reject imports without replacing current content. Rule
 presentation metadata is not converted. Static rules use the house Separator.
 These conversion workflows require deferred runtime validation.
+
+## Native block behavior
+
+Install the optional `editor-block-behavior` item. Import
+`EditorBlockBehaviorExtension` from `@/components/editor/block-behavior`.
+Register it in a stable root extensions array. A collapsed heading Enter makes
+the new half a paragraph. Higher-priority host handlers can preempt this rule.
+Other block and expanded-selection handlers remain native.
+
+This is not the Plate rule runtime. Native keyboard boundaries and history
+require deferred checks.

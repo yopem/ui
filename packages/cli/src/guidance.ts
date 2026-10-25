@@ -83,6 +83,9 @@ Use the pure \`search-model\` module outside React. Preserve host input cancella
 Install optional \`editor-floating-toolbar\` separately. Compose \`EditorFloatingToolbar\` inside \`EditorRoot\` beside \`EditorContent\`.
 Use existing controls as children. Select native text, then use Alt+F10 to focus the toolbar. Escape returns keyboard focus.
 Preserve the saved-range guard. Content changes and read-only transitions invalidate the target.
+Install optional \`editor-block-behavior\` separately. Import \`EditorBlockBehaviorExtension\` from \`${imports.editor}/block-behavior\`.
+Keep its extensions array stable. Collapsed heading Enter makes the new half a paragraph.
+Preserve higher-priority host policy, native selection, NodeState, composition, and history. Other block handlers stay native.
 Install optional \`editor-autoformat\` separately. Import \`EditorAutoformatExtension\` from \`${imports.editor}/autoformat\`.
 Keep it in a stable root array. It adds non-base transformers without repeating the base Markdown registration.
 Document readers support plain horizontal rules. Register HorizontalRuleExtension before live imports. Unsupported rule presentation rejects.

@@ -45,6 +45,7 @@ import {
 } from "./editor-examples/public-hosts"
 import { PublicNativeEditingExample } from "./editor-examples/public-native-editing"
 import { PublicPlaceholderExample } from "./editor-examples/public-placeholder"
+import { PublicPluginRulesExample } from "./editor-examples/public-plugin-rules"
 import { ReadOnlyEditorExample } from "./editor-examples/public-readonly"
 import { PublicReviewExample } from "./editor-examples/public-review"
 import { PublicScaleExample } from "./editor-examples/public-scale"
@@ -429,6 +430,24 @@ const examples = [
       "Apply selected-block alignment, text and background colors, indentation, and line height. Save and reload styled native JSON and HTML.",
     limits:
       "These controls use native Lexical state. Saved roundtrips stay in local component memory and are not host persistence. Public-example behavior remains unverified.",
+  },
+  {
+    slug: "public-plugin-rules",
+    sourceFile: "public-plugin-rules",
+    workflowIds: ["plugin-rules"],
+    title: "Native block behavior rules",
+    Component: PublicPluginRulesExample,
+    items: [
+      "editor-block-behavior",
+      "editor-autoformat",
+      "button",
+      "stack",
+      "text",
+    ],
+    description:
+      "Split headings into paragraphs and inspect native quote, code, list, inline, link, and void keyboard boundaries with history and read-only controls.",
+    limits:
+      "Only collapsed heading splitting is overridden. Other operations use native Lexical behavior, not a Plate rule runtime. Directional affinity, empty links, void selection, nested contexts, metadata, and Undo remain runtime-unverified.",
   },
   {
     slug: "public-autoformat",

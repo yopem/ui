@@ -72,7 +72,8 @@
     "./floating-toolbar": "./src/floating-toolbar.tsx",
     "./editing-rules": "./src/editing-rules.ts",
     "./block-placeholder": "./src/block-placeholder.tsx",
-    "./autoformat": "./src/autoformat.ts"
+    "./autoformat": "./src/autoformat.ts",
+    "./block-behavior": "./src/block-behavior.ts"
   },
   "scripts": {
     "typecheck": "tsc --noEmit"

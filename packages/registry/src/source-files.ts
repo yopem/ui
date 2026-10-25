@@ -9,6 +9,7 @@ export const sourceImportReplacements = [
     "@/components/editor/block-placeholder",
   ],
   ["@yopem-ui/editor/autoformat", "@/components/editor/autoformat"],
+  ["@yopem-ui/editor/block-behavior", "@/components/editor/block-behavior"],
   ["@yopem-ui/editor/editing-rules", "@/components/editor/editing-rules"],
   ["@yopem-ui/editor/floating-toolbar", "@/components/editor/floating-toolbar"],
   ["@yopem-ui/editor/search-model", "@/components/editor/search-model"],

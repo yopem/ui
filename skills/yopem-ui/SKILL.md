@@ -1042,3 +1042,12 @@ Document readers support plain native horizontal rules. Register
 `HorizontalRuleExtension` for live imports. Keep rules in block containers.
 Unsupported presentation rejects instead of being discarded. Static output uses
 the house Separator. Conversion workflows remain runtime-unverified.
+
+## Optional editor block behavior
+
+Install `editor-block-behavior` separately. Import
+`EditorBlockBehaviorExtension` from `@/components/editor/block-behavior`.
+Register it in a stable root extension array. Collapsed heading Enter makes the
+new half a paragraph. Higher-priority host handlers can preempt the LOW-priority
+rule. Other native handlers remain unchanged. Validate metadata, selection,
+composition, history, and nested contexts before production use.

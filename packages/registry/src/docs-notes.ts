@@ -11,6 +11,11 @@ const usageNoteValues = {
     "Labels have a 64-entry limit, 64-character keys, and 512-character values. Placeholder text stays outside native nodes and exported content. A separate live status announces its label.",
     "Blur, read-only transitions, layer removal, and root cleanup clear owned DOM hints. Native focus, history, serialization, screen-reader and visual behavior remain runtime-unverified.",
   ],
+  "editor-block-behavior": [
+    "Register EditorBlockBehaviorExtension once in the stable root extensions array. A collapsed heading Enter makes the new half a paragraph. Converted paragraphs retain serialized node state.",
+    "The handler uses LOW priority. Higher-priority host handlers can preempt it. Read-only, composition, expanded selections, and other block types retain native handlers.",
+    "This is not a replacement rule engine. Native nested quote, list, code, link, void, history, and arrow-affinity behavior remain runtime-unverified.",
+  ],
   "editor-autoformat": [
     "Register EditorAutoformatExtension in the stable root extension array. It adds non-base transformers without duplicating the base Markdown registration.",
     "Type [ ] plus Space for a checklist, two through six > prefixes plus Space for nested quotes, and --- plus Enter for a horizontal rule. Text rules include smart quotes, arrows, comparisons, legal symbols, fractions, and Unicode script characters.",

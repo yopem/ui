@@ -46,6 +46,7 @@ const completeEditorPreviews = new Map<
   ["editor-search", ["./editor-preview-compositions/search.tsx"]],
   ["editor-block-placeholder", ["./editor-examples/public-placeholder.tsx"]],
   ["editor-autoformat", ["./editor-examples/public-autoformat.tsx"]],
+  ["editor-block-behavior", ["./editor-examples/public-plugin-rules.tsx"]],
   ["editor-editing-rules", ["./editor-examples/public-editing-rules.tsx"]],
   [
     "editor-floating-toolbar",

@@ -1,5 +1,16 @@
 // Standalone TSX files use the standard @ alias for src.
 const usageSnippetValues = {
+  "editor-block-behavior": `"use client"
+
+import { EditorContent, EditorRoot } from "@/components/editor"
+import { EditorBlockBehaviorExtension } from "@/components/editor/block-behavior"
+
+const extensions = [EditorBlockBehaviorExtension]
+
+export function BlockBehaviorExample() {
+  return <EditorRoot ariaLabel="Block behavior" extensions={extensions}><EditorContent /></EditorRoot>
+}`,
+
   "editor-autoformat": `"use client"
 
 import { EditorContent, EditorRoot } from "@/components/editor"
