@@ -1,0 +1,140 @@
+"use client"
+
+import type { EditorState } from "lexical"
+
+import { Box } from "@registry/components/ui/box"
+import { Button } from "@registry/components/ui/button"
+import { Stack } from "@registry/components/ui/stack"
+import { Text } from "@registry/components/ui/text"
+import * as stylex from "@stylexjs/stylex"
+import {
+  EditorBlockButton,
+  EditorBlockPresentationExtension,
+  EditorContent,
+  EditorFormatButton,
+  EditorHistoryButton,
+  EditorLinkControl,
+  EditorRoot,
+  EditorTableButton,
+  EditorTableMenu,
+  EditorTablePresentationExtension,
+  EditorToolbar,
+} from "@yopem-ui/editor"
+import {
+  EditorDocxControls,
+  EditorDocxImportControl,
+  EditorDocxExportControl,
+} from "@yopem-ui/editor/docx/client"
+import { useState, type ReactNode } from "react"
+
+const extensions = [
+  EditorBlockPresentationExtension,
+  EditorTablePresentationExtension,
+]
+
+const initialState = JSON.stringify({
+  root: {
+    type: "root",
+    version: 1,
+    direction: null,
+    format: "",
+    indent: 0,
+    children: [
+      {
+        type: "paragraph",
+        version: 1,
+        direction: null,
+        format: "",
+        indent: 0,
+        children: [
+          {
+            type: "text",
+            version: 1,
+            detail: 0,
+            format: 0,
+            mode: "normal",
+            style: "",
+            text: "Edit this document, download it, and import the file into the same native editor.",
+          },
+        ],
+      },
+    ],
+  },
+})
+
+const styles = stylex.create({
+  snapshot: {
+    whiteSpace: "pre-wrap",
+    overflowWrap: "anywhere",
+  },
+})
+
+export function PublicDocxImportExample() {
+  return (
+    <PublicDocxExample>
+      <EditorDocxImportControl />
+    </PublicDocxExample>
+  )
+}
+
+export function PublicDocxExportExample() {
+  return (
+    <PublicDocxExample>
+      <EditorDocxExportControl />
+    </PublicDocxExample>
+  )
+}
+
+export function PublicDocxExample({ children }: { children?: ReactNode }) {
+  const [readOnly, setReadOnly] = useState(false)
+  const [snapshot, setSnapshot] = useState(initialState)
+
+  function change(state: EditorState) {
+    setSnapshot(JSON.stringify(state.toJSON()))
+  }
+
+  return (
+    <Stack data-testid="public-docx-example">
+      <Text>
+        Native Word files use a bounded semantic subset. This example does not
+        preserve page layout, images, macros, headers, or footers. Unsupported
+        content is rejected before document replacement.
+      </Text>
+      <Text>
+        Files have a 1 MiB archive and decoded-data limit. Import uses local
+        browser APIs. Cancellation cannot stop synchronous parsing already in
+        progress. Runtime and file fidelity checks remain pending.
+      </Text>
+      <Button onClick={() => setReadOnly(!readOnly)}>
+        {readOnly ? "Disable Word read-only" : "Enable Word read-only"}
+      </Button>
+      <EditorRoot
+        ariaLabel="Native Word document"
+        initialState={initialState}
+        editable={!readOnly}
+        extensions={extensions}
+        onChange={change}
+      >
+        <EditorToolbar aria-label="Native Word tools">
+          <EditorHistoryButton action="undo" />
+          <EditorHistoryButton action="redo" />
+          <EditorFormatButton format="bold" />
+          <EditorFormatButton format="italic" />
+          <EditorBlockButton block="paragraph" />
+          <EditorBlockButton block="h2" />
+          <EditorBlockButton block="quote" />
+          <EditorLinkControl />
+          <EditorTableButton />
+          <EditorTableMenu />
+        </EditorToolbar>
+        <EditorContent />
+        {children ?? <EditorDocxControls />}
+      </EditorRoot>
+      <Box render={<section />} aria-label="Word document JSON">
+        <Box render={<pre />} xstyle={styles.snapshot}>
+          {snapshot}
+        </Box>
+      </Box>
+    </Stack>
+  )
+}

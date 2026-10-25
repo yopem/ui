@@ -77,7 +77,8 @@
     "./labels": "./src/labels.ts",
     "./labels/model": "./src/labels-model.ts",
     "./labels/node": "./src/labels-node.ts",
-    "./docx": "./src/docx.ts"
+    "./docx": "./src/docx.ts",
+    "./docx/client": "./src/docx-controls.tsx"
   },
   "scripts": {
     "typecheck": "tsc --noEmit"

@@ -8,6 +8,8 @@ export const sourceImportReplacements = [
     "@yopem-ui/editor/block-placeholder",
     "@/components/editor/block-placeholder",
   ],
+  ["@yopem-ui/editor/docx/client", "@/components/editor/docx-controls"],
+  ["@yopem-ui/editor/docx", "@/components/editor/docx"],
   ["@yopem-ui/editor/labels/model", "@/components/editor/labels-model"],
   ["@yopem-ui/editor/labels/node", "@/components/editor/labels-node"],
   ["@yopem-ui/editor/labels", "@/components/editor/labels"],

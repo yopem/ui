@@ -11,6 +11,19 @@ export function BlockBehaviorExample() {
   return <EditorRoot ariaLabel="Block behavior" extensions={extensions}><EditorContent /></EditorRoot>
 }`,
 
+  "editor-docx": `import { EditorBlockPresentationExtension, EditorContent, EditorRoot, EditorTablePresentationExtension } from "@/components/editor"
+import { EditorDocxControls } from "@/components/editor/docx-controls"
+
+const extensions = [EditorBlockPresentationExtension, EditorTablePresentationExtension]
+
+export function WordEditor() {
+  return (
+    <EditorRoot extensions={extensions}>
+      <EditorContent />
+      <EditorDocxControls />
+    </EditorRoot>
+  )
+}`,
   "editor-labels": `"use client"
 
 import { EditorLabelsPicker } from "@/components/editor/labels"

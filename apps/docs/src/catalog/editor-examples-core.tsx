@@ -35,6 +35,7 @@ import { PublicCodeExample } from "./editor-examples/public-code"
 import { CsvEditorExample } from "./editor-examples/public-csv"
 import { PublicDemoHostExample } from "./editor-examples/public-demo-host"
 import { PublicDocumentExamples } from "./editor-examples/public-document"
+import { PublicDocxExample } from "./editor-examples/public-docx"
 import { PublicEditingRulesExample } from "./editor-examples/public-editing-rules"
 import { PublicFloatingToolbarExample } from "./editor-examples/public-floating-toolbar"
 import { PublicFootnotesExample } from "./editor-examples/public-footnotes"
@@ -433,6 +434,18 @@ const examples = [
       "Apply selected-block alignment, text and background colors, indentation, and line height. Save and reload styled native JSON and HTML.",
     limits:
       "These controls use native Lexical state. Saved roundtrips stay in local component memory and are not host persistence. Public-example behavior remains unverified.",
+  },
+  {
+    slug: "public-docx",
+    sourceFile: "public-docx",
+    workflowIds: [],
+    title: "Bounded native Word document conversion",
+    Component: PublicDocxExample,
+    items: ["editor-docx", "box", "button", "stack", "text"],
+    description:
+      "Import a supported Word document or download native content as actual DOCX archive bytes. Keep read-only export and native history separate from import.",
+    limits:
+      "This local semantic subset rejects unsupported content. It does not preserve Word page layout, images, macros, headers, or footers. Native decompression support is required. This file workflow does not implement the separate pinned Word clipboard workflow. Real-file, security, history, and browser validation remain pending.",
   },
   {
     slug: "public-labels",

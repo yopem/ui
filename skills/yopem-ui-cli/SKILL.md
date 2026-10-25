@@ -871,3 +871,26 @@ Replace only label-only content. Register EditorLabelNode in each reader. Use
 labels-model for pure validation. Invalid node metadata rejects. Unknown,
 duplicate, and excess valid tokens become plain text. Labels grant no access.
 Generic document conversion does not support these nodes.
+
+## Optional Word files
+
+Install the separate source item:
+
+```sh
+bunx --bun @yopem-ui/cli add editor-docx
+npx @yopem-ui/cli add editor-docx
+pnpm dlx @yopem-ui/cli add editor-docx
+yarn dlx @yopem-ui/cli add editor-docx
+```
+
+Import `parseDocx`, `importDocx`, and `exportDocx` from
+`@/components/editor/docx`. Compose `EditorDocxImportControl`,
+`EditorDocxExportControl`, or `EditorDocxControls` inside `EditorRoot`. Import
+these client parts from `@/components/editor/docx-controls`. Read-only roots can
+export but cannot import. Supply cancellation signals for host lifecycle
+changes. Keep the independent 1 MiB archive and decoded-data limits. Native
+deflate decompression is required for compressed Word files. Unsupported content
+rejects before replacement. Full Word layout, images, macros, headers, and
+footers are not supported. Synchronous parsing cannot be stopped. Word clipboard
+cleanup is a separate integration. See
+https://ui.yopem.com/components/editor-docx for the current subset and limits.

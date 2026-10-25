@@ -1372,3 +1372,44 @@ Native clipboard, normalization, history, read-only, source-copy, and
 accessibility validation remain deferred. See the
 [label picker](/editor/labels-picker) and [label option](/editor/labels-option)
 references.
+
+## Word document files
+
+Install the optional file-conversion item. Use the package-manager switcher.
+
+```sh
+bunx --bun @yopem-ui/cli add editor-docx
+```
+
+Import portable functions from `@/components/editor/docx`. Import client
+controls from `@/components/editor/docx-controls`. Compose
+`EditorDocxImportControl`, `EditorDocxExportControl`, or `EditorDocxControls`
+inside `EditorRoot`. The separate package entry is
+`@yopem-ui/editor/docx/client` for client parts.
+
+`parseDocx` returns validated native JSON. `importDocx` validates the target
+before replacement. `exportDocx` returns actual DOCX archive bytes. Read-only
+documents can export but cannot import. Imports reject stale targets,
+unsupported content, malformed XML, and invalid archives. Supply an AbortSignal
+for host lifecycle changes. Synchronous parsing cannot be stopped.
+
+Archives and decoded package data each have a 1 MiB limit. Archives have at most
+128 entries. XML depth, nodes, relationships, and external links are bounded.
+Compressed archives require native deflate decompression support. The supported
+semantic subset does not preserve complete Word page layout, images, macros,
+headers, or footers. Word clipboard cleanup is a separate workflow. Real-file,
+security, and browser checks remain deferred.
+
+Namespace aliases and rebinding reject. Styled document defaults and unsupported
+paragraph or run styles reject. Known font mappings are supported. Unsupported
+fonts reject instead of becoming a different family. Table grid widths must map
+to integral pixel values from 48 through 640. Supported table alignment and
+hyperlink tooltip/frame metadata are retained. Unsupported table properties and
+link relations reject. Word can use application defaults for heading appearance.
+Cancellation requests stop active stream reads. Blob reads and synchronous
+parsing cannot be stopped.
+
+See [the DOCX source item](/components/editor-docx),
+[import control](/editor/docx-import-control),
+[download control](/editor/docx-export-control), and
+[combined controls](/editor/docx-controls).

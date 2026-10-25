@@ -172,3 +172,15 @@ scheduled cleanup and private, unversioned buckets. Cancellation does not prove
 that an object write stopped.
 
 All editor tests live under the repository's root `tests/` directory.
+
+## Optional Word files
+
+Use the separate `editor-docx` item for bounded semantic Word file conversion.
+The workspace `@yopem-ui/editor/docx` entry supplies portable functions. The
+`@yopem-ui/editor/docx/client` entry supplies composable client controls. Base
+Editor does not import this feature. Read-only roots can download files but
+cannot import them. The implementation rejects unsupported content before
+replacement. It does not preserve complete Word page layout, images, macros,
+headers, or footers. Independent archive and decoded-data limits are 1 MiB.
+Native deflate support is required for compressed input. Word clipboard cleanup
+is separate. Runtime and real-file checks remain deferred.

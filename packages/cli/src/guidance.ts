@@ -83,6 +83,13 @@ Use the pure \`search-model\` module outside React. Preserve host input cancella
 Install optional \`editor-floating-toolbar\` separately. Compose \`EditorFloatingToolbar\` inside \`EditorRoot\` beside \`EditorContent\`.
 Use existing controls as children. Select native text, then use Alt+F10 to focus the toolbar. Escape returns keyboard focus.
 Preserve the saved-range guard. Content changes and read-only transitions invalidate the target.
+Install optional \`editor-docx\` separately for bounded semantic Word files.
+Import portable functions from \`${imports.editor}/docx\` and client controls from \`${imports.editor}/docx-controls\`.
+Compose \`EditorDocxImportControl\`, \`EditorDocxExportControl\`, or \`EditorDocxControls\` inside \`EditorRoot\`.
+Validate archives and XML before document replacement. Read-only or stale targets reject imports; read-only export is supported.
+Keep independent 1 MiB archive and decoded-data limits. Native deflate decompression is required for compressed files.
+Unsupported content rejects. Do not promise complete Word layout, images, macros, headers, or footers.
+Cancellation cannot stop synchronous parsing. Word files and Word clipboard cleanup are separate workflows.
 Install optional \`editor-labels\` separately. Import the controls and stable \`createEditorLabelsExtension\` from \`${imports.editor}/labels\`.
 Use \`EditorLabelsPicker\` or compose \`EditorLabelsOption\` inside house \`CheckboxGroup\`. Admit one through 64 unique bounded options and at most ten tokens.
 Apply minimum counts in the host form. Replace only label-only content. Register \`EditorLabelNode\` in each reader and use \`${imports.editor}/labels-model\` for pure validation.

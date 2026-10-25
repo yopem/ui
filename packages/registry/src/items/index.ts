@@ -19,6 +19,7 @@ import { editorColumnsItem } from "@registry/items/editor-columns"
 import { editorCsvItem } from "@registry/items/editor-csv"
 import { editorDateItem } from "@registry/items/editor-date"
 import { editorDocumentItem } from "@registry/items/editor-document"
+import { editorDocxItem } from "@registry/items/editor-docx"
 import { editorEditingRulesItem } from "@registry/items/editor-editing-rules"
 import { editorFloatingToolbarItem } from "@registry/items/editor-floating-toolbar"
 import { editorFootnotesItem } from "@registry/items/editor-footnotes"
@@ -65,6 +66,7 @@ export const sourceItems = [
   editorFloatingToolbarItem,
   editorAutoformatItem,
   editorBlockBehaviorItem,
+  editorDocxItem,
   editorLabelsItem,
   editorEditingRulesItem,
   editorBlockPlaceholderItem,

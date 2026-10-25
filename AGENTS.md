@@ -877,3 +877,19 @@ Register `EditorLabelNode` in each reader. Use `labels-model` for pure validatio
 Malformed node metadata rejects. Unknown, duplicate, and excess valid tokens become text.
 Label identities do not grant access. Generic document conversion remains unsupported.
 Native clipboard, normalization, history, read-only, and accessibility checks are deferred.
+
+## Optional editor DOCX
+
+Install `editor-docx` separately for bounded semantic Word file conversion.
+Import portable functions from `@/components/editor/docx`.
+Import client controls from `@/components/editor/docx-controls`.
+Compose `EditorDocxImportControl`, `EditorDocxExportControl`, or `EditorDocxControls` inside `EditorRoot`.
+Keep the base editor independent of DOCX code.
+Imports validate archive, XML, document structure, and target registration before replacement.
+Read-only and stale targets reject imports. Read-only export remains available.
+Supply an AbortSignal for host cancellation. Synchronous parsing cannot be stopped.
+Keep independent 1 MiB archive and decoded-data limits, bounded entries, and XML limits.
+Unsupported content rejects. Do not promise complete Word layout, image, macro, header, or footer support.
+Native deflate decompression is required for compressed archives.
+Word file conversion does not implement the separate pinned Word clipboard workflow.
+Runtime, real-file fidelity, and security fixture checks remain deferred.

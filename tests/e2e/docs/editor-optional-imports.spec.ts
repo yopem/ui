@@ -8,6 +8,12 @@ const documentationSchema = z.object({
 })
 
 const cases = [
+  ["editor-docx", "parseDocx", "docx"],
+  ["editor-docx", "importDocx", "docx"],
+  ["editor-docx", "exportDocx", "docx"],
+  ["editor-docx", "EditorDocxImportControl", "docx-controls"],
+  ["editor-docx", "EditorDocxExportControl", "docx-controls"],
+  ["editor-docx", "EditorDocxControls", "docx-controls"],
   ["editor-code-format", "formatEditorCode", "code-format"],
   ["editor-columns", "EditorColumnsControls", "columns"],
   ["editor-date", "EditorDateControls", "date"],

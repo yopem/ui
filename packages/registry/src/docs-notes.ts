@@ -1,5 +1,13 @@
 // These notes describe Yopem's composition choices, not only the upstream types.
 const usageNoteValues = {
+  "editor-docx": [
+    "Install this optional item for bounded native Word document conversion.",
+    "Compose EditorDocxImportControl, EditorDocxExportControl, or EditorDocxControls inside EditorRoot. Keep portable functions separate from client controls.",
+    "Files have independent 1 MiB archive and decoded-data limits. Archives have at most 128 entries. XML has bounded depth and node counts.",
+    "Imports validate before replacing current content. Supply an AbortSignal for host cancellation. Read-only or stale targets reject imports.",
+    "This implementation supports a semantic subset, not complete Word layout. Unsupported images, macros, headers, footers, and other content reject. Runtime and real-file fidelity checks remain pending.",
+    "Native deflate decompression must be available. Cancellation cannot stop synchronous parsing already in progress.",
+  ],
   "editor-block-selection": [
     "Create one stable controller. Render EditorBlockSelection inside EditorRoot. Select and move top-level blocks with the gutter, drag handles, or keyboard actions.",
     "Native cut requires synchronous literal-true host approval. Preserve native MIME export and higher-priority host cancellation. Document validation must also return literal true.",
