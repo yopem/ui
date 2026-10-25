@@ -16,6 +16,7 @@ import { editorCollaborationNodeItem } from "@registry/items/editor-collaboratio
 import { editorCollaborationServerItem } from "@registry/items/editor-collaboration-server"
 import { editorCollaborationWorkerItem } from "@registry/items/editor-collaboration-worker"
 import { editorColumnsItem } from "@registry/items/editor-columns"
+import { editorCopilotItem } from "@registry/items/editor-copilot"
 import { editorCsvItem } from "@registry/items/editor-csv"
 import { editorDateItem } from "@registry/items/editor-date"
 import { editorDocumentItem } from "@registry/items/editor-document"
@@ -70,6 +71,7 @@ export const sourceItems = [
   editorBlockBehaviorItem,
   editorDocxItem,
   editorEditableCardItem,
+  editorCopilotItem,
   editorListPresentationItem,
   editorLabelsItem,
   editorEditingRulesItem,

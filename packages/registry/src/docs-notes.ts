@@ -6,6 +6,13 @@ const usageNoteValues = {
     "Markers affect one native list. Nested lists keep their own markers. Checklists do not use custom markers.",
     "Keep yopemListMarker NodeState, data-editor-list-marker, and native ol start attributes in compatible readers.",
   ],
+  "editor-copilot": [
+    "Supply a stable configuration inside EditorRoot. No endpoint, credentials, or model is supplied.",
+    "Control+Space requests a paragraph-end completion. Tab accepts all text; Mod+Right accepts one grapheme. Escape cancels.",
+    "Acceptance requires explicit completion and clean EOF. Document, selection, style, composition, and read-only changes invalidate stale completions.",
+    "Automatic requests require both host permission and user opt-in. Host authentication, document policy, CSRF checks, and quota remain mandatory.",
+    "Cancellation cannot prove that provider billing stops. Native focus, IME, accessibility, and real provider checks remain deferred.",
+  ],
   "editor-editable-card": [
     "Register one stable EditorEditableCardExtension per root. Compose EditorEditableCardInsertButton inside EditorToolbar.",
     "Cards use native inputs, radio controls, and a separate nested editor. Browser Tab order remains native.",

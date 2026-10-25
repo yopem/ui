@@ -1,5 +1,7 @@
 /** Import aliases used in the copyable source files served by the registry. */
 export const sourceImportReplacements = [
+  ["@yopem-ui/editor/copilot/session", "@/components/editor/copilot-session"],
+  ["@yopem-ui/editor/copilot", "@/components/editor/copilot"],
   [
     "@yopem-ui/editor/editable-card/model",
     "@/components/editor/editable-card-model",

@@ -32,6 +32,7 @@ import { MediaExample } from "./editor-examples/media-example"
 import { PublicAutoformatExample } from "./editor-examples/public-autoformat"
 import { PublicBlocksExample } from "./editor-examples/public-blocks"
 import { PublicCodeExample } from "./editor-examples/public-code"
+import { PublicCopilotExample } from "./editor-examples/public-copilot"
 import { CsvEditorExample } from "./editor-examples/public-csv"
 import { PublicDemoHostExample } from "./editor-examples/public-demo-host"
 import { PublicDocumentExamples } from "./editor-examples/public-document"
@@ -70,6 +71,17 @@ const sources = import.meta.glob<string>("./editor-examples/*.tsx", {
 })
 
 const examples = [
+  {
+    slug: "public-copilot",
+    workflowIds: ["copilot"],
+    title: "Configured inline Copilot",
+    Component: PublicCopilotExample,
+    items: ["editor-copilot"],
+    description:
+      "Configure an existing authenticated host endpoint before requesting paragraph-end completions.",
+    limits:
+      "No endpoint, model, credentials, or free inference is provided. Automatic requests need host and user opt-in. Provider billing may continue after cancellation. Runtime acceptance is deferred.",
+  },
   {
     slug: "public-editable-voids",
     workflowIds: ["editable-voids"],

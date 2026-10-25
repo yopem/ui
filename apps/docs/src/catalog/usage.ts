@@ -37,6 +37,17 @@ export function CardEditor() {
     </EditorRoot>
   )
 }`,
+  "editor-copilot": `import { EditorContent, EditorRoot } from "@/components/editor"
+import { EditorCopilot, type EditorCopilotConfig } from "@/components/editor/copilot"
+
+export function CopilotEditor({ config }: { config: EditorCopilotConfig }) {
+  return (
+    <EditorRoot>
+      <EditorContent />
+      <EditorCopilot config={config} />
+    </EditorRoot>
+  )
+}`,
   "editor-docx": `import { EditorBlockPresentationExtension, EditorContent, EditorRoot, EditorTablePresentationExtension } from "@/components/editor"
 import { EditorDocxControls } from "@/components/editor/docx-controls"
 

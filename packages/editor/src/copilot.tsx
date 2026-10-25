@@ -181,6 +181,7 @@ function EditorCopilotInstance({ config }: { config: EditorCopilotConfig }) {
       <Box
         render={<output />}
         data-slot="editor-copilot-status"
+        data-state={snapshot.status}
         aria-live="polite"
         aria-atomic="true"
         xstyle={styles.status}

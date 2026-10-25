@@ -83,6 +83,12 @@ Use the pure \`search-model\` module outside React. Preserve host input cancella
 Install optional \`editor-floating-toolbar\` separately. Compose \`EditorFloatingToolbar\` inside \`EditorRoot\` beside \`EditorContent\`.
 Use existing controls as children. Select native text, then use Alt+F10 to focus the toolbar. Escape returns keyboard focus.
 Preserve the saved-range guard. Content changes and read-only transitions invalidate the target.
+Install optional \`editor-copilot\` separately. Import \`EditorCopilot\` from \`${imports.editor}/copilot\`.
+Render inside \`EditorRoot\` with a stable same-origin endpoint, document ID, and current authentication and CSRF headers.
+Control+Space requests a paragraph-end completion. Tab accepts completed text; Mod+Right accepts one grapheme. Escape cancels.
+Require explicit completion and clean EOF. Stale selection, content, style, composition, and read-only changes invalidate completions.
+Automatic requests need host permission and user opt-in. Keep server document policy, quota, credentials, and model selection explicit.
+Cancellation cannot prove that provider billing stops. No default endpoint or model exists.
 Install optional \`editor-editable-card\` separately for native cards with transient local form state.
 Import from \`${imports.editor}/editable-card\`. Register \`EditorEditableCardExtension\` in a stable extensions array.
 Compose \`EditorEditableCardInsertButton\` inside \`EditorToolbar\`. Keep native browser Tab order.

@@ -917,3 +917,13 @@ Keep native browser Tab order through form controls and the nested editor.
 The nested editor has independent state and history. Local fields and notes are transient.
 JSON stores only type and version. Removal, import, and undo restoration reset local values.
 Outer read-only state disables local controls. Generic document conversion does not support cards.
+
+## Optional inline Copilot
+
+Install `editor-copilot` separately. Render `EditorCopilot` inside `EditorRoot` with a stable explicit configuration.
+Supply a same-origin endpoint, document ID, and current host authentication and CSRF headers.
+Use Control+Space at a paragraph end. Tab accepts completed text. Mod+Right accepts one grapheme. Escape cancels.
+Require explicit completion and clean EOF before acceptance. Invalidate stale document, selection, style, composition, and read-only targets.
+Automatic requests require host permission and user opt-in. They can incur charges.
+Keep host document policy, quota, provider credentials, and model selection on the server.
+Cancellation does not prove that billing stops. No default endpoint or model exists.

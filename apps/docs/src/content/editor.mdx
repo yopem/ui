@@ -1447,3 +1447,17 @@ through the controls. Outer read-only state disables the local controls. Local
 fields and nested notes are transient. JSON stores only type and version.
 Removal, import, and undo restoration reset local values. Generic document
 conversion does not support cards.
+
+## Inline Copilot
+
+Install `editor-copilot` separately. Render `EditorCopilot` inside `EditorRoot`
+with a stable explicit configuration. Supply your same-origin endpoint, document
+ID, and current authentication and CSRF headers. Control+Space requests a
+paragraph-end completion. Tab accepts completed text. Mod+Right accepts one
+grapheme. Escape cancels. Acceptance requires explicit completion and clean EOF.
+Changed document, selection, formatting, composition, or read-only state
+invalidates stale completions. Automatic requests require host permission and
+user opt-in. These requests can incur charges. Your server controls document
+policy, quota, credentials, and model selection. Cancellation does not prove
+billing stops. No endpoint or model is provided. Runtime, provider, focus, and
+accessibility checks remain deferred.

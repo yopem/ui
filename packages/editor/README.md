@@ -193,3 +193,12 @@ Card fields, visibility, and nested notes are transient. Visibility does not
 change document access. JSON stores only type and version. Removal, import, and
 undo restoration reset local values. Generic document conversion does not
 support cards. Runtime acceptance remains deferred.
+
+Optional `editor-copilot` adds configured paragraph-end completions without
+replacing the editable surface. Use a stable `EditorCopilot` configuration
+inside `EditorRoot`. Supply your endpoint, document ID, and current
+authentication and CSRF headers. Tab accepts completed text. Mod+Right accepts
+one grapheme. Escape cancels. Automatic requests require host permission and
+user opt-in. No endpoint or model is supplied. Keep document authorization and
+quotas on your server. Cancellation does not prove provider billing stops.
+Native focus, IME, accessibility, and provider acceptance remain deferred.

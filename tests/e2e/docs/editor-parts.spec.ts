@@ -50,6 +50,17 @@ for (const part of editorParts.filter(
         preview.getByRole("button", { name: "Connect to host", exact: true }),
       ).toBeVisible()
       await expect(preview.locator('[contenteditable="true"]')).toHaveCount(0)
+    } else if (part.item === "editor-copilot") {
+      await expect(
+        preview.getByRole("button", { name: "Configure Copilot", exact: true }),
+      ).toBeVisible()
+      await expect(
+        preview.getByRole("textbox", { name: "Host endpoint", exact: true }),
+      ).toBeVisible()
+      await expect(
+        preview.getByLabel("Host CSRF token", { exact: true }),
+      ).toHaveAttribute("type", "password")
+      await expect(preview.locator('[contenteditable="true"]')).toHaveCount(0)
     } else if (part.name === "EditorLabelsOption") {
       await expect(
         preview.getByRole("group", { name: "Custom label options" }),

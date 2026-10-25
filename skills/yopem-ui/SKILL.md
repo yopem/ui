@@ -1117,3 +1117,12 @@ Keep native Tab order. Local fields and nested notes are transient and reset
 after card removal or import. The nested editor has independent history. JSON
 stores only type and version. Generic document conversion does not support
 cards.
+
+Install optional `editor-copilot`. Import `EditorCopilot` from
+`@/components/editor/copilot` inside `EditorRoot`. Supply stable host endpoint,
+document ID, authentication, and CSRF configuration. No default endpoint or
+model exists. Control+Space requests paragraph-end completion. Tab accepts all
+completed text; Mod+Right accepts one grapheme. Escape cancels. Require
+completion and clean EOF. Automatic requests require host and user opt-in and
+can incur charges. Keep document authorization, quota, provider credentials, and
+model selection on the server. Cancellation does not prove billing stops.
