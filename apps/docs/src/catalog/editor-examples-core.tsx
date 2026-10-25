@@ -71,6 +71,7 @@ import { PublicTablesExample } from "./editor-examples/public-tables"
 import { PublicTocExample } from "./editor-examples/public-toc"
 import { PublicTypeaheadExample } from "./editor-examples/public-typeahead"
 import { PublicWordClipboardExample } from "./editor-examples/public-word-clipboard"
+import { EditorNativeCollaborationClient } from "./editor-native-collaboration-client"
 import { EditorPlaygroundClient } from "./editor-playground-client"
 
 const sources = import.meta.glob<string>("./editor-examples/*.tsx", {
@@ -380,6 +381,25 @@ const examples = [
     items: ["editor-drawing"],
     limits:
       "Requires browser-only SDK loading, approved same-origin assets and the SDK stylesheet. Files, images, links, custom metadata and unsupported element types reject. Generic document conversion is unsupported. SDK, drawing history, read-only viewing, accessibility and dependency-audit acceptance remain deferred. The credit covers mapped source operations only, not unrestricted Excalidraw or verified runtime equivalence.",
+  },
+  {
+    slug: "native-collaboration",
+    sourceFile: "public-native-collaboration",
+    workflowIds: [],
+    title: "Host-authorized Hocuspocus and WebRTC rooms",
+    description:
+      "Change or generate persisted room IDs. View separate server and peer states with host-verified identities and permissions.",
+    Component: EditorNativeCollaborationClient,
+    items: [
+      "editor-collaboration-native",
+      "checkbox",
+      "field",
+      "form",
+      "hstack",
+      "label",
+    ],
+    limits:
+      "Requires an authorized HTTPS grant endpoint, trusted WSS Hocuspocus hosting and authoritative one-time room initialization. WebRTC requires explicit trusted-writer signaling and allows nine peers. Only room IDs enter browser storage. Hocuspocus sync is not proof of durable storage, and peer discovery is not a connection. Native transports do not provide editor-v1 durable ACKs, per-frame host policy or atomic revocation. Host services, identity isolation, SDK disposal, SSR, clipboard, focus and accessibility remain unverified.",
   },
   {
     slug: "public-collaboration",
