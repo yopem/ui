@@ -20,6 +20,7 @@ import {
 } from "@registry/components/ui/dialog"
 import { Input } from "@registry/components/ui/input"
 import { List, ListItem } from "@registry/components/ui/list"
+import { ScrollArea } from "@registry/components/ui/scroll-area"
 import { Stack } from "@registry/components/ui/stack"
 import { Text } from "@registry/components/ui/text"
 import { Wrap } from "@registry/components/ui/wrap"
@@ -56,20 +57,11 @@ const styles = stylex.create({
     backgroundColor: tokens["--accent"],
     color: tokens["--accent-foreground"],
   },
-  chat: { maxBlockSize: "10rem", overflowY: "auto" },
-  commandList: {
-    listStyle: "none",
-    maxBlockSize: "16rem",
-    overflowY: "auto",
-    paddingInlineStart: 0,
-  },
+  chat: { maxBlockSize: "10rem" },
+  commandPane: { maxBlockSize: "16rem" },
+  commandList: { listStyle: "none", paddingInlineStart: 0 },
   message: { overflowWrap: "anywhere", whiteSpace: "pre-wrap" },
-  proposal: {
-    maxBlockSize: "16rem",
-    overflowY: "auto",
-    overflowWrap: "anywhere",
-    whiteSpace: "pre-wrap",
-  },
+  proposal: { maxBlockSize: "16rem" },
 })
 
 interface EditorAiMenuCommand {
@@ -435,35 +427,37 @@ function EditorAiMenuSearch({
         onChange={onSearchChange}
         onKeyDown={onKeyDown}
       />
-      <List aria-label="AI commands" xstyle={styles.commandList}>
-        {commands.length ? (
-          commands.map((command, index) => (
-            <ListItem key={command.label}>
-              <Button
-                type="button"
-                variant="ghost"
-                xstyle={
-                  index === activeIndex ? styles.activeCommand : undefined
-                }
-                aria-current={index === activeIndex ? "true" : undefined}
-                disabled={
-                  !bookmarkCaptured ||
-                  status === "streaming" ||
-                  status === "stale" ||
-                  (command.review === true && !reviewAllowed)
-                }
-                onClick={() => onSelect(command)}
-              >
-                {command.label}
-              </Button>
+      <ScrollArea aria-label="AI commands" xstyle={styles.commandPane}>
+        <List aria-label="AI commands" xstyle={styles.commandList}>
+          {commands.length ? (
+            commands.map((command, index) => (
+              <ListItem key={command.label}>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  xstyle={
+                    index === activeIndex ? styles.activeCommand : undefined
+                  }
+                  aria-current={index === activeIndex ? "true" : undefined}
+                  disabled={
+                    !bookmarkCaptured ||
+                    status === "streaming" ||
+                    status === "stale" ||
+                    (command.review === true && !reviewAllowed)
+                  }
+                  onClick={() => onSelect(command)}
+                >
+                  {command.label}
+                </Button>
+              </ListItem>
+            ))
+          ) : (
+            <ListItem>
+              <Text>No matching command.</Text>
             </ListItem>
-          ))
-        ) : (
-          <ListItem>
-            <Text>No matching command.</Text>
-          </ListItem>
-        )}
-      </List>
+          )}
+        </List>
+      </ScrollArea>
     </>
   )
 }
@@ -519,22 +513,19 @@ function EditorAiMenuTranscript({
   return (
     <>
       {text ? (
-        <Box render={<section aria-label="AI proposal" />}>
-          <Text xstyle={styles.proposal}>{text}</Text>
-        </Box>
+        <ScrollArea aria-label="AI proposal" xstyle={styles.proposal}>
+          <Text xstyle={styles.message}>{text}</Text>
+        </ScrollArea>
       ) : null}
       {messages.length ? (
-        <Box
-          render={<section aria-label="AI chat history" />}
-          xstyle={styles.chat}
-        >
+        <ScrollArea aria-label="AI chat history" xstyle={styles.chat}>
           {messages.map((message) => (
             <Box key={message.id}>
               <Text>{message.role}</Text>
               <Text xstyle={styles.message}>{message.text}</Text>
             </Box>
           ))}
-        </Box>
+        </ScrollArea>
       ) : null}
     </>
   )

@@ -15,7 +15,15 @@ export const editorAiMenuItem: SourceItem = {
     registryDependency("react"),
     registryDependency("react-dom"),
   ],
-  registryDependencies: ["editor", "editor-review", "list"],
+  registryDependencies: [
+    "editor",
+    "editor-review",
+    "dialog",
+    "field",
+    "list",
+    "scroll-area",
+    "wrap",
+  ],
   files: [
     {
       path: "components/editor/ai-menu.tsx",

@@ -5,6 +5,7 @@ import type { EditorReviewHost } from "@yopem-ui/editor/review"
 
 import { Box } from "@registry/components/ui/box"
 import { Button } from "@registry/components/ui/button"
+import { Field, FieldLabel } from "@registry/components/ui/field"
 import { Input } from "@registry/components/ui/input"
 import { Stack } from "@registry/components/ui/stack"
 import { Text } from "@registry/components/ui/text"
@@ -27,7 +28,7 @@ import {
   EditorReviewPanel,
   EditorReviewProvider,
 } from "@yopem-ui/editor/review"
-import { useRef, useState } from "react"
+import { useId, useRef, useState } from "react"
 
 const reviewViewer = { id: "public-ai-reviewer", name: "Example reviewer" }
 
@@ -74,6 +75,7 @@ function PublicAiEditor({
 }
 
 export function PublicAiExample() {
+  const fieldId = useId()
   const endpointRef = useRef<HTMLInputElement>(null)
   const documentIdRef = useRef<HTMLInputElement>(null)
   const csrfRef = useRef<HTMLInputElement>(null)
@@ -125,26 +127,40 @@ export function PublicAiExample() {
           access, choose an authorized model, and enforce quota. Requests can
           incur charges. No endpoint or model is provided.
         </Text>
-        <Input
-          aria-label="Host endpoint"
-          ref={endpointRef}
-          disabled={config !== undefined}
-          required
-        />
-        <Input
-          aria-label="Host document ID"
-          ref={documentIdRef}
-          disabled={config !== undefined}
-          required
-        />
-        <Input
-          aria-label="Host CSRF token"
-          type="password"
-          autoComplete="off"
-          ref={csrfRef}
-          disabled={config !== undefined}
-          required
-        />
+        <Field>
+          <FieldLabel htmlFor={`${fieldId}-endpoint`}>Host endpoint</FieldLabel>
+          <Input
+            id={`${fieldId}-endpoint`}
+            aria-label="Host endpoint"
+            ref={endpointRef}
+            disabled={config !== undefined}
+            required
+          />
+        </Field>
+        <Field>
+          <FieldLabel htmlFor={`${fieldId}-document`}>
+            Host document ID
+          </FieldLabel>
+          <Input
+            id={`${fieldId}-document`}
+            aria-label="Host document ID"
+            ref={documentIdRef}
+            disabled={config !== undefined}
+            required
+          />
+        </Field>
+        <Field>
+          <FieldLabel htmlFor={`${fieldId}-csrf`}>Host CSRF token</FieldLabel>
+          <Input
+            id={`${fieldId}-csrf`}
+            aria-label="Host CSRF token"
+            type="password"
+            autoComplete="off"
+            ref={csrfRef}
+            disabled={config !== undefined}
+            required
+          />
+        </Field>
         <Button disabled={config !== undefined} onClick={configure}>
           Configure AI
         </Button>

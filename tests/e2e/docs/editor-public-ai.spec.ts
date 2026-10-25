@@ -1,5 +1,6 @@
 import type { Page } from "@playwright/test"
 
+import AxeBuilder from "@axe-core/playwright"
 import { expect, test } from "@playwright/test"
 
 function eventStream(text: string) {
@@ -73,7 +74,7 @@ test("Mod+J searches commands and explicit approval replaces selection once", as
   ).toHaveAttribute("data-state", "ready")
   await expect(editor).toHaveText("Selected copy")
   await expect(
-    dialog.getByRole("region", { name: "AI chat history" }),
+    dialog.getByRole("group", { name: "AI chat history" }),
   ).toContainText("Proposed copy")
   await dialog.getByRole("button", { name: "Replace selection" }).click()
   await expect(editor).toHaveText("Proposed copy")
@@ -83,7 +84,7 @@ test("Mod+J searches commands and explicit approval replaces selection once", as
   await editor.click()
   await editor.press("ControlOrMeta+j")
   await expect(
-    page.getByRole("dialog", { name: "AI command menu" }).getByRole("region", {
+    page.getByRole("dialog", { name: "AI command menu" }).getByRole("group", {
       name: "AI chat history",
     }),
   ).toContainText("Proposed copy")
@@ -127,7 +128,7 @@ test("bounded chat sends follow-up context through the configured host", async (
   await expect.poll(() => followupBody).toContain("First response")
   await expect(editor).toHaveText("Source text")
   await expect(
-    dialog.getByRole("region", { name: "AI chat history" }),
+    dialog.getByRole("group", { name: "AI chat history" }),
   ).toContainText("Second response")
 })
 
@@ -149,8 +150,35 @@ test("chat truncation keeps well-formed Unicode in follow-up requests", async ({
   await editor.fill("Unicode source")
   await editor.press("ControlOrMeta+j")
   const dialog = await openCommand(page, "Continue")
-  const history = dialog.getByRole("region", { name: "AI chat history" })
+  const history = dialog.getByRole("group", { name: "AI chat history" })
   await expect(history).toContainText("x".repeat(2047))
+  await expect
+    .poll(() =>
+      history.evaluate((node) => node.scrollHeight > node.clientHeight),
+    )
+    .toBe(true)
+  await history.focus()
+  await page.keyboard.press("ArrowDown")
+  await expect
+    .poll(() => history.evaluate((node) => node.scrollTop))
+    .toBeGreaterThan(0)
+
+  const proposal = dialog.getByRole("group", {
+    name: "AI proposal",
+    exact: true,
+  })
+
+  await expect
+    .poll(() =>
+      proposal.evaluate((node) => node.scrollHeight > node.clientHeight),
+    )
+    .toBe(true)
+  await proposal.focus()
+  await page.keyboard.press("ArrowDown")
+  await expect
+    .poll(() => proposal.evaluate((node) => node.scrollTop))
+    .toBeGreaterThan(0)
+  expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([])
   expect(await history.textContent()).not.toContain("\ud83d")
   await dialog.getByRole("button", { name: "Discard proposal" }).click()
   const chat = dialog.getByRole("textbox", { name: "AI chat message" })
@@ -263,13 +291,13 @@ test("all menu actions use the configured stream and remain plain text proposals
       dialog.locator('[data-slot="editor-ai-menu-status"]'),
     ).toHaveAttribute("data-state", "ready")
     await expect(
-      dialog.getByRole("region", { name: "AI chat history" }),
+      dialog.getByRole("group", { name: "AI chat history" }),
     ).toContainText("Plain proposal")
     await dialog.getByRole("button", { name: "Discard proposal" }).click()
   }
 
   expect(calls()).toBe(12)
-  const history = dialog.getByRole("region", { name: "AI chat history" })
+  const history = dialog.getByRole("group", { name: "AI chat history" })
   await expect(history.getByText("You", { exact: true })).toHaveCount(6)
   await expect(history.getByText("AI", { exact: true })).toHaveCount(6)
   await expect(editor).toHaveText("Source text")
