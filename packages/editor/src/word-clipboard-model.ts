@@ -26,7 +26,7 @@ import {
 } from "./list-presentation-model"
 import { serializeMediaHtml } from "./media/html"
 
-const resolverFunctionSchema = z.function()
+const resolverFunctionSchema = z.function({ input: [z.unknown(), z.unknown()] })
 
 export interface WordClipboardImage {
   readonly source: string
@@ -275,15 +275,20 @@ export function normalizeWordClipboardHTML(
 
       try {
         const result: unknown = resolveImage(image)
-        void Promise.resolve(result).catch(() => undefined)
 
-        if (
-          z.util.isObject(result) &&
-          resolverFunctionSchema.safeParse(result["then"]).success
-        )
+        const then = z.util.isObject(result)
+          ? resolverFunctionSchema.safeParse(result["then"])
+          : null
+
+        if (then?.success) {
+          void new Promise<unknown>((resolve, reject) => {
+            then.data.call(result, resolve, reject)
+          }).catch(() => undefined)
           throw new DocumentError([
             "Word image resolver returned invalid media metadata.",
           ])
+        }
+
         media = documentMediaSchema.parse(result)
       } catch (error) {
         if (error instanceof DocumentError) throw error

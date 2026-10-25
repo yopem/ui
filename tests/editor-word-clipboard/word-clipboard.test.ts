@@ -117,6 +117,40 @@ test("thenable media metadata is not accepted as a synchronous resolver value", 
   await new Promise((resolve) => setTimeout(resolve, 0))
 })
 
+test("resolver then getters cannot change acceptance after their first read", async () => {
+  const rejected = Promise.reject(new Error("Unexpected deferred resolver"))
+  const nativeThen = rejected.then.bind(rejected)
+
+  const media: MediaInput = {
+    kind: "image",
+    url: "https://assets.example.test/word.png",
+  }
+
+  let reads = 0
+
+  const result = new Proxy(media, {
+    get(target, property) {
+      if (property === "then") {
+        reads += 1
+
+        return reads === 1 ? nativeThen : undefined
+      }
+
+      if (property === "kind") return target.kind
+
+      if (property === "url") return target.url
+
+      return undefined
+    },
+  })
+
+  expect(() => normalizeWordClipboardHTML(wordImageHTML, () => result)).toThrow(
+    "Word image resolver returned invalid media metadata.",
+  )
+  await new Promise((resolve) => setTimeout(resolve, 0))
+  expect(reads).toBe(1)
+})
+
 test("invalid image metadata and unsupported rich formatting reject before import", () => {
   expect(() =>
     normalizeWordClipboardHTML(wordImageHTML, (image) => ({
