@@ -20,6 +20,7 @@ import { editorCollaborationWorkerItem } from "@registry/items/editor-collaborat
 import { editorColumnsItem } from "@registry/items/editor-columns"
 import { editorCopilotItem } from "@registry/items/editor-copilot"
 import { editorCsvItem } from "@registry/items/editor-csv"
+import { editorCursorOverlayItem } from "@registry/items/editor-cursor-overlay"
 import { editorDateItem } from "@registry/items/editor-date"
 import { editorDiagramItem } from "@registry/items/editor-diagram"
 import {
@@ -77,6 +78,7 @@ export const sourceItems = [
   editorTocItem,
   editorCsvItem,
   editorWordClipboardItem,
+  editorCursorOverlayItem,
   editorSearchItem,
   editorFloatingToolbarItem,
   editorAutoformatItem,

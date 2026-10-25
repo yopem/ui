@@ -100,6 +100,11 @@ export const sourceImportReplacements = [
     "@/components/editor/word-clipboard-model",
   ],
   ["@yopem-ui/editor/word-clipboard", "@/components/editor/word-clipboard"],
+  [
+    "@yopem-ui/editor/cursor-overlay/store",
+    "@/components/editor/cursor-overlay-store",
+  ],
+  ["@yopem-ui/editor/cursor-overlay", "@/components/editor/cursor-overlay"],
   ["@yopem-ui/editor/ai/menu", "@/components/editor/ai-menu"],
   ["@yopem-ui/editor/ai/client", "@/components/editor/ai-client"],
   ["@yopem-ui/editor/ai", "@/components/editor/ai-controls"],

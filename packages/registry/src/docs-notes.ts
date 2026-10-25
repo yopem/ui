@@ -1,5 +1,11 @@
 // These notes describe Yopem's composition choices, not only the upstream types.
 const usageNoteValues = {
+  "editor-cursor-overlay": [
+    "Compose EditorCursorOverlay inside EditorRoot beside EditorContent. Paint stays outside saved document state and uses the root owner document.",
+    "Native drag and drop remain unchanged. Document changes and read-only transitions clear selection and caret paint.",
+    "Create the store without listeners. Its first subscription connects native listeners. Final unsubscribe or explicit disposal removes owned listeners.",
+    "This feature paints browser selection. It supplies no AI authorization, proposal approval, or remote collaboration presence.",
+  ],
   "editor-word-clipboard": [
     "Register EditorWordClipboardExtension in a stable extensions array. Call registerDocumentPaste and registerWordClipboardPaste after creation. Run both cleanups on unmount.",
     "This optional feature inserts a bounded Word HTML fragment. DOCX file import is a separate feature. No full Word layout or native-capture acceptance is claimed.",
