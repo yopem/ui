@@ -34,7 +34,8 @@
     "test:postgres-native:node": "bun build --target=node --format=esm --packages=external --tsconfig-override tests/tsconfig.json tests/editor-document-stores/postgres-native.integration.ts --outfile=./test-results/postgres-native.mjs && node ./test-results/postgres-native.mjs",
     "test:document:standalone": "bun test ./tests/editor-document-browser/standalone.test.ts ./tests/editor-document-browser/accessible-blocks.test.ts",
     "test:editor-document-clipboard": "bun tests/editor-document-clipboard/run.mjs",
-    "test:editor-assets-browser": "bun test ./tests/editor-assets/browser-security.spec.ts ./tests/editor-assets/browser.spec.ts ./tests/editor-assets/general-browser.spec.ts"
+    "test:editor-assets-browser": "bun test ./tests/editor-assets/browser-security.spec.ts ./tests/editor-assets/browser.spec.ts ./tests/editor-assets/general-browser.spec.ts",
+    "test:editor-cursor-overlay": "bun --tsconfig-override ./tests/tsconfig.json ./tests/editor-cursor-overlay/cursor-overlay.native.ts"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.14.0",

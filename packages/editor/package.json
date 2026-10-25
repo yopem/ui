@@ -100,7 +100,9 @@
     "./diagram/renderers/flowchart": "./src/diagram-renderers/flowchart.browser.ts",
     "./ai/menu": "./src/ai-menu.tsx",
     "./word-clipboard": "./src/word-clipboard.ts",
-    "./word-clipboard-model": "./src/word-clipboard-model.ts"
+    "./word-clipboard-model": "./src/word-clipboard-model.ts",
+    "./cursor-overlay": "./src/cursor-overlay.tsx",
+    "./cursor-overlay/store": "./src/cursor-overlay-store.ts"
   },
   "scripts": {
     "typecheck": "tsc --noEmit"
