@@ -39,6 +39,7 @@ import {
   MultipleEditorsExample,
 } from "./editor-examples/public-hosts"
 import { ReadOnlyEditorExample } from "./editor-examples/public-readonly"
+import { PublicSelectionExample } from "./editor-examples/public-selection"
 import { PublicStylesExample } from "./editor-examples/public-styles"
 import { PublicTocExample } from "./editor-examples/public-toc"
 
@@ -214,6 +215,18 @@ const examples = [
       "Save immutable snapshots. Inspect an earlier revision without changing the current document. Compare inserted, removed, and updated blocks and text.",
     limits:
       "History stays in memory and holds at most 20 snapshots, each within 1 MiB and 200 top-level blocks. Long or multiline text uses whole-block differences. No server history is configured.",
+  },
+  {
+    slug: "public-selection",
+    sourceFile: "public-selection",
+    workflowIds: ["block-selection", "dnd"],
+    title: "Block selection and reorder",
+    Component: PublicSelectionExample,
+    items: ["editor-block-selection"],
+    description:
+      "Select top-level ranges, copy or confirm native cuts, reorder by handle or move controls, and preserve rich content with local history.",
+    limits:
+      "Selection and reorder apply to top-level blocks only. Local Cut confirmation grants no server permission. Pointer, clipboard policy, history, and read-only acceptance remain unverified.",
   },
   {
     slug: "read-only",
