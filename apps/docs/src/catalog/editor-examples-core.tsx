@@ -33,6 +33,7 @@ import { PublicBlocksExample } from "./editor-examples/public-blocks"
 import { PublicCodeExample } from "./editor-examples/public-code"
 import { CsvEditorExample } from "./editor-examples/public-csv"
 import { PublicDocumentExamples } from "./editor-examples/public-document"
+import { PublicEditingRulesExample } from "./editor-examples/public-editing-rules"
 import { PublicFloatingToolbarExample } from "./editor-examples/public-floating-toolbar"
 import { PublicFootnotesExample } from "./editor-examples/public-footnotes"
 import { VersionHistoryExample } from "./editor-examples/public-history"
@@ -221,6 +222,18 @@ const examples = [
       "Save immutable snapshots. Inspect an earlier revision without changing the current document. Compare inserted, removed, and updated blocks and text.",
     limits:
       "History stays in memory and holds at most 20 snapshots, each within 1 MiB and 200 top-level blocks. Long or multiline text uses whole-block differences. No server history is configured.",
+  },
+  {
+    slug: "public-editing-rules",
+    sourceFile: "public-editing-rules",
+    workflowIds: ["exit-break", "single-block"],
+    title: "Native exit break and single-paragraph rules",
+    Component: PublicEditingRulesExample,
+    items: ["editor-editing-rules"],
+    description:
+      "Exit native quote, code, and table root boundaries with modifier shortcuts. Use separate single-block or single-line input modes with bounded plain-text paste.",
+    limits:
+      "Single-paragraph modes apply only to a root with one paragraph and do not validate or flatten arbitrary documents. Single-line removes new pasted breaks, not existing content. Full autoformat, plugin-rules, placeholders and tabbable workflows are not provided. History, IME, native clipboard and accessibility are unverified.",
   },
   {
     slug: "public-floating-toolbar",

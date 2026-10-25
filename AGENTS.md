@@ -818,3 +818,14 @@ Use existing editor controls as children. Select native text to open it.
 Press Alt+F10 to focus its first enabled button. Escape returns keyboard focus.
 Keep the saved-range guard. Content changes and read-only transitions invalidate targets.
 Native focus, nested popups, pointer geometry, RTL, and cleanup require runtime checks.
+
+
+## Optional native editing rules
+
+Install `editor-editing-rules` separately. Create its extension once per root.
+Use Mod+Enter for an exit paragraph. Add Shift to insert before the root block.
+Single-paragraph modes keep Enter and modifier shortcuts within one paragraph.
+They apply only to one paragraph. They do not validate or flatten arbitrary documents.
+Plain text has a 1 MiB limit. Converted block text has a 2501-line limit.
+Reject rich, non-text, oversized, and converted-empty paste without removing selected content.
+Preserve higher-priority host handlers, IME, native Tab, and read-only behavior.

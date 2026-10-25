@@ -5,6 +5,12 @@ const usageNoteValues = {
     "Native cut requires synchronous literal-true host approval. Preserve native MIME export and higher-priority host cancellation. Document validation must also return literal true.",
     "Content, selection, and read-only changes expire saved operations. Keep host authorization for persisted writes. Validate custom document schemas before local mutations.",
   ],
+  "editor-editing-rules": [
+    "Create the extension once per root. Preserve higher-priority host keyboard and clipboard handlers. Tab behavior remains native.",
+    "Exit-break requires a collapsed editable range. Single-paragraph modes keep Enter and modifier shortcuts within that paragraph. Other document shapes keep native behavior without flattening.",
+    "Plain text is limited to 1 MiB and converted block text to 2501 lines. Rich, non-text, oversized and converted-empty paste preserves selected content. Single-line mode removes new pasted line breaks, not existing content.",
+    "This extension is not a complete document validator. Native paste, history, IME, nested boundaries, read-only behavior and accessibility still need deferred runtime checks.",
+  ],
   "editor-floating-toolbar": [
     "Install editor-floating-toolbar separately. Compose EditorFloatingToolbar inside EditorRoot beside EditorContent. Use existing editor controls as children.",
     "Select text to open the non-modal toolbar. Press Alt+F10 to focus the first enabled control. Escape returns keyboard focus to the editor.",

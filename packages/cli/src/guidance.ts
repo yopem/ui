@@ -83,6 +83,11 @@ Use the pure \`search-model\` module outside React. Preserve host input cancella
 Install optional \`editor-floating-toolbar\` separately. Compose \`EditorFloatingToolbar\` inside \`EditorRoot\` beside \`EditorContent\`.
 Use existing controls as children. Select native text, then use Alt+F10 to focus the toolbar. Escape returns keyboard focus.
 Preserve the saved-range guard. Content changes and read-only transitions invalidate the target.
+Install optional \`editor-editing-rules\` separately. Create one stable \`createEditorEditingRulesExtension\` per root.
+Use Mod+Enter to exit the containing root block; add Shift to insert before it.
+Single-paragraph modes retain one paragraph for Enter and modifier shortcuts. They do not validate arbitrary documents.
+Bound plain text to 1 MiB and converted block text to 2501 lines. Rejected or converted-empty paste preserves selected content.
+Keep higher-priority host handlers, IME, native Tab, and read-only behavior.
 Validate external table JSON and HTML before conversion. Reject invalid updates without removing existing content.
 Discard saved table selections after document content changes. Preserve resize cancellation, history, and RTL keyboard behavior.
 Render checklist items as native list items with separate checkbox controls.

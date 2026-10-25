@@ -69,7 +69,8 @@
     "./csv/model": "./src/csv-model.ts",
     "./search": "./src/search.tsx",
     "./search-model": "./src/search-model.ts",
-    "./floating-toolbar": "./src/floating-toolbar.tsx"
+    "./floating-toolbar": "./src/floating-toolbar.tsx",
+    "./editing-rules": "./src/editing-rules.ts"
   },
   "scripts": {
     "typecheck": "tsc --noEmit"

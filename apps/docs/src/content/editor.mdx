@@ -1265,3 +1265,22 @@ Set `pasteTsv` to `false` when CSV handles fields that contain tab characters.
 Configure this value on `EditorTablePresentationExtension`. HTML table
 validation remains active. See [CSV paste](/components/editor-csv) for the
 composition and API.
+
+## Native editing rules
+
+Install the optional [editing rules item](/components/editor-editing-rules).
+Create one stable extension with `createEditorEditingRulesExtension` before the
+root mounts. Use Mod+Enter to insert after the containing root block. Add Shift
+to insert before it.
+
+Set `singleBlockMode` to `single-block` or `single-line` for a root with one
+paragraph. Enter and modifier shortcuts stay in that paragraph. Other root
+shapes keep native editing without flattening. The extension is not a complete
+document validator. Single-line mode removes new pasted breaks, not existing
+content.
+
+Plain text has a 1 MiB limit. Converted block text has a 2501-line limit.
+Rejected rich, non-text, oversized, and converted-empty paste keeps selected
+content. Keep higher-priority host handlers, IME, native Tab, and read-only
+behavior. Native clipboard, nested boundaries, history, and accessibility checks
+remain deferred.

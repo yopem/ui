@@ -16,6 +16,7 @@ import { editorColumnsItem } from "@registry/items/editor-columns"
 import { editorCsvItem } from "@registry/items/editor-csv"
 import { editorDateItem } from "@registry/items/editor-date"
 import { editorDocumentItem } from "@registry/items/editor-document"
+import { editorEditingRulesItem } from "@registry/items/editor-editing-rules"
 import { editorFloatingToolbarItem } from "@registry/items/editor-floating-toolbar"
 import { editorFootnotesItem } from "@registry/items/editor-footnotes"
 import { editorMathItem } from "@registry/items/editor-math"
@@ -58,6 +59,7 @@ export const sourceItems = [
   editorCsvItem,
   editorSearchItem,
   editorFloatingToolbarItem,
+  editorEditingRulesItem,
   editorDocumentItem,
   editorStoreItem,
   editorReviewItem,

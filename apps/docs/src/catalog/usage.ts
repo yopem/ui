@@ -1,5 +1,20 @@
 // Standalone TSX files use the standard @ alias for src.
 const usageSnippetValues = {
+  "editor-editing-rules": `"use client"
+
+import { EditorRoot, EditorContent } from "@/components/editor"
+import { createEditorEditingRulesExtension } from "@/components/editor/editing-rules"
+
+const extensions = [createEditorEditingRulesExtension()]
+
+export function ExitBreakExample() {
+  return (
+    <EditorRoot ariaLabel="Exit break document" extensions={extensions}>
+      <EditorContent />
+    </EditorRoot>
+  )
+}`,
+
   "editor-floating-toolbar": `"use client"
 
 import { EditorRoot, EditorContent, EditorFormatButton } from "@/components/editor"

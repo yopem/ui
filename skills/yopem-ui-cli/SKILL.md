@@ -808,3 +808,14 @@ EditorRoot beside EditorContent. Use existing editor controls as children.
 Select native text to open the toolbar. Press Alt+F10 to focus its first enabled
 button. Keep the saved-range guard. Document changes and read-only transitions
 invalidate the target.
+
+## Optional native editing rules
+
+Install `editor-editing-rules` separately. Import
+`createEditorEditingRulesExtension` from the copied
+`@/components/editor/editing-rules` module. Create a stable extension array
+before the root mounts. Mod+Enter exits the containing root block; Shift inserts
+before it. Single-paragraph modes retain one paragraph for Enter and modifier
+shortcuts. Other shapes keep native behavior without flattening. Plain text has
+a 1 MiB limit. Converted block text has a 2501-line limit. Keep higher-priority
+host handlers, IME, native Tab, and empty-paste preservation.
