@@ -5,6 +5,12 @@ const usageNoteValues = {
     "Native cut requires synchronous literal-true host approval. Preserve native MIME export and higher-priority host cancellation. Document validation must also return literal true.",
     "Content, selection, and read-only changes expire saved operations. Keep host authorization for persisted writes. Validate custom document schemas before local mutations.",
   ],
+  "editor-block-placeholder": [
+    "Mount one EditorBlockPlaceholder beside EditorContent inside EditorRoot. Labels are fixed until unmount; remount to replace them.",
+    "Only focused, editable, empty top-level elements receive hints. Heading keys use h1 through h6. Other keys use native node type names. Empty labels disable a hint.",
+    "Labels have a 64-entry limit, 64-character keys, and 512-character values. Placeholder text stays outside native nodes and exported content. A separate live status announces its label.",
+    "Blur, read-only transitions, layer removal, and root cleanup clear owned DOM hints. Native focus, history, serialization, screen-reader and visual behavior remain runtime-unverified.",
+  ],
   "editor-editing-rules": [
     "Create the extension once per root. Preserve higher-priority host keyboard and clipboard handlers. Tab behavior remains native.",
     "Exit-break requires a collapsed editable range. Single-paragraph modes keep Enter and modifier shortcuts within that paragraph. Other document shapes keep native behavior without flattening.",

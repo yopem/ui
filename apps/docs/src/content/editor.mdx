@@ -1284,3 +1284,15 @@ Rejected rich, non-text, oversized, and converted-empty paste keeps selected
 content. Keep higher-priority host handlers, IME, native Tab, and read-only
 behavior. Native clipboard, nested boundaries, history, and accessibility checks
 remain deferred.
+
+## Selected block placeholders
+
+Install the optional
+[block placeholder item](/components/editor-block-placeholder). Mount one
+`EditorBlockPlaceholder` beside `EditorContent` inside `EditorRoot`. Keep labels
+fixed until the layer unmounts. Use native node types or heading tags as keys.
+
+Only focused, editable, empty root elements receive hints. Empty labels disable
+a hint. The hint stays outside native document content and serializers. A
+separate live status supplies its label. Native focus, cleanup, history,
+screen-reader announcements, and visual behavior still need runtime checks.

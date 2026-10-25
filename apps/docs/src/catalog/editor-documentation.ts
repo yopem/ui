@@ -8,7 +8,9 @@ export async function getEditorDocumentation(slug: string) {
   if (!part) return null
   let sourcePath = `./editor-previews/${part.slug}.tsx`
 
-  if (part.item === "editor-floating-toolbar")
+  if (part.item === "editor-block-placeholder")
+    sourcePath = "./editor-examples/public-placeholder.tsx"
+  else if (part.item === "editor-floating-toolbar")
     sourcePath = "./editor-examples/public-floating-toolbar.tsx"
   else if (part.item === "editor-search")
     sourcePath = "./editor-preview-compositions/search.tsx"
@@ -75,6 +77,11 @@ export async function getEditorDocumentation(slug: string) {
         : [
             "Place controls and EditorContent inside EditorRoot. Keep extension arrays stable when the editor mounts.",
           ]),
+      ...(part.item === "editor-block-placeholder"
+        ? [
+            "Mount one placeholder layer beside EditorContent inside EditorRoot. Keep labels fixed until unmount. Hints and the accessible status do not add document text.",
+          ]
+        : []),
       ...(part.name.startsWith("EditorAi")
         ? [
             "Supply a same-origin host endpoint, document ID, and session-bound CSRF headers. No default endpoint or model exists.",

@@ -1,4 +1,5 @@
 import { editorAiParts } from "./editor-ai-parts"
+import { editorBlockPlaceholderParts } from "./editor-block-placeholder-parts"
 import { editorBlockSelectionParts } from "./editor-block-selection-parts"
 import { editorCodeParts } from "./editor-code-parts"
 import { editorCollaborationParts } from "./editor-collaboration-parts"
@@ -242,6 +243,7 @@ export const editorParts = [
   ...editorTypeaheadParts,
   ...editorSearchParts,
   ...editorFloatingToolbarParts,
+  ...editorBlockPlaceholderParts,
 ] as const
 
 export function getEditorPart(slug: string) {

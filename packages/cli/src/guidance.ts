@@ -88,6 +88,10 @@ Use Mod+Enter to exit the containing root block; add Shift to insert before it.
 Single-paragraph modes retain one paragraph for Enter and modifier shortcuts. They do not validate arbitrary documents.
 Bound plain text to 1 MiB and converted block text to 2501 lines. Rejected or converted-empty paste preserves selected content.
 Keep higher-priority host handlers, IME, native Tab, and read-only behavior.
+Install optional \`editor-block-placeholder\` separately. Mount one \`EditorBlockPlaceholder\` beside \`EditorContent\` inside \`EditorRoot\`.
+Keep label options fixed until unmount. Use native node type names or heading tags h1 through h6.
+Show hints only for focused empty root blocks. Do not serialize placeholder text or modify native selection.
+Preserve host classes and clear owned hints on blur, read-only changes, layer removal, and cleanup.
 Validate external table JSON and HTML before conversion. Reject invalid updates without removing existing content.
 Discard saved table selections after document content changes. Preserve resize cancellation, history, and RTL keyboard behavior.
 Render checklist items as native list items with separate checkbox controls.

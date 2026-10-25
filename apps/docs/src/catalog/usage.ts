@@ -1,5 +1,19 @@
 // Standalone TSX files use the standard @ alias for src.
 const usageSnippetValues = {
+  "editor-block-placeholder": `"use client"
+
+import { EditorRoot, EditorContent } from "@/components/editor"
+import { EditorBlockPlaceholder } from "@/components/editor/block-placeholder"
+
+export function PlaceholderExample() {
+  return (
+    <EditorRoot ariaLabel="Block placeholder document">
+      <EditorBlockPlaceholder />
+      <EditorContent />
+    </EditorRoot>
+  )
+}`,
+
   "editor-editing-rules": `"use client"
 
 import { EditorRoot, EditorContent } from "@/components/editor"

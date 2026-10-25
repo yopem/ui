@@ -44,6 +44,7 @@ const completeEditorPreviews = new Map<
   ["editor-toc", ["./editor-example-compositions/toc.tsx", "toc"]],
   ["editor-csv", ["./editor-examples/public-csv.tsx"]],
   ["editor-search", ["./editor-preview-compositions/search.tsx"]],
+  ["editor-block-placeholder", ["./editor-examples/public-placeholder.tsx"]],
   ["editor-editing-rules", ["./editor-examples/public-editing-rules.tsx"]],
   [
     "editor-floating-toolbar",

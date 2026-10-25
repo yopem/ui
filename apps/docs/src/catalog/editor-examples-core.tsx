@@ -41,6 +41,7 @@ import {
   ControlledEditorExample,
   MultipleEditorsExample,
 } from "./editor-examples/public-hosts"
+import { PublicPlaceholderExample } from "./editor-examples/public-placeholder"
 import { ReadOnlyEditorExample } from "./editor-examples/public-readonly"
 import { PublicReviewExample } from "./editor-examples/public-review"
 import { PublicSearchExample } from "./editor-examples/public-search"
@@ -222,6 +223,18 @@ const examples = [
       "Save immutable snapshots. Inspect an earlier revision without changing the current document. Compare inserted, removed, and updated blocks and text.",
     limits:
       "History stays in memory and holds at most 20 snapshots, each within 1 MiB and 200 top-level blocks. Long or multiline text uses whole-block differences. No server history is configured.",
+  },
+  {
+    slug: "public-placeholder",
+    sourceFile: "public-placeholder",
+    workflowIds: ["block-placeholder"],
+    title: "Selected empty block placeholders",
+    Component: PublicPlaceholderExample,
+    items: ["editor-block-placeholder"],
+    description:
+      "Select an empty root heading, paragraph, quote, or code block to expose a transient hint and live status. Typing removes it without saved placeholder text.",
+    limits:
+      "Hints apply only to focused empty top-level elements. Labels are fixed until unmount. Native focus, history, cleanup, screen-reader announcements, serialization and responsive behavior remain unverified.",
   },
   {
     slug: "public-editing-rules",

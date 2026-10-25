@@ -819,3 +819,12 @@ before it. Single-paragraph modes retain one paragraph for Enter and modifier
 shortcuts. Other shapes keep native behavior without flattening. Plain text has
 a 1 MiB limit. Converted block text has a 2501-line limit. Keep higher-priority
 host handlers, IME, native Tab, and empty-paste preservation.
+
+## Selected block placeholders
+
+Install `editor-block-placeholder` separately. Import `EditorBlockPlaceholder`
+from `@/components/editor/block-placeholder`. Mount one layer beside
+`EditorContent` inside `EditorRoot`. Keep labels fixed until unmount. Hints
+apply only to focused, editable, empty root elements. Use native node types or
+heading tags as label keys. Placeholder text stays outside document content and
+serializers. Preserve native focus, history, and host classes.

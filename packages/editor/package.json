@@ -70,7 +70,8 @@
     "./search": "./src/search.tsx",
     "./search-model": "./src/search-model.ts",
     "./floating-toolbar": "./src/floating-toolbar.tsx",
-    "./editing-rules": "./src/editing-rules.ts"
+    "./editing-rules": "./src/editing-rules.ts",
+    "./block-placeholder": "./src/block-placeholder.tsx"
   },
   "scripts": {
     "typecheck": "tsc --noEmit"

@@ -829,3 +829,12 @@ They apply only to one paragraph. They do not validate or flatten arbitrary docu
 Plain text has a 1 MiB limit. Converted block text has a 2501-line limit.
 Reject rich, non-text, oversized, and converted-empty paste without removing selected content.
 Preserve higher-priority host handlers, IME, native Tab, and read-only behavior.
+
+
+## Optional selected block placeholders
+
+Install `editor-block-placeholder` separately. Mount one `EditorBlockPlaceholder` beside `EditorContent` inside `EditorRoot`.
+Keep labels fixed until unmount. Keys use native node types or heading tags `h1` through `h6`.
+Hints apply only to focused, editable, empty top-level elements. Empty labels disable a hint.
+Keep hint text outside document nodes and serializers. Clear owned DOM hints on blur, read-only changes, layer removal, and root cleanup.
+A separate live status supplies the label. Preserve native caret, selection, history, and host classes.
