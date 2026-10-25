@@ -17,13 +17,13 @@ export async function getEditorDocumentation(slug: string) {
   else if (part.item === "editor-cursor-overlay")
     sourcePath = "./editor-examples/public-cursors.tsx"
   else if (part.item === "editor-ai-menu")
-    sourcePath = "./editor-examples/public-ai.tsx"
+    sourcePath = "./editor-preview-compositions/ai-menu.tsx"
   else if (part.item === "editor-diagram")
     sourcePath = "./editor-preview-compositions/diagram.tsx"
   else if (part.item === "editor-list-presentation")
     sourcePath = "./editor-examples/public-list-presentation.tsx"
   else if (part.item === "editor-block-menu")
-    sourcePath = "./editor-examples/public-block-menu.tsx"
+    sourcePath = "./editor-preview-compositions/block-menu.tsx"
   else if (part.item === "editor-copilot")
     sourcePath = "./editor-examples/public-copilot.tsx"
   else if (part.item === "editor-editable-card")

@@ -1,7 +1,7 @@
 "use client"
 
-import { PublicAiExample } from "@/catalog/editor-examples/public-ai"
+import { EditorAiMenuComposition } from "@/catalog/editor-preview-compositions/ai-menu"
 
 export function EditorAiMenuContentPreview() {
-  return <PublicAiExample />
+  return <EditorAiMenuComposition />
 }

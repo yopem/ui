@@ -1,5 +1,5 @@
-import { PublicBlockMenuExample } from "@/catalog/editor-examples/public-block-menu"
+import { EditorBlockMenuComposition } from "@/catalog/editor-preview-compositions/block-menu"
 
 export function EditorPartPreview() {
-  return <PublicBlockMenuExample />
+  return <EditorBlockMenuComposition />
 }
