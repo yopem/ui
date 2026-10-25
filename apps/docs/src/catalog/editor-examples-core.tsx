@@ -38,6 +38,7 @@ import {
   ControlledEditorExample,
   MultipleEditorsExample,
 } from "./editor-examples/public-hosts"
+import { ReadOnlyEditorExample } from "./editor-examples/public-readonly"
 import { PublicStylesExample } from "./editor-examples/public-styles"
 import { PublicTocExample } from "./editor-examples/public-toc"
 
@@ -213,6 +214,18 @@ const examples = [
       "Save immutable snapshots. Inspect an earlier revision without changing the current document. Compare inserted, removed, and updated blocks and text.",
     limits:
       "History stays in memory and holds at most 20 snapshots, each within 1 MiB and 200 top-level blocks. Long or multiline text uses whole-block differences. No server history is configured.",
+  },
+  {
+    slug: "read-only",
+    sourceFile: "public-readonly",
+    workflowIds: ["editor-disabled"],
+    title: "Read-only rich document",
+    Component: ReadOnlyEditorExample,
+    items: ["editor"],
+    description:
+      "Render headings, inline marks, a quotation, and a usable link without enabling document mutation. Select and copy native content.",
+    limits:
+      "This is a companion to the disabled-editor workflow, not an additional mapped public example. Clipboard, focus, and read-only behavior remain unverified.",
   },
   {
     slug: "public-code",
