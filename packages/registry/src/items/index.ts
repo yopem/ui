@@ -20,6 +20,13 @@ import { editorColumnsItem } from "@registry/items/editor-columns"
 import { editorCopilotItem } from "@registry/items/editor-copilot"
 import { editorCsvItem } from "@registry/items/editor-csv"
 import { editorDateItem } from "@registry/items/editor-date"
+import { editorDiagramItem } from "@registry/items/editor-diagram"
+import {
+  editorDiagramMermaidItem,
+  editorDiagramPlantUmlItem,
+  editorDiagramGraphvizItem,
+  editorDiagramFlowchartItem,
+} from "@registry/items/editor-diagram-renderers"
 import { editorDocumentItem } from "@registry/items/editor-document"
 import { editorDocxItem } from "@registry/items/editor-docx"
 import { editorEditableCardItem } from "@registry/items/editor-editable-card"
@@ -71,6 +78,11 @@ export const sourceItems = [
   editorAutoformatItem,
   editorBlockBehaviorItem,
   editorDocxItem,
+  editorDiagramItem,
+  editorDiagramMermaidItem,
+  editorDiagramPlantUmlItem,
+  editorDiagramGraphvizItem,
+  editorDiagramFlowchartItem,
   editorEditableCardItem,
   editorCopilotItem,
   editorBlockMenuItem,

@@ -1,5 +1,30 @@
 /** Import aliases used in the copyable source files served by the registry. */
 export const sourceImportReplacements = [
+  [
+    "@yopem-ui/editor/diagram/renderers/mermaid",
+    "@/components/editor/diagram-renderers/mermaid.browser",
+  ],
+  [
+    "@yopem-ui/editor/diagram/renderers/plantuml",
+    "@/components/editor/diagram-renderers/plantuml.browser",
+  ],
+  [
+    "@yopem-ui/editor/diagram/renderers/graphviz",
+    "@/components/editor/diagram-renderers/graphviz",
+  ],
+  [
+    "@yopem-ui/editor/diagram/renderers/flowchart",
+    "@/components/editor/diagram-renderers/flowchart.browser",
+  ],
+  ["@yopem-ui/editor/diagram/model", "@/components/editor/diagram-model"],
+  ["@yopem-ui/editor/diagram/state", "@/components/editor/diagram-state"],
+  ["@yopem-ui/editor/diagram/render", "@/components/editor/diagram-render"],
+  [
+    "@yopem-ui/editor/diagram/extension",
+    "@/components/editor/diagram-extension",
+  ],
+  ["@yopem-ui/editor/diagram/html", "@/components/editor/diagram-html"],
+  ["@yopem-ui/editor/diagram", "@/components/editor/diagram"],
   ["@yopem-ui/editor/block-menu", "@/components/editor/block-menu-index"],
   ["@yopem-ui/editor/copilot/session", "@/components/editor/copilot-session"],
   ["@yopem-ui/editor/copilot", "@/components/editor/copilot"],

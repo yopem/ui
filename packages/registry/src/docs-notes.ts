@@ -1,5 +1,31 @@
 // These notes describe Yopem's composition choices, not only the upstream types.
 const usageNoteValues = {
+  "editor-diagram": [
+    "Register EditorDiagramExtension once at root creation. Compose focused controls inside EditorDiagramRoot and EditorRoot.",
+    "Supply explicit renderers. Host endpoints require current authentication, document authorization, exact Origin, CSRF checks, and bounded work.",
+    "Per-node previews keep source visible until a matching sanitized SVG image decodes. The raw SVG cache holds at most 32 results and 8 MiB.",
+    "Native Lexical JSON and marked code HTML keep diagram metadata. Generic document conversion does not support this metadata.",
+    "Only SVG download is supplied. PNG and PDF export are not supplied. Renderer and browser workflows remain unverified.",
+  ],
+  "editor-diagram-mermaid": [
+    "Load this optional SDK adapter only in a browser-only entry. Do not import it into an SSR route.",
+    "Source filters reject configuration directives, image resources, custom styles, and unsupported control characters. They are not a renderer sandbox.",
+    "Mermaid has a material dependency footprint. Use renderEditorDiagram to sanitize SVG. Cancellation cannot stop all queued SDK work.",
+  ],
+  "editor-diagram-plantuml": [
+    "Load this optional SDK adapter only in a browser-only entry. Keep the copied type declaration and its runtime loader together.",
+    "Source filters reject preprocessors, resource loads, and function calls. Use renderEditorDiagram to sanitize links and returned SVG.",
+    "Some layouts can require host Graphviz support. Cancellation cannot stop every queued SDK operation. No engine compatibility claim is made.",
+  ],
+  "editor-diagram-graphviz": [
+    "This optional adapter loads local WebAssembly. Check host CSP and bundler support before use.",
+    "Use renderEditorDiagram to sanitize returned SVG. Deadline checks reject late results but cannot stop synchronous layout work.",
+  ],
+  "editor-diagram-flowchart": [
+    "Load this optional SDK adapter only in a browser-only entry. It uses a temporary hidden, inert browser container.",
+    "Source filters reject style and callback directives. Use renderEditorDiagram to sanitize links and returned SVG.",
+    "Cancellation cannot stop synchronous layout work. Browser, CSP, and cleanup workflows remain unverified.",
+  ],
   "editor-list-presentation": [
     "Register EditorListPresentationExtension in a stable root extensions array.",
     "Compose marker and signed-start controls inside EditorToolbar. Saved selections expire after document changes.",
