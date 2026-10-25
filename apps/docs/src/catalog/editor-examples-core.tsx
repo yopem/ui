@@ -29,6 +29,7 @@ import { ElementsSetupExample } from "./editor-examples/installation-next-03-ele
 import { LinkExample } from "./editor-examples/link"
 import { MathExample } from "./editor-examples/math-example"
 import { MediaExample } from "./editor-examples/media-example"
+import { PublicAutoformatExample } from "./editor-examples/public-autoformat"
 import { PublicBlocksExample } from "./editor-examples/public-blocks"
 import { PublicCodeExample } from "./editor-examples/public-code"
 import { CsvEditorExample } from "./editor-examples/public-csv"
@@ -428,6 +429,18 @@ const examples = [
       "Apply selected-block alignment, text and background colors, indentation, and line height. Save and reload styled native JSON and HTML.",
     limits:
       "These controls use native Lexical state. Saved roundtrips stay in local component memory and are not host persistence. Public-example behavior remains unverified.",
+  },
+  {
+    slug: "public-autoformat",
+    sourceFile: "public-autoformat",
+    workflowIds: ["autoformat"],
+    title: "Additional native input shortcuts",
+    Component: PublicAutoformatExample,
+    items: ["editor-autoformat", "button", "stack", "text"],
+    description:
+      "Extend native shortcuts with nested quote, checklist, rule, smart quote, symbol, fraction, and Unicode script input rules.",
+    limits:
+      "Known substitutions are fixed and bounded, not an arbitrary input-rule engine. Code text stays literal. Fraction boundaries and line-start guillemet behavior are explicit. Native Undo, overlapping rules, IME, paste, and copied-consumer behavior remain unverified.",
   },
   {
     slug: "public-demo-host",

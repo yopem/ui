@@ -1310,3 +1310,18 @@ before native insertion. It does not replace the entire document. Empty or
 unsupported Markdown keeps selected content. Higher-priority host vetoes and
 read-only behavior remain in place. Native MIME ordering, nested insertions,
 history, and browser clipboard compatibility still need deferred checks.
+
+## Additional native input shortcuts
+
+Install the optional `editor-autoformat` item. Register
+`EditorAutoformatExtension` in a stable extensions array. Import it from
+`@/components/editor/autoformat`. Base editor installation remains unchanged.
+
+Type `[ ]` and Space for a checklist. Type two through six `>` characters and
+Space for nested quotes. Type `---` and Enter for a horizontal rule. Smart text
+rules include quotes, fractions, symbols, and Unicode scripts. Fractions require
+a word boundary. Guillemet shortcuts require preceding text or whitespace.
+
+The extension does not repeat the base Markdown transformers. Native code text
+stays literal. History, composition, overlapping inputs, and browser clipboard
+workflows require deferred checks.

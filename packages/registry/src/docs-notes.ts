@@ -11,6 +11,11 @@ const usageNoteValues = {
     "Labels have a 64-entry limit, 64-character keys, and 512-character values. Placeholder text stays outside native nodes and exported content. A separate live status announces its label.",
     "Blur, read-only transitions, layer removal, and root cleanup clear owned DOM hints. Native focus, history, serialization, screen-reader and visual behavior remain runtime-unverified.",
   ],
+  "editor-autoformat": [
+    "Register EditorAutoformatExtension in the stable root extension array. It adds non-base transformers without duplicating the base Markdown registration.",
+    "Type [ ] plus Space for a checklist, two through six > prefixes plus Space for nested quotes, and --- plus Enter for a horizontal rule. Text rules include smart quotes, arrows, comparisons, legal symbols, fractions, and Unicode script characters.",
+    "Fraction shortcuts require a word boundary. Guillemet shortcuts require preceding text or whitespace to retain line-start nested quote syntax. Code retains literal text. Overlapping input rules, IME, history, clipboard, and readonly behavior remain runtime-unverified.",
+  ],
   "editor-editing-rules": [
     "Create the extension once per root. Preserve higher-priority host keyboard and clipboard handlers. Tab behavior remains native.",
     "Exit-break requires a collapsed editable range. Single-paragraph modes keep Enter and modifier shortcuts within that paragraph. Other document shapes keep native behavior without flattening.",

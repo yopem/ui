@@ -3,6 +3,7 @@ import { editorItem } from "@registry/items/editor"
 import { editorAiItem } from "@registry/items/editor-ai"
 import { editorAssetsItem } from "@registry/items/editor-assets"
 import { editorAuthItem } from "@registry/items/editor-auth"
+import { editorAutoformatItem } from "@registry/items/editor-autoformat"
 import { editorBlockPlaceholderItem } from "@registry/items/editor-block-placeholder"
 import { editorBlockSelectionItem } from "@registry/items/editor-block-selection"
 import { editorBlocksItem } from "@registry/items/editor-blocks"
@@ -60,6 +61,7 @@ export const sourceItems = [
   editorCsvItem,
   editorSearchItem,
   editorFloatingToolbarItem,
+  editorAutoformatItem,
   editorEditingRulesItem,
   editorBlockPlaceholderItem,
   editorDocumentItem,

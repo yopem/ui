@@ -841,3 +841,12 @@ Keep labels fixed until unmount. Keys use native node types or heading tags `h1`
 Hints apply only to focused, editable, empty top-level elements. Empty labels disable a hint.
 Keep hint text outside document nodes and serializers. Clear owned DOM hints on blur, read-only changes, layer removal, and root cleanup.
 A separate live status supplies the label. Preserve native caret, selection, history, and host classes.
+
+
+## Optional editor input shortcuts
+
+Install `editor-autoformat` separately. Register `EditorAutoformatExtension` in a stable root extensions array.
+It adds checklist, nested quote, horizontal-rule, and fixed smart text substitutions without repeating base Markdown transformers.
+Keep code literal, native history, host input policies, and composition behavior.
+Fraction shortcuts require a word boundary. Line-start quote prefixes stay available.
+Native clipboard, IME, overlapping substitutions, and inline-code history remain unverified.

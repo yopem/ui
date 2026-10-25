@@ -71,7 +71,8 @@
     "./search-model": "./src/search-model.ts",
     "./floating-toolbar": "./src/floating-toolbar.tsx",
     "./editing-rules": "./src/editing-rules.ts",
-    "./block-placeholder": "./src/block-placeholder.tsx"
+    "./block-placeholder": "./src/block-placeholder.tsx",
+    "./autoformat": "./src/autoformat.ts"
   },
   "scripts": {
     "typecheck": "tsc --noEmit"

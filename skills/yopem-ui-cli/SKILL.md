@@ -837,3 +837,12 @@ root extensions array. Keep registration cleanup in the host lifecycle. Lexical
 JSON and HTML have priority. Without this option, plain-text paste stays native.
 Rejected empty or unsupported fragments keep selected content. Higher-priority
 host vetoes still apply.
+
+## Optional editor input shortcuts
+
+Install `editor-autoformat` separately. Import `EditorAutoformatExtension` from
+`@/components/editor/autoformat`. Keep it in a stable root extensions array.
+Base Markdown shortcuts remain separate. Additional rules support checklist and
+nested quote prefixes, horizontal rules, and fixed smart text substitutions.
+Code remains literal. Fractions require word boundaries. Check native input
+policies, IME, history, and clipboard before production use.

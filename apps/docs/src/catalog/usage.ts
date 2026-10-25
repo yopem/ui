@@ -1,5 +1,16 @@
 // Standalone TSX files use the standard @ alias for src.
 const usageSnippetValues = {
+  "editor-autoformat": `"use client"
+
+import { EditorContent, EditorRoot } from "@/components/editor"
+import { EditorAutoformatExtension } from "@/components/editor/autoformat"
+
+const extensions = [EditorAutoformatExtension]
+
+export function AutoformatExample() {
+  return <EditorRoot ariaLabel="Input shortcuts" extensions={extensions}><EditorContent /></EditorRoot>
+}`,
+
   "editor-block-placeholder": `"use client"
 
 import { EditorRoot, EditorContent } from "@/components/editor"
