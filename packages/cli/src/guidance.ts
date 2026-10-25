@@ -87,6 +87,10 @@ Install optional \`editor-block-menu\` separately. Import from \`${imports.edito
 Create one stable controller per root. Register its extension and wrap \`EditorContent\` with \`EditorBlockMenu\`.
 Right-click or press Shift+F10. Configured action policy must return literal true; stale targets reject.
 Supply explicit Ask AI and Code Drawing callbacks. No default service is supplied.
+Their second argument retains a validated target after menu close. Subscribe to its availability.
+Call restoreSelection from the native control's onClick handler. Prevent default when restoration fails.
+Call refresh after host policy changes. Dispose retained preparations during cleanup.
+New captures, content changes, and read-only transitions invalidate them.
 For Add comment, supply onAddComment and an authorizeAction policy that returns literal true.
 The comment callback owns review UI, focus, and storage. The controller does not restore its captured selection for this action.
 Callbacks do not grant document access. Preserve native selection, clipboard policies, history, and host event cancellation.

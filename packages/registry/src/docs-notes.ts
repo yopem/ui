@@ -66,7 +66,9 @@ const usageNoteValues = {
     "Create one stable controller per root. Register its extension before wrapping EditorContent with EditorBlockMenu.",
     "Open with right-click or Shift+F10. Copy, duplicate, delete, conversion, indentation, and alignment use native editor operations.",
     "Host action policy must return literal true. Pending document changes and stale targets reject actions.",
-    "Ask AI and Code Drawing require supplied host callbacks. No default service or Add Comment action is provided.",
+    "Ask AI and Code Drawing require host callbacks. Their second argument retains a validated target after menu close.",
+    "Restore the target from the native control's onClick handler. Prevent default if restoration fails. Refresh after policy changes. Dispose retained preparations during cleanup.",
+    "Add Comment requires its own callback and literal-true host policy. The host owns review UI and storage. No default service exists.",
     "Native keyboard, selection, policy, clipboard, history, and accessibility checks remain deferred.",
   ],
   "editor-copilot": [

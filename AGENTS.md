@@ -948,6 +948,10 @@ Register its extension at root creation. Wrap `EditorContent` with `EditorBlockM
 Right-click a block or press Shift+F10. Keep native selection, clipboard policies, history, and host event cancellation.
 Configured `authorizeAction` must return literal `true`. Stale or pending document targets reject actions.
 Supply explicit `onAskAI` and `onCodeDrawing` callbacks when needed. These callbacks do not grant document access.
+Their second argument retains a validated target after the menu closes.
+Subscribe to its availability. Call `restoreSelection` from the native control's `onClick` handler.
+Prevent default when restoration fails. Call `refresh` after host policy changes.
+Dispose retained preparations during cleanup. New captures, content changes, and read-only transitions invalidate them.
 Supply `onAddComment` with an `authorizeAction` policy for the Add comment action.
 The policy must return literal `true`. The callback owns review UI, focus, and storage.
 The controller passes frozen block context. It does not restore the captured selection for this action.

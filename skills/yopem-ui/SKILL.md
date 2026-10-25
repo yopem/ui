@@ -1159,7 +1159,12 @@ Install optional `editor-block-menu`. Import `createEditorBlockMenu` and
 controller per root. Register its extension before wrapping `EditorContent` with
 the menu. Right-click or press Shift+F10. Configured policy must return literal
 `true`; stale or pending targets reject. Host Ask AI and Code Drawing callbacks
-require separate authorization. No default service is supplied. For Add comment,
+require separate authorization. No default service is supplied. Their second
+argument retains a validated target after menu close. Subscribe to its
+availability. Call `restoreSelection` from the native control's `onClick`
+handler. Prevent default when restoration fails. Call `refresh` after host
+policy changes. Dispose retained preparations during cleanup. New captures,
+content changes, and read-only transitions invalidate them. For Add comment,
 supply `onAddComment` and an `authorizeAction` policy that returns literal
 `true`. The callback owns review UI, focus, and storage. It receives frozen
 block context. The controller does not restore the captured selection for this

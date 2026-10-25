@@ -2,6 +2,7 @@ import type {
   LexicalEditor,
   LexicalNode,
   NodeKey,
+  RangeSelection,
   SerializedEditorState,
 } from "lexical"
 
@@ -18,6 +19,7 @@ import {
   $isElementNode,
   $isNodeSelection,
   $isRangeSelection,
+  $setSelection,
   defineExtension,
   FORMAT_ELEMENT_COMMAND,
   HISTORY_PUSH_TAG,
@@ -27,7 +29,10 @@ import {
 } from "lexical"
 
 import { createEditorBlockSelection } from "./block-selection"
-import { createEditorSelectionBookmark } from "./selection-bookmark"
+import {
+  $isValidBookmarkPoint,
+  createEditorSelectionBookmark,
+} from "./selection-bookmark"
 
 export type EditorBlockMenuAction =
   | "copy"
@@ -58,14 +63,30 @@ export interface EditorBlockMenuContext {
   readonly selectedText: string
 }
 
+export interface EditorBlockMenuActionPreparation {
+  readonly action: "ask-ai" | "code-drawing"
+  subscribe(this: void, listener: () => void): () => void
+  getSnapshot(this: void): boolean
+  getServerSnapshot(this: void): false
+  refresh(this: void): boolean
+  restoreSelection(this: void): boolean
+  dispose(this: void): void
+}
+
 export interface EditorBlockMenuOptions {
   validateDocument?: (state: SerializedEditorState) => boolean
   authorizeAction?: (
     action: EditorBlockMenuAction,
     context: EditorBlockMenuContext,
   ) => boolean
-  onAskAI?: (context: EditorBlockMenuContext) => void | Promise<void>
-  onCodeDrawing?: (context: EditorBlockMenuContext) => void | Promise<void>
+  onAskAI?: (
+    context: EditorBlockMenuContext,
+    preparation: EditorBlockMenuActionPreparation,
+  ) => void | Promise<void>
+  onCodeDrawing?: (
+    context: EditorBlockMenuContext,
+    preparation: EditorBlockMenuActionPreparation,
+  ) => void | Promise<void>
   onAddComment?: (context: EditorBlockMenuContext) => void | Promise<void>
 }
 
@@ -82,6 +103,7 @@ export interface EditorBlockMenuSnapshot {
 interface TargetRecord {
   readonly context: EditorBlockMenuContext
   readonly revision: number
+  readonly generation: number
   readonly index: number
   readonly selection: ReturnType<typeof $getSelection>
 }
@@ -139,11 +161,7 @@ function $getSelectedNode() {
   return null
 }
 
-function $selectionTargetsBlock(blockKey: NodeKey) {
-  const selection = $getSelection()
-
-  if (!$isRangeSelection(selection)) return false
-
+function $rangeTargetsBlock(selection: RangeSelection, blockKey: NodeKey) {
   const nodes = [
     selection.anchor.getNode(),
     selection.focus.getNode(),
@@ -151,6 +169,12 @@ function $selectionTargetsBlock(blockKey: NodeKey) {
   ]
 
   return nodes.every((node) => $getTopLevelBlock(node)?.getKey() === blockKey)
+}
+
+function $selectionTargetsBlock(blockKey: NodeKey) {
+  const selection = $getSelection()
+
+  return $isRangeSelection(selection) && $rangeTargetsBlock(selection, blockKey)
 }
 
 export function createEditorBlockMenu(options: EditorBlockMenuOptions = {}) {
@@ -180,6 +204,12 @@ export function createEditorBlockMenu(options: EditorBlockMenuOptions = {}) {
   let unsubscribeBookmark: (() => void) | undefined
   let target: TargetRecord | null = null
   let revision = 0
+  let captureGeneration = 0
+  const preparations = new Set<EditorBlockMenuActionPreparation>()
+
+  function invalidatePreparations() {
+    for (const preparation of preparations) preparation.dispose()
+  }
 
   function publish(next: EditorBlockMenuSnapshot) {
     snapshot = next
@@ -201,6 +231,9 @@ export function createEditorBlockMenu(options: EditorBlockMenuOptions = {}) {
     const currentEditor = editor
 
     if (!currentEditor || !bookmark) return false
+    const generation = ++captureGeneration
+
+    invalidatePreparations()
 
     const nodeConstructor =
       currentEditor.getRootElement()?.ownerDocument.defaultView?.Node
@@ -241,6 +274,7 @@ export function createEditorBlockMenu(options: EditorBlockMenuOptions = {}) {
             selectedText,
           }),
           revision,
+          generation,
           index,
           selection: selection?.clone() ?? null,
         },
@@ -322,6 +356,169 @@ export function createEditorBlockMenu(options: EditorBlockMenuOptions = {}) {
       currentTarget(record) !== null &&
       (!requiresCurrentSelection || selectionMatches(record))
     )
+  }
+
+  function createActionPreparation(
+    action: EditorBlockMenuActionPreparation["action"],
+    record: TargetRecord,
+  ) {
+    const owner = editor
+    const listeners = new Set<() => void>()
+    let isDisposed = false
+    let isInvalidated = false
+    let allowed = false
+    let preparation: EditorBlockMenuActionPreparation | null = null
+
+    function publishPreparation(next: boolean) {
+      if (allowed === next) return
+      allowed = next
+
+      for (const listener of listeners) listener()
+    }
+
+    function invalidate() {
+      if (isDisposed || isInvalidated) return
+      isInvalidated = true
+
+      if (preparation) preparations.delete(preparation)
+      publishPreparation(false)
+    }
+
+    function validTarget() {
+      if (
+        !owner ||
+        isDisposed ||
+        isInvalidated ||
+        editor !== owner ||
+        record.revision !== revision ||
+        record.generation !== captureGeneration ||
+        !owner.isEditable()
+      )
+        return false
+
+      return owner.read("pending", () => {
+        if ($getRoot().isDirty()) return false
+        const block = $getNodeByKey(record.context.blockKey)
+        const selection = record.selection
+
+        return (
+          block?.getParent() === $getRoot() &&
+          $isRangeSelection(selection) &&
+          $isValidBookmarkPoint(selection.anchor) &&
+          $isValidBookmarkPoint(selection.focus) &&
+          $rangeTargetsBlock(selection, record.context.blockKey)
+        )
+      })
+    }
+
+    function refresh() {
+      if (!validTarget()) {
+        invalidate()
+
+        return false
+      }
+
+      let authorized = false
+
+      try {
+        authorized = options.authorizeAction?.(action, record.context) === true
+      } catch {
+        authorized = false
+      }
+
+      if (!validTarget()) {
+        invalidate()
+
+        return false
+      }
+
+      publishPreparation(authorized)
+
+      return authorized
+    }
+
+    function restoreSelection() {
+      if (!refresh() || !owner) return false
+      let restored = false
+
+      try {
+        owner.update(
+          () => {
+            const block = $getNodeByKey(record.context.blockKey)
+            const selection = record.selection
+
+            if (
+              editor !== owner ||
+              isDisposed ||
+              isInvalidated ||
+              record.revision !== revision ||
+              record.generation !== captureGeneration ||
+              !owner.isEditable() ||
+              $getRoot().isDirty() ||
+              block?.getParent() !== $getRoot() ||
+              !$isRangeSelection(selection) ||
+              !$isValidBookmarkPoint(selection.anchor) ||
+              !$isValidBookmarkPoint(selection.focus) ||
+              !$rangeTargetsBlock(selection, record.context.blockKey)
+            )
+              return
+
+            $setSelection(selection.clone())
+            restored = true
+          },
+          { discrete: true },
+        )
+      } catch {
+        invalidate()
+        publishPreparation(false)
+
+        return false
+      }
+
+      if (!restored || !validTarget()) {
+        invalidate()
+        publishPreparation(false)
+
+        return false
+      }
+
+      publishPreparation(true)
+
+      return true
+    }
+
+    const actionPreparation: EditorBlockMenuActionPreparation = {
+      action,
+      subscribe(this: void, listener: () => void) {
+        if (isDisposed || isInvalidated) return () => undefined
+        listeners.add(listener)
+
+        return () => {
+          listeners.delete(listener)
+        }
+      },
+      getSnapshot(this: void) {
+        return allowed
+      },
+      getServerSnapshot(this: void) {
+        return false
+      },
+      refresh,
+      restoreSelection,
+      dispose() {
+        if (isDisposed) return
+        isDisposed = true
+
+        preparations.delete(actionPreparation)
+        publishPreparation(false)
+      },
+    }
+
+    preparation = actionPreparation
+    preparations.add(actionPreparation)
+    refresh()
+
+    return actionPreparation
   }
 
   function restoreSelection() {
@@ -479,24 +676,30 @@ export function createEditorBlockMenu(options: EditorBlockMenuOptions = {}) {
 
     if (action === "ask-ai") {
       if (!options.onAskAI) return false
+      const preparation = createActionPreparation(action, record)
 
       try {
-        await options.onAskAI(record.context)
+        await options.onAskAI(record.context, preparation)
 
         return true
       } catch {
+        preparation.dispose()
+
         return false
       }
     }
 
     if (action === "code-drawing") {
       if (!options.onCodeDrawing) return false
+      const preparation = createActionPreparation(action, record)
 
       try {
-        await options.onCodeDrawing(record.context)
+        await options.onCodeDrawing(record.context, preparation)
 
         return true
       } catch {
+        preparation.dispose()
+
         return false
       }
     }
@@ -548,14 +751,18 @@ export function createEditorBlockMenu(options: EditorBlockMenuOptions = {}) {
           ({ dirtyElements, dirtyLeaves }) => {
             if (dirtyElements.size === 0 && dirtyLeaves.size === 0) return
             revision += 1
+            invalidatePreparations()
             bookmark?.clear()
             clearTarget()
           },
         ),
         currentEditor.registerEditableListener((editable) => {
+          if (!editable) invalidatePreparations()
           publish({ ...snapshot, editable })
         }),
         () => {
+          invalidatePreparations()
+          captureGeneration += 1
           unsubscribeBookmark?.()
           unsubscribeBookmark = undefined
           bookmark = null

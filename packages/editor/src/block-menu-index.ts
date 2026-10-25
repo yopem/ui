@@ -2,6 +2,7 @@ export { createEditorBlockMenu } from "./block-menu"
 
 export type {
   EditorBlockMenuAction,
+  EditorBlockMenuActionPreparation,
   EditorBlockMenuContext,
   EditorBlockMenuController,
   EditorBlockMenuOptions,
