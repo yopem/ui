@@ -88,6 +88,9 @@
     "./copilot": "./src/copilot.tsx",
     "./copilot/session": "./src/copilot-session.ts",
     "./block-menu": "./src/block-menu-index.ts",
+    "./diagram": "./src/diagram.ts",
+    "./diagram/extension": "./src/diagram-extension.ts",
+    "./diagram/html": "./src/diagram-html.ts",
     "./diagram/model": "./src/diagram-model.ts",
     "./diagram/render": "./src/diagram-render.ts",
     "./diagram/state": "./src/diagram-state.ts"

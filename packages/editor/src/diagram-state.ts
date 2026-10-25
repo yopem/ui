@@ -12,6 +12,16 @@ import {
   type EditorDiagramViewMode,
 } from "./diagram-model"
 
+export function getEditorDiagramCodeLanguage(kind: EditorDiagramKind) {
+  if (kind === "graphviz") return "dot"
+
+  if (kind === "plantuml") return "plant-uml"
+
+  if (kind === "flowchart") return "text"
+
+  return kind
+}
+
 export const editorDiagramState = createState("editorDiagram", {
   parse: (input) => editorDiagramStateSchema.parse(input),
 })
@@ -29,7 +39,7 @@ export function $createEditorDiagramCodeNode(
 ): CodeNode {
   validateEditorDiagramSource(source)
 
-  const code = $createCodeNode(kind)
+  const code = $createCodeNode(getEditorDiagramCodeLanguage(kind))
   $setState(
     code,
     editorDiagramState,
@@ -51,5 +61,5 @@ export function $setEditorDiagramMetadata(
 
   $setState(code, editorDiagramState, metadata)
 
-  if (metadata) code.setLanguage(metadata.kind)
+  if (metadata) code.setLanguage(getEditorDiagramCodeLanguage(metadata.kind))
 }
