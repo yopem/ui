@@ -86,7 +86,8 @@
     "./editable-card/model": "./src/editable-card-model.ts",
     "./editable-card/node": "./src/editable-card-node.tsx",
     "./copilot": "./src/copilot.tsx",
-    "./copilot/session": "./src/copilot-session.ts"
+    "./copilot/session": "./src/copilot-session.ts",
+    "./block-menu": "./src/block-menu-index.ts"
   },
   "scripts": {
     "typecheck": "tsc --noEmit"
