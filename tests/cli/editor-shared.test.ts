@@ -302,6 +302,14 @@ test("packed CLI exposes shared editor roots to external workspace consumers", a
         `${server.url}r`,
       ])
 
+      await run(ui, [
+        ...command,
+        "add",
+        "editor-ai-menu",
+        "--registry",
+        `${server.url}r`,
+      ])
+
       const blockExports: typeof initialized = await Bun.file(
         join(ui, "package.json"),
       ).json()
@@ -337,7 +345,7 @@ test("packed CLI exposes shared editor roots to external workspace consumers", a
       await put(
         app,
         "src/check.tsx",
-        `import { DocumentStatic } from "@acme/ui/${components.slice(4)}/editor/document/static"\nimport { parseDocument } from "@acme/ui/${components.slice(4)}/editor/document"\nexport const portableDocument = parseDocument("<p>Document</p>", "html")\nexport const staticDocument = DocumentStatic\nimport { Editor, EditorRoot, EditorContent, EditorFormatButton } from "@acme/ui/${components.slice(4)}/editor"\nimport { EditorCodeExtension, EditorCodeToolbar, EditorCodeLanguage, EditorCodeCopyButton, EditorCodeToggle, EditorCodeStatus } from "@acme/ui/${components.slice(4)}/editor/code"\nimport { EditorBlocksExtension, EditorBlocksControls, EditorBlockTypeButton } from "@acme/ui/${components.slice(4)}/editor/blocks"\nimport { EditorCalloutIconControl } from "@acme/ui/${components.slice(4)}/editor/blocks-controls"\nimport { createOpenAuthAuthentication, createBetterAuthAuthentication, authorizeEditorRequest } from "@acme/ui/${lib.slice(4)}/editor-auth"\nexport const parts = [Editor, EditorRoot, EditorContent, EditorFormatButton, EditorCodeExtension, EditorCodeToolbar, EditorCodeLanguage, EditorCodeCopyButton, EditorCodeToggle, EditorCodeStatus, EditorBlocksExtension, EditorBlocksControls, EditorBlockTypeButton, EditorCalloutIconControl, createOpenAuthAuthentication, createBetterAuthAuthentication, authorizeEditorRequest]\n`,
+        `import { DocumentStatic } from "@acme/ui/${components.slice(4)}/editor/document/static"\nimport { parseDocument } from "@acme/ui/${components.slice(4)}/editor/document"\nexport const portableDocument = parseDocument("<p>Document</p>", "html")\nexport const staticDocument = DocumentStatic\nimport { Editor, EditorRoot, EditorContent, EditorFormatButton } from "@acme/ui/${components.slice(4)}/editor"\nimport { EditorCodeExtension, EditorCodeToolbar, EditorCodeLanguage, EditorCodeCopyButton, EditorCodeToggle, EditorCodeStatus } from "@acme/ui/${components.slice(4)}/editor/code"\nimport { EditorBlocksExtension, EditorBlocksControls, EditorBlockTypeButton } from "@acme/ui/${components.slice(4)}/editor/blocks"\nimport { EditorCalloutIconControl } from "@acme/ui/${components.slice(4)}/editor/blocks-controls"\nimport { createOpenAuthAuthentication, createBetterAuthAuthentication, authorizeEditorRequest } from "@acme/ui/${lib.slice(4)}/editor-auth"\nimport { EditorAiMenuRoot, EditorAiMenuTrigger, EditorAiMenuContent, EditorAiMenuPanel } from "@acme/ui/${components.slice(4)}/editor/ai-menu"\nexport const parts = [EditorAiMenuRoot, EditorAiMenuTrigger, EditorAiMenuContent, EditorAiMenuPanel, Editor, EditorRoot, EditorContent, EditorFormatButton, EditorCodeExtension, EditorCodeToolbar, EditorCodeLanguage, EditorCodeCopyButton, EditorCodeToggle, EditorCodeStatus, EditorBlocksExtension, EditorBlocksControls, EditorBlockTypeButton, EditorCalloutIconControl, createOpenAuthAuthentication, createBetterAuthAuthentication, authorizeEditorRequest]\n`,
       )
       await put(
         app,

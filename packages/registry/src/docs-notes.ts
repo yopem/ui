@@ -1,5 +1,13 @@
 // These notes describe Yopem's composition choices, not only the upstream types.
 const usageNoteValues = {
+  "editor-ai-menu": [
+    "Compose EditorAiMenuRoot inside configured EditorAiRoot and EditorRoot. EditorAiMenuContent owns the editable surface. Do not add a second EditorContent.",
+    "Supply an explicit same-origin host endpoint, document ID, and current authentication and CSRF headers. No provider or service is selected automatically.",
+    "Commands and chat produce untrusted plain text. Approve only completed output. Replace and top-level insert-below use the saved selection and one history update.",
+    "The menu retains at most twelve truncated chat messages until its root unmounts. No server chat storage is supplied. Remount on document or viewer changes.",
+    "AI comments require a current review controller and literal-true host authorization. AI permission never grants document writes or review permissions.",
+    "Null selection retains the dialog target. Remount EditorAiRoot to discard it explicitly. Rich Markdown approval, nested shadow-root insert-below, and selected-text native context-menu replacement are not supplied.",
+  ],
   "editor-diagram": [
     "Register EditorDiagramExtension once at root creation. Compose focused controls inside EditorDiagramRoot and EditorRoot.",
     "Supply explicit renderers. Host endpoints require current authentication, document authorization, exact Origin, CSRF checks, and bounded work.",
