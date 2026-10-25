@@ -24,6 +24,7 @@ import {
 import {
   $getEditor,
   $getRoot,
+  $getSelection,
   $hasUpdateTag,
   $isElementNode,
   configExtension,
@@ -836,6 +837,62 @@ function validatePasteTarget(
   checkRetainedJSON(expected.root, actual.root)
 }
 
+function rejectUntrustedReviewState(
+  document: ReturnType<typeof parseDocument>,
+) {
+  const root = z.object({ root: nodeSchema }).parse(document).root
+  const pending = [root]
+
+  while (pending.length) {
+    const node = pending.pop()
+
+    if (!node) continue
+
+    if (
+      node.$?.yopemReview !== undefined ||
+      node.$?.yopemSuggestion !== undefined
+    )
+      throw new DocumentError([
+        "Untrusted fragments cannot contain review state.",
+      ])
+
+    for (const child of node.children ?? [])
+      pending.push(nodeSchema.parse(child))
+  }
+}
+
+export function $insertDocumentFragment(
+  source: string,
+  selection: BaseSelection | null = $getSelection(),
+) {
+  const editor = $getEditor()
+
+  if (!editor.isEditable()) throw new DocumentError(["Document is readonly."])
+
+  if (!selection)
+    throw new DocumentError(["Document fragment requires a selection."])
+  const document = parseDocument(source, "markdown")
+  const fragment = document.root.children
+  const first = fragment[0] ? nodeSchema.parse(fragment[0]) : undefined
+
+  if (
+    !source.trim() ||
+    !fragment.length ||
+    (fragment.length === 1 &&
+      first?.type === "paragraph" &&
+      !first.children?.length)
+  )
+    throw new DocumentError(["Markdown fragment is empty."])
+
+  rejectUntrustedReviewState(document)
+  validatePasteTarget(editor, document)
+  const nodes = $generateNodesFromSerializedNodes(fragment)
+
+  if (!nodes.length) throw new DocumentError(["Markdown fragment is empty."])
+
+  $insertGeneratedNodes(editor, nodes, selection)
+}
+
 function $importDocumentJSON(
   data: string,
   _selection: BaseSelection,
@@ -1001,26 +1058,7 @@ function $importDocumentMarkdown(
   if (!editor.isEditable()) return true
 
   try {
-    const document = parseDocument(data, "markdown")
-
-    const fragment = document.root.children
-    const first = fragment[0] ? nodeSchema.parse(fragment[0]) : undefined
-
-    if (
-      !data.trim() ||
-      !fragment.length ||
-      (fragment.length === 1 &&
-        first?.type === "paragraph" &&
-        !first.children?.length)
-    )
-      throw new DocumentError(["Markdown fragment is empty."])
-
-    validatePasteTarget(editor, document)
-    const nodes = $generateNodesFromSerializedNodes(fragment)
-
-    if (!nodes.length) throw new DocumentError(["Markdown fragment is empty."])
-
-    $insertGeneratedNodes(editor, nodes, selection)
+    $insertDocumentFragment(data, selection)
   } catch (error) {
     registration.onError(
       error instanceof DocumentError

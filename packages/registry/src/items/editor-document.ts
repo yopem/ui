@@ -30,6 +30,7 @@ export const editorDocumentItem: SourceItem = {
       "DocumentFormat",
       "parseDocument",
       "importDocument",
+      "$insertDocumentFragment",
       "exportDocument",
       "htmlDocument",
       "downloadDocument",
@@ -39,7 +40,7 @@ export const editorDocumentItem: SourceItem = {
       "DocumentStatic",
     ],
     usage:
-      "Import portable helpers from @/components/editor/document. Import DocumentStatic from @/components/editor/document/static. Register EditorDocumentClipboardExtension at root creation. Keep registerDocumentPaste cleanup in the host lifecycle. Register EditorBlocksExtension for live callouts and toggles. Register math, mention, and media nodes before importing their representations. Use EditorListPresentationExtension for live custom list markers. Preserve yopemListMarker and native ordered starts in document readers. Use MediaExtension for live media rendering. Media Markdown uses canonical HTML. Reject media URL queries and fragments. Mention identities do not grant access. See /docs/editor.",
+      "Import portable helpers from @/components/editor/document. Import DocumentStatic from @/components/editor/document/static. Register EditorDocumentClipboardExtension at root creation. Keep registerDocumentPaste cleanup in the host lifecycle. Call $insertDocumentFragment inside editor.update to insert validated Markdown at the current selection. This helper does not replace the document. Register EditorBlocksExtension for live callouts and toggles. Register math, mention, and media nodes before importing their representations. Use EditorListPresentationExtension for live custom list markers. Preserve yopemListMarker and native ordered starts in document readers. Use MediaExtension for live media rendering. Media Markdown uses canonical HTML. Reject media URL queries and fragments. Mention identities do not grant access. See /docs/editor.",
   },
   files: [
     ...[
