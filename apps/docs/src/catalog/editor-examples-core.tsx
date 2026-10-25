@@ -133,11 +133,18 @@ const examples = [
     workflowIds: [],
     title: "Native block context actions",
     Component: PublicBlockMenuExample,
-    items: ["editor-block-menu"],
+    items: [
+      "editor-block-menu",
+      "editor-review",
+      "editor-diagram",
+      "checkbox",
+      "dialog",
+      "field",
+    ],
     description:
-      "Right-click a block or use Shift+F10 for native clipboard, type, indentation, alignment, and history actions.",
+      "Use native context actions, policy-bound comments, configured AI proposals, and captured-target diagram insertion.",
     limits:
-      "This composition does not supply Ask AI or Code Drawing host callbacks. Add Comment is absent. Full pinned block-menu equivalence is not credited. Runtime acceptance is deferred.",
+      "The reviewer and permission controls are local fixtures, not authorization services. AI needs an existing authenticated host with CSRF and document policy. Captured targets expire on content or read-only changes. Diagram source insertion has no configured renderer. Full pinned block-menu equivalence is not credited. Runtime acceptance is deferred.",
   },
   {
     slug: "public-copilot",
