@@ -29,6 +29,7 @@ import { ElementsSetupExample } from "./editor-examples/installation-next-03-ele
 import { LinkExample } from "./editor-examples/link"
 import { MathExample } from "./editor-examples/math-example"
 import { MediaExample } from "./editor-examples/media-example"
+import { VersionHistoryExample } from "./editor-examples/public-history"
 import {
   ControlledEditorExample,
   MultipleEditorsExample,
@@ -195,6 +196,17 @@ const examples = [
       "Edit two independent roots. Keep their formatting, history, content, and read-only state separate.",
     limits:
       "The roots do not share document state. This is not a collaboration example.",
+  },
+  {
+    slug: "version-history",
+    sourceFile: "public-history",
+    title: "Local revision history",
+    Component: VersionHistoryExample,
+    items: ["editor", "editor-review", "native-select"],
+    description:
+      "Save immutable snapshots. Inspect an earlier revision without changing the current document. Compare inserted, removed, and updated blocks and text.",
+    limits:
+      "History stays in memory and holds at most 20 snapshots, each within 1 MiB and 200 top-level blocks. Long or multiline text uses whole-block differences. No server history is configured.",
   },
 ] as const
 
