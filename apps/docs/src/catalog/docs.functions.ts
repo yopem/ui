@@ -44,6 +44,10 @@ const completeEditorPreviews = new Map<
   ["editor-toc", ["./editor-example-compositions/toc.tsx", "toc"]],
   ["editor-csv", ["./editor-examples/public-csv.tsx"]],
   ["editor-search", ["./editor-preview-compositions/search.tsx"]],
+  [
+    "editor-list-presentation",
+    ["./editor-examples/public-list-presentation.tsx"],
+  ],
   ["editor-docx", ["./editor-examples/public-docx.tsx"]],
   ["editor-labels", ["./editor-examples/public-labels.tsx"]],
   ["editor-block-placeholder", ["./editor-examples/public-placeholder.tsx"]],

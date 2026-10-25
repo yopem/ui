@@ -9,6 +9,7 @@ import { editorDocxParts } from "./editor-docx-parts"
 import { editorFloatingToolbarParts } from "./editor-floating-toolbar-parts"
 import { editorFootnoteParts } from "./editor-footnote-parts"
 import { editorLabelsParts } from "./editor-labels-parts"
+import { editorListPresentationParts } from "./editor-list-presentation-parts"
 import { editorMathParts } from "./editor-math-parts"
 import { editorMediaParts } from "./editor-media-parts"
 import { editorReviewParts } from "./editor-review-parts"
@@ -240,6 +241,7 @@ export const editorParts = [
   ...editorDateParts,
   ...editorDocxParts,
   ...editorLabelsParts,
+  ...editorListPresentationParts,
   ...editorReviewParts,
   ...editorAiParts,
   ...editorCollaborationParts,

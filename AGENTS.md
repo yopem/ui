@@ -893,3 +893,15 @@ Unsupported content rejects. Do not promise complete Word layout, image, macro, 
 Native deflate decompression is required for compressed archives.
 Word file conversion does not implement the separate pinned Word clipboard workflow.
 Runtime, real-file fidelity, and security fixture checks remain deferred.
+
+## Optional editor list presentation
+
+Install `editor-list-presentation` separately.
+Register `EditorListPresentationExtension` in a stable extensions array.
+Compose marker and signed-start controls inside `EditorToolbar`.
+Markers apply to one list. Nested lists keep their own markers.
+Checklists do not use custom markers.
+Starts accept signed 32-bit integers, including zero. Invalid drafts do not change saved content.
+Keep `yopemListMarker` NodeState, `data-editor-list-marker`, and native `ol` start attributes.
+Compose host HTML hooks with `createEditorListPresentationHTMLConfig`.
+Keep pure codecs in `list-presentation-model`.

@@ -83,6 +83,10 @@ Use the pure \`search-model\` module outside React. Preserve host input cancella
 Install optional \`editor-floating-toolbar\` separately. Compose \`EditorFloatingToolbar\` inside \`EditorRoot\` beside \`EditorContent\`.
 Use existing controls as children. Select native text, then use Alt+F10 to focus the toolbar. Escape returns keyboard focus.
 Preserve the saved-range guard. Content changes and read-only transitions invalidate the target.
+Install optional \`editor-list-presentation\` separately for native list markers and signed starts.
+Register \`EditorListPresentationExtension\` at root creation. Compose marker and start controls inside \`EditorToolbar\`.
+Preserve \`yopemListMarker\` NodeState, \`data-editor-list-marker\`, and native ordered-list \`start\` attributes.
+Checklists keep their native behavior. Custom HTML readers must compose existing converters instead of replacing them.
 Install optional \`editor-docx\` separately for bounded semantic Word files.
 Import portable functions from \`${imports.editor}/docx\` and client controls from \`${imports.editor}/docx-controls\`.
 Compose \`EditorDocxImportControl\`, \`EditorDocxExportControl\`, or \`EditorDocxControls\` inside \`EditorRoot\`.

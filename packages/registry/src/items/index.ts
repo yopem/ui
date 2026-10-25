@@ -24,6 +24,7 @@ import { editorEditingRulesItem } from "@registry/items/editor-editing-rules"
 import { editorFloatingToolbarItem } from "@registry/items/editor-floating-toolbar"
 import { editorFootnotesItem } from "@registry/items/editor-footnotes"
 import { editorLabelsItem } from "@registry/items/editor-labels"
+import { editorListPresentationItem } from "@registry/items/editor-list-presentation"
 import { editorMathItem } from "@registry/items/editor-math"
 import { editorMediaItem } from "@registry/items/editor-media"
 import { editorReviewItem } from "@registry/items/editor-review"
@@ -67,6 +68,7 @@ export const sourceItems = [
   editorAutoformatItem,
   editorBlockBehaviorItem,
   editorDocxItem,
+  editorListPresentationItem,
   editorLabelsItem,
   editorEditingRulesItem,
   editorBlockPlaceholderItem,

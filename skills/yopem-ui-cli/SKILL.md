@@ -894,3 +894,23 @@ rejects before replacement. Full Word layout, images, macros, headers, and
 footers are not supported. Synchronous parsing cannot be stopped. Word clipboard
 cleanup is a separate integration. See
 https://ui.yopem.com/components/editor-docx for the current subset and limits.
+
+### Native list presentation
+
+Install this optional item separately.
+
+```sh
+bunx --bun @yopem-ui/cli add editor-list-presentation
+npx @yopem-ui/cli add editor-list-presentation
+pnpm dlx @yopem-ui/cli add editor-list-presentation
+yarn dlx @yopem-ui/cli add editor-list-presentation
+```
+
+Import controls from `@/components/editor/list-presentation`. Register
+`EditorListPresentationExtension` in a stable root extensions array. Compose
+`EditorListMarkerControl`, `EditorListStartControl`, or
+`EditorListPresentationControls` inside `EditorToolbar`. Markers affect one
+native list. Nested lists and checklists keep their own behavior. Preserve
+`yopemListMarker` NodeState, `data-editor-list-marker`, and native ordered-list
+`start` attributes. Starts accept signed 32-bit integers. Invalid drafts and
+stale selections cannot change lists.

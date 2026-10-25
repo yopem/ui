@@ -1413,3 +1413,19 @@ See [the DOCX source item](/components/editor-docx),
 [import control](/editor/docx-import-control),
 [download control](/editor/docx-export-control), and
 [combined controls](/editor/docx-controls).
+
+## Native list presentation
+
+Install this optional item separately.
+
+```sh
+bunx --bun @yopem-ui/cli add editor-list-presentation
+```
+
+Register `EditorListPresentationExtension` in a stable root extensions array.
+Compose marker and signed-start controls inside `EditorToolbar`. Markers affect
+one list. Nested lists keep their own markers. Starts accept signed 32-bit
+integers, including zero. Invalid drafts do not change saved content. Preserve
+`yopemListMarker` NodeState, `data-editor-list-marker`, and native `ol` start
+attributes in compatible readers. Compose existing HTML hooks with
+`createEditorListPresentationHTMLConfig`.

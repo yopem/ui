@@ -1,6 +1,18 @@
 /** Import aliases used in the copyable source files served by the registry. */
 export const sourceImportReplacements = [
   [
+    "@yopem-ui/editor/list-presentation/model",
+    "@/components/editor/list-presentation-model",
+  ],
+  [
+    "@yopem-ui/editor/list-presentation/extension",
+    "@/components/editor/list-presentation-extension",
+  ],
+  [
+    "@yopem-ui/editor/list-presentation",
+    "@/components/editor/list-presentation",
+  ],
+  [
     "@yopem-ui/editor/block-selection",
     "@/components/editor/block-selection-index",
   ],

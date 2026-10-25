@@ -46,6 +46,7 @@ import {
 } from "./editor-examples/public-hosts"
 import { PublicIframeExample } from "./editor-examples/public-iframe"
 import { PublicLabelsExample } from "./editor-examples/public-labels"
+import { PublicListPresentationExample } from "./editor-examples/public-list-presentation"
 import { PublicNativeEditingExample } from "./editor-examples/public-native-editing"
 import { PublicPersistedExample } from "./editor-examples/public-persisted"
 import { PublicPlaceholderExample } from "./editor-examples/public-placeholder"
@@ -434,6 +435,18 @@ const examples = [
       "Apply selected-block alignment, text and background colors, indentation, and line height. Save and reload styled native JSON and HTML.",
     limits:
       "These controls use native Lexical state. Saved roundtrips stay in local component memory and are not host persistence. Public-example behavior remains unverified.",
+  },
+  {
+    slug: "public-list-presentation",
+    sourceFile: "public-list-presentation",
+    workflowIds: [],
+    title: "Native list presentation",
+    Component: PublicListPresentationExample,
+    items: ["editor-list-presentation", "box", "button", "stack", "text"],
+    description:
+      "Set list markers and signed starts on independent nested native lists.",
+    limits:
+      "Local JSON/HTML controls are not an untrusted importer. Runtime and clipboard fidelity remain unverified.",
   },
   {
     slug: "public-docx",

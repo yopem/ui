@@ -1,5 +1,11 @@
 // These notes describe Yopem's composition choices, not only the upstream types.
 const usageNoteValues = {
+  "editor-list-presentation": [
+    "Register EditorListPresentationExtension in a stable root extensions array.",
+    "Compose marker and signed-start controls inside EditorToolbar. Saved selections expire after document changes.",
+    "Markers affect one native list. Nested lists keep their own markers. Checklists do not use custom markers.",
+    "Keep yopemListMarker NodeState, data-editor-list-marker, and native ol start attributes in compatible readers.",
+  ],
   "editor-docx": [
     "Install this optional item for bounded native Word document conversion.",
     "Compose EditorDocxImportControl, EditorDocxExportControl, or EditorDocxControls inside EditorRoot. Keep portable functions separate from client controls.",

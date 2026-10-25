@@ -11,6 +11,19 @@ export function BlockBehaviorExample() {
   return <EditorRoot ariaLabel="Block behavior" extensions={extensions}><EditorContent /></EditorRoot>
 }`,
 
+  "editor-list-presentation": `import { EditorContent, EditorRoot, EditorToolbar } from "@/components/editor"
+import { EditorListPresentationControls, EditorListPresentationExtension } from "@/components/editor/list-presentation"
+
+const extensions = [EditorListPresentationExtension]
+
+export function ListEditor() {
+  return (
+    <EditorRoot extensions={extensions}>
+      <EditorToolbar><EditorListPresentationControls /></EditorToolbar>
+      <EditorContent />
+    </EditorRoot>
+  )
+}`,
   "editor-docx": `import { EditorBlockPresentationExtension, EditorContent, EditorRoot, EditorTablePresentationExtension } from "@/components/editor"
 import { EditorDocxControls } from "@/components/editor/docx-controls"
 
