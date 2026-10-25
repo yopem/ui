@@ -44,6 +44,7 @@ import {
   MultipleEditorsExample,
 } from "./editor-examples/public-hosts"
 import { PublicNativeEditingExample } from "./editor-examples/public-native-editing"
+import { PublicPersistedExample } from "./editor-examples/public-persisted"
 import { PublicPlaceholderExample } from "./editor-examples/public-placeholder"
 import { PublicPluginRulesExample } from "./editor-examples/public-plugin-rules"
 import { ReadOnlyEditorExample } from "./editor-examples/public-readonly"
@@ -430,6 +431,27 @@ const examples = [
       "Apply selected-block alignment, text and background colors, indentation, and line height. Save and reload styled native JSON and HTML.",
     limits:
       "These controls use native Lexical state. Saved roundtrips stay in local component memory and are not host persistence. Public-example behavior remains unverified.",
+  },
+  {
+    slug: "public-persisted",
+    sourceFile: "public-persisted",
+    workflowIds: ["installation-next"],
+    title: "Date-scoped local draft host",
+    Component: PublicPersistedExample,
+    items: [
+      "editor-document",
+      "box",
+      "button",
+      "field",
+      "heading",
+      "input",
+      "stack",
+      "text",
+    ],
+    description:
+      "Open validated saved native state before mounting the editable root, save document changes by date, and reset without replacing the saved snapshot.",
+    limits:
+      "Browser-local storage is unencrypted and last-write-wins across tabs. Invalid storage pauses automatic writes. Only this root's base node types are admitted. This React composition is not a verified Next.js integration; storage, mount/reset races, history, and source closure remain untested.",
   },
   {
     slug: "public-plugin-rules",
