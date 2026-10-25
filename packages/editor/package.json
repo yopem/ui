@@ -44,6 +44,8 @@
     "./media/model": "./src/media/model.ts",
     "./selection-bookmark": "./src/selection-bookmark.ts",
     "./collaboration": "./src/collaboration.ts",
+    "./collaboration/native": "./src/collaboration-native.ts",
+    "./collaboration/native-model": "./src/collaboration-native-model.ts",
     "./footnote": "./src/footnote.ts",
     "./footnote-model": "./src/footnote-model.ts",
     "./footnote-node": "./src/footnote-node.tsx",
