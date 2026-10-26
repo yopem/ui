@@ -8,6 +8,25 @@ import { resolveSourcePath } from "./source-path"
 
 const root = dirname(fileURLToPath(import.meta.url))
 
+function isReactReturn(type: ts.Type): boolean {
+  const symbol = type.aliasSymbol ?? type.getSymbol()
+
+  if (
+    symbol &&
+    ["ReactNode", "ReactElement", "ReactPortal", "Element"].includes(
+      symbol.name,
+    ) &&
+    symbol
+      .getDeclarations()
+      ?.some((node) =>
+        /[/\\]@types[/\\]react[/\\]/.test(node.getSourceFile().fileName),
+      )
+  )
+    return true
+
+  return type.isUnion() && type.types.some(isReactReturn)
+}
+
 export function extractDocs() {
   const configPath = resolve(root, "../tsconfig.json")
   const config = ts.readConfigFile(configPath, (path) => ts.sys.readFile(path))
@@ -338,7 +357,10 @@ export function extractDocs() {
         ? "value"
         : signatures.length
           ? /^[A-Z]/.test(name.split(".").at(-1)!) &&
-            !name.includes("CreateHandle")
+            !name.includes("CreateHandle") &&
+            signatures.some((signature) =>
+              isReactReturn(signature.getReturnType()),
+            )
             ? "component"
             : "function"
           : symbol.flags & ts.SymbolFlags.Namespace
@@ -536,12 +558,7 @@ export function extractDocs() {
                           "components/editor/copilot-session.ts",
                         ].includes(file.path)
                       : item.name === "editor-editable-card"
-                        ? [
-                            "components/editor/editable-card.ts",
-                            "components/editor/editable-card-view.tsx",
-                            "components/editor/editable-card-model.ts",
-                            "components/editor/editable-card-node.tsx",
-                          ].includes(file.path)
+                        ? file.path === "components/editor/editable-card.ts"
                         : item.name === "editor-docx"
                           ? [
                               "components/editor/docx.ts",
