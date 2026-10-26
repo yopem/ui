@@ -56,6 +56,8 @@ import {
 import { PublicIframeExample } from "./editor-examples/public-iframe"
 import { PublicLabelsExample } from "./editor-examples/public-labels"
 import { PublicListPresentationExample } from "./editor-examples/public-list-presentation"
+import { PublicMediaEmbedsExample } from "./editor-examples/public-media-embeds"
+import { PublicMediaPreviewExample } from "./editor-examples/public-media-preview"
 import { PublicNativeEditingExample } from "./editor-examples/public-native-editing"
 import { PublicPersistedExample } from "./editor-examples/public-persisted"
 import { PublicPlaceholderExample } from "./editor-examples/public-placeholder"
@@ -81,6 +83,28 @@ const sources = import.meta.glob<string>("./editor-examples/*.tsx", {
 })
 
 const examples = [
+  {
+    slug: "public-media-preview",
+    workflowIds: [],
+    title: "Image previews and bounded zoom",
+    Component: PublicMediaPreviewExample,
+    items: ["editor-media"],
+    description:
+      "Open images in an owner-document dialog with navigation and keyboard-accessible zoom scrolling.",
+    limits:
+      "Preview state is not document state. Foreign documents need host styles; this fixture copies its initial styles and theme. Image networking, focus restoration, zoom geometry, and accessibility remain unverified. This example adds no mapped-workflow credit.",
+  },
+  {
+    slug: "public-media-embeds",
+    workflowIds: [],
+    title: "Consent-gated external media",
+    Component: PublicMediaEmbedsExample,
+    items: ["editor-media"],
+    description:
+      "Configure fixed providers or exact iframe origins before explicit user consent loads external content.",
+    limits:
+      "Provider availability, framing policy, cookies, CSP, and accessibility need host checks. Disabling content or changing policy resets consent. Host validation must address DNS, redirects, credentials, and private networks. Removed frames cannot retract network work. This example adds no mapped-workflow credit.",
+  },
   {
     slug: "public-playground",
     workflowIds: ["playground", "playground-source"],

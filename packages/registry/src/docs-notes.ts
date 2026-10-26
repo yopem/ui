@@ -157,6 +157,9 @@ const usageNoteValues = {
     "Use HTTPS URLs without credentials. Provide image alt text and media captions. Provider embeds use exact supported hosts and canonical URLs.",
     "Supply a bounded, abort-aware host upload callback. Uploads require host authorization and validation. This item does not configure private asset delivery.",
     "Register MediaNode in every document reader. Document conversion preserves canonical media metadata and tagged figure HTML. Media conversion rejects URL queries and fragments.",
+    "Preview parts need no EditorRoot. Compose MediaPreviewRoot, Trigger, and Dialog, or use MediaPreviewGallery. Supply unique image IDs. Zoom and navigation stay outside saved state.",
+    "Configure live embeds with stable createMediaExtension({ embedPolicy }). Do not register MediaExtension beside it. MediaEmbedContent loads frames only after explicit consent.",
+    "Changing source, policy, or disabled resets consent. Tweets use the fixed Twitter endpoint. Exported HTML keeps inert links. Host controls must address DNS, redirects, private networks, and provider framing policies.",
   ],
   "editor-columns": [
     "Register EditorColumnsExtension in a stable extensions array. Compose the preset or focused controls inside EditorToolbar. Layouts contain two through four rich-text columns. Nested column groups are rejected; nested rich blocks remain native.",

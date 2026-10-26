@@ -49,7 +49,11 @@ test("optional media publishes a complete consumer source closure", async () => 
   expect(visited.has("aspect-ratio")).toBe(true)
   expect(visited.has("figcaption")).toBe(true)
   expect(visited.has("progress")).toBe(true)
+  expect(visited.has("scroll-area")).toBe(true)
+  expect(visited.has("slider")).toBe(true)
   expect(files.has("components/editor/media.ts")).toBe(true)
+  expect(files.has("components/editor/media-preview.tsx")).toBe(true)
+  expect(files.has("components/editor/media-embed.tsx")).toBe(true)
   expect(files.has("components/editor/root.tsx")).toBe(true)
   expect(files.has("components/editor/selection-bookmark.ts")).toBe(true)
 

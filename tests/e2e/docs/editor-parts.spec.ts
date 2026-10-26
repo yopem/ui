@@ -78,6 +78,25 @@ for (const part of editorParts.filter(
         preview.getByRole("checkbox", { name: "Editor", exact: true }),
       ).toBeChecked()
       await expect(preview.locator('[contenteditable="true"]')).toHaveCount(0)
+    } else if (part.name.startsWith("MediaPreview")) {
+      await expect(
+        preview
+          .getByRole("button", {
+            name: "Preview image: Yopem UI mark",
+            exact: true,
+          })
+          .first(),
+      ).toBeVisible()
+      await expect(preview.locator('[contenteditable="true"]')).toHaveCount(0)
+    } else if (part.name === "MediaEmbedContent") {
+      await expect(
+        preview.getByRole("button", {
+          name: "Load content from www.youtube-nocookie.com",
+          exact: true,
+        }),
+      ).toBeVisible()
+      await expect(preview.locator("iframe")).toHaveCount(0)
+      await expect(preview.locator('[contenteditable="true"]')).toHaveCount(0)
     } else if (part.name === "MediaContent") {
       await expect(
         preview.getByRole("img", { name: "Media preview", exact: true }),

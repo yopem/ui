@@ -36,6 +36,10 @@ export async function getEditorDocumentation(slug: string) {
     sourcePath = "./editor-preview-compositions/search.tsx"
   else if (part.name.startsWith("EditorInlineCombobox"))
     sourcePath = "./editor-preview-compositions/inline-combobox.tsx"
+  else if (part.name.startsWith("MediaPreview"))
+    sourcePath = "./editor-preview-compositions/media-preview.tsx"
+  else if (part.name === "MediaEmbedContent")
+    sourcePath = "./editor-preview-compositions/media-embed.tsx"
   else if (part.name === "MediaInsertControl")
     sourcePath = "./editor-preview-compositions/media.tsx"
   else if (part.name === "EditorFootnoteControls")
@@ -147,7 +151,9 @@ export async function getEditorDocumentation(slug: string) {
       ...(part.item === "editor-media"
         ? [
             "Register MediaExtension in a stable root extension array. MediaInsertControl belongs inside EditorToolbar.",
-            "MediaContent renders validated parseMedia data without EditorRoot. Keep native playback and file links usable in read-only views.",
+            "MediaContent and MediaPreview parts work without EditorRoot. Keep native playback and file links usable in read-only views.",
+            "Compose MediaPreviewRoot, Trigger, and Dialog, or use MediaPreviewGallery. Supply unique image IDs. Zoom uses keyboard-accessible Slider and ScrollArea controls and is not saved.",
+            "MediaEmbedContent needs an explicit provider or exact HTTPS-origin policy. Frames stay blocked until consent. Source, policy, and disabled changes reset consent. DNS and redirects need host controls.",
             "Use HTTPS URLs without credentials. Host uploads require authorization and bounded validation.",
             "Install editor-document separately for document IO. Preserve canonical media metadata and reject URL queries and fragments.",
           ]
