@@ -71,9 +71,10 @@ const reviewHost: EditorReviewHost = {
   visible: true,
   replyWhileReadonly: false,
   can(action, _targetId, viewer) {
-    if (action !== "create" || viewer.id !== reviewViewer.id) return false
-
-    return true
+    return (
+      viewer.id === reviewViewer.id &&
+      ["create", "suggest", "accept", "reject"].includes(action)
+    )
   },
 }
 

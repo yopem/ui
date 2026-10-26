@@ -875,6 +875,62 @@ export function EditorAiMenuContent({
   })
 }
 
+function EditorAiMenuReviewSuggestionAction({
+  review,
+}: {
+  review: EditorReviewBinding
+}) {
+  const { session, state } = useAi()
+  const { editable } = useEditorState()
+  const bookmark = useMenuBookmark()
+  const [error, setError] = useState("")
+  useSyncExternalStore(review.subscribe, review.getSnapshot, review.getSnapshot)
+
+  const withinLimit = state.text.length <= 16_384 && !/[\r\n]/.test(state.text)
+  const available = review.available("suggest")
+
+  function approveSuggestion() {
+    if (!editable || !available || !withinLimit || !bookmark.getSnapshot())
+      return
+    setError("")
+
+    const applied = session.approveWith((text) => {
+      if (!review.available("suggest")) return false
+      review.$suggestCompletedText(text)
+
+      return true
+    })
+
+    if (!applied)
+      setError(
+        "Review suggestion was not created. The proposal remains available.",
+      )
+  }
+
+  if (state.status !== "ready" || !state.text) return null
+
+  return (
+    <Stack>
+      {error ? <Text role="alert">{error}</Text> : null}
+      <Button
+        type="button"
+        disabled={
+          !editable || !available || !withinLimit || !bookmark.getSnapshot()
+        }
+        onClick={approveSuggestion}
+      >
+        Suggest change
+      </Button>
+      {!withinLimit ? (
+        <Text>
+          Inline review requires one line with at most 16384 characters. Use a
+          structural proposal for document changes.
+        </Text>
+      ) : null}
+    </Stack>
+  )
+}
+
 function EditorAiMenuDialog({ review }: { review?: EditorReviewBinding }) {
   const editor = useEditor()
   const bookmark = useMenuBookmark()
@@ -1155,6 +1211,9 @@ function EditorAiMenuDialog({ review }: { review?: EditorReviewBinding }) {
             reviewError={reviewError}
             state={state}
           />
+          {review && !lastRequest?.command.review ? (
+            <EditorAiMenuReviewSuggestionAction review={review} />
+          ) : null}
         </Stack>
       </DialogPanel>
     </DialogPopup>

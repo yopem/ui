@@ -571,3 +571,79 @@ test("host read-only changes expire ready approval and preserve the document", a
   const results = await new AxeBuilder({ page }).analyze()
   expect(results.violations).toEqual([])
 })
+
+test("completed AI text becomes a separately decided review suggestion", async ({
+  page,
+}, testInfo) => {
+  test.slow()
+  const calls = await installAiResponse(page, "Proposed review copy")
+  const { editor, setup } = await mountPublicAi(page)
+  await editor.fill("Original review copy")
+  await editor.press("ControlOrMeta+a")
+  await editor.press("ControlOrMeta+j")
+  const dialog = await openCommand(page, "Summarize")
+  await dialog
+    .getByRole("button", { name: "Suggest change", exact: true })
+    .click()
+  await expect(dialog).toBeHidden()
+  const panel = setup.getByRole("complementary", { name: "Document review" })
+  await expect(
+    panel.getByRole("button", { name: "Accept all suggestions", exact: true }),
+  ).toBeEnabled()
+  await expect(editor).toContainText("Original review copy")
+  await expect(editor).toContainText("Proposed review copy")
+  expect(calls()).toBe(1)
+  const pending = await new AxeBuilder({ page }).analyze()
+  expect(pending.violations).toEqual([])
+  await panel
+    .getByRole("button", { name: "Accept all suggestions", exact: true })
+    .click()
+  await expect(editor).toHaveText("Proposed review copy")
+  await editor.click()
+  await editor.press("ControlOrMeta+z")
+  await expect(editor).toContainText("Original review copy")
+  await editor.press("ControlOrMeta+z")
+  await expect(editor).toHaveText("Original review copy")
+  await editor.press("ControlOrMeta+Shift+z")
+  await expect(
+    panel.getByRole("button", { name: "Reject all suggestions", exact: true }),
+  ).toBeEnabled()
+  await panel
+    .getByRole("button", { name: "Reject all suggestions", exact: true })
+    .click()
+  await expect(editor).toHaveText("Original review copy")
+  await testInfo.attach("ai-review-decision", {
+    body: JSON.stringify({ calls: calls(), text: await editor.innerText() }),
+    contentType: "application/json",
+  })
+})
+
+test("multiline AI output cannot enter inline review or remove source content", async ({
+  page,
+}) => {
+  const calls = await installAiResponse(
+    page,
+    "First proposal line\nSecond proposal line",
+  )
+
+  const { editor, setup } = await mountPublicAi(page)
+  await editor.fill("Keep source before review")
+  await editor.press("ControlOrMeta+a")
+  await editor.press("ControlOrMeta+j")
+  const dialog = await openCommand(page, "Summarize")
+  await expect(
+    dialog.getByRole("button", { name: "Suggest change", exact: true }),
+  ).toBeDisabled()
+  await expect(editor).toHaveText("Keep source before review")
+  await expect(
+    dialog.locator('[data-slot="editor-ai-menu-status"]'),
+  ).toHaveAttribute("data-state", "ready")
+  await expect(
+    setup.getByRole("button", { name: "Accept all suggestions", exact: true }),
+  ).toBeDisabled()
+  expect(calls()).toBe(1)
+  await dialog
+    .getByRole("button", { name: "Discard proposal", exact: true })
+    .click()
+  await expect(editor).toHaveText("Keep source before review")
+})
