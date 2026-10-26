@@ -51,7 +51,7 @@ test("configured iframe URLs require exact public HTTPS origins", () => {
   const lookalike = parseMedia({
     kind: "embed",
     embedType: "iframe",
-    url: "https://embed.example.com.evil.test/player/42",
+    url: "https://embed.example.com.evil.com/player/42",
   })
 
   expect(resolveMediaEmbed(configured, policy)).toEqual({
@@ -79,6 +79,7 @@ test("iframe URL validation rejects credentials, secrets, encoded paths, and pri
     "https://embed.example.com/player/42#secret",
     "https://embed.example.com/%2e%2e/admin",
     "https://embed.example.com/player%2f42",
+    "https://embed.example.com.evil.test/player/42",
     "https://localhost/player/42",
     "https://127.0.0.1/player/42",
     "https://[::1]/player/42",
