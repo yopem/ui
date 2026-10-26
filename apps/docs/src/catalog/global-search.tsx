@@ -196,9 +196,9 @@ export function GlobalSearch() {
       >
         <SearchIcon size={16} />
         <Box render={<span />} xstyle={primitiveStyles.span}>
-          Search docs
+          Search documentation
         </Box>
-        <Box render={<kbd />} xstyle={primitiveStyles.kbd}>
+        <Box render={<kbd />} aria-hidden="true" xstyle={primitiveStyles.kbd}>
           ⌘ / Ctrl K
         </Box>
       </DialogTrigger>
