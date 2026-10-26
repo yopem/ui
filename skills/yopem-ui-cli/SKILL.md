@@ -684,36 +684,49 @@ yarn dlx @yopem-ui/cli add editor-document
 ```
 
 Import portable helpers from `@/components/editor/document`. Import
-`DocumentStatic` from `@/components/editor/document/static`. Register
-`EditorDocumentClipboardExtension` in the stable root extension array. Call
-`registerDocumentPaste` after editor creation. Retain its cleanup callback.
-Validate complete documents before replacement. Keep host HTML sanitization.
-Retain canonical block metadata, table borders, and `data-editor-row-height`.
-Failed imports preserve existing content. Stream imports commit only at EOF.
-Abort stale requests. Cancellation cannot stop a noncooperative producer.
-Register math and mention nodes before importing their representations. Markdown
-supports TeX delimiters with canonical HTML fallback when required for fidelity.
-Static and standalone HTML use native MathML. Mentions use the validated
-identity codec. Saved mention identities do not grant access. Media JSON and
-canonical tagged figure HTML retain native metadata. Markdown uses canonical
-HTML for media. Register `MediaExtension` for live rendering or `MediaNode` in
-headless readers. Media URLs cannot contain credentials, queries, or fragments.
-Review nodes remain unsupported. Do not use conversion to remove unknown nodes
-or formatting without approval. See
-https://ui.yopem.com/components/editor-document for supported formats.
+`DocumentStatic` from `@/components/editor/document/static`. Keep `@types/hast`
+and `@types/mdast` as direct consumer dependencies. Keep copied pure models and
+`document/optional-nodes.ts`. Register `EditorDocumentClipboardExtension` in the
+stable root extension array. Call `registerDocumentPaste` after editor creation.
+Retain its cleanup callback. Validate complete documents before replacement.
+Keep host HTML sanitization. Retain canonical block metadata, table borders, and
+`data-editor-row-height`. Failed imports preserve existing content. Stream
+imports commit only at EOF. Abort stale requests. Cancellation cannot stop a
+noncooperative producer. Register math and mention nodes before importing their
+representations. Markdown supports TeX delimiters with canonical HTML fallback
+when required for fidelity. Static and standalone HTML use native MathML.
+Mentions use the validated identity codec. Saved mention identities do not grant
+access. Media JSON and canonical tagged figure HTML retain native metadata.
+Markdown uses canonical HTML for media. Register `MediaExtension` for live
+rendering or `MediaNode` in headless readers. Media URLs cannot contain
+credentials, queries, or fragments. Register optional feature nodes before live
+import. Readers retain footnotes, contents, columns, dates, labels, drawings,
+editable cards, and diagram metadata. Optional nodes use canonical HTML
+fallback. Markdown footnote input is supported. Transient card fields are not
+saved. Drawing SDKs do not run during static conversion. Review nodes remain
+unsupported. Do not use conversion to remove unknown nodes or formatting without
+approval. See https://ui.yopem.com/components/editor-document for supported
+formats.
 
 ## Optional editor media
 
 Install `editor-media` separately. Import parts from
 `@/components/editor/media`. Register `MediaExtension` in a stable root
 extension array. Compose `MediaInsertControl` inside `EditorToolbar`.
-`MediaContent` renders validated `parseMedia` data without `EditorRoot`. Use
-HTTPS URLs without credentials. Supply alt text and captions for your content.
-Keep native playback, file links, and iframe controls usable in read-only roots.
-Supply bounded, abort-aware host uploads with server authorization and
-validation. Private assets need explicit same-origin delivery integration. Never
-put tokens in media URLs. Register `MediaNode` in document readers. Do not
-flatten unsupported media during conversion.
+`MediaContent` and image preview parts work without `EditorRoot`. Compose
+`MediaPreviewRoot`, `MediaPreviewTrigger`, and `MediaPreviewDialog`, or use
+`MediaPreviewGallery`. Supply unique image IDs. Zoom stays local. Use the house
+Slider and ScrollArea controls for keyboard zoom and scrolling.
+`MediaEmbedContent` needs an explicit provider or exact HTTPS-origin policy.
+Frames need user consent. Source, policy, and disabled changes discard consent.
+Tweet embeds use the fixed platform.twitter.com endpoint. HTML exports keep
+inert links. Origin validation does not check DNS or redirects. Keep these
+controls in the host. Use HTTPS URLs without credentials. Supply alt text and
+captions for your content. Keep native playback, file links, and iframe controls
+usable in read-only roots. Supply bounded, abort-aware host uploads with server
+authorization and validation. Private assets need explicit same-origin delivery
+integration. Never put tokens in media URLs. Register `MediaNode` in document
+readers. Do not flatten unsupported media during conversion.
 
 ## Optional footnotes and table of contents
 
@@ -726,8 +739,9 @@ definitions. Renumber a selected duplicate explicitly. Do not silently rewrite
 identifiers. Table-of-contents links target the current editor only. Base
 contents controls do not require typeahead. Add `editorTocSlashCommand` only to
 a configured slash controller. Register feature nodes in each reader. Model
-fragment codecs do not validate complete host documents. Generic
-`editor-document` conversion does not yet support footnotes or contents nodes.
+fragment codecs do not validate complete host documents. Document readers
+support validated footnotes and table-of-contents nodes. Keep canonical
+reference IDs.
 
 ## Optional editor columns and dates
 
@@ -756,10 +770,10 @@ Store validated YYYY-MM-DD strings without timezone conversion. Use
 `editorDateFromLocalDate` for local dates. Import pure codecs from
 `@/components/editor/columns-model` and `@/components/editor/date-model`. Keep
 all copied feature and core selection helpers. Shared packages must export both
-feature and model subpaths. Generic document converters do not support columns
-or dates. Never flatten these nodes silently. Supply complete host document
-validation; feature validators check only their own contracts. See
-https://ui.yopem.com/components/editor-columns and
+feature and model subpaths. Document readers retain validated columns and dates.
+Register the matching nodes before live import. Never flatten unknown nodes.
+Supply complete host document validation; feature validators check only their
+own contracts. See https://ui.yopem.com/components/editor-columns and
 https://ui.yopem.com/components/editor-date for composition.
 
 ## Optional editor math
@@ -922,7 +936,8 @@ for the root. Compose the picker or house CheckboxGroup options. Use one through
 Replace only label-only content. Register EditorLabelNode in each reader. Use
 labels-model for pure validation. Invalid node metadata rejects. Unknown,
 duplicate, and excess valid tokens become plain text. Labels grant no access.
-Generic document conversion does not support these nodes.
+Document readers retain validated label tokens. Register label nodes before live
+import.
 
 ## Optional Word clipboard
 
@@ -1003,8 +1018,8 @@ Install optional `editor-editable-card` separately. Import parts from
 root creation. Compose `EditorEditableCardInsertButton` inside `EditorToolbar`.
 Keep native Tab order. Local fields and nested notes are transient and reset
 after card removal or import. The nested editor has independent history. JSON
-stores only type and version. Generic document conversion does not support
-cards.
+stores only type and version. Document readers retain this saved node, not
+transient form values or nested-editor drafts.
 
 Install optional `editor-copilot`. Import `EditorCopilot` from
 `@/components/editor/copilot` inside `EditorRoot`. Supply stable host endpoint,
@@ -1040,18 +1055,18 @@ extensions array. Compose `EditorDiagramRoot` inside `EditorRoot` with explicit
 renderers. Use focused Toolbar, InsertButton, KindSelect, ViewModeSelect,
 RenderButton, DownloadButton, DeleteButton, Status, and Preview parts.
 
-Native JSON and marked code HTML keep metadata. Generic document conversion
-rejects it. Source stays visible until a matching sanitized SVG image loads.
-Only SVG download is supplied. Install optional Mermaid, PlantUML, Graphviz, and
-Flowchart adapters as separate registry items. Import SDK adapters only in
-browser-only entries, never SSR routes. Use `renderEditorDiagram` for direct
-calls. It checks budgets and sanitizes SVG. Source filters are supported
-subsets, not SDK sandboxes. Cancellation cannot stop synchronous SDK work.
-Validate engine, CSP, WebAssembly, and lifecycle compatibility before
-deployment. Host endpoints need authentication, document authorization, exact
-Origin, CSRF, and execution limits. Never put credentials in diagram URLs.
-Supply headers explicitly. See https://ui.yopem.com/editor/diagram-root for
-composition and API details.
+Native JSON and marked code HTML keep metadata. Document readers retain this
+metadata without running renderers. Source stays visible until a matching
+sanitized SVG image loads. Only SVG download is supplied. Install optional
+Mermaid, PlantUML, Graphviz, and Flowchart adapters as separate registry items.
+Import SDK adapters only in browser-only entries, never SSR routes. Use
+`renderEditorDiagram` for direct calls. It checks budgets and sanitizes SVG.
+Source filters are supported subsets, not SDK sandboxes. Cancellation cannot
+stop synchronous SDK work. Validate engine, CSP, WebAssembly, and lifecycle
+compatibility before deployment. Host endpoints need authentication, document
+authorization, exact Origin, CSRF, and execution limits. Never put credentials
+in diagram URLs. Supply headers explicitly. See
+https://ui.yopem.com/editor/diagram-root for composition and API details.
 
 ## Optional AI command menu
 

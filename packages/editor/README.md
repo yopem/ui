@@ -87,6 +87,20 @@ and fragments. It does not resolve private routes or configure asset access.
 Hosts must supply authentication, delivery policies, and validated upload
 callbacks.
 
+## Optional document nodes
+
+Document readers retain validated footnotes, contents, columns, dates, labels,
+drawings, editable cards, and diagram metadata. Register matching native nodes
+before live import. Custom headless readers use `documentNodes`. Keep all copied
+pure models and `document/optional-nodes.ts`. Keep `@types/hast` and
+`@types/mdast` as direct consumer dependencies.
+
+Optional nodes use canonical HTML fallback in Markdown. Markdown footnote input
+is supported. Drawings retain scene metadata, not SDK-rendered output. Editable
+cards retain their saved node, not transient fields or nested-editor drafts.
+Review state still rejects before replacement. These codec workflows remain
+runtime-unverified.
+
 ## Optional code formatting
 
 The repository uses Oxfmt. Base `editor-code` does not require Prettier. Supply

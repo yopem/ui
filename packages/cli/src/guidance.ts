@@ -96,7 +96,8 @@ The comment callback owns review UI, focus, and storage. The controller does not
 Callbacks do not grant document access. Preserve native selection, clipboard policies, history, and host event cancellation.
 Install optional \`editor-diagram\` separately. Import from \`${imports.editor}/diagram\`.
 Register \`EditorDiagramExtension\` once. Compose \`EditorDiagramRoot\` inside \`EditorRoot\` with explicit renderers.
-Native JSON and marked code HTML keep diagram metadata. Generic document converters reject it. SVG download is supplied; PNG and PDF are absent.
+Native JSON and marked code HTML keep diagram metadata. Document readers retain it without running renderers.
+SVG download is supplied by diagram controls; PNG and PDF are absent there.
 Install engine adapters separately: \`editor-diagram-mermaid\`, \`editor-diagram-plantuml\`, \`editor-diagram-graphviz\`, or \`editor-diagram-flowchart\`.
 Import SDK adapters only from browser-only entries, never SSR routes. Use \`renderEditorDiagram\` for direct calls and SVG sanitization.
 Source filters are supported subsets, not SDK sandboxes. Cancellation cannot stop synchronous SDK work or every queued operation.
@@ -111,7 +112,8 @@ Install optional \`editor-editable-card\` separately for native cards with trans
 Import from \`${imports.editor}/editable-card\`. Register \`EditorEditableCardExtension\` in a stable extensions array.
 Compose \`EditorEditableCardInsertButton\` inside \`EditorToolbar\`. Keep native browser Tab order.
 Nested editor state and history are independent. JSON stores only the card type and version.
-Removal, import, and undo restoration reset local fields and notes. Generic document conversion does not support cards.
+Removal, import, and undo restoration reset local fields and notes.
+Document readers retain the saved card node, not transient form values.
 Install optional \`editor-list-presentation\` separately for native list markers and signed starts.
 Register \`EditorListPresentationExtension\` at root creation. Compose marker and start controls inside \`EditorToolbar\`.
 Preserve \`yopemListMarker\` NodeState, \`data-editor-list-marker\`, and native ordered-list \`start\` attributes.
@@ -124,7 +126,8 @@ Self-host SDK fonts under an approved same-origin path. Preserve SDK/font notice
 Register one runtime per root and run its cleanup. Concurrent runtimes must share the global asset path.
 Keep scenes within 512 KiB and 2000 supported elements. Reject files, images, link targets, custom metadata, and unsupported types.
 Read-only roots can open saved scenes in view mode. They cannot insert or apply drawing edits.
-Validate drafts and sanitize SVG before download. Generic document conversion does not support drawing nodes.
+Validate drafts and sanitize SVG before download. Document readers retain validated scenes in JSON and canonical HTML.
+Generic static output shows drawing metadata, not an SDK-rendered scene.
 SDK/transitive dependency advisories and SSR/browser/accessibility acceptance remain unresolved. Do not claim production safety.
 Install optional \`editor-cursor-overlay\` separately. Import \`EditorCursorOverlay\` from \`${imports.editor}/cursor-overlay\`.
 Compose it beside \`EditorContent\` inside \`EditorRoot\`. Keep native drag and drop.
@@ -149,7 +152,8 @@ Cancellation cannot stop synchronous parsing. Word files and Word clipboard clea
 Install optional \`editor-labels\` separately. Import the controls and stable \`createEditorLabelsExtension\` from \`${imports.editor}/labels\`.
 Use \`EditorLabelsPicker\` or compose \`EditorLabelsOption\` inside house \`CheckboxGroup\`. Admit one through 64 unique bounded options and at most ten tokens.
 Apply minimum counts in the host form. Replace only label-only content. Register \`EditorLabelNode\` in each reader and use \`${imports.editor}/labels-model\` for pure validation.
-Invalid node metadata rejects; unknown, duplicate, and excess valid tokens become text. Labels grant no access. Generic document conversion does not support them.
+Invalid node metadata rejects; unknown, duplicate, and excess valid tokens become text. Labels grant no access.
+Document readers retain validated tokens. Register label nodes before live import.
 Install optional \`editor-block-behavior\` separately. Import \`EditorBlockBehaviorExtension\` from \`${imports.editor}/block-behavior\`.
 Keep its extensions array stable. Collapsed heading Enter makes the new half a paragraph.
 Preserve higher-priority host policy, native selection, NodeState, composition, and history. Other block handlers stay native.
@@ -294,7 +298,13 @@ yarn dlx @yopem-ui/cli add editor-media
 
 Import optional parts from \`${imports.editor}/media\`.
 Register MediaExtension in a stable root extensions array. Compose MediaInsertControl inside EditorToolbar.
-MediaContent renders validated media without EditorRoot. Use HTTPS URLs without credentials.
+MediaContent and image preview parts work without EditorRoot. Use HTTPS URLs without credentials.
+Compose MediaPreviewRoot, MediaPreviewTrigger, and MediaPreviewDialog, or use MediaPreviewGallery.
+Supply unique image IDs. Zoom stays local and uses house Slider and ScrollArea controls.
+Use MediaEmbedContent with an explicit provider or exact HTTPS-origin policy.
+Frames need user consent. Source, policy, and disabled changes discard consent.
+Tweet embeds use the fixed platform.twitter.com endpoint. HTML exports keep inert links.
+Origin validation does not check DNS or redirects. Keep these controls in the host.
 Keep native playback, file links, and iframe controls usable in read-only roots.
 Supply bounded, abort-aware host uploads with server authorization and validation.
 Private asset delivery needs explicit same-origin host integration. Never put tokens in media URLs.
@@ -332,7 +342,8 @@ Do not add adjacent EditorContent. Preserve repeated and unresolved references a
 Renumber a selected duplicate explicitly. Do not silently rewrite identifiers.
 Table-of-contents links target the current editor. Base controls do not require typeahead.
 Register feature nodes in every reader. Validate complete host documents at IO boundaries.
-Generic editor-document conversion does not yet support footnotes or table-of-contents nodes.
+Document readers support validated footnotes and table-of-contents nodes.
+Keep canonical heading and reference IDs intact.
 
 ### Optional editor columns and dates
 
@@ -358,7 +369,8 @@ The house Calendar inserts dates and edits native date nodes through \`EditorDat
 Store validated YYYY-MM-DD strings without timezone conversion. Use \`editorDateFromLocalDate\` for local dates.
 Import pure codecs from \`${imports.editor}/columns-model\` and \`${imports.editor}/date-model\`.
 Keep all copied feature and core selection helpers. Shared packages must export both feature and model subpaths.
-Generic document converters do not support columns or dates. Never flatten these nodes silently.
+Document readers retain validated columns and dates through canonical codecs.
+Register matching live nodes before import. Never flatten unknown nodes.
 Supply complete host document validation; feature validators check only their own contracts.
 
 ### Optional editor math
@@ -388,7 +400,7 @@ Install \`editor-document\` separately for JSON, HTML, Markdown, streaming, and 
 It depends on \`editor\` and \`editor-blocks\`. Base editor installs do not include document codecs.
 Import helpers from \`${imports.editor}/document\` and DocumentStatic from \`${imports.editor}/document/static\`.
 DocumentStatic needs no EditorRoot. Keep every copied helper, including \`document/state.ts\` and canonical presentation codecs.
-Keep \`@types/hast\` as a direct consumer dependency.
+Keep \`@types/hast\` and \`@types/mdast\` as direct consumer dependencies.
 Register EditorDocumentClipboardExtension at root creation in a stable extensions array.
 Call registerDocumentPaste after creation. Keep its cleanup in the host lifecycle.
 Opt in with \`{ markdown: true }\` only for validated Markdown fragments at the native caret.
@@ -404,6 +416,11 @@ Saved mention identities do not grant access.
 Media JSON and canonical tagged figure HTML preserve native media metadata.
 Markdown uses canonical HTML for media. Register MediaExtension for live rendering.
 Use MediaNode in headless readers. Reject media URL credentials, queries, and fragments.
+Register optional feature nodes in every live reader before import.
+Document readers retain footnotes, contents, columns, dates, labels, drawings, editable cards, and diagram metadata.
+Optional nodes use canonical HTML fallback in Markdown. Markdown footnote input is supported.
+Keep copied pure models and \`document/optional-nodes.ts\` with the document helpers.
+Drawings use metadata fallback. Transient card fields are not serialized.
 Review formats fail closed before document replacement.
 Keep native clipboard priorities, host vetoes, and host HTML sanitization.
 Host MIME handlers that consume data must validate their own output.

@@ -519,6 +519,18 @@ host boundary. JSON retains supported NodeState. HTML and Markdown retain
 supported element NodeState. Persisted code-view booleans require JSON; HTML and
 Markdown report diagnostics.
 
+Readers also retain validated footnotes, table of contents, columns, dates,
+labels, drawings, editable cards, and diagram metadata. Register the matching
+native feature nodes before live import. Keep canonical markers, references,
+slots, and NodeState. Optional nodes use canonical HTML fallback in Markdown.
+Markdown footnote input is supported. Drawings keep scene metadata without SDK
+rendering. Editable cards keep their saved node, not transient form values or
+nested-editor drafts. Review state still rejects before replacement.
+
+Keep every copied pure model and `document/optional-nodes.ts`. Keep
+`@types/hast` and `@types/mdast` as direct consumer dependencies. The optional
+codec workflows remain unverified until deferred checks run.
+
 Markdown uses HTML fallback to retain whitespace. Use JSON for native text with
 carriage returns or invalid HTML characters. JSON escapes retain these values in
 metadata.
@@ -1233,6 +1245,23 @@ canonical URLs from exact supported hosts.
 `MediaContent` renders validated `parseMedia` data without an `EditorRoot`. Use
 it for a standalone media view. Keep upload services and provider credentials on
 the host server.
+
+Compose [MediaPreviewRoot](/editor/media-preview-root),
+[MediaPreviewTrigger](/editor/media-preview-trigger), and
+[MediaPreviewDialog](/editor/media-preview-dialog) for image previews. Use
+[MediaPreviewGallery](/editor/media-preview-gallery) for the preset. Supply
+unique image IDs. Zoom stays local and does not change document state. The house
+Slider and ScrollArea retain keyboard zoom and scrolling.
+
+Use [MediaEmbedContent](/editor/media-embed-content) with an explicit provider
+or exact HTTPS-origin policy. Configure live nodes with a stable
+`createMediaExtension({ embedPolicy })` instead of `MediaExtension`. Do not
+register both extensions in one root.
+
+External frames load only after user consent. Source, policy, and disabled
+changes discard consent. Tweet embeds use the fixed `platform.twitter.com`
+endpoint. HTML exports keep inert links instead of active frames. An origin
+allowlist does not validate DNS, redirects, or host network policy.
 
 Supply a bounded, abort-aware host upload callback through `createMediaUpload`.
 Authorize each upload on the server. Validate content before publication.

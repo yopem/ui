@@ -147,7 +147,7 @@ export async function getEditorDocumentation(slug: string) {
       ...(part.item === "editor-document"
         ? [
             "Import DocumentStatic from the separate document/static entry. No EditorRoot is required.",
-            "Register math, mention, and media nodes before import. Media uses canonical tagged HTML and Markdown fallback. Review formats fail before replacement. Saved mention identities do not grant access.",
+            "Register each optional live feature node before import. Readers retain validated math, mentions, media, footnotes, contents, columns, dates, labels, drawing scenes, card nodes, and diagram metadata. Static drawing output uses metadata without SDK rendering. Transient card values are not saved. Review formats fail before replacement. Saved identities do not grant access.",
           ]
         : []),
       ...(part.item === "editor-media"

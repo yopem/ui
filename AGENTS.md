@@ -708,7 +708,13 @@ Do not mark a mapped public workflow complete before its behavior is checked.
 Install `editor-media` separately. Import optional parts from the copied `media` module.
 Register `MediaExtension` in a stable extensions array.
 Compose `MediaInsertControl` inside `EditorToolbar`.
-`MediaContent` renders validated media without `EditorRoot`.
+`MediaContent` and image preview parts work without `EditorRoot`.
+Compose `MediaPreviewRoot`, `MediaPreviewTrigger`, and `MediaPreviewDialog`, or use `MediaPreviewGallery`.
+Supply unique image IDs. Zoom stays local and uses house Slider and ScrollArea controls.
+Use `MediaEmbedContent` with an explicit provider or exact HTTPS-origin policy.
+Frames need user consent. Source, policy, and disabled changes discard consent.
+Tweet embeds use the fixed platform.twitter.com endpoint. HTML exports keep inert links.
+Origin validation does not check DNS or redirects. Keep these controls in the host.
 Use HTTPS URLs without credentials and exact supported embed hosts.
 Keep native audio, video, file, and iframe controls usable in read-only roots.
 Supply bounded, abort-aware host uploads with server authorization and validation.
@@ -729,7 +735,8 @@ Renumber a selected duplicate explicitly. Do not silently rewrite identifiers.
 Table-of-contents links target headings in the current editor only.
 `editorTocSlashCommand` is an optional host slash action. Base contents controls do not require typeahead.
 Register feature nodes in every reader and validate complete documents at IO boundaries.
-Generic document converters do not yet support footnote or table-of-contents nodes.
+Document readers support validated footnote and table-of-contents nodes.
+Keep heading IDs, reference IDs, and canonical HTML markers intact.
 Reject unsupported content without removing the current document.
 
 ## Optional editor columns and dates
@@ -745,7 +752,8 @@ Use the house Calendar for date insertion and native date editing.
 Store validated YYYY-MM-DD dates without timestamp conversion. Convert local dates with `editorDateFromLocalDate`.
 Keep pure codecs in `columns-model` and `date-model`. These models do not import React or Lexical.
 Copy all feature helpers and keep core selection helpers. Shared packages must export feature and model subpaths.
-Keep generic document converters unsupported for these nodes until deliberate codec integration. Never flatten them silently.
+Document readers retain validated columns and dates through canonical codecs.
+Register the matching live nodes before import. Never flatten unknown nodes.
 Feature validators check their own contracts. Supply complete host document validation at IO boundaries.
 
 ## Optional editor math
@@ -786,7 +794,7 @@ Install `editor-document` separately for JSON, HTML, Markdown, streaming, and st
 It depends on `editor` and `editor-blocks`. Base editor installs do not include document codecs.
 Import helpers from `@/components/editor/document` and DocumentStatic from `@/components/editor/document/static`.
 DocumentStatic needs no EditorRoot. Keep every copied helper, including `document/state.ts` and canonical presentation codecs.
-Keep `@types/hast` as a direct consumer dependency.
+Keep `@types/hast` and `@types/mdast` as direct consumer dependencies.
 Register EditorDocumentClipboardExtension at root creation in a stable extensions array.
 Call registerDocumentPaste after creation. Keep its cleanup in the host lifecycle.
 Opt in with `{ markdown: true }` for validated Markdown fragments at the native caret.
@@ -802,6 +810,11 @@ Saved mention identities do not grant access.
 Media JSON and canonical tagged figure HTML preserve native media metadata.
 Markdown uses canonical HTML for media. Register MediaExtension for live rendering.
 Use MediaNode in headless readers. Reject media URL credentials, queries, and fragments.
+Register optional feature nodes in every live reader before import.
+Document readers retain footnotes, contents, columns, dates, labels, drawings, editable cards, and diagram metadata.
+Optional nodes use canonical HTML fallback in Markdown. Markdown footnote input is supported.
+Keep copied pure models and `document/optional-nodes.ts` with the document helpers.
+Drawings use metadata fallback. Transient card fields are not serialized.
 Review formats fail closed before document replacement.
 Keep native clipboard priorities, host vetoes, and host HTML sanitization.
 Host MIME handlers that consume data must validate their own output.
@@ -926,7 +939,8 @@ Options admit one through 64 unique bounded strings. Tokens admit at most ten la
 Apply application minimum counts in the host form. Replace only a label-only paragraph.
 Register `EditorLabelNode` in each reader. Use `labels-model` for pure validation.
 Malformed node metadata rejects. Unknown, duplicate, and excess valid tokens become text.
-Label identities do not grant access. Generic document conversion remains unsupported.
+Label identities do not grant access. Document readers retain validated label tokens.
+Register label nodes before live import.
 Native clipboard, normalization, history, read-only, and accessibility checks are deferred.
 
 ## Optional editor Word clipboard
@@ -980,7 +994,8 @@ Compose `EditorEditableCardInsertButton` inside `EditorToolbar`.
 Keep native browser Tab order through form controls and the nested editor.
 The nested editor has independent state and history. Local fields and notes are transient.
 JSON stores only type and version. Removal, import, and undo restoration reset local values.
-Outer read-only state disables local controls. Generic document conversion does not support cards.
+Outer read-only state disables local controls. Document readers retain the saved card node.
+Transient form values and nested-editor drafts are not part of that node.
 
 ## Optional inline Copilot
 
@@ -1017,7 +1032,8 @@ Use its Toolbar, InsertButton, KindSelect, ViewModeSelect, RenderButton,
 DownloadButton, DeleteButton, Status, and Preview parts.
 
 Native JSON and marked code HTML keep diagram metadata.
-Generic document conversion rejects this metadata.
+Document readers retain validated diagram metadata with code source.
+Generic static output does not run diagram renderers.
 Keep source visible until the matching sanitized SVG image loads.
 Per-node previews keep independent selection paths. Only SVG download is supplied.
 
@@ -1089,7 +1105,8 @@ Reject files, images, link targets, custom metadata, and unsupported element typ
 Validate draft output before replacing the saved drawing node.
 Read-only roots can open saved scenes in view mode. They cannot insert or apply drawing edits.
 Validate and sanitize SVG output before download.
-Generic document conversion does not support drawing nodes.
+Document readers retain validated drawing scenes in JSON and canonical HTML.
+Generic static output shows metadata, not an SDK-rendered drawing.
 
 Current SDK and transitive dependency advisories remain unresolved.
 Do not claim production safety from source checks.

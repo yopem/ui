@@ -59,6 +59,7 @@ import { PublicListPresentationExample } from "./editor-examples/public-list-pre
 import { PublicMediaEmbedsExample } from "./editor-examples/public-media-embeds"
 import { PublicMediaPreviewExample } from "./editor-examples/public-media-preview"
 import { PublicNativeEditingExample } from "./editor-examples/public-native-editing"
+import { PublicOptionalDocumentExample } from "./editor-examples/public-optional-document"
 import { PublicPersistedExample } from "./editor-examples/public-persisted"
 import { PublicPlaceholderExample } from "./editor-examples/public-placeholder"
 import { PublicPluginRulesExample } from "./editor-examples/public-plugin-rules"
@@ -83,6 +84,29 @@ const sources = import.meta.glob<string>("./editor-examples/*.tsx", {
 })
 
 const examples = [
+  {
+    slug: "public-optional-document",
+    workflowIds: [],
+    title: "Registered optional document readers",
+    Component: PublicOptionalDocumentExample,
+    items: [
+      "editor-document",
+      "editor-footnotes",
+      "editor-toc",
+      "editor-columns",
+      "editor-date",
+      "editor-labels",
+      "editor-drawing",
+      "editor-editable-card",
+      "editor-diagram",
+      "heading",
+      "textarea",
+    ],
+    description:
+      "Read canonical optional nodes through registered live readers and static document output.",
+    limits:
+      "Register each target node before import. Drawing scenes and diagram source remain metadata; this example loads no drawing or diagram engine. The drawing installation still includes its optional browser SDK. Review data rejects. Transient card fields do not persist. Live roundtrips, clipboard, accessibility, and consumer installs remain unverified. This example adds no mapped-workflow credit.",
+  },
   {
     slug: "public-media-preview",
     workflowIds: [],

@@ -7,7 +7,7 @@ const usageNoteValues = {
     "Scenes reject files, images, links, custom metadata and unsupported elements. Apply replaces one drawing node; cancellation leaves its saved scene unchanged.",
     "SVG output requires bounded scene validation and shared SVG sanitization. Missing assets, SDK support and rejected exports produce errors instead of unverified downloads.",
     "Audit the SDK and its transitive dependencies before release. Runtime, CSP, fonts, export, clipboard and accessibility acceptance remain deferred.",
-    "Generic editor-document conversion does not support drawing nodes. Source presence does not establish the complete mapped Excalidraw workflow.",
+    "Document readers retain validated scene metadata without SDK rendering. Source presence does not establish complete Excalidraw workflow acceptance.",
   ],
   "editor-cursor-overlay": [
     "Compose EditorCursorOverlay inside EditorRoot beside EditorContent. Paint stays outside saved document state and uses the root owner document.",
@@ -36,7 +36,7 @@ const usageNoteValues = {
     "Register EditorDiagramExtension once at root creation. Compose focused controls inside EditorDiagramRoot and EditorRoot.",
     "Supply explicit renderers. Host endpoints require current authentication, document authorization, exact Origin, CSRF checks, and bounded work.",
     "Per-node previews keep source visible until a matching sanitized SVG image decodes. The raw SVG cache holds at most 32 results and 8 MiB.",
-    "Native Lexical JSON and marked code HTML keep diagram metadata. Generic document conversion does not support this metadata.",
+    "Native Lexical JSON and marked code HTML keep diagram metadata. Document readers retain validated metadata without running renderers.",
     "Only SVG download is supplied. PNG and PDF export are not supplied. Renderer and browser workflows remain unverified.",
   ],
   "editor-diagram-mermaid": [
@@ -84,7 +84,7 @@ const usageNoteValues = {
     "Register one stable EditorEditableCardExtension per root. Compose EditorEditableCardInsertButton inside EditorToolbar.",
     "Cards use native inputs, radio controls, and a separate nested editor. Browser Tab order remains native.",
     "JSON stores only type and version. Local fields and nested content are transient. Removal, import, and undo restoration reset them.",
-    "Outer read-only state disables local controls. Generic document conversion does not support card nodes. Runtime checks remain pending.",
+    "Outer read-only state disables local controls. Document readers retain the saved card node, not transient values. Runtime checks remain pending.",
   ],
   "editor-docx": [
     "Install this optional item for bounded native Word document conversion.",
@@ -114,7 +114,7 @@ const usageNoteValues = {
     "Create a stable labels extension with one through 64 unique bounded options. Label editors admit up to ten tokens. Apply the host minimum count separately.",
     "Replace only a label-only paragraph. Existing unrelated content makes replacement fail without removal. Unknown, duplicate, and excess valid tokens become text; malformed token metadata rejects.",
     "Use EditorLabelsPicker as the checkbox preset. Compose EditorLabelsOption inside CheckboxGroup for custom options. Register EditorLabelNode in every reader. Pure codecs do not validate complete documents or grant access.",
-    "Generic document conversion does not support label tokens. Native clipboard, normalization, history, read-only behavior, and reader validation remain runtime-unverified.",
+    "Document readers retain validated label tokens. Native clipboard, normalization, history, read-only behavior, and reader validation remain runtime-unverified.",
   ],
   "editor-autoformat": [
     "Register EditorAutoformatExtension in the stable root extension array. It adds non-base transformers without duplicating the base Markdown registration.",
@@ -146,12 +146,12 @@ const usageNoteValues = {
   ],
   "editor-toc": [
     "Register EditorTocExtension in a stable root extension array. Compose controls inside EditorToolbar. Entries follow current document headings.",
-    "Navigation stays within the current editor. Register EditorTocNode in host readers. Generic editor-document conversion does not support table-of-contents nodes.",
+    "Navigation stays within the current editor. Register EditorTocNode in live readers. Document codecs retain validated contents nodes and canonical heading IDs.",
   ],
   "editor-footnotes": [
     "Register EditorFootnoteExtension in a stable root extension array. Keep rich definitions and references in the native document. Compose controls inside EditorToolbar.",
     "The optional typeahead owns the editable surface. Keep its controller stable until unmount. Do not add EditorContent beside EditorFootnoteTypeahead.",
-    "Register footnote nodes in every host reader. Validate complete documents before replacement. Generic editor-document conversion does not support footnotes.",
+    "Register footnote nodes in every host reader. Document codecs retain validated definitions, references, and canonical HTML. Validate complete documents before replacement.",
   ],
   "editor-media": [
     "Register MediaExtension in a stable extensions array. Compose MediaInsertControl inside EditorToolbar. MediaContent can render validated media without EditorRoot.",
@@ -165,12 +165,12 @@ const usageNoteValues = {
   "editor-columns": [
     "Register EditorColumnsExtension in a stable extensions array. Compose the preset or focused controls inside EditorToolbar. Layouts contain two through four rich-text columns. Nested column groups are rejected; nested rich blocks remain native.",
     "Resize adjacent columns with the house Slider. Keep native selection, history, cancellation, and read-only behavior. Import pure validation and fragment codecs from columns-model.",
-    "Generic editor-document converters do not support columns. Do not flatten column content during conversion. Validate complete host documents before replacement.",
+    "Document codecs retain validated columns through native JSON and canonical HTML. Register matching live nodes before import. Validate complete host documents before replacement.",
   ],
   "editor-date": [
     "Register EditorDateExtension in a stable extensions array. Compose EditorDateControls or EditorDateInsertControl inside EditorToolbar. EditorDateNode renders EditorDateInline for calendar editing.",
     "Store YYYY-MM-DD calendar dates, not timestamps. Use date-model for pure validation and calendar conversion. Do not use UTC conversion for local calendar dates.",
-    "Generic editor-document converters do not support date nodes. Do not flatten date content during conversion. Validate host HTML before native import.",
+    "Document codecs retain validated calendar dates without timestamp conversion. Register matching live nodes before import. Validate host HTML before native import.",
   ],
   "editor-code-format": [
     "Install this item only for the optional Prettier adapter. Base editor-code does not require Prettier. Repository formatting still uses Oxfmt.",
@@ -181,13 +181,13 @@ const usageNoteValues = {
     "Use registerDocumentPaste with { markdown: true } only for opt-in validated Markdown fragments at the native caret. Lexical JSON and HTML retain priority. Default text/plain paste stays native. Empty or unsupported fragments keep selected content.",
     "Register EditorDocumentClipboardExtension at root creation in a stable extensions array. Call registerDocumentPaste after creation and keep its cleanup in the host lifecycle. Duplicate registrations fail.",
     "Use the document subpath for validated JSON, HTML, and Markdown. Import DocumentStatic from document/static separately.",
-    "Custom headless editors use documentNodes. Imports verify the parsed target before replacing the document.",
+    "Custom headless editors use documentNodes. Keep copied pure models and document/optional-nodes.ts. Keep @types/hast and @types/mdast as direct consumer dependencies. Imports verify the parsed target before replacement.",
     "Links retain safe relations and use _self or _blank targets. The codec rejects opener relations.",
     "Standalone color variables require mounted theme context and an opaque host surface. Partially transparent surfaces and context-relative color variables fail. Fonts use local fallbacks.",
     "Document limits are independent: 1 MiB UTF-8, depth 64, 65,536 structures, 50 rows, 50 columns, and 2,500 table slots.",
     "Preserve row-height metadata and supported NodeState. Streams commit only at EOF; failed or stale imports keep current content.",
-    "Register math, mention, and media nodes before import. Media Markdown uses canonical tagged HTML. Review formats remain unsupported and fail before replacement.",
-    "These formats require canonical codecs and registered readers. Plain text and ordinary strikethrough do not carry these semantics.",
+    "Register math, mention, media, and other optional feature nodes before live import. Readers retain validated footnotes, contents, columns, dates, labels, drawings, editable cards, and diagram metadata. Review formats fail before replacement.",
+    "Optional nodes use canonical HTML fallback in Markdown. Markdown footnote input is supported. Drawings retain scene metadata without SDK rendering. Editable cards retain their saved node, not transient fields. Plain text cannot retain these semantics.",
     "Persisted code-view booleans require JSON; HTML and Markdown report diagnostics.",
     "Markdown uses HTML fallback to retain whitespace. Use JSON for native text with carriage returns or invalid HTML characters. JSON escapes retain these values in metadata.",
     "Install editor-document separately. It includes editor and editor-blocks without a circular dependency.",
