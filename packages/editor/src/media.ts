@@ -1,5 +1,7 @@
 export { MediaInsertControl } from "./media/controls"
 
+export { MediaFileClipboard } from "./media/clipboard"
+
 export { MediaContent } from "./media/view"
 
 export { MediaEmbedContent } from "./media-embed"
