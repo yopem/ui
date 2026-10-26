@@ -51,11 +51,16 @@ test("optional document reader edits, round-trips, and renders saved native data
   })
 
   await expect(editor).toBeEditable()
-  await editor.click()
+  await editor
+    .getByText("Canonical document codecs retain native saved data", {
+      exact: true,
+    })
+    .click()
   await page.keyboard.press("Control+End")
   await page.keyboard.press("Enter")
   await page.keyboard.type("Live edit marker")
-  await expect(editor).toContainText("Live edit marker")
+  const liveEdit = editor.getByText("Live edit marker", { exact: true })
+  await expect(liveEdit).toBeVisible()
   await example
     .getByRole("button", { name: "Export all formats", exact: true })
     .click()
@@ -64,6 +69,7 @@ test("optional document reader edits, round-trips, and renders saved native data
   const htmlSource = example.getByLabel("HTML source", { exact: true })
   const markdownSource = example.getByLabel("Markdown source", { exact: true })
   await expectOptionalDocumentData(example)
+  await expect(jsonSource).toHaveValue(/Live edit marker/)
 
   const html = await htmlSource.inputValue()
   expect(html).toContain("data-editor-footnote-reference")
@@ -165,12 +171,20 @@ test("optional document reader edits, round-trips, and renders saved native data
     await example
       .getByRole("button", { name: `Import ${format}`, exact: true })
       .click()
-    await expect(editor).toContainText("Live edit marker")
+    await expect(liveEdit).toBeVisible()
     await example
       .getByRole("button", { name: "Export all formats", exact: true })
       .click()
     await expectOptionalDocumentData(example)
+    await expect(jsonSource).toHaveValue(/Live edit marker/)
   }
+
+  await expect(
+    editor.getByRole("navigation", { name: "Table of contents", exact: true }),
+  ).toBeVisible()
+  await expect(staticPreview.getByRole("navigation")).toHaveAccessibleName(
+    "Optional codec static preview: Table of contents",
+  )
 
   const axe = await new AxeBuilder({ page })
     .include('[data-testid="public-optional-document"]')
@@ -209,19 +223,25 @@ test("optional document reader rejects malformed and read-only imports without c
     exact: true,
   })
 
-  const before = await editor.innerText()
   const jsonSource = example.getByLabel("JSON source", { exact: true })
+
+  const exportButton = example.getByRole("button", {
+    name: "Export all formats",
+    exact: true,
+  })
+
+  await exportButton.click()
+  const before = await jsonSource.inputValue()
+  await expectOptionalDocumentData(example)
 
   await jsonSource.fill("{not valid JSON}")
   await example
     .getByRole("button", { name: "Import JSON", exact: true })
     .click()
   await expect(example.getByRole("alert")).toBeVisible()
-  await expect(editor).toHaveText(before)
+  await exportButton.click()
+  await expect(jsonSource).toHaveValue(before)
 
-  await example
-    .getByRole("button", { name: "Export all formats", exact: true })
-    .click()
   await example
     .getByRole("button", { name: "Make editor read-only", exact: true })
     .click()
@@ -230,5 +250,6 @@ test("optional document reader rejects malformed and read-only imports without c
     .getByRole("button", { name: "Import HTML", exact: true })
     .click()
   await expect(example.getByRole("alert")).toBeVisible()
-  await expect(editor).toHaveText(before)
+  await exportButton.click()
+  await expect(jsonSource).toHaveValue(before)
 })

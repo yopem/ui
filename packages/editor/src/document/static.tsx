@@ -24,7 +24,11 @@ type StaticProperties = Record<
   | undefined
 >
 
-function renderNode(node: RootContent, key: number): ReactNode {
+function renderNode(
+  node: RootContent,
+  key: number,
+  ariaLabel: string,
+): ReactNode {
   if (node.type === "text") return node.value
 
   if (node.type !== "element") return null
@@ -72,6 +76,9 @@ function renderNode(node: RootContent, key: number): ReactNode {
 
   const canonical = canonicalDocumentNode(node)
 
+  if (canonical?.type === "toc")
+    properties.set("aria-label", `${ariaLabel}: Table of contents`)
+
   const children =
     canonical?.type === "math"
       ? documentMathChildren(canonical.value)
@@ -80,7 +87,7 @@ function renderNode(node: RootContent, key: number): ReactNode {
   return createElement(
     node.tagName,
     Object.fromEntries(properties),
-    ...children.map(renderNode),
+    ...children.map((child, index) => renderNode(child, index, ariaLabel)),
   )
 }
 
@@ -99,7 +106,7 @@ export function DocumentStatic({
 
   return (
     <Box render={<section aria-label={ariaLabel} />}>
-      {tree.children.map(renderNode)}
+      {tree.children.map((child, index) => renderNode(child, index, ariaLabel))}
     </Box>
   )
 }
