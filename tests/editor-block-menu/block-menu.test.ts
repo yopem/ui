@@ -8,6 +8,7 @@ import { ListExtension } from "@lexical/list"
 import { RichTextExtension } from "@lexical/rich-text"
 import { expect, test } from "bun:test"
 import {
+  configExtension,
   $createParagraphNode,
   $createTextNode,
   $getRoot,
@@ -26,7 +27,7 @@ function setup(options: EditorBlockMenuOptions = {}) {
     name: "test/block-menu",
     dependencies: [
       RichTextExtension,
-      HistoryExtension,
+      configExtension(HistoryExtension, { disabled: false }),
       ListExtension,
       CodeExtension,
       controller.extension,
