@@ -103,6 +103,15 @@ function makeStructuralFixture(name: string) {
   return { editor, target, review, id }
 }
 
+test("structural proposals accept native Lexical editor state JSON", () => {
+  const { editor, target, review, id } = makeStructuralFixture("native-json")
+
+  expect(review.decideStructural(id, "accept")).toBe(true)
+  editor.read(() => expect($getRoot().getTextContent()).toBe("Proposed"))
+  editor.dispose()
+  target.dispose()
+})
+
 test("structural decisions reject calls from an active Lexical update", () => {
   const { editor, target, review, id } = makeStructuralFixture("active-update")
   let decision: boolean | undefined
@@ -360,9 +369,31 @@ test("structural proposals accept and reject blocks, properties, breaks, and voi
       expect.objectContaining({ kind: "insert" }),
     ]),
   )
-  editor.read(() => expect($getRoot().getTextContent()).toBe("FirstSecond"))
+  editor.read(() => {
+    const children = $getRoot().getChildren()
+
+    expect(children.map((child) => child.getType())).toEqual([
+      "paragraph",
+      "horizontalrule",
+      "paragraph",
+    ])
+    expect(
+      children.filter($isElementNode).map((child) => child.getTextContent()),
+    ).toEqual(["First", "Second"])
+  })
   expect(review.decideStructural(id, "reject")).toBe(true)
-  editor.read(() => expect($getRoot().getTextContent()).toBe("FirstSecond"))
+  editor.read(() => {
+    const children = $getRoot().getChildren()
+
+    expect(children.map((child) => child.getType())).toEqual([
+      "paragraph",
+      "horizontalrule",
+      "paragraph",
+    ])
+    expect(
+      children.filter($isElementNode).map((child) => child.getTextContent()),
+    ).toEqual(["First", "Second"])
+  })
   expect(review.getView().structuralProposals).toHaveLength(0)
 
   expect(
@@ -372,9 +403,21 @@ test("structural proposals accept and reject blocks, properties, breaks, and voi
   ).toBe(true)
   expect(review.decideStructural(id, "accept")).toBe(true)
   editor.read(() => {
-    expect($getRoot().getTextContent()).toBe("SecondFirst\nAdded")
-    expect($getRoot().getChildren()).toHaveLength(3)
-    expect($getRoot().getFirstChild()?.getType()).toBe("paragraph")
+    const children = $getRoot().getChildren()
+
+    expect(children.map((child) => child.getType())).toEqual([
+      "paragraph",
+      "paragraph",
+      "paragraph",
+    ])
+    expect(
+      children.filter($isElementNode).map((child) => child.getTextContent()),
+    ).toEqual(["Second", "First\n", "Added"])
+    expect(
+      $isElementNode(children[1])
+        ? children[1].getChildren().map((child) => child.getType())
+        : [],
+    ).toEqual(["text", "linebreak"])
   })
   editor.dispose()
   target.dispose()

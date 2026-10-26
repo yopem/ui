@@ -59,6 +59,9 @@ test("unsupported native structure is discarded before the next authorized actio
   editor
     .getEditorState()
     .read(() => expect($getRoot().getTextContent()).toBe("Original text"))
+  expect(
+    review.getView().suggestions.map((suggestion) => suggestion.id),
+  ).toEqual([id])
   expect(review.getView().diagnostic).not.toBe("")
   editor.update(
     () => {

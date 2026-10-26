@@ -203,10 +203,24 @@ function mergeReviewTreeRootState<AfterInput, CurrentInput>(
   return preserveReview ? { root } : parseEditorReviewTreeDocument({ root })
 }
 
+function parseReviewSnapshot<Input>(
+  input: Input,
+  trusted: boolean,
+  allowStructuralTreeDepth = false,
+) {
+  checkReviewComplexity(input, 64)
+  const serialized = JSON.stringify(input)
+
+  if (serialized === undefined)
+    throw new EditorReviewInputError("Review document is not serializable.")
+
+  return parseReviewDocumentJSON(serialized, trusted, allowStructuralTreeDepth)
+}
+
 function $currentReviewTreeJSON() {
   try {
     return canonicalEditorReviewTreeJSON(
-      parseReviewDocument($serializeReviewRoot(), false),
+      parseReviewSnapshot($serializeReviewRoot(), false),
     )
   } catch {
     return null
@@ -713,14 +727,14 @@ function createReviewController() {
     const rawBefore = $serializeReviewRoot()
 
     const before = parseEditorReviewTreeDocument(
-      parseReviewDocument(rawBefore, false, true),
+      parseReviewSnapshot(rawBefore, false, true),
     )
 
     const target = parseEditorReviewTreeDocument(
-      parseReviewDocument(input, false, true),
+      parseReviewSnapshot(input, false, true),
     )
 
-    const mergedRootState = mergeReviewTreeRootState(target, rawBefore, false)
+    const mergedRootState = mergeReviewTreeRootState(target, before, false)
     const mergedTarget = mergeEditorReviewTreeNodeState(before, mergedRootState)
 
     const parsedTarget = current.parseEditorState(
@@ -728,7 +742,7 @@ function createReviewController() {
     )
 
     const after = parseEditorReviewTreeDocument(
-      parseReviewDocument(parsedTarget.toJSON(), false, true),
+      parseReviewSnapshot(parsedTarget.toJSON(), false, true),
     )
 
     const precondition = canonicalEditorReviewTreeJSON(before)
@@ -1000,21 +1014,38 @@ function createReviewController() {
         return fail("Structural proposal changed during authorization.")
 
       if (action === "accept") {
-        const source = parseReviewDocument(
+        const source = parseReviewSnapshot(
           current.getEditorState().toJSON(),
           true,
           true,
         )
 
-        const merged = mergeReviewTreeRootState(proposal.after, source, true)
+        const merged = mergeReviewTreeRootState(proposal.after, source, false)
         const targetWithMarks = preserveEditorReviewTreeMarks(source, merged)
 
         if (!targetWithMarks)
           return fail(
             "Structural review cannot preserve one or more comment anchors.",
           )
-        const trustedTarget = parseReviewDocument(targetWithMarks, true, true)
-        const cleanTarget = parseReviewDocument(targetWithMarks, false, true)
+
+        const targetWithSourceState = mergeReviewTreeRootState(
+          targetWithMarks,
+          source,
+          true,
+        )
+
+        const trustedTarget = parseReviewDocument(
+          targetWithSourceState,
+          true,
+          true,
+        )
+
+        const cleanTarget = parseReviewDocument(
+          targetWithSourceState,
+          false,
+          true,
+        )
+
         parseEditorReviewTreeDocument(cleanTarget)
         const next = current.parseEditorState(JSON.stringify(trustedTarget))
         permit.assertCurrent()
@@ -1754,6 +1785,17 @@ function createReviewController() {
 
           return
         }
+
+        const previousSuggestion = current.getEditorState().read(() =>
+          $getRoot()
+            .getAllTextNodes()
+            .some((node) => $getState(node, editorSuggestionState)),
+        )
+
+        if (suggesting || previousSuggestion)
+          throw new EditorReviewInputError(
+            "Untracked edits are blocked. Resolve pending suggestions or use review actions.",
+          )
 
         const structuralProposals = $getState(
           $getRoot(),
