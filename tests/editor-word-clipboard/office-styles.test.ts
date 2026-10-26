@@ -52,7 +52,7 @@ function listStructureFor(source: string) {
       lists.push({
         type: node.listType,
         marker: node.$?.yopemListMarker,
-        start: node.start,
+        start: node.listType === "number" ? node.start : undefined,
         depth: parentDepth,
       })
 

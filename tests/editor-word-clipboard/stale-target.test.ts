@@ -37,6 +37,7 @@ for (const mutation of ["selection", "content"] as const) {
     const errors: string[] = []
     editor.update(
       () => {
+        $getRoot().clear()
         const original = $createTextNode("Keep target")
         $getRoot().append($createParagraphNode().append(original))
         original.select(0, original.getTextContentSize())

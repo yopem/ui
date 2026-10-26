@@ -78,13 +78,7 @@ test("Word images require a bounded resolver and become canonical media", () => 
 })
 
 test("a rejecting image resolver thenable is consumed and rejected synchronously", async () => {
-  const rejection = Promise.reject(new Error("unexpected async resolver"))
   const unhandled: unknown[] = []
-
-  const resolverOutput: MediaInput = Object.assign(rejection, {
-    kind: "image" as const,
-    url: "https://assets.example.test/word-image.png",
-  })
 
   function onUnhandled(event: PromiseRejectionEvent) {
     unhandled.push(event.reason)
@@ -94,7 +88,12 @@ test("a rejecting image resolver thenable is consumed and rejected synchronously
 
   try {
     expect(() =>
-      normalizeWordClipboardHTML(wordImageHTML, () => resolverOutput),
+      normalizeWordClipboardHTML(wordImageHTML, () =>
+        Object.assign(Promise.reject(new Error("unexpected async resolver")), {
+          kind: "image" as const,
+          url: "https://assets.example.test/word-image.png",
+        }),
+      ),
     ).toThrow("Word image resolver returned invalid media metadata.")
     await new Promise((resolve) => setTimeout(resolve, 0))
     expect(unhandled).toEqual([])
@@ -118,37 +117,53 @@ test("thenable media metadata is not accepted as a synchronous resolver value", 
 })
 
 test("resolver then getters cannot change acceptance after their first read", async () => {
-  const rejected = Promise.reject(new Error("Unexpected deferred resolver"))
-  const nativeThen = rejected.then.bind(rejected)
+  const unhandled: unknown[] = []
 
-  const media: MediaInput = {
-    kind: "image",
-    url: "https://assets.example.test/word.png",
+  function onUnhandled(event: PromiseRejectionEvent) {
+    unhandled.push(event.reason)
   }
 
-  let reads = 0
+  globalThis.addEventListener("unhandledrejection", onUnhandled)
 
-  const result = new Proxy(media, {
-    get(target, property) {
-      if (property === "then") {
-        reads += 1
+  try {
+    const media: MediaInput = {
+      kind: "image",
+      url: "https://assets.example.test/word.png",
+    }
 
-        return reads === 1 ? nativeThen : undefined
-      }
+    let reads = 0
 
-      if (property === "kind") return target.kind
+    const result = new Proxy(media, {
+      get(target, property) {
+        if (property === "then") {
+          reads += 1
 
-      if (property === "url") return target.url
+          if (reads !== 1) return undefined
 
-      return undefined
-    },
-  })
+          const rejected = Promise.reject(
+            new Error("Unexpected deferred resolver"),
+          )
 
-  expect(() => normalizeWordClipboardHTML(wordImageHTML, () => result)).toThrow(
-    "Word image resolver returned invalid media metadata.",
-  )
-  await new Promise((resolve) => setTimeout(resolve, 0))
-  expect(reads).toBe(1)
+          return rejected.then.bind(rejected)
+        }
+
+        if (property === "kind") return target.kind
+
+        if (property === "url") return target.url
+
+        return undefined
+      },
+    })
+
+    expect(() =>
+      normalizeWordClipboardHTML(wordImageHTML, () => result),
+    ).toThrow("Word image resolver returned invalid media metadata.")
+    await new Promise((resolve) => setTimeout(resolve, 0))
+    expect(reads).toBe(1)
+    expect(unhandled).toEqual([])
+  } finally {
+    globalThis.removeEventListener("unhandledrejection", onUnhandled)
+  }
 })
 
 test("invalid image metadata and unsupported rich formatting reject before import", () => {

@@ -6,6 +6,7 @@ import type {
   RootContent,
 } from "hast"
 
+import { fromHtml } from "hast-util-from-html"
 import { toHtml } from "hast-util-to-html"
 import { z } from "zod"
 
@@ -17,6 +18,8 @@ import {
   checkTree,
   parseHTMLSyntax,
   safeDocumentStyle,
+  safeDocumentURL,
+  validateDocumentLink,
 } from "./document/boundary"
 import { documentMediaSchema } from "./document/media"
 import {
@@ -272,7 +275,7 @@ export function normalizeWordClipboardHTML(
   if (!isWordClipboardHTML(source)) return null
 
   try {
-    const root = parseHTMLSyntax(source)
+    const root = parseWordClipboardHTML(source)
     const stylesheet = readOfficeStyleRules(root)
     const { rules } = stylesheet
     let imageCount = 0
@@ -371,6 +374,13 @@ export function normalizeWordClipboardHTML(
       }
 
       for (const child of children) {
+        if (
+          listParagraphs.length > 0 &&
+          child.type === "text" &&
+          child.value.trim() === ""
+        )
+          continue
+
         if (child.type === "element" && child.tagName === "p") {
           const list = readWordListParagraph(
             child,
@@ -457,6 +467,8 @@ export function normalizeWordClipboardHTML(
         return cleanChildren(node.children, inheritedTextStyle)
       }
 
+      if (tagName === "a") validateWordLink(node)
+
       const declarations = declarationsFor(node, rules)
       const listValue = declarations.get("mso-list")
 
@@ -527,20 +539,25 @@ export function normalizeWordClipboardHTML(
       return [block]
     }
 
-    const output: ElementContent[] = []
+    const cleaned: Root = {
+      ...root,
+      children: cleanChildren(
+        root.children.flatMap((child) => {
+          if (child.type === "doctype") return []
 
-    for (const child of root.children) {
-      if (child.type === "doctype") continue
+          if (
+            child.type !== "element" &&
+            child.type !== "text" &&
+            child.type !== "comment"
+          )
+            throw new DocumentError(["Unsupported Word clipboard markup."])
 
-      if (child.type === "comment") {
-        if (isBoundaryComment(child.value)) continue
-        throw new DocumentError(["Unsupported Word clipboard comment."])
-      }
-
-      output.push(...cleanNode(child, new Map()))
+          return [child]
+        }),
+        new Map(),
+      ),
     }
 
-    const cleaned: Root = { ...root, children: output }
     checkTree(cleaned)
 
     return toHtml(cleaned)
@@ -550,6 +567,36 @@ export function normalizeWordClipboardHTML(
       error instanceof Error ? error.message : "Invalid Word clipboard HTML.",
     ])
   }
+}
+
+function parseWordClipboardHTML(source: string): Root {
+  const normalized = source
+    .replace(/<!\[if !supportLists\]>/gi, "<!--[if !supportLists]-->")
+    .replace(/<!\[endif\]>(?!\s*-->)/gi, "<!--[endif]-->")
+
+  checkText(normalized)
+
+  parseHTMLSyntax(normalized)
+
+  const documentSource = /<!doctype\b/i.test(normalized)
+    ? normalized
+    : `<!doctype html>${normalized}`
+
+  checkText(documentSource)
+
+  const errors: string[] = []
+
+  const tree = fromHtml(documentSource, {
+    fragment: false,
+    onerror(error) {
+      errors.push(error.reason)
+    },
+    verbose: true,
+  })
+
+  if (errors.length) throw new DocumentError(errors)
+
+  return checkTree(tree)
 }
 
 function readOfficeStyleRules(root: Root): OfficeStylesheet {
@@ -1264,6 +1311,8 @@ function normalizeStyle(
     if (shell && shellStyleMetadata.has(property)) continue
 
     if (property === "mso-para-margin-left" || property === "margin-left") {
+      if (property === "margin-left" && !list && isOfficeListMargin(value))
+        continue
       assignIndent(value)
       continue
     }
@@ -1341,6 +1390,15 @@ function parseWordIndent(value: string) {
     ])
 
   return indent
+}
+
+function isOfficeListMargin(value: string) {
+  const match = /^(\d+(?:\.\d+)?)pt$/i.exec(value)
+
+  if (!match?.[1]) return false
+  const points = Number(match[1])
+
+  return points >= 24 && Number.isInteger((points - 24) / 36)
 }
 
 function parseWordListIndent(value: string, level: number) {
@@ -1984,8 +2042,14 @@ function buildWordLists(entries: readonly WordListParagraph[]) {
         listProperties,
       )
 
-      if (info.level === 1) roots.push(list)
-      else {
+      if (info.level === 1) {
+        const previous = roots.at(-1)
+
+        if (previous?.tagName === list.tagName)
+          roots.push(createElement("p", []))
+
+        roots.push(list)
+      } else {
         const parent = stack[info.level - 2]
 
         if (!parent?.lastItem)
@@ -2129,6 +2193,33 @@ function imageDimension(
     throw new DocumentError(["Word image dimensions exceed bounds."])
 
   return value
+}
+
+function validateWordLink(node: Element) {
+  const allowed = new Set([
+    "className",
+    "dir",
+    "href",
+    "lang",
+    "rel",
+    "style",
+    "target",
+    "title",
+    "xmlSpace",
+  ])
+
+  if (Object.keys(node.properties).some((key) => !allowed.has(key)))
+    throw new DocumentError(["Unsupported Word link attributes."])
+  const href = z.string().safeParse(node.properties.href)
+
+  if (
+    !href.success ||
+    (!safeDocumentURL(href.data) &&
+      !/^#[A-Za-z0-9_.:-]{1,128}$/.test(href.data))
+  )
+    throw new DocumentError(["Unsafe Word link URL."])
+
+  validateDocumentLink(node.properties.target, node.properties.rel)
 }
 
 function validateWordNamedAnchor(node: Element) {
