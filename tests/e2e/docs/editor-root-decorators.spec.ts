@@ -23,12 +23,14 @@ test("decorated date controls receive their root and current editability", async
   })
 
   const date = editor.getByRole("button", {
-    name: "Choose date 2024-02-29",
-    exact: true,
+    name: /^Choose date /,
   })
 
   await expect(editor).toHaveAttribute("contenteditable", "true")
   await expect(date).toBeEnabled()
+  await expect(date).toHaveAccessibleName(
+    `Choose date ${await date.innerText()}`,
+  )
   await example
     .getByRole("button", { name: "Make editor read-only", exact: true })
     .click()

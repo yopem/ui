@@ -107,7 +107,7 @@ export function EditorDateInline({
       <PopoverTrigger
         render={<Button size="sm" variant="ghost" />}
         disabled={!editable}
-        aria-label={`Choose date ${date}`}
+        aria-label={`Choose date ${formatEditorDate(date)}`}
         onFocus={prepare}
       >
         {formatEditorDate(date)}
