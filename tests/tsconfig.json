@@ -6,6 +6,7 @@
     "resolveJsonModule": true,
     "types": ["bun", "node"],
     "paths": {
+      "@/*": ["../apps/docs/src/*"],
       "@registry/*": ["../packages/registry/src/*"],
       "@editor/*": ["../packages/editor/src/*"],
       "@cli/*": ["../packages/cli/src/*"],
