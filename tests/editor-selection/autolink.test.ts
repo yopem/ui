@@ -33,9 +33,9 @@ describe("native automatic links", () => {
     try {
       editor.update(
         () => {
-          $getRoot().append(
-            $createParagraphNode().append($createTextNode(text)),
-          )
+          $getRoot()
+            .clear()
+            .append($createParagraphNode().append($createTextNode(text)))
         },
         { discrete: true },
       )
@@ -56,11 +56,13 @@ describe("native automatic links", () => {
     try {
       editor.update(
         () => {
-          $getRoot().append(
-            $createParagraphNode().append(
-              $createTextNode("https://example.com"),
-            ),
-          )
+          $getRoot()
+            .clear()
+            .append(
+              $createParagraphNode().append(
+                $createTextNode("https://example.com"),
+              ),
+            )
         },
         { discrete: true },
       )
@@ -108,19 +110,21 @@ describe("native automatic links", () => {
     try {
       editor.update(
         () => {
-          $getRoot().append(
-            $createCodeNode().append(
-              $createTextNode("https://code.example.com"),
-            ),
-            $createParagraphNode().append(
-              $createTextNode("https://inline.example.com").toggleFormat(
-                "code",
+          $getRoot()
+            .clear()
+            .append(
+              $createCodeNode().append(
+                $createTextNode("https://code.example.com"),
               ),
-            ),
-            $createParagraphNode().append(
-              $createTextNode("https://prose.example.com"),
-            ),
-          )
+              $createParagraphNode().append(
+                $createTextNode("https://inline.example.com").toggleFormat(
+                  "code",
+                ),
+              ),
+              $createParagraphNode().append(
+                $createTextNode("https://prose.example.com"),
+              ),
+            )
         },
         { discrete: true },
       )
@@ -148,11 +152,13 @@ describe("native automatic links", () => {
     try {
       editor.update(
         () => {
-          $getRoot().append(
-            $createParagraphNode().append(
-              $createTextNode("javascript:alert(1) data:text/html,test"),
-            ),
-          )
+          $getRoot()
+            .clear()
+            .append(
+              $createParagraphNode().append(
+                $createTextNode("javascript:alert(1) data:text/html,test"),
+              ),
+            )
         },
         { discrete: true },
       )

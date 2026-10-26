@@ -121,9 +121,8 @@ export function applyEditorLinkEdit(
         }
 
         if (link.getTextContent() !== edit.text) {
-          link.clear()
           const text = $createTextNode(edit.text)
-          link.append(text)
+          link.splice(0, link.getChildrenSize(), [text])
           text.select(0, edit.text.length)
         }
 

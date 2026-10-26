@@ -22,6 +22,7 @@ import {
   $getRoot,
   $getSelection,
   $isRangeSelection,
+  $isTextNode,
   $nodesOfType,
   type NodeKey,
 } from "lexical"
@@ -197,6 +198,10 @@ describe("editor link editing", () => {
         expect(link.getTextContent()).toBe("Updated label")
         expect(link.getChildren()).toHaveLength(1)
         expect(link.getTarget()).toBeNull()
+        const text = link.getFirstChild()
+
+        if (!$isTextNode(text)) throw new Error("Expected edited link text.")
+        expectCurrentRange(text.getKey(), 0, "Updated label".length)
       })
     } finally {
       unsubscribe()

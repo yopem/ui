@@ -86,8 +86,12 @@ test("active auto links retain semantic HTML and Markdown links", () => {
 
   const html = exportDocument(instance, "html")
   const markdown = exportDocument(instance, "markdown")
+  const roundtrip = editor()
 
-  for (const output of [html, markdown]) {
+  importDocument(roundtrip, markdown, "markdown")
+  const renderedMarkdown = exportDocument(roundtrip, "html")
+
+  for (const output of [html, renderedMarkdown]) {
     const anchor = parseDOM(
       `<html><body>${output}</body></html>`,
     ).document.querySelector("a")
@@ -111,8 +115,12 @@ test("unlinked auto links stay inert in HTML and Markdown output", () => {
 
   const html = exportDocument(instance, "html")
   const markdown = exportDocument(instance, "markdown")
+  const roundtrip = editor()
 
-  for (const output of [html, markdown]) {
+  importDocument(roundtrip, markdown, "markdown")
+  const renderedMarkdown = exportDocument(roundtrip, "html")
+
+  for (const output of [html, renderedMarkdown]) {
     const document = parseDOM(`<html><body>${output}</body></html>`).document
 
     expect(document.querySelector("a")).toBeNull()

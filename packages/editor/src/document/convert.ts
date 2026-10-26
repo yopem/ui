@@ -1807,6 +1807,9 @@ export function treeMarkdown(tree: Root) {
       return !preformatted && /[\t\n\f$]| {2}/.test(node.value)
 
     if (node.type !== "element") return false
+
+    if (unlinkedAutoLinks.has(node)) return true
+
     const canonical = canonicalDocumentNode(node)
 
     if (canonical?.type === "math") {
