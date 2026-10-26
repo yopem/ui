@@ -5,7 +5,9 @@ import type { ComponentProps } from "react"
 import { TOGGLE_LINK_COMMAND } from "@lexical/link"
 import { Box } from "@registry/components/ui/box"
 import { Button } from "@registry/components/ui/button"
+import { Checkbox } from "@registry/components/ui/checkbox"
 import { Input } from "@registry/components/ui/input"
+import { Label } from "@registry/components/ui/label"
 import {
   Popover,
   PopoverPopup,
@@ -15,9 +17,15 @@ import {
 import { Stack } from "@registry/components/ui/stack"
 import { Text } from "@registry/components/ui/text"
 import { ToolbarButton } from "@registry/components/ui/toolbar"
+import { HISTORY_PUSH_TAG } from "lexical"
 import { useState, useSyncExternalStore } from "react"
 
-import { isSafeLink } from "./extension"
+import {
+  $getEditorLinkEditTarget,
+  applyEditorLinkEdit,
+  type EditorLinkEditTarget,
+} from "./link-edit"
+import { isSafeLink } from "./link-url"
 import { useEditor, useEditorState } from "./root"
 import { createEditorSelectionBookmark } from "./selection-bookmark"
 
@@ -41,36 +49,86 @@ export function EditorLinkControl({
   )
 
   const [open, setOpen] = useState(false)
+  const [target, setTarget] = useState<EditorLinkEditTarget | null>(null)
   const [url, setUrl] = useState("")
-  const [invalid, setInvalid] = useState(false)
+  const [text, setText] = useState("")
+  const [newTab, setNewTab] = useState(false)
+  const [invalid, setInvalid] = useState<"url" | "text" | false>(false)
 
   function applyLink(remove: boolean) {
-    if (disabled || !editor.isEditable() || !bookmark.getSnapshot()) return
+    if (disabled || !editor.isEditable() || !hasSelection) return
 
-    if (!remove && !isSafeLink(url)) {
-      setInvalid(true)
+    if (remove) {
+      let removed = false
+
+      editor.update(
+        () => {
+          if (!editor.isEditable() || !bookmark.restore()) return
+          removed = editor.dispatchCommand(TOGGLE_LINK_COMMAND, null)
+        },
+        { discrete: true, tag: HISTORY_PUSH_TAG },
+      )
+
+      if (!removed) return
+      bookmark.clear()
+      setTarget(null)
+      setOpen(false)
+      setInvalid(false)
+      editor.focus()
 
       return
     }
 
-    editor.update(() => {
-      if (!bookmark.restore()) return
-      editor.dispatchCommand(TOGGLE_LINK_COMMAND, remove ? null : url)
+    if (!target) return
+
+    if (!isSafeLink(url)) {
+      setInvalid("url")
+
+      return
+    }
+
+    if (!text.trim() || /[\r\n]/.test(text)) {
+      setInvalid("text")
+
+      return
+    }
+
+    const applied = applyEditorLinkEdit(editor, bookmark, target, {
+      url,
+      text,
+      newTab,
     })
+
+    if (!applied) return
     bookmark.clear()
+    setTarget(null)
     setOpen(false)
     setInvalid(false)
     editor.focus()
   }
+
+  const controlDisabled = disabled === true || !editable || !hasSelection
 
   return (
     <Popover
       open={open && editable && !disabled}
       onOpenChange={(next) => {
         if (next) {
-          editor.getEditorState().read(bookmark.capture)
+          const currentTarget = editor.getEditorState().read(() => {
+            bookmark.capture()
+
+            return $getEditorLinkEditTarget()
+          })
+
+          setTarget(currentTarget)
+          setUrl(currentTarget?.url ?? "")
+          setText(currentTarget?.text ?? "")
+          setNewTab(currentTarget?.newTab ?? false)
           setInvalid(false)
-        } else bookmark.clear()
+        } else {
+          bookmark.clear()
+          setTarget(null)
+        }
 
         setOpen(next)
       }}
@@ -102,26 +160,44 @@ export function EditorLinkControl({
               setUrl(event.target.value)
               setInvalid(false)
             }}
-            aria-invalid={invalid || undefined}
+            aria-invalid={invalid === "url" || undefined}
+            disabled={controlDisabled}
           />
-          {invalid && (
+          <Input
+            aria-label="Link text"
+            value={text}
+            onChange={(event) => {
+              setText(event.target.value)
+              setInvalid(false)
+            }}
+            aria-invalid={invalid === "text" || undefined}
+            disabled={controlDisabled}
+          />
+          <Label>
+            <Checkbox
+              aria-label="Open in new tab"
+              checked={newTab}
+              onCheckedChange={(checked) => setNewTab(checked === true)}
+              disabled={controlDisabled}
+            />
+            Open in new tab
+          </Label>
+          {invalid === "url" && (
             <Text role="alert">
               Use an absolute HTTP, HTTPS, mailto, or tel URL.
             </Text>
           )}
+          {invalid === "text" && <Text role="alert">Enter link text.</Text>}
           {!hasSelection && (
             <Box render={<output />}>
               Selection changed. Close this popup. Select text again.
             </Box>
           )}
-          <Button
-            disabled={disabled === true || !editable || !hasSelection}
-            onClick={() => applyLink(false)}
-          >
+          <Button disabled={controlDisabled} onClick={() => applyLink(false)}>
             Apply link
           </Button>
           <Button
-            disabled={disabled === true || !editable || !hasSelection}
+            disabled={controlDisabled}
             variant="ghost"
             onClick={() => applyLink(true)}
           >

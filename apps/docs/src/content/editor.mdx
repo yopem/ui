@@ -95,7 +95,10 @@ Choose `EditorFormatButton` for Lexical text formats. Use `EditorBlockButton`
 for paragraph, h1 through h6, quote, or code blocks. Use `EditorHistoryButton`
 for undo or redo. Use `EditorListButton` with bullet, number, or check.
 `EditorIndentButton` accepts indent or outdent. `EditorLinkControl` validates
-link URLs. `EditorTableButton` inserts a three-row, three-column table.
+link URLs. Select an existing link to edit its URL, text, and new-tab setting.
+Unchanged link text keeps its native children and formatting. Explicit edits
+turn automatic links into manual links. `EditorTableButton` inserts a three-row,
+three-column table.
 
 Core editing links plain HTTP and HTTPS URLs, `www` addresses, and email
 addresses. Code blocks and inline code do not expose automatic navigation.
