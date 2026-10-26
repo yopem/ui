@@ -49,12 +49,14 @@ export function EditorRoot({
   })
 
   return (
-    <LexicalExtensionComposer
-      extension={setup.extension}
-      contentEditable={null}
-    >
-      <EditorContext value={setup}>{root}</EditorContext>
-    </LexicalExtensionComposer>
+    <EditorContext value={setup}>
+      <LexicalExtensionComposer
+        extension={setup.extension}
+        contentEditable={null}
+      >
+        {root}
+      </LexicalExtensionComposer>
+    </EditorContext>
   )
 }
 
