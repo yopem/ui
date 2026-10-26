@@ -108,7 +108,7 @@ test("exact pinned Word-shaped HTML pastes and invalid metadata fails closed", a
 
   const fixture = await readFile(
     new URL(
-      "../../editor-word-clipboard/fixtures/plate-word-lists.html",
+      "../../editor-word-clipboard/fixtures/plate-word-lists.html.fixture",
       import.meta.url,
     ),
     "utf8",

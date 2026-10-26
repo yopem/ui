@@ -95,7 +95,7 @@ p.Compact {mso-style-name:Compact; margin-top:1.8pt; margin-bottom:1.8pt; font-f
 
 test("pinned public Word list HTML retains visible text and list structure", async () => {
   const source = await Bun.file(
-    new URL("./fixtures/plate-word-lists.html", import.meta.url),
+    new URL("./fixtures/plate-word-lists.html.fixture", import.meta.url),
   ).text()
 
   const nodes = nodesFor(source)
