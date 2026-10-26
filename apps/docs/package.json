@@ -82,6 +82,6 @@
     "oxc-transform-react": "^0.155.0",
     "remark-gfm": "^4.0.1",
     "vite": "catalog:",
-    "wrangler": "^4.152.0"
+    "wrangler": "^4.153.0"
   }
 }
