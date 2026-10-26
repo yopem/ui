@@ -15,6 +15,7 @@ import { Text } from "@registry/components/ui/text"
 import { rewriteImports } from "@registry/source-files"
 import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
+import { useHydrated } from "@tanstack/react-router"
 
 import { EditorDrawingClient } from "./editor-drawing-client"
 import { BasicMarksExample } from "./editor-examples/basic-marks"
@@ -942,6 +943,8 @@ export function getCoreEditorExamplesMarkdown() {
 }
 
 export function CoreEditorExamplesGallery() {
+  const hydrated = useHydrated()
+
   return (
     <Stack data-testid="editor-examples-core">
       <Heading>Core compositions</Heading>
@@ -980,7 +983,10 @@ export function CoreEditorExamplesGallery() {
                 <Text>{limits}</Text>
                 <Text>Required registry items: {items.join(", ")}</Text>
                 <Collapsible>
-                  <CollapsibleTrigger render={<Button variant="outline" />}>
+                  <CollapsibleTrigger
+                    disabled={!hydrated}
+                    render={<Button variant="outline" />}
+                  >
                     Live preview
                   </CollapsibleTrigger>
                   <CollapsiblePanel>
@@ -990,13 +996,17 @@ export function CoreEditorExamplesGallery() {
                   </CollapsiblePanel>
                 </Collapsible>
                 <Clipboard
+                  disabled={!hydrated}
                   value={documentation.source}
                   aria-label="Copy source"
                 >
                   Copy source
                 </Clipboard>
                 <Collapsible>
-                  <CollapsibleTrigger render={<Button variant="outline" />}>
+                  <CollapsibleTrigger
+                    disabled={!hydrated}
+                    render={<Button variant="outline" />}
+                  >
                     View source
                   </CollapsibleTrigger>
                   <CollapsiblePanel xstyle={styles.details}>
