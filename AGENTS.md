@@ -1047,6 +1047,9 @@ Import it from the copied `ai-menu-preview` module. It changes no document state
 Supply an explicit same-origin host endpoint, document ID, and current authentication and CSRF headers.
 Only explicit user requests start inference. Approve cleanly completed plain text explicitly.
 Review comments require the current review controller and literal-true host policy.
+Suggest change creates an inline review suggestion from completed single-line output.
+It requires current suggest permission and a valid saved range.
+Accept or reject the suggestion separately. Authorize document writes separately.
 Twelve truncated chat messages stay in memory across closes until the menu root unmounts.
 Remount on document or viewer changes. No server chat storage is supplied.
 Null selection retains the dialog target. Remount EditorAiRoot to discard it.

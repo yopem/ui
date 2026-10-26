@@ -441,6 +441,9 @@ Compose EditorAiInlinePreview from \`${imports.editor}/ai-menu-preview\` inside 
 The preview changes no document state. Keep explicit approval controls.
 The menu keeps twelve truncated chat messages until its root unmounts. Remount on document or viewer changes. No server chat storage is supplied.
 Comments require the current review controller and literal-true host policy. AI permission never grants review access.
+Suggest change creates an inline review suggestion from completed single-line output.
+It requires current suggest permission and a valid saved range.
+Accept or reject the suggestion separately. Authorize document writes separately.
 Selected-text context actions respect prevented host events.
 Supply synchronous markdownInsertion for optional validated Markdown approval.
 Install editor-document and call $insertDocumentFragment inside the supplied update.

@@ -317,6 +317,69 @@ This adapter does not grant document-write permission. Save through the host
 policy. Composition, native history, and nested insertion checks remain
 deferred.
 
+## Propose completed text for review
+
+Register one review controller in the stable root extension array. Compose
+`EditorReviewProvider` around the configured AI menu. Supply verified host
+identity and synchronous, per-action authorization.
+
+```tsx
+"use client"
+
+import type { EditorAiConfig } from "@/components/editor/ai-client"
+import type { EditorReviewHost } from "@/components/editor/review"
+
+import { EditorAiRoot, EditorRoot, EditorToolbar } from "@/components/editor"
+import {
+  EditorAiMenuContent,
+  EditorAiMenuPanel,
+  EditorAiMenuRoot,
+  EditorAiMenuTrigger,
+} from "@/components/editor/ai-menu"
+import {
+  createEditorReview,
+  EditorReviewPanel,
+  EditorReviewProvider,
+} from "@/components/editor/review"
+import { useState } from "react"
+
+export function AiReviewEditor({
+  config,
+  host,
+}: {
+  config: EditorAiConfig
+  host: EditorReviewHost
+}) {
+  const [controller] = useState(createEditorReview)
+  const [extensions] = useState(() => [controller.extension])
+
+  return (
+    <EditorRoot extensions={extensions} ariaLabel="AI review editor">
+      <EditorReviewProvider controller={controller} host={host}>
+        <EditorAiRoot config={config}>
+          <EditorAiMenuRoot>
+            <EditorToolbar aria-label="AI review toolbar">
+              <EditorAiMenuTrigger />
+            </EditorToolbar>
+            <EditorAiMenuContent />
+            <EditorAiMenuPanel />
+          </EditorAiMenuRoot>
+        </EditorAiRoot>
+        <EditorReviewPanel />
+      </EditorReviewProvider>
+    </EditorRoot>
+  )
+}
+```
+
+Choose **Suggest change** after clean stream completion. The action accepts
+single-line text up to 16384 UTF-16 units. It uses the saved range and current
+`suggest` permission. Unsupported ranges and denied actions keep the proposal.
+
+Accept or reject the resulting suggestion separately. Creation does not grant
+decision or document-write permission. The AI service does not save the change.
+These decision, history, and policy workflows still need runtime validation.
+
 ## Try your host endpoint
 
 This example makes real requests only after explicit host configuration. It does

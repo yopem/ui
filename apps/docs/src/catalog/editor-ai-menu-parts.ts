@@ -30,6 +30,6 @@ export const editorAiMenuParts = [
     slug: "ai-menu-panel",
     item: "editor-ai-menu",
     description:
-      "Review untrusted proposals and make explicit text or comment decisions.",
+      "Review untrusted proposals and make explicit text, comment, or suggestion decisions.",
   },
 ] as const

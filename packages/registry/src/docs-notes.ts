@@ -29,6 +29,7 @@ const usageNoteValues = {
     "Compose EditorAiInlinePreview inside EditorAiRoot for a bounded escaped preview beside the saved range. The preview changes no saved content.",
     "The menu retains at most twelve truncated chat messages until its root unmounts. No server chat storage is supplied. Remount on document or viewer changes.",
     "AI comments require a current review controller and literal-true host authorization. AI permission never grants document writes or review permissions.",
+    "Suggest change creates a separate inline review suggestion from completed single-line output up to 16384 UTF-16 units. Current suggest permission and the saved range are required. Accept or reject it separately.",
     "Null selection retains the dialog target. Remount EditorAiRoot to discard it explicitly. Supply synchronous markdownInsertion for validated rich Markdown and register each target node. MDX stays literal source.",
   ],
   "editor-diagram": [
