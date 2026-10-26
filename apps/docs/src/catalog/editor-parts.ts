@@ -1,5 +1,3 @@
-import { editorDiagramParts } from "@/catalog/editor-diagram-parts"
-
 import { editorAiMenuParts } from "./editor-ai-menu-parts"
 import { editorAiParts } from "./editor-ai-parts"
 import { editorBlockMenuParts } from "./editor-block-menu-parts"
@@ -11,6 +9,7 @@ import { editorColumnsParts } from "./editor-columns-parts"
 import { editorCopilotParts } from "./editor-copilot-parts"
 import { editorCursorOverlayParts } from "./editor-cursor-overlay-parts"
 import { editorDateParts } from "./editor-date-parts"
+import { editorDiagramParts } from "./editor-diagram-parts"
 import { editorDocumentExportParts } from "./editor-document-export-parts"
 import { editorDocxParts } from "./editor-docx-parts"
 import { editorDrawingParts } from "./editor-drawing-parts"
