@@ -296,18 +296,30 @@ for (const failure of ["unavailable", "blocked"] as const) {
   test(`clipboard ${failure} preserves source and reports failure`, async ({
     page,
   }) => {
+    const pageErrors: string[] = []
+
+    page.on("pageerror", (error) => {
+      pageErrors.push(error.message)
+    })
     await page.addInitScript((mode) => {
+      if (mode === "unavailable") {
+        Reflect.deleteProperty(navigator, "clipboard")
+        Reflect.deleteProperty(Navigator.prototype, "clipboard")
+
+        return
+      }
+
       Object.defineProperty(navigator, "clipboard", {
         configurable: true,
-        value:
-          mode === "unavailable"
-            ? undefined
-            : {
-                writeText: () => Promise.reject(new Error("Clipboard blocked")),
-              },
+        value: {
+          writeText: () => Promise.reject(new Error("Clipboard blocked")),
+        },
       })
     }, failure)
     await page.goto("/components/button")
+    expect(await page.evaluate(() => "clipboard" in navigator)).toBe(
+      failure !== "unavailable",
+    )
 
     const copy = page.getByRole("button", {
       name: "Copy Button usage",
@@ -321,6 +333,7 @@ for (const failure of ["unavailable", "blocked"] as const) {
     await expect(block.locator("pre")).toBeVisible()
     await expect(block.locator("pre")).not.toBeEmpty()
     await expect(copy).toBeEnabled()
+    expect(pageErrors).toEqual([])
   })
 }
 
