@@ -140,23 +140,7 @@ function validateJSONValue(value: EditorDrawingValidationInput, depth = 0) {
   }
 }
 
-function createJSONSchema(depth: number): z.ZodType<EditorDrawingJSON> {
-  const nested = depth < maxDepth ? createJSONSchema(depth + 1) : z.never()
-
-  return z.union([
-    z.null(),
-    z.boolean(),
-    z.number().finite(),
-    z.string().max(EDITOR_DRAWING_MAX_BYTES),
-    z.array(nested),
-    z.record(
-      z.string().refine((key) => !blockedKeys.has(key) || key === "link"),
-      nested,
-    ),
-  ])
-}
-
-const jsonValueSchema = createJSONSchema(0)
+const jsonValueSchema = z.json()
 
 function isEditorDrawingJSONObject(
   value: EditorDrawingValidationInput,

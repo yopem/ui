@@ -7,8 +7,38 @@ import {
   parseEditorDrawingScene,
 } from "@editor/drawing-model"
 import { describe, expect, test } from "bun:test"
+import { spawnSync } from "node:child_process"
 
 describe("editor drawing scene model", () => {
+  test("validates drawing scenes with global schema compilation", () => {
+    const module = new URL(
+      "../../packages/editor/src/drawing-model.ts",
+      import.meta.url,
+    ).href
+
+    const result = spawnSync(
+      process.execPath,
+      [
+        "--eval",
+        `import assert from "node:assert/strict";
+import "zod/compile";
+import { parseEditorDrawingScene } from ${JSON.stringify(module)};
+const scene = { elements: [{ id: "compiled-shape", type: "rectangle", x: 24, y: 24, metadata: { values: [1, "plain", null] } }] };
+assert.deepEqual(parseEditorDrawingScene(scene), scene);
+assert.throws(() => parseEditorDrawingScene({ elements: [{ id: "unsafe", type: "rectangle", metadata: { src: "https://example.com" } }] }));`,
+      ],
+      {
+        cwd: new URL("../..", import.meta.url),
+        encoding: "utf8",
+        timeout: 20_000,
+      },
+    )
+
+    expect(result.error).toBeUndefined()
+    expect(result.stderr).toBe("")
+    expect(result.status).toBe(0)
+  }, 30_000)
+
   test("accepts bounded native shape scenes and returns a detached value", () => {
     const scene = {
       elements: [
