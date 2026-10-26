@@ -117,6 +117,8 @@ const usageNoteValues = {
   ],
   "editor-autoformat": [
     "Register EditorAutoformatExtension in the stable root extension array. It adds non-base transformers without duplicating the base Markdown registration.",
+    "Configure stable element and text-match transformers with configExtension. Host rules precede the extension's built-ins. includeBuiltInRules=false disables only these built-ins. Base Markdown stays separate.",
+    "Callbacks and regular expressions are trusted host code, not a sandbox. Keep callbacks synchronous. Register each transformer's node dependencies at root creation. Remount to change rule configuration.",
     "Type [ ] plus Space for a checklist, two through six > prefixes plus Space for nested quotes, and --- plus Enter for a horizontal rule. Text rules include smart quotes, arrows, comparisons, legal symbols, fractions, and Unicode script characters.",
     "Fraction shortcuts require a word boundary. Guillemet shortcuts require preceding text or whitespace to retain line-start nested quote syntax. Code retains literal text. Overlapping input rules, IME, history, clipboard, and readonly behavior remain runtime-unverified.",
   ],

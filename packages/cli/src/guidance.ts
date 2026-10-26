@@ -155,6 +155,10 @@ Keep its extensions array stable. Collapsed heading Enter makes the new half a p
 Preserve higher-priority host policy, native selection, NodeState, composition, and history. Other block handlers stay native.
 Install optional \`editor-autoformat\` separately. Import \`EditorAutoformatExtension\` from \`${imports.editor}/autoformat\`.
 Keep it in a stable root array. It adds non-base transformers without repeating the base Markdown registration.
+Configure stable element and text-match \`transformers\` with Lexical \`configExtension\`.
+Host rules precede this extension's built-ins. Set \`includeBuiltInRules\` to \`false\` to disable only these built-ins.
+Register transformer node dependencies at root creation. Keep trusted callbacks synchronous and regular expressions bounded.
+Remount to change configuration. Custom rules are not a sandbox.
 Document readers support plain horizontal rules. Register HorizontalRuleExtension before live imports. Unsupported rule presentation rejects.
 Use word boundaries for fractions and retain line-start quote prefixes. Keep code literal and preserve host input, composition, clipboard, and history behavior.
 Install optional \`editor-editing-rules\` separately. Create one stable \`createEditorEditingRulesExtension\` per root.

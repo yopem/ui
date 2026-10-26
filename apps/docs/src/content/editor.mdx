@@ -1354,9 +1354,47 @@ Space for nested quotes. Type `---` and Enter for a horizontal rule. Smart text
 rules include quotes, fractions, symbols, and Unicode scripts. Fractions require
 a word boundary. Guillemet shortcuts require preceding text or whitespace.
 
-The extension does not repeat the base Markdown transformers. Native code text
-stays literal. History, composition, overlapping inputs, and browser clipboard
-workflows require deferred checks.
+Configure host element and text-match transformers with Lexical
+`configExtension`. Host rules precede this extension's built-ins. Set
+`includeBuiltInRules` to `false` to disable only these built-ins. Base Markdown
+stays separate.
+
+```tsx
+import { configExtension } from "lexical"
+import {
+  EditorAutoformatExtension,
+  type EditorAutoformatTransformer,
+} from "@/components/editor/autoformat"
+
+const hostRules: EditorAutoformatTransformer[] = [
+  {
+    dependencies: [],
+    type: "text-match",
+    trigger: ")",
+    regExp: /\(ok\)$/u,
+    replace(node) {
+      node.setTextContent("✓")
+      node.selectEnd()
+      return node
+    },
+  },
+]
+
+const extensions = [
+  configExtension(EditorAutoformatExtension, {
+    transformers: hostRules,
+    includeBuiltInRules: false,
+  }),
+]
+```
+
+Keep transformer arrays stable. Register each transformer's node dependencies at
+root creation. Remount the root to change rule configuration. Callbacks and
+regular expressions are trusted host code, not a sandbox. Keep callbacks
+synchronous and regular expressions bounded.
+
+Native code text stays literal. History, composition, overlapping inputs, custom
+callbacks, and browser clipboard workflows require deferred checks.
 
 Document readers support plain native horizontal rules in JSON, HTML, and
 Markdown. Register `HorizontalRuleExtension` before live rule imports. Missing

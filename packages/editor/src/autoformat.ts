@@ -16,6 +16,8 @@ import * as stylex from "@stylexjs/stylex"
 import {
   $createParagraphNode,
   $getEditor,
+  $getSelection,
+  $isRangeSelection,
   defineExtension,
   mergeRegister,
   PASTE_TAG,
@@ -118,16 +120,47 @@ const substitutions = [
   ["^-", "⁻"],
 ] as const
 
+export type EditorAutoformatTransformer =
+  | ElementTransformer
+  | TextMatchTransformer
+
+export interface EditorAutoformatConfig {
+  transformers: readonly EditorAutoformatTransformer[]
+  includeBuiltInRules: boolean
+}
+
+const defaultConfig: EditorAutoformatConfig = {
+  transformers: [],
+  includeBuiltInRules: true,
+}
+
 const blockedStates = new WeakMap<LexicalEditor, WeakSet<EditorState>>()
+
+const blockedPattern = /(?!)/u
 
 function canTransformInput() {
   const editor = $getEditor()
+  const selection = $getSelection()
 
   return (
     editor.isEditable() &&
     !editor.isComposing() &&
+    $isRangeSelection(selection) &&
+    selection.isCollapsed() &&
+    !selection.hasFormat("code") &&
     !blockedStates.get(editor)?.has(editor.getEditorState())
   )
+}
+
+function guardTransformer(transformer: EditorAutoformatTransformer) {
+  return {
+    ...transformer,
+    get regExp() {
+      return canTransformInput()
+        ? (transformer.regExp ?? blockedPattern)
+        : blockedPattern
+    },
+  }
 }
 
 function replaceTypedText(node: TextNode, text: string) {
@@ -240,7 +273,7 @@ const checkList: ElementTransformer = {
   },
 }
 
-const additionalTransformers: Transformer[] = [
+const additionalTransformers: EditorAutoformatTransformer[] = [
   horizontalRule,
   nestedQuote,
   checkList,
@@ -254,12 +287,18 @@ const additionalTransformers: Transformer[] = [
 
 export const EditorAutoformatExtension = defineExtension({
   name: "@yopem-ui/editor/autoformat",
+  config: defaultConfig,
   dependencies: [HorizontalRuleExtension],
   theme: {
     hr: stylex.props(styles.rule).className,
     hrSelected: stylex.props(styles.selected).className,
   },
-  register(editor) {
+  register(editor, config) {
+    const transformers: Transformer[] = [
+      ...config.transformers,
+      ...(config.includeBuiltInRules ? additionalTransformers : []),
+    ].map(guardTransformer)
+
     const blocked = new WeakSet<EditorState>()
     blockedStates.set(editor, blocked)
 
@@ -271,7 +310,7 @@ export const EditorAutoformatExtension = defineExtension({
         if (tags.has(PASTE_TAG) || tags.has(HISTORY_PUSH_TAG))
           blocked.add(editorState)
       }),
-      registerMarkdownShortcuts(editor, additionalTransformers),
+      registerMarkdownShortcuts(editor, transformers),
     )
   },
 })

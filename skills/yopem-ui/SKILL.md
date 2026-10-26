@@ -1071,9 +1071,14 @@ host vetoes still apply.
 Install `editor-autoformat` separately. Import `EditorAutoformatExtension` from
 `@/components/editor/autoformat`. Keep it in a stable root extensions array.
 Base Markdown shortcuts remain separate. Additional rules support checklist and
-nested quote prefixes, horizontal rules, and fixed smart text substitutions.
-Code remains literal. Fractions require word boundaries. Check native input
-policies, IME, history, and clipboard before production use.
+nested quote prefixes, horizontal rules, and smart text substitutions. Configure
+stable element and text-match `transformers` with Lexical `configExtension`.
+Host rules precede the extension's built-ins. Set `includeBuiltInRules` to
+`false` to disable only these built-ins. Base Markdown stays separate. Register
+transformer node dependencies at root creation. Keep callbacks synchronous and
+regular expressions bounded. Host rules are not a sandbox. Remount to change
+rule configuration. Code remains literal. Fractions require word boundaries.
+Check native input policies, IME, history, and clipboard before production use.
 
 Document readers support plain native horizontal rules. Register
 `HorizontalRuleExtension` for live imports. Keep rules in block containers.

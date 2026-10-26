@@ -884,7 +884,12 @@ A separate live status supplies the label. Preserve native caret, selection, his
 ## Optional editor input shortcuts
 
 Install `editor-autoformat` separately. Register `EditorAutoformatExtension` in a stable root extensions array.
-It adds checklist, nested quote, horizontal-rule, and fixed smart text substitutions without repeating base Markdown transformers.
+It adds checklist, nested quote, horizontal-rule, and smart text substitutions without repeating base Markdown transformers.
+Configure stable element and text-match `transformers` with Lexical `configExtension`.
+Host rules precede this extension's built-ins. Set `includeBuiltInRules` to `false` to disable only these built-ins.
+Base Markdown stays separate. Register transformer node dependencies at root creation.
+Callbacks and regular expressions are trusted host code, not a sandbox. Keep callbacks synchronous.
+Remount the root to change rule configuration.
 Keep code literal, native history, host input policies, and composition behavior.
 Fraction shortcuts require a word boundary. Line-start quote prefixes stay available.
 Native clipboard, IME, overlapping substitutions, and inline-code history remain unverified.

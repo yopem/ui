@@ -11,10 +11,34 @@ import {
   EditorRoot,
   EditorToolbar,
 } from "@yopem-ui/editor"
-import { EditorAutoformatExtension } from "@yopem-ui/editor/autoformat"
+import {
+  EditorAutoformatExtension,
+  type EditorAutoformatTransformer,
+} from "@yopem-ui/editor/autoformat"
+import { configExtension } from "lexical"
 import { useState } from "react"
 
 const extensions = [EditorAutoformatExtension]
+
+const hostRule: EditorAutoformatTransformer = {
+  dependencies: [],
+  type: "text-match",
+  trigger: ")",
+  regExp: /\(ok\)$/u,
+  replace(node) {
+    node.setTextContent("✓")
+    node.selectEnd()
+
+    return node
+  },
+}
+
+const hostExtensions = [
+  configExtension(EditorAutoformatExtension, {
+    transformers: [hostRule],
+    includeBuiltInRules: false,
+  }),
+]
 
 export function PublicAutoformatExample() {
   const [editable, setEditable] = useState(true)
@@ -68,9 +92,28 @@ export function PublicAutoformatExample() {
         <EditorContent />
       </EditorRoot>
       <Text>
+        Type (ok) in this independent editor for a host-defined replacement.
+        Extended built-in rules are off here. Base Markdown shortcuts remain
+        available.
+      </Text>
+      <EditorRoot
+        key={`host:${revision}`}
+        data-testid="host-input-rule-example"
+        extensions={hostExtensions}
+        editable={editable}
+        ariaLabel="Host input rules"
+      >
+        <EditorToolbar aria-label="Host input-rule controls">
+          <EditorFormatButton format="code" />
+          <EditorHistoryButton action="undo" />
+          <EditorHistoryButton action="redo" />
+        </EditorToolbar>
+        <EditorContent />
+      </EditorRoot>
+      <Text>
         These added rules do not replace the base Markdown registration.
-        Clipboard, IME, inline-code history, overlapping substitutions, and
-        nested quote editing remain runtime-unverified.
+        Clipboard, IME, inline-code history, custom callbacks, overlapping
+        substitutions, and nested quote editing remain runtime-unverified.
       </Text>
     </Stack>
   )

@@ -14,9 +14,13 @@ export const editorAutoformatItem: SourceItem = {
     "Add native checklist, nested quote, rule, and smart text input shortcuts.",
   devDependencies: [],
   docs: {
-    api: ["EditorAutoformatExtension"],
+    api: [
+      "EditorAutoformatExtension",
+      "EditorAutoformatConfig",
+      "EditorAutoformatTransformer",
+    ],
     usage:
-      "Register EditorAutoformatExtension in a stable root extensions array. It adds non-base transformers without repeating the base Markdown registration. Code keeps literal text. Fractions require a word boundary. Guillemet shortcuts require preceding text or whitespace. Native history, IME, clipboard, and overlapping pattern behavior need host validation.",
+      "Register EditorAutoformatExtension in a stable root extensions array. Configure host element and text-match transformers with Lexical configExtension. Host rules precede the extension's built-ins. Set includeBuiltInRules to false to omit only these built-ins. Keep trusted synchronous callbacks and transformer arrays stable until remount. Base Markdown stays separate. Code keeps literal text. Fractions require a word boundary. Guillemet shortcuts require preceding text or whitespace. Native history, IME, clipboard, and overlapping pattern behavior need host validation.",
   },
   files: [
     {
