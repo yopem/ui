@@ -4,8 +4,15 @@ import {
   AutoLinkNode,
   autoLinkEmailMatcher,
   autoLinkUrlMatcher,
+  $isAutoLinkNode,
 } from "@lexical/link"
-import { $isTextNode, configExtension, defineExtension } from "lexical"
+import {
+  $isTextNode,
+  configExtension,
+  defineExtension,
+  mergeRegister,
+  TextNode,
+} from "lexical"
 
 export const EditorAutoLinkExtension = defineExtension({
   name: "@yopem-ui/editor/AutoLink",
@@ -17,14 +24,26 @@ export const EditorAutoLinkExtension = defineExtension({
     }),
   ],
   register(editor) {
-    return editor.registerNodeTransform(AutoLinkNode, (node) => {
-      if (
-        !node.getIsUnlinked() &&
-        node
-          .getChildren()
-          .some((child) => $isTextNode(child) && child.hasFormat("code"))
-      )
-        node.setIsUnlinked(true)
-    })
+    return mergeRegister(
+      editor.registerNodeTransform(AutoLinkNode, (node) => {
+        if (
+          !node.getIsUnlinked() &&
+          node
+            .getChildren()
+            .some((child) => $isTextNode(child) && child.hasFormat("code"))
+        )
+          node.setIsUnlinked(true)
+      }),
+      editor.registerNodeTransform(TextNode, (node) => {
+        const parent = node.getParent()
+
+        if (
+          $isAutoLinkNode(parent) &&
+          !parent.getIsUnlinked() &&
+          node.hasFormat("code")
+        )
+          parent.setIsUnlinked(true)
+      }),
+    )
   },
 })
