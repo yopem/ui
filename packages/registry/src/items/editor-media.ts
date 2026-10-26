@@ -17,6 +17,7 @@ export const editorMediaItem: SourceItem = {
   docs: {
     api: [
       "MediaInsertControl",
+      "MediaFileClipboard",
       "MediaContent",
       "MediaPreviewRoot",
       "MediaPreviewTrigger",
@@ -54,13 +55,15 @@ export const editorMediaItem: SourceItem = {
       "createMediaUpload",
     ],
     usage:
-      "Register MediaExtension in a stable extensions array. Compose MediaInsertControl inside EditorToolbar. MediaContent and image preview parts need no EditorRoot. Compose MediaPreviewRoot, Trigger, and Dialog, or use MediaPreviewGallery. Zoom stays local and uses house Slider and ScrollArea controls. Supply an explicit createMediaEmbedPolicy for provider or exact-origin frames. No frame loads before consent. Policy, source, or disabled changes discard consent. Tweet embeds use the fixed platform.twitter.com endpoint. HTML exports stay inert links. Origin validation does not check DNS or redirects. Supply a host upload callback when required. Validate boundary inputs with mediaSchema before calling parseMedia. Canonical document conversion requires editor-document and registered media nodes. This item does not authorize private asset delivery.",
+      "Register MediaExtension in a stable extensions array. Compose MediaInsertControl inside EditorToolbar. MediaContent and image preview parts need no EditorRoot. Compose MediaPreviewRoot, Trigger, and Dialog, or use MediaPreviewGallery. Zoom stays local and uses house Slider and ScrollArea controls. Supply an explicit createMediaEmbedPolicy for provider or exact-origin frames. No frame loads before consent. Policy, source, or disabled changes discard consent. Tweet embeds use the fixed platform.twitter.com endpoint. HTML exports stay inert links. Origin validation does not check DNS or redirects. Supply a host upload callback when required. Mount MediaFileClipboard inside EditorRoot for one-file paste and drop. Without upload it registers nothing. Rich MIME and higher-priority host handlers stay first. Keep upload stable. Changing it cancels pending work. Host callbacks must validate content and enforce size, authorization, and quota limits. Validate boundary inputs with mediaSchema before calling parseMedia. Canonical document conversion requires editor-document and registered media nodes. This item does not authorize private asset delivery.",
   },
   files: [
     "media.ts",
     "media-preview.tsx",
     "media-embed.tsx",
     "media/controls.tsx",
+    "media/clipboard.tsx",
+    "media/clipboard-model.ts",
     "media/extension.tsx",
     "media/html.ts",
     "media/model.ts",

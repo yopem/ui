@@ -310,6 +310,10 @@ yarn dlx @yopem-ui/cli add editor-media
 
 Import optional parts from \`${imports.editor}/media\`.
 Register MediaExtension in a stable root extensions array. Compose MediaInsertControl inside EditorToolbar.
+Mount MediaFileClipboard inside EditorRoot with a stable host upload callback.
+It handles one file per paste or drop. Without upload, it registers nothing.
+Rich MIME and higher-priority host handlers stay first. Callback changes cancel pending work.
+Host callbacks enforce size, content, authorization, and quota limits.
 MediaContent and image preview parts work without EditorRoot. Use HTTPS URLs without credentials.
 Compose MediaPreviewRoot, MediaPreviewTrigger, and MediaPreviewDialog, or use MediaPreviewGallery.
 Supply unique image IDs. Zoom stays local and uses house Slider and ScrollArea controls.

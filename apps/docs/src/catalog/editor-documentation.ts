@@ -47,6 +47,8 @@ export async function getEditorDocumentation(slug: string) {
     sourcePath = "./editor-preview-compositions/media-embed.tsx"
   else if (part.name === "MediaInsertControl")
     sourcePath = "./editor-preview-compositions/media.tsx"
+  else if (part.name === "MediaFileClipboard")
+    sourcePath = "./editor-preview-compositions/media-file-clipboard.tsx"
   else if (part.name === "EditorFootnoteControls")
     sourcePath = "./editor-preview-compositions/footnotes.tsx"
   else if (part.name === "EditorTocControls")
@@ -165,6 +167,7 @@ export async function getEditorDocumentation(slug: string) {
             "Compose MediaPreviewRoot, Trigger, and Dialog, or use MediaPreviewGallery. Supply unique image IDs. Zoom uses keyboard-accessible Slider and ScrollArea controls and is not saved.",
             "MediaEmbedContent needs an explicit provider or exact HTTPS-origin policy. Frames stay blocked until consent. Source, policy, and disabled changes reset consent. DNS and redirects need host controls.",
             "Use HTTPS URLs without credentials. Host uploads require authorization and bounded validation.",
+            "Mount MediaFileClipboard inside EditorRoot with a stable upload callback. It handles one file per paste or drop. Rich MIME and higher-priority host handlers stay first. Without upload it registers nothing. Callback changes cancel pending work. Host callbacks enforce size, content, authorization, and quota limits.",
             "Install editor-document separately for document IO. Preserve canonical media metadata and reject URL queries and fragments.",
           ]
         : []),

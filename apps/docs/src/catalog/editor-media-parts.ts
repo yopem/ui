@@ -1,5 +1,12 @@
 export const editorMediaParts = [
   {
+    name: "MediaFileClipboard",
+    slug: "media-file-clipboard",
+    item: "editor-media",
+    description:
+      "Insert one pasted or dropped file through a configured host upload callback.",
+  },
+  {
     name: "MediaPreviewRoot",
     slug: "media-preview-root",
     item: "editor-media",

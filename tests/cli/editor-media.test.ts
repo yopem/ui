@@ -54,6 +54,8 @@ test("optional media publishes a complete consumer source closure", async () => 
   expect(files.has("components/editor/media.ts")).toBe(true)
   expect(files.has("components/editor/media-preview.tsx")).toBe(true)
   expect(files.has("components/editor/media-embed.tsx")).toBe(true)
+  expect(files.has("components/editor/media/clipboard.tsx")).toBe(true)
+  expect(files.has("components/editor/media/clipboard-model.ts")).toBe(true)
   expect(files.has("components/editor/root.tsx")).toBe(true)
   expect(files.has("components/editor/selection-bookmark.ts")).toBe(true)
 

@@ -710,6 +710,10 @@ Do not mark a mapped public workflow complete before its behavior is checked.
 Install `editor-media` separately. Import optional parts from the copied `media` module.
 Register `MediaExtension` in a stable extensions array.
 Compose `MediaInsertControl` inside `EditorToolbar`.
+Mount `MediaFileClipboard` inside `EditorRoot` with a stable host upload callback.
+It handles one file per paste or drop. Without upload, it registers nothing.
+Rich MIME and higher-priority host handlers stay first. Callback changes cancel pending work.
+Host callbacks must enforce size, content, authorization, and quota limits.
 `MediaContent` and image preview parts work without `EditorRoot`.
 Compose `MediaPreviewRoot`, `MediaPreviewTrigger`, and `MediaPreviewDialog`, or use `MediaPreviewGallery`.
 Supply unique image IDs. Zoom stays local and uses house Slider and ScrollArea controls.

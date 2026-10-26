@@ -1272,8 +1272,13 @@ endpoint. HTML exports keep inert links instead of active frames. An origin
 allowlist does not validate DNS, redirects, or host network policy.
 
 Supply a bounded, abort-aware host upload callback through `createMediaUpload`.
-Authorize each upload on the server. Validate content before publication.
-Cancellation does not prove that a server write stopped.
+Mount `MediaFileClipboard` inside `EditorRoot` to handle one pasted or dropped
+file. Pass the callback through `upload`. Without it, the part registers
+nothing. Rich clipboard formats and higher-priority host handlers stay first.
+Keep the callback stable. Changing it cancels the current upload. Failed,
+cancelled, stale, and read-only insertions keep current content. Authorize each
+upload on the server. Validate content before publication. Cancellation does not
+prove that a server write stopped.
 
 This item does not configure private asset storage or delivery. A private asset
 route needs existing same-origin authentication and explicit host integration.
