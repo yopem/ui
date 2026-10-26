@@ -1,5 +1,5 @@
 import { EditorBlockMenuComposition } from "@/catalog/editor-preview-compositions/block-menu"
 
-export function EditorPartPreview() {
+export function Preview() {
   return <EditorBlockMenuComposition />
 }

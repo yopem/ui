@@ -1,5 +1,5 @@
 import { MediaPreviewComposition } from "@/catalog/editor-preview-compositions/media-preview"
 
-export function MediaPreviewGalleryPreview() {
+export function Preview() {
   return <MediaPreviewComposition />
 }

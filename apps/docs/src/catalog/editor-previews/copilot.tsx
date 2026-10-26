@@ -1,5 +1,5 @@
 import { PublicCopilotExample } from "@/catalog/editor-examples/public-copilot"
 
-export function EditorPartPreview() {
+export function Preview() {
   return <PublicCopilotExample />
 }

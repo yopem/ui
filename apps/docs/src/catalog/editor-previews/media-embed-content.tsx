@@ -1,5 +1,5 @@
 import { MediaEmbedComposition } from "@/catalog/editor-preview-compositions/media-embed"
 
-export function MediaEmbedContentPreview() {
+export function Preview() {
   return <MediaEmbedComposition />
 }

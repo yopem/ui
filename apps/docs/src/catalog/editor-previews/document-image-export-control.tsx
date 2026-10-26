@@ -1,1 +1,1 @@
-export { EditorPartPreview } from "@/catalog/editor-previews/document-export-controls"
+export { Preview } from "@/catalog/editor-previews/document-export-controls"

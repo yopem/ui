@@ -2,6 +2,6 @@
 
 import { EditorAiMenuComposition } from "@/catalog/editor-preview-compositions/ai-menu"
 
-export function EditorAiInlinePreviewPreview() {
+export function Preview() {
   return <EditorAiMenuComposition />
 }

@@ -1,5 +1,5 @@
 import { PublicDocumentExportExample } from "@/catalog/editor-examples/public-document-export"
 
-export function EditorPartPreview() {
+export function Preview() {
   return <PublicDocumentExportExample />
 }

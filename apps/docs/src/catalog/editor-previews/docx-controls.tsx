@@ -2,7 +2,7 @@ import { EditorDocxControls } from "@yopem-ui/editor/docx/client"
 
 import { PublicDocxExample } from "@/catalog/editor-examples/public-docx"
 
-export function EditorPartPreview() {
+export function Preview() {
   return (
     <PublicDocxExample>
       <EditorDocxControls />

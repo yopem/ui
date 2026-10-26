@@ -2,6 +2,6 @@
 
 import { PublicAiExample } from "@/catalog/editor-examples/public-ai"
 
-export function EditorAiMenuPreview() {
+export function Preview() {
   return <PublicAiExample />
 }
