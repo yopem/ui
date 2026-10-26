@@ -113,7 +113,9 @@
     "./drawing/model": "./src/drawing-model.ts",
     "./drawing/browser": "./src/drawing-browser.tsx",
     "./media-preview": "./src/media-preview.tsx",
-    "./media-embed": "./src/media-embed.tsx"
+    "./media-embed": "./src/media-embed.tsx",
+    "./document-export": "./src/document-export.tsx",
+    "./document-export-html-to-image": "./src/document-export-html-to-image.ts"
   },
   "scripts": {
     "typecheck": "tsc --noEmit"
