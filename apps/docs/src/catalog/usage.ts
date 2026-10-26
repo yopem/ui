@@ -119,6 +119,33 @@ export function CopilotEditor({ config }: { config: EditorCopilotConfig }) {
     </EditorRoot>
   )
 }`,
+  "editor-document-export": `"use client"
+
+import { EditorContent, EditorRoot } from "@/components/editor"
+import { EditorDocumentPrintControl } from "@/components/editor/document-export"
+
+export function PrintableEditor() {
+  return (
+    <EditorRoot ariaLabel="Printable document">
+      <EditorContent />
+      <EditorDocumentPrintControl title="Editor document" />
+    </EditorRoot>
+  )
+}`,
+  "editor-document-export-image": `"use client"
+
+import { EditorContent, EditorRoot } from "@/components/editor"
+import { EditorDocumentImageExportControl } from "@/components/editor/document-export"
+import { captureEditorDocumentImageWithHtmlToImage } from "@/components/editor/document-export-html-to-image"
+
+export function DocumentImageEditor() {
+  return (
+    <EditorRoot ariaLabel="Document image export">
+      <EditorContent />
+      <EditorDocumentImageExportControl capture={captureEditorDocumentImageWithHtmlToImage} />
+    </EditorRoot>
+  )
+}`,
   "editor-docx": `import { EditorBlockPresentationExtension, EditorContent, EditorRoot, EditorTablePresentationExtension } from "@/components/editor"
 import { EditorDocxControls } from "@/components/editor/docx-controls"
 

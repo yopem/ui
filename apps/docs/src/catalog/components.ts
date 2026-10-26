@@ -44,6 +44,7 @@ const previewDescriptionValues = {
   "editor-media": "Validated image, video, audio, file, and embed content",
   "editor-blocks": "Native callouts and disclosures",
   "editor-document": "Validated document import and export",
+  "editor-document-export": "Print canonical snapshots without a capture SDK",
   "editor-word-clipboard":
     "Bounded Word HTML fragments with native clipboard policies",
   "editor-cursor-overlay": "Native drop carets and retained selection paint",

@@ -1528,6 +1528,51 @@ acceptance remain incomplete.
 See [the clipboard source item](/components/editor-word-clipboard) for complete
 consumer source.
 
+## Print and document images
+
+Install the optional export controls. Use the package-manager switcher.
+
+```sh
+bunx --bun @yopem-ui/cli add editor-document-export
+```
+
+Compose `EditorDocumentPrintControl` inside `EditorRoot`. Print uses a validated
+canonical document snapshot. It does not require an image capture SDK. Read-only
+roots can export. Export does not change selection or saved history.
+
+PNG needs an explicit `capture` callback. Install the separate adapter only when
+you need its implementation.
+
+```sh
+bunx --bun @yopem-ui/cli add editor-document-export-image
+```
+
+Import `captureEditorDocumentImageWithHtmlToImage` from
+`@/components/editor/document-export-html-to-image`. Pass it to
+`EditorDocumentImageExportControl` or `EditorDocumentExportControls`.
+
+Supply an abort-aware `resolveResource` callback for remote images. Check exact
+origins and current private asset permission. Never forward credentials to an
+untrusted origin. Resource URLs with credentials, queries, or fragments reject.
+Embedded images must use a supported raster data URL. SVG resources reject.
+
+Print and PNG layouts allow 4096 by 16384 pixels and 16777216 pixels total.
+Resource limits count every image occurrence, including cached images. Exports
+also have byte limits and a 30-second budget. Only one export can run at a time.
+Noncooperative work retains capacity until it settles. Document changes and
+unmounting cancel active output. Native print dialogs and synchronous SVG or
+canvas work cannot be stopped.
+
+The optional adapter validates its SVG before PNG rasterization. It skips web
+fonts. Local font fallbacks can change layout. Verify browser SVG support, CSP,
+owner-document behavior, keyboard access, and real output before deployment.
+Supply a CSP nonce when required. Unsupported canonical document formats reject.
+
+See [print control](/editor/document-print-control),
+[PNG control](/editor/document-image-export-control), and
+[combined export controls](/editor/document-export-controls). Runtime and
+browser checks remain deferred.
+
 ## Word document files
 
 Install the optional file-conversion item. Use the package-manager switcher.

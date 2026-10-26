@@ -11,6 +11,7 @@ import { editorColumnsParts } from "./editor-columns-parts"
 import { editorCopilotParts } from "./editor-copilot-parts"
 import { editorCursorOverlayParts } from "./editor-cursor-overlay-parts"
 import { editorDateParts } from "./editor-date-parts"
+import { editorDocumentExportParts } from "./editor-document-export-parts"
 import { editorDocxParts } from "./editor-docx-parts"
 import { editorDrawingParts } from "./editor-drawing-parts"
 import { editorEditableCardParts } from "./editor-editable-card-parts"
@@ -26,6 +27,7 @@ import { editorTocParts } from "./editor-toc-parts"
 import { editorTypeaheadParts } from "./editor-typeahead-parts"
 
 export const editorParts = [
+  ...editorDocumentExportParts,
   ...editorDiagramParts,
   ...editorAiMenuParts,
   {

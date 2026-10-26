@@ -30,6 +30,11 @@ export async function getEditorDocumentation(slug: string) {
     sourcePath = "./editor-examples/public-editable-voids.tsx"
   else if (part.item === "editor-docx")
     sourcePath = "./editor-examples/public-docx.tsx"
+  else if (part.item === "editor-document-export")
+    sourcePath =
+      part.name === "EditorDocumentPrintControl"
+        ? "./editor-preview-compositions/document-print.tsx"
+        : "./editor-examples/public-document-export.tsx"
   else if (part.item === "editor-labels")
     sourcePath = "./editor-examples/public-labels.tsx"
   else if (part.item === "editor-search")
@@ -86,9 +91,12 @@ export async function getEditorDocumentation(slug: string) {
 
   return {
     installNames:
-      part.name === "editorTocSlashCommand"
-        ? [part.item, "editor-typeahead"]
-        : [part.item],
+      part.item === "editor-document-export" &&
+      part.name !== "EditorDocumentPrintControl"
+        ? [part.item, "editor-document-export-image", "editor-math"]
+        : part.name === "editorTocSlashCommand"
+          ? [part.item, "editor-typeahead"]
+          : [part.item],
     title: part.name,
     description: part.description,
     usage,

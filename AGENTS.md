@@ -902,6 +902,24 @@ Keep hint text outside document nodes and serializers. Clear owned DOM hints on 
 A separate live status supplies the label. Preserve native caret, selection, history, and host classes.
 
 
+## Optional editor print and image export
+
+Install `editor-document-export` separately. Compose its print, PNG, or combined
+controls inside `EditorRoot`. Read-only roots can export validated canonical
+snapshots without changing saved content, selection, or history.
+Print does not need an image SDK. Supply an explicit PNG `capture` callback.
+Install `editor-document-export-image` only for the optional html-to-image adapter.
+Import that adapter from `document-export-html-to-image`. Keep its license notice.
+Supply an abort-aware host resolver for remote images. Enforce exact origins,
+private asset permission, and resource limits. Credential, query, and fragment
+URLs reject. Supply a CSP nonce when required.
+Print and PNG layouts allow 4096 by 16384 pixels and 16777216 pixels total.
+Image limits count every occurrence, including cached images. PNG checks validate container structure and checksums, not decoded pixels.
+Keep one export active at a time. Cancellation retains capacity until pending
+work settles. Native print dialogs and synchronous browser work cannot be stopped.
+Verify local font fallbacks, SVG foreignObject, CSP, keyboard access, owner-document
+cleanup, and real output before use. Runtime checks remain deferred.
+
 ## Optional editor input shortcuts
 
 Install `editor-autoformat` separately. Register `EditorAutoformatExtension` in a stable root extensions array.

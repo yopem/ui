@@ -42,6 +42,7 @@ import { CsvEditorExample } from "./editor-examples/public-csv"
 import { PublicCursorsExample } from "./editor-examples/public-cursors"
 import { PublicDemoHostExample } from "./editor-examples/public-demo-host"
 import { PublicDocumentExamples } from "./editor-examples/public-document"
+import { PublicDocumentExportExample } from "./editor-examples/public-document-export"
 import { PublicDocxExample } from "./editor-examples/public-docx"
 import { PublicEditableVoidsExample } from "./editor-examples/public-editable-voids"
 import { PublicEditingRulesExample } from "./editor-examples/public-editing-rules"
@@ -128,6 +129,21 @@ const examples = [
       "Configure fixed providers or exact iframe origins before explicit user consent loads external content.",
     limits:
       "Provider availability, framing policy, cookies, CSP, and accessibility need host checks. Disabling content or changing policy resets consent. Host validation must address DNS, redirects, credentials, and private networks. Removed frames cannot retract network work. This example adds no mapped-workflow credit.",
+  },
+  {
+    slug: "public-document-export",
+    workflowIds: [],
+    title: "Print and bounded document images",
+    Component: PublicDocumentExportExample,
+    items: [
+      "editor-document-export",
+      "editor-document-export-image",
+      "editor-math",
+    ],
+    description:
+      "Print a validated canonical document or capture one bounded PNG through an explicit optional adapter.",
+    limits:
+      "Browser and local font output can differ from the editable surface. Remote images require an authorized abort-aware host resolver. Native print dialogs, synchronous rendering, and canvas work cannot be interrupted. SVG foreignObject support, CSP, owner-document cleanup, read-only export, and real font behavior remain unverified. Unsupported document formats reject. This example adds no mapped-workflow credit.",
   },
   {
     slug: "public-playground",

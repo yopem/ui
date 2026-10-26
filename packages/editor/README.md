@@ -269,6 +269,43 @@ cannot be rolled back. Native Word capture, structural fidelity, clipboard
 policy, history, and browser checks remain deferred. This subset does not
 preserve complete Word page layout.
 
+## Optional print and image export
+
+Install print controls separately. The package-manager switcher supports these
+commands in public documentation.
+
+```sh
+bunx --bun @yopem-ui/cli add editor-document-export
+npx @yopem-ui/cli add editor-document-export
+pnpm dlx @yopem-ui/cli add editor-document-export
+yarn dlx @yopem-ui/cli add editor-document-export
+```
+
+Compose `EditorDocumentPrintControl` inside `EditorRoot`. Print needs no capture
+SDK. Read-only roots can export a validated canonical snapshot without changing
+selection or history. PNG requires an explicit capture callback.
+
+```sh
+bunx --bun @yopem-ui/cli add editor-document-export-image
+npx @yopem-ui/cli add editor-document-export-image
+pnpm dlx @yopem-ui/cli add editor-document-export-image
+yarn dlx @yopem-ui/cli add editor-document-export-image
+```
+
+The separate `document-export-html-to-image` module exports
+`captureEditorDocumentImageWithHtmlToImage`. Pass it as `capture` to
+`EditorDocumentImageExportControl` or `EditorDocumentExportControls`. Preserve
+the MIT notice in `LICENSE.md`. Remote images need an abort-aware host resolver
+with exact origin and private asset checks. Credential, query, and fragment URLs
+reject. Supply a CSP nonce when required.
+
+Exports bound resources, bytes, dimensions, pixels, and operation time. One
+export can run at a time. Cancelled noncooperative work retains capacity until
+settlement. Native print dialogs and synchronous browser work cannot be stopped.
+The adapter skips web fonts. Local font fallbacks can change layout. Verify SVG
+foreignObject, CSP, owner-document cleanup, keyboard access, and real output
+before deployment. Tests and browser checks remain deferred.
+
 ## Optional Word files
 
 Use the separate `editor-docx` item for bounded semantic Word file conversion.

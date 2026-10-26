@@ -149,6 +149,16 @@ Validate archives and XML before document replacement. Read-only or stale target
 Keep independent 1 MiB archive and decoded-data limits. Native deflate decompression is required for compressed files.
 Unsupported content rejects. Do not promise complete Word layout, images, macros, headers, or footers.
 Cancellation cannot stop synchronous parsing. Word files and Word clipboard cleanup are separate workflows.
+Install optional \`editor-document-export\` separately. Compose its print, PNG, or combined controls inside \`EditorRoot\`.
+Import controls from \`${imports.editor}/document-export\`. Read-only roots can export validated canonical snapshots.
+Print needs no capture SDK. PNG requires an explicit \`capture\` callback.
+Install \`editor-document-export-image\` only for the optional \`captureEditorDocumentImageWithHtmlToImage\` adapter.
+Import the adapter from \`${imports.editor}/document-export-html-to-image\`. Preserve its dependency license notice.
+Supply an abort-aware host resolver for remote images. Enforce exact origins, private asset permissions, and resource limits.
+URLs with credentials, queries, or fragments reject. Supply a CSP nonce when required.
+Print and PNG layouts allow 4096 by 16384 pixels and 16777216 pixels total. Image limits count every occurrence, including cached images. PNG checks validate container structure and checksums, not decoded pixels.
+Export does not change selection or history. Keep one export active; cancelled work retains capacity until settlement.
+Native print dialogs and synchronous browser work cannot be stopped. Verify local fonts, SVG foreignObject, CSP, and owner-document cleanup.
 Install optional \`editor-labels\` separately. Import the controls and stable \`createEditorLabelsExtension\` from \`${imports.editor}/labels\`.
 Use \`EditorLabelsPicker\` or compose \`EditorLabelsOption\` inside house \`CheckboxGroup\`. Admit one through 64 unique bounded options and at most ten tokens.
 Apply minimum counts in the host form. Replace only label-only content. Register \`EditorLabelNode\` in each reader and use \`${imports.editor}/labels-model\` for pure validation.

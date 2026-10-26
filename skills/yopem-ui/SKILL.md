@@ -1156,6 +1156,40 @@ This feature is separate from DOCX files. Full Word page layout and native
 capture acceptance are not supplied. See
 https://ui.yopem.com/components/editor-word-clipboard.
 
+## Optional print and document images
+
+```sh
+bunx --bun @yopem-ui/cli add editor-document-export
+npx @yopem-ui/cli add editor-document-export
+pnpm dlx @yopem-ui/cli add editor-document-export
+yarn dlx @yopem-ui/cli add editor-document-export
+```
+
+Compose `EditorDocumentPrintControl` inside `EditorRoot`. Print needs no capture
+SDK. Read-only roots can export validated snapshots. Export keeps selection and
+history unchanged. PNG needs an explicit capture callback.
+
+```sh
+bunx --bun @yopem-ui/cli add editor-document-export-image
+npx @yopem-ui/cli add editor-document-export-image
+pnpm dlx @yopem-ui/cli add editor-document-export-image
+yarn dlx @yopem-ui/cli add editor-document-export-image
+```
+
+Import `captureEditorDocumentImageWithHtmlToImage` from
+`@/components/editor/document-export-html-to-image`. Pass it as `capture` to
+`EditorDocumentImageExportControl` or `EditorDocumentExportControls`. Supply an
+abort-aware host resolver for remote images. Check exact origins and private
+asset permission. Credential, query, and fragment URLs reject. Keep the
+dependency license notice. Supply a CSP nonce when required. Print and PNG
+layouts allow 4096 by 16384 pixels and 16777216 pixels total. Image limits count
+every occurrence, including cached images. PNG checks validate container
+structure and checksums, not decoded pixels. Only one export can run. Cancelled
+work retains capacity until it settles. Native print dialogs and synchronous
+browser work cannot be stopped. Verify local fonts, SVG foreignObject, CSP,
+keyboard access, and owner-document cleanup. Browser and output checks remain
+deferred.
+
 ## Optional Word files
 
 Install the separate source item:
