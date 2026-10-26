@@ -47,6 +47,7 @@ import {
   validateEditorTocJSON,
 } from "@yopem-ui/editor/toc-model"
 import {
+  $createParagraphNode,
   $getEditor,
   $getRoot,
   $getSelection,
@@ -81,8 +82,10 @@ import {
   markdownTree,
   treeHTML,
   treeMarkdown,
+  typesetDocumentTree,
 } from "./convert"
 import { documentMediaSchema } from "./media"
+import { documentOptionalNodes } from "./optional-nodes"
 import { checkTableGrid, documentStateSchema } from "./state"
 
 export { DocumentError, documentLimits } from "./boundary"
@@ -193,7 +196,12 @@ const nodeSchema = z.strictObject({
     .min(EDITOR_LIST_START_MIN)
     .max(EDITOR_LIST_START_MAX)
     .optional(),
-  value: z.number().int().min(-2147483647).max(2147483647).optional(),
+  value: z
+    .number()
+    .int()
+    .min(EDITOR_LIST_START_MIN)
+    .max(EDITOR_LIST_START_MAX)
+    .optional(),
   checked: z.boolean().optional(),
   colSpan: z.number().int().min(1).max(50).optional(),
   rowSpan: z.number().int().min(1).max(50).optional(),
@@ -848,11 +856,13 @@ function documentColors(editor: LexicalEditor) {
 export function htmlDocument(editor: LexicalEditor, title = "Document") {
   checkText(title)
 
-  const tree = editor.read(() => {
-    validateJSON(JSON.stringify(editor.getEditorState().toJSON()))
+  const tree = typesetDocumentTree(
+    editor.read(() => {
+      validateJSON(JSON.stringify(editor.getEditorState().toJSON()))
 
-    return validateHTMLTree($exportTree())
-  })
+      return validateHTMLTree($exportTree())
+    }),
+  )
 
   const colors = documentColors(editor)
 
@@ -975,7 +985,7 @@ export function htmlDocument(editor: LexicalEditor, title = "Document") {
     .replaceAll(">", "&gt;")
     .replaceAll('"', "&quot;")
 
-  const output = `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>${safeTitle}</title></head><body style="font-family: Inter, sans-serif; font-size: 16px; line-height: 1.5; color: ${colors.foreground}; background-color: ${colors.background}">${treeHTML(tree)}</body></html>`
+  const output = `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>${safeTitle}</title></head><body style="font-family: Inter, sans-serif; font-size: 16px; line-height: 1.5; color: ${colors.foreground}; background-color: ${colors.background}">${treeHTML(tree, false)}</body></html>`
   checkText(output)
 
   return output
@@ -1031,9 +1041,11 @@ function validatePasteTarget(
 
     if (!node) continue
 
-    const klass = documentNodes.find(
-      (candidate) => candidate.getType() === node.type,
-    )
+    const klass =
+      documentNodes.find((candidate) => candidate.getType() === node.type) ??
+      documentOptionalNodes.find(
+        (candidate) => candidate.getType() === node.type,
+      )
 
     if (klass && !editor.hasNode(klass))
       throw new DocumentError([`Unsupported target node: ${node.type}.`])
@@ -1106,7 +1118,14 @@ export function $insertDocumentFragment(
 
   if (!nodes.length) throw new DocumentError(["Markdown fragment is empty."])
 
-  $insertGeneratedNodes(editor, nodes, selection)
+  if (first?.type === "paragraph") {
+    $insertGeneratedNodes(editor, nodes, selection)
+  } else {
+    const boundary = $createParagraphNode()
+    $insertGeneratedNodes(editor, [boundary, ...nodes], selection)
+
+    if (boundary.isAttached()) boundary.remove()
+  }
 }
 
 function $importDocumentJSON(

@@ -1763,9 +1763,72 @@ export function parseHTMLSyntax(source: string) {
     onerror(error) {
       errors.push(error.reason)
     },
+    verbose: true,
   })
 
   if (errors.length) throw new DocumentError(errors)
+
+  const pending = [...tree.children]
+
+  while (pending.length) {
+    const node = pending.pop()
+
+    if (node?.type !== "element") continue
+
+    const startPosition = node.data?.position?.properties?.start
+
+    if (
+      node.tagName === "ol" &&
+      (startPosition !== undefined || node.properties.start !== undefined)
+    ) {
+      const startOffset = startPosition?.start?.offset
+      const endOffset = startPosition?.end?.offset
+
+      const rawAttribute =
+        startOffset === undefined || endOffset === undefined
+          ? ""
+          : source.slice(startOffset, endOffset)
+
+      const match =
+        /^\s*start\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'`=<>]+))\s*$/i.exec(
+          rawAttribute,
+        )
+
+      const value = match?.[1] ?? match?.[2] ?? match?.[3]
+
+      const decoded = value?.replace(
+        /&#(?:([0-9]+)|[xX]([\da-f]+));/gi,
+        (
+          _match,
+          decimal: string | undefined,
+          hexadecimal: string | undefined,
+        ) => {
+          const codePoint = Number.parseInt(
+            decimal ?? hexadecimal ?? "",
+            decimal ? 10 : 16,
+          )
+
+          return Number.isInteger(codePoint) && codePoint <= 0x10ffff
+            ? String.fromCodePoint(codePoint)
+            : "\uFFFD"
+        },
+      )
+
+      const parsedStart =
+        decoded === undefined ? undefined : parseEditorListStartHTML(decoded)
+
+      if (parsedStart === undefined || parsedStart !== node.properties.start)
+        throw new DocumentError(["Invalid list start."])
+    }
+
+    if (node.data) {
+      Reflect.deleteProperty(node.data, "position")
+
+      if (Object.keys(node.data).length === 0) delete node.data
+    }
+
+    pending.push(...node.children)
+  }
 
   checkTree(tree)
 

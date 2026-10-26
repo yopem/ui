@@ -171,11 +171,11 @@ function optionalDocument() {
           indent: 0,
           children: [paragraph(text("Duplicate definition"))],
         },
-        {
+        paragraph({
           type: "editor-footnote-reference",
           version: 1,
           identifier: "unresolved",
-        },
+        }),
         {
           type: "list",
           version: 1,
@@ -191,11 +191,10 @@ function optionalDocument() {
               type: "listitem",
               version: 1,
               value: 3,
-              checked: false,
               direction: null,
-              format: 0,
+              format: "",
               indent: 0,
-              children: [paragraph(text("List item"))],
+              children: [text("List item")],
             },
           ],
         },
@@ -325,6 +324,7 @@ test("unregistered optional nodes and readonly imports preserve current content"
 test("optional-node streaming rejects stale concurrent edits and incomplete streams", async () => {
   const instance = editor()
   importDocument(instance, "Original", "markdown")
+  const original = instance.getEditorState()
   let signalProgress: (() => void) | undefined
   let releaseStream: (() => void) | undefined
 
@@ -349,10 +349,13 @@ test("optional-node streaming rejects stale concurrent edits and incomplete stre
   })
 
   await firstChunk
+  expect(instance.getEditorState()).toBe(original)
   importDocument(instance, "Concurrent edit", "markdown")
+  const concurrent = instance.getEditorState()
   releaseStream?.()
   const result = await pending.catch((error: Error) => error)
 
   expect(result).toBeInstanceOf(DocumentError)
-  expect(exportDocument(instance, "markdown")).toContain("Original")
+  expect(instance.getEditorState()).toBe(concurrent)
+  expect(exportDocument(instance, "markdown")).toContain("Concurrent edit")
 })

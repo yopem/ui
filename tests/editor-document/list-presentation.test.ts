@@ -1,4 +1,5 @@
 import { createDocumentEditor } from "@editor/document/convert"
+import { $isListItemNode, $isListNode } from "@lexical/list"
 import {
   DocumentError,
   exportDocument,
@@ -8,6 +9,7 @@ import {
 } from "@yopem-ui/editor/document"
 import { DocumentStatic } from "@yopem-ui/editor/document/static"
 import { expect, test } from "bun:test"
+import { $getRoot } from "lexical"
 import { createElement } from "react"
 import { renderToStaticMarkup } from "react-dom/server"
 
@@ -133,7 +135,30 @@ test.each([-2_147_483_648, -2, 0, 7])(
 )
 
 test.each([
+  { start: "&#50;", expected: 2 },
+  { start: "&#45;2", expected: -2 },
+])(
+  "HTML ordered start decodes numeric entities: $start",
+  ({ start, expected }) => {
+    const instance = editor()
+
+    importDocument(instance, `<ol start="${start}"><li>Item</li></ol>`, "html")
+    expect(exportDocument(instance, "json")).toContain(`"start":${expected}`)
+  },
+)
+
+test("maximum 50 by 50 HTML table stays within document structure bounds", () => {
+  const row = `<tr>${"<td>Cell</td>".repeat(50)}</tr>`
+
+  expect(() =>
+    parseDocument(`<table><tbody>${row.repeat(50)}</tbody></table>`, "html"),
+  ).not.toThrow()
+})
+
+test.each([
   '<ol start="1.5"><li>Item</li></ol>',
+  '<ol start="+2"><li>Item</li></ol>',
+  '<ol start="0x10"><li>Item</li></ol>',
   '<ol start="2147483648"><li>Item</li></ol>',
   '<ol start="-2147483649"><li>Item</li></ol>',
   '<ol start="1e3"><li>Item</li></ol>',
@@ -152,8 +177,31 @@ test("ordinary Markdown lists and native checklists stay Markdown", () => {
 
   expect(markdown).not.toContain("<ol")
   expect(markdown).not.toContain("<ul")
-  expect(markdown).toContain("- [x] Done")
+  expect(markdown).toContain("1. Ordered")
+  expect(markdown).toContain("[x] Done")
+  expect(markdown).toContain("[ ] Next")
   importDocument(restored, markdown, "markdown")
+
+  const checklistItems = restored.read(() =>
+    $getRoot()
+      .getChildren()
+      .flatMap((node) =>
+        $isListNode(node) && node.getListType() === "check"
+          ? node
+              .getChildren()
+              .filter($isListItemNode)
+              .map((item) => ({
+                checked: item.getChecked(),
+                text: item.getTextContent(),
+              }))
+          : [],
+      ),
+  )
+
+  expect(checklistItems).toEqual([
+    { checked: true, text: "Done" },
+    { checked: false, text: "Next" },
+  ])
   expect(restored.getEditorState().toJSON()).toEqual(
     instance.getEditorState().toJSON(),
   )

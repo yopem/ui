@@ -236,6 +236,10 @@ export class DocumentTocNode extends DecoratorNode<null> {
     return { ...super.exportJSON(), type: EDITOR_TOC_TYPE, version: 1 }
   }
 
+  isInline() {
+    return false
+  }
+
   isKeyboardSelectable() {
     return true
   }
@@ -528,6 +532,10 @@ export class DocumentDrawingNode extends DecoratorNode<null> {
     return `Drawing with ${this.getLatest().__elements.length} elements`
   }
 
+  isInline() {
+    return false
+  }
+
   createDOM(_config: EditorConfig, editor: LexicalEditor) {
     const element = editor
       .getRootElement()
@@ -572,6 +580,10 @@ export class DocumentEditableCardNode extends DecoratorNode<null> {
 
   getTextContent() {
     return "Editable card"
+  }
+
+  isInline() {
+    return false
   }
 
   createDOM(_config: EditorConfig, editor: LexicalEditor) {

@@ -104,6 +104,10 @@ export class EditorTocNode extends DecoratorNode<ReactNode> {
     super(key)
   }
 
+  isInline() {
+    return false
+  }
+
   isKeyboardSelectable() {
     return true
   }

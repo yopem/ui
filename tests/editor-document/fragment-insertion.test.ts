@@ -1,4 +1,5 @@
-import { createHeadlessEditor } from "@lexical/headless"
+import { buildEditorFromExtensions } from "@lexical/extension"
+import { createHeadlessEditor, HeadlessExtension } from "@lexical/headless"
 import { MarkNode, $getMarkIDs } from "@lexical/mark"
 import {
   $insertDocumentFragment,
@@ -16,6 +17,7 @@ import {
   $createTextNode,
   $getRoot,
   $getState,
+  defineExtension,
   HISTORY_PUSH_TAG,
 } from "lexical"
 
@@ -131,13 +133,16 @@ test("oversized Markdown fragment rejects without mutation", () => {
 })
 
 test("Markdown insertion preserves trusted review anchors and root state", () => {
-  const editor = createHeadlessEditor({
-    namespace: "document-fragment-review-state",
-    nodes: [...documentNodes, MarkNode],
-    onError(error) {
-      throw error
-    },
-  })
+  const editor = buildEditorFromExtensions(
+    defineExtension({
+      name: "document-fragment-review-state",
+      nodes: [...documentNodes, MarkNode],
+      dependencies: [HeadlessExtension],
+      onError(error) {
+        throw error
+      },
+    }),
+  )
 
   const controller = createEditorReview()
   const cleanup = controller.register(editor)
@@ -183,4 +188,5 @@ test("Markdown insertion preserves trusted review anchors and root state", () =>
     expect($getRoot().getTextContent()).toContain("Added section")
   })
   cleanup()
+  editor.dispose()
 })

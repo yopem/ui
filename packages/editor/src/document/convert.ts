@@ -249,6 +249,26 @@ export function markdownTree(source: string): Root {
     })
     .runSync(tree)
 
+  function removeTaskDelimiter(node: RootContent) {
+    if (node.type !== "element") return
+
+    for (const [index, child] of node.children.entries()) {
+      const next = node.children[index + 1]
+
+      if (
+        child.type === "element" &&
+        child.tagName === "input" &&
+        child.properties.type === "checkbox" &&
+        next?.type === "text" &&
+        next.value.startsWith(" ")
+      )
+        next.value = next.value.slice(1)
+      removeTaskDelimiter(child)
+    }
+  }
+
+  for (const child of hast.children) removeTaskDelimiter(child)
+
   const parsed = parseHTMLSyntax(toHtml(hast, { allowDangerousHtml: true }))
 
   return validateHTMLTree(parsed, true)
@@ -360,7 +380,8 @@ function append(parent: ElementNode, children: LexicalNode[]) {
     } else if (
       ($isTableCellNode(parent) || parent.getType() === "root") &&
       !(child instanceof MediaNode) &&
-      (!$isElementNode(child) || child.isInline())
+      ((!$isElementNode(child) && !(child instanceof DecoratorNode)) ||
+        child.isInline())
     ) {
       const last = parent.getLastChild()
 
@@ -1248,7 +1269,7 @@ export function $exportTree(markdown = false): Root {
           ),
         ],
         {
-          ...editorTocHTMLAttributes(),
+          dataEditorToc: editorTocHTMLAttributes()["data-editor-toc"],
           ariaLabel: "Table of contents",
         },
       )
@@ -1289,7 +1310,8 @@ export function $exportTree(markdown = false): Root {
       editorEditableCardNodeSchema.parse(node.exportJSON())
 
       return element("figure", [{ type: "text", value: "Editable card" }], {
-        ...editorEditableCardHTMLAttributes(),
+        dataEditorEditableCard:
+          editorEditableCardHTMLAttributes()["data-editor-editable-card"],
         ariaLabel: "Editable card",
       })
     }
@@ -1743,7 +1765,7 @@ export function $exportTree(markdown = false): Root {
   }
 }
 
-export function treeHTML(tree: Root, typeset = true) {
+export function typesetDocumentTree(tree: Root): Root {
   function display(node: RootContent): ElementContent {
     if (node.type === "doctype")
       throw new DocumentError(["Unsupported document doctype."])
@@ -1760,9 +1782,11 @@ export function treeHTML(tree: Root, typeset = true) {
     }
   }
 
-  const html = toHtml(
-    typeset ? { ...tree, children: tree.children.map(display) } : tree,
-  )
+  return { ...tree, children: tree.children.map(display) }
+}
+
+export function treeHTML(tree: Root, typeset = true) {
+  const html = toHtml(typeset ? typesetDocumentTree(tree) : tree)
 
   if (html.includes("\r"))
     throw new DocumentError(["Carriage-return text requires JSON export."])
@@ -1965,7 +1989,12 @@ export function treeMarkdown(tree: Root) {
 
 function mathMarkdown(value: EditorMathValue) {
   try {
-    if (value.tex.includes("|") || value.tex.includes("\r")) return null
+    if (
+      value.tex.includes("|") ||
+      value.tex.includes("\r") ||
+      (value.kind === "inline" && value.tex.includes("\n"))
+    )
+      return null
     const fragment = editorMathToMarkdown(value)
     const tree = unified().use(remarkParse).use(remarkMath).parse(fragment)
     const children: MarkdownFeatureNode[] = tree.children

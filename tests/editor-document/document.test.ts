@@ -44,7 +44,7 @@ for (const format of ["json", "html", "markdown"] as const) {
     expect(() =>
       importDocument(target, exportDocument(source, format), format),
     ).toThrow(DocumentError)
-    expect(errors.length).toBeGreaterThan(0)
+    expect(errors).toEqual([])
     expect(target.getEditorState()).toBe(before)
   })
 }
@@ -167,8 +167,16 @@ describe("portable document boundary", () => {
       expect(instance.getEditorState().toJSON()).toEqual(before)
     },
   )
+  test("Markdown footnotes use their canonical optional nodes", () => {
+    const document = JSON.stringify(
+      parseDocument("Text[^a]\n\n[^a]: Footnote", "markdown"),
+    )
+
+    expect(document).toContain('"type":"editor-footnote-reference"')
+    expect(document).toContain('"type":"editor-footnote-definition"')
+  })
   test.each([
-    "Text[^a]\n\n[^a]: Footnote",
+    "<script>alert(1)</script>",
     "<Widget value={run()} />",
     "![image](https://example.com/a.png)",
   ])("reports unsupported Markdown, never evaluates: %s", (source) => {

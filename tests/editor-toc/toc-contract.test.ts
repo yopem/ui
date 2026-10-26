@@ -3,7 +3,10 @@ import {
   parseEditorTocNode,
   validateEditorTocJSON,
 } from "@editor/toc-model"
+import { EditorTocNode } from "@editor/toc-node"
+import { createHeadlessEditor } from "@lexical/headless"
 import { expect, test } from "bun:test"
+import { $applyNodeReplacement, $createParagraphNode, $getRoot } from "lexical"
 
 test("TOC target IDs remain bounded, valid, and unique per editor scope", () => {
   const first = createEditorTocHeadingId("editor-a", "12")
@@ -27,6 +30,31 @@ test("TOC nodes store no copied heading list", () => {
       headings: [{ id: "fake", title: "Not a document heading" }],
     }),
   ).toThrow()
+})
+
+test("native TOC insertion keeps the navigation node at the root", () => {
+  const editor = createHeadlessEditor({
+    namespace: "toc-root-contract",
+    nodes: [EditorTocNode],
+    onError(cause) {
+      throw cause
+    },
+  })
+
+  editor.update(
+    () => {
+      const root = $getRoot()
+      const paragraph = $createParagraphNode()
+      root.clear().append(paragraph)
+      const selection = paragraph.selectStart()
+      const toc = $applyNodeReplacement(new EditorTocNode())
+
+      expect(toc.isInline()).toBe(false)
+      selection.insertNodes([toc])
+      expect(toc.getParent()?.is(root)).toBe(true)
+    },
+    { discrete: true },
+  )
 })
 
 test("TOC document validation rejects malformed or nested feature nodes", () => {
