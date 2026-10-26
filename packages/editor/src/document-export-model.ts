@@ -448,9 +448,11 @@ function isValidPNG(
         return false
 
       hasHeader = true
-    } else if (type === "IHDR") {
-      return false
+      offset = nextOffset
+      continue
     }
+
+    if (type === "IHDR") return false
 
     if (type === "acTL" || type === "fcTL" || type === "fdAT") return false
 

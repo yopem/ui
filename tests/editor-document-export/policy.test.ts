@@ -15,8 +15,14 @@ import {
   waitForEditorDocumentExport,
   waitForEditorDocumentExportWithCleanup,
 } from "@editor/document-export-model"
+import { withDOM } from "@lexical/headless/dom"
 import { expect, test } from "bun:test"
-import { DOMParser, parseHTML } from "linkedom"
+
+const DOMParser = withDOM((window) => window.DOMParser)
+
+function parseHTML(source: string) {
+  return { document: new DOMParser().parseFromString(source, "text/html") }
+}
 
 function operation(signal = new AbortController().signal) {
   return {
@@ -521,7 +527,7 @@ test("validates encoded SVG payloads and rejects active or external content", ()
 test("validates PNG signature, MIME type, byte size, and declared dimensions", async () => {
   const payload = new Uint8Array(
     Buffer.from(
-      "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQIHWP4z8DwHwAFgAI/ScL+AAAAAElFTkSuQmCC",
+      "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGP4z8DwHwAFAAH/iZk9HQAAAABJRU5ErkJggg==",
       "base64",
     ),
   )
