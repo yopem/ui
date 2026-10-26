@@ -26,9 +26,10 @@ import {
   mergeRegister,
 } from "lexical"
 
-import type { MediaInput } from "./schema"
+import type { MediaEmbedPolicyInput, MediaInput } from "./schema"
 
 import { $createMediaNode, MediaNode, registerMediaRenderer } from "./model"
+import { createMediaEmbedPolicy } from "./schema"
 import { MediaView } from "./view"
 
 export function createMediaStore(editor: LexicalEditor) {
@@ -83,84 +84,114 @@ export function $insertMedia(value: MediaInput) {
   return true
 }
 
-export const MediaExtension = defineExtension({
-  name: "@yopem-ui/editor/media",
-  nodes: [MediaNode],
-  register(editor) {
-    const store = createMediaStore(editor)
+export type MediaExtensionOptions = Readonly<{
+  embedPolicy?: MediaEmbedPolicyInput
+}>
 
-    function select(event: Event) {
-      const target = event.target
+export function createMediaExtension(options: MediaExtensionOptions = {}) {
+  const embedPolicy = options.embedPolicy
+    ? createMediaEmbedPolicy(options.embedPolicy)
+    : undefined
 
-      if (!isHTMLElement(target)) return
-      const element = target.closest('[data-slot="editor-media"]')
+  return defineExtension({
+    name: "@yopem-ui/editor/media",
+    nodes: [MediaNode],
+    register(editor) {
+      const store = createMediaStore(editor)
 
-      if (!element) return
-      editor.update(() => {
-        const node = $getNearestNodeFromDOMNode(element)
+      function select(event: Event) {
+        const target = event.target
 
-        if (!(node instanceof MediaNode)) return
-        const selection = $createNodeSelection()
-        selection.add(node.getKey())
-        $setSelection(selection)
-      })
-    }
+        if (!isHTMLElement(target) || event.defaultPrevented) return
+        const element = target.closest('[data-slot="editor-media"]')
 
-    function remove(event: KeyboardEvent | null) {
-      if (!editor.isEditable()) return false
-      const selection = $getSelection()
+        const interactive = target.closest(
+          "button, input, textarea, select, a[href], video, audio, summary, iframe",
+        )
 
-      if (!$isNodeSelection(selection)) return false
+        if (
+          !element ||
+          target.closest('[data-slot="media-preview-trigger"]') ||
+          (event.type === "click" && interactive)
+        )
+          return
+        editor.update(() => {
+          const node = $getNearestNodeFromDOMNode(element)
 
-      const nodes = selection.getNodes()
+          if (!(node instanceof MediaNode)) return
+          const selection = $createNodeSelection()
+          selection.add(node.getKey())
+          $setSelection(selection)
+        })
+      }
 
-      if (!nodes.length || !nodes.every((node) => node instanceof MediaNode))
-        return false
-      event?.preventDefault()
-      $addUpdateTag(HISTORY_PUSH_TAG)
+      function remove(event: KeyboardEvent | null) {
+        if (!editor.isEditable()) return false
+        const selection = $getSelection()
 
-      for (const node of nodes) node.remove()
+        if (!$isNodeSelection(selection)) return false
 
-      return true
-    }
+        const nodes = selection.getNodes()
 
-    return mergeRegister(
-      store.register(),
-      registerMediaRenderer(editor, (node) => (
-        <MediaView editor={editor} nodeKey={node.getKey()} store={store} />
-      )),
-      editor.registerRootListener((root, previous) => {
-        previous?.removeEventListener("click", select)
-        previous?.removeEventListener("focusin", select)
-        root?.addEventListener("click", select)
-        root?.addEventListener("focusin", select)
-      }),
-      editor.registerCommand(
-        KEY_DOWN_COMMAND,
-        (event) => {
-          const target = event.target
+        if (!nodes.length || !nodes.every((node) => node instanceof MediaNode))
+          return false
+        event?.preventDefault()
+        $addUpdateTag(HISTORY_PUSH_TAG)
 
-          if (
-            isHTMLElement(target) &&
-            target.closest('[data-slot="editor-media"]') &&
-            target.closest(
-              "input, textarea, select, button, a[href], video, audio, summary, iframe",
+        for (const node of nodes) node.remove()
+
+        return true
+      }
+
+      return mergeRegister(
+        store.register(),
+        registerMediaRenderer(editor, (node) => (
+          <MediaView
+            editor={editor}
+            nodeKey={node.getKey()}
+            store={store}
+            embedPolicy={embedPolicy}
+          />
+        )),
+        editor.registerRootListener((root, previous) => {
+          previous?.removeEventListener("click", select)
+          previous?.removeEventListener("focusin", select)
+          root?.addEventListener("click", select)
+          root?.addEventListener("focusin", select)
+        }),
+        editor.registerCommand(
+          KEY_DOWN_COMMAND,
+          (event) => {
+            const target = event.target
+
+            if (
+              isHTMLElement(target) &&
+              target.closest('[data-slot="editor-media"]') &&
+              target.closest(
+                "input, textarea, select, button, a[href], video, audio, summary, iframe",
+              )
             )
-          )
-            return true
+              return true
 
-          return (
-            isDOMNode(target) && $isSelectionCapturedInDecoratorInput(target)
-          )
-        },
-        COMMAND_PRIORITY_HIGH,
-      ),
-      editor.registerCommand(KEY_DELETE_COMMAND, remove, COMMAND_PRIORITY_LOW),
-      editor.registerCommand(
-        KEY_BACKSPACE_COMMAND,
-        remove,
-        COMMAND_PRIORITY_LOW,
-      ),
-    )
-  },
-})
+            return (
+              isDOMNode(target) && $isSelectionCapturedInDecoratorInput(target)
+            )
+          },
+          COMMAND_PRIORITY_HIGH,
+        ),
+        editor.registerCommand(
+          KEY_DELETE_COMMAND,
+          remove,
+          COMMAND_PRIORITY_LOW,
+        ),
+        editor.registerCommand(
+          KEY_BACKSPACE_COMMAND,
+          remove,
+          COMMAND_PRIORITY_LOW,
+        ),
+      )
+    },
+  })
+}
+
+export const MediaExtension = createMediaExtension()

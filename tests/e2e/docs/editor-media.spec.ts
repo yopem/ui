@@ -184,6 +184,12 @@ test("@a11y media editing supports native resources and read-only mode", async (
     await dialog.getByRole("button", { name: "Insert", exact: true }).click()
   }
 
+  await fixture
+    .getByRole("button", {
+      name: "Load content from player.vimeo.com",
+      exact: true,
+    })
+    .click()
   await expect(fixture.locator("video[controls]")).toHaveCount(1)
   await expect(fixture.locator("audio[controls]")).toHaveCount(1)
   await expect(

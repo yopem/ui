@@ -22,7 +22,7 @@ import { createEditorSelectionBookmark } from "@yopem-ui/editor/selection-bookma
 import { $getSelection, $isRangeSelection, HISTORY_PUSH_TAG } from "lexical"
 import { useState, useSyncExternalStore } from "react"
 
-import type { MediaKind, MediaInput } from "./schema"
+import type { MediaEmbedType, MediaKind, MediaInput } from "./schema"
 import type { MediaUpload } from "./upload"
 
 import { $insertMedia } from "./extension"
@@ -35,9 +35,11 @@ const styles = stylex.create({
 
 export function MediaInsertControl({
   kind,
+  embedType,
   upload,
 }: {
   kind: MediaKind
+  embedType?: MediaEmbedType
   upload?: MediaUpload
 }) {
   const editor = useEditor()
@@ -89,6 +91,8 @@ export function MediaInsertControl({
 
   const sessionValid =
     sessionRevision !== null && sessionRevision === revision && hasBookmark
+
+  const label = embedType ?? kind
 
   function insert(value: MediaInput) {
     const media = parseMedia(value)
@@ -147,14 +151,14 @@ export function MediaInsertControl({
         disabled={!editable}
         onMouseDown={(event) => event.preventDefault()}
       >
-        Insert {kind}
+        Insert {label}
       </DialogTrigger>
       <DialogPopup
         ref={uploadRootRef}
         finalFocus={() => editor.getRootElement()}
       >
         <DialogHeader>
-          <DialogTitle>Insert {kind}</DialogTitle>
+          <DialogTitle>Insert {label}</DialogTitle>
           <DialogDescription>
             Use an HTTPS media URL without credentials.
           </DialogDescription>
@@ -168,7 +172,11 @@ export function MediaInsertControl({
               if (url === null || url instanceof File) return
 
               try {
-                insert({ kind, url })
+                insert(
+                  kind === "embed" && embedType
+                    ? { kind, url, embedType }
+                    : { kind, url },
+                )
                 setError(false)
               } catch {
                 setError(true)

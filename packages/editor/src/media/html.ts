@@ -22,7 +22,7 @@ export function serializeMediaHtml(value: MediaData) {
   else if (data.kind === "file")
     content = `<a href="${url}" rel="noopener noreferrer">${escapeHtml(data.name)}</a>`
   else if (data.kind === "embed")
-    content = `<iframe src="${url}" title="${label || "Embedded media"}" sandbox="allow-scripts allow-presentation" referrerpolicy="no-referrer" loading="lazy"></iframe>`
+    content = `<a href="${url}" rel="noopener noreferrer">${label || "Open embedded media"}</a>`
   else {
     const track = data.trackUrl
       ? `<track kind="captions" src="${escapeHtml(data.trackUrl)}" srclang="en" label="Captions">`

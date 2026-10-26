@@ -13,10 +13,16 @@ import { Toolbar, ToolbarButton } from "@registry/components/ui/toolbar"
 import { Wrap } from "@registry/components/ui/wrap"
 import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
+import { MediaEmbedContent } from "@yopem-ui/editor/media-embed"
+import {
+  MediaPreviewGallery,
+  MediaPreviewTrigger,
+} from "@yopem-ui/editor/media-preview"
 import {
   $createNodeSelection,
   $getNodeByKey,
   $getSelection,
+  $nodesOfType,
   $isNodeSelection,
   $setSelection,
   HISTORY_PUSH_TAG,
@@ -24,7 +30,7 @@ import {
 import { useRef, useState, useSyncExternalStore } from "react"
 
 import type { createMediaStore } from "./extension"
-import type { MediaData } from "./schema"
+import type { MediaData, MediaEmbedPolicy } from "./schema"
 
 import { MediaNode } from "./model"
 import { parseMedia } from "./schema"
@@ -46,7 +52,6 @@ const styles = stylex.create({
   selected: { outline: `2px solid ${tokens["--ring"]}` },
   media: { display: "block", maxInlineSize: "100%", blockSize: "auto" },
   file: { display: "flex", alignItems: "center", minBlockSize: 44 },
-  frame: { inlineSize: "100%", blockSize: "100%", borderWidth: 0 },
   start: { marginInlineEnd: "auto" },
   center: { marginInline: "auto" },
   end: { marginInlineStart: "auto" },
@@ -64,10 +69,12 @@ export function MediaView({
   editor,
   nodeKey,
   store,
+  embedPolicy,
 }: {
   editor: LexicalEditor
   nodeKey: NodeKey
   store: ReturnType<typeof createMediaStore>
+  embedPolicy?: MediaEmbedPolicy
 }) {
   const snapshot = useSyncExternalStore(
     store.subscribe,
@@ -79,12 +86,36 @@ export function MediaView({
     const node = $getNodeByKey(nodeKey)
     const selection = $getSelection()
 
-    return node instanceof MediaNode
-      ? {
-          media: node.getMedia(),
-          selected: $isNodeSelection(selection) && selection.has(nodeKey),
-        }
-      : null
+    if (!(node instanceof MediaNode)) return null
+
+    const mediaNodes = $nodesOfType(MediaNode)
+
+    const images = mediaNodes.flatMap((imageNode) => {
+      const image = imageNode.getMedia()
+
+      return image.kind === "image"
+        ? [
+            {
+              id: imageNode.getKey(),
+              src: image.url,
+              alt: image.alt,
+              caption: image.caption,
+            },
+          ]
+        : []
+    })
+
+    return {
+      media: node.getMedia(),
+      selected: $isNodeSelection(selection) && selection.has(nodeKey),
+      images,
+      imageRevision: JSON.stringify(
+        mediaNodes.map((mediaNode) => [
+          mediaNode.getKey(),
+          mediaNode.getMedia(),
+        ]),
+      ),
+    }
   })
 
   const [preview, setPreview] = useState<number | null>(null)
@@ -94,7 +125,7 @@ export function MediaView({
   )
 
   if (!data) return null
-  const { media, selected } = data
+  const { media, selected, images, imageRevision } = data
 
   function change(patch: Partial<MediaData>) {
     if (!editor.isEditable()) return
@@ -142,7 +173,15 @@ export function MediaView({
         selected && styles.selected,
       ]}
     >
-      <MediaContent media={media} width={preview ?? media.width} />
+      {media.kind === "image" ? (
+        <MediaPreviewGallery key={imageRevision} images={images}>
+          <MediaPreviewTrigger imageId={nodeKey}>
+            <MediaContent media={media} width={preview ?? media.width} />
+          </MediaPreviewTrigger>
+        </MediaPreviewGallery>
+      ) : (
+        <MediaContent media={media} embedPolicy={embedPolicy} />
+      )}
       {media.caption ? <Figcaption>{media.caption}</Figcaption> : null}
       {snapshot.editable ? (
         <Stack>
@@ -278,9 +317,11 @@ export function MediaView({
 export function MediaContent({
   media,
   width = media.width,
+  embedPolicy,
 }: {
   media: MediaData
   width?: number
+  embedPolicy?: MediaEmbedPolicy
 }) {
   const data = parseMedia({ ...media, width })
 
@@ -338,14 +379,7 @@ export function MediaContent({
       ) : null}
       {data.kind === "embed" ? (
         <AspectRatio>
-          <iframe
-            {...stylex.props(styles.frame)}
-            src={data.url}
-            title={data.alt || "Embedded media"}
-            sandbox="allow-scripts allow-presentation"
-            referrerPolicy="no-referrer"
-            loading="lazy"
-          />
+          <MediaEmbedContent media={data} policy={embedPolicy} />
         </AspectRatio>
       ) : null}
     </>

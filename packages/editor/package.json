@@ -109,7 +109,9 @@
     "./cursor-overlay/store": "./src/cursor-overlay-store.ts",
     "./drawing": "./src/drawing.ts",
     "./drawing/model": "./src/drawing-model.ts",
-    "./drawing/browser": "./src/drawing-browser.tsx"
+    "./drawing/browser": "./src/drawing-browser.tsx",
+    "./media-preview": "./src/media-preview.tsx",
+    "./media-embed": "./src/media-embed.tsx"
   },
   "scripts": {
     "typecheck": "tsc --noEmit"

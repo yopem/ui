@@ -36,8 +36,10 @@ test("semantic HTML escapes text and validates all URL attributes", () => {
     expect(html).not.toContain("<script>")
 
     if (kind === "embed") {
-      expect(html).toContain('sandbox="allow-scripts allow-presentation"')
-      expect(html).toContain('referrerpolicy="no-referrer"')
+      expect(html).toContain(
+        '<a href="https://player.vimeo.com/video/123456" rel="noopener noreferrer">',
+      )
+      expect(html).not.toContain("<iframe")
     }
 
     if (kind === "audio" || kind === "video") {
@@ -52,4 +54,35 @@ test("semantic HTML escapes text and validates all URL attributes", () => {
       url: "javascript:alert(1)",
     }),
   ).toThrow()
+})
+
+test("tweet and configured iframe HTML keep source metadata inert", () => {
+  for (const media of [
+    parseMedia({
+      kind: "embed",
+      embedType: "tweet",
+      url: "https://x.com/YopemUI/status/1234567890123456789",
+    }),
+    parseMedia({
+      kind: "embed",
+      embedType: "iframe",
+      url: "https://embed.example.com/player/42",
+    }),
+  ]) {
+    const html = serializeMediaHtml(media)
+    const attribute = /data-yopem-media="([^"]*)"/u.exec(html)?.[1]
+
+    if (!attribute) throw new Error("Missing canonical media metadata")
+
+    const decoded = attribute
+      .replaceAll("&quot;", '"')
+      .replaceAll("&#39;", "'")
+      .replaceAll("&lt;", "<")
+      .replaceAll("&gt;", ">")
+      .replaceAll("&amp;", "&")
+
+    expect(parseMedia(JSON.parse(decoded))).toEqual(media)
+    expect(html).not.toContain("<iframe")
+    expect(html).toContain('rel="noopener noreferrer"')
+  }
 })
