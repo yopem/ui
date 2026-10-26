@@ -10,6 +10,7 @@ import {
   $createTextNode,
   $getRoot,
   $getSelection,
+  $isNodeSelection,
   $isRangeSelection,
   UNDO_COMMAND,
   REDO_COMMAND,
@@ -119,7 +120,7 @@ test("duplicate and delete use native complete subtrees; final delete leaves par
   editor.dispose()
 })
 
-test("external mutation, readonly and disposal invalidate targets; readonly allows view selection", () => {
+test("external mutation, readonly and disposal invalidate targets; readonly allows view selection", async () => {
   const { controller, editor, keys } = setup()
   controller.select(keys[0])
   editor.update(
@@ -133,6 +134,16 @@ test("external mutation, readonly and disposal invalidate targets; readonly allo
   editor.setEditable(false)
   expect(controller.getSnapshot().selected).toEqual([])
   controller.select(keys[0])
+  expect(controller.getSnapshot().selected).toEqual([keys[0]])
+  await Promise.resolve()
+  editor.read(() => {
+    const selection = $getSelection()
+    expect($isNodeSelection(selection)).toBe(true)
+
+    if (!$isNodeSelection(selection))
+      throw new Error("Expected block selection")
+    expect(selection.has(keys[0])).toBe(true)
+  })
   expect(controller.getSnapshot().selected).toEqual([keys[0]])
   expect(controller.remove()).toBe(false)
   expect(controller.duplicate()).toBe(false)

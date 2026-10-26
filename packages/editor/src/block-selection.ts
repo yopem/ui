@@ -112,16 +112,17 @@ export function createEditorBlockSelection(
   }
 
   function clear() {
-    if (snapshot.mode && editor)
-      editor.update(
-        () => {
-          if (hasCurrentSelection()) {
-            $setSelection(null)
-            $addUpdateTag(SKIP_DOM_SELECTION_TAG)
-          }
-        },
-        { discrete: true },
-      )
+    const currentEditor = editor
+
+    const selection =
+      snapshot.mode && currentEditor
+        ? currentEditor
+            .getEditorState()
+            .read(() =>
+              hasCurrentSelection() ? $getSelection()?.clone() : null,
+            )
+        : null
+
     anchor = null
     dragState = null
     marqueeStart = null
@@ -132,6 +133,21 @@ export function createEditorBlockSelection(
       error: null,
       dropTarget: null,
     })
+
+    if (selection && currentEditor)
+      currentEditor.update(
+        () => {
+          if (
+            editor === currentEditor &&
+            !snapshot.mode &&
+            selection.is($getSelection())
+          ) {
+            $setSelection(null)
+            $addUpdateTag(SKIP_DOM_SELECTION_TAG)
+          }
+        },
+        { discrete: true },
+      )
   }
 
   function readBlocks() {
