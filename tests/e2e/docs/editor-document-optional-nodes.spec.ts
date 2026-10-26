@@ -16,6 +16,7 @@ test("optional document nodes fail closed when target nodes are not registered @
     exact: true,
   })
 
+  await expect(document).toHaveAttribute("contenteditable", "true")
   await htmlSource.fill("<p>Original content</p>")
   await page.getByRole("button", { name: "Import HTML", exact: true }).click()
   await expect(document).toHaveText("Original content")
@@ -57,6 +58,7 @@ test("readonly document preview blocks optional-node import", async ({
     exact: true,
   })
 
+  await expect(document).toHaveAttribute("contenteditable", "true")
   await htmlSource.fill("<p>Original content</p>")
   await page.getByRole("button", { name: "Import HTML", exact: true }).click()
   await expect(document).toHaveText("Original content")

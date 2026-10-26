@@ -106,7 +106,23 @@ test("link control stays disabled in read-only editor", async ({
   })
 
   await expect(editor).toHaveAttribute("contenteditable", "true")
-  const before = await editor.innerHTML()
+  await page.context().grantPermissions(["clipboard-read", "clipboard-write"])
+
+  async function copyNativeState() {
+    await page.evaluate(() =>
+      navigator.clipboard.writeText("Native document pending"),
+    )
+    await workspace
+      .getByRole("button", { name: "Copy native JSON", exact: true })
+      .click()
+    await expect
+      .poll(() => page.evaluate(() => navigator.clipboard.readText()))
+      .not.toBe("Native document pending")
+
+    return page.evaluate(() => navigator.clipboard.readText())
+  }
+
+  const before: unknown = JSON.parse(await copyNativeState())
 
   await workspace
     .getByRole("button", { name: "Make editor read-only", exact: true })
@@ -115,7 +131,12 @@ test("link control stays disabled in read-only editor", async ({
   await expect(
     workspace.getByRole("button", { name: "Link", exact: true }),
   ).toBeDisabled()
-  expect(await editor.innerHTML()).toBe(before)
+  const after: unknown = JSON.parse(await copyNativeState())
+  expect(after).toEqual(before)
+  await testInfo.attach("editor-link-control-read-only.json", {
+    body: JSON.stringify({ before, after }),
+    contentType: "application/json",
+  })
   await testInfo.attach("editor-link-control-read-only.html", {
     body: await editor.innerHTML(),
     contentType: "text/html",
