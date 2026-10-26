@@ -115,6 +115,7 @@ export const editorItem: SourceItem = {
     "root.tsx",
     "controls.tsx",
     "link-control.tsx",
+    "link-url.ts",
     "selection-bookmark.ts",
     "ai-client.ts",
     "ai-session.ts",

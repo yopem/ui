@@ -30,6 +30,7 @@ import {
 
 import { createChecklistAccessibilityExtension } from "./checklist-accessibility"
 import { registerEditorClipboardGuard } from "./clipboard-guard"
+import { isSafeLink } from "./link-url"
 import { editorStyles, editorTheme } from "./theme"
 
 export interface EditorProps extends Omit<StackProps, "children" | "onChange"> {
@@ -63,15 +64,7 @@ const formats: TextFormatType[] = [
   "capitalize",
 ]
 
-export function isSafeLink(url: string) {
-  try {
-    const parsed = new URL(url)
-
-    return ["https:", "http:", "mailto:", "tel:"].includes(parsed.protocol)
-  } catch {
-    return false
-  }
-}
+export { isSafeLink } from "./link-url"
 
 export function createEditorSetup({
   initialState,
