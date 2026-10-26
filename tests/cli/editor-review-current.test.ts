@@ -4,14 +4,7 @@ import { rewriteImports } from "@registry/source-files"
 import { resolveSourcePath } from "@registry/source-path"
 import { expect, test } from "bun:test"
 import { createHash } from "node:crypto"
-import {
-  mkdir,
-  mkdtemp,
-  readFile,
-  readdir,
-  symlink,
-  writeFile,
-} from "node:fs/promises"
+import { mkdir, mkdtemp, readFile, readdir, writeFile } from "node:fs/promises"
 import { tmpdir } from "node:os"
 import { join, resolve } from "node:path"
 
@@ -111,11 +104,15 @@ test("packed HTTP review add and update preserve external consumer closure", asy
 
     if (!archive) throw new Error("Missing packed CLI archive")
     await run(directory, "tar", "-xzf", join(directory, archive))
-    const cli = join(directory, "package/dist/cli.js")
-    await symlink(
-      join(root, "node_modules"),
-      join(directory, "package/node_modules"),
+    await run(
+      join(directory, "package"),
+      "npm",
+      "install",
+      "--ignore-scripts",
+      "--no-audit",
+      "--no-fund",
     )
+    const cli = join(directory, "package/dist/cli.js")
 
     for (const layout of ["default", "custom", "shared"]) {
       const workspace = join(directory, layout)
@@ -136,6 +133,7 @@ test("packed HTTP review add and update preserve external consumer closure", asy
         for (const specifier of [
           ...item.dependencies,
           ...item.devDependencies,
+          ...item.peerDependencies,
         ]) {
           const split = specifier.lastIndexOf("@")
           dependencies[specifier.slice(0, split)] = specifier.slice(split + 1)
@@ -162,7 +160,7 @@ test("packed HTTP review add and update preserve external consumer closure", asy
           paths: { components, ui: "src/controls", lib: "src/services" },
         }),
       )
-      await symlink(join(root, "node_modules"), join(project, "node_modules"))
+      await run(project, "bun", "install")
       const before = await readFile(join(project, "ui.json"), "utf8")
       await run(
         project,

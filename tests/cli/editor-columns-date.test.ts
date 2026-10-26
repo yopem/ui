@@ -63,7 +63,7 @@ for (const shared of [false, true])
             cwd: directory,
             registryUrl: `${server.url}r`,
             async run(args) {
-              const child = Bun.spawn(args, {
+              const child = Bun.spawn(["bun", ...args], {
                 cwd: directory,
                 stdout: "pipe",
                 stderr: "pipe",
@@ -75,7 +75,7 @@ for (const shared of [false, true])
                 new Response(child.stderr).text(),
               ])
 
-              logs.push(`${args.join(" ")}\n${stdout}${stderr}`)
+              logs.push(`bun ${args.join(" ")}\n${stdout}${stderr}`)
               expect(status, stderr).toBe(0)
             },
           })
