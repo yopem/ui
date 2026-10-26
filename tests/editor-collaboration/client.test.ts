@@ -300,7 +300,24 @@ describe("Lexical collaboration provider", function providerContracts() {
       .parse(parsed)
 
     expect(state.user).toBeUndefined()
-    expect(state.cursor?.anchor).toContain("client")
+    expect(state.cursor).not.toBeNull()
+
+    if (!state.cursor) throw new Error("relative cursor positions missing")
+
+    for (const serialized of [state.cursor.anchor, state.cursor.head]) {
+      const value: unknown = JSON.parse(serialized)
+      const position = Y.createRelativePositionFromJSON(value)
+
+      const absolute = Y.createAbsolutePositionFromRelativePosition(
+        position,
+        provider.doc,
+      )
+
+      expect(absolute?.type).toBe(text)
+      expect(absolute?.index).toBe(1)
+      expect(absolute?.assoc).toBe(relative.assoc)
+    }
+
     provider.destroy()
   })
 

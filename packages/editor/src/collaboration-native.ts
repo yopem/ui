@@ -13,6 +13,7 @@ import { z } from "zod"
 
 import {
   createValidatedAwarenessFacade,
+  waitForEditorCollaborationRequest,
   type EditorCollaborationConnectionStatus,
   type EditorCollaborationPeer,
   type EditorCollaborationSnapshot,
@@ -647,11 +648,24 @@ export class EditorNativeCollaborationProvider implements EditorCollaborationTra
   private async requestGrant(epoch: number, cycle: number) {
     const controller = new AbortController()
     this.grantController = controller
+    const deadline = Date.now() + this.connectTimeoutMs
     const timeout = setTimeout(() => controller.abort(), this.connectTimeoutMs)
 
     try {
-      const headers = new Headers(await this.options.headers(controller.signal))
+      const headers = new Headers(
+        await waitForEditorCollaborationRequest(
+          Promise.resolve(this.options.headers(controller.signal)),
+          controller.signal,
+        ),
+      )
+
       headers.set("Content-Type", "application/json")
+
+      if (Date.now() >= deadline) controller.abort()
+      controller.signal.throwIfAborted()
+
+      if (!this.isCurrent(epoch) || cycle !== this.authCycle)
+        throw new Error("native collaboration grant is stale")
 
       const response = await fetch(this.grantUrl, {
         method: "POST",

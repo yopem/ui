@@ -317,14 +317,14 @@ async function responseTicket(response: Response) {
   return ticketSchema.parse(JSON.parse(new TextDecoder().decode(bytes)))
 }
 
-function abortable<T>(promise: Promise<T>, signal: AbortSignal) {
+export function waitForEditorCollaborationRequest<T>(
+  promise: Promise<T>,
+  signal: AbortSignal,
+) {
   return new Promise<T>((resolve, reject) => {
-    const onAbort = () => reject(new Error("collaboration request aborted"))
-
-    if (signal.aborted) {
-      onAbort()
-
-      return
+    function onAbort() {
+      signal.removeEventListener("abort", onAbort)
+      reject(new Error("collaboration request aborted"))
     }
 
     signal.addEventListener("abort", onAbort, { once: true })
@@ -342,6 +342,8 @@ function abortable<T>(promise: Promise<T>, signal: AbortSignal) {
         )
       },
     )
+
+    if (signal.aborted) onAbort()
   })
 }
 
@@ -796,14 +798,13 @@ export class EditorCollaborationProvider implements Provider {
     const controller = new AbortController()
     this.ticketController = controller
 
-    const timer = setTimeout(
-      () => controller.abort(),
-      this.options.connectTimeoutMs ?? 15000,
-    )
+    const timeoutMs = this.options.connectTimeoutMs ?? 15000
+    const deadline = Date.now() + timeoutMs
+    const timer = setTimeout(() => controller.abort(), timeoutMs)
 
     try {
       const headers = new Headers(
-        await abortable(
+        await waitForEditorCollaborationRequest(
           Promise.resolve(this.options.headers?.(controller.signal)),
           controller.signal,
         ),
@@ -814,7 +815,10 @@ export class EditorCollaborationProvider implements Provider {
       const fetcher =
         this.options.fetcher?.bind(this.options) ?? globalThis.fetch
 
-      const response = await abortable(
+      if (Date.now() >= deadline) controller.abort()
+      controller.signal.throwIfAborted()
+
+      const response = await waitForEditorCollaborationRequest(
         fetcher(this.options.ticketUrl, {
           method: "POST",
           headers,
@@ -834,7 +838,7 @@ export class EditorCollaborationProvider implements Provider {
         throw new Error("collaboration ticket request failed")
       }
 
-      const ticket = await abortable(
+      const ticket = await waitForEditorCollaborationRequest(
         responseTicket(response),
         controller.signal,
       )
