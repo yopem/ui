@@ -75,6 +75,24 @@ async function expectDocumentError(promise: Promise<unknown>) {
     expect(result.reason).toBeInstanceOf(DocumentError)
 }
 
+test("DOCX relationships resolve from each owning package part", async () => {
+  const source = editor()
+  importDocument(source, "<p>Relationship content</p>", "html")
+
+  const bytes = replacePart(
+    exportDocx(source),
+    "word/_rels/document.xml.rels",
+    (xml) => xml.replace('Target="styles.xml"', 'Target="../word/styles.xml"'),
+  )
+
+  const parsed = await parseDocx(bytes)
+  const target = editor()
+  importDocument(target, JSON.stringify(parsed), "json")
+  expect(target.getEditorState().read(() => $getRoot().getTextContent())).toBe(
+    "Relationship content",
+  )
+})
+
 test("DOCX export writes OpenXML package parts and imports rich native content", async () => {
   const source = editor()
   importDocument(source, sample, "html")
@@ -251,9 +269,13 @@ test("unsupported native content cannot disappear during DOCX export", () => {
   const source = editor()
   importDocument(
     source,
-    '<ul><li><input type="checkbox" checked>Task</li></ul>',
+    '<ul><li><input type="checkbox" checked disabled>Task</li></ul>',
     "html",
   )
+  expect(source.getEditorState().toJSON().root.children[0]).toMatchObject({
+    type: "list",
+    listType: "check",
+  })
 
   expect(() => exportDocx(source)).toThrow(DocumentError)
 })

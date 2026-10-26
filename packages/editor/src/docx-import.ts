@@ -289,7 +289,7 @@ function parseRelationships(
       )
         fail("Unsafe or unsupported external DOCX relationship.")
     } else {
-      const resolved = resolvePart(source, target)
+      const resolved = resolvePart(relationshipSource(path), target)
 
       if (!files.has(resolved)) fail("DOCX relationship target is missing.")
       result.set(id, { id, type, kind, target: resolved, external })
@@ -371,9 +371,8 @@ function readRelationships(
   const parsed = new Map<string, Map<string, Relation>>()
   const externalCount = { value: 0 }
 
-  for (const path of xmlParts.keys()) {
+  for (const [path, source] of xmlParts) {
     if (!path.endsWith(".rels")) continue
-    const source = relationshipSource(path)
     parsed.set(path, parseRelationships(path, source, files, externalCount))
   }
 
