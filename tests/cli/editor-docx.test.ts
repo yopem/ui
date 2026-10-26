@@ -4,6 +4,7 @@ import { expect, test } from "bun:test"
 import { readFile } from "node:fs/promises"
 
 const files = [
+  "checksum.ts",
   "docx.ts",
   "docx-controls.tsx",
   "docx-export.ts",

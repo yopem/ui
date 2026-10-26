@@ -33,6 +33,7 @@ export const editorDocxItem: SourceItem = {
       "Install editor-docx separately. Import portable functions from docx and client controls from docx-controls. Compose focused controls inside EditorRoot. Read-only roots can export but cannot import. Imports validate archive, XML, semantic content, and target registration before replacement. Use cancellation signals for host lifecycle changes. Files have independent 1 MiB archive and decoded-data limits. Unsupported content rejects. Page layout, images, macros, headers, and footers are not preserved. Native decompression support is required for deflated archives. Runtime and Word fidelity checks remain pending.",
   },
   files: [
+    "checksum.ts",
     "docx.ts",
     "docx-controls.tsx",
     "docx-export.ts",

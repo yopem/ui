@@ -1,3 +1,4 @@
+import { crc32 } from "./checksum"
 import { DocumentError } from "./document/boundary"
 import { docxLimits } from "./docx-limits"
 
@@ -19,16 +20,6 @@ interface ZipDirectoryEntry {
   uncompressedSize: number
   localOffset: number
   endOffset: number
-}
-
-const crcTable = new Uint32Array(256)
-
-for (let index = 0; index < crcTable.length; index++) {
-  let value = index
-
-  for (let bit = 0; bit < 8; bit++)
-    value = value & 1 ? 0xedb88320 ^ (value >>> 1) : value >>> 1
-  crcTable[index] = value >>> 0
 }
 
 function fail(message: string): never {
@@ -64,15 +55,6 @@ function writeU16(view: DataView, offset: number, value: number) {
 
 function writeU32(view: DataView, offset: number, value: number) {
   view.setUint32(offset, value >>> 0, true)
-}
-
-function crc32(bytes: Uint8Array) {
-  let value = 0xffffffff
-
-  for (const byte of bytes)
-    value = (value >>> 8) ^ (crcTable[(value ^ byte) & 0xff] ?? 0)
-
-  return (value ^ 0xffffffff) >>> 0
 }
 
 function validateExtra(bytes: Uint8Array, offset: number, length: number) {
