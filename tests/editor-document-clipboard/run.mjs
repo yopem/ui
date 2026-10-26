@@ -110,7 +110,7 @@ try {
     if (status !== 0) console.error(output)
   }
 } finally {
-  server.stop(true)
+  await server.stop(true)
 }
 
 await writeFile(
