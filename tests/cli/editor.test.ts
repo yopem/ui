@@ -40,9 +40,40 @@ test("packed CLI installs complete editor source from generated registry", async
   const logs: string[] = []
   await mkdir(results, { recursive: true })
 
-  async function run(cwd: string, ...args: string[]) {
+  function run(cwd: string, ...args: string[]) {
+    return runCommand(cwd, args, process.env)
+  }
+
+  function runConsumer(
+    cwd: string,
+    sourceRoot: string,
+    importPrefix: string,
+    ...args: string[]
+  ) {
+    return runCommand(
+      cwd,
+      [
+        "bun",
+        "--preload",
+        resolve(import.meta.dirname, "editor-stylex-preload.ts"),
+        ...args,
+      ],
+      {
+        ...process.env,
+        YOPEM_EDITOR_STYLEX_SOURCE_ROOT: sourceRoot,
+        YOPEM_EDITOR_STYLEX_IMPORT_PREFIX: importPrefix,
+      },
+    )
+  }
+
+  async function runCommand(
+    cwd: string,
+    args: string[],
+    env: NodeJS.ProcessEnv,
+  ) {
     const child = Bun.spawn(args, {
       cwd,
+      env,
       stdout: "pipe",
       stderr: "pipe",
       timeout: 120_000,
@@ -317,8 +348,21 @@ for (const html of [
 ]) assert.throws(() => renderToStaticMarkup(<DocumentStatic html={html} />), { name: "DocumentError" })
 `,
       )
-      await run(project, "bun", "src/portable.ts")
-      await run(project, "bun", "src/static.tsx")
+
+      const sourceRoot = join(project, "src")
+
+      await runConsumer(project, sourceRoot, prefix, "src/portable.ts")
+
+      const staticOutput = await runConsumer(
+        project,
+        sourceRoot,
+        prefix,
+        "src/static.tsx",
+      )
+
+      expect(staticOutput).toContain(
+        `StyleX fixture compiler transformed ${join(sourceRoot, "styles/tokens.stylex.ts")}`,
+      )
 
       if (layout === "shared") {
         const consumer = join(workspace, "packages/consumer")
@@ -345,8 +389,18 @@ for (const html of [
           join(consumer, "static.tsx"),
           await readFile(join(project, "src/static.tsx"), "utf8"),
         )
-        await run(consumer, "bun", "portable.ts")
-        await run(consumer, "bun", "static.tsx")
+        await runConsumer(consumer, sourceRoot, prefix, "portable.ts")
+
+        const staticOutput = await runConsumer(
+          consumer,
+          sourceRoot,
+          prefix,
+          "static.tsx",
+        )
+
+        expect(staticOutput).toContain(
+          `StyleX fixture compiler transformed ${join(sourceRoot, "styles/tokens.stylex.ts")}`,
+        )
       }
 
       await run(project, "bunx", "tsc", "--noEmit")
