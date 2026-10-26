@@ -10,6 +10,7 @@ test("optional document nodes fail closed when target nodes are not registered @
     name: "HTML source",
     exact: true,
   })
+
   const document = page.getByRole("textbox", {
     name: "Document editor",
     exact: true,
@@ -29,6 +30,7 @@ test("optional document nodes fail closed when target nodes are not registered @
   const results = await new AxeBuilder({ page })
     .include('[aria-label="Document I/O example"]')
     .analyze()
+
   await info.attach("editor-document-optional-nodes-axe.json", {
     body: JSON.stringify(results),
     contentType: "application/json",
@@ -40,13 +42,16 @@ test("optional document nodes fail closed when target nodes are not registered @
   })
 })
 
-test("readonly document preview blocks optional-node import", async ({ page }) => {
+test("readonly document preview blocks optional-node import", async ({
+  page,
+}) => {
   await page.goto("/docs/editor")
 
   const htmlSource = page.getByRole("textbox", {
     name: "HTML source",
     exact: true,
   })
+
   const document = page.getByRole("textbox", {
     name: "Document editor",
     exact: true,
@@ -56,7 +61,9 @@ test("readonly document preview blocks optional-node import", async ({ page }) =
   await page.getByRole("button", { name: "Import HTML", exact: true }).click()
   await expect(document).toHaveText("Original content")
 
-  await page.getByRole("button", { name: "Toggle readonly", exact: true }).click()
+  await page
+    .getByRole("button", { name: "Toggle readonly", exact: true })
+    .click()
   await expect(
     page.getByRole("button", { name: "Import HTML", exact: true }),
   ).toBeDisabled()
