@@ -164,7 +164,11 @@ test("exact pinned Word-shaped HTML pastes and invalid metadata fails closed", a
   )
 
   const clipboard = await page.evaluate(async () => {
-    const item = (await navigator.clipboard.read())[0]
+    const clipboard: {
+      read(options?: { unsanitized?: string[] }): ReturnType<Clipboard["read"]>
+    } = navigator.clipboard
+
+    const item = (await clipboard.read({ unsanitized: ["text/html"] }))[0]
 
     if (!item) return null
     const html = await (await item.getType("text/html")).text()
@@ -239,15 +243,15 @@ test("exact pinned Word-shaped HTML pastes and invalid metadata fails closed", a
       return {
         type: list.tagName.toLowerCase(),
         marker: list.getAttribute("data-editor-list-marker"),
-        start: list.getAttribute("start"),
+        start: list instanceof HTMLOListElement ? list.start : null,
         depth,
       }
     }),
   )
 
   expect(listStructure).toEqual([
-    { type: "ol", marker: "decimal", start: "1", depth: 0 },
-    { type: "ol", marker: "lower-alpha", start: "1", depth: 1 },
+    { type: "ol", marker: "decimal", start: 1, depth: 0 },
+    { type: "ol", marker: "lower-alpha", start: 1, depth: 1 },
     { type: "ul", marker: "disc", start: null, depth: 0 },
     { type: "ul", marker: "disc", start: null, depth: 1 },
     { type: "ul", marker: "disc", start: null, depth: 2 },
