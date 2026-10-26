@@ -9,6 +9,7 @@ export const editorDocumentItem: SourceItem = {
     editorDependency("@lexical/extension"),
     editorDependency("@lexical/headless"),
     editorDependency("@types/hast"),
+    editorDependency("@types/mdast"),
     editorDependency("katex"),
     editorDependency("hast-util-from-html"),
     editorDependency("hast-util-to-html"),
@@ -40,7 +41,7 @@ export const editorDocumentItem: SourceItem = {
       "DocumentStatic",
     ],
     usage:
-      "Import portable helpers from @/components/editor/document. Import DocumentStatic from @/components/editor/document/static. Register EditorDocumentClipboardExtension at root creation. Keep registerDocumentPaste cleanup in the host lifecycle. Call $insertDocumentFragment inside editor.update to insert validated Markdown at the current selection. This helper does not replace the document. Register EditorBlocksExtension for live callouts and toggles. Register math, mention, and media nodes before importing their representations. Use EditorListPresentationExtension for live custom list markers. Preserve yopemListMarker and native ordered starts in document readers. Use MediaExtension for live media rendering. Media Markdown uses canonical HTML. Reject media URL queries and fragments. Mention identities do not grant access. See /docs/editor.",
+      "Import portable helpers from @/components/editor/document. Import DocumentStatic from @/components/editor/document/static. Register EditorDocumentClipboardExtension at root creation. Keep registerDocumentPaste cleanup in the host lifecycle. Call $insertDocumentFragment inside editor.update to insert validated Markdown at the current selection. This helper does not replace the document. Register EditorBlocksExtension for live callouts and toggles. Register math, mention, and media nodes before importing their representations. Use EditorListPresentationExtension for live custom list markers. Preserve yopemListMarker and native ordered starts in document readers. Register each optional node in every live document reader before import. Document conversion supports validated footnotes, contents, columns, dates, labels, drawings, editable cards, and diagram metadata. Optional nodes use canonical HTML fallback in Markdown. Drawings export scene metadata, not rendered SVG. Editable cards export their saved node, not transient form values. Use MediaExtension for live media rendering. Media Markdown uses canonical HTML. Reject media URL queries and fragments. Mention identities do not grant access. Review metadata remains unsupported. See /docs/editor.",
   },
   files: [
     ...[
@@ -48,6 +49,7 @@ export const editorDocumentItem: SourceItem = {
       "boundary.ts",
       "convert.ts",
       "media.ts",
+      "optional-nodes.ts",
       "state.ts",
       "static.tsx",
     ].map((file) => ({
@@ -68,6 +70,15 @@ export const editorDocumentItem: SourceItem = {
       "mention-node.ts",
       "list-presentation-model.ts",
       "list-presentation-extension.ts",
+      "date-model.ts",
+      "editable-card-model.ts",
+      "footnote-model.ts",
+      "labels-model.ts",
+      "toc-model.ts",
+      "columns-model.ts",
+      "drawing-model.ts",
+      "diagram-model.ts",
+      "dom.ts",
     ].map((file) => ({
       path: `components/editor/${file}`,
       target: `@/components/editor/${file}`,

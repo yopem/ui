@@ -4,6 +4,19 @@ import {
   isEditorLineHeight,
   isEditorStyleLength,
 } from "@yopem-ui/editor/block-presentation"
+import { editorColumnsFromHTMLAttributes } from "@yopem-ui/editor/columns-model"
+import { editorDateFromHTMLAttributes } from "@yopem-ui/editor/date-model"
+import {
+  parseEditorDiagramMetadata,
+  validateEditorDiagramSource,
+} from "@yopem-ui/editor/diagram/model"
+import { editorDrawingFromHTMLAttributes } from "@yopem-ui/editor/drawing/model"
+import { editorEditableCardFromHTMLAttributes } from "@yopem-ui/editor/editable-card/model"
+import {
+  parseEditorFootnoteId,
+  validateEditorFootnotesHTML,
+} from "@yopem-ui/editor/footnote-model"
+import { editorLabelSchema } from "@yopem-ui/editor/labels/model"
 import {
   editorListMarkerSchema,
   isEditorListMarkerForType,
@@ -21,6 +34,10 @@ import {
   parseTableBorderHTML,
   parseTableRowHeightHTML,
 } from "@yopem-ui/editor/table-presentation-schema"
+import {
+  createEditorTocHeadingId,
+  validateEditorTocHTML,
+} from "@yopem-ui/editor/toc-model"
 import { fromHtml } from "hast-util-from-html"
 import { toHtml } from "hast-util-to-html"
 import { z } from "zod"
@@ -238,6 +255,10 @@ const tags = new Set([
   "td",
   "th",
   "input",
+  "figure",
+  "nav",
+  "time",
+  "yopem-editor-label",
 ])
 
 const inlineMetadataTags = new Set([
@@ -317,6 +338,26 @@ const attributes = new Set([
   "dataLexicalFrozenRow",
   "dataEditorFrozenColumns",
   "dataEditorFrozenRows",
+  "dataEditorFootnoteReference",
+  "dataEditorFootnoteDefinition",
+  "dataEditorFootnoteBacklink",
+  "dataEditorFootnoteReferenceLink",
+  "dataEditorToc",
+  "dataEditorColumns",
+  "dataEditorColumnsLayout",
+  "dataEditorColumn",
+  "dataEditorDate",
+  "dateTime",
+  "dataEditorDrawing",
+  "dataEditorDrawingScene",
+  "dataEditorEditableCard",
+  "dataEditorDiagram",
+  "dataEditorDiagramKind",
+  "dataEditorDiagramView",
+  "dataEditorSlot",
+  "dataEditorLabel",
+  "id",
+  "role",
 ])
 
 export function textOf(node: RootContent): string {
@@ -346,20 +387,72 @@ export function documentMathChildren(value: EditorMathValue) {
 export function canonicalDocumentNode(node: Element) {
   const properties = node.properties
 
-  const math =
+  const flags = [
     properties.dataEditorMath !== undefined ||
-    properties.dataEditorTex !== undefined
-
-  const mention =
+      properties.dataEditorTex !== undefined,
     properties.dataMentionId !== undefined ||
-    properties.dataMentionLabel !== undefined
+      properties.dataMentionLabel !== undefined,
+    properties.dataYopemMedia !== undefined,
+    properties.dataEditorFootnoteReference !== undefined,
+    properties.dataEditorFootnoteDefinition !== undefined,
+    properties.dataEditorToc !== undefined,
+    properties.dataEditorColumns !== undefined ||
+      properties.dataEditorColumnsLayout !== undefined,
+    properties.dataEditorColumn !== undefined,
+    properties.dataEditorDate !== undefined,
+    properties.dataEditorDrawing !== undefined ||
+      properties.dataEditorDrawingScene !== undefined,
+    properties.dataEditorEditableCard !== undefined,
+    properties.dataEditorDiagram !== undefined ||
+      properties.dataEditorDiagramKind !== undefined ||
+      properties.dataEditorDiagramView !== undefined,
+    properties.dataEditorSlot !== undefined,
+    properties.dataEditorLabel !== undefined,
+  ]
+
+  if (!flags.some(Boolean)) return null
+
+  if (flags.filter(Boolean).length > 1)
+    throw new DocumentError(["Conflicting canonical metadata."])
+
+  function allowed(keys: readonly string[]) {
+    const allowedKeys = new Set(keys)
+
+    if (Object.keys(properties).some((key) => !allowedKeys.has(key)))
+      throw new DocumentError(["Unsupported canonical node metadata."])
+  }
+
+  function withoutSlots() {
+    return {
+      ...node,
+      children: node.children.filter(
+        (child) =>
+          child.type !== "element" ||
+          child.properties.dataEditorSlot === undefined,
+      ),
+    }
+  }
+
+  function state() {
+    if (properties.dataEditorState === undefined) return
+
+    try {
+      const value: unknown = JSON.parse(String(properties.dataEditorState))
+      checkTree(value)
+      const parsed = documentStateSchema.parse(value)
+
+      if (
+        parsed.yopemReview !== undefined ||
+        parsed.yopemSuggestion !== undefined ||
+        parsed.yopemReviewStructural !== undefined
+      )
+        throw new Error("Untrusted review state")
+    } catch {
+      throw new DocumentError(["Invalid canonical node state."])
+    }
+  }
 
   const media = properties.dataYopemMedia !== undefined
-
-  if (!math && !mention && !media) return null
-
-  if (Number(math) + Number(mention) + Number(media) > 1)
-    throw new DocumentError(["Conflicting canonical metadata."])
 
   if (media) {
     const value = documentMediaSchema.parse(
@@ -368,13 +461,22 @@ export function canonicalDocumentNode(node: Element) {
 
     const expected = parseHTMLSyntax(serializeMediaHtml(value))
 
-    if (node.tagName !== "figure" || toHtml(node) !== toHtml(expected))
+    if (
+      node.tagName !== "figure" ||
+      toHtml(withoutSlots()) !== toHtml(expected)
+    )
       throw new DocumentError(["Invalid canonical media HTML."])
 
     return { type: "media" as const, value }
   }
 
+  const math =
+    properties.dataEditorMath !== undefined ||
+    properties.dataEditorTex !== undefined
+
   if (math) {
+    const content = withoutSlots()
+
     const value = editorMathFromHTMLAttributes({
       "data-editor-math": z.string().parse(properties.dataEditorMath),
       "data-editor-tex": z.string().parse(properties.dataEditorTex),
@@ -382,13 +484,14 @@ export function canonicalDocumentNode(node: Element) {
 
     if (
       node.tagName !== (value.kind === "inline" ? "span" : "div") ||
+      content.children.length !== node.children.length ||
       Object.keys(properties).some(
         (key) => !["dataEditorMath", "dataEditorTex"].includes(key),
       ) ||
       !(
-        (node.children.every((child) => child.type === "text") &&
-          textOf(node) === value.tex) ||
-        toHtml({ type: "root", children: node.children }) ===
+        (content.children.every((child) => child.type === "text") &&
+          textOf(content) === value.tex) ||
+        toHtml({ type: "root", children: content.children }) ===
           toHtml({ type: "root", children: documentMathChildren(value) })
       )
     )
@@ -397,27 +500,432 @@ export function canonicalDocumentNode(node: Element) {
     return { type: "math" as const, value }
   }
 
-  const identity = decodeMention({
-    id: properties.dataMentionId,
-    label: properties.dataMentionLabel,
-  })
+  if (
+    properties.dataMentionId !== undefined ||
+    properties.dataMentionLabel !== undefined
+  ) {
+    const identity = decodeMention({
+      id: properties.dataMentionId,
+      label: properties.dataMentionLabel,
+    })
+
+    if (
+      !identity ||
+      node.tagName !== "span" ||
+      Object.keys(properties).some(
+        (key) =>
+          !["dataMentionId", "dataMentionLabel", "dir", "style"].includes(key),
+      ) ||
+      (properties.dir !== undefined && properties.dir !== "auto") ||
+      node.children.some((child) => child.type !== "text") ||
+      textOf(node) !== mentionPlainText(identity)
+    )
+      throw new DocumentError(["Invalid canonical mention HTML."])
+
+    if (properties.style) safeDocumentStyle(String(properties.style))
+
+    return { type: "mention" as const, value: identity }
+  }
+
+  if (properties.dataEditorFootnoteReference !== undefined) {
+    const identifier = parseEditorFootnoteId(
+      String(properties.dataEditorFootnoteReference),
+    )
+
+    allowed(["dataEditorFootnoteReference", "id", "role"])
+
+    if (
+      node.tagName !== "sup" ||
+      (properties.role !== undefined && properties.role !== "doc-noteref") ||
+      (properties.id !== undefined &&
+        !/^[A-Za-z0-9_.:-]{1,128}$/.test(String(properties.id))) ||
+      node.children.filter(
+        (child) => child.type === "element" && child.tagName === "a",
+      ).length > 1 ||
+      node.children.some(
+        (child) =>
+          child.type !== "text" &&
+          !(
+            child.type === "element" &&
+            child.tagName === "a" &&
+            child.properties.dataEditorFootnoteReferenceLink === "" &&
+            Object.keys(child.properties).every((key) =>
+              ["dataEditorFootnoteReferenceLink", "href", "ariaLabel"].includes(
+                key,
+              ),
+            ) &&
+            child.children.every((value) => value.type === "text")
+          ),
+      )
+    )
+      throw new DocumentError(["Invalid canonical footnote reference HTML."])
+
+    if (properties.style) safeDocumentStyle(String(properties.style))
+
+    return { type: "footnote-reference" as const, value: identifier }
+  }
+
+  if (properties.dataEditorFootnoteDefinition !== undefined) {
+    const identifier = parseEditorFootnoteId(
+      String(properties.dataEditorFootnoteDefinition),
+    )
+
+    allowed([
+      "dataEditorFootnoteDefinition",
+      "dataEditorState",
+      "dataEditorTextFormat",
+      "dataEditorTextStyle",
+      "dataEditorIndent",
+      "dataEditorBlockPresentation",
+      "dir",
+      "id",
+      "role",
+      "style",
+    ])
+    state()
+
+    if (
+      node.tagName !== "div" ||
+      (properties.role !== undefined && properties.role !== "doc-endnote") ||
+      (properties.id !== undefined &&
+        !/^[A-Za-z0-9_.:-]{1,128}$/.test(String(properties.id)))
+    )
+      throw new DocumentError(["Invalid canonical footnote definition HTML."])
+
+    if (properties.style) safeDocumentStyle(String(properties.style))
+
+    validateEditorFootnotesHTML(toHtml({ type: "root", children: [node] }))
+
+    return { type: "footnote-definition" as const, value: identifier }
+  }
+
+  if (properties.dataEditorToc !== undefined) {
+    allowed(["dataEditorToc", "ariaLabel"])
+
+    if (
+      node.tagName !== "nav" ||
+      properties.dataEditorToc !== "" ||
+      (properties.ariaLabel !== undefined &&
+        properties.ariaLabel !== "Table of contents")
+    )
+      throw new DocumentError(["Invalid canonical table of contents HTML."])
+
+    const content = withoutSlots()
+
+    if (content.children.length !== node.children.length)
+      throw new DocumentError(["Table of contents nodes cannot own slots."])
+
+    validateEditorTocHTML(toHtml({ type: "root", children: [content] }))
+
+    return { type: "toc" as const }
+  }
 
   if (
-    !identity ||
-    node.tagName !== "span" ||
-    Object.keys(properties).some(
-      (key) =>
-        !["dataMentionId", "dataMentionLabel", "dir", "style"].includes(key),
-    ) ||
-    (properties.dir !== undefined && properties.dir !== "auto") ||
-    node.children.some((child) => child.type !== "text") ||
-    textOf(node) !== mentionPlainText(identity)
-  )
-    throw new DocumentError(["Invalid canonical mention HTML."])
+    properties.dataEditorColumns !== undefined ||
+    properties.dataEditorColumnsLayout !== undefined
+  ) {
+    const layout = editorColumnsFromHTMLAttributes({
+      "data-editor-columns": z.string().parse(properties.dataEditorColumns),
+      "data-editor-columns-layout": z
+        .string()
+        .parse(properties.dataEditorColumnsLayout),
+    })
 
-  if (properties.style) safeDocumentStyle(String(properties.style))
+    allowed([
+      "dataEditorColumns",
+      "dataEditorColumnsLayout",
+      "dataEditorState",
+      "dataEditorTextFormat",
+      "dataEditorTextStyle",
+      "dataEditorIndent",
+      "dataEditorBlockPresentation",
+      "dir",
+      "style",
+    ])
+    state()
 
-  return { type: "mention" as const, value: identity }
+    const content = withoutSlots()
+
+    const columns = content.children.filter(
+      (child) => child.type === "element" && child.tagName === "div",
+    )
+
+    if (
+      node.tagName !== "div" ||
+      columns.length !== layout.length ||
+      content.children.some((child) =>
+        child.type === "text"
+          ? child.value.trim().length > 0
+          : child.type !== "element" || child.tagName !== "div",
+      ) ||
+      columns.some(
+        (child) =>
+          child.type !== "element" ||
+          child.properties.dataEditorColumn !== "1" ||
+          Object.keys(child.properties).some(
+            (key) =>
+              ![
+                "dataEditorColumn",
+                "dataEditorState",
+                "dataEditorTextFormat",
+                "dataEditorTextStyle",
+                "dataEditorIndent",
+                "dataEditorBlockPresentation",
+                "dir",
+                "style",
+              ].includes(key),
+          ),
+      )
+    )
+      throw new DocumentError(["Invalid canonical editor columns HTML."])
+
+    if (properties.style) safeDocumentStyle(String(properties.style))
+
+    return { type: "columns-group" as const, value: layout }
+  }
+
+  if (properties.dataEditorColumn !== undefined) {
+    allowed([
+      "dataEditorColumn",
+      "dataEditorState",
+      "dataEditorTextFormat",
+      "dataEditorTextStyle",
+      "dataEditorIndent",
+      "dataEditorBlockPresentation",
+      "dir",
+      "style",
+    ])
+    state()
+
+    if (node.tagName !== "div" || properties.dataEditorColumn !== "1")
+      throw new DocumentError(["Invalid canonical editor column HTML."])
+
+    if (properties.style) safeDocumentStyle(String(properties.style))
+
+    return { type: "column" as const }
+  }
+
+  if (properties.dataEditorDate !== undefined) {
+    const value = editorDateFromHTMLAttributes({
+      "data-editor-date": String(properties.dataEditorDate),
+      datetime: z.string().parse(properties.dateTime),
+    })
+
+    allowed(["dataEditorDate", "dateTime"])
+
+    if (
+      node.tagName !== "time" ||
+      node.children.some((child) => child.type !== "text") ||
+      textOf(node) !== value
+    )
+      throw new DocumentError(["Invalid canonical editor date HTML."])
+
+    return { type: "date" as const, value }
+  }
+
+  if (
+    properties.dataEditorDrawing !== undefined ||
+    properties.dataEditorDrawingScene !== undefined
+  ) {
+    const scene = editorDrawingFromHTMLAttributes({
+      "data-editor-drawing": z.string().parse(properties.dataEditorDrawing),
+      "data-editor-drawing-scene": z
+        .string()
+        .parse(properties.dataEditorDrawingScene),
+    })
+
+    const expected = `Drawing with ${scene.elements.length} elements`
+    const content = withoutSlots()
+
+    allowed([
+      "dataEditorDrawing",
+      "dataEditorDrawingScene",
+      "ariaLabel",
+      "role",
+    ])
+
+    if (
+      node.tagName !== "figure" ||
+      content.children.length !== node.children.length ||
+      (properties.ariaLabel !== undefined &&
+        properties.ariaLabel !== expected) ||
+      (properties.role !== undefined && properties.role !== "group") ||
+      content.children.some((child) => child.type !== "text") ||
+      textOf(content) !== expected
+    )
+      throw new DocumentError(["Invalid canonical editor drawing HTML."])
+
+    return { type: "drawing" as const, value: scene }
+  }
+
+  if (properties.dataEditorEditableCard !== undefined) {
+    editorEditableCardFromHTMLAttributes({
+      "data-editor-editable-card": String(properties.dataEditorEditableCard),
+    })
+    const content = withoutSlots()
+    allowed(["dataEditorEditableCard", "ariaLabel"])
+
+    if (
+      node.tagName !== "figure" ||
+      content.children.length !== node.children.length ||
+      (properties.ariaLabel !== undefined &&
+        properties.ariaLabel !== "Editable card") ||
+      content.children.some((child) => child.type !== "text") ||
+      textOf(content) !== "Editable card"
+    )
+      throw new DocumentError(["Invalid canonical editable card HTML."])
+
+    return { type: "editable-card" as const }
+  }
+
+  if (
+    properties.dataEditorDiagram !== undefined ||
+    properties.dataEditorDiagramKind !== undefined ||
+    properties.dataEditorDiagramView !== undefined
+  ) {
+    const kind = z.string().safeParse(properties.dataEditorDiagramKind)
+    const viewMode = z.string().safeParse(properties.dataEditorDiagramView)
+
+    const metadata = parseEditorDiagramMetadata({
+      version: 1,
+      kind: kind.success ? kind.data : null,
+      viewMode: viewMode.success ? viewMode.data : null,
+    })
+
+    const code = node.children.find(
+      (child) => child.type === "element" && child.tagName === "code",
+    )
+
+    const language = metadata
+      ? {
+          mermaid: "mermaid",
+          plantuml: "plant-uml",
+          graphviz: "dot",
+          flowchart: "text",
+        }[metadata.kind]
+      : undefined
+
+    const classes = code?.type === "element" ? code.properties.className : null
+
+    if (
+      node.tagName !== "pre" ||
+      properties.dataEditorDiagram !== "1" ||
+      !metadata ||
+      code?.type !== "element" ||
+      !Array.isArray(classes) ||
+      classes.length !== 1 ||
+      classes[0] !== `language-${language}` ||
+      Object.keys(code.properties).some((key) => key !== "className") ||
+      code.children.some((child) => child.type !== "text") ||
+      node.children.filter(
+        (child) => child.type === "element" && child.tagName === "code",
+      ).length !== 1 ||
+      node.children.some((child) =>
+        child.type === "text"
+          ? child.value.trim().length > 0
+          : child.type !== "element" ||
+            (child.tagName !== "code" &&
+              child.properties.dataEditorSlot === undefined),
+      )
+    )
+      throw new DocumentError(["Invalid canonical editor diagram HTML."])
+
+    allowed([
+      "dataEditorDiagram",
+      "dataEditorDiagramKind",
+      "dataEditorDiagramView",
+      "dataEditorState",
+      "dataEditorTextFormat",
+      "dataEditorTextStyle",
+      "dataEditorIndent",
+      "dataEditorBlockPresentation",
+      "dir",
+      "style",
+    ])
+    state()
+
+    if (
+      properties.dataEditorTextFormat !== undefined &&
+      !z.coerce
+        .number()
+        .int()
+        .min(0)
+        .max(2047)
+        .safeParse(properties.dataEditorTextFormat).success
+    )
+      throw new DocumentError(["Invalid diagram text format."])
+
+    if (properties.dataEditorTextStyle !== undefined)
+      safeDocumentStyle(String(properties.dataEditorTextStyle))
+
+    if (
+      properties.dataEditorIndent !== undefined &&
+      (!/^\d+$/.test(String(properties.dataEditorIndent)) ||
+        Number(properties.dataEditorIndent) > 64)
+    )
+      throw new DocumentError(["Invalid diagram indentation."])
+
+    if (properties.dataEditorBlockPresentation !== undefined) {
+      try {
+        documentStateSchema.parse({
+          editorBlockPresentation: JSON.parse(
+            String(properties.dataEditorBlockPresentation),
+          ),
+        })
+      } catch {
+        throw new DocumentError(["Invalid diagram block presentation."])
+      }
+    }
+
+    if (
+      properties.dir !== undefined &&
+      !["ltr", "rtl"].includes(String(properties.dir))
+    )
+      throw new DocumentError(["Invalid diagram direction."])
+
+    if (properties.style !== undefined)
+      safeDocumentStyle(String(properties.style))
+
+    validateEditorDiagramSource(textOf(code))
+
+    return { type: "diagram" as const, value: metadata }
+  }
+
+  if (properties.dataEditorSlot !== undefined) {
+    const name = z
+      .string()
+      .regex(/^[A-Za-z][A-Za-z0-9_-]{0,63}$/)
+      .parse(properties.dataEditorSlot)
+
+    allowed(["dataEditorSlot"])
+
+    if (
+      node.tagName !== "div" ||
+      node.children.filter((child) => child.type === "element").length !== 1 ||
+      node.children.some(
+        (child) => child.type !== "text" || child.value.trim().length > 0,
+      )
+    )
+      throw new DocumentError(["Invalid canonical document slot HTML."])
+
+    return { type: "slot" as const, value: name }
+  }
+
+  if (node.tagName === "yopem-editor-label") {
+    const label = editorLabelSchema.parse(properties.dataEditorLabel)
+    allowed(["dataEditorLabel"])
+
+    if (
+      node.tagName !== "yopem-editor-label" ||
+      node.children.some((child) => child.type !== "text") ||
+      textOf(node) !== label
+    )
+      throw new DocumentError(["Invalid canonical editor label HTML."])
+
+    return { type: "label" as const, value: label }
+  }
+
+  return null
 }
 
 export function documentListType(node: Element) {
@@ -482,6 +990,137 @@ export function documentListMarker(node: Element) {
   return resolved
 }
 
+function validateDocumentRelations(tree: Root) {
+  const elements: { node: Element; parent: Element | null }[] = []
+  const parents = new Map<Element, Element | null>()
+  const ids = new Map<string, Element>()
+
+  function collect(node: RootContent, parent: Element | null) {
+    if (node.type !== "element") return
+    elements.push({ node, parent })
+    parents.set(node, parent)
+    const id = node.properties.id
+
+    if (id !== undefined) {
+      const value = String(id)
+
+      if (ids.has(value)) throw new DocumentError(["Duplicate document ID."])
+      ids.set(value, node)
+    }
+
+    for (const child of node.children) collect(child, node)
+  }
+
+  for (const node of tree.children) collect(node, null)
+
+  const headingIds: string[] = []
+  const tocTargets = new Set<string>()
+  const tocSequences = new Map<Element, string[]>()
+
+  for (const { node, parent } of elements) {
+    if (/^h[1-6]$/.test(node.tagName) && node.properties.id !== undefined) {
+      const id = String(node.properties.id)
+      headingIds.push(id)
+    }
+
+    if (node.tagName !== "a") continue
+    const href = String(node.properties.href ?? "")
+
+    if (!href.startsWith("#")) continue
+    const targetId = href.slice(1)
+    const target = ids.get(targetId)
+
+    if (!target) throw new DocumentError(["Document link target is missing."])
+
+    const tocList = parent ? parents.get(parent) : null
+    const toc = tocList ? parents.get(tocList) : null
+
+    const inToc =
+      parent?.tagName === "li" &&
+      tocList?.tagName === "ol" &&
+      toc?.tagName === "nav" &&
+      toc.properties.dataEditorToc !== undefined
+
+    const referenceLink =
+      node.properties.dataEditorFootnoteReferenceLink === "" &&
+      parent?.tagName === "sup" &&
+      parent.properties.dataEditorFootnoteReference !== undefined
+
+    const backlink =
+      node.properties.dataEditorFootnoteBacklink === "" &&
+      parent?.tagName === "div" &&
+      parent.properties.dataEditorFootnoteDefinition !== undefined
+
+    if (inToc && toc) {
+      if (
+        !/^h[1-6]$/.test(target.tagName) ||
+        textOf(node).replace(/\s+/g, " ").trim() !==
+          textOf(target).replace(/\s+/g, " ").trim()
+      )
+        throw new DocumentError(["Table of contents target is invalid."])
+
+      tocTargets.add(targetId)
+      const sequence = tocSequences.get(toc) ?? []
+      sequence.push(targetId)
+      tocSequences.set(toc, sequence)
+    } else if (referenceLink) {
+      if (
+        target.tagName !== "div" ||
+        target.properties.dataEditorFootnoteDefinition !==
+          parent?.properties.dataEditorFootnoteReference
+      )
+        throw new DocumentError(["Footnote reference target is invalid."])
+    } else if (backlink) {
+      if (
+        target.tagName !== "sup" ||
+        target.properties.dataEditorFootnoteReference !==
+          parent?.properties.dataEditorFootnoteDefinition
+      )
+        throw new DocumentError(["Footnote backlink target is invalid."])
+    } else {
+      throw new DocumentError(["Unsupported document fragment link."])
+    }
+  }
+
+  for (const { node } of elements) {
+    if (node.tagName !== "nav" || node.properties.dataEditorToc === undefined)
+      continue
+
+    const list = node.children.find(
+      (child) => child.type === "element" && child.tagName === "ol",
+    )
+
+    const count =
+      list?.type === "element"
+        ? list.children.filter(
+            (child) => child.type === "element" && child.tagName === "li",
+          ).length
+        : 0
+
+    if (count !== (tocSequences.get(node)?.length ?? 0))
+      throw new DocumentError(["Table of contents entries need heading links."])
+  }
+
+  if (headingIds.length > 0 && tocTargets.size !== headingIds.length)
+    throw new DocumentError(["Table of contents heading IDs are incomplete."])
+
+  headingIds.forEach((id, index) => {
+    if (
+      id !== createEditorTocHeadingId("document", String(index + 1)) ||
+      !tocTargets.has(id)
+    )
+      throw new DocumentError([
+        "Heading ID is not canonical for this document.",
+      ])
+  })
+
+  const expectedSequence = headingIds.join("\0")
+
+  for (const sequence of tocSequences.values())
+    if (sequence.join("\0") !== expectedSequence)
+      throw new DocumentError(["Table of contents order is not canonical."])
+}
+
 export function validateHTMLTree(tree: Root, generated = false) {
   checkTree(tree)
   let tableSlots = 0
@@ -506,6 +1145,34 @@ export function validateHTMLTree(tree: Root, generated = false) {
         !["blockquote", "aside", "div", "li", "td", "th"].includes(parent)
       )
         throw new DocumentError(["Media requires a block container."])
+
+      if (
+        [
+          "footnote-definition",
+          "toc",
+          "columns-group",
+          "column",
+          "slot",
+        ].includes(canonicalNode.type)
+      )
+        for (const child of node.children)
+          visit(child, node.tagName, inSizedTable, node)
+
+      if (canonicalNode.type === "media")
+        for (const child of node.children)
+          if (
+            child.type === "element" &&
+            child.properties.dataEditorSlot !== undefined
+          )
+            visit(child, node.tagName, inSizedTable, node)
+
+      if (canonicalNode.type === "diagram")
+        for (const child of node.children)
+          if (
+            child.type === "element" &&
+            child.properties.dataEditorSlot !== undefined
+          )
+            visit(child, node.tagName, inSizedTable, node)
 
       return
     }
@@ -778,6 +1445,26 @@ export function validateHTMLTree(tree: Root, generated = false) {
           dataLexicalFrozenRow: ["table"],
           dataEditorFrozenColumns: ["table"],
           dataEditorFrozenRows: ["table"],
+          dataEditorFootnoteReference: ["sup"],
+          dataEditorFootnoteDefinition: ["div"],
+          dataEditorFootnoteBacklink: ["a"],
+          dataEditorFootnoteReferenceLink: ["a"],
+          dataEditorToc: ["nav"],
+          dataEditorColumns: ["div"],
+          dataEditorColumnsLayout: ["div"],
+          dataEditorColumn: ["div"],
+          dataEditorDate: ["time"],
+          dateTime: ["time"],
+          dataEditorDrawing: ["figure"],
+          dataEditorDrawingScene: ["figure"],
+          dataEditorEditableCard: ["figure"],
+          dataEditorDiagram: ["pre"],
+          dataEditorDiagramKind: ["pre"],
+          dataEditorDiagramView: ["pre"],
+          dataEditorSlot: ["div"],
+          dataEditorLabel: ["yopem-editor-label"],
+          id: ["h1", "h2", "h3", "h4", "h5", "h6", "sup", "div"],
+          role: ["sup", "div"],
           align: ["td", "th", "table"],
           href: ["a"],
           title: ["a"],
@@ -822,8 +1509,24 @@ export function validateHTMLTree(tree: Root, generated = false) {
       )
         throw new DocumentError(["Unsupported summary accessible name."])
 
-      if (key === "href" && !safeDocumentURL(String(value)))
+      if (
+        key === "href" &&
+        !safeDocumentURL(String(value)) &&
+        !/^#[A-Za-z0-9_.:-]{1,128}$/.test(String(value))
+      )
         throw new DocumentError(["Unsafe link URL."])
+
+      if (
+        [
+          "dataEditorFootnoteBacklink",
+          "dataEditorFootnoteReferenceLink",
+        ].includes(key) &&
+        value !== ""
+      )
+        throw new DocumentError(["Invalid canonical footnote link."])
+
+      if (key === "id" && !/^[A-Za-z0-9_.:-]{1,128}$/.test(String(value)))
+        throw new DocumentError(["Invalid document element ID."])
 
       if (key === "style") {
         safeDocumentStyle(String(value))
@@ -1040,6 +1743,7 @@ export function validateHTMLTree(tree: Root, generated = false) {
   }
 
   for (const node of tree.children) visit(node)
+  validateDocumentRelations(tree)
 
   return tree
 }

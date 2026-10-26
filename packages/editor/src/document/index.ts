@@ -8,6 +8,27 @@ import {
 } from "@lexical/clipboard"
 import { getPeerDependencyFromEditor } from "@lexical/extension"
 import { validateEditorBlocksJSON } from "@yopem-ui/editor/blocks-model"
+import { validateEditorColumnsJSON } from "@yopem-ui/editor/columns-model"
+import {
+  editorDateNodeSchema,
+  validateEditorDateJSON,
+} from "@yopem-ui/editor/date-model"
+import {
+  parseEditorDiagramMetadata,
+  validateEditorDiagramSource,
+} from "@yopem-ui/editor/diagram/model"
+import { parseEditorDrawingNode } from "@yopem-ui/editor/drawing/model"
+import { editorEditableCardNodeSchema } from "@yopem-ui/editor/editable-card/model"
+import {
+  editorFootnoteIdSchema,
+  parseEditorFootnoteDefinitionNode,
+  parseEditorFootnoteReferenceNode,
+  validateEditorFootnotesJSON,
+} from "@yopem-ui/editor/footnote-model"
+import {
+  editorLabelNodeSchema,
+  EDITOR_LABEL_MAX_COUNT,
+} from "@yopem-ui/editor/labels/model"
 import {
   EDITOR_LIST_START_MAX,
   EDITOR_LIST_START_MIN,
@@ -21,6 +42,10 @@ import {
   getTableSpanGeometry,
   getTableEdgeGroups,
 } from "@yopem-ui/editor/table-presentation-schema"
+import {
+  editorTocNodeSchema,
+  validateEditorTocJSON,
+} from "@yopem-ui/editor/toc-model"
 import {
   $getEditor,
   $getRoot,
@@ -71,6 +96,9 @@ const presentationNodes = new Set([
   "editor-toggle",
   "editor-toggle-summary",
   "editor-toggle-body",
+  "editor-footnote-definition",
+  "editor-columns-group",
+  "editor-column",
   "paragraph",
   "heading",
   "quote",
@@ -112,16 +140,31 @@ const nodeSchema = z.strictObject({
     "table",
     "tablerow",
     "tablecell",
+    "editor-footnote-reference",
+    "editor-footnote-definition",
+    "editor-toc",
+    "editor-columns-group",
+    "editor-column",
+    "editor-date",
+    "editor-label",
+    "editor-drawing",
+    "editor-editable-card",
   ]),
   kind: z.enum(["inline", "block"]).optional(),
   tex: z.string().optional(),
   identity: z.unknown().optional(),
   media: z.unknown().optional(),
+  identifier: editorFootnoteIdSchema.optional(),
+  layout: z.array(z.number().int().min(12).max(76)).min(2).max(4).optional(),
+  label: z.string().optional(),
+  date: z.string().optional(),
+  elements: z.array(z.unknown()).max(2000).optional(),
   appearance: z.unknown().optional(),
   icon: z.unknown().optional(),
   open: z.unknown().optional(),
   version: z.literal(1),
   $: documentStateSchema.optional(),
+  $slots: z.record(z.string(), z.unknown()).optional(),
   children: z.array(z.unknown()).optional(),
   direction: z.enum(["ltr", "rtl"]).nullable().optional(),
   format: z
@@ -163,6 +206,42 @@ const nodeSchema = z.strictObject({
   frozenRowCount: z.number().int().min(0).max(50).optional(),
 })
 
+type SerializedDocumentNode = z.infer<typeof nodeSchema>
+
+const leafTypes = new Set<SerializedDocumentNode["type"]>([
+  "yopem-media",
+  "text",
+  "tab",
+  "code-highlight",
+  "linebreak",
+  "horizontalrule",
+  "mention",
+  "editor-math",
+  "editor-footnote-reference",
+  "editor-toc",
+  "editor-date",
+  "editor-label",
+  "editor-drawing",
+  "editor-editable-card",
+])
+
+const slotlessTypes = new Set<SerializedDocumentNode["type"]>([
+  "text",
+  "tab",
+  "code-highlight",
+  "linebreak",
+  "horizontalrule",
+  "mention",
+  "editor-label",
+  "editor-footnote-reference",
+  "editor-toc",
+  "link",
+  "editor-date",
+  "editor-math",
+  "editor-drawing",
+  "editor-editable-card",
+])
+
 const elementFields = [
   "children",
   "direction",
@@ -188,6 +267,15 @@ const nodeFields = new Map(
     code: [...elementFields, "language"],
     "editor-math": ["kind", "tex"],
     "yopem-media": ["media"],
+    "editor-footnote-reference": ["identifier"],
+    "editor-footnote-definition": [...elementFields, "identifier"],
+    "editor-toc": [],
+    "editor-columns-group": [...elementFields, "layout"],
+    "editor-column": elementFields,
+    "editor-date": ["date"],
+    "editor-label": [...textFields, "label"],
+    "editor-drawing": ["elements"],
+    "editor-editable-card": [],
     mention: [...textFields, "identity"],
     text: textFields,
     tab: textFields,
@@ -216,6 +304,14 @@ const nodeFields = new Map(
     ],
   }),
 )
+
+function serializedText(node: SerializedDocumentNode): string {
+  if (node.text !== undefined) return node.text
+
+  return (node.children ?? [])
+    .map((child) => serializedText(nodeSchema.parse(child)))
+    .join("")
+}
 
 function validateJSON(source: string) {
   checkText(source)
@@ -246,6 +342,9 @@ function validateJSON(source: string) {
   if (!document.success) throw new DocumentError(["Invalid document root."])
 
   let tableSlots = 0
+  let labelCount = 0
+  const labels = new Set<string>()
+  const optionalTypes = new Set<string>()
 
   const pendingNodes = [document.data.root]
 
@@ -258,16 +357,25 @@ function validateJSON(source: string) {
       ])
 
     const node = result.data
+    optionalTypes.add(node.type)
 
     const allowed = new Set([
       "type",
       "version",
       "$",
+      "$slots",
       ...(nodeFields.get(node.type) ?? []),
     ])
 
     if (Object.keys(node).some((key) => !allowed.has(key)))
       throw new DocumentError([`Unsupported data on ${node.type}.`])
+
+    if (
+      node.$?.yopemReview !== undefined ||
+      node.$?.yopemSuggestion !== undefined ||
+      node.$?.yopemReviewStructural !== undefined
+    )
+      throw new DocumentError(["Review metadata requires trusted review IO."])
 
     if (node.$?.yopemTableBorder !== undefined && node.type !== "tablecell")
       throw new DocumentError(["Table border state requires tablecell."])
@@ -336,16 +444,60 @@ function validateJSON(source: string) {
 
     if (node.type === "yopem-media") documentMediaSchema.parse(node.media)
 
-    const leaf = [
-      "yopem-media",
-      "text",
-      "tab",
-      "code-highlight",
-      "linebreak",
-      "horizontalrule",
-      "mention",
-      "editor-math",
-    ].includes(node.type)
+    if (node.type === "editor-footnote-reference")
+      parseEditorFootnoteReferenceNode(node)
+
+    if (node.type === "editor-footnote-definition")
+      parseEditorFootnoteDefinitionNode(node)
+
+    if (node.type === "editor-toc") editorTocNodeSchema.parse(node)
+
+    if (node.type === "editor-date") editorDateNodeSchema.parse(node)
+
+    if (node.type === "editor-label") {
+      const label = editorLabelNodeSchema.safeParse(node)
+
+      if (!label.success) throw new DocumentError([label.error.message])
+
+      if (label.data.style) safeDocumentStyle(label.data.style)
+      labelCount += 1
+
+      if (labelCount > EDITOR_LABEL_MAX_COUNT || labels.has(label.data.label))
+        throw new DocumentError(["Invalid document label order or count."])
+
+      labels.add(label.data.label)
+    }
+
+    if (node.type === "editor-drawing") {
+      const drawing = z
+        .strictObject({
+          type: z.literal("editor-drawing"),
+          version: z.literal(1),
+          elements: z.array(z.unknown()).max(2000),
+        })
+        .parse(node)
+
+      parseEditorDrawingNode(drawing)
+    }
+
+    if (node.type === "editor-editable-card")
+      editorEditableCardNodeSchema.parse(node)
+
+    if (node.type === "code" && node.$?.editorDiagram !== undefined) {
+      const metadata = node.$.editorDiagram
+
+      if (metadata !== null) {
+        const parsedMetadata = parseEditorDiagramMetadata(metadata)
+
+        if (!parsedMetadata)
+          throw new DocumentError(["Invalid editor diagram metadata."])
+        validateEditorDiagramSource(serializedText(node))
+      }
+    } else if (node.$?.editorDiagram !== undefined) {
+      throw new DocumentError(["Diagram metadata requires code."])
+    }
+
+    const leaf = leafTypes.has(node.type)
 
     if (!leaf && !node.children)
       throw new DocumentError([`Missing children on ${node.type}.`])
@@ -388,6 +540,11 @@ function validateJSON(source: string) {
     if (node.backgroundColor)
       safeDocumentStyle(`background-color: ${node.backgroundColor}`)
 
+    const slotValues = Object.values(node.$slots ?? {})
+
+    if (slotValues.length > 0 && slotlessTypes.has(node.type))
+      throw new DocumentError(["This document node cannot own slots."])
+
     for (const child of node.children ?? []) {
       const parsedChild = nodeSchema.parse(child)
 
@@ -400,15 +557,65 @@ function validateJSON(source: string) {
           "editor-toggle-body",
           "listitem",
           "tablecell",
+          "editor-footnote-definition",
+          "editor-column",
         ].includes(node.type)
       )
         throw new DocumentError(["Media and rules require a block container."])
       pendingNodes.push(child)
     }
+
+    for (const slot of slotValues) pendingNodes.push(slot)
   }
 
   if (nodeSchema.parse(document.data.root).type !== "root")
     throw new DocumentError(["Document root must have type root."])
+
+  if (optionalTypes.has("editor-footnote-definition")) {
+    const rootNode = nodeSchema.parse(document.data.root)
+    const pendingSlots = Object.values(rootNode.$slots ?? {})
+
+    while (pendingSlots.length) {
+      const slotNode = nodeSchema.parse(pendingSlots.pop())
+
+      if (slotNode.type === "editor-footnote-definition")
+        throw new DocumentError([
+          "Footnote definitions must be document blocks.",
+        ])
+
+      pendingSlots.push(
+        ...(slotNode.children ?? []),
+        ...Object.values(slotNode.$slots ?? {}),
+      )
+    }
+  }
+
+  const optionalDocument = { root: document.data.root }
+
+  try {
+    if (
+      optionalTypes.has("editor-footnote-reference") ||
+      optionalTypes.has("editor-footnote-definition")
+    )
+      validateEditorFootnotesJSON(optionalDocument)
+
+    if (optionalTypes.has("editor-toc")) validateEditorTocJSON(optionalDocument)
+
+    if (
+      optionalTypes.has("editor-columns-group") ||
+      optionalTypes.has("editor-column")
+    )
+      validateEditorColumnsJSON(optionalDocument)
+
+    if (optionalTypes.has("editor-date"))
+      validateEditorDateJSON(optionalDocument)
+  } catch (error) {
+    throw new DocumentError([
+      error instanceof Error
+        ? error.message
+        : "Invalid optional document node.",
+    ])
+  }
 
   return source
 }
@@ -850,7 +1057,8 @@ function rejectUntrustedReviewState(
 
     if (
       node.$?.yopemReview !== undefined ||
-      node.$?.yopemSuggestion !== undefined
+      node.$?.yopemSuggestion !== undefined ||
+      node.$?.yopemReviewStructural !== undefined
     )
       throw new DocumentError([
         "Untrusted fragments cannot contain review state.",

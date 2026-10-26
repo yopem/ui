@@ -49,6 +49,32 @@ import {
   isEditorCalloutAppearance,
   isEditorCalloutIcon,
 } from "@yopem-ui/editor/blocks-model"
+import { editorColumnsHTMLAttributes } from "@yopem-ui/editor/columns-model"
+import {
+  editorDateHTMLAttributes,
+  editorDateNodeSchema,
+} from "@yopem-ui/editor/date-model"
+import {
+  parseEditorDiagramMetadata,
+  validateEditorDiagramSource,
+} from "@yopem-ui/editor/diagram/model"
+import {
+  editorDrawingHTMLAttributes,
+  parseEditorDrawingNode,
+  parseEditorDrawingScene,
+} from "@yopem-ui/editor/drawing/model"
+import {
+  editorEditableCardHTMLAttributes,
+  editorEditableCardNodeSchema,
+} from "@yopem-ui/editor/editable-card/model"
+import {
+  editorFootnoteDefinitionHTMLAttributes,
+  editorFootnoteReferenceHTMLAttributes,
+  parseEditorFootnoteDefinitionNode,
+  parseEditorFootnoteId,
+  parseEditorFootnoteReferenceNode,
+} from "@yopem-ui/editor/footnote-model"
+import { editorLabelNodeSchema } from "@yopem-ui/editor/labels/model"
 import { parseEditorListStartHTML } from "@yopem-ui/editor/list-presentation/model"
 import {
   editorMathFromMarkdown,
@@ -70,6 +96,11 @@ import {
   parseTableBorderHTML,
   parseTableRowHeightHTML,
 } from "@yopem-ui/editor/table-presentation-schema"
+import {
+  createEditorTocHeadingId,
+  editorTocHTMLAttributes,
+  editorTocNodeSchema,
+} from "@yopem-ui/editor/toc-model"
 import { toHtml } from "hast-util-to-html"
 import {
   $applyNodeReplacement,
@@ -77,10 +108,14 @@ import {
   $createParagraphNode,
   $createTextNode,
   $getRoot,
+  $getSlot,
+  $getSlotNames,
+  $setSlot,
   $isElementNode,
   $isLineBreakNode,
   $isParagraphNode,
   $isTextNode,
+  DecoratorNode,
 } from "lexical"
 import rehypeRemark from "rehype-remark"
 import remarkGfm from "remark-gfm"
@@ -89,6 +124,7 @@ import remarkParse from "remark-parse"
 import remarkRehype from "remark-rehype"
 import remarkStringify from "remark-stringify"
 import { unified } from "unified"
+import { z } from "zod"
 
 import {
   canonicalDocumentNode,
@@ -105,6 +141,18 @@ import {
   validateHTMLTree,
   textOf,
 } from "./boundary"
+import {
+  DocumentColumnNode,
+  DocumentColumnsGroupNode,
+  DocumentDateNode,
+  DocumentDrawingNode,
+  DocumentEditableCardNode,
+  DocumentFootnoteDefinitionNode,
+  DocumentFootnoteReferenceNode,
+  DocumentLabelNode,
+  DocumentTocNode,
+  documentOptionalNodes,
+} from "./optional-nodes"
 import {
   getDocumentState,
   setDocumentState,
@@ -135,7 +183,7 @@ export const documentNodes = [
 export function createDocumentEditor() {
   return createHeadlessEditor({
     namespace: "yopem-document",
-    nodes: documentNodes,
+    nodes: [...documentNodes, ...documentOptionalNodes],
     onError(error) {
       throw error
     },
@@ -151,12 +199,7 @@ export function markdownTree(source: string): Root {
   const tree = parser.parse(source)
   checkTree(tree)
 
-  const unsupported = new Set([
-    "image",
-    "imageReference",
-    "footnoteDefinition",
-    "footnoteReference",
-  ])
+  const unsupported = new Set(["image", "imageReference"])
 
   function visit(node: {
     type: string
@@ -164,7 +207,7 @@ export function markdownTree(source: string): Root {
   }) {
     if (unsupported.has(node.type))
       throw new DocumentError([
-        `Unsupported Markdown node: ${node.type}. HTML, MDX and footnotes are not evaluated.`,
+        `Unsupported Markdown node: ${node.type}. HTML and MDX are not evaluated.`,
       ])
 
     for (const child of node.children ?? []) visit(child)
@@ -174,7 +217,29 @@ export function markdownTree(source: string): Root {
   convertMarkdownFeatures(tree, source)
 
   const hast = unified()
-    .use(remarkRehype, { allowDangerousHtml: true })
+    .use(remarkRehype, {
+      allowDangerousHtml: true,
+      handlers: {
+        footnoteReference(_state, node) {
+          const identifier = parseEditorFootnoteId(String(node.identifier))
+
+          return element(
+            "sup",
+            [{ type: "text", value: `[^${identifier}]` }],
+            editorFootnoteReferenceHTMLAttributes(identifier),
+          )
+        },
+        footnoteDefinition(state, node) {
+          const identifier = parseEditorFootnoteId(String(node.identifier))
+
+          return element(
+            "div",
+            state.all(node),
+            editorFootnoteDefinitionHTMLAttributes(identifier),
+          )
+        },
+      },
+    })
     .runSync(tree)
 
   const parsed = parseHTMLSyntax(toHtml(hast, { allowDangerousHtml: true }))
@@ -280,6 +345,12 @@ const textFormats = new Map<string, TextFormatType>(
 function append(parent: ElementNode, children: LexicalNode[]) {
   for (const child of children) {
     if (
+      ["editor-toc", "editor-drawing", "editor-editable-card"].includes(
+        child.getType(),
+      )
+    ) {
+      parent.append(child)
+    } else if (
       ($isTableCellNode(parent) || parent.getType() === "root") &&
       !(child instanceof MediaNode) &&
       (!$isElementNode(child) || child.isInline())
@@ -296,6 +367,45 @@ function append(parent: ElementNode, children: LexicalNode[]) {
 }
 
 export function $importTree(tree: Root) {
+  function isSlotWrapper(node: RootContent): node is Element {
+    return (
+      node.type === "element" && canonicalDocumentNode(node)?.type === "slot"
+    )
+  }
+
+  function setSlots(output: LexicalNode, slots: readonly Element[]) {
+    for (const wrapper of slots) {
+      const slot = canonicalDocumentNode(wrapper)
+
+      if (slot?.type !== "slot")
+        throw new DocumentError(["Invalid canonical document slot."])
+
+      const child = wrapper.children.find((value) => value.type === "element")
+
+      if (child?.type !== "element")
+        throw new DocumentError(["Document slot needs one block node."])
+
+      const values = convert(child)
+      const value = values[0]
+
+      if (
+        values.length !== 1 ||
+        !value ||
+        ($isElementNode(value) && value.isInline()) ||
+        (!$isElementNode(value) && !(value instanceof DecoratorNode))
+      )
+        throw new DocumentError(["Document slot needs one block node."])
+
+      if ($isElementNode(output) || output instanceof DecoratorNode)
+        $setSlot(output, slot.value, value)
+      else throw new DocumentError(["Document slot host is invalid."])
+    }
+  }
+
+  function getSlotWrappers(node: RootContent) {
+    return node.type === "element" ? node.children.filter(isSlotWrapper) : []
+  }
+
   function convert(
     node: RootContent,
     formats: readonly TextFormatType[] = [],
@@ -308,7 +418,10 @@ export function $importTree(tree: Root) {
       if (formats.length || inheritedStyle)
         throw new DocumentError(["Media text presentation cannot be retained."])
 
-      return [$createMediaNode(canonical.value)]
+      const output = $createMediaNode(canonical.value)
+      setSlots(output, getSlotWrappers(node))
+
+      return [output]
     }
 
     if (canonical?.type === "math") {
@@ -318,7 +431,49 @@ export function $importTree(tree: Root) {
       return [$createEditorMathNode(canonical.value)]
     }
 
-    if (node.type === "text" || canonical?.type === "mention") {
+    if (
+      canonical?.type === "footnote-reference" ||
+      canonical?.type === "toc" ||
+      canonical?.type === "date" ||
+      canonical?.type === "drawing" ||
+      canonical?.type === "editable-card"
+    ) {
+      if (formats.length || inheritedStyle)
+        throw new DocumentError(["Decorator presentation cannot be retained."])
+
+      const output =
+        canonical.type === "footnote-reference"
+          ? $applyNodeReplacement(
+              new DocumentFootnoteReferenceNode(canonical.value),
+            )
+          : canonical.type === "toc"
+            ? $applyNodeReplacement(new DocumentTocNode())
+            : canonical.type === "date"
+              ? $applyNodeReplacement(new DocumentDateNode(canonical.value))
+              : canonical.type === "drawing"
+                ? $applyNodeReplacement(
+                    new DocumentDrawingNode(canonical.value),
+                  )
+                : $applyNodeReplacement(new DocumentEditableCardNode())
+
+      setDocumentState(
+        output,
+        documentStateSchema.parse(
+          node.type === "element" && node.properties.dataEditorState
+            ? JSON.parse(String(node.properties.dataEditorState))
+            : {},
+        ),
+      )
+      setSlots(output, getSlotWrappers(node))
+
+      return [output]
+    }
+
+    if (
+      node.type === "text" ||
+      canonical?.type === "mention" ||
+      canonical?.type === "label"
+    ) {
       const textStyle = safeDocumentStyle(
         [inheritedStyle, node.type === "element" ? node.properties.style : ""]
           .filter(Boolean)
@@ -328,7 +483,9 @@ export function $importTree(tree: Root) {
       const text = (
         canonical?.type === "mention"
           ? $createMentionNode(canonical.value)
-          : $createTextNode(node.type === "text" ? node.value : "")
+          : canonical?.type === "label"
+            ? $applyNodeReplacement(new DocumentLabelNode(canonical.value))
+            : $createTextNode(node.type === "text" ? node.value : "")
       ).setStyle(textStyle)
 
       for (const format of new Set(formats)) text.toggleFormat(format)
@@ -355,6 +512,10 @@ export function $importTree(tree: Root) {
 
     if (node.type !== "element")
       throw new DocumentError([`Unsupported node: ${node.type}.`])
+
+    if (canonical?.type === "slot")
+      throw new DocumentError(["Document slot must attach to its host."])
+
     const tag = node.tagName
 
     const style = safeDocumentStyle(
@@ -387,6 +548,8 @@ export function $importTree(tree: Root) {
       return node.children
         .filter((child) => !(child.type === "text" && !child.value.trim()))
         .flatMap((child) => convert(child, formats, style))
+
+    if (node.properties.dataEditorFootnoteBacklink !== undefined) return []
 
     if (
       ["input", "colgroup"].includes(tag) ||
@@ -463,9 +626,19 @@ export function $importTree(tree: Root) {
         break
       case "div":
         output =
-          node.properties.dataEditorToggleSummary !== undefined
-            ? $applyNodeReplacement(new ToggleSummaryNode())
-            : $applyNodeReplacement(new ToggleBodyNode())
+          canonical?.type === "footnote-definition"
+            ? $applyNodeReplacement(
+                new DocumentFootnoteDefinitionNode(canonical.value),
+              )
+            : canonical?.type === "columns-group"
+              ? $applyNodeReplacement(
+                  new DocumentColumnsGroupNode(canonical.value),
+                )
+              : canonical?.type === "column"
+                ? $applyNodeReplacement(new DocumentColumnNode())
+                : node.properties.dataEditorToggleSummary !== undefined
+                  ? $applyNodeReplacement(new ToggleSummaryNode())
+                  : $applyNodeReplacement(new ToggleBodyNode())
         break
       case "p":
         output = $createParagraphNode()
@@ -595,6 +768,12 @@ export function $importTree(tree: Root) {
         ? JSON.parse(String(node.properties.dataEditorState))
         : {},
     )
+
+    if (canonical?.type === "diagram") {
+      if (stateInput.editorDiagram !== undefined)
+        throw new DocumentError(["Conflicting editor diagram metadata."])
+      stateInput.editorDiagram = canonical.value
+    }
 
     const listMarker = documentListMarker(node)
 
@@ -771,12 +950,33 @@ export function $importTree(tree: Root) {
 
     if (node.properties.dir === "ltr" || node.properties.dir === "rtl")
       output.setDirection(node.properties.dir)
+
+    const codeElement =
+      tag === "pre"
+        ? node.children.find(
+            (child) => child.type === "element" && child.tagName === "code",
+          )
+        : undefined
+
+    const childContent =
+      tag === "pre"
+        ? [
+            {
+              type: "text" as const,
+              value:
+                codeElement?.type === "element"
+                  ? textOf(codeElement)
+                  : textOf(node),
+            },
+          ]
+        : node.children
+
+    const slots = node.children.filter(isSlotWrapper)
+
     append(
       output,
-      (tag === "pre"
-        ? [{ type: "text" as const, value: textOf(node) }]
-        : node.children
-      )
+      childContent
+        .filter((child) => !isSlotWrapper(child))
         .filter(
           (child) =>
             !(
@@ -791,24 +991,171 @@ export function $importTree(tree: Root) {
         )
         .flatMap((child) => convert(child, formats, "")),
     )
+    setSlots(output, slots)
 
     return [output]
   }
 
   const root = $getRoot().clear()
+  const rootSlots = tree.children.filter(isSlotWrapper)
   append(
     root,
     tree.children
+      .filter((child) => !isSlotWrapper(child))
       .filter((child) => !(child.type === "text" && !child.value.trim()))
       .flatMap((child) => convert(child)),
   )
+  setSlots(root, rootSlots)
 
   if (root.getChildrenSize() === 0) root.append($createParagraphNode())
 }
 
 export function $exportTree(markdown = false): Root {
-  if (Object.keys(getDocumentState($getRoot())).length)
+  const root = $getRoot()
+
+  if (Object.keys(getDocumentState(root)).length)
     throw new DocumentError(["Root NodeState requires JSON export."])
+
+  const footnoteReferences: {
+    key: string
+    identifier: string
+    number: number
+    id: string
+  }[] = []
+
+  const footnoteDefinitions = new Map<string, string[]>()
+  const definitionKeys = new Map<string, string>()
+  let footnoteReferenceNumber = 0
+  let footnoteDefinitionNumber = 0
+  let headingNumber = 0
+  const headingIds = new Map<string, string>()
+  const headings: { id: string; text: string }[] = []
+  let tocPresent = false
+
+  function collect(node: LexicalNode) {
+    const slots = $getSlotNames(node)
+
+    if (
+      slots.length > 0 &&
+      ((!$isElementNode(node) && !(node instanceof MediaNode)) ||
+        ($isElementNode(node) && node.isInline()))
+    )
+      throw new DocumentError(["Document slots need a supported block host."])
+
+    if (node.getType() === "editor-footnote-reference") {
+      footnoteReferenceNumber += 1
+
+      const identifier = parseEditorFootnoteReferenceNode(
+        node.exportJSON(),
+      ).identifier
+
+      footnoteReferences.push({
+        key: node.getKey(),
+        identifier,
+        number: footnoteReferenceNumber,
+        id: `yopem-footnote-reference-${identifier}-${footnoteReferenceNumber}`,
+      })
+    }
+
+    if (node.getType() === "editor-footnote-definition") {
+      footnoteDefinitionNumber += 1
+
+      const identifier = parseEditorFootnoteDefinitionNode(
+        node.exportJSON(),
+      ).identifier
+
+      const id = `yopem-footnote-definition-${identifier}-${footnoteDefinitionNumber}`
+      const ids = footnoteDefinitions.get(identifier) ?? []
+      ids.push(id)
+      footnoteDefinitions.set(identifier, ids)
+      definitionKeys.set(node.getKey(), id)
+    }
+
+    if (node.getType() === "editor-toc") {
+      editorTocNodeSchema.parse(node.exportJSON())
+      tocPresent = true
+    }
+
+    if ($isElementNode(node))
+      for (const child of node.getChildren()) collect(child)
+
+    for (const name of slots) {
+      const value = $getSlot(node, name)
+
+      if (!value)
+        throw new DocumentError(["Document slot needs one block node."])
+      collect(value)
+    }
+  }
+
+  collect(root)
+
+  function collectHeadings(node: LexicalNode) {
+    if ($isElementNode(node)) {
+      if ($isHeadingNode(node)) {
+        headingNumber += 1
+        const id = createEditorTocHeadingId("document", String(headingNumber))
+        headingIds.set(node.getKey(), id)
+        headings.push({ id, text: node.getTextContent() })
+      }
+
+      for (const child of node.getChildren()) collectHeadings(child)
+    }
+
+    for (const name of $getSlotNames(node)) {
+      const value = $getSlot(node, name)
+
+      if (!value)
+        throw new DocumentError(["Document slot needs one block node."])
+      collectHeadings(value)
+    }
+  }
+
+  if (tocPresent) collectHeadings(root)
+
+  interface FootnoteReferenceOutput {
+    id: string
+    number: number
+    definitionId?: string
+  }
+
+  const referenceOutput = new Map<string, FootnoteReferenceOutput>()
+
+  const referencesByIdentifier = new Map<
+    string,
+    { id: string; number: number }[]
+  >()
+
+  for (const reference of footnoteReferences) {
+    const definitionId = footnoteDefinitions.get(reference.identifier)?.[0]
+
+    const info: FootnoteReferenceOutput = {
+      id: reference.id,
+      number: reference.number,
+    }
+
+    if (definitionId) info.definitionId = definitionId
+    referenceOutput.set(reference.key, info)
+    const references = referencesByIdentifier.get(reference.identifier) ?? []
+    references.push({ id: reference.id, number: reference.number })
+    referencesByIdentifier.set(reference.identifier, references)
+  }
+
+  function slotElements(node: LexicalNode) {
+    return $getSlotNames(node).map((name) => {
+      const value = $getSlot(node, name)
+
+      if (
+        !value ||
+        (!$isElementNode(value) && !(value instanceof DecoratorNode)) ||
+        ($isElementNode(value) && value.isInline()) ||
+        (value instanceof DecoratorNode && value.isInline())
+      )
+        throw new DocumentError(["Document slot needs one block node."])
+
+      return element("div", [convert(value)], { dataEditorSlot: name })
+    })
+  }
 
   function convert(node: LexicalNode): ElementContent {
     const state = getDocumentState(node)
@@ -828,7 +1175,10 @@ export function $exportTree(markdown = false): Root {
       if (figure?.type !== "element")
         throw new DocumentError(["Invalid generated media HTML."])
 
-      return figure
+      return {
+        ...figure,
+        children: [...figure.children, ...slotElements(node)],
+      }
     }
 
     if (node instanceof EditorMathNode) {
@@ -844,14 +1194,115 @@ export function $exportTree(markdown = false): Root {
       )
     }
 
+    if (node.getType() === "editor-footnote-reference") {
+      const identifier = parseEditorFootnoteReferenceNode(
+        node.exportJSON(),
+      ).identifier
+
+      const reference = referenceOutput.get(node.getKey())
+
+      if (!reference)
+        throw new DocumentError(["Footnote reference metadata is missing."])
+
+      const content: ElementContent = reference.definitionId
+        ? element("a", [{ type: "text", value: String(reference.number) }], {
+            dataEditorFootnoteReferenceLink: "",
+            href: `#${reference.definitionId}`,
+          })
+        : { type: "text", value: String(reference.number) }
+
+      return element("sup", [content], {
+        dataEditorFootnoteReference:
+          editorFootnoteReferenceHTMLAttributes(identifier)[
+            "data-editor-footnote-reference"
+          ],
+        id: reference.id,
+        role: "doc-noteref",
+      })
+    }
+
+    if (node.getType() === "editor-toc") {
+      editorTocNodeSchema.parse(node.exportJSON())
+
+      return element(
+        "nav",
+        [
+          element(
+            "ol",
+            headings.map(({ id, text }) =>
+              element("li", [
+                element("a", [{ type: "text", value: text }], {
+                  href: `#${id}`,
+                }),
+              ]),
+            ),
+          ),
+        ],
+        {
+          ...editorTocHTMLAttributes(),
+          ariaLabel: "Table of contents",
+        },
+      )
+    }
+
+    if (node.getType() === "editor-date") {
+      const date = editorDateNodeSchema.parse(node.exportJSON()).date
+      const attributes = editorDateHTMLAttributes(date)
+
+      return element("time", [{ type: "text", value: date }], {
+        dataEditorDate: attributes["data-editor-date"],
+        dateTime: attributes.datetime,
+      })
+    }
+
+    if (node.getType() === "editor-drawing") {
+      const serialized = parseEditorDrawingNode(node.exportJSON())
+
+      const scene = parseEditorDrawingScene({
+        elements: serialized.elements,
+      })
+
+      const attributes = editorDrawingHTMLAttributes(scene)
+
+      return element(
+        "figure",
+        [{ type: "text", value: node.getTextContent() }],
+        {
+          dataEditorDrawing: attributes["data-editor-drawing"],
+          dataEditorDrawingScene: attributes["data-editor-drawing-scene"],
+          ariaLabel: `Drawing with ${scene.elements.length} elements`,
+          role: "group",
+        },
+      )
+    }
+
+    if (node.getType() === "editor-editable-card") {
+      editorEditableCardNodeSchema.parse(node.exportJSON())
+
+      return element("figure", [{ type: "text", value: "Editable card" }], {
+        ...editorEditableCardHTMLAttributes(),
+        ariaLabel: "Editable card",
+      })
+    }
+
     if ($isLineBreakNode(node)) return element("br")
 
     if ($isHorizontalRuleNode(node)) return element("hr")
 
     if ($isTextNode(node)) {
+      const label =
+        node.getType() === "editor-label"
+          ? editorLabelNodeSchema.parse(node.exportJSON()).label
+          : undefined
+
+      const isLabel = label !== undefined
+
       if (
-        (node.getType() !== "text" && !(node instanceof MentionNode)) ||
-        node.getMode() !== (node instanceof MentionNode ? "token" : "normal") ||
+        (node.getType() !== "text" &&
+          !(node instanceof MentionNode) &&
+          !isLabel) ||
+        node.getMode() !==
+          (node instanceof MentionNode || isLabel ? "token" : "normal") ||
         node.getDetail() !== 0 ||
         node.getFormat() > 2047
       )
@@ -867,6 +1318,10 @@ export function $exportTree(markdown = false): Root {
         output = element("span", [output], {
           dataMentionId: identity.id,
           dataMentionLabel: identity.label,
+        })
+      } else if (label !== undefined) {
+        output = element("yopem-editor-label", [output], {
+          dataEditorLabel: label,
         })
       }
 
@@ -939,7 +1394,37 @@ export function $exportTree(markdown = false): Root {
       ])
     let tag: string
 
-    if (node instanceof CalloutNode) {
+    if (node.getType() === "editor-footnote-definition") {
+      const id = definitionKeys.get(node.getKey())
+
+      const identifier = parseEditorFootnoteDefinitionNode(
+        node.exportJSON(),
+      ).identifier
+
+      if (!id)
+        throw new DocumentError(["Footnote definition metadata is missing."])
+
+      tag = "div"
+      properties.dataEditorFootnoteDefinition =
+        editorFootnoteDefinitionHTMLAttributes(identifier)[
+          "data-editor-footnote-definition"
+        ]
+      properties.id = id
+      properties.role = "doc-endnote"
+    } else if (node.getType() === "editor-columns-group") {
+      const group = z
+        .object({ layout: z.array(z.number()) })
+        .parse(node.exportJSON())
+
+      const attributes = editorColumnsHTMLAttributes(group.layout)
+      tag = "div"
+      properties.dataEditorColumns = attributes["data-editor-columns"]
+      properties.dataEditorColumnsLayout =
+        attributes["data-editor-columns-layout"]
+    } else if (node.getType() === "editor-column") {
+      tag = "div"
+      properties.dataEditorColumn = "1"
+    } else if (node instanceof CalloutNode) {
       tag = "aside"
       properties.dataEditorCallout = ""
       properties.dataAppearance = node.getAppearance()
@@ -959,8 +1444,12 @@ export function $exportTree(markdown = false): Root {
         throw new DocumentError(["Orphan toggle body."])
       properties.open = toggle.getOpen()
     } else if ($isParagraphNode(node)) tag = "p"
-    else if ($isHeadingNode(node)) tag = node.getTag()
-    else if ($isQuoteNode(node)) tag = "blockquote"
+    else if ($isHeadingNode(node)) {
+      tag = node.getTag()
+      const id = headingIds.get(node.getKey())
+
+      if (id) properties.id = id
+    } else if ($isQuoteNode(node)) tag = "blockquote"
     else if ($isCodeNode(node)) tag = "pre"
     else if ($isLinkNode(node)) {
       tag = "a"
@@ -1042,6 +1531,7 @@ export function $exportTree(markdown = false): Root {
             "editorBlockPresentation",
             "yopemTableBorder",
             "yopemListMarker",
+            "editorDiagram",
           ].includes(key),
       ),
     )
@@ -1058,6 +1548,31 @@ export function $exportTree(markdown = false): Root {
             )
             .join(""),
       )
+
+    if (
+      $isCodeNode(node) &&
+      state.editorDiagram !== undefined &&
+      state.editorDiagram !== null
+    ) {
+      const diagram = parseEditorDiagramMetadata(state.editorDiagram)
+
+      const language = diagram
+        ? {
+            mermaid: "mermaid",
+            plantuml: "plant-uml",
+            graphviz: "dot",
+            flowchart: "text",
+          }[diagram.kind]
+        : undefined
+
+      if (!diagram || node.getLanguage() !== language)
+        throw new DocumentError(["Invalid editor diagram metadata."])
+      validateEditorDiagramSource(node.getTextContent())
+      properties.dataEditorDiagram = "1"
+      properties.dataEditorDiagramKind = diagram.kind
+      properties.dataEditorDiagramView = diagram.viewMode
+    }
+
     const presentation = state.editorBlockPresentation
 
     if (presentation)
@@ -1141,6 +1656,24 @@ export function $exportTree(markdown = false): Root {
         ]
       : node.getChildren().map(convert)
 
+    if (node.getType() === "editor-footnote-definition") {
+      const identifier = parseEditorFootnoteDefinitionNode(
+        node.exportJSON(),
+      ).identifier
+
+      const references = referencesByIdentifier.get(identifier) ?? []
+
+      for (const reference of references)
+        children.push(
+          element("a", [{ type: "text", value: `↩ ${reference.number}` }], {
+            dataEditorFootnoteBacklink: "",
+            href: `#${reference.id}`,
+          }),
+        )
+    }
+
+    children.push(...slotElements(node))
+
     if ($isTableNode(node) && node.getColWidths()?.length)
       children.unshift(
         element(
@@ -1186,7 +1719,10 @@ export function $exportTree(markdown = false): Root {
     return element(tag, children, properties)
   }
 
-  return { type: "root", children: $getRoot().getChildren().map(convert) }
+  return {
+    type: "root",
+    children: [...root.getChildren().map(convert), ...slotElements(root)],
+  }
 }
 
 export function treeHTML(tree: Root, typeset = true) {
@@ -1235,6 +1771,9 @@ export function treeMarkdown(tree: Root) {
     }
 
     if (canonical?.type === "media") return true
+
+    if (canonical && !["math", "media", "mention"].includes(canonical.type))
+      return true
 
     if (canonical?.type === "mention") return Boolean(node.properties.style)
     const literalWhitespace = preformatted || node.tagName === "pre"

@@ -121,8 +121,8 @@ describe("document media fidelity", () => {
     serializeMediaHtml(values[0]).replace('alt="Photo"', 'alt="Other"'),
     serializeMediaHtml(values[0]).replace("<img ", '<img onerror="alert(1)" '),
     serializeMediaHtml(values[4]).replace(
-      'sandbox="allow-scripts allow-presentation"',
-      'sandbox="allow-same-origin allow-scripts"',
+      'href="https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ"',
+      'href="https://evil.example/embed/dQw4w9WgXcQ"',
     ),
     serializeMediaHtml(values[0]).replace(
       "</figure>",
