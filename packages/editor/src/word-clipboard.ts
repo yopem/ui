@@ -7,7 +7,6 @@ import type {
 
 import {
   $generateNodesFromSerializedNodes,
-  $insertGeneratedNodes,
   ClipboardImportExtension,
   DEFAULT_IMPORT_MIME_TYPE,
 } from "@lexical/clipboard"
@@ -27,6 +26,7 @@ import {
   EditorDocumentClipboardExtension,
   parseDocument,
 } from "./document/index"
+import { $insertDocumentNodes } from "./document/insertion"
 import {
   isWordClipboardHTML,
   normalizeWordClipboardHTML,
@@ -155,7 +155,7 @@ function $importWordHTML(
     if (!nodes.length)
       throw new DocumentError(["Word clipboard content is empty."])
     ensurePasteTarget(editor, selection, registration, target)
-    $insertGeneratedNodes(editor, nodes, selection)
+    $insertDocumentNodes(editor, nodes, selection)
   } catch (error) {
     registration.onError(
       error instanceof Error

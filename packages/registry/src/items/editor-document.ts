@@ -48,6 +48,7 @@ export const editorDocumentItem: SourceItem = {
       "index.ts",
       "boundary.ts",
       "convert.ts",
+      "insertion.ts",
       "media.ts",
       "optional-nodes.ts",
       "state.ts",

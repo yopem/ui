@@ -2,7 +2,6 @@ import type { BaseSelection, LexicalEditor, LexicalNode } from "lexical"
 
 import {
   $generateNodesFromSerializedNodes,
-  $insertGeneratedNodes,
   ClipboardImportExtension,
   DEFAULT_IMPORT_MIME_TYPE,
 } from "@lexical/clipboard"
@@ -47,7 +46,6 @@ import {
   validateEditorTocJSON,
 } from "@yopem-ui/editor/toc-model"
 import {
-  $createParagraphNode,
   $getEditor,
   $getRoot,
   $getSelection,
@@ -84,6 +82,7 @@ import {
   treeMarkdown,
   typesetDocumentTree,
 } from "./convert"
+import { $insertDocumentNodes } from "./insertion"
 import { documentMediaSchema } from "./media"
 import { documentOptionalNodes } from "./optional-nodes"
 import { checkTableGrid, documentStateSchema } from "./state"
@@ -1118,14 +1117,7 @@ export function $insertDocumentFragment(
 
   if (!nodes.length) throw new DocumentError(["Markdown fragment is empty."])
 
-  if (first?.type === "paragraph") {
-    $insertGeneratedNodes(editor, nodes, selection)
-  } else {
-    const boundary = $createParagraphNode()
-    $insertGeneratedNodes(editor, [boundary, ...nodes], selection)
-
-    if (boundary.isAttached()) boundary.remove()
-  }
+  $insertDocumentNodes(editor, nodes, selection)
 }
 
 function $importDocumentJSON(

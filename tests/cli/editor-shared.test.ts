@@ -301,6 +301,11 @@ test("packed CLI exposes shared editor roots to external workspace consumers", a
         "--registry",
         `${server.url}r`,
       ])
+      expect(
+        await Bun.file(
+          join(ui, components, "editor/document/insertion.ts"),
+        ).exists(),
+      ).toBe(true)
 
       await run(ui, [
         ...command,
