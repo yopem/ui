@@ -28,6 +28,7 @@ import {
   mergeRegister,
 } from "lexical"
 
+import { EditorAutoLinkExtension } from "./autolink"
 import { createChecklistAccessibilityExtension } from "./checklist-accessibility"
 import { registerEditorClipboardGuard } from "./clipboard-guard"
 import { isSafeLink } from "./link-url"
@@ -113,6 +114,7 @@ export function createEditorSetup({
         stylex.props(editorStyles.checkControl).className ?? "",
       ),
       configExtension(LinkExtension, { validateUrl: isSafeLink }),
+      EditorAutoLinkExtension,
       CodeExtension,
       TableExtension,
       ...extensions,

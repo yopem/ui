@@ -97,6 +97,11 @@ for undo or redo. Use `EditorListButton` with bullet, number, or check.
 `EditorIndentButton` accepts indent or outdent. `EditorLinkControl` validates
 link URLs. `EditorTableButton` inserts a three-row, three-column table.
 
+Core editing links plain HTTP and HTTPS URLs, `www` addresses, and email
+addresses. Code blocks and inline code do not expose automatic navigation.
+Automatic links use native `AutoLinkNode` state, including explicit unlink
+state. Register `AutoLinkNode` in custom readers that load core editor JSON.
+
 Controls accept native control props, refs, `className`, and `xstyle`. A
 consumer `onClick` can prevent the command with `event.preventDefault()`. Keep
 controls and the editable surface inside their `EditorRoot`. Use `useEditor` for

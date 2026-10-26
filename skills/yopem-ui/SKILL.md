@@ -104,7 +104,10 @@ and a suitable popup; there is no separate date-picker item.
 ### Editor composition
 
 Install the `editor` item before you use either the preset or public parts. The
-same installation copies all composition source files and UI dependencies.
+same installation copies all composition source files and UI dependencies. Core
+editing links plain URLs and email addresses with native `AutoLinkNode`. Code
+stays inert. Register `AutoLinkNode` in custom readers of core editor JSON.
+
 Import `Editor` from `@/components/editor` for the preset. Import `EditorRoot`,
 `EditorToolbar`, and `EditorContent` from the same copied source for custom UI.
 Keep each toolbar and surface inside one root. Each root keeps separate history

@@ -135,6 +135,7 @@ const nodeSchema = z.strictObject({
     "code",
     "code-highlight",
     "link",
+    "autolink",
     "list",
     "listitem",
     "table",
@@ -184,6 +185,7 @@ const nodeSchema = z.strictObject({
   title: z.string().nullable().optional(),
   target: z.string().nullable().optional(),
   rel: z.string().nullable().optional(),
+  isUnlinked: z.boolean().optional(),
   listType: z.enum(["number", "bullet", "check"]).optional(),
   start: z
     .number()
@@ -236,6 +238,7 @@ const slotlessTypes = new Set<SerializedDocumentNode["type"]>([
   "editor-footnote-reference",
   "editor-toc",
   "link",
+  "autolink",
   "editor-date",
   "editor-math",
   "editor-drawing",
@@ -283,6 +286,7 @@ const nodeFields = new Map(
     linebreak: [],
     horizontalrule: [],
     link: [...elementFields, "url", "title", "target", "rel"],
+    autolink: [...elementFields, "url", "title", "target", "rel", "isUnlinked"],
     list: [...elementFields, "listType", "start", "tag"],
     listitem: [...elementFields, "value", "checked"],
     table: [
@@ -369,6 +373,9 @@ function validateJSON(source: string) {
 
     if (Object.keys(node).some((key) => !allowed.has(key)))
       throw new DocumentError([`Unsupported data on ${node.type}.`])
+
+    if (node.type === "autolink" && node.isUnlinked === undefined)
+      throw new DocumentError(["AutoLinkNode requires isUnlinked."])
 
     if (
       node.$?.yopemReview !== undefined ||
@@ -535,7 +542,8 @@ function validateJSON(source: string) {
     if (node.url && !safeDocumentURL(node.url))
       throw new DocumentError(["Unsafe link URL."])
 
-    if (node.type === "link") validateDocumentLink(node.target, node.rel)
+    if (node.type === "link" || node.type === "autolink")
+      validateDocumentLink(node.target, node.rel)
 
     if (node.backgroundColor)
       safeDocumentStyle(`background-color: ${node.backgroundColor}`)
@@ -1145,6 +1153,7 @@ function $importDocumentJSON(
           "linebreak",
           "code-highlight",
           "link",
+          "autolink",
           "mention",
         ].includes(node.type) ||
         (node.type === "editor-math" && node.kind === "inline")

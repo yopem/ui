@@ -13,7 +13,13 @@ import {
   HorizontalRuleNode,
 } from "@lexical/extension"
 import { createHeadlessEditor } from "@lexical/headless"
-import { $createLinkNode, $isLinkNode, LinkNode } from "@lexical/link"
+import {
+  $createLinkNode,
+  $isAutoLinkNode,
+  $isLinkNode,
+  AutoLinkNode,
+  LinkNode,
+} from "@lexical/link"
 import {
   $createListItemNode,
   $createListNode,
@@ -175,6 +181,7 @@ export const documentNodes = [
   ListNode,
   ListItemNode,
   LinkNode,
+  AutoLinkNode,
   TableNode,
   TableRowNode,
   TableCellNode,
@@ -1010,6 +1017,8 @@ export function $importTree(tree: Root) {
   if (root.getChildrenSize() === 0) root.append($createParagraphNode())
 }
 
+const unlinkedAutoLinks = new WeakSet<Element>()
+
 export function $exportTree(markdown = false): Root {
   const root = $getRoot()
 
@@ -1452,18 +1461,22 @@ export function $exportTree(markdown = false): Root {
     } else if ($isQuoteNode(node)) tag = "blockquote"
     else if ($isCodeNode(node)) tag = "pre"
     else if ($isLinkNode(node)) {
-      tag = "a"
+      if ($isAutoLinkNode(node) && node.getIsUnlinked()) {
+        tag = "span"
+      } else {
+        tag = "a"
 
-      if (!safeDocumentURL(node.getURL()))
-        throw new DocumentError(["Unsafe link URL."])
-      properties.href = node.getURL()
-      const title = node.getTitle()
+        if (!safeDocumentURL(node.getURL()))
+          throw new DocumentError(["Unsafe link URL."])
+        properties.href = node.getURL()
+        const title = node.getTitle()
 
-      if (title) properties.title = title
+        if (title) properties.title = title
 
-      if (node.getTarget()) properties.target = node.getTarget() ?? undefined
+        if (node.getTarget()) properties.target = node.getTarget() ?? undefined
 
-      if (node.getRel()) properties.rel = node.getRel()?.split(/\s+/)
+        if (node.getRel()) properties.rel = node.getRel()?.split(/\s+/)
+      }
     } else if ($isListNode(node)) {
       tag = node.getListType() === "number" ? "ol" : "ul"
 
@@ -1716,7 +1729,12 @@ export function $exportTree(markdown = false): Root {
       )
     }
 
-    return element(tag, children, properties)
+    const output = element(tag, children, properties)
+
+    if (markdown && $isAutoLinkNode(node) && node.getIsUnlinked())
+      unlinkedAutoLinks.add(output)
+
+    return output
   }
 
   return {
@@ -1753,8 +1771,35 @@ export function treeHTML(tree: Root, typeset = true) {
   return html
 }
 
+function markdownInertAutoLink(node: Element) {
+  return toHtml(node)
+    .replaceAll(":", "&#58;")
+    .replaceAll("@", "&#64;")
+    .replaceAll(".", "&#46;")
+}
+
+function markdownFallback(tree: Root, source: string) {
+  let output = source
+
+  function visit(node: RootContent) {
+    if (node.type !== "element") return
+
+    if (unlinkedAutoLinks.has(node)) {
+      output = output.replaceAll(toHtml(node), markdownInertAutoLink(node))
+
+      return
+    }
+
+    for (const child of node.children) visit(child)
+  }
+
+  for (const node of tree.children) visit(node)
+
+  return `${output.replaceAll("\n", "&#10;")}\n`
+}
+
 export function treeMarkdown(tree: Root) {
-  const html = treeHTML(tree, false).replaceAll("\n", "&#10;")
+  const html = treeHTML(tree, false)
   let hasMath = false
 
   function needsHTML(node: RootContent, preformatted = false): boolean {
@@ -1840,7 +1885,8 @@ export function treeMarkdown(tree: Root) {
     })
   }
 
-  if (tree.children.some((node) => needsHTML(node))) return html + "\n"
+  if (tree.children.some((node) => needsHTML(node)))
+    return markdownFallback(tree, html)
 
   function flatten(node: RootContent) {
     if (node.type !== "element") return
@@ -1874,6 +1920,9 @@ export function treeMarkdown(tree: Root) {
         span(state, node) {
           const canonical = canonicalDocumentNode(node)
 
+          if (unlinkedAutoLinks.has(node))
+            return { type: "html", value: markdownInertAutoLink(node) }
+
           if (canonical?.type === "math")
             return {
               type: "html",
@@ -1901,9 +1950,10 @@ export function treeMarkdown(tree: Root) {
     }
 
     try {
-      if (snapshot(tree) !== snapshot(markdownTree(output))) return html + "\n"
+      if (snapshot(tree) !== snapshot(markdownTree(output)))
+        return markdownFallback(tree, html)
     } catch {
-      return html + "\n"
+      return markdownFallback(tree, html)
     }
   }
 

@@ -189,6 +189,8 @@ Discard saved table selections after document content changes. Preserve resize c
 Render checklist items as native list items with separate checkbox controls.
 Keep native list semantics, keyboard input, history, and read-only behavior.
 Reject empty rich clipboard insertions without removing selected content.
+Core editing links plain URLs and email addresses with native AutoLinkNode.
+Keep code inert. Register AutoLinkNode in custom readers of core editor JSON.
 \`EditorContent\` shares the root accessible name and read-only state.
 Pass additional Lexical extensions through \`extensions\` on EditorRoot or Editor.
 Keep that list stable. Remount the root when the extension configuration changes.

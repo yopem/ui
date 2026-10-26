@@ -109,6 +109,7 @@ export const editorItem: SourceItem = {
     "index.ts",
     "editor.tsx",
     "extension.ts",
+    "autolink.ts",
     "checklist-accessibility.ts",
     "clipboard-guard.ts",
     "theme.ts",

@@ -282,6 +282,8 @@ Rounded components use md (12px) by default. Use xstyle to change corner radii. 
   document compatibility. Keep editor styles in StyleX. Preserve native editing,
   selection, clipboard, history, keyboard input, and accessible control names.
   Reject empty rich clipboard insertions without removing selected content.
+  Core editing links plain URLs and email addresses with native AutoLinkNode.
+  Keep code inert. Register AutoLinkNode in custom readers of core editor JSON.
   Discard saved link and table selections after document content changes. Use
   EditorTableMenu for table actions. Register EditorTablePresentationExtension
   for bounded geometry and persisted cell borders. Compose EditorTableDimensions,
