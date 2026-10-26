@@ -87,6 +87,7 @@ const config = defineConfig({
       build: {
         rolldownOptions: {
           output: {
+            strictExecutionOrder: true,
             codeSplitting: {
               groups: [
                 {
