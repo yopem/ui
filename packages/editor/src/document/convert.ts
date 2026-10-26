@@ -1767,10 +1767,10 @@ export function $exportTree(markdown = false): Root {
 
 export function typesetDocumentTree(tree: Root): Root {
   function display(node: RootContent): ElementContent {
-    if (node.type === "doctype")
-      throw new DocumentError(["Unsupported document doctype."])
+    if (node.type === "text" || node.type === "comment") return node
 
-    if (node.type !== "element") return node
+    if (node.type !== "element")
+      throw new DocumentError(["Unsupported document markup."])
     const canonical = canonicalDocumentNode(node)
 
     return {

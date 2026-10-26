@@ -383,7 +383,11 @@ export function documentMathChildren(value: EditorMathValue): ElementContent[] {
   checkTree(tree)
 
   return tree.children.map((node) => {
-    if (node.type === "doctype")
+    if (
+      node.type !== "element" &&
+      node.type !== "text" &&
+      node.type !== "comment"
+    )
       throw new DocumentError(["Invalid generated math HTML."])
 
     return node
