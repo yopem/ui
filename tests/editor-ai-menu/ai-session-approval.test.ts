@@ -1,7 +1,6 @@
 import type { MouseEventHandler } from "react"
 
 import { createEditorAiSession } from "@editor/ai-session"
-import { createHeadlessEditor } from "@lexical/headless"
 import { documentNodes, importDocument } from "@yopem-ui/editor/document"
 import { expect, test } from "bun:test"
 import {
@@ -105,7 +104,7 @@ const nestedTargets = [
 
 for (const target of nestedTargets) {
   test(`approved below stays inside nested ${target.name}`, async () => {
-    const editor = createHeadlessEditor({
+    const editor = createEditor({
       namespace: `ai-menu-nested-${target.parentType}`,
       nodes: documentNodes,
       onError(error) {
@@ -140,7 +139,8 @@ for (const target of nestedTargets) {
     })
 
     try {
-      session.open("rewrite")
+      session.open("generate")
+      expect(session.getSnapshot().status).toBe("idle")
       await session.request(
         {
           endpoint: "/ai",
