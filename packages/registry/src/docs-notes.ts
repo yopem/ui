@@ -86,6 +86,21 @@ const usageNoteValues = {
     "JSON stores only type and version. Local fields and nested content are transient. Removal, import, and undo restoration reset them.",
     "Outer read-only state disables local controls. Document readers retain the saved card node, not transient values. Runtime checks remain pending.",
   ],
+  "editor-document-export": [
+    "Install export controls separately. Compose them inside EditorRoot. Read-only roots can export validated snapshots.",
+    "Print needs no image SDK. PNG needs an explicit capture callback or the separate editor-document-export-image adapter.",
+    "Supply an abort-aware host resolver for remote images. Enforce exact origins, private asset permissions, and cumulative resource limits.",
+    "Exports do not change saved content, selection, or history. Unsupported document representations reject before output.",
+    "Only one export can run at a time. Cancellation keeps capacity reserved until pending work settles.",
+    "PNG uses bounded dimensions and output bytes. Native print dialogs and synchronous capture work cannot be stopped.",
+    "Verify owner-document behavior, local fonts, CSP, browser SVG support, and keyboard access before production use.",
+  ],
+  "editor-document-export-image": [
+    "Install this adapter only for PNG capture. Pass captureEditorDocumentImageWithHtmlToImage as the control capture prop.",
+    "The adapter uses html-to-image, validates its SVG, and rasterizes in the editor owner document.",
+    "Web fonts are skipped. Local font fallbacks can change document layout. Verify CSP and SVG foreignObject support.",
+    "The base print item does not require this SDK. Abort discards output but cannot stop synchronous browser work.",
+  ],
   "editor-docx": [
     "Install this optional item for bounded native Word document conversion.",
     "Compose EditorDocxImportControl, EditorDocxExportControl, or EditorDocxControls inside EditorRoot. Keep portable functions separate from client controls.",

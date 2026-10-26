@@ -150,93 +150,103 @@ export function createComponentDocs(
                   : ""),
             ),
         importPath:
-          item.name === "editor"
-            ? part.source === "components/editor/ai-controls.tsx"
-              ? "@/components/editor/ai-controls"
-              : part.source === "components/editor/ai-client.ts"
-                ? "@/components/editor/ai-client"
-                : "@/components/editor"
-            : item.name === "editor-list-presentation"
-              ? part.source === "components/editor/list-presentation-model.ts"
-                ? "@/components/editor/list-presentation-model"
-                : "@/components/editor/list-presentation"
-              : item.name === "editor-diagram"
-                ? /^components\/editor\/diagram-(?:model|state|render|html)\.ts$/u.test(
-                    part.source,
-                  )
-                  ? `@/${part.source.replace(/\.tsx?$/, "")}`
-                  : "@/components/editor/diagram"
-                : item.name === "editor-block-menu"
-                  ? "@/components/editor/block-menu-index"
-                  : item.name === "editor-copilot"
-                    ? part.source === "components/editor/copilot-session.ts"
-                      ? "@/components/editor/copilot-session"
-                      : "@/components/editor/copilot"
-                    : item.name === "editor-editable-card"
-                      ? part.source ===
-                        "components/editor/editable-card-model.ts"
-                        ? "@/components/editor/editable-card-model"
-                        : "@/components/editor/editable-card"
-                      : item.name === "editor-docx"
-                        ? part.source === "components/editor/docx-controls.tsx"
-                          ? "@/components/editor/docx-controls"
-                          : "@/components/editor/docx"
-                        : item.name === "editor-assets"
-                          ? "@/lib/editor-assets"
-                          : item.name === "editor-ai"
-                            ? "@/lib/editor-ai"
-                            : item.name === "editor-collaboration-grants"
-                              ? part.source ===
-                                "lib/editor-collaboration/collaboration-native-model.ts"
-                                ? "@/lib/editor-collaboration/collaboration-native-model"
-                                : "@/lib/editor-collaboration/collaboration-native-grants"
-                              : item.name === "editor-collaboration-server"
-                                ? "@/lib/editor-collaboration"
-                                : item.name === "editor-collaboration-worker"
-                                  ? "@/lib/editor-collaboration/collaboration-do"
-                                  : item.name === "editor-block-selection"
-                                    ? "@/components/editor/block-selection-index"
-                                    : item.name === "editor-footnotes"
-                                      ? "@/components/editor/footnote"
-                                      : [
-                                            "editor-code",
-                                            "editor-columns",
-                                            "editor-labels",
-                                            "editor-date",
-                                            "editor-review",
-                                            "editor-collaboration",
-                                            "editor-media",
-                                            "editor-toc",
-                                            "editor-csv",
-                                            "editor-autoformat",
-                                            "editor-block-behavior",
-                                          ].includes(item.name)
-                                        ? `@/components/editor/${item.name.slice(7)}`
-                                        : item.name === "editor-math"
-                                          ? "@/components/editor/math"
-                                          : item.name === "editor-blocks" &&
-                                              part.source !==
-                                                "components/editor/blocks-model.ts"
-                                            ? "@/components/editor/blocks"
-                                            : item.name === "editor-document"
-                                              ? part.name === "DocumentStatic"
-                                                ? "@/components/editor/document/static"
-                                                : "@/components/editor/document"
-                                              : item.name === "editor-typeahead"
-                                                ? "@/components/editor/typeahead-index"
-                                                : (item.files
-                                                    .find(
-                                                      (file) =>
-                                                        file.path ===
-                                                          part.source ||
-                                                        file.path.endsWith(
-                                                          `${item.name}.tsx`,
-                                                        ),
-                                                    )
-                                                    ?.target.replace(
-                                                      /\.tsx?$/,
-                                                      "",
-                                                    ) ?? null),
+          item.name === "editor-document-export"
+            ? "@/components/editor/document-export"
+            : item.name === "editor-document-export-image"
+              ? "@/components/editor/document-export-html-to-image"
+              : item.name === "editor"
+                ? part.source === "components/editor/ai-controls.tsx"
+                  ? "@/components/editor/ai-controls"
+                  : part.source === "components/editor/ai-client.ts"
+                    ? "@/components/editor/ai-client"
+                    : "@/components/editor"
+                : item.name === "editor-list-presentation"
+                  ? part.source ===
+                    "components/editor/list-presentation-model.ts"
+                    ? "@/components/editor/list-presentation-model"
+                    : "@/components/editor/list-presentation"
+                  : item.name === "editor-diagram"
+                    ? /^components\/editor\/diagram-(?:model|state|render|html)\.ts$/u.test(
+                        part.source,
+                      )
+                      ? `@/${part.source.replace(/\.tsx?$/, "")}`
+                      : "@/components/editor/diagram"
+                    : item.name === "editor-block-menu"
+                      ? "@/components/editor/block-menu-index"
+                      : item.name === "editor-copilot"
+                        ? part.source === "components/editor/copilot-session.ts"
+                          ? "@/components/editor/copilot-session"
+                          : "@/components/editor/copilot"
+                        : item.name === "editor-editable-card"
+                          ? part.source ===
+                            "components/editor/editable-card-model.ts"
+                            ? "@/components/editor/editable-card-model"
+                            : "@/components/editor/editable-card"
+                          : item.name === "editor-docx"
+                            ? part.source ===
+                              "components/editor/docx-controls.tsx"
+                              ? "@/components/editor/docx-controls"
+                              : "@/components/editor/docx"
+                            : item.name === "editor-assets"
+                              ? "@/lib/editor-assets"
+                              : item.name === "editor-ai"
+                                ? "@/lib/editor-ai"
+                                : item.name === "editor-collaboration-grants"
+                                  ? part.source ===
+                                    "lib/editor-collaboration/collaboration-native-model.ts"
+                                    ? "@/lib/editor-collaboration/collaboration-native-model"
+                                    : "@/lib/editor-collaboration/collaboration-native-grants"
+                                  : item.name === "editor-collaboration-server"
+                                    ? "@/lib/editor-collaboration"
+                                    : item.name ===
+                                        "editor-collaboration-worker"
+                                      ? "@/lib/editor-collaboration/collaboration-do"
+                                      : item.name === "editor-block-selection"
+                                        ? "@/components/editor/block-selection-index"
+                                        : item.name === "editor-footnotes"
+                                          ? "@/components/editor/footnote"
+                                          : [
+                                                "editor-code",
+                                                "editor-columns",
+                                                "editor-labels",
+                                                "editor-date",
+                                                "editor-review",
+                                                "editor-collaboration",
+                                                "editor-media",
+                                                "editor-toc",
+                                                "editor-csv",
+                                                "editor-autoformat",
+                                                "editor-block-behavior",
+                                              ].includes(item.name)
+                                            ? `@/components/editor/${item.name.slice(7)}`
+                                            : item.name === "editor-math"
+                                              ? "@/components/editor/math"
+                                              : item.name === "editor-blocks" &&
+                                                  part.source !==
+                                                    "components/editor/blocks-model.ts"
+                                                ? "@/components/editor/blocks"
+                                                : item.name ===
+                                                    "editor-document"
+                                                  ? part.name ===
+                                                    "DocumentStatic"
+                                                    ? "@/components/editor/document/static"
+                                                    : "@/components/editor/document"
+                                                  : item.name ===
+                                                      "editor-typeahead"
+                                                    ? "@/components/editor/typeahead-index"
+                                                    : (item.files
+                                                        .find(
+                                                          (file) =>
+                                                            file.path ===
+                                                              part.source ||
+                                                            file.path.endsWith(
+                                                              `${item.name}.tsx`,
+                                                            ),
+                                                        )
+                                                        ?.target.replace(
+                                                          /\.tsx?$/,
+                                                          "",
+                                                        ) ?? null),
         props: part.props.map((index) => {
           const prop = properties[index]
 

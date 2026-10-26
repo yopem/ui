@@ -32,6 +32,10 @@ import {
   editorDiagramFlowchartItem,
 } from "@registry/items/editor-diagram-renderers"
 import { editorDocumentItem } from "@registry/items/editor-document"
+import {
+  editorDocumentExportItem,
+  editorDocumentExportImageItem,
+} from "@registry/items/editor-document-export"
 import { editorDocxItem } from "@registry/items/editor-docx"
 import { editorDrawingItem } from "@registry/items/editor-drawing"
 import { editorEditableCardItem } from "@registry/items/editor-editable-card"
@@ -90,6 +94,8 @@ export const sourceItems = [
   editorAutoformatItem,
   editorBlockBehaviorItem,
   editorDocxItem,
+  editorDocumentExportItem,
+  editorDocumentExportImageItem,
   editorDiagramItem,
   editorDiagramMermaidItem,
   editorDiagramPlantUmlItem,

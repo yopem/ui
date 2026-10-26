@@ -109,6 +109,11 @@ export const sourceImportReplacements = [
   ],
   ["@yopem-ui/editor/word-clipboard", "@/components/editor/word-clipboard"],
   [
+    "@yopem-ui/editor/document-export-html-to-image",
+    "@/components/editor/document-export-html-to-image",
+  ],
+  ["@yopem-ui/editor/document-export", "@/components/editor/document-export"],
+  [
     "@yopem-ui/editor/cursor-overlay/store",
     "@/components/editor/cursor-overlay-store",
   ],

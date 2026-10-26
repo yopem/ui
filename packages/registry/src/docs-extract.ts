@@ -498,6 +498,11 @@ export function extractDocs() {
         .filter(
           (file) =>
             /\.tsx?$/.test(file.path) &&
+            (item.name !== "editor-document-export" ||
+              file.path === "components/editor/document-export.tsx") &&
+            (item.name !== "editor-document-export-image" ||
+              file.path ===
+                "components/editor/document-export-html-to-image.ts") &&
             (item.name !== "editor-ai-menu" ||
               [
                 "components/editor/ai-menu.tsx",
