@@ -194,6 +194,48 @@ test("cancelled and stale uploads do not replace selected content", async ({
   await page.clock.resume()
 })
 
+test("moving the caret cancels a pending file insertion without changing content", async ({
+  page,
+  context,
+}) => {
+  test.slow()
+  await openMediaClipboard(page)
+  await context.grantPermissions(["clipboard-read", "clipboard-write"], {
+    origin: new URL(page.url()).origin,
+  })
+  await page.clock.install({ time: new Date("2030-01-01T00:00:00Z") })
+  await page.clock.pauseAt(new Date("2030-01-01T00:01:00Z"))
+
+  const region = page.getByRole("region", {
+    name: "Media file clipboard editor",
+    exact: true,
+  })
+
+  const editor = region.getByRole("textbox", {
+    name: "Media file clipboard content",
+    exact: true,
+  })
+
+  await editor.fill("Keep original")
+  await editor.press("End")
+  await writeImageClipboard(page)
+  await editor.press("ControlOrMeta+V")
+  await expect(
+    region.getByRole("button", { name: "Cancel upload", exact: true }),
+  ).toBeVisible()
+  await editor.press("ArrowLeft")
+  await expect(
+    region.getByRole("button", { name: "Cancel upload", exact: true }),
+  ).toHaveCount(0)
+  await page.clock.runFor(1000)
+  await expect(editor.locator('[data-slot="editor-media"]')).toHaveCount(0)
+  await expect(editor).toHaveText("Keep original")
+  await expect(editor).toBeFocused()
+  await editor.press("X")
+  await expect(editor).toHaveText("Keep originaXl")
+  await page.clock.resume()
+})
+
 test("validates file drop coordinates and accepts files inside the editor", async ({
   page,
 }) => {

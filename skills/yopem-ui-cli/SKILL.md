@@ -719,21 +719,22 @@ extension array. Compose `MediaInsertControl` inside `EditorToolbar`. Mount
 `MediaFileClipboard` inside `EditorRoot` with a stable host upload callback. It
 handles one file per paste or drop. Without upload, it registers nothing. Rich
 MIME and higher-priority host handlers stay first. Callback changes cancel
-pending work. Host callbacks enforce size, content, authorization, and quota
-limits. `MediaContent` and image preview parts work without `EditorRoot`.
-Compose `MediaPreviewRoot`, `MediaPreviewTrigger`, and `MediaPreviewDialog`, or
-use `MediaPreviewGallery`. Supply unique image IDs. Zoom stays local. Use the
-house Slider and ScrollArea controls for keyboard zoom and scrolling.
-`MediaEmbedContent` needs an explicit provider or exact HTTPS-origin policy.
-Frames need user consent. Source, policy, and disabled changes discard consent.
-Tweet embeds use the fixed platform.twitter.com endpoint. HTML exports keep
-inert links. Origin validation does not check DNS or redirects. Keep these
-controls in the host. Use HTTPS URLs without credentials. Supply alt text and
-captions for your content. Keep native playback, file links, and iframe controls
-usable in read-only roots. Supply bounded, abort-aware host uploads with server
-authorization and validation. Private assets need explicit same-origin delivery
-integration. Never put tokens in media URLs. Register `MediaNode` in document
-readers. Do not flatten unsupported media during conversion.
+pending work. Moving the caret cancels pending insertion. Host callbacks enforce
+size, content, authorization, and quota limits. `MediaContent` and image preview
+parts work without `EditorRoot`. Compose `MediaPreviewRoot`,
+`MediaPreviewTrigger`, and `MediaPreviewDialog`, or use `MediaPreviewGallery`.
+Supply unique image IDs. Zoom stays local. Use the house Slider and ScrollArea
+controls for keyboard zoom and scrolling. `MediaEmbedContent` needs an explicit
+provider or exact HTTPS-origin policy. Frames need user consent. Source, policy,
+and disabled changes discard consent. Tweet embeds use the fixed
+platform.twitter.com endpoint. HTML exports keep inert links. Origin validation
+does not check DNS or redirects. Keep these controls in the host. Use HTTPS URLs
+without credentials. Supply alt text and captions for your content. Keep native
+playback, file links, and iframe controls usable in read-only roots. Supply
+bounded, abort-aware host uploads with server authorization and validation.
+Private assets need explicit same-origin delivery integration. Never put tokens
+in media URLs. Register `MediaNode` in document readers. Do not flatten
+unsupported media during conversion.
 
 ## Optional footnotes and table of contents
 

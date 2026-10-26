@@ -21,6 +21,7 @@ import {
   mergeRegister,
   PASTE_COMMAND,
   type PasteCommandType,
+  type RangeSelection,
 } from "lexical"
 import { useState, useSyncExternalStore } from "react"
 
@@ -202,7 +203,11 @@ function ConfiguredMediaFileClipboard({ upload }: { upload: MediaUpload }) {
         return
       }
 
+      let uploadSelection: RangeSelection | null = null
+
       const unbookmark = bookmark.subscribe(() => {
+        if (!bookmark.getSnapshot()) uploadSelection = null
+
         if (
           !bookmark.getSnapshot() &&
           task.getSnapshot().status === "uploading"
@@ -212,7 +217,11 @@ function ConfiguredMediaFileClipboard({ upload }: { upload: MediaUpload }) {
         }
       })
 
-      function uploadFile(file: File, revision: number) {
+      function uploadFile(
+        file: File,
+        revision: number,
+        expectedSelection: RangeSelection,
+      ) {
         if (file.name.length > 512) {
           setError("File name is too long.")
           bookmark.clear()
@@ -240,12 +249,15 @@ function ConfiguredMediaFileClipboard({ upload }: { upload: MediaUpload }) {
             try {
               editor.update(
                 () => {
+                  const selection = $getSelection()
+
                   if (
                     !editor.isEditable() ||
                     bookmark.getRevision() !== revision ||
                     !bookmark.getSnapshot() ||
-                    !bookmark.restore() ||
-                    !$isRangeSelection($getSelection())
+                    !$isRangeSelection(selection) ||
+                    !selection.is(expectedSelection) ||
+                    !bookmark.restore()
                   )
                     return
 
@@ -258,6 +270,7 @@ function ConfiguredMediaFileClipboard({ upload }: { upload: MediaUpload }) {
             }
 
             if (!inserted) {
+              bookmark.clear()
               setError("Selection changed. Select an insertion point again.")
 
               return
@@ -341,14 +354,17 @@ function ConfiguredMediaFileClipboard({ upload }: { upload: MediaUpload }) {
         bookmark.clear()
         bookmark.capture()
 
-        if (!bookmark.getSnapshot()) {
+        const selection = $getSelection()
+
+        if (!bookmark.getSnapshot() || !$isRangeSelection(selection)) {
           setError("Select an insertion point again.")
 
           return true
         }
 
         setError(null)
-        uploadFile(file, bookmark.getRevision())
+        uploadSelection = selection.clone()
+        uploadFile(file, bookmark.getRevision(), uploadSelection)
 
         return true
       }
@@ -359,7 +375,30 @@ function ConfiguredMediaFileClipboard({ upload }: { upload: MediaUpload }) {
         return handleTransfer(event, event.clipboardData)
       }
 
+      function cancelStaleUpload() {
+        if (task.getSnapshot().status !== "uploading") return
+        task.cancel()
+        bookmark.clear()
+        setError("Selection changed. Select an insertion point again.")
+      }
+
       const unregister = mergeRegister(
+        editor.registerUpdateListener(({ editorState }) => {
+          const expectedSelection = uploadSelection
+
+          if (!expectedSelection || task.getSnapshot().status !== "uploading")
+            return
+
+          const matches = editorState.read(() => {
+            const selection = $getSelection()
+
+            return (
+              $isRangeSelection(selection) && selection.is(expectedSelection)
+            )
+          })
+
+          if (!matches) cancelStaleUpload()
+        }),
         editor.registerCommand(
           PASTE_COMMAND,
           handlePaste,

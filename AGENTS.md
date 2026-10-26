@@ -713,6 +713,7 @@ Compose `MediaInsertControl` inside `EditorToolbar`.
 Mount `MediaFileClipboard` inside `EditorRoot` with a stable host upload callback.
 It handles one file per paste or drop. Without upload, it registers nothing.
 Rich MIME and higher-priority host handlers stay first. Callback changes cancel pending work.
+Moving the caret cancels pending insertion.
 Host callbacks must enforce size, content, authorization, and quota limits.
 `MediaContent` and image preview parts work without `EditorRoot`.
 Compose `MediaPreviewRoot`, `MediaPreviewTrigger`, and `MediaPreviewDialog`, or use `MediaPreviewGallery`.
