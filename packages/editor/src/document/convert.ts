@@ -1238,6 +1238,7 @@ export function $exportTree(markdown = false): Root {
         ? element("a", [{ type: "text", value: String(reference.number) }], {
             dataEditorFootnoteReferenceLink: "",
             href: `#${reference.definitionId}`,
+            role: "doc-noteref",
           })
         : { type: "text", value: String(reference.number) }
 
@@ -1247,7 +1248,6 @@ export function $exportTree(markdown = false): Root {
             "data-editor-footnote-reference"
           ],
         id: reference.id,
-        role: "doc-noteref",
       })
     }
 
@@ -1441,7 +1441,7 @@ export function $exportTree(markdown = false): Root {
           "data-editor-footnote-definition"
         ]
       properties.id = id
-      properties.role = "doc-endnote"
+      properties.role = "doc-footnote"
     } else if (node.getType() === "editor-columns-group") {
       const group = z
         .object({ layout: z.array(z.number()) })

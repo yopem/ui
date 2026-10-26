@@ -544,14 +544,22 @@ export function canonicalDocumentNode(node: Element) {
 
     allowed(["dataEditorFootnoteReference", "id", "role"])
 
+    const links = node.children.filter(
+      (child): child is Element =>
+        child.type === "element" && child.tagName === "a",
+    )
+
+    const link = links[0]
+
     if (
       node.tagName !== "sup" ||
       (properties.role !== undefined && properties.role !== "doc-noteref") ||
+      (link?.properties.role !== undefined &&
+        link.properties.role !== "doc-noteref") ||
+      (properties.role !== undefined && link?.properties.role !== undefined) ||
       (properties.id !== undefined &&
         !/^[A-Za-z0-9_.:-]{1,128}$/.test(String(properties.id))) ||
-      node.children.filter(
-        (child) => child.type === "element" && child.tagName === "a",
-      ).length > 1 ||
+      links.length > 1 ||
       node.children.some(
         (child) =>
           child.type !== "text" &&
@@ -559,10 +567,14 @@ export function canonicalDocumentNode(node: Element) {
             child.type === "element" &&
             child.tagName === "a" &&
             child.properties.dataEditorFootnoteReferenceLink === "" &&
+            child.properties.href !== undefined &&
             Object.keys(child.properties).every((key) =>
-              ["dataEditorFootnoteReferenceLink", "href", "ariaLabel"].includes(
-                key,
-              ),
+              [
+                "dataEditorFootnoteReferenceLink",
+                "href",
+                "ariaLabel",
+                "role",
+              ].includes(key),
             ) &&
             child.children.every((value) => value.type === "text")
           ),
@@ -596,7 +608,8 @@ export function canonicalDocumentNode(node: Element) {
 
     if (
       node.tagName !== "div" ||
-      (properties.role !== undefined && properties.role !== "doc-endnote") ||
+      (properties.role !== undefined &&
+        !["doc-footnote", "doc-endnote"].includes(String(properties.role))) ||
       (properties.id !== undefined &&
         !/^[A-Za-z0-9_.:-]{1,128}$/.test(String(properties.id)))
     )
@@ -1036,6 +1049,17 @@ function validateDocumentRelations(tree: Root) {
     if (node.tagName !== "a") continue
     const href = String(node.properties.href ?? "")
 
+    const referenceLinkMarker =
+      node.properties.dataEditorFootnoteReferenceLink === ""
+
+    const backlinkMarker = node.properties.dataEditorFootnoteBacklink === ""
+
+    if (
+      (referenceLinkMarker || backlinkMarker) &&
+      !/^#[A-Za-z0-9_.:-]{1,128}$/.test(href)
+    )
+      throw new DocumentError(["Invalid footnote link target."])
+
     if (!href.startsWith("#")) continue
     const targetId = href.slice(1)
     const target = ids.get(targetId)
@@ -1052,12 +1076,12 @@ function validateDocumentRelations(tree: Root) {
       toc.properties.dataEditorToc !== undefined
 
     const referenceLink =
-      node.properties.dataEditorFootnoteReferenceLink === "" &&
+      referenceLinkMarker &&
       parent?.tagName === "sup" &&
       parent.properties.dataEditorFootnoteReference !== undefined
 
     const backlink =
-      node.properties.dataEditorFootnoteBacklink === "" &&
+      backlinkMarker &&
       parent?.tagName === "div" &&
       parent.properties.dataEditorFootnoteDefinition !== undefined
 
@@ -1474,7 +1498,7 @@ export function validateHTMLTree(tree: Root, generated = false) {
           dataEditorSlot: ["div"],
           dataEditorLabel: ["yopem-editor-label"],
           id: ["h1", "h2", "h3", "h4", "h5", "h6", "sup", "div"],
-          role: ["sup", "div"],
+          role: ["sup", "div", "a"],
           align: ["td", "th", "table"],
           href: ["a"],
           title: ["a"],
@@ -1493,6 +1517,14 @@ export function validateHTMLTree(tree: Root, generated = false) {
         throw new DocumentError([
           `Unsupported attribute on ${node.tagName}: ${key}.`,
         ])
+
+      if (
+        key === "role" &&
+        node.tagName === "a" &&
+        (value !== "doc-noteref" ||
+          node.properties.dataEditorFootnoteReferenceLink !== "")
+      )
+        throw new DocumentError(["Invalid footnote reference role."])
 
       if (
         ["thead", "tbody", "tfoot", "br", "input"].includes(node.tagName) &&

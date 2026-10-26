@@ -163,7 +163,6 @@ export class EditorFootnoteReferenceNode extends DecoratorNode<ReactNode> {
       EDITOR_FOOTNOTE_REFERENCE_ATTRIBUTE,
       this.getIdentifier(),
     )
-    element.setAttribute("role", "doc-noteref")
     element.contentEditable = "false"
 
     return element
@@ -394,7 +393,7 @@ export class EditorFootnoteDefinitionNode extends ElementNode {
       editorFootnoteDefinitionHTMLAttributes(this.getIdentifier()),
     ))
       element.setAttribute(name, value)
-    element.setAttribute("role", "doc-endnote")
+    element.setAttribute("role", "doc-footnote")
     const liveElement = output.element
 
     const body = isHTMLElement(liveElement)
@@ -485,7 +484,13 @@ function EditorFootnoteReferenceView({
 
   const trigger = targetId ? (
     <Button
-      render={<a href={`#${targetId}`} aria-label={accessibleName} />}
+      render={
+        <a
+          href={`#${targetId}`}
+          aria-label={accessibleName}
+          role="doc-noteref"
+        />
+      }
       variant="link"
       size="xs"
       xstyle={styles.reference}
