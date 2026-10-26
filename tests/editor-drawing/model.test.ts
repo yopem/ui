@@ -63,6 +63,28 @@ describe("editor drawing scene model", () => {
       expect(() => parseEditorDrawingScene({ elements: [element] })).toThrow()
   })
 
+  test.each(["\ud800", "tail\udbff", "\udfff", "\ud800x", "\ud800\ud800"])(
+    "rejects unpaired scene text surrogates: %j",
+    (text) => {
+      expect(() =>
+        parseEditorDrawingScene({
+          elements: [{ id: "shape-1", type: "text", text }],
+        }),
+      ).toThrow()
+    },
+  )
+
+  test.each(["👩‍💻", "\udbff\udfff"])(
+    "preserves valid supplementary scene text: %j",
+    (text) => {
+      expect(
+        parseEditorDrawingScene({
+          elements: [{ id: "shape-1", type: "text", text }],
+        }).elements[0].text,
+      ).toBe(text)
+    },
+  )
+
   test("rejects malformed Unicode and non-JSON object prototypes", () => {
     expect(() =>
       parseEditorDrawingScene({
