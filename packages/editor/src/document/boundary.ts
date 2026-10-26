@@ -1,4 +1,10 @@
-import type { Element, Properties, Root, RootContent } from "hast"
+import type {
+  Element,
+  ElementContent,
+  Properties,
+  Root,
+  RootContent,
+} from "hast"
 
 import {
   isEditorLineHeight,
@@ -368,7 +374,7 @@ export function textOf(node: RootContent): string {
   return node.tagName === "br" ? "\n" : node.children.map(textOf).join("")
 }
 
-export function documentMathChildren(value: EditorMathValue) {
+export function documentMathChildren(value: EditorMathValue): ElementContent[] {
   const result = renderEditorMath(value)
 
   if (!result.ok) return [{ type: "text" as const, value: value.tex }]
