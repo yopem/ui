@@ -23,9 +23,21 @@ import { useRef, useState } from "react"
 import { z } from "zod"
 
 const primitiveStyles = stylex.create({
-  searchDocumentation: {
+  searchTrigger: {
+    position: "relative",
     marginInlineStart: "auto",
-    inlineSize: { default: "15rem", "@media (max-width: 767.98px)": "2.5rem" },
+    inlineSize: { default: "19rem", "@media (max-width: 767.98px)": "2.5rem" },
+  },
+  searchDocumentation: {
+    inlineSize: "100%",
+    paddingInlineEnd: {
+      default: `calc(${tokens["--spacing"]} * 25)`,
+      "@media (max-width: 767.98px)": `calc(${tokens["--spacing"]} * 2)`,
+    },
+    paddingInlineStart: {
+      default: `calc(${tokens["--spacing"]} * 3)`,
+      "@media (max-width: 767.98px)": `calc(${tokens["--spacing"]} * 2)`,
+    },
     justifyContent: {
       default: "flex-start",
       "@media (max-width: 767.98px)": "center",
@@ -36,7 +48,12 @@ const primitiveStyles = stylex.create({
     display: { default: "inline", "@media (max-width: 767.98px)": "none" },
   },
   kbd: {
-    marginInlineStart: "auto",
+    position: "absolute",
+    insetBlockStart: "50%",
+    insetInlineEnd: `calc(${tokens["--spacing"]} * 3)`,
+    transform: "translateY(-50%)",
+    pointerEvents: "none",
+    color: tokens["--muted-foreground"],
     fontFamily: tokens["--font-mono"],
     fontSize: "0.6875rem",
     display: { default: "inline", "@media (max-width: 767.98px)": "none" },
@@ -183,25 +200,28 @@ export function GlobalSearch() {
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogTrigger
-        disabled={!hydrated}
-        render={
-          <Button
-            variant="outline"
-            ref={registerTrigger}
-            aria-label="Search documentation"
-            xstyle={primitiveStyles.searchDocumentation}
-          />
-        }
-      >
-        <SearchIcon size={16} />
-        <Box render={<span />} xstyle={primitiveStyles.span}>
-          Search documentation
-        </Box>
+      <Box xstyle={primitiveStyles.searchTrigger}>
+        <DialogTrigger
+          disabled={!hydrated}
+          render={
+            <Button
+              variant="outline"
+              ref={registerTrigger}
+              aria-label="Search documentation"
+              aria-keyshortcuts="Control+K Meta+K"
+              xstyle={primitiveStyles.searchDocumentation}
+            />
+          }
+        >
+          <SearchIcon size={16} />
+          <Box render={<span />} xstyle={primitiveStyles.span}>
+            Search documentation
+          </Box>
+        </DialogTrigger>
         <Box render={<kbd />} aria-hidden="true" xstyle={primitiveStyles.kbd}>
           ⌘ / Ctrl K
         </Box>
-      </DialogTrigger>
+      </Box>
       <DialogPopup
         xstyle={primitiveStyles.dialogPopup}
         initialFocus={inputRef}
