@@ -5,8 +5,10 @@ import {
   sanitizeEditorDiagramSvg,
   type EditorDiagramRenderInput,
 } from "@editor/diagram-render"
+import { withDOM } from "@lexical/headless/dom"
 import { afterEach, beforeEach, describe, expect, test } from "bun:test"
-import { DOMParser } from "linkedom"
+
+const DOMParser = withDOM((window) => window.DOMParser)
 
 const safeSvg =
   '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M2 2h20v20H2z" fill="#fff" stroke="#111"/><text x="4" y="12">Ready</text></svg>'

@@ -10,6 +10,7 @@ import {
   CodeHighlightNode,
   CodeNode,
 } from "@lexical/code"
+import { withDOM } from "@lexical/headless/dom"
 import { describe, expect, test } from "bun:test"
 import {
   $createParagraphNode,
@@ -20,7 +21,8 @@ import {
   $setState,
   createEditor,
 } from "lexical"
-import { DOMParser } from "linkedom"
+
+const DOMParser = withDOM((window) => window.DOMParser)
 
 const safeSvg =
   '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2 2"><path d="M0 0h2v2H0z"/></svg>'
