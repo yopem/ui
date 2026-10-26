@@ -4,7 +4,7 @@ import AxeBuilder from "@axe-core/playwright"
 import { expect, test } from "@playwright/test"
 
 const imageData =
-  "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/FuoAAAAASUVORK5CYII="
+  "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGP4z8DwHwAFAAH/iZk9HQAAAABJRU5ErkJggg=="
 
 async function writeImageClipboard(page: Page) {
   await page.evaluate(async (base64) => {
@@ -103,6 +103,9 @@ test("uploads one pasted file and fails closed without host upload", async ({
   )
   await expect(editor).toContainText("Keep original")
 
+  await editor.press("ControlOrMeta+A")
+  await editor.press("Backspace")
+  await expect(media).toHaveCount(0)
   await editor.fill("Keep rich data")
   await editor.press("End")
   await writeRichImageClipboard(page)
@@ -253,9 +256,14 @@ test("validates file drop coordinates and accepts files inside the editor", asyn
   })
 
   await editor.fill("Keep original")
-  const bounds = await editor.boundingBox()
 
-  if (!bounds) throw new Error("Editor has no bounds")
+  const point = await editor.evaluate((element) => {
+    const range = element.ownerDocument.createRange()
+    range.selectNodeContents(element)
+    const bounds = range.getBoundingClientRect()
+
+    return { x: bounds.x + bounds.width / 2, y: bounds.y + bounds.height / 2 }
+  })
 
   const invalidDropPrevented = await page.evaluate(() => {
     const editor = document.querySelector(
@@ -284,29 +292,26 @@ test("validates file drop coordinates and accepts files inside the editor", asyn
   expect(invalidDropPrevented).toBe(true)
   await expect(editor.locator('[data-slot="editor-media"]')).toHaveCount(0)
 
-  await page.evaluate(
-    ({ x, y }) => {
-      const editor = document.querySelector(
-        '[aria-label="Media file clipboard content"]',
-      )
+  await page.evaluate(({ x, y }) => {
+    const editor = document.querySelector(
+      '[aria-label="Media file clipboard content"]',
+    )
 
-      if (!editor) throw new Error("Editor is missing")
-      const transfer = new DataTransfer()
-      transfer.items.add(
-        new File(["image"], "dropped.png", { type: "image/png" }),
-      )
-      editor.dispatchEvent(
-        new DragEvent("drop", {
-          bubbles: true,
-          cancelable: true,
-          clientX: x,
-          clientY: y,
-          dataTransfer: transfer,
-        }),
-      )
-    },
-    { x: bounds.x + 8, y: bounds.y + 8 },
-  )
+    if (!editor) throw new Error("Editor is missing")
+    const transfer = new DataTransfer()
+    transfer.items.add(
+      new File(["image"], "dropped.png", { type: "image/png" }),
+    )
+    editor.dispatchEvent(
+      new DragEvent("drop", {
+        bubbles: true,
+        cancelable: true,
+        clientX: x,
+        clientY: y,
+        dataTransfer: transfer,
+      }),
+    )
+  }, point)
 
   await expect(editor.locator('[data-slot="editor-media"]')).toHaveCount(1)
   await expect(editor).toContainText("Keep original")
