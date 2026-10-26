@@ -636,10 +636,18 @@ Supply a verified viewer and a synchronous host policy for every action.
 Allow an action only when current policy returns literal `true`.
 Serialized author IDs do not grant access. Recheck every action on the server.
 `visible=false` hides review UI. It does not redact or delete review state.
-Review state uses root NodeState `yopemReview` and text NodeState `yopemSuggestion`.
+Review state uses root NodeState `yopemReview`, pending tree state `yopemReviewStructural`, and text NodeState `yopemSuggestion`.
 Use `parseReviewDocument` at IO boundaries. Register `MarkNode` in every reader that loads review state.
 Untrusted input loses review metadata. Trust it only after host verification.
-Review suggestions are inline only. Text diffs support one paragraph, 2048 graphemes, and 4096 UTF-16 units.
+Text diffs support one paragraph, 2048 graphemes, and 4096 UTF-16 units.
+Use `$suggestDocumentTree` inside an editor update for one bounded structural proposal.
+Resolve inline suggestions before proposing a tree. Tree proposals allow 128 KiB, 1024 nodes, depth 24, and 128 changes.
+Call `decideStructural` outside Lexical read and update contexts for authorized decisions.
+Pending edits, changed documents, and ambiguous comment anchors reject before replacement.
+Use `$suggestCompletedText` inside an update for single-line AI output up to 16384 UTF-16 units.
+Suggestion creation and acceptance are separate actions. Authorize document writes separately.
+Use `parseReviewDocument(value, trusted, true)` for structural-review IO, with trust only after host verification.
+Compose the structural proposal, change-list, and decision parts. The source implementation still needs runtime validation.
 Paste inserts plain text only. Rich HTML paste is rejected. Pasted review metadata is not preserved.
 The separate `editor-document` readers do not import review formats.
 See https://ui.yopem.com/components/editor-review for API and limits.

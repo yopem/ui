@@ -209,16 +209,26 @@ Allow an action only when current policy returns literal `true`. Serialized
 author IDs do not grant access. Check each action again on the server before
 saving. `visible=false` hides review UI. It does not redact or delete state.
 
-Review state uses root NodeState `yopemReview` and text NodeState
-`yopemSuggestion`. Validate imported state with `parseReviewDocument`. Register
-`MarkNode` in every reader that loads review state. Untrusted input loses review
-metadata. Trust it only after host verification.
+Review state uses root NodeState `yopemReview`, pending tree state
+`yopemReviewStructural`, and text NodeState `yopemSuggestion`. Validate imported
+state with `parseReviewDocument`. Register `MarkNode` in every reader that loads
+review state. Untrusted input loses review metadata. Trust it only after host
+verification.
 
-Review suggestions are inline only. Text diffs support one paragraph, 2048
-graphemes, and 4096 UTF-16 units. Paste inserts plain text only. Rich HTML paste
-is rejected. Pasted review metadata is not preserved. `editor-document` does not
-import review formats. See https://ui.yopem.com/components/editor-review for
-public contracts and limits.
+Text diffs support one paragraph, 2048 graphemes, and 4096 UTF-16 units. Call
+`$suggestDocumentTree` inside an editor update for one bounded tree proposal.
+Resolve inline suggestions first. Tree proposals allow 128 KiB, 1024 nodes,
+depth 24, and 128 changes. Call `decideStructural` outside Lexical read and
+update contexts. Pending edits, changed documents, and ambiguous comment anchors
+reject before replacement. Use `$suggestCompletedText` inside an update for
+single-line output up to 16384 UTF-16 units. Suggestion creation and acceptance
+are separate actions. Authorize document writes separately. Compose the
+structural proposal, change-list, and decision parts. Use
+`parseReviewDocument(value, trusted, true)` for structural-review IO. Trust
+metadata only after host verification. Runtime validation remains deferred.
+Paste inserts plain text only. Rich HTML paste is rejected. Pasted review
+metadata is not preserved. `editor-document` does not import review formats. See
+https://ui.yopem.com/components/editor-review for public contracts and limits.
 
 ### Optional editor authentication
 

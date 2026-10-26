@@ -3,7 +3,8 @@ export const editorReviewParts = [
     name: "EditorReviewPreset",
     slug: "review-preset",
     item: "editor-review",
-    description: "Use the complete optional inline review editor.",
+    description:
+      "Compose discussions, inline suggestions, and bounded tree review.",
   },
   {
     name: "EditorReviewProvider",
@@ -76,5 +77,29 @@ export const editorReviewParts = [
     slug: "review-keyboard-control",
     item: "editor-review",
     description: "Apply keyboard formatting to selected discussion text.",
+  },
+  {
+    name: "EditorReviewStructuralProposals",
+    slug: "review-structural-proposals",
+    item: "editor-review",
+    description: "Show the pending bounded document-tree proposal.",
+  },
+  {
+    name: "EditorReviewStructuralProposal",
+    slug: "review-structural-proposal",
+    item: "editor-review",
+    description: "Read one structural proposal and its decisions.",
+  },
+  {
+    name: "EditorReviewStructuralChangeList",
+    slug: "review-structural-change-list",
+    item: "editor-review",
+    description: "Inspect inserted, removed, moved, or changed nodes.",
+  },
+  {
+    name: "EditorReviewStructuralDecisionControls",
+    slug: "review-structural-decision-controls",
+    item: "editor-review",
+    description: "Decide a current tree proposal with host permission.",
   },
 ] as const

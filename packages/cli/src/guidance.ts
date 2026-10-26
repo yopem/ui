@@ -240,9 +240,17 @@ Place \`EditorReviewProvider\` inside \`EditorRoot\`.
 Set \`viewer\` from a verified host identity. Require synchronous \`can(action, targetId, viewer)\` and literal \`true\` for each allowed action.
 Serialized author IDs are attribution only. They do not grant access. Check every action again on the server before saving.
 \`visible=false\` hides review UI. It does not redact or delete review state. Review permission does not grant document writes.
-Review state uses root NodeState \`yopemReview\` and text NodeState \`yopemSuggestion\`. Use \`parseReviewDocument\` at IO boundaries.
+Review state uses root NodeState \`yopemReview\`, pending tree state \`yopemReviewStructural\`, and text NodeState \`yopemSuggestion\`. Use \`parseReviewDocument\` at IO boundaries.
 The review extension registers \`MarkNode\` in its editor. Register \`MarkNode\` in every external reader that loads review data.
-Suggestions cover inline text. The diff control changes one paragraph, up to 2048 graphemes and 4096 UTF-16 units. Structural suggestions are not supported.
+The diff control changes one paragraph, up to 2048 graphemes and 4096 UTF-16 units.
+Call \`$suggestDocumentTree\` inside an editor update for one bounded tree proposal. Resolve inline suggestions first.
+Tree proposals allow 128 KiB, 1024 nodes, depth 24, and 128 changes.
+Call \`decideStructural\` outside Lexical read and update contexts for current authorized decisions.
+Pending edits, changed documents, and ambiguous comment anchors reject before replacement.
+Use \`$suggestCompletedText\` inside an update for single-line AI output up to 16384 UTF-16 units.
+Suggestion creation and acceptance are separate actions. Authorize document writes separately. Compose the structural proposal, change-list, and decision parts.
+Use \`parseReviewDocument(value, trusted, true)\` for structural-review IO. Trust metadata only after host verification.
+The source implementation still needs runtime validation.
 Paste inserts plain text only. Rich HTML paste is rejected. Pasted review metadata is not preserved. \`editor-document\` does not import review formats.
 See https://ui.yopem.com/components/editor-review for API and limits.
 

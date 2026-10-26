@@ -46,6 +46,8 @@ export async function getEditorDocumentation(slug: string) {
     sourcePath = "./editor-preview-compositions/footnotes.tsx"
   else if (part.name === "EditorTocControls")
     sourcePath = "./editor-preview-compositions/toc.tsx"
+  else if (part.name.startsWith("EditorReviewStructural"))
+    sourcePath = "./editor-preview-compositions/review-structural.tsx"
   else if (
     part.item === "editor-review" &&
     ![

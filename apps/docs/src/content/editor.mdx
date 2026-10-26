@@ -1152,10 +1152,10 @@ complete documents or Plate state.
 See [Editor math](/components/editor-math) for the live preview and composable
 example.
 
-## Optional inline review
+## Optional review
 
 Install `editor-review` separately. The item depends on `editor` and adds native
-review threads, rich comments, and bounded text suggestions.
+review threads, rich comments, inline suggestions, and bounded tree proposals.
 
 ```sh
 bunx --bun @yopem-ui/cli add editor-review
@@ -1176,17 +1176,39 @@ saving. Serialized author IDs are attribution only. They do not grant access.
 `replyWhileReadonly` only when your document policy allows discussion edits on
 read-only content.
 
-Review data uses `yopemReview` on the Lexical root and `yopemSuggestion` on text
-nodes. `parseReviewDocument` validates trusted review state or strips review
-data from untrusted input. Set `trusted=true` only for host-authenticated data.
-Register `MarkNode` in every reader that opens review documents. The review
-extension registers it in its own editor. The `editor-document` item does not
-import review formats.
+Review data uses `yopemReview` and `yopemReviewStructural` on the Lexical root.
+Text suggestions use `yopemSuggestion` on text nodes. `parseReviewDocument`
+validates trusted review state or strips review data from untrusted input. Set
+`trusted=true` only for host-authenticated data. Register `MarkNode` in every
+reader that opens review documents. The review extension registers it in its own
+editor. The `editor-document` item does not import review formats.
 
-Review supports inline text suggestions, not structural edits. The diff control
-changes one paragraph with at most 2048 graphemes and 4096 UTF-16 units. Rich
-comments use validated review content. Editor paste inserts plain text only.
-Rich HTML paste is rejected. Pasted review metadata is not preserved.
+The text diff control changes one paragraph with at most 2048 graphemes and 4096
+UTF-16 units. Rich comments use validated review content. Editor paste inserts
+plain text only. Rich HTML paste is rejected. Pasted review metadata is not
+preserved.
+
+Call `controller.$suggestDocumentTree(nextState)` inside an editor update for an
+explicit tree proposal. Resolve inline suggestions before proposing a tree. The
+proposal records insertions, removals, moves, replacements, properties, and line
+breaks. It does not automatically track all native editor commands.
+
+Compose [EditorReviewStructuralProposals](/editor/review-structural-proposals),
+[EditorReviewStructuralProposal](/editor/review-structural-proposal),
+[EditorReviewStructuralChangeList](/editor/review-structural-change-list), and
+[EditorReviewStructuralDecisionControls](/editor/review-structural-decision-controls).
+The focused examples include creation, permissions, read-only state, and
+history.
+
+Keep one pending tree proposal per root. Tree documents have a 128 KiB limit,
+1024 nodes, depth 24, and at most 128 changes. Use
+`controller.decideStructural(id, "accept")` or `"reject"` with current host
+permission. Changed source content and ambiguous comment anchors reject before
+replacement. Unchanged or uniquely moved comment ranges retain their anchors.
+
+Use `parseReviewDocument(value, trusted, true)` for structural-review IO. Trust
+metadata only after host verification. Supply complete host document validation
+separately. The source and deferred workflows still need runtime validation.
 
 See [Editor review](/components/editor-review) for API and examples.
 
