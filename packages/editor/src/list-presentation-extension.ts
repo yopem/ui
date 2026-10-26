@@ -148,11 +148,14 @@ export function createEditorListPresentationHTMLConfig(
     }
 
     apply(output.element)
+    const after = output.after
+
+    if (!after) return output
 
     return {
       ...output,
       after(element) {
-        return apply(output.after ? output.after(element) : element)
+        return apply(after.call(node, element))
       },
     }
   })

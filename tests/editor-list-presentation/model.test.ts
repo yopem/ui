@@ -9,6 +9,7 @@ import {
   parseEditorListStartHTML,
 } from "@editor/list-presentation-model"
 import { createHeadlessEditor } from "@lexical/headless"
+import { withDOM } from "@lexical/headless/dom"
 import { $generateHtmlFromNodes, $generateNodesFromDOM } from "@lexical/html"
 import {
   $createListItemNode,
@@ -24,8 +25,14 @@ import {
   type DOMConversionOutput,
   type DOMExportOutput,
   type HTMLConfig,
+  type LexicalNode,
 } from "lexical"
-import { parseHTML } from "linkedom"
+
+function parseHTML(source: string) {
+  return {
+    document: new window.DOMParser().parseFromString(source, "text/html"),
+  }
+}
 
 function createListEditor(html?: HTMLConfig) {
   return createHeadlessEditor({
@@ -53,36 +60,7 @@ function isHTMLElement(
 }
 
 function withDocument<T>(run: (document: Document) => T) {
-  const { document, window } = parseHTML(
-    "<!doctype html><html><body></body></html>",
-  )
-
-  const previousDocument = Object.getOwnPropertyDescriptor(
-    globalThis,
-    "document",
-  )
-
-  const previousWindow = Object.getOwnPropertyDescriptor(globalThis, "window")
-  Object.defineProperty(globalThis, "document", {
-    configurable: true,
-    value: document,
-  })
-  Object.defineProperty(globalThis, "window", {
-    configurable: true,
-    value: window,
-  })
-
-  try {
-    return run(document)
-  } finally {
-    if (previousDocument)
-      Object.defineProperty(globalThis, "document", previousDocument)
-    else Reflect.deleteProperty(globalThis, "document")
-
-    if (previousWindow)
-      Object.defineProperty(globalThis, "window", previousWindow)
-    else Reflect.deleteProperty(globalThis, "window")
-  }
+  return withDOM((window) => run(window.document))
 }
 
 test("list marker codec accepts only the eight supported native values", () => {
@@ -194,7 +172,10 @@ test("HTML roundtrip keeps marker metadata, native starts, nested lists, and che
       .read(() => $generateHtmlFromNodes(editor), { editor })
 
     const roundtrip = createListEditor(html)
-    const sourceDocument = parseHTML(source).document
+
+    const sourceDocument = parseHTML(
+      `<!doctype html><html><body>${source}</body></html>`,
+    ).document
 
     roundtrip.update(
       () => {
@@ -209,13 +190,15 @@ test("HTML roundtrip keeps marker metadata, native starts, nested lists, and che
       .getEditorState()
       .read(() => $generateHtmlFromNodes(roundtrip), { editor: roundtrip })
 
-    const result = parseHTML(output).document
+    const result = parseHTML(
+      `<!doctype html><html><body>${output}</body></html>`,
+    ).document
 
     expect(
-      result
-        .querySelector('ul[data-editor-list-marker="circle"]')
-        ?.getAttribute("style"),
-    ).toContain("list-style-type: circle")
+      result.querySelector<HTMLUListElement>(
+        'ul[data-editor-list-marker="circle"]',
+      )?.style.listStyleType,
+    ).toBe("circle")
     expect(result.querySelector('ol[start="0"]')).not.toBeNull()
     expect(result.querySelector('ol[start="-3"]')).not.toBeNull()
     expect(
@@ -227,95 +210,109 @@ test("HTML roundtrip keeps marker metadata, native starts, nested lists, and che
   })
 })
 
-test("HTML composition keeps host import and export callbacks", () => {
-  withDocument((document) => {
-    const editor = createListEditor()
-    let importAfterCalls = 0
-    let exportAfterCalls = 0
+test.each(["replace", "null", "undefined"] as const)(
+  "HTML composition keeps host import and export callbacks: %s",
+  (replacement) => {
+    withDocument((document) => {
+      const editor = createListEditor()
+      let importAfterCalls = 0
+      let exportAfterCalls = 0
 
-    const imports: NonNullable<HTMLConfig["import"]> = {
-      ul: () => ({
-        priority: 4,
-        conversion() {
-          return {
-            node: $createListNode("bullet"),
-            after(children) {
-              importAfterCalls += 1
+      const imports: NonNullable<HTMLConfig["import"]> = {
+        ul: () => ({
+          priority: 4,
+          conversion() {
+            return {
+              node: $createListNode("bullet"),
+              after(children) {
+                importAfterCalls += 1
 
-              return children
-            },
-          }
-        },
-      }),
-    }
-
-    const exports: NonNullable<HTMLConfig["export"]> = new Map([
-      [
-        ListNode,
-        () => ({
-          element: document.createElement("ul"),
-          after() {
-            exportAfterCalls += 1
-
-            return document.createElement("ul")
+                return children
+              },
+            }
           },
         }),
-      ],
-    ])
+      }
 
-    const config = createEditorListPresentationHTMLConfig({
-      import: imports,
-      export: exports,
+      const exports: NonNullable<HTMLConfig["export"]> = new Map([
+        [
+          ListNode,
+          (_editor, node) => ({
+            element: document.createElement("ul"),
+            after(this: LexicalNode) {
+              exportAfterCalls += 1
+              expect(this).toBe(node)
+
+              if (replacement === "null") return null
+
+              if (replacement === "undefined") return undefined
+
+              return document.createElement("ul")
+            },
+          }),
+        ],
+      ])
+
+      const config = createEditorListPresentationHTMLConfig({
+        import: imports,
+        export: exports,
+      })
+
+      const element = document.createElement("ul")
+      element.setAttribute("data-editor-list-marker", "square")
+      const importer = config.import?.ul?.(element)
+
+      if (!importer) throw new Error("Missing list importer")
+      const imported: ConversionOutputHolder = { output: null }
+
+      editor.update(
+        () => {
+          imported.output = importer.conversion(element)
+        },
+        { discrete: true },
+      )
+
+      const importOutput = imported.output
+
+      if (!importOutput) throw new Error("Host list importer returned no nodes")
+      importOutput.after?.([])
+      expect(importAfterCalls).toBe(1)
+
+      const markerEditor = createListEditor(config)
+      const list: ListNodeHolder = { node: null }
+      markerEditor.update(
+        () => {
+          list.node = $createListNode("bullet").append(
+            $createListItemNode().append($createTextNode("Host item")),
+          )
+          $setState(list.node, editorListMarkerState, "square")
+          $getRoot().append(list.node)
+        },
+        { discrete: true },
+      )
+      const exporter = config.export?.get(ListNode)
+      const currentList = list.node
+
+      if (!exporter || !currentList) throw new Error("Missing list exporter")
+
+      const output = markerEditor
+        .getEditorState()
+        .read(() => exporter(markerEditor, currentList), {
+          editor: markerEditor,
+        })
+
+      const result = output.after?.call(currentList, output.element)
+
+      if (replacement !== "replace")
+        expect(result).toBe(replacement === "null" ? null : undefined)
+      const elementWithStyle = result ?? output.element
+
+      const resultStyle = isHTMLElement(elementWithStyle)
+        ? elementWithStyle.style.listStyleType
+        : null
+
+      expect(exportAfterCalls).toBe(1)
+      expect(resultStyle).toBe("square")
     })
-
-    const element = document.createElement("ul")
-    element.setAttribute("data-editor-list-marker", "square")
-    const importer = config.import?.ul?.(element)
-
-    if (!importer) throw new Error("Missing list importer")
-    const imported: ConversionOutputHolder = { output: null }
-
-    editor.update(
-      () => {
-        imported.output = importer.conversion(element)
-      },
-      { discrete: true },
-    )
-
-    const importOutput = imported.output
-
-    if (!importOutput) throw new Error("Host list importer returned no nodes")
-    importOutput.after?.([])
-    expect(importAfterCalls).toBe(1)
-
-    const markerEditor = createListEditor(config)
-    const list: ListNodeHolder = { node: null }
-    markerEditor.update(
-      () => {
-        list.node = $createListNode("bullet").append(
-          $createListItemNode().append($createTextNode("Host item")),
-        )
-        $setState(list.node, editorListMarkerState, "square")
-        $getRoot().append(list.node)
-      },
-      { discrete: true },
-    )
-    const exporter = config.export?.get(ListNode)
-    const currentList = list.node
-
-    if (!exporter || !currentList) throw new Error("Missing list exporter")
-
-    const output = markerEditor
-      .getEditorState()
-      .read(() => exporter(markerEditor, currentList), { editor: markerEditor })
-
-    const result = output.after?.(output.element)
-
-    const resultStyle = isHTMLElement(result)
-      ? result.getAttribute("style")
-      : null
-
-    expect(exportAfterCalls).toBe(1)
-    expect(resultStyle).toContain("list-style-type: square")
-  })
-})
+  },
+)
