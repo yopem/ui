@@ -7,13 +7,15 @@ import { Button } from "@registry/components/ui/button"
 import { Wrap } from "@registry/components/ui/wrap"
 import { EditorContent, EditorRoot, EditorToolbar } from "@yopem-ui/editor"
 import {
-  MediaExtension,
+  createMediaExtension,
   MediaInsertControl,
   mediaKinds,
 } from "@yopem-ui/editor/media"
 import { useState } from "react"
 
-const extensions = [MediaExtension]
+const extensions = [
+  createMediaExtension({ embedPolicy: { providers: ["vimeo"] } }),
+]
 
 export function EditorMediaExample({ upload }: { upload?: MediaUpload }) {
   const [editable, setEditable] = useState(true)
