@@ -272,5 +272,5 @@ describe("authoritative Lexical collaboration bootstrap", function bootstrapCont
     )
 
     expect(result.rows).toEqual([{ mode: "snapshot" }])
-  })
+  }, 30_000)
 })

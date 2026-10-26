@@ -86,6 +86,7 @@ test("a blocking expired query prevents later SQL dispatch", async () => {
 test("cancelled pool wait releases a late client as broken", async () => {
   const connection = Promise.withResolvers<DocumentPgClient>()
   const started = Promise.withResolvers<void>()
+  const released = Promise.withResolvers<void>()
   const releases: boolean[] = []
   let queries = 0
 
@@ -121,9 +122,10 @@ test("cancelled pool wait releases a late client as broken", async () => {
     },
     release(destroy) {
       releases.push(destroy ?? false)
+      released.resolve()
     },
   })
-  await connection.promise
+  await released.promise
 
   expect(queries).toBe(0)
   expect(releases).toEqual([true])

@@ -97,10 +97,13 @@ export function waitForNativeUpgrade(
 ): Promise<NativeUpgradeResult> {
   return new Promise((resolve) => {
     let settled = false
+    let outcome: NativeUpgradeResult | undefined
 
     const timer = setTimeout(function timedOut() {
+      outcome = { kind: "timeout" }
       socket.terminate()
-      finish({ kind: "timeout" })
+
+      if (socket.readyState === WebSocket.CLOSED) finish(outcome)
     }, timeoutMs)
 
     function finish(result: NativeUpgradeResult) {
@@ -119,18 +122,17 @@ export function waitForNativeUpgrade(
     }
 
     function rejected(_request: ClientRequest, response: IncomingMessage) {
-      const status = response.statusCode ?? 0
+      outcome = { kind: "rejected", status: response.statusCode ?? 0 }
       response.resume()
-      finish({ kind: "rejected", status })
       socket.terminate()
     }
 
     function closed() {
-      finish({ kind: "closed" })
+      finish(outcome ?? { kind: "closed" })
     }
 
     function failed() {
-      finish({ kind: "failed" })
+      outcome ??= { kind: "failed" }
     }
 
     socket.on("open", opened)

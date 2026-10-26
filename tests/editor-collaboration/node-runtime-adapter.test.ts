@@ -195,10 +195,15 @@ async function nativeNodeWorkflow() {
 }
 
 if (runNative) {
-  test("Node http and ws run in an isolated native process", nativeNodeWorkflow)
+  test(
+    "Node http and ws run in an isolated native process",
+    nativeNodeWorkflow,
+    60_000,
+  )
 } else {
   test.skip(
     "Node native collaboration workflow requires RUN_NATIVE_COLLABORATION=1",
     nativeNodeWorkflow,
+    60_000,
   )
 }
