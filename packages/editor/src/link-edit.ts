@@ -72,6 +72,9 @@ export function applyEditorLinkEdit(
 ) {
   if (
     !editor.isEditable() ||
+    editor._updating ||
+    editor._dirtyElements.size > 0 ||
+    editor._dirtyLeaves.size > 0 ||
     !bookmark.getSnapshot() ||
     !isSafeLink(edit.url) ||
     !edit.text.trim() ||

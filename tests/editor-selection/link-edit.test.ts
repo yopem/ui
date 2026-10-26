@@ -289,6 +289,57 @@ describe("editor link editing", () => {
     }
   })
 
+  test.each(["pending", "active"] as const)(
+    "rejects link edits during %s host updates",
+    (phase) => {
+      const { editor, bookmark, unsubscribe, target, linkKey } = setup("link")
+
+      const edit = {
+        url: "https://new.example",
+        text: target.text,
+        newTab: false,
+      }
+
+      try {
+        if (phase === "active") {
+          editor.update(
+            () => {
+              expect(applyEditorLinkEdit(editor, bookmark, target, edit)).toBe(
+                false,
+              )
+            },
+            { discrete: true },
+          )
+        } else {
+          editor.update(() => {
+            $getRoot().append(
+              $createParagraphNode().append($createTextNode("Host change")),
+            )
+          })
+          expect(applyEditorLinkEdit(editor, bookmark, target, edit)).toBe(
+            false,
+          )
+          editor.update(
+            () => {
+              $getRoot().selectEnd()
+            },
+            { discrete: true },
+          )
+        }
+
+        editor.getEditorState().read(() => {
+          const link = $getNodeByKey(linkKey)
+
+          if (!$isLinkNode(link)) throw new Error("Expected the original link.")
+          expect(link.getURL()).toBe("https://old.example")
+        })
+      } finally {
+        unsubscribe()
+        editor.dispose()
+      }
+    },
+  )
+
   test("opens a new link from changed selected text", () => {
     const editor = createEditor()
     const bookmark = createEditorSelectionBookmark(editor)

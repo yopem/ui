@@ -56,7 +56,15 @@ export function EditorLinkControl({
   const [invalid, setInvalid] = useState<"url" | "text" | false>(false)
 
   function applyLink(remove: boolean) {
-    if (disabled || !editor.isEditable() || !hasSelection) return
+    if (
+      disabled ||
+      !editor.isEditable() ||
+      !hasSelection ||
+      editor._updating ||
+      editor._dirtyElements.size > 0 ||
+      editor._dirtyLeaves.size > 0
+    )
+      return
 
     if (remove) {
       let removed = false
