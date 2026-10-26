@@ -15,7 +15,7 @@ import { parseHTML } from "linkedom"
 
 test("columns HTML validation uses the supplied DOM, not ambient constructors", () => {
   const valid = parseHTML(
-    '<div data-editor-columns="1" data-editor-columns-layout="[50,50]"><div data-editor-column="1"><p>One</p></div><div data-editor-column="1"><p>Two</p></div></div>',
+    '<div data-editor-columns="1" data-editor-columns-layout="50,50"><div data-editor-column="1"><p>One</p></div><div data-editor-column="1"><p>Two</p></div></div>',
   ).document
 
   expect(() => validateEditorColumnsHTML(valid)).not.toThrow()

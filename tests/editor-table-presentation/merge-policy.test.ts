@@ -31,7 +31,9 @@ function createTableEditor(disableMerge?: boolean) {
 
   editor.update(
     () => {
-      $getRoot().append($createTableNodeWithDimensions(2, 2, false))
+      $getRoot()
+        .clear()
+        .append($createTableNodeWithDimensions(2, 2, false))
     },
     { discrete: true },
   )

@@ -3,14 +3,28 @@ import {
   registerEditorEditableCardRenderer,
 } from "@editor/editable-card-node"
 import { expect, test } from "bun:test"
-import { createEditor } from "lexical"
+import { $getRoot, createEditor } from "lexical"
 
 test("editable card renderers stay editor-local and clean up by identity", () => {
-  const firstEditor = createEditor()
+  const firstEditor = createEditor({ nodes: [EditorEditableCardNode] })
 
-  const secondEditor = createEditor()
+  const secondEditor = createEditor({ nodes: [EditorEditableCardNode] })
 
-  const node = new EditorEditableCardNode()
+  firstEditor.update(
+    () => {
+      $getRoot().append(new EditorEditableCardNode())
+    },
+    { discrete: true },
+  )
+
+  const node = firstEditor.read(() => {
+    const card = $getRoot().getFirstChildOrThrow()
+
+    if (!(card instanceof EditorEditableCardNode))
+      throw new Error("Expected editable card")
+
+    return card
+  })
 
   const removeFirst = registerEditorEditableCardRenderer(
     firstEditor,

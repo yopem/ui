@@ -109,7 +109,7 @@ function seedParagraph(editor: ReturnType<typeof createEditor>, text = "Seed") {
 }
 
 function topLevel(editor: ReturnType<typeof createEditor>) {
-  return editor.getEditorState().read(() =>
+  return editor.read(() =>
     $getRoot()
       .getChildren()
       .map((node) => ({ type: node.getType(), text: node.getTextContent() })),
