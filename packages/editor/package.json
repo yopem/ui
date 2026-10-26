@@ -63,6 +63,8 @@
     "./review": "./src/review.tsx",
     "./review-codecs": "./src/review-codecs.ts",
     "./review-diff": "./src/review-diff.ts",
+    "./review-tree-diff": "./src/review-tree-diff.ts",
+    "./review-structural": "./src/review-structural.ts",
     "./review-extension": "./src/review-extension.ts",
     "./review-html": "./src/review-html.ts",
     "./review-model": "./src/review-model.ts",

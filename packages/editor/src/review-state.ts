@@ -7,6 +7,10 @@ import {
   type EditorReviewData,
   type EditorSuggestion,
 } from "./review-codecs"
+import {
+  emptyEditorReviewStructural,
+  parseEditorReviewStructural,
+} from "./review-structural"
 
 export const emptyReview = parseEditorReview({ version: 1, threads: [] })
 
@@ -21,6 +25,16 @@ export const editorSuggestionState = createState("yopemSuggestion", {
       ? null
       : reviewSuggestionSchema.parse(value),
 })
+
+export const editorReviewStructuralState = createState(
+  "yopemReviewStructural",
+  {
+    parse: (value) =>
+      value === undefined
+        ? emptyEditorReviewStructural
+        : parseEditorReviewStructural(value),
+  },
+)
 
 export const editorReviewKeyboardState = createState("yopemReviewKeyboard", {
   parse(value) {

@@ -54,6 +54,7 @@ import type { EditorReviewRichContent } from "./review-richtext"
 
 import {
   parseEditorReview,
+  parseReviewDocument,
   parseReviewDocumentJSON,
   checkReviewComplexity,
   sanitizeEditorReviewClipboard,
@@ -78,15 +79,33 @@ import {
   $setEditorSuggestion,
   emptyReview,
   editorReviewState,
+  editorReviewStructuralState,
   editorSuggestionState,
 } from "./review-state"
+import {
+  deriveEditorReviewStructuralAnchors,
+  emptyEditorReviewStructural,
+  parseEditorReviewStructural,
+  type EditorReviewStructuralProposal,
+} from "./review-structural"
+import {
+  canonicalEditorReviewTreeJSON,
+  deriveEditorReviewTreeDiff,
+  mergeEditorReviewTreeNodeState,
+  parseEditorReviewTreeDocument,
+  preserveEditorReviewTreeMarks,
+} from "./review-tree-diff"
 import { reviewStringSchema, isReviewObject } from "./review-validation"
 import {
   $isValidBookmarkPoint,
   createEditorSelectionBookmark,
 } from "./selection-bookmark"
 
-export { editorReviewState, editorSuggestionState } from "./review-state"
+export {
+  editorReviewState,
+  editorReviewStructuralState,
+  editorSuggestionState,
+} from "./review-state"
 
 export type { EditorSuggestion } from "./review-codecs"
 
@@ -127,6 +146,73 @@ type EditorReviewSuggestionSummary = Omit<EditorSuggestion, "kind"> & {
   readonly formattedText: string
 }
 
+function hasNamedReviewSlots(node: ReviewSerializedNode) {
+  if (node.$slots && Object.keys(node.$slots).length) return true
+
+  return node.children?.some(hasNamedReviewSlots) ?? false
+}
+
+function $serializeReviewRoot() {
+  let count = 0
+
+  function serialize(node: LexicalNode, depth: number): ReviewSerializedNode {
+    if (++count > 10000 || depth > 24)
+      throw new EditorReviewInputError(
+        "Review document exceeds its size limit.",
+      )
+    const value = node.exportJSON()
+
+    if (!$isElementNode(node)) return value
+
+    if (node.getChildrenSize() + count > 10000)
+      throw new EditorReviewInputError(
+        "Review document exceeds its node limit.",
+      )
+
+    return {
+      ...value,
+      children: node.getChildren().map((child) => serialize(child, depth + 1)),
+    }
+  }
+
+  return { root: serialize($getRoot(), 0) }
+}
+
+function mergeReviewTreeRootState<AfterInput, CurrentInput>(
+  afterInput: AfterInput,
+  currentInput: CurrentInput,
+  preserveReview: boolean,
+) {
+  const afterDocument = z.record(z.string(), z.json()).parse(afterInput)
+  const currentDocument = z.record(z.string(), z.json()).parse(currentInput)
+  const afterRoot = z.record(z.string(), z.json()).parse(afterDocument.root)
+  const currentRoot = z.record(z.string(), z.json()).parse(currentDocument.root)
+  const currentState = z.record(z.string(), z.json()).parse(currentRoot.$ ?? {})
+  const state = { ...currentState }
+
+  delete state.yopemReviewStructural
+  delete state.yopemSuggestion
+
+  if (!preserveReview) delete state.yopemReview
+
+  const root = { ...afterRoot }
+
+  if (Object.keys(state).length) root.$ = state
+  else delete root.$
+
+  return preserveReview ? { root } : parseEditorReviewTreeDocument({ root })
+}
+
+function $currentReviewTreeJSON() {
+  try {
+    return canonicalEditorReviewTreeJSON(
+      parseReviewDocument($serializeReviewRoot(), false),
+    )
+  } catch {
+    return null
+  }
+}
+
 function createReviewController() {
   const session = createReviewSession()
   let editor: LexicalEditor | null = null
@@ -137,6 +223,7 @@ function createReviewController() {
 
   let commentRequest = 0
   let suggesting = false
+  let decidingStructural = false
   let diagnostic = ""
   let version = 0
   const listeners = new Set<() => void>()
@@ -257,6 +344,8 @@ function createReviewController() {
     kind: EditorSuggestion["kind"],
     beforeFormat = 0,
   ): EditorSuggestion {
+    if ($getState($getRoot(), editorReviewStructuralState).proposals.length)
+      return fail("Resolve structural proposals before suggesting text.")
     const permit = authorize("suggest")
 
     return {
@@ -608,6 +697,131 @@ function createReviewController() {
     saved = null
   }
 
+  function $suggestDocumentTree<Input>(input: Input) {
+    $assertEditor()
+    const permit = authorize("suggest")
+    const current = instance()
+
+    if (
+      suggesting ||
+      $getState($getRoot(), editorReviewStructuralState).proposals.length ||
+      $getRoot()
+        .getAllTextNodes()
+        .some((node) => $getState(node, editorSuggestionState))
+    )
+      return fail("Stop suggestion mode and resolve current suggestions first.")
+    const rawBefore = $serializeReviewRoot()
+
+    const before = parseEditorReviewTreeDocument(
+      parseReviewDocument(rawBefore, false, true),
+    )
+
+    const target = parseEditorReviewTreeDocument(
+      parseReviewDocument(input, false, true),
+    )
+
+    const mergedRootState = mergeReviewTreeRootState(target, rawBefore, false)
+    const mergedTarget = mergeEditorReviewTreeNodeState(before, mergedRootState)
+
+    const parsedTarget = current.parseEditorState(
+      canonicalEditorReviewTreeJSON(mergedTarget),
+    )
+
+    const after = parseEditorReviewTreeDocument(
+      parseReviewDocument(parsedTarget.toJSON(), false, true),
+    )
+
+    const precondition = canonicalEditorReviewTreeJSON(before)
+    const changes = deriveEditorReviewTreeDiff(before, after)
+
+    if (!changes.length) return fail("Structural proposal has no changes.")
+    permit.assertCurrent()
+
+    const proposal = parseEditorReviewStructural({
+      version: 1,
+      proposals: [
+        {
+          id: crypto.randomUUID(),
+          author: permit.author,
+          createdAt: Date.now(),
+          before,
+          after,
+          precondition,
+          changes,
+          anchors: deriveEditorReviewStructuralAnchors(changes),
+        },
+      ],
+    }).proposals[0]
+
+    if (!proposal) return fail("Structural proposal is invalid.")
+    $addUpdateTag(HISTORY_PUSH_TAG)
+    $addUpdateTag("yopem-review-action")
+    $addUpdateTag("yopem-review-structural-action")
+    $setState($getRoot(), editorReviewStructuralState, {
+      version: 1,
+      proposals: [proposal],
+    })
+    saved = null
+
+    return proposal.id
+  }
+
+  function $suggestCompletedText<Input>(input: Input) {
+    const parsed = insertionTextSchema.safeParse(input)
+
+    if (!parsed.success)
+      return fail("Completed review text must be bounded inline text.")
+    const selected = selection(false)
+    $addUpdateTag(HISTORY_PUSH_TAG)
+
+    if (selected.isCollapsed()) return $suggestInsert(parsed.data)
+
+    const range = selectedText()
+    const removed = range.getTextContent()
+
+    if (
+      removed.length > 16384 ||
+      $getRoot().getTextContentSize() - removed.length + parsed.data.length >
+        1048576
+    )
+      return fail("Completed review replacement exceeds document limits.")
+
+    const suggestion = newSuggestion("insert")
+    const nodes = range.getNodes()
+
+    if (!nodes.length || nodes.some((node) => !$isTextNode(node)))
+      return fail("Completed review replacement requires normal selected text.")
+    const removedNodes = range.extract().filter($isTextNode)
+
+    if (!removedNodes.length)
+      return fail("Completed review replacement has no valid target.")
+
+    const deletion: EditorSuggestion = { ...suggestion, kind: "delete" }
+    $addUpdateTag("yopem-review-action")
+
+    for (const node of removedNodes) {
+      $setEditorSuggestion(node, {
+        ...deletion,
+        beforeFormat: node.getFormat(),
+      })
+    }
+
+    range.anchor.set(range.focus.key, range.focus.offset, range.focus.type)
+    const caret = $getSelection()
+
+    if (!$isRangeSelection(caret) || !caret.isCollapsed())
+      return fail("Completed review replacement lost its insertion point.")
+
+    const inserted = $createTextNode(parsed.data)
+      .setFormat(caret.format)
+      .setStyle(caret.style)
+
+    $setEditorSuggestion(inserted, { ...suggestion, beforeFormat: 0 })
+    caret.insertNodes([inserted])
+
+    return suggestion.id
+  }
+
   function formatFromCommand(format: TextFormatType) {
     if (!reviewFormatSchema.safeParse(format).success)
       return fail("Unsupported review text format.")
@@ -707,6 +921,161 @@ function createReviewController() {
     decisions([...ids], action)
   }
 
+  function structuralProposal(current: LexicalEditor, id: string) {
+    return current
+      .getEditorState()
+      .read(() =>
+        $getState($getRoot(), editorReviewStructuralState).proposals.find(
+          (proposal) => proposal.id === id,
+        ),
+      )
+  }
+
+  function hasActiveLexicalContext() {
+    try {
+      $getEditor()
+
+      return true
+    } catch {
+      return false
+    }
+  }
+
+  function structuralProposalIsCurrent(
+    current: LexicalEditor,
+    proposal: EditorReviewStructuralProposal,
+  ) {
+    return current.read("pending", () => {
+      const root = $getRoot()
+
+      const active = $getState(
+        root,
+        editorReviewStructuralState,
+      ).proposals.find((item) => item.id === proposal.id)
+
+      return (
+        !root.isDirty() &&
+        active === proposal &&
+        $currentReviewTreeJSON() === proposal.precondition
+      )
+    })
+  }
+
+  function decideStructural(id: string, action: "accept" | "reject") {
+    if (decidingStructural) return false
+    decidingStructural = true
+    diagnostic = ""
+
+    try {
+      if (hasActiveLexicalContext())
+        return fail(
+          "Structural decisions must run outside Lexical state contexts.",
+        )
+      const current = instance()
+      const targetId = reviewIdSchema.parse(id)
+
+      if (current.read("pending", () => $getRoot().isDirty()))
+        return fail("Structural decisions require a committed editor state.")
+      const proposal = structuralProposal(current, targetId)
+
+      if (!proposal) return fail("Structural proposal no longer exists.")
+
+      if (suggesting)
+        return fail(
+          "Stop suggestion mode before deciding structural proposals.",
+        )
+
+      if (!structuralProposalIsCurrent(current, proposal))
+        return fail("Structural proposal is stale.")
+
+      const before = current
+        .getEditorState()
+        .read(() => $currentReviewTreeJSON())
+
+      if (before !== proposal.precondition)
+        return fail("Structural proposal is stale.")
+      const permit = authorize(action, targetId)
+
+      if (!structuralProposalIsCurrent(current, proposal))
+        return fail("Structural proposal changed during authorization.")
+
+      if (action === "accept") {
+        const source = parseReviewDocument(
+          current.getEditorState().toJSON(),
+          true,
+          true,
+        )
+
+        const merged = mergeReviewTreeRootState(proposal.after, source, true)
+        const targetWithMarks = preserveEditorReviewTreeMarks(source, merged)
+
+        if (!targetWithMarks)
+          return fail(
+            "Structural review cannot preserve one or more comment anchors.",
+          )
+        const trustedTarget = parseReviewDocument(targetWithMarks, true, true)
+        const cleanTarget = parseReviewDocument(targetWithMarks, false, true)
+        parseEditorReviewTreeDocument(cleanTarget)
+        const next = current.parseEditorState(JSON.stringify(trustedTarget))
+        permit.assertCurrent()
+
+        if (editor !== current || !current.isEditable())
+          return fail("Structural review action is read-only or expired.")
+
+        if (!structuralProposalIsCurrent(current, proposal))
+          return fail("Structural proposal changed before commit.")
+        current.setEditorState(next, { tag: HISTORY_PUSH_TAG })
+      } else {
+        permit.assertCurrent()
+        let removed = false
+        current.update(
+          () => {
+            const root = $getRoot()
+
+            const active = $getState(
+              root,
+              editorReviewStructuralState,
+            ).proposals.find((item) => item.id === targetId)
+
+            if (
+              root.isDirty() ||
+              active !== proposal ||
+              $currentReviewTreeJSON() !== proposal.precondition
+            )
+              return
+            $addUpdateTag("yopem-review-action")
+            $addUpdateTag("yopem-review-structural-action")
+            $setState(
+              root,
+              editorReviewStructuralState,
+              emptyEditorReviewStructural,
+            )
+            removed = true
+          },
+          { tag: HISTORY_PUSH_TAG, discrete: true },
+        )
+
+        if (!removed || structuralProposal(current, targetId))
+          return fail("Structural proposal changed before rejection.")
+      }
+
+      diagnostic = ""
+      publish()
+
+      return true
+    } catch (error) {
+      diagnostic =
+        error instanceof EditorReviewInputError
+          ? error.message
+          : "Structural review action failed."
+      publish()
+
+      return false
+    } finally {
+      decidingStructural = false
+    }
+  }
+
   function capture() {
     const current = instance()
     current.getEditorState().read(() => {
@@ -782,7 +1151,22 @@ function createReviewController() {
     const value = parsed.data
     instance()
 
-    if (value) authorize("suggest")
+    if (value) {
+      const current = instance()
+
+      if (
+        current
+          .getEditorState()
+          .read(
+            () =>
+              $getState($getRoot(), editorReviewStructuralState).proposals
+                .length > 0,
+          )
+      )
+        return fail("Resolve structural proposals before suggestion mode.")
+      authorize("suggest")
+    }
+
     suggesting = value
     saved = null
     publish()
@@ -802,6 +1186,33 @@ function createReviewController() {
     if (
       !editor.isEditable() &&
       !(discussion && session.getHost()?.replyWhileReadonly)
+    )
+      return false
+
+    if (id && (action === "accept" || action === "reject")) {
+      const current = editor
+
+      const currentTarget = current.getEditorState().read(() => {
+        const proposal = $getState(
+          $getRoot(),
+          editorReviewStructuralState,
+        ).proposals.find((item) => item.id === id)
+
+        return !proposal || $currentReviewTreeJSON() === proposal.precondition
+      })
+
+      if (!currentTarget) return false
+    }
+
+    if (
+      action === "suggest" &&
+      editor
+        .getEditorState()
+        .read(
+          () =>
+            $getState($getRoot(), editorReviewStructuralState).proposals
+              .length > 0,
+        )
     )
       return false
 
@@ -897,6 +1308,14 @@ function createReviewController() {
         }
 
         const visible = session.getHost()?.visible === true
+        const currentTreeJSON = $currentReviewTreeJSON()
+
+        const structuralProposals = $getState(
+          $getRoot(),
+          editorReviewStructuralState,
+        ).proposals.filter(
+          (proposal) => proposal.precondition === currentTreeJSON,
+        )
 
         const anchors = new Set(
           $nodesOfType(MarkNode)
@@ -907,6 +1326,7 @@ function createReviewController() {
         return {
           text: $getRoot().getTextContent(),
           diffAvailable: $reviewTextDiffSource() !== null,
+          visible,
           commentRequest,
           detachedThreadIds: visible
             ? data()
@@ -915,6 +1335,7 @@ function createReviewController() {
             : [],
           data: visible ? data() : emptyReview,
           suggestions: visible ? [...suggestions.values()] : [],
+          structuralProposals: visible ? structuralProposals : [],
           suggesting,
           diagnostic,
         }
@@ -1030,43 +1451,30 @@ function createReviewController() {
     refreshDecorations = decorations.refresh
 
     function validateDocument() {
-      let count = 0
+      try {
+        const snapshot = $serializeReviewRoot()
 
-      function serialize(
-        node: LexicalNode,
-        depth: number,
-      ): ReviewSerializedNode {
-        if (++count > 10000 || depth > 24)
-          throw new EditorReviewInputError(
-            "Review document exceeds its size limit.",
-          )
-        const value = node.exportJSON()
-
-        if (value.$slots && Object.keys(value.$slots).length > 0)
+        if (
+          !$hasUpdateTag("yopem-review-structural-action") &&
+          !$getState($getRoot(), editorReviewStructuralState).proposals
+            .length &&
+          hasNamedReviewSlots(snapshot.root)
+        )
           throw new EditorReviewInputError(
             "Review does not support named slot updates.",
           )
 
-        if (!$isElementNode(node)) return value
+        const structuralAction =
+          $hasUpdateTag("yopem-review-structural-action") ||
+          $getState($getRoot(), editorReviewStructuralState).proposals.length >
+            0
 
-        if (node.getChildrenSize() + count > 10000)
-          throw new EditorReviewInputError(
-            "Review document exceeds its node limit.",
-          )
-
-        return {
-          ...value,
-          children: node
-            .getChildren()
-            .map((child) => serialize(child, depth + 1)),
-        }
-      }
-
-      try {
-        const snapshot = { root: serialize($getRoot(), 0) }
-        checkReviewComplexity(snapshot)
-        const canonical = JSON.stringify(snapshot)
-        parseReviewDocumentJSON(canonical, true)
+        checkReviewComplexity(snapshot, structuralAction ? 64 : 24)
+        parseReviewDocumentJSON(
+          JSON.stringify(snapshot),
+          true,
+          structuralAction,
+        )
       } catch (error) {
         throw error instanceof EditorReviewInputError
           ? error
@@ -1077,10 +1485,13 @@ function createReviewController() {
     }
 
     function hasPending() {
-      return current.getEditorState().read(() =>
-        $getRoot()
-          .getAllTextNodes()
-          .some((node) => $getState(node, editorSuggestionState)),
+      return current.getEditorState().read(
+        () =>
+          $getState($getRoot(), editorReviewStructuralState).proposals.length >
+            0 ||
+          $getRoot()
+            .getAllTextNodes()
+            .some((node) => $getState(node, editorSuggestionState)),
       )
     }
 
@@ -1323,13 +1734,50 @@ function createReviewController() {
           return
         }
 
-        if ($hasUpdateTag(HISTORIC_TAG)) return
+        if ($hasUpdateTag(HISTORIC_TAG)) {
+          const proposals = $getState(
+            $getRoot(),
+            editorReviewStructuralState,
+          ).proposals
 
-        const pending = current.getEditorState().read(() =>
+          if (
+            proposals.length &&
+            proposals.some(
+              (proposal) => proposal.precondition !== $currentReviewTreeJSON(),
+            )
+          )
+            $setState(
+              $getRoot(),
+              editorReviewStructuralState,
+              emptyEditorReviewStructural,
+            )
+
+          return
+        }
+
+        const structuralProposals = $getState(
+          $getRoot(),
+          editorReviewStructuralState,
+        ).proposals
+
+        if (
+          structuralProposals.length &&
+          structuralProposals.some(
+            (proposal) => proposal.precondition !== $currentReviewTreeJSON(),
+          )
+        )
+          $setState(
+            $getRoot(),
+            editorReviewStructuralState,
+            emptyEditorReviewStructural,
+          )
+
+        const pending =
+          $getState($getRoot(), editorReviewStructuralState).proposals.length >
+            0 ||
           $getRoot()
             .getAllTextNodes()
-            .some((node) => $getState(node, editorSuggestionState)),
-        )
+            .some((node) => $getState(node, editorSuggestionState))
 
         if (suggesting || pending)
           throw new EditorReviewInputError(
@@ -1391,6 +1839,7 @@ function createReviewController() {
     setHost,
     setSuggesting,
     available,
+    decideStructural,
     availableAllDecisions,
     availableDeleteComment,
     getSnapshot,
@@ -1413,6 +1862,8 @@ function createReviewController() {
     $suggestDelete,
     $suggestFormat,
     $suggestDocumentText,
+    $suggestDocumentTree,
+    $suggestCompletedText,
     $decide,
     $decideAll,
   }

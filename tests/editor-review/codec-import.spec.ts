@@ -384,3 +384,27 @@ test("trusted suggestions reject token and segmented text modes", () => {
     ).toThrow()
   }
 })
+
+test("untrusted structural metadata cannot widen ordinary document depth", () => {
+  interface NestedState {
+    child?: NestedState
+  }
+
+  let nested: NestedState = {}
+
+  for (let index = 0; index < 30; index += 1) nested = { child: nested }
+
+  const input = {
+    root: {
+      type: "root",
+      children: [],
+      $: { custom: nested, yopemReviewStructural: null },
+    },
+  }
+
+  expect(() => parseReviewDocument(input, false)).toThrow()
+  expect(parseReviewDocument(input, false, true)).toHaveProperty(
+    "root.$.custom",
+    nested,
+  )
+})

@@ -5,6 +5,7 @@ import {
   reviewRichText,
   reviewRichHTML,
 } from "./review-richtext"
+import { parseEditorReviewStructural } from "./review-structural"
 import {
   checkReviewComplexity,
   escapeReviewHTML,
@@ -101,17 +102,27 @@ export function reviewInlineHTML(
   return `<${tag}>${escaped}</${tag}>`
 }
 
-export function parseReviewDocumentJSON(text: string, trusted: boolean) {
+export function parseReviewDocumentJSON(
+  text: string,
+  trusted: boolean,
+  allowStructuralTreeDepth = false,
+) {
   const input = parseReviewJSONValue(text)
 
-  return parseReviewDocument(input, trusted)
+  return parseReviewDocument(input, trusted, allowStructuralTreeDepth)
 }
 
-export function parseReviewDocument<Input, Trust>(input: Input, trust: Trust) {
+export function parseReviewDocument<Input, Trust>(
+  input: Input,
+  trust: Trust,
+  allowStructuralTreeDepth = false,
+) {
   const trusted = z.boolean().parse(trust)
-  checkReviewComplexity(input)
+  const allowStructural = z.boolean().parse(allowStructuralTreeDepth)
+  checkReviewComplexity(input, 64)
   const value = z.json().parse(input)
   let nodes = 0
+  let hasStructuralMetadata = false
   const suggestionIds = new Map<string, string>()
   const entityIds = new Set<string>()
 
@@ -130,6 +141,9 @@ export function parseReviewDocument<Input, Trust>(input: Input, trust: Trust) {
       const state = decodedState.data
       node.$ = state
 
+      if (state.yopemReviewStructural !== undefined)
+        hasStructuralMetadata = true
+
       if (trusted) {
         if (state.yopemReview !== undefined) {
           if (node.type !== "root" || nodes !== 1)
@@ -140,6 +154,23 @@ export function parseReviewDocument<Input, Trust>(input: Input, trust: Trust) {
             entityIds.add(thread.id)
 
             for (const comment of thread.comments) entityIds.add(comment.id)
+          }
+        }
+
+        if (state.yopemReviewStructural !== undefined) {
+          if (node.type !== "root" || nodes !== 1)
+            throw new Error(
+              "Structural review metadata requires the root node.",
+            )
+
+          const structural = parseEditorReviewStructural(
+            state.yopemReviewStructural,
+          )
+
+          for (const proposal of structural.proposals) {
+            if (entityIds.has(proposal.id))
+              throw new Error("Review entity IDs must be unique.")
+            entityIds.add(proposal.id)
           }
         }
 
@@ -171,6 +202,7 @@ export function parseReviewDocument<Input, Trust>(input: Input, trust: Trust) {
         }
       } else {
         delete state.yopemReview
+        delete state.yopemReviewStructural
         delete state.yopemSuggestion
 
         if (!Object.keys(state).length) delete node.$
@@ -219,6 +251,10 @@ export function parseReviewDocument<Input, Trust>(input: Input, trust: Trust) {
 
   if (root.type !== "root") throw new Error("Expected a Lexical root node.")
   document.root = visit(root)[0]!
+  checkReviewComplexity(
+    document,
+    (trusted && hasStructuralMetadata) || allowStructural ? 64 : 24,
+  )
 
   return document
 }

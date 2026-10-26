@@ -3,6 +3,7 @@
 export {
   createEditorReview,
   editorReviewState,
+  editorReviewStructuralState,
   editorSuggestionState,
 } from "./review-extension"
 
@@ -43,6 +44,10 @@ export {
   EditorReviewThread,
   EditorReviewComment,
   EditorReviewDecisionControls,
+  EditorReviewStructuralChangeList,
+  EditorReviewStructuralDecisionControls,
+  EditorReviewStructuralProposal,
+  EditorReviewStructuralProposals,
 } from "./review-components"
 
 export {
@@ -69,3 +74,27 @@ export type { EditorReviewRichContent as EditorReviewRichContentValue } from "./
 export { deriveReviewTextDiff, EditorReviewTextDiffError } from "./review-diff"
 
 export type { EditorReviewTextDiffOperation } from "./review-diff"
+
+export {
+  canonicalEditorReviewTreeJSON,
+  deriveEditorReviewTreeDiff,
+  parseEditorReviewTreeDocument,
+} from "./review-tree-diff"
+
+export type {
+  EditorReviewTreeChange,
+  EditorReviewTreeChangeKind,
+  EditorReviewTreeDocument,
+} from "./review-tree-diff"
+
+export {
+  deriveEditorReviewStructuralAnchors,
+  emptyEditorReviewStructural,
+  parseEditorReviewStructural,
+} from "./review-structural"
+
+export type {
+  EditorReviewStructuralAnchor,
+  EditorReviewStructuralProposal as EditorReviewStructuralProposalValue,
+  EditorReviewStructuralState,
+} from "./review-structural"

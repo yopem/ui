@@ -9,6 +9,7 @@ import { Field, FieldLabel } from "@registry/components/ui/field"
 import { Form } from "@registry/components/ui/form"
 import { Heading } from "@registry/components/ui/heading"
 import { HStack } from "@registry/components/ui/hstack"
+import { List, ListItem } from "@registry/components/ui/list"
 import { Stack } from "@registry/components/ui/stack"
 import { Text } from "@registry/components/ui/text"
 import { Textarea } from "@registry/components/ui/textarea"
@@ -27,6 +28,7 @@ import type {
   EditorReviewBinding,
 } from "./review-extension"
 import type { EditorReviewHost } from "./review-model"
+import type { EditorReviewTreeChange } from "./review-tree-diff"
 
 import {
   makeReviewRichContent,
@@ -480,6 +482,124 @@ export function EditorReviewDecisionControls({ id }: { id?: string }) {
   )
 }
 
+function structuralChangeLabel(change: EditorReviewTreeChange) {
+  if (change.kind === "break")
+    return change.after === "(removed)"
+      ? "Remove line break"
+      : "Insert line break"
+
+  if (change.kind === "move")
+    return `Move ${change.nodeType ?? "block"} from ${change.fromPath?.join(".")} to ${change.toPath?.join(".")}`
+
+  if (change.kind === "property")
+    return `Change ${change.property ?? "property"} on ${change.nodeType ?? "node"}`
+
+  if (change.kind === "replace")
+    return `Replace ${change.beforeType ?? "node"} with ${change.afterType ?? "node"}`
+
+  if (change.kind === "remove") return `Remove ${change.nodeType ?? "node"}`
+
+  return `Insert ${change.nodeType ?? "node"}`
+}
+
+export function EditorReviewStructuralChangeList({ id }: { id: string }) {
+  const controller = useEditorReview()
+
+  const proposal = controller
+    .getView()
+    .structuralProposals.find((item) => item.id === id)
+
+  if (!proposal) return null
+
+  return (
+    <List aria-label="Structural changes">
+      {proposal.changes.map((change) => (
+        <ListItem key={JSON.stringify([proposal.id, change])}>
+          <Stack>
+            <Text>{structuralChangeLabel(change)}</Text>
+            {change.before ? <Text>Before: {change.before}</Text> : null}
+            {change.after ? <Text>After: {change.after}</Text> : null}
+          </Stack>
+        </ListItem>
+      ))}
+    </List>
+  )
+}
+
+export function EditorReviewStructuralDecisionControls({ id }: { id: string }) {
+  const controller = useEditorReview()
+
+  return (
+    <HStack>
+      <Button
+        type="button"
+        disabled={!controller.available("accept", id)}
+        onClick={(event) => {
+          if (!event.defaultPrevented) controller.decideStructural(id, "accept")
+        }}
+      >
+        Accept structural proposal
+      </Button>
+      <Button
+        type="button"
+        disabled={!controller.available("reject", id)}
+        onClick={(event) => {
+          if (!event.defaultPrevented) controller.decideStructural(id, "reject")
+        }}
+      >
+        Reject structural proposal
+      </Button>
+    </HStack>
+  )
+}
+
+export function EditorReviewStructuralProposal({ id }: { id: string }) {
+  const controller = useEditorReview()
+
+  const proposal = controller
+    .getView()
+    .structuralProposals.find((item) => item.id === id)
+
+  if (!proposal) return null
+
+  return (
+    <Box render={<section aria-label={`Structural proposal ${id}`} />}>
+      <Stack>
+        <Text>Proposed by {proposal.author.name}</Text>
+        <EditorReviewStructuralChangeList id={id} />
+        <EditorReviewStructuralDecisionControls id={id} />
+      </Stack>
+    </Box>
+  )
+}
+
+export function EditorReviewStructuralProposals() {
+  const controller = useEditorReview()
+  const view = controller.getView()
+
+  if (!view.visible) return null
+
+  const proposals = view.structuralProposals
+
+  return (
+    <Box render={<section aria-label="Structural proposals" />}>
+      <Stack>
+        <Heading>Structural proposals</Heading>
+        {proposals.length ? (
+          proposals.map((proposal) => (
+            <EditorReviewStructuralProposal
+              key={proposal.id}
+              id={proposal.id}
+            />
+          ))
+        ) : (
+          <Text>No structural proposals.</Text>
+        )}
+      </Stack>
+    </Box>
+  )
+}
+
 export function EditorReviewPanel() {
   const controller = useEditorReview()
   const view = controller.getView()
@@ -521,6 +641,7 @@ export function EditorReviewPanel() {
             </Stack>
           </Box>
         ))}
+        <EditorReviewStructuralProposals />
       </Stack>
     </Box>
   )

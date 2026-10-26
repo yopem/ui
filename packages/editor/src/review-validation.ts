@@ -12,7 +12,7 @@ export function isReviewObject(value: unknown): value is object {
   return value !== null && Object(value) === value
 }
 
-export function checkReviewComplexity<Input>(input: Input) {
+export function checkReviewComplexity<Input>(input: Input, depthLimit = 24) {
   const stack: ReviewImportFrame[] = [{ value: input, depth: 0 }]
   const seen = new Set<object>()
   let count = 0
@@ -27,7 +27,7 @@ export function checkReviewComplexity<Input>(input: Input) {
       continue
     }
 
-    if (++count > 100000 || item.depth > 24)
+    if (++count > 100000 || item.depth > depthLimit)
       throw new Error("Review input exceeds complexity limit.")
     const value = item.value
 
