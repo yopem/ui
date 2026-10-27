@@ -30,8 +30,11 @@ const svgTags = new Set([
   "g",
   "defs",
   "marker",
+  "filter",
+  "feDropShadow",
   "clipPath",
   "path",
+  "use",
   "rect",
   "circle",
   "ellipse",
@@ -83,6 +86,7 @@ const svgAttributes = new Set([
   "d",
   "points",
   "transform",
+  "filter",
   "fill",
   "fill-opacity",
   "fill-rule",
@@ -126,6 +130,9 @@ const svgAttributes = new Set([
   "offset",
   "stop-color",
   "stop-opacity",
+  "flood-color",
+  "flood-opacity",
+  "stdDeviation",
   "fx",
   "fy",
   "fr",
@@ -159,12 +166,18 @@ const htmlAttributes = new Set([
 ])
 
 const styleProperties = new Set([
+  "--mermaid-font-family",
+  "-webkit-tap-highlight-color",
   "alignment-baseline",
+  "animation",
+  "background",
   "background-color",
   "border",
   "border-radius",
   "color",
+  "cursor",
   "display",
+  "filter",
   "dominant-baseline",
   "fill",
   "fill-opacity",
@@ -174,13 +187,16 @@ const styleProperties = new Set([
   "font-style",
   "font-variant",
   "font-weight",
+  "height",
   "letter-spacing",
   "line-height",
   "margin",
+  "max-width",
   "opacity",
   "overflow",
   "padding",
   "paint-order",
+  "pointer-events",
   "position",
   "top",
   "left",
@@ -195,13 +211,16 @@ const styleProperties = new Set([
   "stroke-miterlimit",
   "stroke-opacity",
   "stroke-width",
+  "text-align",
   "text-anchor",
   "text-decoration",
   "text-transform",
   "vertical-align",
   "visibility",
   "white-space",
+  "width",
   "word-spacing",
+  "z-index",
 ])
 
 export interface EditorDiagramRenderInput {
@@ -281,7 +300,40 @@ function safeReference(value: string, ids: Set<string>) {
   )
 }
 
-function sanitizeDeclarations(value: string, ids: Set<string>) {
+function validateStyleDimension(value: string, maximum: number) {
+  const em = value.match(/^(\d+(?:\.\d+)?)em$/u)
+
+  if (em) return Number(em[1]) > 0 && Number(em[1]) <= maximum / 16
+
+  return validateDimension(value, maximum)
+}
+
+function isSafeDropShadow(value: string) {
+  const match = value.match(
+    /^drop-shadow\((\d+(?:\.\d+)?)px (\d+(?:\.\d+)?)px (\d+(?:\.\d+)?)px rgba\((\d{1,3}),\s*(\d{1,3}),\s*(\d{1,3}),\s*(?:0|1|0?\.\d+)\)\)$/u,
+  )
+
+  return (
+    match !== null &&
+    match.slice(1, 4).every((number) => Number(number) <= 64) &&
+    match.slice(4, 7).every((number) => Number(number) <= 255)
+  )
+}
+
+function isSafeFilter(value: string, ids: Set<string>) {
+  return (
+    value === "none" ||
+    isSafeDropShadow(value) ||
+    (/^url\(\s*(['"]?)#[A-Za-z_][\w:.-]*\1\s*\)$/iu.test(value) &&
+      safeReference(value, ids))
+  )
+}
+
+function sanitizeDeclarations(
+  value: string,
+  ids: Set<string>,
+  animationSuffix = "",
+) {
   const declarations = value
     .split(";")
     .map((part) => part.trim())
@@ -289,62 +341,228 @@ function sanitizeDeclarations(value: string, ids: Set<string>) {
     .map((part) => {
       const separator = part.indexOf(":")
       const property = part.slice(0, separator).trim().toLowerCase()
-      const content = part.slice(separator + 1).trim()
+      const declaration = part.slice(separator + 1).trim()
+      const important = declaration.endsWith("!important")
+
+      const content = important
+        ? declaration.slice(0, -"!important".length).trimEnd()
+        : declaration
+
+      const dimension = ["height", "max-width", "width"].includes(property)
+
+      const safeAnimation =
+        property !== "animation" ||
+        content === "none" ||
+        (animationSuffix !== "" &&
+          [
+            "dash 20s linear infinite",
+            "dash 50s linear infinite",
+            `dash-${animationSuffix} 20s linear infinite`,
+            `dash-${animationSuffix} 50s linear infinite`,
+          ].includes(content))
+
+      const safeFilter = property !== "filter" || isSafeFilter(content, ids)
+
+      const safeTapHighlight =
+        property !== "-webkit-tap-highlight-color" ||
+        /^rgba\(0,\s*0,\s*0,\s*0\)$/u.test(content)
 
       if (
         separator < 1 ||
         !styleProperties.has(property) ||
         !content ||
         !/^[A-Za-z0-9#(),.%+\-/'"_\s:]+$/u.test(content) ||
-        !safeReference(content, ids)
+        !safeReference(content, ids) ||
+        (important && !["fill", "stroke-dasharray"].includes(property)) ||
+        (dimension && !validateStyleDimension(content, 4096)) ||
+        !safeAnimation ||
+        !safeFilter ||
+        !safeTapHighlight
       )
         throw new Error("Diagram SVG contains unsafe style data.")
 
-      return `${property}:${content}`
+      const scopedContent =
+        property === "animation" && content.startsWith("dash ")
+          ? content.replace(/^dash/u, `dash-${animationSuffix}`)
+          : content
+
+      return `${property}:${scopedContent}${important ? "!important" : ""}`
     })
 
   return declarations.join(";")
 }
 
-function sanitizeStylesheet(value: string, ids: Set<string>) {
+function parseStylesheetRules(value: string) {
+  const rules: { selector: string; body: string }[] = []
+  let selectorStart = 0
+  let bodyStart = 0
+  let depth = 0
+  let quote = ""
+  let escaped = false
+
+  for (let index = 0; index < value.length; index += 1) {
+    const character = value.charAt(index)
+
+    if (quote) {
+      if (escaped) escaped = false
+      else if (character === "\\") escaped = true
+      else if (character === quote) quote = ""
+
+      continue
+    }
+
+    if (character === "'" || character === '"') {
+      quote = character
+
+      continue
+    }
+
+    if (character === "{") {
+      if (depth === 0) {
+        if (!value.slice(selectorStart, index).trim())
+          throw new Error("Diagram SVG contains invalid style data.")
+
+        bodyStart = index + 1
+      }
+
+      depth += 1
+    } else if (character === "}") {
+      depth -= 1
+
+      if (depth < 0) throw new Error("Diagram SVG contains invalid style data.")
+
+      if (depth === 0) {
+        rules.push({
+          selector: value.slice(selectorStart, bodyStart - 1).trim(),
+          body: value.slice(bodyStart, index).trim(),
+        })
+        selectorStart = index + 1
+      }
+    }
+  }
+
+  if (depth !== 0 || quote || value.slice(selectorStart).trim())
+    throw new Error("Diagram SVG contains invalid style data.")
+
+  return rules
+}
+
+function isSafeStylesheetSelector(selector: string, rootId: string) {
+  const tokens = selector.trim().split(/\s+/u)
+
+  if (
+    tokens.every((token) =>
+      /^(?:[A-Za-z][\w-]*|\.[A-Za-z_][\w-]*|#[A-Za-z_][\w-]*)$/u.test(token),
+    )
+  )
+    return true
+
+  if (!rootId || tokens[0] !== `#${rootId}` || tokens.length < 2) return false
+
+  return tokens
+    .slice(1)
+    .every((token) =>
+      /^(?:[A-Za-z][\w-]*|\.[A-Za-z_][\w-]*|\[data-[A-Za-z0-9_-]+="[A-Za-z0-9_-]+"\]|:(?:root|first-of-type|last-of-type|nth-of-type\(\d+\)|not\(\.[A-Za-z_][\w-]*\)))+$/u.test(
+        token,
+      ),
+    )
+}
+
+function sanitizeStylesheet(value: string, ids: Set<string>, rootId: string) {
   if (byteLength(value) > maximumStyleBytes)
     throw new Error("Diagram SVG style data exceeds the size limit.")
 
-  const rules = value
-    .split("}")
-    .map((rule) => rule.trim())
-    .filter(Boolean)
-
   const output: string[] = []
 
-  for (const rule of rules) {
-    const separator = rule.indexOf("{")
-    const selectors = rule.slice(0, separator).trim()
-    const declarations = rule.slice(separator + 1).trim()
+  const animationSuffix = rootId.replace(
+    /[^A-Za-z0-9_-]/gu,
+    (character) => `-${character.charCodeAt(0).toString(16)}-`,
+  )
 
-    if (separator < 1 || !declarations)
+  let includeReducedMotion = false
+
+  for (const rule of parseStylesheetRules(value)) {
+    if (rule.selector === "@media (prefers-reduced-motion: reduce)") {
+      if (
+        !rootId ||
+        (rule.body !== "svg *{animation:none!important}" &&
+          rule.body !== `#${rootId} *{animation:none!important}`)
+      )
+        throw new Error("Diagram SVG contains unsafe style data.")
+
+      includeReducedMotion = true
+
+      continue
+    }
+
+    const keyframeName = ["dash", "edge-animation-frame"].find(
+      (name) =>
+        rule.selector === `@keyframes ${name}` ||
+        rule.selector === `@keyframes ${name}-${animationSuffix}`,
+    )
+
+    if (keyframeName) {
+      if (!animationSuffix)
+        throw new Error("Diagram SVG contains unsafe style data.")
+
+      const frames = parseStylesheetRules(rule.body)
+      const sanitizedFrames: string[] = []
+
+      for (const frame of frames) {
+        const declarations = sanitizeDeclarations(frame.body, ids)
+
+        if (
+          !["from", "to"].includes(frame.selector) ||
+          declarations !== "stroke-dashoffset:0"
+        )
+          throw new Error("Diagram SVG contains unsafe style data.")
+
+        sanitizedFrames.push(`${frame.selector}{${declarations}}`)
+      }
+
+      if (sanitizedFrames.length === 0)
+        throw new Error("Diagram SVG contains invalid style data.")
+
+      output.push(
+        `@keyframes ${keyframeName}-${animationSuffix}{${sanitizedFrames.join("")}}`,
+      )
+
+      continue
+    }
+
+    if (rule.selector.startsWith("@") || rule.body.includes("{"))
       throw new Error("Diagram SVG contains invalid style data.")
 
-    for (const selector of selectors.split(","))
-      if (
-        !selector
-          .trim()
-          .split(/\s+/u)
-          .every((token) =>
-            /^(?:[A-Za-z][\w-]*|\.[A-Za-z_][\w-]*|#[A-Za-z_][\w-]*)$/u.test(
-              token,
-            ),
-          )
-      )
-        throw new Error("Diagram SVG contains unsafe style selectors.")
+    const selectors = rule.selector.split(",")
 
-    output.push(`${selectors}{${sanitizeDeclarations(declarations, ids)}}`)
+    if (
+      selectors.some(
+        (selector) => !isSafeStylesheetSelector(selector.trim(), rootId),
+      )
+    )
+      throw new Error("Diagram SVG contains unsafe style selectors.")
+
+    if (!rule.body) throw new Error("Diagram SVG contains invalid style data.")
+
+    output.push(
+      `${rule.selector}{${sanitizeDeclarations(rule.body, ids, animationSuffix)}}`,
+    )
   }
 
-  if (value.includes("{") && !value.trimEnd().endsWith("}"))
-    throw new Error("Diagram SVG contains invalid style data.")
+  if (
+    includeReducedMotion ||
+    output.some((rule) => rule.includes("animation:dash-"))
+  )
+    output.push(
+      `@media (prefers-reduced-motion: reduce){#${rootId} *{animation:none!important}}`,
+    )
 
-  return output.join("")
+  const result = output.join("")
+
+  if (byteLength(result) > maximumStyleBytes)
+    throw new Error("Diagram SVG style data exceeds the size limit.")
+
+  return result
 }
 
 function validateDimension(value: string, maximum: number) {
@@ -372,7 +590,12 @@ function validateDimension(value: string, maximum: number) {
   return pixels > 0 && pixels <= maximum
 }
 
-function validateAttribute(attribute: Attr, isHtml: boolean, ids: Set<string>) {
+function validateAttribute(
+  attribute: Attr,
+  element: Element,
+  isHtml: boolean,
+  ids: Set<string>,
+) {
   const name = attribute.name
   const value = attribute.value
   const normalizedName = name.toLowerCase()
@@ -394,6 +617,27 @@ function validateAttribute(attribute: Attr, isHtml: boolean, ids: Set<string>) {
       /^#[A-Za-z_][\w:.-]*$/u.test(value) &&
       ids.has(value.slice(1))
     )
+
+  if (name === "data-edge") return value === "true"
+
+  if (name === "data-et") return value === "edge"
+
+  if (
+    ["data-id", "data-entity-1", "data-entity-2", "data-entity-uid"].includes(
+      name,
+    )
+  )
+    return /^[A-Za-z_][\w:.-]{0,127}$/u.test(value)
+
+  if (name === "data-look")
+    return ["classic", "handDrawn", "neo"].includes(value)
+
+  if (name === "data-points") return /^[A-Za-z0-9+/]+={0,2}$/u.test(value)
+
+  if (name === "data-source-line") return /^\d{1,7}$/u.test(value)
+
+  if (name === "data-qualified-name")
+    return byteLength(value) <= 4096 && safeReference(value, ids)
 
   if (name === "style") {
     if (byteLength(value) > maximumStyleBytes) return false
@@ -419,9 +663,49 @@ function validateAttribute(attribute: Attr, isHtml: boolean, ids: Set<string>) {
 
   if (!svgAttributes.has(name)) return false
 
+  if (
+    element.localName === "filter" &&
+    (name === "width" || name === "height") &&
+    value.endsWith("%")
+  ) {
+    const percent = Number(value.slice(0, -1))
+
+    return validateDimension(value, 4096) && percent > 0 && percent <= 200
+  }
+
+  if (element.localName === "feDropShadow") {
+    if (name === "dx" || name === "dy") {
+      const offset = Number(value)
+
+      return Number.isFinite(offset) && Math.abs(offset) <= 64
+    }
+
+    if (name === "stdDeviation") {
+      if (!value.trim()) return false
+
+      const deviations = value.trim().split(/[ ,]+/u).map(Number)
+
+      return (
+        deviations.length <= 2 &&
+        deviations.every(
+          (deviation) =>
+            Number.isFinite(deviation) && deviation >= 0 && deviation <= 64,
+        )
+      )
+    }
+
+    if (name === "flood-opacity") {
+      const opacity = Number(value)
+
+      return Number.isFinite(opacity) && opacity >= 0 && opacity <= 1
+    }
+  }
+
   if (name === "id") return ids.has(value)
 
   if (name === "class") return /^[A-Za-z0-9_ -]{0,256}$/u.test(value)
+
+  if (name === "filter") return isSafeFilter(value, ids)
 
   if (name === "width" || name === "height")
     return validateDimension(value, 4096)
@@ -464,14 +748,41 @@ function validateAttribute(attribute: Attr, isHtml: boolean, ids: Set<string>) {
 
 function collectIds(document: Document, elements: Element[]) {
   const ids = new Set<string>()
+  const duplicateSuffixes = new Map<string, number>()
+  const validId = /^[A-Za-z_][\w:.-]{0,127}$/u
 
   for (const element of elements) {
-    const id = element.getAttribute("id")
+    let id = element.getAttribute("id")
 
     if (!id) continue
 
-    if (!/^[A-Za-z_][\w:.-]{0,127}$/u.test(id) || ids.has(id))
+    if (!validId.test(id))
       throw new Error("Diagram SVG contains invalid identifiers.")
+
+    if (ids.has(id)) {
+      const plantUmlMessage =
+        element.localName === "g" &&
+        element.getAttribute("class")?.split(/\s+/u).includes("message") &&
+        /^msg\d+$/u.test(id)
+
+      if (!plantUmlMessage)
+        throw new Error("Diagram SVG contains invalid identifiers.")
+
+      let suffix = duplicateSuffixes.get(id) ?? 2
+      let uniqueId = `${id}-${suffix}`
+
+      while (ids.has(uniqueId)) {
+        suffix += 1
+        uniqueId = `${id}-${suffix}`
+      }
+
+      if (!validId.test(uniqueId))
+        throw new Error("Diagram SVG contains invalid identifiers.")
+
+      duplicateSuffixes.set(id, suffix + 1)
+      element.setAttribute("id", uniqueId)
+      id = uniqueId
+    }
 
     ids.add(id)
   }
@@ -526,7 +837,7 @@ function sanitizeElement(element: Element, root: Element, ids: Set<string>) {
     throw new Error("Diagram SVG contains unsupported content.")
 
   for (const attribute of Array.from(element.attributes))
-    if (!validateAttribute(attribute, html, ids))
+    if (!validateAttribute(attribute, element, html, ids))
       throw new Error("Diagram SVG contains an unsafe attribute.")
 
   if (tag === "style") {
@@ -536,7 +847,11 @@ function sanitizeElement(element: Element, root: Element, ids: Set<string>) {
         throw new Error("Diagram SVG contains unsupported content.")
     }
 
-    element.textContent = sanitizeStylesheet(element.textContent ?? "", ids)
+    element.textContent = sanitizeStylesheet(
+      element.textContent ?? "",
+      ids,
+      root.getAttribute("id") ?? "",
+    )
 
     return
   }

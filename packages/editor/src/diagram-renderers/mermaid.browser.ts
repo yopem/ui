@@ -18,7 +18,9 @@ export async function editorDiagramMermaidRenderer(
     startOnLoad: false,
     securityLevel: "strict",
     htmlLabels: false,
+    look: "classic",
     maxTextSize: EDITOR_DIAGRAM_MAX_SOURCE_BYTES,
+    theme: "default",
     secure: [
       "secure",
       "securityLevel",
@@ -28,6 +30,8 @@ export async function editorDiagramMermaidRenderer(
       "maxEdges",
       "htmlLabels",
       "themeCSS",
+      "look",
+      "theme",
     ],
   })
 

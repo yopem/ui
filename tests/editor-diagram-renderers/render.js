@@ -1,5 +1,8 @@
 import { createEditorDiagramMetadata } from "@editor/diagram-model"
-import { renderEditorDiagram } from "@editor/diagram-render"
+import {
+  renderEditorDiagram,
+  sanitizeEditorDiagramSvg,
+} from "@editor/diagram-render"
 import { editorDiagramFlowchartRenderer } from "@editor/diagram-renderers/flowchart.browser"
 import { editorDiagramGraphvizRenderer } from "@editor/diagram-renderers/graphviz"
 import { editorDiagramMermaidRenderer } from "@editor/diagram-renderers/mermaid.browser"
@@ -55,6 +58,20 @@ async function renderAll() {
 
     if (!label.includes(example.label))
       throw new Error(`${example.kind} did not render its source label.`)
+
+    if (sanitizeEditorDiagramSvg(svg) !== svg)
+      throw new Error(`${example.kind} SVG changed on repeated validation.`)
+
+    const image = document.createElement("img")
+    image.alt = `${example.kind} diagram`
+    image.src = `data:image/svg+xml,${encodeURIComponent(svg)}`
+    image.style.display = "block"
+    image.style.maxInlineSize = "100%"
+    document.body.append(image)
+    await image.decode()
+
+    if (image.naturalWidth === 0 || image.naturalHeight === 0)
+      throw new Error(`${example.kind} SVG could not be decoded.`)
 
     completed.push(`${example.kind}:pass`)
   }
