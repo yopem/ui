@@ -4,8 +4,10 @@ import { z } from "zod"
 import {
   parseEditorReview,
   reviewBreakSuggestionSchema,
+  reviewNativeFragmentSchema,
   reviewSuggestionSchema,
   type EditorReviewBreakSuggestion,
+  type EditorReviewNativeFragment,
   type EditorReviewData,
   type EditorSuggestion,
 } from "./review-codecs"
@@ -34,6 +36,16 @@ export const editorReviewBreakState = createState("yopemReviewBreak", {
       ? null
       : reviewBreakSuggestionSchema.parse(value),
 })
+
+export const editorReviewNativeFragmentState = createState(
+  "yopemReviewNativeFragment",
+  {
+    parse: (value): EditorReviewNativeFragment | null =>
+      value === undefined || value === null
+        ? null
+        : reviewNativeFragmentSchema.parse(value),
+  },
+)
 
 export const editorReviewStructuralState = createState(
   "yopemReviewStructural",

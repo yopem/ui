@@ -1,4 +1,12 @@
 import {
+  $generateNodesFromSerializedNodes,
+  $insertGeneratedNodes,
+  ClipboardImportExtension,
+  DEFAULT_IMPORT_MIME_TYPE,
+  DEFAULT_IMPORT_MIME_TYPE_PRIORITY,
+} from "@lexical/clipboard"
+import { $getPeerDependency } from "@lexical/extension"
+import {
   MarkExtension,
   MarkNode,
   $wrapSelectionInMarkNode,
@@ -64,12 +72,13 @@ import {
   parseReviewDocument,
   parseReviewDocumentJSON,
   checkReviewComplexity,
-  sanitizeEditorReviewClipboard,
   reviewIdSchema,
+  reviewNativeFragmentSchema,
   reviewTextSchema,
   type EditorReviewBreakSuggestion,
   type EditorSuggestion,
   type EditorReviewData,
+  type EditorReviewNativeFragment,
 } from "./review-codecs"
 import { registerReviewDecorations } from "./review-decorations"
 import { EditorReviewTextDiffError } from "./review-diff"
@@ -77,6 +86,7 @@ import {
   $applyEditorReviewTextDiff,
   $reviewTextDiffSource,
 } from "./review-diff-native"
+import { parseEditorReviewNativeFragment } from "./review-fragment-native"
 import { createEditorReviewHTMLConfig } from "./review-html"
 import {
   createReviewSession,
@@ -87,6 +97,7 @@ import {
   $setEditorSuggestion,
   emptyReview,
   editorReviewBreakState,
+  editorReviewNativeFragmentState,
   editorReviewState,
   editorReviewStructuralState,
   editorSuggestionState,
@@ -104,7 +115,11 @@ import {
   parseEditorReviewTreeDocument,
   preserveEditorReviewTreeMarks,
 } from "./review-tree-diff"
-import { reviewStringSchema, isReviewObject } from "./review-validation"
+import {
+  isReviewObject,
+  parseReviewJSONValue,
+  reviewStringSchema,
+} from "./review-validation"
 import {
   $isValidBookmarkPoint,
   createEditorSelectionBookmark,
@@ -201,6 +216,7 @@ function mergeReviewTreeRootState<AfterInput, CurrentInput>(
   const state = { ...currentState }
 
   delete state.yopemReviewStructural
+  delete state.yopemReviewNativeFragment
   delete state.yopemSuggestion
 
   if (!preserveReview) delete state.yopemReview
@@ -211,6 +227,35 @@ function mergeReviewTreeRootState<AfterInput, CurrentInput>(
   else delete root.$
 
   return preserveReview ? { root } : parseEditorReviewTreeDocument({ root })
+}
+
+function hasCustomClipboardImportPipeline() {
+  const dependency = $getPeerDependency<typeof ClipboardImportExtension>(
+    ClipboardImportExtension.name,
+  )
+
+  if (!dependency) return false
+
+  for (const mime in dependency.config.$importMimeType) {
+    const handlers = dependency.config.$importMimeType[mime]
+    const defaults = DEFAULT_IMPORT_MIME_TYPE[mime]
+
+    if (
+      handlers &&
+      (handlers.length !== defaults?.length ||
+        handlers.some((handler, index) => handler !== defaults[index]))
+    )
+      return true
+  }
+
+  for (const mime in dependency.config.priority)
+    if (
+      dependency.config.priority[mime] !==
+      DEFAULT_IMPORT_MIME_TYPE_PRIORITY[mime]
+    )
+      return true
+
+  return false
 }
 
 function parseReviewSnapshot<Input>(
@@ -235,6 +280,36 @@ function $currentReviewTreeJSON() {
   } catch {
     return null
   }
+}
+
+function withoutNativeFragmentState<Input>(input: Input) {
+  const serialized = JSON.stringify(input)
+
+  if (serialized === undefined)
+    throw new EditorReviewInputError("Review document is not serializable.")
+
+  const document = z
+    .record(z.string(), z.json())
+    .parse(parseReviewJSONValue(serialized))
+
+  const root = z.record(z.string(), z.json()).parse(document.root)
+  const state = z.record(z.string(), z.json()).parse(root.$ ?? {})
+
+  delete state.yopemReviewNativeFragment
+
+  if (Object.keys(state).length) root.$ = state
+  else delete root.$
+
+  return JSON.stringify({ root })
+}
+
+function normalizedNativeFragmentSnapshot<Input>(
+  current: LexicalEditor,
+  input: Input,
+) {
+  const parsed = current.parseEditorState(withoutNativeFragmentState(input))
+
+  return withoutNativeFragmentState(parsed.toJSON())
 }
 
 function createReviewController() {
@@ -272,6 +347,24 @@ function createReviewController() {
 
   function authorize(action: EditorReviewAction, id?: string) {
     const current = instance()
+
+    const nativeFragment = hasActiveLexicalContext()
+      ? $getState($getRoot(), editorReviewNativeFragmentState)
+      : current
+          .getEditorState()
+          .read(() => $getState($getRoot(), editorReviewNativeFragmentState))
+
+    if (
+      nativeFragment &&
+      !(
+        (action === "accept" || action === "reject") &&
+        id === nativeFragment.id
+      ) &&
+      action !== "undo" &&
+      action !== "redo"
+    )
+      return fail("Resolve the native fragment before other review actions.")
+
     const host = session.getHost()
 
     const discussion =
@@ -314,11 +407,48 @@ function createReviewController() {
 
   function $hasReviewSuggestions() {
     return (
+      $getState($getRoot(), editorReviewNativeFragmentState) !== null ||
       $getRoot()
         .getAllTextNodes()
         .some((node) => $getState(node, editorSuggestionState)) ||
       $getEditorReviewBreaks().length > 0
     )
+  }
+
+  function nativeFragmentIsCurrent(fragment: EditorReviewNativeFragment) {
+    try {
+      const active = $getState($getRoot(), editorReviewNativeFragmentState)
+
+      return (
+        active !== null &&
+        JSON.stringify(active) === JSON.stringify(fragment) &&
+        normalizedNativeFragmentSnapshot(instance(), $serializeReviewRoot()) ===
+          normalizedNativeFragmentSnapshot(
+            instance(),
+            parseReviewJSONValue(fragment.after),
+          )
+      )
+    } catch {
+      return false
+    }
+  }
+
+  function nativeFragmentBeforeNodes(fragment: EditorReviewNativeFragment) {
+    try {
+      const parsed = instance().parseEditorState(fragment.before).toJSON()
+
+      return $generateNodesFromSerializedNodes(parsed.root.children)
+    } catch {
+      return fail("Native fragment rollback cannot be validated.")
+    }
+  }
+
+  function $restoreNativeFragmentBefore(children: LexicalNode[]) {
+    const root = $getRoot()
+
+    $setState(root, editorReviewNativeFragmentState, null)
+    root.clear().append(...children)
+    root.selectEnd()
   }
 
   function setData(next: EditorReviewData, focusEditor = false) {
@@ -894,10 +1024,14 @@ function createReviewController() {
     if (!reviewDecisionSchema.safeParse(action).success)
       return fail("Review decision must accept or reject.")
     $assertEditor()
-    const nodes = $getRoot().getAllTextNodes()
-
+    const root = $getRoot()
+    const nodes = root.getAllTextNodes()
     const requested = new Set(ids)
     const found = new Set<string>()
+    const fragment = $getState(root, editorReviewNativeFragmentState)
+
+    const fragmentTarget =
+      fragment && requested.has(fragment.id) ? fragment : null
 
     const targets = nodes.filter((node) => {
       const value = $getState(node, editorSuggestionState)
@@ -915,14 +1049,31 @@ function createReviewController() {
       return true
     })
 
+    if (fragmentTarget) found.add(fragmentTarget.id)
+
     if (ids.some((id) => !found.has(id)))
       return fail("Suggestion no longer exists.")
 
     if (breakTargets.some((target) => !$canResolveEditorReviewBreak(target)))
       return fail("Review break target is no longer valid.")
+
+    if (fragmentTarget && !nativeFragmentIsCurrent(fragmentTarget))
+      return fail(
+        "Native review fragment changed and cannot be resolved safely.",
+      )
+
+    const restored =
+      fragmentTarget && action === "reject"
+        ? nativeFragmentBeforeNodes(fragmentTarget)
+        : null
+
     const permits = ids.map((id) => authorize(action, id))
 
     for (const permit of permits) permit.assertCurrent()
+
+    if (fragmentTarget && !nativeFragmentIsCurrent(fragmentTarget))
+      return fail("Native review fragment changed during authorization.")
+
     const activeBreaks = $getEditorReviewBreaks()
 
     if (
@@ -941,10 +1092,13 @@ function createReviewController() {
       })
     )
       return fail("Review break target changed during authorization.")
+    $addUpdateTag(HISTORY_PUSH_TAG)
     $addUpdateTag("yopem-review-action")
 
     for (const node of targets) {
       const value = $getState(node, editorSuggestionState)!
+
+      if (fragmentTarget?.id === value.id && action === "reject") continue
 
       if (
         (value.kind === "insert" && action === "reject") ||
@@ -959,8 +1113,19 @@ function createReviewController() {
     }
 
     for (const target of breakTargets) {
+      if (fragmentTarget?.id === target.suggestion.id) continue
+
       if (!$resolveEditorReviewBreak(target, action))
         return fail("Review break target changed before decision.")
+    }
+
+    if (fragmentTarget) {
+      if (action === "reject") {
+        if (!restored) return fail("Native fragment rollback is unavailable.")
+        $restoreNativeFragmentBefore(restored)
+      } else {
+        $setState(root, editorReviewNativeFragmentState, null)
+      }
     }
   }
 
@@ -1070,6 +1235,13 @@ function createReviewController() {
     }
 
     for (const target of $getEditorReviewBreaks()) ids.add(target.suggestion.id)
+
+    const nativeFragment = $getState(
+      $getRoot(),
+      editorReviewNativeFragmentState,
+    )
+
+    if (nativeFragment) ids.add(nativeFragment.id)
 
     decisions([...ids], action)
   }
@@ -1356,6 +1528,30 @@ function createReviewController() {
     if (
       !editor.isEditable() &&
       !(discussion && session.getHost()?.replyWhileReadonly)
+    )
+      return false
+
+    const nativeFragment = editor
+      .getEditorState()
+      .read(() => $getState($getRoot(), editorReviewNativeFragmentState))
+
+    if (
+      nativeFragment &&
+      !(
+        (action === "accept" || action === "reject") &&
+        id === nativeFragment.id
+      ) &&
+      action !== "undo" &&
+      action !== "redo"
+    )
+      return false
+
+    if (
+      nativeFragment &&
+      (action === "accept" || action === "reject") &&
+      !editor
+        .getEditorState()
+        .read(() => nativeFragmentIsCurrent(nativeFragment))
     )
       return false
 
@@ -1688,6 +1884,16 @@ function createReviewController() {
           true,
           structuralAction,
         )
+
+        const nativeFragment = $getState(
+          $getRoot(),
+          editorReviewNativeFragmentState,
+        )
+
+        if (nativeFragment && !nativeFragmentIsCurrent(nativeFragment))
+          throw new EditorReviewInputError(
+            "Native review fragment changed and cannot be resolved safely.",
+          )
       } catch (error) {
         throw error instanceof EditorReviewInputError
           ? error
@@ -1697,31 +1903,57 @@ function createReviewController() {
       }
     }
 
-    function hasPending() {
-      return current
-        .getEditorState()
-        .read(
-          () =>
-            $getState($getRoot(), editorReviewStructuralState).proposals
-              .length > 0 || $hasReviewSuggestions(),
-        )
+    function $hasCurrentPending() {
+      return (
+        $getState($getRoot(), editorReviewStructuralState).proposals.length >
+          0 || $hasReviewSuggestions()
+      )
     }
 
     function paste(event: ClipboardEvent | InputEvent | KeyboardEvent) {
       if (event.defaultPrevented) return true
-      event.preventDefault()
 
-      if (suggesting || hasPending()) {
-        diagnostic =
-          "Resolve suggestions and stop suggestion mode before pasting."
+      if (!current.isEditable()) {
+        event.preventDefault()
+        diagnostic = "Review paste is read-only."
         publish()
 
         return true
       }
 
-      if (!current.isEditable()) return true
+      if (!suggesting) {
+        if (!$hasCurrentPending()) return false
+        event.preventDefault()
+        diagnostic = "Resolve pending suggestions before pasting."
+        publish()
+
+        return true
+      }
+
+      event.preventDefault()
+
+      if ($hasCurrentPending()) {
+        diagnostic = "Resolve pending suggestions before pasting."
+        publish()
+
+        return true
+      }
+
+      if ("isComposing" in event && event.isComposing) {
+        diagnostic = "Native paste is not supported during composition."
+        publish()
+
+        return true
+      }
+
+      let nativePastePhase = "clipboard"
 
       try {
+        if (hasCustomClipboardImportPipeline())
+          return fail(
+            "Native review paste is unavailable with custom clipboard import handlers.",
+          )
+
         const transfer =
           "clipboardData" in event
             ? event.clipboardData
@@ -1730,43 +1962,229 @@ function createReviewController() {
               : null
 
         if (!transfer || transfer.files.length || transfer.types.length > 16)
-          return fail("This clipboard content is not supported.")
-        const native = transfer.getData("application/x-lexical-editor")
+          return fail("This native clipboard content is not supported.")
+        const data = transfer.getData("application/x-lexical-editor")
 
-        if (native) sanitizeEditorReviewClipboard(native)
-        else if (transfer.getData("text/html"))
-          return fail("Rich clipboard content is not supported.")
-        const text = transfer.getData("text/plain")
-
-        if (
-          !text ||
-          text.length > 1048576 ||
-          $getRoot().getTextContentSize() + text.length > 1048576
+        const parsed = parseEditorReviewNativeFragment(
+          data,
+          current._config.namespace,
         )
-          return fail("Clipboard text is empty or too large.")
-        let budget = 10000 - text.split(/\r\n?|\n/).length * 2
-        const nodes: LexicalNode[] = [$getRoot()]
 
-        while (nodes.length) {
-          const node = nodes.pop()!
+        if (parsed.status !== "validated")
+          return fail(
+            "This native rich-text fragment is invalid or unsupported.",
+          )
+        nativePastePhase = "staging"
 
-          if (--budget < 0)
-            return fail("Clipboard content exceeds the node limit.")
+        const staging = current.parseEditorState(
+          JSON.stringify({
+            root: { type: "root", children: parsed.blocks },
+          }),
+        )
 
-          if ($isElementNode(node)) {
-            if (node.getChildrenSize() > budget)
-              return fail("Clipboard content exceeds the node limit.")
-            nodes.push(...node.getChildren())
+        const stagedJSON = JSON.stringify(staging.toJSON())
+
+        if (stagedJSON === undefined)
+          return fail("Native rich-text fragment is not serializable.")
+
+        const stagedDocument = z
+          .record(z.string(), z.json())
+          .parse(parseReviewJSONValue(stagedJSON))
+
+        const stagedRoot = z
+          .record(z.string(), z.json())
+          .parse(stagedDocument.root)
+
+        const normalized = parseEditorReviewNativeFragment(
+          JSON.stringify({
+            namespace: current._config.namespace,
+            nodes: stagedRoot.children,
+          }),
+          current._config.namespace,
+        )
+
+        if (normalized.status !== "validated")
+          return fail("This native rich-text fragment is not supported here.")
+
+        nativePastePhase = "selection"
+        const range = selection(false)
+        const anchor = range.anchor.getNode()
+        const focus = range.focus.getNode()
+        const anchorBlock = anchor.getTopLevelElement()
+        const focusBlock = focus.getTopLevelElement()
+
+        const textSelection =
+          range.anchor.type === "text" &&
+          range.focus.type === "text" &&
+          $isTextNode(anchor) &&
+          $isTextNode(focus) &&
+          anchor.isSimpleText() &&
+          focus.isSimpleText()
+
+        const emptyParagraphCaret =
+          range.isCollapsed() &&
+          range.anchor.type === "element" &&
+          range.focus.type === "element" &&
+          anchor === focus &&
+          $isElementNode(anchor) &&
+          anchor.getType() === "paragraph" &&
+          anchor.getChildrenSize() === 0
+
+        function hasCommentAnchor(node: LexicalNode) {
+          let parent = node.getParent()
+
+          while (parent) {
+            if (parent instanceof MarkNode) return true
+            parent = parent.getParent()
           }
+
+          return false
         }
 
-        const range = $getSelection()
+        if (
+          (!textSelection && !emptyParagraphCaret) ||
+          !anchorBlock ||
+          anchorBlock !== focusBlock ||
+          anchorBlock.getType() !== "paragraph" ||
+          anchorBlock.getParent() !== $getRoot() ||
+          hasCommentAnchor(anchor) ||
+          hasCommentAnchor(focus) ||
+          (textSelection &&
+            range
+              .getNodes()
+              .some(
+                (node) =>
+                  !$isTextNode(node) ||
+                  !node.isSimpleText() ||
+                  hasCommentAnchor(node),
+              ))
+        )
+          return fail(
+            "Native paste requires one unannotated root paragraph selection.",
+          )
 
-        if (!$isRangeSelection(range))
-          return fail("Clipboard content requires a text selection.")
+        nativePastePhase = "serialize before"
+        const beforeRoot = $serializeReviewRoot()
+        nativePastePhase = "clean before"
+        const before = normalizedNativeFragmentSnapshot(current, beforeRoot)
+        nativePastePhase = "check bounds"
+
+        if (
+          hasNamedReviewSlots(beforeRoot.root) ||
+          new TextEncoder().encode(before).byteLength > 131072
+        )
+          return fail(
+            "Native review snapshots exceed the supported document scope.",
+          )
+
+        nativePastePhase = "before snapshot"
+        parseReviewDocumentJSON(before, true, true)
+        const savedRange = range.clone()
+        const permit = authorize("suggest")
+
+        permit.assertCurrent()
+
+        const activeRange = $getSelection()
+
+        if (
+          JSON.stringify($serializeReviewRoot()) !== before ||
+          !$isRangeSelection(activeRange) ||
+          !activeRange.is(savedRange)
+        )
+          return fail("Native paste target changed during authorization.")
+
+        const suggestion: EditorSuggestion = {
+          id: reviewIdSchema.parse(crypto.randomUUID()),
+          author: permit.author,
+          createdAt: Date.now(),
+          kind: "insert",
+          beforeFormat: 0,
+        }
+
+        const inserted = $generateNodesFromSerializedNodes(normalized.blocks)
+
+        const insertedText = inserted.flatMap((node) =>
+          $isTextNode(node)
+            ? [node]
+            : $isElementNode(node)
+              ? node.getAllTextNodes()
+              : [],
+        )
+
+        if (!inserted.length || !insertedText.length)
+          return fail("Native fragment has no supported text nodes.")
+
+        for (const node of insertedText) $setEditorSuggestion(node, suggestion)
+
         $addUpdateTag(PASTE_TAG)
         $addUpdateTag(HISTORY_PUSH_TAG)
-        range.insertRawText(text)
+        $addUpdateTag("yopem-review-action")
+        nativePastePhase = "insert"
+        $insertGeneratedNodes(current, inserted, range)
+
+        try {
+          nativePastePhase = "after snapshot"
+          permit.assertCurrent()
+
+          const insertedTextContent = insertedText
+            .map((node) => node.getTextContent())
+            .join("")
+
+          const attributedText = $getRoot()
+            .getAllTextNodes()
+            .filter(
+              (node) =>
+                $getState(node, editorSuggestionState)?.id === suggestion.id,
+            )
+
+          if (
+            !attributedText.length ||
+            attributedText.map((node) => node.getTextContent()).join("") !==
+              insertedTextContent
+          )
+            throw new EditorReviewInputError(
+              "Native insertion changed the staged fragment.",
+            )
+
+          const afterRoot = $serializeReviewRoot()
+          const after = normalizedNativeFragmentSnapshot(current, afterRoot)
+
+          if (new TextEncoder().encode(after).byteLength > 131072)
+            throw new EditorReviewInputError(
+              "Native review snapshots exceed the supported document scope.",
+            )
+          checkReviewComplexity(afterRoot, 24)
+          parseReviewSnapshot(afterRoot, true, true)
+
+          if ($getRoot().getTextContentSize() > 1048576)
+            throw new EditorReviewInputError(
+              "Review document exceeds growth limits.",
+            )
+
+          const fragment = reviewNativeFragmentSchema.parse({
+            version: 1,
+            id: suggestion.id,
+            author: suggestion.author,
+            createdAt: suggestion.createdAt,
+            before,
+            after,
+          })
+
+          $setState($getRoot(), editorReviewNativeFragmentState, fragment)
+        } catch (error) {
+          const parsedBefore = current.parseEditorState(before).toJSON()
+
+          $getRoot()
+            .clear()
+            .append(
+              ...$generateNodesFromSerializedNodes(parsedBefore.root.children),
+            )
+          $getRoot().selectEnd()
+          $setState($getRoot(), editorReviewNativeFragmentState, null)
+
+          throw error
+        }
+
         diagnostic = ""
         publish()
 
@@ -1774,12 +2192,14 @@ function createReviewController() {
       } catch (error) {
         throw error instanceof EditorReviewInputError
           ? error
-          : new EditorReviewInputError("Clipboard content was not imported.")
+          : new EditorReviewInputError(
+              `${nativePastePhase}: ${error instanceof Error ? error.message : String(error)}`,
+            )
       }
     }
 
     function cut(event: ClipboardEvent | KeyboardEvent | null) {
-      if (!suggesting && !hasPending()) return false
+      if (!suggesting && !$hasCurrentPending()) return false
       event?.preventDefault()
       diagnostic =
         "Resolve suggestions and stop suggestion mode before cutting."
@@ -1793,7 +2213,7 @@ function createReviewController() {
         key,
         (payload: T) => {
           if (!suggesting) {
-            if (!hasPending()) return false
+            if (!$hasCurrentPending()) return false
             diagnostic = "Resolve pending suggestions before normal editing."
             publish()
 
@@ -1830,7 +2250,7 @@ function createReviewController() {
           }
 
           if (!suggesting) {
-            if (!hasPending()) return false
+            if (!$hasCurrentPending()) return false
             diagnostic = "Resolve pending suggestions before normal editing."
             publish()
 
@@ -2081,7 +2501,7 @@ function createReviewController() {
       breakCommand(INSERT_LINE_BREAK_COMMAND, (selectStart) =>
         $suggestBreak("linebreak", selectStart),
       ),
-      current.registerCommand(PASTE_COMMAND, paste, COMMAND_PRIORITY_LOW),
+      current.registerCommand(PASTE_COMMAND, paste, COMMAND_PRIORITY_NORMAL),
       current.registerCommand(CUT_COMMAND, cut, COMMAND_PRIORITY_LOW),
       current.registerUpdateListener(({ dirtyElements, dirtyLeaves }) => {
         if (dirtyElements.size || dirtyLeaves.size) saved = null

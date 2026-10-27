@@ -84,6 +84,7 @@ export const editorReviewItem: SourceItem = {
     "review-diff-native.ts",
     "review-diff.ts",
     "review-extension.ts",
+    "review-fragment-native.ts",
     "review-html.ts",
     "review-model.ts",
     "review-preset.tsx",

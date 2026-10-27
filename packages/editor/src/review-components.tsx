@@ -95,13 +95,14 @@ export function useEditorReview() {
   const controller = use(ReviewContext)
 
   if (!controller) throw new Error("Review parts require EditorReviewProvider.")
-  useSyncExternalStore(
+
+  const revision = useSyncExternalStore(
     controller.subscribe,
     controller.getSnapshot,
     controller.getSnapshot,
   )
 
-  return controller
+  return { ...controller, revision }
 }
 
 export function EditorReviewModeControl() {
@@ -622,7 +623,15 @@ export function EditorReviewPanel() {
               <Text>
                 {suggestion.author.name}: {suggestion.kind}
               </Text>
-              {suggestion.insertedText ? (
+              {suggestion.breakKind ? (
+                <Text>
+                  {suggestion.breakKind === "paragraph"
+                    ? "Paragraph break"
+                    : "Line break"}
+                </Text>
+              ) : null}
+              {suggestion.insertedText &&
+              (!suggestion.breakKind || suggestion.insertedText !== "\n") ? (
                 <Text>Inserted preview: {suggestion.insertedText}</Text>
               ) : null}
               {suggestion.removedText ? (

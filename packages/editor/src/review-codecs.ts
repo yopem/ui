@@ -85,6 +85,19 @@ export const reviewSuggestionSchema = z
 
 export type EditorSuggestion = z.infer<typeof reviewSuggestionSchema>
 
+export const reviewNativeFragmentSchema = z.strictObject({
+  version: z.literal(1),
+  id: reviewIdSchema,
+  author: reviewAuthorSchema,
+  createdAt: timeSchema,
+  before: z.string().max(131072),
+  after: z.string().max(131072),
+})
+
+export type EditorReviewNativeFragment = z.infer<
+  typeof reviewNativeFragmentSchema
+>
+
 export const reviewBreakSuggestionSchema = z
   .strictObject({
     id: reviewIdSchema,
@@ -113,6 +126,120 @@ export function reviewInlineHTML(
     value.kind === "insert" ? "ins" : value.kind === "delete" ? "del" : "mark"
 
   return `<${tag}>${escaped}</${tag}>`
+}
+
+function parseNativeFragmentSnapshot(source: string) {
+  if (new TextEncoder().encode(source).byteLength > 131072)
+    throw new Error("Native review snapshot exceeds its byte limit.")
+  const value = parseReviewJSONValue(source)
+  const document = z.record(z.string(), z.json()).parse(value)
+  const root = z.record(z.string(), z.json()).parse(document.root)
+
+  if (root.type !== "root" || !Array.isArray(root.children))
+    throw new Error("Native review snapshots require a root node.")
+
+  const pending = [root]
+
+  while (pending.length) {
+    const node = z.record(z.string(), z.json()).parse(pending.pop())
+    const state = z.record(z.string(), z.json()).safeParse(node.$)
+
+    if (state.success && state.data.yopemReviewNativeFragment !== undefined)
+      throw new Error("Native review snapshots cannot contain fragments.")
+
+    if (Array.isArray(node.children))
+      pending.push(
+        ...node.children.map((child) =>
+          z.record(z.string(), z.json()).parse(child),
+        ),
+      )
+
+    if (node.$slots !== undefined) {
+      const slots = z.record(z.string(), z.json()).parse(node.$slots)
+      pending.push(
+        ...Object.values(slots).map((child) =>
+          z.record(z.string(), z.json()).parse(child),
+        ),
+      )
+    }
+  }
+
+  return parseReviewDocument(value, true, true)
+}
+
+function validateNativeFragmentSnapshots(fragment: EditorReviewNativeFragment) {
+  const before = parseNativeFragmentSnapshot(fragment.before)
+  const after = parseNativeFragmentSnapshot(fragment.after)
+  let matchedSuggestion = false
+
+  for (const [snapshot, isBefore] of [
+    [before, true],
+    [after, false],
+  ] as const) {
+    const root = z.record(z.string(), z.json()).parse(snapshot.root)
+    const pending = [root]
+
+    while (pending.length) {
+      const node = z.record(z.string(), z.json()).parse(pending.pop())
+      const state = z.record(z.string(), z.json()).safeParse(node.$)
+
+      if (state.success) {
+        if (
+          state.data.yopemReviewStructural !== undefined ||
+          state.data.yopemReviewBreak !== undefined
+        )
+          throw new Error(
+            "Native review snapshots cannot contain pending breaks or trees.",
+          )
+
+        if (
+          state.data.yopemSuggestion !== undefined &&
+          state.data.yopemSuggestion !== null
+        ) {
+          if (isBefore)
+            throw new Error(
+              "Native review snapshots cannot replace pending suggestions.",
+            )
+
+          const suggestion = reviewSuggestionSchema.parse(
+            state.data.yopemSuggestion,
+          )
+
+          if (
+            suggestion.id !== fragment.id ||
+            suggestion.kind !== "insert" ||
+            suggestion.createdAt !== fragment.createdAt ||
+            JSON.stringify(suggestion.author) !==
+              JSON.stringify(fragment.author)
+          )
+            throw new Error(
+              "Native review fragment attribution does not match.",
+            )
+
+          matchedSuggestion = true
+        }
+      }
+
+      if (Array.isArray(node.children))
+        pending.push(
+          ...node.children.map((child) =>
+            z.record(z.string(), z.json()).parse(child),
+          ),
+        )
+
+      if (node.$slots !== undefined) {
+        const slots = z.record(z.string(), z.json()).parse(node.$slots)
+        pending.push(
+          ...Object.values(slots).map((child) =>
+            z.record(z.string(), z.json()).parse(child),
+          ),
+        )
+      }
+    }
+  }
+
+  if (!matchedSuggestion)
+    throw new Error("Native review fragment has no inserted text attribution.")
 }
 
 export function parseReviewDocumentJSON(
@@ -204,6 +331,26 @@ export function parseReviewDocument<Input, Trust>(
         }
 
         if (
+          state.yopemReviewNativeFragment !== undefined &&
+          state.yopemReviewNativeFragment !== null
+        ) {
+          if (node.type !== "root" || nodes !== 1)
+            throw new Error(
+              "Native review fragment metadata requires the root node.",
+            )
+
+          const fragment = reviewNativeFragmentSchema.parse(
+            state.yopemReviewNativeFragment,
+          )
+
+          validateNativeFragmentSnapshots(fragment)
+          registerSuggestionId(
+            fragment.id,
+            JSON.stringify([fragment.author, "text", fragment.createdAt]),
+          )
+        }
+
+        if (
           state.yopemSuggestion !== undefined &&
           state.yopemSuggestion !== null
         ) {
@@ -269,6 +416,7 @@ export function parseReviewDocument<Input, Trust>(
       } else {
         delete state.yopemReview
         delete state.yopemReviewStructural
+        delete state.yopemReviewNativeFragment
         delete state.yopemSuggestion
         delete state.yopemReviewBreak
 
