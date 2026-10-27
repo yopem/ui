@@ -91,6 +91,7 @@ function clearResult(state: PresentationState, key: string) {
   if (host) {
     host.requestedSvg = null
     host.loadedSvg = null
+    host.image.removeAttribute("src")
   }
 }
 

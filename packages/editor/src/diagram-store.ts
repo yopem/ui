@@ -705,15 +705,27 @@ export function createEditorDiagramStore(
     ) {
       if (!editor.isEditable()) return false
       let changed = false
+      const targetKey = controlsFocused ? target?.getKey() : undefined
 
       editor.update(
         () => {
           if (!editor.isEditable() || $getRoot().isDirty()) return
           const code = $createEditorDiagramCodeNode(kind, source, viewMode)
-          const selection = $getSelection()
+          const selectedTarget = targetKey ? $getNodeByKey(targetKey) : null
 
-          if ($isRangeSelection(selection)) selection.insertNodes([code])
-          else $getRoot().append(code)
+          if ($isCodeNode(selectedTarget) && selectedTarget.isAttached()) {
+            selectedTarget.insertAfter(code)
+          } else {
+            const selection = $getSelection()
+
+            if (
+              $isRangeSelection(selection) &&
+              $getNodeByKey(selection.anchor.key)?.isAttached() &&
+              $getNodeByKey(selection.focus.key)?.isAttached()
+            )
+              selection.insertNodes([code])
+            else $getRoot().append(code)
+          }
 
           code.selectStart()
           changed = true
