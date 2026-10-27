@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test"
+import { interFontBySdkFile } from "@workspace/apps/docs/scripts/excalidraw-font-map"
 import { createHash } from "node:crypto"
 import { readFileSync, readdirSync } from "node:fs"
 import { createRequire } from "node:module"
@@ -7,38 +8,66 @@ import { dirname, resolve, sep } from "node:path"
 function getInstalledDrawingFonts() {
   const require = createRequire(resolve("apps/docs/package.json"))
 
-  const directory = resolve(
+  const sdkFontDirectory = resolve(
     dirname(require.resolve("@excalidraw/excalidraw")),
     "fonts",
   )
 
-  const families = new Map<string, string>()
+  const interPackageDirectory = dirname(
+    require.resolve("@fontsource-variable/inter/package.json"),
+  )
 
-  for (const entry of readdirSync(directory, {
+  const interFontDirectory = resolve(interPackageDirectory, "files")
+
+  const files = readdirSync(sdkFontDirectory, {
     recursive: true,
     encoding: "utf8",
-  })) {
-    if (!entry.endsWith(".woff2")) continue
+  }).filter((file) => file.endsWith(".woff2"))
 
-    const family = entry.split(sep)[0]
+  const families = new Map<string, string>()
+  const nunitoFiles = files.filter((file) => file.startsWith(`Nunito${sep}`))
+
+  for (const file of files) {
+    if (file.startsWith(`Nunito${sep}`)) continue
+
+    const family = file.split(sep)[0]
 
     if (!family) throw new Error("The drawing font has no family directory.")
 
-    if (!families.has(family)) families.set(family, entry)
+    if (!families.has(family)) families.set(family, file)
   }
 
   if (families.size === 0) {
     throw new Error("The installed drawing SDK has no WOFF2 fonts.")
   }
 
-  return Array.from(families, ([family, file]) => ({
-    family,
-    bytes: readFileSync(resolve(directory, file)),
-    url: `/assets/excalidraw/fonts/${file.split(sep).map(encodeURIComponent).join("/")}`,
-  }))
+  if (
+    nunitoFiles.length !== interFontBySdkFile.size ||
+    nunitoFiles.some((file) => !interFontBySdkFile.has(file))
+  )
+    throw new Error("The installed SDK Nunito font map has changed.")
+
+  const selectedFiles = [...families.values(), ...nunitoFiles]
+
+  return selectedFiles.map((file) => {
+    const interFile = interFontBySdkFile.get(file)
+    const family = file.split(sep)[0]
+
+    if (!family) throw new Error("The drawing font has no family directory.")
+
+    return {
+      family,
+      bytes: readFileSync(
+        interFile
+          ? resolve(interFontDirectory, interFile)
+          : resolve(sdkFontDirectory, file),
+      ),
+      url: `/assets/excalidraw/fonts/${file.split(sep).map(encodeURIComponent).join("/")}`,
+    }
+  })
 }
 
-test("serves every installed drawing font family locally without changing its bytes", async ({
+test("serves local drawing fonts and maps Nunito assets to Inter", async ({
   page,
   request,
 }, testInfo) => {
@@ -77,16 +106,65 @@ test("serves every installed drawing font family locally without changing its by
   }, sources)
 
   expect(statuses).toEqual(fonts.map(() => "loaded"))
+
+  const nunitoLatin = fonts.find((font) =>
+    font.url.endsWith(
+      "Nunito-Regular-XRXI3I6Li01BKofiOc5wtlZ2di8HDIkhdTQ3j6zbXWjgeg.woff2",
+    ),
+  )
+
+  if (!nunitoLatin) throw new Error("The Nunito Latin Inter asset is missing.")
+
+  const measurement = await page.evaluate(async (source) => {
+    const faces = await Promise.all([
+      new FontFace("YopemDrawingInterProbe", `url("${source}")`, {
+        weight: "500",
+      }).load(),
+      new FontFace("Nunito", `url("${source}")`, { weight: "500" }).load(),
+    ])
+
+    for (const face of faces) document.fonts.add(face)
+
+    try {
+      const text = "Yopem UI canvas measurement"
+
+      await document.fonts.load('500 16px "YopemDrawingInterProbe"', text)
+      await document.fonts.load("500 16px Nunito", text)
+
+      const context = document.createElement("canvas").getContext("2d")
+
+      if (!context) return null
+
+      context.font = '500 16px "YopemDrawingInterProbe"'
+      const inter = context.measureText(text).width
+      context.font = "500 16px Nunito"
+
+      return {
+        inter,
+        nunito: context.measureText(text).width,
+        statuses: faces.map((face) => face.status),
+      }
+    } finally {
+      for (const face of faces) document.fonts.delete(face)
+    }
+  }, new URL(nunitoLatin.url, page.url()).href)
+
+  expect(measurement).not.toBeNull()
+  expect(measurement?.statuses).toEqual(["loaded", "loaded"])
+  expect(measurement?.inter).toBeGreaterThan(0)
+  expect(measurement?.nunito).toBe(measurement?.inter)
+
   await testInfo.attach("self-hosted-drawing-fonts", {
-    body: JSON.stringify(
-      fonts.map((font, index) => ({
+    body: JSON.stringify({
+      fonts: fonts.map((font, index) => ({
         family: font.family,
         resource: font.url,
         bytes: font.bytes.length,
         sha256: createHash("sha256").update(font.bytes).digest("hex"),
         status: statuses[index],
       })),
-    ),
+      measurement,
+    }),
     contentType: "application/json",
   })
 })

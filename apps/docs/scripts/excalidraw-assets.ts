@@ -11,12 +11,22 @@ import {
 import { createRequire } from "node:module"
 import { dirname, isAbsolute, relative, resolve, sep } from "node:path"
 
+import { interFontBySdkFile } from "./excalidraw-font-map"
+
 const require = createRequire(import.meta.url)
 
 const fontDirectory = resolve(
   dirname(require.resolve("@excalidraw/excalidraw")),
   "fonts",
 )
+
+const interPackageDirectory = dirname(
+  require.resolve("@fontsource-variable/inter/package.json"),
+)
+
+const interFontDirectory = resolve(interPackageDirectory, "files")
+
+const interLicense = resolve(interPackageDirectory, "LICENSE")
 
 function lstatIfPresent(path: string) {
   try {
@@ -128,7 +138,35 @@ export function prepareExcalidrawAssets(publicDirectory: string) {
   const assetDirectory = resolve(publicRoot, "assets")
   const excalidrawDirectory = resolve(assetDirectory, "excalidraw")
   const outputFontDirectory = resolve(excalidrawDirectory, "fonts")
-  const sourceFontFiles = listFiles(fontDirectory)
+
+  const sdkFontFiles = listFiles(fontDirectory)
+
+  const sdkNunitoFiles = sdkFontFiles.filter((file) =>
+    file.startsWith(`Nunito${sep}`),
+  )
+
+  if (
+    sdkNunitoFiles.length !== interFontBySdkFile.size ||
+    sdkNunitoFiles.some((file) => !interFontBySdkFile.has(file))
+  )
+    throw new Error(`Unsupported Excalidraw Nunito font map: ${fontDirectory}`)
+
+  const outputAssets = [
+    ...sdkFontFiles.map((file) => {
+      const interFile = interFontBySdkFile.get(file)
+
+      return {
+        file,
+        source: interFile
+          ? resolve(interFontDirectory, interFile)
+          : resolve(fontDirectory, file),
+      }
+    }),
+    { file: "Inter-OFL.txt", source: interLicense },
+  ].sort((left, right) =>
+    left.file < right.file ? -1 : left.file > right.file ? 1 : 0,
+  )
+
   const existingFontDirectory = lstatIfPresent(outputFontDirectory)
   const createdFiles: { destination: string; source: string }[] = []
   const createdDirectories: string[] = []
@@ -165,12 +203,12 @@ export function prepareExcalidrawAssets(publicDirectory: string) {
     const outputFiles = listFiles(outputFontDirectory)
 
     const matchesSource =
-      outputFiles.length === sourceFontFiles.length &&
-      sourceFontFiles.every(
-        (file, index) =>
-          outputFiles[index] === file &&
-          readFileSync(resolve(outputFontDirectory, file)).equals(
-            readFileSync(resolve(fontDirectory, file)),
+      outputFiles.length === outputAssets.length &&
+      outputAssets.every(
+        (asset, index) =>
+          outputFiles[index] === asset.file &&
+          readFileSync(resolve(outputFontDirectory, asset.file)).equals(
+            readFileSync(asset.source),
           ),
       )
 
@@ -185,12 +223,13 @@ export function prepareExcalidrawAssets(publicDirectory: string) {
     ensureDirectory(excalidrawDirectory, createdDirectories)
     ensureDirectory(outputFontDirectory, createdDirectories)
 
-    for (const file of sourceFontFiles) {
-      const source = resolve(fontDirectory, file)
+    for (const asset of outputAssets) {
+      const { file, source } = asset
       const destination = resolve(outputFontDirectory, file)
 
       if (
-        !isInside(fontDirectory, source) ||
+        (!isInside(fontDirectory, source) &&
+          !isInside(interPackageDirectory, source)) ||
         !isInside(outputFontDirectory, destination)
       )
         throw new Error(`Excalidraw font path escapes asset directory: ${file}`)

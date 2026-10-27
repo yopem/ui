@@ -1,0 +1,39 @@
+import { join } from "node:path"
+
+export const interFontBySdkFile: ReadonlyMap<string, string> = new Map([
+  [
+    join(
+      "Nunito",
+      "Nunito-Regular-XRXI3I6Li01BKofiOc5wtlZ2di8HDIkhdTQ3j6zbXWjgeg.woff2",
+    ),
+    "inter-latin-wght-normal.woff2",
+  ],
+  [
+    join(
+      "Nunito",
+      "Nunito-Regular-XRXI3I6Li01BKofiOc5wtlZ2di8HDIkhdTo3j6zbXWjgevT5.woff2",
+    ),
+    "inter-latin-ext-wght-normal.woff2",
+  ],
+  [
+    join(
+      "Nunito",
+      "Nunito-Regular-XRXI3I6Li01BKofiOc5wtlZ2di8HDIkhdTs3j6zbXWjgevT5.woff2",
+    ),
+    "inter-vietnamese-wght-normal.woff2",
+  ],
+  [
+    join(
+      "Nunito",
+      "Nunito-Regular-XRXI3I6Li01BKofiOc5wtlZ2di8HDIkhdTA3j6zbXWjgevT5.woff2",
+    ),
+    "inter-cyrillic-wght-normal.woff2",
+  ],
+  [
+    join(
+      "Nunito",
+      "Nunito-Regular-XRXI3I6Li01BKofiOc5wtlZ2di8HDIkhdTk3j6zbXWjgevT5.woff2",
+    ),
+    "inter-cyrillic-ext-wght-normal.woff2",
+  ],
+])
