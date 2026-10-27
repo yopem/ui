@@ -41,6 +41,7 @@ import {
   $isEditorDrawingNode,
   registerEditorDrawingRenderer,
 } from "./drawing-node"
+import { normalizeEditorDrawingSdkElements } from "./drawing-sdk"
 import { useEditor, useEditorState } from "./root"
 
 const styles = stylex.create({
@@ -159,7 +160,9 @@ function loadDrawingData(scene: EditorDrawingScene) {
     if (Object.keys(restored.files).length > 0)
       throw new Error("Editor drawing files are not supported")
 
-    parseEditorDrawingScene({ elements: restored.elements })
+    parseEditorDrawingScene({
+      elements: normalizeEditorDrawingSdkElements(restored.elements),
+    })
 
     return restored
   })
@@ -334,7 +337,9 @@ function EditorDrawingView({
 
     try {
       const expectedScene = JSON.stringify(
-        parseEditorDrawingScene({ elements: currentElements }),
+        parseEditorDrawingScene({
+          elements: normalizeEditorDrawingSdkElements(currentElements),
+        }),
       )
 
       if (Object.keys(api.getFiles()).length > 0)
@@ -387,7 +392,9 @@ function EditorDrawingView({
         !isCurrent ||
         loadSequence.current !== exportSequence ||
         JSON.stringify(
-          parseEditorDrawingScene({ elements: api.getSceneElements() }),
+          parseEditorDrawingScene({
+            elements: normalizeEditorDrawingSdkElements(api.getSceneElements()),
+          }),
         ) !== expectedScene ||
         Object.keys(api.getFiles()).length > 0
       )
@@ -478,7 +485,9 @@ function EditorDrawingView({
                           throw new Error(
                             "External drawing files are not supported",
                           )
-                        const accepted = parseEditorDrawingScene({ elements })
+                        const accepted = parseEditorDrawingScene({
+                          elements: normalizeEditorDrawingSdkElements(elements),
+                        })
                         draft.current = accepted
                         setError("")
                       } catch {
