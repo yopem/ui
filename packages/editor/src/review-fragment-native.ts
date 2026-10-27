@@ -233,7 +233,32 @@ export function parseEditorReviewNativeFragment(
       .parse(root.children)
       .map(stripNodeState)
 
-    const blocks = z.array(nativeFragmentBlockSchema).parse(nodes)
+    const fragment = z
+      .array(
+        z.union([
+          nativeFragmentBlockSchema,
+          nativeTextNodeSchema,
+          nativeLinebreakNodeSchema,
+        ]),
+      )
+      .parse(nodes)
+
+    const blocks: NativeFragmentBlock[] = []
+    let inline: NativeParagraphNode | null = null
+
+    for (const node of fragment) {
+      if (node.type === "text" || node.type === "linebreak") {
+        if (!inline) {
+          inline = { type: "paragraph", version: 1, children: [] }
+          blocks.push(inline)
+        }
+
+        inline.children.push(node)
+      } else {
+        inline = null
+        blocks.push(node)
+      }
+    }
 
     if (!nativeFragmentHasText(blocks))
       return { status: "rejected", reason: "invalid-fragment" }
