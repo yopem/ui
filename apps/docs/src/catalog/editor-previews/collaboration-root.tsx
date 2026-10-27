@@ -2,6 +2,7 @@
 
 import type { EditorCollaborationController } from "@yopem-ui/editor/collaboration"
 
+import { useStableCallback } from "@base-ui/utils/useStableCallback"
 import { Button } from "@registry/components/ui/button"
 import { Form } from "@registry/components/ui/form"
 import { Input } from "@registry/components/ui/input"
@@ -19,7 +20,7 @@ import {
   EditorCollaborationRoot,
   EditorCollaborationStatus,
 } from "@yopem-ui/editor/collaboration"
-import { useState } from "react"
+import { useState, type FormEvent } from "react"
 import { z } from "zod"
 
 function SharedEditor({
@@ -52,6 +53,45 @@ export function Preview() {
 
   const [error, setError] = useState(false)
 
+  const closeCollaboration = useStableCallback(function closeCollaboration() {
+    if (!controller) return
+    controller.destroy()
+    setController(null)
+  })
+
+  const connectToHost = useStableCallback(function connectToHost(
+    event: FormEvent<HTMLFormElement>,
+  ) {
+    event.preventDefault()
+    const data = new FormData(event.currentTarget)
+
+    try {
+      const { csrf, documentId, ticketUrl, socketUrl } = z
+        .object({
+          csrf: z.string().min(1),
+          documentId: z.string().min(1),
+          ticketUrl: z.string().min(1),
+          socketUrl: z.string().min(1),
+        })
+        .parse(Object.fromEntries(data))
+
+      setController(
+        createEditorCollaboration({
+          documentId,
+          ticketUrl,
+          socketUrl,
+          permission: "write",
+          headers() {
+            return { "X-CSRF-Token": csrf }
+          },
+        }),
+      )
+      setError(false)
+    } catch {
+      setError(true)
+    }
+  })
+
   return (
     <Stack>
       <Text>
@@ -62,48 +102,10 @@ export function Preview() {
       {controller ? (
         <>
           <SharedEditor controller={controller} />
-          <Button
-            onClick={() => {
-              controller.destroy()
-              setController(null)
-            }}
-          >
-            Close
-          </Button>
+          <Button onClick={closeCollaboration}>Close</Button>
         </>
       ) : (
-        <Form
-          onSubmit={(event) => {
-            event.preventDefault()
-            const data = new FormData(event.currentTarget)
-
-            try {
-              const { csrf, documentId, ticketUrl, socketUrl } = z
-                .object({
-                  csrf: z.string().min(1),
-                  documentId: z.string().min(1),
-                  ticketUrl: z.string().min(1),
-                  socketUrl: z.string().min(1),
-                })
-                .parse(Object.fromEntries(data))
-
-              setController(
-                createEditorCollaboration({
-                  documentId,
-                  ticketUrl,
-                  socketUrl,
-                  permission: "write",
-                  headers() {
-                    return { "X-CSRF-Token": csrf }
-                  },
-                }),
-              )
-              setError(false)
-            } catch {
-              setError(true)
-            }
-          }}
-        >
+        <Form onSubmit={connectToHost}>
           <Stack>
             <Input name="documentId" aria-label="Document ID" required />
             <Input

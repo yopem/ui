@@ -2,6 +2,7 @@
 
 import type { MediaUpload } from "@yopem-ui/editor/media"
 
+import { useStableCallback } from "@base-ui/utils/useStableCallback"
 import { Button } from "@registry/components/ui/button"
 import { Stack } from "@registry/components/ui/stack"
 import { Wrap } from "@registry/components/ui/wrap"
@@ -84,9 +85,13 @@ const initialState = JSON.stringify({
 export function MediaExample({ upload }: { upload?: MediaUpload }) {
   const [editable, setEditable] = useState(true)
 
+  const toggleEditable = useStableCallback(function toggleEditable() {
+    setEditable((current) => !current)
+  })
+
   return (
     <Stack>
-      <Button onClick={() => setEditable((current) => !current)}>
+      <Button onClick={toggleEditable}>
         {editable ? "Read only" : "Edit document"}
       </Button>
       <EditorRoot

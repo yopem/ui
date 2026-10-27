@@ -1,5 +1,8 @@
 "use client"
 
+import type { ChangeEvent } from "react"
+
+import { useStableCallback } from "@base-ui/utils/useStableCallback"
 import { Button } from "@registry/components/ui/button"
 import { Field, FieldLabel } from "@registry/components/ui/field"
 import { Input } from "@registry/components/ui/input"
@@ -141,7 +144,13 @@ export function PublicDemoHostExample() {
 
   const [error, setError] = useState("")
 
-  function loadFixture() {
+  const handleInputChange = useStableCallback(function handleInputChange(
+    event: ChangeEvent<HTMLInputElement>,
+  ) {
+    setInput(event.currentTarget.value)
+  })
+
+  const loadFixture = useStableCallback(function loadFixture() {
     const parsed = fixtureIdSchema.safeParse(input)
 
     if (!parsed.success) {
@@ -154,7 +163,7 @@ export function PublicDemoHostExample() {
       createFixturePair(parsed.data, previous.revision + 1),
     )
     setError("")
-  }
+  })
 
   return (
     <Stack>
@@ -172,7 +181,7 @@ export function PublicDemoHostExample() {
           id={inputId}
           value={input}
           maxLength={64}
-          onChange={(event) => setInput(event.currentTarget.value)}
+          onChange={handleInputChange}
         />
       </Field>
       <Button onClick={loadFixture}>Load fresh fixture roots</Button>

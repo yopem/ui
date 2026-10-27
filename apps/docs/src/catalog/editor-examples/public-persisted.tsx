@@ -2,6 +2,7 @@
 
 import type { EditorState, LexicalEditor } from "lexical"
 
+import { useStableCallback } from "@base-ui/utils/useStableCallback"
 import { Box } from "@registry/components/ui/box"
 import { Button } from "@registry/components/ui/button"
 import { Field, FieldLabel } from "@registry/components/ui/field"
@@ -181,7 +182,7 @@ function PersistedDraftControls({
 }) {
   const editor = useEditor()
 
-  function saveDraft() {
+  const saveDraft = useStableCallback(function saveDraft() {
     if (!date) {
       onFeedback({ kind: "error", text: "Choose a date before saving." })
 
@@ -200,9 +201,9 @@ function PersistedDraftControls({
         text: "Could not save the draft. The current document remains open.",
       })
     }
-  }
+  })
 
-  function loadDraft() {
+  const loadDraft = useStableCallback(function loadDraft() {
     if (!date) {
       onFeedback({ kind: "error", text: "Choose a date before loading." })
 
@@ -233,9 +234,9 @@ function PersistedDraftControls({
     } finally {
       persistence.finishReplacement()
     }
-  }
+  })
 
-  function resetEditor() {
+  const resetEditor = useStableCallback(function resetEditor() {
     persistence.beginReplacement()
 
     try {
@@ -253,7 +254,7 @@ function PersistedDraftControls({
     } finally {
       persistence.finishReplacement()
     }
-  }
+  })
 
   return (
     <Stack>
@@ -273,17 +274,20 @@ function PersistedDraftControls({
 function DailyDraftSession({
   date,
   prepared,
+  onFeedback,
 }: {
   date: string
   prepared: PreparedDraft
+  onFeedback: (value: Feedback | null) => void
 }) {
-  const [feedback, setFeedback] = useState(prepared.feedback)
-
   const [persistence] = useState(() =>
     createDraftPersistence(prepared.source, prepared.automatic),
   )
 
-  function saveChangedDocument(_state: EditorState, editor: LexicalEditor) {
+  const saveChangedDocument = useStableCallback(function saveChangedDocument(
+    _state: EditorState,
+    editor: LexicalEditor,
+  ) {
     if (!persistence.shouldSave() || !date) return
 
     try {
@@ -292,15 +296,15 @@ function DailyDraftSession({
       if (!persistence.changed(source)) return
       window.localStorage.setItem(storageKey(date), source)
       persistence.saved(source)
-      setFeedback({ kind: "status", text: `Saved draft for ${date}.` })
+      onFeedback({ kind: "status", text: `Saved draft for ${date}.` })
     } catch {
       persistence.pauseAutomatic()
-      setFeedback({
+      onFeedback({
         kind: "error",
         text: "Automatic save failed. The current document remains open. Use Save draft to retry.",
       })
     }
-  }
+  })
 
   return (
     <Stack>
@@ -322,20 +326,20 @@ function DailyDraftSession({
         <PersistedDraftControls
           date={date}
           persistence={persistence}
-          onFeedback={setFeedback}
+          onFeedback={onFeedback}
         />
       </EditorRoot>
-      {feedback ? (
+      {prepared.feedback ? (
         <Box
           render={
-            feedback.kind === "error" ? (
+            prepared.feedback.kind === "error" ? (
               <div role="alert" />
             ) : (
               <output aria-live="polite" />
             )
           }
         >
-          {feedback.text}
+          {prepared.feedback.text}
         </Box>
       ) : null}
     </Stack>
@@ -344,6 +348,10 @@ function DailyDraftSession({
 
 function PreparedDailyEditor({ date }: { date: string }) {
   const [prepared, setPrepared] = useState<PreparedDraft | null>(null)
+
+  function updateFeedback(feedback: Feedback | null) {
+    setPrepared((current) => (current ? { ...current, feedback } : current))
+  }
 
   const [attach] = useState(() => {
     let initialized = false
@@ -358,7 +366,11 @@ function PreparedDailyEditor({ date }: { date: string }) {
   return (
     <Box ref={attach}>
       {prepared ? (
-        <DailyDraftSession date={date} prepared={prepared} />
+        <DailyDraftSession
+          date={date}
+          prepared={prepared}
+          onFeedback={updateFeedback}
+        />
       ) : (
         <Box render={<output aria-live="polite" />}>
           Opening this date's draft…
@@ -372,9 +384,11 @@ export function PublicPersistedExample() {
   const dateId = useId()
   const [date, setDate] = useState("2025-03-08")
 
-  function changeDate(event: ChangeEvent<HTMLInputElement>) {
+  const changeDate = useStableCallback(function changeDate(
+    event: ChangeEvent<HTMLInputElement>,
+  ) {
     setDate(event.currentTarget.value)
-  }
+  })
 
   return (
     <Stack>

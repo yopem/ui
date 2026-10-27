@@ -3,6 +3,7 @@
 import type { EditorListMarker } from "@yopem-ui/editor/list-presentation"
 import type { KeyboardEvent } from "react"
 
+import { useStableCallback } from "@base-ui/utils/useStableCallback"
 import { $generateHtmlFromNodes, $generateNodesFromDOM } from "@lexical/html"
 import { Box } from "@registry/components/ui/box"
 import { Button } from "@registry/components/ui/button"
@@ -391,13 +392,15 @@ function ListPresentationContent({
 }) {
   const editor = useEditor()
 
-  function replaceDocument() {
+  const replaceDocument = useStableCallback(function replaceDocument() {
     editor.setEditorState(editor.parseEditorState(replacementState), {
       tag: HISTORY_PUSH_TAG,
     })
-  }
+  })
 
-  function handleStartKeyDown(event: KeyboardEvent<HTMLInputElement>) {
+  const handleStartKeyDown = useStableCallback(function handleStartKeyDown(
+    event: KeyboardEvent<HTMLInputElement>,
+  ) {
     if (
       event.defaultPrevented ||
       !event.altKey ||
@@ -408,13 +411,13 @@ function ListPresentationContent({
 
     event.preventDefault()
     replaceDocument()
-  }
+  })
 
-  function loadInitialDocument() {
+  const loadInitialDocument = useStableCallback(function loadInitialDocument() {
     editor.setEditorState(editor.parseEditorState(initialState), {
       tag: HISTORY_PUSH_TAG,
     })
-  }
+  })
 
   return (
     <>
@@ -468,10 +471,10 @@ function ListPresentationActions({
   const [message, setMessage] = useState("")
   const rejected = message.toLowerCase().includes("rejected")
 
-  function saveJSON() {
+  const saveJSON = useStableCallback(function saveJSON() {
     setSavedJSON(JSON.stringify(editor.getEditorState().toJSON(), null, 2))
     setMessage("Local JSON saved.")
-  }
+  })
 
   function loadJSON(source: string) {
     try {
@@ -491,14 +494,14 @@ function ListPresentationActions({
     }
   }
 
-  function saveHTML() {
+  const saveHTML = useStableCallback(function saveHTML() {
     setSavedHTML(
       editor.getEditorState().read(() => $generateHtmlFromNodes(editor), {
         editor,
       }),
     )
     setMessage("Local HTML saved.")
-  }
+  })
 
   function loadHTML(source: string) {
     const view = editor.getRootElement()?.ownerDocument.defaultView
@@ -534,29 +537,31 @@ function ListPresentationActions({
     }
   }
 
-  function loadInvalidJSON() {
-    loadJSON(invalidJSON)
-  }
+  const loadSavedJSON = useStableCallback(function loadSavedJSON() {
+    loadJSON(savedJSON)
+  })
 
-  function loadInvalidHTML() {
+  const loadSavedHTML = useStableCallback(function loadSavedHTML() {
+    loadHTML(savedHTML)
+  })
+
+  const loadInvalidJSON = useStableCallback(function loadInvalidJSON() {
+    loadJSON(invalidJSON)
+  })
+
+  const loadInvalidHTML = useStableCallback(function loadInvalidHTML() {
     loadHTML(invalidHTML)
-  }
+  })
 
   return (
     <>
       <Wrap>
         <Button onClick={saveJSON}>Save local JSON</Button>
-        <Button
-          disabled={!editable || !savedJSON}
-          onClick={() => loadJSON(savedJSON)}
-        >
+        <Button disabled={!editable || !savedJSON} onClick={loadSavedJSON}>
           Load local JSON
         </Button>
         <Button onClick={saveHTML}>Save local HTML</Button>
-        <Button
-          disabled={!editable || !savedHTML}
-          onClick={() => loadHTML(savedHTML)}
-        >
+        <Button disabled={!editable || !savedHTML} onClick={loadSavedHTML}>
           Load local HTML
         </Button>
         <Button disabled={!editable} onClick={onReplaceDocument}>
@@ -598,9 +603,9 @@ function ListPresentationActions({
 export function PublicListPresentationExample() {
   const [editable, setEditable] = useState(true)
 
-  function toggleEditable() {
+  const toggleEditable = useStableCallback(function toggleEditable() {
     setEditable((current) => !current)
-  }
+  })
 
   return (
     <EditorRoot

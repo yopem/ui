@@ -2,6 +2,7 @@
 
 import type { EditorState } from "lexical"
 
+import { useStableCallback } from "@base-ui/utils/useStableCallback"
 import { Box } from "@registry/components/ui/box"
 import { Button } from "@registry/components/ui/button"
 import { Stack } from "@registry/components/ui/stack"
@@ -25,7 +26,7 @@ import {
   EditorDocxImportControl,
   EditorDocxExportControl,
 } from "@yopem-ui/editor/docx/client"
-import { useState, type ReactNode } from "react"
+import { useReducer, useState, type ReactNode } from "react"
 
 const extensions = [
   EditorBlockPresentationExtension,
@@ -86,12 +87,16 @@ export function PublicDocxExportExample() {
 }
 
 export function PublicDocxExample({ children }: { children?: ReactNode }) {
-  const [readOnly, setReadOnly] = useState(false)
+  const [readOnly, toggleReadOnly] = useReducer(
+    (current: boolean) => !current,
+    false,
+  )
+
   const [snapshot, setSnapshot] = useState(initialState)
 
-  function change(state: EditorState) {
+  const change = useStableCallback(function change(state: EditorState) {
     setSnapshot(JSON.stringify(state.toJSON()))
-  }
+  })
 
   return (
     <Stack data-testid="public-docx-example">
@@ -105,7 +110,7 @@ export function PublicDocxExample({ children }: { children?: ReactNode }) {
         browser APIs. Cancellation cannot stop synchronous parsing already in
         progress. Runtime and file fidelity checks remain pending.
       </Text>
-      <Button onClick={() => setReadOnly(!readOnly)}>
+      <Button onClick={toggleReadOnly}>
         {readOnly ? "Disable Word read-only" : "Enable Word read-only"}
       </Button>
       <EditorRoot

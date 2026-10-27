@@ -1,5 +1,8 @@
 "use client"
 
+import type { EditorState } from "lexical"
+
+import { useStableCallback } from "@base-ui/utils/useStableCallback"
 import { Box } from "@registry/components/ui/box"
 import { Button } from "@registry/components/ui/button"
 import { Stack } from "@registry/components/ui/stack"
@@ -16,7 +19,7 @@ import {
   MediaPreviewGallery,
   MediaPreviewTrigger,
 } from "@yopem-ui/editor/media"
-import { useState } from "react"
+import { useReducer, useState, type ComponentProps } from "react"
 import { createPortal } from "react-dom"
 
 const styles = stylex.create({
@@ -30,6 +33,18 @@ const styles = stylex.create({
 })
 
 const extensions = [MediaExtension]
+
+const foreignPreviewImages = [
+  {
+    id: "foreign-mark",
+    src: "https://ui.yopem.com/favicon.svg",
+    alt: "Yopem UI mark",
+  },
+]
+
+function serializeEditorState(_current: string, state: EditorState) {
+  return JSON.stringify(state.toJSON())
+}
 
 const initialState = JSON.stringify({
   root: {
@@ -68,15 +83,19 @@ const initialState = JSON.stringify({
 })
 
 export function PublicMediaPreviewExample() {
-  const [editable, setEditable] = useState(true)
-  const [documentState, setDocumentState] = useState(initialState)
+  const [editable, toggleEditable] = useReducer(
+    (current: boolean) => !current,
+    true,
+  )
+
+  const [documentState, setDocumentState] = useReducer(
+    serializeEditorState,
+    initialState,
+  )
 
   return (
     <Stack>
-      <Button
-        variant="outline"
-        onClick={() => setEditable((current) => !current)}
-      >
+      <Button variant="outline" onClick={toggleEditable}>
         {editable ? "Set read-only" : "Edit media"}
       </Button>
       <EditorRoot
@@ -84,7 +103,7 @@ export function PublicMediaPreviewExample() {
         editable={editable}
         extensions={extensions}
         initialState={initialState}
-        onChange={(state) => setDocumentState(JSON.stringify(state.toJSON()))}
+        onChange={setDocumentState}
       >
         <EditorToolbar aria-label="Media preview history">
           <EditorHistoryButton action="undo" />
@@ -109,6 +128,49 @@ export function PublicMediaPreviewExample() {
 function ForeignDocumentPreview() {
   const [foreignBody, setForeignBody] = useState<HTMLElement | null>(null)
 
+  const handleLoad = useStableCallback(function handleLoad(
+    event: Parameters<NonNullable<ComponentProps<"iframe">["onLoad"]>>[0],
+  ) {
+    const frame = event.currentTarget
+    const target = frame.contentDocument
+
+    if (!target) {
+      setForeignBody(null)
+
+      return
+    }
+
+    const source = frame.ownerDocument
+    target.documentElement.className = source.documentElement.className
+    target.documentElement.lang = source.documentElement.lang || "en"
+
+    for (const attribute of ["data-theme", "dir"] as const) {
+      const value = source.documentElement.getAttribute(attribute)
+
+      if (value === null) target.documentElement.removeAttribute(attribute)
+      else target.documentElement.setAttribute(attribute, value)
+    }
+
+    for (const previous of target.head.querySelectorAll(
+      "[data-media-preview-stylesheet]",
+    ))
+      previous.remove()
+
+    for (const stylesheet of source.querySelectorAll<
+      HTMLStyleElement | HTMLLinkElement
+    >("style, link[rel='stylesheet']")) {
+      const copy = target.importNode(stylesheet, true)
+      const href = stylesheet.getAttribute("href")
+
+      if (href !== null)
+        copy.setAttribute("href", new URL(href, stylesheet.baseURI).href)
+      copy.setAttribute("data-media-preview-stylesheet", "")
+      target.head.append(copy)
+    }
+
+    setForeignBody(target.body)
+  })
+
   return (
     <>
       <Box
@@ -116,66 +178,15 @@ function ForeignDocumentPreview() {
           <iframe
             title="Foreign document media preview"
             srcDoc='<!doctype html><html lang="en"><head><title>Media preview document</title></head><body></body></html>'
-            onLoad={(event) => {
-              const frame = event.currentTarget
-              const target = frame.contentDocument
-
-              if (!target) {
-                setForeignBody(null)
-
-                return
-              }
-
-              const source = frame.ownerDocument
-              target.documentElement.className =
-                source.documentElement.className
-              target.documentElement.lang = source.documentElement.lang || "en"
-
-              for (const attribute of ["data-theme", "dir"] as const) {
-                const value = source.documentElement.getAttribute(attribute)
-
-                if (value === null)
-                  target.documentElement.removeAttribute(attribute)
-                else target.documentElement.setAttribute(attribute, value)
-              }
-
-              for (const previous of target.head.querySelectorAll(
-                "[data-media-preview-stylesheet]",
-              ))
-                previous.remove()
-
-              for (const stylesheet of source.querySelectorAll<
-                HTMLStyleElement | HTMLLinkElement
-              >("style, link[rel='stylesheet']")) {
-                const copy = target.importNode(stylesheet, true)
-                const href = stylesheet.getAttribute("href")
-
-                if (href !== null)
-                  copy.setAttribute(
-                    "href",
-                    new URL(href, stylesheet.baseURI).href,
-                  )
-                copy.setAttribute("data-media-preview-stylesheet", "")
-                target.head.append(copy)
-              }
-
-              setForeignBody(target.body)
-            }}
+            sandbox="allow-same-origin"
+            onLoad={handleLoad}
           />
         }
         xstyle={styles.foreignFrame}
       />
       {foreignBody
         ? createPortal(
-            <MediaPreviewGallery
-              images={[
-                {
-                  id: "foreign-mark",
-                  src: "https://ui.yopem.com/favicon.svg",
-                  alt: "Yopem UI mark",
-                },
-              ]}
-            >
+            <MediaPreviewGallery images={foreignPreviewImages}>
               <MediaPreviewTrigger imageId="foreign-mark">
                 <img
                   src="https://ui.yopem.com/favicon.svg"

@@ -1,5 +1,6 @@
 "use client"
 
+import { useStableCallback } from "@base-ui/utils/useStableCallback"
 import { Button } from "@registry/components/ui/button"
 import { Stack } from "@registry/components/ui/stack"
 import {
@@ -111,9 +112,13 @@ export function MathExample() {
 
   const [editable, setEditable] = useState(true)
 
+  const toggleEditable = useStableCallback(function toggleEditable() {
+    setEditable((current) => !current)
+  })
+
   return (
     <Stack>
-      <Button onClick={() => setEditable((current) => !current)}>
+      <Button onClick={toggleEditable}>
         {editable ? "Read only" : "Edit document"}
       </Button>
       <EditorRoot

@@ -1,5 +1,6 @@
 "use client"
 
+import { useStableCallback } from "@base-ui/utils/useStableCallback"
 import { Box } from "@registry/components/ui/box"
 import { Button } from "@registry/components/ui/button"
 import { Heading } from "@registry/components/ui/heading"
@@ -105,14 +106,16 @@ function ExternalPreviewCard({
 
   const title = configurable ? exampleId : preview.title
 
-  function changeExampleId(event: ChangeEvent<HTMLInputElement>) {
+  const changeExampleId = useStableCallback(function changeExampleId(
+    event: ChangeEvent<HTMLInputElement>,
+  ) {
     if (!loaded) setExampleId(event.target.value)
-  }
+  })
 
-  function togglePreview() {
+  const togglePreview = useStableCallback(function togglePreview() {
     if (!loaded && invalidId) return
     setLoaded((current) => !current)
-  }
+  })
 
   return (
     <Box

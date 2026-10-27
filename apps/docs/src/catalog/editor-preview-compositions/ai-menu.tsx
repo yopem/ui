@@ -3,6 +3,7 @@
 import type { EditorAiConfig } from "@yopem-ui/editor/ai/client"
 import type { FormEvent } from "react"
 
+import { useStableCallback } from "@base-ui/utils/useStableCallback"
 import { Box } from "@registry/components/ui/box"
 import { Button } from "@registry/components/ui/button"
 import { Field, FieldLabel } from "@registry/components/ui/field"
@@ -72,7 +73,9 @@ export function EditorAiMenuComposition() {
   const [config, setConfig] = useState<EditorAiConfig>()
   const [error, setError] = useState("")
 
-  function configure(event: FormEvent<HTMLFormElement>) {
+  const configure = useStableCallback(function configure(
+    event: FormEvent<HTMLFormElement>,
+  ) {
     event.preventDefault()
 
     const values = new FormData(event.currentTarget)
@@ -110,7 +113,7 @@ export function EditorAiMenuComposition() {
     event.currentTarget.reset()
     setConfig(next)
     setError("")
-  }
+  })
 
   return (
     <Box render={<section aria-label="AI menu host setup" />}>

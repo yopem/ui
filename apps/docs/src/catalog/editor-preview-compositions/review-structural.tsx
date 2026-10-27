@@ -1,5 +1,6 @@
 "use client"
 
+import { useStableCallback } from "@base-ui/utils/useStableCallback"
 import { Box } from "@registry/components/ui/box"
 import { Button } from "@registry/components/ui/button"
 import { HStack } from "@registry/components/ui/hstack"
@@ -134,7 +135,7 @@ function StructuralReviewControls({ part }: { part: StructuralPart }) {
   const proposal = view.structuralProposals[0]
   const [error, setError] = useState("")
 
-  function propose() {
+  const propose = useStableCallback(function propose() {
     setError("")
     editor.update(
       () => {
@@ -150,7 +151,7 @@ function StructuralReviewControls({ part }: { part: StructuralPart }) {
       },
       { discrete: true },
     )
-  }
+  })
 
   return (
     <Stack>
@@ -191,13 +192,13 @@ export function StructuralReviewExample({
   const [editable, setEditable] = useState(true)
   const [allowDecisions, setAllowDecisions] = useState(true)
 
-  function toggleEditable() {
+  const toggleEditable = useStableCallback(function toggleEditable() {
     setEditable((current) => !current)
-  }
+  })
 
-  function togglePermission() {
+  const togglePermission = useStableCallback(function togglePermission() {
     setAllowDecisions((current) => !current)
-  }
+  })
 
   return (
     <EditorRoot

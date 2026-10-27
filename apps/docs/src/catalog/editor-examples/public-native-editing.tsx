@@ -1,5 +1,8 @@
 "use client"
 
+import type { MouseEvent } from "react"
+
+import { useStableCallback } from "@base-ui/utils/useStableCallback"
 import {
   HorizontalRuleExtension,
   INSERT_HORIZONTAL_RULE_COMMAND,
@@ -48,6 +51,10 @@ const styles = stylex.create({
   },
 })
 
+function preventToolbarMouseDown(event: MouseEvent<HTMLButtonElement>) {
+  event.preventDefault()
+}
+
 const blockExtensions = [
   defineExtension({
     name: "editor-examples/public-native-editing",
@@ -64,16 +71,18 @@ function NativeHorizontalRuleButton() {
   const editor = useEditor()
   const { editable } = useEditorState()
 
+  const handleInsert = useStableCallback(function handleInsert() {
+    if (!editor.isEditable()) return
+    editor.dispatchCommand(INSERT_HORIZONTAL_RULE_COMMAND, undefined)
+    editor.focus()
+  })
+
   return (
     <ToolbarButton
       render={<Button variant="ghost" size="sm" />}
       disabled={!editable}
-      onMouseDown={(event) => event.preventDefault()}
-      onClick={() => {
-        if (!editor.isEditable()) return
-        editor.dispatchCommand(INSERT_HORIZONTAL_RULE_COMMAND, undefined)
-        editor.focus()
-      }}
+      onMouseDown={preventToolbarMouseDown}
+      onClick={handleInsert}
     >
       Insert horizontal rule
     </ToolbarButton>

@@ -1,5 +1,8 @@
 "use client"
 
+import type { MouseEvent } from "react"
+
+import { useStableCallback } from "@base-ui/utils/useStableCallback"
 import { $generateHtmlFromNodes } from "@lexical/html"
 import { Box } from "@registry/components/ui/box"
 import { Button } from "@registry/components/ui/button"
@@ -16,6 +19,10 @@ import {
 } from "@yopem-ui/editor"
 import { EditorTocControls, EditorTocExtension } from "@yopem-ui/editor/toc"
 import { useState } from "react"
+
+function preventToolbarBlur(event: MouseEvent<HTMLElement>) {
+  event.preventDefault()
+}
 
 const styles = stylex.create({
   html: {
@@ -83,16 +90,16 @@ function ExportDocumentHTML() {
   const editor = useEditor()
   const [html, setHTML] = useState("")
 
+  const exportHTML = useStableCallback(function exportHTML() {
+    setHTML(editor.getEditorState().read(() => $generateHtmlFromNodes(editor)))
+  })
+
   return (
     <>
       <Button
         variant="outline"
-        onMouseDown={(event) => event.preventDefault()}
-        onClick={() =>
-          setHTML(
-            editor.getEditorState().read(() => $generateHtmlFromNodes(editor)),
-          )
-        }
+        onMouseDown={preventToolbarBlur}
+        onClick={exportHTML}
       >
         Export document HTML
       </Button>

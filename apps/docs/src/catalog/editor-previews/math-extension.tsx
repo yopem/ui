@@ -9,6 +9,8 @@ import {
 
 const extensions = [EditorMathExtension]
 
+const previewValue = { kind: "block", tex: "\\frac{a}{b} + x^2" } as const
+
 export function Preview() {
   return (
     <EditorRoot extensions={extensions} ariaLabel="EditorMathExtension preview">
@@ -16,7 +18,7 @@ export function Preview() {
         <EditorMathControls />
       </EditorToolbar>
       <EditorContent />
-      <EditorMathPreview value={{ kind: "block", tex: "\\frac{a}{b} + x^2" }} />
+      <EditorMathPreview value={previewValue} />
     </EditorRoot>
   )
 }

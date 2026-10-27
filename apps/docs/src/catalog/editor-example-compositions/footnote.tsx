@@ -17,12 +17,16 @@ import {
   EditorFootnoteRenumberControl,
   EditorFootnoteTypeahead,
 } from "@yopem-ui/editor/footnote"
-import { useState } from "react"
+import { useReducer, useState } from "react"
 
 import { editorFootnoteFixture } from "@/catalog/editor-example-fixtures/footnote"
 
 export function FootnoteExample() {
-  const [editable, setEditable] = useState(true)
+  const [editable, toggleEditable] = useReducer(
+    (current: boolean) => !current,
+    true,
+  )
+
   const [controller] = useState(createEditorFootnoteTypeahead)
   const [extensions] = useState(() => [controller.extension])
 
@@ -33,7 +37,7 @@ export function FootnoteExample() {
         <Button
           variant="outline"
           aria-pressed={!editable}
-          onClick={() => setEditable(!editable)}
+          onClick={toggleEditable}
         >
           Read only
         </Button>

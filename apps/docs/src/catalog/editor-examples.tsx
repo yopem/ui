@@ -1,12 +1,12 @@
 "use client"
 
+import { useStableCallback } from "@base-ui/utils/useStableCallback"
 import { Box } from "@registry/components/ui/box"
 import { Button } from "@registry/components/ui/button"
 import { Heading } from "@registry/components/ui/heading"
 import { HStack } from "@registry/components/ui/hstack"
 import { Stack } from "@registry/components/ui/stack"
 import { Text } from "@registry/components/ui/text"
-import { useEventCallback } from "@registry/hooks/use-event-callback"
 import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import { Editor, type EditorProps } from "@yopem-ui/editor"
@@ -70,11 +70,11 @@ export function EditorExamples() {
   const [serialized, setSerialized] = useState(initialState)
   const [readOnlyEditable, setReadOnlyEditable] = useState(false)
 
-  function toggleEditing() {
+  const toggleEditing = useStableCallback(function toggleEditing() {
     setReadOnlyEditable((value) => !value)
-  }
+  })
 
-  const handleChange = useEventCallback(
+  const handleChange = useStableCallback(
     (state: Parameters<NonNullable<EditorProps["onChange"]>>[0]) => {
       setSerialized(JSON.stringify(state.toJSON(), null, 2))
     },

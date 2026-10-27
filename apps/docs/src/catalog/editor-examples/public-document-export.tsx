@@ -14,7 +14,7 @@ import {
 import { EditorDocumentExportControls } from "@yopem-ui/editor/document-export"
 import { captureEditorDocumentImageWithHtmlToImage } from "@yopem-ui/editor/document-export-html-to-image"
 import { EditorMathExtension } from "@yopem-ui/editor/math"
-import { useState } from "react"
+import { useReducer } from "react"
 
 const extensions = [EditorMathExtension]
 
@@ -96,8 +96,15 @@ const initialState = JSON.stringify({
 })
 
 export function PublicDocumentExportExample() {
-  const [editable, setEditable] = useState(true)
-  const [mounted, setMounted] = useState(true)
+  const [editable, toggleEditable] = useReducer(
+    (current: boolean) => !current,
+    true,
+  )
+
+  const [mounted, toggleMounted] = useReducer(
+    (current: boolean) => !current,
+    true,
+  )
 
   return (
     <Stack>
@@ -107,15 +114,12 @@ export function PublicDocumentExportExample() {
       </Text>
       <Heading>Document export</Heading>
       <Box>
-        <Button
-          aria-pressed={!editable}
-          onClick={() => setEditable((current) => !current)}
-        >
+        <Button aria-pressed={!editable} onClick={toggleEditable}>
           {editable
             ? "Make export editor read-only"
             : "Enable export editor editing"}
         </Button>
-        <Button onClick={() => setMounted((current) => !current)}>
+        <Button onClick={toggleMounted}>
           {mounted ? "Unmount export editor" : "Mount export editor"}
         </Button>
       </Box>

@@ -1,5 +1,6 @@
 "use client"
 
+import { useStableCallback } from "@base-ui/utils/useStableCallback"
 import { $generateHtmlFromNodes, $generateNodesFromDOM } from "@lexical/html"
 import { Box } from "@registry/components/ui/box"
 import { Button } from "@registry/components/ui/button"
@@ -65,7 +66,7 @@ function TableSnapshots() {
   const [html, setHTML] = useState<string | null>(null)
   const [error, setError] = useState("")
 
-  function saveJSON() {
+  const saveJSON = useStableCallback(function saveJSON() {
     try {
       const next = JSON.stringify(editor.getEditorState().toJSON())
       setJSON(next)
@@ -73,9 +74,9 @@ function TableSnapshots() {
     } catch (cause) {
       setError(snapshotError(cause))
     }
-  }
+  })
 
-  function loadJSON() {
+  const loadJSON = useStableCallback(function loadJSON() {
     if (json === null || !editor.isEditable()) return
 
     try {
@@ -85,9 +86,9 @@ function TableSnapshots() {
     } catch (cause) {
       setError(snapshotError(cause))
     }
-  }
+  })
 
-  function saveHTML() {
+  const saveHTML = useStableCallback(function saveHTML() {
     try {
       const next = editor
         .getEditorState()
@@ -98,9 +99,9 @@ function TableSnapshots() {
     } catch (cause) {
       setError(snapshotError(cause))
     }
-  }
+  })
 
-  function loadHTML() {
+  const loadHTML = useStableCallback(function loadHTML() {
     if (html === null || !editor.isEditable()) return
 
     try {
@@ -109,7 +110,7 @@ function TableSnapshots() {
     } catch (cause) {
       setError(snapshotError(cause))
     }
-  }
+  })
 
   return (
     <Stack>

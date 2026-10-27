@@ -1,5 +1,6 @@
 "use client"
 
+import { useStableCallback } from "@base-ui/utils/useStableCallback"
 import { AspectRatio } from "@registry/components/ui/aspect-ratio"
 import { Button } from "@registry/components/ui/button"
 import { Stack } from "@registry/components/ui/stack"
@@ -45,19 +46,24 @@ export function MediaEmbedComposition() {
   const [disabled, setDisabled] = useState(false)
   const [configured, setConfigured] = useState(true)
 
+  const toggleDisabled = useStableCallback(function toggleDisabled() {
+    setDisabled((value) => !value)
+  })
+
+  const toggleConfigured = useStableCallback(function toggleConfigured() {
+    setConfigured((value) => !value)
+  })
+
   return (
     <Stack>
       <Text>
         External frames need an explicit provider policy and consent. An origin
         allowlist does not validate DNS or redirects.
       </Text>
-      <Button variant="outline" onClick={() => setDisabled((value) => !value)}>
+      <Button variant="outline" onClick={toggleDisabled}>
         {disabled ? "Enable external content" : "Disable external content"}
       </Button>
-      <Button
-        variant="outline"
-        onClick={() => setConfigured((value) => !value)}
-      >
+      <Button variant="outline" onClick={toggleConfigured}>
         {configured ? "Remove provider policy" : "Restore provider policy"}
       </Button>
       {media.map((item) => (

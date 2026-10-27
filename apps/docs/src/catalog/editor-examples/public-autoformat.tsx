@@ -16,7 +16,7 @@ import {
   type EditorAutoformatTransformer,
 } from "@yopem-ui/editor/autoformat"
 import { configExtension } from "lexical"
-import { useState } from "react"
+import { useReducer } from "react"
 
 const extensions = [EditorAutoformatExtension]
 
@@ -41,16 +41,15 @@ const hostExtensions = [
 ]
 
 export function PublicAutoformatExample() {
-  const [editable, setEditable] = useState(true)
-  const [revision, setRevision] = useState(0)
+  const [editable, toggleEditable] = useReducer(
+    (current: boolean) => !current,
+    true,
+  )
 
-  function toggleEditable() {
-    setEditable((value) => !value)
-  }
-
-  function resetDocument() {
-    setRevision((value) => value + 1)
-  }
+  const [revision, resetDocument] = useReducer(
+    (current: number) => current + 1,
+    0,
+  )
 
   return (
     <Stack>

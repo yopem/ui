@@ -1,5 +1,6 @@
 "use client"
 
+import { useStableCallback } from "@base-ui/utils/useStableCallback"
 import { Box } from "@registry/components/ui/box"
 import { Button } from "@registry/components/ui/button"
 import { Field, FieldLabel } from "@registry/components/ui/field"
@@ -92,39 +93,47 @@ export function PublicScaleExample() {
     (typeof editorCounts)[number] | null
   >(null)
 
-  function changeParagraphCount(event: ChangeEvent<HTMLSelectElement>) {
+  const changeParagraphCount = useStableCallback(function changeParagraphCount(
+    event: ChangeEvent<HTMLSelectElement>,
+  ) {
     const value = paragraphCounts.find(
       (count) => String(count) === event.currentTarget.value,
     )
 
     if (value) setParagraphCount(value)
-  }
+  })
 
-  function changeEditorCount(event: ChangeEvent<HTMLSelectElement>) {
+  const changeEditorCount = useStableCallback(function changeEditorCount(
+    event: ChangeEvent<HTMLSelectElement>,
+  ) {
     const value = editorCounts.find(
       (count) => String(count) === event.currentTarget.value,
     )
 
     if (value) setEditorCount(value)
-  }
+  })
 
-  function openLongDocument() {
+  const openLongDocument = useStableCallback(function openLongDocument() {
     setMountedEditorCount(null)
     setDocumentState(createLongDocumentState(paragraphCount))
-  }
+  })
 
-  function openIndependentEditors() {
+  const openIndependentEditors = useStableCallback(
+    function openIndependentEditors() {
+      setDocumentState(null)
+      setMountedEditorCount(editorCount)
+    },
+  )
+
+  const closeLongDocument = useStableCallback(function closeLongDocument() {
     setDocumentState(null)
-    setMountedEditorCount(editorCount)
-  }
+  })
 
-  function closeLongDocument() {
-    setDocumentState(null)
-  }
-
-  function closeIndependentEditors() {
-    setMountedEditorCount(null)
-  }
+  const closeIndependentEditors = useStableCallback(
+    function closeIndependentEditors() {
+      setMountedEditorCount(null)
+    },
+  )
 
   return (
     <Stack>

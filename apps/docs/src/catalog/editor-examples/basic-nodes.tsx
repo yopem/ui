@@ -1,5 +1,8 @@
 "use client"
 
+import type { MouseEvent } from "react"
+
+import { useStableCallback } from "@base-ui/utils/useStableCallback"
 import {
   HorizontalRuleExtension,
   INSERT_HORIZONTAL_RULE_COMMAND,
@@ -19,6 +22,10 @@ import {
   useEditorState,
 } from "@yopem-ui/editor"
 import { defineExtension } from "lexical"
+
+function preventToolbarBlur(event: MouseEvent<HTMLElement>) {
+  event.preventDefault()
+}
 
 const styles = stylex.create({
   rule: {
@@ -92,16 +99,20 @@ function HorizontalRuleButton() {
   const editor = useEditor()
   const { editable } = useEditorState()
 
+  const insertHorizontalRule = useStableCallback(
+    function insertHorizontalRule() {
+      if (!editor.isEditable()) return
+      editor.dispatchCommand(INSERT_HORIZONTAL_RULE_COMMAND, undefined)
+      editor.focus()
+    },
+  )
+
   return (
     <ToolbarButton
       render={<Button variant="ghost" size="sm" />}
       disabled={!editable}
-      onMouseDown={(event) => event.preventDefault()}
-      onClick={() => {
-        if (!editor.isEditable()) return
-        editor.dispatchCommand(INSERT_HORIZONTAL_RULE_COMMAND, undefined)
-        editor.focus()
-      }}
+      onMouseDown={preventToolbarBlur}
+      onClick={insertHorizontalRule}
     >
       Insert horizontal rule
     </ToolbarButton>

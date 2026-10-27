@@ -1,5 +1,6 @@
 "use client"
 
+import { useStableCallback } from "@base-ui/utils/useStableCallback"
 import { Box } from "@registry/components/ui/box"
 import { Button } from "@registry/components/ui/button"
 import { Stack } from "@registry/components/ui/stack"
@@ -22,6 +23,10 @@ export function Preview() {
   const [editable, setEditable] = useState(true)
   const [extensions] = useState(() => [EditorFootnoteExtension])
 
+  const toggleEditable = useStableCallback(function toggleEditable() {
+    setEditable((current) => !current)
+  })
+
   return (
     <Box data-testid="footnote-example">
       <Stack>
@@ -29,7 +34,7 @@ export function Preview() {
         <Button
           variant="outline"
           aria-pressed={!editable}
-          onClick={() => setEditable(!editable)}
+          onClick={toggleEditable}
         >
           Read only
         </Button>

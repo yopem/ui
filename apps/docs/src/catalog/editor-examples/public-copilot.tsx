@@ -2,6 +2,7 @@
 
 import type { EditorCopilotConfig } from "@yopem-ui/editor/copilot"
 
+import { useStableCallback } from "@base-ui/utils/useStableCallback"
 import { Box } from "@registry/components/ui/box"
 import { Button } from "@registry/components/ui/button"
 import { Checkbox } from "@registry/components/ui/checkbox"
@@ -27,7 +28,7 @@ export function PublicCopilotExample() {
   const [config, setConfig] = useState<EditorCopilotConfig>()
   const [error, setError] = useState("")
 
-  function configure() {
+  const configure = useStableCallback(function configure() {
     const endpoint = endpointRef.current?.value ?? ""
     const documentId = documentIdRef.current?.value ?? ""
     const csrf = csrfRef.current?.value ?? ""
@@ -55,7 +56,7 @@ export function PublicCopilotExample() {
     } catch {
       setError("Use a valid same-origin endpoint, document ID, and CSRF token.")
     }
-  }
+  })
 
   return (
     <Box render={<section />} aria-label="Copilot host setup">

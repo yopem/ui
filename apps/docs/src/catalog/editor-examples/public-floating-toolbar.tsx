@@ -1,5 +1,6 @@
 "use client"
 
+import { useStableCallback } from "@base-ui/utils/useStableCallback"
 import { Button } from "@registry/components/ui/button"
 import { Stack } from "@registry/components/ui/stack"
 import { Text } from "@registry/components/ui/text"
@@ -80,7 +81,9 @@ export function PublicFloatingToolbarExample() {
 export function FloatingExampleControls() {
   const editor = useEditor()
 
-  function handleHostShortcut(event: KeyboardEvent<HTMLDivElement>) {
+  const handleHostShortcut = useStableCallback(function handleHostShortcut(
+    event: KeyboardEvent<HTMLDivElement>,
+  ) {
     if (
       event.defaultPrevented ||
       !event.altKey ||
@@ -102,7 +105,7 @@ export function FloatingExampleControls() {
       { tag: HISTORY_PUSH_TAG },
     )
     editor.focus()
-  }
+  })
 
   return (
     <EditorFloatingToolbar

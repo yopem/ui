@@ -2,6 +2,7 @@
 
 import type { EditorCollaborationController } from "@yopem-ui/editor/collaboration"
 
+import { useStableCallback } from "@base-ui/utils/useStableCallback"
 import { Button } from "@registry/components/ui/button"
 import { Input } from "@registry/components/ui/input"
 import { Stack } from "@registry/components/ui/stack"
@@ -19,7 +20,7 @@ import {
   EditorCollaborationRoot,
   EditorCollaborationStatus,
 } from "@yopem-ui/editor/collaboration"
-import { useState } from "react"
+import { useState, type ChangeEvent } from "react"
 
 function SharedEditor({
   controller,
@@ -57,7 +58,31 @@ export function Preview() {
 
   const [error, setError] = useState(false)
 
-  function connect() {
+  const changeDocumentId = useStableCallback(function changeDocumentId(
+    event: ChangeEvent<HTMLInputElement>,
+  ) {
+    setDocumentId(event.target.value)
+  })
+
+  const changeTicketUrl = useStableCallback(function changeTicketUrl(
+    event: ChangeEvent<HTMLInputElement>,
+  ) {
+    setTicketUrl(event.target.value)
+  })
+
+  const changeSocketUrl = useStableCallback(function changeSocketUrl(
+    event: ChangeEvent<HTMLInputElement>,
+  ) {
+    setSocketUrl(event.target.value)
+  })
+
+  const changeCsrf = useStableCallback(function changeCsrf(
+    event: ChangeEvent<HTMLInputElement>,
+  ) {
+    setCsrf(event.target.value)
+  })
+
+  const connect = useStableCallback(function connect() {
     try {
       setController(
         createEditorCollaboration({
@@ -74,7 +99,13 @@ export function Preview() {
     } catch {
       setError(true)
     }
-  }
+  })
+
+  const closeCollaboration = useStableCallback(function closeCollaboration() {
+    if (!controller) return
+    controller.destroy()
+    setController(null)
+  })
 
   return (
     <Stack>
@@ -87,38 +118,31 @@ export function Preview() {
       {controller ? (
         <>
           <SharedEditor controller={controller} />
-          <Button
-            onClick={() => {
-              controller.destroy()
-              setController(null)
-            }}
-          >
-            Close
-          </Button>
+          <Button onClick={closeCollaboration}>Close</Button>
         </>
       ) : (
         <>
           <Input
             aria-label="Document ID"
             value={documentId}
-            onChange={(event) => setDocumentId(event.target.value)}
+            onChange={changeDocumentId}
           />
           <Input
             aria-label="Ticket endpoint"
             value={ticketUrl}
-            onChange={(event) => setTicketUrl(event.target.value)}
+            onChange={changeTicketUrl}
           />
           <Input
             aria-label="WebSocket endpoint"
             value={socketUrl}
-            onChange={(event) => setSocketUrl(event.target.value)}
+            onChange={changeSocketUrl}
           />
           <Input
             aria-label="CSRF token"
             type="password"
             autoComplete="off"
             value={csrf}
-            onChange={(event) => setCsrf(event.target.value)}
+            onChange={changeCsrf}
           />
           <Button
             disabled={!documentId || !ticketUrl || !socketUrl || !csrf}

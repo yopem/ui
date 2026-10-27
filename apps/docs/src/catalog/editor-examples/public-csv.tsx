@@ -1,5 +1,6 @@
 "use client"
 
+import { useStableCallback } from "@base-ui/utils/useStableCallback"
 import { mergeRegister } from "@lexical/utils"
 import { Button } from "@registry/components/ui/button"
 import { Stack } from "@registry/components/ui/stack"
@@ -76,9 +77,13 @@ export function CsvEditorExample() {
     }),
   ])
 
-  function toggleVeto() {
+  const toggleVeto = useStableCallback(function toggleVeto() {
     setVeto(policy.toggle())
-  }
+  })
+
+  const toggleReadOnly = useStableCallback(function toggleReadOnly() {
+    setReadOnly((current) => !current)
+  })
 
   return (
     <Stack>
@@ -90,7 +95,7 @@ export function CsvEditorExample() {
       <Button aria-pressed={veto} onClick={toggleVeto}>
         Host paste veto
       </Button>
-      <Button aria-pressed={readOnly} onClick={() => setReadOnly(!readOnly)}>
+      <Button aria-pressed={readOnly} onClick={toggleReadOnly}>
         CSV read only
       </Button>
       <EditorRoot

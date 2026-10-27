@@ -2,6 +2,7 @@
 
 import type { MouseEvent } from "react"
 
+import { useStableCallback } from "@base-ui/utils/useStableCallback"
 import { Button } from "@registry/components/ui/button"
 import { Stack } from "@registry/components/ui/stack"
 import {
@@ -24,7 +25,7 @@ import {
   EditorCodeStatus,
 } from "@yopem-ui/editor/code"
 import { prettierEditorCodeFormatter } from "@yopem-ui/editor/code-format"
-import { useState } from "react"
+import { useReducer } from "react"
 
 const presetState = JSON.stringify({
   root: {
@@ -67,14 +68,14 @@ const presetState = JSON.stringify({
 
 const extensions = [EditorCodeExtension]
 
+function preventToolbarMouseDown(event: MouseEvent<HTMLButtonElement>) {
+  event.preventDefault()
+}
+
 function EditorCodeHostReplacement() {
   const editor = useEditor()
 
-  function preserveFocus(event: MouseEvent<HTMLButtonElement>) {
-    event.preventDefault()
-  }
-
-  function replaceDocument() {
+  const replaceDocument = useStableCallback(function replaceDocument() {
     const state = editor.parseEditorState({
       root: {
         type: "root",
@@ -106,12 +107,12 @@ function EditorCodeHostReplacement() {
     })
 
     editor.setEditorState(state)
-  }
+  })
 
   return (
     <Button
       variant="outline"
-      onMouseDown={preserveFocus}
+      onMouseDown={preventToolbarMouseDown}
       onClick={replaceDocument}
     >
       Replace code document
@@ -120,16 +121,15 @@ function EditorCodeHostReplacement() {
 }
 
 export function EditorCodeExamples() {
-  const [editable, setEditable] = useState(true)
-  const [toolsDisabled, setToolsDisabled] = useState(false)
+  const [editable, toggleEditable] = useReducer(
+    (current: boolean) => !current,
+    true,
+  )
 
-  function toggleEditable() {
-    setEditable(!editable)
-  }
-
-  function toggleTools() {
-    setToolsDisabled(!toolsDisabled)
-  }
+  const [toolsDisabled, toggleTools] = useReducer(
+    (current: boolean) => !current,
+    false,
+  )
 
   return (
     <Stack data-slot="editor-code-demo">

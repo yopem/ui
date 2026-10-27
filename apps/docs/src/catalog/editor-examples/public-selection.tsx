@@ -1,5 +1,6 @@
 "use client"
 
+import { useStableCallback } from "@base-ui/utils/useStableCallback"
 import { Button } from "@registry/components/ui/button"
 import { Stack } from "@registry/components/ui/stack"
 import { Text } from "@registry/components/ui/text"
@@ -51,6 +52,10 @@ const initialState = JSON.stringify({
 export function PublicSelectionExample() {
   const [editable, setEditable] = useState(true)
 
+  const toggleEditable = useStableCallback(function toggleEditable() {
+    setEditable((current) => !current)
+  })
+
   const [setup] = useState(() => {
     const controller = createEditorBlockSelection({
       authorizeCut: () => window.confirm("Cut selected blocks?"),
@@ -66,7 +71,7 @@ export function PublicSelectionExample() {
         move controls. Cut asks for local confirmation, not document
         authorization.
       </Text>
-      <Button variant="outline" onClick={() => setEditable(!editable)}>
+      <Button variant="outline" onClick={toggleEditable}>
         {editable ? "Read-only selection" : "Enable selection editing"}
       </Button>
       <EditorRoot

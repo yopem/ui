@@ -1,5 +1,6 @@
 import type { EditorAiConfig } from "@yopem-ui/editor"
 
+import { useStableCallback } from "@base-ui/utils/useStableCallback"
 import { Box } from "@registry/components/ui/box"
 import { Button } from "@registry/components/ui/button"
 import { Input } from "@registry/components/ui/input"
@@ -14,13 +15,43 @@ import {
   EditorAiTrigger,
   EditorAiPanel,
 } from "@yopem-ui/editor"
-import { useState } from "react"
+import { useState, type ComponentProps } from "react"
 
 export function EditorAiExample() {
   const [endpoint, setEndpoint] = useState("")
   const [documentId, setDocumentId] = useState("")
   const [csrf, setCsrf] = useState("")
   const [config, setConfig] = useState<EditorAiConfig>()
+
+  const handleEndpointChange = useStableCallback(function handleEndpointChange(
+    event: Parameters<NonNullable<ComponentProps<typeof Input>["onChange"]>>[0],
+  ) {
+    setEndpoint(event.target.value)
+  })
+
+  const handleDocumentIdChange = useStableCallback(
+    function handleDocumentIdChange(
+      event: Parameters<
+        NonNullable<ComponentProps<typeof Input>["onChange"]>
+      >[0],
+    ) {
+      setDocumentId(event.target.value)
+    },
+  )
+
+  const handleCsrfChange = useStableCallback(function handleCsrfChange(
+    event: Parameters<NonNullable<ComponentProps<typeof Input>["onChange"]>>[0],
+  ) {
+    setCsrf(event.target.value)
+  })
+
+  const handleConfigure = useStableCallback(function handleConfigure() {
+    setConfig({
+      endpoint,
+      documentId,
+      headers: () => ({ "x-csrf-token": csrf }),
+    })
+  })
 
   return (
     <Box render={<section />} aria-label="Host AI setup">
@@ -33,13 +64,13 @@ export function EditorAiExample() {
           aria-label="Host endpoint"
           value={endpoint}
           disabled={!!config}
-          onChange={(event) => setEndpoint(event.target.value)}
+          onChange={handleEndpointChange}
         />
         <Input
           aria-label="Host document ID"
           value={documentId}
           disabled={!!config}
-          onChange={(event) => setDocumentId(event.target.value)}
+          onChange={handleDocumentIdChange}
         />
         <Input
           aria-label="Host CSRF token"
@@ -47,17 +78,11 @@ export function EditorAiExample() {
           autoComplete="off"
           value={csrf}
           disabled={!!config}
-          onChange={(event) => setCsrf(event.target.value)}
+          onChange={handleCsrfChange}
         />
         <Button
           disabled={!!config || !endpoint || !documentId || !csrf}
-          onClick={() =>
-            setConfig({
-              endpoint,
-              documentId,
-              headers: () => ({ "x-csrf-token": csrf }),
-            })
-          }
+          onClick={handleConfigure}
         >
           Configure AI
         </Button>

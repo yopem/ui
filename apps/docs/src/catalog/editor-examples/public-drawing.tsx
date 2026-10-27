@@ -1,6 +1,7 @@
 "use client"
 
 import "@excalidraw/excalidraw/index.css"
+import { useStableCallback } from "@base-ui/utils/useStableCallback"
 import { $insertNodeToNearestRoot } from "@lexical/utils"
 import { Box } from "@registry/components/ui/box"
 import { Button } from "@registry/components/ui/button"
@@ -32,7 +33,7 @@ import {
   $isRangeSelection,
   HISTORY_PUSH_TAG,
 } from "lexical"
-import { type MouseEvent, useId, useState } from "react"
+import { type ComponentProps, type MouseEvent, useId, useState } from "react"
 
 const extensions = [EditorDrawingExtension]
 
@@ -88,7 +89,9 @@ function DrawingControls() {
   const editor = useEditor()
   const { editable } = useEditorState()
 
-  function insertDrawingFixture(event: MouseEvent<HTMLButtonElement>) {
+  const insertDrawingFixture = useStableCallback(function insertDrawingFixture(
+    event: MouseEvent<HTMLButtonElement>,
+  ) {
     if (event.defaultPrevented || !editor.isEditable()) return
 
     editor.update(
@@ -101,7 +104,7 @@ function DrawingControls() {
       },
       { tag: HISTORY_PUSH_TAG },
     )
-  }
+  })
 
   const [connect] = useState(
     () =>
@@ -129,6 +132,22 @@ export function PublicDrawingExample() {
   const [assetsReady, setAssetsReady] = useState(false)
   const assetPathId = useId()
 
+  const changeReadOnly = useStableCallback(function changeReadOnly(
+    checked: Parameters<
+      NonNullable<ComponentProps<typeof Checkbox>["onCheckedChange"]>
+    >[0],
+  ) {
+    setReadOnly(checked === true)
+  })
+
+  const changeAssetsReady = useStableCallback(function changeAssetsReady(
+    checked: Parameters<
+      NonNullable<ComponentProps<typeof Checkbox>["onCheckedChange"]>
+    >[0],
+  ) {
+    setAssetsReady(checked === true)
+  })
+
   return (
     <Box render={<section />} data-testid="public-drawing">
       <Stack>
@@ -147,7 +166,7 @@ export function PublicDrawingExample() {
           <Checkbox
             aria-label="Read-only editor"
             checked={readOnly}
-            onCheckedChange={(checked) => setReadOnly(checked === true)}
+            onCheckedChange={changeReadOnly}
           />
           Read-only editor
         </Label>
@@ -157,7 +176,7 @@ export function PublicDrawingExample() {
           <Checkbox
             aria-label="Drawing assets are installed"
             checked={assetsReady}
-            onCheckedChange={(checked) => setAssetsReady(checked === true)}
+            onCheckedChange={changeAssetsReady}
           />
           Drawing assets are installed
         </Label>

@@ -1,5 +1,6 @@
 "use client"
 
+import { useStableCallback } from "@base-ui/utils/useStableCallback"
 import { Box } from "@registry/components/ui/box"
 import { Field, FieldLabel } from "@registry/components/ui/field"
 import { Heading } from "@registry/components/ui/heading"
@@ -217,16 +218,20 @@ export function PublicIframeExample() {
       },
   )
 
-  function frameLoaded(event: SyntheticEvent<HTMLIFrameElement>) {
+  const frameLoaded = useStableCallback(function frameLoaded(
+    event: SyntheticEvent<HTMLIFrameElement>,
+  ) {
     prepareFrame(event.currentTarget)
-  }
+  })
 
-  function changePreviewWidth(value: number | readonly number[]) {
+  const changePreviewWidth = useStableCallback(function changePreviewWidth(
+    value: number | readonly number[],
+  ) {
     const nextValue = Array.isArray(value) ? value[0] : value
     const nextWidth = previewWidths.find((width) => width === nextValue)
 
     if (nextWidth !== undefined) setPreviewWidth(nextWidth)
-  }
+  })
 
   return (
     <Box

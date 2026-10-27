@@ -1,5 +1,8 @@
 "use client"
 
+import type { MouseEvent } from "react"
+
+import { useStableCallback } from "@base-ui/utils/useStableCallback"
 import { Box } from "@registry/components/ui/box"
 import { Button } from "@registry/components/ui/button"
 import { Stack } from "@registry/components/ui/stack"
@@ -37,14 +40,57 @@ import {
   EditorEmojiToolbarButton,
   useEditorEmojiPicker,
 } from "@yopem-ui/editor/typeahead"
-import { HISTORY_PUSH_TAG } from "lexical"
-import { useState, useSyncExternalStore } from "react"
+import { HISTORY_PUSH_TAG, type EditorState } from "lexical"
+import { useReducer, useState, useSyncExternalStore } from "react"
 
 const extensions = [EditorBlocksExtension]
 
 const styles = stylex.create({
   json: { overflowWrap: "anywhere", whiteSpace: "pre-wrap", margin: 0 },
 })
+
+function CalloutEmojiOption({
+  item,
+  bookmark,
+  controller,
+  valid,
+}: {
+  item: Parameters<typeof EditorEmojiItem>[0]["item"]
+  bookmark: ReturnType<typeof createEditorSelectionBookmark>
+  controller: ReturnType<typeof useEditorEmojiPicker>["controller"]
+  valid: boolean
+}) {
+  const editor = useEditor()
+
+  const selectEmoji = useStableCallback(function selectEmoji(
+    event: MouseEvent<HTMLElement>,
+  ) {
+    event.preventDefault()
+
+    if (!controller.getSnapshot().valid || !editor.isEditable()) return
+    let applied = false
+    editor.update(
+      () => {
+        if (!bookmark.restore()) return
+        applied = editor.dispatchCommand(UPDATE_EDITOR_CALLOUT_COMMAND, {
+          icon: item.emoji,
+        })
+      },
+      { tag: HISTORY_PUSH_TAG },
+    )
+
+    if (!applied) return
+    bookmark.clear()
+    controller.setOpen(false)
+    editor.focus()
+  })
+
+  return (
+    <EditorEmojiItem item={item} disabled={!valid} onClick={selectEmoji}>
+      {item.emoji} {item.label}
+    </EditorEmojiItem>
+  )
+}
 
 function CalloutEmojiItems({
   bookmark,
@@ -53,40 +99,18 @@ function CalloutEmojiItems({
   bookmark: ReturnType<typeof createEditorSelectionBookmark>
   valid: boolean
 }) {
-  const editor = useEditor()
   const { controller, state } = useEditorEmojiPicker()
 
   return (
     <EditorEmojiList>
       {state.items.map((item) => (
-        <EditorEmojiItem
+        <CalloutEmojiOption
           key={item.id}
           item={item}
-          disabled={!valid}
-          onClick={(event) => {
-            event.preventDefault()
-
-            if (!state.valid || !editor.isEditable()) return
-            let applied = false
-            editor.update(
-              () => {
-                if (!bookmark.restore()) return
-                applied = editor.dispatchCommand(
-                  UPDATE_EDITOR_CALLOUT_COMMAND,
-                  { icon: item.emoji },
-                )
-              },
-              { tag: HISTORY_PUSH_TAG },
-            )
-
-            if (!applied) return
-            bookmark.clear()
-            controller.setOpen(false)
-            editor.focus()
-          }}
-        >
-          {item.emoji} {item.label}
-        </EditorEmojiItem>
+          bookmark={bookmark}
+          controller={controller}
+          valid={valid}
+        />
       ))}
     </EditorEmojiList>
   )
@@ -102,9 +126,9 @@ function CalloutEmojiPicker() {
     bookmark.getServerSnapshot,
   )
 
-  function capture() {
+  const capture = useStableCallback(function capture() {
     editor.getEditorState().read(bookmark.capture)
-  }
+  })
 
   return (
     <EditorEmojiPopover>
@@ -127,15 +151,25 @@ function CalloutEmojiPicker() {
 }
 
 export function PublicBlocksExample() {
-  const [editable, setEditable] = useState(true)
+  const [editable, toggleEditable] = useReducer(
+    (current: boolean) => !current,
+    true,
+  )
+
   const [documentJSON, setDocumentJSON] = useState("")
+
+  const handleChange = useStableCallback(function handleChange(
+    state: EditorState,
+  ) {
+    setDocumentJSON(JSON.stringify(state.toJSON()))
+  })
 
   return (
     <Stack>
       <Button
         variant="outline"
         aria-pressed={!editable}
-        onClick={() => setEditable(!editable)}
+        onClick={toggleEditable}
       >
         {editable ? "Read-only blocks" : "Edit blocks"}
       </Button>
@@ -143,7 +177,7 @@ export function PublicBlocksExample() {
         ariaLabel="Public blocks editor"
         extensions={extensions}
         editable={editable}
-        onChange={(state) => setDocumentJSON(JSON.stringify(state.toJSON()))}
+        onChange={handleChange}
       >
         <EditorToolbar aria-label="Public blocks">
           <EditorCalloutButton />

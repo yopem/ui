@@ -1,5 +1,8 @@
 "use client"
 
+import type { EditorState } from "lexical"
+
+import { useStableCallback } from "@base-ui/utils/useStableCallback"
 import { $generateHtmlFromNodes, $generateNodesFromDOM } from "@lexical/html"
 import { Box } from "@registry/components/ui/box"
 import { Button } from "@registry/components/ui/button"
@@ -28,22 +31,26 @@ export function EditorBlocksExample() {
   const [editable, setEditable] = useState(true)
   const [json, setJSON] = useState("")
 
+  const toggleEditable = useStableCallback(function toggleEditable() {
+    setEditable((current) => !current)
+  })
+
+  const handleChange = useStableCallback(function handleChange(
+    state: EditorState,
+  ) {
+    setJSON(JSON.stringify(state.toJSON()))
+  })
+
   return (
     <Stack data-testid="blocks-example">
-      <Button
-        onClick={() => {
-          setEditable(!editable)
-        }}
-      >
+      <Button onClick={toggleEditable}>
         {editable ? "Read only blocks" : "Edit blocks"}
       </Button>
       <EditorRoot
         extensions={extensions}
         ariaLabel="Blocks editor"
         editable={editable}
-        onChange={(state) => {
-          setJSON(JSON.stringify(state.toJSON()))
-        }}
+        onChange={handleChange}
       >
         <EditorToolbar aria-label="Blocks">
           <EditorBlocksControls />
@@ -62,72 +69,59 @@ function EditorBlocksInterop() {
   const editor = useEditor()
   const [error, setError] = useState("")
 
+  const roundtripJSON = useStableCallback(function roundtripJSON() {
+    const json = editor.getEditorState().toJSON()
+
+    try {
+      validateEditorBlocksJSON(json)
+      editor.setEditorState(editor.parseEditorState(JSON.stringify(json)))
+      setError("")
+    } catch {
+      setError("Cannot load block JSON.")
+    }
+  })
+
+  const roundtripHTML = useStableCallback(function roundtripHTML() {
+    try {
+      const html = editor
+        .getEditorState()
+        .read(() => $generateHtmlFromNodes(editor))
+
+      const view = editor.getRootElement()?.ownerDocument.defaultView
+
+      if (!view) return
+
+      const document = new view.DOMParser().parseFromString(html, "text/html")
+
+      validateEditorBlocksHTML(document)
+      editor.update(() => {
+        const nodes = $generateNodesFromDOM(editor, document)
+        $getRoot()
+          .clear()
+          .append(...nodes)
+      })
+      setError("")
+    } catch {
+      setError("Cannot load block HTML.")
+    }
+  })
+
+  const replaceDocument = useStableCallback(function replaceDocument() {
+    editor.update(() => {
+      $getRoot()
+        .clear()
+        .append(
+          $createParagraphNode().append($createTextNode("Host replacement")),
+        )
+    })
+  })
+
   return (
     <Stack>
       <Wrap>
-        <Button
-          onClick={() => {
-            const json = editor.getEditorState().toJSON()
-
-            try {
-              validateEditorBlocksJSON(json)
-              editor.setEditorState(
-                editor.parseEditorState(JSON.stringify(json)),
-              )
-              setError("")
-            } catch {
-              setError("Cannot load block JSON.")
-            }
-          }}
-        >
-          Roundtrip blocks JSON
-        </Button>
-        <Button
-          onClick={() => {
-            try {
-              const html = editor
-                .getEditorState()
-                .read(() => $generateHtmlFromNodes(editor))
-
-              const view = editor.getRootElement()?.ownerDocument.defaultView
-
-              if (!view) return
-
-              const document = new view.DOMParser().parseFromString(
-                html,
-                "text/html",
-              )
-
-              validateEditorBlocksHTML(document)
-              editor.update(() => {
-                const nodes = $generateNodesFromDOM(editor, document)
-                $getRoot()
-                  .clear()
-                  .append(...nodes)
-              })
-              setError("")
-            } catch {
-              setError("Cannot load block HTML.")
-            }
-          }}
-        >
-          Roundtrip blocks HTML
-        </Button>
-        <Button
-          onClick={() => {
-            editor.update(() => {
-              $getRoot()
-                .clear()
-                .append(
-                  $createParagraphNode().append(
-                    $createTextNode("Host replacement"),
-                  ),
-                )
-            })
-          }}
-        >
-          Replace blocks document
-        </Button>
+        <Button onClick={roundtripJSON}>Roundtrip blocks JSON</Button>
+        <Button onClick={roundtripHTML}>Roundtrip blocks HTML</Button>
+        <Button onClick={replaceDocument}>Replace blocks document</Button>
       </Wrap>
       {error ? <Text role="alert">{error}</Text> : null}
     </Stack>

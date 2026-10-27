@@ -1,7 +1,9 @@
 "use client"
 
 import type { EditorCollaborationController } from "@yopem-ui/editor/collaboration"
+import type { ComponentProps } from "react"
 
+import { useStableCallback } from "@base-ui/utils/useStableCallback"
 import { Box } from "@registry/components/ui/box"
 import { Button } from "@registry/components/ui/button"
 import { Checkbox } from "@registry/components/ui/checkbox"
@@ -33,6 +35,7 @@ import {
 } from "@yopem-ui/editor/collaboration/native"
 import {
   useId,
+  useReducer,
   useState,
   useSyncExternalStore,
   type FormEvent,
@@ -251,7 +254,12 @@ function NativeEditor({
   client: NativeClient
 }) {
   const [extensions] = useState(() => [controller.extension])
-  const [editable, setEditable] = useState(true)
+
+  const [editable, toggleEditable] = useReducer(
+    (current: boolean) => !current,
+    true,
+  )
+
   const collaboration = useEditorCollaboration(controller)
 
   const native = useSyncExternalStore(
@@ -259,6 +267,14 @@ function NativeEditor({
     provider.getNativeSnapshot,
     provider.getNativeSnapshot,
   )
+
+  const handleDisconnect = useStableCallback(function handleDisconnect() {
+    provider.disconnect()
+  })
+
+  const handleReconnect = useStableCallback(function handleReconnect() {
+    void provider.reconnect().catch(() => undefined)
+  })
 
   return (
     <Box ref={attachEditorRoot}>
@@ -299,14 +315,14 @@ function NativeEditor({
               <Button
                 type="button"
                 aria-pressed={!editable}
-                onClick={() => setEditable((current) => !current)}
+                onClick={toggleEditable}
               >
                 {editable ? "Pause local editing" : "Resume local editing"}
               </Button>
               <Button
                 type="button"
                 disabled={native.hocuspocus.status === "disconnected"}
-                onClick={() => provider.disconnect()}
+                onClick={handleDisconnect}
               >
                 Disconnect
               </Button>
@@ -317,9 +333,7 @@ function NativeEditor({
                   collaboration.status !== "denied" &&
                   collaboration.status !== "error"
                 }
-                onClick={() => {
-                  void provider.reconnect().catch(() => undefined)
-                }}
+                onClick={handleReconnect}
               >
                 Reconnect
               </Button>
@@ -362,7 +376,9 @@ export function PublicNativeCollaborationExample() {
 
   const [error, setError] = useState("")
 
-  async function applyRoomId(value: string) {
+  const applyRoomId = useStableCallback(async function applyRoomId(
+    value: string,
+  ) {
     const parsed = roomIdSchema.safeParse(value)
 
     if (!parsed.success) {
@@ -397,17 +413,19 @@ export function PublicNativeCollaborationExample() {
     } finally {
       if (isCurrent(operation)) setBusy(false)
     }
-  }
+  })
 
-  function createRoomId() {
+  const createRoomId = useStableCallback(function createRoomId() {
     try {
       void applyRoomId(`native:${crypto.randomUUID()}`)
     } catch {
       setError("Create a room ID in a secure browser context.")
     }
-  }
+  })
 
-  async function connect(event: FormEvent<HTMLFormElement>) {
+  const connect = useStableCallback(async function connect(
+    event: FormEvent<HTMLFormElement>,
+  ) {
     if (event.defaultPrevented) return
     event.preventDefault()
     const csrf = csrfToken.trim()
@@ -459,7 +477,87 @@ export function PublicNativeCollaborationExample() {
     } finally {
       if (isCurrent(operation)) setBusy(false)
     }
-  }
+  })
+
+  const handleRoomDraftChange = useStableCallback(
+    function handleRoomDraftChange(
+      event: Parameters<
+        NonNullable<ComponentProps<typeof Input>["onChange"]>
+      >[0],
+    ) {
+      setRoomDraft(event.currentTarget.value)
+    },
+  )
+
+  const handleGrantUrlChange = useStableCallback(function handleGrantUrlChange(
+    event: Parameters<NonNullable<ComponentProps<typeof Input>["onChange"]>>[0],
+  ) {
+    setGrantUrl(event.currentTarget.value)
+  })
+
+  const handleSocketUrlChange = useStableCallback(
+    function handleSocketUrlChange(
+      event: Parameters<
+        NonNullable<ComponentProps<typeof Input>["onChange"]>
+      >[0],
+    ) {
+      setSocketUrl(event.currentTarget.value)
+    },
+  )
+
+  const handleCsrfTokenChange = useStableCallback(
+    function handleCsrfTokenChange(
+      event: Parameters<
+        NonNullable<ComponentProps<typeof Input>["onChange"]>
+      >[0],
+    ) {
+      setCsrfToken(event.currentTarget.value)
+    },
+  )
+
+  const handleSignalingChange = useStableCallback(
+    function handleSignalingChange(
+      event: Parameters<
+        NonNullable<ComponentProps<typeof Input>["onChange"]>
+      >[0],
+    ) {
+      setSignaling(event.currentTarget.value)
+    },
+  )
+
+  const handleDisplayNameChange = useStableCallback(
+    function handleDisplayNameChange(
+      event: Parameters<
+        NonNullable<ComponentProps<typeof Input>["onChange"]>
+      >[0],
+    ) {
+      setDisplayName(event.currentTarget.value)
+    },
+  )
+
+  const handlePermissionChange = useStableCallback(
+    function handlePermissionChange(
+      checked: Parameters<
+        NonNullable<ComponentProps<typeof Checkbox>["onCheckedChange"]>
+      >[0],
+    ) {
+      setRequestedPermission(checked === true ? "read" : "write")
+    },
+  )
+
+  const handleCursorColorChange = useStableCallback(
+    function handleCursorColorChange(
+      event: Parameters<
+        NonNullable<ComponentProps<typeof Input>["onChange"]>
+      >[0],
+    ) {
+      setCursorColor(event.currentTarget.value)
+    },
+  )
+
+  const handleApplyRoomId = useStableCallback(function handleApplyRoomId() {
+    void applyRoomId(roomDraft)
+  })
 
   return (
     <Box
@@ -497,22 +595,14 @@ export function PublicNativeCollaborationExample() {
                 value={roomDraft}
                 maxLength={256}
                 autoComplete="off"
-                onChange={(event) => setRoomDraft(event.currentTarget.value)}
+                onChange={handleRoomDraftChange}
               />
             </Field>
             <HStack>
-              <Button
-                type="button"
-                disabled={busy}
-                onClick={() => void applyRoomId(roomDraft)}
-              >
+              <Button type="button" disabled={busy} onClick={handleApplyRoomId}>
                 Apply room ID
               </Button>
-              <Button
-                type="button"
-                disabled={busy}
-                onClick={() => createRoomId()}
-              >
+              <Button type="button" disabled={busy} onClick={createRoomId}>
                 New room
               </Button>
             </HStack>
@@ -532,7 +622,7 @@ export function PublicNativeCollaborationExample() {
                 value={grantUrl}
                 maxLength={2048}
                 autoComplete="off"
-                onChange={(event) => setGrantUrl(event.currentTarget.value)}
+                onChange={handleGrantUrlChange}
               />
             </Field>
             <Field>
@@ -545,7 +635,7 @@ export function PublicNativeCollaborationExample() {
                 value={socketUrl}
                 maxLength={2048}
                 autoComplete="off"
-                onChange={(event) => setSocketUrl(event.currentTarget.value)}
+                onChange={handleSocketUrlChange}
               />
             </Field>
             <Field>
@@ -558,7 +648,7 @@ export function PublicNativeCollaborationExample() {
                 autoComplete="off"
                 value={csrfToken}
                 maxLength={4096}
-                onChange={(event) => setCsrfToken(event.currentTarget.value)}
+                onChange={handleCsrfTokenChange}
               />
             </Field>
             <Field>
@@ -570,7 +660,7 @@ export function PublicNativeCollaborationExample() {
                 value={signaling}
                 maxLength={8192}
                 autoComplete="off"
-                onChange={(event) => setSignaling(event.currentTarget.value)}
+                onChange={handleSignalingChange}
               />
               <Text>
                 Separate URLs with commas. Leave blank to disable WebRTC.
@@ -584,16 +674,14 @@ export function PublicNativeCollaborationExample() {
                 id={`${fieldId}-name`}
                 value={displayName}
                 maxLength={128}
-                onChange={(event) => setDisplayName(event.currentTarget.value)}
+                onChange={handleDisplayNameChange}
               />
             </Field>
             <Label>
               <Checkbox
                 aria-label="Request read-only access"
                 checked={requestedPermission === "read"}
-                onCheckedChange={(checked) =>
-                  setRequestedPermission(checked === true ? "read" : "write")
-                }
+                onCheckedChange={handlePermissionChange}
               />
               Request read-only access. Host still decides granted permission.
             </Label>
@@ -605,7 +693,7 @@ export function PublicNativeCollaborationExample() {
                 id={`${fieldId}-color`}
                 type="color"
                 value={cursorColor}
-                onChange={(event) => setCursorColor(event.currentTarget.value)}
+                onChange={handleCursorColorChange}
               />
             </Field>
             <Button type="submit" disabled={busy || !grantUrl || !socketUrl}>

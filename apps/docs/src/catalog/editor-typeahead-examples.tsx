@@ -40,7 +40,7 @@ import {
   useEditorInlineCombobox,
   mentionIdentitySchema,
 } from "@yopem-ui/editor/typeahead"
-import { useState } from "react"
+import { useReducer, useState } from "react"
 
 const demoPeople = [
   { id: "ada", label: "Ada Lovelace" },
@@ -48,8 +48,15 @@ const demoPeople = [
 ]
 
 export function EditorTypeaheadExample() {
-  const [editable, setEditable] = useState(true)
-  const [mounted, setMounted] = useState(true)
+  const [editable, toggleEditable] = useReducer(
+    (current: boolean) => !current,
+    true,
+  )
+
+  const [mounted, toggleMounted] = useReducer(
+    (current: boolean) => !current,
+    true,
+  )
 
   const [controller] = useState(() =>
     createEditorTypeahead({
@@ -80,11 +87,11 @@ export function EditorTypeaheadExample() {
       <Button
         variant="outline"
         aria-pressed={!editable}
-        onClick={() => setEditable(!editable)}
+        onClick={toggleEditable}
       >
         Read only
       </Button>
-      <Button variant="outline" onClick={() => setMounted(!mounted)}>
+      <Button variant="outline" onClick={toggleMounted}>
         {mounted ? "Hide editor" : "Show editor"}
       </Button>
       {mounted ? (
@@ -165,7 +172,10 @@ function ComposedSuggestions() {
 }
 
 export function EditorHTTPTypeaheadExample() {
-  const [mounted, setMounted] = useState(true)
+  const [mounted, toggleMounted] = useReducer(
+    (current: boolean) => !current,
+    true,
+  )
 
   const [controller] = useState(() =>
     createEditorTypeahead({
@@ -195,7 +205,7 @@ export function EditorHTTPTypeaheadExample() {
         This HTTP integration needs a host search endpoint. Without it, search
         shows an error.
       </Text>
-      <Button variant="outline" onClick={() => setMounted(!mounted)}>
+      <Button variant="outline" onClick={toggleMounted}>
         {mounted ? "Hide HTTP editor" : "Show HTTP editor"}
       </Button>
       {mounted ? (

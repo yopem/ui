@@ -1,5 +1,6 @@
 "use client"
 
+import { useStableCallback } from "@base-ui/utils/useStableCallback"
 import { Box } from "@registry/components/ui/box"
 import { Button } from "@registry/components/ui/button"
 import { Text } from "@registry/components/ui/text"
@@ -46,6 +47,14 @@ export function Preview() {
   const [editable, setEditable] = useState(true)
   const [mounted, setMounted] = useState(true)
 
+  const toggleEditable = useStableCallback(function toggleEditable() {
+    setEditable((current) => !current)
+  })
+
+  const toggleMounted = useStableCallback(function toggleMounted() {
+    setMounted((current) => !current)
+  })
+
   const [controller] = useState(() =>
     createEditorTypeahead({
       mentions: {
@@ -75,11 +84,11 @@ export function Preview() {
       <Button
         variant="outline"
         aria-pressed={!editable}
-        onClick={() => setEditable(!editable)}
+        onClick={toggleEditable}
       >
         Read only
       </Button>
-      <Button variant="outline" onClick={() => setMounted(!mounted)}>
+      <Button variant="outline" onClick={toggleMounted}>
         {mounted ? "Hide editor" : "Show editor"}
       </Button>
       {mounted ? (

@@ -1,5 +1,6 @@
 "use client"
 
+import { useStableCallback } from "@base-ui/utils/useStableCallback"
 import { Button } from "@registry/components/ui/button"
 import { Stack } from "@registry/components/ui/stack"
 import { Text } from "@registry/components/ui/text"
@@ -100,9 +101,9 @@ const initialState = JSON.stringify({
 export function PublicPluginRulesExample() {
   const [editable, setEditable] = useState(true)
 
-  function toggleEditable() {
+  const toggleEditable = useStableCallback(function toggleEditable() {
     setEditable((value) => !value)
-  }
+  })
 
   return (
     <Stack>

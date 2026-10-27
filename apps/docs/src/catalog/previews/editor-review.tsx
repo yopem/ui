@@ -1,5 +1,6 @@
 "use client"
 
+import { useStableCallback } from "@base-ui/utils/useStableCallback"
 import { Button } from "@registry/components/ui/button"
 import { Field, FieldLabel } from "@registry/components/ui/field"
 import { Input } from "@registry/components/ui/input"
@@ -25,7 +26,7 @@ import {
   EditorReviewPanel,
   type EditorReviewHost,
 } from "@yopem-ui/editor/review"
-import { useState } from "react"
+import { useState, type ChangeEvent } from "react"
 
 function allowDemoReview() {
   return true
@@ -57,6 +58,55 @@ export function Preview() {
   const [editable, setEditable] = useState(true)
   const [caption, setCaption] = useState("Review example")
 
+  const changeCaption = useStableCallback(function changeCaption(
+    event: ChangeEvent<HTMLInputElement>,
+  ) {
+    setCaption(event.target.value)
+  })
+
+  const changeReviewer = useStableCallback(function changeReviewer() {
+    setHost((current) => ({
+      ...current,
+      viewer:
+        current.viewer?.id === demoHost.viewer.id
+          ? { id: "second-reviewer", name: "Second reviewer" }
+          : demoHost.viewer,
+    }))
+  })
+
+  const toggleReviewer = useStableCallback(function toggleReviewer() {
+    setHost((current) => ({
+      ...current,
+      viewer: current.viewer ? null : demoHost.viewer,
+    }))
+  })
+
+  const toggleEditable = useStableCallback(function toggleEditable() {
+    setEditable((current) => !current)
+  })
+
+  const toggleReplyWhileReadonly = useStableCallback(
+    function toggleReplyWhileReadonly() {
+      setHost((current) => ({
+        ...current,
+        replyWhileReadonly: !current.replyWhileReadonly,
+      }))
+    },
+  )
+
+  const toggleVisibility = useStableCallback(function toggleVisibility() {
+    setHost((current) => ({ ...current, visible: !current.visible }))
+  })
+
+  const toggleReviewPermission = useStableCallback(
+    function toggleReviewPermission() {
+      setHost((current) => ({
+        ...current,
+        can: current.can === allowDemoReview ? denyDemoReview : allowDemoReview,
+      }))
+    },
+  )
+
   return (
     <Stack>
       <Text>
@@ -68,53 +118,27 @@ export function Preview() {
         <Input
           aria-label="Document caption"
           value={caption}
-          onChange={(event) => setCaption(event.target.value)}
+          onChange={changeCaption}
         />
       </Field>
       <Wrap>
-        <Button
-          onClick={() =>
-            setHost({
-              ...host,
-              viewer:
-                host.viewer?.id === demoHost.viewer.id
-                  ? { id: "second-reviewer", name: "Second reviewer" }
-                  : demoHost.viewer,
-            })
-          }
-        >
-          Change reviewer
-        </Button>
-        <Button
-          onClick={() =>
-            setHost({ ...host, viewer: host.viewer ? null : demoHost.viewer })
-          }
-        >
+        <Button onClick={changeReviewer}>Change reviewer</Button>
+        <Button onClick={toggleReviewer}>
           {host.viewer ? "Remove reviewer" : "Restore reviewer"}
         </Button>
-        <Button aria-pressed={!editable} onClick={() => setEditable(!editable)}>
+        <Button aria-pressed={!editable} onClick={toggleEditable}>
           Read-only document
         </Button>
         <Button
           aria-pressed={host.replyWhileReadonly}
-          onClick={() =>
-            setHost({ ...host, replyWhileReadonly: !host.replyWhileReadonly })
-          }
+          onClick={toggleReplyWhileReadonly}
         >
           Allow read-only discussion
         </Button>
-        <Button onClick={() => setHost({ ...host, visible: !host.visible })}>
+        <Button onClick={toggleVisibility}>
           {host.visible ? "Hide discussions" : "Show discussions"}
         </Button>
-        <Button
-          onClick={() =>
-            setHost({
-              ...host,
-              can:
-                host.can === allowDemoReview ? denyDemoReview : allowDemoReview,
-            })
-          }
-        >
+        <Button onClick={toggleReviewPermission}>
           {host.can === allowDemoReview
             ? "Deny review actions"
             : "Allow review actions"}

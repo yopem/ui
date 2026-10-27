@@ -1,5 +1,6 @@
 "use client"
 
+import { useStableCallback } from "@base-ui/utils/useStableCallback"
 import { Box } from "@registry/components/ui/box"
 import { Button } from "@registry/components/ui/button"
 import { Fieldset, FieldsetLegend } from "@registry/components/ui/fieldset"
@@ -70,7 +71,9 @@ export function EditingModeControls() {
 
   const [status, setStatus] = useState("Single block mode is active.")
 
-  function selectMode(nextMode: Exclude<EditorSingleBlockMode, "off">) {
+  const selectMode = useStableCallback(function selectMode(
+    nextMode: Exclude<EditorSingleBlockMode, "off">,
+  ) {
     if (
       !editor.dispatchCommand(SET_EDITOR_SINGLE_BLOCK_MODE_COMMAND, nextMode)
     ) {
@@ -85,15 +88,19 @@ export function EditingModeControls() {
         ? "Single block mode is active."
         : "Single line mode is active.",
     )
-  }
+  })
 
-  function selectSingleBlockMode() {
-    selectMode("single-block")
-  }
+  const selectSingleBlockMode = useStableCallback(
+    function selectSingleBlockMode() {
+      selectMode("single-block")
+    },
+  )
 
-  function selectSingleLineMode() {
-    selectMode("single-line")
-  }
+  const selectSingleLineMode = useStableCallback(
+    function selectSingleLineMode() {
+      selectMode("single-line")
+    },
+  )
 
   return (
     <Stack>
@@ -207,9 +214,9 @@ const exitState = JSON.stringify({
 export function PublicEditingRulesExample() {
   const [editable, setEditable] = useState(true)
 
-  function toggleEditable() {
+  const toggleEditable = useStableCallback(function toggleEditable() {
     setEditable((current) => !current)
-  }
+  })
 
   return (
     <Stack>

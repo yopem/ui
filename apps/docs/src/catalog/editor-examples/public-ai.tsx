@@ -4,6 +4,7 @@ import type { EditorAiConfig } from "@yopem-ui/editor/ai/client"
 import type { EditorReviewHost } from "@yopem-ui/editor/review"
 import type { KeyboardEvent } from "react"
 
+import { useStableCallback } from "@base-ui/utils/useStableCallback"
 import { Box } from "@registry/components/ui/box"
 import { Button } from "@registry/components/ui/button"
 import { Field, FieldLabel } from "@registry/components/ui/field"
@@ -32,7 +33,7 @@ import {
   EditorReviewPanel,
   EditorReviewProvider,
 } from "@yopem-ui/editor/review"
-import { useId, useRef, useState } from "react"
+import { useId, useRef, useState, type MouseEvent } from "react"
 
 const initialState = JSON.stringify({
   root: {
@@ -88,16 +89,24 @@ function PublicAiEditor({
   const editor = useEditor()
   const binding = review.forEditor(editor)
 
+  const markdownInsertion = useStableCallback(function markdownInsertion(
+    source: string,
+  ) {
+    $insertDocumentFragment(source)
+
+    return true
+  })
+
+  const handleContextMenu = useStableCallback(function handleContextMenu(
+    event: MouseEvent<HTMLDivElement>,
+  ) {
+    if (event.altKey) event.preventDefault()
+  })
+
   return (
     <EditorReviewProvider controller={review} host={reviewHost}>
       <EditorAiRoot config={config}>
-        <EditorAiMenuRoot
-          markdownInsertion={(source) => {
-            $insertDocumentFragment(source)
-
-            return true
-          }}
-        >
+        <EditorAiMenuRoot markdownInsertion={markdownInsertion}>
           <EditorToolbar aria-label="AI tools">
             <EditorAiMenuTrigger />
             <EditorHistoryButton action="undo" />
@@ -107,9 +116,7 @@ function PublicAiEditor({
           <EditorAiMenuContent
             aria-label="Public AI editor"
             placeholder="Select text, press Mod+J, or press Space in an empty block."
-            onContextMenu={(event) => {
-              if (event.altKey) event.preventDefault()
-            }}
+            onContextMenu={handleContextMenu}
           />
           <EditorFloatingToolbar aria-label="Selection AI commands">
             <EditorAiMenuTrigger>Ask about selection</EditorAiMenuTrigger>
@@ -133,7 +140,7 @@ export function PublicAiExample() {
   const [review] = useState(createEditorReview)
   const [extensions] = useState(() => [review.extension])
 
-  function configure() {
+  const configure = useStableCallback(function configure() {
     const endpoint = endpointRef.current?.value ?? ""
     const documentId = documentIdRef.current?.value ?? ""
     const csrf = csrfRef.current?.value ?? ""
@@ -157,13 +164,15 @@ export function PublicAiExample() {
     } catch {
       setError("Use a valid same-origin endpoint, document ID, and CSRF token.")
     }
-  }
+  })
 
-  function toggleEditable() {
+  const toggleEditable = useStableCallback(function toggleEditable() {
     setEditable((current) => !current)
-  }
+  })
 
-  function handleHostShortcut(event: KeyboardEvent<HTMLElement>) {
+  const handleHostShortcut = useStableCallback(function handleHostShortcut(
+    event: KeyboardEvent<HTMLElement>,
+  ) {
     if (
       event.defaultPrevented ||
       event.repeat ||
@@ -177,7 +186,7 @@ export function PublicAiExample() {
       return
     event.preventDefault()
     toggleEditable()
-  }
+  })
 
   return (
     <Box

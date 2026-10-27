@@ -1,5 +1,6 @@
 "use client"
 
+import { useStableCallback } from "@base-ui/utils/useStableCallback"
 import { $generateHtmlFromNodes, $generateNodesFromDOM } from "@lexical/html"
 import { Box } from "@registry/components/ui/box"
 import { Button } from "@registry/components/ui/button"
@@ -15,11 +16,11 @@ import {
   EditorFormatButton,
   EditorHistoryButton,
   EditorIndentButton,
+  EditorRoot,
   EditorToolbar,
 } from "@yopem-ui/editor"
 import {
   EditorContent,
-  EditorRoot,
   EditorTablePresentationExtension,
   parseTablePresentationJSON,
   validateTablePresentationHTML,
@@ -39,7 +40,7 @@ import {
   EditorLineHeightControl,
 } from "@yopem-ui/editor"
 import { $getRoot } from "lexical"
-import { useState } from "react"
+import { useState, type ComponentProps } from "react"
 
 const extensions = [
   EditorBlockPresentationExtension,
@@ -50,10 +51,24 @@ export function EditorStyleExample() {
   const [editable, setEditable] = useState(true)
   const [serialized, setSerialized] = useState("")
 
+  const handleToggleEditable = useStableCallback(
+    function handleToggleEditable() {
+      setEditable((current) => !current)
+    },
+  )
+
+  const handleEditorChange = useStableCallback(function handleEditorChange(
+    state: Parameters<
+      NonNullable<ComponentProps<typeof EditorRoot>["onChange"]>
+    >[0],
+  ) {
+    setSerialized(JSON.stringify(state.toJSON()))
+  })
+
   return (
     <Box render={<section />} aria-label="Text style examples">
       <Stack>
-        <Button onClick={() => setEditable(!editable)}>
+        <Button onClick={handleToggleEditable}>
           {editable
             ? "Make styled editor readonly"
             : "Make styled editor editable"}
@@ -62,7 +77,7 @@ export function EditorStyleExample() {
           extensions={extensions}
           ariaLabel="Styled editor"
           editable={editable}
-          onChange={(state) => setSerialized(JSON.stringify(state.toJSON()))}
+          onChange={handleEditorChange}
         >
           <EditorToolbar aria-label="Text styles">
             <EditorFormatButton format="bold" />
@@ -106,7 +121,7 @@ function EditorStyleInterop() {
   const [html, setHTML] = useState("")
   const [error, setError] = useState("")
 
-  function loadJSON() {
+  const loadJSON = useStableCallback(function loadJSON() {
     try {
       parseTablePresentationJSON(json)
       editor.setEditorState(editor.parseEditorState(json))
@@ -114,9 +129,9 @@ function EditorStyleInterop() {
     } catch {
       setError("Cannot load this JSON document.")
     }
-  }
+  })
 
-  function loadHTML() {
+  const loadHTML = useStableCallback(function loadHTML() {
     const view = editor.getRootElement()?.ownerDocument.defaultView
 
     if (!view) return
@@ -134,33 +149,35 @@ function EditorStyleInterop() {
     } catch {
       setError("Cannot load this HTML document.")
     }
-  }
+  })
+
+  const handleSaveJson = useStableCallback(function handleSaveJson() {
+    setJSON(JSON.stringify(editor.getEditorState().toJSON()))
+  })
+
+  const handleSaveHtml = useStableCallback(function handleSaveHtml() {
+    editor
+      .getEditorState()
+      .read(() => setHTML($generateHtmlFromNodes(editor, null)))
+  })
+
+  const handleHtmlChange = useStableCallback(function handleHtmlChange(
+    event: Parameters<NonNullable<ComponentProps<typeof Input>["onChange"]>>[0],
+  ) {
+    setHTML(event.target.value)
+  })
 
   return (
     <Stack>
-      <Button
-        onClick={() =>
-          setJSON(JSON.stringify(editor.getEditorState().toJSON()))
-        }
-      >
-        Save styled JSON
-      </Button>
+      <Button onClick={handleSaveJson}>Save styled JSON</Button>
       <Button disabled={!editable || !json} onClick={loadJSON}>
         Load styled JSON
       </Button>
-      <Button
-        onClick={() =>
-          editor
-            .getEditorState()
-            .read(() => setHTML($generateHtmlFromNodes(editor, null)))
-        }
-      >
-        Save styled HTML
-      </Button>
+      <Button onClick={handleSaveHtml}>Save styled HTML</Button>
       <Input
         aria-label="Styled HTML"
         value={html}
-        onChange={(event) => setHTML(event.target.value)}
+        onChange={handleHtmlChange}
       />
       <Button disabled={!editable || !html} onClick={loadHTML}>
         Load styled HTML

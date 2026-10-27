@@ -2,6 +2,7 @@
 
 import type { EditorAiConfig } from "@yopem-ui/editor/ai/client"
 
+import { useStableCallback } from "@base-ui/utils/useStableCallback"
 import { Box } from "@registry/components/ui/box"
 import { Button } from "@registry/components/ui/button"
 import { Field, FieldLabel } from "@registry/components/ui/field"
@@ -65,7 +66,7 @@ export function PublicCursorsExample() {
   const [config, setConfig] = useState<EditorAiConfig>()
   const [error, setError] = useState("")
 
-  function configureAi() {
+  const configureAi = useStableCallback(function configureAi() {
     const endpoint = endpointRef.current?.value ?? ""
     const documentId = documentIdRef.current?.value ?? ""
     const csrf = csrfRef.current?.value ?? ""
@@ -91,7 +92,7 @@ export function PublicCursorsExample() {
     } catch {
       setError("Use a valid same-origin endpoint, document ID, and CSRF token.")
     }
-  }
+  })
 
   return (
     <Stack>

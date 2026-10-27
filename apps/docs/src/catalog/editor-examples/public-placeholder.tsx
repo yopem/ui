@@ -1,5 +1,6 @@
 "use client"
 
+import { useStableCallback } from "@base-ui/utils/useStableCallback"
 import { Box } from "@registry/components/ui/box"
 import { Button } from "@registry/components/ui/button"
 import { Stack } from "@registry/components/ui/stack"
@@ -14,7 +15,8 @@ import {
   EditorHistoryButton,
 } from "@yopem-ui/editor"
 import { EditorBlockPlaceholder } from "@yopem-ui/editor/block-placeholder"
-import { type KeyboardEvent, useState } from "react"
+import { type EditorState } from "lexical"
+import { type KeyboardEvent, useReducer, useState } from "react"
 
 const labels = {
   paragraph: "Write a paragraph",
@@ -68,19 +70,21 @@ const styles = stylex.create({
 })
 
 export function PublicPlaceholderExample() {
-  const [editable, setEditable] = useState(true)
-  const [visible, setVisible] = useState(true)
+  const [editable, toggleEditable] = useReducer(
+    (current: boolean) => !current,
+    true,
+  )
+
+  const [visible, toggleVisible] = useReducer(
+    (current: boolean) => !current,
+    true,
+  )
+
   const [json, setJson] = useState(initialState)
 
-  function toggleEditable() {
-    setEditable((value) => !value)
-  }
-
-  function toggleVisible() {
-    setVisible((value) => !value)
-  }
-
-  function onKeyDown(event: KeyboardEvent<HTMLDivElement>) {
+  const onKeyDown = useStableCallback(function onKeyDown(
+    event: KeyboardEvent<HTMLDivElement>,
+  ) {
     if (
       !event.defaultPrevented &&
       event.altKey &&
@@ -90,7 +94,13 @@ export function PublicPlaceholderExample() {
       event.preventDefault()
       toggleVisible()
     }
-  }
+  })
+
+  const updateDocument = useStableCallback(function updateDocument(
+    state: EditorState,
+  ) {
+    setJson(JSON.stringify(state, null, 2))
+  })
 
   return (
     <Stack>
@@ -114,9 +124,7 @@ export function PublicPlaceholderExample() {
         initialState={initialState}
         editable={editable}
         onKeyDown={onKeyDown}
-        onChange={function updateDocument(state) {
-          setJson(JSON.stringify(state, null, 2))
-        }}
+        onChange={updateDocument}
       >
         <EditorToolbar aria-label="Placeholder block controls">
           <EditorBlockButton block="paragraph" />

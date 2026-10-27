@@ -11,18 +11,21 @@ import {
   MediaInsertControl,
   mediaKinds,
 } from "@yopem-ui/editor/media"
-import { useState } from "react"
+import { useReducer } from "react"
 
 const extensions = [
   createMediaExtension({ embedPolicy: { providers: ["vimeo"] } }),
 ]
 
 export function EditorMediaExample({ upload }: { upload?: MediaUpload }) {
-  const [editable, setEditable] = useState(true)
+  const [editable, toggleEditable] = useReducer(
+    (current: boolean) => !current,
+    true,
+  )
 
   return (
     <Box render={<section />} aria-label="Media editor">
-      <Button onClick={() => setEditable(!editable)}>
+      <Button onClick={toggleEditable}>
         {editable ? "Read only" : "Edit media"}
       </Button>
       <EditorRoot

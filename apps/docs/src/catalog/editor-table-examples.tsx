@@ -1,5 +1,6 @@
 "use client"
 
+import { useStableCallback } from "@base-ui/utils/useStableCallback"
 import { $generateHtmlFromNodes, $generateNodesFromDOM } from "@lexical/html"
 import { Box } from "@registry/components/ui/box"
 import { Button } from "@registry/components/ui/button"
@@ -39,7 +40,7 @@ import {
   COMMAND_PRIORITY_HIGH,
   type LexicalEditor,
 } from "lexical"
-import { useRef, useState } from "react"
+import { useReducer, useRef, useState, type ComponentProps } from "react"
 
 const tableExtensions = [EditorTablePresentationExtension]
 
@@ -65,106 +66,119 @@ function TableRoundTripControls() {
   const [htmlInput, setHtmlInput] = useState("")
   const [error, setError] = useState("")
 
+  const registerTableError = useStableCallback(function registerTableError(
+    element: HTMLDivElement | null,
+  ) {
+    if (!element) return
+
+    return editor.registerCommand(
+      TABLE_PRESENTATION_ERROR_COMMAND,
+      (failure) => {
+        setError(failure.message)
+
+        return true
+      },
+      COMMAND_PRIORITY_HIGH,
+    )
+  })
+
+  const handleReloadJson = useStableCallback(function handleReloadJson() {
+    if (!editor.isEditable()) return
+    const serialized = JSON.stringify(editor.getEditorState().toJSON())
+    editor.setEditorState(
+      editor.parseEditorState(parseTablePresentationJSON(serialized)),
+    )
+  })
+
+  const handleReloadHtml = useStableCallback(function handleReloadHtml() {
+    if (!editor.isEditable()) return
+
+    const html = editor
+      .getEditorState()
+      .read(() => $generateHtmlFromNodes(editor))
+
+    const Parser = editor.getRootElement()?.ownerDocument.defaultView?.DOMParser
+
+    if (!Parser) return
+    const document = new Parser().parseFromString(html, "text/html")
+    validateTablePresentationHTML(document)
+    editor.update(() => {
+      const nodes = $generateNodesFromDOM(editor, document)
+      $getRoot()
+        .clear()
+        .append(...nodes)
+    })
+  })
+
+  const handleJsonChange = useStableCallback(function handleJsonChange(
+    event: Parameters<
+      NonNullable<ComponentProps<typeof Textarea>["onChange"]>
+    >[0],
+  ) {
+    setJson(event.target.value)
+  })
+
+  const handleImportJson = useStableCallback(function handleImportJson() {
+    if (!editor.isEditable()) return
+
+    try {
+      const input = parseTablePresentationJSON(json)
+      editor.setEditorState(editor.parseEditorState(input))
+      setError("")
+    } catch {
+      setError("Invalid table document.")
+    }
+  })
+
+  const handleHtmlChange = useStableCallback(function handleHtmlChange(
+    event: Parameters<
+      NonNullable<ComponentProps<typeof Textarea>["onChange"]>
+    >[0],
+  ) {
+    setHtmlInput(event.target.value)
+  })
+
+  const handleImportHtml = useStableCallback(function handleImportHtml() {
+    if (!editor.isEditable()) return
+
+    try {
+      const document = parseTableExampleHTML(editor, htmlInput)
+      editor.update(() => {
+        const nodes = $generateNodesFromDOM(editor, document)
+        $getRoot()
+          .clear()
+          .append(...nodes)
+      })
+      setError("")
+    } catch {
+      setError("Invalid table document.")
+    }
+  })
+
   return (
-    <Wrap
-      ref={(element) => {
-        if (!element) return
-
-        return editor.registerCommand(
-          TABLE_PRESENTATION_ERROR_COMMAND,
-          (failure) => {
-            setError(failure.message)
-
-            return true
-          },
-          COMMAND_PRIORITY_HIGH,
-        )
-      }}
-    >
-      <Button
-        disabled={!editable}
-        onClick={() => {
-          if (!editor.isEditable()) return
-          const serialized = JSON.stringify(editor.getEditorState().toJSON())
-          editor.setEditorState(
-            editor.parseEditorState(parseTablePresentationJSON(serialized)),
-          )
-        }}
-      >
+    <Wrap ref={registerTableError}>
+      <Button disabled={!editable} onClick={handleReloadJson}>
         Reload table JSON
       </Button>
-      <Button
-        disabled={!editable}
-        onClick={() => {
-          if (!editor.isEditable()) return
-
-          const html = editor
-            .getEditorState()
-            .read(() => $generateHtmlFromNodes(editor))
-
-          const Parser =
-            editor.getRootElement()?.ownerDocument.defaultView?.DOMParser
-
-          if (!Parser) return
-          const document = new Parser().parseFromString(html, "text/html")
-          validateTablePresentationHTML(document)
-          editor.update(() => {
-            const nodes = $generateNodesFromDOM(editor, document)
-            $getRoot()
-              .clear()
-              .append(...nodes)
-          })
-        }}
-      >
+      <Button disabled={!editable} onClick={handleReloadHtml}>
         Reload table HTML
       </Button>
       <Textarea
         aria-label="Table JSON input"
         value={json}
         disabled={!editable}
-        onChange={(event) => setJson(event.target.value)}
+        onChange={handleJsonChange}
       />
-      <Button
-        disabled={!editable}
-        onClick={() => {
-          if (!editor.isEditable()) return
-
-          try {
-            const input = parseTablePresentationJSON(json)
-            editor.setEditorState(editor.parseEditorState(input))
-            setError("")
-          } catch {
-            setError("Invalid table document.")
-          }
-        }}
-      >
+      <Button disabled={!editable} onClick={handleImportJson}>
         Import table JSON
       </Button>
       <Textarea
         aria-label="Table HTML input"
         value={htmlInput}
         disabled={!editable}
-        onChange={(event) => setHtmlInput(event.target.value)}
+        onChange={handleHtmlChange}
       />
-      <Button
-        disabled={!editable}
-        onClick={() => {
-          if (!editor.isEditable()) return
-
-          try {
-            const document = parseTableExampleHTML(editor, htmlInput)
-            editor.update(() => {
-              const nodes = $generateNodesFromDOM(editor, document)
-              $getRoot()
-                .clear()
-                .append(...nodes)
-            })
-            setError("")
-          } catch {
-            setError("Invalid table document.")
-          }
-        }}
-      >
+      <Button disabled={!editable} onClick={handleImportHtml}>
         Import table HTML
       </Button>
       {error ? <Text role="alert">{error}</Text> : null}
@@ -173,58 +187,75 @@ function TableRoundTripControls() {
 }
 
 export function EditorTableExamples() {
-  const [editable, setEditable] = useState(true)
-  const [rtl, setRtl] = useState(false)
+  const [editable, toggleEditable] = useReducer(
+    (current: boolean) => !current,
+    true,
+  )
+
+  const [rtl, toggleRtl] = useReducer((current: boolean) => !current, false)
   const [serialized, setSerialized] = useState("")
   const editor = useRef<LexicalEditor | null>(null)
+
+  const handleKeyDownCapture = useStableCallback(function handleKeyDownCapture(
+    event: Parameters<
+      NonNullable<ComponentProps<typeof Stack>["onKeyDownCapture"]>
+    >[0],
+  ) {
+    if (!event.altKey || !event.shiftKey) return
+
+    if (event.code === "KeyR") {
+      event.preventDefault()
+      toggleEditable()
+    }
+
+    if (event.code === "KeyN" && editor.current) {
+      event.preventDefault()
+      const instance = editor.current
+      instance.setEditorState(
+        instance.parseEditorState(
+          '{"root":{"type":"root","version":1,"children":[],"direction":null,"format":"","indent":0}}',
+          () => {
+            $getRoot().append(
+              $createParagraphNode().append(
+                $createTextNode("Replacement content"),
+              ),
+            )
+          },
+        ),
+      )
+    }
+  })
+
+  const handleEditorChange = useStableCallback(function handleEditorChange(
+    state: Parameters<
+      NonNullable<ComponentProps<typeof EditorRoot>["onChange"]>
+    >[0],
+    instance: Parameters<
+      NonNullable<ComponentProps<typeof EditorRoot>["onChange"]>
+    >[1],
+  ) {
+    editor.current = instance
+    setSerialized(JSON.stringify(state.toJSON(), null, 2))
+  })
 
   return (
     <Stack
       data-testid="table-example"
       dir={rtl ? "rtl" : "ltr"}
       xstyle={styles.root}
-      onKeyDownCapture={(event) => {
-        if (!event.altKey || !event.shiftKey) return
-
-        if (event.code === "KeyR") {
-          event.preventDefault()
-          setEditable((value) => !value)
-        }
-
-        if (event.code === "KeyN" && editor.current) {
-          event.preventDefault()
-          const instance = editor.current
-          instance.setEditorState(
-            instance.parseEditorState(
-              '{"root":{"type":"root","version":1,"children":[],"direction":null,"format":"","indent":0}}',
-              () => {
-                $getRoot().append(
-                  $createParagraphNode().append(
-                    $createTextNode("Replacement content"),
-                  ),
-                )
-              },
-            ),
-          )
-        }
-      }}
+      onKeyDownCapture={handleKeyDownCapture}
     >
       <Wrap>
-        <Button onClick={() => setEditable((value) => !value)}>
+        <Button onClick={toggleEditable}>
           {editable ? "Disable table editing" : "Enable table editing"}
         </Button>
-        <Button onClick={() => setRtl((value) => !value)}>
-          {rtl ? "Use LTR" : "Use RTL"}
-        </Button>
+        <Button onClick={toggleRtl}>{rtl ? "Use LTR" : "Use RTL"}</Button>
       </Wrap>
       <EditorRoot
         ariaLabel="Table editor"
         extensions={tableExtensions}
         editable={editable}
-        onChange={(state, instance) => {
-          editor.current = instance
-          setSerialized(JSON.stringify(state.toJSON(), null, 2))
-        }}
+        onChange={handleEditorChange}
       >
         <EditorToolbar aria-label="Table formatting">
           <EditorHistoryButton action="undo" />

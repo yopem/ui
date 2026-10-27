@@ -4,6 +4,7 @@ import type { EditorDiagramRenderers } from "@yopem-ui/editor/diagram"
 import type { EditorState } from "lexical"
 import type { ChangeEvent } from "react"
 
+import { useStableCallback } from "@base-ui/utils/useStableCallback"
 import { Box } from "@registry/components/ui/box"
 import { Button } from "@registry/components/ui/button"
 import { Field, FieldLabel } from "@registry/components/ui/field"
@@ -36,13 +37,21 @@ import {
   EditorDiagramToolbar,
   EditorDiagramViewModeSelect,
 } from "@yopem-ui/editor/diagram"
-import { useId, useState } from "react"
+import { useId, useReducer, useState } from "react"
 
 const styles = stylex.create({
   state: { whiteSpace: "pre-wrap", overflowWrap: "anywhere" },
 })
 
 const extensions = [EditorCodeExtension, EditorDiagramExtension]
+
+function toggleBoolean(current: boolean) {
+  return !current
+}
+
+function serializeDiagramState(_current: string, state: EditorState) {
+  return JSON.stringify(state, null, 2)
+}
 
 const initialState = JSON.stringify({
   root: {
@@ -107,30 +116,32 @@ export function PublicCodeDrawingExample() {
   const [csrf, setCsrf] = useState("")
   const [error, setError] = useState("")
   const [renderers, setRenderers] = useState<EditorDiagramRenderers>()
-  const [editable, setEditable] = useState(true)
-  const [serialized, setSerialized] = useState(initialState)
+  const [editable, toggleEditable] = useReducer(toggleBoolean, true)
 
-  function updateEndpoint(event: ChangeEvent<HTMLInputElement>) {
+  const [serialized, setSerialized] = useReducer(
+    serializeDiagramState,
+    initialState,
+  )
+
+  const updateEndpoint = useStableCallback(function updateEndpoint(
+    event: ChangeEvent<HTMLInputElement>,
+  ) {
     setEndpoint(event.target.value)
-  }
+  })
 
-  function updateDocumentId(event: ChangeEvent<HTMLInputElement>) {
+  const updateDocumentId = useStableCallback(function updateDocumentId(
+    event: ChangeEvent<HTMLInputElement>,
+  ) {
     setDocumentId(event.target.value)
-  }
+  })
 
-  function updateCsrf(event: ChangeEvent<HTMLInputElement>) {
+  const updateCsrf = useStableCallback(function updateCsrf(
+    event: ChangeEvent<HTMLInputElement>,
+  ) {
     setCsrf(event.target.value)
-  }
+  })
 
-  function toggleEditable() {
-    setEditable((value) => !value)
-  }
-
-  function updateSerialized(state: EditorState) {
-    setSerialized(JSON.stringify(state, null, 2))
-  }
-
-  function configure() {
+  const configure = useStableCallback(function configure() {
     try {
       if (
         !documentId.trim() ||
@@ -168,18 +179,18 @@ export function PublicCodeDrawingExample() {
         "Supply a valid same-origin endpoint, document ID, and CSRF token.",
       )
     }
-  }
+  })
 
   return (
     <Stack>
       <Text>
         Supply an authorized same-origin SVG renderer. No endpoint or engine is
-        configured by default. After configuration, selected diagram code
-        renders automatically after 300 ms when no current preview exists.
-        Editing source or changing diagram type can trigger another render.
-        Requests send source to your host and may use its resources or service
-        quota. The host must check document access, CSRF, quotas, and rendering
-        budgets. Source and errors remain visible if rendering fails.
+        configured by default. After configuration, saved diagrams render
+        without selection, including read-only documents. Source and type
+        changes render after a 500 ms delay. Requests send source to your host
+        and may use its resources or service quota. The host must check document
+        access, CSRF, quotas, and rendering budgets. Source and errors remain
+        visible if rendering fails.
       </Text>
       <Field>
         <FieldLabel htmlFor={`${fieldId}-endpoint`}>
@@ -222,17 +233,17 @@ export function PublicCodeDrawingExample() {
         Configure diagram renderer
       </Button>
       {error ? <Box role="alert">{error}</Box> : null}
+      <Button variant="outline" onClick={toggleEditable}>
+        {editable ? "Read-only diagram" : "Enable diagram editing"}
+      </Button>
       {renderers ? (
         <Stack>
-          <Button variant="outline" onClick={toggleEditable}>
-            {editable ? "Read-only diagram" : "Enable diagram editing"}
-          </Button>
           <EditorRoot
             ariaLabel="Public code drawing editor"
             editable={editable}
             extensions={extensions}
             initialState={initialState}
-            onChange={updateSerialized}
+            onChange={setSerialized}
           >
             <EditorDiagramRoot renderers={renderers} autoRender>
               <EditorCodeToolbar aria-label="Diagram code tools">

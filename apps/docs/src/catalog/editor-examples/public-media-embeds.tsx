@@ -1,5 +1,6 @@
 "use client"
 
+import { useStableCallback } from "@base-ui/utils/useStableCallback"
 import { AspectRatio } from "@registry/components/ui/aspect-ratio"
 import { Box } from "@registry/components/ui/box"
 import { Button } from "@registry/components/ui/button"
@@ -82,11 +83,21 @@ export function PublicMediaEmbedsExample() {
   const [configuredEmbedDisabled, setConfiguredEmbedDisabled] = useState(false)
   const activePolicy = xEmbedsEnabled ? embedPolicy : policyWithoutX
 
-  function changeTweet() {
+  const toggleXEmbeds = useStableCallback(function toggleXEmbeds() {
+    setXEmbedsEnabled((current) => !current)
+  })
+
+  const changeTweet = useStableCallback(function changeTweet() {
     setTweet((current) =>
       current.url === firstTweet.url ? updatedTweet : firstTweet,
     )
-  }
+  })
+
+  const toggleConfiguredEmbed = useStableCallback(
+    function toggleConfiguredEmbed() {
+      setConfiguredEmbedDisabled((current) => !current)
+    },
+  )
 
   return (
     <Box render={<section aria-label="Public media embed examples" />}>
@@ -98,19 +109,13 @@ export function PublicMediaEmbedsExample() {
           </EditorToolbar>
           <EditorContent placeholder="Select a position, then insert an embed." />
         </EditorRoot>
-        <Button
-          variant="outline"
-          onClick={() => setXEmbedsEnabled((current) => !current)}
-        >
+        <Button variant="outline" onClick={toggleXEmbeds}>
           {xEmbedsEnabled ? "Disable X embeds" : "Enable X embeds"}
         </Button>
         <Button variant="outline" onClick={changeTweet}>
           Change tweet source
         </Button>
-        <Button
-          variant="outline"
-          onClick={() => setConfiguredEmbedDisabled((current) => !current)}
-        >
+        <Button variant="outline" onClick={toggleConfiguredEmbed}>
           {configuredEmbedDisabled
             ? "Enable configured embed"
             : "Disable configured embed"}

@@ -12,6 +12,7 @@ import type {
   MentionIdentity,
 } from "@yopem-ui/editor/typeahead"
 
+import { useStableCallback } from "@base-ui/utils/useStableCallback"
 import { $createHeadingNode, $isHeadingNode } from "@lexical/rich-text"
 import { $insertNodeToNearestRoot } from "@lexical/utils"
 import { Box } from "@registry/components/ui/box"
@@ -169,13 +170,25 @@ import {
 } from "lexical"
 import {
   useId,
+  useReducer,
   useState,
+  type ChangeEvent,
   type KeyboardEvent as ReactKeyboardEvent,
   type MouseEvent,
   type ReactNode,
 } from "react"
 
 type Locale = "en" | "cn"
+
+type BooleanStateAction = boolean | "indeterminate" | "toggle"
+
+function booleanStateReducer(current: boolean, action: BooleanStateAction) {
+  if (action === true || action === false) return action
+
+  if (action === "indeterminate") return false
+
+  return !current
+}
 
 type Variant =
   | "normal"
@@ -879,7 +892,9 @@ function DrawingControls({
       },
   )
 
-  function insertDrawingFixture(event: MouseEvent<HTMLButtonElement>) {
+  const insertDrawingFixture = useStableCallback(function insertDrawingFixture(
+    event: MouseEvent<HTMLButtonElement>,
+  ) {
     if (event.defaultPrevented || !editor.isEditable()) return
 
     editor.update(
@@ -892,7 +907,7 @@ function DrawingControls({
       },
       { tag: HISTORY_PUSH_TAG },
     )
-  }
+  })
 
   return (
     <Stack ref={connect}>
@@ -921,8 +936,8 @@ function PlaygroundEditor({
 }) {
   const labels = copy[locale]
   const [review] = useState(createEditorReview)
-  const [readOnly, setReadOnly] = useState(false)
-  const [assetsReady, setAssetsReady] = useState(false)
+  const [readOnly, setReadOnly] = useReducer(booleanStateReducer, false)
+  const [assetsReady, setAssetsReady] = useReducer(booleanStateReducer, false)
   const assetPathId = useId()
 
   const [typeahead] = useState(() =>
@@ -962,7 +977,9 @@ function PlaygroundEditor({
         : createInitialState(locale),
   )
 
-  function handleHostShortcut(event: ReactKeyboardEvent<HTMLDivElement>) {
+  const handleHostShortcut = useStableCallback(function handleHostShortcut(
+    event: ReactKeyboardEvent<HTMLDivElement>,
+  ) {
     if (
       event.defaultPrevented ||
       event.repeat ||
@@ -975,42 +992,24 @@ function PlaygroundEditor({
     )
       return
     event.preventDefault()
-    setReadOnly((current) => !current)
-  }
+    setReadOnly("toggle")
+  })
 
-  function handleHostContextMenu(event: MouseEvent<HTMLDivElement>) {
-    if (event.altKey) event.preventDefault()
-  }
+  const toggleReadOnly = useStableCallback(function toggleReadOnly() {
+    setReadOnly("toggle")
+  })
 
   return (
     <>
       {variant === "drawing" ? (
-        <Stack>
-          <Text>{labels.drawingNotice}</Text>
-          <Text>{labels.drawingAssetNotice}</Text>
-          <Field>
-            <FieldLabel htmlFor={assetPathId}>
-              {labels.drawingAssetPath}
-            </FieldLabel>
-            <Input id={assetPathId} readOnly value={drawingAssetPath} />
-          </Field>
-          <Label>
-            <Checkbox
-              aria-label={labels.drawingReadOnly}
-              checked={readOnly}
-              onCheckedChange={(checked) => setReadOnly(checked === true)}
-            />
-            {labels.drawingReadOnly}
-          </Label>
-          <Label>
-            <Checkbox
-              aria-label={labels.drawingAssets}
-              checked={assetsReady}
-              onCheckedChange={(checked) => setAssetsReady(checked === true)}
-            />
-            {labels.drawingAssets}
-          </Label>
-        </Stack>
+        <DrawingSetup
+          assetPathId={assetPathId}
+          assetsReady={assetsReady}
+          labels={labels}
+          readOnly={readOnly}
+          setAssetsReady={setAssetsReady}
+          setReadOnly={setReadOnly}
+        />
       ) : null}
       <EditorRoot
         ariaLabel={labels.editor}
@@ -1021,170 +1020,266 @@ function PlaygroundEditor({
       >
         <EditorReviewProvider controller={review} host={reviewHost}>
           {variant === "drawing" ? (
-            <>
-              <EditorContent
-                lang={locale === "cn" ? "zh-CN" : "en"}
-                placeholder={labels.placeholder}
-              />
-              {assetsReady ? (
-                <DrawingControls labels={labels} />
-              ) : (
-                <Text>{labels.drawingAssetGate}</Text>
-              )}
-            </>
+            <DrawingPlaygroundContent
+              assetsReady={assetsReady}
+              labels={labels}
+              locale={locale}
+            />
           ) : (
-            <AiMenuComposition config={aiMenuConfig}>
-              <>
-                <Text>{labels.readOnlyShortcut}</Text>
-                <EditorToolbar aria-label={labels.toolbar}>
-                  {aiMenuConfig ? <EditorAiMenuTrigger /> : null}
-                  <EditorFormatButton format="bold">
-                    {locale === "en" ? "Bold" : "加粗"}
-                  </EditorFormatButton>
-                  <EditorFormatButton format="italic">
-                    {locale === "en" ? "Italic" : "斜体"}
-                  </EditorFormatButton>
-                  <EditorFormatButton format="underline">
-                    {locale === "en" ? "Underline" : "下划线"}
-                  </EditorFormatButton>
-                  <EditorAlignmentButton alignment="left" />
-                  <EditorAlignmentButton alignment="center" />
-                  <EditorAlignmentButton alignment="right" />
-                  {variant === "listClassic" ? (
-                    <>
-                      <EditorListMarkerControl />
-                      <EditorListStartControl />
-                    </>
-                  ) : (
-                    <>
-                      <EditorIndentButton direction="indent" />
-                      <EditorIndentButton direction="outdent" />
-                      <EditorListButton listType="bullet" />
-                      <EditorListButton listType="number" />
-                      <EditorListButton listType="check" />
-                    </>
-                  )}
-                  {variant !== "listClassic" ? (
-                    <EditorFirstLineIndentControl />
-                  ) : null}
-                  <EditorFontColorControl />
-                  <EditorBackgroundColorControl />
-                  <EditorFontFamilyControl />
-                  <EditorFontSizeControl />
-                  <EditorFontWeightControl />
-                  <EditorClearFormattingButton />
-                  <EditorBlockButton block="h1" />
-                  {variant === "forced-layout" ? (
-                    <EditorBlockButton block="paragraph" />
-                  ) : null}
-                  <EditorBlockButton block="h2" />
-                  <EditorBlockButton block="quote" />
-                  <EditorBlockButton block="code" />
-                  <EditorLinkControl />
-                  <EditorTableButton />
-                  <EditorTableMenu />
-                  <EditorCalloutButton />
-                  <EditorToggleButton />
-                  <EditorDisclosureButton />
-                  {editorCalloutAppearances.map((appearance) => (
-                    <EditorCalloutAppearanceButton
-                      key={appearance}
-                      appearance={appearance}
-                    />
-                  ))}
-                  <EditorColumnsControls />
-                  <EditorDateControls initialDate="2025-01-15" />
-                  <EditorMathControl kind="inline" />
-                  <EditorMathControl kind="block" />
-                  <EditorFootnoteControls />
-                  {mediaKinds.map((kind) => (
-                    <MediaInsertControl key={kind} kind={kind} />
-                  ))}
-                  <EditorHistoryButton action="undo" />
-                  <EditorHistoryButton action="redo" />
-                  <Button
-                    onClick={() => setReadOnly((current) => !current)}
-                    variant="outline"
-                  >
-                    {readOnly ? labels.enableEditing : labels.makeReadOnly}
-                  </Button>
-                </EditorToolbar>
-                <NativeJsonControls locale={locale} />
-                <WordClipboardRegistration locale={locale} />
-                <EditorCodeToolbar aria-label={labels.codeToolbar}>
-                  <EditorCodeLanguage
-                    aria-label={locale === "en" ? "Code language" : "代码语言"}
-                  />
-                  <EditorCodeCopyButton
-                    aria-label={locale === "en" ? "Copy code" : "复制代码"}
-                  />
-                  <EditorCodeToggle
-                    setting="wrap"
-                    aria-label={locale === "en" ? "Wrap code" : "自动换行"}
-                  />
-                  <EditorCodeToggle
-                    setting="lineNumbers"
-                    aria-label={locale === "en" ? "Line numbers" : "行号"}
-                  />
-                  <EditorCodeStatus />
-                </EditorCodeToolbar>
-                <EditorTableDimensions />
-                <EditorTableResizeControls />
-                <EditorTableCellPresentation />
-                <EditorReviewModeControl />
-                <EditorReviewCreateControl />
-                <EditorReviewDiffControl />
-                <EditorSearchRoot
-                  initialQuery={locale === "cn" ? "审阅" : "review"}
-                >
-                  <Stack>
-                    <EditorSearchInput
-                      aria-label={labels.search}
-                      placeholder={labels.searchPlaceholder}
-                    />
-                    <HStack>
-                      <EditorSearchPreviousButton>
-                        {labels.previous}
-                      </EditorSearchPreviousButton>
-                      <EditorSearchNextButton>
-                        {labels.next}
-                      </EditorSearchNextButton>
-                      <EditorSearchStatus />
-                    </HStack>
-                    <EditorSearchViewport>
-                      {aiMenuConfig ? (
-                        <EditorAiMenuContent
-                          aria-label={labels.editor}
-                          lang={locale === "cn" ? "zh-CN" : "en"}
-                          onContextMenu={handleHostContextMenu}
-                          placeholder={labels.placeholder}
-                          render={<EditorTypeahead controller={typeahead} />}
-                        />
-                      ) : (
-                        <EditorTypeahead
-                          aria-label={labels.editor}
-                          lang={locale === "cn" ? "zh-CN" : "en"}
-                          controller={typeahead}
-                          onContextMenu={handleHostContextMenu}
-                          placeholder={labels.placeholder}
-                        />
-                      )}
-                    </EditorSearchViewport>
-                  </Stack>
-                </EditorSearchRoot>
-                <EditorReviewPanel />
-                {aiMenuConfig ? (
-                  <PlaygroundAiParts locale={locale} review={review} />
-                ) : null}
-                {variant === "copilot" && copilotConfig ? (
-                  <EditorCopilot config={copilotConfig} />
-                ) : null}
-              </>
-            </AiMenuComposition>
+            <StandardPlaygroundContent
+              aiMenuConfig={aiMenuConfig}
+              copilotConfig={copilotConfig}
+              labels={labels}
+              locale={locale}
+              readOnly={readOnly}
+              review={review}
+              toggleReadOnly={toggleReadOnly}
+              typeahead={typeahead}
+              variant={variant}
+            />
           )}
-          {variant !== "drawing" ? <EditorCursorOverlay /> : null}
         </EditorReviewProvider>
       </EditorRoot>
+    </>
+  )
+}
+
+function preventAltContextMenu(event: MouseEvent<HTMLDivElement>) {
+  if (event.altKey) event.preventDefault()
+}
+
+function DrawingSetup({
+  assetPathId,
+  assetsReady,
+  labels,
+  readOnly,
+  setAssetsReady,
+  setReadOnly,
+}: {
+  assetPathId: string
+  assetsReady: boolean
+  labels: (typeof copy)[Locale]
+  readOnly: boolean
+  setAssetsReady: (action: BooleanStateAction) => void
+  setReadOnly: (action: BooleanStateAction) => void
+}) {
+  return (
+    <Stack>
+      <Text>{labels.drawingNotice}</Text>
+      <Text>{labels.drawingAssetNotice}</Text>
+      <Field>
+        <FieldLabel htmlFor={assetPathId}>{labels.drawingAssetPath}</FieldLabel>
+        <Input id={assetPathId} readOnly value={drawingAssetPath} />
+      </Field>
+      <Label>
+        <Checkbox
+          aria-label={labels.drawingReadOnly}
+          checked={readOnly}
+          onCheckedChange={setReadOnly}
+        />
+        {labels.drawingReadOnly}
+      </Label>
+      <Label>
+        <Checkbox
+          aria-label={labels.drawingAssets}
+          checked={assetsReady}
+          onCheckedChange={setAssetsReady}
+        />
+        {labels.drawingAssets}
+      </Label>
+    </Stack>
+  )
+}
+
+function DrawingPlaygroundContent({
+  assetsReady,
+  labels,
+  locale,
+}: {
+  assetsReady: boolean
+  labels: (typeof copy)[Locale]
+  locale: Locale
+}) {
+  return (
+    <>
+      <EditorContent
+        lang={locale === "cn" ? "zh-CN" : "en"}
+        placeholder={labels.placeholder}
+      />
+      {assetsReady ? (
+        <DrawingControls labels={labels} />
+      ) : (
+        <Text>{labels.drawingAssetGate}</Text>
+      )}
+    </>
+  )
+}
+
+function StandardPlaygroundContent({
+  aiMenuConfig,
+  copilotConfig,
+  labels,
+  locale,
+  readOnly,
+  review,
+  toggleReadOnly,
+  typeahead,
+  variant,
+}: {
+  aiMenuConfig?: EditorAiConfig
+  copilotConfig?: EditorCopilotConfig
+  labels: (typeof copy)[Locale]
+  locale: Locale
+  readOnly: boolean
+  review: ReturnType<typeof createEditorReview>
+  toggleReadOnly: () => void
+  typeahead: ReturnType<typeof createEditorTypeahead>
+  variant: Variant
+}) {
+  return (
+    <>
+      <AiMenuComposition config={aiMenuConfig}>
+        <>
+          <Text>{labels.readOnlyShortcut}</Text>
+          <EditorToolbar aria-label={labels.toolbar}>
+            {aiMenuConfig ? <EditorAiMenuTrigger /> : null}
+            <EditorFormatButton format="bold">
+              {locale === "en" ? "Bold" : "加粗"}
+            </EditorFormatButton>
+            <EditorFormatButton format="italic">
+              {locale === "en" ? "Italic" : "斜体"}
+            </EditorFormatButton>
+            <EditorFormatButton format="underline">
+              {locale === "en" ? "Underline" : "下划线"}
+            </EditorFormatButton>
+            <EditorAlignmentButton alignment="left" />
+            <EditorAlignmentButton alignment="center" />
+            <EditorAlignmentButton alignment="right" />
+            {variant === "listClassic" ? (
+              <>
+                <EditorListMarkerControl />
+                <EditorListStartControl />
+              </>
+            ) : (
+              <>
+                <EditorIndentButton direction="indent" />
+                <EditorIndentButton direction="outdent" />
+                <EditorListButton listType="bullet" />
+                <EditorListButton listType="number" />
+                <EditorListButton listType="check" />
+              </>
+            )}
+            {variant !== "listClassic" ? (
+              <EditorFirstLineIndentControl />
+            ) : null}
+            <EditorFontColorControl />
+            <EditorBackgroundColorControl />
+            <EditorFontFamilyControl />
+            <EditorFontSizeControl />
+            <EditorFontWeightControl />
+            <EditorClearFormattingButton />
+            <EditorBlockButton block="h1" />
+            {variant === "forced-layout" ? (
+              <EditorBlockButton block="paragraph" />
+            ) : null}
+            <EditorBlockButton block="h2" />
+            <EditorBlockButton block="quote" />
+            <EditorBlockButton block="code" />
+            <EditorLinkControl />
+            <EditorTableButton />
+            <EditorTableMenu />
+            <EditorCalloutButton />
+            <EditorToggleButton />
+            <EditorDisclosureButton />
+            {editorCalloutAppearances.map((appearance) => (
+              <EditorCalloutAppearanceButton
+                key={appearance}
+                appearance={appearance}
+              />
+            ))}
+            <EditorColumnsControls />
+            <EditorDateControls initialDate="2025-01-15" />
+            <EditorMathControl kind="inline" />
+            <EditorMathControl kind="block" />
+            <EditorFootnoteControls />
+            {mediaKinds.map((kind) => (
+              <MediaInsertControl key={kind} kind={kind} />
+            ))}
+            <EditorHistoryButton action="undo" />
+            <EditorHistoryButton action="redo" />
+            <Button onClick={toggleReadOnly} variant="outline">
+              {readOnly ? labels.enableEditing : labels.makeReadOnly}
+            </Button>
+          </EditorToolbar>
+          <NativeJsonControls locale={locale} />
+          <WordClipboardRegistration locale={locale} />
+          <EditorCodeToolbar aria-label={labels.codeToolbar}>
+            <EditorCodeLanguage
+              aria-label={locale === "en" ? "Code language" : "代码语言"}
+            />
+            <EditorCodeCopyButton
+              aria-label={locale === "en" ? "Copy code" : "复制代码"}
+            />
+            <EditorCodeToggle
+              setting="wrap"
+              aria-label={locale === "en" ? "Wrap code" : "自动换行"}
+            />
+            <EditorCodeToggle
+              setting="lineNumbers"
+              aria-label={locale === "en" ? "Line numbers" : "行号"}
+            />
+            <EditorCodeStatus />
+          </EditorCodeToolbar>
+          <EditorTableDimensions />
+          <EditorTableResizeControls />
+          <EditorTableCellPresentation />
+          <EditorReviewModeControl />
+          <EditorReviewCreateControl />
+          <EditorReviewDiffControl />
+          <EditorSearchRoot initialQuery={locale === "cn" ? "审阅" : "review"}>
+            <Stack>
+              <EditorSearchInput
+                aria-label={labels.search}
+                placeholder={labels.searchPlaceholder}
+              />
+              <HStack>
+                <EditorSearchPreviousButton>
+                  {labels.previous}
+                </EditorSearchPreviousButton>
+                <EditorSearchNextButton>{labels.next}</EditorSearchNextButton>
+                <EditorSearchStatus />
+              </HStack>
+              <EditorSearchViewport>
+                {aiMenuConfig ? (
+                  <EditorAiMenuContent
+                    aria-label={labels.editor}
+                    lang={locale === "cn" ? "zh-CN" : "en"}
+                    onContextMenu={preventAltContextMenu}
+                    placeholder={labels.placeholder}
+                    render={<EditorTypeahead controller={typeahead} />}
+                  />
+                ) : (
+                  <EditorTypeahead
+                    aria-label={labels.editor}
+                    lang={locale === "cn" ? "zh-CN" : "en"}
+                    controller={typeahead}
+                    onContextMenu={preventAltContextMenu}
+                    placeholder={labels.placeholder}
+                  />
+                )}
+              </EditorSearchViewport>
+            </Stack>
+          </EditorSearchRoot>
+          <EditorReviewPanel />
+          {aiMenuConfig ? (
+            <PlaygroundAiParts locale={locale} review={review} />
+          ) : null}
+          {variant === "copilot" && copilotConfig ? (
+            <EditorCopilot config={copilotConfig} />
+          ) : null}
+        </>
+      </AiMenuComposition>
+      <EditorCursorOverlay />
     </>
   )
 }
@@ -1205,7 +1300,25 @@ function HostAiSetup({
   const [csrf, setCsrf] = useState("")
   const [error, setError] = useState("")
 
-  function configure() {
+  const updateEndpoint = useStableCallback(function updateEndpoint(
+    event: ChangeEvent<HTMLInputElement>,
+  ) {
+    setEndpoint(event.currentTarget.value)
+  })
+
+  const updateDocumentId = useStableCallback(function updateDocumentId(
+    event: ChangeEvent<HTMLInputElement>,
+  ) {
+    setDocumentId(event.currentTarget.value)
+  })
+
+  const updateCsrf = useStableCallback(function updateCsrf(
+    event: ChangeEvent<HTMLInputElement>,
+  ) {
+    setCsrf(event.currentTarget.value)
+  })
+
+  const configure = useStableCallback(function configure() {
     if (!csrf.trim()) {
       setError(labels.invalidConfig)
 
@@ -1225,7 +1338,7 @@ function HostAiSetup({
     } catch {
       setError(labels.invalidConfig)
     }
-  }
+  })
 
   return (
     <Stack>
@@ -1240,7 +1353,7 @@ function HostAiSetup({
           aria-label={labels.endpoint}
           value={endpoint}
           maxLength={2048}
-          onChange={(event) => setEndpoint(event.currentTarget.value)}
+          onChange={updateEndpoint}
         />
       </Field>
       <Field>
@@ -1252,7 +1365,7 @@ function HostAiSetup({
           aria-label={labels.documentId}
           value={documentId}
           maxLength={256}
-          onChange={(event) => setDocumentId(event.currentTarget.value)}
+          onChange={updateDocumentId}
         />
       </Field>
       <Field>
@@ -1264,7 +1377,7 @@ function HostAiSetup({
           autoComplete="off"
           value={csrf}
           maxLength={4096}
-          onChange={(event) => setCsrf(event.currentTarget.value)}
+          onChange={updateCsrf}
         />
       </Field>
       <Button
@@ -1285,19 +1398,49 @@ export function PublicPlaygroundExample() {
   const [copilotConfig, setCopilotConfig] = useState<EditorCopilotConfig>()
   const labels = copy[locale]
 
-  function chooseLocale(next: Locale) {
+  const chooseLocale = useStableCallback(function chooseLocale(next: Locale) {
     if (next === locale) return
     setAiMenuConfig(undefined)
     setCopilotConfig(undefined)
     setLocale(next)
-  }
+  })
 
-  function chooseVariant(next: Variant) {
+  const chooseVariant = useStableCallback(function chooseVariant(
+    next: Variant,
+  ) {
     if (next === variant) return
     setAiMenuConfig(undefined)
     setCopilotConfig(undefined)
     setVariant(next)
-  }
+  })
+
+  const chooseEnglish = useStableCallback(function chooseEnglish() {
+    chooseLocale("en")
+  })
+
+  const chooseChinese = useStableCallback(function chooseChinese() {
+    chooseLocale("cn")
+  })
+
+  const chooseNormal = useStableCallback(function chooseNormal() {
+    chooseVariant("normal")
+  })
+
+  const chooseCopilot = useStableCallback(function chooseCopilot() {
+    chooseVariant("copilot")
+  })
+
+  const chooseListClassic = useStableCallback(function chooseListClassic() {
+    chooseVariant("listClassic")
+  })
+
+  const chooseForcedLayout = useStableCallback(function chooseForcedLayout() {
+    chooseVariant("forced-layout")
+  })
+
+  const chooseDrawing = useStableCallback(function chooseDrawing() {
+    chooseVariant("drawing")
+  })
 
   return (
     <Box data-testid="public-playground-workspace">
@@ -1309,44 +1452,41 @@ export function PublicPlaygroundExample() {
             <Button
               aria-label="English"
               aria-pressed={locale === "en"}
-              onClick={() => chooseLocale("en")}
+              onClick={chooseEnglish}
             >
               English
             </Button>
             <Button
               aria-label="简体中文"
               aria-pressed={locale === "cn"}
-              onClick={() => chooseLocale("cn")}
+              onClick={chooseChinese}
             >
               简体中文
             </Button>
-            <Button
-              aria-pressed={variant === "normal"}
-              onClick={() => chooseVariant("normal")}
-            >
+            <Button aria-pressed={variant === "normal"} onClick={chooseNormal}>
               {labels.normal}
             </Button>
             <Button
               aria-pressed={variant === "copilot"}
-              onClick={() => chooseVariant("copilot")}
+              onClick={chooseCopilot}
             >
               {labels.copilot}
             </Button>
             <Button
               aria-pressed={variant === "listClassic"}
-              onClick={() => chooseVariant("listClassic")}
+              onClick={chooseListClassic}
             >
               {labels.listClassic}
             </Button>
             <Button
               aria-pressed={variant === "forced-layout"}
-              onClick={() => chooseVariant("forced-layout")}
+              onClick={chooseForcedLayout}
             >
               {labels.forcedLayout}
             </Button>
             <Button
               aria-pressed={variant === "drawing"}
-              onClick={() => chooseVariant("drawing")}
+              onClick={chooseDrawing}
             >
               {labels.drawing}
             </Button>
@@ -1357,7 +1497,7 @@ export function PublicPlaygroundExample() {
             key={`${variant}-${locale}`}
             locale={locale}
             mode="copilot"
-            onConfigure={(config) => setCopilotConfig(config)}
+            onConfigure={setCopilotConfig}
           />
         ) : null}
         {variant !== "copilot" && variant !== "drawing" && !aiMenuConfig ? (

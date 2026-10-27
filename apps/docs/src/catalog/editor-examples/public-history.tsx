@@ -1,5 +1,6 @@
 "use client"
 
+import { useStableCallback } from "@base-ui/utils/useStableCallback"
 import { Box } from "@registry/components/ui/box"
 import { Field, FieldLabel } from "@registry/components/ui/field"
 import { NativeSelect } from "@registry/components/ui/native-select"
@@ -21,7 +22,7 @@ import {
   reviewTextDiffSegments,
 } from "@yopem-ui/editor/review-diff"
 import { $getRoot, type LexicalEditor } from "lexical"
-import { type ChangeEvent, useId, useState } from "react"
+import { type ChangeEvent, type ComponentProps, useId, useState } from "react"
 
 export interface LocalRevisionBlock {
   key: string
@@ -118,9 +119,9 @@ export function RevisionSaveButton({
 }) {
   const editor = useEditor()
 
-  function save() {
+  const save = useStableCallback(function save() {
     onSave(captureSnapshot(editor))
-  }
+  })
 
   return (
     <ToolbarButton disabled={disabled} onClick={save}>
@@ -264,7 +265,9 @@ export function VersionHistoryExample() {
     (revision) => revision.id === history.selected,
   )
 
-  function save(snapshot: LocalRevisionSnapshot | null) {
+  const save = useStableCallback(function save(
+    snapshot: LocalRevisionSnapshot | null,
+  ) {
     setHistory((previous) => {
       if (!snapshot)
         return {
@@ -287,12 +290,23 @@ export function VersionHistoryExample() {
       }
     })
     setCurrent(snapshot)
-  }
+  })
 
-  function selectRevision(event: ChangeEvent<HTMLSelectElement>) {
+  const selectRevision = useStableCallback(function selectRevision(
+    event: ChangeEvent<HTMLSelectElement>,
+  ) {
     const selected = event.currentTarget.value
     setHistory((previous) => ({ ...previous, selected }))
-  }
+  })
+
+  const handleEditorChange = useStableCallback(function handleEditorChange(
+    _state: Parameters<
+      NonNullable<ComponentProps<typeof EditorRoot>["onChange"]>
+    >[0],
+    editor: LexicalEditor,
+  ) {
+    setCurrent(captureSnapshot(editor))
+  })
 
   return (
     <Stack>
@@ -303,7 +317,7 @@ export function VersionHistoryExample() {
       <EditorRoot
         ariaLabel="Current revision editor"
         initialState={initialState}
-        onChange={(_state, editor) => setCurrent(captureSnapshot(editor))}
+        onChange={handleEditorChange}
       >
         <EditorToolbar aria-label="Revision actions">
           <RevisionSaveButton

@@ -1,5 +1,8 @@
 "use client"
 
+import type { ChangeEvent } from "react"
+
+import { useStableCallback } from "@base-ui/utils/useStableCallback"
 import { Box } from "@registry/components/ui/box"
 import { Button } from "@registry/components/ui/button"
 import { Heading } from "@registry/components/ui/heading"
@@ -20,7 +23,7 @@ import {
 } from "@yopem-ui/editor/document"
 import { DocumentStatic } from "@yopem-ui/editor/document/static"
 import { COMMAND_PRIORITY_HIGH, PASTE_COMMAND, defineExtension } from "lexical"
-import { useRef, useState } from "react"
+import { useReducer, useRef, useState } from "react"
 import { z } from "zod"
 
 const documentExtensions = [EditorDocumentClipboardExtension]
@@ -158,6 +161,13 @@ function MarkdownSyntaxPreview({
   )
 }
 
+function getLocalStreamingScenario(scenarioId: LocalStreamingScenarioId) {
+  return (
+    localStreamingScenarios.find((item) => item.id === scenarioId) ??
+    localStreamingScenarios[0]
+  )
+}
+
 function createMarkdownChunks(markdown: string) {
   const chunkSize = 12
   const chunks: string[] = []
@@ -221,18 +231,22 @@ function createMarkdownProducer(
     })
   }
 
-  async function* produce() {
-    for (const [index, chunk] of chunks.entries()) {
-      if (index >= startAt) await waitForNextChunk()
+  async function* produce(index: number): AsyncGenerator<string> {
+    if (index >= chunks.length) return
 
-      if (signal.aborted) return
-      onChunk(index + 1)
-      yield chunk
-    }
+    if (index >= startAt) await waitForNextChunk()
+
+    if (signal.aborted) return
+    const chunk = chunks[index]
+
+    if (chunk === undefined) return
+    onChunk(index + 1)
+    yield chunk
+    yield* produce(index + 1)
   }
 
   return {
-    chunks: produce(),
+    chunks: produce(0),
     totalChunks: chunks.length,
     pause() {
       if (paused) return
@@ -292,6 +306,7 @@ function HTMLControls() {
   const [htmlSource, setHTMLSource] = useState(richHTMLSample)
   const [error, setError] = useState("")
   const [copied, setCopied] = useState(false)
+  const htmlSourceRef = useRef(htmlSource)
   const connect = useDocumentPasteRegistration(setError)
 
   function run(action: () => void) {
@@ -303,7 +318,20 @@ function HTMLControls() {
     }
   }
 
-  async function copyRichHTML() {
+  const handleHTMLSourceChange = useStableCallback(
+    function handleHTMLSourceChange(event: ChangeEvent<HTMLTextAreaElement>) {
+      const value = event.target.value
+      htmlSourceRef.current = value
+      setHTMLSource(value)
+      setCopied(false)
+    },
+  )
+
+  const importHTML = useStableCallback(function importHTML() {
+    run(() => importDocument(editor, htmlSourceRef.current, "html"))
+  })
+
+  const copyRichHTML = useStableCallback(async function copyRichHTML() {
     try {
       await navigator.clipboard.write([
         new ClipboardItem({
@@ -320,7 +348,7 @@ function HTMLControls() {
       setCopied(false)
       setError(failureMessage(failure, "HTML clipboard write failed."))
     }
-  }
+  })
 
   return (
     <Stack ref={connect}>
@@ -328,25 +356,10 @@ function HTMLControls() {
       <Textarea
         id="public-document-html-source"
         value={htmlSource}
-        onChange={(event) => {
-          setHTMLSource(event.target.value)
-          setCopied(false)
-        }}
+        onChange={handleHTMLSourceChange}
       />
-      <Button
-        onClick={() => {
-          run(() => importDocument(editor, htmlSource, "html"))
-        }}
-      >
-        Import HTML source
-      </Button>
-      <Button
-        onClick={() => {
-          void copyRichHTML()
-        }}
-      >
-        Copy rich HTML sample
-      </Button>
+      <Button onClick={importHTML}>Import HTML source</Button>
+      <Button onClick={copyRichHTML}>Copy rich HTML sample</Button>
       {copied ? <Box render={<output />}>Rich HTML sample copied.</Box> : null}
       {error ? <Text role="alert">{error}</Text> : null}
     </Stack>
@@ -382,6 +395,7 @@ function MarkdownControls() {
   const [markdownOutput, setMarkdownOutput] = useState("")
   const [copied, setCopied] = useState(false)
   const [error, setError] = useState("")
+  const markdownRef = useRef(markdown)
 
   const connect = useDocumentPasteRegistration(setError, undefined, {
     markdown: true,
@@ -396,17 +410,29 @@ function MarkdownControls() {
     }
   }
 
-  async function copyMarkdown() {
+  const handleMarkdownChange = useStableCallback(function handleMarkdownChange(
+    event: ChangeEvent<HTMLTextAreaElement>,
+  ) {
+    const value = event.target.value
+    markdownRef.current = value
+    setMarkdown(value)
+    setCopied(false)
+    setSourceRevision((revision) => revision + 1)
+  })
+
+  const copyMarkdown = useStableCallback(async function copyMarkdown() {
+    const value = markdownRef.current
+
     try {
       if (window.ClipboardItem?.supports?.("text/markdown")) {
         await navigator.clipboard.write([
           new window.ClipboardItem({
-            "text/markdown": new Blob([markdown], { type: "text/markdown" }),
-            "text/plain": new Blob([markdown], { type: "text/plain" }),
+            "text/markdown": new Blob([value], { type: "text/markdown" }),
+            "text/plain": new Blob([value], { type: "text/plain" }),
           }),
         ])
       } else {
-        await navigator.clipboard.writeText(markdown)
+        await navigator.clipboard.writeText(value)
       }
 
       setCopied(true)
@@ -415,9 +441,13 @@ function MarkdownControls() {
       setCopied(false)
       setError(failureMessage(failure, "Markdown clipboard write failed."))
     }
-  }
+  })
 
-  function exportOutputs() {
+  const importMarkdown = useStableCallback(function importMarkdown() {
+    run(() => importDocument(editor, markdownRef.current, "markdown"))
+  })
+
+  const exportOutputs = useStableCallback(function exportOutputs() {
     try {
       const nextHTML = exportDocument(editor, "html")
       const nextMarkdown = exportDocument(editor, "markdown")
@@ -427,7 +457,7 @@ function MarkdownControls() {
     } catch (cause) {
       setError(failureMessage(cause, "Markdown export failed."))
     }
-  }
+  })
 
   return (
     <Stack ref={connect}>
@@ -435,11 +465,7 @@ function MarkdownControls() {
       <Textarea
         id="public-document-markdown-source"
         value={markdown}
-        onChange={(event) => {
-          setMarkdown(event.target.value)
-          setCopied(false)
-          setSourceRevision((revision) => revision + 1)
-        }}
+        onChange={handleMarkdownChange}
       />
       <Box data-testid="public-document-markdown-source-preview">
         <MarkdownSyntaxPreview
@@ -452,13 +478,7 @@ function MarkdownControls() {
       {copied ? (
         <Box render={<output />}>Markdown clipboard sample copied.</Box>
       ) : null}
-      <Button
-        onClick={() => {
-          run(() => importDocument(editor, markdown, "markdown"))
-        }}
-      >
-        Import Markdown
-      </Button>
+      <Button onClick={importMarkdown}>Import Markdown</Button>
       <Button onClick={exportOutputs}>Export document</Button>
       <Label htmlFor="public-document-markdown-output">Markdown output</Label>
       <Textarea
@@ -507,15 +527,15 @@ export function PublicDocumentMarkdownExample() {
   const [policy] = useState(createMarkdownPastePolicy)
   const [extensions] = useState(() => [...documentExtensions, policy.extension])
   const [blocked, setBlocked] = useState(false)
-  const [editable, setEditable] = useState(true)
 
-  function togglePaste() {
+  const [editable, toggleEditable] = useReducer(
+    (current: boolean) => !current,
+    true,
+  )
+
+  const togglePaste = useStableCallback(function togglePaste() {
     setBlocked(policy.toggle())
-  }
-
-  function toggleEditable() {
-    setEditable((value) => !value)
-  }
+  })
 
   return (
     <Box
@@ -582,6 +602,9 @@ function StreamingControls() {
   const [convertedHTML, setConvertedHTML] = useState("")
   const [error, setError] = useState("")
   const stream = useRef<ActiveMarkdownStream | null>(null)
+  const scenarioRef = useRef(scenarioId)
+  const speedRef = useRef(speed)
+  const selectedPositionRef = useRef(selectedPosition)
 
   const connect = useDocumentPasteRegistration(setError, () => {
     const active = stream.current
@@ -589,55 +612,147 @@ function StreamingControls() {
     active?.abort.abort()
   })
 
-  const scenario =
-    localStreamingScenarios.find((item) => item.id === scenarioId) ??
-    localStreamingScenarios[0]
-
+  const scenario = getLocalStreamingScenario(scenarioId)
   const chunks = createMarkdownChunks(scenario.markdown)
 
-  function launchStream(startAt: number) {
-    stream.current?.abort.abort()
-    const abort = new AbortController()
-    let session: ActiveMarkdownStream | null = null
+  const [launchStream] = useState(
+    () =>
+      function launchStream(startAt: number) {
+        stream.current?.abort.abort()
+        const abort = new AbortController()
+        let session: ActiveMarkdownStream | null = null
 
-    const producer = createMarkdownProducer(
-      chunks,
-      abort.signal,
-      startAt,
-      Number(speed),
-      (position) => {
-        if (stream.current === session) setProgressPosition(position)
+        const chunks = createMarkdownChunks(
+          getLocalStreamingScenario(scenarioRef.current).markdown,
+        )
+
+        const producer = createMarkdownProducer(
+          chunks,
+          abort.signal,
+          startAt,
+          Number(speedRef.current),
+          (position) => {
+            if (stream.current === session) setProgressPosition(position)
+          },
+        )
+
+        session = { abort, producer }
+        stream.current = session
+        setStreamState("playing")
+        setStreaming("")
+        setProgressPosition(0)
+        setConvertedHTML("")
+        setError("")
+
+        void streamMarkdown(editor, producer.chunks, {
+          signal: abort.signal,
+          onProgress(source) {
+            if (stream.current === session) setStreaming(source)
+          },
+        })
+          .then(() => {
+            if (stream.current === session)
+              setConvertedHTML(exportDocument(editor, "html"))
+          })
+          .catch((cause: unknown) => {
+            if (stream.current === session)
+              setError(failureMessage(cause, "Markdown stream failed."))
+          })
+          .finally(() => {
+            if (stream.current !== session) return
+            stream.current = null
+            setStreamState("idle")
+          })
       },
+  )
+
+  const changeScenario = useStableCallback(function changeScenario(
+    event: ChangeEvent<HTMLSelectElement>,
+  ) {
+    const nextScenario = localStreamingScenarios.find(
+      (item) => item.id === event.currentTarget.value,
     )
 
-    session = { abort, producer }
-    stream.current = session
-    setStreamState("playing")
-    setStreaming("")
+    if (!nextScenario) return
+    scenarioRef.current = nextScenario.id
+    selectedPositionRef.current = 0
+    setScenarioId(nextScenario.id)
+    setSourceRevision((revision) => revision + 1)
+    setSelectedPosition(0)
     setProgressPosition(0)
+    setStreaming("")
     setConvertedHTML("")
     setError("")
+  })
 
-    void streamMarkdown(editor, producer.chunks, {
-      signal: abort.signal,
-      onProgress(source) {
-        if (stream.current === session) setStreaming(source)
-      },
-    })
-      .then(() => {
-        if (stream.current === session)
-          setConvertedHTML(exportDocument(editor, "html"))
-      })
-      .catch((cause: unknown) => {
-        if (stream.current === session)
-          setError(failureMessage(cause, "Markdown stream failed."))
-      })
-      .finally(() => {
-        if (stream.current !== session) return
-        stream.current = null
-        setStreamState("idle")
-      })
-  }
+  const changeSpeed = useStableCallback(function changeSpeed(
+    event: ChangeEvent<HTMLSelectElement>,
+  ) {
+    const nextSpeed = event.currentTarget.value
+    speedRef.current = nextSpeed
+    setSpeed(nextSpeed)
+    stream.current?.producer.setSpeed(Number(nextSpeed))
+  })
+
+  const changePosition = useStableCallback(function changePosition(
+    value: number | readonly number[],
+  ) {
+    const result = producerPositionSchema.safeParse(value)
+
+    if (!result.success) {
+      setError("Invalid producer position.")
+
+      return
+    }
+
+    const length = createMarkdownChunks(
+      getLocalStreamingScenario(scenarioRef.current).markdown,
+    ).length
+
+    const nextPosition = Math.max(0, Math.min(length, Math.round(result.data)))
+    selectedPositionRef.current = nextPosition
+    setSelectedPosition(nextPosition)
+  })
+
+  const previousChunk = useStableCallback(function previousChunk() {
+    const nextPosition = Math.max(0, selectedPositionRef.current - 1)
+    selectedPositionRef.current = nextPosition
+    setSelectedPosition(nextPosition)
+  })
+
+  const nextChunk = useStableCallback(function nextChunk() {
+    const length = createMarkdownChunks(
+      getLocalStreamingScenario(scenarioRef.current).markdown,
+    ).length
+
+    const nextPosition = Math.min(length, selectedPositionRef.current + 1)
+    selectedPositionRef.current = nextPosition
+    setSelectedPosition(nextPosition)
+  })
+
+  const launchSelectedStream = useStableCallback(
+    function launchSelectedStream() {
+      launchStream(selectedPositionRef.current)
+    },
+  )
+
+  const pauseStream = useStableCallback(function pauseStream() {
+    stream.current?.producer.pause()
+    setStreamState("paused")
+  })
+
+  const resumeStream = useStableCallback(function resumeStream() {
+    stream.current?.producer.resume()
+    setStreamState("playing")
+  })
+
+  const showRawSource = useStableCallback(function showRawSource() {
+    setPreviewMode("raw")
+  })
+
+  const showStreamProgress = useStableCallback(function showStreamProgress() {
+    setPreviewMode("progress")
+  })
 
   function cancelStream() {
     const active = stream.current
@@ -647,20 +762,6 @@ function StreamingControls() {
     active.abort.abort()
     setStreamState("idle")
     setError("Stream cancelled.")
-  }
-
-  function changePosition(value: number | readonly number[]) {
-    const result = producerPositionSchema.safeParse(value)
-
-    if (!result.success) {
-      setError("Invalid producer position.")
-
-      return
-    }
-
-    setSelectedPosition(
-      Math.max(0, Math.min(chunks.length, Math.round(result.data))),
-    )
   }
 
   return (
@@ -675,20 +776,7 @@ function StreamingControls() {
         id="public-document-stream-scenario"
         value={scenarioId}
         disabled={streamState !== "idle"}
-        onChange={(event) => {
-          const nextScenario = localStreamingScenarios.find(
-            (item) => item.id === event.currentTarget.value,
-          )
-
-          if (!nextScenario) return
-          setScenarioId(nextScenario.id)
-          setSourceRevision((revision) => revision + 1)
-          setSelectedPosition(0)
-          setProgressPosition(0)
-          setStreaming("")
-          setConvertedHTML("")
-          setError("")
-        }}
+        onChange={changeScenario}
       >
         {localStreamingScenarios.map((item) => (
           <option key={item.id} value={item.id}>
@@ -707,11 +795,7 @@ function StreamingControls() {
       <NativeSelect
         id="public-document-stream-speed"
         value={speed}
-        onChange={(event) => {
-          const nextSpeed = event.currentTarget.value
-          setSpeed(nextSpeed)
-          stream.current?.producer.setSpeed(Number(nextSpeed))
-        }}
+        onChange={changeSpeed}
       >
         <option value="80">Fast</option>
         <option value="180">Steady</option>
@@ -738,74 +822,33 @@ function StreamingControls() {
             ? "Producer playing"
             : "Producer ready"}
       </Box>
-      <Button
-        disabled={selectedPosition === 0}
-        onClick={() => {
-          setSelectedPosition((position) => Math.max(0, position - 1))
-        }}
-      >
+      <Button disabled={selectedPosition === 0} onClick={previousChunk}>
         Previous chunk
       </Button>
-      <Button
-        disabled={selectedPosition >= chunks.length}
-        onClick={() => {
-          setSelectedPosition((position) =>
-            Math.min(chunks.length, position + 1),
-          )
-        }}
-      >
+      <Button disabled={selectedPosition >= chunks.length} onClick={nextChunk}>
         Next chunk
       </Button>
-      <Button
-        disabled={streamState !== "idle"}
-        onClick={() => {
-          launchStream(selectedPosition)
-        }}
-      >
+      <Button disabled={streamState !== "idle"} onClick={launchSelectedStream}>
         Stream local Markdown
       </Button>
-      <Button
-        disabled={streamState === "idle"}
-        onClick={() => {
-          launchStream(selectedPosition)
-        }}
-      >
+      <Button disabled={streamState === "idle"} onClick={launchSelectedStream}>
         Restart at selected chunk
       </Button>
-      <Button
-        disabled={streamState !== "playing"}
-        onClick={() => {
-          stream.current?.producer.pause()
-          setStreamState("paused")
-        }}
-      >
+      <Button disabled={streamState !== "playing"} onClick={pauseStream}>
         Pause producer
       </Button>
-      <Button
-        disabled={streamState !== "paused"}
-        onClick={() => {
-          stream.current?.producer.resume()
-          setStreamState("playing")
-        }}
-      >
+      <Button disabled={streamState !== "paused"} onClick={resumeStream}>
         Resume producer
       </Button>
       <Button disabled={streamState === "idle"} onClick={cancelStream}>
         Cancel stream
       </Button>
-      <Button
-        aria-pressed={previewMode === "raw"}
-        onClick={() => {
-          setPreviewMode("raw")
-        }}
-      >
+      <Button aria-pressed={previewMode === "raw"} onClick={showRawSource}>
         Show raw source
       </Button>
       <Button
         aria-pressed={previewMode === "progress"}
-        onClick={() => {
-          setPreviewMode("progress")
-        }}
+        onClick={showStreamProgress}
       >
         Show stream progress
       </Button>
@@ -867,7 +910,10 @@ function MarkdownToLexicalControls() {
       clearTimeout(pendingConversion.current)
   })
 
-  function scheduleConversion(value: string) {
+  const handleMarkdownChange = useStableCallback(function handleMarkdownChange(
+    event: ChangeEvent<HTMLTextAreaElement>,
+  ) {
+    const value = event.target.value
     setMarkdown(value)
 
     if (pendingConversion.current !== null)
@@ -890,7 +936,7 @@ function MarkdownToLexicalControls() {
         setError(failureMessage(failure, "Markdown conversion failed."))
       }
     }, 250)
-  }
+  })
 
   return (
     <Stack ref={connect}>
@@ -900,9 +946,7 @@ function MarkdownToLexicalControls() {
       <Textarea
         id="public-document-markdown-to-lexical-source"
         value={markdown}
-        onChange={(event) => {
-          scheduleConversion(event.target.value)
-        }}
+        onChange={handleMarkdownChange}
       />
       {error ? <Text role="alert">{error}</Text> : null}
     </Stack>

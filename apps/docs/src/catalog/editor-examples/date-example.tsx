@@ -9,7 +9,7 @@ import {
   EditorToolbar,
 } from "@yopem-ui/editor"
 import { EditorDateControls, EditorDateExtension } from "@yopem-ui/editor/date"
-import { useState } from "react"
+import { useReducer } from "react"
 
 const extensions = [EditorDateExtension]
 
@@ -45,11 +45,14 @@ const initialState = JSON.stringify({
 })
 
 export function DateExample() {
-  const [editable, setEditable] = useState(true)
+  const [editable, toggleEditable] = useReducer(
+    (current: boolean) => !current,
+    true,
+  )
 
   return (
     <Stack>
-      <Button onClick={() => setEditable((current) => !current)}>
+      <Button onClick={toggleEditable}>
         {editable ? "Read only" : "Edit document"}
       </Button>
       <EditorRoot

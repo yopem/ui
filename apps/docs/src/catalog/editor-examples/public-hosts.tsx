@@ -1,5 +1,6 @@
 "use client"
 
+import { useStableCallback } from "@base-ui/utils/useStableCallback"
 import { Box } from "@registry/components/ui/box"
 import { Button } from "@registry/components/ui/button"
 import { Stack } from "@registry/components/ui/stack"
@@ -15,7 +16,7 @@ import {
   useEditor,
 } from "@yopem-ui/editor"
 import { $getRoot, HISTORY_PUSH_TAG } from "lexical"
-import { Suspense, use, useState } from "react"
+import { Suspense, use, useState, type ComponentProps } from "react"
 
 function paragraphState(text: string) {
   return JSON.stringify({
@@ -69,14 +70,18 @@ export function ControlledDocumentActions() {
     editor.focus(undefined, { defaultSelection })
   }
 
+  const handleReplaceValue = useStableCallback(function handleReplaceValue() {
+    replace("Replacement document", "rootEnd")
+  })
+
+  const handleResetEditor = useStableCallback(function handleResetEditor() {
+    replace("", "rootStart")
+  })
+
   return (
     <>
-      <ToolbarButton onClick={() => replace("Replacement document", "rootEnd")}>
-        Replace value
-      </ToolbarButton>
-      <ToolbarButton onClick={() => replace("", "rootStart")}>
-        Reset editor
-      </ToolbarButton>
+      <ToolbarButton onClick={handleReplaceValue}>Replace value</ToolbarButton>
+      <ToolbarButton onClick={handleResetEditor}>Reset editor</ToolbarButton>
     </>
   )
 }
@@ -119,33 +124,57 @@ export function MultipleEditorsExample() {
   const [firstText, setFirstText] = useState("First document")
   const [secondText, setSecondText] = useState("Second document")
 
+  const handleFirstChange = useStableCallback(function handleFirstChange(
+    _state: Parameters<
+      NonNullable<ComponentProps<typeof Editor>["onChange"]>
+    >[0],
+    editor: Parameters<
+      NonNullable<ComponentProps<typeof Editor>["onChange"]>
+    >[1],
+  ) {
+    setFirstText(
+      editor.getEditorState().read(() => $getRoot().getTextContent()),
+    )
+  })
+
+  const handleToggleReadOnly = useStableCallback(
+    function handleToggleReadOnly() {
+      setReadOnly((current) => !current)
+    },
+  )
+
+  const handleSecondChange = useStableCallback(function handleSecondChange(
+    _state: Parameters<
+      NonNullable<ComponentProps<typeof Editor>["onChange"]>
+    >[0],
+    editor: Parameters<
+      NonNullable<ComponentProps<typeof Editor>["onChange"]>
+    >[1],
+  ) {
+    setSecondText(
+      editor.getEditorState().read(() => $getRoot().getTextContent()),
+    )
+  })
+
   return (
     <Stack>
       <Text>Each root owns its content, selection, and local history.</Text>
       <Editor
         ariaLabel="First independent editor"
         initialState={firstState}
-        onChange={(_state, editor) =>
-          setFirstText(
-            editor.getEditorState().read(() => $getRoot().getTextContent()),
-          )
-        }
+        onChange={handleFirstChange}
       />
       <Box render={<output />} aria-label="First document text">
         {firstText}
       </Box>
-      <Button onClick={() => setReadOnly(!readOnly)} aria-pressed={readOnly}>
+      <Button onClick={handleToggleReadOnly} aria-pressed={readOnly}>
         Toggle second read only
       </Button>
       <Editor
         ariaLabel="Second independent editor"
         initialState={secondState}
         editable={!readOnly}
-        onChange={(_state, editor) =>
-          setSecondText(
-            editor.getEditorState().read(() => $getRoot().getTextContent()),
-          )
-        }
+        onChange={handleSecondChange}
       />
       <Box render={<output />} aria-label="Second document text">
         {secondText}

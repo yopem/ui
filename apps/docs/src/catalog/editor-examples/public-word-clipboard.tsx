@@ -5,6 +5,7 @@ import type {
   WordClipboardImageResolver,
 } from "@yopem-ui/editor/word-clipboard-model"
 
+import { useStableCallback } from "@base-ui/utils/useStableCallback"
 import { Box } from "@registry/components/ui/box"
 import { Button } from "@registry/components/ui/button"
 import { Field, FieldLabel } from "@registry/components/ui/field"
@@ -34,7 +35,7 @@ import {
   EditorWordClipboardExtension,
   registerWordClipboardPaste,
 } from "@yopem-ui/editor/word-clipboard"
-import { useId, useState, type FormEvent } from "react"
+import { useId, useReducer, useState, type FormEvent } from "react"
 import { z } from "zod"
 
 const extensions = [
@@ -130,7 +131,9 @@ function WordImageLookup({
   const [error, setError] = useState("")
   const [configured, setConfigured] = useState(false)
 
-  function configure(event: FormEvent<HTMLFormElement>) {
+  const configure = useStableCallback(function configure(
+    event: FormEvent<HTMLFormElement>,
+  ) {
     if (event.defaultPrevented) return
     event.preventDefault()
     const fields = new FormData(event.currentTarget)
@@ -161,7 +164,7 @@ function WordImageLookup({
         "Use an approved HTTPS image URL without credentials, queries, or fragments.",
       )
     }
-  }
+  })
 
   return (
     <Form onSubmit={configure}>
@@ -245,7 +248,11 @@ export function PublicWordClipboardExample({
   imageMappings,
 }: PublicWordClipboardExampleProps) {
   const titleId = useId()
-  const [editable, setEditable] = useState(true)
+
+  const [editable, toggleEditable] = useReducer(
+    (current: boolean) => !current,
+    true,
+  )
 
   const [session, setSession] = useState(() => ({
     generation: 0,
@@ -258,10 +265,6 @@ export function PublicWordClipboardExample({
       generation: current.generation + 1,
       resolveImage,
     }))
-  }
-
-  function toggleEditable() {
-    setEditable((current) => !current)
   }
 
   return (

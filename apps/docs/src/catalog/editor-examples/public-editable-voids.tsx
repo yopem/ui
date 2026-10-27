@@ -19,7 +19,7 @@ import {
   EditorEditableCardInsertButton,
 } from "@yopem-ui/editor/editable-card"
 import { $getRoot, $getSelection } from "lexical"
-import { useState, useSyncExternalStore } from "react"
+import { useReducer, useState, useSyncExternalStore } from "react"
 
 const extensions = [EditorEditableCardExtension]
 
@@ -63,11 +63,10 @@ function EditableCardOuterState() {
 }
 
 export function PublicEditableVoidsExample() {
-  const [editable, setEditable] = useState(true)
-
-  function toggleEditable() {
-    setEditable(!editable)
-  }
+  const [editable, toggleEditable] = useReducer(
+    (current: boolean) => !current,
+    true,
+  )
 
   return (
     <Stack xstyle={styles.root}>

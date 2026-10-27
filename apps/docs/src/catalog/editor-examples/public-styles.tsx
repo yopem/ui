@@ -1,5 +1,8 @@
 "use client"
 
+import type { MouseEvent } from "react"
+
+import { useStableCallback } from "@base-ui/utils/useStableCallback"
 import { $generateHtmlFromNodes, $generateNodesFromDOM } from "@lexical/html"
 import { Button } from "@registry/components/ui/button"
 import { Wrap } from "@registry/components/ui/wrap"
@@ -22,30 +25,34 @@ import { useState } from "react"
 
 const extensions = [EditorBlockPresentationExtension]
 
+function preventToolbarMouseDown(event: MouseEvent<HTMLButtonElement>) {
+  event.preventDefault()
+}
+
 function PublicStylesRoundtrip() {
   const editor = useEditor()
   const [savedJSON, setSavedJSON] = useState("")
   const [savedHTML, setSavedHTML] = useState("")
 
-  function saveJSON() {
+  const saveJSON = useStableCallback(function saveJSON() {
     setSavedJSON(JSON.stringify(editor.getEditorState().toJSON()))
-  }
+  })
 
-  function loadJSON() {
+  const loadJSON = useStableCallback(function loadJSON() {
     if (!savedJSON) return
     editor.setEditorState(editor.parseEditorState(savedJSON), {
       tag: HISTORY_PUSH_TAG,
     })
     editor.focus()
-  }
+  })
 
-  function saveHTML() {
+  const saveHTML = useStableCallback(function saveHTML() {
     setSavedHTML(
       editor.getEditorState().read(() => $generateHtmlFromNodes(editor)),
     )
-  }
+  })
 
-  function loadHTML() {
+  const loadHTML = useStableCallback(function loadHTML() {
     if (!savedHTML) return
     const view = editor.getRootElement()?.ownerDocument.defaultView
 
@@ -66,32 +73,26 @@ function PublicStylesRoundtrip() {
       { tag: HISTORY_PUSH_TAG },
     )
     editor.focus()
-  }
+  })
 
   return (
     <Wrap>
-      <Button
-        onMouseDown={(event) => event.preventDefault()}
-        onClick={saveJSON}
-      >
+      <Button onMouseDown={preventToolbarMouseDown} onClick={saveJSON}>
         Save styled JSON
       </Button>
       <Button
         disabled={!savedJSON}
-        onMouseDown={(event) => event.preventDefault()}
+        onMouseDown={preventToolbarMouseDown}
         onClick={loadJSON}
       >
         Load styled JSON
       </Button>
-      <Button
-        onMouseDown={(event) => event.preventDefault()}
-        onClick={saveHTML}
-      >
+      <Button onMouseDown={preventToolbarMouseDown} onClick={saveHTML}>
         Save styled HTML
       </Button>
       <Button
         disabled={!savedHTML}
-        onMouseDown={(event) => event.preventDefault()}
+        onMouseDown={preventToolbarMouseDown}
         onClick={loadHTML}
       >
         Load styled HTML

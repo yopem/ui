@@ -5,6 +5,7 @@ import type {
   EditorCollaborationController,
 } from "@yopem-ui/editor/collaboration"
 
+import { useStableCallback } from "@base-ui/utils/useStableCallback"
 import { Box } from "@registry/components/ui/box"
 import { Button } from "@registry/components/ui/button"
 import { Field, FieldLabel } from "@registry/components/ui/field"
@@ -24,7 +25,7 @@ import {
   EditorCollaborationStatus,
   useEditorCollaboration,
 } from "@yopem-ui/editor/collaboration"
-import { type FormEvent, useId, useState } from "react"
+import { type FormEvent, useId, useReducer, useState } from "react"
 import { z } from "zod"
 
 const hostSettingsSchema = z.strictObject({
@@ -102,8 +103,21 @@ function CollaborationClient({
   name: "Client A" | "Client B"
 }) {
   const [extensions] = useState(() => [controller.extension])
-  const [editable, setEditable] = useState(true)
+
+  const [editable, toggleEditable] = useReducer(
+    (current: boolean) => !current,
+    true,
+  )
+
   const snapshot = useEditorCollaboration(controller)
+
+  const handleDisconnect = useStableCallback(function handleDisconnect() {
+    controller.provider.disconnect()
+  })
+
+  const handleReconnect = useStableCallback(function handleReconnect() {
+    void controller.provider.reconnect().catch(() => undefined)
+  })
 
   return (
     <Box render={<section aria-label={name} />}>
@@ -123,7 +137,7 @@ function CollaborationClient({
                   snapshot.status === "idle" ||
                   snapshot.status === "disconnected"
                 }
-                onClick={() => controller.provider.disconnect()}
+                onClick={handleDisconnect}
               >
                 Disconnect {name}
               </Button>
@@ -132,16 +146,14 @@ function CollaborationClient({
                 disabled={
                   !["disconnected", "error", "denied"].includes(snapshot.status)
                 }
-                onClick={() => {
-                  void controller.provider.reconnect().catch(() => undefined)
-                }}
+                onClick={handleReconnect}
               >
                 Reconnect {name}
               </Button>
               <Button
                 type="button"
                 aria-pressed={!editable}
-                onClick={() => setEditable((current) => !current)}
+                onClick={toggleEditable}
               >
                 Toggle {name} read only
               </Button>
@@ -164,12 +176,14 @@ export function PublicCollaborationExample() {
   const [clients, setClients] = useState<CollaborationClients | null>(null)
   const formId = useId()
 
-  function resetApproval() {
+  const resetApproval = useStableCallback(function resetApproval() {
     setHostReady(false)
     setError(false)
-  }
+  })
 
-  function connectBoth(event: FormEvent<HTMLFormElement>) {
+  const connectBoth = useStableCallback(function connectBoth(
+    event: FormEvent<HTMLFormElement>,
+  ) {
     event.preventDefault()
 
     if (!hostReady) {
@@ -188,7 +202,12 @@ export function PublicCollaborationExample() {
     } catch {
       setError(true)
     }
-  }
+  })
+
+  const handleHostSetup = useStableCallback(function handleHostSetup() {
+    setHostReady((current) => !current)
+    setError(false)
+  })
 
   return (
     <Box data-testid="public-collaboration-example">
@@ -261,10 +280,7 @@ export function PublicCollaborationExample() {
               <Button
                 type="button"
                 aria-pressed={hostReady}
-                onClick={() => {
-                  setHostReady((current) => !current)
-                  setError(false)
-                }}
+                onClick={handleHostSetup}
               >
                 Confirm host setup
               </Button>

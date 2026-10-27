@@ -12,7 +12,7 @@ import {
   EditorColumnsControls,
   EditorColumnsExtension,
 } from "@yopem-ui/editor/columns"
-import { useState } from "react"
+import { useReducer } from "react"
 
 const extensions = [EditorColumnsExtension]
 
@@ -93,11 +93,14 @@ const initialState = JSON.stringify({
 })
 
 export function ColumnsExample() {
-  const [editable, setEditable] = useState(true)
+  const [editable, toggleEditable] = useReducer(
+    (current: boolean) => !current,
+    true,
+  )
 
   return (
     <Stack>
-      <Button onClick={() => setEditable((current) => !current)}>
+      <Button onClick={toggleEditable}>
         {editable ? "Read only" : "Edit document"}
       </Button>
       <EditorRoot

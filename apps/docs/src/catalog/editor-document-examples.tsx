@@ -1,5 +1,8 @@
 "use client"
 
+import type { ChangeEvent, Dispatch, MouseEvent, SetStateAction } from "react"
+
+import { useStableCallback } from "@base-ui/utils/useStableCallback"
 import { HorizontalRuleExtension } from "@lexical/extension"
 import { Box } from "@registry/components/ui/box"
 import { Button } from "@registry/components/ui/button"
@@ -53,7 +56,7 @@ function DocumentControls({
   setReadonly,
 }: {
   readonly: boolean
-  setReadonly: (value: boolean) => void
+  setReadonly: Dispatch<SetStateAction<boolean>>
 }) {
   const editor = useEditor()
 
@@ -71,6 +74,8 @@ function DocumentControls({
   const [streaming, setStreaming] = useState("")
   const [controller, setController] = useState<AbortController | null>(null)
   const stream = useRef<AbortController | null>(null)
+  const markdownRef = useRef(markdown)
+  const htmlSourceRef = useRef(htmlSource)
 
   const [connect] = useState(
     () =>
@@ -97,7 +102,7 @@ function DocumentControls({
     }
   }
 
-  function exportOutputs() {
+  const exportOutputs = useStableCallback(function exportOutputs() {
     try {
       const nextHTML = exportDocument(editor, "html")
       setHTML(nextHTML)
@@ -106,22 +111,22 @@ function DocumentControls({
     } catch (failure) {
       setError(failure instanceof Error ? failure.message : "Export failed.")
     }
-  }
+  })
 
-  async function startStream() {
+  const startStream = useStableCallback(async function startStream() {
     const abort = new AbortController()
     stream.current = abort
     setController(abort)
     setStreaming("")
 
     async function* chunks() {
-      for (let offset = 0; offset < markdown.length; offset += 4) {
+      for (let offset = 0; offset < markdownRef.current.length; offset += 4) {
         await new Promise((resolve) => {
           setTimeout(resolve, 100)
         })
 
         if (abort.signal.aborted) return
-        yield markdown.slice(offset, offset + 4)
+        yield markdownRef.current.slice(offset, offset + 4)
       }
     }
 
@@ -137,7 +142,57 @@ function DocumentControls({
       stream.current = null
       setController(null)
     }
-  }
+  })
+
+  const handleMarkdownChange = useStableCallback(function handleMarkdownChange(
+    event: ChangeEvent<HTMLTextAreaElement>,
+  ) {
+    markdownRef.current = event.target.value
+    setMarkdown(event.target.value)
+  })
+
+  const importMarkdown = useStableCallback(function importMarkdown() {
+    run(() => importDocument(editor, markdownRef.current, "markdown"))
+  })
+
+  const handleHTMLSourceChange = useStableCallback(
+    function handleHTMLSourceChange(event: ChangeEvent<HTMLTextAreaElement>) {
+      htmlSourceRef.current = event.target.value
+      setHTMLSource(event.target.value)
+    },
+  )
+
+  const importHTML = useStableCallback(function importHTML() {
+    run(() => importDocument(editor, htmlSourceRef.current, "html"))
+  })
+
+  const downloadMarkdown = useStableCallback(function downloadMarkdown(
+    event: MouseEvent<HTMLElement>,
+  ) {
+    run(() =>
+      downloadDocument(editor, "markdown", event.currentTarget.ownerDocument),
+    )
+  })
+
+  const downloadHTML = useStableCallback(function downloadHTML(
+    event: MouseEvent<HTMLElement>,
+  ) {
+    run(() =>
+      downloadDocument(editor, "html", event.currentTarget.ownerDocument),
+    )
+  })
+
+  const cancelStream = useStableCallback(function cancelStream() {
+    stream.current?.abort()
+  })
+
+  const undoImport = useStableCallback(function undoImport() {
+    editor.dispatchCommand(UNDO_COMMAND, undefined)
+  })
+
+  const toggleReadonly = useStableCallback(function toggleReadonly() {
+    setReadonly((current) => !current)
+  })
 
   return (
     <Stack ref={connect}>
@@ -145,17 +200,11 @@ function DocumentControls({
       <Textarea
         id="document-markdown-source"
         value={markdown}
-        onChange={(event) => {
-          setMarkdown(event.target.value)
-        }}
+        onChange={handleMarkdownChange}
       />
       <Button
         disabled={readonly || controller !== null}
-        onClick={() => {
-          run(() => {
-            importDocument(editor, markdown, "markdown")
-          })
-        }}
+        onClick={importMarkdown}
       >
         Import Markdown
       </Button>
@@ -163,57 +212,18 @@ function DocumentControls({
       <Textarea
         id="document-html-source"
         value={htmlSource}
-        onChange={(event) => {
-          setHTMLSource(event.target.value)
-        }}
+        onChange={handleHTMLSourceChange}
       />
-      <Button
-        disabled={readonly || controller !== null}
-        onClick={() => {
-          run(() => {
-            importDocument(editor, htmlSource, "html")
-          })
-        }}
-      >
+      <Button disabled={readonly || controller !== null} onClick={importHTML}>
         Import HTML
       </Button>
       <Button onClick={exportOutputs}>Export document</Button>
-      <Button
-        onClick={(event) => {
-          run(() => {
-            downloadDocument(
-              editor,
-              "markdown",
-              event.currentTarget.ownerDocument,
-            )
-          })
-        }}
-      >
-        Download Markdown
-      </Button>
-      <Button
-        onClick={(event) => {
-          run(() => {
-            downloadDocument(editor, "html", event.currentTarget.ownerDocument)
-          })
-        }}
-      >
-        Download HTML
-      </Button>
-      <Button
-        disabled={readonly || controller !== null}
-        onClick={() => {
-          void startStream()
-        }}
-      >
+      <Button onClick={downloadMarkdown}>Download Markdown</Button>
+      <Button onClick={downloadHTML}>Download HTML</Button>
+      <Button disabled={readonly || controller !== null} onClick={startStream}>
         Stream Markdown
       </Button>
-      <Button
-        disabled={controller === null}
-        onClick={() => {
-          controller?.abort()
-        }}
-      >
+      <Button disabled={controller === null} onClick={cancelStream}>
         Cancel stream
       </Button>
       <Label htmlFor="document-stream-output">Streaming output</Label>
@@ -223,20 +233,10 @@ function DocumentControls({
         value={streaming}
         aria-live="polite"
       />
-      <Button
-        disabled={readonly || controller !== null}
-        onClick={() => {
-          editor.dispatchCommand(UNDO_COMMAND, undefined)
-        }}
-      >
+      <Button disabled={readonly || controller !== null} onClick={undoImport}>
         Undo import
       </Button>
-      <Button
-        disabled={controller !== null}
-        onClick={() => {
-          setReadonly(!readonly)
-        }}
-      >
+      <Button disabled={controller !== null} onClick={toggleReadonly}>
         Toggle readonly
       </Button>
       <Label htmlFor="document-markdown-output">Markdown output</Label>

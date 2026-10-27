@@ -3,6 +3,7 @@
 import type { EditorState } from "lexical"
 import type { FormEvent } from "react"
 
+import { useStableCallback } from "@base-ui/utils/useStableCallback"
 import { Box } from "@registry/components/ui/box"
 import { Button } from "@registry/components/ui/button"
 import { CheckboxGroup } from "@registry/components/ui/checkbox-group"
@@ -47,6 +48,8 @@ const labelOptions = [
 
 const labelExtensions = [createEditorLabelsExtension(labelOptions)]
 
+const defaultLabels = ["Editor"]
+
 const styles = stylex.create({
   root: {
     gap: `calc(${tokens["--spacing"]} * 4)`,
@@ -58,9 +61,9 @@ export function PublicLabelsExample() {
   const [labels, setLabels] = useState<readonly string[]>([])
   const [readOnly, setReadOnly] = useState(false)
 
-  function syncLabels(state: EditorState) {
+  const syncLabels = useStableCallback(function syncLabels(state: EditorState) {
     setLabels(state.read(() => $getEditorLabels()))
-  }
+  })
 
   return (
     <Box
@@ -105,15 +108,17 @@ function PublicLabelsForm({
   const errorId = useId()
   const [error, setError] = useState("")
 
-  function toggleReadOnly() {
+  const toggleReadOnly = useStableCallback(function toggleReadOnly() {
     onReadOnlyChange(!readOnly)
-  }
+  })
 
-  function makeEditable() {
+  const makeEditable = useStableCallback(function makeEditable() {
     onReadOnlyChange(false)
-  }
+  })
 
-  function submit(event: FormEvent<HTMLFormElement>) {
+  const submit = useStableCallback(function submit(
+    event: FormEvent<HTMLFormElement>,
+  ) {
     event.preventDefault()
 
     if (readOnly || !editor.isEditable()) return
@@ -143,7 +148,7 @@ function PublicLabelsForm({
     })
 
     setError(applied ? "" : "Labels could not be applied")
-  }
+  })
 
   return (
     <Stack>
@@ -198,7 +203,10 @@ function PublicLabelsForm({
 
 export function LabelOptionsExample() {
   return (
-    <CheckboxGroup aria-label="Custom label options" defaultValue={["Editor"]}>
+    <CheckboxGroup
+      aria-label="Custom label options"
+      defaultValue={defaultLabels}
+    >
       <EditorLabelsOption value="Editor" />
       <EditorLabelsOption value="Dialog">Dialog label</EditorLabelsOption>
       <EditorLabelsOption value="Form" disabled>
