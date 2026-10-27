@@ -26,6 +26,7 @@
     "test:e2e": "bun run build && PLAYWRIGHT_PRODUCTION=1 playwright test",
     "test:editor-callout-clipboard": "bun tests/editor-callout-clipboard/run.mjs",
     "test:editor-checklist": "node tests/editor-checklist/run.mjs",
+    "test:editor-native-providers-local": "TSX_TSCONFIG_PATH=./tests/tsconfig.json node --import tsx ./tests/e2e/fixtures/native-providers-local/run.ts",
     "test:a11y": "bun run build && FULL_A11Y=1 PLAYWRIGHT_PRODUCTION=1 playwright test --project=chromium --grep @a11y",
     "lint": "oxlint lint .",
     "fmt": "oxfmt fmt .",

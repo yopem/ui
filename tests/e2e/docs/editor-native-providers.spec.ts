@@ -5,6 +5,12 @@ import {
   type Locator,
   type Page,
 } from "@playwright/test"
+import {
+  installHocuspocusTrafficGate,
+  installNativeRtcProbe,
+  readNativeRtcEvidence,
+  watchNativeGrantResponse,
+} from "@workspace/tests/e2e/fixtures/native-providers-local/native-provider-assertions"
 
 interface NativeIdentity {
   cookieName: string
@@ -31,6 +37,7 @@ const fixtureInputs = [
   "EDITOR_NATIVE_DOCS_URL",
   "EDITOR_NATIVE_GRANT_URL",
   "EDITOR_NATIVE_SOCKET_URL",
+  "EDITOR_NATIVE_SIGNALING_URLS",
   "EDITOR_NATIVE_ROOM_ID",
   "EDITOR_NATIVE_SWITCH_ROOM_ID",
   "EDITOR_NATIVE_DENIED_ROOM_ID",
@@ -69,6 +76,7 @@ function readNativeFixture(): NativeProviderFixture | undefined {
   const docsUrl = process.env.EDITOR_NATIVE_DOCS_URL
   const grantUrl = process.env.EDITOR_NATIVE_GRANT_URL
   const socketUrl = process.env.EDITOR_NATIVE_SOCKET_URL
+  const signalingUrls = process.env.EDITOR_NATIVE_SIGNALING_URLS
   const roomId = process.env.EDITOR_NATIVE_ROOM_ID
   const switchRoomId = process.env.EDITOR_NATIVE_SWITCH_ROOM_ID
   const deniedRoomId = process.env.EDITOR_NATIVE_DENIED_ROOM_ID
@@ -82,6 +90,7 @@ function readNativeFixture(): NativeProviderFixture | undefined {
     !docsUrl ||
     !grantUrl ||
     !socketUrl ||
+    !signalingUrls?.trim() ||
     !roomId ||
     !switchRoomId ||
     !deniedRoomId ||
@@ -93,7 +102,7 @@ function readNativeFixture(): NativeProviderFixture | undefined {
     docsUrl,
     grantUrl,
     socketUrl,
-    signalingUrls: process.env.EDITOR_NATIVE_SIGNALING_URLS ?? "",
+    signalingUrls,
     roomId,
     switchRoomId,
     deniedRoomId,
@@ -131,17 +140,49 @@ function assertHostUrls(fixture: NativeProviderFixture) {
   socketOrigin.protocol = "https:"
 
   expect(docs.protocol).toBe("https:")
+  expect(docs.hostname).toBe("127.0.0.1")
+  expect(docs.port).toBe("3443")
   expect(docs.pathname).toBe("/editor/examples")
   expect(docs.hash).toBe("#native-collaboration")
+  expect(docs.username).toBe("")
+  expect(docs.password).toBe("")
+  expect(docs.search).toBe("")
   expect(grant.protocol).toBe("https:")
   expect(grant.origin).toBe(docs.origin)
+  expect(grant.pathname).toBe("/api/native-grant")
+  expect(grant.username).toBe("")
+  expect(grant.password).toBe("")
+  expect(grant.search).toBe("")
+  expect(grant.hash).toBe("")
   expect(socket.protocol).toBe("wss:")
+  expect(socket.origin).toBe("wss://127.0.0.1:3443")
+  expect(socket.pathname).toBe("/native-collaboration/socket")
+  expect(socket.username).toBe("")
+  expect(socket.password).toBe("")
+  expect(socket.search).toBe("")
+  expect(socket.hash).toBe("")
   expect(socketOrigin.origin).toBe(docs.origin)
 
-  for (const value of fixture.signalingUrls
+  const signalingUrls = fixture.signalingUrls
     .split(",")
-    .map((url) => url.trim())) {
-    if (value) expect(new URL(value).protocol).toBe("wss:")
+    .map((url) => url.trim())
+    .filter(Boolean)
+
+  expect(signalingUrls.length).toBeGreaterThan(0)
+
+  for (const value of signalingUrls) {
+    const signaling = new URL(value)
+    const signalingOrigin = new URL(signaling.href)
+    signalingOrigin.protocol = "https:"
+
+    expect(signaling.protocol).toBe("wss:")
+    expect(signaling.origin).toBe(socket.origin)
+    expect(signalingOrigin.origin).toBe(docs.origin)
+    expect(signaling.pathname).toBe("/signaling")
+    expect(signaling.username).toBe("")
+    expect(signaling.password).toBe("")
+    expect(signaling.search).toBe("")
+    expect(signaling.hash).toBe("")
   }
 }
 
@@ -188,8 +229,15 @@ async function fillConnectionFields(
   identity: NativeIdentity,
   roomId: string,
   displayName: string,
+  requestedPermission: "read" | "write" = "write",
 ) {
   await region.getByLabel("Room ID").fill(roomId)
+  await region
+    .getByRole("button", { name: "Apply room ID", exact: true })
+    .click()
+  await expect(
+    region.getByText(`Active room ID: ${roomId}`, { exact: true }),
+  ).toBeVisible()
   await region.getByLabel("HTTPS grant endpoint").fill(fixture.grantUrl)
   await region.getByLabel("WSS Hocuspocus endpoint").fill(fixture.socketUrl)
   await region.getByLabel("Host CSRF token").fill(identity.csrf)
@@ -197,6 +245,14 @@ async function fillConnectionFields(
     .getByLabel("Optional WSS signaling URLs")
     .fill(fixture.signalingUrls)
   await region.getByLabel("Requested display name").fill(displayName)
+
+  const readOnlyRequest = region.getByRole("checkbox", {
+    name: "Request read-only access",
+    exact: true,
+  })
+
+  if (requestedPermission === "read") await readOnlyRequest.check()
+  else await readOnlyRequest.uncheck()
 }
 
 function isCsrfInputEmpty(region: Locator) {
@@ -214,8 +270,16 @@ async function connectToRoom(
   identity: NativeIdentity,
   roomId: string,
   displayName: string,
+  requestedPermission: "read" | "write" = "write",
 ) {
-  await fillConnectionFields(region, fixture, identity, roomId, displayName)
+  await fillConnectionFields(
+    region,
+    fixture,
+    identity,
+    roomId,
+    displayName,
+    requestedPermission,
+  )
   await region
     .getByRole("button", { name: "Connect to host", exact: true })
     .click()
@@ -246,6 +310,14 @@ async function connectToRoom(
     name: "Native collaboration editor",
     exact: true,
   })
+}
+
+async function expectNoUnconfirmedUpdates(region: Locator) {
+  await expect(
+    region.getByText(
+      /Hocuspocus socket:\s*connected;\s*authenticated:\s*true;\s*Yjs-synced:\s*true;\s*unconfirmed updates:\s*0\./,
+    ),
+  ).toBeVisible({ timeout: 30_000 })
 }
 
 async function expectConnected(region: Locator) {
@@ -280,9 +352,9 @@ function watchSocketCloses(page: Page, socketUrl: string) {
   }
 }
 
-test("native providers sync, persist, and switch rooms", async ({
+test("native providers sync through WebRTC, reopen Hocuspocus in-memory state, and switch rooms", async ({
   browser,
-}) => {
+}, testInfo) => {
   const fixture = requireNativeFixture()
 
   if (!fixture) return
@@ -301,10 +373,26 @@ test("native providers sync, persist, and switch rooms", async ({
     fixture.writerB,
   )
 
+  let writerContextsClosed = false
+
   try {
     const pageA = await contextA.newPage()
     const pageB = await contextB.newPage()
-    const closedSocketCount = watchSocketCloses(pageA, fixture.socketUrl)
+    await pageA.addInitScript(installNativeRtcProbe)
+    await pageB.addInitScript(installNativeRtcProbe)
+
+    const trafficGateA = await installHocuspocusTrafficGate(
+      pageA,
+      fixture.socketUrl,
+    )
+
+    const trafficGateB = await installHocuspocusTrafficGate(
+      pageB,
+      fixture.socketUrl,
+    )
+
+    const closedSocketCountA = watchSocketCloses(pageA, fixture.socketUrl)
+    const closedSocketCountB = watchSocketCloses(pageB, fixture.socketUrl)
     const regionA = await openNativeExample(pageA, fixture.docsUrl)
     const regionB = await openNativeExample(pageB, fixture.docsUrl)
 
@@ -328,11 +416,97 @@ test("native providers sync, persist, and switch rooms", async ({
     await expectConnected(regionB)
     await expect(editorA).toHaveAttribute("contenteditable", "true")
     await expect(editorB).toHaveAttribute("contenteditable", "true")
+    await expect(editorA).toHaveText(
+      `Authoritative Lexical seed for ${fixture.roomId}`,
+    )
+    await expect(editorB).toHaveText(
+      `Authoritative Lexical seed for ${fixture.roomId}`,
+    )
+    await expect
+      .poll(
+        async () => {
+          const [evidenceA, evidenceB] = await Promise.all([
+            readNativeRtcEvidence(pageA),
+            readNativeRtcEvidence(pageB),
+          ])
 
-    await editorA.fill("Writer A update")
-    await expect(editorB).toHaveText("Writer A update", { timeout: 30_000 })
+          return (
+            evidenceA.connectedPeerConnections > 0 &&
+            evidenceA.openDataChannels > 0 &&
+            evidenceA.dataChannelStats > 0 &&
+            evidenceB.connectedPeerConnections > 0 &&
+            evidenceB.openDataChannels > 0 &&
+            evidenceB.dataChannelStats > 0
+          )
+        },
+        { timeout: 30_000 },
+      )
+      .toBe(true)
+
+    const [rtcBaselineA, rtcBaselineB] = await Promise.all([
+      readNativeRtcEvidence(pageA),
+      readNativeRtcEvidence(pageB),
+    ])
+
+    const closedBeforeGateA = closedSocketCountA()
+    const closedBeforeGateB = closedSocketCountB()
+    const rtcOnlyUpdate = `WebRTC-only update ${Date.now()}`
+
+    trafficGateA.block()
+    trafficGateB.block()
+    expect(trafficGateA.isBlocking()).toBe(true)
+    expect(trafficGateB.isBlocking()).toBe(true)
+    await editorA.fill(rtcOnlyUpdate)
+    await expect(editorB).toHaveText(rtcOnlyUpdate, { timeout: 30_000 })
+    await expect
+      .poll(
+        async () => {
+          const [evidenceA, evidenceB] = await Promise.all([
+            readNativeRtcEvidence(pageA),
+            readNativeRtcEvidence(pageB),
+          ])
+
+          return (
+            evidenceA.bytesSent > rtcBaselineA.bytesSent &&
+            evidenceB.bytesReceived > rtcBaselineB.bytesReceived &&
+            trafficGateA.suppressedClientMessages() > 0
+          )
+        },
+        { timeout: 30_000 },
+      )
+      .toBe(true)
+    await expectConnected(regionA)
+    await expectConnected(regionB)
+    expect(closedSocketCountA()).toBe(closedBeforeGateA)
+    expect(closedSocketCountB()).toBe(closedBeforeGateB)
+
+    const [rtcAfterA, rtcAfterB] = await Promise.all([
+      readNativeRtcEvidence(pageA),
+      readNativeRtcEvidence(pageB),
+    ])
+
+    await testInfo.attach("native-rtc-isolated-update", {
+      body: JSON.stringify({
+        writerA: { before: rtcBaselineA, after: rtcAfterA },
+        writerB: { before: rtcBaselineB, after: rtcAfterB },
+        heldHocuspocusMessages: {
+          writerA: trafficGateA.suppressedClientMessages(),
+          writerB: trafficGateB.suppressedClientMessages(),
+        },
+        closedSockets: {
+          writerA: closedSocketCountA(),
+          writerB: closedSocketCountB(),
+        },
+      }),
+      contentType: "application/json",
+    })
+
+    trafficGateA.release()
+    trafficGateB.release()
     await editorB.fill("Writer B update")
     await expect(editorA).toHaveText("Writer B update", { timeout: 30_000 })
+    await expectNoUnconfirmedUpdates(regionA)
+    await expectNoUnconfirmedUpdates(regionB)
 
     const persistedPage = await contextA.newPage()
 
@@ -355,7 +529,9 @@ test("native providers sync, persist, and switch rooms", async ({
         exact: true,
       }),
     ).toHaveCount(0)
-    await expect.poll(closedSocketCount, { timeout: 30_000 }).toBeGreaterThan(0)
+    await expect
+      .poll(closedSocketCountA, { timeout: 30_000 })
+      .toBeGreaterThan(closedBeforeGateA)
 
     const switchedEditor = await connectToRoom(
       regionA,
@@ -367,8 +543,43 @@ test("native providers sync, persist, and switch rooms", async ({
 
     await expectConnected(regionA)
     await expect(switchedEditor).toHaveAttribute("contenteditable", "true")
-  } finally {
+
     await Promise.all([contextA.close(), contextB.close()])
+    writerContextsClosed = true
+
+    const reopenedContext = await createIdentityContext(
+      browser,
+      fixture.docsUrl,
+      fixture.writerA,
+    )
+
+    try {
+      const reopenedPage = await reopenedContext.newPage()
+
+      const reopenedRegion = await openNativeExample(
+        reopenedPage,
+        fixture.docsUrl,
+      )
+
+      const reopenedEditor = await connectToRoom(
+        reopenedRegion,
+        fixture,
+        fixture.writerA,
+        fixture.roomId,
+        "Native writer A reopened",
+      )
+
+      await expectConnected(reopenedRegion)
+      await expect(reopenedEditor).toHaveText("Writer B update", {
+        timeout: 30_000,
+      })
+      await expectNoUnconfirmedUpdates(reopenedRegion)
+    } finally {
+      await reopenedContext.close()
+    }
+  } finally {
+    if (!writerContextsClosed)
+      await Promise.all([contextA.close(), contextB.close()])
   }
 })
 
@@ -397,19 +608,61 @@ test("server grants enforce read-only access and denial", async ({
     const readerPage = await readerContext.newPage()
     const readerRegion = await openNativeExample(readerPage, fixture.docsUrl)
 
+    const readerGrantResponse = watchNativeGrantResponse(
+      readerPage,
+      fixture.grantUrl,
+    )
+
     const readerEditor = await connectToRoom(
       readerRegion,
       fixture,
       fixture.reader,
       fixture.roomId,
       "Native read-only peer",
+      "read",
     )
 
+    const readGrant = await readerGrantResponse
+
+    expect(readGrant.status).toBe(200)
+    expect(readGrant.permission).toBe("read")
+    expect(readGrant.peerIsNull).toBe(true)
     await expectConnected(readerRegion)
     await expect(
       readerRegion.getByText(/Server write access:\s*disabled\./),
     ).toBeVisible()
     await expect(readerEditor).toHaveAttribute("contenteditable", "false")
+
+    const unauthorizedWriteStatus = await readerPage.evaluate(
+      async ({ grantUrl, roomId, csrf }) => {
+        const response = await fetch(grantUrl, {
+          method: "POST",
+          credentials: "same-origin",
+          headers: {
+            "Content-Type": "application/json",
+            "X-CSRF-Token": csrf,
+          },
+          body: JSON.stringify({
+            roomId,
+            displayName: "Unauthorized reader write",
+            cursorColor: "#3466aa",
+            requestedPermission: "write",
+          }),
+          cache: "no-store",
+        })
+
+        await response.body?.cancel()
+
+        return response.status
+      },
+      {
+        grantUrl: fixture.grantUrl,
+        roomId: fixture.roomId,
+        csrf: fixture.reader.csrf,
+      },
+    )
+
+    expect(unauthorizedWriteStatus).toBe(403)
 
     const deniedPage = await deniedContext.newPage()
     const deniedRegion = await openNativeExample(deniedPage, fixture.docsUrl)

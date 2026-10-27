@@ -19,6 +19,7 @@ bun run typecheck        # typecheck registry and docs
 bun run test             # CLI and Oxlint Bun tests from tests/
 bun run test:e2e          # docs and registry Playwright tests
 bun run test:editor-callout-clipboard
+bun run test:editor-native-providers-local
 bun run test:a11y        # docs and registry accessibility tests
 bun test ./tests/cli      # CLI tests without browsers
 bun run build            # registry and docs production build
@@ -26,6 +27,12 @@ bun run build            # registry and docs production build
 
 The clipboard command writes its browser report to
 `test-results/editor-callout-clipboard/`.
+
+The local native-provider command needs Node, OpenSSL, NSS `certutil`, and Chromium.
+Start the built docs fixture on port `3100` first. Keep port `3443` free.
+The command uses a temporary HTTPS gateway and an isolated browser trust store.
+It writes reports to `test-results/native-provider-local/`.
+The fixture checks in-memory room state, not durable database storage.
 
 After changes, run `bun run lint && bun run fmt:check && bun run typecheck` plus
 focused E2E tests for affected behavior. Before release work, run the full gate
