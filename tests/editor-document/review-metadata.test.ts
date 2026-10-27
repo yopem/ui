@@ -12,6 +12,7 @@ for (const key of [
   "yopemReview",
   "yopemSuggestion",
   "yopemReviewStructural",
+  "yopemReviewBreak",
 ] as const) {
   test(`generic document IO rejects ${key} without replacing current content`, () => {
     const editor = createHeadlessEditor({
@@ -32,6 +33,11 @@ for (const key of [
 
     expect(() => parseDocument(source, "json")).toThrow(DocumentError)
     expect(() => importDocument(editor, source, "json")).toThrow(DocumentError)
+    expect(editor.getEditorState()).toBe(before)
+    const html = `<p data-editor-state='${JSON.stringify({ [key]: { version: 1, proposals: [] } })}'>Untrusted replacement</p>`
+
+    expect(() => parseDocument(html, "html")).toThrow(DocumentError)
+    expect(() => importDocument(editor, html, "html")).toThrow(DocumentError)
     expect(editor.getEditorState()).toBe(before)
     editor.setEditorState(editor.parseEditorState(source))
     expect(() => exportDocument(editor, "json")).toThrow(DocumentError)
