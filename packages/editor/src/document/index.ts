@@ -388,7 +388,8 @@ function validateJSON(source: string) {
       node.$?.yopemReview !== undefined ||
       node.$?.yopemSuggestion !== undefined ||
       node.$?.yopemReviewStructural !== undefined ||
-      node.$?.yopemReviewBreak !== undefined
+      node.$?.yopemReviewBreak !== undefined ||
+      node.$?.yopemReviewNativeFragment !== undefined
     )
       throw new DocumentError(["Review metadata requires trusted review IO."])
 
@@ -1081,7 +1082,8 @@ function rejectUntrustedReviewState(
       node.$?.yopemReview !== undefined ||
       node.$?.yopemSuggestion !== undefined ||
       node.$?.yopemReviewStructural !== undefined ||
-      node.$?.yopemReviewBreak !== undefined
+      node.$?.yopemReviewBreak !== undefined ||
+      node.$?.yopemReviewNativeFragment !== undefined
     )
       throw new DocumentError([
         "Untrusted fragments cannot contain review state.",

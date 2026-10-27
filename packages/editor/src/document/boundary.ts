@@ -455,7 +455,8 @@ export function canonicalDocumentNode(node: Element) {
         parsed.yopemReview !== undefined ||
         parsed.yopemSuggestion !== undefined ||
         parsed.yopemReviewStructural !== undefined ||
-        parsed.yopemReviewBreak !== undefined
+        parsed.yopemReviewBreak !== undefined ||
+        parsed.yopemReviewNativeFragment !== undefined
       )
         throw new Error("Untrusted review state")
     } catch {

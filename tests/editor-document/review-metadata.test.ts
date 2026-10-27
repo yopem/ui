@@ -13,6 +13,7 @@ for (const key of [
   "yopemSuggestion",
   "yopemReviewStructural",
   "yopemReviewBreak",
+  "yopemReviewNativeFragment",
 ] as const) {
   test(`generic document IO rejects ${key} without replacing current content`, () => {
     const editor = createHeadlessEditor({
