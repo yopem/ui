@@ -1,9 +1,10 @@
 "use client"
 
 import type { Popover as PopoverPrimitive } from "@base-ui/react/popover"
+import type { BaseUIEvent } from "@base-ui/react/types"
 import type { StyleXComponentProps } from "@registry/lib/stylex"
 
-import { useRender } from "@base-ui/react/use-render"
+import { useStableCallback } from "@base-ui/utils/useStableCallback"
 import { Box } from "@registry/components/ui/box"
 import {
   Command,
@@ -30,6 +31,7 @@ import {
   useState,
   useSyncExternalStore,
   type ComponentProps,
+  type KeyboardEvent,
   type ReactNode,
 } from "react"
 
@@ -88,6 +90,31 @@ export function EditorInlineCombobox({
       },
   )
 
+  const changeOpen = useStableCallback(function changeOpen(open: boolean) {
+    if (!open) controller.close()
+  })
+
+  const captureKeyDown = useStableCallback(function captureKeyDown(
+    event: KeyboardEvent<HTMLDivElement>,
+  ) {
+    returnFocus.current = event.key !== "Tab" || event.defaultPrevented
+  })
+
+  const captureFocus = useStableCallback(function captureFocus() {
+    returnFocus.current = true
+  })
+
+  const handleKeyDown = useStableCallback(function handleKeyDown(
+    event: KeyboardEvent<HTMLDivElement>,
+  ) {
+    if (event.key === "Tab") returnFocus.current = event.defaultPrevented
+
+    if (event.key === "Tab" && !event.defaultPrevented) {
+      controller.close()
+      actionsRef.current?.unmount()
+    }
+  })
+
   return (
     <InlineContext value={controller}>
       <ReturnFocusContext value={returnFocus}>
@@ -95,29 +122,14 @@ export function EditorInlineCombobox({
           actionsRef={actionsRef}
           modal={false}
           open={state.query !== null}
-          onOpenChange={function change(open) {
-            if (!open) controller.close()
-          }}
+          onOpenChange={changeOpen}
         >
           <Box
             ref={connect}
             data-slot="editor-inline-combobox"
-            onKeyDownCapture={function keyDownCapture(event) {
-              returnFocus.current =
-                event.key !== "Tab" || event.defaultPrevented
-            }}
-            onFocusCapture={function focusCapture() {
-              returnFocus.current = true
-            }}
-            onKeyDown={function keyDown(event) {
-              if (event.key === "Tab")
-                returnFocus.current = event.defaultPrevented
-
-              if (event.key === "Tab" && !event.defaultPrevented) {
-                controller.close()
-                actionsRef.current?.unmount()
-              }
-            }}
+            onKeyDownCapture={captureKeyDown}
+            onFocusCapture={captureFocus}
+            onKeyDown={handleKeyDown}
           >
             {children}
           </Box>
@@ -127,13 +139,8 @@ export function EditorInlineCombobox({
   )
 }
 
-function InlineComboboxEditable({
-  triggerRef,
-  ...props
-}: ComponentProps<typeof EditorContent> & {
-  triggerRef: ComponentProps<typeof EditorContent>["ref"]
-}) {
-  return useRender({ render: <EditorContent {...props} />, ref: triggerRef })
+function preserveNativeEditing(event: BaseUIEvent<KeyboardEvent<HTMLElement>>) {
+  event.preventBaseUIHandler()
 }
 
 export function EditorInlineComboboxInput({
@@ -146,15 +153,11 @@ export function EditorInlineComboboxInput({
     <PopoverTrigger
       id={id}
       nativeButton={false}
-      render={function render(triggerProps) {
-        return (
-          <InlineComboboxEditable
-            {...props}
-            id={triggerProps.id}
-            triggerRef={triggerProps.ref}
-          />
-        )
-      }}
+      role={props.role ?? "textbox"}
+      aria-expanded={undefined}
+      onKeyDown={preserveNativeEditing}
+      onKeyUp={preserveNativeEditing}
+      render={<EditorContent {...props} />}
     />
   )
 }
@@ -169,24 +172,25 @@ export function EditorInlineComboboxContent({
   const { controller, state } = useEditorInlineCombobox()
   const returnFocus = useContext(ReturnFocusContext)
 
+  const focusFinal = useStableCallback(function focusFinal() {
+    if (!returnFocus?.current) return false
+    const anchor = controller.getAnchor()
+
+    const root =
+      anchor && ("contextElement" in anchor ? anchor.contextElement : anchor)
+
+    if (root?.contains(root.ownerDocument.activeElement)) return false
+
+    return root
+  })
+
   return (
     <PopoverPopup
       {...props}
       anchor={controller.getAnchor()}
       align="start"
       initialFocus={false}
-      finalFocus={function focus() {
-        if (!returnFocus?.current) return false
-        const anchor = controller.getAnchor()
-
-        const root =
-          anchor &&
-          ("contextElement" in anchor ? anchor.contextElement : anchor)
-
-        if (root?.contains(root.ownerDocument.activeElement)) return false
-
-        return root
-      }}
+      finalFocus={focusFinal}
       data-slot="editor-inline-combobox-content"
     >
       <Command
@@ -244,15 +248,47 @@ export function EditorInlineComboboxItem({
   const { controller, state } = useEditorInlineCombobox()
   const index = state.items.findIndex((candidate) => candidate === item)
 
+  function connect(element: HTMLDivElement | null) {
+    controller.connectOption(index, element)
+  }
+
+  const handlePointerDown = useStableCallback(function handlePointerDown(
+    event: Parameters<NonNullable<typeof onPointerDown>>[0],
+  ) {
+    onPointerDown?.(event)
+    event.preventDefault()
+  })
+
+  const handleMouseDown = useStableCallback(function handleMouseDown(
+    event: Parameters<NonNullable<typeof onMouseDown>>[0],
+  ) {
+    onMouseDown?.(event)
+    event.preventDefault()
+  })
+
+  const handlePointerMove = useStableCallback(function handlePointerMove(
+    event: Parameters<NonNullable<typeof onPointerMove>>[0],
+  ) {
+    onPointerMove?.(event)
+
+    if (!event.defaultPrevented) controller.highlight(index)
+  })
+
+  const handleClick = useStableCallback(function handleClick(
+    event: Parameters<NonNullable<typeof onClick>>[0],
+  ) {
+    onClick?.(event)
+
+    if (!event.defaultPrevented) controller.choose(item.id)
+  })
+
   if (index < 0) return null
 
   return (
     <CommandItem
       {...props}
       value={item}
-      ref={function connect(element) {
-        controller.connectOption(index, element)
-      }}
+      ref={connect}
       tabIndex={-1}
       aria-selected={index === state.active}
       aria-label={item.label}
@@ -260,24 +296,10 @@ export function EditorInlineComboboxItem({
       xstyle={[styles.item, xstyle]}
       data-highlighted={index === state.active ? "" : undefined}
       data-slot="editor-inline-combobox-item"
-      onPointerDown={function pointerDown(event) {
-        onPointerDown?.(event)
-        event.preventDefault()
-      }}
-      onMouseDown={function mouseDown(event) {
-        onMouseDown?.(event)
-        event.preventDefault()
-      }}
-      onPointerMove={function pointerMove(event) {
-        onPointerMove?.(event)
-
-        if (!event.defaultPrevented) controller.highlight(index)
-      }}
-      onClick={function click(event) {
-        onClick?.(event)
-
-        if (!event.defaultPrevented) controller.choose(item.id)
-      }}
+      onPointerDown={handlePointerDown}
+      onMouseDown={handleMouseDown}
+      onPointerMove={handlePointerMove}
+      onClick={handleClick}
     >
       {children ?? (
         <Stack xstyle={styles.optionText}>

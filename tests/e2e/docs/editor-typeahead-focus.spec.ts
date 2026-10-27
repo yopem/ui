@@ -174,3 +174,81 @@ test("inline suggestions preserve native Tab focus and blur through repeated ope
     contentType: "application/json",
   })
 })
+
+test("filtered inline options keep their active descendant after index changes", async ({
+  page,
+}, testInfo) => {
+  test.slow()
+  const errors: string[] = []
+  page.on("pageerror", (error) => errors.push(error.message))
+  await page.goto("/docs/editor")
+
+  const editor = page.getByRole("textbox", {
+    name: "Typeahead editor",
+    exact: true,
+  })
+
+  await expect(editor).toHaveAttribute("contenteditable", "true")
+  await editor.fill("/")
+
+  const paragraph = page.getByRole("option", { name: "Paragraph", exact: true })
+  const heading = page.getByRole("option", { name: "Heading 1", exact: true })
+
+  await expect(paragraph).toBeVisible()
+  await expect(heading).toBeVisible()
+  await heading.evaluate((element) => {
+    element.setAttribute("data-retained-option", "true")
+  })
+  await page.keyboard.type("heading")
+  await expect(paragraph).toBeHidden()
+  await expect(heading).toHaveAttribute("data-retained-option", "true")
+  await expect(heading).toHaveAttribute("id", /\S+/)
+  await expect
+    .poll(async () => ({
+      active: await editor.getAttribute("aria-activedescendant"),
+      expected: await heading.getAttribute("id"),
+    }))
+    .toEqual({
+      active: await heading.getAttribute("id"),
+      expected: await heading.getAttribute("id"),
+    })
+  await expect(heading).toHaveAttribute("aria-selected", "true")
+  await page.keyboard.press("Enter")
+  await page.keyboard.type("Retained heading")
+  await expect(editor.getByRole("heading", { level: 1 })).toHaveText(
+    "Retained heading",
+  )
+  expect(errors).toEqual([])
+  const scan = await new AxeBuilder({ page }).analyze()
+
+  expect(scan.violations).toEqual([])
+  await testInfo.attach("retained-option-state", {
+    body: JSON.stringify({ content: await editor.innerHTML(), errors }),
+    contentType: "application/json",
+  })
+})
+
+test("inline editor keeps textbox semantics and native Space and Enter input", async ({
+  page,
+}) => {
+  test.slow()
+  await page.goto("/docs/editor")
+
+  const editor = page.getByRole("textbox", {
+    name: "Typeahead editor",
+    exact: true,
+  })
+
+  await expect(editor).toHaveAttribute("contenteditable", "true")
+  await expect(editor).not.toHaveAttribute("aria-expanded")
+  await editor.fill("")
+  await editor.pressSequentially("Native words")
+  await editor.press("Enter")
+  await editor.pressSequentially("Second line")
+  await expect(editor.locator("p")).toHaveText(["Native words", "Second line"])
+  await expect(editor).toBeFocused()
+  await expect(
+    page.getByRole("dialog", { name: "Editor suggestions", exact: true }),
+  ).toHaveCount(0)
+  expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([])
+})
