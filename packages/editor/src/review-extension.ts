@@ -1431,11 +1431,49 @@ function createReviewController() {
     )
       return fail("Completed review replacement exceeds document limits.")
 
-    const suggestion = newSuggestion("insert")
     const nodes = range.getNodes()
+    const root = $getRoot()
 
-    if (!nodes.length || nodes.some((node) => !$isTextNode(node)))
-      return fail("Completed review replacement requires normal selected text.")
+    if (
+      !nodes.length ||
+      nodes.some((node) => {
+        let current: LexicalNode | null = node
+
+        while (current && current !== root) {
+          if (
+            current instanceof MarkNode ||
+            $getState(current, editorReviewNativeOperationState) ||
+            $getState(current, editorReviewBreakState)
+          )
+            return true
+
+          current = current.getParent()
+        }
+
+        return false
+      })
+    )
+      return fail(
+        "Completed review replacement cannot change comments or review structure.",
+      )
+
+    const savedRange = range.clone()
+    const suggestingBeforeAuthorization = suggesting
+    const currentEditor = instance()
+    const suggestion = newSuggestion("insert")
+    const activeRange = selection()
+
+    if (
+      editor !== currentEditor ||
+      !currentEditor.isEditable() ||
+      suggesting !== suggestingBeforeAuthorization ||
+      !activeRange.is(savedRange) ||
+      activeRange.getTextContent() !== removed
+    )
+      return fail(
+        "Completed review replacement target changed during authorization.",
+      )
+
     const removedNodes = range.extract().filter($isTextNode)
 
     if (!removedNodes.length)
@@ -2937,6 +2975,13 @@ function createReviewController() {
       return current.registerCommand(
         key,
         (payload: T) => {
+          if (!current.isEditable()) {
+            diagnostic = "Review action is read-only."
+            publish()
+
+            return true
+          }
+
           if (!suggesting) {
             if (!$hasCurrentPending()) return false
             diagnostic = "Resolve pending suggestions before normal editing."
@@ -3064,6 +3109,24 @@ function createReviewController() {
         current.dispatchCommand(
           DELETE_CHARACTER_COMMAND,
           event.inputType === "deleteContentBackward",
+        )
+      } else if (
+        event.inputType === "deleteWordBackward" ||
+        event.inputType === "deleteWordForward"
+      ) {
+        current.dispatchCommand(
+          DELETE_WORD_COMMAND,
+          event.inputType === "deleteWordBackward",
+        )
+      } else if (
+        event.inputType === "deleteHardLineBackward" ||
+        event.inputType === "deleteHardLineForward" ||
+        event.inputType === "deleteSoftLineBackward" ||
+        event.inputType === "deleteSoftLineForward"
+      ) {
+        current.dispatchCommand(
+          DELETE_LINE_COMMAND,
+          event.inputType.endsWith("Backward"),
         )
       } else {
         diagnostic =
@@ -3243,13 +3306,21 @@ function createReviewController() {
       command<string | InputEvent>(
         CONTROLLED_TEXT_INSERTION_COMMAND,
         (payload) => {
+          let text: string
+
           if (payload instanceof Object) {
             if (payload.isComposing || payload.inputType !== "insertText")
               return unsupported()
-            $suggestInsert(payload.data ?? "")
+            text = payload.data ?? ""
           } else {
-            $suggestInsert(payload)
+            text = payload
           }
+
+          const selected = $getSelection()
+
+          if ($isRangeSelection(selected) && !selected.isCollapsed())
+            $suggestCompletedText(text)
+          else $suggestInsert(text)
         },
       ),
       command<boolean>(DELETE_CHARACTER_COMMAND, (backward) =>
