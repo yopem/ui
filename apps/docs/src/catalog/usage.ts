@@ -1,5 +1,30 @@
 // Standalone TSX files use the standard @ alias for src.
 const usageSnippetValues = {
+  "editor-collaboration": `import { useState } from "react"
+
+import { EditorContent, EditorRoot } from "@/components/editor"
+import {
+  EditorCollaborationAwareness,
+  EditorCollaborationCursors,
+  EditorCollaborationRoot,
+  EditorCollaborationStatus,
+  type EditorCollaborationController,
+} from "@/components/editor/collaboration"
+
+export function CollaborativeDocument({ controller }: { controller: EditorCollaborationController }) {
+  const [extensions] = useState(() => [controller.extension])
+
+  return (
+    <EditorRoot ariaLabel="Shared document" extensions={extensions}>
+      <EditorCollaborationRoot controller={controller}>
+        <EditorCollaborationStatus />
+        <EditorCollaborationAwareness />
+        <EditorContent />
+        <EditorCollaborationCursors />
+      </EditorCollaborationRoot>
+    </EditorRoot>
+  )
+}`,
   "editor-ai-menu": `import type { EditorAiConfig } from "@/components/editor/ai-client"
 
 import { EditorAiRoot, EditorRoot, EditorToolbar } from "@/components/editor"

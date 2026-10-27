@@ -129,9 +129,11 @@ Register EditorDocumentClipboardExtension at root creation in a stable extension
 Call registerDocumentPaste after creation. Keep its cleanup in the host lifecycle.
 Register EditorBlocksExtension for live callout and toggle imports.
 Unsupported structures fail before document replacement.
-Media, mention nodes, math nodes, and review formats remain unsupported.
-Canonical codecs and registered readers remain an outstanding interoperability gap, including optional math and typeahead integration.
-Plain text and ordinary strikethrough do not carry these semantics. Code view state requires JSON.
+Register each optional feature's nodes before live import.
+Validated codecs retain math, mentions, canonical media, footnotes, contents, columns, dates, labels, drawing scenes, editable cards, and diagram metadata.
+Markdown uses canonical HTML when native Markdown cannot retain metadata. Static math uses native MathML.
+Mention and asset identities do not grant access. Private media delivery requires host authorization and a trusted resolver.
+Review formats reject before document replacement. Transient card fields are not serialized. Code view state requires JSON.
 Use Bun, npm, pnpm, or Yarn 2 and later with the CLI runners above.
 
 ## Themes and lint rules

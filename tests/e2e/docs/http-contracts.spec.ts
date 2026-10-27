@@ -112,6 +112,20 @@ test("public registry inventory ships source, dependencies, and documentation", 
   expect(registry.items.length).toBeGreaterThan(0)
   const names = registry.items.map((item) => item.name)
 
+  const sourceImports = new Set(
+    registry.items.flatMap((item) =>
+      item.files.flatMap(({ target }) => {
+        if (!target) return []
+
+        const module = target.replace(/\.(?:[cm]?[jt]sx?)$/, "")
+
+        return module.endsWith("/index")
+          ? [module, module.slice(0, -6)]
+          : [module]
+      }),
+    ),
+  )
+
   for (const name of [
     "container",
     "clipboard",
@@ -223,6 +237,9 @@ test("public registry inventory ships source, dependencies, and documentation", 
   }
 
   for (const path of paths) {
+    const page = await request.get(path.slice(0, -3))
+    expect(page.status(), path).toBe(200)
+    expect(page.headers()["content-type"], path).toContain("text/html")
     expect(llms, path).toContain(`https://ui.yopem.com${path}`)
     expect(sitemap, path).toContain(
       `<loc>https://ui.yopem.com${path.slice(0, -3)}</loc>`,
@@ -231,7 +248,15 @@ test("public registry inventory ships source, dependencies, and documentation", 
     expect(docs.status(), path).toBe(200)
     const examples = (await docs.text()).split("## API reference")[0]
     expect(examples, path).not.toContain("@registry/")
-    expect(examples, path).toMatch(/from "@\/(?:components|hooks)\//)
+
+    const imports = [...examples.matchAll(/\bfrom\s+["'](@\/[^"']+)["']/g)]
+
+    expect(
+      imports.some(
+        ([, module]) => module !== undefined && sourceImports.has(module),
+      ),
+      `${path} must import published consumer source`,
+    ).toBe(true)
   }
 
   for (const name of ["use-event-callback", "use-media-query"]) {

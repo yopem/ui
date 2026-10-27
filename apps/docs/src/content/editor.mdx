@@ -814,7 +814,7 @@ document access or prove an account exists.
 
 <EditorTypeaheadExample />
 
-### Emoji inventory
+## Emoji inventory
 
 Type a colon followed by an alias, then select a result. Search names or
 underscore-separated aliases. A timestamp such as `12:30` does not open
@@ -838,7 +838,7 @@ or account synchronization is automatic. Hosts can subscribe to the store for
 their own storage policy. Search returns at most 50 results per page. Insertion
 preserves native UTF-16 offsets, ZWJ sequences, and skin tones.
 
-### Persisted mentions and document IO
+## Persisted mentions and document IO
 
 Register `MentionNode` in every reader of documents that contain mentions,
 including read-only roots and server converters. The controller extension
@@ -890,7 +890,7 @@ export function MentionReader() {
 The mention schema does not validate complete documents, CSS declarations, or
 host NodeState. Keep host document and CSS validation.
 
-### HTTP integration example
+## HTTP integration example
 
 Supply an existing authenticated search endpoint through the host loader. No
 account database or search backend is included. The example endpoint below is an
