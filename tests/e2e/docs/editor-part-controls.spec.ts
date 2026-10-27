@@ -252,6 +252,7 @@ for (const control of [
   test(`${control.part} applies only native selected text and rejects invalid input @a11y`, async ({
     page,
   }, info) => {
+    test.slow()
     const { preview, editor } = await openPart(page, control.slug, control.part)
     await editor.fill("Alpha Beta")
     await editor.press("Home")

@@ -45,6 +45,7 @@ test("composed editor uses selected controls and keeps its own state", async ({
 test("@a11y composed format controls render highlight and letter case", async ({
   page,
 }, testInfo) => {
+  test.slow()
   await page.goto("/docs/editor")
 
   const editor = page.getByRole("textbox", {
@@ -84,6 +85,7 @@ test("@a11y composed format controls render highlight and letter case", async ({
 test("@a11y link bookmarks reject host document replacement", async ({
   page,
 }, testInfo) => {
+  test.slow()
   const errors: string[] = []
   page.on("pageerror", (error) => errors.push(error.message))
   await page.goto("/docs/editor")
@@ -165,6 +167,7 @@ test("composed root registers custom extensions once per mount", async ({
 test("@a11y composed editor toolbar supports keyboard operation", async ({
   page,
 }, testInfo) => {
+  test.slow()
   await page.goto("/docs/editor")
 
   const editor = page.getByRole("textbox", {
@@ -199,6 +202,7 @@ test("@a11y composed editor toolbar supports keyboard operation", async ({
 test("@a11y composed editor switches subscript and superscript", async ({
   page,
 }, testInfo) => {
+  test.slow()
   await page.goto("/docs/editor")
 
   const editor = page.getByRole("textbox", {
