@@ -858,6 +858,8 @@ Use existing components before building substitutes. Check their documented prop
 - Feedback: Alert, Toast, Badge, Progress, Meter, Spinner, Skeleton, Empty, Checkmark.
 - Content: Card, Frame, Table, Avatar, Accordion, Collapsible, Separator, ScrollArea, Stat, Kbd, Clipboard, Group, Marquee.
 
+Calendar day button labels include the visible day. Preserve consumer label and formatter overrides.
+
 ### Themes and accessibility
 
 Keep light and dark theme values complete in \`tokens.stylex.ts\`.

@@ -1,10 +1,21 @@
 "use client"
 
+import type { Labels } from "@daypicker/react"
 import type { StyleXComponentProps } from "@registry/lib/stylex"
 import type { ComponentProps } from "react"
 
-import { DayPicker } from "@daypicker/react"
-import { mergeStylexProps, stylexProps } from "@registry/lib/stylex"
+import {
+  DateLib,
+  DayPicker,
+  formatDay,
+  labelDayButton as dayPickerLabelDayButton,
+} from "@daypicker/react"
+import {
+  isCallback,
+  isString,
+  mergeStylexProps,
+  stylexProps,
+} from "@registry/lib/stylex"
 import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import { clsx } from "clsx"
@@ -239,6 +250,38 @@ function CalendarChevron({
 
 const defaultComponents = { Chevron: CalendarChevron }
 
+type DayButtonLabelParameters = Parameters<Labels["labelDayButton"]>
+
+type DayFormatter = NonNullable<
+  NonNullable<ComponentProps<typeof DayPicker>["formatters"]>["formatDay"]
+>
+
+function labelDayButtonWithVisibleDay(
+  date: DayButtonLabelParameters[0],
+  modifiers: DayButtonLabelParameters[1],
+  options: DayButtonLabelParameters[2],
+  dateLib: DayButtonLabelParameters[3],
+  formatDayFormatter: DayFormatter,
+) {
+  const dateLibrary = dateLib ?? new DateLib(options)
+  const localeLabel = options?.locale?.labels?.labelDayButton
+
+  const label = isCallback(localeLabel)
+    ? localeLabel(date, modifiers, options, dateLibrary)
+    : isString(localeLabel)
+      ? localeLabel
+      : dayPickerLabelDayButton(date, modifiers, options, dateLibrary)
+
+  const formattedDate = dateLibrary.format(date, "PPPP")
+  const ordinalDay = dateLibrary.format(date, "do")
+  const numericDay = formatDayFormatter(date, options, dateLibrary)
+
+  return label.replace(
+    formattedDate,
+    formattedDate.replace(ordinalDay, numericDay),
+  )
+}
+
 export function Calendar({
   xstyle: consumerXstyle,
   className,
@@ -296,6 +339,19 @@ export function Calendar({
     mode,
     showOutsideDays,
     ...mergeStylexProps(stylexProps(className, styles.root, xstyle), props),
+    labels: {
+      ...props.labels,
+      labelDayButton:
+        props.labels?.labelDayButton ??
+        ((date, modifiers, options, dateLib) =>
+          labelDayButtonWithVisibleDay(
+            date,
+            modifiers,
+            options,
+            dateLib,
+            props.formatters?.formatDay ?? formatDay,
+          )),
+    } satisfies ComponentProps<typeof DayPicker>["labels"],
   }
 
   // SAFETY: `mode` and `props` derive from DayPicker input.

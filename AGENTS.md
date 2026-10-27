@@ -274,6 +274,8 @@ Rounded components use md (12px) by default. Use xstyle to change corner radii. 
   Keep its `data-cfasync="false"` attribute to prevent Rocket Loader deferral.
 - Use Field, Fieldset, Form, and Label for form structure. Use the matching
   input, selection, and validation components instead of new control systems.
+- Calendar day button labels include the visible day. Preserve consumer label
+  and formatter overrides.
 - Use Dialog, AlertDialog, Sheet, Drawer, Popover, Tooltip, PreviewCard, Menu,
   and ContextMenu for their documented interaction patterns. Keep Base UI focus
   management, dismissal, accessible names, and keyboard behavior intact.
