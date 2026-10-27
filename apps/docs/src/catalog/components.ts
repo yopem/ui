@@ -166,6 +166,11 @@ export const catalog: CatalogItem[] = Object.entries(modules)
   })
   .concat(
     { name: "EditorAiServer", slug: "editor-ai", title: "Editor AI server" },
+    {
+      name: "EditorCollaboration",
+      slug: "editor-collaboration",
+      title: "Editor Collaboration",
+    },
     { name: "Label", slug: "label", title: "Label" },
     { name: "Sidebar", slug: "sidebar", title: "Sidebar" },
   )

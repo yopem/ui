@@ -22,6 +22,20 @@ export interface ApiProp {
   source: string
 }
 
+const sharedEditorItems = new Set([
+  "editor-code",
+  "editor-columns",
+  "editor-labels",
+  "editor-date",
+  "editor-review",
+  "editor-collaboration",
+  "editor-media",
+  "editor-toc",
+  "editor-csv",
+  "editor-autoformat",
+  "editor-block-behavior",
+])
+
 const partPurposes = {
   Trigger: "Control that opens or toggles the associated content.",
   Popup:
@@ -205,19 +219,7 @@ export function createComponentDocs(
                                         ? "@/components/editor/block-selection-index"
                                         : item.name === "editor-footnotes"
                                           ? "@/components/editor/footnote"
-                                          : [
-                                                "editor-code",
-                                                "editor-columns",
-                                                "editor-labels",
-                                                "editor-date",
-                                                "editor-review",
-                                                "editor-collaboration",
-                                                "editor-media",
-                                                "editor-toc",
-                                                "editor-csv",
-                                                "editor-autoformat",
-                                                "editor-block-behavior",
-                                              ].includes(item.name)
+                                          : sharedEditorItems.has(item.name)
                                             ? `@/components/editor/${item.name.slice(7)}`
                                             : item.name === "editor-math"
                                               ? "@/components/editor/math"
