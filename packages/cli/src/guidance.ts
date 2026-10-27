@@ -267,6 +267,12 @@ Use \`$suggestCompletedText\` inside an update for single-line AI output up to 1
 Suggestion creation and acceptance are separate actions. Authorize document writes separately. Compose the structural proposal, change-list, and decision parts.
 Use \`parseReviewDocument(value, trusted, true)\` for structural-review IO. Trust metadata only after host verification.
 The source implementation still needs runtime validation.
+Enter tracks a root paragraph split. Shift+Enter tracks a line break.
+Other supported block contexts use tracked line breaks.
+Resolve a pending paragraph break before splitting that paragraph again.
+Call \`$suggestNativeInsertNodes\` inside a synchronous editor update for explicit insert-only operations.
+Return the new inserted nodes. Use normal text descendants and snapshots within 128 KiB.
+Resolve pending suggestions first. This API does not track arbitrary callbacks or text-free nodes.
 Paste can retain validated same-namespace paragraph and list fragments as one authored suggestion. Accept keeps the fragment. Reject restores the prior document and its comment anchors. Rich HTML and unsupported native fragments are rejected. Pasted review metadata is not preserved. \`editor-document\` does not import review formats.
 See https://ui.yopem.com/components/editor-review for API and limits.
 

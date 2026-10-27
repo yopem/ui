@@ -49,6 +49,7 @@ import {
   UNDO_COMMAND,
   REDO_COMMAND,
   KEY_DOWN_COMMAND,
+  type BaseSelection,
   type LexicalEditor,
   type LexicalNode,
   type SerializedLexicalNode,
@@ -93,6 +94,7 @@ import {
   type EditorReviewHost,
   type EditorReviewAction,
 } from "./review-model"
+import { createEditorReviewNativeOperationSnapshots } from "./review-operation-native"
 import {
   $setEditorSuggestion,
   emptyReview,
@@ -312,6 +314,18 @@ function normalizedNativeFragmentSnapshot<Input>(
   return withoutNativeFragmentState(parsed.toJSON())
 }
 
+interface NativeInsertNodeKey {
+  getKey(): string
+}
+
+function isNativeInsertNodeKey(value: unknown): value is NativeInsertNodeKey {
+  return (
+    isReviewObject(value) &&
+    "getKey" in value &&
+    z.function().safeParse(value.getKey).success
+  )
+}
+
 function createReviewController() {
   const session = createReviewSession()
   let editor: LexicalEditor | null = null
@@ -323,6 +337,15 @@ function createReviewController() {
   let commentRequest = 0
   let suggesting = false
   let decidingStructural = false
+  let nativeInsertInProgress = false
+
+  let nativeInsertMarker: {
+    editor: LexicalEditor
+    id: string
+    after: string
+    assertCurrent: () => void
+  } | null = null
+
   let diagnostic = ""
   let version = 0
   const listeners = new Set<() => void>()
@@ -858,6 +881,274 @@ function createReviewController() {
     }
 
     saved = null
+  }
+
+  function $suggestNativeInsertNodes(insert: () => readonly LexicalNode[]) {
+    $assertEditor()
+    const current = instance()
+
+    if (
+      nativeInsertInProgress ||
+      nativeInsertMarker ||
+      !current.isEditable() ||
+      !suggesting ||
+      $getState($getRoot(), editorReviewStructuralState).proposals.length ||
+      $hasReviewSuggestions()
+    )
+      return fail(
+        "Native insertion requires suggestion mode with no pending review state.",
+      )
+
+    nativeInsertInProgress = true
+
+    try {
+      const beforeRoot = $serializeReviewRoot()
+      const before = normalizedNativeFragmentSnapshot(current, beforeRoot)
+
+      if (
+        hasNamedReviewSlots(beforeRoot.root) ||
+        new TextEncoder().encode(before).byteLength > 131072
+      )
+        return fail(
+          "Native review snapshots exceed the supported document scope.",
+        )
+
+      parseReviewDocumentJSON(before, true, true)
+      const selectionBefore = $getSelection()
+
+      if (!selectionBefore)
+        return fail("Native insertion requires an active selection.")
+
+      const savedSelection: BaseSelection = selectionBefore.clone()
+      const permit = authorize("suggest")
+
+      permit.assertCurrent()
+
+      if (
+        editor !== current ||
+        $getEditor() !== current ||
+        !current.isEditable() ||
+        !suggesting ||
+        normalizedNativeFragmentSnapshot(current, $serializeReviewRoot()) !==
+          before ||
+        !savedSelection.is($getSelection())
+      )
+        return fail("Native insertion target changed during authorization.")
+
+      const root = $getRoot()
+      const existingKeys = new Set<string>()
+      const pendingNodes: LexicalNode[] = [root]
+
+      while (pendingNodes.length) {
+        const node = pendingNodes.pop()
+
+        if (!node) continue
+        existingKeys.add(node.getKey())
+
+        if ($isElementNode(node)) pendingNodes.push(...node.getChildren())
+      }
+
+      let output: unknown
+
+      try {
+        output = insert()
+      } catch {
+        return fail("Native insertion callback failed.")
+      }
+
+      if (isReviewObject(output) && "then" in output) {
+        void Promise.resolve(output).catch(() => undefined)
+
+        return fail("Native insertion callbacks must be synchronous.")
+      }
+
+      if (!Array.isArray(output) || !output.length)
+        return fail("Native insertion must return its inserted nodes.")
+
+      const returnedNodes: unknown[] = output
+      const returnedKeys: string[] = []
+      const insertedKeys = new Set<string>()
+
+      for (const value of returnedNodes) {
+        if (!isNativeInsertNodeKey(value))
+          return fail("Native insertion returned an invalid node.")
+
+        const key = reviewStringSchema.parse(value.getKey())
+
+        if (existingKeys.has(key) || insertedKeys.has(key))
+          return fail("Native insertion must return new, unique nodes.")
+        insertedKeys.add(key)
+        returnedKeys.push(key)
+      }
+
+      const attachedNodes = new Map<
+        string,
+        { node: LexicalNode; path: number[] }
+      >()
+
+      const pendingPaths: {
+        node: LexicalNode
+        path: number[]
+        marked: boolean
+      }[] = [{ node: root, path: [], marked: false }]
+
+      while (pendingPaths.length) {
+        const currentNode = pendingPaths.pop()
+
+        if (!currentNode) continue
+        const { node, path, marked } = currentNode
+        const key = node.getKey()
+
+        if (insertedKeys.has(key)) {
+          if (!path.length)
+            return fail("Native insertion returned the document root.")
+
+          if (marked || node instanceof MarkNode)
+            return fail("Native insertion cannot change comment anchors.")
+          attachedNodes.set(key, { node, path })
+        }
+
+        if ($isElementNode(node)) {
+          const children = node.getChildren()
+
+          for (let index = children.length - 1; index >= 0; index--) {
+            const child = children[index]
+
+            if (child)
+              pendingPaths.push({
+                node: child,
+                path: [...path, index],
+                marked: marked || node instanceof MarkNode,
+              })
+          }
+        }
+      }
+
+      if (attachedNodes.size !== returnedKeys.length)
+        return fail("Native insertion returned a detached node.")
+
+      const insertedNodes: LexicalNode[] = []
+      const insertedPaths: number[][] = []
+
+      for (const key of returnedKeys) {
+        const inserted = attachedNodes.get(key)
+
+        if (!inserted) return fail("Native insertion returned a detached node.")
+
+        insertedNodes.push(inserted.node)
+        insertedPaths.push(inserted.path)
+      }
+
+      const insertedText = insertedNodes.flatMap((node) =>
+        $isTextNode(node)
+          ? [node]
+          : $isElementNode(node)
+            ? node.getAllTextNodes()
+            : [],
+      )
+
+      if (
+        !insertedText.length ||
+        insertedText.some(
+          (node) => !node.isSimpleText() || node.getMode() !== "normal",
+        ) ||
+        !insertedText.some((node) => node.getTextContentSize() > 0)
+      )
+        return fail("Native insertion requires normal text descendants.")
+
+      if (savedSelection.is($getSelection()))
+        return fail("Native insertion must use the native selection operation.")
+
+      const afterRoot = $serializeReviewRoot()
+
+      if (
+        JSON.stringify({ ...beforeRoot.root, children: undefined }) !==
+        JSON.stringify({ ...afterRoot.root, children: undefined })
+      )
+        return fail("Native insertion cannot change root review state.")
+
+      const snapshots = createEditorReviewNativeOperationSnapshots(
+        current,
+        beforeRoot,
+        afterRoot,
+        insertedPaths,
+      )
+
+      if (!snapshots)
+        return fail("Native insertion must add the returned nodes.")
+
+      permit.assertCurrent()
+
+      if (editor !== current || !current.isEditable() || !suggesting)
+        return fail("Native insertion authorization expired.")
+
+      const suggestion: EditorSuggestion = {
+        id: reviewIdSchema.parse(crypto.randomUUID()),
+        author: permit.author,
+        createdAt: Date.now(),
+        kind: "insert",
+        beforeFormat: 0,
+      }
+
+      for (const node of insertedText) $setEditorSuggestion(node, suggestion)
+
+      const insertedTextContent = insertedText
+        .map((node) => node.getTextContent())
+        .join("")
+
+      const attributedText = root
+        .getAllTextNodes()
+        .filter(
+          (node) =>
+            $getState(node, editorSuggestionState)?.id === suggestion.id,
+        )
+
+      if (
+        attributedText.length !== insertedText.length ||
+        attributedText.map((node) => node.getTextContent()).join("") !==
+          insertedTextContent
+      )
+        return fail("Native insertion changed the returned nodes.")
+
+      const attributedRoot = $serializeReviewRoot()
+      const after = normalizedNativeFragmentSnapshot(current, attributedRoot)
+
+      if (new TextEncoder().encode(after).byteLength > 131072)
+        return fail(
+          "Native review snapshots exceed the supported document scope.",
+        )
+      checkReviewComplexity(attributedRoot, 24)
+      parseReviewSnapshot(attributedRoot, true, true)
+
+      if (root.getTextContentSize() > 1048576)
+        return fail("Review document exceeds growth limits.")
+
+      const fragment = reviewNativeFragmentSchema.parse({
+        version: 1,
+        id: suggestion.id,
+        author: suggestion.author,
+        createdAt: suggestion.createdAt,
+        before: snapshots.before,
+        after,
+      })
+
+      $setState(root, editorReviewNativeFragmentState, fragment)
+      nativeInsertMarker = {
+        editor: current,
+        id: suggestion.id,
+        after,
+        assertCurrent: permit.assertCurrent,
+      }
+      diagnostic = ""
+
+      return suggestion.id
+    } catch (error) {
+      if (error instanceof EditorReviewInputError) throw error
+
+      return fail("Native insertion could not be validated.")
+    } finally {
+      nativeInsertInProgress = false
+    }
   }
 
   function $suggestDocumentTree<Input>(input: Input) {
@@ -2399,6 +2690,43 @@ function createReviewController() {
       }),
       detachRoot,
       current.registerNodeTransform(RootNode, () => {
+        if (nativeInsertMarker) {
+          const marker = nativeInsertMarker
+          nativeInsertMarker = null
+
+          try {
+            marker.assertCurrent()
+
+            if (
+              marker.editor !== current ||
+              editor !== current ||
+              !current.isEditable() ||
+              !suggesting ||
+              $getState($getRoot(), editorReviewNativeFragmentState)?.id !==
+                marker.id ||
+              normalizedNativeFragmentSnapshot(
+                current,
+                $serializeReviewRoot(),
+              ) !== marker.after
+            )
+              throw new EditorReviewInputError(
+                "Native insertion changed before validation.",
+              )
+          } catch (error) {
+            throw error instanceof EditorReviewInputError
+              ? error
+              : new EditorReviewInputError(
+                  "Native insertion authorization expired.",
+                )
+          }
+
+          $addUpdateTag(HISTORY_PUSH_TAG)
+          $addUpdateTag("yopem-review-action")
+          validateDocument()
+
+          return
+        }
+
         if (initialReviewState) {
           initialReviewState = false
 
@@ -2504,6 +2832,8 @@ function createReviewController() {
       current.registerCommand(PASTE_COMMAND, paste, COMMAND_PRIORITY_NORMAL),
       current.registerCommand(CUT_COMMAND, cut, COMMAND_PRIORITY_LOW),
       current.registerUpdateListener(({ dirtyElements, dirtyLeaves }) => {
+        if (nativeInsertMarker?.editor === current) nativeInsertMarker = null
+
         if (dirtyElements.size || dirtyLeaves.size) saved = null
         publish()
       }),
@@ -2516,6 +2846,8 @@ function createReviewController() {
       () => {
         saved = null
         suggesting = false
+        nativeInsertMarker = null
+        nativeInsertInProgress = false
         editor = null
         disposed = true
         session.dispose()
@@ -2551,6 +2883,7 @@ function createReviewController() {
     $deleteThread,
     $resolve,
     $suggestInsert,
+    $suggestNativeInsertNodes,
     $suggestDelete,
     $suggestFormat,
     $suggestDocumentText,
