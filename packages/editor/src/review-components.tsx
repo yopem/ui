@@ -1,7 +1,8 @@
 "use client"
 
-import type { ReactNode } from "react"
+import type { ChangeEvent, FormEvent, MouseEvent, ReactNode } from "react"
 
+import { useStableCallback } from "@base-ui/utils/useStableCallback"
 import { AutoFocusExtension } from "@lexical/extension"
 import { Box } from "@registry/components/ui/box"
 import { Button } from "@registry/components/ui/button"
@@ -47,22 +48,6 @@ const reviewStyles = stylex.create({ panel: { overflowWrap: "anywhere" } })
 
 const ReviewContext = createContext<EditorReviewBinding | null>(null)
 
-function createReviewConnection(
-  binding: EditorReviewBinding,
-  host: EditorReviewHost | null,
-) {
-  function connect(element: HTMLDivElement | null) {
-    if (!element) return
-    binding.setHost(host)
-
-    return function disconnect() {
-      binding.setHost(null)
-    }
-  }
-
-  return connect
-}
-
 export function EditorReviewProvider({
   controller,
   host,
@@ -73,15 +58,9 @@ export function EditorReviewProvider({
   children: ReactNode
 }) {
   const binding = controller.forEditor(useEditor())
-  const [source, setSource] = useState({ binding, host })
 
-  const [connect, setConnect] = useState(() =>
-    createReviewConnection(binding, host),
-  )
-
-  if (source.binding !== binding || source.host !== host) {
-    setSource({ binding, host })
-    setConnect(() => createReviewConnection(binding, host))
+  function connect(element: HTMLDivElement | null) {
+    binding.setHost(element ? host : null)
   }
 
   return (
@@ -109,13 +88,15 @@ export function EditorReviewModeControl() {
   const controller = useEditorReview()
   const view = controller.getView()
 
+  const handleClick = useStableCallback(function handleClick() {
+    controller.run(() => controller.setSuggesting(!view.suggesting))
+  })
+
   return (
     <Button
       disabled={!view.suggesting && !controller.available("suggest")}
       aria-pressed={view.suggesting}
-      onClick={() =>
-        controller.run(() => controller.setSuggesting(!view.suggesting))
-      }
+      onClick={handleClick}
     >
       Suggest edits
     </Button>
@@ -128,33 +109,51 @@ export function EditorReviewDiffControl() {
   const [opened, setOpened] = useState(false)
   const [target, setTarget] = useState("")
 
+  const capture = useStableCallback(function capture() {
+    controller.capture()
+  })
+
+  const open = useStableCallback(function open() {
+    setTarget(view.text)
+    setOpened(true)
+  })
+
+  const submit = useStableCallback(function submit(
+    event: FormEvent<HTMLFormElement>,
+  ) {
+    event.preventDefault()
+
+    if (
+      controller.run(() => {
+        controller.restore()
+        controller.$suggestDocumentText(target)
+      })
+    )
+      setOpened(false)
+  })
+
+  const changeTarget = useStableCallback(function changeTarget(
+    event: ChangeEvent<HTMLTextAreaElement>,
+  ) {
+    setTarget(event.target.value)
+  })
+
+  const close = useStableCallback(function close() {
+    setOpened(false)
+  })
+
   return (
     <Stack>
       <Button
         disabled={!view.diffAvailable || !controller.available("suggest")}
-        onPointerDown={() => controller.capture()}
-        onFocus={() => controller.capture()}
-        onClick={() => {
-          setTarget(view.text)
-          setOpened(true)
-        }}
+        onPointerDown={capture}
+        onFocus={capture}
+        onClick={open}
       >
         Review replacement
       </Button>
       {opened ? (
-        <Form
-          onSubmit={(event) => {
-            event.preventDefault()
-
-            if (
-              controller.run(() => {
-                controller.restore()
-                controller.$suggestDocumentText(target)
-              })
-            )
-              setOpened(false)
-          }}
-        >
+        <Form onSubmit={submit}>
           <Stack>
             <Field>
               <FieldLabel>Proposed document text</FieldLabel>
@@ -162,7 +161,7 @@ export function EditorReviewDiffControl() {
                 aria-label="Proposed document text"
                 value={target}
                 maxLength={4096}
-                onChange={(event) => setTarget(event.target.value)}
+                onChange={changeTarget}
               />
             </Field>
             <Text>Use one paragraph with at most 2048 graphemes.</Text>
@@ -170,7 +169,7 @@ export function EditorReviewDiffControl() {
               <Button type="submit" disabled={!controller.available("suggest")}>
                 Suggest document text
               </Button>
-              <Button type="button" onClick={() => setOpened(false)}>
+              <Button type="button" onClick={close}>
                 Cancel replacement
               </Button>
             </HStack>
@@ -195,34 +194,49 @@ export function EditorReviewCreateControl() {
     setCaptured(true)
   }
 
+  const capture = useStableCallback(function capture() {
+    controller.capture()
+  })
+
+  const open = useStableCallback(function open() {
+    setCaptured(true)
+  })
+
+  const submit = useStableCallback(function submit(
+    event: FormEvent<HTMLFormElement>,
+  ) {
+    event.preventDefault()
+
+    if (!draft) return
+
+    if (
+      controller.run(() => {
+        controller.restore()
+        controller.$createThread(text, draft)
+      })
+    ) {
+      setDraft(null)
+      setCaptured(false)
+    }
+  })
+
+  const cancel = useStableCallback(function cancel() {
+    setDraft(null)
+    setCaptured(false)
+  })
+
   return (
     <Stack>
       <Button
         disabled={!controller.available("create")}
-        onPointerDown={() => controller.capture()}
-        onFocus={() => controller.capture()}
-        onClick={() => setCaptured(true)}
+        onPointerDown={capture}
+        onFocus={capture}
+        onClick={open}
       >
         Comment on selection
       </Button>
       {captured ? (
-        <Form
-          onSubmit={(event) => {
-            event.preventDefault()
-
-            if (!draft) return
-
-            if (
-              controller.run(() => {
-                controller.restore()
-                controller.$createThread(text, draft)
-              })
-            ) {
-              setDraft(null)
-              setCaptured(false)
-            }
-          }}
-        >
+        <Form onSubmit={submit}>
           <Stack>
             <EditorReviewRichComposer
               extensions={reviewDraftFocusExtensions}
@@ -237,13 +251,7 @@ export function EditorReviewCreateControl() {
               >
                 Add comment
               </Button>
-              <Button
-                type="button"
-                onClick={() => {
-                  setDraft(null)
-                  setCaptured(false)
-                }}
-              >
+              <Button type="button" onClick={cancel}>
                 Cancel comment
               </Button>
             </HStack>
@@ -260,23 +268,25 @@ export function EditorReviewReplyForm({ id }: { id: string }) {
   const [revision, setRevision] = useState(0)
   const text = draft ? reviewRichText(draft).trim() : ""
 
+  const submit = useStableCallback(function submit(
+    event: FormEvent<HTMLFormElement>,
+  ) {
+    event.preventDefault()
+
+    if (!draft) return
+
+    if (
+      controller.run(() => {
+        controller.$reply(id, text, draft)
+      })
+    ) {
+      setDraft(null)
+      setRevision((value) => value + 1)
+    }
+  })
+
   return (
-    <Form
-      onSubmit={(event) => {
-        event.preventDefault()
-
-        if (!draft) return
-
-        if (
-          controller.run(() => {
-            controller.$reply(id, text, draft)
-          })
-        ) {
-          setDraft(null)
-          setRevision((value) => value + 1)
-        }
-      }}
-    >
+    <Form onSubmit={submit}>
       <Stack>
         <EditorReviewRichComposer
           key={revision}
@@ -301,6 +311,18 @@ export function EditorReviewThread({ id }: { id: string }) {
   const view = controller.getView()
   const thread = view.data.threads.find((item) => item.id === id)
 
+  const goToThread = useStableCallback(function goToThread() {
+    controller.goToThread(id)
+  })
+
+  const resolveThread = useStableCallback(function resolveThread() {
+    if (thread) controller.run(() => controller.$resolve(id, !thread.resolved))
+  })
+
+  const deleteThread = useStableCallback(function deleteThread() {
+    controller.run(() => controller.$deleteThread(id))
+  })
+
   if (!thread) return null
 
   return (
@@ -322,7 +344,7 @@ export function EditorReviewThread({ id }: { id: string }) {
         <Wrap>
           <Button
             disabled={view.detachedThreadIds.includes(id)}
-            onClick={() => controller.goToThread(id)}
+            onClick={goToThread}
           >
             Go to thread
           </Button>
@@ -330,16 +352,14 @@ export function EditorReviewThread({ id }: { id: string }) {
             disabled={
               !controller.available(thread.resolved ? "reopen" : "resolve", id)
             }
-            onClick={() =>
-              controller.run(() => controller.$resolve(id, !thread.resolved))
-            }
+            onClick={resolveThread}
           >
             {thread.resolved ? "Reopen thread" : "Resolve thread"}
           </Button>
           <Button
             disabled={!controller.available("delete", id)}
             variant="destructive-outline"
-            onClick={() => controller.run(() => controller.$deleteThread(id))}
+            onClick={deleteThread}
           >
             Delete thread
           </Button>
@@ -367,14 +387,38 @@ export function EditorReviewComment({
   const [draft, setDraft] = useState<ReviewRichContent | null>(null)
   const text = draft ? reviewRichText(draft).trim() : ""
 
-  function finishEditing() {
+  const finishEditing = useStableCallback(function finishEditing() {
     setEditing(false)
     queueMicrotask(() => {
       const button = editButton.current
 
       if (button?.isConnected && !button.disabled) button.focus()
     })
-  }
+  })
+
+  const submit = useStableCallback(function submit(
+    event: FormEvent<HTMLFormElement>,
+  ) {
+    event.preventDefault()
+
+    if (!draft) return
+
+    if (
+      controller.run(() => {
+        controller.$editComment(threadId, comment.id, text, draft)
+      })
+    )
+      finishEditing()
+  })
+
+  const edit = useStableCallback(function edit() {
+    setDraft(comment.content ?? makeReviewRichContent(comment.text))
+    setEditing(true)
+  })
+
+  const deleteComment = useStableCallback(function deleteComment() {
+    controller.run(() => controller.$deleteComment(threadId, comment.id))
+  })
 
   return (
     <Box render={<article aria-label={`Comment by ${comment.author.name}`} />}>
@@ -386,20 +430,7 @@ export function EditorReviewComment({
           </time>
         </Text>
         {editing ? (
-          <Form
-            onSubmit={(event) => {
-              event.preventDefault()
-
-              if (!draft) return
-
-              if (
-                controller.run(() => {
-                  controller.$editComment(threadId, comment.id, text, draft)
-                })
-              )
-                finishEditing()
-            }}
-          >
+          <Form onSubmit={submit}>
             <Stack>
               <EditorReviewRichComposer
                 extensions={reviewDraftFocusExtensions}
@@ -430,21 +461,14 @@ export function EditorReviewComment({
           <Button
             ref={editButton}
             disabled={editing || !controller.available("edit", comment.id)}
-            onClick={() => {
-              setDraft(comment.content ?? makeReviewRichContent(comment.text))
-              setEditing(true)
-            }}
+            onClick={edit}
           >
             Edit comment
           </Button>
           <Button
             disabled={!controller.availableDeleteComment(threadId, comment.id)}
             variant="destructive-outline"
-            onClick={() =>
-              controller.run(() =>
-                controller.$deleteComment(threadId, comment.id),
-              )
-            }
+            onClick={deleteComment}
           >
             Delete comment
           </Button>
@@ -454,30 +478,41 @@ export function EditorReviewComment({
   )
 }
 
-export function EditorReviewDecisionControls({ id }: { id?: string }) {
+function EditorReviewDecisionButton({
+  action,
+  id,
+}: {
+  action: "accept" | "reject"
+  id?: string
+}) {
   const controller = useEditorReview()
 
+  const handleClick = useStableCallback(function handleClick() {
+    controller.run(() =>
+      id ? controller.$decide(id, action) : controller.$decideAll(action),
+    )
+  })
+
+  return (
+    <Button
+      disabled={
+        !(id
+          ? controller.available(action, id)
+          : controller.availableAllDecisions(action))
+      }
+      onClick={handleClick}
+    >
+      {action === "accept" ? "Accept" : "Reject"}
+      {id ? " suggestion" : " all suggestions"}
+    </Button>
+  )
+}
+
+export function EditorReviewDecisionControls({ id }: { id?: string }) {
   return (
     <HStack>
       {(["accept", "reject"] as const).map((action) => (
-        <Button
-          key={action}
-          disabled={
-            !(id
-              ? controller.available(action, id)
-              : controller.availableAllDecisions(action))
-          }
-          onClick={() =>
-            controller.run(() =>
-              id
-                ? controller.$decide(id, action)
-                : controller.$decideAll(action),
-            )
-          }
-        >
-          {action === "accept" ? "Accept" : "Reject"}
-          {id ? " suggestion" : " all suggestions"}
-        </Button>
+        <EditorReviewDecisionButton key={action} action={action} id={id} />
       ))}
     </HStack>
   )
@@ -530,23 +565,31 @@ export function EditorReviewStructuralChangeList({ id }: { id: string }) {
 export function EditorReviewStructuralDecisionControls({ id }: { id: string }) {
   const controller = useEditorReview()
 
+  const accept = useStableCallback(function accept(
+    event: MouseEvent<HTMLButtonElement>,
+  ) {
+    if (!event.defaultPrevented) controller.decideStructural(id, "accept")
+  })
+
+  const reject = useStableCallback(function reject(
+    event: MouseEvent<HTMLButtonElement>,
+  ) {
+    if (!event.defaultPrevented) controller.decideStructural(id, "reject")
+  })
+
   return (
     <HStack>
       <Button
         type="button"
         disabled={!controller.available("accept", id)}
-        onClick={(event) => {
-          if (!event.defaultPrevented) controller.decideStructural(id, "accept")
-        }}
+        onClick={accept}
       >
         Accept structural proposal
       </Button>
       <Button
         type="button"
         disabled={!controller.available("reject", id)}
-        onClick={(event) => {
-          if (!event.defaultPrevented) controller.decideStructural(id, "reject")
-        }}
+        onClick={reject}
       >
         Reject structural proposal
       </Button>
@@ -601,6 +644,20 @@ export function EditorReviewStructuralProposals() {
   )
 }
 
+function EditorReviewGoToSuggestion({ id }: { id: string }) {
+  const controller = useEditorReview()
+
+  const goToSuggestion = useStableCallback(function goToSuggestion() {
+    controller.goToSuggestion(id)
+  })
+
+  return (
+    <Button type="button" onClick={goToSuggestion}>
+      Go to suggestion
+    </Button>
+  )
+}
+
 export function EditorReviewPanel() {
   const controller = useEditorReview()
   const view = controller.getView()
@@ -640,12 +697,7 @@ export function EditorReviewPanel() {
               {suggestion.formattedText ? (
                 <Text>Format preview: {suggestion.formattedText}</Text>
               ) : null}
-              <Button
-                type="button"
-                onClick={() => controller.goToSuggestion(suggestion.id)}
-              >
-                Go to suggestion
-              </Button>
+              <EditorReviewGoToSuggestion id={suggestion.id} />
               <EditorReviewDecisionControls id={suggestion.id} />
             </Stack>
           </Box>

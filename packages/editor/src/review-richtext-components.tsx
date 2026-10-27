@@ -3,6 +3,7 @@
 import type { EditorState } from "lexical"
 import type { ReactNode } from "react"
 
+import { useStableCallback } from "@base-ui/utils/useStableCallback"
 import { Box } from "@registry/components/ui/box"
 import { Em } from "@registry/components/ui/em"
 import { Fieldset, FieldsetLegend } from "@registry/components/ui/fieldset"
@@ -128,7 +129,7 @@ export function EditorReviewRichComposer({
     }),
   ])
 
-  function change(state: EditorState) {
+  const change = useStableCallback(function change(state: EditorState) {
     try {
       const content = parseReviewRichContent(state.toJSON())
       setInvalid(false)
@@ -137,7 +138,7 @@ export function EditorReviewRichComposer({
       setInvalid(true)
       onChange(null)
     }
-  }
+  })
 
   return (
     <Fieldset>
