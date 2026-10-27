@@ -1,11 +1,12 @@
 "use client"
 
+import { useStableCallback } from "@base-ui/utils/useStableCallback"
 import { Button } from "@registry/components/ui/button"
 import { Fieldset } from "@registry/components/ui/fieldset"
 import { Text } from "@registry/components/ui/text"
 import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
-import { useState } from "react"
+import { useState, type ComponentProps } from "react"
 
 import type { MediaData, MediaEmbedPolicy } from "./media/schema"
 
@@ -86,6 +87,13 @@ function MediaEmbedConsent({
 }) {
   const [consented, setConsented] = useState(false)
 
+  const handleLoad = useStableCallback(function handleLoad(
+    event: Parameters<NonNullable<ComponentProps<typeof Button>["onClick"]>>[0],
+  ) {
+    if (event.defaultPrevented || disabled) return
+    setConsented(true)
+  })
+
   if (source && consented)
     return (
       <iframe
@@ -115,10 +123,7 @@ function MediaEmbedConsent({
           variant="outline"
           disabled={disabled}
           xstyle={styles.target}
-          onClick={(event) => {
-            if (event.defaultPrevented || disabled) return
-            setConsented(true)
-          }}
+          onClick={handleLoad}
         >
           Load content from {host}
         </Button>

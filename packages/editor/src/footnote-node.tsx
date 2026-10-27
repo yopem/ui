@@ -13,6 +13,7 @@ import type {
 } from "lexical"
 import type { MouseEvent, ReactNode } from "react"
 
+import { useStableCallback } from "@base-ui/utils/useStableCallback"
 import { Button } from "@registry/components/ui/button"
 import {
   PreviewCard,
@@ -69,6 +70,10 @@ export type SerializedEditorFootnoteDefinitionNode = Spread<
   },
   SerializedElementNode
 >
+
+function preventFootnoteBlur(event: MouseEvent<HTMLElement>) {
+  event.preventDefault()
+}
 
 const styles = stylex.create({
   definition: {
@@ -444,7 +449,9 @@ function EditorFootnoteReferenceView({
     ? `Footnote ${reference.number} reference`
     : `Unresolved footnote reference ${identifier}`
 
-  function navigate(event: MouseEvent<HTMLElement>) {
+  const navigate = useStableCallback(function navigate(
+    event: MouseEvent<HTMLElement>,
+  ) {
     event.preventDefault()
 
     if (!targetKey) return
@@ -464,9 +471,9 @@ function EditorFootnoteReferenceView({
     })
     element?.scrollIntoView({ block: "nearest" })
     editor.focus()
-  }
+  })
 
-  function createDefinition() {
+  const createDefinition = useStableCallback(function createDefinition() {
     if (!editor.isEditable() || definition) return
     editor.update(
       () => {
@@ -480,7 +487,7 @@ function EditorFootnoteReferenceView({
       { discrete: true },
     )
     editor.focus()
-  }
+  })
 
   const trigger = targetId ? (
     <Button
@@ -495,7 +502,7 @@ function EditorFootnoteReferenceView({
       size="xs"
       xstyle={styles.reference}
       aria-label={accessibleName}
-      onMouseDown={(event) => event.preventDefault()}
+      onMouseDown={preventFootnoteBlur}
       onClick={navigate}
     >
       {label}
@@ -507,7 +514,7 @@ function EditorFootnoteReferenceView({
       xstyle={styles.reference}
       aria-label={accessibleName}
       disabled={!editor.isEditable()}
-      onMouseDown={(event) => event.preventDefault()}
+      onMouseDown={preventFootnoteBlur}
       onClick={createDefinition}
     >
       {label}
@@ -530,7 +537,7 @@ function EditorFootnoteReferenceView({
             <Button
               variant="outline"
               size="sm"
-              onMouseDown={(event) => event.preventDefault()}
+              onMouseDown={preventFootnoteBlur}
               onClick={createDefinition}
             >
               Create definition for [^{identifier}]

@@ -3,6 +3,7 @@
 import type { StyleXComponentProps } from "@registry/lib/stylex"
 import type { ComponentProps } from "react"
 
+import { useStableCallback } from "@base-ui/utils/useStableCallback"
 import { Box } from "@registry/components/ui/box"
 import { Button } from "@registry/components/ui/button"
 import { NativeSelect } from "@registry/components/ui/native-select"
@@ -64,21 +65,21 @@ export function EditorCodeToolbar({
   const [store] = useState(() => createEditorCodeStore(editor))
   const toolbarXstyle = [editorStyles.toolbar, xstyle]
 
-  function handleFocus(
+  const handleFocus = useStableCallback(function handleFocus(
     event: Parameters<NonNullable<EditorCodeToolbarProps["onFocusCapture"]>>[0],
   ) {
     store.enterControls()
     onFocusCapture?.(event)
-  }
+  })
 
-  function handleBlur(
+  const handleBlur = useStableCallback(function handleBlur(
     event: Parameters<NonNullable<EditorCodeToolbarProps["onBlurCapture"]>>[0],
   ) {
     onBlurCapture?.(event)
 
     if (!event.currentTarget.contains(event.relatedTarget))
       store.leaveControls()
-  }
+  })
 
   return (
     <CodeContext value={store}>
@@ -115,7 +116,7 @@ export function EditorCodeLanguage({
   const language = state?.language ?? ""
   const toolbarDisabled = use(CodeDisabledContext)
 
-  function handleChange(
+  const handleChange = useStableCallback(function handleChange(
     event: Parameters<NonNullable<EditorCodeLanguageProps["onChange"]>>[0],
   ) {
     const revision = store.getRevision()
@@ -123,9 +124,9 @@ export function EditorCodeLanguage({
 
     if (!event.defaultPrevented && !disabled && !toolbarDisabled)
       store.setLanguage(event.currentTarget.value, revision)
-  }
+  })
 
-  function handleKeyDown(
+  const handleKeyDown = useStableCallback(function handleKeyDown(
     event: Parameters<NonNullable<EditorCodeLanguageProps["onKeyDown"]>>[0],
   ) {
     onKeyDown?.(event)
@@ -135,7 +136,7 @@ export function EditorCodeLanguage({
       ["Home", "End", "PageUp", "PageDown"].includes(event.key)
     )
       event.stopPropagation()
-  }
+  })
 
   return (
     <NativeSelect
@@ -195,7 +196,7 @@ export function EditorCodeFormatButton({
     ? "Formatting is not supported for this language"
     : "Format the whole code block. Activate again to cancel pending formatting."
 
-  function handleClick(
+  const handleClick = useStableCallback(function handleClick(
     event: Parameters<NonNullable<EditorCodeFormatButtonProps["onClick"]>>[0],
   ) {
     const revision = store.getRevision()
@@ -205,7 +206,7 @@ export function EditorCodeFormatButton({
 
     if (pending) store.cancelFormat()
     else void store.format(formatter, revision)
-  }
+  })
 
   if (!formatter) return null
 
@@ -243,14 +244,14 @@ export function EditorCodeCopyButton({
   const store = useCodeStore()
   const state = useCodeState()
 
-  function handleClick(
+  const handleClick = useStableCallback(function handleClick(
     event: Parameters<NonNullable<EditorCodeCopyButtonProps["onClick"]>>[0],
   ) {
     const revision = store.getRevision()
     onClick?.(event)
 
     if (!event.defaultPrevented && !disabled) void store.copy(revision)
-  }
+  })
 
   return (
     <ToolbarButton
@@ -280,14 +281,14 @@ export function EditorCodeToggle({
   const store = useCodeStore()
   const state = useCodeState()
 
-  function handleClick(
+  const handleClick = useStableCallback(function handleClick(
     event: Parameters<NonNullable<EditorCodeToggleProps["onClick"]>>[0],
   ) {
     const revision = store.getRevision()
     onClick?.(event)
 
     if (!event.defaultPrevented && !disabled) store.toggle(setting, revision)
-  }
+  })
 
   return (
     <ToolbarButton

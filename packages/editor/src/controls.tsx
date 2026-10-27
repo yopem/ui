@@ -1,8 +1,10 @@
 "use client"
 
+import type { StyleXStyle } from "@registry/lib/stylex"
 import type { LexicalCommand, TextFormatType } from "lexical"
 import type { ComponentProps } from "react"
 
+import { useStableCallback } from "@base-ui/utils/useStableCallback"
 import { $createCodeNode } from "@lexical/code"
 import {
   $removeList,
@@ -40,13 +42,14 @@ export function EditorToolbar({
   ...props
 }: EditorToolbarProps) {
   const state = useEditorState()
+  const toolbarXstyle: StyleXStyle = [editorStyles.toolbar, xstyle]
 
   return (
     <Toolbar
       {...props}
       aria-label={label ?? `${state.ariaLabel} formatting`}
       disabled={disabled === true || !state.editable}
-      xstyle={[editorStyles.toolbar, xstyle]}
+      xstyle={toolbarXstyle}
     />
   )
 }
@@ -62,23 +65,31 @@ export function EditorCommandButton({
   const editor = useEditor()
   const { editable } = useEditorState()
 
+  const handleMouseDown = useStableCallback(function handleMouseDown(
+    event: Parameters<NonNullable<typeof onMouseDown>>[0],
+  ) {
+    onMouseDown?.(event)
+    event.preventDefault()
+  })
+
+  const handleClick = useStableCallback(function handleClick(
+    event: Parameters<NonNullable<typeof onClick>>[0],
+  ) {
+    onClick?.(event)
+
+    if (event.defaultPrevented || disabled === true || !editor.isEditable())
+      return
+    command()
+    editor.focus()
+  })
+
   return (
     <ToolbarButton
       render={<Button variant="ghost" size="sm" />}
       {...props}
       disabled={disabled === true || !editable}
-      onMouseDown={(event) => {
-        onMouseDown?.(event)
-        event.preventDefault()
-      }}
-      onClick={(event) => {
-        onClick?.(event)
-
-        if (event.defaultPrevented || disabled === true || !editor.isEditable())
-          return
-        command()
-        editor.focus()
-      }}
+      onMouseDown={handleMouseDown}
+      onClick={handleClick}
     >
       {children}
     </ToolbarButton>
@@ -112,12 +123,16 @@ export function EditorFormatButton({
   const editor = useEditor()
   const state = useEditorState()
 
+  function command() {
+    editor.dispatchCommand(FORMAT_TEXT_COMMAND, format)
+  }
+
   return (
     <EditorCommandButton
       aria-label={label}
       aria-pressed={state.formats.includes(format)}
       {...props}
-      command={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, format)}
+      command={command}
     >
       {children ?? label}
     </EditorCommandButton>
@@ -137,6 +152,13 @@ export function EditorHistoryButton({
   const editor = useEditor()
   const state = useEditorState()
 
+  function command() {
+    editor.dispatchCommand(
+      action === "undo" ? UNDO_COMMAND : REDO_COMMAND,
+      undefined,
+    )
+  }
+
   return (
     <EditorCommandButton
       {...props}
@@ -144,12 +166,7 @@ export function EditorHistoryButton({
         disabled === true ||
         !(action === "undo" ? state.canUndo : state.canRedo)
       }
-      command={() =>
-        editor.dispatchCommand(
-          action === "undo" ? UNDO_COMMAND : REDO_COMMAND,
-          undefined,
-        )
-      }
+      command={command}
     >
       {children ?? (action === "undo" ? "Undo" : "Redo")}
     </EditorCommandButton>
@@ -188,30 +205,29 @@ export function EditorBlockButton({
 }: EditorBlockButtonProps) {
   const editor = useEditor()
 
-  return (
-    <EditorCommandButton
-      {...props}
-      command={() =>
-        editor.update(() => {
-          $removeList()
-          const selection = $getSelection()
+  function command() {
+    editor.update(() => {
+      $removeList()
+      const selection = $getSelection()
 
-          if (!$isRangeSelection(selection)) return
-          $setBlocksType(selection, () => {
-            switch (block) {
-              case "paragraph":
-                return $createParagraphNode()
-              case "quote":
-                return $createQuoteNode()
-              case "code":
-                return $createCodeNode()
-              default:
-                return $createHeadingNode(block)
-            }
-          })
-        })
-      }
-    >
+      if (!$isRangeSelection(selection)) return
+      $setBlocksType(selection, () => {
+        switch (block) {
+          case "paragraph":
+            return $createParagraphNode()
+          case "quote":
+            return $createQuoteNode()
+          case "code":
+            return $createCodeNode()
+          default:
+            return $createHeadingNode(block)
+        }
+      })
+    })
+  }
+
+  return (
+    <EditorCommandButton {...props} command={command}>
       {children ?? blockLabels[block]}
     </EditorCommandButton>
   )
@@ -243,11 +259,12 @@ export function EditorListButton({
 }: EditorListButtonProps) {
   const editor = useEditor()
 
+  function command() {
+    editor.dispatchCommand(listCommands[listType], undefined)
+  }
+
   return (
-    <EditorCommandButton
-      {...props}
-      command={() => editor.dispatchCommand(listCommands[listType], undefined)}
-    >
+    <EditorCommandButton {...props} command={command}>
       {children ?? listLabels[listType]}
     </EditorCommandButton>
   )
@@ -264,18 +281,15 @@ export function EditorIndentButton({
 }: EditorIndentButtonProps) {
   const editor = useEditor()
 
+  function command() {
+    editor.dispatchCommand(
+      direction === "indent" ? INDENT_CONTENT_COMMAND : OUTDENT_CONTENT_COMMAND,
+      undefined,
+    )
+  }
+
   return (
-    <EditorCommandButton
-      {...props}
-      command={() =>
-        editor.dispatchCommand(
-          direction === "indent"
-            ? INDENT_CONTENT_COMMAND
-            : OUTDENT_CONTENT_COMMAND,
-          undefined,
-        )
-      }
-    >
+    <EditorCommandButton {...props} command={command}>
       {children ?? (direction === "indent" ? "Indent" : "Outdent")}
     </EditorCommandButton>
   )
@@ -289,17 +303,16 @@ export function EditorTableButton({
 }: EditorTableButtonProps) {
   const editor = useEditor()
 
+  function command() {
+    editor.dispatchCommand(INSERT_TABLE_COMMAND, {
+      columns: "3",
+      rows: "3",
+      includeHeaders: true,
+    })
+  }
+
   return (
-    <EditorCommandButton
-      {...props}
-      command={() =>
-        editor.dispatchCommand(INSERT_TABLE_COMMAND, {
-          columns: "3",
-          rows: "3",
-          includeHeaders: true,
-        })
-      }
-    >
+    <EditorCommandButton {...props} command={command}>
       {children}
     </EditorCommandButton>
   )

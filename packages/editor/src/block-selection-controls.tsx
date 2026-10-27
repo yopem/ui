@@ -1,7 +1,14 @@
 "use client"
 
-import type { ComponentProps, ReactNode } from "react"
+import type {
+  ComponentProps,
+  KeyboardEvent,
+  MouseEvent,
+  PointerEvent,
+  ReactNode,
+} from "react"
 
+import { useStableCallback } from "@base-ui/utils/useStableCallback"
 import { Box } from "@registry/components/ui/box"
 import { Button } from "@registry/components/ui/button"
 import { HStack } from "@registry/components/ui/hstack"
@@ -66,6 +73,40 @@ export function useEditorBlockSelection() {
   return { controller, state }
 }
 
+function EditorBlockSelectionSelectButton({
+  blockKey,
+  index,
+  selected,
+}: {
+  blockKey: string
+  index: number
+  selected: boolean
+}) {
+  const { controller } = useEditorBlockSelection()
+
+  const select = useStableCallback(function select(
+    event: MouseEvent<HTMLButtonElement>,
+  ) {
+    controller.select(blockKey, {
+      shift: event.shiftKey,
+      toggle: event.ctrlKey || event.metaKey,
+    })
+  })
+
+  return (
+    <Button
+      variant="ghost"
+      size="icon"
+      xstyle={[styles.handle, selected && styles.selected]}
+      aria-label={`Select block ${index + 1}`}
+      aria-pressed={selected}
+      onClick={select}
+    >
+      {index + 1}
+    </Button>
+  )
+}
+
 export function EditorBlockSelection({
   controller,
   children,
@@ -78,6 +119,55 @@ export function EditorBlockSelection({
 }) {
   const [initial] = useState(() => controller)
 
+  const handleKeyDown = useStableCallback(function handleKeyDown(
+    event: KeyboardEvent<HTMLDivElement>,
+  ) {
+    onKeyDown?.(event)
+
+    if (event.defaultPrevented) return
+
+    if (event.key === "Escape") {
+      controller.cancelDrag()
+      controller.clear()
+      event.preventDefault()
+    }
+
+    if (event.target instanceof HTMLElement && event.target.isContentEditable)
+      return
+    const current = controller.getSnapshot()
+
+    if (
+      current.mode &&
+      (event.key === "ArrowUp" || event.key === "ArrowDown")
+    ) {
+      const direction = event.key === "ArrowUp" ? "up" : "down"
+
+      if (event.altKey) controller.move(direction)
+      else {
+        const key =
+          direction === "up"
+            ? current.selected[0]
+            : current.selected[current.selected.length - 1]
+
+        const index = key ? current.blocks.indexOf(key) : -1
+        const next = current.blocks[index + (direction === "up" ? -1 : 1)]
+
+        if (next) controller.select(next, { shift: event.shiftKey })
+      }
+
+      event.preventDefault()
+    }
+
+    if (
+      (event.ctrlKey || event.metaKey) &&
+      event.key.toLowerCase() === "a" &&
+      controller.getSnapshot().mode
+    ) {
+      controller.selectAll()
+      event.preventDefault()
+    }
+  })
+
   if (initial !== controller)
     throw new Error("Keep the block selection controller stable")
 
@@ -87,55 +177,7 @@ export function EditorBlockSelection({
         {...props}
         data-slot="editor-block-selection"
         xstyle={[styles.root, xstyle]}
-        onKeyDown={function keyDown(event) {
-          onKeyDown?.(event)
-
-          if (event.defaultPrevented) return
-
-          if (event.key === "Escape") {
-            controller.cancelDrag()
-            controller.clear()
-            event.preventDefault()
-          }
-
-          if (
-            event.target instanceof HTMLElement &&
-            event.target.isContentEditable
-          )
-            return
-          const current = controller.getSnapshot()
-
-          if (
-            current.mode &&
-            (event.key === "ArrowUp" || event.key === "ArrowDown")
-          ) {
-            const direction = event.key === "ArrowUp" ? "up" : "down"
-
-            if (event.altKey) controller.move(direction)
-            else {
-              const key =
-                direction === "up"
-                  ? current.selected[0]
-                  : current.selected[current.selected.length - 1]
-
-              const index = key ? current.blocks.indexOf(key) : -1
-              const next = current.blocks[index + (direction === "up" ? -1 : 1)]
-
-              if (next) controller.select(next, { shift: event.shiftKey })
-            }
-
-            event.preventDefault()
-          }
-
-          if (
-            (event.ctrlKey || event.metaKey) &&
-            event.key.toLowerCase() === "a" &&
-            controller.getSnapshot().mode
-          ) {
-            controller.selectAll()
-            event.preventDefault()
-          }
-        }}
+        onKeyDown={handleKeyDown}
       >
         {children}
       </Box>
@@ -201,6 +243,35 @@ export function EditorBlockSelectionGutter() {
       },
   )
 
+  const handlePointerDown = useStableCallback(function handlePointerDown(
+    event: PointerEvent<HTMLDivElement>,
+  ) {
+    if (event.target !== event.currentTarget || event.button !== 0) return
+    event.preventDefault()
+    event.currentTarget.setPointerCapture(event.pointerId)
+    controller.startMarquee(event.clientY, event.ctrlKey || event.metaKey)
+  })
+
+  const handlePointerMove = useStableCallback(function handlePointerMove(
+    event: PointerEvent<HTMLDivElement>,
+  ) {
+    if (event.currentTarget.hasPointerCapture(event.pointerId))
+      controller.marquee(event.clientY)
+  })
+
+  const handlePointerUp = useStableCallback(function handlePointerUp(
+    event: PointerEvent<HTMLDivElement>,
+  ) {
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+      event.currentTarget.releasePointerCapture(event.pointerId)
+      controller.endMarquee()
+    }
+  })
+
+  const handlePointerCancel = useStableCallback(function handlePointerCancel() {
+    controller.endMarquee()
+  })
+
   return (
     <Box
       render={<fieldset />}
@@ -208,43 +279,18 @@ export function EditorBlockSelectionGutter() {
       data-slot="editor-block-selection-gutter"
       ref={connect}
       xstyle={[styles.group, styles.gutter]}
-      onPointerDown={function down(event) {
-        if (event.target !== event.currentTarget || event.button !== 0) return
-        event.preventDefault()
-        event.currentTarget.setPointerCapture(event.pointerId)
-        controller.startMarquee(event.clientY, event.ctrlKey || event.metaKey)
-      }}
-      onPointerMove={function move(event) {
-        if (event.currentTarget.hasPointerCapture(event.pointerId))
-          controller.marquee(event.clientY)
-      }}
-      onPointerUp={function up(event) {
-        if (event.currentTarget.hasPointerCapture(event.pointerId)) {
-          event.currentTarget.releasePointerCapture(event.pointerId)
-          controller.endMarquee()
-        }
-      }}
-      onPointerCancel={function cancel() {
-        controller.endMarquee()
-      }}
+      onPointerDown={handlePointerDown}
+      onPointerMove={handlePointerMove}
+      onPointerUp={handlePointerUp}
+      onPointerCancel={handlePointerCancel}
     >
       {state.layout.map(({ key, top }, index) => (
         <HStack key={key} xstyle={styles.row(top)}>
-          <Button
-            variant="ghost"
-            size="icon"
-            xstyle={[styles.handle, selected.has(key) && styles.selected]}
-            aria-label={`Select block ${index + 1}`}
-            aria-pressed={selected.has(key)}
-            onClick={function select(event) {
-              controller.select(key, {
-                shift: event.shiftKey,
-                toggle: event.ctrlKey || event.metaKey,
-              })
-            }}
-          >
-            {index + 1}
-          </Button>
+          <EditorBlockSelectionSelectButton
+            blockKey={key}
+            index={index}
+            selected={selected.has(key)}
+          />
           <EditorBlockDragHandle
             blockKey={key}
             label={`Drag block ${index + 1}`}
@@ -266,6 +312,55 @@ export function EditorBlockDragHandle({
   const { controller, state } = useEditorBlockSelection()
   const pointer = useRef<{ x: number; y: number; moved: boolean } | null>(null)
 
+  const handlePointerDown = useStableCallback(function handlePointerDown(
+    event: PointerEvent<HTMLButtonElement>,
+  ) {
+    if (event.button !== 0 || !controller.beginDrag(blockKey)) return
+    event.preventDefault()
+    pointer.current = { x: event.clientX, y: event.clientY, moved: false }
+    event.currentTarget.setPointerCapture(event.pointerId)
+  })
+
+  const handlePointerMove = useStableCallback(function handlePointerMove(
+    event: PointerEvent<HTMLButtonElement>,
+  ) {
+    const start = pointer.current
+
+    if (!start || !event.currentTarget.hasPointerCapture(event.pointerId))
+      return
+
+    if (Math.hypot(event.clientX - start.x, event.clientY - start.y) >= 6)
+      start.moved = true
+
+    if (start.moved) controller.previewDrop(event.clientY)
+  })
+
+  const handlePointerUp = useStableCallback(function handlePointerUp(
+    event: PointerEvent<HTMLButtonElement>,
+  ) {
+    if (!event.currentTarget.hasPointerCapture(event.pointerId)) return
+
+    if (controller.getSnapshot().dragging && pointer.current?.moved)
+      controller.dropAt(event.clientY)
+    else controller.cancelDrag()
+    pointer.current = null
+    event.currentTarget.releasePointerCapture(event.pointerId)
+    event.currentTarget.focus()
+  })
+
+  const handlePointerCancel = useStableCallback(function handlePointerCancel() {
+    pointer.current = null
+    controller.cancelDrag()
+  })
+
+  const handleLostPointerCapture = useStableCallback(
+    function handleLostPointerCapture(event: PointerEvent<HTMLButtonElement>) {
+      pointer.current = null
+      controller.cancelDrag()
+      props.onLostPointerCapture?.(event)
+    },
+  )
+
   return (
     <Button
       {...props}
@@ -275,42 +370,11 @@ export function EditorBlockDragHandle({
       data-slot="editor-block-drag-handle"
       disabled={!state.editable || props.disabled}
       xstyle={[styles.handle, props.xstyle]}
-      onPointerDown={function down(event) {
-        if (event.button !== 0 || !controller.beginDrag(blockKey)) return
-        event.preventDefault()
-        pointer.current = { x: event.clientX, y: event.clientY, moved: false }
-        event.currentTarget.setPointerCapture(event.pointerId)
-      }}
-      onPointerMove={function move(event) {
-        const start = pointer.current
-
-        if (!start || !event.currentTarget.hasPointerCapture(event.pointerId))
-          return
-
-        if (Math.hypot(event.clientX - start.x, event.clientY - start.y) >= 6)
-          start.moved = true
-
-        if (start.moved) controller.previewDrop(event.clientY)
-      }}
-      onPointerUp={function up(event) {
-        if (!event.currentTarget.hasPointerCapture(event.pointerId)) return
-
-        if (controller.getSnapshot().dragging && pointer.current?.moved)
-          controller.dropAt(event.clientY)
-        else controller.cancelDrag()
-        pointer.current = null
-        event.currentTarget.releasePointerCapture(event.pointerId)
-        event.currentTarget.focus()
-      }}
-      onPointerCancel={function cancel() {
-        pointer.current = null
-        controller.cancelDrag()
-      }}
-      onLostPointerCapture={function lost(event) {
-        pointer.current = null
-        controller.cancelDrag()
-        props.onLostPointerCapture?.(event)
-      }}
+      onPointerDown={handlePointerDown}
+      onPointerMove={handlePointerMove}
+      onPointerUp={handlePointerUp}
+      onPointerCancel={handlePointerCancel}
+      onLostPointerCapture={handleLostPointerCapture}
     >
       {props.children ?? <GripVertical size={16} aria-hidden="true" />}
     </Button>
@@ -322,6 +386,10 @@ export function EditorBlockSelectionActions({
   ...props
 }: ComponentProps<typeof Wrap>) {
   const { controller, state } = useEditorBlockSelection()
+
+  const clear = useStableCallback(function clear() {
+    controller.clear()
+  })
 
   return (
     <Box render={<fieldset />} aria-label="Block actions" xstyle={styles.group}>
@@ -346,13 +414,7 @@ export function EditorBlockSelectionActions({
             <EditorBlockSelectionAction action="cut">
               Cut blocks
             </EditorBlockSelectionAction>
-            <Button
-              variant="outline"
-              disabled={!state.mode}
-              onClick={function clear() {
-                controller.clear()
-              }}
-            >
+            <Button variant="outline" disabled={!state.mode} onClick={clear}>
               Clear block selection
             </Button>
           </>
@@ -370,6 +432,20 @@ export function EditorBlockSelectionAction({
 }) {
   const { controller, state } = useEditorBlockSelection()
 
+  const handleClick = useStableCallback(function handleClick(
+    event: MouseEvent<HTMLButtonElement>,
+  ) {
+    props.onClick?.(event)
+
+    if (event.defaultPrevented) return
+
+    if (action === "up" || action === "down") controller.move(action)
+    else if (action === "duplicate") controller.duplicate()
+    else if (action === "delete") controller.remove()
+    else if (action === "copy") void controller.copy()
+    else controller.cut()
+  })
+
   return (
     <Button
       {...props}
@@ -380,17 +456,7 @@ export function EditorBlockSelectionAction({
         !state.mode ||
         (action !== "copy" && !state.editable)
       }
-      onClick={function click(event) {
-        props.onClick?.(event)
-
-        if (event.defaultPrevented) return
-
-        if (action === "up" || action === "down") controller.move(action)
-        else if (action === "duplicate") controller.duplicate()
-        else if (action === "delete") controller.remove()
-        else if (action === "copy") void controller.copy()
-        else controller.cut()
-      }}
+      onClick={handleClick}
     />
   )
 }

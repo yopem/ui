@@ -2,6 +2,7 @@
 
 import type { ComponentProps, ReactNode } from "react"
 
+import { useStableCallback } from "@base-ui/utils/useStableCallback"
 import { Box } from "@registry/components/ui/box"
 import { Button } from "@registry/components/ui/button"
 import {
@@ -90,15 +91,16 @@ export function EditorAiConfiguredRoot({
     session.getSnapshot,
   )
 
+  const handleOpenChange = useStableCallback(function handleOpenChange(
+    open: boolean,
+  ) {
+    if (!open) session.close()
+  })
+
   return (
     <AiSessionContext value={session}>
       <AiConfigContext value={config}>
-        <Dialog
-          open={state.open}
-          onOpenChange={(open) => {
-            if (!open) session.close()
-          }}
-        >
+        <Dialog open={state.open} onOpenChange={handleOpenChange}>
           {children}
         </Dialog>
       </AiConfigContext>
@@ -117,21 +119,31 @@ export function EditorAiTrigger({
   const { session } = useAi()
   const { editable } = useEditorState()
 
+  const handleMouseDown = useStableCallback(function handleMouseDown(
+    event: Parameters<
+      NonNullable<ComponentProps<typeof Button>["onMouseDown"]>
+    >[0],
+  ) {
+    onMouseDown?.(event)
+
+    if (!event.defaultPrevented) event.preventDefault()
+  })
+
+  const handleClick = useStableCallback(function handleClick(
+    event: Parameters<NonNullable<ComponentProps<typeof Button>["onClick"]>>[0],
+  ) {
+    onClick?.(event)
+
+    if (!event.defaultPrevented && editable && !disabled)
+      session.open(operation)
+  })
+
   return (
     <DialogTrigger
       render={<Button variant="ghost" size="sm" {...props} />}
       disabled={disabled === true || !editable}
-      onMouseDown={(event) => {
-        onMouseDown?.(event)
-
-        if (!event.defaultPrevented) event.preventDefault()
-      }}
-      onClick={(event) => {
-        onClick?.(event)
-
-        if (!event.defaultPrevented && editable && !disabled)
-          session.open(operation)
-      }}
+      onMouseDown={handleMouseDown}
+      onClick={handleClick}
     >
       {children ??
         (operation === "generate"
@@ -149,12 +161,26 @@ export function EditorAiPanel() {
   const { editable } = useEditorState()
   const [instruction, setInstruction] = useState("")
 
+  const finalFocus = useStableCallback(function finalFocus() {
+    return session.getApproved() ? editor.getRootElement() : true
+  })
+
+  const handleInstructionChange = useStableCallback(
+    function handleInstructionChange(
+      event: Parameters<
+        NonNullable<ComponentProps<typeof Input>["onChange"]>
+      >[0],
+    ) {
+      setInstruction(event.target.value)
+    },
+  )
+
+  const handleRequest = useStableCallback(function handleRequest() {
+    void session.request(config, instruction, window.location.origin)
+  })
+
   return (
-    <DialogPopup
-      finalFocus={() =>
-        session.getApproved() ? editor.getRootElement() : true
-      }
-    >
+    <DialogPopup finalFocus={finalFocus}>
       <DialogPanel>
         <Stack>
           <DialogTitle>AI proposal</DialogTitle>
@@ -167,15 +193,13 @@ export function EditorAiPanel() {
             value={instruction}
             maxLength={16_384}
             disabled={state.status !== "idle" || !editable}
-            onChange={(event) => setInstruction(event.target.value)}
+            onChange={handleInstructionChange}
           />
           <Button
             disabled={
               !editable || state.status !== "idle" || !instruction.trim()
             }
-            onClick={() => {
-              void session.request(config, instruction, window.location.origin)
-            }}
+            onClick={handleRequest}
           >
             Request proposal
           </Button>

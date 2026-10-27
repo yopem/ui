@@ -2,6 +2,7 @@
 
 import type { ComponentProps, ReactNode } from "react"
 
+import { useStableCallback } from "@base-ui/utils/useStableCallback"
 import { Checkbox } from "@registry/components/ui/checkbox"
 import { CheckboxGroup } from "@registry/components/ui/checkbox-group"
 import { Label } from "@registry/components/ui/label"
@@ -58,6 +59,18 @@ export function EditorLabelsOption({
   )
 }
 
+function cleanSelection(
+  values: readonly string[],
+  allowed: ReadonlySet<string>,
+) {
+  const selected = new Set<string>()
+
+  for (const item of values.slice(0, EDITOR_LABEL_MAX_OPTIONS))
+    if (allowed.has(item)) selected.add(item)
+
+  return Array.from(selected)
+}
+
 export function EditorLabelsPicker({
   options,
   value,
@@ -73,24 +86,17 @@ export function EditorLabelsPicker({
 
   const allowed = new Set(fixedOptions)
 
-  function cleanSelection(values: readonly string[]) {
-    const selected = new Set<string>()
-
-    for (const item of values.slice(0, EDITOR_LABEL_MAX_OPTIONS))
-      if (allowed.has(item)) selected.add(item)
-
-    return Array.from(selected)
-  }
-
-  function changeSelection(values: readonly string[]) {
-    onValueChange(cleanSelection(values))
-  }
+  const changeSelection = useStableCallback(function changeSelection(
+    values: readonly string[],
+  ) {
+    onValueChange(cleanSelection(values, allowed))
+  })
 
   return (
     <CheckboxGroup
       {...props}
       data-slot="editor-labels-picker"
-      value={cleanSelection(value)}
+      value={cleanSelection(value, allowed)}
       onValueChange={changeSelection}
     >
       {fixedOptions.map((option) => (

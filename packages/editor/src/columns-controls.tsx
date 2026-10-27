@@ -1,5 +1,8 @@
 "use client"
 
+import type { ComponentProps, KeyboardEvent, MouseEvent } from "react"
+
+import { useStableCallback } from "@base-ui/utils/useStableCallback"
 import { Button } from "@registry/components/ui/button"
 import { Slider } from "@registry/components/ui/slider"
 import { ToolbarButton } from "@registry/components/ui/toolbar"
@@ -63,6 +66,142 @@ const layoutPresets = new Map<
   [4, [{ label: "Equal columns", layout: [25, 25, 25, 25] }]],
 ])
 
+function preventColumnButtonFocus(event: MouseEvent<HTMLElement>) {
+  event.preventDefault()
+}
+
+type SliderValueChange = NonNullable<
+  ComponentProps<typeof Slider>["onValueChange"]
+>
+
+function EditorColumnInsertButton({
+  count,
+  disabled,
+  capture,
+  insert,
+}: {
+  count: number
+  disabled: boolean
+  capture: () => void
+  insert: (count: number) => void
+}) {
+  const handleMouseDown = useStableCallback(function handleMouseDown(
+    event: MouseEvent<HTMLElement>,
+  ) {
+    event.preventDefault()
+    capture()
+  })
+
+  const handleClick = useStableCallback(function handleClick() {
+    insert(count)
+  })
+
+  return (
+    <ToolbarButton
+      aria-label={`Insert ${count} columns`}
+      disabled={disabled}
+      render={<Button variant="ghost" size="sm" />}
+      onMouseDown={handleMouseDown}
+      onFocus={capture}
+      onClick={handleClick}
+    >
+      {count} columns
+    </ToolbarButton>
+  )
+}
+
+function EditorColumnLayoutButton({
+  preset,
+  disabled,
+  capture,
+  apply,
+}: {
+  preset: { label: string; layout: EditorColumnsLayout }
+  disabled: boolean
+  capture: () => void
+  apply: (layout: EditorColumnsLayout) => void
+}) {
+  const handleMouseDown = useStableCallback(function handleMouseDown(
+    event: MouseEvent<HTMLElement>,
+  ) {
+    event.preventDefault()
+    capture()
+  })
+
+  const handleClick = useStableCallback(function handleClick() {
+    apply(preset.layout)
+  })
+
+  return (
+    <ToolbarButton
+      aria-label={preset.label}
+      disabled={disabled}
+      render={<Button variant="ghost" size="sm" />}
+      onMouseDown={handleMouseDown}
+      onFocus={capture}
+      onClick={handleClick}
+    >
+      {preset.label}
+    </ToolbarButton>
+  )
+}
+
+function EditorColumnResizeSlider({
+  boundary,
+  disabled,
+  label,
+  max,
+  min,
+  value,
+  onCancel,
+  onFinish,
+  onResize,
+  onStart,
+}: {
+  boundary: number
+  disabled: boolean
+  label: string
+  max: number
+  min: number
+  value: number
+  onCancel: () => void
+  onFinish: () => void
+  onResize: (boundary: number, width: number, reason: string) => void
+  onStart: () => void
+}) {
+  const handleKeyDown = useStableCallback(function handleKeyDown(
+    event: KeyboardEvent<HTMLElement>,
+  ) {
+    if (event.key === "Escape") onCancel()
+    else onStart()
+  })
+
+  const handleValueChange = useStableCallback(function handleValueChange(
+    value: Parameters<SliderValueChange>[0],
+    details: Parameters<SliderValueChange>[1],
+  ) {
+    if (isSingleSliderValue(value)) onResize(boundary, value, details.reason)
+  })
+
+  return (
+    <Slider
+      aria-label={label}
+      disabled={disabled}
+      max={max}
+      min={min}
+      xstyle={styles.resizeSlider}
+      value={value}
+      onFocus={onStart}
+      onPointerDown={onStart}
+      onPointerCancel={onCancel}
+      onBlur={onCancel}
+      onKeyDown={handleKeyDown}
+      onValueChange={handleValueChange}
+      onValueCommitted={onFinish}
+    />
+  )
+}
+
 export function EditorColumnsInsertControl() {
   const editor = useEditor()
   const { editable } = useEditorState()
@@ -74,49 +213,53 @@ export function EditorColumnsInsertControl() {
   )
   const context = editor.getEditorState().read($getEditorColumnsContext)
 
-  function capture() {
+  const capture = useStableCallback(function capture() {
     editor.getEditorState().read(bookmark.capture)
-  }
+  })
 
-  function insert(count: number) {
-    if (!editable || !editor.isEditable() || !bookmark.getSnapshot()) return
-    const revision = bookmark.getRevision()
-    let inserted = false
+  const [insert] = useState(
+    () =>
+      function insert(count: number) {
+        if (!editor.isEditable() || !bookmark.getSnapshot()) return
+        const revision = bookmark.getRevision()
+        let inserted = false
 
-    editor.update(
-      () => {
-        if (bookmark.getRevision() !== revision || !bookmark.restore()) return
+        editor.update(
+          () => {
+            if (bookmark.getRevision() !== revision || !bookmark.restore())
+              return
 
-        const layout =
-          count === 2 ? [50, 50] : count === 3 ? [34, 33, 33] : [25, 25, 25, 25]
+            const layout =
+              count === 2
+                ? [50, 50]
+                : count === 3
+                  ? [34, 33, 33]
+                  : [25, 25, 25, 25]
 
-        inserted = editor.dispatchCommand(INSERT_EDITOR_COLUMNS_COMMAND, layout)
+            inserted = editor.dispatchCommand(
+              INSERT_EDITOR_COLUMNS_COMMAND,
+              layout,
+            )
+          },
+          { discrete: true, tag: HISTORY_PUSH_TAG },
+        )
+
+        bookmark.clear()
+
+        if (inserted) editor.focus()
       },
-      { discrete: true, tag: HISTORY_PUSH_TAG },
-    )
-
-    bookmark.clear()
-
-    if (inserted) editor.focus()
-  }
+  )
 
   return (
     <Wrap>
       {[2, 3, 4].map((count) => (
-        <ToolbarButton
+        <EditorColumnInsertButton
           key={count}
-          aria-label={`Insert ${count} columns`}
+          count={count}
           disabled={!editable || context !== null}
-          render={<Button variant="ghost" size="sm" />}
-          onMouseDown={(event) => {
-            event.preventDefault()
-            capture()
-          }}
-          onFocus={capture}
-          onClick={() => insert(count)}
-        >
-          {count} columns
-        </ToolbarButton>
+          capture={capture}
+          insert={insert}
+        />
       ))}
     </Wrap>
   )
@@ -138,68 +281,69 @@ export function EditorColumnsLayoutControl() {
     ? (layoutPresets.get(context.layout.length) ?? [])
     : []
 
-  function capture() {
-    if (!context) return
+  const capture = useStableCallback(function capture() {
     editor.getEditorState().read(() => {
+      const context = $getEditorColumnsContext()
+
+      if (!context) return
       bookmark.capture()
       target.current = {
         groupKey: context.group.getKey(),
         revision: bookmark.getRevision(),
       }
     })
-  }
+  })
 
-  function apply(layout: EditorColumnsLayout) {
-    const selected = target.current
+  const [apply] = useState(
+    () =>
+      function apply(layout: EditorColumnsLayout) {
+        const selected = target.current
 
-    if (!editable || !editor.isEditable() || !selected) return
-    let applied = false
+        if (!editor.isEditable() || !selected) return
+        let applied = false
 
-    editor.update(
-      () => {
-        if (bookmark.getRevision() !== selected.revision || !bookmark.restore())
-          return
-        const group = $getNodeByKey(selected.groupKey)
+        editor.update(
+          () => {
+            if (
+              bookmark.getRevision() !== selected.revision ||
+              !bookmark.restore()
+            )
+              return
+            const group = $getNodeByKey(selected.groupKey)
 
-        if (
-          !(group instanceof EditorColumnsGroupNode) ||
-          !group.isAttached() ||
-          group.getChildrenSize() !== layout.length
+            if (
+              !(group instanceof EditorColumnsGroupNode) ||
+              !group.isAttached() ||
+              group.getChildrenSize() !== layout.length
+            )
+              return
+            applied = editor.dispatchCommand(
+              SET_EDITOR_COLUMNS_LAYOUT_COMMAND,
+              layout,
+            )
+          },
+          { discrete: true, tag: HISTORY_PUSH_TAG },
         )
-          return
-        applied = editor.dispatchCommand(
-          SET_EDITOR_COLUMNS_LAYOUT_COMMAND,
-          layout,
-        )
+
+        bookmark.clear()
+        target.current = null
+
+        if (applied) editor.focus()
       },
-      { discrete: true, tag: HISTORY_PUSH_TAG },
-    )
-
-    bookmark.clear()
-    target.current = null
-
-    if (applied) editor.focus()
-  }
+  )
 
   if (!context) return null
 
   return (
     <Wrap>
       {presets.map((preset) => (
-        <ToolbarButton
+        <EditorColumnLayoutButton
           key={preset.label}
-          aria-label={preset.label}
+          preset={preset}
           disabled={!editable}
-          render={<Button variant="ghost" size="sm" />}
-          onMouseDown={(event) => {
-            event.preventDefault()
-            capture()
-          }}
-          onFocus={capture}
-          onClick={() => apply(preset.layout)}
-        >
-          {preset.label}
-        </ToolbarButton>
+          capture={capture}
+          apply={apply}
+        />
       ))}
     </Wrap>
   )
@@ -224,8 +368,10 @@ export function EditorColumnResizeControls() {
 
   const context = editor.getEditorState().read($getEditorColumnsContext)
 
-  function start() {
-    if (session.current || !context || !editable || !editor.isEditable()) return
+  const start = useStableCallback(function start() {
+    const context = editor.getEditorState().read($getEditorColumnsContext)
+
+    if (session.current || !context || !editor.isEditable()) return
     editor.getEditorState().read(bookmark.capture)
     session.current = {
       groupKey: context.group.getKey(),
@@ -233,14 +379,14 @@ export function EditorColumnResizeControls() {
       initialLayout: context.layout,
       changed: false,
     }
-  }
+  })
 
-  function finish() {
+  const finish = useStableCallback(function finish() {
     session.current = null
     bookmark.clear()
-  }
+  })
 
-  function cancel() {
+  const cancel = useStableCallback(function cancel() {
     const current = session.current
 
     session.current = null
@@ -267,15 +413,18 @@ export function EditorColumnResizeControls() {
       { discrete: true, tag: HISTORY_MERGE_TAG },
     )
     bookmark.clear()
-  }
+  })
 
-  function resize(boundary: number, width: number, reason: string) {
+  const resize = useStableCallback(function resize(
+    boundary: number,
+    width: number,
+    reason: string,
+  ) {
     start()
     const current = session.current
 
     if (
       !current ||
-      !editable ||
       !editor.isEditable() ||
       bookmark.getRevision() !== current.revision
     ) {
@@ -318,7 +467,7 @@ export function EditorColumnResizeControls() {
       current.changed = true
       current.revision = bookmark.getRevision()
     }
-  }
+  })
 
   if (!context) return null
 
@@ -341,27 +490,18 @@ export function EditorColumnResizeControls() {
         )
 
         return (
-          <Slider
+          <EditorColumnResizeSlider
             key={`${context.group.getKey()}-${boundary}`}
-            aria-label={`Resize between column ${boundary + 1} and column ${boundary + 2}`}
+            boundary={boundary}
             disabled={!editable}
+            label={`Resize between column ${boundary + 1} and column ${boundary + 2}`}
             max={maximum}
             min={minimum}
-            xstyle={styles.resizeSlider}
             value={firstWidth}
-            onFocus={start}
-            onPointerDown={start}
-            onPointerCancel={cancel}
-            onBlur={cancel}
-            onKeyDown={(event) => {
-              if (event.key === "Escape") cancel()
-              else start()
-            }}
-            onValueChange={(value, details) => {
-              if (!isSingleSliderValue(value)) return
-              resize(boundary, value, details.reason)
-            }}
-            onValueCommitted={finish}
+            onCancel={cancel}
+            onFinish={finish}
+            onResize={resize}
+            onStart={start}
           />
         )
       })}
@@ -374,18 +514,29 @@ export function EditorColumnMoveControls() {
   const { editable } = useEditorState()
   const context = editor.getEditorState().read($getEditorColumnsContext)
 
-  if (!context || context.columnIndex === null) return null
-
-  function move(direction: "left" | "right") {
-    if (!editable || !editor.isEditable()) return
-    editor.update(
-      () => {
-        editor.dispatchCommand(MOVE_EDITOR_COLUMN_COMMAND, direction)
+  const [move] = useState(
+    () =>
+      function move(direction: "left" | "right") {
+        if (!editor.isEditable()) return
+        editor.update(
+          () => {
+            editor.dispatchCommand(MOVE_EDITOR_COLUMN_COMMAND, direction)
+          },
+          { discrete: true, tag: HISTORY_PUSH_TAG },
+        )
+        editor.focus()
       },
-      { discrete: true, tag: HISTORY_PUSH_TAG },
-    )
-    editor.focus()
-  }
+  )
+
+  const moveLeft = useStableCallback(function moveLeft() {
+    move("left")
+  })
+
+  const moveRight = useStableCallback(function moveRight() {
+    move("right")
+  })
+
+  if (!context || context.columnIndex === null) return null
 
   return (
     <Wrap>
@@ -393,8 +544,8 @@ export function EditorColumnMoveControls() {
         aria-label="Move column left"
         disabled={!editable || context.columnIndex === 0}
         render={<Button variant="ghost" size="sm" />}
-        onMouseDown={(event) => event.preventDefault()}
-        onClick={() => move("left")}
+        onMouseDown={preventColumnButtonFocus}
+        onClick={moveLeft}
       >
         Move left
       </ToolbarButton>
@@ -404,8 +555,8 @@ export function EditorColumnMoveControls() {
           !editable || context.columnIndex === context.layout.length - 1
         }
         render={<Button variant="ghost" size="sm" />}
-        onMouseDown={(event) => event.preventDefault()}
-        onClick={() => move("right")}
+        onMouseDown={preventColumnButtonFocus}
+        onClick={moveRight}
       >
         Move right
       </ToolbarButton>
@@ -418,10 +569,8 @@ export function EditorColumnsRemoveControl() {
   const { editable } = useEditorState()
   const context = editor.getEditorState().read($getEditorColumnsContext)
 
-  if (!context) return null
-
-  function remove() {
-    if (!editable || !editor.isEditable()) return
+  const remove = useStableCallback(function remove() {
+    if (!editor.isEditable()) return
     editor.update(
       () => {
         editor.dispatchCommand(REMOVE_EDITOR_COLUMNS_COMMAND, undefined)
@@ -429,14 +578,16 @@ export function EditorColumnsRemoveControl() {
       { discrete: true, tag: HISTORY_PUSH_TAG },
     )
     editor.focus()
-  }
+  })
+
+  if (!context) return null
 
   return (
     <ToolbarButton
       aria-label="Remove columns"
       disabled={!editable}
       render={<Button variant="destructive-outline" size="sm" />}
-      onMouseDown={(event) => event.preventDefault()}
+      onMouseDown={preventColumnButtonFocus}
       onClick={remove}
     >
       Remove columns

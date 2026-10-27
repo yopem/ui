@@ -2,6 +2,7 @@
 
 import type { ComponentProps, ReactNode } from "react"
 
+import { useStableCallback } from "@base-ui/utils/useStableCallback"
 import { Box } from "@registry/components/ui/box"
 import { Button } from "@registry/components/ui/button"
 import { NativeSelect } from "@registry/components/ui/native-select"
@@ -201,21 +202,41 @@ export function EditorDiagramRoot({
     createEditorDiagramStore(editor, { renderers, timeoutMs, autoRender }),
   )
 
+  const [initialOptions] = useState(() => ({
+    renderers,
+    timeoutMs,
+    autoRender,
+  }))
+
+  if (
+    initialOptions.timeoutMs !== timeoutMs ||
+    initialOptions.autoRender !== autoRender ||
+    EDITOR_DIAGRAM_KINDS.some(
+      (kind) => initialOptions.renderers?.[kind] !== renderers?.[kind],
+    )
+  )
+    throw new Error(
+      "Keep diagram renderers and options stable for the mounted root.",
+    )
+
   const automatic = useSyncExternalStore(
     store.subscribe,
     store.getAutoRenderSnapshot,
     store.getAutoRenderServerSnapshot,
   )
 
+  const handleBlurCapture = useStableCallback(function handleBlurCapture(
+    event: Parameters<
+      NonNullable<ComponentProps<typeof Box>["onBlurCapture"]>
+    >[0],
+  ) {
+    if (!event.currentTarget.contains(event.relatedTarget)) store.blur()
+  })
+
   return (
     <DiagramContext value={store}>
       <DiagramDisabledContext value={disabled === true}>
-        <Box
-          aria-busy={automatic.busy}
-          onBlurCapture={(event) => {
-            if (!event.currentTarget.contains(event.relatedTarget)) store.blur()
-          }}
-        >
+        <Box aria-busy={automatic.busy} onBlurCapture={handleBlurCapture}>
           {children}
         </Box>
       </DiagramDisabledContext>
@@ -236,16 +257,16 @@ export function EditorDiagramToolbar({
 }: EditorDiagramToolbarProps) {
   const store = useDiagramStore()
 
-  function handleFocus(
+  const handleFocus = useStableCallback(function handleFocus(
     event: Parameters<
       NonNullable<EditorDiagramToolbarProps["onFocusCapture"]>
     >[0],
   ) {
     store.enterControls()
     onFocusCapture?.(event)
-  }
+  })
 
-  function handleBlur(
+  const handleBlur = useStableCallback(function handleBlur(
     event: Parameters<
       NonNullable<EditorDiagramToolbarProps["onBlurCapture"]>
     >[0],
@@ -254,7 +275,7 @@ export function EditorDiagramToolbar({
 
     if (!event.currentTarget.contains(event.relatedTarget))
       store.leaveControls()
-  }
+  })
 
   return (
     <Toolbar
@@ -293,7 +314,7 @@ export function EditorDiagramInsertButton({
   const state = useDiagramState()
   const { editable } = useEditorState()
 
-  function handleClick(
+  const handleClick = useStableCallback(function handleClick(
     event: Parameters<
       NonNullable<EditorDiagramInsertButtonProps["onClick"]>
     >[0],
@@ -302,7 +323,7 @@ export function EditorDiagramInsertButton({
 
     if (!event.defaultPrevented && !disabled && !toolbarDisabled && editable)
       store.insert(kind, source, viewMode)
-  }
+  })
 
   return (
     <ToolbarButton
@@ -338,7 +359,7 @@ export function EditorDiagramKindSelect({
   const state = useDiagramState()
   const toolbarDisabled = use(DiagramDisabledContext)
 
-  function handleChange(
+  const handleChange = useStableCallback(function handleChange(
     event: Parameters<NonNullable<EditorDiagramKindSelectProps["onChange"]>>[0],
   ) {
     const revision = store.getRevision()
@@ -351,9 +372,9 @@ export function EditorDiagramKindSelect({
       isEditorDiagramKind(event.currentTarget.value)
     )
       store.setKind(event.currentTarget.value, revision)
-  }
+  })
 
-  function handleKeyDown(
+  const handleKeyDown = useStableCallback(function handleKeyDown(
     event: Parameters<
       NonNullable<EditorDiagramKindSelectProps["onKeyDown"]>
     >[0],
@@ -365,7 +386,7 @@ export function EditorDiagramKindSelect({
       ["Home", "End", "PageUp", "PageDown"].includes(event.key)
     )
       event.stopPropagation()
-  }
+  })
 
   return (
     <NativeSelect
@@ -408,7 +429,7 @@ export function EditorDiagramViewModeSelect({
   const state = useDiagramState()
   const toolbarDisabled = use(DiagramDisabledContext)
 
-  function handleChange(
+  const handleChange = useStableCallback(function handleChange(
     event: Parameters<
       NonNullable<EditorDiagramViewModeSelectProps["onChange"]>
     >[0],
@@ -423,9 +444,9 @@ export function EditorDiagramViewModeSelect({
       isEditorDiagramViewMode(event.currentTarget.value)
     )
       store.setViewMode(event.currentTarget.value, revision)
-  }
+  })
 
-  function handleKeyDown(
+  const handleKeyDown = useStableCallback(function handleKeyDown(
     event: Parameters<
       NonNullable<EditorDiagramViewModeSelectProps["onKeyDown"]>
     >[0],
@@ -437,7 +458,7 @@ export function EditorDiagramViewModeSelect({
       ["Home", "End", "PageUp", "PageDown"].includes(event.key)
     )
       event.stopPropagation()
-  }
+  })
 
   return (
     <NativeSelect
@@ -476,7 +497,7 @@ export function EditorDiagramRenderButton({
   const rendering = useDiagramRenderState().status === "loading"
   const toolbarDisabled = use(DiagramDisabledContext)
 
-  function handleClick(
+  const handleClick = useStableCallback(function handleClick(
     event: Parameters<
       NonNullable<EditorDiagramRenderButtonProps["onClick"]>
     >[0],
@@ -488,7 +509,7 @@ export function EditorDiagramRenderButton({
 
     if (rendering) store.cancelRender()
     else void store.render(revision)
-  }
+  })
 
   return (
     <ToolbarButton
@@ -580,7 +601,7 @@ export function EditorDiagramDownloadButton({
     }
   }
 
-  function handleClick(
+  const handleClick = useStableCallback(function handleClick(
     event: Parameters<
       NonNullable<EditorDiagramDownloadButtonProps["onClick"]>
     >[0],
@@ -625,7 +646,7 @@ export function EditorDiagramDownloadButton({
       link.remove()
       view.setTimeout(() => view.URL.revokeObjectURL(url), 0)
     }
-  }
+  })
 
   return (
     <>
@@ -671,7 +692,7 @@ export function EditorDiagramDeleteButton({
   const state = useDiagramState()
   const toolbarDisabled = use(DiagramDisabledContext)
 
-  function handleClick(
+  const handleClick = useStableCallback(function handleClick(
     event: Parameters<
       NonNullable<EditorDiagramDeleteButtonProps["onClick"]>
     >[0],
@@ -681,7 +702,7 @@ export function EditorDiagramDeleteButton({
 
     if (!event.defaultPrevented && !disabled && !toolbarDisabled)
       store.delete(revision)
-  }
+  })
 
   return (
     <ToolbarButton

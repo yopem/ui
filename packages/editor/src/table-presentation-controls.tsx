@@ -1,5 +1,8 @@
 "use client"
 
+import type { MouseEvent } from "react"
+
+import { useStableCallback } from "@base-ui/utils/useStableCallback"
 import {
   $createTableNodeWithDimensions,
   $getTableNodeFromLexicalNodeOrThrow,
@@ -16,7 +19,12 @@ import {
   mergeRegister,
   type LexicalEditor,
 } from "lexical"
-import { useId, useState, useSyncExternalStore } from "react"
+import {
+  useId,
+  useState,
+  useSyncExternalStore,
+  type ComponentProps,
+} from "react"
 
 import { useEditor, useEditorState } from "./root"
 import { $getTableContext, createEditorTableBookmark } from "./table-bookmark"
@@ -29,6 +37,10 @@ import {
   TABLE_MAX_COLUMNS,
   TABLE_MAX_ROWS,
 } from "./table-presentation"
+
+function preventToolbarMouseDown(event: MouseEvent<HTMLButtonElement>) {
+  event.preventDefault()
+}
 
 export function EditorTableDimensions() {
   const editor = useEditor()
@@ -47,6 +59,41 @@ export function EditorTableDimensions() {
     columnCount <= TABLE_MAX_COLUMNS &&
     rowCount * columnCount <= TABLE_MAX_CELLS
 
+  const handleRowsChange = useStableCallback(function handleRowsChange(
+    event: Parameters<NonNullable<ComponentProps<typeof Input>["onChange"]>>[0],
+  ) {
+    setRows(event.target.value)
+  })
+
+  const handleColumnsChange = useStableCallback(function handleColumnsChange(
+    event: Parameters<NonNullable<ComponentProps<typeof Input>["onChange"]>>[0],
+  ) {
+    setColumns(event.target.value)
+  })
+
+  const handleInsertTable = useStableCallback(function handleInsertTable() {
+    if (!valid || !editor.isEditable()) return
+    editor.update(
+      () => {
+        if (!editor.isEditable()) return
+
+        const table = $createTableNodeWithDimensions(
+          rowCount,
+          columnCount,
+          true,
+        )
+
+        const cell = $getSelectedTableCells()[0]
+
+        if (cell) $getTableNodeFromLexicalNodeOrThrow(cell).insertAfter(table)
+        else $insertNodes([table])
+        table.selectStart()
+      },
+      { tag: HISTORY_PUSH_TAG },
+    )
+    editor.focus()
+  })
+
   return (
     <Wrap>
       <Field>
@@ -57,7 +104,7 @@ export function EditorTableDimensions() {
           max={TABLE_MAX_ROWS}
           value={rows}
           disabled={!editable}
-          onChange={(event) => setRows(event.target.value)}
+          onChange={handleRowsChange}
         />
       </Field>
       <Field>
@@ -68,35 +115,13 @@ export function EditorTableDimensions() {
           max={TABLE_MAX_COLUMNS}
           value={columns}
           disabled={!editable}
-          onChange={(event) => setColumns(event.target.value)}
+          onChange={handleColumnsChange}
         />
       </Field>
       <Button
         disabled={!editable || !valid}
-        onMouseDown={(event) => event.preventDefault()}
-        onClick={() => {
-          if (!valid || !editor.isEditable()) return
-          editor.update(
-            () => {
-              if (!editor.isEditable()) return
-
-              const table = $createTableNodeWithDimensions(
-                rowCount,
-                columnCount,
-                true,
-              )
-
-              const cell = $getSelectedTableCells()[0]
-
-              if (cell)
-                $getTableNodeFromLexicalNodeOrThrow(cell).insertAfter(table)
-              else $insertNodes([table])
-              table.selectStart()
-            },
-            { tag: HISTORY_PUSH_TAG },
-          )
-          editor.focus()
-        }}
+        onMouseDown={preventToolbarMouseDown}
+        onClick={handleInsertTable}
       >
         Insert table
       </Button>
@@ -173,11 +198,11 @@ function useTablePresentation() {
 
   const unavailable = !editable || !available
 
-  function save() {
+  const save = useStableCallback(function save() {
     editor.getEditorState().read(bookmark.capture)
-  }
+  })
 
-  function apply(
+  const apply = useStableCallback(function apply(
     action: (context: NonNullable<ReturnType<typeof $getTableContext>>) => void,
   ) {
     if (!editor.isEditable() || !bookmark.getSnapshot()) return
@@ -202,7 +227,7 @@ function useTablePresentation() {
         },
       },
     )
-  }
+  })
 
   return { unavailable, editable, save, bookmark, apply }
 }
@@ -222,47 +247,104 @@ export function EditorTableBackgroundControls() {
 
   const [background, setBackground] = useState("#ffffff")
 
+  const handleFocusCapture = useStableCallback(function handleFocusCapture() {
+    if (!bookmark.getSnapshot()) save()
+  })
+
+  const handleBlurCapture = useStableCallback(function handleBlurCapture(
+    event: Parameters<
+      NonNullable<ComponentProps<typeof Wrap>["onBlurCapture"]>
+    >[0],
+  ) {
+    if (!event.currentTarget.contains(event.relatedTarget)) bookmark.clear()
+  })
+
+  const handleBackgroundChange = useStableCallback(
+    function handleBackgroundChange(
+      event: Parameters<
+        NonNullable<ComponentProps<typeof Input>["onChange"]>
+      >[0],
+    ) {
+      setBackground(event.target.value)
+    },
+  )
+
+  const handleApplyBackground = useStableCallback(
+    function handleApplyBackground() {
+      apply(({ cells }) => {
+        for (const cell of cells) cell.setBackgroundColor(background)
+      })
+    },
+  )
+
+  const handleResetBackground = useStableCallback(
+    function handleResetBackground() {
+      apply(({ cells }) => {
+        for (const cell of cells) cell.setBackgroundColor(null)
+      })
+    },
+  )
+
   return (
     <Wrap
       onPointerDownCapture={save}
-      onFocusCapture={() => {
-        if (!bookmark.getSnapshot()) save()
-      }}
-      onBlurCapture={(event) => {
-        if (!event.currentTarget.contains(event.relatedTarget)) bookmark.clear()
-      }}
+      onFocusCapture={handleFocusCapture}
+      onBlurCapture={handleBlurCapture}
     >
       <Field>
         <FieldLabel>Cell background</FieldLabel>
         <Input
           value={background}
           disabled={!editable}
-          onChange={(event) => setBackground(event.target.value)}
+          onChange={handleBackgroundChange}
         />
       </Field>
       <Button
         disabled={unavailable || !isTableBackground(background)}
-        onMouseDown={(event) => event.preventDefault()}
-        onClick={() =>
-          apply(({ cells }) => {
-            for (const cell of cells) cell.setBackgroundColor(background)
-          })
-        }
+        onMouseDown={preventToolbarMouseDown}
+        onClick={handleApplyBackground}
       >
         Apply cell background
       </Button>
       <Button
         disabled={unavailable}
-        onMouseDown={(event) => event.preventDefault()}
-        onClick={() =>
-          apply(({ cells }) => {
-            for (const cell of cells) cell.setBackgroundColor(null)
-          })
-        }
+        onMouseDown={preventToolbarMouseDown}
+        onClick={handleResetBackground}
       >
         Reset cell background
       </Button>
     </Wrap>
+  )
+}
+
+function TableBorderAction({
+  operation,
+  label,
+  unavailable,
+  value,
+  applyBorder,
+}: {
+  operation: TableBorderOperation
+  label: string
+  unavailable: boolean
+  value?: "solid" | "hidden" | null
+  applyBorder: (
+    operation: TableBorderOperation,
+    value?: "solid" | "hidden" | null,
+  ) => void
+}) {
+  const handleClick = useStableCallback(function handleClick() {
+    applyBorder(operation, value)
+  })
+
+  return (
+    <Button
+      disabled={unavailable}
+      onMouseDown={preventToolbarMouseDown}
+      onClick={handleClick}
+    >
+      {label}
+    </Button>
   )
 }
 
@@ -271,25 +353,44 @@ export function EditorTableBorderControls() {
   const borderStyleId = useId()
   const [border, setBorder] = useState<"solid" | "hidden" | null>("solid")
 
-  function applyBorder(
+  const applyBorder = useStableCallback(function applyBorder(
     operation: TableBorderOperation,
     value: "solid" | "hidden" | null = "solid",
   ) {
     apply(({ table, cells }) =>
       $setTableBorders(table, cells, operation, value),
     )
-  }
+  })
+
+  const handleFocusCapture = useStableCallback(function handleFocusCapture() {
+    if (!bookmark.getSnapshot()) save()
+  })
+
+  const handleBlurCapture = useStableCallback(function handleBlurCapture(
+    event: Parameters<
+      NonNullable<ComponentProps<typeof Fieldset>["onBlurCapture"]>
+    >[0],
+  ) {
+    if (!event.currentTarget.contains(event.relatedTarget)) bookmark.clear()
+  })
+
+  const handleBorderChange = useStableCallback(function handleBorderChange(
+    event: Parameters<
+      NonNullable<ComponentProps<typeof NativeSelect>["onChange"]>
+    >[0],
+  ) {
+    const value = event.currentTarget.value
+
+    if (value === "solid" || value === "hidden") setBorder(value)
+    else setBorder(null)
+  })
 
   return (
     <Fieldset
       aria-label="Cell borders"
       onPointerDownCapture={save}
-      onFocusCapture={() => {
-        if (!bookmark.getSnapshot()) save()
-      }}
-      onBlurCapture={(event) => {
-        if (!event.currentTarget.contains(event.relatedTarget)) bookmark.clear()
-      }}
+      onFocusCapture={handleFocusCapture}
+      onBlurCapture={handleBlurCapture}
     >
       <Field>
         <FieldLabel htmlFor={borderStyleId}>Border edge style</FieldLabel>
@@ -297,12 +398,7 @@ export function EditorTableBorderControls() {
           id={borderStyleId}
           value={border ?? "reset"}
           disabled={unavailable}
-          onChange={(event) => {
-            const value = event.currentTarget.value
-
-            if (value === "solid" || value === "hidden") setBorder(value)
-            else setBorder(null)
-          }}
+          onChange={handleBorderChange}
         >
           <option value="solid">Solid</option>
           <option value="hidden">Hidden</option>
@@ -321,36 +417,33 @@ export function EditorTableBorderControls() {
             ["none", "No cell borders"],
           ] as const
         ).map(([operation, label]) => (
-          <Button
+          <TableBorderAction
             key={operation}
-            disabled={unavailable}
-            onMouseDown={(event) => event.preventDefault()}
-            onClick={() => applyBorder(operation, border)}
-          >
-            {label}
-          </Button>
+            operation={operation}
+            label={label}
+            unavailable={unavailable}
+            value={border}
+            applyBorder={applyBorder}
+          />
         ))}
-        <Button
-          disabled={unavailable}
-          onMouseDown={(event) => event.preventDefault()}
-          onClick={() => applyBorder("all")}
-        >
-          Show cell borders
-        </Button>
-        <Button
-          disabled={unavailable}
-          onMouseDown={(event) => event.preventDefault()}
-          onClick={() => applyBorder("none")}
-        >
-          Hide cell borders
-        </Button>
-        <Button
-          disabled={unavailable}
-          onMouseDown={(event) => event.preventDefault()}
-          onClick={() => applyBorder("reset")}
-        >
-          Reset cell borders
-        </Button>
+        <TableBorderAction
+          operation="all"
+          label="Show cell borders"
+          unavailable={unavailable}
+          applyBorder={applyBorder}
+        />
+        <TableBorderAction
+          operation="none"
+          label="Hide cell borders"
+          unavailable={unavailable}
+          applyBorder={applyBorder}
+        />
+        <TableBorderAction
+          operation="reset"
+          label="Reset cell borders"
+          unavailable={unavailable}
+          applyBorder={applyBorder}
+        />
       </Wrap>
     </Fieldset>
   )

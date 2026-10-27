@@ -4,6 +4,7 @@ import type { BoxProps } from "@registry/components/ui/box"
 import type { ChangeEvent, MouseEvent } from "react"
 
 import { useRender } from "@base-ui/react/use-render"
+import { useStableCallback } from "@base-ui/utils/useStableCallback"
 import { Box } from "@registry/components/ui/box"
 import { Button } from "@registry/components/ui/button"
 import { Field, FieldLabel } from "@registry/components/ui/field"
@@ -30,6 +31,7 @@ export function EditorDocxImportControl({
   const inputId = useId()
   const inputRef = useRef<HTMLInputElement>(null)
   const abortRef = useRef<AbortController | null>(null)
+  const fileRef = useRef<File | null>(null)
   const [file, setFile] = useState<File | null>(null)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState("")
@@ -53,18 +55,26 @@ export function EditorDocxImportControl({
       },
   )
 
-  function selectFile(event: ChangeEvent<HTMLInputElement>) {
+  const selectFile = useStableCallback(function selectFile(
+    event: ChangeEvent<HTMLInputElement>,
+  ) {
     if (event.defaultPrevented) return
-    setFile(event.currentTarget.files?.[0] ?? null)
+    const nextFile = event.currentTarget.files?.[0] ?? null
+    fileRef.current = nextFile
+    setFile(nextFile)
     setError("")
     setStatus("")
-  }
+  })
 
-  function cancel() {
+  const cancel = useStableCallback(function cancel() {
     abortRef.current?.abort()
-  }
+  })
 
-  async function importSelected(event: MouseEvent<HTMLElement>) {
+  const importSelected = useStableCallback(async function importSelected(
+    event: MouseEvent<HTMLElement>,
+  ) {
+    const file = fileRef.current
+
     if (
       event.defaultPrevented ||
       !file ||
@@ -82,6 +92,7 @@ export function EditorDocxImportControl({
       await importDocx(editor, file, { signal: controller.signal })
 
       if (abortRef.current !== controller) return
+      fileRef.current = null
       setFile(null)
       setStatus("Word document imported")
 
@@ -95,12 +106,10 @@ export function EditorDocxImportControl({
         setError(cause instanceof Error ? cause.message : "DOCX import failed.")
       }
     } finally {
-      if (abortRef.current === controller) {
-        abortRef.current = null
-        setBusy(false)
-      }
+      abortRef.current = null
+      setBusy(false)
     }
-  }
+  })
 
   return useRender({
     render: <Box />,
@@ -153,7 +162,9 @@ export function EditorDocxExportControl(props: EditorDocxExportControlProps) {
   const editor = useEditor()
   const [error, setError] = useState("")
 
-  function download(event: MouseEvent<HTMLElement>) {
+  const download = useStableCallback(function download(
+    event: MouseEvent<HTMLElement>,
+  ) {
     if (event.defaultPrevented) return
 
     const root = editor.getRootElement()
@@ -190,7 +201,7 @@ export function EditorDocxExportControl(props: EditorDocxExportControlProps) {
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "DOCX export failed.")
     }
-  }
+  })
 
   return (
     <Box {...props} data-slot="editor-docx-export">

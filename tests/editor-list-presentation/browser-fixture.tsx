@@ -1,3 +1,4 @@
+import { useStableCallback } from "@base-ui/utils/useStableCallback"
 import { $generateHtmlFromNodes, $generateNodesFromDOM } from "@lexical/html"
 import { Button } from "@registry/components/ui/button"
 import {
@@ -11,7 +12,7 @@ import {
   EditorListPresentationExtension,
 } from "@yopem-ui/editor/list-presentation"
 import { $getRoot, HISTORY_PUSH_TAG } from "lexical"
-import { useState } from "react"
+import { useReducer, useState } from "react"
 import { createRoot } from "react-dom/client"
 
 const extensions = [EditorListPresentationExtension]
@@ -207,13 +208,13 @@ function EditorActions({ onToggleEditable }: { onToggleEditable: () => void }) {
   const [json, setJson] = useState("")
   const [html, setHtml] = useState("")
 
-  function roundtripJSON() {
+  const roundtripJSON = useStableCallback(function roundtripJSON() {
     const value = JSON.stringify(editor.getEditorState().toJSON())
     setJson(value)
     editor.setEditorState(editor.parseEditorState(value))
-  }
+  })
 
-  function roundtripHTML() {
+  const roundtripHTML = useStableCallback(function roundtripHTML() {
     const value = editor
       .getEditorState()
       .read(() => $generateHtmlFromNodes(editor), { editor })
@@ -228,19 +229,17 @@ function EditorActions({ onToggleEditable }: { onToggleEditable: () => void }) {
       },
       { tag: HISTORY_PUSH_TAG },
     )
-  }
+  })
+
+  const replaceDocument = useStableCallback(function replaceDocument() {
+    editor.setEditorState(editor.parseEditorState(replacementState))
+  })
 
   return (
     <div>
       <Button onClick={roundtripJSON}>Roundtrip JSON</Button>
       <Button onClick={roundtripHTML}>Roundtrip HTML</Button>
-      <Button
-        onClick={() =>
-          editor.setEditorState(editor.parseEditorState(replacementState))
-        }
-      >
-        Replace document
-      </Button>
+      <Button onClick={replaceDocument}>Replace document</Button>
       <Button onClick={onToggleEditable}>Toggle read-only</Button>
       <output data-testid="json-output">{json}</output>
       <output data-testid="html-output">{html}</output>
@@ -249,7 +248,10 @@ function EditorActions({ onToggleEditable }: { onToggleEditable: () => void }) {
 }
 
 function Fixture() {
-  const [editable, setEditable] = useState(true)
+  const [editable, toggleEditable] = useReducer(
+    (current: boolean) => !current,
+    true,
+  )
 
   return (
     <EditorRoot
@@ -262,7 +264,7 @@ function Fixture() {
       <EditorToolbar aria-label="List presentation controls">
         <EditorListPresentationControls />
       </EditorToolbar>
-      <EditorActions onToggleEditable={() => setEditable((value) => !value)} />
+      <EditorActions onToggleEditable={toggleEditable} />
     </EditorRoot>
   )
 }

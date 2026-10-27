@@ -2,6 +2,7 @@
 
 import type { LexicalEditor, NodeKey } from "lexical"
 
+import { useStableCallback } from "@base-ui/utils/useStableCallback"
 import { AspectRatio } from "@registry/components/ui/aspect-ratio"
 import { Box } from "@registry/components/ui/box"
 import { Button } from "@registry/components/ui/button"
@@ -27,7 +28,15 @@ import {
   $setSelection,
   HISTORY_PUSH_TAG,
 } from "lexical"
-import { useRef, useState, useSyncExternalStore } from "react"
+import {
+  useRef,
+  useState,
+  useSyncExternalStore,
+  type ChangeEvent,
+  type KeyboardEvent,
+  type MouseEvent,
+  type PointerEvent,
+} from "react"
 
 import type { createMediaStore } from "./extension"
 import type { MediaData, MediaEmbedPolicy } from "./schema"
@@ -124,28 +133,25 @@ export function MediaView({
     null,
   )
 
-  if (!data) return null
-  const { media, selected, images, imageRevision } = data
-
-  function change(patch: Partial<MediaData>) {
+  const change = useStableCallback(function change(patch: Partial<MediaData>) {
     if (!editor.isEditable()) return
     editor.update(() => {
       const node = $getNodeByKey(nodeKey)
 
       if (editor.isEditable() && node instanceof MediaNode) node.setMedia(patch)
     })
-  }
+  })
 
-  function select() {
+  const select = useStableCallback(function select() {
     if (!editor.isEditable()) return
     editor.update(() => {
       const selection = $createNodeSelection()
       selection.add(nodeKey)
       $setSelection(selection)
     })
-  }
+  })
 
-  function remove() {
+  const remove = useStableCallback(function remove() {
     if (!editor.isEditable()) return
     editor.update(
       () => {
@@ -154,11 +160,118 @@ export function MediaView({
       { tag: HISTORY_PUSH_TAG },
     )
     editor.focus()
-  }
+  })
 
-  function clamp(value: number) {
-    return Math.max(64, Math.min(4096, Math.round(value)))
-  }
+  const stopKeyDown = useStableCallback(function stopKeyDown(
+    event: KeyboardEvent<HTMLElement>,
+  ) {
+    event.stopPropagation()
+  })
+
+  const handleSelectKeyDown = useStableCallback(function handleSelectKeyDown(
+    event: KeyboardEvent<HTMLElement>,
+  ) {
+    if (["Delete", "Backspace"].includes(event.key)) {
+      event.preventDefault()
+      remove()
+    }
+  })
+
+  const changeAlignment = useStableCallback(function changeAlignment(
+    event: MouseEvent<HTMLElement>,
+  ) {
+    const alignment = event.currentTarget.dataset.alignment
+
+    if (alignment === "start" || alignment === "center" || alignment === "end")
+      change({ alignment })
+  })
+
+  const handleAltChange = useStableCallback(function handleAltChange(
+    event: ChangeEvent<HTMLInputElement>,
+  ) {
+    change({ alt: event.currentTarget.value })
+  })
+
+  const handleCaptionChange = useStableCallback(function handleCaptionChange(
+    event: ChangeEvent<HTMLInputElement>,
+  ) {
+    change({ caption: event.currentTarget.value })
+  })
+
+  const handleWidthChange = useStableCallback(function handleWidthChange(
+    event: ChangeEvent<HTMLInputElement>,
+  ) {
+    change({ width: Number(event.currentTarget.value) })
+  })
+
+  const handleWidthKeyDown = useStableCallback(function handleWidthKeyDown(
+    event: KeyboardEvent<HTMLInputElement>,
+  ) {
+    const media = data?.media
+
+    if (media?.kind !== "image") return
+
+    const delta = ["ArrowRight", "ArrowUp"].includes(event.key)
+      ? 16
+      : ["ArrowLeft", "ArrowDown"].includes(event.key)
+        ? -16
+        : 0
+
+    if (delta || ["Home", "End"].includes(event.key)) {
+      event.preventDefault()
+      change({
+        width:
+          event.key === "Home"
+            ? 64
+            : event.key === "End"
+              ? 4096
+              : Math.max(64, Math.min(4096, media.width + delta)),
+      })
+    }
+  })
+
+  const handlePointerDown = useStableCallback(function handlePointerDown(
+    event: PointerEvent<HTMLInputElement>,
+  ) {
+    const media = data?.media
+
+    if (!editor.isEditable() || media?.kind !== "image") return
+    event.preventDefault()
+    event.currentTarget.focus()
+    drag.current = {
+      start: event.clientX,
+      width: media.width,
+      value: media.width,
+    }
+    event.currentTarget.setPointerCapture(event.pointerId)
+  })
+
+  const handlePointerMove = useStableCallback(function handlePointerMove(
+    event: PointerEvent<HTMLInputElement>,
+  ) {
+    const active = drag.current
+
+    if (!active) return
+    active.value = Math.max(
+      64,
+      Math.min(4096, Math.round(active.width + event.clientX - active.start)),
+    )
+    setPreview(active.value)
+  })
+
+  const handlePointerUp = useStableCallback(function handlePointerUp() {
+    if (drag.current) change({ width: drag.current.value })
+    drag.current = null
+    setPreview(null)
+  })
+
+  const cancelPointer = useStableCallback(function cancelPointer() {
+    drag.current = null
+    setPreview(null)
+  })
+
+  if (!data) return null
+  const { media, selected, images, imageRevision } = data
 
   return (
     <Box
@@ -166,7 +279,7 @@ export function MediaView({
       data-slot="editor-media"
       data-alignment={media.alignment}
       contentEditable={false}
-      onKeyDown={(event) => event.stopPropagation()}
+      onKeyDown={stopKeyDown}
       xstyle={[
         styles.figure,
         styles[media.alignment],
@@ -191,12 +304,7 @@ export function MediaView({
               aria-label="Select media"
               aria-pressed={selected}
               onClick={select}
-              onKeyDown={(event) => {
-                if (["Delete", "Backspace"].includes(event.key)) {
-                  event.preventDefault()
-                  remove()
-                }
-              }}
+              onKeyDown={handleSelectKeyDown}
             >
               Select media
             </ToolbarButton>
@@ -206,7 +314,8 @@ export function MediaView({
                 render={<Button xstyle={styles.target} />}
                 aria-label={`Align ${alignment}`}
                 aria-pressed={media.alignment === alignment}
-                onClick={() => change({ alignment })}
+                data-alignment={alignment}
+                onClick={changeAlignment}
               >
                 {alignment}
               </ToolbarButton>
@@ -225,7 +334,7 @@ export function MediaView({
                 xstyle={styles.target}
                 value={media.alt}
                 maxLength={2000}
-                onChange={(event) => change({ alt: event.target.value })}
+                onChange={handleAltChange}
               />
             </Field>
             <Field>
@@ -234,7 +343,7 @@ export function MediaView({
                 xstyle={styles.target}
                 value={media.caption}
                 maxLength={10000}
-                onChange={(event) => change({ caption: event.target.value })}
+                onChange={handleCaptionChange}
               />
             </Field>
           </Wrap>
@@ -245,67 +354,19 @@ export function MediaView({
               max={4096}
               step={1}
               value={preview ?? media.width}
-              onChange={(event) =>
-                change({ width: Number(event.target.value) })
-              }
+              onChange={handleWidthChange}
               aria-label="Image width"
               aria-valuemin={64}
               aria-valuemax={4096}
               aria-valuenow={preview ?? media.width}
               aria-valuetext={`${preview ?? media.width} pixels`}
               {...stylex.props(styles.resize)}
-              onKeyDown={(event) => {
-                const delta = ["ArrowRight", "ArrowUp"].includes(event.key)
-                  ? 16
-                  : ["ArrowLeft", "ArrowDown"].includes(event.key)
-                    ? -16
-                    : 0
-
-                if (delta || ["Home", "End"].includes(event.key)) {
-                  event.preventDefault()
-                  change({
-                    width:
-                      event.key === "Home"
-                        ? 64
-                        : event.key === "End"
-                          ? 4096
-                          : clamp(media.width + delta),
-                  })
-                }
-              }}
-              onPointerDown={(event) => {
-                if (!editor.isEditable()) return
-                event.preventDefault()
-                event.currentTarget.focus()
-                drag.current = {
-                  start: event.clientX,
-                  width: media.width,
-                  value: media.width,
-                }
-                event.currentTarget.setPointerCapture(event.pointerId)
-              }}
-              onPointerMove={(event) => {
-                const active = drag.current
-
-                if (!active) return
-                active.value = clamp(
-                  active.width + event.clientX - active.start,
-                )
-                setPreview(active.value)
-              }}
-              onPointerUp={() => {
-                if (drag.current) change({ width: drag.current.value })
-                drag.current = null
-                setPreview(null)
-              }}
-              onPointerCancel={() => {
-                drag.current = null
-                setPreview(null)
-              }}
-              onLostPointerCapture={() => {
-                drag.current = null
-                setPreview(null)
-              }}
+              onKeyDown={handleWidthKeyDown}
+              onPointerDown={handlePointerDown}
+              onPointerMove={handlePointerMove}
+              onPointerUp={handlePointerUp}
+              onPointerCancel={cancelPointer}
+              onLostPointerCapture={cancelPointer}
             />
           ) : null}
         </Stack>

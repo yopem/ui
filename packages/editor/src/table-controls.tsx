@@ -2,6 +2,7 @@
 
 import type { ComponentProps } from "react"
 
+import { useStableCallback } from "@base-ui/utils/useStableCallback"
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext"
 import {
   $deleteTableColumnAtSelection,
@@ -59,9 +60,11 @@ export function EditorTableMenu({
     split: false,
   })
 
-  function subscribeEditable(notify: () => void) {
+  const subscribeEditable = useStableCallback(function subscribeEditable(
+    notify: () => void,
+  ) {
     return editor.registerEditableListener(notify)
-  }
+  })
 
   const editable = useSyncExternalStore(
     subscribeEditable,
@@ -104,21 +107,129 @@ export function EditorTableMenu({
     setOpen(false)
   }
 
+  const handleOpenChange = useStableCallback(function handleOpenChange(
+    next: boolean,
+  ) {
+    if (next) {
+      returnToEditor.current = false
+      saveSelection()
+    } else bookmark.clear()
+
+    setOpen(next)
+  })
+
+  const handleMouseDown = useStableCallback(function handleMouseDown(
+    event: Parameters<NonNullable<EditorTableMenuProps["onMouseDown"]>>[0],
+  ) {
+    onMouseDown?.(event)
+
+    if (!event.defaultPrevented) {
+      saveSelection()
+      event.preventDefault()
+    }
+  })
+
+  const handleFinalFocus = useStableCallback(function handleFinalFocus() {
+    if (!returnToEditor.current) return true
+    returnToEditor.current = false
+    editor.focus()
+
+    return false
+  })
+
+  const handleInsertRowAbove = useStableCallback(
+    function handleInsertRowAbove() {
+      applyAction(() => {
+        $insertTableRowAtSelection(false)
+      })
+    },
+  )
+
+  const handleInsertRowBelow = useStableCallback(
+    function handleInsertRowBelow() {
+      applyAction(() => {
+        $insertTableRowAtSelection(true)
+      })
+    },
+  )
+
+  const handleInsertColumnBefore = useStableCallback(
+    function handleInsertColumnBefore() {
+      applyAction(() => {
+        $insertTableColumnAtSelection(false)
+      })
+    },
+  )
+
+  const handleInsertColumnAfter = useStableCallback(
+    function handleInsertColumnAfter() {
+      applyAction(() => {
+        $insertTableColumnAtSelection(true)
+      })
+    },
+  )
+
+  const handleToggleHeaderRow = useStableCallback(
+    function handleToggleHeaderRow() {
+      applyAction(({ cell, table }) => {
+        $setTableRowIsHeader(
+          table,
+          $getTableRowIndexFromTableCellNode(cell),
+          !cell.hasHeaderState(TableCellHeaderStates.ROW),
+        )
+      })
+    },
+  )
+
+  const handleToggleHeaderCell = useStableCallback(
+    function handleToggleHeaderCell() {
+      applyAction(({ cell }) => {
+        cell.setHeaderStyles(
+          cell.getHeaderStyles() === TableCellHeaderStates.NO_STATUS
+            ? TableCellHeaderStates.ROW
+            : TableCellHeaderStates.NO_STATUS,
+        )
+      })
+    },
+  )
+
+  const handleMergeCells = useStableCallback(function handleMergeCells() {
+    applyAction(({ cells, table }) => {
+      if (cells.length > 1)
+        $mergeTableCellsWithBorders(table, cells)?.selectEnd()
+    })
+  })
+
+  const handleSplitCell = useStableCallback(function handleSplitCell() {
+    applyAction(() => {
+      $unmergeTableCellWithBorders()
+    })
+  })
+
+  const handleDeleteRow = useStableCallback(function handleDeleteRow() {
+    applyAction(() => {
+      $deleteTableRowAtSelection()
+    })
+  })
+
+  const handleDeleteColumn = useStableCallback(function handleDeleteColumn() {
+    applyAction(() => {
+      $deleteTableColumnAtSelection()
+    })
+  })
+
+  const handleDeleteTable = useStableCallback(function handleDeleteTable() {
+    applyAction(({ table }) => {
+      table.selectPrevious()
+      table.remove()
+    })
+  })
+
   const unavailable =
     disabled === true || !editable || !available || !capabilities.table
 
   return (
-    <Menu
-      open={open && editable && !disabled}
-      onOpenChange={(next) => {
-        if (next) {
-          returnToEditor.current = false
-          saveSelection()
-        } else bookmark.clear()
-
-        setOpen(next)
-      }}
-    >
+    <Menu open={open && editable && !disabled} onOpenChange={handleOpenChange}>
       <MenuTrigger
         aria-label={label}
         disabled={disabled === true || !editable}
@@ -129,115 +240,43 @@ export function EditorTableMenu({
           />
         }
         onClick={onClick}
-        onMouseDown={(event) => {
-          onMouseDown?.(event)
-
-          if (!event.defaultPrevented) {
-            saveSelection()
-            event.preventDefault()
-          }
-        }}
+        onMouseDown={handleMouseDown}
       >
         {children}
       </MenuTrigger>
       <MenuPopup
         aria-label={label}
+        finalFocus={handleFinalFocus}
         portalProps={{ role: "region", "aria-label": label }}
-        finalFocus={() => {
-          if (!returnToEditor.current) return true
-          returnToEditor.current = false
-          editor.focus()
-
-          return false
-        }}
       >
-        <MenuItem
-          disabled={unavailable}
-          onClick={() =>
-            applyAction(() => {
-              $insertTableRowAtSelection(false)
-            })
-          }
-        >
+        <MenuItem disabled={unavailable} onClick={handleInsertRowAbove}>
           Insert row above
         </MenuItem>
-        <MenuItem
-          disabled={unavailable}
-          onClick={() =>
-            applyAction(() => {
-              $insertTableRowAtSelection(true)
-            })
-          }
-        >
+        <MenuItem disabled={unavailable} onClick={handleInsertRowBelow}>
           Insert row below
         </MenuItem>
-        <MenuItem
-          disabled={unavailable}
-          onClick={() =>
-            applyAction(() => {
-              $insertTableColumnAtSelection(false)
-            })
-          }
-        >
+        <MenuItem disabled={unavailable} onClick={handleInsertColumnBefore}>
           Insert column before
         </MenuItem>
-        <MenuItem
-          disabled={unavailable}
-          onClick={() =>
-            applyAction(() => {
-              $insertTableColumnAtSelection(true)
-            })
-          }
-        >
+        <MenuItem disabled={unavailable} onClick={handleInsertColumnAfter}>
           Insert column after
         </MenuItem>
         <MenuSeparator />
-        <MenuItem
-          disabled={unavailable}
-          onClick={() =>
-            applyAction(({ cell, table }) => {
-              $setTableRowIsHeader(
-                table,
-                $getTableRowIndexFromTableCellNode(cell),
-                !cell.hasHeaderState(TableCellHeaderStates.ROW),
-              )
-            })
-          }
-        >
+        <MenuItem disabled={unavailable} onClick={handleToggleHeaderRow}>
           Toggle header row
         </MenuItem>
-        <MenuItem
-          disabled={unavailable}
-          onClick={() =>
-            applyAction(({ cell }) => {
-              cell.setHeaderStyles(
-                cell.getHeaderStyles() === TableCellHeaderStates.NO_STATUS
-                  ? TableCellHeaderStates.ROW
-                  : TableCellHeaderStates.NO_STATUS,
-              )
-            })
-          }
-        >
+        <MenuItem disabled={unavailable} onClick={handleToggleHeaderCell}>
           Toggle header cell
         </MenuItem>
         <MenuItem
           disabled={unavailable || !capabilities.merge}
-          onClick={() =>
-            applyAction(({ cells, table }) => {
-              if (cells.length > 1)
-                $mergeTableCellsWithBorders(table, cells)?.selectEnd()
-            })
-          }
+          onClick={handleMergeCells}
         >
           Merge selected cells
         </MenuItem>
         <MenuItem
           disabled={unavailable || !capabilities.split}
-          onClick={() =>
-            applyAction(() => {
-              $unmergeTableCellWithBorders()
-            })
-          }
+          onClick={handleSplitCell}
         >
           Split merged cell
         </MenuItem>
@@ -245,34 +284,21 @@ export function EditorTableMenu({
         <MenuItem
           variant="destructive"
           disabled={unavailable}
-          onClick={() =>
-            applyAction(() => {
-              $deleteTableRowAtSelection()
-            })
-          }
+          onClick={handleDeleteRow}
         >
           Delete row
         </MenuItem>
         <MenuItem
           variant="destructive"
           disabled={unavailable}
-          onClick={() =>
-            applyAction(() => {
-              $deleteTableColumnAtSelection()
-            })
-          }
+          onClick={handleDeleteColumn}
         >
           Delete column
         </MenuItem>
         <MenuItem
           variant="destructive"
           disabled={unavailable}
-          onClick={() =>
-            applyAction(({ table }) => {
-              table.selectPrevious()
-              table.remove()
-            })
-          }
+          onClick={handleDeleteTable}
         >
           Delete table
         </MenuItem>

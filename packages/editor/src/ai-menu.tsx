@@ -12,6 +12,7 @@ import type {
 } from "react"
 
 import { useRender } from "@base-ui/react/use-render"
+import { useStableCallback } from "@base-ui/utils/useStableCallback"
 import { Box } from "@registry/components/ui/box"
 import { Button } from "@registry/components/ui/button"
 import {
@@ -427,6 +428,44 @@ interface EditorAiMenuSearchProps {
   status: EditorAiMenuState["status"]
 }
 
+function EditorAiMenuCommandButton({
+  active,
+  bookmarkCaptured,
+  command,
+  onSelect,
+  reviewAllowed,
+  status,
+}: {
+  active: boolean
+  bookmarkCaptured: boolean
+  command: EditorAiMenuCommand
+  onSelect: (command: EditorAiMenuCommand) => void
+  reviewAllowed: boolean
+  status: EditorAiMenuState["status"]
+}) {
+  const handleClick = useStableCallback(function handleClick() {
+    onSelect(command)
+  })
+
+  return (
+    <Button
+      type="button"
+      variant="ghost"
+      xstyle={active ? styles.activeCommand : undefined}
+      aria-current={active ? "true" : undefined}
+      disabled={
+        !bookmarkCaptured ||
+        status === "streaming" ||
+        status === "stale" ||
+        (command.review === true && !reviewAllowed)
+      }
+      onClick={handleClick}
+    >
+      {command.label}
+    </Button>
+  )
+}
+
 function EditorAiMenuSearch({
   activeIndex,
   bookmarkCaptured,
@@ -454,23 +493,14 @@ function EditorAiMenuSearch({
           {commands.length ? (
             commands.map((command, index) => (
               <ListItem key={command.label}>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  xstyle={
-                    index === activeIndex ? styles.activeCommand : undefined
-                  }
-                  aria-current={index === activeIndex ? "true" : undefined}
-                  disabled={
-                    !bookmarkCaptured ||
-                    status === "streaming" ||
-                    status === "stale" ||
-                    (command.review === true && !reviewAllowed)
-                  }
-                  onClick={() => onSelect(command)}
-                >
-                  {command.label}
-                </Button>
+                <EditorAiMenuCommandButton
+                  active={index === activeIndex}
+                  bookmarkCaptured={bookmarkCaptured}
+                  command={command}
+                  onSelect={onSelect}
+                  reviewAllowed={reviewAllowed}
+                  status={status}
+                />
               </ListItem>
             ))
           ) : (
@@ -775,21 +805,29 @@ export function EditorAiMenuTrigger({
   const bookmark = useMenuBookmark()
   const { editable } = useEditorState()
 
+  const handleMouseDown = useStableCallback(function handleMouseDown(
+    event: ReactMouseEvent<HTMLButtonElement>,
+  ) {
+    onMouseDown?.(event)
+
+    if (!event.defaultPrevented) event.preventDefault()
+  })
+
+  const handleClick = useStableCallback(function handleClick(
+    event: ReactMouseEvent<HTMLButtonElement>,
+  ) {
+    onClick?.(event)
+
+    if (!event.defaultPrevented && editable && disabled !== true)
+      openAiMenu(session, editor, bookmark)
+  })
+
   return (
     <DialogTrigger
       render={<Button variant="ghost" size="sm" {...props} />}
       disabled={disabled === true || !editable}
-      onMouseDown={(event) => {
-        onMouseDown?.(event)
-
-        if (!event.defaultPrevented) event.preventDefault()
-      }}
-      onClick={(event) => {
-        onClick?.(event)
-
-        if (!event.defaultPrevented && editable && disabled !== true)
-          openAiMenu(session, editor, bookmark)
-      }}
+      onMouseDown={handleMouseDown}
+      onClick={handleClick}
     >
       {children ?? "Ask AI"}
     </DialogTrigger>
@@ -812,65 +850,69 @@ export function EditorAiMenuContent({
   const bookmark = useMenuBookmark()
   const { editable } = useEditorState()
 
+  const handleKeyDownCapture = useStableCallback(function handleKeyDownCapture(
+    event: ReactKeyboardEvent<HTMLDivElement>,
+  ) {
+    onKeyDownCapture?.(event)
+
+    if (event.defaultPrevented || event.nativeEvent.isComposing || !editable)
+      return
+
+    if (
+      event.key.toLowerCase() === "j" &&
+      (event.metaKey || event.ctrlKey) &&
+      !event.altKey &&
+      !event.shiftKey &&
+      !event.repeat
+    ) {
+      event.preventDefault()
+      openAiMenu(session, editor, bookmark)
+
+      return
+    }
+
+    if (
+      event.key === " " &&
+      !event.repeat &&
+      editor.getEditorState().read(() => {
+        const selection = $getSelection()
+
+        return (
+          $isRangeSelection(selection) &&
+          selection.isCollapsed() &&
+          selection.anchor
+            .getNode()
+            .getTopLevelElementOrThrow()
+            .getTextContentSize() === 0
+        )
+      })
+    ) {
+      event.preventDefault()
+      openAiMenu(session, editor, bookmark, "generate")
+    }
+  })
+
+  const handleContextMenu = useStableCallback(function handleContextMenu(
+    event: ReactMouseEvent<HTMLDivElement>,
+  ) {
+    onContextMenu?.(event)
+
+    if (event.defaultPrevented || !editable) return
+    const selected = hasSelectedText(editor)
+
+    if (!selected && !selectContextBlock(editor, event.target)) return
+
+    event.preventDefault()
+    openAiMenu(session, editor, bookmark, selected ? "rewrite" : "generate")
+  })
+
   return useRender({
     render: render ?? <EditorContent />,
     ref: ref ?? null,
     props: {
       ...contentProps,
-      onKeyDownCapture: (event: ReactKeyboardEvent<HTMLDivElement>) => {
-        onKeyDownCapture?.(event)
-
-        if (
-          event.defaultPrevented ||
-          event.nativeEvent.isComposing ||
-          !editable
-        )
-          return
-
-        if (
-          event.key.toLowerCase() === "j" &&
-          (event.metaKey || event.ctrlKey) &&
-          !event.altKey &&
-          !event.shiftKey &&
-          !event.repeat
-        ) {
-          event.preventDefault()
-          openAiMenu(session, editor, bookmark)
-
-          return
-        }
-
-        if (
-          event.key === " " &&
-          !event.repeat &&
-          editor.getEditorState().read(() => {
-            const selection = $getSelection()
-
-            return (
-              $isRangeSelection(selection) &&
-              selection.isCollapsed() &&
-              selection.anchor
-                .getNode()
-                .getTopLevelElementOrThrow()
-                .getTextContentSize() === 0
-            )
-          })
-        ) {
-          event.preventDefault()
-          openAiMenu(session, editor, bookmark, "generate")
-        }
-      },
-      onContextMenu: (event: ReactMouseEvent<HTMLDivElement>) => {
-        onContextMenu?.(event)
-
-        if (event.defaultPrevented || !editable) return
-        const selected = hasSelectedText(editor)
-
-        if (!selected && !selectContextBlock(editor, event.target)) return
-
-        event.preventDefault()
-        openAiMenu(session, editor, bookmark, selected ? "rewrite" : "generate")
-      },
+      onKeyDownCapture: handleKeyDownCapture,
+      onContextMenu: handleContextMenu,
     },
   })
 }
@@ -889,7 +931,7 @@ function EditorAiMenuReviewSuggestionAction({
   const withinLimit = state.text.length <= 16_384 && !/[\r\n]/.test(state.text)
   const available = review.available("suggest")
 
-  function approveSuggestion() {
+  const approveSuggestion = useStableCallback(function approveSuggestion() {
     if (!editable || !available || !withinLimit || !bookmark.getSnapshot())
       return
     setError("")
@@ -905,7 +947,7 @@ function EditorAiMenuReviewSuggestionAction({
       setError(
         "Review suggestion was not created. The proposal remains available.",
       )
-  }
+  })
 
   if (state.status !== "ready" || !state.text) return null
 
@@ -973,7 +1015,9 @@ function EditorAiMenuDialog({ review }: { review?: EditorReviewBinding }) {
     if (result.status === "ready") addMessage("AI", result.text)
   }
 
-  function runCommand(command: EditorAiMenuCommand) {
+  const runCommand = useStableCallback(function runCommand(
+    command: EditorAiMenuCommand,
+  ) {
     if (
       !editable ||
       !bookmark.getSnapshot() ||
@@ -998,9 +1042,9 @@ function EditorAiMenuDialog({ review }: { review?: EditorReviewBinding }) {
     setReviewError("")
     setMarkdownError("")
     void sendRequest(request, command.label)
-  }
+  })
 
-  function sendChatMessage() {
+  const sendChatMessage = useStableCallback(function sendChatMessage() {
     const prompt = chatInput.trim()
 
     if (!prompt || !editable || !bookmark.getSnapshot()) return
@@ -1024,13 +1068,17 @@ function EditorAiMenuDialog({ review }: { review?: EditorReviewBinding }) {
     setMarkdownError("")
     setChatInput("")
     void sendRequest(request, prompt)
-  }
+  })
 
-  function onChatChange(event: ChangeEvent<HTMLInputElement>) {
+  const onChatChange = useStableCallback(function onChatChange(
+    event: ChangeEvent<HTMLInputElement>,
+  ) {
     setChatInput(event.target.value)
-  }
+  })
 
-  function onChatKeyDown(event: ReactKeyboardEvent<HTMLInputElement>) {
+  const onChatKeyDown = useStableCallback(function onChatKeyDown(
+    event: ReactKeyboardEvent<HTMLInputElement>,
+  ) {
     if (
       event.key !== "Enter" ||
       event.shiftKey ||
@@ -1040,9 +1088,9 @@ function EditorAiMenuDialog({ review }: { review?: EditorReviewBinding }) {
 
     event.preventDefault()
     sendChatMessage()
-  }
+  })
 
-  function retry() {
+  const retry = useStableCallback(function retry() {
     if (
       !lastRequest ||
       !resetAiSession(session, editor, bookmark, lastRequest.operation)
@@ -1052,17 +1100,17 @@ function EditorAiMenuDialog({ review }: { review?: EditorReviewBinding }) {
     setReviewError("")
     setMarkdownError("")
     void sendRequest(lastRequest, `Retry: ${lastRequest.command.label}`)
-  }
+  })
 
-  function discard() {
+  const discard = useStableCallback(function discard() {
     if (!resetAiSession(session, editor, bookmark, targetOperation)) return
 
     setLastRequest(null)
     setReviewError("")
     setMarkdownError("")
-  }
+  })
 
-  function approveComment() {
+  const approveComment = useStableCallback(function approveComment() {
     if (
       !review ||
       !review.available("create") ||
@@ -1098,9 +1146,11 @@ function EditorAiMenuDialog({ review }: { review?: EditorReviewBinding }) {
 
     session.close()
     editor.focus()
-  }
+  })
 
-  function onSearchKeyDown(event: ReactKeyboardEvent<HTMLInputElement>) {
+  const onSearchKeyDown = useStableCallback(function onSearchKeyDown(
+    event: ReactKeyboardEvent<HTMLInputElement>,
+  ) {
     if (event.nativeEvent.isComposing || filteredCommands.length === 0) return
 
     if (event.key === "ArrowDown" || event.key === "ArrowUp") {
@@ -1114,14 +1164,16 @@ function EditorAiMenuDialog({ review }: { review?: EditorReviewBinding }) {
       event.preventDefault()
       runCommand(filteredCommands[activeIndex] ?? filteredCommands[0])
     }
-  }
+  })
 
-  function onSearchChange(event: ChangeEvent<HTMLInputElement>) {
+  const onSearchChange = useStableCallback(function onSearchChange(
+    event: ChangeEvent<HTMLInputElement>,
+  ) {
     setQuery(event.target.value)
     setActiveIndex(0)
-  }
+  })
 
-  function approveMarkdown() {
+  const approveMarkdown = useStableCallback(function approveMarkdown() {
     if (!markdownInsertion) return
 
     setMarkdownError("")
@@ -1130,26 +1182,26 @@ function EditorAiMenuDialog({ review }: { review?: EditorReviewBinding }) {
       setMarkdownError(
         "Markdown was rejected. Insert source as plain text or discard the proposal.",
       )
-  }
+  })
 
-  function approveReplace() {
+  const approveReplace = useStableCallback(function approveReplace() {
     session.approve()
-  }
+  })
 
-  function insertBelow() {
+  const insertBelow = useStableCallback(function insertBelow() {
     session.approveBelow()
-  }
+  })
 
-  function cancelRequest() {
+  const cancelRequest = useStableCallback(function cancelRequest() {
     session.cancel()
-  }
+  })
+
+  const finalFocus = useStableCallback(function finalFocus() {
+    return session.getApproved() ? editor.getRootElement() : true
+  })
 
   return (
-    <DialogPopup
-      finalFocus={() =>
-        session.getApproved() ? editor.getRootElement() : true
-      }
-    >
+    <DialogPopup finalFocus={finalFocus}>
       <DialogPanel>
         <Stack>
           <DialogTitle>AI command menu</DialogTitle>

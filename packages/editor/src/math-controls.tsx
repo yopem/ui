@@ -1,5 +1,8 @@
 "use client"
 
+import type { MouseEvent } from "react"
+
+import { useStableCallback } from "@base-ui/utils/useStableCallback"
 import { Box } from "@registry/components/ui/box"
 import { Button } from "@registry/components/ui/button"
 import {
@@ -21,7 +24,7 @@ import {
   $getSelection,
   HISTORY_PUSH_TAG,
 } from "lexical"
-import { useState, useSyncExternalStore } from "react"
+import { useState, useSyncExternalStore, type ComponentProps } from "react"
 
 import { $getSelectedEditorMath, $insertEditorMath } from "./math-extension"
 import { parseEditorMath, type EditorMathValue } from "./math-model"
@@ -29,6 +32,10 @@ import { EditorMathNode } from "./math-node"
 import { renderEditorMath } from "./math-render"
 import { useEditor, useEditorState } from "./root"
 import { createEditorSelectionBookmark } from "./selection-bookmark"
+
+function preventToolbarMouseDown(event: MouseEvent<HTMLButtonElement>) {
+  event.preventDefault()
+}
 
 export function EditorMathPreview({ value }: { value: EditorMathValue }) {
   const result = renderEditorMath(value)
@@ -63,12 +70,15 @@ export function EditorMathControl({
     kind: EditorMathValue["kind"]
   } | null>(null)
 
-  const [tex, setTex] = useState("x^2")
+  const [value, setValue] = useState<EditorMathValue>({
+    kind: kind ?? "inline",
+    tex: "x^2",
+  })
+
   const [error, setError] = useState("")
-  const value = { kind: session?.kind ?? kind ?? "inline", tex }
   const valid = renderEditorMath(value).ok
 
-  function close() {
+  const close = useStableCallback(function close() {
     editor.update(
       () => {
         if (!session || bookmark.getRevision() !== session.revision) return
@@ -87,9 +97,9 @@ export function EditorMathControl({
     setSession(null)
     bookmark.clear()
     editor.focus()
-  }
+  })
 
-  function open() {
+  const open = useStableCallback(function open() {
     if (!editor.isEditable()) return
     editor.getEditorState().read(() => {
       const node = kind ? null : $getSelectedEditorMath()
@@ -101,17 +111,23 @@ export function EditorMathControl({
       }
 
       bookmark.capture()
-      setTex(node?.getValue().tex ?? "x^2")
+
+      const nextValue = node?.getValue() ?? {
+        kind: kind ?? "inline",
+        tex: "x^2",
+      }
+
+      setValue(nextValue)
       setError("")
       setSession({
         revision: bookmark.getRevision(),
         node,
-        kind: kind ?? node?.getValue().kind ?? "inline",
+        kind: nextValue.kind,
       })
     })
-  }
+  })
 
-  function apply(remove = false) {
+  const apply = useStableCallback(function apply(remove = false) {
     if (!session || !editor.isEditable() || (!remove && !valid)) return
     let applied = false
     editor.update(
@@ -147,7 +163,51 @@ export function EditorMathControl({
 
     if (applied) close()
     else setError("Selection expired. Close and select again.")
-  }
+  })
+
+  const handleOpenChange = useStableCallback(function handleOpenChange(
+    next: boolean,
+  ) {
+    if (!next) close()
+  })
+
+  const handleFinalFocus = useStableCallback(function handleFinalFocus() {
+    return editor.getRootElement()
+  })
+
+  const handleChange = useStableCallback(function handleChange(
+    event: Parameters<
+      NonNullable<ComponentProps<typeof Textarea>["onChange"]>
+    >[0],
+  ) {
+    setValue((current) => ({
+      ...current,
+      tex: event.currentTarget.value,
+    }))
+  })
+
+  const handleKeyDown = useStableCallback(function handleKeyDown(
+    event: Parameters<
+      NonNullable<ComponentProps<typeof Textarea>["onKeyDown"]>
+    >[0],
+  ) {
+    if (
+      event.key === "Enter" &&
+      !event.shiftKey &&
+      !event.nativeEvent.isComposing
+    ) {
+      event.preventDefault()
+      apply()
+    }
+  })
+
+  const handleApply = useStableCallback(function handleApply() {
+    apply()
+  })
+
+  const handleDelete = useStableCallback(function handleDelete() {
+    apply(true)
+  })
 
   return (
     <>
@@ -156,19 +216,14 @@ export function EditorMathControl({
         aria-haspopup="dialog"
         aria-expanded={session !== null}
         disabled={!editable}
-        onMouseDown={(event) => event.preventDefault()}
+        onMouseDown={preventToolbarMouseDown}
         onClick={open}
       >
         {kind ? `Insert ${kind} equation` : "Edit equation"}
       </ToolbarButton>
       {!session && error ? <Box render={<output />}>{error}</Box> : null}
-      <Dialog
-        open={session !== null}
-        onOpenChange={(next) => {
-          if (!next) close()
-        }}
-      >
-        <DialogPopup finalFocus={() => editor.getRootElement()}>
+      <Dialog open={session !== null} onOpenChange={handleOpenChange}>
+        <DialogPopup finalFocus={handleFinalFocus}>
           <Stack>
             <DialogTitle>
               {kind ? "Insert equation" : "Edit equation"}
@@ -179,27 +234,18 @@ export function EditorMathControl({
             <Field>
               <FieldLabel>TeX expression</FieldLabel>
               <Textarea
-                value={tex}
+                value={value.tex}
                 maxLength={4096}
                 disabled={!editable}
                 aria-invalid={!valid}
-                onChange={(event) => setTex(event.target.value)}
-                onKeyDown={(event) => {
-                  if (
-                    event.key === "Enter" &&
-                    !event.shiftKey &&
-                    !event.nativeEvent.isComposing
-                  ) {
-                    event.preventDefault()
-                    apply()
-                  }
-                }}
+                onChange={handleChange}
+                onKeyDown={handleKeyDown}
               />
             </Field>
             <EditorMathPreview value={value} />
             {error ? <Text role="alert">{error}</Text> : null}
             <HStack>
-              <Button disabled={!editable || !valid} onClick={() => apply()}>
+              <Button disabled={!editable || !valid} onClick={handleApply}>
                 Apply equation
               </Button>
               <Button variant="outline" onClick={close}>
@@ -209,7 +255,7 @@ export function EditorMathControl({
                 <Button
                   variant="destructive"
                   disabled={!editable}
-                  onClick={() => apply(true)}
+                  onClick={handleDelete}
                 >
                   Delete equation
                 </Button>

@@ -10,6 +10,7 @@ import type {
 } from "lexical"
 import type { MouseEvent, ReactNode } from "react"
 
+import { useStableCallback } from "@base-ui/utils/useStableCallback"
 import { Box } from "@registry/components/ui/box"
 import { Button } from "@registry/components/ui/button"
 import { List, ListItem } from "@registry/components/ui/list"
@@ -218,6 +219,10 @@ function EditorTocView({ editor }: { editor: LexicalEditor }) {
   )
 }
 
+function preventEditorTocMouseDown(event: MouseEvent<HTMLElement>) {
+  event.preventDefault()
+}
+
 function EditorTocItem({
   editor,
   heading,
@@ -230,10 +235,12 @@ function EditorTocItem({
   const targetId = getEditorTocHeadingId(editor, heading.key)
   const depthStyle = depthStyles[heading.depth - 1] ?? styles.depthSix
 
-  function navigate(event: MouseEvent<HTMLElement>) {
+  const navigate = useStableCallback(function navigate(
+    event: MouseEvent<HTMLElement>,
+  ) {
     event.preventDefault()
     focusEditorTocHeading(editor, heading.key)
-  }
+  })
 
   return (
     <ListItem>
@@ -243,7 +250,7 @@ function EditorTocItem({
         size="sm"
         xstyle={[styles.item, depthStyle, active && styles.active]}
         aria-current={active ? "location" : undefined}
-        onMouseDown={(event) => event.preventDefault()}
+        onMouseDown={preventEditorTocMouseDown}
         onClick={navigate}
       >
         {heading.title}

@@ -1,7 +1,9 @@
 "use client"
 
 import type { ElementFormatType, ElementNode } from "lexical"
+import type { ChangeEvent, ComponentProps, KeyboardEvent } from "react"
 
+import { useStableCallback } from "@base-ui/utils/useStableCallback"
 import { $isListItemNode } from "@lexical/list"
 import { $patchStyleText } from "@lexical/selection"
 import { Box } from "@registry/components/ui/box"
@@ -72,22 +74,30 @@ export function EditorAlignmentButton({
   const editor = useEditor()
   const { editable } = useEditorState()
 
+  const handleMouseDown = useStableCallback(function handleMouseDown(
+    event: Parameters<NonNullable<typeof onMouseDown>>[0],
+  ) {
+    onMouseDown?.(event)
+    event.preventDefault()
+  })
+
+  const handleClick = useStableCallback(function handleClick(
+    event: Parameters<NonNullable<typeof onClick>>[0],
+  ) {
+    onClick?.(event)
+
+    if (event.defaultPrevented || disabled || !editor.isEditable()) return
+    editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, alignment)
+    editor.focus()
+  })
+
   return (
     <ToolbarButton
       {...props}
       render={<Button variant="ghost" size="sm" />}
       disabled={disabled === true || !editable}
-      onMouseDown={(event) => {
-        onMouseDown?.(event)
-        event.preventDefault()
-      }}
-      onClick={(event) => {
-        onClick?.(event)
-
-        if (event.defaultPrevented || disabled || !editor.isEditable()) return
-        editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, alignment)
-        editor.focus()
-      }}
+      onMouseDown={handleMouseDown}
+      onClick={handleClick}
     >
       {children ?? `Align ${alignment}`}
     </ToolbarButton>
@@ -182,7 +192,7 @@ function EditorStyleControl({
   const [open, setOpen] = useState(false)
   const [invalid, setInvalid] = useState(false)
 
-  function apply() {
+  const apply = useStableCallback(function apply() {
     if (disabled || !editor.isEditable() || !bookmark.getSnapshot()) return
     const next = value.trim()
 
@@ -221,19 +231,53 @@ function EditorStyleControl({
     bookmark.clear()
     setOpen(false)
     editor.focus()
-  }
+  })
+
+  const changeOpen = useStableCallback(function changeOpen(next: boolean) {
+    if (next) {
+      editor.read(bookmark.capture)
+      setInvalid(false)
+    } else bookmark.clear()
+    setOpen(next)
+  })
+
+  const handleMouseDown = useStableCallback(function handleMouseDown(
+    event: Parameters<NonNullable<typeof onMouseDown>>[0],
+  ) {
+    onMouseDown?.(event)
+    event.preventDefault()
+  })
+
+  const selectColor = useStableCallback(function selectColor(
+    event: Parameters<NonNullable<ComponentProps<typeof Button>["onClick"]>>[0],
+  ) {
+    const next = event.currentTarget.dataset.value
+
+    if (!next) return
+    setValue(next)
+    setInvalid(false)
+  })
+
+  const changeValue = useStableCallback(function changeValue(
+    event: ChangeEvent<HTMLInputElement>,
+  ) {
+    setValue(event.target.value)
+    setInvalid(false)
+  })
+
+  const handleInputKeyDown = useStableCallback(function handleInputKeyDown(
+    event: KeyboardEvent<HTMLInputElement>,
+  ) {
+    if (event.nativeEvent.isComposing) return
+
+    if (event.key === "Enter") {
+      event.preventDefault()
+      apply()
+    }
+  })
 
   return (
-    <Popover
-      open={open && editable && !disabled}
-      onOpenChange={(next) => {
-        if (next) {
-          editor.read(bookmark.capture)
-          setInvalid(false)
-        } else bookmark.clear()
-        setOpen(next)
-      }}
-    >
+    <Popover open={open && editable && !disabled} onOpenChange={changeOpen}>
       <PopoverTrigger
         disabled={!editable || disabled}
         render={
@@ -244,10 +288,7 @@ function EditorStyleControl({
           />
         }
         onClick={onClick}
-        onMouseDown={(event) => {
-          onMouseDown?.(event)
-          event.preventDefault()
-        }}
+        onMouseDown={handleMouseDown}
       >
         {children ?? definition.label}
       </PopoverTrigger>
@@ -259,10 +300,8 @@ function EditorStyleControl({
               <Button
                 key={color.label}
                 variant="ghost"
-                onClick={() => {
-                  setValue(color.value)
-                  setInvalid(false)
-                }}
+                data-value={color.value}
+                onClick={selectColor}
               >
                 {color.label}
               </Button>
@@ -271,18 +310,8 @@ function EditorStyleControl({
             aria-label={`${definition.label} value`}
             value={value}
             aria-invalid={invalid || undefined}
-            onChange={(event) => {
-              setValue(event.target.value)
-              setInvalid(false)
-            }}
-            onKeyDown={(event) => {
-              if (event.nativeEvent.isComposing) return
-
-              if (event.key === "Enter") {
-                event.preventDefault()
-                apply()
-              }
-            }}
+            onChange={changeValue}
+            onKeyDown={handleInputKeyDown}
           />
           {invalid && <Text role="alert">Invalid style value.</Text>}
           {!hasSelection && (
@@ -340,53 +369,61 @@ export function EditorClearFormattingButton({
   const editor = useEditor()
   const { editable } = useEditorState()
 
+  const handleMouseDown = useStableCallback(function handleMouseDown(
+    event: Parameters<NonNullable<typeof onMouseDown>>[0],
+  ) {
+    onMouseDown?.(event)
+    event.preventDefault()
+  })
+
+  const handleClick = useStableCallback(function handleClick(
+    event: Parameters<NonNullable<typeof onClick>>[0],
+  ) {
+    onClick?.(event)
+
+    if (event.defaultPrevented || disabled || !editor.isEditable()) return
+    editor.update(
+      () => {
+        const selection = $getSelection()
+
+        if (!$isRangeSelection(selection)) return
+
+        if (selection.isCollapsed()) {
+          selection.setStyle("")
+
+          selection.format = 0
+
+          return
+        }
+
+        for (const block of $selectedBlocks()) {
+          block.setFormat("").setTextFormat(0).setTextStyle("")
+
+          if (!$isListItemNode(block)) block.setIndent(0)
+
+          $setState(block, editorBlockPresentationState, {
+            lineHeight: "",
+            textIndent: "",
+          })
+        }
+
+        for (const node of selection.extract())
+          if ($isTextNode(node)) node.setFormat(0).setStyle("")
+        selection.setStyle("")
+        selection.format = 0
+      },
+      { tag: HISTORY_PUSH_TAG },
+    )
+    editor.focus()
+  })
+
   return (
     <ToolbarButton
       {...props}
       render={<Button variant="ghost" size="sm" />}
       disabled={disabled === true || !editable}
-      onMouseDown={(event) => {
-        onMouseDown?.(event)
-        event.preventDefault()
-      }}
-      onClick={(event) => {
-        onClick?.(event)
-
-        if (event.defaultPrevented || disabled || !editor.isEditable()) return
-        editor.update(
-          () => {
-            const selection = $getSelection()
-
-            if (!$isRangeSelection(selection)) return
-
-            if (selection.isCollapsed()) {
-              selection.setStyle("")
-
-              selection.format = 0
-
-              return
-            }
-
-            for (const block of $selectedBlocks()) {
-              block.setFormat("").setTextFormat(0).setTextStyle("")
-
-              if (!$isListItemNode(block)) block.setIndent(0)
-
-              $setState(block, editorBlockPresentationState, {
-                lineHeight: "",
-                textIndent: "",
-              })
-            }
-
-            for (const node of selection.extract())
-              if ($isTextNode(node)) node.setFormat(0).setStyle("")
-            selection.setStyle("")
-            selection.format = 0
-          },
-          { tag: HISTORY_PUSH_TAG },
-        )
-        editor.focus()
-      }}
+      onMouseDown={handleMouseDown}
+      onClick={handleClick}
     >
       {children}
     </ToolbarButton>

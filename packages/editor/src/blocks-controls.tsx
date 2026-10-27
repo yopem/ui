@@ -1,7 +1,9 @@
 "use client"
 
 import type { LexicalCommand } from "lexical"
+import type { ChangeEvent, ComponentProps } from "react"
 
+import { useStableCallback } from "@base-ui/utils/useStableCallback"
 import { Button } from "@registry/components/ui/button"
 import { Input } from "@registry/components/ui/input"
 import { ToolbarButton } from "@registry/components/ui/toolbar"
@@ -24,6 +26,14 @@ import { EditorHistoryButton } from "./controls"
 import { useEditor, useEditorState } from "./root"
 import { createEditorSelectionBookmark } from "./selection-bookmark"
 
+function preventButtonFocus(
+  event: Parameters<
+    NonNullable<ComponentProps<typeof ToolbarButton>["onMouseDown"]>
+  >[0],
+) {
+  event.preventDefault()
+}
+
 function EditorBlocksCommandButton({
   command,
   children,
@@ -35,27 +45,35 @@ function EditorBlocksCommandButton({
   const editor = useEditor()
   const { editable } = useEditorState()
 
+  const handleMouseDown = useStableCallback(function handleMouseDown(
+    event: Parameters<NonNullable<typeof onMouseDown>>[0],
+  ) {
+    onMouseDown?.(event)
+    event.preventDefault()
+  })
+
+  const handleClick = useStableCallback(function handleClick(
+    event: Parameters<NonNullable<typeof onClick>>[0],
+  ) {
+    onClick?.(event)
+
+    if (event.defaultPrevented || disabled || !editor.isEditable()) return
+    editor.update(
+      () => {
+        editor.dispatchCommand(command, undefined)
+      },
+      { tag: HISTORY_PUSH_TAG },
+    )
+    editor.focus()
+  })
+
   return (
     <ToolbarButton
       {...props}
       render={<Button variant="ghost" size="sm" />}
       disabled={disabled === true || !editable}
-      onMouseDown={(event) => {
-        onMouseDown?.(event)
-        event.preventDefault()
-      }}
-      onClick={(event) => {
-        onClick?.(event)
-
-        if (event.defaultPrevented || disabled || !editor.isEditable()) return
-        editor.update(
-          () => {
-            editor.dispatchCommand(command, undefined)
-          },
-          { tag: HISTORY_PUSH_TAG },
-        )
-        editor.focus()
-      }}
+      onMouseDown={handleMouseDown}
+      onClick={handleClick}
     >
       {children}
     </ToolbarButton>
@@ -114,29 +132,37 @@ export function EditorCalloutAppearanceButton({
   const editor = useEditor()
   const { editable } = useEditorState()
 
+  const handleMouseDown = useStableCallback(function handleMouseDown(
+    event: Parameters<NonNullable<typeof onMouseDown>>[0],
+  ) {
+    onMouseDown?.(event)
+    event.preventDefault()
+  })
+
+  const handleClick = useStableCallback(function handleClick(
+    event: Parameters<NonNullable<typeof onClick>>[0],
+  ) {
+    onClick?.(event)
+
+    if (event.defaultPrevented || disabled || !editor.isEditable()) return
+    editor.update(
+      () => {
+        editor.dispatchCommand(UPDATE_EDITOR_CALLOUT_COMMAND, {
+          appearance,
+        })
+      },
+      { tag: HISTORY_PUSH_TAG },
+    )
+    editor.focus()
+  })
+
   return (
     <ToolbarButton
       {...props}
       render={<Button variant="ghost" size="sm" />}
       disabled={disabled === true || !editable}
-      onMouseDown={(event) => {
-        onMouseDown?.(event)
-        event.preventDefault()
-      }}
-      onClick={(event) => {
-        onClick?.(event)
-
-        if (event.defaultPrevented || disabled || !editor.isEditable()) return
-        editor.update(
-          () => {
-            editor.dispatchCommand(UPDATE_EDITOR_CALLOUT_COMMAND, {
-              appearance,
-            })
-          },
-          { tag: HISTORY_PUSH_TAG },
-        )
-        editor.focus()
-      }}
+      onMouseDown={handleMouseDown}
+      onClick={handleClick}
     >
       {children ?? `Callout appearance ${appearance}`}
     </ToolbarButton>
@@ -154,27 +180,35 @@ export function EditorBlockTypeButton({
   const editor = useEditor()
   const { editable } = useEditorState()
 
+  const handleMouseDown = useStableCallback(function handleMouseDown(
+    event: Parameters<NonNullable<typeof onMouseDown>>[0],
+  ) {
+    onMouseDown?.(event)
+    event.preventDefault()
+  })
+
+  const handleClick = useStableCallback(function handleClick(
+    event: Parameters<NonNullable<typeof onClick>>[0],
+  ) {
+    onClick?.(event)
+
+    if (event.defaultPrevented || disabled || !editor.isEditable()) return
+    editor.update(
+      () => {
+        editor.dispatchCommand(CONVERT_EDITOR_BLOCK_COMMAND, kind)
+      },
+      { tag: HISTORY_PUSH_TAG },
+    )
+    editor.focus()
+  })
+
   return (
     <ToolbarButton
       {...props}
       render={<Button variant="ghost" size="sm" />}
       disabled={disabled === true || !editable}
-      onMouseDown={(event) => {
-        onMouseDown?.(event)
-        event.preventDefault()
-      }}
-      onClick={(event) => {
-        onClick?.(event)
-
-        if (event.defaultPrevented || disabled || !editor.isEditable()) return
-        editor.update(
-          () => {
-            editor.dispatchCommand(CONVERT_EDITOR_BLOCK_COMMAND, kind)
-          },
-          { tag: HISTORY_PUSH_TAG },
-        )
-        editor.focus()
-      }}
+      onMouseDown={handleMouseDown}
+      onClick={handleClick}
     >
       {children ?? `Convert to ${kind}`}
     </ToolbarButton>
@@ -195,6 +229,28 @@ export function EditorCalloutIconControl() {
 
   const valid = isEditorCalloutIcon(value)
 
+  const captureSelection = useStableCallback(function captureSelection() {
+    editor.getEditorState().read(bookmark.capture)
+  })
+
+  const changeValue = useStableCallback(function changeValue(
+    event: ChangeEvent<HTMLInputElement>,
+  ) {
+    setValue(event.target.value)
+  })
+
+  const applyIcon = useStableCallback(function applyIcon() {
+    if (!editor.isEditable() || !isEditorCalloutIcon(value)) return
+    editor.update(
+      () => {
+        if (bookmark.restore())
+          editor.dispatchCommand(UPDATE_EDITOR_CALLOUT_COMMAND, { icon: value })
+      },
+      { tag: HISTORY_PUSH_TAG },
+    )
+    editor.focus()
+  })
+
   return (
     <>
       <Input
@@ -203,35 +259,15 @@ export function EditorCalloutIconControl() {
         maxLength={32}
         disabled={!editable}
         aria-invalid={!valid}
-        onPointerDown={() => {
-          editor.getEditorState().read(bookmark.capture)
-        }}
-        onFocus={() => {
-          editor.getEditorState().read(bookmark.capture)
-        }}
-        onChange={(event) => {
-          setValue(event.target.value)
-        }}
+        onPointerDown={captureSelection}
+        onFocus={captureSelection}
+        onChange={changeValue}
       />
       <ToolbarButton
         render={<Button variant="ghost" size="sm" />}
         disabled={!editable || !valid || !hasSelection}
-        onMouseDown={(event) => {
-          event.preventDefault()
-        }}
-        onClick={() => {
-          if (!editor.isEditable() || !valid) return
-          editor.update(
-            () => {
-              if (bookmark.restore())
-                editor.dispatchCommand(UPDATE_EDITOR_CALLOUT_COMMAND, {
-                  icon: value,
-                })
-            },
-            { tag: HISTORY_PUSH_TAG },
-          )
-          editor.focus()
-        }}
+        onMouseDown={preventButtonFocus}
+        onClick={applyIcon}
       >
         Apply icon
       </ToolbarButton>

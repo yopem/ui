@@ -3,6 +3,7 @@
 import type { EditorState, LexicalEditor } from "lexical"
 import type { ComponentProps } from "react"
 
+import { useStableCallback } from "@base-ui/utils/useStableCallback"
 import {
   Excalidraw,
   exportToBlob,
@@ -99,6 +100,14 @@ const styles = stylex.create({
   error: { color: tokens["--destructive-foreground"] },
 })
 
+type ExcalidrawChangeHandler = NonNullable<
+  ComponentProps<typeof Excalidraw>["onChange"]
+>
+
+type ExcalidrawLinkOpenHandler = NonNullable<
+  ComponentProps<typeof Excalidraw>["onLinkOpen"]
+>
+
 type ExcalidrawApi =
   NonNullable<ComponentProps<typeof Excalidraw>["excalidrawAPI"]> extends (
     api: infer Api,
@@ -119,6 +128,22 @@ interface AssetPathLease {
 }
 
 let assetPathLease: AssetPathLease | null = null
+
+const drawingUIOptions: NonNullable<
+  ComponentProps<typeof Excalidraw>["UIOptions"]
+> = {
+  canvasActions: {
+    loadScene: false,
+    export: false,
+    saveToActiveFile: false,
+    saveAsImage: false,
+  },
+  tools: { image: false },
+}
+
+function rejectDrawingContent() {
+  return false
+}
 
 export function registerEditorDrawingRuntime(
   editor: LexicalEditor,
@@ -331,11 +356,11 @@ function EditorDrawingScenePreview({
     ownedUrl.current = null
   }
 
-  function failPreview() {
+  const failPreview = useStableCallback(function failPreview() {
     revokePreviewUrl()
     setPreviewUrl(null)
     setStatus("Drawing preview unavailable.")
-  }
+  })
 
   const [previewRef] = useState(
     () =>
@@ -447,7 +472,7 @@ export function EditorDrawingInsertButton() {
   const editor = useEditor()
   const { editable } = useEditorState()
 
-  function insertDrawing() {
+  const insertDrawing = useStableCallback(function insertDrawing() {
     if (!editor.isEditable()) return
 
     editor.update(
@@ -460,7 +485,7 @@ export function EditorDrawingInsertButton() {
       },
       { tag: HISTORY_PUSH_TAG },
     )
-  }
+  })
 
   return (
     <Button disabled={!editable} onClick={insertDrawing}>
@@ -524,7 +549,7 @@ function EditorDrawingView({
     }
   })
 
-  function openEditor() {
+  const openEditor = useStableCallback(function openEditor() {
     const serializedScene = JSON.stringify(scene)
 
     const current = editor.getEditorState().read(() => {
@@ -567,30 +592,32 @@ function EditorDrawingView({
         }),
     )
     setOpen(true)
-  }
+  })
 
-  function handleDialogOpenChange(
-    nextOpen: boolean,
-    details: Parameters<
-      NonNullable<ComponentProps<typeof Dialog>["onOpenChange"]>
-    >[1],
-  ) {
-    const ownerWindow = editor.getRootElement()?.ownerDocument.defaultView
-
-    if (
-      !nextOpen &&
-      details.reason === "escape-key" &&
-      ownerWindow &&
-      details.event.target instanceof ownerWindow.HTMLTextAreaElement &&
-      details.event.target.classList.contains("excalidraw-wysiwyg")
+  const handleDialogOpenChange = useStableCallback(
+    function handleDialogOpenChange(
+      nextOpen: boolean,
+      details: Parameters<
+        NonNullable<ComponentProps<typeof Dialog>["onOpenChange"]>
+      >[1],
     ) {
-      details.cancel()
+      const ownerWindow = editor.getRootElement()?.ownerDocument.defaultView
 
-      return
-    }
+      if (
+        !nextOpen &&
+        details.reason === "escape-key" &&
+        ownerWindow &&
+        details.event.target instanceof ownerWindow.HTMLTextAreaElement &&
+        details.event.target.classList.contains("excalidraw-wysiwyg")
+      ) {
+        details.cancel()
 
-    changeOpen(nextOpen)
-  }
+        return
+      }
+
+      changeOpen(nextOpen)
+    },
+  )
 
   function changeOpen(nextOpen: boolean) {
     if (!nextOpen) {
@@ -605,7 +632,7 @@ function EditorDrawingView({
     setOpen(nextOpen)
   }
 
-  function apply() {
+  const apply = useStableCallback(function apply() {
     if (exportBusyRef.current) return
 
     let changed = false
@@ -658,7 +685,7 @@ function EditorDrawingView({
         "Drawing is invalid or exceeds supported limits. Existing content is unchanged.",
       )
     }
-  }
+  })
 
   async function runDrawingExport(
     kind: "svg" | "json" | "png" | "copy-png",
@@ -941,6 +968,64 @@ function EditorDrawingView({
     }
   }
 
+  const handleLinkOpen = useStableCallback(function handleLinkOpen(
+    _element: Parameters<ExcalidrawLinkOpenHandler>[0],
+    event: Parameters<ExcalidrawLinkOpenHandler>[1],
+  ) {
+    event.preventDefault()
+  })
+
+  const handleChange = useStableCallback(function handleChange(
+    elements: Parameters<ExcalidrawChangeHandler>[0],
+    _appState: Parameters<ExcalidrawChangeHandler>[1],
+    files: Parameters<ExcalidrawChangeHandler>[2],
+  ) {
+    try {
+      if (Object.keys(files).length > 0)
+        throw new Error("External drawing files are not supported")
+
+      const accepted = parseEditorDrawingScene({
+        elements: normalizeEditorDrawingSdkElements(elements),
+      })
+
+      draft.current = accepted
+      setError("")
+    } catch {
+      setError("Files, embedded URLs, and unsupported elements are rejected.")
+    }
+  })
+
+  const exportSvg = useStableCallback(function exportSvg(
+    event: Parameters<typeof runDrawingExport>[1],
+  ) {
+    void runDrawingExport("svg", event)
+  })
+
+  const exportJson = useStableCallback(function exportJson(
+    event: Parameters<typeof runDrawingExport>[1],
+  ) {
+    void runDrawingExport("json", event)
+  })
+
+  const exportPng = useStableCallback(function exportPng(
+    event: Parameters<typeof runDrawingExport>[1],
+  ) {
+    void runDrawingExport("png", event)
+  })
+
+  const copyPng = useStableCallback(function copyPng(
+    event: Parameters<typeof runDrawingExport>[1],
+  ) {
+    void runDrawingExport("copy-png", event)
+  })
+
+  const cancelDrawing = useStableCallback(function cancelDrawing() {
+    draft.current = scene
+    setError("")
+    setExportStatus("")
+    changeOpen(false)
+  })
+
   return (
     <Box
       ref={viewRef}
@@ -998,37 +1083,11 @@ function EditorDrawingView({
                     excalidrawAPI={handleApi}
                     initialData={initialData}
                     viewModeEnabled={!editable}
-                    validateEmbeddable={() => false}
-                    onPaste={() => false}
-                    onLinkOpen={(_element, event) => event.preventDefault()}
-                    UIOptions={{
-                      canvasActions: {
-                        loadScene: false,
-                        export: false,
-                        saveToActiveFile: false,
-                        saveAsImage: false,
-                      },
-                      tools: { image: false },
-                    }}
-                    onChange={(elements, _appState, files) => {
-                      try {
-                        if (Object.keys(files).length > 0)
-                          throw new Error(
-                            "External drawing files are not supported",
-                          )
-
-                        const accepted = parseEditorDrawingScene({
-                          elements: normalizeEditorDrawingSdkElements(elements),
-                        })
-
-                        draft.current = accepted
-                        setError("")
-                      } catch {
-                        setError(
-                          "Files, embedded URLs, and unsupported elements are rejected.",
-                        )
-                      }
-                    }}
+                    validateEmbeddable={rejectDrawingContent}
+                    onPaste={rejectDrawingContent}
+                    onLinkOpen={handleLinkOpen}
+                    UIOptions={drawingUIOptions}
+                    onChange={handleChange}
                   />
                 ) : null}
               </Box>
@@ -1040,40 +1099,19 @@ function EditorDrawingView({
                 </Box>
               ) : null}
               <Stack xstyle={styles.toolbar}>
-                <Button
-                  disabled={!api || exportBusy}
-                  onClick={(event) => void runDrawingExport("svg", event)}
-                >
+                <Button disabled={!api || exportBusy} onClick={exportSvg}>
                   Export drawing SVG
                 </Button>
-                <Button
-                  disabled={!api || exportBusy}
-                  onClick={(event) => void runDrawingExport("json", event)}
-                >
+                <Button disabled={!api || exportBusy} onClick={exportJson}>
                   Export drawing JSON
                 </Button>
-                <Button
-                  disabled={!api || exportBusy}
-                  onClick={(event) => void runDrawingExport("png", event)}
-                >
+                <Button disabled={!api || exportBusy} onClick={exportPng}>
                   Export drawing PNG
                 </Button>
-                <Button
-                  disabled={!api || exportBusy}
-                  onClick={(event) => void runDrawingExport("copy-png", event)}
-                >
+                <Button disabled={!api || exportBusy} onClick={copyPng}>
                   Copy drawing PNG
                 </Button>
-                <Button
-                  onClick={() => {
-                    draft.current = scene
-                    setError("")
-                    setExportStatus("")
-                    changeOpen(false)
-                  }}
-                >
-                  Cancel drawing
-                </Button>
+                <Button onClick={cancelDrawing}>Cancel drawing</Button>
                 <Button
                   disabled={!editable || error !== "" || exportBusy}
                   onClick={apply}

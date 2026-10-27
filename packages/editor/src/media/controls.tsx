@@ -1,5 +1,8 @@
 "use client"
 
+import type { ChangeEvent, ComponentProps, FormEvent } from "react"
+
+import { useStableCallback } from "@base-ui/utils/useStableCallback"
 import { Button } from "@registry/components/ui/button"
 import {
   Dialog,
@@ -28,6 +31,14 @@ import type { MediaUpload } from "./upload"
 import { $insertMedia } from "./extension"
 import { parseMedia } from "./schema"
 import { createMediaUpload } from "./upload"
+
+function preventTriggerFocus(
+  event: Parameters<
+    NonNullable<ComponentProps<typeof DialogTrigger>["onMouseDown"]>
+  >[0],
+) {
+  event.preventDefault()
+}
 
 const styles = stylex.create({
   target: { minBlockSize: 44, minInlineSize: 44 },
@@ -94,7 +105,7 @@ export function MediaInsertControl({
 
   const label = embedType ?? kind
 
-  function insert(value: MediaInput) {
+  const insert = useStableCallback(function insert(value: MediaInput) {
     const media = parseMedia(value)
     let inserted = false
 
@@ -121,26 +132,82 @@ export function MediaInsertControl({
     setSessionRevision(null)
     setOpen(false)
     editor.focus()
-  }
+  })
+
+  const changeOpen = useStableCallback(function changeOpen(next: boolean) {
+    if (next) {
+      task.reset()
+      editor.getEditorState().read(bookmark.capture)
+      setSessionRevision(bookmark.getRevision())
+      setError(false)
+    } else {
+      task.cancel()
+      bookmark.clear()
+      setSessionRevision(null)
+    }
+
+    setOpen(next)
+  })
+
+  const submitURL = useStableCallback(function submitURL(
+    event: FormEvent<HTMLFormElement>,
+  ) {
+    event.preventDefault()
+    const url = new FormData(event.currentTarget).get("url")
+
+    if (url === null || url instanceof File) return
+
+    try {
+      insert(
+        kind === "embed" && embedType
+          ? { kind, url, embedType }
+          : { kind, url },
+      )
+      setError(false)
+    } catch {
+      setError(true)
+    }
+  })
+
+  const uploadFile = useStableCallback(async function uploadFile(
+    event: ChangeEvent<HTMLInputElement>,
+  ) {
+    const file = event.currentTarget.files?.[0]
+    event.currentTarget.value = ""
+
+    if (!file) return
+
+    if (!sessionValid || sessionRevision === null || !editor.isEditable()) {
+      setError(true)
+
+      return
+    }
+
+    if (!upload || kind === "embed") return
+    const activeRevision = sessionRevision
+    const result = await task.start(file, kind, upload)
+
+    if (!result) return
+
+    if (
+      activeRevision !== bookmark.getRevision() ||
+      !bookmark.getSnapshot() ||
+      !editor.isEditable()
+    ) {
+      setError(true)
+
+      return
+    }
+
+    try {
+      insert(result)
+    } catch {
+      setError(true)
+    }
+  })
 
   return (
-    <Dialog
-      open={open}
-      onOpenChange={(next) => {
-        if (next) {
-          task.reset()
-          editor.getEditorState().read(bookmark.capture)
-          setSessionRevision(bookmark.getRevision())
-          setError(false)
-        } else {
-          task.cancel()
-          bookmark.clear()
-          setSessionRevision(null)
-        }
-
-        setOpen(next)
-      }}
-    >
+    <Dialog open={open} onOpenChange={changeOpen}>
       <DialogTrigger
         render={
           <ToolbarButton
@@ -149,7 +216,7 @@ export function MediaInsertControl({
           />
         }
         disabled={!editable}
-        onMouseDown={(event) => event.preventDefault()}
+        onMouseDown={preventTriggerFocus}
       >
         Insert {label}
       </DialogTrigger>
@@ -164,25 +231,7 @@ export function MediaInsertControl({
           </DialogDescription>
         </DialogHeader>
         <Stack>
-          <Form
-            onSubmit={(event) => {
-              event.preventDefault()
-              const url = new FormData(event.currentTarget).get("url")
-
-              if (url === null || url instanceof File) return
-
-              try {
-                insert(
-                  kind === "embed" && embedType
-                    ? { kind, url, embedType }
-                    : { kind, url },
-                )
-                setError(false)
-              } catch {
-                setError(true)
-              }
-            }}
-          >
+          <Form onSubmit={submitURL}>
             <Stack>
               <Field>
                 <FieldLabel>Media URL</FieldLabel>
@@ -221,43 +270,7 @@ export function MediaInsertControl({
                   disabled={
                     !editable || !sessionValid || state.status === "uploading"
                   }
-                  onChange={async (event) => {
-                    const file = event.target.files?.[0]
-                    event.target.value = ""
-
-                    if (!file) return
-
-                    if (
-                      !sessionValid ||
-                      sessionRevision === null ||
-                      !editor.isEditable()
-                    ) {
-                      setError(true)
-
-                      return
-                    }
-
-                    const activeRevision = sessionRevision
-                    const result = await task.start(file, kind, upload)
-
-                    if (!result) return
-
-                    if (
-                      activeRevision !== bookmark.getRevision() ||
-                      !bookmark.getSnapshot() ||
-                      !editor.isEditable()
-                    ) {
-                      setError(true)
-
-                      return
-                    }
-
-                    try {
-                      insert(result)
-                    } catch {
-                      setError(true)
-                    }
-                  }}
+                  onChange={uploadFile}
                 />
               </Field>
               {state.status === "uploading" && (

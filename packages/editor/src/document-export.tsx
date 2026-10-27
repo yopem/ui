@@ -5,6 +5,7 @@ import type { WrapProps } from "@registry/components/ui/wrap"
 import type { MouseEvent } from "react"
 
 import { useRender } from "@base-ui/react/use-render"
+import { useStableCallback } from "@base-ui/utils/useStableCallback"
 import { Box } from "@registry/components/ui/box"
 import { Button } from "@registry/components/ui/button"
 import { Text } from "@registry/components/ui/text"
@@ -301,7 +302,9 @@ export function EditorDocumentPrintControl({
     if (mountedRef.current) setStatus(value)
   }
 
-  function cancel(event: MouseEvent<HTMLElement>) {
+  const cancel = useStableCallback(function cancel(
+    event: MouseEvent<HTMLElement>,
+  ) {
     if (event.defaultPrevented) return
     const active = activeRef.current
 
@@ -309,7 +312,7 @@ export function EditorDocumentPrintControl({
     active.reason = "cancelled"
     active.controller.abort()
     active.popup?.close()
-  }
+  })
 
   async function print(event: MouseEvent<HTMLElement>) {
     if (event.defaultPrevented || activeRef.current) return
@@ -467,6 +470,12 @@ export function EditorDocumentPrintControl({
     }
   }
 
+  const handlePrint = useStableCallback(function handlePrint(
+    event: MouseEvent<HTMLElement>,
+  ) {
+    void print(event)
+  })
+
   return useRender({
     render: <Box />,
     ref: [rootRef, ref ?? null],
@@ -478,7 +487,7 @@ export function EditorDocumentPrintControl({
       "aria-busy": busy,
       children: (
         <Wrap>
-          <Button disabled={busy} onClick={print}>
+          <Button disabled={busy} onClick={handlePrint}>
             Print document
           </Button>
           <Button disabled={!busy} onClick={cancel}>
@@ -512,14 +521,16 @@ export function EditorDocumentImageExportControl({
   const [error, setError] = useState("")
   const [status, setStatus] = useState("")
 
-  function cancel(event: MouseEvent<HTMLElement>) {
+  const cancel = useStableCallback(function cancel(
+    event: MouseEvent<HTMLElement>,
+  ) {
     if (event.defaultPrevented) return
     const active = activeRef.current
 
     if (!active) return
     active.reason = "cancelled"
     active.controller.abort()
-  }
+  })
 
   async function exportImage(event: MouseEvent<HTMLElement>) {
     if (event.defaultPrevented || activeRef.current) return
@@ -636,6 +647,12 @@ export function EditorDocumentImageExportControl({
     }
   }
 
+  const handleExportImage = useStableCallback(function handleExportImage(
+    event: MouseEvent<HTMLElement>,
+  ) {
+    void exportImage(event)
+  })
+
   return useRender({
     render: <Box />,
     ref: [rootRef, ref ?? null],
@@ -647,7 +664,7 @@ export function EditorDocumentImageExportControl({
       "aria-busy": busy,
       children: (
         <Wrap>
-          <Button disabled={busy} onClick={exportImage}>
+          <Button disabled={busy} onClick={handleExportImage}>
             Export document as PNG
           </Button>
           <Button disabled={!busy} onClick={cancel}>

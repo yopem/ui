@@ -6,8 +6,9 @@ import type {
   NodeKey,
   SerializedLexicalNode,
 } from "lexical"
-import type { ReactNode } from "react"
+import type { FocusEvent, ReactNode } from "react"
 
+import { useStableCallback } from "@base-ui/utils/useStableCallback"
 import { Button } from "@registry/components/ui/button"
 import { Calendar } from "@registry/components/ui/calendar"
 import {
@@ -55,22 +56,22 @@ export function EditorDateInline({
   const [open, setOpen] = useState(false)
   const calendarDate = editorDateToCalendarDate(date)
 
-  function prepare() {
-    if (!editable || !editor.isEditable()) return
+  const prepare = useStableCallback(function prepare() {
+    if (!editor.isEditable()) return
     target.current = { date }
-  }
+  })
 
-  function changeOpen(nextOpen: boolean) {
+  const changeOpen = useStableCallback(function changeOpen(nextOpen: boolean) {
     setOpen(nextOpen)
 
     if (nextOpen) prepare()
     else target.current = null
-  }
+  })
 
   function apply(value: EditorDateValue) {
     const current = target.current
 
-    if (!current || !editable || !editor.isEditable()) {
+    if (!current || !editor.isEditable()) {
       setOpen(false)
 
       return
@@ -102,6 +103,23 @@ export function EditorDateInline({
     if (changed) editor.focus()
   }
 
+  const selectDate = useStableCallback(function selectDate(
+    selected: Date | undefined,
+  ) {
+    if (selected) apply(editorDateFromCalendarDate(selected))
+  })
+
+  const handlePopupBlur = useStableCallback(function handlePopupBlur(
+    event: FocusEvent<HTMLElement>,
+  ) {
+    if (
+      event.relatedTarget instanceof Node &&
+      event.currentTarget.contains(event.relatedTarget)
+    )
+      return
+    changeOpen(false)
+  })
+
   return (
     <Popover open={open} onOpenChange={changeOpen}>
       <PopoverTrigger
@@ -112,23 +130,11 @@ export function EditorDateInline({
       >
         {formatEditorDate(date)}
       </PopoverTrigger>
-      <PopoverPopup
-        onBlur={(event) => {
-          if (
-            event.relatedTarget instanceof Node &&
-            event.currentTarget.contains(event.relatedTarget)
-          )
-            return
-          changeOpen(false)
-        }}
-      >
+      <PopoverPopup onBlur={handlePopupBlur}>
         <Calendar
           defaultMonth={calendarDate}
           mode="single"
-          onSelect={(selected) => {
-            if (!selected) return
-            apply(editorDateFromCalendarDate(selected))
-          }}
+          onSelect={selectDate}
           selected={calendarDate}
         />
       </PopoverPopup>

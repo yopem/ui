@@ -3,6 +3,7 @@
 import type { TableNode } from "@lexical/table"
 import type { LexicalEditor, NodeKey } from "lexical"
 
+import { useStableCallback } from "@base-ui/utils/useStableCallback"
 import {
   $getTableNodeFromLexicalNodeOrThrow,
   $isTableCellNode,
@@ -26,7 +27,7 @@ import {
   setDOMUnmanaged,
 } from "lexical"
 import { GripHorizontal, GripVertical } from "lucide-react"
-import { useState, useSyncExternalStore } from "react"
+import { useState, useSyncExternalStore, type KeyboardEvent } from "react"
 
 import { useEditor, useEditorState } from "./root"
 import {
@@ -404,6 +405,64 @@ function TableResizeSeparator({
   const editor = useEditor()
   const { editable } = useEditorState()
 
+  const handleKeyDown = useStableCallback(function handleKeyDown(
+    event: KeyboardEvent<HTMLElement>,
+  ) {
+    if (!editor.isEditable()) return
+
+    const rtl =
+      event.currentTarget.ownerDocument.defaultView?.getComputedStyle(
+        event.currentTarget,
+      ).direction === "rtl"
+
+    const currentWidth = editor.getEditorState().read(() => {
+      if (rowKey) {
+        const row = $getNodeByKey(rowKey)
+
+        return $isTableRowNode(row) ? (row.getHeight() ?? 0) : 0
+      }
+
+      const table = $getNodeByKey(tableKey)
+
+      return $isTableNode(table)
+        ? ($columnWidths(editor, table)[index] ?? TABLE_MIN_COLUMN_WIDTH)
+        : TABLE_MIN_COLUMN_WIDTH
+    })
+
+    let next = currentWidth
+
+    switch (event.key) {
+      case "Home":
+        next = rowKey ? 0 : TABLE_MIN_COLUMN_WIDTH
+        break
+      case "End":
+        if (rowKey) return
+        next = TABLE_MAX_COLUMN_WIDTH
+        break
+      case "ArrowUp":
+        if (!rowKey) return
+        next -= 10
+        break
+      case "ArrowDown":
+        if (!rowKey) return
+        next += 10
+        break
+      case "ArrowLeft":
+        if (rowKey) return
+        next += rtl ? 10 : -10
+        break
+      case "ArrowRight":
+        if (rowKey) return
+        next += rtl ? -10 : 10
+        break
+      default:
+        return
+    }
+
+    event.preventDefault()
+    setWidth(editor, tableKey, index, next, rowKey)
+  })
+
   const [connect] = useState(function createPointerBinding() {
     return function attachSeparator(element: HTMLElement | null) {
       if (!element) return
@@ -595,47 +654,7 @@ function TableResizeSeparator({
         tabIndex={0}
         xstyle={[styles.separator, rowKey !== undefined && styles.rowSeparator]}
         ref={connect}
-        onKeyDown={(event) => {
-          if (!editor.isEditable()) return
-
-          const rtl =
-            event.currentTarget.ownerDocument.defaultView?.getComputedStyle(
-              event.currentTarget,
-            ).direction === "rtl"
-
-          let next = width
-
-          switch (event.key) {
-            case "Home":
-              next = rowKey ? 0 : TABLE_MIN_COLUMN_WIDTH
-              break
-            case "End":
-              if (rowKey) return
-              next = TABLE_MAX_COLUMN_WIDTH
-              break
-            case "ArrowUp":
-              if (!rowKey) return
-              next -= 10
-              break
-            case "ArrowDown":
-              if (!rowKey) return
-              next += 10
-              break
-            case "ArrowLeft":
-              if (rowKey) return
-              next += rtl ? 10 : -10
-              break
-            case "ArrowRight":
-              if (rowKey) return
-              next += rtl ? -10 : 10
-              break
-            default:
-              return
-          }
-
-          event.preventDefault()
-          setWidth(editor, tableKey, index, next, rowKey)
-        }}
+        onKeyDown={handleKeyDown}
       >
         {rowKey ? (
           <GripHorizontal aria-hidden="true" size={18} />
@@ -666,7 +685,7 @@ export function EditorTableResizeControls() {
         <Wrap>
           {snapshot.columns.map((column) => (
             <TableResizeSeparator
-              key={column.key}
+              key={`${snapshot.tableKey}:${column.key}`}
               tableKey={snapshot.tableKey}
               index={column.index}
               width={column.width}
@@ -678,7 +697,7 @@ export function EditorTableResizeControls() {
         <Wrap>
           {snapshot.rows.map((row) => (
             <TableResizeSeparator
-              key={row.key}
+              key={`${snapshot.tableKey}:${row.key}`}
               tableKey={snapshot.tableKey}
               rowKey={row.key}
               index={row.index}

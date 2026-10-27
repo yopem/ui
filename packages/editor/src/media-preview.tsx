@@ -1,7 +1,13 @@
 "use client"
 
-import type { ComponentProps, MouseEventHandler, ReactNode } from "react"
+import type {
+  ComponentProps,
+  MouseEvent,
+  MouseEventHandler,
+  ReactNode,
+} from "react"
 
+import { useStableCallback } from "@base-ui/utils/useStableCallback"
 import { Box } from "@registry/components/ui/box"
 import { Button } from "@registry/components/ui/button"
 import {
@@ -204,13 +210,14 @@ function MediaPreviewRootState({
     },
   }))
 
+  const handleOpenChange = useStableCallback(function handleOpenChange(
+    open: boolean,
+  ) {
+    if (!open) actions.close()
+  })
+
   return (
-    <Dialog
-      open={value.activeImage !== null}
-      onOpenChange={(open) => {
-        if (!open) actions.close()
-      }}
-    >
+    <Dialog open={value.activeImage !== null} onOpenChange={handleOpenChange}>
       <MediaPreviewContext.Provider value={value}>
         <MediaPreviewActionsContext.Provider value={actions}>
           {children}
@@ -241,6 +248,15 @@ export function MediaPreviewTrigger({
   const imageName =
     [image?.alt, image?.caption].find((label) => label?.trim()) ?? "Image"
 
+  const handleClick = useStableCallback(function handleClick(
+    event: Parameters<NonNullable<typeof onClick>>[0],
+  ) {
+    onClick?.(event)
+
+    if (event.defaultPrevented || disabled || context.disabled || !image) return
+    context.open(imageId)
+  })
+
   const [setTriggerRef] = useState(() => (element: HTMLElement | null) => {
     if (element) context.setPortalContainer(element.ownerDocument.body)
   })
@@ -259,13 +275,7 @@ export function MediaPreviewTrigger({
       data-slot="media-preview-trigger"
       aria-label={`Preview image: ${imageName}`}
       disabled={disabled || context.disabled || !image}
-      onClick={(event) => {
-        onClick?.(event)
-
-        if (event.defaultPrevented || disabled || context.disabled || !image)
-          return
-        context.open(imageId)
-      }}
+      onClick={handleClick}
     >
       {children}
     </DialogTrigger>
@@ -275,19 +285,46 @@ export function MediaPreviewTrigger({
 export function MediaPreviewDialog({ children }: { children?: ReactNode }) {
   const context = useMediaPreviewContext()
   const image = context.activeImage
-
-  if (!image) return null
-
   const previousImage = context.images[context.activeIndex - 1]
   const nextImage = context.images[context.activeIndex + 1]
 
-  function navigate(imageId: string) {
-    context.open(imageId)
-  }
+  const handlePrevious = useStableCallback(function handlePrevious(
+    event: MouseEvent<HTMLButtonElement>,
+  ) {
+    if (!event.defaultPrevented && previousImage) context.open(previousImage.id)
+  })
 
-  function changeZoomBy(delta: number) {
-    context.setZoom(Math.max(50, Math.min(300, context.zoom + delta)))
-  }
+  const handleNext = useStableCallback(function handleNext(
+    event: MouseEvent<HTMLButtonElement>,
+  ) {
+    if (!event.defaultPrevented && nextImage) context.open(nextImage.id)
+  })
+
+  const handleZoomOut = useStableCallback(function handleZoomOut(
+    event: MouseEvent<HTMLButtonElement>,
+  ) {
+    if (!event.defaultPrevented)
+      context.setZoom(Math.max(50, context.zoom - 50))
+  })
+
+  const handleZoomIn = useStableCallback(function handleZoomIn(
+    event: MouseEvent<HTMLButtonElement>,
+  ) {
+    if (!event.defaultPrevented)
+      context.setZoom(Math.min(300, context.zoom + 50))
+  })
+
+  const handleZoomValueChange = useStableCallback(
+    function handleZoomValueChange(
+      value: Parameters<
+        NonNullable<ComponentProps<typeof Slider>["onValueChange"]>
+      >[0],
+    ) {
+      context.setZoom(Array.isArray(value) ? (value[0] ?? context.zoom) : value)
+    },
+  )
+
+  if (!image) return null
 
   return (
     <DialogPopup
@@ -319,10 +356,7 @@ export function MediaPreviewDialog({ children }: { children?: ReactNode }) {
             variant="outline"
             xstyle={styles.target}
             disabled={!previousImage}
-            onClick={(event) => {
-              if (!event.defaultPrevented && previousImage)
-                navigate(previousImage.id)
-            }}
+            onClick={handlePrevious}
           >
             Previous image
           </Button>
@@ -331,9 +365,7 @@ export function MediaPreviewDialog({ children }: { children?: ReactNode }) {
             variant="outline"
             xstyle={styles.target}
             disabled={!nextImage}
-            onClick={(event) => {
-              if (!event.defaultPrevented && nextImage) navigate(nextImage.id)
-            }}
+            onClick={handleNext}
           >
             Next image
           </Button>
@@ -342,9 +374,7 @@ export function MediaPreviewDialog({ children }: { children?: ReactNode }) {
             variant="outline"
             xstyle={styles.target}
             disabled={context.zoom === 50}
-            onClick={(event) => {
-              if (!event.defaultPrevented) changeZoomBy(-50)
-            }}
+            onClick={handleZoomOut}
           >
             Zoom out
           </Button>
@@ -354,11 +384,7 @@ export function MediaPreviewDialog({ children }: { children?: ReactNode }) {
             max={300}
             step={50}
             value={context.zoom}
-            onValueChange={(value) =>
-              context.setZoom(
-                Array.isArray(value) ? (value[0] ?? context.zoom) : value,
-              )
-            }
+            onValueChange={handleZoomValueChange}
             xstyle={styles.slider}
           />
           <Box
@@ -372,9 +398,7 @@ export function MediaPreviewDialog({ children }: { children?: ReactNode }) {
             variant="outline"
             xstyle={styles.target}
             disabled={context.zoom === 300}
-            onClick={(event) => {
-              if (!event.defaultPrevented) changeZoomBy(50)
-            }}
+            onClick={handleZoomIn}
           >
             Zoom in
           </Button>

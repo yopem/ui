@@ -1,5 +1,6 @@
 "use client"
 
+import { useStableCallback } from "@base-ui/utils/useStableCallback"
 import { Button } from "@registry/components/ui/button"
 import { Calendar } from "@registry/components/ui/calendar"
 import {
@@ -8,7 +9,12 @@ import {
   PopoverTrigger,
 } from "@registry/components/ui/popover"
 import { HISTORY_PUSH_TAG } from "lexical"
-import { useState, useSyncExternalStore } from "react"
+import {
+  useState,
+  useSyncExternalStore,
+  type FocusEvent,
+  type MouseEvent,
+} from "react"
 
 import { INSERT_EDITOR_DATE_COMMAND } from "./date-extension"
 import {
@@ -44,18 +50,18 @@ export function EditorDateInsertControl({
 
   const calendarDate = editorDateToCalendarDate(date)
 
-  function capture() {
+  const capture = useStableCallback(function capture() {
     editor.getEditorState().read(bookmark.capture)
-  }
+  })
 
-  function changeOpen(nextOpen: boolean) {
+  const changeOpen = useStableCallback(function changeOpen(nextOpen: boolean) {
     setOpen(nextOpen)
 
     if (nextOpen) capture()
     else bookmark.clear()
-  }
+  })
 
-  function insert(value: EditorDateValue) {
+  const insert = useStableCallback(function insert(value: EditorDateValue) {
     if (!editable || !editor.isEditable() || !bookmark.getSnapshot()) {
       setOpen(false)
 
@@ -76,40 +82,54 @@ export function EditorDateInsertControl({
     setOpen(false)
 
     if (inserted) editor.focus()
-  }
+  })
+
+  const handleMouseDown = useStableCallback(function handleMouseDown(
+    event: MouseEvent<HTMLButtonElement>,
+  ) {
+    event.preventDefault()
+    capture()
+  })
+
+  const handleFocus = useStableCallback(function handleFocus() {
+    capture()
+  })
+
+  const handleBlur = useStableCallback(function handleBlur(
+    event: FocusEvent<HTMLElement>,
+  ) {
+    if (
+      event.relatedTarget instanceof Node &&
+      event.currentTarget.contains(event.relatedTarget)
+    )
+      return
+    changeOpen(false)
+  })
+
+  const handleSelect = useStableCallback(function handleSelect(
+    selected: Date | undefined,
+  ) {
+    if (!selected) return
+    const next = editorDateFromCalendarDate(selected)
+    setDate(next)
+    insert(next)
+  })
 
   return (
     <Popover open={open} onOpenChange={changeOpen}>
       <PopoverTrigger
         render={<Button variant="ghost" size="sm" />}
         disabled={!editable}
-        onMouseDown={(event) => {
-          event.preventDefault()
-          capture()
-        }}
-        onFocus={capture}
+        onMouseDown={handleMouseDown}
+        onFocus={handleFocus}
       >
         Insert date
       </PopoverTrigger>
-      <PopoverPopup
-        onBlur={(event) => {
-          if (
-            event.relatedTarget instanceof Node &&
-            event.currentTarget.contains(event.relatedTarget)
-          )
-            return
-          changeOpen(false)
-        }}
-      >
+      <PopoverPopup onBlur={handleBlur}>
         <Calendar
           defaultMonth={calendarDate}
           mode="single"
-          onSelect={(selected) => {
-            if (!selected) return
-            const next = editorDateFromCalendarDate(selected)
-            setDate(next)
-            insert(next)
-          }}
+          onSelect={handleSelect}
           selected={calendarDate}
         />
       </PopoverPopup>

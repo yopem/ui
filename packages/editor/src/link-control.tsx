@@ -1,7 +1,9 @@
 "use client"
 
 import type { ComponentProps } from "react"
+import type { ChangeEvent } from "react"
 
+import { useStableCallback } from "@base-ui/utils/useStableCallback"
 import { TOGGLE_LINK_COMMAND } from "@lexical/link"
 import { Box } from "@registry/components/ui/box"
 import { Button } from "@registry/components/ui/button"
@@ -18,7 +20,7 @@ import { Stack } from "@registry/components/ui/stack"
 import { Text } from "@registry/components/ui/text"
 import { ToolbarButton } from "@registry/components/ui/toolbar"
 import { HISTORY_PUSH_TAG } from "lexical"
-import { useState, useSyncExternalStore } from "react"
+import { useRef, useState, useSyncExternalStore } from "react"
 
 import {
   $getEditorLinkEditTarget,
@@ -49,7 +51,7 @@ export function EditorLinkControl({
   )
 
   const [open, setOpen] = useState(false)
-  const [target, setTarget] = useState<EditorLinkEditTarget | null>(null)
+  const targetRef = useRef<EditorLinkEditTarget | null>(null)
   const [url, setUrl] = useState("")
   const [text, setText] = useState("")
   const [newTab, setNewTab] = useState(false)
@@ -59,7 +61,7 @@ export function EditorLinkControl({
     if (
       disabled ||
       !editor.isEditable() ||
-      !hasSelection ||
+      !bookmark.getSnapshot() ||
       editor._updating ||
       editor._dirtyElements.size > 0 ||
       editor._dirtyLeaves.size > 0
@@ -79,13 +81,15 @@ export function EditorLinkControl({
 
       if (!removed) return
       bookmark.clear()
-      setTarget(null)
+      targetRef.current = null
       setOpen(false)
       setInvalid(false)
       editor.focus()
 
       return
     }
+
+    const target = targetRef.current
 
     if (!target) return
 
@@ -109,38 +113,77 @@ export function EditorLinkControl({
 
     if (!applied) return
     bookmark.clear()
-    setTarget(null)
+    targetRef.current = null
     setOpen(false)
     setInvalid(false)
     editor.focus()
   }
 
+  const changeOpen = useStableCallback(function changeOpen(next: boolean) {
+    if (next) {
+      const currentTarget = editor.getEditorState().read(() => {
+        bookmark.capture()
+
+        return $getEditorLinkEditTarget()
+      })
+
+      targetRef.current = currentTarget
+      const nextURL = currentTarget?.url ?? ""
+      const nextText = currentTarget?.text ?? ""
+      const nextTab = currentTarget?.newTab ?? false
+      setUrl(nextURL)
+      setText(nextText)
+      setNewTab(nextTab)
+      setInvalid(false)
+    } else {
+      bookmark.clear()
+      targetRef.current = null
+    }
+
+    setOpen(next)
+  })
+
+  const handleMouseDown = useStableCallback(function handleMouseDown(
+    event: Parameters<NonNullable<typeof onMouseDown>>[0],
+  ) {
+    onMouseDown?.(event)
+    event.preventDefault()
+  })
+
+  const handleURLChange = useStableCallback(function handleURLChange(
+    event: ChangeEvent<HTMLInputElement>,
+  ) {
+    setUrl(event.target.value)
+    setInvalid(false)
+  })
+
+  const handleTextChange = useStableCallback(function handleTextChange(
+    event: ChangeEvent<HTMLInputElement>,
+  ) {
+    setText(event.target.value)
+    setInvalid(false)
+  })
+
+  const handleNewTabChange = useStableCallback(function handleNewTabChange(
+    checked: Parameters<
+      NonNullable<ComponentProps<typeof Checkbox>["onCheckedChange"]>
+    >[0],
+  ) {
+    setNewTab(checked === true)
+  })
+
+  const applyCurrentLink = useStableCallback(function applyCurrentLink() {
+    applyLink(false)
+  })
+
+  const removeCurrentLink = useStableCallback(function removeCurrentLink() {
+    applyLink(true)
+  })
+
   const controlDisabled = disabled === true || !editable || !hasSelection
 
   return (
-    <Popover
-      open={open && editable && !disabled}
-      onOpenChange={(next) => {
-        if (next) {
-          const currentTarget = editor.getEditorState().read(() => {
-            bookmark.capture()
-
-            return $getEditorLinkEditTarget()
-          })
-
-          setTarget(currentTarget)
-          setUrl(currentTarget?.url ?? "")
-          setText(currentTarget?.text ?? "")
-          setNewTab(currentTarget?.newTab ?? false)
-          setInvalid(false)
-        } else {
-          bookmark.clear()
-          setTarget(null)
-        }
-
-        setOpen(next)
-      }}
-    >
+    <Popover open={open && editable && !disabled} onOpenChange={changeOpen}>
       <PopoverTrigger
         disabled={!editable || disabled}
         render={
@@ -151,10 +194,7 @@ export function EditorLinkControl({
           />
         }
         onClick={onClick}
-        onMouseDown={(event) => {
-          onMouseDown?.(event)
-          event.preventDefault()
-        }}
+        onMouseDown={handleMouseDown}
       >
         {children}
       </PopoverTrigger>
@@ -164,20 +204,14 @@ export function EditorLinkControl({
           <Input
             aria-label="Link URL"
             value={url}
-            onChange={(event) => {
-              setUrl(event.target.value)
-              setInvalid(false)
-            }}
+            onChange={handleURLChange}
             aria-invalid={invalid === "url" || undefined}
             disabled={controlDisabled}
           />
           <Input
             aria-label="Link text"
             value={text}
-            onChange={(event) => {
-              setText(event.target.value)
-              setInvalid(false)
-            }}
+            onChange={handleTextChange}
             aria-invalid={invalid === "text" || undefined}
             disabled={controlDisabled}
           />
@@ -185,7 +219,7 @@ export function EditorLinkControl({
             <Checkbox
               aria-label="Open in new tab"
               checked={newTab}
-              onCheckedChange={(checked) => setNewTab(checked === true)}
+              onCheckedChange={handleNewTabChange}
               disabled={controlDisabled}
             />
             Open in new tab
@@ -201,13 +235,13 @@ export function EditorLinkControl({
               Selection changed. Close this popup. Select text again.
             </Box>
           )}
-          <Button disabled={controlDisabled} onClick={() => applyLink(false)}>
+          <Button disabled={controlDisabled} onClick={applyCurrentLink}>
             Apply link
           </Button>
           <Button
             disabled={controlDisabled}
             variant="ghost"
-            onClick={() => applyLink(true)}
+            onClick={removeCurrentLink}
           >
             Remove link
           </Button>

@@ -4,6 +4,7 @@ import type { InputProps } from "@registry/components/ui/input"
 import type { LexicalEditor } from "lexical"
 import type { ComponentProps, ReactNode } from "react"
 
+import { useStableCallback } from "@base-ui/utils/useStableCallback"
 import { createDOMRange } from "@lexical/selection"
 import { Box } from "@registry/components/ui/box"
 import { Button } from "@registry/components/ui/button"
@@ -378,7 +379,7 @@ export function EditorSearchInput({
 }: EditorSearchInputProps) {
   const { controller, snapshot } = useEditorSearch()
 
-  function handleKeyDown(
+  const handleKeyDown = useStableCallback(function handleKeyDown(
     event: Parameters<NonNullable<EditorSearchInputProps["onKeyDown"]>>[0],
   ) {
     onKeyDown?.(event)
@@ -391,7 +392,15 @@ export function EditorSearchInput({
 
     if (event.shiftKey) controller.previous()
     else controller.next()
-  }
+  })
+
+  const handleChange = useStableCallback(function handleChange(
+    event: Parameters<NonNullable<EditorSearchInputProps["onChange"]>>[0],
+  ) {
+    onChange?.(event)
+
+    if (!event.defaultPrevented) controller.setQuery(event.currentTarget.value)
+  })
 
   return (
     <Input
@@ -399,12 +408,7 @@ export function EditorSearchInput({
       aria-label={label}
       type="search"
       value={snapshot.query}
-      onChange={(event) => {
-        onChange?.(event)
-
-        if (!event.defaultPrevented)
-          controller.setQuery(event.currentTarget.value)
-      }}
+      onChange={handleChange}
       onKeyDown={handleKeyDown}
     />
   )
@@ -427,25 +431,33 @@ function EditorSearchNavigationButton({
 }) {
   const { controller, snapshot } = useEditorSearch()
 
+  const handleMouseDown = useStableCallback(function handleMouseDown(
+    event: Parameters<NonNullable<EditorSearchButtonProps["onMouseDown"]>>[0],
+  ) {
+    onMouseDown?.(event)
+
+    if (!event.defaultPrevented) event.preventDefault()
+  })
+
+  const handleClick = useStableCallback(function handleClick(
+    event: Parameters<NonNullable<EditorSearchButtonProps["onClick"]>>[0],
+  ) {
+    onClick?.(event)
+
+    if (event.defaultPrevented || disabled === true) return
+
+    if (direction === -1) controller.previous()
+    else controller.next()
+  })
+
   return (
     <Button
       {...props}
       variant="ghost"
       size="sm"
       disabled={disabled === true || snapshot.matches.length === 0}
-      onMouseDown={(event) => {
-        onMouseDown?.(event)
-
-        if (!event.defaultPrevented) event.preventDefault()
-      }}
-      onClick={(event) => {
-        onClick?.(event)
-
-        if (event.defaultPrevented || disabled === true) return
-
-        if (direction === -1) controller.previous()
-        else controller.next()
-      }}
+      onMouseDown={handleMouseDown}
+      onClick={handleClick}
     >
       {children ?? (direction === -1 ? "Previous match" : "Next match")}
     </Button>

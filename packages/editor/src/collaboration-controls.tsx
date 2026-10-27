@@ -37,7 +37,7 @@ import {
   getActiveElement,
   isDOMShadowRoot,
 } from "lexical"
-import { createContext, use, useSyncExternalStore } from "react"
+import { createContext, use, useState, useSyncExternalStore } from "react"
 import * as Y from "yjs"
 
 import type {
@@ -551,22 +551,32 @@ export function EditorCollaborationCursors() {
   const context = use(EditorCollaborationContext)
   const editor = useEditor()
 
+  function createMount(provider: EditorCollaborationTransport | undefined) {
+    return function mount(element: HTMLDivElement | null) {
+      if (!element) return
+      const binding = collaborationBindings.get(editor)
+
+      if (!binding || binding.provider !== provider)
+        throw new Error(
+          "EditorCollaborationCursors requires its controller extension in EditorRoot.",
+        )
+
+      return binding.mountCursors(element)
+    }
+  }
+
+  const [provider, setProvider] = useState(context?.provider)
+  const [mount, setMount] = useState(() => createMount(context?.provider))
+
+  if (provider !== context?.provider) {
+    setProvider(context?.provider)
+    setMount(() => createMount(context?.provider))
+  }
+
   if (!context)
     throw new Error(
       "EditorCollaborationCursors must be inside EditorCollaborationRoot.",
     )
-
-  function mount(element: HTMLDivElement | null) {
-    if (!element) return
-    const binding = collaborationBindings.get(editor)
-
-    if (!binding || binding.provider !== context?.provider)
-      throw new Error(
-        "EditorCollaborationCursors requires its controller extension in EditorRoot.",
-      )
-
-    return binding.mountCursors(element)
-  }
 
   return (
     <Box

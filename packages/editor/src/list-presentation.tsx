@@ -21,6 +21,7 @@ import type { InputProps } from "@registry/components/ui/input"
 import type { NativeSelectProps } from "@registry/components/ui/native-select"
 import type { ChangeEvent, ComponentProps, FocusEvent } from "react"
 
+import { useStableCallback } from "@base-ui/utils/useStableCallback"
 import {
   Field,
   FieldDescription,
@@ -58,9 +59,9 @@ function isPresentationControlTarget(event: FocusEvent<HTMLElement>) {
 function useListPresentationControl() {
   const selection = useEditorListPresentationSelection()
 
-  function blur(event: FocusEvent<HTMLElement>) {
+  const blur = useStableCallback(function blur(event: FocusEvent<HTMLElement>) {
     if (!isPresentationControlTarget(event)) selection.clear()
-  }
+  })
 
   return { ...selection, blur }
 }
@@ -92,6 +93,27 @@ export function EditorListMarkerControl({
     !selection.available ||
     selection.listType === "check"
 
+  const handleChange = useStableCallback(function handleChange(
+    event: ChangeEvent<HTMLSelectElement>,
+  ) {
+    const value = event.currentTarget.value
+
+    if (!value) {
+      selection.setMarker(undefined)
+
+      return
+    }
+
+    const parsed = editorListMarkerSchema.safeParse(value)
+
+    if (
+      parsed.success &&
+      selection.listType &&
+      isEditorListMarkerForType(parsed.data, selection.listType)
+    )
+      selection.setMarker(parsed.data)
+  })
+
   return (
     <Field
       data-editor-list-presentation-control=""
@@ -105,24 +127,7 @@ export function EditorListMarkerControl({
         disabled={controlDisabled}
         id={id}
         value={selection.marker ?? ""}
-        onChange={(event) => {
-          const value = event.currentTarget.value
-
-          if (!value) {
-            selection.setMarker(undefined)
-
-            return
-          }
-
-          const parsed = editorListMarkerSchema.safeParse(value)
-
-          if (
-            parsed.success &&
-            selection.listType &&
-            isEditorListMarkerForType(parsed.data, selection.listType)
-          )
-            selection.setMarker(parsed.data)
-        }}
+        onChange={handleChange}
       >
         <option value="">Default</option>
         {markers.map((marker) => (
@@ -176,7 +181,9 @@ export function EditorListStartControl({
     !selection.available ||
     selection.listType !== "number"
 
-  function change(event: ChangeEvent<HTMLInputElement>) {
+  const change = useStableCallback(function change(
+    event: ChangeEvent<HTMLInputElement>,
+  ) {
     const next = event.currentTarget.value
     setDraft(next)
 
@@ -196,16 +203,27 @@ export function EditorListStartControl({
 
     setInvalid(false)
     selection.setStart(start)
-  }
+  })
 
-  function blur(event: FocusEvent<HTMLElement>) {
+  const blur = useStableCallback(function blur(event: FocusEvent<HTMLElement>) {
     selection.blur(event)
 
     if (!isPresentationControlTarget(event)) {
       setDraft(null)
       setInvalid(false)
     }
-  }
+  })
+
+  const handleFocus = useStableCallback(function handleFocus(
+    event: Parameters<NonNullable<typeof onFocus>>[0],
+  ) {
+    onFocus?.(event)
+
+    if (event.defaultPrevented) return
+
+    setDraft(selection.start === undefined ? "" : String(selection.start))
+    setInvalid(false)
+  })
 
   return (
     <Field
@@ -223,14 +241,7 @@ export function EditorListStartControl({
         id={id}
         type="text"
         value={value}
-        onFocus={(event) => {
-          onFocus?.(event)
-
-          if (event.defaultPrevented) return
-
-          setDraft(selection.start === undefined ? "" : String(selection.start))
-          setInvalid(false)
-        }}
+        onFocus={handleFocus}
         onChange={change}
       />
       <FieldDescription id={descriptionId}>

@@ -1,5 +1,6 @@
 "use client"
 
+import { useStableCallback } from "@base-ui/utils/useStableCallback"
 import { Box } from "@registry/components/ui/box"
 import { Button } from "@registry/components/ui/button"
 import {
@@ -100,6 +101,16 @@ export function EditorEmojiToolbarButton({
 }: ComponentProps<typeof ToolbarButton>) {
   const { state } = useEditorEmojiPicker()
 
+  const handleMouseDown = useStableCallback(function handleMouseDown(
+    event: Parameters<
+      NonNullable<ComponentProps<typeof ToolbarButton>["onMouseDown"]>
+    >[0],
+  ) {
+    onMouseDown?.(event)
+
+    if (!event.defaultPrevented) event.preventDefault()
+  })
+
   return (
     <PopoverTrigger
       disabled={disabled === true || !state.editable}
@@ -112,11 +123,7 @@ export function EditorEmojiToolbarButton({
         />
       }
       data-slot="editor-emoji-toolbar-button"
-      onMouseDown={function mouseDown(event) {
-        onMouseDown?.(event)
-
-        if (!event.defaultPrevented) event.preventDefault()
-      }}
+      onMouseDown={handleMouseDown}
     >
       {children}
     </PopoverTrigger>
@@ -157,17 +164,23 @@ export function EditorEmojiCategory({
 }: Omit<ComponentProps<typeof NativeSelect>, "value" | "children">) {
   const { controller, state } = useEditorEmojiPicker()
 
+  const handleChange = useStableCallback(function handleChange(
+    event: Parameters<
+      NonNullable<ComponentProps<typeof NativeSelect>["onChange"]>
+    >[0],
+  ) {
+    onChange?.(event)
+
+    if (!event.defaultPrevented) controller.setCategory(event.target.value)
+  })
+
   return (
     <NativeSelect
       aria-label="Emoji category"
       {...props}
       value={state.category}
       data-slot="editor-emoji-category"
-      onChange={function change(event) {
-        onChange?.(event)
-
-        if (!event.defaultPrevented) controller.setCategory(event.target.value)
-      }}
+      onChange={handleChange}
     >
       <option value="all">All emoji</option>
       <option value="frequent">Frequently used</option>
@@ -192,6 +205,25 @@ export function EditorEmojiItem({
   const { controller, state } = useEditorEmojiPicker()
   const current = state.items.find((candidate) => candidate === item)
 
+  const handleMouseDown = useStableCallback(function handleMouseDown(
+    event: Parameters<
+      NonNullable<ComponentProps<typeof CommandItem>["onMouseDown"]>
+    >[0],
+  ) {
+    onMouseDown?.(event)
+    event.preventDefault()
+  })
+
+  const handleClick = useStableCallback(function handleClick(
+    event: Parameters<
+      NonNullable<ComponentProps<typeof CommandItem>["onClick"]>
+    >[0],
+  ) {
+    onClick?.(event)
+
+    if (!event.defaultPrevented) controller.insert(item.id)
+  })
+
   if (!current) return null
 
   return (
@@ -201,15 +233,8 @@ export function EditorEmojiItem({
       disabled={disabled === true || !state.valid || !state.editable}
       xstyle={[styles.item, xstyle]}
       data-slot="editor-emoji-item"
-      onMouseDown={function mouseDown(event) {
-        onMouseDown?.(event)
-        event.preventDefault()
-      }}
-      onClick={function click(event) {
-        onClick?.(event)
-
-        if (!event.defaultPrevented) controller.insert(item.id)
-      }}
+      onMouseDown={handleMouseDown}
+      onClick={handleClick}
     >
       {children ?? `${item.emoji} ${item.label}`}
     </CommandItem>
@@ -253,16 +278,20 @@ export function EditorEmojiPrevious({
 }: ComponentProps<typeof Button>) {
   const { controller, state } = useEditorEmojiPicker()
 
+  const handleClick = useStableCallback(function handleClick(
+    event: Parameters<NonNullable<ComponentProps<typeof Button>["onClick"]>>[0],
+  ) {
+    onClick?.(event)
+
+    if (!event.defaultPrevented) controller.previous()
+  })
+
   return (
     <Button
       variant="ghost"
       {...props}
       disabled={disabled === true || state.offset === 0}
-      onClick={function click(event) {
-        onClick?.(event)
-
-        if (!event.defaultPrevented) controller.previous()
-      }}
+      onClick={handleClick}
     >
       {children}
     </Button>
@@ -277,16 +306,20 @@ export function EditorEmojiNext({
 }: ComponentProps<typeof Button>) {
   const { controller, state } = useEditorEmojiPicker()
 
+  const handleClick = useStableCallback(function handleClick(
+    event: Parameters<NonNullable<ComponentProps<typeof Button>["onClick"]>>[0],
+  ) {
+    onClick?.(event)
+
+    if (!event.defaultPrevented) controller.next()
+  })
+
   return (
     <Button
       variant="ghost"
       {...props}
       disabled={disabled === true || !state.hasNext}
-      onClick={function click(event) {
-        onClick?.(event)
-
-        if (!event.defaultPrevented) controller.next()
-      }}
+      onClick={handleClick}
     >
       {children}
     </Button>
@@ -301,16 +334,20 @@ export function EditorEmojiClearHistory({
 }: ComponentProps<typeof Button>) {
   const { controller, state } = useEditorEmojiPicker()
 
+  const handleClick = useStableCallback(function handleClick(
+    event: Parameters<NonNullable<ComponentProps<typeof Button>["onClick"]>>[0],
+  ) {
+    onClick?.(event)
+
+    if (!event.defaultPrevented) controller.clearHistory()
+  })
+
   return (
     <Button
       variant="ghost"
       {...props}
       disabled={disabled === true || !state.usage.length}
-      onClick={function click(event) {
-        onClick?.(event)
-
-        if (!event.defaultPrevented) controller.clearHistory()
-      }}
+      onClick={handleClick}
     >
       {children}
     </Button>
@@ -325,16 +362,20 @@ export function EditorEmojiClearSearch({
 }: ComponentProps<typeof Button>) {
   const { controller, state } = useEditorEmojiPicker()
 
+  const handleClick = useStableCallback(function handleClick(
+    event: Parameters<NonNullable<ComponentProps<typeof Button>["onClick"]>>[0],
+  ) {
+    onClick?.(event)
+
+    if (!event.defaultPrevented) controller.setQuery("")
+  })
+
   return (
     <Button
       variant="ghost"
       {...props}
       disabled={disabled === true || !state.query}
-      onClick={function click(event) {
-        onClick?.(event)
-
-        if (!event.defaultPrevented) controller.setQuery("")
-      }}
+      onClick={handleClick}
     >
       {children}
     </Button>
@@ -373,6 +414,20 @@ export function EditorEmojiPicker({
 }: EditorEmojiPickerProps) {
   const { controller, state } = useEditorEmojiPicker()
 
+  const handleItemHighlighted = useStableCallback(
+    function handleItemHighlighted(
+      value: Parameters<
+        NonNullable<EditorEmojiPickerProps["onItemHighlighted"]>
+      >[0],
+      details: Parameters<
+        NonNullable<EditorEmojiPickerProps["onItemHighlighted"]>
+      >[1],
+    ) {
+      onItemHighlighted?.(value, details)
+      controller.highlight(state.items.find((item) => item === value) ?? null)
+    },
+  )
+
   return (
     <Command
       {...props}
@@ -380,10 +435,7 @@ export function EditorEmojiPicker({
       value={state.query}
       onValueChange={controller.setQuery}
       filter={null}
-      onItemHighlighted={function highlighted(value, details) {
-        onItemHighlighted?.(value, details)
-        controller.highlight(state.items.find((item) => item === value) ?? null)
-      }}
+      onItemHighlighted={handleItemHighlighted}
     >
       {children ?? (
         <>

@@ -2,6 +2,7 @@
 
 import type { LexicalEditor } from "lexical"
 
+import { useStableCallback } from "@base-ui/utils/useStableCallback"
 import { $insertNodeToNearestRoot } from "@lexical/utils"
 import { Box } from "@registry/components/ui/box"
 import { Button } from "@registry/components/ui/button"
@@ -85,7 +86,7 @@ export function EditorEditableCardInsertButton({
 }: EditorEditableCardInsertButtonProps) {
   const editor = useEditor()
 
-  function insertCard() {
+  const insertCard = useStableCallback(function insertCard() {
     if (!editor.isEditable()) return
     editor.update(
       () => {
@@ -101,7 +102,7 @@ export function EditorEditableCardInsertButton({
       },
       { tag: HISTORY_PUSH_TAG },
     )
-  }
+  })
 
   return (
     <EditorCommandButton {...props} command={insertCard}>
@@ -127,17 +128,21 @@ export function EditorEditableCardView({ editor }: { editor: LexicalEditor }) {
     visibility: string
   } | null>(null)
 
-  function updateTitle(event: ChangeEvent<HTMLInputElement>) {
+  const updateTitle = useStableCallback(function updateTitle(
+    event: ChangeEvent<HTMLInputElement>,
+  ) {
     if (editable) setTitle(event.currentTarget.value)
-  }
+  })
 
-  function updateVisibility(value: string | null) {
+  const updateVisibility = useStableCallback(function updateVisibility(
+    value: string | null,
+  ) {
     if (editable) setVisibility(value ?? "public")
-  }
+  })
 
-  function saveCard() {
+  const saveCard = useStableCallback(function saveCard() {
     if (editor.isEditable()) setSaved({ title, visibility })
-  }
+  })
 
   return (
     <Box

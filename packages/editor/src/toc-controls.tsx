@@ -1,8 +1,9 @@
 "use client"
 
 import type { LexicalEditor } from "lexical"
-import type { ReactNode } from "react"
+import type { MouseEvent, ReactNode } from "react"
 
+import { useStableCallback } from "@base-ui/utils/useStableCallback"
 import { Button } from "@registry/components/ui/button"
 import { HStack } from "@registry/components/ui/hstack"
 import { $getSelection, $isNodeSelection } from "lexical"
@@ -14,6 +15,10 @@ import {
   REMOVE_EDITOR_TOC_COMMAND,
 } from "./toc-extension"
 import { EditorTocNode } from "./toc-node"
+
+function preventEditorTocMouseDown(event: MouseEvent<HTMLButtonElement>) {
+  event.preventDefault()
+}
 
 export function editorTocSlashCommand() {
   return {
@@ -33,16 +38,18 @@ export function EditorTocInsertControl() {
   const editor = useEditor()
   const state = useEditorState()
 
+  const insert = useStableCallback(function insert() {
+    editor.dispatchCommand(INSERT_EDITOR_TOC_COMMAND, undefined)
+  })
+
   return (
     <Button
       variant="ghost"
       size="sm"
       data-slot="editor-toc-insert-control"
       disabled={!state.editable}
-      onMouseDown={(event) => event.preventDefault()}
-      onClick={() =>
-        editor.dispatchCommand(INSERT_EDITOR_TOC_COMMAND, undefined)
-      }
+      onMouseDown={preventEditorTocMouseDown}
+      onClick={insert}
     >
       Insert table of contents
     </Button>
@@ -69,16 +76,18 @@ export function EditorTocRemoveControl() {
     )
   })
 
+  const remove = useStableCallback(function remove() {
+    editor.dispatchCommand(REMOVE_EDITOR_TOC_COMMAND, undefined)
+  })
+
   return (
     <Button
       variant="ghost"
       size="sm"
       data-slot="editor-toc-remove-control"
       disabled={!state.editable || !selected}
-      onMouseDown={(event) => event.preventDefault()}
-      onClick={() =>
-        editor.dispatchCommand(REMOVE_EDITOR_TOC_COMMAND, undefined)
-      }
+      onMouseDown={preventEditorTocMouseDown}
+      onClick={remove}
     >
       Remove table of contents
     </Button>

@@ -59,6 +59,48 @@ function truncatePreview(text: string) {
   return text
 }
 
+type EditorAiState = ReturnType<typeof useAi>["state"]
+
+type CursorOverlaySnapshot = ReturnType<
+  ReturnType<typeof createEditorCursorOverlay>["getSnapshot"]
+>
+
+function getPreviewTarget(
+  state: EditorAiState,
+  editable: boolean,
+  snapshot: CursorOverlaySnapshot,
+  document: Document | undefined,
+  view: Window | null | undefined,
+) {
+  if (
+    !state.open ||
+    (state.status !== "streaming" && state.status !== "ready") ||
+    !state.text ||
+    !editable ||
+    !snapshot.editable ||
+    !document?.body ||
+    !view ||
+    view.innerWidth <= 16 ||
+    view.innerHeight <= 16
+  )
+    return null
+
+  for (let index = snapshot.selectionRects.length - 1; index >= 0; index -= 1) {
+    const rect = snapshot.selectionRects[index]
+
+    if (
+      rect &&
+      rect.bottom > 0 &&
+      rect.top < view.innerHeight &&
+      rect.right > 0 &&
+      rect.left < view.innerWidth
+    )
+      return rect
+  }
+
+  return null
+}
+
 function getPreviewPosition(
   target: DOMRectReadOnly,
   viewportWidth: number,
@@ -100,38 +142,9 @@ export function EditorAiInlinePreview() {
   const document = root?.ownerDocument
   const view = document?.defaultView
 
-  if (
-    !state.open ||
-    (state.status !== "streaming" && state.status !== "ready") ||
-    !state.text ||
-    !editable ||
-    !snapshot.editable ||
-    !document?.body ||
-    !view ||
-    view.innerWidth <= 16 ||
-    view.innerHeight <= 16
-  )
-    return null
+  const target = getPreviewTarget(state, editable, snapshot, document, view)
 
-  let target: DOMRectReadOnly | undefined
-
-  for (let index = snapshot.selectionRects.length - 1; index >= 0; index -= 1) {
-    const rect = snapshot.selectionRects[index]
-
-    if (
-      rect &&
-      rect.bottom > 0 &&
-      rect.top < view.innerHeight &&
-      rect.right > 0 &&
-      rect.left < view.innerWidth
-    ) {
-      target = rect
-
-      break
-    }
-  }
-
-  if (!target) return null
+  if (!target || !document || !view) return null
 
   const position = getPreviewPosition(target, view.innerWidth, view.innerHeight)
 
