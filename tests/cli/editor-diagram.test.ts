@@ -11,7 +11,13 @@ for (const [name, entry, helpers] of [
   [
     "editor-diagram",
     "diagram.ts",
-    ["diagram-presentation.ts", "diagram-html.ts", "code-selection.ts"],
+    [
+      "diagram-presentation.ts",
+      "diagram-html.ts",
+      "diagram-auto-render.ts",
+      "diagram-png.ts",
+      "code-selection.ts",
+    ],
   ],
   [
     "editor-diagram-mermaid",

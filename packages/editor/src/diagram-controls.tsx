@@ -18,6 +18,7 @@ import {
   type EditorDiagramKind,
   type EditorDiagramViewMode,
 } from "./diagram-model"
+import { editorDiagramSvgToPng } from "./diagram-png"
 import {
   createEditorDiagramStore,
   type EditorDiagramRenderers,
@@ -30,6 +31,104 @@ const DiagramContext = createContext<ReturnType<
 > | null>(null)
 
 const DiagramDisabledContext = createContext(false)
+
+type DiagramPngExportSnapshot =
+  | { readonly status: "idle" }
+  | { readonly status: "loading" }
+  | { readonly status: "error"; readonly message: string }
+
+interface DiagramPngExportOperation {
+  readonly revision: number
+  readonly controller: AbortController
+}
+
+const idlePngExportSnapshot: DiagramPngExportSnapshot = { status: "idle" }
+
+function createDiagramPngExportState(
+  store: ReturnType<typeof createEditorDiagramStore>,
+) {
+  const listeners = new Set<() => void>()
+  let snapshot = idlePngExportSnapshot
+  let active: DiagramPngExportOperation | undefined
+  let observedRevision = store.getRevision()
+  let unsubscribeStore: (() => void) | undefined
+
+  function notify() {
+    for (const listener of listeners) listener()
+  }
+
+  function subscribe(listener: () => void) {
+    listeners.add(listener)
+
+    if (!unsubscribeStore) {
+      observedRevision = store.getRevision()
+      unsubscribeStore = store.subscribe(() => {
+        const revision = store.getRevision()
+
+        if (revision === observedRevision) return
+        observedRevision = revision
+        const operation = active
+
+        if (operation) {
+          active = undefined
+          operation.controller.abort("stale")
+        }
+
+        if (operation || snapshot.status === "error") {
+          snapshot = idlePngExportSnapshot
+          notify()
+        }
+      })
+    }
+
+    return () => {
+      listeners.delete(listener)
+
+      if (listeners.size === 0) {
+        const operation = active
+        active = undefined
+        operation?.controller.abort("unmounted")
+        snapshot = idlePngExportSnapshot
+        unsubscribeStore?.()
+        unsubscribeStore = undefined
+      }
+    }
+  }
+
+  return {
+    subscribe(this: void, listener: () => void) {
+      return subscribe(listener)
+    },
+    getSnapshot(this: void) {
+      return snapshot
+    },
+    getServerSnapshot(this: void) {
+      return idlePngExportSnapshot
+    },
+    begin(revision: number) {
+      active?.controller.abort("replaced")
+      const operation = { revision, controller: new AbortController() }
+      active = operation
+      snapshot = { status: "loading" }
+      notify()
+
+      return operation
+    },
+    isCurrent(operation: DiagramPngExportOperation) {
+      return (
+        active === operation &&
+        store.getRevision() === operation.revision &&
+        !operation.controller.signal.aborted
+      )
+    },
+    finish(operation: DiagramPngExportOperation, message?: string) {
+      if (active !== operation) return
+      active = undefined
+      snapshot = message ? { status: "error", message } : idlePngExportSnapshot
+      notify()
+    },
+  }
+}
 
 const styles = stylex.create({
   preview: {
@@ -102,10 +201,17 @@ export function EditorDiagramRoot({
     createEditorDiagramStore(editor, { renderers, timeoutMs, autoRender }),
   )
 
+  const automatic = useSyncExternalStore(
+    store.subscribe,
+    store.getAutoRenderSnapshot,
+    store.getAutoRenderServerSnapshot,
+  )
+
   return (
     <DiagramContext value={store}>
       <DiagramDisabledContext value={disabled === true}>
         <Box
+          aria-busy={automatic.busy}
           onBlurCapture={(event) => {
             if (!event.currentTarget.contains(event.relatedTarget)) store.blur()
           }}
@@ -401,19 +507,78 @@ export function EditorDiagramRenderButton({
 
 export type EditorDiagramDownloadButtonProps = ComponentProps<
   typeof ToolbarButton
->
+> & {
+  format?: "svg" | "png"
+}
 
 export function EditorDiagramDownloadButton({
   children,
   disabled,
+  format = "svg",
   onClick,
-  "aria-label": label = "Download diagram as SVG",
+  "aria-label": label = format === "png"
+    ? "Download diagram as PNG"
+    : "Download diagram as SVG",
   ...props
 }: EditorDiagramDownloadButtonProps) {
   const store = useDiagramStore()
   const state = useDiagramState()
   const rendered = useDiagramRenderState()
   const toolbarDisabled = use(DiagramDisabledContext)
+  const [pngExport] = useState(() => createDiagramPngExportState(store))
+
+  const pngExportSnapshot = useSyncExternalStore(
+    pngExport.subscribe,
+    pngExport.getSnapshot,
+    pngExport.getServerSnapshot,
+  )
+
+  const pngBusy = format === "png" && pngExportSnapshot.status === "loading"
+
+  async function downloadPng(
+    download: { svg: string; kind: EditorDiagramKind },
+    operation: DiagramPngExportOperation,
+    document: Document,
+  ) {
+    try {
+      const blob = await editorDiagramSvgToPng(
+        document,
+        download.svg,
+        operation.controller.signal,
+      )
+
+      const current = store.getDownload(operation.revision)
+
+      if (
+        !pngExport.isCurrent(operation) ||
+        !current ||
+        current.svg !== download.svg ||
+        current.kind !== download.kind
+      )
+        return
+
+      const view = document.defaultView
+
+      if (!view) throw new Error("Diagram PNG download is unavailable.")
+      const link = document.createElement("a")
+      const url = view.URL.createObjectURL(blob)
+
+      try {
+        link.href = url
+        link.download = `${download.kind}-diagram.png`
+        document.body.append(link)
+        link.click()
+      } finally {
+        link.remove()
+        view.setTimeout(() => view.URL.revokeObjectURL(url), 0)
+      }
+    } catch {
+      if (!operation.controller.signal.aborted)
+        pngExport.finish(operation, "Diagram PNG export failed.")
+    } finally {
+      pngExport.finish(operation)
+    }
+  }
 
   function handleClick(
     event: Parameters<
@@ -437,6 +602,14 @@ export function EditorDiagramDownloadButton({
     const view = document.defaultView
 
     if (!download || !view) return
+
+    if (format === "png") {
+      const operation = pngExport.begin(revision)
+      void downloadPng(download, operation, document)
+
+      return
+    }
+
     const link = document.createElement("a")
 
     const url = view.URL.createObjectURL(
@@ -455,20 +628,31 @@ export function EditorDiagramDownloadButton({
   }
 
   return (
-    <ToolbarButton
-      render={<Button variant="ghost" size="sm" />}
-      {...props}
-      aria-label={label}
-      disabled={
-        disabled === true ||
-        toolbarDisabled ||
-        !state ||
-        rendered.status !== "ready"
-      }
-      onClick={handleClick}
-    >
-      {children ?? label}
-    </ToolbarButton>
+    <>
+      <ToolbarButton
+        render={<Button variant="ghost" size="sm" />}
+        {...props}
+        aria-label={label}
+        aria-busy={pngBusy}
+        disabled={
+          disabled === true ||
+          toolbarDisabled ||
+          !state ||
+          rendered.status !== "ready" ||
+          pngBusy
+        }
+        onClick={handleClick}
+      >
+        {children ?? label}
+      </ToolbarButton>
+      {format === "png" && pngExportSnapshot.status !== "idle" ? (
+        <output aria-live="polite" aria-atomic="true">
+          {pngExportSnapshot.status === "loading"
+            ? "Preparing diagram PNG."
+            : pngExportSnapshot.message}
+        </output>
+      ) : null}
+    </>
   )
 }
 

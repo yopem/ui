@@ -27,6 +27,7 @@ export const editorDiagramItem: SourceItem = {
     "diagram-html.ts",
     "diagram-presentation.ts",
     "diagram-model.ts",
+    "diagram-png.ts",
     "diagram-render.ts",
     "diagram-state.ts",
     "diagram-store.ts",
@@ -64,6 +65,6 @@ export const editorDiagramItem: SourceItem = {
       "EditorDiagramRenderers",
     ],
     usage:
-      "Register EditorDiagramExtension in a stable root extension array. Compose EditorDiagramRoot and its controls inside EditorRoot. Supply explicit renderers. No default engine or endpoint exists. Source stays visible until a matching SVG image loads. Generic document conversion does not support diagram metadata.",
+      "Register EditorDiagramExtension in a stable root extension array. Compose EditorDiagramRoot and its controls inside EditorRoot. Supply explicit renderers. No default engine or endpoint exists. Source stays visible until a matching SVG image loads. Optional automatic rendering includes saved and read-only nodes. Download the selected cached preview as SVG or bounded PNG. Registered document readers preserve diagram metadata without rendering it.",
   },
 }
