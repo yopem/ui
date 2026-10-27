@@ -22,6 +22,7 @@ export const editorDiagramItem: SourceItem = {
   files: [
     "diagram.ts",
     "diagram-controls.tsx",
+    "diagram-auto-render.ts",
     "diagram-extension.ts",
     "diagram-html.ts",
     "diagram-presentation.ts",

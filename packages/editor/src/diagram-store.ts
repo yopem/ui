@@ -1,16 +1,23 @@
-import { $isCodeNode, type CodeNode } from "@lexical/code"
+import { $isCodeNode, CodeNode } from "@lexical/code"
 import {
   $getNodeByKey,
   $getSelection,
   $getState,
   $getRoot,
+  $isElementNode,
   $isRangeSelection,
   HISTORY_PUSH_TAG,
   mergeRegister,
   SKIP_DOM_SELECTION_TAG,
   type LexicalEditor,
+  type LexicalNode,
 } from "lexical"
 
+import {
+  createEditorDiagramAutoRenderQueue,
+  type EditorDiagramAutoRenderJob,
+  type EditorDiagramAutoRenderSnapshot,
+} from "./diagram-auto-render"
 import {
   EDITOR_DIAGRAM_KINDS,
   type EditorDiagramKind,
@@ -57,7 +64,17 @@ export type EditorDiagramRenderSnapshot =
 
 const idleRenderSnapshot: EditorDiagramRenderSnapshot = { status: "idle" }
 
+const idleAutoRenderSnapshot: EditorDiagramAutoRenderSnapshot = {
+  busy: false,
+  queued: 0,
+  rendering: 0,
+}
+
 const maximumTimeoutMs = 120_000
+
+const autoRenderDebounceMs = 500
+
+const maximumDebouncedNodes = 16
 
 export function createEditorDiagramStore(
   editor: LexicalEditor,
@@ -81,7 +98,27 @@ export function createEditorDiagramStore(
   let requestId = 0
   let activeRequest: { id: number; controller: AbortController } | undefined
   let controlsFocused = false
-  let autoRenderTimer: ReturnType<typeof setTimeout> | undefined
+  let autoRenderSnapshot = idleAutoRenderSnapshot
+  let autoKeys: string[] | undefined
+  let autoKeyIndex = 0
+  let autoRescanRequested = false
+  let autoRoot: HTMLElement | null | undefined
+  let autoInitialized = false
+  const autoDirtyKeys = new Set<string>()
+  let autoDirtyOverflow = false
+  let autoDebounceTimer: ReturnType<typeof setTimeout> | undefined
+
+  const autoQueue =
+    options.autoRender === true && !editor._headless
+      ? createEditorDiagramAutoRenderQueue({
+          timeoutMs,
+          nextJob: nextAutoRenderJob,
+          onStart: autoRenderStarted,
+          onRendered: autoRenderCompleted,
+          onError: autoRenderFailed,
+          onSnapshot: publishAutoRenderSnapshot,
+        })
+      : undefined
 
   function notify() {
     for (const listener of listeners) listener()
@@ -91,8 +128,6 @@ export function createEditorDiagramStore(
     requestId += 1
     activeRequest?.controller.abort("stale")
     activeRequest = undefined
-    clearTimeout(autoRenderTimer)
-    autoRenderTimer = undefined
 
     if (renderSnapshot.status !== "idle") renderSnapshot = idleRenderSnapshot
   }
@@ -111,11 +146,6 @@ export function createEditorDiagramStore(
         : null
 
     const targetChanged = code !== target
-
-    const inputChanged =
-      snapshot?.key !== next?.key ||
-      snapshot?.source !== next?.source ||
-      snapshot?.metadata.kind !== next?.metadata.kind
 
     const snapshotChanged =
       snapshot?.key !== next?.key ||
@@ -144,18 +174,280 @@ export function createEditorDiagramStore(
 
     if (cached !== undefined) renderSnapshot = { status: "ready", svg: cached }
 
-    if (
-      options.autoRender === true &&
-      snapshot?.editable &&
-      inputChanged &&
-      cached === undefined
-    )
-      autoRenderTimer = setTimeout(() => {
-        autoRenderTimer = undefined
-        void render()
-      }, 300)
-
     notify()
+  }
+
+  function collectAutoRenderKeys() {
+    return editor.getEditorState().read(() => {
+      const keys: string[] = []
+
+      function collect(node: LexicalNode) {
+        if ($isCodeNode(node) && $getState(node, editorDiagramState))
+          keys.push(node.getKey())
+
+        if ($isElementNode(node))
+          for (const child of node.getChildren()) collect(child)
+      }
+
+      for (const child of $getRoot().getChildren()) collect(child)
+
+      return keys
+    })
+  }
+
+  function readAutoRenderJob(key: string) {
+    let job: EditorDiagramAutoRenderJob | undefined
+
+    editor.getEditorState().read(() => {
+      const code = $getNodeByKey(key)
+
+      if (!$isCodeNode(code) || !code.isAttached()) return
+      const metadata = $getState(code, editorDiagramState)
+      const renderer = metadata && options.renderers?.[metadata.kind]
+
+      if (!metadata || !renderer) return
+      const source = code.getTextContent()
+
+      if (
+        getEditorDiagramRenderedSvg(editor, key, source, metadata.kind) !==
+        undefined
+      )
+        return
+
+      job = { key, source, metadata, renderer }
+    })
+
+    return job
+  }
+
+  function nextAutoRenderJob() {
+    if (
+      !autoQueue ||
+      listeners.size === 0 ||
+      !autoRoot ||
+      editor._headless ||
+      (autoDebounceTimer !== undefined && autoDirtyOverflow)
+    )
+      return undefined
+
+    while (true) {
+      if (
+        (!autoKeys || autoKeyIndex >= autoKeys.length) &&
+        autoRescanRequested
+      ) {
+        autoRescanRequested = false
+        autoKeys = collectAutoRenderKeys()
+        autoKeyIndex = 0
+      }
+
+      const key = autoKeys?.[autoKeyIndex]
+
+      if (key === undefined) {
+        autoKeys = undefined
+        autoKeyIndex = 0
+
+        return undefined
+      }
+
+      autoKeyIndex += 1
+
+      if (autoDirtyKeys.has(key)) continue
+      const job = readAutoRenderJob(key)
+
+      if (job) return job
+    }
+  }
+
+  function publishAutoRenderSnapshot(
+    queueSnapshot: EditorDiagramAutoRenderSnapshot,
+  ) {
+    const scanning =
+      (autoKeys !== undefined && autoKeyIndex < autoKeys.length) ||
+      autoRescanRequested ||
+      autoDirtyKeys.size > 0 ||
+      autoDirtyOverflow ||
+      autoDebounceTimer !== undefined
+
+    const next = {
+      busy: queueSnapshot.busy || scanning,
+      queued: queueSnapshot.queued,
+      rendering: queueSnapshot.rendering,
+    }
+
+    if (
+      next.busy === autoRenderSnapshot.busy &&
+      next.queued === autoRenderSnapshot.queued &&
+      next.rendering === autoRenderSnapshot.rendering
+    )
+      return
+
+    autoRenderSnapshot = next
+    notify()
+  }
+
+  function matchesAutoRenderTarget(job: EditorDiagramAutoRenderJob) {
+    return (
+      snapshot?.key === job.key &&
+      snapshot.source === job.source &&
+      snapshot.metadata.kind === job.metadata.kind
+    )
+  }
+
+  function isCurrentAutoRenderJob(job: EditorDiagramAutoRenderJob) {
+    if (!listeners.size || !autoRoot || editor._headless) return false
+
+    return editor.getEditorState().read(() => {
+      const code = $getNodeByKey(job.key)
+
+      if (!$isCodeNode(code) || !code.isAttached()) return false
+      const metadata = $getState(code, editorDiagramState)
+
+      return (
+        !!metadata &&
+        code.getTextContent() === job.source &&
+        metadata.kind === job.metadata.kind
+      )
+    })
+  }
+
+  function autoRenderStarted(job: EditorDiagramAutoRenderJob) {
+    if (!matchesAutoRenderTarget(job)) return
+    renderSnapshot = { status: "loading" }
+    notify()
+  }
+
+  function autoRenderCompleted(job: EditorDiagramAutoRenderJob, svg: string) {
+    if (!isCurrentAutoRenderJob(job)) return
+
+    const stored = setEditorDiagramRenderedSvg(
+      editor,
+      job.key,
+      job.source,
+      job.metadata.kind,
+      svg,
+    )
+
+    if (!stored || !matchesAutoRenderTarget(job)) return
+    renderSnapshot = { status: "ready", svg }
+    notify()
+  }
+
+  function autoRenderFailed(job: EditorDiagramAutoRenderJob) {
+    if (!isCurrentAutoRenderJob(job) || !matchesAutoRenderTarget(job)) return
+    renderSnapshot = {
+      status: "error",
+      message: "Diagram rendering failed.",
+    }
+    notify()
+  }
+
+  function setAutoRoot(root: HTMLElement | null) {
+    if (root === autoRoot) return
+    autoKeys = undefined
+    autoKeyIndex = 0
+    autoRescanRequested = false
+    clearTimeout(autoDebounceTimer)
+    autoDebounceTimer = undefined
+    autoDirtyKeys.clear()
+    autoDirtyOverflow = false
+    autoQueue?.cancelAll()
+    autoRoot = root
+
+    if (root && !editor._headless && listeners.size > 0) {
+      autoKeys = collectAutoRenderKeys()
+      autoQueue?.wake()
+    }
+
+    publishAutoRenderSnapshot(
+      autoQueue?.getSnapshot() ?? idleAutoRenderSnapshot,
+    )
+  }
+
+  function handleCodeMutations(
+    mutations: Map<string, "created" | "updated" | "destroyed">,
+  ) {
+    if (!autoQueue || !autoInitialized || !autoRoot) return
+    const jobs: EditorDiagramAutoRenderJob[] = []
+    const cancelled: string[] = []
+
+    editor.getEditorState().read(() => {
+      for (const [key, mutation] of mutations) {
+        if (mutation === "destroyed") {
+          cancelled.push(key)
+          continue
+        }
+
+        const code = $getNodeByKey(key)
+
+        if (!$isCodeNode(code) || !code.isAttached()) {
+          cancelled.push(key)
+          continue
+        }
+
+        const metadata = $getState(code, editorDiagramState)
+        const renderer = metadata && options.renderers?.[metadata.kind]
+
+        if (!metadata || !renderer) {
+          cancelled.push(key)
+          continue
+        }
+
+        const source = code.getTextContent()
+
+        if (
+          getEditorDiagramRenderedSvg(editor, key, source, metadata.kind) !==
+          undefined
+        ) {
+          cancelled.push(key)
+          continue
+        }
+
+        jobs.push({ key, source, metadata, renderer })
+      }
+    })
+
+    for (const key of cancelled) {
+      autoDirtyKeys.delete(key)
+      autoQueue.cancel(key)
+    }
+
+    for (const job of jobs) {
+      if (autoQueue.has(job)) continue
+
+      if (
+        !autoDirtyKeys.has(job.key) &&
+        autoDirtyKeys.size >= maximumDebouncedNodes
+      )
+        autoDirtyOverflow = true
+      else autoDirtyKeys.add(job.key)
+
+      autoQueue.cancel(job.key)
+    }
+
+    clearTimeout(autoDebounceTimer)
+
+    if (autoDirtyKeys.size > 0 || autoDirtyOverflow)
+      autoDebounceTimer = setTimeout(() => {
+        autoDebounceTimer = undefined
+        const keys = [...autoDirtyKeys]
+        autoDirtyKeys.clear()
+        const overflow = autoDirtyOverflow
+        autoDirtyOverflow = false
+
+        for (const key of keys) {
+          const job = readAutoRenderJob(key)
+
+          if (job && !autoQueue.enqueue(job)) autoRescanRequested = true
+        }
+
+        if (overflow) autoRescanRequested = true
+        autoQueue.wake()
+        publishAutoRenderSnapshot(autoQueue.getSnapshot())
+      }, autoRenderDebounceMs)
+    else autoDebounceTimer = undefined
+
+    autoQueue.wake()
+    publishAutoRenderSnapshot(autoQueue.getSnapshot())
   }
 
   function resolve(revision = generation) {
@@ -309,6 +601,12 @@ export function createEditorDiagramStore(
     getRenderServerSnapshot(this: void) {
       return idleRenderSnapshot
     },
+    getAutoRenderSnapshot(this: void) {
+      return autoRenderSnapshot
+    },
+    getAutoRenderServerSnapshot(this: void) {
+      return idleAutoRenderSnapshot
+    },
     canRender(this: void) {
       return Boolean(snapshot && options.renderers?.[snapshot.metadata.kind])
     },
@@ -316,7 +614,7 @@ export function createEditorDiagramStore(
       listeners.add(listener)
 
       if (!unregister) {
-        unregister = mergeRegister(
+        const cleanups = [
           editor.registerUpdateListener(
             ({ editorState, dirtyElements, dirtyLeaves }) => {
               const dirty = dirtyElements.size > 0 || dirtyLeaves.size > 0
@@ -337,8 +635,26 @@ export function createEditorDiagramStore(
           editor.registerEditableListener(() => {
             editor.getEditorState().read(() => publish(resolve()))
           }),
-        )
+        ]
+
+        if (autoQueue)
+          cleanups.push(
+            editor.registerMutationListener(CodeNode, handleCodeMutations, {
+              skipInitialization: true,
+            }),
+          )
+
         editor.getEditorState().read(() => publish($getSelectedEditorDiagram()))
+        autoInitialized = true
+
+        if (autoQueue) {
+          cleanups.push(
+            editor.registerRootListener((root) => setAutoRoot(root)),
+          )
+          setAutoRoot(editor.getRootElement())
+        }
+
+        unregister = mergeRegister(...cleanups)
       }
 
       return () => {
@@ -346,6 +662,17 @@ export function createEditorDiagramStore(
 
         if (listeners.size === 0) {
           stopRender()
+          autoQueue?.cancelAll()
+          autoKeys = undefined
+          autoKeyIndex = 0
+          autoRescanRequested = false
+          clearTimeout(autoDebounceTimer)
+          autoDebounceTimer = undefined
+          autoDirtyKeys.clear()
+          autoDirtyOverflow = false
+          autoRoot = undefined
+          autoInitialized = false
+          autoRenderSnapshot = idleAutoRenderSnapshot
           unregister?.()
           unregister = undefined
           generation += 1
