@@ -707,6 +707,8 @@ export function parseDocument(source: string, format: DocumentFormat) {
     throw new DocumentError([
       error instanceof Error ? error.message : "Document conversion failed.",
     ])
+  } finally {
+    staging.dispose()
   }
 }
 

@@ -7,7 +7,6 @@ export const editorDocumentItem: SourceItem = {
   categories: ["input"],
   dependencies: [
     editorDependency("@lexical/extension"),
-    editorDependency("@lexical/headless"),
     editorDependency("@types/hast"),
     editorDependency("@types/mdast"),
     editorDependency("katex"),

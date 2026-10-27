@@ -99,14 +99,21 @@ export function DocumentStatic({
   "aria-label"?: string
 }) {
   const editor = createDocumentEditor()
-  const document = parseDocument(html, "html")
-  editor.setEditorState(editor.parseEditorState(JSON.stringify(document)))
 
-  const tree = editor.getEditorState().read(() => $exportTree(), { editor })
+  try {
+    const document = parseDocument(html, "html")
+    editor.setEditorState(editor.parseEditorState(JSON.stringify(document)))
 
-  return (
-    <Box render={<section aria-label={ariaLabel} />}>
-      {tree.children.map((child, index) => renderNode(child, index, ariaLabel))}
-    </Box>
-  )
+    const tree = editor.getEditorState().read(() => $exportTree(), { editor })
+
+    return (
+      <Box render={<section aria-label={ariaLabel} />}>
+        {tree.children.map((child, index) =>
+          renderNode(child, index, ariaLabel),
+        )}
+      </Box>
+    )
+  } finally {
+    editor.dispose()
+  }
 }

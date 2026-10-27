@@ -10,9 +10,9 @@ import {
 import {
   $createHorizontalRuleNode,
   $isHorizontalRuleNode,
+  buildEditorFromExtensions,
   HorizontalRuleNode,
 } from "@lexical/extension"
-import { createHeadlessEditor } from "@lexical/headless"
 import {
   $createLinkNode,
   $isAutoLinkNode,
@@ -121,6 +121,7 @@ import {
   $isLineBreakNode,
   $isParagraphNode,
   $isTextNode,
+  defineExtension,
   DecoratorNode,
 } from "lexical"
 import rehypeRemark from "rehype-remark"
@@ -188,13 +189,17 @@ export const documentNodes = [
 ]
 
 export function createDocumentEditor() {
-  return createHeadlessEditor({
-    namespace: "yopem-document",
-    nodes: [...documentNodes, ...documentOptionalNodes],
-    onError(error) {
-      throw error
-    },
-  })
+  return buildEditorFromExtensions(
+    defineExtension({
+      name: "@yopem-ui/editor/document-conversion",
+      namespace: "yopem-document",
+      nodes: [...documentNodes, ...documentOptionalNodes],
+      $initialEditorState: null,
+      onError(error) {
+        throw error
+      },
+    }),
+  )
 }
 
 export function markdownTree(source: string): Root {
@@ -1971,9 +1976,14 @@ export function treeMarkdown(tree: Root) {
   if (hasMath) {
     function snapshot(input: Root) {
       const editor = createDocumentEditor()
-      editor.update(() => $importTree(input), { discrete: true })
 
-      return JSON.stringify(editor.getEditorState().toJSON())
+      try {
+        editor.update(() => $importTree(input), { discrete: true })
+
+        return JSON.stringify(editor.getEditorState().toJSON())
+      } finally {
+        editor.dispose()
+      }
     }
 
     try {

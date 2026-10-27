@@ -306,6 +306,7 @@ test("packed CLI exposes shared editor roots to external workspace consumers", a
           join(ui, components, "editor/document/insertion.ts"),
         ).exists(),
       ).toBe(true)
+      expect(() => Bun.resolveSync("@lexical/headless", ui)).toThrow()
 
       await run(ui, [
         ...command,
