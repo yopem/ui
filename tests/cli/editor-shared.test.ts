@@ -318,10 +318,15 @@ test("packed CLI exposes shared editor roots to external workspace consumers", a
       expect(
         await Bun.file(join(ui, components, "editor/drawing-sdk.ts")).exists(),
       ).toBe(true)
+      expect(
+        await Bun.file(
+          join(ui, components, "editor/drawing-export-model.ts"),
+        ).exists(),
+      ).toBe(true)
       await put(
         app,
         "src/drawing-boundary.ts",
-        `import { normalizeEditorDrawingSdkElements } from "@acme/ui/${components.slice(4)}/editor/drawing-sdk"\nimport { parseEditorDrawingScene } from "@acme/ui/${components.slice(4)}/editor/drawing-model"\nconst elements = normalizeEditorDrawingSdkElements([])\nif (parseEditorDrawingScene({ elements }).elements.length !== 0) throw new Error("Invalid empty native drawing scene")\nif (Reflect.has(globalThis, "document")) throw new Error("Drawing boundary requires no DOM")\n`,
+        `import { normalizeEditorDrawingSdkElements } from "@acme/ui/${components.slice(4)}/editor/drawing-sdk"\nimport { validateEditorDrawingExportDimensions } from "@acme/ui/${components.slice(4)}/editor/drawing-export-model"\nimport { parseEditorDrawingScene } from "@acme/ui/${components.slice(4)}/editor/drawing-model"\nif (validateEditorDrawingExportDimensions(1, 1).width !== 1) throw new Error("Invalid drawing export dimensions")\nconst elements = normalizeEditorDrawingSdkElements([])\nif (parseEditorDrawingScene({ elements }).elements.length !== 0) throw new Error("Invalid empty native drawing scene")\nif (Reflect.has(globalThis, "document")) throw new Error("Drawing boundary requires no DOM")\n`,
       )
       await put(
         app,

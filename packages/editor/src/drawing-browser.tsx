@@ -3,7 +3,13 @@
 import type { EditorState, LexicalEditor } from "lexical"
 import type { ComponentProps } from "react"
 
-import { Excalidraw, exportToSvg, loadFromBlob } from "@excalidraw/excalidraw"
+import {
+  Excalidraw,
+  exportToBlob,
+  exportToSvg,
+  loadFromBlob,
+  serializeAsJSON,
+} from "@excalidraw/excalidraw"
 import { $insertNodeToNearestRoot } from "@lexical/utils"
 import { Box } from "@registry/components/ui/box"
 import { Button } from "@registry/components/ui/button"
@@ -32,6 +38,18 @@ import { useRef, useState } from "react"
 
 import { sanitizeEditorDiagramSvg } from "./diagram-render"
 import {
+  assertEditorDrawingExportActive,
+  assertEditorDrawingExportPNG,
+  createEditorDrawingExportDeferred,
+  beginEditorDrawingExport,
+  editorDrawingExportLimits,
+  observeEditorDrawingSdkControlNames,
+  removeEmptyEditorDrawingSvgMetadata,
+  validateEditorDrawingExportDimensions,
+  validateEditorDrawingJSON,
+  waitForEditorDrawingExport,
+} from "./drawing-export-model"
+import {
   EDITOR_DRAWING_MAX_BYTES,
   parseEditorDrawingScene,
   type EditorDrawingScene,
@@ -59,6 +77,25 @@ const styles = stylex.create({
     overflow: "hidden",
     position: "relative",
   },
+  previewFrame: {
+    backgroundColor: tokens["--muted"],
+    borderColor: tokens["--border"],
+    borderRadius: tokens["--radius-md"],
+    borderStyle: "solid",
+    borderWidth: 1,
+    blockSize: "12rem",
+    display: "grid",
+    inlineSize: "min(100%, 28rem)",
+    overflow: "hidden",
+    placeItems: "center",
+  },
+  previewImage: {
+    blockSize: "100%",
+    display: "block",
+    inlineSize: "100%",
+    objectFit: "contain",
+  },
+  previewStatus: { color: tokens["--muted-foreground"] },
   error: { color: tokens["--destructive-foreground"] },
 })
 
@@ -66,7 +103,7 @@ type ExcalidrawApi =
   NonNullable<ComponentProps<typeof Excalidraw>["excalidrawAPI"]> extends (
     api: infer Api,
   ) => void
-    ? Api
+    ? NonNullable<Api>
     : never
 
 declare global {
@@ -93,12 +130,15 @@ export function registerEditorDrawingRuntime(
   if (assetPathLease && assetPathLease.path !== assetPath)
     throw new Error("Excalidraw asset path is already in use")
 
+  const runtime = { active: true }
+
   const unregisterRenderer = registerEditorDrawingRenderer(
     editor,
     (node, currentEditor) => (
       <EditorDrawingView
         editor={currentEditor}
         nodeKey={node.getKey()}
+        runtime={runtime}
         scene={node.getScene()}
       />
     ),
@@ -114,12 +154,10 @@ export function registerEditorDrawingRuntime(
     window.EXCALIDRAW_ASSET_PATH = assetPath
   }
 
-  let registered = true
-
   return function unregister() {
-    if (!registered) return
+    if (!runtime.active) return
 
-    registered = false
+    runtime.active = false
     unregisterRenderer()
 
     if (!assetPathLease || assetPathLease.path !== assetPath) return
@@ -168,6 +206,243 @@ function loadDrawingData(scene: EditorDrawingScene) {
   })
 }
 
+function captureEditorDrawingExport(api: ExcalidrawApi) {
+  const elements = api.getSceneElements()
+
+  const scene = parseEditorDrawingScene({
+    elements: normalizeEditorDrawingSdkElements(elements),
+  })
+
+  const files = api.getFiles()
+
+  if (Reflect.ownKeys(files).length > 0)
+    throw new Error("Drawing export does not accept scene files")
+
+  return {
+    elements,
+    scene,
+    serializedScene: JSON.stringify(scene),
+    appState: api.getAppState(),
+  }
+}
+
+function createDrawingExportAppState(
+  appState: ReturnType<ExcalidrawApi["getAppState"]>,
+) {
+  return {
+    exportBackground: appState.exportBackground,
+    exportEmbedScene: false,
+    exportScale: 1,
+    exportWithDarkMode: appState.exportWithDarkMode,
+    viewBackgroundColor: appState.viewBackgroundColor,
+  }
+}
+
+function downloadDrawingBlob(
+  ownerDocument: Document,
+  ownerWindow: Window & typeof globalThis,
+  blob: Blob,
+  filename: string,
+) {
+  const link = ownerDocument.createElement("a")
+  const url = ownerWindow.URL.createObjectURL(blob)
+
+  try {
+    if (!ownerDocument.body) throw new Error("Drawing document is unavailable")
+
+    link.href = url
+    link.download = filename
+    ownerDocument.body.append(link)
+    link.click()
+  } finally {
+    link.remove()
+    ownerWindow.setTimeout(() => ownerWindow.URL.revokeObjectURL(url), 0)
+  }
+}
+
+async function createSafeDrawingSvg(
+  input: Parameters<typeof exportToSvg>[0],
+  ownerWindow: Window & typeof globalThis,
+) {
+  if (input.files && Object.keys(input.files).length > 0)
+    throw new Error("SVG export does not accept scene files")
+
+  const svg = await exportToSvg({
+    elements: input.elements,
+    appState: { ...input.appState, exportEmbedScene: false },
+    files: {},
+    exportPadding: 10,
+    renderEmbeddables: false,
+    skipInliningFonts: true,
+  })
+
+  removeEmptyEditorDrawingSvgMetadata(svg)
+
+  const svgElements = [svg, ...Array.from(svg.querySelectorAll("*"))]
+
+  if (
+    svgElements.some((element) =>
+      ["a", "image", "foreignObject"].includes(element.localName),
+    ) ||
+    svgElements.some((element) =>
+      ["href", "xlink:href"].some((name) => element.hasAttribute(name)),
+    )
+  )
+    throw new Error("SVG contains unsupported external content")
+
+  const source = new ownerWindow.XMLSerializer().serializeToString(svg)
+
+  if (
+    new TextEncoder().encode(source).byteLength >
+    editorDrawingExportLimits.maxOutputBytes
+  )
+    throw new Error("Drawing SVG exceeds the export size limit")
+
+  return sanitizeEditorDiagramSvg(source)
+}
+
+function EditorDrawingScenePreview({
+  editor,
+  nodeKey,
+  runtime,
+  scene,
+}: {
+  editor: LexicalEditor
+  nodeKey: NodeKey
+  runtime: { active: boolean }
+  scene: EditorDrawingScene
+}) {
+  const serializedScene = JSON.stringify(scene)
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null)
+  const [status, setStatus] = useState("Generating drawing preview.")
+  const generation = useRef(0)
+
+  const ownedUrl = useRef<{
+    revoke: (url: string) => void
+    url: string
+  } | null>(null)
+
+  function revokePreviewUrl() {
+    const owned = ownedUrl.current
+
+    if (!owned) return
+
+    owned.revoke(owned.url)
+    ownedUrl.current = null
+  }
+
+  function failPreview() {
+    revokePreviewUrl()
+    setPreviewUrl(null)
+    setStatus("Drawing preview unavailable.")
+  }
+
+  const [previewRef] = useState(
+    () =>
+      function attachPreview(element: HTMLElement | null) {
+        if (!element) {
+          generation.current += 1
+          revokePreviewUrl()
+
+          return
+        }
+
+        const sequence = ++generation.current
+        const ownerWindow = element.ownerDocument.defaultView
+        revokePreviewUrl()
+        setPreviewUrl(null)
+        setStatus("Generating drawing preview.")
+
+        if (!ownerWindow || scene.elements.length === 0) {
+          setStatus("Drawing preview unavailable.")
+
+          return
+        }
+
+        void Promise.resolve()
+          .then(() => loadDrawingData(scene))
+          .then((restored) =>
+            createSafeDrawingSvg(
+              {
+                elements: restored.elements,
+                appState: restored.appState,
+                files: restored.files,
+              },
+              ownerWindow,
+            ),
+          )
+          .then((safeSvg) => {
+            if (
+              !runtime.active ||
+              sequence !== generation.current ||
+              !element.isConnected
+            )
+              return
+
+            const isCurrent = editor.getEditorState().read(() => {
+              const node = $getNodeByKey(nodeKey)
+
+              return (
+                $isEditorDrawingNode(node) &&
+                node.isAttached() &&
+                JSON.stringify(node.getScene()) === serializedScene
+              )
+            })
+
+            if (!isCurrent) {
+              setStatus("Drawing preview unavailable.")
+
+              return
+            }
+
+            const url = ownerWindow.URL.createObjectURL(
+              new ownerWindow.Blob([safeSvg], {
+                type: "image/svg+xml;charset=utf-8",
+              }),
+            )
+
+            ownedUrl.current = {
+              revoke: (ownedUrl) => ownerWindow.URL.revokeObjectURL(ownedUrl),
+              url,
+            }
+            setPreviewUrl(url)
+            setStatus("")
+          })
+          .catch(() => {
+            if (
+              runtime.active &&
+              sequence === generation.current &&
+              element.isConnected
+            )
+              setStatus("Drawing preview unavailable.")
+          })
+      },
+  )
+
+  return (
+    <Box ref={previewRef} xstyle={styles.previewFrame}>
+      {previewUrl ? (
+        <img
+          {...stylex.props(styles.previewImage)}
+          alt={`Preview of drawing with ${scene.elements.length} elements`}
+          data-testid="editor-drawing-scene-preview"
+          onError={failPreview}
+          src={previewUrl}
+        />
+      ) : null}
+      {status ? (
+        <Box
+          render={<output />}
+          data-testid="editor-drawing-preview-status"
+          xstyle={styles.previewStatus}
+        >
+          {status}
+        </Box>
+      ) : null}
+    </Box>
+  )
+}
+
 export function EditorDrawingInsertButton() {
   const editor = useEditor()
   const { editable } = useEditorState()
@@ -197,29 +472,56 @@ export function EditorDrawingInsertButton() {
 function EditorDrawingView({
   editor,
   nodeKey,
+  runtime,
   scene,
 }: {
   editor: LexicalEditor
   nodeKey: NodeKey
+  runtime: { active: boolean }
   scene: EditorDrawingScene
 }) {
   const { editable } = useEditorState()
   const [open, setOpen] = useState(false)
   const draft = useRef(scene)
   const [api, setApi] = useState<ExcalidrawApi | null>(null)
+  const apiRef = useRef<ExcalidrawApi | null>(null)
+  const [exportBusy, setExportBusy] = useState(false)
+  const exportBusyRef = useRef(false)
+  const exportController = useRef<AbortController | null>(null)
+  const viewElement = useRef<HTMLElement | null>(null)
 
   const [initialData, setInitialData] = useState<Promise<Awaited<
     ReturnType<typeof loadFromBlob>
   > | null> | null>(null)
 
   const [error, setError] = useState("")
+  const [exportStatus, setExportStatus] = useState("")
 
   const origin = useRef("")
   const originState = useRef<EditorState | null>(null)
   const loadSequence = useRef(0)
 
+  const [handleApi] = useState(() => (nextApi: ExcalidrawApi | null) => {
+    apiRef.current = nextApi
+    setApi(nextApi)
+  })
+
   const [viewRef] = useState(() => (element: HTMLElement | null) => {
-    if (!element) loadSequence.current += 1
+    viewElement.current = element
+
+    if (!element) {
+      loadSequence.current += 1
+      exportController.current?.abort()
+    }
+  })
+
+  const [stageRef] = useState(() => {
+    let cleanup: (() => void) | null = null
+
+    return function attachStage(element: HTMLElement | null) {
+      cleanup?.()
+      cleanup = element ? observeEditorDrawingSdkControlNames(element) : null
+    }
   })
 
   function openEditor() {
@@ -246,6 +548,8 @@ function EditorDrawingView({
     originState.current = editor.getEditorState()
     draft.current = scene
     setError("")
+    setExportStatus("")
+    apiRef.current = null
     setApi(null)
     setInitialData(
       Promise.resolve()
@@ -265,10 +569,36 @@ function EditorDrawingView({
     setOpen(true)
   }
 
+  function handleDialogOpenChange(
+    nextOpen: boolean,
+    details: Parameters<
+      NonNullable<ComponentProps<typeof Dialog>["onOpenChange"]>
+    >[1],
+  ) {
+    const ownerWindow = editor.getRootElement()?.ownerDocument.defaultView
+
+    if (
+      !nextOpen &&
+      details.reason === "escape-key" &&
+      ownerWindow &&
+      details.event.target instanceof ownerWindow.HTMLTextAreaElement &&
+      details.event.target.classList.contains("excalidraw-wysiwyg")
+    ) {
+      details.cancel()
+
+      return
+    }
+
+    changeOpen(nextOpen)
+  }
+
   function changeOpen(nextOpen: boolean) {
     if (!nextOpen) {
       loadSequence.current += 1
+      exportController.current?.abort()
+      exportController.current = null
       setInitialData(null)
+      apiRef.current = null
       setApi(null)
     }
 
@@ -276,6 +606,8 @@ function EditorDrawingView({
   }
 
   function apply() {
+    if (exportBusyRef.current) return
+
     let changed = false
 
     try {
@@ -328,97 +660,284 @@ function EditorDrawingView({
     }
   }
 
-  async function exportSvg() {
-    if (!api) return
+  async function runDrawingExport(
+    kind: "svg" | "json" | "png" | "copy-png",
+    event: Parameters<NonNullable<ComponentProps<typeof Button>["onClick"]>>[0],
+  ) {
+    if (event.defaultPrevented || !api || exportBusyRef.current) return
 
-    const exportSequence = loadSequence.current
-    const currentElements = api.getSceneElements()
-    const expectedEditorScene = origin.current
+    const ownerDocument = editor.getRootElement()?.ownerDocument
+    const ownerWindow = ownerDocument?.defaultView
+
+    if (!ownerDocument || !ownerWindow) {
+      setError("Drawing export needs a mounted browser document.")
+
+      return
+    }
+
+    const isClipboard = kind === "copy-png"
+    let clipboard: Clipboard | null = null
+    let ClipboardItemConstructor: typeof ClipboardItem | null = null
 
     try {
-      const expectedScene = JSON.stringify(
-        parseEditorDrawingScene({
-          elements: normalizeEditorDrawingSdkElements(currentElements),
-        }),
-      )
+      if (isClipboard) {
+        clipboard = ownerWindow.navigator.clipboard
+        ClipboardItemConstructor = ownerWindow.ClipboardItem
+        const supportsPNG = ClipboardItemConstructor?.supports?.("image/png")
 
-      if (Object.keys(api.getFiles()).length > 0)
-        throw new Error("SVG export does not accept scene files")
+        if (
+          !clipboard?.write ||
+          !ClipboardItemConstructor ||
+          supportsPNG === false
+        )
+          throw new Error(
+            "PNG clipboard copy is not supported by this browser.",
+          )
+      }
 
-      const svg = await exportToSvg({
-        elements: currentElements,
-        appState: { ...api.getAppState(), exportEmbedScene: false },
-        files: {},
-        exportPadding: 10,
-        renderEmbeddables: false,
-        skipInliningFonts: true,
+      const controller = new ownerWindow.AbortController()
+
+      const operation = beginEditorDrawingExport({
+        signal: controller.signal,
+        deadlineAt: Date.now() + editorDrawingExportLimits.maxDurationMs,
       })
 
-      const root = svg
-
-      const svgElements = [root, ...Array.from(root.querySelectorAll("*"))]
-
-      if (
-        svgElements.some((element) =>
-          ["a", "image", "foreignObject"].includes(element.localName),
-        ) ||
-        svgElements.some((element) =>
-          ["href", "xlink:href"].some((name) => element.hasAttribute(name)),
-        )
-      )
-        throw new Error("SVG contains unsupported external content")
-
-      const safeSvg = sanitizeEditorDiagramSvg(
-        new XMLSerializer().serializeToString(svg),
-      )
-
-      let isCurrent = false
-
-      editor.update(
-        () => {
-          const node = $getNodeByKey(nodeKey)
-
-          isCurrent =
-            !$getRoot().isDirty() &&
-            editor.getEditorState() === originState.current &&
-            $isEditorDrawingNode(node) &&
-            node.isAttached() &&
-            JSON.stringify(node.getScene()) === expectedEditorScene
-        },
-        { discrete: true },
-      )
-
-      if (
-        !isCurrent ||
-        loadSequence.current !== exportSequence ||
-        JSON.stringify(
-          parseEditorDrawingScene({
-            elements: normalizeEditorDrawingSdkElements(api.getSceneElements()),
-          }),
-        ) !== expectedScene ||
-        Object.keys(api.getFiles()).length > 0
-      )
-        throw new Error("Drawing changed during SVG export")
-
-      const ownerDocument = editor.getRootElement()?.ownerDocument
-
-      const ownerWindow = ownerDocument?.defaultView
-
-      if (!ownerDocument || !ownerWindow)
-        throw new Error("Drawing document is unavailable")
-
-      const url = ownerWindow.URL.createObjectURL(
-        new Blob([safeSvg], { type: "image/svg+xml" }),
-      )
-
-      const link = ownerDocument.createElement("a")
-      link.href = url
-      link.download = "drawing.svg"
-      link.click()
-      ownerWindow.setTimeout(() => ownerWindow.URL.revokeObjectURL(url), 0)
+      exportController.current = controller
+      exportBusyRef.current = true
+      setExportBusy(true)
       setError("")
-    } catch {
-      setError("SVG export failed. Existing drawing is unchanged.")
+      setExportStatus("")
+
+      try {
+        const currentApi = apiRef.current
+
+        if (!currentApi) throw new Error("Drawing editor is unavailable.")
+
+        const expectedApi = currentApi
+        const expectedApiScene = captureEditorDrawingExport(expectedApi)
+        const expectedSavedScene = origin.current
+        const expectedEditorState = originState.current
+        const expectedSequence = loadSequence.current
+
+        function assertCurrent() {
+          assertEditorDrawingExportActive(operation)
+
+          if (
+            !runtime.active ||
+            !viewElement.current?.isConnected ||
+            !open ||
+            expectedEditorState === null ||
+            editor.getEditorState() !== expectedEditorState ||
+            apiRef.current !== expectedApi ||
+            exportController.current !== controller ||
+            origin.current !== expectedSavedScene ||
+            loadSequence.current !== expectedSequence
+          )
+            throw new Error("Drawing changed during export.")
+
+          const savedSceneIsCurrent = editor.getEditorState().read(() => {
+            const node = $getNodeByKey(nodeKey)
+
+            return (
+              $isEditorDrawingNode(node) &&
+              node.isAttached() &&
+              JSON.stringify(node.getScene()) === expectedSavedScene
+            )
+          })
+
+          if (!savedSceneIsCurrent)
+            throw new Error("Drawing changed during export.")
+
+          if (
+            captureEditorDrawingExport(expectedApi).serializedScene !==
+            expectedApiScene.serializedScene
+          )
+            throw new Error("Drawing changed during export.")
+        }
+
+        assertCurrent()
+
+        if (kind === "json") {
+          const source = serializeAsJSON(
+            expectedApiScene.elements,
+            {
+              name: expectedApiScene.appState.name,
+              viewBackgroundColor:
+                expectedApiScene.appState.viewBackgroundColor,
+            },
+            {},
+            "local",
+          )
+
+          validateEditorDrawingJSON(source)
+          assertCurrent()
+          downloadDrawingBlob(
+            ownerDocument,
+            ownerWindow,
+            new ownerWindow.Blob([source], {
+              type: "application/json;charset=utf-8",
+            }),
+            "drawing.excalidraw",
+          )
+
+          return
+        }
+
+        if (kind === "svg") {
+          const svgWork = operation.track(
+            createSafeDrawingSvg(
+              {
+                elements: expectedApiScene.elements,
+                appState: createDrawingExportAppState(
+                  expectedApiScene.appState,
+                ),
+                files: {},
+              },
+              ownerWindow,
+            ),
+          )
+
+          const safeSvg = await waitForEditorDrawingExport(svgWork, operation)
+
+          assertCurrent()
+          downloadDrawingBlob(
+            ownerDocument,
+            ownerWindow,
+            new ownerWindow.Blob([safeSvg], {
+              type: "image/svg+xml;charset=utf-8",
+            }),
+            "drawing.svg",
+          )
+
+          return
+        }
+
+        let clipboardBlob: ReturnType<
+          typeof createEditorDrawingExportDeferred<Blob>
+        > | null = null
+
+        let writeWork: Promise<void> | null = null
+
+        if (isClipboard) {
+          if (!clipboard || !ClipboardItemConstructor)
+            throw new Error("PNG clipboard copy is not supported.")
+
+          clipboardBlob = createEditorDrawingExportDeferred<Blob>()
+          void clipboardBlob.promise.catch(() => undefined)
+
+          const item = new ClipboardItemConstructor({
+            "image/png": clipboardBlob.promise,
+          })
+
+          writeWork = operation.track(clipboard.write([item]))
+        }
+
+        let dimensions: { width: number; height: number } | null = null
+
+        const pngWork = operation.track<Blob>(
+          exportToBlob({
+            elements: expectedApiScene.elements,
+            appState: createDrawingExportAppState(expectedApiScene.appState),
+            files: {},
+            exportPadding: 10,
+            getDimensions(width: number, height: number) {
+              assertCurrent()
+
+              const result = validateEditorDrawingExportDimensions(
+                width,
+                height,
+              )
+
+              dimensions = { width: result.width, height: result.height }
+
+              return result
+            },
+            mimeType: "image/png",
+          }).then(async (blob: Blob) => {
+            assertCurrent()
+
+            if (!dimensions)
+              throw new Error("PNG export did not report safe dimensions.")
+
+            const safeBlob = await assertEditorDrawingExportPNG(
+              blob,
+              operation,
+              dimensions,
+            )
+
+            assertCurrent()
+
+            return safeBlob
+          }),
+        )
+
+        if (isClipboard) {
+          if (!clipboardBlob || !writeWork)
+            throw new Error("PNG clipboard copy is not supported.")
+
+          const currentWriteWork = writeWork
+
+          void pngWork.then(clipboardBlob.resolve, () =>
+            clipboardBlob.reject(new Error("PNG export failed.")),
+          )
+
+          const copied = await waitForEditorDrawingExport<Blob>(
+            Promise.all([pngWork, currentWriteWork]).then(([blob]) => blob),
+            operation,
+          )
+
+          assertCurrent()
+
+          setExportStatus(`Copied PNG (${copied.size} bytes).`)
+
+          return
+        }
+
+        const png = await waitForEditorDrawingExport(pngWork, operation)
+
+        assertCurrent()
+        downloadDrawingBlob(ownerDocument, ownerWindow, png, "drawing.png")
+      } catch {
+        if (
+          !controller.signal.aborted &&
+          viewElement.current?.isConnected &&
+          runtime.active
+        ) {
+          const alternative = isClipboard
+            ? "Use Download drawing PNG instead."
+            : "Existing drawing is unchanged."
+
+          setError(
+            `${isClipboard ? "PNG clipboard copy" : `Drawing ${kind}`} failed. ${alternative}`,
+          )
+        }
+
+        controller.abort()
+      } finally {
+        operation.finish()
+        await operation.whenIdle
+
+        if (exportController.current === controller)
+          exportController.current = null
+
+        exportBusyRef.current = false
+
+        if (viewElement.current?.isConnected) setExportBusy(false)
+      }
+    } catch (cause) {
+      if (
+        viewElement.current?.isConnected &&
+        runtime.active &&
+        !(cause instanceof Error && cause.name === "AbortError")
+      ) {
+        const alternative = isClipboard
+          ? "Use Download drawing PNG instead."
+          : "Existing drawing is unchanged."
+
+        setError(
+          `${isClipboard ? "PNG clipboard copy" : `Drawing ${kind}`} failed. ${alternative}`,
+        )
+      }
     }
   }
 
@@ -430,18 +949,25 @@ function EditorDrawingView({
       data-testid="editor-drawing-preview"
     >
       <Stack>
+        <EditorDrawingScenePreview
+          key={JSON.stringify(scene)}
+          editor={editor}
+          nodeKey={nodeKey}
+          runtime={runtime}
+          scene={scene}
+        />
         <Text>{`Drawing with ${scene.elements.length} elements`}</Text>
         <Stack xstyle={styles.toolbar}>
           <Button onClick={openEditor}>
             {editable ? "Edit drawing" : "View drawing"}
           </Button>
         </Stack>
-        {error ? (
+        {!open && error ? (
           <Text role="alert" xstyle={styles.error}>
             {error}
           </Text>
         ) : null}
-        <Dialog open={open} onOpenChange={changeOpen}>
+        <Dialog open={open} onOpenChange={handleDialogOpenChange}>
           <DialogPopup
             aria-label={editable ? "Edit drawing" : "View drawing"}
             showCloseButton={false}
@@ -461,10 +987,15 @@ function EditorDrawingView({
               </DialogDescription>
             </DialogHeader>
             <DialogPanel xstyle={styles.panel}>
-              <Box xstyle={styles.stage}>
+              {error ? (
+                <Text role="alert" xstyle={styles.error}>
+                  {error}
+                </Text>
+              ) : null}
+              <Box ref={stageRef} xstyle={styles.stage}>
                 {initialData ? (
                   <Excalidraw
-                    excalidrawAPI={setApi}
+                    excalidrawAPI={handleApi}
                     initialData={initialData}
                     viewModeEnabled={!editable}
                     validateEmbeddable={() => false}
@@ -485,9 +1016,11 @@ function EditorDrawingView({
                           throw new Error(
                             "External drawing files are not supported",
                           )
+
                         const accepted = parseEditorDrawingScene({
                           elements: normalizeEditorDrawingSdkElements(elements),
                         })
+
                         draft.current = accepted
                         setError("")
                       } catch {
@@ -501,21 +1034,53 @@ function EditorDrawingView({
               </Box>
             </DialogPanel>
             <DialogFooter>
-              <Button onClick={exportSvg} disabled={!api}>
-                Export drawing SVG
-              </Button>
-              <Button
-                onClick={() => {
-                  draft.current = scene
-                  setError("")
-                  changeOpen(false)
-                }}
-              >
-                Cancel drawing
-              </Button>
-              <Button disabled={!editable || error !== ""} onClick={apply}>
-                Apply drawing
-              </Button>
+              {exportStatus ? (
+                <Box render={<output />} xstyle={styles.previewStatus}>
+                  {exportStatus}
+                </Box>
+              ) : null}
+              <Stack xstyle={styles.toolbar}>
+                <Button
+                  disabled={!api || exportBusy}
+                  onClick={(event) => void runDrawingExport("svg", event)}
+                >
+                  Export drawing SVG
+                </Button>
+                <Button
+                  disabled={!api || exportBusy}
+                  onClick={(event) => void runDrawingExport("json", event)}
+                >
+                  Export drawing JSON
+                </Button>
+                <Button
+                  disabled={!api || exportBusy}
+                  onClick={(event) => void runDrawingExport("png", event)}
+                >
+                  Export drawing PNG
+                </Button>
+                <Button
+                  disabled={!api || exportBusy}
+                  onClick={(event) => void runDrawingExport("copy-png", event)}
+                >
+                  Copy drawing PNG
+                </Button>
+                <Button
+                  onClick={() => {
+                    draft.current = scene
+                    setError("")
+                    setExportStatus("")
+                    changeOpen(false)
+                  }}
+                >
+                  Cancel drawing
+                </Button>
+                <Button
+                  disabled={!editable || error !== "" || exportBusy}
+                  onClick={apply}
+                >
+                  Apply drawing
+                </Button>
+              </Stack>
             </DialogFooter>
           </DialogPopup>
         </Dialog>

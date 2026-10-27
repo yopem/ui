@@ -1,10 +1,10 @@
 import AxeBuilder from "@axe-core/playwright"
-import { expect, test, type Page } from "@playwright/test"
+import { expect, test, type Locator, type Page } from "@playwright/test"
 import { readFile } from "node:fs/promises"
 
 async function openDrawingExample(page: Page) {
   await page.goto("/editor/examples#public-drawing")
-  const example = page.locator("#editor-example-public-drawing")
+  const example = page.getByTestId("editor-example-public-drawing")
 
   await example
     .getByRole("button", { name: "Live preview", exact: true })
@@ -31,13 +31,26 @@ async function openDrawingExample(page: Page) {
   return example
 }
 
+async function chooseDrawingTool(dialog: Locator, name: "rectangle" | "text") {
+  const radio = dialog.getByTestId(`toolbar-${name}`)
+
+  await radio.locator("..").click()
+  await expect(radio).toBeChecked()
+}
+
 test("draw, apply, cancel, undo, and export a native Excalidraw scene", async ({
   page,
 }, testInfo) => {
   test.slow()
   const errors: string[] = []
+  const fontRequests: URL[] = []
 
   page.on("pageerror", (error) => errors.push(error.message))
+  page.on("request", (request) => {
+    const url = new URL(request.url())
+
+    if (/\.woff2?$/u.test(url.pathname)) fontRequests.push(url)
+  })
 
   const example = await openDrawingExample(page)
 
@@ -65,17 +78,40 @@ test("draw, apply, cancel, undo, and export a native Excalidraw scene", async ({
   const dialog = page.getByRole("dialog", { name: "Edit drawing", exact: true })
 
   await expect(dialog).toBeVisible()
-  await dialog.getByTestId("toolbar-rectangle").click()
+  await chooseDrawingTool(dialog, "rectangle")
 
   const canvas = dialog.locator("canvas").last()
   const bounds = await canvas.boundingBox()
 
   if (!bounds) throw new Error("Excalidraw canvas is not visible")
 
-  await page.mouse.move(bounds.x + 80, bounds.y + 80)
+  const startX = bounds.x + Math.min(240, bounds.width * 0.55)
+
+  await page.mouse.move(startX, bounds.y + 80)
   await page.mouse.down()
-  await page.mouse.move(bounds.x + 220, bounds.y + 180, { steps: 8 })
+  await page.mouse.move(
+    startX + Math.min(140, bounds.width * 0.3),
+    bounds.y + 180,
+    { steps: 8 },
+  )
   await page.mouse.up()
+  await chooseDrawingTool(dialog, "text")
+  await page.mouse.click(startX, bounds.y + 240)
+
+  const textEditor = dialog.locator("textarea.excalidraw-wysiwyg")
+
+  await expect(textEditor).toBeVisible()
+  await textEditor.fill("Local drawing font")
+  await textEditor.press("Escape")
+  await expect(textEditor).toHaveCount(0)
+  await expect(dialog).toBeVisible()
+  await expect
+    .poll(() =>
+      fontRequests.some((url) =>
+        url.pathname.startsWith("/assets/excalidraw/fonts/"),
+      ),
+    )
+    .toBe(true)
 
   const downloadPromise = page.waitForEvent("download")
 
@@ -133,7 +169,15 @@ test("draw, apply, cancel, undo, and export a native Excalidraw scene", async ({
 
   expect(accessibility.violations).toEqual([])
   expect(errors).toEqual([])
+  const origin = new URL(page.url()).origin
 
+  expect(fontRequests.map((url) => url.origin)).toEqual(
+    fontRequests.map(() => origin),
+  )
+  await testInfo.attach("drawing-font-requests", {
+    body: JSON.stringify(fontRequests.map((url) => url.href)),
+    contentType: "application/json",
+  })
   await testInfo.attach("drawing-svg", { path, contentType: "image/svg+xml" })
 })
 
@@ -211,13 +255,19 @@ test("seeded rectangle and ellipse persist through editing and read-only viewing
     .click()
   const dialog = page.getByRole("dialog", { name: "Edit drawing", exact: true })
   await expect(dialog.locator("canvas").last()).toBeVisible()
-  await dialog.getByTestId("toolbar-rectangle").click()
+  await chooseDrawingTool(dialog, "rectangle")
   const bounds = await dialog.locator("canvas").last().boundingBox()
 
   if (!bounds) throw new Error("Drawing canvas is unavailable")
-  await page.mouse.move(bounds.x + 60, bounds.y + 60)
+  const startX = bounds.x + Math.min(240, bounds.width * 0.55)
+
+  await page.mouse.move(startX, bounds.y + 80)
   await page.mouse.down()
-  await page.mouse.move(bounds.x + 180, bounds.y + 130, { steps: 8 })
+  await page.mouse.move(
+    startX + Math.min(140, bounds.width * 0.3),
+    bounds.y + 180,
+    { steps: 8 },
+  )
   await page.mouse.up()
   await dialog
     .getByRole("button", { name: "Apply drawing", exact: true })
