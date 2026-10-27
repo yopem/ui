@@ -38,6 +38,7 @@ function serializedState(elements: readonly object[]) {
 test("mounts saved drawing DOM, keeps fallback, rejects unsupported state, and detaches", () => {
   withDOM((window) => {
     const iframe = window.document.createElement("iframe")
+    iframe.srcdoc = "<!doctype html><html><body></body></html>"
     window.document.body.append(iframe)
     const ownerDocument = iframe.contentDocument
 

@@ -103,7 +103,16 @@
     "zod": "catalog:"
   },
   "overrides": {
-    "@effect/platform-node-shared": "^4.0.6"
+    "@chevrotain/cst-dts-gen>lodash-es": "^4.18.1",
+    "@chevrotain/gast>lodash-es": "^4.18.1",
+    "@effect/platform-node-shared": "^4.0.6",
+    "@excalidraw/excalidraw>nanoid": "^3.3.20",
+    "@excalidraw/mermaid-to-excalidraw>nanoid": "^5.1.16",
+    "@lexical/headless>happy-dom": "^21.0.4",
+    "chevrotain>lodash-es": "^4.18.1",
+    "mermaid@^11>katex": "^0.19.1",
+    "micromark-extension-math>katex": "^0.19.1",
+    "satori>fflate": "^0.7.5"
   },
   "packageManager": "bun@1.4.4",
   "catalog": {

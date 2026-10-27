@@ -132,6 +132,13 @@ Oxlint. Follow the CLI skill to set up the project.
 
 ## Development
 
+Use Bun 1.4.4 or later. The lockfile uses version 3 for parent-scoped security
+overrides. These overrides select published upstream versions. They do not
+change dependency source.
+
+Audit consumer dependencies separately. CLI installation does not copy this
+workspace's security overrides into consumer projects.
+
 ```sh
 bun install
 bun run dev
