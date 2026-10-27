@@ -80,6 +80,7 @@ export function DiagramExample({
                 <EditorDiagramViewModeSelect />
                 <EditorDiagramRenderButton />
                 <EditorDiagramDownloadButton />
+                <EditorDiagramDownloadButton format="png" />
                 <EditorDiagramDeleteButton />
               </EditorDiagramToolbar>
             )}

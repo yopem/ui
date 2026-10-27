@@ -1107,15 +1107,18 @@ RenderButton, DownloadButton, DeleteButton, Status, and Preview parts.
 
 Native JSON and marked code HTML keep metadata. Document readers retain this
 metadata without running renderers. Source stays visible until a matching
-sanitized SVG image loads. Only SVG download is supplied. Install optional
-Mermaid, PlantUML, Graphviz, and Flowchart adapters as separate registry items.
-Import SDK adapters only in browser-only entries, never SSR routes. Use
-`renderEditorDiagram` for direct calls. It checks budgets and sanitizes SVG.
-Source filters are supported subsets, not SDK sandboxes. Cancellation cannot
-stop synchronous SDK work. Validate engine, CSP, WebAssembly, and lifecycle
-compatibility before deployment. Host endpoints need authentication, document
-authorization, exact Origin, CSRF, and execution limits. Never put credentials
-in diagram URLs. Supply headers explicitly. See
+sanitized SVG image loads. Mount-time autoRender includes saved and read-only
+nodes. Source changes wait 500 ms. Work allows two active renderers and sixteen
+queued jobs. Use EditorDiagramDownloadButton format="png" for bounded PNG. SVG
+remains the default. PDF is not supplied. Synchronous canvas work cannot be
+interrupted. Install optional Mermaid, PlantUML, Graphviz, and Flowchart
+adapters as separate registry items. Import SDK adapters only in browser-only
+entries, never SSR routes. Use `renderEditorDiagram` for direct calls. It checks
+budgets and sanitizes SVG. Source filters are supported subsets, not SDK
+sandboxes. Cancellation cannot stop synchronous SDK work. Validate engine, CSP,
+WebAssembly, and lifecycle compatibility before deployment. Host endpoints need
+authentication, document authorization, exact Origin, CSRF, and execution
+limits. Never put credentials in diagram URLs. Supply headers explicitly. See
 https://ui.yopem.com/editor/diagram-root for composition and API details.
 
 ## Optional AI command menu
@@ -1166,7 +1169,11 @@ through CSP. Register one drawing runtime per root and run its cleanup.
 Concurrent runtimes must share the asset path. Keep scenes within 512 KiB and
 2000 supported shapes. Files, images, link targets, and custom metadata reject.
 Read-only roots can open saved scenes in view mode. They cannot insert or apply
-drawing edits. Validate drafts and sanitize SVG before download. Document
+drawing edits. Download validated JSON, sanitized SVG, or bounded PNG without
+applying drafts. PNG clipboard copy requires browser support and user
+activation. One module-instance export has a 30-second deadline and 16 MiB
+output limit. PNG allows 4096 by 16384 pixels and 16777216 pixels total.
+Cancellation cannot interrupt synchronous SDK or native clipboard work. Document
 readers retain validated scene metadata, not SDK-rendered output. SDK dependency
 advisories and runtime/SSR/accessibility acceptance remain unresolved. Do not
 claim production safety.

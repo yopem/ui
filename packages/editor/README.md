@@ -341,8 +341,14 @@ Native focus, IME, accessibility, and provider acceptance remain deferred.
 Install `editor-diagram` for native code metadata, per-node previews, and
 composed controls. Supply explicit renderers. No endpoint or engine is
 configured by default. Native JSON and marked code HTML keep the metadata.
-Generic document conversion rejects it. Download currently supports SVG, not PNG
-or PDF.
+Registered document readers preserve validated diagram metadata without
+rendering it. Use `EditorDiagramDownloadButton format="png"` for bounded
+owner-document PNG output. SVG remains the default. PDF is not supplied.
+
+Mount-time `autoRender` also renders saved and read-only nodes without changing
+history or selection. Source changes wait 500 ms. Work allows two active
+renderers and sixteen queued jobs. Noncooperative renderers retain their slots
+until settlement.
 
 The four engine adapters are separate browser-only entries and registry items.
 Do not import SDK adapters into SSR routes. Use `renderEditorDiagram` for direct
@@ -354,7 +360,7 @@ Mermaid tooling needs Node 22.12 or later and has a material package footprint.
 Host rendering requires authentication, document permission, exact Origin, CSRF,
 and execution limits. Put secrets in host configuration, not in diagram URLs.
 See https://ui.yopem.com/editor/diagram-root for composition and API details.
-Engine and browser checks remain deferred while executable validation is paused.
+Verify the configured engine and its real output before deployment.
 
 ## Optional AI command menu
 

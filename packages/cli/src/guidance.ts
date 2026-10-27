@@ -97,7 +97,9 @@ Callbacks do not grant document access. Preserve native selection, clipboard pol
 Install optional \`editor-diagram\` separately. Import from \`${imports.editor}/diagram\`.
 Register \`EditorDiagramExtension\` once. Compose \`EditorDiagramRoot\` inside \`EditorRoot\` with explicit renderers.
 Native JSON and marked code HTML keep diagram metadata. Document readers retain it without running renderers.
-SVG download is supplied by diagram controls; PNG and PDF are absent there.
+Set mount-time \`autoRender\` to render configured saved and read-only diagram nodes after a 500 ms source-change delay.
+Automatic work allows two active renders and sixteen queued jobs. Noncooperative renderers retain their slots until settlement.
+Use \`EditorDiagramDownloadButton format="png"\` for bounded owner-document PNG download; SVG remains the default. PDF is not supplied.
 Install engine adapters separately: \`editor-diagram-mermaid\`, \`editor-diagram-plantuml\`, \`editor-diagram-graphviz\`, or \`editor-diagram-flowchart\`.
 Import SDK adapters only from browser-only entries, never SSR routes. Use \`renderEditorDiagram\` for direct calls and SVG sanitization.
 Source filters are supported subsets, not SDK sandboxes. Cancellation cannot stop synchronous SDK work or every queued operation.
@@ -126,7 +128,11 @@ Self-host SDK fonts under an approved same-origin path. Preserve SDK/font notice
 Register one runtime per root and run its cleanup. Concurrent runtimes must share the global asset path.
 Keep scenes within 512 KiB and 2000 supported elements. Reject files, images, link targets, custom metadata, and unsupported types.
 Read-only roots can open saved scenes in view mode. They cannot insert or apply drawing edits.
-Validate drafts and sanitize SVG before download. Document readers retain validated scenes in JSON and canonical HTML.
+Download validated JSON, sanitized SVG, or bounded PNG without applying draft changes. Read-only views can export.
+PNG clipboard copy requires browser support and user activation. One module-instance export uses a 30-second deadline.
+PNG allows 4096 by 16384 pixels and 16777216 pixels total. Output has a 16 MiB limit.
+Cancellation discards stale results but cannot interrupt synchronous SDK or native clipboard work.
+Document readers retain validated scenes in JSON and canonical HTML.
 Generic static output shows drawing metadata, not an SDK-rendered scene.
 SDK/transitive dependency advisories and SSR/browser/accessibility acceptance remain unresolved. Do not claim production safety.
 Install optional \`editor-cursor-overlay\` separately. Import \`EditorCursorOverlay\` from \`${imports.editor}/cursor-overlay\`.

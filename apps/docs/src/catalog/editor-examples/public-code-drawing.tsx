@@ -248,6 +248,7 @@ export function PublicCodeDrawingExample() {
                 <EditorDiagramViewModeSelect />
                 <EditorDiagramRenderButton />
                 <EditorDiagramDownloadButton />
+                <EditorDiagramDownloadButton format="png" />
                 <EditorDiagramDeleteButton />
                 <EditorDiagramStatus />
               </EditorDiagramToolbar>

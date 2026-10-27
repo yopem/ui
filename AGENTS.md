@@ -1077,7 +1077,11 @@ Native JSON and marked code HTML keep diagram metadata.
 Document readers retain validated diagram metadata with code source.
 Generic static output does not run diagram renderers.
 Keep source visible until the matching sanitized SVG image loads.
-Per-node previews keep independent selection paths. Only SVG download is supplied.
+Per-node previews keep independent selection paths.
+Set autoRender at mount time to render configured saved nodes, including read-only nodes.
+Automatic source changes use a 500 ms delay, with at most two active renderers and sixteen queued jobs.
+Omit format or use format="svg" for SVG download. Use format="png" for bounded owner-document PNG download.
+PNG export does not fetch external resources. Synchronous rendering and canvas work cannot be interrupted.
 
 Install optional engine adapters separately: `editor-diagram-mermaid`,
 `editor-diagram-plantuml`, `editor-diagram-graphviz`, or `editor-diagram-flowchart`.
@@ -1146,7 +1150,11 @@ Keep scenes within 512 KiB and 2000 supported native elements.
 Reject files, images, link targets, custom metadata, and unsupported element types.
 Validate draft output before replacing the saved drawing node.
 Read-only roots can open saved scenes in view mode. They cannot insert or apply drawing edits.
-Validate and sanitize SVG output before download.
+Export the validated current draft as JSON, sanitized SVG, or bounded PNG without applying it.
+Read-only view dialogs can export. PNG clipboard copy requires browser support and user activation.
+Exports share one module-instance operation lease and a 30-second deadline.
+PNG allows 4096 by 16384 pixels and 16777216 pixels total. Output has a 16 MiB limit.
+Cancellation discards stale results. Synchronous SDK work and native clipboard work cannot be interrupted.
 Document readers retain validated drawing scenes in JSON and canonical HTML.
 Generic static output shows metadata, not an SDK-rendered drawing.
 
