@@ -4,7 +4,7 @@ import { readFile } from "node:fs/promises"
 
 async function openExample(page: Page) {
   await page.goto("/editor/examples#public-document-export")
-  const example = page.locator("#editor-example-public-document-export")
+  const example = page.getByTestId("editor-example-public-document-export")
   await example
     .getByRole("button", { name: "Live preview", exact: true })
     .click()
@@ -69,7 +69,22 @@ test("rejects over-budget print layout before opening the native dialog", async 
     element.style.maxBlockSize = "12rem"
     element.style.overflow = "auto"
   })
-  await editor.fill("Tall print line\n".repeat(1200).trimEnd())
+  await context.grantPermissions(["clipboard-read", "clipboard-write"], {
+    origin: new URL(page.url()).origin,
+  })
+  await page.evaluate(
+    (text) => navigator.clipboard.writeText(text),
+    "Tall print line\n".repeat(1200).trimEnd(),
+  )
+  await editor
+    .getByRole("heading", { name: "Field report", exact: true })
+    .click()
+  await page.keyboard.press("ControlOrMeta+A")
+  await page.keyboard.press("ControlOrMeta+V")
+  await expect(editor).toContainText("Tall print line")
+  await expect
+    .poll(() => editor.evaluate((element) => element.scrollHeight))
+    .toBeGreaterThan(16384)
 
   const before = await editor.innerText()
   const opened = page.waitForEvent("popup")
@@ -95,16 +110,16 @@ test("prints a validated rich document from its owner frame without changing edi
       document.documentElement.setAttribute("data-print-called", "true")
     }
   })
-  await page.goto("/")
-  await page.evaluate(() => {
-    const frame = document.createElement("iframe")
-    frame.title = "Document export host"
-    frame.src = `${location.origin}/editor/examples#public-document-export`
-    document.body.append(frame)
-  })
+  await page.route("**/editor-export-frame-host", (route) =>
+    route.fulfill({
+      contentType: "text/html",
+      body: '<!doctype html><html lang="en"><head><title>Document export host</title></head><body><main aria-label="Document export host"><h1>Document export host</h1><iframe title="Document export host" src="/editor/examples#public-document-export"></iframe></main></body></html>',
+    }),
+  )
+  await page.goto("/editor-export-frame-host")
 
   const frame = page.frameLocator('iframe[title="Document export host"]')
-  const example = frame.locator("#editor-example-public-document-export")
+  const example = frame.getByTestId("editor-example-public-document-export")
   await example
     .getByRole("button", { name: "Live preview", exact: true })
     .click()
@@ -141,7 +156,7 @@ test("prints a validated rich document from its owner frame without changing edi
   await expect(popup.locator("math")).toHaveCount(1)
   await expect(popup.locator("script, iframe, object, embed")).toHaveCount(0)
   await expect(editor).toHaveAttribute("contenteditable", "false")
-  await expect(editor).toHaveText(stateBefore)
+  await expect.poll(() => editor.innerText()).toBe(stateBefore)
   await expect(undo).toBeDisabled()
   await expect(redo).toBeDisabled()
 
