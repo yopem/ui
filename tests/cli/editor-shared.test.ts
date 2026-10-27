@@ -310,6 +310,27 @@ test("packed CLI exposes shared editor roots to external workspace consumers", a
       await run(ui, [
         ...command,
         "add",
+        "editor-drawing",
+        "--registry",
+        `${server.url}r`,
+      ])
+      expect(
+        await Bun.file(join(ui, components, "editor/drawing-sdk.ts")).exists(),
+      ).toBe(true)
+      await put(
+        app,
+        "src/drawing-boundary.ts",
+        `import { normalizeEditorDrawingSdkElements } from "@acme/ui/${components.slice(4)}/editor/drawing-sdk"\nimport { parseEditorDrawingScene } from "@acme/ui/${components.slice(4)}/editor/drawing-model"\nconst elements = normalizeEditorDrawingSdkElements([])\nif (parseEditorDrawingScene({ elements }).elements.length !== 0) throw new Error("Invalid empty native drawing scene")\nif (Reflect.has(globalThis, "document")) throw new Error("Drawing boundary requires no DOM")\n`,
+      )
+      await put(
+        app,
+        "src/drawing-components.tsx",
+        `import { EditorDrawingExtension } from "@acme/ui/${components.slice(4)}/editor/drawing"\nimport { EditorDrawingInsertButton, registerEditorDrawingRuntime } from "@acme/ui/${components.slice(4)}/editor/drawing-browser"\nexport const drawingParts = [EditorDrawingExtension, EditorDrawingInsertButton, registerEditorDrawingRuntime]\n`,
+      )
+
+      await run(ui, [
+        ...command,
+        "add",
         "editor-ai-menu",
         "--registry",
         `${server.url}r`,
@@ -402,7 +423,13 @@ test("packed CLI exposes shared editor roots to external workspace consumers", a
           skipLibCheck: true,
           noEmit: true,
         },
-        include: ["geometry.ts", "check.ts", "native-collaboration.ts"],
+        include: [
+          "geometry.ts",
+          "check.ts",
+          "native-collaboration.ts",
+          "drawing-boundary.ts",
+          "drawing-components.tsx",
+        ],
       })
       await put(
         external,
@@ -419,6 +446,14 @@ test("packed CLI exposes shared editor roots to external workspace consumers", a
         "native-collaboration.ts",
         await readFile(join(app, "src/native-collaboration.ts"), "utf8"),
       )
+
+      for (const file of ["drawing-boundary.ts", "drawing-components.tsx"])
+        await put(
+          external,
+          file,
+          await readFile(join(app, "src", file), "utf8"),
+        )
+
       await run(external, ["bun", "install"])
       await run(external, [
         "bun",
@@ -434,6 +469,15 @@ test("packed CLI exposes shared editor roots to external workspace consumers", a
         "--outfile=geometry.mjs",
       ])
       await run(external, ["node", "geometry.mjs"])
+      await run(external, ["bun", "drawing-boundary.ts"])
+      await run(external, [
+        "bun",
+        "build",
+        "./drawing-boundary.ts",
+        "--target=node",
+        "--outfile=drawing-boundary.mjs",
+      ])
+      await run(external, ["node", "drawing-boundary.mjs"])
       await run(external, ["bun", "native-collaboration.ts"])
       await run(external, [
         "bun",

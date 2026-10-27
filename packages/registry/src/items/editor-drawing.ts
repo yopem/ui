@@ -24,7 +24,7 @@ export const editorDrawingItem: SourceItem = {
       "parseEditorDrawingScene",
     ],
     usage:
-      "Register EditorDrawingExtension in a stable root array. Load the separate browser entry with approved same-origin SDK assets and its stylesheet. Register one drawing runtime per root and run its cleanup. Source, SDK, dependency-audit, CSP, font, SVG and accessibility acceptance remain required. Generic document conversion does not support drawing nodes.",
+      "Register EditorDrawingExtension in a stable root array. Load the separate browser entry with approved same-origin SDK assets and its stylesheet. Register one drawing runtime per root and run its cleanup. Source, SDK, dependency-audit, CSP, font, SVG and accessibility acceptance remain required. Register drawing nodes before document imports. Document readers retain scene metadata without loading the SDK.",
   },
   files: [
     {
@@ -50,6 +50,11 @@ export const editorDrawingItem: SourceItem = {
     {
       path: "components/editor/drawing-browser.tsx",
       target: "@/components/editor/drawing-browser.tsx",
+      type: "registry:ui",
+    },
+    {
+      path: "components/editor/drawing-sdk.ts",
+      target: "@/components/editor/drawing-sdk.ts",
       type: "registry:ui",
     },
     {
