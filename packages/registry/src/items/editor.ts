@@ -7,6 +7,7 @@ export const editorItem: SourceItem = {
   categories: ["input"],
   dependencies: [
     editorDependency("@base-ui/react"),
+    editorDependency("@base-ui/utils"),
     editorDependency("lexical"),
     editorDependency("zod"),
     editorDependency("@lexical/code"),
