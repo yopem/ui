@@ -1424,6 +1424,11 @@ function createReviewController() {
     requestedKind: EditorReviewBreakSuggestion["kind"],
     selectStart = false,
   ) {
+    if (editor?.isComposing())
+      return fail(
+        "This native input is not supported in suggestion mode. Original content is unchanged.",
+      )
+
     const range = selection(false)
     let removed: TextNode[] = []
 
@@ -2609,11 +2614,15 @@ function createReviewController() {
         return
       }
 
-      if (
-        event.inputType === "insertText" &&
-        event.data &&
-        !event.isComposing
-      ) {
+      if (event.isComposing || current.isComposing()) {
+        diagnostic =
+          "This native input is not supported in suggestion mode. Original content is unchanged."
+        publish()
+
+        return
+      }
+
+      if (event.inputType === "insertText" && event.data) {
         current.dispatchCommand(CONTROLLED_TEXT_INSERTION_COMMAND, event.data)
       } else if (event.inputType === "insertParagraph") {
         current.dispatchCommand(INSERT_PARAGRAPH_COMMAND, undefined)
