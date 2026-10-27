@@ -666,7 +666,7 @@ Call `$suggestNativeInsertNodes` inside a synchronous editor update for explicit
 Return the new inserted nodes. Use normal text descendants and snapshots within 128 KiB.
 Resolve pending suggestions first. This API does not track arbitrary callbacks or text-free nodes.
 Paste can retain validated same-namespace paragraph and list fragments as one authored suggestion.
-Accept keeps the fragment. Reject restores the prior document and its comment anchors.
+Accept keeps that fragment. Reject changes only that suggestion and preserves unrelated edits.
 Rich HTML and unsupported native fragments are rejected. Pasted review metadata is not preserved.
 The separate `editor-document` readers do not import review formats.
 See https://ui.yopem.com/components/editor-review for API and limits.

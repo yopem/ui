@@ -279,7 +279,7 @@ Resolve a pending paragraph break before splitting that paragraph again.
 Call \`$suggestNativeInsertNodes\` inside a synchronous editor update for explicit insert-only operations.
 Return the new inserted nodes. Use normal text descendants and snapshots within 128 KiB.
 Resolve pending suggestions first. This API does not track arbitrary callbacks or text-free nodes.
-Paste can retain validated same-namespace paragraph and list fragments as one authored suggestion. Accept keeps the fragment. Reject restores the prior document and its comment anchors. Rich HTML and unsupported native fragments are rejected. Pasted review metadata is not preserved. \`editor-document\` does not import review formats.
+Paste can retain validated same-namespace paragraph and list fragments as one authored suggestion. Accept keeps that fragment. Reject changes only that suggestion and preserves unrelated edits. Rich HTML and unsupported native fragments are rejected. Pasted review metadata is not preserved. \`editor-document\` does not import review formats.
 See https://ui.yopem.com/components/editor-review for API and limits.
 
 ### Optional editor typeahead

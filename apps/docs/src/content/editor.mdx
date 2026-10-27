@@ -1197,16 +1197,24 @@ saving. Serialized author IDs are attribution only. They do not grant access.
 read-only content.
 
 Review data uses `yopemReview` and `yopemReviewStructural` on the Lexical root.
-Text suggestions use `yopemSuggestion` on text nodes. `parseReviewDocument`
-validates trusted review state or strips review data from untrusted input. Set
-`trusted=true` only for host-authenticated data. Register `MarkNode` in every
-reader that opens review documents. The review extension registers it in its own
-editor. The `editor-document` item does not import review formats.
+Text suggestions use `yopemSuggestion` on text nodes. Tracked breaks use
+`yopemReviewBreak` on native paragraph or line-break nodes.
+`parseReviewDocument` validates trusted review state or strips review data from
+untrusted input. Set `trusted=true` only for host-authenticated data. Register
+`MarkNode` in every reader that opens review documents. The review extension
+registers it in its own editor. The `editor-document` item does not import
+review formats.
+
+Enter tracks a root paragraph split. Shift+Enter tracks a line break. Other
+supported block contexts use tracked line breaks. Resolve a pending paragraph
+break before splitting that paragraph again. Accept and reject these changes
+with the existing suggestion controls.
 
 The text diff control changes one paragraph with at most 2048 graphemes and 4096
 UTF-16 units. Rich comments use validated review content. Paste can retain
-validated same-namespace paragraph and list fragments as one authored suggestion.
-Accept keeps the fragment. Reject restores the prior document and its comment anchors.
+validated same-namespace paragraph and list fragments as one authored
+suggestion. Accept keeps the fragment. Reject restores replaced content and
+keeps other pending edits. Both decisions preserve comment anchors.
 Rich HTML and unsupported native fragments are rejected. Pasted review metadata
 is not preserved.
 

@@ -326,7 +326,8 @@ const usageNoteValues = {
     "Compose EditorReviewStructuralProposals, Proposal, ChangeList, and DecisionControls. decideStructural rechecks current host permission and source content before acceptance or rejection.",
     "Structural acceptance preserves unchanged or uniquely moved comment anchors. Ambiguous anchors reject before replacement. These source workflows still need runtime validation.",
     "Use parseReviewDocument(value, trusted, true) for structural-review IO. Supply complete host document validation separately. Native editor commands do not automatically become tree proposals.",
-    "Paste inserts plain text only. Rich HTML paste is rejected. Pasted review metadata is not preserved. editor-document does not read review formats.",
+    "Paste can retain validated same-namespace paragraph and list fragments as one authored suggestion. Rich HTML and unsupported native fragments are rejected.",
+    "Accept keeps that fragment. Reject changes only that suggestion and preserves unrelated edits. Pasted review metadata is not preserved. editor-document does not read review formats.",
   ],
   "editor-auth": [
     "Import server helpers from @/lib/editor-auth. Keep them outside browser components. Use an existing OpenAuth or Better Auth service.",
