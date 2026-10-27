@@ -80,6 +80,7 @@ import {
   type EditorSuggestion,
   type EditorReviewData,
   type EditorReviewNativeFragment,
+  type EditorReviewNativeOperation,
 } from "./review-codecs"
 import { registerReviewDecorations } from "./review-decorations"
 import { EditorReviewTextDiffError } from "./review-diff"
@@ -96,10 +97,12 @@ import {
 } from "./review-model"
 import { createEditorReviewNativeOperationSnapshots } from "./review-operation-native"
 import {
+  $setEditorReviewNativeOperation,
   $setEditorSuggestion,
   emptyReview,
   editorReviewBreakState,
   editorReviewNativeFragmentState,
+  editorReviewNativeOperationState,
   editorReviewState,
   editorReviewStructuralState,
   editorSuggestionState,
@@ -179,6 +182,152 @@ function hasNamedReviewSlots(node: ReviewSerializedNode) {
   return node.children?.some(hasNamedReviewSlots) ?? false
 }
 
+const nativeOperationBlockTypes = new Set(["paragraph", "list", "listitem"])
+
+function $hasMarkedNativeOperationText(operation: EditorReviewNativeOperation) {
+  const root = $getRoot()
+
+  return root.getAllTextNodes().some((node) => {
+    const suggestion = $getState(node, editorSuggestionState)
+
+    if (
+      node.getTextContentSize() === 0 ||
+      !suggestion ||
+      suggestion.id !== operation.id ||
+      suggestion.kind !== operation.kind
+    )
+      return false
+
+    let parent: LexicalNode | null = node.getParent()
+
+    while (parent && parent !== root) {
+      const marker = $getState(parent, editorReviewNativeOperationState)
+
+      if (
+        marker?.version === operation.version &&
+        marker.id === operation.id &&
+        marker.kind === operation.kind
+      )
+        return true
+
+      parent = parent.getParent()
+    }
+
+    return false
+  })
+}
+
+function $nativeOperationBlockIsOwned(
+  node: LexicalNode,
+  operation: EditorReviewNativeOperation,
+  requireMarker: boolean,
+) {
+  if (!$isElementNode(node) || !nativeOperationBlockTypes.has(node.getType()))
+    return false
+
+  const pending: LexicalNode[] = [node]
+  let hasText = false
+
+  while (pending.length) {
+    const current = pending.pop()
+
+    if (!current) continue
+    const marker = $getState(current, editorReviewNativeOperationState)
+
+    if (
+      current === node
+        ? requireMarker
+          ? JSON.stringify(marker) !== JSON.stringify(operation)
+          : marker !== null
+        : marker !== null
+    )
+      return false
+
+    if ($getState(current, editorReviewBreakState)) return false
+
+    if ($isTextNode(current)) {
+      const suggestion = $getState(current, editorSuggestionState)
+
+      if (
+        !current.isSimpleText() ||
+        current.getMode() !== "normal" ||
+        !suggestion ||
+        suggestion.id !== operation.id ||
+        suggestion.kind !== operation.kind
+      )
+        return false
+
+      hasText ||= current.getTextContentSize() > 0
+      continue
+    }
+
+    if (current.getType() === "linebreak") {
+      if (operation.kind !== "insert") return false
+
+      continue
+    }
+
+    if (
+      !$isElementNode(current) ||
+      !nativeOperationBlockTypes.has(current.getType()) ||
+      (operation.kind === "delete" && current.getChildrenSize() === 0)
+    )
+      return false
+
+    pending.push(...current.getChildren())
+  }
+
+  return (
+    hasText ||
+    (operation.kind === "insert" && $hasMarkedNativeOperationText(operation))
+  )
+}
+
+function $markNativeOperationBlocks(
+  node: LexicalNode,
+  operation: EditorReviewNativeOperation,
+) {
+  function visit(current: LexicalNode) {
+    if (!$isElementNode(current)) return
+
+    if ($nativeOperationBlockIsOwned(current, operation, false)) {
+      $setEditorReviewNativeOperation(current, operation)
+
+      return
+    }
+
+    for (const child of current.getChildren()) visit(child)
+  }
+
+  visit(node)
+}
+
+function $getNativeOperationTargets(
+  root: LexicalNode,
+  requested: ReadonlySet<string>,
+) {
+  const targets: {
+    node: LexicalNode
+    operation: EditorReviewNativeOperation
+  }[] = []
+
+  const pending: LexicalNode[] = [root]
+
+  while (pending.length) {
+    const node = pending.pop()
+
+    if (!node) continue
+    const operation = $getState(node, editorReviewNativeOperationState)
+
+    if (operation && requested.has(operation.id))
+      targets.push({ node, operation })
+
+    if ($isElementNode(node)) pending.push(...node.getChildren())
+  }
+
+  return targets
+}
+
 function $serializeReviewRoot() {
   let count = 0
 
@@ -203,6 +352,50 @@ function $serializeReviewRoot() {
   }
 
   return { root: serialize($getRoot(), 0) }
+}
+
+function $serializeReviewSubtree(node: LexicalNode) {
+  let count = 0
+
+  function serialize(
+    current: LexicalNode,
+    depth: number,
+  ): ReviewSerializedNode {
+    if (++count > 10000 || depth > 24)
+      throw new EditorReviewInputError(
+        "Review operation exceeds its size limit.",
+      )
+
+    const value = current.exportJSON()
+
+    if (!$isElementNode(current)) return value
+
+    if (current.getChildrenSize() + count > 10000)
+      throw new EditorReviewInputError(
+        "Review operation exceeds its node limit.",
+      )
+
+    return {
+      ...value,
+      children: current
+        .getChildren()
+        .map((child) => serialize(child, depth + 1)),
+    }
+  }
+
+  return serialize(node, 0)
+}
+
+function $reviewNodePath(node: LexicalNode) {
+  const path: string[] = []
+  let current: LexicalNode | null = node
+
+  while (current) {
+    path.unshift(current.getKey())
+    current = current.getParent()
+  }
+
+  return JSON.stringify(path)
 }
 
 function mergeReviewTreeRootState<AfterInput, CurrentInput>(
@@ -1333,6 +1526,10 @@ function createReviewController() {
       return true
     })
 
+    const operationTargets = $getNativeOperationTargets(root, requested)
+
+    for (const { operation } of operationTargets) found.add(operation.id)
+
     const breakTargets = $getEditorReviewBreaks().filter((target) => {
       if (!requested.has(target.suggestion.id)) return false
       found.add(target.suggestion.id)
@@ -1344,6 +1541,16 @@ function createReviewController() {
 
     if (ids.some((id) => !found.has(id)))
       return fail("Suggestion no longer exists.")
+
+    if (
+      operationTargets.some(
+        ({ node, operation }) =>
+          !$nativeOperationBlockIsOwned(node, operation, true),
+      )
+    )
+      return fail(
+        "Native review operation changed and cannot be resolved safely.",
+      )
 
     if (breakTargets.some((target) => !$canResolveEditorReviewBreak(target)))
       return fail("Review break target is no longer valid.")
@@ -1357,6 +1564,20 @@ function createReviewController() {
       fragmentTarget && action === "reject"
         ? nativeFragmentBeforeNodes(fragmentTarget)
         : null
+
+    const textSnapshots = targets.map((node) => ({
+      node,
+      key: node.getKey(),
+      serialized: JSON.stringify(node.exportJSON()),
+      path: $reviewNodePath(node),
+    }))
+
+    const operationSnapshots = operationTargets.map((target) => ({
+      ...target,
+      operationJSON: JSON.stringify(target.operation),
+      subtree: JSON.stringify($serializeReviewSubtree(target.node)),
+      path: $reviewNodePath(target.node),
+    }))
 
     const permits = ids.map((id) => authorize(action, id))
 
@@ -1383,10 +1604,93 @@ function createReviewController() {
       })
     )
       return fail("Review break target changed during authorization.")
+
+    const activeTexts = root.getAllTextNodes().filter((node) => {
+      const value = $getState(node, editorSuggestionState)
+
+      return value !== null && requested.has(value.id)
+    })
+
+    const activeTextByKey = new Map(
+      activeTexts.map((node) => [node.getKey(), node]),
+    )
+
+    const activeOperations = $getNativeOperationTargets(root, requested)
+
+    const activeOperationByKey = new Map(
+      activeOperations.map((target) => [target.node.getKey(), target]),
+    )
+
+    if (
+      activeTexts.length !== textSnapshots.length ||
+      textSnapshots.some(({ node, key, serialized, path }) => {
+        const active = activeTextByKey.get(key)
+
+        return (
+          !active ||
+          active !== node ||
+          JSON.stringify(active.exportJSON()) !== serialized ||
+          $reviewNodePath(active) !== path
+        )
+      }) ||
+      activeOperations.length !== operationSnapshots.length ||
+      operationSnapshots.some(
+        ({ node, operation, operationJSON, subtree, path }) => {
+          const active = activeOperationByKey.get(node.getKey())
+
+          return (
+            !active ||
+            active.node !== node ||
+            JSON.stringify(active.operation) !== operationJSON ||
+            JSON.stringify($serializeReviewSubtree(active.node)) !== subtree ||
+            $reviewNodePath(active.node) !== path ||
+            !$nativeOperationBlockIsOwned(active.node, operation, true)
+          )
+        },
+      )
+    )
+      return fail("Review targets changed during authorization.")
+
+    const removedOperationBlocks = operationTargets.filter(
+      ({ operation }) =>
+        (operation.kind === "insert" && action === "reject") ||
+        (operation.kind === "delete" && action === "accept"),
+    )
+
+    if (
+      $getEditorReviewBreaks().some((target) => {
+        if (target.suggestion.kind !== "paragraph") return false
+        const next = target.node.getNextSibling()
+
+        return removedOperationBlocks.some(
+          ({ node }) => node === target.node || node === next,
+        )
+      })
+    )
+      return fail("Native operation would invalidate a review break target.")
+
+    const textInsideRemovedBlocks = new Set(
+      targets.filter((node) =>
+        removedOperationBlocks.some(({ node: block }) => {
+          let current: LexicalNode | null = node
+
+          while (current) {
+            if (current === block) return true
+            current = current.getParent()
+          }
+
+          return false
+        }),
+      ),
+    )
+
     $addUpdateTag(HISTORY_PUSH_TAG)
     $addUpdateTag("yopem-review-action")
 
+    for (const { node } of removedOperationBlocks) node.remove()
+
     for (const node of targets) {
+      if (textInsideRemovedBlocks.has(node)) continue
       const value = $getState(node, editorSuggestionState)!
 
       if (fragmentTarget?.id === value.id && action === "reject") continue
@@ -1401,6 +1705,12 @@ function createReviewController() {
           node.setFormat(value.beforeFormat)
         $setEditorSuggestion(node, null)
       }
+    }
+
+    for (const { node } of operationTargets) {
+      if (removedOperationBlocks.some((target) => target.node === node))
+        continue
+      $setEditorReviewNativeOperation(node, null)
     }
 
     for (const target of breakTargets) {
@@ -1855,12 +2165,21 @@ function createReviewController() {
       const current = editor
 
       const currentTarget = current.getEditorState().read(() => {
+        const root = $getRoot()
+
         const proposal = $getState(
-          $getRoot(),
+          root,
           editorReviewStructuralState,
         ).proposals.find((item) => item.id === id)
 
-        return !proposal || $currentReviewTreeJSON() === proposal.precondition
+        const operations = $getNativeOperationTargets(root, new Set([id]))
+
+        return (
+          (!proposal || $currentReviewTreeJSON() === proposal.precondition) &&
+          operations.every(({ node, operation }) =>
+            $nativeOperationBlockIsOwned(node, operation, true),
+          )
+        )
       })
 
       if (!currentTarget) return false
@@ -2228,7 +2547,11 @@ function createReviewController() {
 
       event.preventDefault()
 
-      if ($hasCurrentPending()) {
+      if (
+        $getState($getRoot(), editorReviewStructuralState).proposals.length ||
+        $getState($getRoot(), editorReviewNativeFragmentState) ||
+        $getEditorReviewBreaks().length
+      ) {
         diagnostic = "Resolve pending suggestions before pasting."
         publish()
 
@@ -2304,10 +2627,14 @@ function createReviewController() {
 
         nativePastePhase = "selection"
         const range = selection(false)
+        const root = $getRoot()
         const anchor = range.anchor.getNode()
         const focus = range.focus.getNode()
-        const anchorBlock = anchor.getTopLevelElement()
-        const focusBlock = focus.getTopLevelElement()
+        const selectedNodes = range.getNodes()
+        const selectedTextNodes = selectedNodes.filter($isTextNode)
+        const backward = range.isBackward()
+        const startPoint = backward ? range.focus : range.anchor
+        const endPoint = backward ? range.anchor : range.focus
 
         const textSelection =
           range.anchor.type === "text" &&
@@ -2315,7 +2642,9 @@ function createReviewController() {
           $isTextNode(anchor) &&
           $isTextNode(focus) &&
           anchor.isSimpleText() &&
-          focus.isSimpleText()
+          focus.isSimpleText() &&
+          anchor.getMode() === "normal" &&
+          focus.getMode() === "normal"
 
         const emptyParagraphCaret =
           range.isCollapsed() &&
@@ -2324,39 +2653,86 @@ function createReviewController() {
           anchor === focus &&
           $isElementNode(anchor) &&
           anchor.getType() === "paragraph" &&
+          anchor.getParent() === root &&
           anchor.getChildrenSize() === 0
 
-        function hasCommentAnchor(node: LexicalNode) {
-          let parent = node.getParent()
+        const spans = textSelection
+          ? selectedTextNodes.flatMap((node) => {
+              const start =
+                node.getKey() === startPoint.key ? startPoint.offset : 0
 
-          while (parent) {
-            if (parent instanceof MarkNode) return true
-            parent = parent.getParent()
+              const end =
+                node.getKey() === endPoint.key
+                  ? endPoint.offset
+                  : node.getTextContentSize()
+
+              return start < end ? [{ node, start, end }] : []
+            })
+          : []
+
+        function hasCommentAnchor(node: LexicalNode) {
+          let current: LexicalNode | null = node
+
+          while (current && current !== root) {
+            if (current instanceof MarkNode) return true
+            current = current.getParent()
           }
 
           return false
         }
 
+        function supportedTargetPath(node: LexicalNode) {
+          let current: LexicalNode | null = node
+
+          while (current && current !== root) {
+            if (
+              current instanceof MarkNode ||
+              $getState(current, editorReviewNativeOperationState) ||
+              $getState(current, editorReviewBreakState)
+            )
+              return false
+
+            if ($isTextNode(current)) {
+              if (
+                !current.isSimpleText() ||
+                current.getMode() !== "normal" ||
+                $getState(current, editorSuggestionState)
+              )
+                return false
+            } else if (
+              !$isElementNode(current) ||
+              !nativeOperationBlockTypes.has(current.getType())
+            ) {
+              return false
+            }
+
+            current = current.getParent()
+          }
+
+          return current === root
+        }
+
         if (
           (!textSelection && !emptyParagraphCaret) ||
-          !anchorBlock ||
-          anchorBlock !== focusBlock ||
-          anchorBlock.getType() !== "paragraph" ||
-          anchorBlock.getParent() !== $getRoot() ||
-          hasCommentAnchor(anchor) ||
-          hasCommentAnchor(focus) ||
-          (textSelection &&
-            range
-              .getNodes()
-              .some(
-                (node) =>
-                  !$isTextNode(node) ||
-                  !node.isSimpleText() ||
-                  hasCommentAnchor(node),
-              ))
+          (!range.isCollapsed() && !spans.length) ||
+          (!selectedNodes.length && !range.isCollapsed()) ||
+          selectedNodes.some(
+            (node) =>
+              node !== root &&
+              !$isTextNode(node) &&
+              (!$isElementNode(node) ||
+                !nativeOperationBlockTypes.has(node.getType())),
+          ) ||
+          [...selectedNodes, anchor, focus].some(
+            (node) => hasCommentAnchor(node) || !supportedTargetPath(node),
+          ) ||
+          spans.some(
+            ({ node, start, end }) =>
+              start < 0 || end > node.getTextContentSize() || start >= end,
+          )
         )
           return fail(
-            "Native paste requires one unannotated root paragraph selection.",
+            "Native paste requires an unannotated normal-text selection.",
           )
 
         nativePastePhase = "serialize before"
@@ -2383,6 +2759,7 @@ function createReviewController() {
         const activeRange = $getSelection()
 
         if (
+          !suggesting ||
           JSON.stringify($serializeReviewRoot()) !== before ||
           !$isRangeSelection(activeRange) ||
           !activeRange.is(savedRange)
@@ -2397,6 +2774,18 @@ function createReviewController() {
           beforeFormat: 0,
         }
 
+        const deleteOperation: EditorReviewNativeOperation = {
+          version: 1,
+          id: suggestion.id,
+          kind: "delete",
+        }
+
+        const insertOperation: EditorReviewNativeOperation = {
+          version: 1,
+          id: suggestion.id,
+          kind: "insert",
+        }
+
         const inserted = $generateNodesFromSerializedNodes(normalized.blocks)
 
         const insertedText = inserted.flatMap((node) =>
@@ -2407,18 +2796,52 @@ function createReviewController() {
               : [],
         )
 
-        if (!inserted.length || !insertedText.length)
+        if (
+          !inserted.length ||
+          !insertedText.length ||
+          !insertedText.some((node) => node.getTextContentSize() > 0)
+        )
           return fail("Native fragment has no supported text nodes.")
-
-        for (const node of insertedText) $setEditorSuggestion(node, suggestion)
 
         $addUpdateTag(PASTE_TAG)
         $addUpdateTag(HISTORY_PUSH_TAG)
         $addUpdateTag("yopem-review-action")
-        nativePastePhase = "insert"
-        $insertGeneratedNodes(current, inserted, range)
 
         try {
+          if (!range.isCollapsed()) {
+            const removed = range.extract().filter($isTextNode)
+
+            if (removed.length !== spans.length)
+              throw new EditorReviewInputError(
+                "Native replacement could not retain the selected text.",
+              )
+
+            for (const node of removed) {
+              $setEditorSuggestion(node, {
+                ...suggestion,
+                kind: "delete",
+                beforeFormat: node.getFormat(),
+              })
+            }
+
+            const insertionPoint = backward ? range.focus : range.anchor
+            range.anchor.set(
+              insertionPoint.key,
+              insertionPoint.offset,
+              insertionPoint.type,
+            )
+            range.focus.set(
+              insertionPoint.key,
+              insertionPoint.offset,
+              insertionPoint.type,
+            )
+          }
+
+          for (const node of insertedText)
+            $setEditorSuggestion(node, suggestion)
+
+          nativePastePhase = "insert"
+          $insertGeneratedNodes(current, inserted, range)
           nativePastePhase = "after snapshot"
           permit.assertCurrent()
 
@@ -2428,10 +2851,11 @@ function createReviewController() {
 
           const attributedText = $getRoot()
             .getAllTextNodes()
-            .filter(
-              (node) =>
-                $getState(node, editorSuggestionState)?.id === suggestion.id,
-            )
+            .filter((node) => {
+              const value = $getState(node, editorSuggestionState)
+
+              return value?.id === suggestion.id && value.kind === "insert"
+            })
 
           if (
             !attributedText.length ||
@@ -2441,6 +2865,22 @@ function createReviewController() {
             throw new EditorReviewInputError(
               "Native insertion changed the staged fragment.",
             )
+
+          for (const node of inserted) {
+            if ($isElementNode(node) && node.isAttached())
+              $markNativeOperationBlocks(node, insertOperation)
+          }
+
+          for (const node of inserted) {
+            if (
+              $isElementNode(node) &&
+              node.isAttached() &&
+              !$getState(node, editorReviewNativeOperationState)
+            )
+              $markNativeOperationBlocks(node, insertOperation)
+          }
+
+          $markNativeOperationBlocks($getRoot(), deleteOperation)
 
           const afterRoot = $serializeReviewRoot()
           const after = normalizedNativeFragmentSnapshot(current, afterRoot)
@@ -2456,17 +2896,6 @@ function createReviewController() {
             throw new EditorReviewInputError(
               "Review document exceeds growth limits.",
             )
-
-          const fragment = reviewNativeFragmentSchema.parse({
-            version: 1,
-            id: suggestion.id,
-            author: suggestion.author,
-            createdAt: suggestion.createdAt,
-            before,
-            after,
-          })
-
-          $setState($getRoot(), editorReviewNativeFragmentState, fragment)
         } catch (error) {
           const parsedBefore = current.parseEditorState(before).toJSON()
 

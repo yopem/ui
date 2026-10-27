@@ -21,7 +21,7 @@ import {
   defineExtension,
 } from "lexical"
 
-test("tree proposals reject native break attribution", () => {
+test("tree proposals reject native break and operation attribution", () => {
   const clean = {
     root: {
       type: "root",
@@ -56,6 +56,27 @@ test("tree proposals reject native break attribution", () => {
   }
 
   expect(() => parseEditorReviewTreeDocument(attributed)).toThrow()
+
+  expect(() =>
+    parseEditorReviewTreeDocument({
+      root: {
+        type: "root",
+        children: [
+          {
+            type: "paragraph",
+            $: {
+              yopemReviewNativeOperation: {
+                version: 1,
+                id: "operation",
+                kind: "insert",
+              },
+            },
+            children: [{ type: "text", text: "Inserted" }],
+          },
+        ],
+      },
+    }),
+  ).toThrow()
 })
 
 function setup(name: string) {
@@ -283,7 +304,9 @@ test("Shift+Enter and nested Enter create tracked native line breaks", () => {
   review.setSuggesting(true)
   editor.update(
     () => editor.dispatchCommand(INSERT_PARAGRAPH_COMMAND, undefined),
-    { discrete: true },
+    {
+      discrete: true,
+    },
   )
 
   const nestedBreak = review
@@ -323,7 +346,9 @@ test("expanded selection tracks deletion with Enter and default mode stays nativ
   review.setSuggesting(true)
   editor.update(
     () => editor.dispatchCommand(INSERT_PARAGRAPH_COMMAND, undefined),
-    { discrete: true },
+    {
+      discrete: true,
+    },
   )
 
   const replacement = review
@@ -360,7 +385,9 @@ test("expanded selection tracks deletion with Enter and default mode stays nativ
   )
   native.editor.update(
     () => native.editor.dispatchCommand(INSERT_PARAGRAPH_COMMAND, undefined),
-    { discrete: true },
+    {
+      discrete: true,
+    },
   )
   native.editor.read(() => {
     expect(

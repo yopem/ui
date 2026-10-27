@@ -1,13 +1,20 @@
-import { createState, $setState, type TextNode } from "lexical"
+import {
+  createState,
+  $setState,
+  type LexicalNode,
+  type TextNode,
+} from "lexical"
 import { z } from "zod"
 
 import {
   parseEditorReview,
   reviewBreakSuggestionSchema,
   reviewNativeFragmentSchema,
+  reviewNativeOperationSchema,
   reviewSuggestionSchema,
   type EditorReviewBreakSuggestion,
   type EditorReviewNativeFragment,
+  type EditorReviewNativeOperation,
   type EditorReviewData,
   type EditorSuggestion,
 } from "./review-codecs"
@@ -47,6 +54,16 @@ export const editorReviewNativeFragmentState = createState(
   },
 )
 
+export const editorReviewNativeOperationState = createState(
+  "yopemReviewNativeOperation",
+  {
+    parse: (value): EditorReviewNativeOperation | null =>
+      value === undefined || value === null
+        ? null
+        : reviewNativeOperationSchema.parse(value),
+  },
+)
+
 export const editorReviewStructuralState = createState(
   "yopemReviewStructural",
   {
@@ -62,6 +79,17 @@ export const editorReviewKeyboardState = createState("yopemReviewKeyboard", {
     return value === undefined ? false : z.boolean().parse(value)
   },
 })
+
+export function $setEditorReviewNativeOperation(
+  node: LexicalNode,
+  value: EditorReviewNativeOperation | null,
+) {
+  $setState(
+    node,
+    editorReviewNativeOperationState,
+    value === null ? null : reviewNativeOperationSchema.parse(value),
+  )
+}
 
 export function $setEditorSuggestion(
   node: TextNode,

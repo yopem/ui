@@ -144,6 +144,7 @@ function validateReviewTreeNode(value: ReviewJsonValue, depth: number) {
         "yopemReviewStructural",
         "yopemSuggestion",
         "yopemReviewBreak",
+        "yopemReviewNativeOperation",
       ].some((key) => key in parsedState)
     )
       throw new Error("Review tree cannot contain review overlays.")

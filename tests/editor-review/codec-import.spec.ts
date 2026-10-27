@@ -240,7 +240,9 @@ test("untrusted named slot descendants cannot retain review authority", () => {
 test("document JSON decoder rejects oversized and malformed input before import", () => {
   expect(
     parseReviewDocumentJSON('{"root":{"type":"root","children":[]}}', true),
-  ).toEqual({ root: { type: "root", children: [] } })
+  ).toEqual({
+    root: { type: "root", children: [] },
+  })
   expect(() => parseReviewDocumentJSON("{", true)).toThrow()
   expect(() => parseReviewDocumentJSON(" ".repeat(1048577), true)).toThrow()
 })
@@ -383,6 +385,366 @@ test("trusted suggestions reject token and segmented text modes", () => {
       ),
     ).toThrow()
   }
+})
+
+test("trusted native operation markers round-trip and untrusted markers are stripped", () => {
+  const document = {
+    root: {
+      type: "root",
+      children: [
+        {
+          type: "paragraph",
+          $: {
+            yopemReviewNativeOperation: {
+              version: 1,
+              id: "operation-1",
+              kind: "insert",
+            },
+          },
+          children: [
+            {
+              type: "text",
+              text: "Inserted",
+              $: {
+                yopemSuggestion: {
+                  id: "operation-1",
+                  author: { id: "alice", name: "Alice" },
+                  createdAt: 1,
+                  kind: "insert",
+                  beforeFormat: 0,
+                },
+              },
+            },
+          ],
+        },
+      ],
+    },
+  }
+
+  expect(parseReviewDocumentJSON(JSON.stringify(document), true)).toEqual(
+    document,
+  )
+  const untrusted = parseReviewDocument(document, false)
+
+  expect(JSON.stringify(untrusted)).not.toContain("yopemReviewNativeOperation")
+  expect(JSON.stringify(untrusted)).not.toContain("yopemSuggestion")
+  expect(JSON.stringify(untrusted)).not.toContain("operation-1")
+})
+
+test("empty insert operation blocks require attributed sibling ownership", () => {
+  const marker = {
+    version: 1,
+    id: "operation-1",
+    kind: "insert",
+  }
+
+  const suggestion = {
+    id: "operation-1",
+    author: { id: "alice", name: "Alice" },
+    createdAt: 1,
+    kind: "insert",
+    beforeFormat: 0,
+  }
+
+  const emptyBlock = {
+    type: "paragraph",
+    $: { yopemReviewNativeOperation: marker },
+    children: [],
+  }
+
+  const attributedBlock = {
+    type: "paragraph",
+    $: { yopemReviewNativeOperation: marker },
+    children: [
+      {
+        type: "text",
+        text: "Inserted",
+        $: { yopemSuggestion: suggestion },
+      },
+    ],
+  }
+
+  const groupedDocument = {
+    root: {
+      type: "root",
+      children: [emptyBlock, attributedBlock],
+    },
+  }
+
+  expect(
+    parseReviewDocumentJSON(JSON.stringify(groupedDocument), true),
+  ).toEqual(groupedDocument)
+  expect(() =>
+    parseReviewDocumentJSON(
+      JSON.stringify({
+        root: {
+          type: "root",
+          children: [
+            emptyBlock,
+            {
+              type: "paragraph",
+              children: [
+                {
+                  type: "text",
+                  text: "Inserted",
+                  $: { yopemSuggestion: suggestion },
+                },
+              ],
+            },
+          ],
+        },
+      }),
+      true,
+    ),
+  ).toThrow()
+})
+
+test("native operation markers reject malformed placement and attribution", () => {
+  const author = { id: "alice", name: "Alice" }
+  const marker = { version: 1, id: "operation-1", kind: "insert" }
+
+  const suggestion = {
+    id: "operation-1",
+    author,
+    createdAt: 1,
+    kind: "insert",
+    beforeFormat: 0,
+  }
+
+  function document(
+    nodeType: string,
+    operation: typeof marker & { extra?: boolean },
+    textSuggestion: typeof suggestion | undefined,
+  ) {
+    interface NativeReviewTextFixture {
+      type: "text"
+      text: string
+      $?: { yopemSuggestion: typeof suggestion }
+    }
+
+    const textNode: NativeReviewTextFixture = {
+      type: "text",
+      text: "Inserted",
+    }
+
+    if (textSuggestion !== undefined)
+      textNode.$ = { yopemSuggestion: textSuggestion }
+
+    return {
+      root: {
+        type: "root",
+        children: [
+          {
+            type: nodeType,
+            $: { yopemReviewNativeOperation: operation },
+            children: [textNode],
+          },
+        ],
+      },
+    }
+  }
+
+  expect(() =>
+    parseReviewDocument(
+      document("paragraph", { ...marker, version: 2 }, suggestion),
+      true,
+    ),
+  ).toThrow()
+  expect(() =>
+    parseReviewDocument(
+      document("paragraph", { ...marker, extra: true }, suggestion),
+      true,
+    ),
+  ).toThrow()
+  expect(() =>
+    parseReviewDocument(document("quote", marker, suggestion), true),
+  ).toThrow()
+  expect(() =>
+    parseReviewDocument(
+      document("paragraph", marker, { ...suggestion, id: "other-operation" }),
+      true,
+    ),
+  ).toThrow()
+  expect(() =>
+    parseReviewDocument(
+      document("paragraph", marker, { ...suggestion, kind: "delete" }),
+      true,
+    ),
+  ).toThrow()
+  expect(() =>
+    parseReviewDocument(document("paragraph", marker, undefined), true),
+  ).toThrow()
+  expect(() =>
+    parseReviewDocument(
+      {
+        root: {
+          type: "root",
+          children: [
+            {
+              type: "paragraph",
+              $: { yopemReviewNativeOperation: marker },
+              children: [
+                {
+                  type: "text",
+                  text: "One",
+                  $: { yopemSuggestion: suggestion },
+                },
+                {
+                  type: "text",
+                  text: "Two",
+                  $: {
+                    yopemSuggestion: {
+                      ...suggestion,
+                      author: { id: "bob", name: "Bob" },
+                    },
+                  },
+                },
+              ],
+            },
+          ],
+        },
+      },
+      true,
+    ),
+  ).toThrow()
+  expect(() =>
+    parseReviewDocument(
+      {
+        root: {
+          type: "root",
+          children: [
+            {
+              type: "paragraph",
+              $: { yopemReviewNativeOperation: marker },
+              children: [
+                {
+                  type: "list",
+                  $: { yopemReviewNativeOperation: marker },
+                  children: [
+                    {
+                      type: "listitem",
+                      children: [
+                        {
+                          type: "text",
+                          text: "Inserted",
+                          $: { yopemSuggestion: suggestion },
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+      },
+      true,
+    ),
+  ).toThrow()
+  expect(() =>
+    parseReviewDocument(
+      {
+        root: {
+          type: "root",
+          children: [
+            {
+              type: "paragraph",
+              $: { yopemReviewNativeOperation: marker },
+              children: [
+                {
+                  type: "text",
+                  text: "Inserted",
+                  $: { yopemSuggestion: suggestion },
+                },
+                { type: "text", text: "Unmarked" },
+              ],
+            },
+          ],
+        },
+      },
+      true,
+    ),
+  ).toThrow()
+  expect(() =>
+    parseReviewDocument(
+      {
+        root: {
+          type: "root",
+          children: [
+            {
+              type: "paragraph",
+              $: { yopemReviewNativeOperation: marker },
+              children: [
+                {
+                  type: "text",
+                  text: "Inserted",
+                  $: { yopemSuggestion: suggestion },
+                },
+                { type: "horizontalrule" },
+              ],
+            },
+          ],
+        },
+      },
+      true,
+    ),
+  ).toThrow()
+  expect(() =>
+    parseReviewDocument(
+      {
+        root: {
+          type: "root",
+          children: [
+            {
+              type: "paragraph",
+              $: { yopemReviewNativeOperation: marker },
+              children: [
+                {
+                  type: "text",
+                  text: "Inserted",
+                  $: { yopemSuggestion: suggestion },
+                },
+                {
+                  type: "text",
+                  text: "Wrapper",
+                  $: { yopemSuggestion: suggestion },
+                  children: [{ type: "text", text: "Hidden" }],
+                },
+              ],
+            },
+          ],
+        },
+      },
+      true,
+    ),
+  ).toThrow()
+  expect(() =>
+    parseReviewDocument(
+      {
+        root: {
+          type: "root",
+          children: [
+            {
+              type: "paragraph",
+              $: { yopemReviewNativeOperation: marker },
+              children: [
+                {
+                  type: "text",
+                  text: "Inserted",
+                  $: { yopemSuggestion: suggestion },
+                },
+                {
+                  type: "linebreak",
+                  children: [{ type: "text", text: "Hidden" }],
+                },
+              ],
+            },
+          ],
+        },
+      },
+      true,
+    ),
+  ).toThrow()
 })
 
 test("untrusted structural metadata cannot widen ordinary document depth", () => {

@@ -206,30 +206,108 @@ test("denial, readonly, stale selection and unmount cannot mutate", () => {
 
 test("bulk decisions preflight all host permissions and never partially mutate", () => {
   const { editor, review, cleanup } = setup()
-  select(editor, 0, 4)
-  let id = ""
+  let firstId = ""
+  let deniedId = ""
   editor.update(
     () => {
-      id = review.$suggestDelete()
+      const root = $getRoot()
+      root.append($createParagraphNode().append($createTextNode("Second")))
+      root.getAllTextNodes()[0].select(0, 4)
+      firstId = review.$suggestDelete()
+
+      const second = root
+        .getAllTextNodes()
+        .find((node) => node.getTextContent() === "Second")
+
+      if (!second) throw new Error("Expected the second text target.")
+      second.select(0, 3)
+      deniedId = review.$suggestDelete()
     },
     { discrete: true },
   )
+  const before = JSON.stringify(editor.getEditorState().toJSON())
+
   review.setHost({
     viewer: { id: "alice", name: "Alice" },
     visible: true,
     replyWhileReadonly: false,
-    can: (action) => action !== "accept",
+    can: (action, id) => action !== "accept" || id !== deniedId,
   })
   expect(() =>
     editor.update(() => review.$decideAll("accept"), { discrete: true }),
   ).toThrow()
+  expect(JSON.stringify(editor.getEditorState().toJSON())).toBe(before)
   editor.getEditorState().read(() => {
-    expect($getRoot().getTextContent()).toBe("Original text")
+    expect($getRoot().getTextContent()).toBe("Original text\n\nSecond")
     expect(
-      $getState($getRoot().getAllTextNodes()[0], editorSuggestionState)?.id,
-    ).toBe(id)
+      $getRoot()
+        .getAllTextNodes()
+        .map((node) => $getState(node, editorSuggestionState)?.id)
+        .filter(Boolean),
+    ).toEqual(expect.arrayContaining([firstId, deniedId]))
     expect($isRangeSelection($getSelection())).toBe(true)
   })
+  cleanup()
+})
+
+test("suggest and decision denial and reentrant authorization do not mutate", () => {
+  const { editor, review, cleanup } = setup()
+
+  const host = {
+    viewer: { id: "alice", name: "Alice" },
+    visible: true,
+    replyWhileReadonly: false,
+    can: () => true,
+  }
+
+  const beforeSuggestion = JSON.stringify(editor.getEditorState().toJSON())
+
+  review.setHost({ ...host, can: (action) => action !== "suggest" })
+  expect(() =>
+    editor.update(() => review.$suggestInsert("Denied"), { discrete: true }),
+  ).toThrow()
+  expect(JSON.stringify(editor.getEditorState().toJSON())).toBe(
+    beforeSuggestion,
+  )
+
+  review.setHost(host)
+  select(editor, 8, 8)
+  let id = ""
+  editor.update(
+    () => {
+      id = review.$suggestInsert(" pending")
+    },
+    { discrete: true },
+  )
+  const beforeDecision = JSON.stringify(editor.getEditorState().toJSON())
+
+  for (const action of ["accept", "reject"] as const) {
+    review.setHost({ ...host, can: (current) => current !== action })
+    expect(() =>
+      editor.update(() => review.$decide(id, action), { discrete: true }),
+    ).toThrow()
+    expect(JSON.stringify(editor.getEditorState().toJSON())).toBe(
+      beforeDecision,
+    )
+  }
+
+  let reenter = false
+  review.setHost({
+    ...host,
+    can(action) {
+      if (reenter && action === "accept") {
+        reenter = false
+        review.setHost(host)
+      }
+
+      return true
+    },
+  })
+  reenter = true
+  expect(() =>
+    editor.update(() => review.$decide(id, "accept"), { discrete: true }),
+  ).toThrow()
+  expect(JSON.stringify(editor.getEditorState().toJSON())).toBe(beforeDecision)
   cleanup()
 })
 

@@ -66,6 +66,81 @@ test("native history requires current host authorization and preserves suggestio
   editor.dispose()
 })
 
+test("decisions undo and redo one suggestion while another remains pending", () => {
+  const controller = createEditorReview()
+
+  const editor = buildEditorFromExtensions(
+    defineExtension({
+      name: "review-independent-history-decisions",
+      dependencies: [
+        configExtension(HistoryExtension, { disabled: false }),
+        controller.extension,
+      ],
+      onError(error) {
+        throw error
+      },
+    }),
+  )
+
+  const review = controller.forEditor(editor)
+
+  review.setHost({
+    viewer: { id: "alice", name: "Alice" },
+    visible: true,
+    replyWhileReadonly: false,
+    can: () => true,
+  })
+  editor.update(
+    () => {
+      $getRoot()
+        .clear()
+        .append(
+          $createParagraphNode().append($createTextNode("First")),
+          $createParagraphNode().append($createTextNode("Second")),
+        )
+    },
+    { discrete: true },
+  )
+  let firstId = ""
+  let secondId = ""
+  expect(
+    review.run(() => {
+      $getRoot().getAllTextNodes()[0].selectEnd()
+      firstId = review.$suggestInsert(" one")
+    }),
+  ).toBe(true)
+  expect(
+    review.run(() => {
+      $getRoot()
+        .getAllTextNodes()
+        .find((node) => node.getTextContent() === "Second")!
+        .selectEnd()
+      secondId = review.$suggestInsert(" two")
+    }),
+  ).toBe(true)
+  expect(new Set([firstId, secondId]).size).toBe(2)
+
+  expect(review.run(() => review.$decide(firstId, "accept"))).toBe(true)
+  expect(review.getView().suggestions.map((item) => item.id)).toEqual([
+    secondId,
+  ])
+  editor.dispatchCommand(UNDO_COMMAND, undefined)
+  editor.read(() => expect($getRoot().getTextContent()).toContain("First one"))
+  expect(review.getView().suggestions.map((item) => item.id)).toEqual(
+    expect.arrayContaining([firstId, secondId]),
+  )
+  editor.dispatchCommand(REDO_COMMAND, undefined)
+  editor.read(() => expect($getRoot().getTextContent()).toContain("First one"))
+  expect(review.getView().suggestions.map((item) => item.id)).toEqual([
+    secondId,
+  ])
+  editor.read(() => {
+    expect($getRoot().getTextContent()).toContain("First one")
+    expect($getRoot().getTextContent()).toContain("Second two")
+  })
+  editor.dispose()
+})
+
 test("discussion-only updates have separate authorized history entries", () => {
   const controller = createEditorReview()
 

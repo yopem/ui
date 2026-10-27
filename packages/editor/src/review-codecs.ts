@@ -85,6 +85,24 @@ export const reviewSuggestionSchema = z
 
 export type EditorSuggestion = z.infer<typeof reviewSuggestionSchema>
 
+export const reviewNativeOperationSchema = z
+  .strictObject({
+    version: z.literal(1),
+    id: reviewIdSchema,
+    kind: z.enum(["insert", "delete"]),
+  })
+  .readonly()
+
+export type EditorReviewNativeOperation = z.infer<
+  typeof reviewNativeOperationSchema
+>
+
+const reviewNativeOperationTypeSchema = z.enum([
+  "paragraph",
+  "list",
+  "listitem",
+])
+
 export const reviewNativeFragmentSchema = z.strictObject({
   version: z.literal(1),
   id: reviewIdSchema,
@@ -267,6 +285,13 @@ export function parseReviewDocument<Input, Trust>(
   const breakIds = new Set<string>()
   const entityIds = new Set<string>()
 
+  const nativeOperations: {
+    node: object
+    operation: EditorReviewNativeOperation
+  }[] = []
+
+  const nativeOperationGroupsWithText = new Set<string>()
+
   function registerSuggestionId(id: string, identity: string) {
     const previous = suggestionIds.get(id)
 
@@ -351,6 +376,21 @@ export function parseReviewDocument<Input, Trust>(
         }
 
         if (
+          state.yopemReviewNativeOperation !== undefined &&
+          state.yopemReviewNativeOperation !== null
+        ) {
+          if (!reviewNativeOperationTypeSchema.safeParse(node.type).success)
+            throw new Error("Native operation metadata requires a text block.")
+
+          nativeOperations.push({
+            node,
+            operation: reviewNativeOperationSchema.parse(
+              state.yopemReviewNativeOperation,
+            ),
+          })
+        }
+
+        if (
           state.yopemSuggestion !== undefined &&
           state.yopemSuggestion !== null
         ) {
@@ -417,6 +457,7 @@ export function parseReviewDocument<Input, Trust>(
         delete state.yopemReview
         delete state.yopemReviewStructural
         delete state.yopemReviewNativeFragment
+        delete state.yopemReviewNativeOperation
         delete state.yopemSuggestion
         delete state.yopemReviewBreak
 
@@ -468,6 +509,122 @@ export function parseReviewDocument<Input, Trust>(
 
   if (root.type !== "root") throw new Error("Expected a Lexical root node.")
   document.root = visit(root)[0]!
+
+  for (const { node: operationNode, operation } of nativeOperations) {
+    const pending = [
+      { node: z.record(z.string(), z.json()).parse(operationNode), root: true },
+    ]
+
+    let matched = false
+
+    while (pending.length) {
+      const current = pending.pop()
+
+      if (!current) continue
+
+      const state =
+        current.node.$ === undefined
+          ? {}
+          : z.record(z.string(), z.json()).parse(current.node.$)
+
+      const nested = state.yopemReviewNativeOperation
+
+      if (!current.root && nested !== undefined && nested !== null)
+        throw new Error("Native operation metadata cannot be nested.")
+
+      if (
+        state.yopemReviewBreak !== undefined &&
+        state.yopemReviewBreak !== null
+      )
+        throw new Error(
+          "Native operation metadata cannot include review breaks.",
+        )
+
+      if (current.node.$slots !== undefined) {
+        const slots = z.record(z.string(), z.json()).parse(current.node.$slots)
+
+        if (Object.keys(slots).length)
+          throw new Error("Native operations cannot contain named slots.")
+      }
+
+      if (current.node.type === "linebreak") {
+        if (current.node.children !== undefined)
+          throw new Error(
+            "Native operation line breaks cannot contain children.",
+          )
+
+        if (operation.kind !== "insert")
+          throw new Error(
+            "Delete operation metadata cannot include line breaks.",
+          )
+
+        continue
+      }
+
+      if (current.node.type === "text") {
+        if (current.node.children !== undefined)
+          throw new Error("Native operation text cannot contain children.")
+
+        if (current.node.mode !== undefined && current.node.mode !== "normal")
+          throw new Error("Native operation text must use normal mode.")
+
+        if (
+          state.yopemSuggestion === undefined ||
+          state.yopemSuggestion === null
+        )
+          throw new Error(
+            "Native operation text requires matching attribution.",
+          )
+
+        const suggestion = reviewSuggestionSchema.parse(state.yopemSuggestion)
+
+        if (
+          suggestion.id !== operation.id ||
+          suggestion.kind !== operation.kind
+        )
+          throw new Error("Native operation text attribution does not match.")
+
+        const text = z.string().safeParse(current.node.text)
+
+        if (!text.success)
+          throw new Error("Native operation text must contain string content.")
+
+        matched ||= text.data.length > 0
+        continue
+      }
+
+      if (!reviewNativeOperationTypeSchema.safeParse(current.node.type).success)
+        throw new Error(
+          "Native operation metadata contains unsupported content.",
+        )
+
+      const children = z.array(z.json()).parse(current.node.children)
+
+      if (operation.kind === "delete" && children.length === 0)
+        throw new Error("Delete operation blocks cannot be empty.")
+
+      pending.push(
+        ...children.map((child) => ({
+          node: z.record(z.string(), z.json()).parse(child),
+          root: false,
+        })),
+      )
+    }
+
+    if (matched)
+      nativeOperationGroupsWithText.add(
+        JSON.stringify([operation.id, operation.kind]),
+      )
+  }
+
+  for (const { operation } of nativeOperations)
+    if (
+      !nativeOperationGroupsWithText.has(
+        JSON.stringify([operation.id, operation.kind]),
+      )
+    )
+      throw new Error("Native operation metadata has no matching text.")
+
   checkReviewComplexity(
     document,
     (trusted && hasStructuralMetadata) || allowStructural ? 64 : 24,
