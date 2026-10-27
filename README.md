@@ -139,6 +139,10 @@ change dependency source.
 Audit consumer dependencies separately. CLI installation does not copy this
 workspace's security overrides into consumer projects.
 
+Docs use the official [Nitro nightly channel](https://nitro.build/docs/nightly)
+for prerender worker readiness. Keep the `nitro` npm alias and the Bun hoist
+rule together.
+
 ```sh
 bun install
 bun run dev
