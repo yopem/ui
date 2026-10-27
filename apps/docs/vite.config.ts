@@ -8,8 +8,9 @@ import { readdirSync } from "node:fs"
 import { createRequire } from "node:module"
 import { resolve } from "node:path"
 import remarkGfm from "remark-gfm"
-import { defineConfig } from "vite"
+import { defineConfig, type Plugin } from "vite"
 
+import { prepareExcalidrawAssets } from "./scripts/excalidraw-assets"
 import { createPrerenderGuard } from "./scripts/prerender-guard"
 import { editorParts } from "./src/catalog/editor-parts"
 
@@ -79,6 +80,35 @@ mdxPlugin.transform = function transformDocsMdx(code, id) {
   return transformMdx.call(this, code, id)
 }
 
+function createDocsExcalidrawAssets() {
+  let cleanup: (() => void) | undefined
+
+  function clean() {
+    process.off("exit", clean)
+    cleanup?.()
+    cleanup = undefined
+  }
+
+  const plugin: Plugin = {
+    name: "docs-excalidraw-assets",
+    config() {
+      if (!cleanup) {
+        cleanup = prepareExcalidrawAssets(
+          resolve(import.meta.dirname, "public"),
+        )
+        process.once("exit", clean)
+      }
+    },
+    configureServer(server) {
+      server.httpServer?.once("close", clean)
+    },
+  }
+
+  return { clean, plugin }
+}
+
+const drawingAssets = createDocsExcalidrawAssets()
+
 const config = defineConfig({
   build: { cssCodeSplit: false },
   css: { postcss: { plugins: [stylexPostcssPlugin] } },
@@ -143,6 +173,7 @@ const config = defineConfig({
       preset: "static",
       hooks: {
         ...createPrerenderGuard(),
+        close: drawingAssets.clean,
         "prerender:generate"(route) {
           if (route.route === "/404" && route.error?.status === 404) {
             route.error = undefined
@@ -213,6 +244,7 @@ const config = defineConfig({
         ],
       },
     }),
+    drawingAssets.plugin,
     tanstackStart(),
     mdxPlugin,
     viteReact({ compiler: true }),
