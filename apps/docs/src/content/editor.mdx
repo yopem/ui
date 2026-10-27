@@ -1204,9 +1204,11 @@ reader that opens review documents. The review extension registers it in its own
 editor. The `editor-document` item does not import review formats.
 
 The text diff control changes one paragraph with at most 2048 graphemes and 4096
-UTF-16 units. Rich comments use validated review content. Editor paste inserts
-plain text only. Rich HTML paste is rejected. Pasted review metadata is not
-preserved.
+UTF-16 units. Rich comments use validated review content. Paste can retain
+validated same-namespace paragraph and list fragments as one authored suggestion.
+Accept keeps the fragment. Reject restores the prior document and its comment anchors.
+Rich HTML and unsupported native fragments are rejected. Pasted review metadata
+is not preserved.
 
 Call `controller.$suggestDocumentTree(nextState)` inside an editor update for an
 explicit tree proposal. Resolve inline suggestions before proposing a tree. The
