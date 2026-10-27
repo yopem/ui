@@ -24,6 +24,7 @@ import {
   HISTORIC_TAG,
   COMMAND_PRIORITY_CRITICAL,
   COMMAND_PRIORITY_LOW,
+  COMMAND_PRIORITY_NORMAL,
   CONTROLLED_TEXT_INSERTION_COMMAND,
   DELETE_CHARACTER_COMMAND,
   DELETE_WORD_COMMAND,
@@ -53,6 +54,12 @@ import { z } from "zod"
 import type { EditorReviewRichContent } from "./review-richtext"
 
 import {
+  $canResolveEditorReviewBreak,
+  $getEditorReviewBreaks,
+  $insertEditorReviewBreak,
+  $resolveEditorReviewBreak,
+} from "./review-break-native"
+import {
   parseEditorReview,
   parseReviewDocument,
   parseReviewDocumentJSON,
@@ -60,6 +67,7 @@ import {
   sanitizeEditorReviewClipboard,
   reviewIdSchema,
   reviewTextSchema,
+  type EditorReviewBreakSuggestion,
   type EditorSuggestion,
   type EditorReviewData,
 } from "./review-codecs"
@@ -78,6 +86,7 @@ import {
 import {
   $setEditorSuggestion,
   emptyReview,
+  editorReviewBreakState,
   editorReviewState,
   editorReviewStructuralState,
   editorSuggestionState,
@@ -144,6 +153,7 @@ type EditorReviewSuggestionSummary = Omit<EditorSuggestion, "kind"> & {
   readonly insertedText: string
   readonly removedText: string
   readonly formattedText: string
+  readonly breakKind?: EditorReviewBreakSuggestion["kind"]
 }
 
 function hasNamedReviewSlots(node: ReviewSerializedNode) {
@@ -300,6 +310,15 @@ function createReviewController() {
     $assertEditor()
 
     return $getState($getRoot(), editorReviewState)
+  }
+
+  function $hasReviewSuggestions() {
+    return (
+      $getRoot()
+        .getAllTextNodes()
+        .some((node) => $getState(node, editorSuggestionState)) ||
+      $getEditorReviewBreaks().length > 0
+    )
   }
 
   function setData(next: EditorReviewData, focusEditor = false) {
@@ -719,9 +738,7 @@ function createReviewController() {
     if (
       suggesting ||
       $getState($getRoot(), editorReviewStructuralState).proposals.length ||
-      $getRoot()
-        .getAllTextNodes()
-        .some((node) => $getState(node, editorSuggestionState))
+      $hasReviewSuggestions()
     )
       return fail("Stop suggestion mode and resolve current suggestions first.")
     const rawBefore = $serializeReviewRoot()
@@ -891,11 +908,39 @@ function createReviewController() {
       return true
     })
 
+    const breakTargets = $getEditorReviewBreaks().filter((target) => {
+      if (!requested.has(target.suggestion.id)) return false
+      found.add(target.suggestion.id)
+
+      return true
+    })
+
     if (ids.some((id) => !found.has(id)))
       return fail("Suggestion no longer exists.")
+
+    if (breakTargets.some((target) => !$canResolveEditorReviewBreak(target)))
+      return fail("Review break target is no longer valid.")
     const permits = ids.map((id) => authorize(action, id))
 
     for (const permit of permits) permit.assertCurrent()
+    const activeBreaks = $getEditorReviewBreaks()
+
+    if (
+      breakTargets.some((target) => {
+        const active = activeBreaks.find(
+          (item) => item.suggestion.id === target.suggestion.id,
+        )
+
+        return (
+          !active ||
+          active.node !== target.node ||
+          JSON.stringify(active.suggestion) !==
+            JSON.stringify(target.suggestion) ||
+          !$canResolveEditorReviewBreak(active)
+        )
+      })
+    )
+      return fail("Review break target changed during authorization.")
     $addUpdateTag("yopem-review-action")
 
     for (const node of targets) {
@@ -912,6 +957,98 @@ function createReviewController() {
         $setEditorSuggestion(node, null)
       }
     }
+
+    for (const target of breakTargets) {
+      if (!$resolveEditorReviewBreak(target, action))
+        return fail("Review break target changed before decision.")
+    }
+  }
+
+  function $suggestBreak(
+    requestedKind: EditorReviewBreakSuggestion["kind"],
+    selectStart = false,
+  ) {
+    const range = selection(false)
+    let removed: TextNode[] = []
+
+    if (!range.isCollapsed()) {
+      const selected = selectedText().getNodes()
+      removed = selected.filter($isTextNode)
+
+      if (
+        removed.length !== selected.length ||
+        !removed.length ||
+        removed.some(
+          (node) =>
+            node.getTopLevelElement() !==
+            range.anchor.getNode().getTopLevelElement(),
+        )
+      )
+        return fail("Break suggestions require text within one block.")
+    }
+
+    const block = range.anchor.getNode().getTopLevelElement()
+
+    if (!$isElementNode(block))
+      return fail("Break suggestions require a text block.")
+
+    const kind: EditorReviewBreakSuggestion["kind"] =
+      requestedKind === "paragraph" &&
+      block.getType() === "paragraph" &&
+      block.getParent() === $getRoot()
+        ? "paragraph"
+        : "linebreak"
+
+    if (kind === "paragraph" && $getState(block, editorReviewBreakState))
+      return fail("Resolve this paragraph break before adding another.")
+
+    const source = JSON.stringify($serializeReviewRoot())
+    const savedRange = range.clone()
+    const suggestion = newSuggestion("insert")
+    const activeRange = $getSelection()
+
+    if (
+      source !== JSON.stringify($serializeReviewRoot()) ||
+      !$isRangeSelection(activeRange) ||
+      !activeRange.is(savedRange)
+    )
+      return fail("Break suggestion target changed during authorization.")
+
+    const breakSuggestion: EditorReviewBreakSuggestion = {
+      id: suggestion.id,
+      author: suggestion.author,
+      createdAt: suggestion.createdAt,
+      kind,
+    }
+
+    $addUpdateTag(HISTORY_PUSH_TAG)
+    $addUpdateTag("yopem-review-action")
+
+    if (removed.length) {
+      const extracted = range.extract().filter($isTextNode)
+
+      if (!extracted.length || extracted.length !== removed.length)
+        return fail("Break suggestion could not retain selected text.")
+
+      for (const node of extracted) {
+        $setEditorSuggestion(node, {
+          ...suggestion,
+          kind: "delete",
+          beforeFormat: node.getFormat(),
+        })
+      }
+
+      extracted.at(-1)!.selectEnd()
+    }
+
+    if (
+      !$insertEditorReviewBreak(selection(false), breakSuggestion, selectStart)
+    )
+      return fail("This native break cannot be tracked safely.")
+
+    saved = null
+
+    return suggestion.id
   }
 
   function $decide(id: string, action: "accept" | "reject") {
@@ -931,6 +1068,8 @@ function createReviewController() {
 
       if (value) ids.add(value.id)
     }
+
+    for (const target of $getEditorReviewBreaks()) ids.add(target.suggestion.id)
 
     decisions([...ids], action)
   }
@@ -1338,6 +1477,30 @@ function createReviewController() {
           }
         }
 
+        for (const { suggestion } of $getEditorReviewBreaks()) {
+          const previous = suggestions.get(suggestion.id)
+
+          const kind =
+            previous?.kind === "delete"
+              ? "replace"
+              : (previous?.kind ?? "insert")
+
+          suggestions.set(
+            suggestion.id,
+            Object.freeze({
+              id: suggestion.id,
+              author: previous?.author ?? suggestion.author,
+              createdAt: previous?.createdAt ?? suggestion.createdAt,
+              beforeFormat: previous?.beforeFormat ?? 0,
+              kind,
+              breakKind: suggestion.kind,
+              insertedText: `${previous?.insertedText ?? ""}\n`.slice(0, 160),
+              removedText: previous?.removedText ?? "",
+              formattedText: previous?.formattedText ?? "",
+            }),
+          )
+        }
+
         const visible = session.getHost()?.visible === true
         const currentTreeJSON = $currentReviewTreeJSON()
 
@@ -1419,7 +1582,26 @@ function createReviewController() {
         .getAllTextNodes()
         .find((text) => $getState(text, editorSuggestionState)?.id === id)
 
-      return node ? [node] : []
+      if (node) return [node]
+
+      const target = $getEditorReviewBreaks().find(
+        (item) => item.suggestion.id === id,
+      )
+
+      if (!target) return []
+
+      if ($isElementNode(target.node)) {
+        const ownTexts = target.node.getAllTextNodes()
+
+        if (ownTexts.length) return ownTexts
+        const next = target.node.getNextSibling()
+
+        return $isElementNode(next) ? next.getAllTextNodes() : []
+      }
+
+      const parent = target.node.getParent()
+
+      return $isElementNode(parent) ? parent.getAllTextNodes() : []
     })
   }
 
@@ -1516,14 +1698,13 @@ function createReviewController() {
     }
 
     function hasPending() {
-      return current.getEditorState().read(
-        () =>
-          $getState($getRoot(), editorReviewStructuralState).proposals.length >
-            0 ||
-          $getRoot()
-            .getAllTextNodes()
-            .some((node) => $getState(node, editorSuggestionState)),
-      )
+      return current
+        .getEditorState()
+        .read(
+          () =>
+            $getState($getRoot(), editorReviewStructuralState).proposals
+              .length > 0 || $hasReviewSuggestions(),
+        )
     }
 
     function paste(event: ClipboardEvent | InputEvent | KeyboardEvent) {
@@ -1612,13 +1793,7 @@ function createReviewController() {
         key,
         (payload: T) => {
           if (!suggesting) {
-            const pending = current.getEditorState().read(() =>
-              $getRoot()
-                .getAllTextNodes()
-                .some((node) => $getState(node, editorSuggestionState)),
-            )
-
-            if (!pending) return false
+            if (!hasPending()) return false
             diagnostic = "Resolve pending suggestions before normal editing."
             publish()
 
@@ -1637,6 +1812,43 @@ function createReviewController() {
           return true
         },
         COMMAND_PRIORITY_CRITICAL,
+      )
+    }
+
+    function breakCommand<T>(
+      key: LexicalCommand<T>,
+      handler: (payload: T) => void,
+    ) {
+      return current.registerCommand(
+        key,
+        (payload: T) => {
+          if (!current.isEditable()) {
+            diagnostic = "Review action is read-only."
+            publish()
+
+            return true
+          }
+
+          if (!suggesting) {
+            if (!hasPending()) return false
+            diagnostic = "Resolve pending suggestions before normal editing."
+            publish()
+
+            return true
+          }
+
+          try {
+            handler(payload)
+            diagnostic = ""
+          } catch (error) {
+            throw error instanceof EditorReviewInputError
+              ? error
+              : new EditorReviewInputError("Review edit rejected.")
+          }
+
+          return true
+        },
+        COMMAND_PRIORITY_NORMAL,
       )
     }
 
@@ -1667,11 +1879,13 @@ function createReviewController() {
     function beforeInput(event: InputEvent) {
       if (event.defaultPrevented) return
 
-      const pending = current.getEditorState().read(() =>
-        $getRoot()
-          .getAllTextNodes()
-          .some((node) => $getState(node, editorSuggestionState)),
-      )
+      const pending = current
+        .getEditorState()
+        .read(
+          () =>
+            $getState($getRoot(), editorReviewStructuralState).proposals
+              .length > 0 || $hasReviewSuggestions(),
+        )
 
       if (!suggesting && !pending) return
       event.preventDefault()
@@ -1690,6 +1904,10 @@ function createReviewController() {
         !event.isComposing
       ) {
         current.dispatchCommand(CONTROLLED_TEXT_INSERTION_COMMAND, event.data)
+      } else if (event.inputType === "insertParagraph") {
+        current.dispatchCommand(INSERT_PARAGRAPH_COMMAND, undefined)
+      } else if (event.inputType === "insertLineBreak") {
+        current.dispatchCommand(INSERT_LINE_BREAK_COMMAND, false)
       } else if (
         event.inputType === "deleteContentBackward" ||
         event.inputType === "deleteContentForward"
@@ -1720,6 +1938,8 @@ function createReviewController() {
         $moveCaretSelection(range, true, backward, granularity)
       $suggestDelete()
     }
+
+    let initialReviewState = true
 
     return mergeRegister(
       unsubscribeBookmark,
@@ -1759,6 +1979,19 @@ function createReviewController() {
       }),
       detachRoot,
       current.registerNodeTransform(RootNode, () => {
+        if (initialReviewState) {
+          initialReviewState = false
+
+          if (
+            $getState($getRoot(), editorReviewStructuralState).proposals
+              .length ||
+            $hasReviewSuggestions()
+          )
+            validateDocument()
+
+          return
+        }
+
         if ($hasUpdateTag("yopem-review-action")) {
           validateDocument()
 
@@ -1786,11 +2019,9 @@ function createReviewController() {
           return
         }
 
-        const previousSuggestion = current.getEditorState().read(() =>
-          $getRoot()
-            .getAllTextNodes()
-            .some((node) => $getState(node, editorSuggestionState)),
-        )
+        const previousSuggestion = current
+          .getEditorState()
+          .read(() => $hasReviewSuggestions())
 
         if (suggesting || previousSuggestion)
           throw new EditorReviewInputError(
@@ -1816,10 +2047,7 @@ function createReviewController() {
 
         const pending =
           $getState($getRoot(), editorReviewStructuralState).proposals.length >
-            0 ||
-          $getRoot()
-            .getAllTextNodes()
-            .some((node) => $getState(node, editorSuggestionState))
+            0 || $hasReviewSuggestions()
 
         if (suggesting || pending)
           throw new EditorReviewInputError(
@@ -1849,8 +2077,10 @@ function createReviewController() {
       ),
       command(REMOVE_TEXT_COMMAND, $suggestDelete),
       command<TextFormatType>(FORMAT_TEXT_COMMAND, formatFromCommand),
-      command(INSERT_PARAGRAPH_COMMAND, unsupported),
-      command(INSERT_LINE_BREAK_COMMAND, unsupported),
+      breakCommand(INSERT_PARAGRAPH_COMMAND, () => $suggestBreak("paragraph")),
+      breakCommand(INSERT_LINE_BREAK_COMMAND, (selectStart) =>
+        $suggestBreak("linebreak", selectStart),
+      ),
       current.registerCommand(PASTE_COMMAND, paste, COMMAND_PRIORITY_LOW),
       current.registerCommand(CUT_COMMAND, cut, COMMAND_PRIORITY_LOW),
       current.registerUpdateListener(({ dirtyElements, dirtyLeaves }) => {

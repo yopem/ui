@@ -73,11 +73,12 @@ export const editorReviewItem: SourceItem = {
       "EditorReviewStructuralDecisionControls",
     ],
     usage:
-      "Import EditorReviewPreset from @/components/editor/review. Supply a verified viewer and a synchronous per-action host policy. Validate imported review state with parseReviewDocument. Register MarkNode in every external reader. Use controller.$suggestDocumentTree for bounded complete-document proposals. Use controller.$suggestCompletedText inside an authorized editor update for single-line AI suggestions. Accept or reject structural proposals with controller.decideStructural. Keep one pending tree proposal and resolve inline suggestions first. Ambiguous comment-anchor changes reject before replacement. See /components/editor-review.",
+      "Import EditorReviewPreset from @/components/editor/review. Supply a verified viewer and a synchronous per-action host policy. Validate imported review state with parseReviewDocument. Register MarkNode in every external reader. Native Enter tracks root paragraph splits. Shift+Enter and other supported block contexts track line breaks. Resolve a pending paragraph break before splitting that paragraph again. Use controller.$suggestDocumentTree for bounded complete-document proposals. Use controller.$suggestCompletedText inside an authorized editor update for single-line AI suggestions. Accept or reject structural proposals with controller.decideStructural. Keep one pending tree proposal and resolve inline suggestions first. Ambiguous comment-anchor changes reject before replacement. See /components/editor-review.",
   },
   files: [
     "review.tsx",
     "review-codecs.ts",
+    "review-break-native.ts",
     "review-components.tsx",
     "review-decorations.ts",
     "review-diff-native.ts",

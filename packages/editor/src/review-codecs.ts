@@ -85,6 +85,19 @@ export const reviewSuggestionSchema = z
 
 export type EditorSuggestion = z.infer<typeof reviewSuggestionSchema>
 
+export const reviewBreakSuggestionSchema = z
+  .strictObject({
+    id: reviewIdSchema,
+    author: reviewAuthorSchema,
+    createdAt: timeSchema,
+    kind: z.enum(["paragraph", "linebreak"]),
+  })
+  .readonly()
+
+export type EditorReviewBreakSuggestion = z.infer<
+  typeof reviewBreakSuggestionSchema
+>
+
 export function reviewInlineHTML(
   text: string,
   suggestion: EditorSuggestion | null,
@@ -124,10 +137,26 @@ export function parseReviewDocument<Input, Trust>(
   let nodes = 0
   let hasStructuralMetadata = false
   const suggestionIds = new Map<string, string>()
+  const breakIds = new Set<string>()
   const entityIds = new Set<string>()
+
+  function registerSuggestionId(id: string, identity: string) {
+    const previous = suggestionIds.get(id)
+
+    if (entityIds.has(id) && previous === undefined)
+      throw new Error("Review entity IDs must be unique.")
+
+    if (previous && previous !== identity)
+      throw new Error("Inconsistent suggestion attribution.")
+
+    suggestionIds.set(id, identity)
+    entityIds.add(id)
+  }
 
   function visit(
     inputNode: z.infer<ReturnType<typeof z.json>>,
+    parent?: Record<string, z.infer<ReturnType<typeof z.json>>>,
+    index?: number,
   ): z.infer<ReturnType<typeof z.json>>[] {
     const node = z.record(z.string(), z.json()).parse(inputNode)
 
@@ -185,25 +214,63 @@ export function parseReviewDocument<Input, Trust>(
             throw new Error("Suggestion requires a normal text node.")
           const suggestion = reviewSuggestionSchema.parse(state.yopemSuggestion)
 
-          if (entityIds.has(suggestion.id))
-            throw new Error("Review entity IDs must be unique.")
-
           const identity = JSON.stringify([
             suggestion.author,
             suggestion.kind === "format" ? "format" : "text",
             suggestion.createdAt,
           ])
 
-          const previous = suggestionIds.get(suggestion.id)
+          registerSuggestionId(suggestion.id, identity)
+        }
 
-          if (previous && previous !== identity)
-            throw new Error("Inconsistent suggestion attribution.")
-          suggestionIds.set(suggestion.id, identity)
+        if (
+          state.yopemReviewBreak !== undefined &&
+          state.yopemReviewBreak !== null
+        ) {
+          const suggestion = reviewBreakSuggestionSchema.parse(
+            state.yopemReviewBreak,
+          )
+
+          if (breakIds.has(suggestion.id))
+            throw new Error("Review break IDs must be unique.")
+          breakIds.add(suggestion.id)
+
+          const nextSiblingResult =
+            index !== undefined && Array.isArray(parent?.children)
+              ? z
+                  .record(z.string(), z.json())
+                  .safeParse(parent.children[index + 1])
+              : undefined
+
+          const nextSibling =
+            nextSiblingResult?.success === true
+              ? nextSiblingResult.data
+              : undefined
+
+          const validLocation =
+            suggestion.kind === "linebreak"
+              ? node.type === "linebreak" &&
+                parent !== undefined &&
+                parent.type !== "root" &&
+                Array.isArray(parent.children) &&
+                index !== undefined
+              : node.type === "paragraph" &&
+                parent?.type === "root" &&
+                nextSibling?.type === "paragraph"
+
+          if (!validLocation)
+            throw new Error("Review break metadata has an invalid location.")
+
+          registerSuggestionId(
+            suggestion.id,
+            JSON.stringify([suggestion.author, "text", suggestion.createdAt]),
+          )
         }
       } else {
         delete state.yopemReview
         delete state.yopemReviewStructural
         delete state.yopemSuggestion
+        delete state.yopemReviewBreak
 
         if (!Object.keys(state).length) delete node.$
       }
@@ -222,13 +289,15 @@ export function parseReviewDocument<Input, Trust>(
     }
 
     if (Array.isArray(node.children))
-      node.children = node.children.flatMap(visit)
+      node.children = node.children.flatMap((child, childIndex) =>
+        visit(child, node, childIndex),
+      )
 
     if (node.$slots !== undefined) {
       const slots = z.record(z.string(), z.json()).parse(node.$slots)
 
       for (const [key, value] of Object.entries(slots)) {
-        const result = visit(value)
+        const result = visit(value, node)
 
         if (result.length !== 1)
           throw new Error("A named slot requires one root node.")

@@ -3,7 +3,9 @@ import { z } from "zod"
 
 import {
   parseEditorReview,
+  reviewBreakSuggestionSchema,
   reviewSuggestionSchema,
+  type EditorReviewBreakSuggestion,
   type EditorReviewData,
   type EditorSuggestion,
 } from "./review-codecs"
@@ -24,6 +26,13 @@ export const editorSuggestionState = createState("yopemSuggestion", {
     value === undefined || value === null
       ? null
       : reviewSuggestionSchema.parse(value),
+})
+
+export const editorReviewBreakState = createState("yopemReviewBreak", {
+  parse: (value): EditorReviewBreakSuggestion | null =>
+    value === undefined || value === null
+      ? null
+      : reviewBreakSuggestionSchema.parse(value),
 })
 
 export const editorReviewStructuralState = createState(
