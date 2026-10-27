@@ -145,11 +145,13 @@ export function rewriteImports(content: string, path = "") {
   const serverSource =
     path.startsWith("lib/editor-collaboration/") ||
     path.startsWith("lib/editor-assets/")
-      ? content.replace(
-          /from "\.\/(auth|document-[a-z0-9-]+)"/g,
-          (_match, module: string) =>
-            `from "@/lib/${module === "auth" ? "editor-auth" : "editor-store"}/${module}"`,
-        )
+      ? content
+          .replaceAll('from "#serial-iteration"', 'from "./serial-iteration"')
+          .replace(
+            /from "\.\/(auth|document-[a-z0-9-]+)"/g,
+            (_match, module: string) =>
+              `from "@/lib/${module === "auth" ? "editor-auth" : "editor-store"}/${module}"`,
+          )
       : content
 
   const nativeGrantSource =

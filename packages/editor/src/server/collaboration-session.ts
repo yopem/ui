@@ -3,6 +3,8 @@ import * as encoding from "lib0/encoding"
 import * as Y from "yjs"
 import { z } from "zod"
 
+import { mapSerial } from "#serial-iteration"
+
 import type { EditorIdentity } from "./auth"
 import type {
   CollaborationContext,
@@ -426,16 +428,15 @@ export function createPostgresEditorCollaborationSessions(
     })
   }
 
-  async function initialPresence(connection: Connection) {
-    const head = await presenceHead(connection)
-
+  async function initialPresence(connection: Connection, head: string) {
     const rows = await runQuery(connection.grant, (query) =>
       query(
-        "SELECT revision::text,client_id::text,clock::text,payload,user_id,active,expires_at::text FROM editor_collaboration_presence WHERE document_id=$1 AND generation=$2 AND active=TRUE AND expires_at>$3 ORDER BY revision LIMIT 32",
+        "SELECT revision::text,client_id::text,clock::text,payload,user_id,active,expires_at::text FROM editor_collaboration_presence WHERE document_id=$1 AND generation=$2 AND active=TRUE AND expires_at>$3 AND revision<=$4 ORDER BY revision LIMIT 32",
         [
           connection.grant.documentId,
           connection.grant.generation,
           String(Date.now()),
+          head,
         ],
       ),
     )
@@ -482,12 +483,12 @@ export function createPostgresEditorCollaborationSessions(
         .parse(row),
     )
 
-    for (const row of rows) {
+    for await (const updated of mapSerial(rows, async function expireRow(row) {
       const clientId = number(row.client_id, 4294967295)
       const clock = Math.min(number(row.clock, 4294967295) + 1, 4294967295)
       const payload = encodeAwareness(clientId, clock, null)
 
-      const updated = await runQuery(connection.grant, (query) =>
+      return await runQuery(connection.grant, (query) =>
         query(
           "UPDATE editor_collaboration_presence SET clock=$5,payload=$6,active=FALSE,revision=nextval('editor_collaboration_presence_revision_seq'),expires_at=$7 WHERE document_id=$1 AND generation=$2 AND client_id=$3 AND lease_id=$4 AND active=TRUE AND clock=$8 AND expires_at<=$9 RETURNING revision::text",
           [
@@ -503,7 +504,7 @@ export function createPostgresEditorCollaborationSessions(
           ],
         ),
       )
-
+    })) {
       if (updated.length > 1) throw new CollaborationError("corrupt")
     }
 
@@ -845,7 +846,11 @@ export function createPostgresEditorCollaborationSessions(
           protocol: "editor-v1",
         }),
       )
-      const present = await initialPresence(connection)
+
+      const present = await initialPresence(
+        connection,
+        await presenceHead(connection),
+      )
 
       for (const entry of present)
         queued(connection, { kind: "awareness", payload: entry.payload })

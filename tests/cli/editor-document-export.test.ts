@@ -8,6 +8,7 @@ test("document export publishes shared checksum and isolated optional capture", 
   const paths = editorDocumentExportItem.files.map((file) => file.path)
 
   expect(paths).toContain("components/editor/checksum.ts")
+  expect(paths).toContain("components/editor/serial-iteration.ts")
   expect(paths).toContain("components/editor/document-export-model.ts")
   expect(paths).toContain("components/editor/document-export-image.ts")
   expect(paths).not.toContain(

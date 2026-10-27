@@ -1,6 +1,7 @@
 import { crc32 } from "./checksum"
 import { DocumentError } from "./document/boundary"
 import { docxLimits } from "./docx-limits"
+import { mapSerial } from "./serial-iteration"
 
 export interface ZipWriteEntry {
   name: string
@@ -438,19 +439,27 @@ export async function readZipArchiveAsync(
   const { bytes, view, entries } = scanZipArchive(source)
   const output = new Map<string, Uint8Array>()
 
-  for (const entry of entries) {
-    if (signal?.aborted) fail("DOCX import cancelled.")
-    const compressed = entryData(bytes, view, entry)
+  for await (const [name, data] of mapSerial(
+    entries,
+    async function decodeEntry(entry) {
+      if (signal?.aborted) fail("DOCX import cancelled.")
+      const compressed = entryData(bytes, view, entry)
 
-    const data =
-      entry.method === 0
-        ? compressed
-        : await inflateRaw(compressed, entry.uncompressedSize, signal)
+      const data =
+        entry.method === 0
+          ? compressed
+          : await inflateRaw(compressed, entry.uncompressedSize, signal)
 
-    if (data.byteLength !== entry.uncompressedSize || crc32(data) !== entry.crc)
-      fail("DOCX ZIP entry checksum mismatch.")
-    output.set(entry.name, data)
-  }
+      if (
+        data.byteLength !== entry.uncompressedSize ||
+        crc32(data) !== entry.crc
+      )
+        fail("DOCX ZIP entry checksum mismatch.")
+
+      return [entry.name, data] as const
+    },
+  ))
+    output.set(name, data)
 
   if (signal?.aborted) fail("DOCX import cancelled.")
 

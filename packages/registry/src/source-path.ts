@@ -30,6 +30,12 @@ export function resolveSourcePath(path: string) {
   if (path === "lib/editor-auth/index.ts")
     return resolve(root, "../../editor/src/server/auth-index.ts")
 
+  if (
+    path === "lib/editor-collaboration/serial-iteration.ts" ||
+    path === "lib/editor-assets/serial-iteration.ts"
+  )
+    return resolve(root, "../../editor/src/serial-iteration.ts")
+
   if (path === "lib/editor-collaboration/collaboration-native-model.ts")
     return resolve(root, "../../editor/src/collaboration-native-model.ts")
 

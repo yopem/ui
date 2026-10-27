@@ -16,6 +16,7 @@ import {
   validateEditorDocumentExportURL,
   waitForEditorDocumentExport,
 } from "./document-export-model"
+import { mapSerial } from "./serial-iteration"
 
 export interface EditorDocumentExportResourceRequest extends EditorDocumentExportOperation {
   readonly url: URL
@@ -607,29 +608,38 @@ async function rewriteCSSURLs(
   assertSupportedHTMLStyle(value)
   const pattern = /url\s*\(\s*(?:"([^"]*)"|'([^']*)'|([^)]*))\s*\)/gi
   const urlCount = value.match(/url\s*\(/gi)?.length ?? 0
-  let match: RegExpExecArray | null = null
   let found = 0
   let rewritten = ""
   let offset = 0
 
-  while ((match = pattern.exec(value))) {
+  for await (const resource of mapSerial(
+    value.matchAll(pattern),
+    async function resolveResource(match) {
+      assertEditorDocumentExportActive(options)
+      found += 1
+      const resourceURL = (match[1] ?? match[2] ?? match[3] ?? "").trim()
+
+      if (resourceURL.startsWith("#")) return null
+
+      const dataURL = await resolveImage(
+        resourceURL,
+        documentURL,
+        options,
+        budget,
+      )
+
+      return {
+        dataURL,
+        start: match.index,
+        end: match.index + match[0].length,
+      }
+    },
+  )) {
+    if (!resource) continue
+
     assertEditorDocumentExportActive(options)
-    found += 1
-    const resourceURL = (match[1] ?? match[2] ?? match[3] ?? "").trim()
-
-    if (resourceURL.startsWith("#")) continue
-
-    const dataURL = await resolveImage(
-      resourceURL,
-      documentURL,
-      options,
-      budget,
-    )
-
-    assertEditorDocumentExportActive(options)
-
-    rewritten += `${value.slice(offset, match.index)}url("${dataURL}")`
-    offset = pattern.lastIndex
+    rewritten += `${value.slice(offset, resource.start)}url("${resource.dataURL}")`
+    offset = resource.end
   }
 
   if (urlCount !== found)

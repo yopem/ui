@@ -23,6 +23,7 @@ export const editorAssetsItem: SourceItem = {
       "Import server helpers from @/lib/editor-assets. Apply the matching dialect migrations in order. Supply authentication, expiry, document and asset policy, CSRF, quotas, bounded scanners, and scheduled cleanup. See /docs/editor-assets.",
   },
   files: [
+    "serial-iteration.ts",
     "index.ts",
     "asset-http.ts",
     "asset-model.ts",

@@ -168,22 +168,25 @@ export async function getDocumentation({ data }: { data: string }) {
             ? "../../../../packages/editor/LICENSE.md"
             : file.path.startsWith("lib/editor-ai/")
               ? `../../../../packages/editor/src/server/ai/${file.path.slice("lib/editor-ai/".length)}`
-              : file.path ===
-                  "lib/editor-collaboration/collaboration-native-model.ts"
-                ? "../../../../packages/editor/src/collaboration-native-model.ts"
-                : file.path.startsWith("lib/editor-collaboration/")
-                  ? `../../../../packages/editor/src/server/${file.path === "lib/editor-collaboration/index.ts" ? "collaboration-index.ts" : file.path.slice("lib/editor-collaboration/".length)}`
-                  : file.path.startsWith("lib/editor-assets/")
-                    ? `../../../../packages/editor/src/server/${file.path === "lib/editor-assets/index.ts" ? "asset-index.ts" : file.path.slice("lib/editor-assets/".length)}`
-                    : file.path.startsWith("lib/editor-store/")
-                      ? `../../../../packages/editor/src/server/${file.path === "lib/editor-store/index.ts" ? "document-index.ts" : file.path.slice("lib/editor-store/".length)}`
-                      : file.path === "lib/editor-auth/index.ts"
-                        ? "../../../../packages/editor/src/server/auth-index.ts"
-                        : file.path.startsWith("lib/editor-auth/")
-                          ? `../../../../packages/editor/src/server/${file.path.slice("lib/editor-auth/".length)}`
-                          : file.path.startsWith("components/editor/")
-                            ? `../../../../packages/editor/src/${file.path.slice("components/editor/".length)}`
-                            : `../../../../packages/registry/src/${file.path}`
+              : file.path === "lib/editor-collaboration/serial-iteration.ts" ||
+                  file.path === "lib/editor-assets/serial-iteration.ts"
+                ? "../../../../packages/editor/src/serial-iteration.ts"
+                : file.path ===
+                    "lib/editor-collaboration/collaboration-native-model.ts"
+                  ? "../../../../packages/editor/src/collaboration-native-model.ts"
+                  : file.path.startsWith("lib/editor-collaboration/")
+                    ? `../../../../packages/editor/src/server/${file.path === "lib/editor-collaboration/index.ts" ? "collaboration-index.ts" : file.path.slice("lib/editor-collaboration/".length)}`
+                    : file.path.startsWith("lib/editor-assets/")
+                      ? `../../../../packages/editor/src/server/${file.path === "lib/editor-assets/index.ts" ? "asset-index.ts" : file.path.slice("lib/editor-assets/".length)}`
+                      : file.path.startsWith("lib/editor-store/")
+                        ? `../../../../packages/editor/src/server/${file.path === "lib/editor-store/index.ts" ? "document-index.ts" : file.path.slice("lib/editor-store/".length)}`
+                        : file.path === "lib/editor-auth/index.ts"
+                          ? "../../../../packages/editor/src/server/auth-index.ts"
+                          : file.path.startsWith("lib/editor-auth/")
+                            ? `../../../../packages/editor/src/server/${file.path.slice("lib/editor-auth/".length)}`
+                            : file.path.startsWith("components/editor/")
+                              ? `../../../../packages/editor/src/${file.path.slice("components/editor/".length)}`
+                              : `../../../../packages/registry/src/${file.path}`
 
         const load = sources[sourcePath]
 

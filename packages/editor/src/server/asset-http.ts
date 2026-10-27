@@ -1,5 +1,7 @@
 import { z } from "zod"
 
+import { mapSerial } from "#serial-iteration"
+
 import type { AssetConfig, ObjectRange } from "./asset-model"
 import type { AssetOperation, AssetRow } from "./asset-repository"
 
@@ -746,22 +748,26 @@ export function createAssetHttpHandler(config: AssetConfig) {
 
         let deleted = 0
 
-        for (const row of claims) {
-          checkDeadline(signal, deadline)
-          await config.objects.delete(row.object_key, signal)
-          checkDeadline(signal, deadline)
+        for await (const acknowledged of mapSerial(
+          claims,
+          async function deleteClaim(row) {
+            checkDeadline(signal, deadline)
+            await config.objects.delete(row.object_key, signal)
+            checkDeadline(signal, deadline)
 
-          if (
-            await config.repository.ack(
+            const acknowledged = await config.repository.ack(
               row.attempt_id,
               row.claim_token,
               Date.now() + config.cleanupIntervalMs,
               operation,
             )
-          )
-            deleted++
 
-          checkDeadline(signal, deadline)
+            checkDeadline(signal, deadline)
+
+            return acknowledged
+          },
+        )) {
+          if (acknowledged) deleted++
         }
 
         return { deleted, claimed: claims.length }
@@ -800,11 +806,16 @@ export function createAssetHttpHandler(config: AssetConfig) {
 
         const operation = { signal, deadline }
 
-        for (const key of page.keys) {
-          checkDeadline(signal, deadline)
-          const row = await config.repository.key(key, operation)
-          checkDeadline(signal, deadline)
+        for await (const row of mapSerial(
+          page.keys,
+          async function examineKey(key) {
+            checkDeadline(signal, deadline)
+            const row = await config.repository.key(key, operation)
+            checkDeadline(signal, deadline)
 
+            return row
+          },
+        )) {
           if (!row) unknown++
           else if (row.status === "terminal") terminal++
         }

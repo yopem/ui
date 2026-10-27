@@ -32,6 +32,7 @@ export const editorDocumentExportItem: SourceItem = {
     "wrap",
   ],
   files: [
+    "serial-iteration.ts",
     "checksum.ts",
     "document-export.tsx",
     "document-export-model.ts",

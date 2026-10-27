@@ -21,6 +21,7 @@ export const editorCollaborationServerItem: SourceItem = {
   peerDependencies: [],
   registryDependencies: ["editor-store", "editor-auth"],
   files: [
+    "serial-iteration.ts",
     "index.ts",
     "collaboration-d1.ts",
     "collaboration-http.ts",
