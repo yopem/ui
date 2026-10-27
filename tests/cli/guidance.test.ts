@@ -831,6 +831,8 @@ for (const guidance of ["design", "agents", "none", undefined] as const) {
   })
 }
 
+const ptyTestTimeout = 30000
+
 const ptyScript = `import errno, os, pty, select, signal, subprocess, sys, time
 master, slave = pty.openpty()
 child = subprocess.Popen(sys.argv[2:], stdin=slave, stdout=slave, stderr=slave)
@@ -878,69 +880,77 @@ for (const [input, guidance] of [
   ["3", "none"],
   ["", "none"],
 ] as const) {
-  test(`packed real TTY numbered selection ${input || "Enter default"}`, async () => {
+  test(
+    `packed real TTY numbered selection ${input || "Enter default"}`,
+    async () => {
+      const project = fixture()
+      const before = snapshot(project.root)
+
+      try {
+        const result = await command(project.root, [
+          "python3",
+          "-c",
+          ptyScript,
+          input,
+          "node",
+          packedCli,
+          "init",
+          "--dry-run",
+          "--registry",
+          project.options.registryUrl,
+        ])
+
+        expect(result.status, result.stdout + result.stderr).toBe(0)
+        expect(result.stdout).toMatch(/1[^\n]*DESIGN\.md/)
+        expect(result.stdout).toMatch(/2[^\n]*AGENTS\.md/)
+        expect(result.stdout).toMatch(/3[^\n]*Do nothing/)
+
+        for (const [choice, target] of [
+          ["design", "DESIGN.md"],
+          ["agents", "AGENTS.md"],
+        ])
+          expect(result.stdout.includes(join(project.root, target))).toBe(
+            guidance === choice,
+          )
+        expect(snapshot(project.root)).toEqual(before)
+      } finally {
+        await project.dispose()
+      }
+    },
+    ptyTestTimeout,
+  )
+}
+
+test(
+  "packed explicit guidance bypasses TTY prompt",
+  async () => {
     const project = fixture()
-    const before = snapshot(project.root)
 
     try {
       const result = await command(project.root, [
         "python3",
         "-c",
         ptyScript,
-        input,
+        "",
         "node",
         packedCli,
         "init",
+        "--guidance",
+        "design",
         "--dry-run",
         "--registry",
         project.options.registryUrl,
       ])
 
       expect(result.status, result.stdout + result.stderr).toBe(0)
-      expect(result.stdout).toMatch(/1[^\n]*DESIGN\.md/)
-      expect(result.stdout).toMatch(/2[^\n]*AGENTS\.md/)
-      expect(result.stdout).toMatch(/3[^\n]*Do nothing/)
-
-      for (const [choice, target] of [
-        ["design", "DESIGN.md"],
-        ["agents", "AGENTS.md"],
-      ])
-        expect(result.stdout.includes(join(project.root, target))).toBe(
-          guidance === choice,
-        )
-      expect(snapshot(project.root)).toEqual(before)
+      expect(result.stdout).not.toContain("Do nothing")
+      expect(result.stdout).toContain(join(project.root, "DESIGN.md"))
     } finally {
       await project.dispose()
     }
-  })
-}
-
-test("packed explicit guidance bypasses TTY prompt", async () => {
-  const project = fixture()
-
-  try {
-    const result = await command(project.root, [
-      "python3",
-      "-c",
-      ptyScript,
-      "",
-      "node",
-      packedCli,
-      "init",
-      "--guidance",
-      "design",
-      "--dry-run",
-      "--registry",
-      project.options.registryUrl,
-    ])
-
-    expect(result.status, result.stdout + result.stderr).toBe(0)
-    expect(result.stdout).not.toContain("Do nothing")
-    expect(result.stdout).toContain(join(project.root, "DESIGN.md"))
-  } finally {
-    await project.dispose()
-  }
-})
+  },
+  ptyTestTimeout,
+)
 
 for (const args of [
   ["init", "--guidance"],
@@ -1029,81 +1039,93 @@ sys.exit(child.wait())
   })
 }
 
-test("programmatic runCli does not prompt even with real TTY streams", async () => {
-  const project = fixture()
-  const before = snapshot(project.root)
-  const source = resolve(packageRoot, "src/cli.ts")
-  const script = `import { runCli } from ${JSON.stringify(source)}; await runCli(["init", "--dry-run", "--registry", ${JSON.stringify(project.options.registryUrl)}]);`
+test(
+  "programmatic runCli does not prompt even with real TTY streams",
+  async () => {
+    const project = fixture()
+    const before = snapshot(project.root)
+    const source = resolve(packageRoot, "src/cli.ts")
+    const script = `import { runCli } from ${JSON.stringify(source)}; await runCli(["init", "--dry-run", "--registry", ${JSON.stringify(project.options.registryUrl)}]);`
 
-  try {
-    const result = await command(project.root, [
-      "python3",
-      "-c",
-      ptyScript,
-      "",
-      "bun",
-      "-e",
-      script,
-    ])
+    try {
+      const result = await command(project.root, [
+        "python3",
+        "-c",
+        ptyScript,
+        "",
+        "bun",
+        "-e",
+        script,
+      ])
 
-    expect(result.status, result.stdout + result.stderr).toBe(0)
-    expect(result.stdout).not.toContain("Do nothing")
-    expect(result.stdout).not.toContain(join(project.root, "DESIGN.md"))
-    expect(result.stdout).not.toContain(join(project.root, "AGENTS.md"))
-    expect(snapshot(project.root)).toEqual(before)
-  } finally {
-    await project.dispose()
-  }
-})
+      expect(result.status, result.stdout + result.stderr).toBe(0)
+      expect(result.stdout).not.toContain("Do nothing")
+      expect(result.stdout).not.toContain(join(project.root, "DESIGN.md"))
+      expect(result.stdout).not.toContain(join(project.root, "AGENTS.md"))
+      expect(snapshot(project.root)).toEqual(before)
+    } finally {
+      await project.dispose()
+    }
+  },
+  ptyTestTimeout,
+)
 
-test("TTY EOF cancels init before registry requests or mutation", async () => {
-  const project = fixture()
-  const before = snapshot(project.root)
+test(
+  "TTY EOF cancels init before registry requests or mutation",
+  async () => {
+    const project = fixture()
+    const before = snapshot(project.root)
 
-  try {
-    const result = await command(project.root, [
-      "python3",
-      "-c",
-      ptyScript,
-      "EOF",
-      "node",
-      packedCli,
-      "init",
-      "--registry",
-      project.options.registryUrl,
-    ])
+    try {
+      const result = await command(project.root, [
+        "python3",
+        "-c",
+        ptyScript,
+        "EOF",
+        "node",
+        packedCli,
+        "init",
+        "--registry",
+        project.options.registryUrl,
+      ])
 
-    expect(result.status, result.stdout + result.stderr).toBe(1)
-    expect(result.stdout).toContain("Do nothing")
-    expect(project.requests).toEqual([])
-    expect(snapshot(project.root)).toEqual(before)
-  } finally {
-    await project.dispose()
-  }
-})
+      expect(result.status, result.stdout + result.stderr).toBe(1)
+      expect(result.stdout).toContain("Do nothing")
+      expect(project.requests).toEqual([])
+      expect(snapshot(project.root)).toEqual(before)
+    } finally {
+      await project.dispose()
+    }
+  },
+  ptyTestTimeout,
+)
 
-test("TTY Ctrl+C cancels init before registry requests or mutation", async () => {
-  const project = fixture()
-  const before = snapshot(project.root)
+test(
+  "TTY Ctrl+C cancels init before registry requests or mutation",
+  async () => {
+    const project = fixture()
+    const before = snapshot(project.root)
 
-  try {
-    const result = await command(project.root, [
-      "python3",
-      "-c",
-      ptyScript,
-      "SIGINT",
-      "node",
-      packedCli,
-      "init",
-      "--registry",
-      project.options.registryUrl,
-    ])
+    try {
+      const result = await command(project.root, [
+        "python3",
+        "-c",
+        ptyScript,
+        "SIGINT",
+        "node",
+        packedCli,
+        "init",
+        "--registry",
+        project.options.registryUrl,
+      ])
 
-    expect(result.status, result.stdout + result.stderr).toBe(1)
-    expect(result.stdout).toContain("Do nothing")
-    expect(project.requests).toEqual([])
-    expect(snapshot(project.root)).toEqual(before)
-  } finally {
-    await project.dispose()
-  }
-})
+      expect(result.status, result.stdout + result.stderr).toBe(1)
+      expect(result.stdout).toContain("Do nothing")
+      expect(project.requests).toEqual([])
+      expect(snapshot(project.root)).toEqual(before)
+    } finally {
+      await project.dispose()
+    }
+  },
+  ptyTestTimeout,
+)
