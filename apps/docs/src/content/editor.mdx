@@ -1214,9 +1214,9 @@ The text diff control changes one paragraph with at most 2048 graphemes and 4096
 UTF-16 units. Rich comments use validated review content. Paste can retain
 validated same-namespace paragraph and list fragments as one authored
 suggestion. Accept keeps the fragment. Reject restores replaced content and
-keeps other pending edits. Both decisions preserve comment anchors.
-Rich HTML and unsupported native fragments are rejected. Pasted review metadata
-is not preserved.
+keeps other pending edits. Both decisions preserve comment anchors. Rich HTML
+and unsupported native fragments are rejected. Pasted review metadata is not
+preserved.
 
 Call `controller.$suggestDocumentTree(nextState)` inside an editor update for an
 explicit tree proposal. Resolve inline suggestions before proposing a tree. The
