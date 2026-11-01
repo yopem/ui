@@ -786,7 +786,7 @@ export function Preview() {
   return (
     <>
       <Clipboard value="https://example.com/field-notes">Copy link</Clipboard>
-      <Clipboard aria-label="Unavailable copy" disabled value="not copied">
+      <Clipboard disabled value="not copied">
         Disabled copy
       </Clipboard>
     </>

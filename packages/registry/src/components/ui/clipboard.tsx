@@ -1,13 +1,19 @@
 "use client"
 
 import type { StyleXComponentProps } from "@registry/lib/stylex"
-import type { ComponentPropsWithRef, MouseEvent } from "react"
+import type { ComponentPropsWithRef, MouseEvent, ReactNode } from "react"
 
 import { useEventCallback } from "@registry/hooks/use-event-callback"
-import { mergeStylexProps, stylexProps } from "@registry/lib/stylex"
+import { isString, mergeStylexProps, stylexProps } from "@registry/lib/stylex"
 import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
-import { useState } from "react"
+import {
+  CheckIcon,
+  CircleAlertIcon,
+  CopyIcon,
+  HourglassIcon,
+} from "lucide-react"
+import { Fragment, isValidElement, useState } from "react"
 
 const styles = stylex.create({
   button: {
@@ -35,7 +41,19 @@ const styles = stylex.create({
       outlineStyle: "solid",
       outlineWidth: 2,
     },
-    "@media (pointer: coarse)": { minBlockSize: "2.75rem" },
+    "@media (pointer: coarse)": {
+      minBlockSize: "2.75rem",
+      minInlineSize: "2.75rem",
+    },
+  },
+  icon: {
+    blockSize: "1rem",
+    flexShrink: 0,
+    inlineSize: "1rem",
+  },
+  errorStatus: {
+    color: tokens["--destructive-foreground"],
+    fontSize: "0.875rem",
   },
   status: {
     blockSize: 1,
@@ -46,6 +64,29 @@ const styles = stylex.create({
     whiteSpace: "nowrap",
   },
 })
+
+function hasOnlyEmptyChildren(children: ReactNode): boolean {
+  if (children == null || children === false || children === true) return true
+
+  if (isString(children)) return children.trim() === ""
+
+  if (Array.isArray(children)) return children.every(hasOnlyEmptyChildren)
+
+  if (
+    isValidElement<{ children?: ReactNode }>(children) &&
+    children.type === Fragment
+  ) {
+    return hasOnlyEmptyChildren(children.props.children)
+  }
+
+  return false
+}
+
+function defaultClipboardText(ariaLabel: string | undefined) {
+  return ariaLabel?.trim() && !ariaLabel.toLowerCase().includes("copy")
+    ? ariaLabel
+    : "Copy"
+}
 
 export type ClipboardProps = StyleXComponentProps<
   ComponentPropsWithRef<"button">,
@@ -59,12 +100,22 @@ export function Clipboard({
   children,
   onClick,
   type = "button",
-  "aria-label": ariaLabel = "Copy to clipboard",
+  title = "Copy to clipboard",
+  "aria-label": ariaLabel,
   ...props
 }: ClipboardProps) {
   const [status, setStatus] = useState<"pending" | "success" | "error" | null>(
     null,
   )
+
+  const StatusIcon =
+    status === "pending"
+      ? HourglassIcon
+      : status === "success"
+        ? CheckIcon
+        : status === "error"
+          ? CircleAlertIcon
+          : CopyIcon
 
   const copyToClipboard = useEventCallback(async () => {
     setStatus("pending")
@@ -94,28 +145,35 @@ export function Clipboard({
   return (
     <>
       <button
-        aria-label={ariaLabel}
+        aria-label={
+          ariaLabel ??
+          (props["aria-labelledby"] == null && hasOnlyEmptyChildren(children)
+            ? "Copy to clipboard"
+            : undefined)
+        }
         data-slot="clipboard"
         onClick={handleClick}
+        title={title}
         type={type}
         {...mergeStylexProps(
           stylexProps(className, styles.button, consumerXstyle),
           props,
         )}
       >
-        {status === "pending"
-          ? "Copying…"
-          : status === "success"
-            ? "Copied"
-            : status === "error"
-              ? "Copy failed"
-              : (children ?? "Copy")}
+        <StatusIcon
+          aria-hidden="true"
+          data-slot="clipboard-icon"
+          {...stylex.props(styles.icon)}
+        />
+        {children ?? defaultClipboardText(ariaLabel)}
       </button>
       <output
         aria-atomic="true"
         aria-live="polite"
         data-slot="clipboard-status"
-        {...stylex.props(styles.status)}
+        {...stylex.props(
+          status === "error" ? styles.errorStatus : styles.status,
+        )}
       >
         {status === "pending"
           ? "Copying to clipboard"

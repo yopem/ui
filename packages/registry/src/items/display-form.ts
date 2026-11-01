@@ -446,6 +446,7 @@ const baseUiComponents = new Set([
 const lucideComponents = new Set([
   "breadcrumb",
   "checkmark",
+  "clipboard",
   "native-select",
   "number-field",
   "rating",

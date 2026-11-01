@@ -485,6 +485,7 @@ const usageNoteValues = {
   ],
   clipboard: [
     "Supply the value to copy. The button reports success or failure to assistive technology and never submits its parent form by default.",
+    "Clipboard keeps its command text unchanged. Decorative icons show progress and results. A live status reports success or failure.",
   ],
   marquee: [
     "Marquee provides a pause control and stops animating with reduced motion. Do not put essential controls in moving content.",

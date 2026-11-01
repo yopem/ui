@@ -1,3 +1,5 @@
+import type { Page, TestInfo } from "@playwright/test"
+
 import AxeBuilder from "@axe-core/playwright"
 import { expect, test } from "@playwright/test"
 
@@ -161,22 +163,323 @@ test("@a11y steps expose active item as current step", async ({ page }) => {
   expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([])
 })
 
-test("clipboard reports copied content", async ({ page, context }) => {
-  await context.grantPermissions(["clipboard-read", "clipboard-write"])
+async function checkClipboardAccessibility(
+  page: Page,
+  testInfo: TestInfo,
+  state: string,
+) {
+  const report = await new AxeBuilder({ page })
+    .options({ rules: { "label-content-name-mismatch": { enabled: true } } })
+    .analyze()
+
+  await testInfo.attach(`clipboard-${state}-axe.json`, {
+    body: JSON.stringify(report, null, 2),
+    contentType: "application/json",
+  })
+  await testInfo.attach(`clipboard-${state}.png`, {
+    body: await page.screenshot({ fullPage: true, scale: "css" }),
+    contentType: "image/png",
+  })
+  expect(report.violations).toEqual([])
+}
+
+async function openClipboardPreview(page: Page) {
   await page.goto("/components/clipboard", { waitUntil: "domcontentloaded" })
   await expect(
-    page.getByRole("button", { name: "Copy Clipboard usage" }),
+    page.getByRole("button", { name: "Copy Clipboard usage", exact: true }),
   ).toBeEnabled({ timeout: 20_000 })
-  await page.getByRole("button", { name: "Copy to clipboard" }).click()
-  await expect(
-    page.locator('[data-slot="clipboard-status"]').first(),
-  ).toHaveText("Copied to clipboard")
-  expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(
-    "https://example.com/field-notes",
+}
+
+test("@a11y clipboard keeps command labels and copies native text", async ({
+  page,
+  context,
+}, testInfo) => {
+  await context.grantPermissions(["clipboard-read", "clipboard-write"])
+  await openClipboardPreview(page)
+  await checkClipboardAccessibility(page, testInfo, "idle")
+
+  for (const [name, label, value] of [
+    ["Copy link", "Copy link", "https://example.com/field-notes"],
+    ["Copy to clipboard", "Copy", "Default clipboard text"],
+    ["Copy source", "Copy", 'const message = "Clipboard example"'],
+    ["Copy icon example", "", "Icon clipboard text"],
+    ["Copy to clipboard", "", "Default icon clipboard text"],
+  ] as const) {
+    const button = page
+      .getByRole("button", { name, exact: true })
+      .filter({ hasText: label === "" ? /^$/ : label })
+      .and(page.locator('button:not([id^="clipboard-"])'))
+
+    await expect(button).toHaveText(label)
+    await expect(button).toHaveAccessibleName(name)
+    await expect(button).toHaveAttribute("type", "button")
+    const status = button.locator("+ output")
+    await expect(status).toHaveAttribute("aria-live", "polite")
+    await expect(status).toHaveAttribute("aria-atomic", "true")
+
+    if (value === "Default icon clipboard text") {
+      await expect(button).toHaveAttribute("title", "")
+      await expect(button).toHaveAttribute("aria-label", "Copy to clipboard")
+    }
+
+    if (await page.evaluate(() => matchMedia("(pointer: coarse)").matches)) {
+      const bounds = await button.boundingBox()
+      expect(bounds).not.toBeNull()
+      expect(bounds?.width).toBeGreaterThanOrEqual(44)
+      expect(bounds?.height).toBeGreaterThanOrEqual(44)
+    }
+
+    await expect(button.locator('[data-slot="clipboard-icon"]')).toBeVisible()
+    await expect(
+      button.locator('[data-slot="clipboard-icon"]'),
+    ).toHaveAttribute("aria-hidden", "true")
+    await button.focus()
+    await button.press("Enter")
+    await expect(button.locator("+ output")).toHaveText("Copied to clipboard")
+    await expect(button).toHaveText(label)
+    await expect(button).toHaveAccessibleName(name)
+    await expect(button).toBeFocused()
+    expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(
+      value,
+    )
+    await testInfo.attach(`${name}-${label || "icon"}-clipboard.txt`, {
+      body: await page.evaluate(() => navigator.clipboard.readText()),
+      contentType: "text/plain",
+    })
+  }
+
+  await checkClipboardAccessibility(page, testInfo, "success")
+})
+
+test("@a11y clipboard keeps its command during a pending native write", async ({
+  page,
+  context,
+}, testInfo) => {
+  await context.grantPermissions(["clipboard-read", "clipboard-write"])
+  await openClipboardPreview(page)
+  await page.evaluate(() => {
+    const writeText = navigator.clipboard.writeText.bind(navigator.clipboard)
+    Object.defineProperty(navigator.clipboard, "writeText", {
+      configurable: true,
+      value: async (value: string) => {
+        await new Promise<void>((resolve) => {
+          window.addEventListener("release-clipboard-write", () => resolve(), {
+            once: true,
+          })
+        })
+        await writeText(value)
+      },
+    })
+  })
+  const button = page.getByRole("button", { name: "Copy source", exact: true })
+  await button.click()
+  await expect(button.locator("+ output")).toHaveText("Copying to clipboard")
+  await expect(button).toHaveText("Copy")
+  await expect(button).toHaveAccessibleName("Copy source")
+  await checkClipboardAccessibility(page, testInfo, "pending")
+  await page.evaluate(() =>
+    window.dispatchEvent(new Event("release-clipboard-write")),
   )
-  await expect(
-    page.getByRole("button", { name: "Unavailable copy" }),
-  ).toBeDisabled()
+  await expect(button.locator("+ output")).toHaveText("Copied to clipboard")
+  await expect(button).toHaveText("Copy")
+  expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(
+    'const message = "Clipboard example"',
+  )
+})
+
+for (const failure of ["denied", "unavailable"] as const) {
+  test(`@a11y clipboard reports ${failure} writes without changing its command`, async ({
+    page,
+    context,
+  }, testInfo) => {
+    await context.grantPermissions(["clipboard-read", "clipboard-write"])
+    await openClipboardPreview(page)
+    await page.evaluate(() =>
+      navigator.clipboard.writeText("Clipboard sentinel"),
+    )
+    await page.evaluate((kind) => {
+      if (kind === "unavailable") {
+        Object.defineProperty(navigator, "clipboard", {
+          configurable: true,
+          value: undefined,
+        })
+      } else {
+        Object.defineProperty(navigator.clipboard, "writeText", {
+          configurable: true,
+          value: () =>
+            Promise.reject(new DOMException("Denied", "NotAllowedError")),
+        })
+      }
+    }, failure)
+    const button = page.getByRole("button", { name: "Copy link", exact: true })
+    await button.click()
+    const status = button.locator("+ output")
+    await expect(status).toHaveText("Could not copy to clipboard")
+    await expect(status).toBeVisible()
+    await expect(status).toHaveCSS("clip-path", "none")
+    await expect(status.locator("xpath=ancestor::button")).toHaveCount(0)
+    await expect(status).toHaveAttribute("aria-live", "polite")
+    await expect(button).toHaveText("Copy link")
+    await expect(button).toHaveAccessibleName("Copy link")
+    await checkClipboardAccessibility(page, testInfo, failure)
+
+    if (failure === "unavailable") {
+      await page.evaluate(() => Reflect.deleteProperty(navigator, "clipboard"))
+    } else {
+      await page.evaluate(() =>
+        Reflect.deleteProperty(navigator.clipboard, "writeText"),
+      )
+    }
+
+    expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(
+      "Clipboard sentinel",
+    )
+    await button.click()
+    await expect(button.locator("+ output")).toHaveText("Copied to clipboard")
+    await expect(button).toHaveText("Copy link")
+    expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(
+      "https://example.com/field-notes",
+    )
+  })
+}
+
+test("@a11y clipboard names empty children without changing their text", async ({
+  page,
+  context,
+}, testInfo) => {
+  await context.grantPermissions(["clipboard-read", "clipboard-write"])
+  await openClipboardPreview(page)
+
+  for (const [id, text] of [
+    ["clipboard-false", ""],
+    ["clipboard-whitespace", "   "],
+    ["clipboard-fragment", ""],
+    ["clipboard-nested-fragment", "  "],
+  ] as const) {
+    const button = page.locator(`#${id}`)
+    await expect(button).toHaveAttribute("title", "")
+    await expect.poll(() => button.textContent()).toBe(text)
+    await expect(button).toHaveAccessibleName("Copy to clipboard")
+    await button.focus()
+    await button.press("Enter")
+    await expect(button.locator("+ output")).toHaveText("Copied to clipboard")
+    await expect.poll(() => button.textContent()).toBe(text)
+    await expect(button).toHaveAccessibleName("Copy to clipboard")
+    expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(id)
+  }
+
+  await checkClipboardAccessibility(page, testInfo, "empty-children")
+})
+
+test("clipboard keeps visible text in native names and respects explicit labels", async ({
+  page,
+}) => {
+  await openClipboardPreview(page)
+
+  for (const [id, text, name] of [
+    ["clipboard-fragment-text", "Copy report", "Copy report"],
+    ["clipboard-custom-text", "Copy custom", "Copy custom"],
+    ["clipboard-custom-empty", "", "Copy custom empty"],
+    ["clipboard-other-label", "Duplicate", "Duplicate"],
+  ] as const) {
+    const button = page.locator(`#${id}`)
+    await expect(button).toHaveText(text)
+    await expect(button).toHaveAccessibleName(name)
+  }
+
+  await expect(page.locator("#clipboard-fragment-text")).not.toHaveAttribute(
+    "aria-label",
+    /.+/,
+  )
+  await expect(page.locator("#clipboard-custom-text")).not.toHaveAttribute(
+    "aria-label",
+    /.+/,
+  )
+  await expect(page.locator("#clipboard-custom-empty")).toHaveAttribute(
+    "aria-label",
+    "Copy custom empty",
+  )
+  await expect(page.locator("#clipboard-other-label")).toHaveAttribute(
+    "aria-label",
+    "Duplicate",
+  )
+})
+
+test("clipboard preserves a consumer aria-labelledby name", async ({
+  page,
+}) => {
+  await openClipboardPreview(page)
+
+  const button = page
+    .getByRole("button", { name: "Cancel copy", exact: true })
+    .filter({ hasText: /^$/ })
+
+  await expect(button).toHaveAccessibleName("Cancel copy")
+  await expect(button).not.toHaveAttribute("aria-label", /.+/)
+  await expect(button).toHaveAttribute("title", "")
+})
+
+test("clipboard usage copy keeps the visible disabled label", async ({
+  page,
+  context,
+}) => {
+  await context.grantPermissions(["clipboard-read", "clipboard-write"])
+  await openClipboardPreview(page)
+  await page
+    .getByRole("button", { name: "Copy Clipboard usage", exact: true })
+    .click()
+
+  const usage = await page.evaluate(() => navigator.clipboard.readText())
+
+  const disabled = usage.match(
+    /<Clipboard\b([^>]*\bdisabled\b[^>]*)>([\s\S]*?)<\/Clipboard>/,
+  )
+
+  expect(disabled).not.toBeNull()
+
+  const visibleLabel = disabled?.[2].trim()
+  const ariaLabel = disabled?.[1].match(/aria-label="([^"]*)"/)?.[1]
+
+  expect(visibleLabel).toBeTruthy()
+
+  if (ariaLabel) expect(ariaLabel).toContain(visibleLabel)
+})
+
+test("@a11y clipboard preserves consumer cancellation and native disabled state", async ({
+  page,
+  context,
+}, testInfo) => {
+  await context.grantPermissions(["clipboard-read", "clipboard-write"])
+  await openClipboardPreview(page)
+  await page.evaluate(() => navigator.clipboard.writeText("Clipboard sentinel"))
+
+  const cancelled = page
+    .getByRole("button", { name: "Cancel copy", exact: true })
+    .filter({ hasText: "Cancel copy" })
+
+  await cancelled.click()
+  await expect(cancelled.locator("+ output")).toHaveText("")
+  await cancelled.focus()
+  await cancelled.press("Space")
+  await expect(cancelled.locator("+ output")).toHaveText("")
+  await expect(cancelled).toHaveText("Cancel copy")
+  await expect(cancelled).toHaveAccessibleName("Cancel copy")
+  await expect(cancelled).toBeFocused()
+
+  const disabled = page.getByRole("button", {
+    name: "Disabled copy",
+    exact: true,
+  })
+
+  await expect(disabled).toBeDisabled()
+  await expect(disabled).toHaveText("Disabled copy")
+  await cancelled.press("Tab")
+  await expect(disabled).not.toBeFocused()
+  await expect(disabled.locator("+ output")).toHaveText("")
+  expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(
+    "Clipboard sentinel",
+  )
+  await checkClipboardAccessibility(page, testInfo, "cancelled")
 })
 
 test("codeblock preserves source, copy and keyboard access", async ({
