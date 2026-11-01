@@ -271,6 +271,7 @@ function checkGuidance(text: string, shared = false) {
     "stylex.props",
     "stylexProps",
     "xstyle",
+    'aria-pressed="true"',
     "controlXstyle",
     "className",
     "data-slot",

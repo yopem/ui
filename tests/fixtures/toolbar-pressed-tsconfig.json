@@ -1,0 +1,10 @@
+{
+  "extends": "../tsconfig.json",
+  "include": [
+    "toolbar-pressed-bundle.ts",
+    "toolbar-pressed-css.d.ts",
+    "toolbar-pressed-entry.tsx",
+    "toolbar-pressed-fixture.tsx",
+    "../e2e/registry/toolbar-pressed.spec.ts"
+  ]
+}

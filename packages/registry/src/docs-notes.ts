@@ -362,6 +362,7 @@ const usageNoteValues = {
   ],
   button: [
     'Use Button for an action. Set type="submit" inside a form when it should submit.',
+    'A ghost Button uses the accent background when its final element has aria-pressed="true". The data-pressed marker also applies the accent independently. Hover and xstyle can change the background. Supply the correct aria-pressed state for toggle actions.',
     "loading displays Spinner and disables the native button. Use an accessible label for icon-only sizes. Use render with a link for navigation. Custom elements must block disabled interaction themselves. An anchor does not honor the disabled attribute.",
   ],
   alert: [

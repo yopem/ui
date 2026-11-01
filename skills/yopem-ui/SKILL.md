@@ -308,6 +308,11 @@ explicitly when composing a rendered button. Use `type="submit"` for submission.
 `loading` shows a spinner, keeps the children, and disables native interaction.
 Retain meaningful action text.
 
+A ghost Button uses the accent background when its final element has
+`aria-pressed="true"`. The `data-pressed` marker also applies the accent
+independently. Hover and `xstyle` can change the background. Supply the correct
+`aria-pressed` state for toggle actions.
+
 A rendered anchor does not support native button `disabled`. Prevent its
 navigation when disabled. Keep coarse-pointer targets at least 44px. Do not clip
 the extended targets.

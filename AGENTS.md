@@ -250,6 +250,10 @@ Do not add code comments or JSDoc. Preserve existing comments.
   overrides for intentional native boundaries. Docs migration is separate from
   enabling this rule; do not globally suppress checks to hide new violations.
 
+A ghost Button uses the accent background when its final element has `aria-pressed="true"`.
+The `data-pressed` marker also applies the accent independently. Hover and `xstyle` can change the background.
+Supply the correct `aria-pressed` state for toggle actions.
+
 Rounded components use md (12px) by default. Use xstyle to change corner radii. Use controlXstyle for Input and Textarea wrappers. Keep circular indicators and edge-attached corners intact.
 
 ## Design system foundations

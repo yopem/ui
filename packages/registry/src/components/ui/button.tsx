@@ -184,6 +184,7 @@ const styles = stylex.create({
       default: "transparent",
       ":hover": tokens["--accent"],
       "[data-pressed]": tokens["--accent"],
+      '[aria-pressed="true"]': tokens["--accent"],
     },
     borderColor: "transparent",
     color: tokens["--foreground"],
