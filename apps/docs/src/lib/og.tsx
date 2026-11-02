@@ -83,5 +83,5 @@ export async function renderOgImage(
     },
   )
 
-  return new Resvg(svg).render().asPng()
+  return new Resvg(svg, { font: { loadSystemFonts: false } }).render().asPng()
 }
