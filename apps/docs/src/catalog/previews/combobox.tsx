@@ -8,6 +8,7 @@ import {
   ComboboxList,
   ComboboxPopup,
 } from "@registry/components/ui/combobox"
+import { useState } from "react"
 
 const items = [
   { label: "Binoculars", value: "binoculars" },
@@ -23,13 +24,20 @@ const items = [
 ]
 
 export function Preview() {
+  const [inputElement, setInputElement] = useState<HTMLInputElement | null>(
+    null,
+  )
+
   return (
     <Combobox items={items}>
       <ComboboxInput
+        ref={setInputElement}
         aria-label="Select equipment"
         placeholder="Select equipment…"
       />
-      <ComboboxPopup>
+      <ComboboxPopup
+        portalProps={{ container: inputElement?.closest("main") ?? undefined }}
+      >
         <ComboboxEmpty>No equipment found.</ComboboxEmpty>
         <ComboboxList>
           {(item) => (

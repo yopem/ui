@@ -8,6 +8,7 @@ import {
   AutocompleteList,
   AutocompletePopup,
 } from "@registry/components/ui/autocomplete"
+import { useState } from "react"
 
 const items = [
   { label: "Binoculars", value: "binoculars" },
@@ -22,9 +23,13 @@ const items = [
   { label: "Torch", value: "torch" },
 ]
 
-function AutocompleteOptions() {
+function AutocompleteOptions({
+  container,
+}: {
+  container: HTMLElement | undefined
+}) {
   return (
-    <AutocompletePopup>
+    <AutocompletePopup portalProps={{ container }}>
       <AutocompleteEmpty>No equipment found.</AutocompleteEmpty>
       <AutocompleteList>
         {(item) => (
@@ -38,13 +43,20 @@ function AutocompleteOptions() {
 }
 
 export function Preview() {
+  const [inputElement, setInputElement] = useState<HTMLInputElement | null>(
+    null,
+  )
+
   return (
     <Autocomplete items={items}>
       <AutocompleteInput
+        ref={setInputElement}
         aria-label="Search items"
         placeholder="Search loan equipment…"
       />
-      <AutocompleteOptions />
+      <AutocompleteOptions
+        container={inputElement?.closest("main") ?? undefined}
+      />
     </Autocomplete>
   )
 }

@@ -4,6 +4,8 @@ import type { StyleXComponentProps } from "@registry/lib/stylex"
 import type { RefObject, ReactNode } from "react"
 
 import { Combobox as ComboboxPrimitive } from "@base-ui/react/combobox"
+import { useDirection } from "@base-ui/react/direction-provider"
+import { useMergedRefs } from "@base-ui/utils/useMergedRefs"
 import { Input } from "@registry/components/ui/input"
 import { ScrollArea } from "@registry/components/ui/scroll-area"
 import {
@@ -16,7 +18,8 @@ import {
 import { themeMarker, tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import { ChevronsUpDownIcon, XIcon } from "lucide-react"
-import { createContext, forwardRef, useContext, useState } from "react"
+import { createContext, forwardRef, useContext, useRef, useState } from "react"
+import { flushSync } from "react-dom"
 
 export const comboboxSlotStyles = stylex.create({
   icon: {
@@ -315,25 +318,46 @@ const styles = stylex.create({
 export const ComboboxContext = createContext<{
   chipsRef: RefObject<HTMLDivElement | null> | null
   multiple: boolean
+  actionsRef?: RefObject<ComboboxPrimitive.Root.Actions | null>
+  inline?: boolean
 }>({ chipsRef: null, multiple: false })
 
 export function Combobox<Value, Multiple extends boolean | undefined = false>(
   props: ComboboxPrimitive.Root.Props<Value, Multiple>,
 ) {
   const multiple = Boolean(props.multiple)
+  const inline = Boolean(props.inline)
+  const localActionsRef = useRef<ComboboxPrimitive.Root.Actions | null>(null)
+  const actionsRef = props.actionsRef ?? localActionsRef
 
   const [contextValue, setContextValue] = useState<{
     chipsRef: RefObject<HTMLDivElement | null>
     multiple: boolean
-  }>(() => ({ chipsRef: { current: null }, multiple }))
+    inline: boolean
+    actionsRef: RefObject<ComboboxPrimitive.Root.Actions | null>
+  }>(() => ({
+    chipsRef: { current: null },
+    multiple,
+    inline,
+    actionsRef,
+  }))
 
-  if (contextValue.multiple !== multiple) {
-    setContextValue({ chipsRef: contextValue.chipsRef, multiple })
+  if (
+    contextValue.multiple !== multiple ||
+    contextValue.inline !== inline ||
+    contextValue.actionsRef !== actionsRef
+  ) {
+    setContextValue({
+      chipsRef: contextValue.chipsRef,
+      multiple,
+      inline,
+      actionsRef,
+    })
   }
 
   return (
     <ComboboxContext.Provider value={contextValue}>
-      <ComboboxPrimitive.Root {...props} />
+      <ComboboxPrimitive.Root {...props} actionsRef={actionsRef} />
     </ComboboxContext.Provider>
   )
 }
@@ -349,13 +373,83 @@ export const ComboboxChipsInput = forwardRef<
   HTMLInputElement,
   ComboboxInputProps
 >(function ComboboxChipsInput(
-  { xstyle: consumerXstyle, className, size, ...restProps },
+  { xstyle: consumerXstyle, className, size, onKeyDown, ...restProps },
   ref,
 ) {
   const props = restProps
   const xstyle = consumerXstyle
 
   const sizeValue = size ?? "default"
+  const { actionsRef, chipsRef, inline } = useContext(ComboboxContext)
+  const direction = useDirection()
+
+  function handleKeyDown(
+    event: Parameters<NonNullable<ComboboxInputProps["onKeyDown"]>>[0],
+  ) {
+    const input = event.currentTarget
+    const group = chipsRef?.current
+    onKeyDown?.(event)
+
+    if (event.defaultPrevented) event.preventBaseUIHandler()
+
+    if (event.baseUIHandlerPrevented) return
+
+    if (
+      inline ||
+      event.ctrlKey ||
+      event.shiftKey ||
+      event.altKey ||
+      event.metaKey ||
+      event.key !== (direction === "rtl" ? "ArrowRight" : "ArrowLeft") ||
+      (input.selectionStart ?? 0) !== 0
+    )
+      return
+
+    if (
+      !input.isConnected ||
+      input.disabled ||
+      input.readOnly ||
+      !input.matches(":focus") ||
+      (group && (group !== chipsRef?.current || !group.contains(input))) ||
+      event.nativeEvent.isComposing ||
+      event.which === 229
+    ) {
+      event.preventBaseUIHandler()
+
+      return
+    }
+
+    if (input.getAttribute("aria-expanded") !== "true") return
+
+    const chips = group?.querySelectorAll<HTMLElement>("[data-combobox-chip]")
+    const chip = chips?.item(chips.length - 1)
+
+    if (!chip) return
+    const label = chip.textContent
+
+    flushSync(() => actionsRef?.current?.close())
+
+    const currentChips = group?.querySelectorAll<HTMLElement>(
+      "[data-combobox-chip]",
+    )
+
+    if (
+      !input.isConnected ||
+      input.disabled ||
+      input.readOnly ||
+      !chip.isConnected ||
+      group !== chipsRef?.current ||
+      !group?.contains(input) ||
+      currentChips?.item(currentChips.length - 1) !== chip ||
+      chip.textContent !== label ||
+      !input.matches(":focus") ||
+      input.getAttribute("aria-expanded") === "true" ||
+      chip.closest('[aria-hidden="true"], [inert]')
+    ) {
+      event.preventDefault()
+      event.preventBaseUIHandler()
+    }
+  }
 
   return (
     <ComboboxPrimitive.Input
@@ -374,6 +468,7 @@ export const ComboboxChipsInput = forwardRef<
         ),
         props,
       )}
+      onKeyDown={handleKeyDown}
     />
   )
 })
@@ -687,7 +782,12 @@ export function ComboboxList({
   const xstyle = consumerXstyle
 
   return (
-    <ScrollArea overscrollContain scrollbarGutter scrollFade>
+    <ScrollArea
+      overscrollContain
+      scrollbarGutter
+      scrollFade
+      viewportTabIndex={-1}
+    >
       <ComboboxPrimitive.List
         data-slot="combobox-list"
         {...mergeStylexProps(
@@ -742,6 +842,7 @@ export function ComboboxChips({
   className,
   children,
   startAddon,
+  ref,
   ...restProps
 }: StyleXComponentProps<
   ComboboxPrimitive.Chips.Props,
@@ -753,11 +854,12 @@ export function ComboboxChips({
   const xstyle = consumerXstyle
 
   const { chipsRef } = useContext(ComboboxContext)
+  const mergedRef = useMergedRefs(chipsRef, ref)
 
   return (
     <ComboboxPrimitive.Chips
       data-slot="combobox-chips"
-      ref={chipsRef}
+      ref={mergedRef}
       {...mergeStylexProps(stylexProps(className, styles.chips, xstyle), props)}
     >
       {startAddon ? (
@@ -791,8 +893,10 @@ export function ComboboxChip({
 
   return (
     <ComboboxPrimitive.Chip
+      aria-readonly={undefined}
       data-slot="combobox-chip"
       {...mergeStylexProps(stylexProps(className, styles.chip, xstyle), props)}
+      data-combobox-chip=""
     >
       {children}
       <ComboboxChipRemove {...removeProps} />

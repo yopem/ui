@@ -462,7 +462,12 @@ export function AutocompleteList({
   const xstyle = consumerXstyle
 
   return (
-    <ScrollArea overscrollContain scrollbarGutter scrollFade>
+    <ScrollArea
+      overscrollContain
+      scrollbarGutter
+      scrollFade
+      viewportTabIndex={-1}
+    >
       <AutocompletePrimitive.List
         data-slot="autocomplete-list"
         {...mergeStylexProps(
