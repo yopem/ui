@@ -5,7 +5,11 @@ import { registryDependency } from "@registry/registry-dependencies"
 
 export const editorReviewItem: SourceItem = {
   categories: ["input"],
-  dependencies: [editorDependency("@lexical/mark"), editorDependency("zod")],
+  dependencies: [
+    editorDependency("@lexical/clipboard"),
+    editorDependency("@lexical/mark"),
+    editorDependency("zod"),
+  ],
   description:
     "Adds review threads, inline suggestions, and bounded structural proposals to the Lexical editor.",
   devDependencies: [],
@@ -34,6 +38,9 @@ export const editorReviewItem: SourceItem = {
       "EditorReviewProvider",
       "useEditorReview",
       "EditorReviewModeControl",
+      "EditorReviewModeMenu",
+      "EditorReviewMode",
+      "EditorReviewModeMenuProps",
       "EditorReviewCreateControl",
       "EditorReviewReplyForm",
       "EditorReviewDiffControl",
@@ -73,7 +80,7 @@ export const editorReviewItem: SourceItem = {
       "EditorReviewStructuralDecisionControls",
     ],
     usage:
-      "Import EditorReviewPreset from @/components/editor/review. Supply a verified viewer and a synchronous per-action host policy. Validate imported review state with parseReviewDocument. Register MarkNode in every external reader. Native Enter tracks root paragraph splits. Shift+Enter and other supported block contexts track line breaks. Resolve a pending paragraph break before splitting that paragraph again. Call controller.$suggestNativeInsertNodes inside a synchronous editor update for explicit insert-only native operations. Return the newly inserted nodes from the callback. This API requires suggestion mode, normal text descendants, no pending suggestions, and snapshots within 128 KiB. It does not track arbitrary host callbacks or text-free nodes. Use controller.$suggestDocumentTree for bounded complete-document proposals. Use controller.$suggestCompletedText inside an authorized editor update for single-line AI suggestions. Accept or reject structural proposals with controller.decideStructural. Keep one pending tree proposal and resolve inline suggestions first. Ambiguous comment-anchor changes reject before replacement. See /components/editor-review.",
+      "Import EditorReviewPreset from @/components/editor/review. Supply a verified viewer and a synchronous per-action host policy. Validate imported review state with parseReviewDocument. Register MarkNode in every external reader. EditorReviewModeMenu requires controlled value, canChangeMode, and onModeChange. The host callback owns editable state and review mode. Check host write and suggestion policies again in that callback. Enable editing synchronously before setSuggesting when leaving Viewing. Roll back editable state if review rejects the transition. Keep the mode menu outside a disabled EditorToolbar. Native Enter tracks root paragraph splits. Shift+Enter and other supported block contexts track line breaks. Resolve a pending paragraph break before splitting that paragraph again. Call controller.$suggestNativeInsertNodes inside a synchronous editor update for explicit insert-only native operations. Return the newly inserted nodes from the callback. This API requires suggestion mode, normal text descendants, no pending suggestions, and snapshots within 128 KiB. It does not track arbitrary host callbacks or text-free nodes. Use controller.$suggestDocumentTree for bounded complete-document proposals. Use controller.$suggestCompletedText inside an authorized editor update for single-line AI suggestions. Accept or reject structural proposals with controller.decideStructural. Keep one pending tree proposal and resolve inline suggestions first. Ambiguous comment-anchor changes reject before replacement. See /components/editor-review.",
   },
   files: [
     "review.tsx",
@@ -87,6 +94,7 @@ export const editorReviewItem: SourceItem = {
     "review-fragment-native.ts",
     "review-html.ts",
     "review-model.ts",
+    "review-mode-menu.tsx",
     "review-operation-native.ts",
     "review-preset.tsx",
     "review-richtext-components.tsx",
@@ -114,6 +122,7 @@ export const editorReviewItem: SourceItem = {
     "hstack",
     "list",
     "mark",
+    "menu",
     "strong",
     "textarea",
   ],

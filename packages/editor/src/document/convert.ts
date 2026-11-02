@@ -91,6 +91,8 @@ import {
   EditorMathNode,
   $createEditorMathNode,
 } from "@yopem-ui/editor/math-node"
+import { mediaPlaceholderNodeSchema } from "@yopem-ui/editor/media-placeholder-model"
+import { $createMediaPlaceholderNode } from "@yopem-ui/editor/media-placeholder-node"
 import { serializeMediaHtml } from "@yopem-ui/editor/media/html"
 import { MediaNode, $createMediaNode } from "@yopem-ui/editor/media/model"
 import {
@@ -138,6 +140,7 @@ import {
   documentListMarker,
   documentListType,
   documentMathChildren,
+  documentLimits,
   checkText,
   checkTree,
   DocumentError,
@@ -147,6 +150,7 @@ import {
   safeDocumentURL,
   validateHTMLTree,
   textOf,
+  tocHeadingText,
 } from "./boundary"
 import {
   DocumentColumnNode,
@@ -447,6 +451,15 @@ export function $importTree(tree: Root) {
     const canonical =
       node.type === "element" ? canonicalDocumentNode(node) : null
 
+    if (canonical?.type === "media-placeholder") {
+      if (formats.length || inheritedStyle)
+        throw new DocumentError([
+          "Placeholder presentation cannot be retained.",
+        ])
+
+      return [$createMediaPlaceholderNode(canonical.value)]
+    }
+
     if (canonical?.type === "media") {
       if (formats.length || inheritedStyle)
         throw new DocumentError(["Media text presentation cannot be retained."])
@@ -591,7 +604,9 @@ export function $importTree(tree: Root) {
       return []
 
     if (node.properties.dataEditorToggleContent !== undefined)
-      return node.children.flatMap((child) => convert(child, formats, style))
+      return node.children
+        .filter((child) => !isSlotWrapper(child))
+        .flatMap((child) => convert(child, formats, style))
 
     if (tag === "br") return [$createLineBreakNode()]
 
@@ -991,6 +1006,15 @@ export function $importTree(tree: Root) {
           )
         : undefined
 
+    const toggleContent =
+      output instanceof ToggleBodyNode
+        ? node.children.find(
+            (child) =>
+              child.type === "element" &&
+              child.properties.dataEditorToggleContent !== undefined,
+          )
+        : undefined
+
     const childContent =
       tag === "pre"
         ? [
@@ -1004,7 +1028,22 @@ export function $importTree(tree: Root) {
           ]
         : node.children
 
-    const slots = node.children.filter(isSlotWrapper)
+    const slots = [
+      ...node.children.filter(isSlotWrapper),
+      ...(toggleContent?.type === "element"
+        ? toggleContent.children.filter(isSlotWrapper)
+        : []),
+    ]
+
+    const names = new Set<string>()
+
+    for (const wrapper of slots) {
+      const slot = canonicalDocumentNode(wrapper)
+
+      if (slot?.type !== "slot" || names.has(slot.value))
+        throw new DocumentError(["Duplicate document slot name."])
+      names.add(slot.value)
+    }
 
     append(
       output,
@@ -1064,8 +1103,11 @@ export function $exportTree(markdown = false): Root {
   let footnoteDefinitionNumber = 0
   let headingNumber = 0
   const headingIds = new Map<string, string>()
-  const headings: { id: string; text: string }[] = []
-  let tocPresent = false
+  const headings: string[] = []
+  const headingElements = new Map<string, Element>()
+  const tocLists: Element[] = []
+  let tocCount = 0
+  let tocNumber = 0
 
   function collect(node: LexicalNode) {
     const slots = $getSlotNames(node)
@@ -1108,7 +1150,7 @@ export function $exportTree(markdown = false): Root {
 
     if (node.getType() === "editor-toc") {
       editorTocNodeSchema.parse(node.exportJSON())
-      tocPresent = true
+      tocCount += 1
     }
 
     if ($isElementNode(node))
@@ -1131,7 +1173,7 @@ export function $exportTree(markdown = false): Root {
         headingNumber += 1
         const id = createEditorTocHeadingId("document", String(headingNumber))
         headingIds.set(node.getKey(), id)
-        headings.push({ id, text: node.getTextContent() })
+        headings.push(id)
       }
 
       for (const child of node.getChildren()) collectHeadings(child)
@@ -1146,7 +1188,14 @@ export function $exportTree(markdown = false): Root {
     }
   }
 
-  if (tocPresent) collectHeadings(root)
+  if (tocCount > 0) {
+    collectHeadings(root)
+
+    if (headings.length > Math.floor(documentLimits.nodes / 7 / tocCount))
+      throw new DocumentError([
+        "Table of contents export exceeds structure budget.",
+      ])
+  }
 
   interface FootnoteReferenceOutput {
     id: string
@@ -1175,6 +1224,43 @@ export function $exportTree(markdown = false): Root {
     references.push({ id: reference.id, number: reference.number })
     referencesByIdentifier.set(reference.identifier, references)
   }
+
+  let backlinkNodes = 0
+  let backlinkBytes = 0
+
+  for (const [identifier, references] of referencesByIdentifier) {
+    const definitions = footnoteDefinitions.get(identifier)?.length ?? 0
+
+    if (!definitions) continue
+
+    if (
+      references.length >
+      Math.floor((documentLimits.nodes - backlinkNodes) / 4 / definitions)
+    )
+      throw new DocumentError(["Footnote export exceeds structure budget."])
+    backlinkNodes += references.length * definitions * 4
+
+    const bytesPerDefinition = Math.floor(
+      (documentLimits.bytes - backlinkBytes) / definitions,
+    )
+
+    let bytes = 0
+
+    for (const reference of references) {
+      bytes += reference.id.length + String(reference.number).length + 3
+
+      if (bytes > bytesPerDefinition)
+        throw new DocumentError(["Footnote export exceeds 1 MiB."])
+    }
+
+    backlinkBytes += bytes * definitions
+  }
+
+  const pendingBacklinks: {
+    children: ElementContent[]
+    index: number
+    references: { id: string; number: number }[]
+  }[] = []
 
   function slotElements(node: LexicalNode) {
     return $getSlotNames(node).map((name) => {
@@ -1258,26 +1344,16 @@ export function $exportTree(markdown = false): Root {
 
     if (node.getType() === "editor-toc") {
       editorTocNodeSchema.parse(node.exportJSON())
+      tocNumber += 1
 
-      return element(
-        "nav",
-        [
-          element(
-            "ol",
-            headings.map(({ id, text }) =>
-              element("li", [
-                element("a", [{ type: "text", value: text }], {
-                  href: `#${id}`,
-                }),
-              ]),
-            ),
-          ),
-        ],
-        {
-          dataEditorToc: editorTocHTMLAttributes()["data-editor-toc"],
-          ariaLabel: "Table of contents",
-        },
-      )
+      const list = element("ol", [])
+      tocLists.push(list)
+
+      return element("nav", [list], {
+        dataEditorToc: editorTocHTMLAttributes()["data-editor-toc"],
+        ariaLabel:
+          tocCount > 1 ? `Table of contents ${tocNumber}` : "Table of contents",
+      })
     }
 
     if (node.getType() === "editor-date") {
@@ -1308,6 +1384,16 @@ export function $exportTree(markdown = false): Root {
           ariaLabel: `Drawing with ${scene.elements.length} elements`,
           role: "group",
         },
+      )
+    }
+
+    if (node.getType() === "editor-media-placeholder") {
+      const parsed = mediaPlaceholderNodeSchema.parse(node.exportJSON())
+
+      return element(
+        "div",
+        [{ type: "text", value: "Upload unavailable. Select a file." }],
+        { dataEditorMediaPlaceholder: parsed.uploadKind },
       )
     }
 
@@ -1703,13 +1789,8 @@ export function $exportTree(markdown = false): Root {
 
       const references = referencesByIdentifier.get(identifier) ?? []
 
-      for (const reference of references)
-        children.push(
-          element("a", [{ type: "text", value: `↩ ${reference.number}` }], {
-            dataEditorFootnoteBacklink: "",
-            href: `#${reference.id}`,
-          }),
-        )
+      if (references.length)
+        pendingBacklinks.push({ children, index: children.length, references })
     }
 
     children.push(...slotElements(node))
@@ -1758,16 +1839,121 @@ export function $exportTree(markdown = false): Root {
 
     const output = element(tag, children, properties)
 
+    if ($isHeadingNode(node)) {
+      const id = headingIds.get(node.getKey())
+
+      if (id) headingElements.set(id, output)
+    }
+
     if (markdown && $isAutoLinkNode(node) && node.getIsUnlinked())
       unlinkedAutoLinks.add(output)
 
     return output
   }
 
-  return {
+  const tree: Root = {
     type: "root",
     children: [...root.getChildren().map(convert), ...slotElements(root)],
   }
+
+  if (backlinkNodes > 0) {
+    checkTree(tree)
+    const pending: object[] = [tree]
+    let nodes = 0
+
+    while (pending.length) {
+      const value = pending.pop()
+
+      if (!value) break
+      nodes += 1
+
+      for (const child of Object.values(value))
+        if (child instanceof Object) pending.push(child)
+    }
+
+    if (backlinkNodes > documentLimits.nodes - nodes)
+      throw new DocumentError(["Footnote export exceeds structure budget."])
+
+    for (const { children, index, references } of pendingBacklinks) {
+      const slots = children.splice(index)
+
+      for (const reference of references)
+        children.push(
+          element("a", [{ type: "text", value: `↩ ${reference.number}` }], {
+            dataEditorFootnoteBacklink: "",
+            href: `#${reference.id}`,
+          }),
+        )
+
+      for (const slot of slots) children.push(slot)
+    }
+  }
+
+  let tocHTMLNodes = 2
+  let tocEntryBytes = 0
+
+  const entries = headings.map((id) => {
+    const heading = headingElements.get(id)
+
+    if (!heading)
+      throw new DocumentError(["Table of contents heading is missing."])
+
+    const text = tocHeadingText(heading)
+    const bytes = checkText(text)
+    tocHTMLNodes += 2 + Number(text.length > 0)
+    tocEntryBytes +=
+      '<li><a href="#'.length +
+      id.length +
+      '">'.length +
+      bytes +
+      "</a></li>".length
+
+    for (const character of text)
+      if (character === "<" || character === "&") tocEntryBytes += 5
+
+    return { id, text }
+  })
+
+  if (tocCount > 0) {
+    if (tocHTMLNodes > 10_000)
+      throw new DocumentError([
+        "Table of contents export exceeds 10000 HTML nodes.",
+      ])
+
+    if (tocEntryBytes > Math.floor(documentLimits.bytes / tocCount))
+      throw new DocumentError(["Table of contents export exceeds 1 MiB."])
+
+    checkTree(tree)
+    const pending: object[] = [tree]
+    let nodes = 0
+
+    while (pending.length) {
+      const value = pending.pop()
+
+      if (!value) break
+      nodes += 1
+
+      for (const child of Object.values(value))
+        if (child instanceof Object) pending.push(child)
+    }
+
+    if (
+      headings.length >
+      Math.floor((documentLimits.nodes - nodes) / 7 / tocCount)
+    )
+      throw new DocumentError([
+        "Table of contents export exceeds structure budget.",
+      ])
+  }
+
+  for (const list of tocLists)
+    list.children = entries.map(({ id, text }) =>
+      element("li", [
+        element("a", [{ type: "text", value: text }], { href: `#${id}` }),
+      ]),
+    )
+
+  return tree
 }
 
 export function typesetDocumentTree(tree: Root): Root {

@@ -9,8 +9,8 @@ import {
 import { $insertDataTransferForRichText } from "@lexical/clipboard"
 import { buildEditorFromExtensions } from "@lexical/extension"
 import { HeadlessExtension } from "@lexical/headless"
-import { withDOM } from "@lexical/headless/dom"
 import { registerRichText } from "@lexical/rich-text"
+import { withDOM } from "@workspace/tests/fixtures/lexical-dom"
 import { expect, test } from "bun:test"
 import {
   $createParagraphNode,

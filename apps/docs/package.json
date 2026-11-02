@@ -32,6 +32,7 @@
     "typecheck": "bun run generate-routes && tsc --noEmit"
   },
   "dependencies": {
+    "@base-ui/react": "catalog:",
     "@base-ui/utils": "catalog:",
     "@daypicker/react": "catalog:",
     "@excalidraw/excalidraw": "catalog:",

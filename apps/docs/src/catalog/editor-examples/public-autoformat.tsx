@@ -16,6 +16,7 @@ import {
   type EditorAutoformatTransformer,
 } from "@yopem-ui/editor/autoformat"
 import { configExtension } from "lexical"
+import { CodeIcon, FileCode2Icon, Redo2Icon, Undo2Icon } from "lucide-react"
 import { useReducer } from "react"
 
 const extensions = [EditorAutoformatExtension]
@@ -83,10 +84,37 @@ export function PublicAutoformatExample() {
         ariaLabel="Extended input rules"
       >
         <EditorToolbar aria-label="Input-rule controls">
-          <EditorFormatButton format="code" />
-          <EditorBlockButton block="code" />
-          <EditorHistoryButton action="undo" />
-          <EditorHistoryButton action="redo" />
+          <EditorFormatButton
+            format="code"
+            title="Inline code"
+            render={<Button variant="ghost" size="icon-sm" />}
+          >
+            <CodeIcon aria-hidden="true" size={16} />
+          </EditorFormatButton>
+          <EditorBlockButton
+            block="code"
+            aria-label="Code block"
+            title="Code block"
+            render={<Button variant="ghost" size="icon-sm" />}
+          >
+            <FileCode2Icon aria-hidden="true" size={16} />
+          </EditorBlockButton>
+          <EditorHistoryButton
+            action="undo"
+            aria-label="Undo"
+            title="Undo"
+            render={<Button variant="ghost" size="icon-sm" />}
+          >
+            <Undo2Icon aria-hidden="true" size={16} />
+          </EditorHistoryButton>
+          <EditorHistoryButton
+            action="redo"
+            aria-label="Redo"
+            title="Redo"
+            render={<Button variant="ghost" size="icon-sm" />}
+          >
+            <Redo2Icon aria-hidden="true" size={16} />
+          </EditorHistoryButton>
         </EditorToolbar>
         <EditorContent />
       </EditorRoot>
@@ -103,9 +131,29 @@ export function PublicAutoformatExample() {
         ariaLabel="Host input rules"
       >
         <EditorToolbar aria-label="Host input-rule controls">
-          <EditorFormatButton format="code" />
-          <EditorHistoryButton action="undo" />
-          <EditorHistoryButton action="redo" />
+          <EditorFormatButton
+            format="code"
+            title="Inline code"
+            render={<Button variant="ghost" size="icon-sm" />}
+          >
+            <CodeIcon aria-hidden="true" size={16} />
+          </EditorFormatButton>
+          <EditorHistoryButton
+            action="undo"
+            aria-label="Undo"
+            title="Undo"
+            render={<Button variant="ghost" size="icon-sm" />}
+          >
+            <Undo2Icon aria-hidden="true" size={16} />
+          </EditorHistoryButton>
+          <EditorHistoryButton
+            action="redo"
+            aria-label="Redo"
+            title="Redo"
+            render={<Button variant="ghost" size="icon-sm" />}
+          >
+            <Redo2Icon aria-hidden="true" size={16} />
+          </EditorHistoryButton>
         </EditorToolbar>
         <EditorContent />
       </EditorRoot>

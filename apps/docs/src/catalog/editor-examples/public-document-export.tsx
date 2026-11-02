@@ -14,6 +14,7 @@ import {
 import { EditorDocumentExportControls } from "@yopem-ui/editor/document-export"
 import { captureEditorDocumentImageWithHtmlToImage } from "@yopem-ui/editor/document-export-html-to-image"
 import { EditorMathExtension } from "@yopem-ui/editor/math"
+import { Redo2Icon, Undo2Icon } from "lucide-react"
 import { useReducer } from "react"
 
 const extensions = [EditorMathExtension]
@@ -131,8 +132,22 @@ export function PublicDocumentExportExample() {
           initialState={initialState}
         >
           <EditorToolbar aria-label="Document export history">
-            <EditorHistoryButton action="undo" />
-            <EditorHistoryButton action="redo" />
+            <EditorHistoryButton
+              action="undo"
+              aria-label="Undo"
+              title="Undo"
+              render={<Button variant="ghost" size="icon-sm" />}
+            >
+              <Undo2Icon aria-hidden="true" size={16} />
+            </EditorHistoryButton>
+            <EditorHistoryButton
+              action="redo"
+              aria-label="Redo"
+              title="Redo"
+              render={<Button variant="ghost" size="icon-sm" />}
+            >
+              <Redo2Icon aria-hidden="true" size={16} />
+            </EditorHistoryButton>
           </EditorToolbar>
           <EditorContent />
           <EditorDocumentExportControls

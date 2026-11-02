@@ -6,6 +6,13 @@ and static registry. Components use React 19, Base UI, StyleX, and TypeScript.
 catalogs, inline previews, guides, search, machine-readable docs, and registry hosting.
 The first release is copy/paste-only and does not publish an npm package.
 
+## Task continuity
+
+Read `docs/plate-current-handoff.json` before you continue the Plate editor work
+if the file exists. Update it after changes, validation, decisions, and blockers.
+Check the current Git state and reports before you act. Keep historical reports
+unchanged.
+
 ## Commands
 
 ```sh
@@ -185,6 +192,9 @@ Do not add code comments or JSDoc. Preserve existing comments.
   `data-slot` values.
 - Use `"use client"` for client components and Base UI primitives from
   `@base-ui/react`.
+- Import CSPProvider from `@base-ui/react/csp-provider` and
+  DirectionProvider from `@base-ui/react/direction-provider`.
+  Supply the host CSP nonce. Keep the host CSP policy intact.
 - Style with `@stylexjs/stylex`: define local `stylex.create` objects, compose
   with `stylex.props`, and use `stylexProps` from `@registry/lib/stylex` when
   merging consumer `className`.
@@ -278,6 +288,13 @@ Rounded components use md (12px) by default. Use xstyle to change corner radii. 
   Keep its `data-cfasync="false"` attribute to prevent Rocket Loader deferral.
 - Use Field, Fieldset, Form, and Label for form structure. Use the matching
   input, selection, and validation components instead of new control systems.
+  Combobox chip navigation closes open suggestions before focus moves to a chip.
+  If closing is cancelled, navigation does not focus a chip.
+  ScrollArea viewports use tabIndex=0 by default. Use viewportTabIndex={-1}
+  when an input owns composite keyboard navigation. ComboboxList and
+  AutocompleteList set this automatically. Keep standalone viewports keyboard-accessible.
+  Use portalProps.container for a host landmark that contains nonmodal suggestions.
+  Check popup position and clipping after setting the container.
 - Calendar day button labels include the visible day. Preserve consumer label
   and formatter overrides.
 - Use Dialog, AlertDialog, Sheet, Drawer, Popover, Tooltip, PreviewCard, Menu,
@@ -291,6 +308,9 @@ Rounded components use md (12px) by default. Use xstyle to change corner radii. 
   editable surface, toolbar, and feature controls separate. Document each public
   part. Make CLI source dependencies match those parts. Keep consumer skills
   aligned with both preset use and custom composition.
+  Use `useEditorState().editable` for mutation controls. It reports attached native
+  editability. Server markup stays read-only until the native root connects.
+  The `editable` prop keeps the requested setting.
   Use Lexical document state, not Slate state. Do not imply Plate plugin or
   document compatibility. Keep editor styles in StyleX. Preserve native editing,
   selection, clipboard, history, keyboard input, and accessible control names.
@@ -309,9 +329,13 @@ Rounded components use md (12px) by default. Use xstyle to change corner radii. 
   Row resizing stores native row minimum height. Content can increase visible height.
   Keep `data-editor-row-height` in exported HTML to preserve finite native heights.
   Keep table scrolling bounded in both directions and keyboard-accessible.
-  Keep table validation pure and shared with import paths. Reject invalid table
-  updates without removing existing content. Preserve native table clipboard,
-  merged spans, resize cancellation, history, and right-to-left keyboard behavior.
+  Keep table validation pure and shared with import paths. Before loading or
+  mutating live Lexical slots, the host must bound occupied slots and preserve
+  acyclic ownership. Validate complete candidates at host boundaries. Root
+  transforms do not validate all queued updates. Rejected updates can discard
+  coalesced pending edits. Do not rely on transforms for `skipTransforms` updates
+  or unvalidated external state. Preserve native table clipboard, merged spans,
+  resize cancellation, history, and right-to-left keyboard behavior.
   Render checklist items as native list items with separate checkbox controls.
   Keep native list semantics, keyboard input, history, and read-only behavior.
   Keep the
@@ -642,11 +666,32 @@ Keep title links usable when closed.
 Keep the native details body, empty disclosure control, and content slot together.
 
 
+## Optional editor toolbar menus
+
+Install `editor-toolbar-menus` separately. Import parts from `@/components/editor/toolbar-menus`.
+Compose `EditorFixedToolbarButtons` inside `EditorFixedToolbar` within `EditorRoot`.
+Use `EditorListToolbarButtons` for grouped list controls.
+Use grouped icon controls with full accessible names. Keep each group within its toolbar.
+`EditorInsertMenu` adds an empty block after one current root block. It does not convert selected content.
+`EditorTurnIntoMenu` converts native blocks. `EditorMoreMenu` applies strikethrough, subscript, superscript, and highlight.
+Saved selections expire after document or editable-state changes. Preserve host event cancellation.
+Configured `authorizeAction` must return literal `true`. It checks menu actions, not all grouped controls.
+Install `editor-floating-toolbar` separately before composing `EditorFloatingToolbarButtons` inside `EditorFloatingToolbar`.
+Optional feature nodes are not included. Native keyboard, history, focus, and accessibility checks remain unvalidated.
+
 ## Optional editor review
 
 Install `editor-review` separately from `editor`.
 Use `EditorReviewPreset` for a complete editor or compose review parts inside `EditorRoot`.
 Keep one review controller and extension per root in a stable mount-time array.
+Import `EditorReviewModeMenu` from `@/components/editor/review`. Keep it outside a disabled `EditorToolbar`.
+Supply controlled `value`, synchronous `canChangeMode`, and `onModeChange` for Editing, Suggestion, and Viewing.
+The default accessible name includes the current mode. An explicit `aria-label` also sets default visible text.
+Keep custom child text in the accessible name.
+Values are `editing`, `suggestion`, and `viewing`. The host owns editable state and review mode.
+Keep `onModeChange` synchronous. Commit the controlled value only after review accepts.
+Recheck host write and suggestion policies in the callback. Mode changes never grant permission.
+Enable editing synchronously before `setSuggesting` when leaving Viewing. Restore the previous editable state if review rejects.
 Supply a verified viewer and a synchronous host policy for every action.
 Allow an action only when current policy returns literal `true`.
 Serialized author IDs do not grant access. Recheck every action on the server.
@@ -711,6 +756,8 @@ See https://ui.yopem.com/components/editor-typeahead for public contracts and li
 Use EditorInlineCombobox with Input, Content, List, Item, Empty, Status, Group, GroupLabel, and Row parts.
 EditorInlineComboboxInput renders EditorContent. Do not add a second query input.
 Keep every current item in controller order. Read state with useEditorInlineCombobox.
+Keep default option names short. Descriptions use aria-describedby outside the named option.
+Keep the complete row available for pointer selection.
 Compose EditorEmojiPopover, EditorEmojiToolbarButton, EditorEmojiPopoverContent, and EditorEmojiPicker inside EditorToolbar.
 EditorEmojiPicker is the panel. EditorEmojiMenu is the complete toolbar preset.
 Compose EditorEmojiSearch, EditorEmojiCategory, EditorEmojiList, EditorEmojiItem, EditorEmojiEmpty, EditorEmojiPrevious, EditorEmojiNext, and EditorEmojiClearHistory.
@@ -723,14 +770,43 @@ EditorTypeahead renders the editable surface and suggestions. Do not add EditorC
 Keep core example compositions in `apps/docs/src/catalog/editor-examples/`.
 Publish the gallery at `/editor/examples` with complete consumer source.
 Keep its JSON inventory, Markdown, search, navigation, and sitemap entries aligned.
+Show basic compositions first. Keep one live preview open.
+Use Lucide icons for standard toolbar actions. Keep full accessible names and titles.
+For standard editor actions, pass Button icon sizes through render. Keep current values visible in selection controls.
+Set aria-pressed on ToolbarButton for controlled toggle actions. Native toggle renderers keep their own state.
+Keep setup details available when the preview is closed. Show limits before the live controls.
 State each example's limits. Do not call the house preset the full Plate EditorKit.
 Do not mark a mapped public workflow complete before its behavior is checked.
+Use `notion-like` for the Potion-style workspace based on public runtime observations.
+Open `/editor/examples/notion-like` for the standalone workspace. Keep consumer source in the gallery.
+Keep the app height within the viewport. Use separate ScrollArea viewports for navigation and document content.
+Use Sheet navigation when the parent is narrow. Keep page controls outside document scrolling.
+Native controls include links, demo mentions, callouts, math, contents, and URL images. Demo mention IDs grant no access.
+The Table of Contents page has a separate outline and an in-document contents block.
+Both show the first 500 nonempty headings in preorder.
+Titles normalize whitespace and truncate to 256 UTF-16 code units.
+The outline does not change saved content.
+The deployed Potion revision is unknown. Do not claim complete Potion or paid-template equivalence.
+Use `yopem-ui:notion-like:v1:document:` keys for validated known-page JSON drafts.
+Validate stored documents before mounting the native root. Keep rejected stored bytes unchanged.
+Pause writes after storage or validation failure. Keep memory editing and active-page JSON copy available.
+Page switches reset undo history and selection. Titles and page options stay in memory.
+Browser drafts are unencrypted. Scripts on this origin can read them. Browser storage can remove drafts.
+Two tabs can overwrite drafts. This example has no conflict resolution or remote synchronization.
+Do not treat browser drafts as private or durable storage.
+Keep accounts, collaboration, and other host services outside this example.
 
 ## Optional editor media
 
 Install `editor-media` separately. Import optional parts from the copied `media` module.
 Register `MediaExtension` in a stable extensions array.
 Compose `MediaInsertControl` inside `EditorToolbar`.
+Compose selected-media controls inside `MediaActions` and `EditorRoot`.
+Omit `nodeKey` to follow one selected media node. Keep an explicit `nodeKey` fixed until unmount.
+`MediaEditControl` changes the current source without another insertion.
+`MediaCaptionTextarea` stores plain text with line breaks and a 10000-character limit.
+`MediaImageResize` supports images only. Escape and pointer cancellation discard resize drafts.
+Content, target, and read-only changes expire saved edits. Host event cancellation takes priority.
 Mount `MediaFileClipboard` inside `EditorRoot` with a stable host upload callback.
 It handles one file per paste or drop. Without upload, it registers nothing.
 Rich MIME and higher-priority host handlers stay first. Callback changes cancel pending work.
@@ -741,26 +817,89 @@ Compose `MediaPreviewRoot`, `MediaPreviewTrigger`, and `MediaPreviewDialog`, or 
 Supply unique image IDs. Zoom stays local and uses house Slider and ScrollArea controls.
 Use `MediaEmbedContent` with an explicit provider or exact HTTPS-origin policy.
 Frames need user consent. Source, policy, and disabled changes discard consent.
+Frame consent does not cover images, video, audio, or caption tracks. Images can request their URLs
+when rendered. Native media and tracks can make network requests. Preload settings do not guarantee
+network privacy. Successful uploads retain the file name and URL. Media JSON and tagged HTML can
+include URLs, names, alt text, and captions. Account for this data in host delivery, CSP, logs,
+clipboard, and storage policies.
 Tweet embeds use the fixed platform.twitter.com endpoint. HTML exports keep inert links.
 Origin validation does not check DNS or redirects. Keep these controls in the host.
-Use HTTPS URLs without credentials and exact supported embed hosts.
+Use absolute HTTPS source and track URLs without credentials and exact supported embed hosts.
+`MediaInsertControl` and `MediaEditControl` reject literal `?` and `#`, including empty delimiters.
+This insert rule applies to direct URLs and upload results. Use query-free provider URLs with this control.
+In URL paths, `%3F` and `%23` are path data. Provider and iframe rules can be stricter.
+`MediaInsertControl` requires a fresh valid range, a connected editable root, and a registered `MediaNode`.
+Content, changed non-null selection, read-only, or root changes can invalidate the target.
+A null selection can remain while the dialog has focus.
+On success, the control inserts after the ordered selection-end root child or at the exact root gap.
+Its insertion keeps selected content, list and table structure, and empty target blocks.
+It adds an empty paragraph and selects the new media node.
+`$insertMedia` uses Lexical nearest-root insertion on the current range.
+`MediaFileClipboard` restores its range and calls `$insertMedia`. Its drop range comes from the drop position.
+Clipboard completion requires an unchanged non-null range. The insert control and clipboard
+insertion request `HISTORY_PUSH_TAG`. Media action changes and removal also request it. This tag
+does not guarantee exact undo grouping. The standalone `$insertMedia` helper adds no history tag or
+saved-target lease. Its caller owns the update, selection, and history policy.
+These paths use `parseMedia`, not the insert control's delimiter rule. Provider-specific checks still apply.
+Ordinary URLs can have nonempty components that the portable reader rejects. Placement has no control preservation guarantee.
+Cancellation signals the host and discards stale local results. Remote cancellation is cooperative.
+Each mounted `MediaInsertControl` instance keeps its upload slot until its callback settles.
+Separate instances and remounts do not share that slot. The placeholder controller keeps its own
+busy slot until settlement. `MediaFileClipboard` does not retain an equivalent slot after
+cancellation. Calling `start` on the same `createMediaUpload` task can supersede an unsettled call. Earlier callbacks
+can continue. Enforce remote upload concurrency and retry policy in the host. Cancellation does not
+prove that remote work stopped.
 Keep native audio, video, file, and iframe controls usable in read-only roots.
 Supply bounded, abort-aware host uploads with server authorization and validation.
 Private assets require explicit same-origin delivery integration. Never put tokens in media URLs.
 Register `MediaNode` in every reader. Preserve native tagged figure HTML.
 Registered media supports validated JSON, canonical tagged HTML, and Markdown HTML fallback.
-Conversion rejects relative URLs, URL credentials, queries, and fragments.
+The portable reader rejects relative URLs, credentials, and nonempty query or fragment components.
+It may retain canonical ordinary-media and track URLs with empty trailing `?` or `#`, subject to all other checks.
 Private delivery still requires host authorization and a trusted URL resolver.
+
+## Optional editor media placeholders
+
+Install `editor-media-placeholder` separately. Import parts from `@/components/editor/media-placeholder`.
+Create one stable `createEditorMediaPlaceholder({ upload })` controller per root.
+Register `MediaExtension` and `createMediaPlaceholderExtension(controller)` in a stable root extensions array.
+Compose `MediaPlaceholderInsertButton` inside `EditorToolbar` and `MediaUploadNotification` beside `EditorContent`.
+The native node renders file, progress, typed failure, retry, cancel, and remove controls through `MediaPlaceholderElement`.
+Each root allows at most 16 placeholders and one active upload task.
+Files require 1 byte through 16 MiB and names of at most 512 characters.
+Use `controller.configure(upload)` when host authentication or the upload callback changes.
+Document, changed non-null selection, read-only, root, and host changes invalidate work.
+Cancel retains the busy slot until the task settles. Cancellation does not prove that remote storage stopped.
+Retry requires an explicit action. Success replaces the placeholder with validated media.
+Placeholder upload results reject literal `?` and `#`, including empty delimiters.
+JSON stores only `type: "editor-media-placeholder"`, `version: 1`, and `uploadKind`.
+Never serialize File objects or private data. Restored placeholders need a fresh file selection.
+An active upload holds a File in memory. A failed upload can retain one File for explicit retry
+until invalidation or cleanup. The host callback receives the File and can retain or copy it,
+including after settlement. Successful replacement stores the file name and URL in media JSON and
+tagged HTML. JSON omission does not erase memory or remote copies.
+Insertion, replacement, and removal each create a separate history step.
+Progress, failure, retry, and cancellation add no history steps. Undo invalidates work; redo never uploads.
+No automatic upload, retry, or fetch is supplied. No file-upload paste or drop handler is supplied.
+The extension checks clipboard node insertion for placeholder limits and valid placement.
+Keep authorization, content validation, and quotas in the host. Source workflows remain runtime-unvalidated.
 
 ## Optional editor footnotes and contents
 
 Install `editor-footnotes` and `editor-toc` separately.
 Register their extensions in stable root extension arrays.
 Compose focused controls inside `EditorToolbar`.
+`EditorFootnoteControls` wraps its actions within the available width.
+Keep compact visible labels and complete accessible action names.
 `EditorFootnoteTypeahead` owns the editable surface. Do not add adjacent `EditorContent`.
 Preserve repeated references, unresolved references, and duplicate definitions.
 Renumber a selected duplicate explicitly. Do not silently rewrite identifiers.
 Table-of-contents links target headings in the current editor only.
+Live contents and native TOC HTML show the first 500 nonempty headings in preorder.
+Titles normalize whitespace and truncate to 256 UTF-16 code units.
+Portable document export uses all headings and full text, subject to document limits.
+It uses canonical document-scoped IDs, not live editor-scoped IDs.
+Portable HTML input requires complete canonical heading links. Native TOC HTML can fail this check.
 `editorTocSlashCommand` is an optional host slash action. Base contents controls do not require typeahead.
 Register feature nodes in every reader and validate complete documents at IO boundaries.
 Document readers support validated footnote and table-of-contents nodes.
@@ -822,6 +961,16 @@ Install `editor-document` separately for JSON, HTML, Markdown, streaming, and st
 It depends on `editor` and `editor-blocks`. Base editor installs do not include document codecs.
 Import helpers from `@/components/editor/document` and DocumentStatic from `@/components/editor/document/static`.
 DocumentStatic needs no EditorRoot. Keep every copied helper, including `document/state.ts` and canonical presentation codecs.
+Portable HTML, Markdown, standalone, download, and DOCX exports reject paragraph-owned slots.
+Use JSON for these documents. Other slot ownership cases still need validation.
+Optional `idPrefix` has 1–64 ASCII characters. Start with an ASCII letter. Use ASCII letters, digits, underscores, or non-consecutive hyphens after it.
+Invalid prefixes throw. Use the same stable prefix for server rendering and hydration.
+Use a distinct prefix for each document in one owner document. Reserve generated IDs against other host markup.
+Choose distinct, meaningful `aria-label` values for multiple documents.
+A prefix changes rendered IDs and fragment targets to `<idPrefix>--<canonical-id>`. Update deep links when opting in.
+Native fragment activation can change the URL and browser history. Changing a prefix changes its links.
+Omitting `idPrefix` preserves canonical IDs and existing deep links, but does not isolate multiple instances.
+Static prefixing does not change document data. Prefixed markup is not portable document HTML.
 Keep `@types/hast` and `@types/mdast` as direct consumer dependencies.
 Register EditorDocumentClipboardExtension at root creation in a stable extensions array.
 Call registerDocumentPaste after creation. Keep its cleanup in the host lifecycle.
@@ -837,7 +986,8 @@ Mentions use the validated identity codec.
 Saved mention identities do not grant access.
 Media JSON and canonical tagged figure HTML preserve native media metadata.
 Markdown uses canonical HTML for media. Register MediaExtension for live rendering.
-Use MediaNode in headless readers. Reject media URL credentials, queries, and fragments.
+Use MediaNode in headless readers. The portable reader rejects credentials and nonempty query or fragment components.
+It may retain canonical ordinary-media and track URLs with empty trailing delimiters, subject to all other checks.
 Register optional feature nodes in every live reader before import.
 Document readers retain footnotes, contents, columns, dates, labels, drawings, editable cards, and diagram metadata.
 Optional nodes use canonical HTML fallback in Markdown. Markdown footnote input is supported.
@@ -868,6 +1018,9 @@ See https://ui.yopem.com/docs/editor-assets for migration, callback, delivery, a
 Install `editor-block-selection` separately.
 Create one stable controller with `createEditorBlockSelection`.
 Compose `EditorBlockSelection` inside `EditorRoot`.
+Keep the wrapper mounted without a gutter. Use `onKeyDown` for host Escape cancellation.
+Forward wrapper refs and `onKeyDownCapture` through custom render elements.
+Same-document React portals retain wrapper ownership. Keep native composition and unowned Escape behavior.
 Use the gutter and actions for keyboard selection and movement.
 Use drag handles for pointer movement. Keep keyboard movement available.
 Require synchronous literal `true` from `authorizeCut` before native cut.
@@ -905,7 +1058,9 @@ Use the pure `search-model` module outside React. Keep native input cancellation
 Install `editor-floating-toolbar` separately.
 Compose `EditorFloatingToolbar` inside EditorRoot beside EditorContent.
 Use existing editor controls as children. Select native text to open it.
-Press Alt+F10 to focus its first enabled button. Escape returns keyboard focus.
+Use `EditorLinkFloatingToolbar` for open, edit, and remove actions at a collapsed link caret.
+Both parts come from the copied `floating-toolbar` module. Expanded link text keeps the text toolbar.
+Press Alt+F10 to focus the first enabled control. Escape returns keyboard focus.
 Keep the saved-range guard. Content changes and read-only transitions invalidate targets.
 Native focus, nested popups, pointer geometry, RTL, and cleanup require runtime checks.
 
@@ -948,6 +1103,20 @@ work settles. Native print dialogs and synchronous browser work cannot be stoppe
 Verify local font fallbacks, SVG foreignObject, CSP, keyboard access, owner-document
 cleanup, and real output before use. Runtime checks remain deferred.
 
+## Optional editor PDF export
+
+Install `editor-document-export-pdf` separately. Import `EditorDocumentPDFExportControl` from `@/components/editor/document-export-pdf`.
+Compose it inside `EditorRoot` with an explicit PNG `capture` callback.
+Install `editor-document-export-image` only to use its optional `captureEditorDocumentImageWithHtmlToImage` adapter.
+Import that adapter from `@/components/editor/document-export-html-to-image`. No capture adapter is installed automatically.
+The control downloads `plate.pdf` directly. It does not use native print.
+Output contains one raster page with an opaque white JPEG image. Text is not selectable.
+Keep the existing export resource policy, CSP nonce, stale-target checks, and shared operation lease.
+Dimensions allow 4096 by 16384 pixels and 16777216 pixels total. Output has a 16 MiB limit.
+Decoded image dimensions must match the snapshot. Cancelled work retains capacity until outstanding work settles.
+Read-only roots can export without changes to saved content, selection, or history.
+Synchronous browser work cannot be stopped. Browser and real PDF output checks remain unvalidated.
+
 ## Optional editor input shortcuts
 
 Install `editor-autoformat` separately. Register `EditorAutoformatExtension` in a stable root extensions array.
@@ -980,7 +1149,13 @@ This is not the Plate rule runtime. Native boundary, metadata, and history check
 ## Optional editor labels
 
 Install `editor-labels` separately. Create a stable `createEditorLabelsExtension(options)` per root.
-Use `EditorLabelsPicker` for the preset or compose `EditorLabelsOption` inside `CheckboxGroup`.
+Use `EditorLabelsPicker` for the checkbox preset or compose `EditorLabelsOption` inside `CheckboxGroup`.
+Use `EditorLabelsSelect` for filtered multiselect with removable tags.
+Compose `EditorLabelsInput`, `EditorLabelsContent`, and `EditorLabelsTag` for custom layouts.
+Uncontrolled selections update the native label document with undo support.
+Controlled `value` needs `onValueChange`. Commit document changes through `$replaceEditorLabels` in the host callback.
+Keep `options` identical to the labels extension. Changes above ten labels reject.
+Disabled and read-only changes close suggestions and clear the query. Restoring editing does not open suggestions.
 Options admit one through 64 unique bounded strings. Tokens admit at most ten labels.
 Apply application minimum counts in the host form. Replace only a label-only paragraph.
 Register `EditorLabelNode` in each reader. Use `labels-model` for pure validation.
@@ -1057,6 +1232,7 @@ Cancellation does not prove that billing stops. No default endpoint or model exi
 
 Install `editor-block-menu` separately. Create one stable `createEditorBlockMenu` controller per root.
 Register its extension at root creation. Wrap `EditorContent` with `EditorBlockMenu` inside that root.
+Compose `EditorBlockSelection` with a separate stable controller for gutter actions. Register both controller extensions once.
 Right-click a block or press Shift+F10. Keep native selection, clipboard policies, history, and host event cancellation.
 Configured `authorizeAction` must return literal `true`. Stale or pending document targets reject actions.
 Supply explicit `onAskAI` and `onCodeDrawing` callbacks when needed. These callbacks do not grant document access.

@@ -16,7 +16,7 @@ import { Button } from "@registry/components/ui/button"
 import { List, ListItem } from "@registry/components/ui/list"
 import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
-import { $applyNodeReplacement, DecoratorNode } from "lexical"
+import { $applyNodeReplacement, $nodesOfType, DecoratorNode } from "lexical"
 import { useSyncExternalStore } from "react"
 
 import {
@@ -77,6 +77,19 @@ const depthStyles = [
   styles.depthFive,
   styles.depthSix,
 ] as const
+
+export function $getEditorTocLabels() {
+  const nodes = $nodesOfType(EditorTocNode)
+    .filter((node) => node.isAttached())
+    .sort((left, right) => (left.isBefore(right) ? -1 : 1))
+
+  return new Map(
+    nodes.map((node, index) => [
+      node.getKey(),
+      nodes.length > 1 ? `Table of contents ${index + 1}` : "Table of contents",
+    ]),
+  )
+}
 
 function editorStateStore(editor: LexicalEditor) {
   return {
@@ -139,7 +152,7 @@ export class EditorTocNode extends DecoratorNode<ReactNode> {
   static importJSON(value: SerializedEditorTocNode) {
     parseEditorTocNode(value)
 
-    return $createEditorTocNode()
+    return $createEditorTocNode().updateFromJSON(value)
   }
 
   static importDOM(): DOMConversionMap {
@@ -167,7 +180,13 @@ export class EditorTocNode extends DecoratorNode<ReactNode> {
 
     for (const [name, value] of Object.entries(editorTocHTMLAttributes()))
       element.setAttribute(name, value)
-    element.setAttribute("aria-label", "Table of contents")
+    element.setAttribute(
+      "aria-label",
+      editor
+        .getEditorState()
+        .read(() => $getEditorTocLabels().get(this.getKey())) ??
+        "Table of contents",
+    )
     const list = document.createElement("ol")
     const snapshot = editor.getEditorState().read($getEditorTocSnapshot)
 
@@ -238,6 +257,7 @@ function EditorTocItem({
   const navigate = useStableCallback(function navigate(
     event: MouseEvent<HTMLElement>,
   ) {
+    if (event.defaultPrevented) return
     event.preventDefault()
     focusEditorTocHeading(editor, heading.key)
   })

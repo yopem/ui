@@ -24,7 +24,12 @@ import {
   $getSelection,
   HISTORY_PUSH_TAG,
 } from "lexical"
-import { useState, useSyncExternalStore, type ComponentProps } from "react"
+import {
+  createElement,
+  useState,
+  useSyncExternalStore,
+  type ComponentProps,
+} from "react"
 
 import { $getSelectedEditorMath, $insertEditorMath } from "./math-extension"
 import { parseEditorMath, type EditorMathValue } from "./math-model"
@@ -42,10 +47,17 @@ export function EditorMathPreview({ value }: { value: EditorMathValue }) {
 
   if (!result.ok) return <Text role="alert">{result.error}</Text>
 
+  const mathML = /<math\b[^>]*>([\s\S]*)<\/math>/u.exec(result.html)?.[1]
+
+  if (!mathML) return <Text role="alert">Invalid TeX expression</Text>
+
   return (
     <Box
+      render={createElement("math", {
+        display: value.kind === "block" ? "block" : "inline",
+      })}
       aria-label={value.tex}
-      dangerouslySetInnerHTML={{ __html: result.html }}
+      dangerouslySetInnerHTML={{ __html: mathML }}
     />
   )
 }

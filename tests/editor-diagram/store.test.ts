@@ -10,7 +10,7 @@ import {
   CodeHighlightNode,
   CodeNode,
 } from "@lexical/code"
-import { withDOM } from "@lexical/headless/dom"
+import { withDOM } from "@workspace/tests/fixtures/lexical-dom"
 import { describe, expect, test } from "bun:test"
 import {
   $createParagraphNode,

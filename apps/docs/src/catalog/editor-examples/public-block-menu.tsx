@@ -69,6 +69,7 @@ import {
   $isRangeSelection,
   HISTORY_PUSH_TAG,
 } from "lexical"
+import { Redo2Icon, Undo2Icon } from "lucide-react"
 import { useId, useState, useSyncExternalStore } from "react"
 
 function subscribeToNoPreparation(_listener: () => void) {
@@ -697,8 +698,22 @@ export function PublicBlockMenuExample() {
       >
         <EditorReviewProvider controller={setup.review} host={reviewHost}>
           <EditorToolbar aria-label="Block menu history">
-            <EditorHistoryButton action="undo" />
-            <EditorHistoryButton action="redo" />
+            <EditorHistoryButton
+              action="undo"
+              aria-label="Undo"
+              title="Undo"
+              render={<Button variant="ghost" size="icon-sm" />}
+            >
+              <Undo2Icon aria-hidden="true" size={16} />
+            </EditorHistoryButton>
+            <EditorHistoryButton
+              action="redo"
+              aria-label="Redo"
+              title="Redo"
+              render={<Button variant="ghost" size="icon-sm" />}
+            >
+              <Redo2Icon aria-hidden="true" size={16} />
+            </EditorHistoryButton>
           </EditorToolbar>
           <EditorDiagramRoot
             disabled={!diagramsAllowed}

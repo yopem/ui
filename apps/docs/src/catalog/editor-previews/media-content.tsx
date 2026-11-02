@@ -6,7 +6,7 @@ import { MediaContent, parseMedia } from "@yopem-ui/editor/media"
 
 const media = parseMedia({
   kind: "image",
-  url: "https://interactive-examples.mdn.mozilla.net/media/cc0-images/grapefruit-slice.jpg",
+  url: "https://interactive-examples.mdn.mozilla.net/media/cc0-images/grapefruit-slice-332-332.jpg",
   alt: "Media preview",
   width: 320,
 })

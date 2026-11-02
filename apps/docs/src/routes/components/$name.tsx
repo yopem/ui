@@ -113,6 +113,9 @@ export const Route = createFileRoute("/components/$name")({
     const [documentation] = await Promise.all([
       getDocumentation({ data: params.name }),
       item.preview?.component.preload?.(),
+      ...(item.additionalPreviews ?? []).map((preview) =>
+        preview.component.preload?.(),
+      ),
     ])
 
     return documentation
@@ -169,6 +172,13 @@ function ComponentPage() {
               Start with the {item.title} example in Usage below.
             </Text>
           )}
+          {item.additionalPreviews?.map((preview) => (
+            <PreviewPanel
+              key={preview.title}
+              preview={preview}
+              source={preview.source}
+            />
+          ))}
           <Heading
             render={<h2>Installation</h2>}
             xstyle={styles.h22}

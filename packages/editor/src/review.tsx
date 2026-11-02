@@ -1,5 +1,12 @@
 "use client"
 
+export { EditorReviewModeMenu } from "./review-mode-menu"
+
+export type {
+  EditorReviewMode,
+  EditorReviewModeMenuProps,
+} from "./review-mode-menu"
+
 export {
   createEditorReview,
   editorReviewState,

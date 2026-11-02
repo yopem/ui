@@ -22,6 +22,24 @@ import {
   useEditorState,
 } from "@yopem-ui/editor"
 import { defineExtension } from "lexical"
+import {
+  BoldIcon,
+  CodeIcon,
+  Heading1Icon,
+  Heading2Icon,
+  Heading3Icon,
+  HighlighterIcon,
+  ItalicIcon,
+  MinusIcon,
+  PilcrowIcon,
+  QuoteIcon,
+  Redo2Icon,
+  StrikethroughIcon,
+  SubscriptIcon,
+  SuperscriptIcon,
+  UnderlineIcon,
+  Undo2Icon,
+} from "lucide-react"
 
 function preventToolbarBlur(event: MouseEvent<HTMLElement>) {
   event.preventDefault()
@@ -109,12 +127,14 @@ function HorizontalRuleButton() {
 
   return (
     <ToolbarButton
-      render={<Button variant="ghost" size="sm" />}
+      render={<Button variant="ghost" size="icon-sm" />}
       disabled={!editable}
       onMouseDown={preventToolbarBlur}
       onClick={insertHorizontalRule}
+      aria-label="Insert horizontal rule"
+      title="Insert horizontal rule"
     >
-      Insert horizontal rule
+      <MinusIcon aria-hidden="true" size={16} />
     </ToolbarButton>
   )
 }
@@ -127,22 +147,119 @@ export function BasicNodesExample() {
       extensions={extensions}
     >
       <EditorToolbar>
-        <EditorBlockButton block="paragraph" />
-        <EditorBlockButton block="h1" />
-        <EditorBlockButton block="h2" />
-        <EditorBlockButton block="h3" />
-        <EditorBlockButton block="quote" />
+        <EditorBlockButton
+          block="paragraph"
+          aria-label="Paragraph"
+          title="Paragraph"
+          render={<Button variant="ghost" size="icon-sm" />}
+        >
+          <PilcrowIcon aria-hidden="true" size={16} />
+        </EditorBlockButton>
+        <EditorBlockButton
+          block="h1"
+          aria-label="Heading 1"
+          title="Heading 1"
+          render={<Button variant="ghost" size="icon-sm" />}
+        >
+          <Heading1Icon aria-hidden="true" size={16} />
+        </EditorBlockButton>
+        <EditorBlockButton
+          block="h2"
+          aria-label="Heading 2"
+          title="Heading 2"
+          render={<Button variant="ghost" size="icon-sm" />}
+        >
+          <Heading2Icon aria-hidden="true" size={16} />
+        </EditorBlockButton>
+        <EditorBlockButton
+          block="h3"
+          aria-label="Heading 3"
+          title="Heading 3"
+          render={<Button variant="ghost" size="icon-sm" />}
+        >
+          <Heading3Icon aria-hidden="true" size={16} />
+        </EditorBlockButton>
+        <EditorBlockButton
+          block="quote"
+          aria-label="Quote"
+          title="Quote"
+          render={<Button variant="ghost" size="icon-sm" />}
+        >
+          <QuoteIcon aria-hidden="true" size={16} />
+        </EditorBlockButton>
         <HorizontalRuleButton />
-        <EditorFormatButton format="bold" />
-        <EditorFormatButton format="italic" />
-        <EditorFormatButton format="underline" />
-        <EditorFormatButton format="strikethrough" />
-        <EditorFormatButton format="code" />
-        <EditorFormatButton format="highlight" />
-        <EditorFormatButton format="subscript" />
-        <EditorFormatButton format="superscript" />
-        <EditorHistoryButton action="undo" />
-        <EditorHistoryButton action="redo" />
+        <EditorFormatButton
+          format="bold"
+          title="Bold"
+          render={<Button variant="ghost" size="icon-sm" />}
+        >
+          <BoldIcon aria-hidden="true" size={16} />
+        </EditorFormatButton>
+        <EditorFormatButton
+          format="italic"
+          title="Italic"
+          render={<Button variant="ghost" size="icon-sm" />}
+        >
+          <ItalicIcon aria-hidden="true" size={16} />
+        </EditorFormatButton>
+        <EditorFormatButton
+          format="underline"
+          title="Underline"
+          render={<Button variant="ghost" size="icon-sm" />}
+        >
+          <UnderlineIcon aria-hidden="true" size={16} />
+        </EditorFormatButton>
+        <EditorFormatButton
+          format="strikethrough"
+          title="Strikethrough"
+          render={<Button variant="ghost" size="icon-sm" />}
+        >
+          <StrikethroughIcon aria-hidden="true" size={16} />
+        </EditorFormatButton>
+        <EditorFormatButton
+          format="code"
+          title="Inline code"
+          render={<Button variant="ghost" size="icon-sm" />}
+        >
+          <CodeIcon aria-hidden="true" size={16} />
+        </EditorFormatButton>
+        <EditorFormatButton
+          format="highlight"
+          title="Highlight"
+          render={<Button variant="ghost" size="icon-sm" />}
+        >
+          <HighlighterIcon aria-hidden="true" size={16} />
+        </EditorFormatButton>
+        <EditorFormatButton
+          format="subscript"
+          title="Subscript"
+          render={<Button variant="ghost" size="icon-sm" />}
+        >
+          <SubscriptIcon aria-hidden="true" size={16} />
+        </EditorFormatButton>
+        <EditorFormatButton
+          format="superscript"
+          title="Superscript"
+          render={<Button variant="ghost" size="icon-sm" />}
+        >
+          <SuperscriptIcon aria-hidden="true" size={16} />
+        </EditorFormatButton>
+        <EditorHistoryButton
+          action="undo"
+          aria-label="Undo"
+          title="Undo"
+          render={<Button variant="ghost" size="icon-sm" />}
+        >
+          <Undo2Icon aria-hidden="true" size={16} />
+        </EditorHistoryButton>
+        <EditorHistoryButton
+          action="redo"
+          aria-label="Redo"
+          title="Redo"
+          render={<Button variant="ghost" size="icon-sm" />}
+        >
+          <Redo2Icon aria-hidden="true" size={16} />
+        </EditorHistoryButton>
       </EditorToolbar>
       <EditorContent placeholder="Write a structured document…" />
     </EditorRoot>

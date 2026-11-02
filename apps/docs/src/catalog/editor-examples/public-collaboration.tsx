@@ -25,6 +25,7 @@ import {
   EditorCollaborationStatus,
   useEditorCollaboration,
 } from "@yopem-ui/editor/collaboration"
+import { Redo2Icon, Undo2Icon } from "lucide-react"
 import { type FormEvent, useId, useReducer, useState } from "react"
 import { z } from "zod"
 
@@ -159,8 +160,22 @@ function CollaborationClient({
               </Button>
             </Stack>
             <EditorToolbar aria-label={`${name} history`}>
-              <EditorHistoryButton action="undo" />
-              <EditorHistoryButton action="redo" />
+              <EditorHistoryButton
+                action="undo"
+                aria-label="Undo"
+                title="Undo"
+                render={<Button variant="ghost" size="icon-sm" />}
+              >
+                <Undo2Icon aria-hidden="true" size={16} />
+              </EditorHistoryButton>
+              <EditorHistoryButton
+                action="redo"
+                aria-label="Redo"
+                title="Redo"
+                render={<Button variant="ghost" size="icon-sm" />}
+              >
+                <Redo2Icon aria-hidden="true" size={16} />
+              </EditorHistoryButton>
             </EditorToolbar>
             <EditorContent placeholder={`Write in ${name}`} />
           </Stack>

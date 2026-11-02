@@ -21,6 +21,7 @@ import {
   type EditorSingleBlockMode,
 } from "@yopem-ui/editor/editing-rules"
 import { EditorTablePresentationExtension } from "@yopem-ui/editor/table-presentation"
+import { Redo2Icon, Undo2Icon } from "lucide-react"
 import { useState } from "react"
 
 const exitExtensions = [
@@ -237,8 +238,22 @@ export function PublicEditingRulesExample() {
           editable={editable}
         >
           <EditorToolbar aria-label="Exit break history">
-            <EditorHistoryButton action="undo" />
-            <EditorHistoryButton action="redo" />
+            <EditorHistoryButton
+              action="undo"
+              aria-label="Undo"
+              title="Undo"
+              render={<Button variant="ghost" size="icon-sm" />}
+            >
+              <Undo2Icon aria-hidden="true" size={16} />
+            </EditorHistoryButton>
+            <EditorHistoryButton
+              action="redo"
+              aria-label="Redo"
+              title="Redo"
+              render={<Button variant="ghost" size="icon-sm" />}
+            >
+              <Redo2Icon aria-hidden="true" size={16} />
+            </EditorHistoryButton>
           </EditorToolbar>
           <EditorContent />
         </EditorRoot>
@@ -253,8 +268,22 @@ export function PublicEditingRulesExample() {
         >
           <EditingModeControls />
           <EditorToolbar aria-label="Single block history">
-            <EditorHistoryButton action="undo" />
-            <EditorHistoryButton action="redo" />
+            <EditorHistoryButton
+              action="undo"
+              aria-label="Undo"
+              title="Undo"
+              render={<Button variant="ghost" size="icon-sm" />}
+            >
+              <Undo2Icon aria-hidden="true" size={16} />
+            </EditorHistoryButton>
+            <EditorHistoryButton
+              action="redo"
+              aria-label="Redo"
+              title="Redo"
+              render={<Button variant="ghost" size="icon-sm" />}
+            >
+              <Redo2Icon aria-hidden="true" size={16} />
+            </EditorHistoryButton>
           </EditorToolbar>
           <EditorContent placeholder="Type or paste plain text…" />
         </EditorRoot>

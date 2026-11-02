@@ -17,6 +17,12 @@ export const editorMediaItem: SourceItem = {
   docs: {
     api: [
       "MediaInsertControl",
+      "MediaActions",
+      "MediaAlignButton",
+      "MediaCaptionTextarea",
+      "MediaDeleteButton",
+      "MediaEditControl",
+      "MediaImageResize",
       "MediaFileClipboard",
       "MediaContent",
       "MediaPreviewRoot",
@@ -55,13 +61,14 @@ export const editorMediaItem: SourceItem = {
       "createMediaUpload",
     ],
     usage:
-      "Register MediaExtension in a stable extensions array. Compose MediaInsertControl inside EditorToolbar. MediaContent and image preview parts need no EditorRoot. Compose MediaPreviewRoot, Trigger, and Dialog, or use MediaPreviewGallery. Zoom stays local and uses house Slider and ScrollArea controls. Supply an explicit createMediaEmbedPolicy for provider or exact-origin frames. No frame loads before consent. Policy, source, or disabled changes discard consent. Tweet embeds use the fixed platform.twitter.com endpoint. HTML exports stay inert links. Origin validation does not check DNS or redirects. Supply a host upload callback when required. Mount MediaFileClipboard inside EditorRoot for one-file paste and drop. Without upload it registers nothing. Rich MIME and higher-priority host handlers stay first. Keep upload stable. Changing it cancels pending work. Host callbacks must validate content and enforce size, authorization, and quota limits. Validate boundary inputs with mediaSchema before calling parseMedia. Canonical document conversion requires editor-document and registered media nodes. This item does not authorize private asset delivery.",
+      "Register MediaExtension in a stable extensions array. Compose MediaInsertControl inside EditorToolbar. MediaInsertControl and MediaEditControl reject literal ? and #, including empty delimiters. The insert rule applies to direct URLs and upload results. Use query-free provider URLs with this control. In URL paths, %3F and %23 are path data. Provider and iframe rules can be stricter. MediaInsertControl requires a fresh valid range, a connected editable root, and a registered MediaNode. Content, changed non-null selection, read-only, or root changes can invalidate the target. A null selection can remain while the dialog has focus. On success, the control inserts after the ordered selection-end root child or at the exact root gap. Its insertion keeps selected content, list and table structure, and empty target blocks. It adds an empty paragraph and selects the new media node. $insertMedia uses Lexical nearest-root insertion on the current range. MediaFileClipboard restores its range and calls $insertMedia. Its drop range comes from the drop position. Clipboard completion requires an unchanged non-null range. The insert control and clipboard insertion request HISTORY_PUSH_TAG. Media action changes and removal also request it. This tag does not guarantee exact undo grouping. The standalone $insertMedia helper adds no history tag or saved-target lease. Its caller owns the update, selection, and history policy. These paths use parseMedia, not the insert control's delimiter rule. Provider-specific checks still apply. Ordinary URLs can have nonempty components that the portable reader rejects. Placement has no control preservation guarantee. Cancellation signals the host and discards stale local results. Remote cancellation is cooperative. Each mounted MediaInsertControl instance keeps its upload slot until its callback settles. Separate instances and remounts do not share that slot. The placeholder controller keeps its own busy slot until settlement. MediaFileClipboard does not retain an equivalent slot after cancellation. Calling start on the same createMediaUpload task can supersede an unsettled call. Earlier callbacks can continue. Enforce remote upload concurrency and retry policy in the host. Cancellation does not prove that remote work stopped. Wrap selected-media controls in MediaActions inside EditorRoot. Omit nodeKey to follow one selected media node. Keep nodeKey fixed until unmount when supplied. Compose MediaEditControl, MediaCaptionTextarea, MediaAlignButton, MediaDeleteButton, and MediaImageResize. Source edits keep the existing node and reject unsafe URLs. Captions store plain text with line breaks and a 10000-character limit. Image resize keeps the 64 through 4096 pixel range. Escape and pointer cancellation discard resize drafts. Other media has no resize control. Content, target, and read-only changes expire saved edits. Host event cancellation takes priority. MediaContent and image preview parts need no EditorRoot. Compose MediaPreviewRoot, Trigger, and Dialog, or use MediaPreviewGallery. Zoom stays local and uses house Slider and ScrollArea controls. Supply an explicit createMediaEmbedPolicy for provider or exact-origin frames. No frame loads before consent. Policy, source, or disabled changes discard consent. Frame consent does not cover images, video, audio, or caption tracks. Images can request their URLs when rendered. Native media and tracks can make network requests. Preload settings do not guarantee network privacy. Successful uploads retain the file name and URL. Media JSON and tagged HTML can include URLs, names, alt text, and captions. Account for this data in host delivery, CSP, logs, clipboard, and storage policies. Tweet embeds use the fixed platform.twitter.com endpoint. HTML exports stay inert links. Origin validation does not check DNS or redirects. Supply a host upload callback when required. Mount MediaFileClipboard inside EditorRoot for one-file paste and drop. Without upload it registers nothing. Rich MIME and higher-priority host handlers stay first. Keep upload stable. Changing it cancels pending work. Host callbacks must validate content and enforce size, authorization, and quota limits. Validate boundary inputs with mediaSchema before calling parseMedia. Canonical document conversion requires editor-document and registered media nodes. Both native media and the portable reader require absolute HTTPS source and track URLs without credentials. The portable reader rejects nonempty query or fragment components. It may retain canonical ordinary-media and track URLs with empty trailing ? or #, subject to all other checks. This item does not authorize private asset delivery.",
   },
   files: [
     "media.ts",
     "media-preview.tsx",
     "media-embed.tsx",
     "media/controls.tsx",
+    "media/actions.tsx",
     "media/clipboard.tsx",
     "media/clipboard-model.ts",
     "media/extension.tsx",
@@ -96,6 +103,7 @@ export const editorMediaItem: SourceItem = {
     "slider",
     "stack",
     "text",
+    "textarea",
     "toolbar",
     "wrap",
   ],

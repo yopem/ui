@@ -16,7 +16,7 @@ import {
 } from "@/catalog/docs-page"
 import { getEditorDocumentation } from "@/catalog/editor-documentation"
 import { editorPartPreviews } from "@/catalog/editor-part-previews"
-import { getEditorPart } from "@/catalog/editor-parts"
+import { getEditorPart, editorPartLabel } from "@/catalog/editor-parts"
 import { createSeo } from "@/lib/seo"
 
 const toc = [
@@ -58,13 +58,20 @@ export function EditorPartPage() {
   return (
     <DocumentationLayout>
       <DocsPage toc={toc}>
-        <DocsTitle>{part.name}</DocsTitle>
+        <DocsTitle>{editorPartLabel(part.name)}</DocsTitle>
+        <Text>
+          <code>{part.name}</code>
+        </Text>
         <DocsDescription>{part.description}</DocsDescription>
         <DocsBody>
           <Stack>
             <Heading id="preview">Preview</Heading>
             <Box data-slot="editor-part-preview">
-              <PreviewPanel preview={preview} source={data.usage} />
+              <PreviewPanel
+                preview={preview}
+                title={null}
+                source={data.usage}
+              />
             </Box>
             <Heading id="installation">Installation</Heading>
             <CopyableCode
@@ -74,7 +81,9 @@ export function EditorPartPage() {
             />
             <CopyableCode
               language="shellscript"
-              code={`bunx --bun @yopem-ui/cli add ${part.item}`}
+              code={data.installNames
+                .map((name) => `bunx --bun @yopem-ui/cli add ${name}`)
+                .join("\n")}
               title={`Install ${part.name} with CLI`}
             />
             <Heading id="usage">Usage</Heading>

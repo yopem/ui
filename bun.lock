@@ -72,6 +72,7 @@
     "apps/docs": {
       "name": "@yopem-ui/docs",
       "dependencies": {
+        "@base-ui/react": "catalog:",
         "@base-ui/utils": "catalog:",
         "@daypicker/react": "catalog:",
         "@excalidraw/excalidraw": "catalog:",
@@ -233,6 +234,7 @@
       "version": "0.1.0",
       "dependencies": {
         "@base-ui/react": "catalog:",
+        "@base-ui/utils": "catalog:",
         "@daypicker/react": "catalog:",
         "@stylexjs/stylex": "catalog:",
         "clsx": "^2.1.1",

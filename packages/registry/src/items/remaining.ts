@@ -530,6 +530,7 @@ export const remainingItems: SourceItem[] = definitions.map(
       ...(lucideComponents.has(name)
         ? [registryDependency("lucide-react")]
         : []),
+      ...(name === "combobox" ? [registryDependency("@base-ui/utils")] : []),
     ],
     description,
     devDependencies: [],

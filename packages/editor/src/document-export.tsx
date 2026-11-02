@@ -81,7 +81,7 @@ function finishExportUI(
   const focused = ownerDocument?.activeElement
 
   const controls = target?.closest(
-    '[data-slot="editor-document-print-control"], [data-slot="editor-document-image-export-control"]',
+    '[data-slot="editor-document-print-control"], [data-slot="editor-document-image-export-control"], [data-slot="editor-document-pdf-export-control"]',
   )
 
   const restoreFocus =
@@ -506,13 +506,31 @@ export interface EditorDocumentImageExportControlProps
   capture: EditorDocumentImageCapture
 }
 
-export function EditorDocumentImageExportControl({
+interface EditorDocumentRasterExportControlProps extends EditorDocumentImageExportControlProps {
+  format: "PNG" | "PDF"
+  encode?: (
+    blob: Blob,
+    ownerDocument: Document,
+    operation: EditorDocumentExportOperation,
+    dimensions: { readonly width: number; readonly height: number },
+  ) => Promise<Blob>
+}
+
+export function EditorDocumentImageExportControl(
+  props: EditorDocumentImageExportControlProps,
+) {
+  return useEditorDocumentRasterExport({ ...props, format: "PNG" })
+}
+
+export function useEditorDocumentRasterExport({
   capture,
   nonce,
   resolveResource,
+  format,
+  encode,
   ref,
   ...props
-}: EditorDocumentImageExportControlProps) {
+}: EditorDocumentRasterExportControlProps) {
   const editor = useEditor()
   const activeRef = useRef<ActiveExport | null>(null)
   const mountedRef = useRef(false)
@@ -538,13 +556,13 @@ export function EditorDocumentImageExportControl({
     const editorRoot = editor.getRootElement()
 
     if (!editorRoot?.ownerDocument.defaultView) {
-      setError("PNG export needs a mounted editor view.")
+      setError(`${format} export needs a mounted editor view.`)
 
       return
     }
 
     setError("")
-    setStatus("Preparing PNG export.")
+    setStatus(`Preparing ${format} export.`)
     let active: ActiveExport | null = null
 
     let snapshot: Awaited<
@@ -588,7 +606,7 @@ export function EditorDocumentImageExportControl({
         }),
       )
 
-      const blob = await waitForEditorDocumentExport(captureWork, active.lease)
+      let blob = await waitForEditorDocumentExport(captureWork, active.lease)
       assertExportCurrent(editor, active)
       await assertEditorDocumentExportPNG(blob, active.lease, {
         height: snapshot.height,
@@ -602,15 +620,27 @@ export function EditorDocumentImageExportControl({
       if (!ownerView)
         throw new EditorDocumentExportError(
           "document",
-          "PNG export needs a mounted editor view.",
+          `${format} export needs a mounted editor view.`,
         )
+
+      if (encode) {
+        const encodeWork = active.lease.track(
+          encode(blob, ownerDocument, active.lease, {
+            height: snapshot.height,
+            width: snapshot.width,
+          }),
+        )
+
+        blob = await waitForEditorDocumentExport(encodeWork, active.lease)
+        assertExportCurrent(editor, active)
+      }
 
       const url = ownerView.URL.createObjectURL(blob)
       const link = ownerDocument.createElement("a")
 
       try {
         link.href = url
-        link.download = "document.png"
+        link.download = format === "PDF" ? "plate.pdf" : "document.png"
         link.hidden = true
         ownerDocument.body.append(link)
         assertEditorDocumentExportActive(active.lease)
@@ -620,7 +650,7 @@ export function EditorDocumentImageExportControl({
         ownerView.setTimeout(() => ownerView.URL.revokeObjectURL(url), 0)
       }
 
-      if (mountedRef.current) setStatus("PNG document downloaded.")
+      if (mountedRef.current) setStatus(`${format} document downloaded.`)
     } catch (cause) {
       active?.controller.abort()
 
@@ -658,14 +688,18 @@ export function EditorDocumentImageExportControl({
     ref: [rootRef, ref ?? null],
     props: {
       role: "group",
-      "aria-label": "Document image export",
+      "aria-label":
+        format === "PDF" ? "Document PDF export" : "Document image export",
       ...props,
-      "data-slot": "editor-document-image-export-control",
+      "data-slot":
+        format === "PDF"
+          ? "editor-document-pdf-export-control"
+          : "editor-document-image-export-control",
       "aria-busy": busy,
       children: (
         <Wrap>
           <Button disabled={busy} onClick={handleExportImage}>
-            Export document as PNG
+            Export document as {format}
           </Button>
           <Button disabled={!busy} onClick={cancel}>
             Cancel document export

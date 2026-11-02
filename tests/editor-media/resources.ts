@@ -83,7 +83,7 @@ export async function routeMediaResources(page: Page) {
     )
   })
   await page.route(
-    "https://interactive-examples.mdn.mozilla.net/media/cc0-images/grapefruit-slice.jpg",
+    "https://interactive-examples.mdn.mozilla.net/media/cc0-images/grapefruit-slice-332-332.jpg",
     (route) =>
       route.fulfill({
         contentType: "image/svg+xml",

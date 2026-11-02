@@ -17,6 +17,7 @@ import {
   EditorBlockSelectionGutter,
   EditorBlockSelectionStatus,
 } from "@yopem-ui/editor/block-selection"
+import { Redo2Icon, Undo2Icon } from "lucide-react"
 import { useState } from "react"
 
 const initialState = JSON.stringify({
@@ -82,8 +83,22 @@ export function PublicSelectionExample() {
       >
         <EditorBlockSelection controller={setup.controller}>
           <EditorToolbar aria-label="History controls">
-            <EditorHistoryButton action="undo" />
-            <EditorHistoryButton action="redo" />
+            <EditorHistoryButton
+              action="undo"
+              aria-label="Undo"
+              title="Undo"
+              render={<Button variant="ghost" size="icon-sm" />}
+            >
+              <Undo2Icon aria-hidden="true" size={16} />
+            </EditorHistoryButton>
+            <EditorHistoryButton
+              action="redo"
+              aria-label="Redo"
+              title="Redo"
+              render={<Button variant="ghost" size="icon-sm" />}
+            >
+              <Redo2Icon aria-hidden="true" size={16} />
+            </EditorHistoryButton>
           </EditorToolbar>
           <EditorBlockSelectionActions />
           <EditorBlockSelectionGutter />

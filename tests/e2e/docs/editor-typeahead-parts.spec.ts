@@ -1,5 +1,6 @@
 import AxeBuilder from "@axe-core/playwright"
 import { expect, test } from "@playwright/test"
+import { editorPartLabel } from "@workspace/apps/docs/src/catalog/editor-parts"
 import { editorTypeaheadParts } from "@workspace/apps/docs/src/catalog/editor-typeahead-parts"
 
 for (const part of editorTypeaheadParts) {
@@ -10,7 +11,11 @@ for (const part of editorTypeaheadParts) {
     const response = await page.goto(`/editor/${part.slug}`)
     expect(response?.status()).toBe(200)
     await expect(
-      page.getByRole("heading", { name: part.name, exact: true, level: 1 }),
+      page.getByRole("heading", {
+        name: editorPartLabel(part.name),
+        exact: true,
+        level: 1,
+      }),
     ).toBeVisible()
     const preview = page.locator('[data-slot="editor-part-preview"]')
 

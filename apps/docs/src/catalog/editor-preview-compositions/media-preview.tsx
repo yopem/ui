@@ -20,7 +20,7 @@ const images = [
   },
   {
     id: "fruit",
-    src: "https://interactive-examples.mdn.mozilla.net/media/cc0-images/grapefruit-slice.jpg",
+    src: "https://interactive-examples.mdn.mozilla.net/media/cc0-images/grapefruit-slice-332-332.jpg",
     alt: "Grapefruit slice",
     caption: "Grapefruit slice",
   },

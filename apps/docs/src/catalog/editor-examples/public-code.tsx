@@ -1,5 +1,6 @@
 "use client"
 
+import { Button } from "@registry/components/ui/button"
 import {
   EditorBlockButton,
   EditorContent,
@@ -16,6 +17,7 @@ import {
   EditorCodeToolbar,
 } from "@yopem-ui/editor/code"
 import { prettierEditorCodeFormatter } from "@yopem-ui/editor/code-format"
+import { FileCode2Icon, PilcrowIcon, Redo2Icon, Undo2Icon } from "lucide-react"
 
 const extensions = [EditorCodeExtension]
 
@@ -64,15 +66,43 @@ export function PublicCodeExample() {
       initialState={initialState}
     >
       <EditorCodeToolbar aria-label="Public code tools">
-        <EditorBlockButton block="code" />
-        <EditorBlockButton block="paragraph" />
+        <EditorBlockButton
+          block="code"
+          aria-label="Code block"
+          title="Code block"
+          render={<Button variant="ghost" size="icon-sm" />}
+        >
+          <FileCode2Icon aria-hidden="true" size={16} />
+        </EditorBlockButton>
+        <EditorBlockButton
+          block="paragraph"
+          aria-label="Paragraph"
+          title="Paragraph"
+          render={<Button variant="ghost" size="icon-sm" />}
+        >
+          <PilcrowIcon aria-hidden="true" size={16} />
+        </EditorBlockButton>
         <EditorCodeLanguage />
         <EditorCodeCopyButton />
         <EditorCodeFormatButton formatter={prettierEditorCodeFormatter} />
         <EditorCodeToggle setting="wrap" />
         <EditorCodeToggle setting="lineNumbers" />
-        <EditorHistoryButton action="undo" />
-        <EditorHistoryButton action="redo" />
+        <EditorHistoryButton
+          action="undo"
+          aria-label="Undo"
+          title="Undo"
+          render={<Button variant="ghost" size="icon-sm" />}
+        >
+          <Undo2Icon aria-hidden="true" size={16} />
+        </EditorHistoryButton>
+        <EditorHistoryButton
+          action="redo"
+          aria-label="Redo"
+          title="Redo"
+          render={<Button variant="ghost" size="icon-sm" />}
+        >
+          <Redo2Icon aria-hidden="true" size={16} />
+        </EditorHistoryButton>
         <EditorCodeStatus />
       </EditorCodeToolbar>
       <EditorContent placeholder="Select a code block to edit its language…" />

@@ -24,6 +24,15 @@ import {
   importDocument,
   parseDocument,
 } from "@yopem-ui/editor/document"
+import {
+  BoldIcon,
+  Heading2Icon,
+  ItalicIcon,
+  PilcrowIcon,
+  QuoteIcon,
+  Redo2Icon,
+  Undo2Icon,
+} from "lucide-react"
 import { useId, useState, type ChangeEvent } from "react"
 import * as z from "zod"
 
@@ -314,13 +323,60 @@ function DailyDraftSession({
         onChange={saveChangedDocument}
       >
         <EditorToolbar aria-label="Daily editor controls">
-          <EditorBlockButton block="paragraph" />
-          <EditorBlockButton block="h2" />
-          <EditorBlockButton block="quote" />
-          <EditorFormatButton format="bold" />
-          <EditorFormatButton format="italic" />
-          <EditorHistoryButton action="undo" />
-          <EditorHistoryButton action="redo" />
+          <EditorBlockButton
+            block="paragraph"
+            aria-label="Paragraph"
+            title="Paragraph"
+            render={<Button variant="ghost" size="icon-sm" />}
+          >
+            <PilcrowIcon aria-hidden="true" size={16} />
+          </EditorBlockButton>
+          <EditorBlockButton
+            block="h2"
+            aria-label="Heading 2"
+            title="Heading 2"
+            render={<Button variant="ghost" size="icon-sm" />}
+          >
+            <Heading2Icon aria-hidden="true" size={16} />
+          </EditorBlockButton>
+          <EditorBlockButton
+            block="quote"
+            aria-label="Quote"
+            title="Quote"
+            render={<Button variant="ghost" size="icon-sm" />}
+          >
+            <QuoteIcon aria-hidden="true" size={16} />
+          </EditorBlockButton>
+          <EditorFormatButton
+            format="bold"
+            title="Bold"
+            render={<Button variant="ghost" size="icon-sm" />}
+          >
+            <BoldIcon aria-hidden="true" size={16} />
+          </EditorFormatButton>
+          <EditorFormatButton
+            format="italic"
+            title="Italic"
+            render={<Button variant="ghost" size="icon-sm" />}
+          >
+            <ItalicIcon aria-hidden="true" size={16} />
+          </EditorFormatButton>
+          <EditorHistoryButton
+            action="undo"
+            aria-label="Undo"
+            title="Undo"
+            render={<Button variant="ghost" size="icon-sm" />}
+          >
+            <Undo2Icon aria-hidden="true" size={16} />
+          </EditorHistoryButton>
+          <EditorHistoryButton
+            action="redo"
+            aria-label="Redo"
+            title="Redo"
+            render={<Button variant="ghost" size="icon-sm" />}
+          >
+            <Redo2Icon aria-hidden="true" size={16} />
+          </EditorHistoryButton>
         </EditorToolbar>
         <EditorContent placeholder="Write this date's note…" />
         <PersistedDraftControls

@@ -209,6 +209,11 @@ test("packed CLI exposes shared document storage roots to external workspace con
         "--registry",
         `${server.url}r`,
       ])
+      expect(
+        await Bun.file(
+          join(ui, lib, "editor-store/json-duplicates.ts"),
+        ).exists(),
+      ).toBe(true)
       expect(authFiles).toContain("migrations/d1/0001-document-snapshots.sql")
       expect(authFiles).toContain(
         "migrations/postgres/0001-document-snapshots.sql",

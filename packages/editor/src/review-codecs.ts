@@ -1,5 +1,6 @@
 import { z } from "zod"
 
+import { scanDocumentJSON } from "./json-duplicates"
 import {
   reviewRichContentSchema,
   reviewRichText,
@@ -182,7 +183,12 @@ function parseNativeFragmentSnapshot(source: string) {
     }
   }
 
-  return parseReviewDocument(value, true, true)
+  const documentValue = parseReviewDocument(value, true, true)
+
+  return {
+    document: documentValue,
+    duplicate: scanDocumentJSON(source, source.length) === "duplicate",
+  }
 }
 
 function validateNativeFragmentSnapshots(fragment: EditorReviewNativeFragment) {
@@ -191,8 +197,8 @@ function validateNativeFragmentSnapshots(fragment: EditorReviewNativeFragment) {
   let matchedSuggestion = false
 
   for (const [snapshot, isBefore] of [
-    [before, true],
-    [after, false],
+    [before.document, true],
+    [after.document, false],
   ] as const) {
     const root = z.record(z.string(), z.json()).parse(snapshot.root)
     const pending = [root]
@@ -258,6 +264,9 @@ function validateNativeFragmentSnapshots(fragment: EditorReviewNativeFragment) {
 
   if (!matchedSuggestion)
     throw new Error("Native review fragment has no inserted text attribution.")
+
+  if (before.duplicate || after.duplicate)
+    throw new Error("Review document contains duplicate keys.")
 }
 
 export function parseReviewDocumentJSON(
@@ -266,8 +275,12 @@ export function parseReviewDocumentJSON(
   allowStructuralTreeDepth = false,
 ) {
   const input = parseReviewJSONValue(text)
+  const document = parseReviewDocument(input, trusted, allowStructuralTreeDepth)
 
-  return parseReviewDocument(input, trusted, allowStructuralTreeDepth)
+  if (scanDocumentJSON(text, text.length) === "duplicate")
+    throw new Error("Review document contains duplicate keys.")
+
+  return document
 }
 
 export function parseReviewDocument<Input, Trust>(
@@ -731,6 +744,9 @@ export function sanitizeEditorReviewClipboard(input: string) {
 
     if (node.type === "paragraph") pending.push(...node.children)
   }
+
+  if (scanDocumentJSON(input, input.length) === "duplicate")
+    throw new Error("Review document contains duplicate keys.")
 
   return { namespace: payload.namespace, nodes }
 }

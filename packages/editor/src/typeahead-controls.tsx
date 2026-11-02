@@ -19,17 +19,18 @@ import {
   PopoverPopup,
   PopoverTrigger,
 } from "@registry/components/ui/popover"
-import { Stack } from "@registry/components/ui/stack"
 import { Text } from "@registry/components/ui/text"
 import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import {
   createContext,
+  isValidElement,
   useContext,
   useId,
   useRef,
   useState,
   useSyncExternalStore,
+  type AriaAttributes,
   type ComponentProps,
   type KeyboardEvent,
   type ReactNode,
@@ -232,6 +233,15 @@ export function EditorInlineComboboxList({
   )
 }
 
+function hasRenderDescription(
+  render: ComponentProps<typeof CommandItem>["render"],
+) {
+  return (
+    isValidElement<AriaAttributes>(render) &&
+    render.props["aria-description"] !== undefined
+  )
+}
+
 export function EditorInlineComboboxItem({
   item,
   children,
@@ -240,6 +250,9 @@ export function EditorInlineComboboxItem({
   onMouseDown,
   onPointerMove,
   xstyle,
+  "aria-label": ariaLabel,
+  "aria-description": ariaDescription,
+  "aria-describedby": ariaDescribedBy,
   ...props
 }: Omit<
   ComponentProps<typeof CommandItem>,
@@ -247,6 +260,8 @@ export function EditorInlineComboboxItem({
 > & { item: EditorTypeaheadItem }) {
   const { controller, state } = useEditorInlineCombobox()
   const index = state.items.findIndex((candidate) => candidate === item)
+  const descriptionId = useId()
+  const description = children == null ? item.description : undefined
 
   function connect(element: HTMLDivElement | null) {
     controller.connectOption(index, element)
@@ -271,7 +286,8 @@ export function EditorInlineComboboxItem({
   ) {
     onPointerMove?.(event)
 
-    if (!event.defaultPrevented) controller.highlight(index)
+    if (!event.defaultPrevented && !event.baseUIHandlerPrevented)
+      controller.highlight(index)
   })
 
   const handleClick = useStableCallback(function handleClick(
@@ -279,21 +295,32 @@ export function EditorInlineComboboxItem({
   ) {
     onClick?.(event)
 
-    if (!event.defaultPrevented) controller.choose(item.id)
+    if (!event.defaultPrevented && !event.baseUIHandlerPrevented)
+      controller.choose(item.id)
   })
 
   if (index < 0) return null
 
-  return (
+  const option = (
     <CommandItem
       {...props}
       value={item}
       ref={connect}
       tabIndex={-1}
       aria-selected={index === state.active}
-      aria-label={item.label}
-      aria-description={item.description}
-      xstyle={[styles.item, xstyle]}
+      aria-label={ariaLabel ?? item.label}
+      aria-description={
+        ariaDescription ?? (description ? undefined : item.description)
+      }
+      aria-describedby={
+        ariaDescribedBy ??
+        (description &&
+        ariaDescription === undefined &&
+        !hasRenderDescription(props.render)
+          ? descriptionId
+          : undefined)
+      }
+      xstyle={[styles.item, description ? styles.describedItem : null, xstyle]}
       data-highlighted={index === state.active ? "" : undefined}
       data-slot="editor-inline-combobox-item"
       onPointerDown={handlePointerDown}
@@ -302,17 +329,31 @@ export function EditorInlineComboboxItem({
       onClick={handleClick}
     >
       {children ?? (
-        <Stack xstyle={styles.optionText}>
-          <Text xstyle={styles.label}>
-            {item.emoji ? `${item.emoji} ` : ""}
-            {item.label}
-          </Text>
-          {item.description ? (
-            <Text xstyle={styles.description}>{item.description}</Text>
-          ) : null}
-        </Stack>
+        <Text data-slot="editor-inline-combobox-label" xstyle={styles.label}>
+          {item.emoji ? `${item.emoji} ` : ""}
+          {item.label}
+        </Text>
       )}
     </CommandItem>
+  )
+
+  return description ? (
+    <Box
+      data-slot="editor-inline-combobox-option-row"
+      xstyle={styles.optionRow}
+    >
+      {option}
+      <Box
+        render={<span />}
+        id={descriptionId}
+        data-slot="editor-inline-combobox-description"
+        xstyle={styles.description}
+      >
+        {description}
+      </Box>
+    </Box>
+  ) : (
+    option
   )
 }
 
@@ -431,15 +472,37 @@ const styles = stylex.create({
       "@media (pointer: coarse)": `calc(${tokens["--spacing"]} * 11)`,
     },
   },
-  optionText: {
-    gap: `calc(${tokens["--spacing"]} / 2)`,
+  optionRow: {
+    display: "grid",
+    gridTemplateColumns: "minmax(0, 1fr)",
+    gridTemplateRows: "auto auto",
+    rowGap: `calc(${tokens["--spacing"]} / 2)`,
+  },
+  describedItem: {
+    alignItems: "start",
+    display: "grid",
+    gridColumn: "1",
+    gridRow: "1 / 3",
+    gridTemplateRows: "subgrid",
+  },
+  label: {
+    fontSize: "inherit",
+    lineHeight: "inherit",
     whiteSpace: "normal",
     overflowWrap: "anywhere",
   },
-  label: { fontSize: "inherit", lineHeight: "inherit" },
   description: {
+    alignSelf: "start",
     color: tokens["--muted-foreground"],
     fontSize: "0.75rem",
+    gridColumn: "1",
+    gridRow: "2",
     lineHeight: 1.4,
+    marginBlockEnd: `calc(${tokens["--spacing"]} * 1.5)`,
+    marginInline: `calc(${tokens["--spacing"]} * 2)`,
+    overflowWrap: "anywhere",
+    pointerEvents: "none",
+    whiteSpace: "normal",
+    zIndex: 1,
   },
 })

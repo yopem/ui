@@ -172,15 +172,18 @@ export function createDocumentService(
 
           checkDeadline()
 
-          if (rows.length > 1) throw new DocumentError("corrupt")
+          try {
+            if (rows.length > 1) throw new DocumentError("corrupt")
 
-          if (!rows.length) return null
-          const record = decodeRecord(rowSchema.parse(rows[0]), config)
+            if (!rows.length) return null
+            const record = decodeRecord(rowSchema.parse(rows[0]), config)
 
-          if (record.documentId !== id) throw new DocumentError("corrupt")
-          checkDeadline()
+            if (record.documentId !== id) throw new DocumentError("corrupt")
 
-          return record
+            return record
+          } finally {
+            checkDeadline()
+          }
         },
       )
     },
@@ -201,14 +204,20 @@ export function createDocumentService(
           if (input.change.kind === "delete" && !expected.generation)
             throw new DocumentError("invalid")
 
-          const state =
-            input.change.kind === "save"
-              ? boundedState(
-                  input.change.state,
-                  input.change.schemaVersion,
-                  (value, version) => config.validateState(value, version),
-                )
-              : null
+          let state: JsonValue | null
+
+          try {
+            state =
+              input.change.kind === "save"
+                ? boundedState(
+                    input.change.state,
+                    input.change.schemaVersion,
+                    (value, version) => config.validateState(value, version),
+                  )
+                : null
+          } finally {
+            checkDeadline()
+          }
 
           const stateJson = state === null ? null : canonical(state)
 
@@ -241,13 +250,19 @@ export function createDocumentService(
             signal,
           )
 
-          if (current.length > 1) throw new DocumentError("corrupt")
+          try {
+            checkDeadline()
 
-          if (current.length) {
-            const head = decodeRecord(rowSchema.parse(current[0]), config)
+            if (current.length > 1) throw new DocumentError("corrupt")
 
-            if (head.documentId !== input.documentId)
-              throw new DocumentError("corrupt")
+            if (current.length) {
+              const head = decodeRecord(rowSchema.parse(current[0]), config)
+
+              if (head.documentId !== input.documentId)
+                throw new DocumentError("corrupt")
+            }
+          } finally {
+            checkDeadline()
           }
 
           const prepared = {
@@ -273,6 +288,8 @@ export function createDocumentService(
               signal,
             )
           } catch (error) {
+            checkDeadline(true)
+
             if (
               error instanceof DocumentError &&
               error.code === "operation-reuse"
@@ -282,43 +299,58 @@ export function createDocumentService(
           }
 
           checkDeadline(true)
+          let receipt: ReturnType<typeof receiptSchema.parse> | undefined
+          let head: ReturnType<typeof decodeRecord> | undefined
+          let record: ReturnType<typeof decodeRecord> | undefined
 
-          if (output.receipt.length > 1 || output.head.length > 1)
-            throw new DocumentError("corrupt")
-          const receipt = output.receipt[0]
-
-          if (receipt !== undefined) {
-            const parsedReceipt = receiptSchema.safeParse(receipt)
-
-            if (!parsedReceipt.success) throw new DocumentError("corrupt")
-
-            if (parsedReceipt.data.request_digest !== digest)
-              throw new DocumentError("operation-reuse")
-            const record = decodeRecord(receiptSchema.parse(receipt), config)
-
-            if (record.documentId !== input.documentId)
-              throw new DocumentError("corrupt")
-
-            checkDeadline(true)
-
-            return { status: "committed", record }
-          }
-
-          if (output.head.length) {
-            const head = decodeRecord(rowSchema.parse(output.head[0]), config)
-
-            if (head.documentId !== input.documentId)
-              throw new DocumentError("corrupt")
-
+          try {
             if (
-              head.generation === expected.generation &&
-              head.revision === expected.revision &&
-              BigInt(head.revision) === maxRevision
+              !Array.isArray(output.receipt) ||
+              !Array.isArray(output.head) ||
+              output.receipt.length > 1 ||
+              output.head.length > 1
             )
-              throw new DocumentError("exhausted")
+              throw new DocumentError("corrupt")
+
+            if (output.receipt.length) {
+              receipt = receiptSchema.parse(output.receipt[0])
+
+              if (receipt.document_id !== input.documentId)
+                throw new DocumentError("corrupt")
+            }
+          } catch {
+            throw new DocumentError("uncertain")
+          } finally {
+            checkDeadline(true)
           }
 
-          checkDeadline(true)
+          if (receipt && receipt.request_digest !== digest)
+            throw new DocumentError("operation-reuse")
+
+          try {
+            if (receipt) record = decodeRecord(receipt, config)
+
+            if (output.head.length) {
+              head = decodeRecord(rowSchema.parse(output.head[0]), config)
+
+              if (head.documentId !== input.documentId)
+                throw new DocumentError("corrupt")
+            }
+          } catch {
+            throw new DocumentError("uncertain")
+          } finally {
+            checkDeadline(true)
+          }
+
+          if (record) return { status: "committed", record }
+
+          if (
+            head &&
+            head.generation === expected.generation &&
+            head.revision === expected.revision &&
+            BigInt(head.revision) === maxRevision
+          )
+            throw new DocumentError("exhausted")
 
           return { status: "conflict" }
         },

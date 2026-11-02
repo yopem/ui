@@ -9,6 +9,7 @@ import {
   EditorToolbar,
 } from "@yopem-ui/editor"
 import { EditorDateControls, EditorDateExtension } from "@yopem-ui/editor/date"
+import { Redo2Icon, Undo2Icon } from "lucide-react"
 import { useReducer } from "react"
 
 const extensions = [EditorDateExtension]
@@ -63,8 +64,22 @@ export function DateExample() {
       >
         <EditorToolbar aria-label="Date tools">
           <EditorDateControls initialDate="2024-01-02" />
-          <EditorHistoryButton action="undo" />
-          <EditorHistoryButton action="redo" />
+          <EditorHistoryButton
+            action="undo"
+            aria-label="Undo"
+            title="Undo"
+            render={<Button variant="ghost" size="icon-sm" />}
+          >
+            <Undo2Icon aria-hidden="true" size={16} />
+          </EditorHistoryButton>
+          <EditorHistoryButton
+            action="redo"
+            aria-label="Redo"
+            title="Redo"
+            render={<Button variant="ghost" size="icon-sm" />}
+          >
+            <Redo2Icon aria-hidden="true" size={16} />
+          </EditorHistoryButton>
         </EditorToolbar>
         <EditorContent placeholder="Enter text and select a date" />
       </EditorRoot>

@@ -1,5 +1,7 @@
 import { z } from "zod"
 
+import { scanDocumentJSON } from "./json-duplicates"
+
 export const TABLE_MIN_COLUMN_WIDTH = 48
 
 export const TABLE_MAX_COLUMN_WIDTH = 640
@@ -202,6 +204,7 @@ const rowSchema = z.object({ height: z.number().optional() })
 const nodeSchema = z.object({
   type: z.string(),
   children: z.array(z.unknown()).max(TABLE_MAX_NODES).optional(),
+  $slots: z.record(z.string(), z.unknown()).optional(),
 })
 
 const cellSchema = z.object({
@@ -306,6 +309,14 @@ export const tablePresentationDocumentSchema = z
             parent: node.type,
           })
 
+        for (const slot of Object.values(node.$slots ?? {}))
+          pending.push({
+            value: slot,
+            depth: entry.depth + 1,
+            inTable: entry.inTable || node.type === "table",
+            parent: "",
+          })
+
         if (pending.length + count > TABLE_MAX_NODES)
           throw new Error("Table document exceeds node budget.")
       }
@@ -326,6 +337,9 @@ export function parseTablePresentationJSON(input: string) {
     throw new Error("Table document exceeds size limit.")
   const document: unknown = JSON.parse(input)
   tablePresentationDocumentSchema.parse(document)
+
+  if (scanDocumentJSON(input, input.length) === "duplicate")
+    throw new Error("Table document contains duplicate keys.")
 
   return input
 }

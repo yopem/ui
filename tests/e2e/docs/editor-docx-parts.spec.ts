@@ -14,7 +14,12 @@ for (const [slug, name] of [
     await context.grantPermissions(["clipboard-read", "clipboard-write"])
     const response = await page.goto(`/editor/${slug}`)
     expect(response?.status()).toBe(200)
-    const preview = page.getByTestId("editor-part-preview")
+
+    const preview = page.getByRole("group", {
+      name: `${name} live preview`,
+      exact: true,
+    })
+
     await expect(
       preview.getByRole("textbox", {
         name: "Native Word document",

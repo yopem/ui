@@ -6,7 +6,7 @@ import { expect, test } from "@playwright/test"
 const firstImageUrl = "https://ui.yopem.com/favicon.svg"
 
 const secondImageUrl =
-  "https://interactive-examples.mdn.mozilla.net/media/cc0-images/grapefruit-slice.jpg"
+  "https://interactive-examples.mdn.mozilla.net/media/cc0-images/grapefruit-slice-332-332.jpg"
 
 async function routePreviewImages(page: Page) {
   for (const url of [firstImageUrl, secondImageUrl])

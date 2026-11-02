@@ -2,6 +2,7 @@
 
 import { useStableCallback } from "@base-ui/utils/useStableCallback"
 import { Box } from "@registry/components/ui/box"
+import { Button } from "@registry/components/ui/button"
 import { Field, FieldLabel } from "@registry/components/ui/field"
 import { NativeSelect } from "@registry/components/ui/native-select"
 import { Stack } from "@registry/components/ui/stack"
@@ -22,6 +23,7 @@ import {
   reviewTextDiffSegments,
 } from "@yopem-ui/editor/review-diff"
 import { $getRoot, type LexicalEditor } from "lexical"
+import { Redo2Icon, Undo2Icon } from "lucide-react"
 import { type ChangeEvent, type ComponentProps, useId, useState } from "react"
 
 export interface LocalRevisionBlock {
@@ -324,8 +326,22 @@ export function VersionHistoryExample() {
             onSave={save}
             disabled={history.revisions.length >= 20}
           />
-          <EditorHistoryButton action="undo">Undo</EditorHistoryButton>
-          <EditorHistoryButton action="redo">Redo</EditorHistoryButton>
+          <EditorHistoryButton
+            action="undo"
+            aria-label="Undo"
+            title="Undo"
+            render={<Button variant="ghost" size="icon-sm" />}
+          >
+            <Undo2Icon aria-hidden="true" size={16} />
+          </EditorHistoryButton>
+          <EditorHistoryButton
+            action="redo"
+            aria-label="Redo"
+            title="Redo"
+            render={<Button variant="ghost" size="icon-sm" />}
+          >
+            <Redo2Icon aria-hidden="true" size={16} />
+          </EditorHistoryButton>
         </EditorToolbar>
         <EditorContent />
       </EditorRoot>

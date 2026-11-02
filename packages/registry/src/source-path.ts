@@ -27,6 +27,9 @@ export function resolveSourcePath(path: string) {
       path.slice("lib/editor-ai/".length),
     )
 
+  if (path === "lib/editor-store/json-duplicates.ts")
+    return resolve(root, "../../editor/src/json-duplicates.ts")
+
   if (path === "lib/editor-auth/index.ts")
     return resolve(root, "../../editor/src/server/auth-index.ts")
 

@@ -19,12 +19,19 @@ test("labels publication keeps the native node and pure model in the copied clos
       "labels-node.ts",
       "labels-extension.ts",
       "labels-controls.tsx",
+      "labels-select.tsx",
     ].map((name) => `components/editor/${name}`),
   )
 
   expect(new Set(item.files.map((file) => file.path))).toEqual(paths)
   expect(item.registryDependencies).toEqual(
-    expect.arrayContaining(["editor", "checkbox", "checkbox-group", "label"]),
+    expect.arrayContaining([
+      "editor",
+      "checkbox",
+      "checkbox-group",
+      "label",
+      "combobox",
+    ]),
   )
 
   const built = registryItemSchema.parse(

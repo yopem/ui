@@ -32,6 +32,15 @@ import {
   EditorListPresentationExtension,
 } from "@yopem-ui/editor/list-presentation"
 import { $getRoot, HISTORY_PUSH_TAG } from "lexical"
+import {
+  IndentDecreaseIcon,
+  IndentIncreaseIcon,
+  ListChecksIcon,
+  ListIcon,
+  ListOrderedIcon,
+  Redo2Icon,
+  Undo2Icon,
+} from "lucide-react"
 import { useState } from "react"
 import { z } from "zod"
 
@@ -422,13 +431,62 @@ function ListPresentationContent({
   return (
     <>
       <EditorToolbar aria-label="Native list editing">
-        <EditorListButton listType="bullet" />
-        <EditorListButton listType="number" />
-        <EditorListButton listType="check" />
-        <EditorIndentButton direction="indent" />
-        <EditorIndentButton direction="outdent" />
-        <EditorHistoryButton action="undo" />
-        <EditorHistoryButton action="redo" />
+        <EditorListButton
+          listType="bullet"
+          aria-label="Bullet list"
+          title="Bullet list"
+          render={<Button variant="ghost" size="icon-sm" />}
+        >
+          <ListIcon aria-hidden="true" size={16} />
+        </EditorListButton>
+        <EditorListButton
+          listType="number"
+          aria-label="Numbered list"
+          title="Numbered list"
+          render={<Button variant="ghost" size="icon-sm" />}
+        >
+          <ListOrderedIcon aria-hidden="true" size={16} />
+        </EditorListButton>
+        <EditorListButton
+          listType="check"
+          aria-label="Checklist"
+          title="Checklist"
+          render={<Button variant="ghost" size="icon-sm" />}
+        >
+          <ListChecksIcon aria-hidden="true" size={16} />
+        </EditorListButton>
+        <EditorIndentButton
+          direction="indent"
+          aria-label="Indent"
+          title="Indent"
+          render={<Button variant="ghost" size="icon-sm" />}
+        >
+          <IndentIncreaseIcon aria-hidden="true" size={16} />
+        </EditorIndentButton>
+        <EditorIndentButton
+          direction="outdent"
+          aria-label="Outdent"
+          title="Outdent"
+          render={<Button variant="ghost" size="icon-sm" />}
+        >
+          <IndentDecreaseIcon aria-hidden="true" size={16} />
+        </EditorIndentButton>
+        <EditorHistoryButton
+          action="undo"
+          aria-label="Undo"
+          title="Undo"
+          render={<Button variant="ghost" size="icon-sm" />}
+        >
+          <Undo2Icon aria-hidden="true" size={16} />
+        </EditorHistoryButton>
+        <EditorHistoryButton
+          action="redo"
+          aria-label="Redo"
+          title="Redo"
+          render={<Button variant="ghost" size="icon-sm" />}
+        >
+          <Redo2Icon aria-hidden="true" size={16} />
+        </EditorHistoryButton>
       </EditorToolbar>
       <EditorContent
         placeholder="Edit the mixed list…"

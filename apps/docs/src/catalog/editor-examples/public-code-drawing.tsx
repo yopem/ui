@@ -37,6 +37,7 @@ import {
   EditorDiagramToolbar,
   EditorDiagramViewModeSelect,
 } from "@yopem-ui/editor/diagram"
+import { Redo2Icon, Undo2Icon } from "lucide-react"
 import { useId, useReducer, useState } from "react"
 
 const styles = stylex.create({
@@ -249,8 +250,22 @@ export function PublicCodeDrawingExample() {
               <EditorCodeToolbar aria-label="Diagram code tools">
                 <EditorCodeLanguage />
                 <EditorCodeCopyButton />
-                <EditorHistoryButton action="undo" />
-                <EditorHistoryButton action="redo" />
+                <EditorHistoryButton
+                  action="undo"
+                  aria-label="Undo"
+                  title="Undo"
+                  render={<Button variant="ghost" size="icon-sm" />}
+                >
+                  <Undo2Icon aria-hidden="true" size={16} />
+                </EditorHistoryButton>
+                <EditorHistoryButton
+                  action="redo"
+                  aria-label="Redo"
+                  title="Redo"
+                  render={<Button variant="ghost" size="icon-sm" />}
+                >
+                  <Redo2Icon aria-hidden="true" size={16} />
+                </EditorHistoryButton>
                 <EditorCodeStatus />
               </EditorCodeToolbar>
               <EditorDiagramToolbar aria-label="Diagram tools">

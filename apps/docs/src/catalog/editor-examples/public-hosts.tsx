@@ -16,6 +16,7 @@ import {
   useEditor,
 } from "@yopem-ui/editor"
 import { $getRoot, HISTORY_PUSH_TAG } from "lexical"
+import { BoldIcon, Redo2Icon, Undo2Icon } from "lucide-react"
 import { Suspense, use, useState, type ComponentProps } from "react"
 
 function paragraphState(text: string) {
@@ -102,9 +103,29 @@ export function ControlledEditorExample() {
       <EditorRoot ariaLabel="Controlled editor" initialState={initialState}>
         <EditorToolbar aria-label="Controlled document actions">
           <ControlledDocumentActions />
-          <EditorFormatButton format="bold">Bold</EditorFormatButton>
-          <EditorHistoryButton action="undo">Undo</EditorHistoryButton>
-          <EditorHistoryButton action="redo">Redo</EditorHistoryButton>
+          <EditorFormatButton
+            format="bold"
+            title="Bold"
+            render={<Button variant="ghost" size="icon-sm" />}
+          >
+            <BoldIcon aria-hidden="true" size={16} />
+          </EditorFormatButton>
+          <EditorHistoryButton
+            action="undo"
+            aria-label="Undo"
+            title="Undo"
+            render={<Button variant="ghost" size="icon-sm" />}
+          >
+            <Undo2Icon aria-hidden="true" size={16} />
+          </EditorHistoryButton>
+          <EditorHistoryButton
+            action="redo"
+            aria-label="Redo"
+            title="Redo"
+            render={<Button variant="ghost" size="icon-sm" />}
+          >
+            <Redo2Icon aria-hidden="true" size={16} />
+          </EditorHistoryButton>
         </EditorToolbar>
         <EditorContent />
       </EditorRoot>

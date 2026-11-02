@@ -37,7 +37,7 @@ const usageNoteValues = {
     "Supply explicit renderers. Host endpoints require current authentication, document authorization, exact Origin, CSRF checks, and bounded work.",
     "Per-node previews keep source visible until a matching sanitized SVG image decodes. The raw SVG cache holds at most 32 results and 8 MiB.",
     "Native Lexical JSON and marked code HTML keep diagram metadata. Document readers retain validated metadata without running renderers.",
-    "Only SVG download is supplied. PNG and PDF export are not supplied. Renderer and browser workflows remain unverified.",
+    "Download sanitized SVG by default. Set the format prop to png for bounded owner-document PNG export. These controls do not export PDF. Verify SDK and browser output in the host.",
   ],
   "editor-diagram-mermaid": [
     "Load this optional SDK adapter only in a browser-only entry. Do not import it into an SSR route.",
@@ -66,6 +66,7 @@ const usageNoteValues = {
   ],
   "editor-block-menu": [
     "Create one stable controller per root. Register its extension before wrapping EditorContent with EditorBlockMenu.",
+    "Compose EditorBlockSelection with a separate stable controller for gutter actions. Register both controller extensions once.",
     "Open with right-click or Shift+F10. Copy, duplicate, delete, conversion, indentation, and alignment use native editor operations.",
     "Host action policy must return literal true. Pending document changes and stale targets reject actions.",
     "Ask AI and Code Drawing require host callbacks. Their second argument retains a validated target after menu close.",
@@ -95,8 +96,17 @@ const usageNoteValues = {
     "PNG uses bounded dimensions and output bytes. Native print dialogs and synchronous capture work cannot be stopped.",
     "Verify owner-document behavior, local fonts, CSP, browser SVG support, and keyboard access before production use.",
   ],
+  "editor-document-export-pdf": [
+    "Install editor-document-export-pdf separately. Import EditorDocumentPDFExportControl from @/components/editor/document-export-pdf and compose it inside EditorRoot.",
+    "Supply an explicit PNG capture callback. Install editor-document-export-image only for its optional captureEditorDocumentImageWithHtmlToImage adapter.",
+    "The control downloads plate.pdf directly without native print. Output contains one raster page with an opaque white JPEG image, not selectable text.",
+    "Dimensions allow 4096 by 16384 pixels and 16777216 pixels total. Output has a 16 MiB limit. Decoded dimensions must match the snapshot.",
+    "Resource policy, CSP nonce, stale-document checks, and the shared operation lease match PNG export. Cancellation retains capacity until outstanding work settles.",
+    "Read-only roots can export without changes to saved content, selection, or history. Synchronous browser work cannot be stopped.",
+    "No PDF SDK or network service is supplied. Browser and real PDF output checks remain unvalidated.",
+  ],
   "editor-document-export-image": [
-    "Install this adapter only for PNG capture. Pass captureEditorDocumentImageWithHtmlToImage as the control capture prop.",
+    "Install this adapter only for PNG capture, including capture for optional PDF export. Pass captureEditorDocumentImageWithHtmlToImage as the control capture prop.",
     "The adapter uses html-to-image, validates its SVG, and rasterizes in the editor owner document.",
     "Web fonts are skipped. Local font fallbacks can change document layout. Verify CSP and SVG foreignObject support.",
     "The base print item does not require this SDK. Abort discards output but cannot stop synchronous browser work.",
@@ -111,6 +121,7 @@ const usageNoteValues = {
   ],
   "editor-block-selection": [
     "Create one stable controller. Render EditorBlockSelection inside EditorRoot. Select and move top-level blocks with the gutter, drag handles, or keyboard actions.",
+    "Keep the wrapper mounted without a gutter. Use onKeyDown for host Escape cancellation. Forward wrapper refs and onKeyDownCapture through custom render elements. Same-document React portals retain wrapper ownership. Keep native composition and unowned Escape behavior.",
     "Native cut requires synchronous literal-true host approval. Preserve native MIME export and higher-priority host cancellation. Document validation must also return literal true.",
     "Content, selection, and read-only changes expire saved operations. Keep host authorization for persisted writes. Validate custom document schemas before local mutations.",
   ],
@@ -129,6 +140,9 @@ const usageNoteValues = {
     "Create a stable labels extension with one through 64 unique bounded options. Label editors admit up to ten tokens. Apply the host minimum count separately.",
     "Replace only a label-only paragraph. Existing unrelated content makes replacement fail without removal. Unknown, duplicate, and excess valid tokens become text; malformed token metadata rejects.",
     "Use EditorLabelsPicker as the checkbox preset. Compose EditorLabelsOption inside CheckboxGroup for custom options. Register EditorLabelNode in every reader. Pure codecs do not validate complete documents or grant access.",
+    "Use EditorLabelsSelect for filtered multiselect with removable tags. Compose EditorLabelsInput, EditorLabelsContent, and EditorLabelsTag for custom layouts. Keep options identical to the labels extension.",
+    "Uncontrolled selections update the native label document with undo support. Controlled value needs onValueChange. Commit document changes through $replaceEditorLabels in the host callback.",
+    "Disabled and read-only changes close suggestions and clear the query. Restoring editing does not open suggestions.",
     "Document readers retain validated label tokens. Native clipboard, normalization, history, read-only behavior, and reader validation remain runtime-unverified.",
   ],
   "editor-autoformat": [
@@ -144,10 +158,20 @@ const usageNoteValues = {
     "Plain text is limited to 1 MiB and converted block text to 2501 lines. Rich, non-text, oversized and converted-empty paste preserves selected content. Single-line mode removes new pasted line breaks, not existing content.",
     "This extension is not a complete document validator. Native paste, history, IME, nested boundaries, read-only behavior and accessibility still need deferred runtime checks.",
   ],
+  "editor-toolbar-menus": [
+    "Install editor-toolbar-menus separately. Import parts from @/components/editor/toolbar-menus. Compose EditorFixedToolbarButtons inside EditorFixedToolbar within EditorRoot.",
+    "EditorInsertMenu adds an empty block after one current root block. It does not convert selected content. EditorTurnIntoMenu converts native blocks.",
+    "EditorMoreMenu applies strikethrough, subscript, superscript, and highlight. Use EditorListToolbarButtons for grouped list controls.",
+    "Use grouped icon controls with full accessible names. Keep each group within its toolbar.",
+    "Install editor-floating-toolbar separately before composing EditorFloatingToolbarButtons inside EditorFloatingToolbar. Optional feature nodes are not included.",
+    "Configured authorizeAction must return literal true. It checks menu actions, not all grouped controls. Preserve host event cancellation.",
+    "Saved selections expire after document or editable-state changes. Native keyboard, history, focus, and accessibility checks remain unvalidated.",
+  ],
   "editor-floating-toolbar": [
     "Install editor-floating-toolbar separately. Compose EditorFloatingToolbar inside EditorRoot beside EditorContent. Use existing editor controls as children.",
     "Select text to open the non-modal toolbar. Press Alt+F10 to focus the first enabled control. Escape returns keyboard focus to the editor.",
-    "Document changes, collapsed ranges, and read-only transitions invalidate the target. Native focus, nested popups, pointer selection, collision geometry, and cleanup require deferred runtime validation.",
+    "Use EditorLinkFloatingToolbar for open, edit, and remove actions at a collapsed link caret. Expanded link text keeps the text toolbar. Both parts support custom controls as children.",
+    "Document changes and read-only transitions invalidate saved targets. Collapsed ranges close the text toolbar. Native focus, nested popups, pointer selection, collision geometry, and cleanup require runtime validation.",
   ],
   "editor-search": [
     "Install editor-search separately. Compose its root inside EditorRoot and place EditorContent inside EditorSearchViewport.",
@@ -160,26 +184,48 @@ const usageNoteValues = {
     "CSV input is limited to 1 MiB, 50 rows, 50 columns, and 2500 cells. Reject malformed quotes and unequal row widths before document replacement.",
   ],
   "editor-toc": [
-    "Register EditorTocExtension in a stable root extension array. Compose controls inside EditorToolbar. Entries follow current document headings.",
-    "Navigation stays within the current editor. Register EditorTocNode in live readers. Document codecs retain validated contents nodes and canonical heading IDs.",
+    "Register EditorTocExtension in a stable root extension array. Compose controls inside EditorToolbar. Live contents show the first 500 nonempty headings in preorder. Titles normalize whitespace and truncate to 256 UTF-16 code units.",
+    "Navigation stays within the current editor. Register EditorTocNode in live readers. The optional editor-document reader retains validated contents nodes.",
+    "Portable document export uses all headings and full text, subject to document limits. It uses canonical document-scoped IDs, not live editor-scoped IDs. Portable HTML input requires complete canonical heading links. Native TOC HTML can fail this check.",
   ],
   "editor-footnotes": [
     "Register EditorFootnoteExtension in a stable root extension array. Keep rich definitions and references in the native document. Compose controls inside EditorToolbar.",
     "The optional typeahead owns the editable surface. Keep its controller stable until unmount. Do not add EditorContent beside EditorFootnoteTypeahead.",
     "Register footnote nodes in every host reader. Document codecs retain validated definitions, references, and canonical HTML. Validate complete documents before replacement.",
   ],
+  "editor-media-placeholder": [
+    "Install editor-media-placeholder separately. Import parts from @/components/editor/media-placeholder. Create one stable createEditorMediaPlaceholder({ upload }) controller per root.",
+    "Register MediaExtension and createMediaPlaceholderExtension(controller) in a stable root extensions array. Compose MediaPlaceholderInsertButton inside EditorToolbar and MediaUploadNotification beside EditorContent.",
+    "MediaPlaceholderNode is a native document node. MediaPlaceholderElement composes file, progress, typed failure, retry, cancel, and remove controls.",
+    "Each root permits at most 16 placeholders and one active upload task. Files require 1 byte through 16 MiB and names of at most 512 characters.",
+    "Use controller.configure(upload) when host authentication or the upload callback changes. Document, changed non-null selection, read-only, root, and host changes invalidate work.",
+    "Cancel retains the busy slot until the task settles. Cancellation does not prove that remote storage stopped. Retry requires an explicit action.",
+    "Success replaces the placeholder with validated media. Placeholder upload results reject literal ? and #, including empty delimiters. Failed uploads retain one File in memory for explicit retry until cancellation, document changes, or cleanup. An active upload holds a File in memory. The host callback receives the File and can retain or copy it, including after settlement. Successful replacement stores the file name and URL in media JSON and tagged HTML. JSON omission does not erase memory or remote copies.",
+    "JSON stores only type editor-media-placeholder, version 1, and uploadKind. Never serialize File objects or private data. Restored placeholders need a fresh file selection.",
+    "Insertion, successful replacement, and removal each create a separate history step. Progress, failure, retry, and cancellation add no history steps.",
+    "Undo invalidates active work. Redo and reload never restart uploads. No automatic upload, retry, or fetch is supplied. No file-upload paste or drop handler is supplied. The extension checks clipboard node insertion for placeholder limits and valid placement.",
+    "Keep authorization, content validation, and quotas in the host. Native upload, history, clipboard, and accessibility workflows remain runtime-unvalidated.",
+  ],
   "editor-media": [
     "Register MediaExtension in a stable extensions array. Compose MediaInsertControl inside EditorToolbar. MediaContent can render validated media without EditorRoot.",
+    "MediaInsertControl and MediaEditControl reject literal ? and #, including empty delimiters. The insert rule applies to direct URLs and upload results. Use query-free provider URLs with this control. In URL paths, %3F and %23 are path data. Provider and iframe rules can be stricter. The pure parseProvider helper keeps its supported provider forms.",
+    "MediaInsertControl requires a fresh valid range, a connected editable root, and a registered MediaNode. Content, changed non-null selection, read-only, or root changes can invalidate the target. A null selection can remain while the dialog has focus. On success, the control inserts after the ordered selection-end root child or at the exact root gap. Its insertion keeps selected content, list and table structure, and empty target blocks. It adds an empty paragraph and selects the new media node.",
+    "$insertMedia uses Lexical nearest-root insertion on the current range. MediaFileClipboard restores its range and calls $insertMedia. Its drop range comes from the drop position. Clipboard completion requires an unchanged non-null range. The insert control and clipboard insertion request HISTORY_PUSH_TAG. Media action changes and removal also request it. This tag does not guarantee exact undo grouping. The standalone $insertMedia helper adds no history tag or saved-target lease. Its caller owns the update, selection, and history policy. These paths use parseMedia, not the insert control's delimiter rule. Provider-specific checks still apply. Ordinary URLs can have nonempty components that the portable reader rejects. Placement has no control preservation guarantee.",
+    "Cancellation signals the host and discards stale local results. Remote cancellation is cooperative. Each mounted MediaInsertControl instance keeps its upload slot until its callback settles. Separate instances and remounts do not share that slot. The placeholder controller keeps its own busy slot until settlement. MediaFileClipboard does not retain an equivalent slot after cancellation. Calling start on the same createMediaUpload task can supersede an unsettled call. Earlier callbacks can continue. Enforce remote upload concurrency and retry policy in the host. Cancellation does not prove that remote work stopped.",
+    "Compose selected-media controls inside MediaActions and EditorRoot. Omit nodeKey to follow one selected media node. Keep an explicit nodeKey fixed until unmount.",
+    "MediaEditControl changes the current source without another insertion. MediaCaptionTextarea stores plain text with line breaks and a 10000-character limit.",
+    "MediaImageResize supports images only. Escape and pointer cancellation discard resize drafts. Content, target, and read-only changes expire saved edits. Host event cancellation takes priority.",
     "Use HTTPS URLs without credentials. Provide image alt text and media captions. Provider embeds use exact supported hosts and canonical URLs.",
     "Supply a bounded, abort-aware host upload callback. Uploads require host authorization and validation. This item does not configure private asset delivery.",
-    "Register MediaNode in every document reader. Document conversion preserves canonical media metadata and tagged figure HTML. Media conversion rejects URL queries and fragments.",
+    "Register MediaNode in every document reader. Document conversion preserves canonical media metadata and tagged figure HTML. Both native media and the portable reader require absolute HTTPS source and track URLs without credentials. The portable reader rejects nonempty query or fragment components. It may retain canonical ordinary-media and track URLs with empty trailing ? or #, subject to all other checks.",
     "Preview parts need no EditorRoot. Compose MediaPreviewRoot, Trigger, and Dialog, or use MediaPreviewGallery. Supply unique image IDs. Zoom and navigation stay outside saved state.",
-    "Configure live embeds with stable createMediaExtension({ embedPolicy }). Do not register MediaExtension beside it. MediaEmbedContent loads frames only after explicit consent.",
+    "Configure live embeds with stable createMediaExtension({ embedPolicy }). Do not register MediaExtension beside it. MediaEmbedContent loads frames only after explicit consent. Frame consent does not cover images, video, audio, or caption tracks. Images can request their URLs when rendered. Native media and tracks can make network requests. Preload settings do not guarantee network privacy. Successful uploads retain the file name and URL. Media JSON and tagged HTML can include URLs, names, alt text, and captions. Account for this data in host delivery, CSP, logs, clipboard, and storage policies.",
     "Changing source, policy, or disabled resets consent. Tweets use the fixed Twitter endpoint. Exported HTML keeps inert links. Host controls must address DNS, redirects, private networks, and provider framing policies.",
   ],
   "editor-columns": [
     "Register EditorColumnsExtension in a stable extensions array. Compose the preset or focused controls inside EditorToolbar. Layouts contain two through four rich-text columns. Nested column groups are rejected; nested rich blocks remain native.",
     "Resize adjacent columns with the house Slider. Keep native selection, history, cancellation, and read-only behavior. Import pure validation and fragment codecs from columns-model.",
+    "Before loading or mutating live Lexical slots, bound occupied slots and preserve acyclic ownership. Validate complete candidates at host boundaries. Transforms do not validate all queued or skipTransforms updates. Rejected updates can discard coalesced pending edits.",
     "Document codecs retain validated columns through native JSON and canonical HTML. Register matching live nodes before import. Validate complete host documents before replacement.",
   ],
   "editor-date": [
@@ -196,6 +242,8 @@ const usageNoteValues = {
     "Use registerDocumentPaste with { markdown: true } only for opt-in validated Markdown fragments at the native caret. Lexical JSON and HTML retain priority. Default text/plain paste stays native. Empty or unsupported fragments keep selected content.",
     "Register EditorDocumentClipboardExtension at root creation in a stable extensions array. Call registerDocumentPaste after creation and keep its cleanup in the host lifecycle. Duplicate registrations fail.",
     "Use the document subpath for validated JSON, HTML, and Markdown. Import DocumentStatic from document/static separately.",
+    "DocumentStatic accepts optional idPrefix with 1–64 ASCII characters. Start with an ASCII letter. Use ASCII letters, digits, underscores, or non-consecutive hyphens after it. Invalid prefixes throw. Use the same stable prefix for server rendering and hydration. Use a distinct prefix for each document in one owner document. Reserve generated IDs against other host markup. Choose distinct, meaningful aria-label values for multiple documents.",
+    "A prefix changes rendered IDs and fragment targets to <idPrefix>--<canonical-id>. Update deep links when opting in. Native fragment activation can change the URL and browser history. Changing a prefix changes its links. Omitting idPrefix preserves canonical IDs and existing deep links, but does not isolate multiple instances. Static prefixing does not change document data. Prefixed markup is not portable document HTML.",
     "Custom headless editors use documentNodes. Keep copied pure models and document/optional-nodes.ts. Keep @types/hast and @types/mdast as direct consumer dependencies. Imports verify the parsed target before replacement.",
     "Links retain safe relations and use _self or _blank targets. The codec rejects opener relations.",
     "Standalone color variables require mounted theme context and an opaque host surface. Partially transparent surfaces and context-relative color variables fail. Fonts use local fallbacks.",
@@ -211,6 +259,7 @@ const usageNoteValues = {
     "Canonical table and block validators keep separate 10000-node budgets. Storage separately counts up to 131072 JSON values.",
   ],
   "editor-typeahead": [
+    "Default options keep short accessible names. Descriptions use aria-describedby outside the named option. The complete row remains available for pointer selection.",
     "Use EditorInlineCombobox with Input, Content, List, Item, Empty, Status, Group, GroupLabel, and Row parts. EditorInlineComboboxInput renders EditorContent. Do not add a second query input. Keep every current item in controller order. Read state with useEditorInlineCombobox. Compose EditorEmojiPopover, EditorEmojiToolbarButton, EditorEmojiPopoverContent, and EditorEmojiPicker inside EditorToolbar. EditorEmojiPicker is the panel. EditorEmojiMenu is the complete toolbar preset. Compose EditorEmojiSearch, EditorEmojiCategory, EditorEmojiList, EditorEmojiItem, EditorEmojiEmpty, EditorEmojiPrevious, EditorEmojiNext, and EditorEmojiClearHistory. Read picker state with useEditorEmojiPicker. Keep inventory, filter, and history stable until unmount. ",
     "Keep one stable controller and mount-time extension array per root. EditorTypeahead renders the editable surface and suggestions. Do not add EditorContent beside this preset. Compose EditorEmojiMenu inside EditorToolbar.",
     "Supply a bounded, abort-aware host mention loader. Missing loaders disable mention queries. Identities do not grant access.",
@@ -218,6 +267,9 @@ const usageNoteValues = {
     "Emoji search uses the complete published English emojibase-data inventory and skin variants. Hosts can supply validated single-grapheme inventories.",
   ],
   editor: [
+    "Use Editor for a ready-to-use preset. Its toolbar uses named icon controls and wraps within the editor.",
+    "For standard editor actions, pass Button icon sizes through render. Keep full accessible names and titles. Keep current values visible in selection controls.",
+    "EditorRoot keeps server markup read-only. Mutation controls become available after the native editable root is attached. useEditorState().editable reports the attached native state.",
     "Compose EditorAiRoot, EditorAiTrigger, and EditorAiPanel inside EditorRoot. Supply explicit same-origin endpoint, documentId, and host headers. Review untrusted text before approval. Stale or failed proposals cannot apply.",
     "Use public style controls inside EditorRoot and EditorToolbar. Register EditorBlockPresentationExtension in a stable mount-time array, including read-only roots.",
     "Use EditorIndentButton for block indentation and EditorFirstLineIndentControl for first-line indentation. Line height accepts unitless 1 through 4. First-line indent accepts nonnegative values through 160px or 10em/rem.",
@@ -230,7 +282,8 @@ const usageNoteValues = {
     "Use xstyle, className, refs, and native attributes on Editor and EditorRoot. Link controls discard saved ranges after document content changes.",
     "Use EditorTableMenu for row, column, header, merge, and split actions. Register EditorTablePresentationExtension for bounded tables and persisted cell presentation. Add EditorTableDimensions, EditorTableCellPresentation, and EditorTableResizeControls inside EditorRoot. Use EditorTableBackgroundControls and EditorTableBorderControls separately when needed. Border controls support logical edges and rectangle actions. Shared merged edges are indivisible. Row resizing stores minimum height. Content can make rows taller.",
     "Set disableMerge:true at mount time to block house merge actions. Existing spans remain. Explicit splitting stays available. Native host mutations bypass this policy.",
-    "Validate external table JSON and HTML before conversion. Tables support 50 rows, 50 columns, and 2500 covered cells across the document. Invalid updates preserve existing content. Saved table selections become invalid after document changes.",
+    "Validate external table JSON and HTML before conversion. Tables support 50 rows, 50 columns, and 2500 covered cells across the document. Saved table selections become invalid after document changes.",
+    "Before loading or mutating live Lexical slots, bound occupied slots and preserve acyclic ownership. Validate complete candidates at host boundaries. Transforms do not validate all queued or skipTransforms updates. Rejected updates can discard coalesced pending edits.",
     "The base editor provides core editing, not full Plate feature parity. Keep collaboration, media uploads, review, and document conversion in separate optional integrations. Install editor-document for supported conversion.",
   ],
   "editor-math": [
@@ -317,6 +370,11 @@ const usageNoteValues = {
   "editor-review": [
     "Install editor-review separately. Use EditorReviewPreset for a complete editor. For custom composition, create one controller per root and add its extension to the stable root extension list.",
     "Place EditorReviewProvider inside EditorRoot. EditorReviewRichComposer creates its own root. EditorReviewRichContent renders validated content without an EditorRoot.",
+    "Import EditorReviewModeMenu from @/components/editor/review. Keep it outside a disabled EditorToolbar. Supply controlled value, synchronous canChangeMode, and onModeChange.",
+    "Editing, Suggestion, and Viewing use editing, suggestion, and viewing values. The host owns editable state and review mode. Mode changes never grant permission.",
+    "The default accessible name includes the current mode. An explicit aria-label also sets default visible text. Keep custom child text in the accessible name.",
+    "Keep onModeChange synchronous. Commit the controlled value only after review accepts.",
+    "Recheck host write and suggestion policies in the callback. Enable editing synchronously before setSuggesting when leaving Viewing. Restore editable state if review rejects.",
     "Set viewer from verified host identity. Serialized author IDs are attribution only and do not grant access. Check each action and target on the server.",
     "Host can is synchronous. Allow an action only when policy returns literal true. visible=false hides review UI; it does not redact or delete state.",
     "Review data uses root NodeState yopemReview and yopemReviewStructural, plus text NodeState yopemSuggestion. Use parseReviewDocument at IO boundaries. Register MarkNode in every reader that loads review state.",
@@ -486,7 +544,7 @@ const usageNoteValues = {
   ],
   clipboard: [
     "Supply the value to copy. The button reports success or failure to assistive technology and never submits its parent form by default.",
-    "Clipboard keeps its command text unchanged. Decorative icons show progress and results. A live status reports success or failure.",
+    "Clipboard keeps its command text unchanged. Decorative icons show progress and results. A live status reports progress and results. Failure text is also visible outside the button.",
   ],
   marquee: [
     "Marquee provides a pause control and stops animating with reduced motion. Do not put essential controls in moving content.",
@@ -598,6 +656,7 @@ const usageNoteValues = {
   toolbar: [
     "Compose ToolbarButton, ToolbarLink and ToolbarInput inside Toolbar. Group related actions with ToolbarGroup.",
     "Toolbar manages focus movement between controls. Set an accessible label. Use ToolbarSeparator between action groups.",
+    "Set aria-pressed on ToolbarButton for controlled toggle actions. Native toggle renderers keep their own state.",
   ],
   accordion: [
     "Place AccordionItem sections inside Accordion. Each item contains AccordionTrigger followed by AccordionPanel.",
@@ -618,6 +677,7 @@ const usageNoteValues = {
   "scroll-area": [
     "Wrap overflowing content in ScrollArea and give its container a bounded height or width.",
     "The wrapper includes its viewport and scrollbars. scrollFade adds edge fades. scrollbarGutter reserves scrollbar space. Use ScrollBar for custom composition with ScrollAreaPrimitive.",
+    "The viewport uses tabIndex=0 by default. Set viewportTabIndex={-1} when a composite control owns keyboard navigation. Native scrolling remains available.",
   ],
   "alert-dialog": [
     "Compose AlertDialogTrigger and AlertDialogPopup inside AlertDialog, with AlertDialogTitle, AlertDialogDescription and confirmation controls in the popup.",
@@ -676,6 +736,7 @@ const usageNoteValues = {
     "Compose ComboboxInput and ComboboxPopup with ComboboxList and ComboboxItem inside Combobox.",
     "For multiple selection, use ComboboxChips, ComboboxChip, and ComboboxChipsInput. Each chip includes a remove control. Supply items. If options are objects, supply a stable mapping from each item to its value.",
     "ComboboxEmpty handles no matches. ComboboxCollection supports grouped rendering. useComboboxFilter matches strings for the selected locale.",
+    "Chip navigation closes open suggestions before focus moves to a chip. If closing is cancelled, navigation does not focus a chip. Inline lists keep native navigation.",
   ],
   command: [
     "Compose CommandInput and CommandList with CommandItem controls inside Command. Use CommandEmpty for no matches.",

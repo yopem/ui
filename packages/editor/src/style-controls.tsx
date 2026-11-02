@@ -94,7 +94,7 @@ export function EditorAlignmentButton({
   return (
     <ToolbarButton
       {...props}
-      render={<Button variant="ghost" size="sm" />}
+      render={props.render ?? <Button variant="ghost" size="sm" />}
       disabled={disabled === true || !editable}
       onMouseDown={handleMouseDown}
       onClick={handleClick}
@@ -420,7 +420,7 @@ export function EditorClearFormattingButton({
   return (
     <ToolbarButton
       {...props}
-      render={<Button variant="ghost" size="sm" />}
+      render={props.render ?? <Button variant="ghost" size="sm" />}
       disabled={disabled === true || !editable}
       onMouseDown={handleMouseDown}
       onClick={handleClick}

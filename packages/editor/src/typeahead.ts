@@ -328,7 +328,7 @@ export function createEditorTypeahead(options: EditorTypeaheadOptions = {}) {
 
       const items = commands
         .filter((command) =>
-          `${command.label} ${command.description}`
+          `${command.id} ${command.label} ${command.description}`
             .toLocaleLowerCase()
             .includes(text),
         )

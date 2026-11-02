@@ -20,6 +20,7 @@ import {
   EditorTypeahead,
   type EditorSlashCommand,
 } from "@yopem-ui/editor/typeahead"
+import { FileCode2Icon, Redo2Icon, TableIcon, Undo2Icon } from "lucide-react"
 import { useState } from "react"
 
 const slashCommands: readonly EditorSlashCommand[] = [
@@ -131,10 +132,37 @@ export function MathExample() {
           <EditorMathControl kind="inline" />
           <EditorMathControl kind="block" />
           <EditorMathControl />
-          <EditorBlockButton block="code" />
-          <EditorTableButton />
-          <EditorHistoryButton action="undo" />
-          <EditorHistoryButton action="redo" />
+          <EditorBlockButton
+            block="code"
+            aria-label="Code block"
+            title="Code block"
+            render={<Button variant="ghost" size="icon-sm" />}
+          >
+            <FileCode2Icon aria-hidden="true" size={16} />
+          </EditorBlockButton>
+          <EditorTableButton
+            aria-label="Insert table"
+            title="Insert table"
+            render={<Button variant="ghost" size="icon-sm" />}
+          >
+            <TableIcon aria-hidden="true" size={16} />
+          </EditorTableButton>
+          <EditorHistoryButton
+            action="undo"
+            aria-label="Undo"
+            title="Undo"
+            render={<Button variant="ghost" size="icon-sm" />}
+          >
+            <Undo2Icon aria-hidden="true" size={16} />
+          </EditorHistoryButton>
+          <EditorHistoryButton
+            action="redo"
+            aria-label="Redo"
+            title="Redo"
+            render={<Button variant="ghost" size="icon-sm" />}
+          >
+            <Redo2Icon aria-hidden="true" size={16} />
+          </EditorHistoryButton>
         </EditorToolbar>
         <EditorTypeahead
           controller={controller}

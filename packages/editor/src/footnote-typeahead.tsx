@@ -1,6 +1,7 @@
 "use client"
 
 import type { Popover as PopoverPrimitive } from "@base-ui/react/popover"
+import type { BaseUIEvent } from "@base-ui/react/types"
 import type {
   AnyLexicalExtensionArgument,
   EditorState,
@@ -8,7 +9,7 @@ import type {
   NodeKey,
 } from "lexical"
 
-import { useRender } from "@base-ui/react/use-render"
+import { useStableCallback } from "@base-ui/utils/useStableCallback"
 import { Box } from "@registry/components/ui/box"
 import {
   Command,
@@ -37,7 +38,14 @@ import {
   defineExtension,
   mergeRegister,
 } from "lexical"
-import { useId, useRef, useState, useSyncExternalStore } from "react"
+import {
+  useId,
+  useRef,
+  useState,
+  useSyncExternalStore,
+  type ComponentProps,
+  type KeyboardEvent as ReactKeyboardEvent,
+} from "react"
 
 import type { EditorContentProps } from "./root"
 
@@ -224,9 +232,12 @@ export function createEditorFootnoteTypeahead() {
   }
 
   function close() {
-    dismissed = snapshot.query
     capturedRevision = -1
-    publish({ query: null, items: [], active: 0 })
+
+    if (snapshot.query) {
+      dismissed = snapshot.query
+      publish({ query: null, items: [], active: 0 })
+    }
   }
 
   function buildItems(query: EditorFootnoteTypeaheadQuery) {
@@ -634,18 +645,88 @@ export function createEditorFootnoteTypeahead() {
   }
 }
 
-function FootnoteEditable({
-  triggerRef,
-  ...props
-}: EditorContentProps & {
-  triggerRef: EditorContentProps["ref"]
-}) {
-  return useRender({ render: <EditorContent {...props} />, ref: triggerRef })
+function preserveFootnoteNativeEditing(
+  event: BaseUIEvent<ReactKeyboardEvent<HTMLElement>>,
+) {
+  event.preventBaseUIHandler()
 }
 
 export interface EditorFootnoteTypeaheadProps extends EditorContentProps {
   readonly controller: EditorFootnoteTypeaheadController
   readonly ariaLabel?: string
+}
+
+function FootnoteTypeaheadOption({
+  controller,
+  index,
+  item,
+  active,
+}: {
+  controller: EditorFootnoteTypeaheadController
+  index: number
+  item: EditorFootnoteTypeaheadItem
+  active: boolean
+}) {
+  function connectOption(element: HTMLDivElement | null) {
+    controller.connectOption(index, element)
+  }
+
+  const handlePointerDown = useStableCallback(function handlePointerDown(
+    event: Parameters<
+      NonNullable<ComponentProps<typeof CommandItemComponent>["onPointerDown"]>
+    >[0],
+  ) {
+    event.preventDefault()
+  })
+
+  const handleMouseDown = useStableCallback(function handleMouseDown(
+    event: Parameters<
+      NonNullable<ComponentProps<typeof CommandItemComponent>["onMouseDown"]>
+    >[0],
+  ) {
+    event.preventDefault()
+  })
+
+  const handlePointerMove = useStableCallback(function handlePointerMove(
+    event: Parameters<
+      NonNullable<ComponentProps<typeof CommandItemComponent>["onPointerMove"]>
+    >[0],
+  ) {
+    if (!event.defaultPrevented) controller.highlight(index)
+  })
+
+  const handleClick = useStableCallback(function handleClick(
+    event: Parameters<
+      NonNullable<ComponentProps<typeof CommandItemComponent>["onClick"]>
+    >[0],
+  ) {
+    if (!event.defaultPrevented) controller.choose(item.id)
+  })
+
+  return (
+    <CommandItemComponent
+      value={item}
+      ref={connectOption}
+      tabIndex={-1}
+      aria-selected={active}
+      aria-label={
+        item.description ? `${item.label} ${item.description}` : item.label
+      }
+      xstyle={styles.item}
+      data-highlighted={active ? "" : undefined}
+      onPointerDown={handlePointerDown}
+      onMouseDown={handleMouseDown}
+      onPointerMove={handlePointerMove}
+      onClick={handleClick}
+    >
+      <Stack xstyle={styles.optionText}>
+        <Text>{item.label}</Text>
+        {item.description ? (
+          <Text xstyle={styles.description}>{item.description}</Text>
+        ) : null}
+      </Stack>
+    </CommandItemComponent>
+  )
 }
 
 export function EditorFootnoteTypeahead({
@@ -677,45 +758,65 @@ export function EditorFootnoteTypeahead({
       },
   )
 
+  const handleOpenChange = useStableCallback(function handleOpenChange(
+    open: boolean,
+  ) {
+    if (!open) controller.close()
+  })
+
+  const handleKeyDownCapture = useStableCallback(function handleKeyDownCapture(
+    event: ReactKeyboardEvent<HTMLDivElement>,
+  ) {
+    returnFocus.current = event.key !== "Tab" || event.defaultPrevented
+  })
+
+  const handleFocusCapture = useStableCallback(function handleFocusCapture() {
+    returnFocus.current = true
+  })
+
+  const handleKeyDown = useStableCallback(function handleKeyDown(
+    event: ReactKeyboardEvent<HTMLDivElement>,
+  ) {
+    if (event.key === "Tab") returnFocus.current = event.defaultPrevented
+
+    if (event.key === "Tab" && !event.defaultPrevented) {
+      controller.close()
+      actionsRef.current?.unmount()
+    }
+  })
+
+  const handleFinalFocus = useStableCallback(function handleFinalFocus() {
+    if (!returnFocus.current) return false
+
+    const element = controller.getAnchor()?.contextElement
+
+    if (element?.contains(element.ownerDocument.activeElement)) return false
+
+    return element ?? false
+  })
+
   return (
     <Popover
       actionsRef={actionsRef}
       modal={false}
       open={snapshot.query !== null}
-      onOpenChange={(open) => {
-        if (!open) controller.close()
-      }}
+      onOpenChange={handleOpenChange}
     >
       <Box
         ref={connectView}
         data-slot="editor-footnote-typeahead"
-        onKeyDownCapture={function keyDownCapture(event) {
-          returnFocus.current = event.key !== "Tab" || event.defaultPrevented
-        }}
-        onFocusCapture={function focusCapture() {
-          returnFocus.current = true
-        }}
-        onKeyDown={function keyDown(event) {
-          if (event.key === "Tab") returnFocus.current = event.defaultPrevented
-
-          if (event.key === "Tab" && !event.defaultPrevented) {
-            controller.close()
-            actionsRef.current?.unmount()
-          }
-        }}
+        onKeyDownCapture={handleKeyDownCapture}
+        onFocusCapture={handleFocusCapture}
+        onKeyDown={handleKeyDown}
       >
         <PopoverTrigger
           id={contentProps.id}
           nativeButton={false}
-          render={function render(triggerProps) {
-            return (
-              <FootnoteEditable
-                {...contentProps}
-                id={triggerProps.id}
-                triggerRef={triggerProps.ref}
-              />
-            )
-          }}
+          role={contentProps.role ?? "textbox"}
+          aria-expanded={undefined}
+          onKeyDown={preserveFootnoteNativeEditing}
+          onKeyUp={preserveFootnoteNativeEditing}
+          render={<EditorContent {...contentProps} />}
         />
       </Box>
       <PopoverPopup
@@ -723,16 +824,7 @@ export function EditorFootnoteTypeahead({
         anchor={controller.getAnchor()}
         align="start"
         initialFocus={false}
-        finalFocus={function focus() {
-          if (!returnFocus.current) return false
-
-          const element = controller.getAnchor()?.contextElement
-
-          if (element?.contains(element.ownerDocument.activeElement))
-            return false
-
-          return element ?? false
-        }}
+        finalFocus={handleFinalFocus}
       >
         <Command
           autoHighlight={false}
@@ -746,32 +838,13 @@ export function EditorFootnoteTypeahead({
             ref={connectList}
           >
             {snapshot.items.map((item, index) => (
-              <CommandItemComponent
+              <FootnoteTypeaheadOption
                 key={item.id}
-                value={item}
-                ref={(element) => controller.connectOption(index, element)}
-                tabIndex={-1}
-                aria-selected={index === snapshot.active}
-                aria-label={item.label}
-                aria-description={item.description}
-                xstyle={styles.item}
-                data-highlighted={index === snapshot.active ? "" : undefined}
-                onPointerDown={(event) => event.preventDefault()}
-                onMouseDown={(event) => event.preventDefault()}
-                onPointerMove={(event) => {
-                  if (!event.defaultPrevented) controller.highlight(index)
-                }}
-                onClick={(event) => {
-                  if (!event.defaultPrevented) controller.choose(item.id)
-                }}
-              >
-                <Stack xstyle={styles.optionText}>
-                  <Text>{item.label}</Text>
-                  {item.description ? (
-                    <Text xstyle={styles.description}>{item.description}</Text>
-                  ) : null}
-                </Stack>
-              </CommandItemComponent>
+                controller={controller}
+                index={index}
+                item={item}
+                active={index === snapshot.active}
+              />
             ))}
           </CommandListComponent>
         </Command>

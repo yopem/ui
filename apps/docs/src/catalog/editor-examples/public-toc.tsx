@@ -18,6 +18,7 @@ import {
   useEditor,
 } from "@yopem-ui/editor"
 import { EditorTocControls, EditorTocExtension } from "@yopem-ui/editor/toc"
+import { Redo2Icon, Undo2Icon } from "lucide-react"
 import { useState } from "react"
 
 function preventToolbarBlur(event: MouseEvent<HTMLElement>) {
@@ -127,8 +128,22 @@ export function PublicTocExample() {
           initialState={initialState}
         >
           <EditorToolbar>
-            <EditorHistoryButton action="undo" />
-            <EditorHistoryButton action="redo" />
+            <EditorHistoryButton
+              action="undo"
+              aria-label="Undo"
+              title="Undo"
+              render={<Button variant="ghost" size="icon-sm" />}
+            >
+              <Undo2Icon aria-hidden="true" size={16} />
+            </EditorHistoryButton>
+            <EditorHistoryButton
+              action="redo"
+              aria-label="Redo"
+              title="Redo"
+              render={<Button variant="ghost" size="icon-sm" />}
+            >
+              <Redo2Icon aria-hidden="true" size={16} />
+            </EditorHistoryButton>
             <EditorTocControls />
           </EditorToolbar>
           <EditorContent placeholder="Write a structured document…" />

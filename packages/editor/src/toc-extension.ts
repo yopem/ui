@@ -1,10 +1,12 @@
 import type { EditorState, LexicalEditor, NodeKey } from "lexical"
 
 import { HeadingNode } from "@lexical/rich-text"
-import { $insertNodeToNearestRoot } from "@lexical/utils"
 import {
   $addUpdateTag,
+  $caretFromPoint,
+  $createParagraphNode,
   $getEditor,
+  $insertNodeToNearestRootAtCaret,
   $getSelection,
   $isNodeSelection,
   $isRangeSelection,
@@ -20,7 +22,11 @@ import {
 
 import { EditorTocClipboardExtension } from "./toc-clipboard"
 import { createEditorTocHTMLConfig } from "./toc-html"
-import { EditorTocNode, $createEditorTocNode } from "./toc-node"
+import {
+  EditorTocNode,
+  $createEditorTocNode,
+  $getEditorTocLabels,
+} from "./toc-node"
 import { getEditorTocHeadingId } from "./toc-runtime"
 import { $getEditorTocSnapshot } from "./toc-state"
 
@@ -46,6 +52,9 @@ function syncHeadings(
   const active = new Set<NodeKey>()
 
   state.read(() => {
+    for (const [key, label] of $getEditorTocLabels())
+      editor.getElementByKey(key)?.setAttribute("aria-label", label)
+
     for (const heading of $getEditorTocSnapshot().headings) {
       const element = editor.getElementByKey(heading.key)
 
@@ -88,7 +97,15 @@ function $insertEditorToc() {
 
   if (!editor.isEditable() || !$isRangeSelection(selection)) return false
   $addUpdateTag(HISTORY_PUSH_TAG)
-  $insertNodeToNearestRoot($createEditorTocNode())
+  const node = $createEditorTocNode()
+  $insertNodeToNearestRootAtCaret(
+    node,
+    $caretFromPoint(selection.focus, "next"),
+    { $shouldSplit: () => false },
+  )
+
+  if (!node.getNextSibling()) node.insertAfter($createParagraphNode())
+  node.selectNext()
 
   return true
 }

@@ -31,6 +31,7 @@ import {
   syncFrame,
   validateAwareness,
 } from "./collaboration/protocol"
+import { boundedState, DocumentError } from "./document-model"
 import { idSchema } from "./document-validation"
 
 declare const WebSocketPair: typeof WorkerWebSocketPair
@@ -321,6 +322,21 @@ export class EditorCollaborationRoom {
 
         if (snapshot === null || snapshot.length === 0)
           throw new CollaborationError("corrupt")
+
+        budget.check()
+
+        try {
+          boundedState(snapshot, document.schema_version, () => true)
+        } catch (error) {
+          budget.check()
+          throw new CollaborationError(
+            error instanceof DocumentError && error.code === "budget"
+              ? "budget"
+              : "invalid",
+          )
+        }
+
+        budget.check()
 
         const seed = await budget.call(() =>
           this.options.initialize({

@@ -15,10 +15,149 @@ import {
   waitForEditorDocumentExport,
   waitForEditorDocumentExportWithCleanup,
 } from "@editor/document-export-model"
-import { withDOM } from "@lexical/headless/dom"
+import { withDOM } from "@workspace/tests/fixtures/lexical-dom"
 import { expect, test } from "bun:test"
 
 const DOMParser = withDOM((window) => window.DOMParser)
+
+const domGlobalKeys = [
+  "window",
+  "document",
+  "MutationObserver",
+  "DOMParser",
+  "getComputedStyle",
+] as const
+
+type DOMGlobalValue = (typeof globalThis)[(typeof domGlobalKeys)[number]]
+
+test.each(["absent", "undefined", "data", "accessor"] as const)(
+  "native DOM fixture restores %s global descriptors after success and failure",
+  (mode) => {
+    const original = new Map(
+      domGlobalKeys.map((key) => [
+        key,
+        Object.getOwnPropertyDescriptor(globalThis, key),
+      ]),
+    )
+
+    try {
+      for (const key of domGlobalKeys) {
+        if (mode === "absent") Reflect.deleteProperty(globalThis, key)
+        else if (mode === "accessor") {
+          let value: DOMGlobalValue | undefined
+          Object.defineProperty(globalThis, key, {
+            configurable: true,
+            enumerable: false,
+            get() {
+              return value
+            },
+            set(next: DOMGlobalValue | undefined) {
+              value = next
+            },
+          })
+        } else
+          Object.defineProperty(globalThis, key, {
+            configurable: true,
+            enumerable: false,
+            writable: true,
+            value: mode === "data" ? null : undefined,
+          })
+      }
+
+      const previous = new Map(
+        domGlobalKeys.map((key) => [
+          key,
+          Object.getOwnPropertyDescriptor(globalThis, key),
+        ]),
+      )
+
+      for (const fail of [false, true]) {
+        const error = new Error("DOM callback failed")
+
+        function run() {
+          return withDOM((window) => {
+            expect(globalThis.window).toBe(window)
+            expect(globalThis.document).toBe(window.document)
+
+            const nested = new Map(
+              domGlobalKeys.map((key) => [
+                key,
+                Object.getOwnPropertyDescriptor(globalThis, key),
+              ]),
+            )
+
+            expect(withDOM((inner) => inner)).toBe(window)
+
+            for (const [key, descriptor] of nested)
+              expect(Object.getOwnPropertyDescriptor(globalThis, key)).toEqual(
+                descriptor,
+              )
+
+            if (fail) throw error
+
+            return window.document.createElement("p").tagName
+          })
+        }
+
+        if (fail) expect(run).toThrow(error)
+        else expect(run()).toBe("P")
+
+        for (const [key, descriptor] of previous) {
+          expect(Object.getOwnPropertyDescriptor(globalThis, key)).toEqual(
+            descriptor,
+          )
+          expect(key in globalThis).toBe(mode !== "absent")
+        }
+      }
+    } finally {
+      for (const [key, descriptor] of original) {
+        if (descriptor) Object.defineProperty(globalThis, key, descriptor)
+        else Reflect.deleteProperty(globalThis, key)
+      }
+    }
+  },
+)
+
+test("native DOM fixture restores globals when native setup throws", () => {
+  const previous = new Map(
+    domGlobalKeys.map((key) => [
+      key,
+      Object.getOwnPropertyDescriptor(globalThis, key),
+    ]),
+  )
+
+  try {
+    Reflect.deleteProperty(globalThis, "window")
+    Object.defineProperty(globalThis, "DOMParser", {
+      configurable: true,
+      enumerable: false,
+      writable: false,
+      value: undefined,
+    })
+
+    const parserDescriptor = Object.getOwnPropertyDescriptor(
+      globalThis,
+      "DOMParser",
+    )
+
+    expect(() => withDOM(() => undefined)).toThrow(TypeError)
+    expect("window" in globalThis).toBe(false)
+    expect(Object.getOwnPropertyDescriptor(globalThis, "DOMParser")).toEqual(
+      parserDescriptor,
+    )
+
+    for (const [key, descriptor] of previous)
+      if (key !== "window" && key !== "DOMParser")
+        expect(Object.getOwnPropertyDescriptor(globalThis, key)).toEqual(
+          descriptor,
+        )
+  } finally {
+    for (const [key, descriptor] of previous) {
+      if (descriptor) Object.defineProperty(globalThis, key, descriptor)
+      else Reflect.deleteProperty(globalThis, key)
+    }
+  }
+})
 
 function parseHTML(source: string) {
   return { document: new DOMParser().parseFromString(source, "text/html") }

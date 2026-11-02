@@ -1,5 +1,6 @@
 "use client"
 
+import type { BaseUIEvent } from "@base-ui/react/types"
 import type {
   ComponentProps,
   KeyboardEvent,
@@ -8,6 +9,8 @@ import type {
   ReactNode,
 } from "react"
 
+import { mergeProps } from "@base-ui/react/merge-props"
+import { useMergedRefs } from "@base-ui/utils/useMergedRefs"
 import { useStableCallback } from "@base-ui/utils/useStableCallback"
 import { Box } from "@registry/components/ui/box"
 import { Button } from "@registry/components/ui/button"
@@ -111,7 +114,9 @@ export function EditorBlockSelection({
   controller,
   children,
   xstyle,
+  ref,
   onKeyDown,
+  onKeyDownCapture,
   ...props
 }: ComponentProps<typeof Box> & {
   controller: EditorBlockSelectionController
@@ -119,22 +124,41 @@ export function EditorBlockSelection({
 }) {
   const [initial] = useState(() => controller)
 
+  const [connect] = useState(
+    () =>
+      function connect(element: HTMLDivElement | null) {
+        if (element) return controller.connectKeyboardBoundary(element)
+      },
+  )
+
+  const mergedRef = useMergedRefs(connect, ref)
+
+  const captureKeyDown = useStableCallback(function captureKeyDown(
+    event: BaseUIEvent<KeyboardEvent<HTMLDivElement>>,
+  ) {
+    controller.captureKeyboardEvent(event.nativeEvent, event.currentTarget)
+    mergeProps<"div">(undefined, { onKeyDownCapture }).onKeyDownCapture?.(event)
+  })
+
   const handleKeyDown = useStableCallback(function handleKeyDown(
     event: KeyboardEvent<HTMLDivElement>,
   ) {
-    onKeyDown?.(event)
+    if (
+      event.defaultPrevented ||
+      event.nativeEvent.isComposing ||
+      event.nativeEvent.keyCode === 229
+    )
+      return
+    const current = controller.getSnapshot()
 
-    if (event.defaultPrevented) return
-
-    if (event.key === "Escape") {
-      controller.cancelDrag()
-      controller.clear()
+    if (controller.escape(event.nativeEvent)) {
       event.preventDefault()
+
+      return
     }
 
     if (event.target instanceof HTMLElement && event.target.isContentEditable)
       return
-    const current = controller.getSnapshot()
 
     if (
       current.mode &&
@@ -175,9 +199,14 @@ export function EditorBlockSelection({
     <Context value={controller}>
       <Box
         {...props}
+        ref={mergedRef}
         data-slot="editor-block-selection"
+        onKeyDownCapture={captureKeyDown}
         xstyle={[styles.root, xstyle]}
-        onKeyDown={handleKeyDown}
+        onKeyDown={
+          mergeProps<"div">({ onKeyDown: handleKeyDown }, { onKeyDown })
+            .onKeyDown
+        }
       >
         {children}
       </Box>

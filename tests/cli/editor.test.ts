@@ -1,4 +1,6 @@
 import { designGuidance } from "@cli/guidance"
+import { rewriteImports } from "@registry/source-files"
+import rootPackage from "@workspace/package.json"
 import { expect, test } from "bun:test"
 import {
   mkdtemp,
@@ -269,6 +271,7 @@ test("packed CLI installs complete editor source from generated registry", async
         "@types/react",
         "@types/react-dom",
         "@types/node",
+        `@lexical/headless@${rootPackage.devDependencies["@lexical/headless"]}`,
       )
       await run(
         project,
@@ -427,6 +430,16 @@ for (const html of [
       ).toBe(canonical.length)
       const installed = await Bun.file(join(project, "package.json")).json()
 
+      const baseUiDependency = inventory.dependencies.find((value) =>
+        value.startsWith("@base-ui/react@"),
+      )
+
+      expect(baseUiDependency).toBeDefined()
+      expect(installed.dependencies["@base-ui/react"]).toBe(
+        baseUiDependency?.slice("@base-ui/react@".length),
+      )
+      expect(await readdir(join(project, lib))).not.toContain("base-ui")
+
       for (const dependency of inventory.dependencies.filter(
         (value) =>
           value.startsWith("lexical@") || value.startsWith("@lexical/"),
@@ -453,6 +466,68 @@ for (const html of [
         join(results, layout, "static.tsx"),
         await readFile(join(project, "src/static.tsx"), "utf8"),
       )
+
+      if (layout === "default") {
+        for (const name of [
+          "editor",
+          "editor-blocks",
+          "editor-document",
+          "editor-typeahead",
+          "editor-block-selection",
+          "editor-block-menu",
+          "editor-floating-toolbar",
+          "editor-math",
+          "editor-toc",
+          "editor-media",
+          "box",
+          "button",
+          "clipboard",
+          "field",
+          "fieldset",
+          "grid",
+          "heading",
+          "hstack",
+          "input",
+          "menu",
+          "popover",
+          "scroll-area",
+          "sheet",
+          "stack",
+          "text",
+          "wrap",
+        ])
+          await run(
+            project,
+            "bunx",
+            "yopem-ui",
+            "add",
+            name,
+            "--registry",
+            `${server.url}r`,
+          )
+
+        const workspaceSource = rewriteImports(
+          await readFile(
+            join(root, "apps/docs/src/catalog/editor-examples/notion-like.tsx"),
+            "utf8",
+          ),
+        )
+
+        await writeFile(join(project, "src/notion-like.tsx"), workspaceSource)
+        await run(project, "bunx", "tsc", "--noEmit")
+        await writeFile(
+          join(results, layout, "notion-like.tsx"),
+          workspaceSource,
+        )
+        await writeFile(
+          join(results, layout, "notion-ui.json"),
+          await readFile(join(project, "ui.json"), "utf8"),
+        )
+        await writeFile(
+          join(results, layout, "notion-package.json"),
+          await readFile(join(project, "package.json"), "utf8"),
+        )
+      }
     }
   } finally {
     await writeFile(join(results, "install.log"), logs.join("\n\n"))

@@ -1,5 +1,5 @@
 import { $isEditorDrawingNode, EditorDrawingNode } from "@editor/drawing-node"
-import { withDOM } from "@lexical/headless/dom"
+import { withDOM } from "@workspace/tests/fixtures/lexical-dom"
 import { expect, test } from "bun:test"
 import { $getRoot, createEditor } from "lexical"
 

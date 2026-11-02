@@ -16,9 +16,12 @@ import { $moveCaretSelection } from "@lexical/selection"
 import {
   $createTextNode,
   $getRoot,
+  $getNodeByKey,
   $getEditor,
   $getSelection,
   $getState,
+  $setSelection,
+  $setCompositionKey,
   $isElementNode,
   $isRangeSelection,
   $isTextNode,
@@ -34,6 +37,10 @@ import {
   COMMAND_PRIORITY_LOW,
   COMMAND_PRIORITY_NORMAL,
   CONTROLLED_TEXT_INSERTION_COMMAND,
+  COMPOSITION_START_COMMAND,
+  COMPOSITION_END_COMMAND,
+  COMPOSITION_START_TAG,
+  COMPOSITION_END_TAG,
   DELETE_CHARACTER_COMMAND,
   DELETE_WORD_COMMAND,
   DELETE_LINE_COMMAND,
@@ -62,6 +69,7 @@ import { z } from "zod"
 
 import type { EditorReviewRichContent } from "./review-richtext"
 
+import { $guardEditorNativeJSON } from "./clipboard-guard"
 import {
   $canResolveEditorReviewBreak,
   $getEditorReviewBreaks,
@@ -141,6 +149,7 @@ export type { EditorSuggestion } from "./review-codecs"
 class EditorReviewInputError extends Error {}
 
 interface ReviewSerializedNode extends SerializedLexicalNode {
+  text?: string
   children?: ReviewSerializedNode[]
 }
 
@@ -328,7 +337,7 @@ function $getNativeOperationTargets(
   return targets
 }
 
-function $serializeReviewRoot() {
+function $serializeReviewRoot(textOverride?: { key: string; text: string }) {
   let count = 0
 
   function serialize(node: LexicalNode, depth: number): ReviewSerializedNode {
@@ -337,6 +346,9 @@ function $serializeReviewRoot() {
         "Review document exceeds its size limit.",
       )
     const value = node.exportJSON()
+
+    if (node.getKey() === textOverride?.key)
+      return { ...value, text: textOverride.text }
 
     if (!$isElementNode(node)) return value
 
@@ -431,19 +443,31 @@ function hasCustomClipboardImportPipeline() {
 
   if (!dependency) return false
 
-  for (const mime in dependency.config.$importMimeType) {
-    const handlers = dependency.config.$importMimeType[mime]
-    const defaults = DEFAULT_IMPORT_MIME_TYPE[mime]
+  const mimes = new Set([
+    ...Object.keys(DEFAULT_IMPORT_MIME_TYPE),
+    ...Object.keys(dependency.config.$importMimeType),
+  ])
+
+  for (const mime of mimes) {
+    const handlers = dependency.config.$importMimeType[mime] ?? []
+    const defaults = DEFAULT_IMPORT_MIME_TYPE[mime] ?? []
+
+    const hasGuard =
+      mime === "application/x-lexical-editor" &&
+      handlers.length === defaults.length + 1 &&
+      handlers.at(-1) === $guardEditorNativeJSON
 
     if (
-      handlers &&
-      (handlers.length !== defaults?.length ||
-        handlers.some((handler, index) => handler !== defaults[index]))
+      handlers.length !== defaults.length + (hasGuard ? 1 : 0) ||
+      defaults.some((handler, index) => handlers[index] !== handler)
     )
       return true
   }
 
-  for (const mime in dependency.config.priority)
+  for (const mime of new Set([
+    ...Object.keys(DEFAULT_IMPORT_MIME_TYPE_PRIORITY),
+    ...Object.keys(dependency.config.priority),
+  ]))
     if (
       dependency.config.priority[mime] !==
       DEFAULT_IMPORT_MIME_TYPE_PRIORITY[mime]
@@ -531,6 +555,19 @@ function createReviewController() {
   let suggesting = false
   let decidingStructural = false
   let nativeInsertInProgress = false
+
+  let composition: {
+    key: string
+    text: string
+    draft: string
+    expected: string | null
+    input: InputEvent | null
+    range: RangeSelection
+    caret: RangeSelection
+    source: string
+    ending: CompositionEvent | null
+    assertCurrent: () => void
+  } | null = null
 
   let nativeInsertMarker: {
     editor: LexicalEditor
@@ -933,8 +970,6 @@ function createReviewController() {
   }
 
   function $suggestInsert<Input>(input: Input) {
-    const suggestion = newSuggestion("insert")
-
     const parsed = insertionTextSchema.safeParse(input)
 
     if (!parsed.success) return fail("Insertion requires bounded inline text.")
@@ -950,6 +985,26 @@ function createReviewController() {
     if (!range.isCollapsed())
       return fail("Insert suggestions require a collapsed caret.")
 
+    const savedRange = range.clone()
+    const source = JSON.stringify($serializeReviewRoot())
+    const suggestingBeforeAuthorization = suggesting
+    const currentEditor = instance()
+
+    function assertTarget() {
+      if (
+        editor !== currentEditor ||
+        !currentEditor.isEditable() ||
+        suggesting !== suggestingBeforeAuthorization ||
+        !$getSelection()?.is(savedRange) ||
+        source !== JSON.stringify($serializeReviewRoot())
+      )
+        return fail(
+          "Completed review insertion target changed during authorization.",
+        )
+    }
+
+    const suggestion = newSuggestion("insert")
+    assertTarget()
     const anchor = range.anchor.getNode()
 
     const existing = $isTextNode(anchor)
@@ -963,6 +1018,7 @@ function createReviewController() {
       ) {
         const permit = authorize("suggest", existing.id)
         permit.assertCurrent()
+        assertTarget()
         $addUpdateTag("yopem-review-action")
 
         if (
@@ -1458,6 +1514,7 @@ function createReviewController() {
       )
 
     const savedRange = range.clone()
+    const source = JSON.stringify($serializeReviewRoot())
     const suggestingBeforeAuthorization = suggesting
     const currentEditor = instance()
     const suggestion = newSuggestion("insert")
@@ -1468,7 +1525,8 @@ function createReviewController() {
       !currentEditor.isEditable() ||
       suggesting !== suggestingBeforeAuthorization ||
       !activeRange.is(savedRange) ||
-      activeRange.getTextContent() !== removed
+      activeRange.getTextContent() !== removed ||
+      source !== JSON.stringify($serializeReviewRoot())
     )
       return fail(
         "Completed review replacement target changed during authorization.",
@@ -2113,12 +2171,57 @@ function createReviewController() {
     saved = null
   }
 
+  function $restoreComposition(restoreSelection = true, active = composition) {
+    composition = null
+
+    if (!active) return null
+    $setCompositionKey(null)
+
+    try {
+      const node = $getNodeByKey(active.key)
+      const range = $getSelection()
+      const ownedSelection = range?.is(active.caret) === true
+
+      if (
+        !$isTextNode(node) ||
+        !node.isAttached() ||
+        node.getTextContent() !== active.draft ||
+        JSON.stringify(
+          $serializeReviewRoot({ key: active.key, text: active.text }),
+        ) !== active.source
+      )
+        return null
+
+      node.setTextContent(active.text)
+
+      if (restoreSelection && ownedSelection)
+        $setSelection(active.range.clone())
+      $addUpdateTag("yopem-review-action")
+      $addUpdateTag(COMPOSITION_END_TAG)
+
+      return ownedSelection ? active : null
+    } catch {
+      return null
+    }
+  }
+
+  function cancelComposition(restoreSelection = true) {
+    if (!composition || !editor) return
+    editor.update(
+      () => {
+        $restoreComposition(restoreSelection)
+      },
+      { tag: HISTORIC_TAG, discrete: true },
+    )
+  }
+
   function setHost(host: EditorReviewHost | null) {
     if (disposed) {
       if (host === null) return
       throw new Error("Review is not mounted.")
     }
 
+    cancelComposition()
     saved = null
     bookmark?.clear()
 
@@ -2153,6 +2256,7 @@ function createReviewController() {
       authorize("suggest")
     }
 
+    cancelComposition()
     suggesting = value
     saved = null
     publish()
@@ -2456,6 +2560,7 @@ function createReviewController() {
 
   function handleError(error: Error) {
     if (!(error instanceof EditorReviewInputError)) return false
+    cancelComposition()
     diagnostic = error.message
     publish()
 
@@ -2971,7 +3076,11 @@ function createReviewController() {
       return true
     }
 
-    function command<T>(key: LexicalCommand<T>, handler: (payload: T) => void) {
+    function command<T>(
+      key: LexicalCommand<T>,
+      handler: (payload: T) => void,
+      nativeComposition = false,
+    ) {
       return current.registerCommand(
         key,
         (payload: T) => {
@@ -2981,6 +3090,8 @@ function createReviewController() {
 
             return true
           }
+
+          if (composition && nativeComposition) return false
 
           if (!suggesting) {
             if (!$hasCurrentPending()) return false
@@ -3059,12 +3170,91 @@ function createReviewController() {
     }
 
     function unsupported() {
-      fail(
+      return fail(
         "Structural, clipboard and composition review changes require explicit host handling.",
       )
     }
 
     let attachedRoot: HTMLElement | null = null
+
+    function expectCompositionInput(event: InputEvent) {
+      const active = composition
+
+      if (!active || event.defaultPrevented || !current.isEditable())
+        return false
+
+      if (
+        event.inputType !== "insertCompositionText" &&
+        event.inputType !== "deleteCompositionText" &&
+        event.inputType !== "insertFromComposition" &&
+        !(active.ending && event.inputType === "insertText")
+      )
+        return false
+
+      const text = event.data ?? active.ending?.data ?? ""
+
+      const start = Math.min(
+        active.range.anchor.offset,
+        active.range.focus.offset,
+      )
+
+      const end = Math.max(
+        active.range.anchor.offset,
+        active.range.focus.offset,
+      )
+
+      active.expected =
+        active.text.slice(0, start) + text + active.text.slice(end)
+      active.input = event
+
+      return true
+    }
+
+    function compositionInput(event: Event) {
+      if (event instanceof InputEvent) expectCompositionInput(event)
+    }
+
+    function $finishComposition(event: CompositionEvent) {
+      try {
+        const active = $restoreComposition()
+
+        if (!active) {
+          $addUpdateTag(HISTORIC_TAG)
+
+          return
+        }
+
+        active.assertCurrent()
+
+        if (event.data && !event.defaultPrevented) {
+          if (!suggesting) return unsupported()
+          $suggestCompletedText(event.data)
+        } else $addUpdateTag(HISTORIC_TAG)
+
+        diagnostic = ""
+      } catch (error) {
+        $addUpdateTag(HISTORIC_TAG)
+        diagnostic =
+          error instanceof Error ? error.message : "Review edit rejected."
+        publish()
+      }
+    }
+
+    function compositionEnd(event: CompositionEvent) {
+      const active = composition
+
+      if (!active) return
+      active.ending = event
+      setTimeout(() => {
+        if (composition !== active || editor !== current) return
+        current.update(
+          () => {
+            $finishComposition(event)
+          },
+          { discrete: true },
+        )
+      }, 0)
+    }
 
     function beforeInput(event: InputEvent) {
       if (event.defaultPrevented) return
@@ -3078,6 +3268,9 @@ function createReviewController() {
         )
 
       if (!suggesting && !pending) return
+
+      if (expectCompositionInput(event)) return
+
       event.preventDefault()
       event.stopImmediatePropagation()
 
@@ -3136,7 +3329,10 @@ function createReviewController() {
     }
 
     function detachRoot() {
+      cancelComposition()
       attachedRoot?.removeEventListener("beforeinput", beforeInput, true)
+      attachedRoot?.removeEventListener("input", compositionInput, true)
+      attachedRoot?.removeEventListener("compositionend", compositionEnd, true)
       attachedRoot = null
     }
 
@@ -3155,6 +3351,85 @@ function createReviewController() {
 
     return mergeRegister(
       unsubscribeBookmark,
+      current.registerCommand(
+        COMPOSITION_START_COMMAND,
+        (event) => {
+          if (!suggesting && !$hasCurrentPending()) return false
+
+          if (event.defaultPrevented) return true
+
+          try {
+            if (!suggesting || !current.isEditable() || composition)
+              return unsupported()
+            const range = selection(false)
+            const node = range.anchor.getNode()
+
+            if (
+              !$isTextNode(node) ||
+              !node.isSimpleText() ||
+              node.getMode() !== "normal" ||
+              range.anchor.key !== range.focus.key ||
+              range.anchor.type !== "text" ||
+              range.focus.type !== "text" ||
+              node.getFormat() !== range.format ||
+              node.getStyle() !== range.style ||
+              $getState(node, editorSuggestionState) ||
+              $getState($getRoot(), editorReviewStructuralState).proposals
+                .length
+            )
+              return unsupported()
+
+            validateDocument()
+            const source = JSON.stringify($serializeReviewRoot())
+            const savedRange = range.clone()
+            const permit = authorize("suggest")
+            permit.assertCurrent()
+
+            if (
+              !suggesting ||
+              !range.is(savedRange) ||
+              !$getSelection()?.is(savedRange) ||
+              source !== JSON.stringify($serializeReviewRoot())
+            )
+              return fail("Composition target changed during authorization.")
+
+            composition = {
+              key: node.getKey(),
+              text: node.getTextContent(),
+              draft: node.getTextContent(),
+              expected: null,
+              input: null,
+              range: savedRange,
+              caret: savedRange.clone(),
+              source,
+              ending: null,
+              assertCurrent: permit.assertCurrent,
+            }
+            $setCompositionKey(node.getKey())
+            $addUpdateTag(COMPOSITION_START_TAG)
+            diagnostic = ""
+          } catch (error) {
+            event.preventDefault()
+            diagnostic =
+              error instanceof Error ? error.message : "Review edit rejected."
+            publish()
+          }
+
+          return true
+        },
+        COMMAND_PRIORITY_CRITICAL,
+      ),
+      current.registerCommand(
+        COMPOSITION_END_COMMAND,
+        (event) => {
+          if (!composition) return false
+
+          if (composition.ending !== event) $finishComposition(event)
+
+          return true
+        },
+        COMMAND_PRIORITY_CRITICAL,
+      ),
       current.registerCommand(
         KEY_DOWN_COMMAND,
         (event) => {
@@ -3186,6 +3461,8 @@ function createReviewController() {
         detachRoot()
         attachedRoot = root
         attachedRoot?.addEventListener("beforeinput", beforeInput, true)
+        attachedRoot?.addEventListener("input", compositionInput, true)
+        attachedRoot?.addEventListener("compositionend", compositionEnd, true)
 
         if (root) decorations.refresh()
       }),
@@ -3239,6 +3516,85 @@ function createReviewController() {
             validateDocument()
 
           return
+        }
+
+        if (composition) {
+          const active = composition
+          const node = $getNodeByKey(active.key)
+          const range = $getSelection()
+
+          try {
+            active.assertCurrent()
+            const content = $isTextNode(node) ? node.getTextContent() : null
+
+            const start = Math.min(
+              active.range.anchor.offset,
+              active.range.focus.offset,
+            )
+
+            const end = Math.max(
+              active.range.anchor.offset,
+              active.range.focus.offset,
+            )
+
+            const suffix = active.text.slice(end)
+
+            const inserted = content?.slice(
+              start,
+              content.length - suffix.length,
+            )
+
+            const unchanged =
+              content === active.draft && range?.is(active.caret)
+
+            if (
+              suggesting &&
+              current.isEditable() &&
+              $isTextNode(node) &&
+              node.isAttached() &&
+              $isRangeSelection(range) &&
+              $getRoot().getTextContentSize() <= 1048576 &&
+              JSON.stringify(
+                $serializeReviewRoot({ key: active.key, text: active.text }),
+              ) === active.source &&
+              (unchanged ||
+                (content === active.expected &&
+                  active.input !== null &&
+                  !active.input.defaultPrevented &&
+                  inserted !== undefined &&
+                  (inserted === "" ||
+                    insertionTextSchema.safeParse(inserted).success) &&
+                  [range.anchor, range.focus].every(
+                    (point) =>
+                      point.key === active.key &&
+                      point.type === "text" &&
+                      point.offset >= start &&
+                      point.offset <= start + inserted.length,
+                  )))
+            ) {
+              active.draft = node.getTextContent()
+              active.caret = range.clone()
+              active.expected = null
+              active.input = null
+              $addUpdateTag(HISTORIC_TAG)
+
+              return
+            }
+          } catch {
+            diagnostic = "Composition authorization or target expired."
+          }
+
+          composition = null
+          $setCompositionKey(null)
+          queueMicrotask(() => {
+            if (editor !== current || composition) return
+            current.update(
+              () => {
+                $restoreComposition(false, active)
+              },
+              { tag: HISTORIC_TAG, discrete: true },
+            )
+          })
         }
 
         if ($hasUpdateTag("yopem-review-action")) {
@@ -3322,6 +3678,7 @@ function createReviewController() {
             $suggestCompletedText(text)
           else $suggestInsert(text)
         },
+        true,
       ),
       command<boolean>(DELETE_CHARACTER_COMMAND, (backward) =>
         remove(backward, "character"),
@@ -3340,21 +3697,52 @@ function createReviewController() {
       ),
       current.registerCommand(PASTE_COMMAND, paste, COMMAND_PRIORITY_NORMAL),
       current.registerCommand(CUT_COMMAND, cut, COMMAND_PRIORITY_LOW),
-      current.registerUpdateListener(({ dirtyElements, dirtyLeaves }) => {
-        if (nativeInsertMarker?.editor === current) nativeInsertMarker = null
+      current.registerUpdateListener(
+        ({ editorState, dirtyElements, dirtyLeaves }) => {
+          if (nativeInsertMarker?.editor === current) nativeInsertMarker = null
 
-        if (dirtyElements.size || dirtyLeaves.size) saved = null
-        publish()
-      }),
+          if (composition) {
+            const active = composition
+
+            const owned = editorState.read(() => {
+              const node = $getNodeByKey(active.key)
+
+              return (
+                $isTextNode(node) &&
+                node.isAttached() &&
+                node.getTextContent() === active.draft &&
+                JSON.stringify(
+                  $serializeReviewRoot({ key: active.key, text: active.text }),
+                ) === active.source
+              )
+            })
+
+            if (!owned) {
+              composition = null
+              current.update(() => {
+                $setCompositionKey(null)
+              })
+            } else if (
+              !editorState.read(() => $getSelection()?.is(active.caret))
+            ) {
+              cancelComposition(false)
+            }
+          }
+
+          if (dirtyElements.size || dirtyLeaves.size) saved = null
+          publish()
+        },
+      ),
       decorations.dispose,
       current.registerEditableListener(() => {
+        cancelComposition()
         saved = null
-        suggesting = false
         publish()
       }),
       () => {
         saved = null
         suggesting = false
+        composition = null
         nativeInsertMarker = null
         nativeInsertInProgress = false
         editor = null

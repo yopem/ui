@@ -102,7 +102,7 @@ for (const invalid of [false, true])
         const json = JSON.stringify(state.editors[2])
         assert(json.includes("Keep original"))
         assert.equal(json.includes("Redacted"), mode === "redact")
-        assert.equal(json.includes("Fallback"), invalid && mode === "delegate")
+        assert.equal(json.includes("Fallback"), false)
         assert.equal(
           json.includes("const answer = 42"),
           !invalid && mode === "delegate",

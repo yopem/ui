@@ -5,6 +5,7 @@ import { Box } from "@registry/components/ui/box"
 import { Button } from "@registry/components/ui/button"
 import { Stack } from "@registry/components/ui/stack"
 import { Text } from "@registry/components/ui/text"
+import { Wrap } from "@registry/components/ui/wrap"
 import {
   EditorContent,
   EditorHistoryButton,
@@ -30,14 +31,16 @@ export function Preview() {
   return (
     <Box data-testid="footnote-example">
       <Stack>
-        <Text>Select a footnote definition to use its controls.</Text>
-        <Button
-          variant="outline"
-          aria-pressed={!editable}
-          onClick={toggleEditable}
-        >
-          Read only
-        </Button>
+        <Wrap>
+          <Text>Select a footnote definition to use its controls.</Text>
+          <Button
+            variant="outline"
+            aria-pressed={!editable}
+            onClick={toggleEditable}
+          >
+            Read only
+          </Button>
+        </Wrap>
         <EditorRoot
           ariaLabel="Footnote editor"
           initialState={editorFootnoteFixture}

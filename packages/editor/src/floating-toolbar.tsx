@@ -1,20 +1,27 @@
 "use client"
 
-import type { ComponentProps, MouseEvent, ReactNode } from "react"
+import type { ComponentProps, FocusEvent, MouseEvent, ReactNode } from "react"
 
+import { TOGGLE_LINK_COMMAND } from "@lexical/link"
+import { Button } from "@registry/components/ui/button"
 import { Popover, PopoverPopup } from "@registry/components/ui/popover"
+import { ToolbarLink } from "@registry/components/ui/toolbar"
 import {
   $getSelection,
   $isRangeSelection,
-  COMMAND_PRIORITY_EDITOR,
+  COMMAND_PRIORITY_LOW,
   KEY_DOWN_COMMAND,
+  HISTORY_PUSH_TAG,
   type LexicalEditor,
 } from "lexical"
 import { useId, useState, useSyncExternalStore } from "react"
 
 import type { EditorToolbarProps } from "./controls"
 
-import { EditorToolbar } from "./controls"
+import { EditorCommandButton, EditorToolbar } from "./controls"
+import { EditorLinkControl } from "./link-control"
+import { $getEditorLinkEditTarget } from "./link-edit"
+import { isSafeLink } from "./link-url"
 import { useEditor, useEditorState } from "./root"
 import { createEditorSelectionBookmark } from "./selection-bookmark"
 
@@ -29,6 +36,7 @@ type PopupCloseType = FirstArgument<NonNullable<PopupProps["finalFocus"]>>
 interface FloatingToolbarSnapshot {
   open: boolean
   anchor: FloatingAnchor | null
+  url: string | null
 }
 
 type FirstArgument<T> = T extends (
@@ -49,21 +57,81 @@ export type EditorFloatingToolbarProps = Omit<
   sideOffset?: PositionerProps["sideOffset"]
 }
 
-export function EditorFloatingToolbar({
+export function EditorFloatingToolbar(props: EditorFloatingToolbarProps) {
+  return <FloatingToolbar {...props} selection="text" />
+}
+
+export type EditorLinkFloatingToolbarProps = Omit<
+  EditorFloatingToolbarProps,
+  "children"
+> & {
+  children?: ReactNode
+}
+
+export function EditorLinkFloatingToolbar({
+  children,
+  "aria-label": label = "Selected link",
+  ...props
+}: EditorLinkFloatingToolbarProps) {
+  return (
+    <FloatingToolbar {...props} selection="link" aria-label={label}>
+      {children}
+    </FloatingToolbar>
+  )
+}
+
+function EditorLinkActions({ url }: { url: string }) {
+  const editor = useEditor()
+
+  function removeLink() {
+    editor.update(
+      () => {
+        editor.dispatchCommand(TOGGLE_LINK_COMMAND, null)
+      },
+      { tag: HISTORY_PUSH_TAG },
+    )
+  }
+
+  return (
+    <>
+      <ToolbarLink
+        href={url || undefined}
+        target="_blank"
+        rel="noopener noreferrer"
+        render={
+          <Button
+            variant="ghost"
+            size="sm"
+            render={<a href={url} aria-label="Open link" />}
+          />
+        }
+      >
+        Open link
+      </ToolbarLink>
+      <EditorLinkControl aria-label="Edit link">Edit link</EditorLinkControl>
+      <EditorCommandButton command={removeLink}>
+        Remove link
+      </EditorCommandButton>
+    </>
+  )
+}
+
+function FloatingToolbar({
   align = "center",
   alignOffset = 0,
   children,
   side = "top",
   sideOffset = 8,
   "aria-label": label,
+  selection,
   ...props
-}: EditorFloatingToolbarProps) {
+}: EditorFloatingToolbarProps & { selection: "text" | "link" }) {
   const editor = useEditor()
   const editorState = useEditorState()
   const toolbarId = useId()
 
   const [controller] = useState(() =>
-    createEditorFloatingToolbar(editor, toolbarId),
+    createEditorFloatingToolbar(editor, toolbarId, selection),
   )
 
   const snapshot = useSyncExternalStore(
@@ -91,7 +159,8 @@ export function EditorFloatingToolbar({
         finalFocus={controller.finalFocus}
         initialFocus={false}
         onClickCapture={controller.restoreOnClick}
-        onFocusCapture={controller.capture}
+        onFocusCapture={controller.captureFocus}
+        onBlurCapture={controller.blur}
         onPointerDownCapture={controller.capture}
       >
         <EditorToolbar
@@ -100,14 +169,22 @@ export function EditorFloatingToolbar({
           aria-label={accessibleName}
           data-slot="editor-floating-toolbar"
         >
-          {children}
+          {selection === "link" && children === undefined ? (
+            <EditorLinkActions url={snapshot.url ?? ""} />
+          ) : (
+            children
+          )}
         </EditorToolbar>
       </PopoverPopup>
     </Popover>
   )
 }
 
-function createEditorFloatingToolbar(editor: LexicalEditor, toolbarId: string) {
+function createEditorFloatingToolbar(
+  editor: LexicalEditor,
+  toolbarId: string,
+  selectionKind: "text" | "link",
+) {
   function getToolbar() {
     const root = editor.getRootElement()
 
@@ -116,10 +193,17 @@ function createEditorFloatingToolbar(editor: LexicalEditor, toolbarId: string) {
 
   const bookmark = createEditorSelectionBookmark(editor)
   const listeners = new Set<() => void>()
-  const serverSnapshot: FloatingToolbarSnapshot = { open: false, anchor: null }
+
+  const serverSnapshot: FloatingToolbarSnapshot = {
+    open: false,
+    anchor: null,
+    url: null,
+  }
+
   let snapshot = serverSnapshot
   let root: HTMLElement | null = null
   let blocked = false
+  let popupFocusTarget: Element | null = null
   let removeRootListeners: (() => void) | undefined
   let disconnect: (() => void) | undefined
 
@@ -144,7 +228,8 @@ function createEditorFloatingToolbar(editor: LexicalEditor, toolbarId: string) {
     const activeElement = root?.ownerDocument.activeElement
 
     return activeElement !== null && activeElement !== undefined
-      ? (getToolbar()?.contains(activeElement) ?? false)
+      ? activeElement === popupFocusTarget ||
+          (getToolbar()?.contains(activeElement) ?? false)
       : false
   }
 
@@ -160,9 +245,21 @@ function createEditorFloatingToolbar(editor: LexicalEditor, toolbarId: string) {
     editor.getEditorState().read(() => {
       const selection = $getSelection()
 
-      if ($isRangeSelection(selection) && !selection.isCollapsed())
+      if (
+        $isRangeSelection(selection) &&
+        (selectionKind === "link" || !selection.isCollapsed())
+      )
         bookmark.capture()
     })
+  }
+
+  function captureFocus(event: FocusEvent<HTMLDivElement>) {
+    popupFocusTarget = event.target
+    capture()
+  }
+
+  function blur(event: FocusEvent<HTMLDivElement>) {
+    if (popupFocusTarget === event.target) popupFocusTarget = null
   }
 
   function restore() {
@@ -189,7 +286,16 @@ function createEditorFloatingToolbar(editor: LexicalEditor, toolbarId: string) {
   }
 
   function restoreOnClick(event: MouseEvent<HTMLDivElement>) {
-    if (!event.defaultPrevented && !restore()) event.preventDefault()
+    const nodeConstructor = event.currentTarget.ownerDocument.defaultView?.Node
+
+    if (
+      !event.defaultPrevented &&
+      nodeConstructor &&
+      event.target instanceof nodeConstructor &&
+      getToolbar()?.contains(event.target) &&
+      !restore()
+    )
+      event.preventDefault()
   }
 
   function handleOpenChange(open: boolean) {
@@ -244,11 +350,31 @@ function createEditorFloatingToolbar(editor: LexicalEditor, toolbarId: string) {
 
     if (blocked || (isToolbarFocused() && bookmark.getSnapshot())) return
 
+    let url: string | null = null
+
     const range = editor.getEditorState().read(() => {
       const selection = $getSelection()
 
-      if (!$isRangeSelection(selection) || selection.isCollapsed()) return null
+      if (!$isRangeSelection(selection)) return null
 
+      if (selectionKind === "link") {
+        if (!selection.isCollapsed()) return null
+        const target = $getEditorLinkEditTarget()
+
+        const link = target?.linkKey
+          ? editor.getElementByKey(target.linkKey)
+          : null
+
+        if (!link || !isSafeLink(target?.url ?? "")) return null
+        const range = currentRoot.ownerDocument.createRange()
+        range.selectNodeContents(link)
+        url = target?.url ?? null
+        bookmark.capture()
+
+        return range
+      }
+
+      if (selection.isCollapsed()) return null
       const current = selectedRange(currentRoot)
 
       if (current) bookmark.capture()
@@ -270,7 +396,7 @@ function createEditorFloatingToolbar(editor: LexicalEditor, toolbarId: string) {
       return
     }
 
-    publish({ open: true, anchor: createAnchor(range, currentRoot) })
+    publish({ open: true, anchor: createAnchor(range, currentRoot), url })
   }
 
   function resumeAfterInput() {
@@ -319,8 +445,8 @@ function createEditorFloatingToolbar(editor: LexicalEditor, toolbarId: string) {
     )
       return false
 
-    const button = getToolbar()?.querySelector<HTMLButtonElement>(
-      "button:not(:disabled)",
+    const button = getToolbar()?.querySelector<HTMLElement>(
+      'button:not(:disabled):not([aria-disabled="true"]), a[href]:not([aria-disabled="true"])',
     )
 
     if (!button) return false
@@ -364,7 +490,7 @@ function createEditorFloatingToolbar(editor: LexicalEditor, toolbarId: string) {
       const unkeydown = editor.registerCommand(
         KEY_DOWN_COMMAND,
         handleKeyDown,
-        COMMAND_PRIORITY_EDITOR,
+        COMMAND_PRIORITY_LOW,
       )
 
       disconnect = () => {
@@ -377,6 +503,7 @@ function createEditorFloatingToolbar(editor: LexicalEditor, toolbarId: string) {
         removeRootListeners = undefined
         root = null
         blocked = false
+        popupFocusTarget = null
         hide()
       }
     }
@@ -401,6 +528,8 @@ function createEditorFloatingToolbar(editor: LexicalEditor, toolbarId: string) {
 
   return {
     capture,
+    captureFocus,
+    blur,
     finalFocus,
     getServerSnapshot,
     getSnapshot,

@@ -1,5 +1,20 @@
 export { EditorLabelsOption, EditorLabelsPicker } from "./labels-controls"
 
+export {
+  EditorLabelsSelect,
+  EditorLabelsInput,
+  EditorLabelsContent,
+  EditorLabelsTag,
+} from "./labels-select"
+
+export type {
+  EditorLabelsChangeEventDetails,
+  EditorLabelsSelectProps,
+  EditorLabelsInputProps,
+  EditorLabelsContentProps,
+  EditorLabelsTagProps,
+} from "./labels-select"
+
 export type {
   EditorLabelsOptionProps,
   EditorLabelsPickerProps,

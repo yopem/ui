@@ -14,6 +14,15 @@ import {
 } from "@yopem-ui/editor"
 import { EditorAutoformatExtension } from "@yopem-ui/editor/autoformat"
 import { EditorBlockBehaviorExtension } from "@yopem-ui/editor/block-behavior"
+import {
+  CodeIcon,
+  Heading2Icon,
+  PilcrowIcon,
+  QuoteIcon,
+  Redo2Icon,
+  SuperscriptIcon,
+  Undo2Icon,
+} from "lucide-react"
 import { useState } from "react"
 
 const element = { version: 1, direction: null, format: "", indent: 0 }
@@ -133,13 +142,60 @@ export function PublicPluginRulesExample() {
         ariaLabel="Native block behavior"
       >
         <EditorToolbar aria-label="Native block behavior tools">
-          <EditorBlockButton block="paragraph" />
-          <EditorBlockButton block="h2" />
-          <EditorBlockButton block="quote" />
-          <EditorFormatButton format="code" />
-          <EditorFormatButton format="superscript" />
-          <EditorHistoryButton action="undo" />
-          <EditorHistoryButton action="redo" />
+          <EditorBlockButton
+            block="paragraph"
+            aria-label="Paragraph"
+            title="Paragraph"
+            render={<Button variant="ghost" size="icon-sm" />}
+          >
+            <PilcrowIcon aria-hidden="true" size={16} />
+          </EditorBlockButton>
+          <EditorBlockButton
+            block="h2"
+            aria-label="Heading 2"
+            title="Heading 2"
+            render={<Button variant="ghost" size="icon-sm" />}
+          >
+            <Heading2Icon aria-hidden="true" size={16} />
+          </EditorBlockButton>
+          <EditorBlockButton
+            block="quote"
+            aria-label="Quote"
+            title="Quote"
+            render={<Button variant="ghost" size="icon-sm" />}
+          >
+            <QuoteIcon aria-hidden="true" size={16} />
+          </EditorBlockButton>
+          <EditorFormatButton
+            format="code"
+            title="Inline code"
+            render={<Button variant="ghost" size="icon-sm" />}
+          >
+            <CodeIcon aria-hidden="true" size={16} />
+          </EditorFormatButton>
+          <EditorFormatButton
+            format="superscript"
+            title="Superscript"
+            render={<Button variant="ghost" size="icon-sm" />}
+          >
+            <SuperscriptIcon aria-hidden="true" size={16} />
+          </EditorFormatButton>
+          <EditorHistoryButton
+            action="undo"
+            aria-label="Undo"
+            title="Undo"
+            render={<Button variant="ghost" size="icon-sm" />}
+          >
+            <Undo2Icon aria-hidden="true" size={16} />
+          </EditorHistoryButton>
+          <EditorHistoryButton
+            action="redo"
+            aria-label="Redo"
+            title="Redo"
+            render={<Button variant="ghost" size="icon-sm" />}
+          >
+            <Redo2Icon aria-hidden="true" size={16} />
+          </EditorHistoryButton>
         </EditorToolbar>
         <EditorContent />
       </EditorRoot>

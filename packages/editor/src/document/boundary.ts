@@ -34,6 +34,7 @@ import {
   type EditorMathValue,
 } from "@yopem-ui/editor/math-model"
 import { renderEditorMath } from "@yopem-ui/editor/math-render"
+import { mediaPlaceholderKindSchema } from "@yopem-ui/editor/media-placeholder-model"
 import { serializeMediaHtml } from "@yopem-ui/editor/media/html"
 import { decodeMention, mentionPlainText } from "@yopem-ui/editor/mention-codec"
 import {
@@ -57,6 +58,11 @@ export class DocumentError extends Error {
     this.name = "DocumentError"
   }
 }
+
+export const documentSlotNameSchema = z
+  .string()
+  .regex(/^[A-Za-z][A-Za-z0-9_-]{0,63}$/)
+  .refine((name) => name !== "constructor" && name !== "prototype")
 
 export const documentLimits = {
   bytes: 1_048_576,
@@ -357,6 +363,7 @@ const attributes = new Set([
   "dataEditorDrawing",
   "dataEditorDrawingScene",
   "dataEditorEditableCard",
+  "dataEditorMediaPlaceholder",
   "dataEditorDiagram",
   "dataEditorDiagramKind",
   "dataEditorDiagramView",
@@ -413,6 +420,7 @@ export function canonicalDocumentNode(node: Element) {
     properties.dataEditorDrawing !== undefined ||
       properties.dataEditorDrawingScene !== undefined,
     properties.dataEditorEditableCard !== undefined,
+    properties.dataEditorMediaPlaceholder !== undefined,
     properties.dataEditorDiagram !== undefined ||
       properties.dataEditorDiagramKind !== undefined ||
       properties.dataEditorDiagramView !== undefined,
@@ -632,7 +640,11 @@ export function canonicalDocumentNode(node: Element) {
       node.tagName !== "nav" ||
       properties.dataEditorToc !== "" ||
       (properties.ariaLabel !== undefined &&
-        properties.ariaLabel !== "Table of contents")
+        properties.ariaLabel !== "Table of contents" &&
+        !z
+          .string()
+          .regex(/^Table of contents [1-9][0-9]*$/)
+          .safeParse(properties.ariaLabel).success)
     )
       throw new DocumentError(["Invalid canonical table of contents HTML."])
 
@@ -784,6 +796,23 @@ export function canonicalDocumentNode(node: Element) {
     return { type: "drawing" as const, value: scene }
   }
 
+  if (properties.dataEditorMediaPlaceholder !== undefined) {
+    const value = mediaPlaceholderKindSchema.parse(
+      properties.dataEditorMediaPlaceholder,
+    )
+
+    allowed(["dataEditorMediaPlaceholder"])
+
+    if (
+      node.tagName !== "div" ||
+      node.children.some((child) => child.type !== "text") ||
+      textOf(node) !== "Upload unavailable. Select a file."
+    )
+      throw new DocumentError(["Invalid canonical media placeholder HTML."])
+
+    return { type: "media-placeholder" as const, value }
+  }
+
   if (properties.dataEditorEditableCard !== undefined) {
     editorEditableCardFromHTMLAttributes({
       "data-editor-editable-card": String(properties.dataEditorEditableCard),
@@ -918,18 +947,17 @@ export function canonicalDocumentNode(node: Element) {
   }
 
   if (properties.dataEditorSlot !== undefined) {
-    const name = z
-      .string()
-      .regex(/^[A-Za-z][A-Za-z0-9_-]{0,63}$/)
-      .parse(properties.dataEditorSlot)
+    const name = documentSlotNameSchema.parse(properties.dataEditorSlot)
 
     allowed(["dataEditorSlot"])
 
     if (
       node.tagName !== "div" ||
       node.children.filter((child) => child.type === "element").length !== 1 ||
-      node.children.some(
-        (child) => child.type !== "text" || child.value.trim().length > 0,
+      node.children.some((child) =>
+        child.type === "text"
+          ? child.value.trim().length > 0
+          : child.type !== "element",
       )
     )
       throw new DocumentError(["Invalid canonical document slot HTML."])
@@ -952,6 +980,28 @@ export function canonicalDocumentNode(node: Element) {
   }
 
   return null
+}
+
+export function tocHeadingText(node: RootContent): string {
+  if (node.type === "text") return node.value
+
+  if (node.type !== "element") return ""
+
+  if (
+    node.properties.dataEditorMath !== undefined ||
+    node.properties.dataEditorTex !== undefined
+  ) {
+    const canonical = canonicalDocumentNode(node)
+
+    if (canonical?.type !== "math")
+      throw new DocumentError(["Invalid canonical math HTML."])
+
+    return canonical.value.tex
+  }
+
+  return node.tagName === "br"
+    ? "\n"
+    : node.children.map(tocHeadingText).join("")
 }
 
 export function documentListType(node: Element) {
@@ -1043,6 +1093,11 @@ function validateDocumentRelations(tree: Root) {
   const tocTargets = new Set<string>()
   const tocSequences = new Map<Element, string[]>()
 
+  const headingLabels = new Map<
+    Element,
+    { projected: string; legacy: string }
+  >()
+
   for (const { node, parent } of elements) {
     if (/^h[1-6]$/.test(node.tagName) && node.properties.id !== undefined) {
       const id = String(node.properties.id)
@@ -1089,11 +1144,21 @@ function validateDocumentRelations(tree: Root) {
       parent.properties.dataEditorFootnoteDefinition !== undefined
 
     if (inToc && toc) {
-      if (
-        !/^h[1-6]$/.test(target.tagName) ||
-        textOf(node).replace(/\s+/g, " ").trim() !==
-          textOf(target).replace(/\s+/g, " ").trim()
-      )
+      if (!/^h[1-6]$/.test(target.tagName))
+        throw new DocumentError(["Table of contents target is invalid."])
+      let labels = headingLabels.get(target)
+
+      if (!labels) {
+        labels = {
+          projected: tocHeadingText(target).replace(/\s+/g, " ").trim(),
+          legacy: textOf(target).replace(/\s+/g, " ").trim(),
+        }
+        headingLabels.set(target, labels)
+      }
+
+      const label = textOf(node).replace(/\s+/g, " ").trim()
+
+      if (label !== labels.projected && label !== labels.legacy)
         throw new DocumentError(["Table of contents target is invalid."])
 
       tocTargets.add(targetId)
@@ -1119,9 +1184,30 @@ function validateDocumentRelations(tree: Root) {
     }
   }
 
-  for (const { node } of elements) {
-    if (node.tagName !== "nav" || node.properties.dataEditorToc === undefined)
-      continue
+  const tocNodes = elements.flatMap(({ node }) =>
+    node.tagName === "nav" && node.properties.dataEditorToc !== undefined
+      ? [node]
+      : [],
+  )
+
+  if (
+    tocNodes.length > 0 &&
+    elements.some(
+      ({ node }) =>
+        /^h[1-6]$/.test(node.tagName) && node.properties.id === undefined,
+    )
+  )
+    throw new DocumentError(["Table of contents heading IDs are incomplete."])
+
+  for (const [index, node] of tocNodes.entries()) {
+    const label = node.properties.ariaLabel
+
+    if (
+      label !== undefined &&
+      label !== "Table of contents" &&
+      (tocNodes.length < 2 || label !== `Table of contents ${index + 1}`)
+    )
+      throw new DocumentError(["Table of contents label is not canonical."])
 
     const list = node.children.find(
       (child) => child.type === "element" && child.tagName === "ol",
@@ -1153,14 +1239,15 @@ function validateDocumentRelations(tree: Root) {
 
   const expectedSequence = headingIds.join("\0")
 
-  for (const sequence of tocSequences.values())
-    if (sequence.join("\0") !== expectedSequence)
+  for (const node of tocNodes)
+    if ((tocSequences.get(node) ?? []).join("\0") !== expectedSequence)
       throw new DocumentError(["Table of contents order is not canonical."])
 }
 
 export function validateHTMLTree(tree: Root, generated = false) {
   checkTree(tree)
   let tableSlots = 0
+  const slotNames = new Map<Element | null, Set<string>>()
 
   function visit(
     node: RootContent,
@@ -1176,6 +1263,20 @@ export function validateHTMLTree(tree: Root, generated = false) {
     const canonicalNode = canonicalDocumentNode(node)
 
     if (canonicalNode) {
+      if (canonicalNode.type === "slot") {
+        const names = slotNames.get(owner ?? null) ?? new Set<string>()
+
+        if (names.has(canonicalNode.value))
+          throw new DocumentError(["Duplicate document slot name."])
+        names.add(canonicalNode.value)
+        slotNames.set(owner ?? null, names)
+      }
+
+      if (canonicalNode.type === "media-placeholder" && parent !== undefined)
+        throw new DocumentError([
+          "Media placeholders require the document root.",
+        ])
+
       if (
         canonicalNode.type === "media" &&
         parent !== undefined &&
@@ -1495,6 +1596,7 @@ export function validateHTMLTree(tree: Root, generated = false) {
           dataEditorDrawing: ["figure"],
           dataEditorDrawingScene: ["figure"],
           dataEditorEditableCard: ["figure"],
+          dataEditorMediaPlaceholder: ["div"],
           dataEditorDiagram: ["pre"],
           dataEditorDiagramKind: ["pre"],
           dataEditorDiagramView: ["pre"],
@@ -1807,12 +1909,168 @@ export function parseHTMLSyntax(source: string) {
 
   if (errors.length) throw new DocumentError(errors)
 
-  const pending = [...tree.children]
+  interface SourceAncestor {
+    start: number
+    end: number
+    parent: SourceAncestor | undefined
+  }
+
+  const pending: {
+    node: RootContent
+    slotStart: number | undefined
+    ancestor: SourceAncestor | undefined
+  }[] = tree.children.map((node) => ({
+    node,
+    slotStart: undefined,
+    ancestor: undefined,
+  }))
+
+  const slotStarts = new Set<number>()
+
+  const slotAncestors: {
+    offset: number
+    ancestor: SourceAncestor | undefined
+  }[] = []
+
+  const sourceStarts: number[] = []
+  const sourceEnds: number[] = []
+  const unclosedInlineEnds = new Set<number>()
 
   while (pending.length) {
-    const node = pending.pop()
+    const entry = pending.pop()
 
-    if (node?.type !== "element") continue
+    if (entry?.node.type !== "element") continue
+
+    const node = entry.node
+    const offset = node.position?.start.offset
+    const opening = node.data?.position?.opening
+    const openingStart = opening?.start.offset
+    const openingEnd = opening?.end.offset
+    const closingStart = node.data?.position?.closing?.start.offset
+
+    const sourceEnd =
+      closingStart ??
+      (node.tagName === "table" ? source.length : node.position?.end.offset)
+
+    let ancestor = entry.ancestor
+
+    if (openingStart !== undefined && openingEnd !== undefined) {
+      const whitespace = (value: string) =>
+        value === " " ||
+        value === "\t" ||
+        value === "\n" ||
+        value === "\r" ||
+        value === "\f"
+
+      let cursor = openingStart + 1
+
+      while (
+        cursor < openingEnd &&
+        !whitespace(source[cursor] ?? "") &&
+        source[cursor] !== "/" &&
+        source[cursor] !== ">"
+      )
+        cursor += 1
+
+      const positions = Object.entries(node.data?.position?.properties ?? {})
+        .map(([name, position]) => ({
+          name,
+          start: position?.start.offset,
+          end: position?.end.offset,
+        }))
+        .sort((left, right) => (left.start ?? -1) - (right.start ?? -1))
+
+      for (const position of positions) {
+        if (
+          position.start === undefined ||
+          position.end === undefined ||
+          position.start < cursor ||
+          position.end > openingEnd
+        )
+          throw new DocumentError(["Ambiguous HTML attributes."])
+
+        while (cursor < position.start && whitespace(source[cursor] ?? ""))
+          cursor += 1
+
+        if (cursor !== position.start)
+          throw new DocumentError(["Ambiguous HTML attributes."])
+
+        let nameEnd = cursor
+
+        while (
+          nameEnd < position.end &&
+          !whitespace(source[nameEnd] ?? "") &&
+          source[nameEnd] !== "=" &&
+          source[nameEnd] !== "/" &&
+          source[nameEnd] !== ">"
+        )
+          nameEnd += 1
+
+        const serialized = toHtml(
+          element("div", [], {
+            [position.name]: node.properties[position.name],
+          }),
+        )
+
+        const name = source.slice(cursor, nameEnd).toLowerCase()
+
+        if (
+          !serialized.startsWith(`<div ${name}=`) &&
+          !serialized.startsWith(`<div ${name}>`) &&
+          !serialized.startsWith(`<div ${name} `)
+        )
+          throw new DocumentError(["Ambiguous HTML attributes."])
+        cursor = position.end
+      }
+
+      while (cursor < openingEnd && whitespace(source[cursor] ?? ""))
+        cursor += 1
+      const tail = source.slice(cursor, openingEnd)
+
+      if (tail !== ">" && tail !== "/>")
+        throw new DocumentError(["Ambiguous HTML attributes."])
+    }
+
+    if (node.properties.dataEditorSlot !== undefined) {
+      if (
+        offset === undefined ||
+        openingStart === undefined ||
+        openingEnd === undefined
+      )
+        throw new DocumentError(["Ambiguous slot source position."])
+      slotAncestors.push({ offset, ancestor: entry.ancestor })
+    }
+
+    if (
+      openingEnd !== undefined &&
+      sourceEnd !== undefined &&
+      sourceEnd >= openingEnd
+    ) {
+      sourceStarts.push(openingEnd)
+      sourceEnds.push(sourceEnd)
+      ancestor = { start: openingEnd, end: sourceEnd, parent: entry.ancestor }
+    }
+
+    if (
+      entry.slotStart !== undefined &&
+      offset !== undefined &&
+      offset < entry.slotStart
+    )
+      throw new DocumentError(["Invalid reconstructed slot content."])
+
+    const slotStart =
+      node.properties.dataEditorSlot !== undefined ? offset : entry.slotStart
+
+    if (node.properties.dataEditorSlot !== undefined && offset !== undefined)
+      slotStarts.add(offset)
+
+    if (
+      (inlineDirectionTags.has(node.tagName) ||
+        ["a", "time", "yopem-editor-label"].includes(node.tagName)) &&
+      node.data?.position?.closing === undefined &&
+      node.position?.end.offset !== undefined
+    )
+      unclosedInlineEnds.add(node.position.end.offset)
 
     const startPosition = node.data?.position?.properties?.start
 
@@ -1866,8 +2124,48 @@ export function parseHTMLSyntax(source: string) {
       if (Object.keys(node.data).length === 0) delete node.data
     }
 
-    pending.push(...node.children)
+    pending.push(
+      ...node.children.map((child) => ({ node: child, slotStart, ancestor })),
+    )
   }
+
+  sourceStarts.sort((left, right) => left - right)
+  sourceEnds.sort((left, right) => left - right)
+  slotAncestors.sort((left, right) => left.offset - right.offset)
+  let started = 0
+  let ended = 0
+
+  for (const slot of slotAncestors) {
+    while (
+      started < sourceStarts.length &&
+      (sourceStarts[started] ?? Infinity) <= slot.offset
+    )
+      started += 1
+
+    while (
+      ended < sourceEnds.length &&
+      (sourceEnds[ended] ?? Infinity) <= slot.offset
+    )
+      ended += 1
+    let count = 0
+    let depth = 0
+    let ancestor = slot.ancestor
+
+    while (ancestor) {
+      if (++depth > documentLimits.depth)
+        throw new DocumentError(["Document exceeds depth limit."])
+
+      if (ancestor.start <= slot.offset && slot.offset < ancestor.end)
+        count += 1
+      ancestor = ancestor.parent
+    }
+
+    if (started - ended !== count)
+      throw new DocumentError(["Invalid slot source ancestry."])
+  }
+
+  if ([...slotStarts].some((offset) => unclosedInlineEnds.has(offset)))
+    throw new DocumentError(["Invalid reconstructed slot content."])
 
   checkTree(tree)
 

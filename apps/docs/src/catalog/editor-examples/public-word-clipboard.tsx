@@ -35,6 +35,7 @@ import {
   EditorWordClipboardExtension,
   registerWordClipboardPaste,
 } from "@yopem-ui/editor/word-clipboard"
+import { Redo2Icon, Undo2Icon } from "lucide-react"
 import { useId, useReducer, useState, type FormEvent } from "react"
 import { z } from "zod"
 
@@ -232,8 +233,22 @@ function WordClipboardControls({ resolveImage }: WordClipboardControlsProps) {
   return (
     <Stack ref={connect}>
       <EditorToolbar aria-label="Word clipboard history">
-        <EditorHistoryButton action="undo" />
-        <EditorHistoryButton action="redo" />
+        <EditorHistoryButton
+          action="undo"
+          aria-label="Undo"
+          title="Undo"
+          render={<Button variant="ghost" size="icon-sm" />}
+        >
+          <Undo2Icon aria-hidden="true" size={16} />
+        </EditorHistoryButton>
+        <EditorHistoryButton
+          action="redo"
+          aria-label="Redo"
+          title="Redo"
+          render={<Button variant="ghost" size="icon-sm" />}
+        >
+          <Redo2Icon aria-hidden="true" size={16} />
+        </EditorHistoryButton>
       </EditorToolbar>
       {error ? <Text role="alert">{error}</Text> : null}
     </Stack>

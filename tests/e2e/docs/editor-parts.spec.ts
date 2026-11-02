@@ -1,6 +1,9 @@
 import AxeBuilder from "@axe-core/playwright"
 import { expect, test } from "@playwright/test"
-import { editorParts } from "@workspace/apps/docs/src/catalog/editor-parts"
+import {
+  editorParts,
+  editorPartLabel,
+} from "@workspace/apps/docs/src/catalog/editor-parts"
 import { z } from "zod"
 
 for (const part of editorParts.filter(
@@ -17,7 +20,11 @@ for (const part of editorParts.filter(
   }, testInfo) => {
     await page.goto(`/editor/${part.slug}`)
     await expect(
-      page.getByRole("heading", { name: part.name, exact: true, level: 1 }),
+      page.getByRole("heading", {
+        name: editorPartLabel(part.name),
+        exact: true,
+        level: 1,
+      }),
     ).toBeVisible()
 
     const preview = page.getByRole("group", {
@@ -117,7 +124,9 @@ for (const part of editorParts.filter(
     } else {
       await expect(editor).toHaveAccessibleName(/\S/)
       await expect(editor).toHaveAttribute("contenteditable", "true")
-      await editor.click()
+      await editor.focus()
+      await expect(editor).toBeFocused()
+      await editor.press("ControlOrMeta+End")
       await editor.pressSequentially("Editor preview")
       await expect(editor).toContainText("Editor preview")
     }
@@ -301,10 +310,15 @@ test("long editor part identifiers stay visible across viewports @a11y", async (
   await page.goto("/editor/table-background-controls")
 
   const heading = page.getByRole("heading", {
-    name: "EditorTableBackgroundControls",
+    name: "Table Background Controls",
     level: 1,
     exact: true,
   })
+
+  const identifier = page
+    .getByRole("main")
+    .locator("p > code")
+    .filter({ hasText: /^EditorTableBackgroundControls$/ })
 
   await expect(
     page.getByRole("textbox", {
@@ -320,7 +334,9 @@ test("long editor part identifiers stay visible across viewports @a11y", async (
       .poll(() => page.evaluate(() => document.documentElement.scrollWidth))
       .toBeLessThanOrEqual(width)
     await expect(heading).toBeInViewport({ ratio: 1 })
-    await expect(heading).toHaveText("EditorTableBackgroundControls")
+    await expect(heading).toHaveText("Table Background Controls")
+    await expect(identifier).toBeInViewport({ ratio: 1 })
+    await expect(identifier).toHaveText("EditorTableBackgroundControls")
     expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([])
     await page.screenshot({
       path: info.outputPath(`long-identifier-${width}.png`),
@@ -362,11 +378,11 @@ test("editor discovery, SSR and compatibility", async ({ request, page }) => {
   await page.goto("/editor")
   await page
     .getByRole("main")
-    .getByRole("link", { name: /^EditorToolbar\b/ })
+    .getByRole("link", { name: /^Toolbar\b/ })
     .click()
   await expect(page).toHaveURL(/\/editor\/toolbar$/)
   await expect(
-    page.getByRole("heading", { name: "EditorToolbar", exact: true, level: 1 }),
+    page.getByRole("heading", { name: "Toolbar", exact: true, level: 1 }),
   ).toBeVisible()
   await expect(
     page.getByRole("textbox", { name: "EditorToolbar preview", exact: true }),
@@ -483,7 +499,7 @@ test("editor search keyboard shortcut and result activation", async ({
     .press("Enter")
   await expect(page).toHaveURL(/\/editor\/toolbar$/)
   await expect(
-    page.getByRole("heading", { name: "EditorToolbar", exact: true, level: 1 }),
+    page.getByRole("heading", { name: "Toolbar", exact: true, level: 1 }),
   ).toBeVisible()
   await expect(
     page.getByRole("textbox", { name: "EditorToolbar preview", exact: true }),
@@ -498,13 +514,16 @@ test("mobile editor navigation closes after selection", async ({ page }) => {
     .click()
   const dialog = page.getByRole("dialog", { name: "Documentation" })
   await dialog
-    .getByRole("link", { name: "EditorTableBackgroundControls", exact: true })
+    .getByRole("button", { name: "Editor basics", exact: true })
+    .click()
+  await dialog
+    .getByRole("link", { name: "Table Background Controls", exact: true })
     .click()
   await expect(dialog).toHaveCount(0)
   await expect(page).toHaveURL(/\/editor\/table-background-controls$/)
   await expect(
     page.getByRole("heading", {
-      name: "EditorTableBackgroundControls",
+      name: "Table Background Controls",
       exact: true,
       level: 1,
     }),
@@ -525,9 +544,11 @@ test.describe("editor server rendering", () => {
       const response = await page.goto(`/editor/${part.slug}`)
       expect(response?.status()).toBe(200)
       await expect(
-        page
-          .getByRole("main")
-          .getByRole("heading", { name: part.name, exact: true, level: 1 }),
+        page.getByRole("main").getByRole("heading", {
+          name: editorPartLabel(part.name),
+          exact: true,
+          level: 1,
+        }),
       ).toBeVisible()
       await expect(
         page.getByRole("heading", { name: "API reference", exact: true }),

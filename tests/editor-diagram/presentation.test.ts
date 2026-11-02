@@ -7,8 +7,8 @@ import { editorDiagramState } from "@editor/diagram-state"
 import { createEditorDiagramStore } from "@editor/diagram-store"
 import { $createCodeNode, $isCodeNode, CodeExtension } from "@lexical/code"
 import { buildEditorFromExtensions } from "@lexical/extension"
-import { withDOM } from "@lexical/headless/dom"
 import { RichTextExtension } from "@lexical/rich-text"
+import { withDOM } from "@workspace/tests/fixtures/lexical-dom"
 import { afterEach, beforeEach, describe, expect, test } from "bun:test"
 import {
   $createParagraphNode,

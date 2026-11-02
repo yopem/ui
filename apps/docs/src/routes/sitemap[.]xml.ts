@@ -14,6 +14,7 @@ export const Route = createFileRoute("/sitemap.xml")({
             "/components",
             "/editor",
             "/editor/examples",
+            "/editor/examples/notion-like",
             ...editorParts.map((part) => `/editor/${part.slug}`),
             ...guidePages.map((page) => page.url),
             ...catalog.map((item) => `/components/${item.slug}`),

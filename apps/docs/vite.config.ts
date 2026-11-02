@@ -196,6 +196,7 @@ const config = defineConfig({
           "/editor.md",
           "/api/editor.json",
           "/editor/examples",
+          "/editor/examples/notion-like",
           "/editor/examples.md",
           "/api/editor-examples.json",
           ...editorParts.flatMap((part) => [

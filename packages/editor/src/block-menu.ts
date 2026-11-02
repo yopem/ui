@@ -16,6 +16,7 @@ import {
   $getNodeByKey,
   $getRoot,
   $getSelection,
+  $getSlotNames,
   $isElementNode,
   $isNodeSelection,
   $isRangeSelection,
@@ -28,7 +29,10 @@ import {
   OUTDENT_CONTENT_COMMAND,
 } from "lexical"
 
-import { createEditorBlockSelection } from "./block-selection"
+import {
+  $blockContainsSlots,
+  createEditorBlockSelection,
+} from "./block-selection"
 import {
   $isValidBookmarkPoint,
   createEditorSelectionBookmark,
@@ -136,6 +140,26 @@ const transformableBlocks = new Set([
   "list",
 ])
 
+function $conversionDiscardsSlots(block: LexicalNode) {
+  const pending = [block]
+
+  while (pending.length) {
+    const node = pending.pop()!
+    const type = node.getType()
+
+    if (
+      (node.is(block) || type === "list" || type === "listitem") &&
+      $getSlotNames(node).length
+    )
+      return true
+
+    if ($isElementNode(node) && (type === "list" || type === "listitem"))
+      pending.push(...node.getChildren())
+  }
+
+  return false
+}
+
 function $getTopLevelBlock(node: LexicalNode | null) {
   if (!node) return null
   const root = $getRoot()
@@ -238,49 +262,52 @@ export function createEditorBlockMenu(options: EditorBlockMenuOptions = {}) {
     const nodeConstructor =
       currentEditor.getRootElement()?.ownerDocument.defaultView?.Node
 
-    const captured = currentEditor.getEditorState().read(() => {
-      const lexicalNode = fromSelection
-        ? $getSelectedNode()
-        : nodeConstructor && targetNode instanceof nodeConstructor
-          ? $getNearestNodeFromDOMNode(targetNode)
-          : null
+    const captured = currentEditor.getEditorState().read(
+      () => {
+        const lexicalNode = fromSelection
+          ? $getSelectedNode()
+          : nodeConstructor && targetNode instanceof nodeConstructor
+            ? $getNearestNodeFromDOMNode(targetNode)
+            : null
 
-      const block = $getTopLevelBlock(lexicalNode)
+        const block = $getTopLevelBlock(lexicalNode)
 
-      if (!block) return null
+        if (!block) return null
 
-      const children = $getRoot().getChildren()
+        const children = $getRoot().getChildren()
 
-      const index = children.findIndex(
-        (child) => child.getKey() === block.getKey(),
-      )
+        const index = children.findIndex(
+          (child) => child.getKey() === block.getKey(),
+        )
 
-      if (index < 0) return null
+        if (index < 0) return null
 
-      const selection = $getSelection()
+        const selection = $getSelection()
 
-      const selectedText =
-        $isRangeSelection(selection) && !selection.isCollapsed()
-          ? selection.getTextContent()
-          : ""
+        const selectedText =
+          $isRangeSelection(selection) && !selection.isCollapsed()
+            ? selection.getTextContent()
+            : ""
 
-      bookmark?.capture()
+        bookmark?.capture()
 
-      return {
-        record: {
-          context: Object.freeze({
-            blockKey: block.getKey(),
-            blockText: block.getTextContent(),
-            selectedText,
-          }),
-          revision,
-          generation,
-          index,
-          selection: selection?.clone() ?? null,
-        },
-        canTransform: transformableBlocks.has(block.getType()),
-      }
-    })
+        return {
+          record: {
+            context: Object.freeze({
+              blockKey: block.getKey(),
+              blockText: block.getTextContent(),
+              selectedText,
+            }),
+            revision,
+            generation,
+            index,
+            selection: selection?.clone() ?? null,
+          },
+          canTransform: transformableBlocks.has(block.getType()),
+        }
+      },
+      { editor: currentEditor },
+    )
 
     if (!captured) {
       bookmark.clear()
@@ -566,7 +593,8 @@ export function createEditorBlockMenu(options: EditorBlockMenuOptions = {}) {
   function mutateBlock(action: EditorBlockMenuAction, record: TargetRecord) {
     const currentEditor = editor
 
-    if (!currentEditor || !approved(action, record)) return false
+    if (!currentEditor || currentEditor._updating || !approved(action, record))
+      return false
     let applied = false
 
     currentEditor.update(
@@ -575,6 +603,18 @@ export function createEditorBlockMenu(options: EditorBlockMenuOptions = {}) {
         const block = $getNodeByKey(record.context.blockKey)
 
         if (!$isElementNode(block) || !transformableBlocks.has(block.getType()))
+          return
+
+        if (
+          ((action === "paragraph" ||
+            action.startsWith("heading-") ||
+            action === "quote" ||
+            action === "code" ||
+            ((action === "indent" || action === "outdent") &&
+              block.getType() === "list")) &&
+            $conversionDiscardsSlots(block)) ||
+          (action === "code" && $blockContainsSlots(block))
+        )
           return
         const restored = bookmark?.restore() === true
 
@@ -705,6 +745,16 @@ export function createEditorBlockMenu(options: EditorBlockMenuOptions = {}) {
     }
 
     if (action === "duplicate" || action === "delete" || action === "copy") {
+      if (
+        action === "delete" &&
+        currentEditor.read("pending", () => {
+          const block = currentTarget(record)
+
+          return !block || $blockContainsSlots(block)
+        })
+      )
+        return false
+
       if (!blockSelection.select(record.context.blockKey)) return false
 
       if (action === "copy") {
@@ -738,7 +788,12 @@ export function createEditorBlockMenu(options: EditorBlockMenuOptions = {}) {
 
   const extension = defineExtension({
     name: "@yopem-ui/editor/block-menu",
-    dependencies: [blockSelection.extension],
+    dependencies: [
+      defineExtension({
+        ...blockSelection.extension,
+        name: "@yopem-ui/editor/block-menu-selection",
+      }),
+    ],
     register(currentEditor) {
       if (editor) throw new Error("Use one block menu per editor root")
       editor = currentEditor

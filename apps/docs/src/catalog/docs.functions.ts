@@ -35,6 +35,15 @@ const completeEditorPreviews = new Map<
   ["editor-block-selection", ["./editor-previews/block-selection.tsx"]],
   ["editor-review", ["./editor-preview-compositions/review.tsx"]],
   ["editor-media", ["./editor-preview-compositions/media.tsx"]],
+  [
+    "editor-media-placeholder",
+    ["./editor-previews/media-placeholder-example.tsx"],
+  ],
+  ["editor-toolbar-menus", ["./editor-preview-compositions/toolbar-menus.tsx"]],
+  [
+    "editor-document-export-pdf",
+    ["./editor-previews/document-pdf-export-control.tsx"],
+  ],
   ["editor-columns", ["./editor-example-compositions/column.tsx", "column"]],
   ["editor-date", ["./editor-example-compositions/date.tsx", "date"]],
   [
@@ -59,7 +68,7 @@ const completeEditorPreviews = new Map<
     "editor-document-export",
     ["./editor-preview-compositions/document-print.tsx"],
   ],
-  ["editor-labels", ["./editor-examples/public-labels.tsx"]],
+  ["editor-labels", ["./editor-previews/labels-select.tsx"]],
   ["editor-block-placeholder", ["./editor-examples/public-placeholder.tsx"]],
   ["editor-autoformat", ["./editor-examples/public-autoformat.tsx"]],
   ["editor-block-behavior", ["./editor-examples/public-plugin-rules.tsx"]],

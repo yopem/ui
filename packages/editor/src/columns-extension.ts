@@ -14,6 +14,9 @@ import {
   $getNodeByKey,
   $getRoot,
   $getSelection,
+  $getSlot,
+  $getSlotHost,
+  $getSlotNames,
   $isElementNode,
   $isNodeSelection,
   $isRangeSelection,
@@ -149,7 +152,8 @@ export function $insertEditorColumns(value: readonly number[]) {
   if (
     !$isRangeSelection(selection) ||
     !selection.isCollapsed() ||
-    $getEditorColumnsContext()
+    $getEditorColumnsContext() ||
+    !$canInsertEditorColumns(selection.anchor.getNode())
   )
     return false
 
@@ -235,7 +239,12 @@ export function $removeEditorColumns() {
   if (isCurrentlyReadOnlyMode()) return false
   const context = $getEditorColumnsContext()
 
-  if (!context) return false
+  if (
+    !context ||
+    $getSlotHost(context.group) ||
+    $hasSlotsInColumns(context.group)
+  )
+    return false
   context.group.selectNext()
   context.group.remove()
 
@@ -249,33 +258,110 @@ export function registerEditorColumnsValidation(editor: LexicalEditor) {
       $nodesOfType(EditorColumnNode).length === 0
     )
       return
-    let count = 0
-
-    function serialize(
-      node: LexicalNode,
-      depth: number,
-    ): SerializedLexicalNode & { children?: SerializedLexicalNode[] } {
-      if (
-        depth > EDITOR_COLUMNS_MAX_DEPTH ||
-        ++count > EDITOR_COLUMNS_MAX_NODES
-      )
-        throw new EditorColumnsError("Editor columns document exceeds limits")
-      const value = node.exportJSON()
-
-      if (!$isElementNode(node)) return value
-      const children = node.getChildren()
-
-      if (children.length + count > EDITOR_COLUMNS_MAX_NODES)
-        throw new EditorColumnsError("Editor columns document exceeds limits")
-
-      return {
-        ...value,
-        children: children.map((child) => serialize(child, depth + 1)),
-      }
-    }
 
     try {
-      validateEditorColumnsJSON({ root: serialize($getRoot(), 0) })
+      type SerializedNode = SerializedLexicalNode & {
+        children?: SerializedNode[]
+        $slots?: Record<string, SerializedNode>
+      }
+
+      interface SerializedRoot {
+        value?: SerializedNode
+      }
+
+      const root: SerializedRoot = {}
+
+      const pending: {
+        node: LexicalNode
+        depth: number
+        assign: (value: SerializedNode) => void
+      }[] = [
+        {
+          node: $getRoot(),
+          depth: 0,
+          assign: (value) => {
+            root.value = value
+          },
+        },
+      ]
+
+      const visited = new Set<string>()
+
+      while (pending.length) {
+        const entry = pending.pop()
+
+        if (!entry) break
+        const { node, depth, assign } = entry
+        const key = node.getKey()
+
+        if (
+          depth > EDITOR_COLUMNS_MAX_DEPTH ||
+          visited.has(key) ||
+          visited.size >= EDITOR_COLUMNS_MAX_NODES
+        )
+          throw new EditorColumnsError("Editor columns document exceeds limits")
+        visited.add(key)
+        const childCount = $isElementNode(node) ? node.getChildrenSize() : 0
+        const names = $getSlotNames(node)
+
+        if (
+          visited.size + pending.length + childCount + names.length >
+          EDITOR_COLUMNS_MAX_NODES
+        )
+          throw new EditorColumnsError("Editor columns document exceeds limits")
+        const value: SerializedNode = { ...node.exportJSON() }
+
+        if (value.type !== node.getType())
+          throw new EditorColumnsError("Invalid node export")
+        delete value.children
+        delete value.$slots
+        assign(value)
+
+        if (names.length) {
+          const slots: Record<string, SerializedNode> = Object.create(null)
+
+          value.$slots = slots
+
+          for (let index = names.length - 1; index >= 0; index -= 1) {
+            const name = names[index]
+
+            if (name === undefined)
+              throw new EditorColumnsError("Invalid slot name")
+            const child = $getSlot(node, name)
+
+            if (!child) throw new EditorColumnsError("Missing slot value")
+            pending.push({
+              node: child,
+              depth: depth + 1,
+              assign: (item) => {
+                slots[name] = item
+              },
+            })
+          }
+        }
+
+        if ($isElementNode(node)) {
+          const children = node.getChildren()
+          const serialized: SerializedNode[] = []
+
+          value.children = serialized
+
+          for (let index = children.length - 1; index >= 0; index -= 1) {
+            const child = children[index]
+
+            if (!child) throw new EditorColumnsError("Missing child")
+            pending.push({
+              node: child,
+              depth: depth + 1,
+              assign: (item) => {
+                serialized.push(item)
+              },
+            })
+          }
+        }
+      }
+
+      validateEditorColumnsJSON({ root: root.value })
     } catch {
       throw new EditorColumnsError("Invalid editor columns state")
     }
@@ -401,6 +487,57 @@ export const EditorColumnsExtension = defineExtension({
     )
   },
 })
+
+function $canInsertEditorColumns(node: LexicalNode) {
+  const visited = new Set<string>()
+  let current: LexicalNode | null = node
+
+  while (current) {
+    const key = current.getKey()
+
+    if (visited.has(key) || visited.size > EDITOR_COLUMNS_MAX_DEPTH)
+      return false
+    visited.add(key)
+
+    if ($getSlotHost(current)) return false
+
+    if (!(current instanceof RootNode) && $getSlotNames(current).length)
+      return false
+    current = current.getParent()
+  }
+
+  return true
+}
+
+function $hasSlotsInColumns(group: EditorColumnsGroupNode) {
+  const pending: LexicalNode[] = [group]
+  const visited = new Set<string>()
+
+  while (pending.length) {
+    const node = pending.pop()
+
+    if (
+      !node ||
+      visited.has(node.getKey()) ||
+      visited.size >= EDITOR_COLUMNS_MAX_NODES
+    )
+      return true
+    visited.add(node.getKey())
+
+    if ($getSlotNames(node).length) return true
+
+    if ($isElementNode(node)) {
+      if (
+        visited.size + pending.length + node.getChildrenSize() >
+        EDITOR_COLUMNS_MAX_NODES
+      )
+        return true
+      pending.push(...node.getChildren())
+    }
+  }
+
+  return false
+}
 
 function findColumnContext(node: LexicalNode) {
   let current: LexicalNode | null = node

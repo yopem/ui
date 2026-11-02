@@ -66,11 +66,25 @@ export const sourceImportReplacements = [
   ["@yopem-ui/editor/block-behavior", "@/components/editor/block-behavior"],
   ["@yopem-ui/editor/editing-rules", "@/components/editor/editing-rules"],
   ["@yopem-ui/editor/floating-toolbar", "@/components/editor/floating-toolbar"],
+  ["@yopem-ui/editor/toolbar-menus", "@/components/editor/toolbar-menus"],
+  [
+    "@yopem-ui/editor/media-placeholder-model",
+    "@/components/editor/media-placeholder-model",
+  ],
+  [
+    "@yopem-ui/editor/media-placeholder-node",
+    "@/components/editor/media-placeholder-node",
+  ],
+  [
+    "@yopem-ui/editor/media-placeholder",
+    "@/components/editor/media-placeholder",
+  ],
   ["@yopem-ui/editor/search-model", "@/components/editor/search-model"],
   ["@yopem-ui/editor/search", "@/components/editor/search"],
   ["@yopem-ui/editor/csv/model", "@/components/editor/csv-model"],
   ["@yopem-ui/editor/columns/model", "@/components/editor/columns-model"],
   ["@yopem-ui/editor/date/model", "@/components/editor/date-model"],
+  ["@yopem-ui/editor/json-duplicates", "@/components/editor/json-duplicates"],
   ["@yopem-ui/editor/document/static", "@/components/editor/document/static"],
   ["@yopem-ui/editor/document", "@/components/editor/document"],
   [
@@ -111,6 +125,10 @@ export const sourceImportReplacements = [
   [
     "@yopem-ui/editor/document-export-html-to-image",
     "@/components/editor/document-export-html-to-image",
+  ],
+  [
+    "@yopem-ui/editor/document-export-pdf",
+    "@/components/editor/document-export-pdf",
   ],
   ["@yopem-ui/editor/document-export", "@/components/editor/document-export"],
   [
@@ -163,7 +181,12 @@ export function rewriteImports(content: string, path = "") {
       : serverSource
 
   const source = path.startsWith("lib/editor-store/")
-    ? content.replaceAll('from "./auth"', 'from "@/lib/editor-auth/auth"')
+    ? content
+        .replaceAll('from "./auth"', 'from "@/lib/editor-auth/auth"')
+        .replaceAll(
+          'from "@yopem-ui/editor/json-duplicates"',
+          'from "./json-duplicates"',
+        )
     : nativeGrantSource
 
   return sourceImportReplacements.reduce(

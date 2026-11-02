@@ -18,6 +18,7 @@ import {
 } from "@yopem-ui/editor"
 import { validateEditorAiConfig } from "@yopem-ui/editor/ai/client"
 import { EditorCopilot } from "@yopem-ui/editor/copilot"
+import { Undo2Icon } from "lucide-react"
 import { useRef, useState } from "react"
 
 export function PublicCopilotExample() {
@@ -110,7 +111,14 @@ export function PublicCopilotExample() {
         {config ? (
           <EditorRoot ariaLabel="Copilot editor">
             <EditorToolbar aria-label="Copilot editor tools">
-              <EditorHistoryButton action="undo" />
+              <EditorHistoryButton
+                action="undo"
+                aria-label="Undo"
+                title="Undo"
+                render={<Button variant="ghost" size="icon-sm" />}
+              >
+                <Undo2Icon aria-hidden="true" size={16} />
+              </EditorHistoryButton>
             </EditorToolbar>
             <EditorContent placeholder="Write a paragraph, then press Control+Space at its end." />
             <EditorCopilot config={config} />

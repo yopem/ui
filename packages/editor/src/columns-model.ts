@@ -29,6 +29,7 @@ const documentSchema = z.object({ root: z.unknown() })
 const nodeSchema = z.looseObject({
   type: z.string().min(1).max(128),
   children: z.array(z.unknown()).max(EDITOR_COLUMNS_MAX_NODES).optional(),
+  $slots: z.record(z.string(), z.unknown()).optional(),
 })
 
 const groupSchema = z.looseObject({
@@ -181,15 +182,8 @@ export function validateEditorColumnsJSON(
       if (group.children.length !== group.layout.length)
         throw new Error("Editor columns count does not match layout")
 
-      for (const child of group.children) {
-        const column = columnSchema.parse(child)
-        visit(column, depth + 1, node.type, true)
-      }
-
-      return
-    }
-
-    if (node.type === "editor-column") {
+      for (const child of group.children) columnSchema.parse(child)
+    } else if (node.type === "editor-column") {
       if (parent !== "editor-columns-group")
         throw new Error("Orphan editor column")
       columnSchema.parse(node)
@@ -201,7 +195,20 @@ export function validateEditorColumnsJSON(
     }
 
     for (const child of node.children ?? [])
-      visit(child, depth + 1, node.type, insideColumns)
+      visit(
+        child,
+        depth + 1,
+        node.type,
+        insideColumns || node.type === "editor-columns-group",
+      )
+
+    for (const slot of Object.values(node.$slots ?? {}))
+      visit(
+        slot,
+        depth + 1,
+        "",
+        insideColumns || node.type === "editor-columns-group",
+      )
   }
 
   const root = nodeSchema.parse(document.root)

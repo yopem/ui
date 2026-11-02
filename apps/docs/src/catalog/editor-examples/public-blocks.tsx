@@ -41,6 +41,18 @@ import {
   useEditorEmojiPicker,
 } from "@yopem-ui/editor/typeahead"
 import { HISTORY_PUSH_TAG, type EditorState } from "lexical"
+import {
+  BoldIcon,
+  ChevronRightIcon,
+  ChevronsUpDownIcon,
+  IndentDecreaseIcon,
+  IndentIncreaseIcon,
+  LinkIcon,
+  ListIcon,
+  MessageSquareTextIcon,
+  Redo2Icon,
+  Undo2Icon,
+} from "lucide-react"
 import { useReducer, useState, useSyncExternalStore } from "react"
 
 const extensions = [EditorBlocksExtension]
@@ -180,8 +192,20 @@ export function PublicBlocksExample() {
         onChange={handleChange}
       >
         <EditorToolbar aria-label="Public blocks">
-          <EditorCalloutButton />
-          <EditorToggleButton />
+          <EditorCalloutButton
+            aria-label="Insert callout"
+            title="Insert callout"
+            render={<Button variant="ghost" size="icon-sm" />}
+          >
+            <MessageSquareTextIcon aria-hidden="true" size={16} />
+          </EditorCalloutButton>
+          <EditorToggleButton
+            aria-label="Insert toggle"
+            title="Insert toggle"
+            render={<Button variant="ghost" size="icon-sm" />}
+          >
+            <ChevronRightIcon aria-hidden="true" size={16} />
+          </EditorToggleButton>
           {editorCalloutAppearances.map((appearance) => (
             <EditorCalloutAppearanceButton
               key={appearance}
@@ -189,14 +213,67 @@ export function PublicBlocksExample() {
             />
           ))}
           <CalloutEmojiPicker />
-          <EditorLinkControl />
-          <EditorDisclosureButton />
-          <EditorIndentButton direction="indent" />
-          <EditorIndentButton direction="outdent" />
-          <EditorListButton listType="bullet" />
-          <EditorFormatButton format="bold" />
-          <EditorHistoryButton action="undo" />
-          <EditorHistoryButton action="redo" />
+          <EditorLinkControl
+            aria-label="Link"
+            title="Link"
+            render={<Button variant="ghost" size="icon-sm" />}
+          >
+            <LinkIcon aria-hidden="true" size={16} />
+          </EditorLinkControl>
+          <EditorDisclosureButton
+            aria-label="Toggle disclosure"
+            title="Toggle disclosure"
+            render={<Button variant="ghost" size="icon-sm" />}
+          >
+            <ChevronsUpDownIcon aria-hidden="true" size={16} />
+          </EditorDisclosureButton>
+          <EditorIndentButton
+            direction="indent"
+            aria-label="Indent"
+            title="Indent"
+            render={<Button variant="ghost" size="icon-sm" />}
+          >
+            <IndentIncreaseIcon aria-hidden="true" size={16} />
+          </EditorIndentButton>
+          <EditorIndentButton
+            direction="outdent"
+            aria-label="Outdent"
+            title="Outdent"
+            render={<Button variant="ghost" size="icon-sm" />}
+          >
+            <IndentDecreaseIcon aria-hidden="true" size={16} />
+          </EditorIndentButton>
+          <EditorListButton
+            listType="bullet"
+            aria-label="Bullet list"
+            title="Bullet list"
+            render={<Button variant="ghost" size="icon-sm" />}
+          >
+            <ListIcon aria-hidden="true" size={16} />
+          </EditorListButton>
+          <EditorFormatButton
+            format="bold"
+            title="Bold"
+            render={<Button variant="ghost" size="icon-sm" />}
+          >
+            <BoldIcon aria-hidden="true" size={16} />
+          </EditorFormatButton>
+          <EditorHistoryButton
+            action="undo"
+            aria-label="Undo"
+            title="Undo"
+            render={<Button variant="ghost" size="icon-sm" />}
+          >
+            <Undo2Icon aria-hidden="true" size={16} />
+          </EditorHistoryButton>
+          <EditorHistoryButton
+            action="redo"
+            aria-label="Redo"
+            title="Redo"
+            render={<Button variant="ghost" size="icon-sm" />}
+          >
+            <Redo2Icon aria-hidden="true" size={16} />
+          </EditorHistoryButton>
         </EditorToolbar>
         <EditorContent placeholder="Insert and edit callouts and toggles…" />
         <Box render={<section />} aria-label="Blocks document JSON">

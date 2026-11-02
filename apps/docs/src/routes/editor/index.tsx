@@ -1,3 +1,4 @@
+import { Box } from "@registry/components/ui/box"
 import { Grid } from "@registry/components/ui/grid"
 import { Heading } from "@registry/components/ui/heading"
 import { Stack } from "@registry/components/ui/stack"
@@ -9,7 +10,8 @@ import { Link, createFileRoute } from "@tanstack/react-router"
 import { DocumentationLayout } from "@/catalog/docs-layout"
 import { DocsDescription, DocsPage, DocsTitle } from "@/catalog/docs-page"
 import { catalogStyles, docsStyles } from "@/catalog/docs-styles"
-import { editorParts } from "@/catalog/editor-parts"
+import { editorPartLabel } from "@/catalog/editor-parts"
+import { editorPartGroups } from "@/catalog/navigation"
 import { createSeo } from "@/lib/seo"
 
 const styles = stylex.create({
@@ -24,11 +26,6 @@ const styles = stylex.create({
   title: { fontSize: "1.0625rem", overflowWrap: "anywhere" },
   description: { color: tokens["--muted-foreground"], fontSize: "0.875rem" },
 })
-
-const pages = editorParts.map((part) => ({
-  ...part,
-  params: { slug: part.slug },
-}))
 
 export const Route = createFileRoute("/editor/")({
   head: () =>
@@ -54,20 +51,32 @@ export function EditorIndex() {
           <Link {...stylex.props(docsStyles.link)} to="/docs/editor">
             Editor composition guide
           </Link>
-          <Grid xstyle={styles.grid}>
-            {pages.map((part) => (
-              <Link
-                key={part.slug}
-                to="/editor/$slug"
-                params={part.params}
-                preload="intent"
-                {...stylex.props(catalogStyles.card)}
-              >
-                <Heading xstyle={styles.title}>{part.name}</Heading>
-                <Text xstyle={styles.description}>{part.description}</Text>
-              </Link>
-            ))}
-          </Grid>
+          {editorPartGroups.map((group) => (
+            <Box key={group.name} render={<section aria-label={group.name} />}>
+              <Stack>
+                <Heading>{group.name}</Heading>
+                <Grid xstyle={styles.grid}>
+                  {group.parts.map((part) => (
+                    <Link
+                      key={part.slug}
+                      to="/editor/$slug"
+                      params={{ slug: part.slug }}
+                      preload="intent"
+                      {...stylex.props(catalogStyles.card)}
+                    >
+                      <Heading
+                        render={<h3>{editorPartLabel(part.name)}</h3>}
+                        xstyle={styles.title}
+                      />
+                      <Text xstyle={styles.description}>
+                        {part.description}
+                      </Text>
+                    </Link>
+                  ))}
+                </Grid>
+              </Stack>
+            </Box>
+          ))}
         </Stack>
       </DocsPage>
     </DocumentationLayout>

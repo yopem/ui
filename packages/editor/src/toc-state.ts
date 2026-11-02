@@ -1,12 +1,8 @@
 import type { LexicalEditor, NodeKey } from "lexical"
 
-import { HeadingNode, $isHeadingNode } from "@lexical/rich-text"
-import {
-  $getNodeByKey,
-  $getSelection,
-  $isRangeSelection,
-  $nodesOfType,
-} from "lexical"
+import { $isHeadingNode, type HeadingNode } from "@lexical/rich-text"
+import { $dfsWithSlotsIterator } from "@lexical/utils"
+import { $getNodeByKey, $getSelection, $isRangeSelection } from "lexical"
 
 export interface EditorTocHeading {
   readonly key: NodeKey
@@ -24,15 +20,21 @@ function headingTitle(node: HeadingNode) {
 }
 
 export function $getEditorTocSnapshot(): EditorTocSnapshot {
-  const headings = $nodesOfType(HeadingNode)
-    .filter((node) => node.isAttached())
-    .map((node) => ({
+  const headings: EditorTocHeading[] = []
+
+  for (const { node } of $dfsWithSlotsIterator()) {
+    if (!$isHeadingNode(node)) continue
+    const title = headingTitle(node)
+
+    if (!title) continue
+    headings.push({
       key: node.getKey(),
-      title: headingTitle(node),
+      title,
       depth: Number(node.getTag().slice(1)),
-    }))
-    .filter((heading) => heading.title.length > 0)
-    .slice(0, 500)
+    })
+
+    if (headings.length === 500) break
+  }
 
   const selection = $getSelection()
 
@@ -54,33 +56,49 @@ export function $getEditorTocSnapshot(): EditorTocSnapshot {
 export function focusEditorTocHeading(editor: LexicalEditor, key: NodeKey) {
   const element = editor.getElementByKey(key)
 
-  if (!editor.isEditable()) {
-    element?.focus()
-    element?.scrollIntoView({ block: "start", behavior: scrollBehavior() })
+  if (!element) return false
 
-    return Boolean(element)
+  if (!editor.isEditable()) {
+    element.focus({ preventScroll: true })
+    element.scrollIntoView({
+      block: "start",
+      behavior: scrollBehavior(element),
+    })
+
+    return true
   }
 
   let focused = false
-  editor.update(() => {
-    const node = $getNodeByKey(key)
+  editor.getRootElement()?.focus({ preventScroll: true })
+  editor.update(
+    () => {
+      const node = $getNodeByKey(key)
 
-    if (!$isHeadingNode(node)) return
-    node.selectStart()
-    focused = true
+      if (!$isHeadingNode(node)) return
+      node.selectStart()
+      focused = true
+    },
+    { discrete: true },
+  )
+
+  if (!focused) return false
+
+  const heading = editor.getElementByKey(key)
+
+  if (!heading) return false
+  heading.focus({ preventScroll: true })
+  heading.scrollIntoView({
+    block: "start",
+    behavior: scrollBehavior(heading),
   })
-  element?.scrollIntoView({ block: "start", behavior: scrollBehavior() })
 
-  if (focused) {
-    editor.focus()
-    element?.focus()
-  }
-
-  return focused
+  return true
 }
 
-function scrollBehavior(): ScrollBehavior {
-  return window.matchMedia("(prefers-reduced-motion: reduce)").matches
+function scrollBehavior(element: HTMLElement): ScrollBehavior {
+  const view = element.ownerDocument.defaultView
+
+  return !view || view.matchMedia("(prefers-reduced-motion: reduce)").matches
     ? "auto"
     : "smooth"
 }

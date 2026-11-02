@@ -1,3 +1,4 @@
+import { scanDocumentJSON } from "@yopem-ui/editor/json-duplicates"
 import { z } from "zod"
 
 import type { EditorAuthentication, EditorAuthorizationInput } from "./auth"
@@ -129,8 +130,20 @@ async function readBody(
       } else if (character === "}" || character === "]") depth--
     }
 
-    return payloadSchema.parse(JSON.parse(text))
+    const parsed: unknown = JSON.parse(text)
+
+    if (scanDocumentJSON(text, 66) === "duplicate") throw new HttpError(400)
+
+    const payload = payloadSchema.parse(parsed)
+
+    if (signal.aborted || Date.now() >= deadline)
+      throw new DocumentError("aborted")
+
+    return payload
   } catch (error) {
+    if (signal.aborted || Date.now() >= deadline)
+      throw new DocumentError("aborted")
+
     if (error instanceof HttpError) throw error
     throw new HttpError(400)
   }

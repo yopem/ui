@@ -51,15 +51,22 @@ const previewHelpers = Object.entries(
 export function PreviewPanel({
   preview,
   source,
+  title,
 }: {
   preview: CatalogPreview
   source: string
+  title?: string | null
 }) {
   const Preview = preview.component
 
   return (
     <Box render={<section />} xstyle={styles.section}>
-      <Heading render={<h3>{preview.title}</h3>} xstyle={styles.h3} />
+      {title !== null ? (
+        <Heading
+          render={<h3>{title ?? preview.title}</h3>}
+          xstyle={styles.h3}
+        />
+      ) : null}
       <ScrollArea
         xstyle={styles.scrollArea}
         aria-label={`${preview.title} live preview`}
@@ -72,6 +79,13 @@ export function PreviewPanel({
           </Suspense>
         </Flex>
       </ScrollArea>
+      {preview.setupCommand ? (
+        <CopyableCode
+          code={preview.setupCommand}
+          language="shellscript"
+          title={`${preview.title} setup`}
+        />
+      ) : null}
       <PreviewSource name={preview.title} source={source} />
     </Box>
   )

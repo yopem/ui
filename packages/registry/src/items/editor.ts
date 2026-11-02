@@ -10,6 +10,7 @@ export const editorItem: SourceItem = {
     editorDependency("@base-ui/utils"),
     editorDependency("lexical"),
     editorDependency("zod"),
+    editorDependency("@lexical/clipboard"),
     editorDependency("@lexical/code"),
     editorDependency("@lexical/extension"),
     editorDependency("@lexical/history"),
@@ -104,7 +105,7 @@ export const editorItem: SourceItem = {
       "useEditorState",
     ],
     usage:
-      "Import Editor from @/components/editor. Set ariaLabel for an accessible name. Use initialState for initial Lexical JSON and onChange for content updates.",
+      "Import Editor from @/components/editor. Set ariaLabel for an accessible name. Use initialState for initial Lexical JSON and onChange for content updates. Raw initialState strings reject duplicate keys. Core native clipboard import rejects duplicate keys in namespace and nodes envelopes. Higher-priority handlers can parse or consume data first. Parsed objects cannot retain duplicate key evidence.",
   },
   files: [
     "index.ts",
@@ -113,6 +114,7 @@ export const editorItem: SourceItem = {
     "autolink.ts",
     "checklist-accessibility.ts",
     "clipboard-guard.ts",
+    "json-duplicates.ts",
     "theme.ts",
     "root.tsx",
     "controls.tsx",

@@ -1,6 +1,7 @@
 "use client"
 
 import { Box } from "@registry/components/ui/box"
+import { Button } from "@registry/components/ui/button"
 import { Stack } from "@registry/components/ui/stack"
 import { Text } from "@registry/components/ui/text"
 import {
@@ -14,6 +15,7 @@ import {
   EditorFootnoteExtension,
   EditorFootnoteTypeahead,
 } from "@yopem-ui/editor/footnote"
+import { Redo2Icon, Undo2Icon } from "lucide-react"
 import { useState } from "react"
 
 function textNode(text: string, format = 0) {
@@ -97,8 +99,22 @@ export function PublicFootnotesExample() {
           initialState={initialState}
         >
           <EditorToolbar>
-            <EditorHistoryButton action="undo" />
-            <EditorHistoryButton action="redo" />
+            <EditorHistoryButton
+              action="undo"
+              aria-label="Undo"
+              title="Undo"
+              render={<Button variant="ghost" size="icon-sm" />}
+            >
+              <Undo2Icon aria-hidden="true" size={16} />
+            </EditorHistoryButton>
+            <EditorHistoryButton
+              action="redo"
+              aria-label="Redo"
+              title="Redo"
+              render={<Button variant="ghost" size="icon-sm" />}
+            >
+              <Redo2Icon aria-hidden="true" size={16} />
+            </EditorHistoryButton>
             <EditorFootnoteControls />
           </EditorToolbar>
           <EditorFootnoteTypeahead

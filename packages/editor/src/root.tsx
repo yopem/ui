@@ -68,7 +68,7 @@ export function useEditorState() {
   return useSyncExternalStore(
     context.subscribe,
     context.getSnapshot,
-    context.getSnapshot,
+    context.getServerSnapshot,
   )
 }
 

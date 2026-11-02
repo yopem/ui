@@ -53,6 +53,10 @@ except for local HTTP. It must not contain credentials, query strings, or
 fragments. The CLI rejects redirects. See
 [installation](https://ui.yopem.com/docs/installation).
 
+Import `CSPProvider` from `@base-ui/react/csp-provider`. Import
+`DirectionProvider` from `@base-ui/react/direction-provider`. Supply the host
+CSP nonce. Keep the host CSP policy intact.
+
 ## Rich-text editor
 
 The editor uses Lexical, registry UI controls, and StyleX. Install its source
@@ -68,6 +72,22 @@ yarn dlx @yopem-ui/cli add editor
 Use the preset or compose editor parts. Store documents as Lexical JSON, not
 Slate JSON. See the [editor guide](https://ui.yopem.com/docs/editor) for
 supported features. This editor does not yet provide full Plate parity.
+
+The [Potion-style workspace](https://ui.yopem.com/editor/examples/notion-like)
+combines thirteen local pages, slash commands, block actions, and mobile
+navigation. Its navigation and document scroll separately within the viewport.
+Native controls include links, demo mentions, callouts, math, contents, and URL
+images. Demo mention IDs grant no access. The
+[gallery](https://ui.yopem.com/editor/examples#notion-like) includes consumer
+source and installation commands. Public runtime observations guide this
+example. The deployed Potion revision is unknown. Validated document drafts use
+browser storage. Rejected stored bytes stay unchanged. Storage or validation
+failures keep memory editing and active-page JSON copy available. Page switches
+reset undo history. Titles and page options stay in memory. Drafts are
+unencrypted. Scripts on this origin can read them. Browser storage can remove
+drafts. Two tabs can overwrite drafts. No conflict resolution or cloud
+synchronization exists. Do not treat browser drafts as private or durable
+storage. This example includes no account or collaboration service.
 
 Optional server helpers connect existing OpenAuth and Better Auth services. They
 keep document authorization separate from authentication. See

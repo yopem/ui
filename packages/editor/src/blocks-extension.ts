@@ -27,6 +27,7 @@ import type { EditorCalloutAppearance } from "./blocks-model"
 
 import {
   $shouldCopyToggleStructure,
+  $canReplaceEditorBlock,
   $createCalloutNode,
   $createToggleNode,
   $findEditorBlock,
@@ -541,6 +542,8 @@ export const EditorBlocksExtension = defineExtension({
           )
             return false
 
+          if (!$canReplaceEditorBlock(node)) return false
+
           if (node instanceof CalloutNode) {
             const next = $createToggleNode().updateFromJSON(node.exportJSON())
             next.getBody().append(...node.getChildren())
@@ -569,10 +572,7 @@ export const EditorBlocksExtension = defineExtension({
           if (!editor.isEditable()) return false
           const node = selectedBlock()
 
-          if (!node) return false
-          $unwrapEditorBlock(node)
-
-          return true
+          return node ? $unwrapEditorBlock(node) : false
         },
         COMMAND_PRIORITY_EDITOR,
       ),

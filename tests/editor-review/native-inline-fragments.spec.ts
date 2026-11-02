@@ -20,6 +20,23 @@ const boldText = {
   text: "Rich paragraph",
 } as const
 
+test("native review clipboard rejects duplicate decoded keys", () => {
+  const valid = JSON.stringify({ namespace, nodes: [boldText] })
+
+  for (const source of [
+    valid.replace('"namespace":', '"namespace":"other","namespace":'),
+    valid.replace(
+      '"text":"Rich paragraph"',
+      '"text":"old","t\\u0065xt":"Rich paragraph"',
+    ),
+  ]) {
+    expect(parseEditorReviewNativeFragment(source, namespace)).toEqual({
+      status: "rejected",
+      reason: "invalid-fragment",
+    })
+  }
+})
+
 test("native range clipboard preserves a top-level formatted text node", () => {
   expect(parseNodes([boldText])).toEqual({
     status: "validated",

@@ -12,7 +12,7 @@ import {
   CodeNode,
 } from "@lexical/code"
 import { createHeadlessEditor } from "@lexical/headless"
-import { withDOM } from "@lexical/headless/dom"
+import { withDOM } from "@workspace/tests/fixtures/lexical-dom"
 import { afterEach, beforeEach, describe, expect, test } from "bun:test"
 import {
   $createParagraphNode,

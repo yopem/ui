@@ -710,8 +710,13 @@ when required for fidelity. Static and standalone HTML use native MathML.
 Mentions use the validated identity codec. Saved mention identities do not grant
 access. Media JSON and canonical tagged figure HTML retain native metadata.
 Markdown uses canonical HTML for media. Register `MediaExtension` for live
-rendering or `MediaNode` in headless readers. Media URLs cannot contain
-credentials, queries, or fragments. Register optional feature nodes before live
+rendering or `MediaNode` in headless readers. Both native media and the portable
+reader require absolute HTTPS source and track URLs without credentials. The
+portable reader rejects nonempty query or fragment components. It may retain
+empty trailing `?` or `#` on ordinary media and track URLs, subject to other
+checks. Native `MediaNode` JSON and tagged HTML use `parseMedia`. Ordinary media
+and track URLs can contain nonempty queries or fragments there. Provider, tweet,
+and iframe rules can be stricter. Register optional feature nodes before live
 import. Readers retain footnotes, contents, columns, dates, labels, drawings,
 editable cards, and diagram metadata. Optional nodes use canonical HTML
 fallback. Markdown footnote input is supported. Transient card fields are not
@@ -724,26 +729,57 @@ formats.
 
 Install `editor-media` separately. Import parts from
 `@/components/editor/media`. Register `MediaExtension` in a stable root
-extension array. Compose `MediaInsertControl` inside `EditorToolbar`. Mount
+extension array. Compose `MediaInsertControl` inside `EditorToolbar`.
+`MediaInsertControl` and `MediaEditControl` reject literal `?` and `#` in the
+source, including empty delimiters. The insert rule also applies to upload
+results. In URL paths, `%3F` and `%23` are path data. Provider and iframe rules
+can be stricter. The insert control requires a fresh valid range, a connected
+editable root, and a registered `MediaNode`. A null selection can remain while
+its dialog has focus. The control inserts after the ordered selection-end root
+child or at the exact root gap. It keeps selected content, list and table
+structure, and empty target blocks. It adds an empty paragraph and selects the
+media node. `$insertMedia` uses Lexical nearest-root insertion on the current
+range. `MediaFileClipboard` restores its saved range and calls `$insertMedia`.
+Its drop range comes from the drop position. These paths use `parseMedia`, not
+the control delimiter rule. They do not promise the control placement or
+preservation behavior. Clipboard completion requires an unchanged non-null
+range. The insert control and clipboard insertion request `HISTORY_PUSH_TAG`.
+Media action changes and removal also request it. This tag does not guarantee
+exact undo grouping. The standalone helper adds no history tag or saved-target
+lease. Its caller owns the update, selection, and history policy. Mount
 `MediaFileClipboard` inside `EditorRoot` with a stable host upload callback. It
 handles one file per paste or drop. Without upload, it registers nothing. Rich
 MIME and higher-priority host handlers stay first. Callback changes cancel
-pending work. Moving the caret cancels pending insertion. Host callbacks enforce
+pending work. Moving the caret cancels pending insertion. Each mounted
+`MediaInsertControl` instance keeps its upload slot until its callback settles.
+Separate instances and remounts do not share that slot. The placeholder
+controller keeps its own busy slot until settlement. `MediaFileClipboard` does
+not retain an equivalent slot after cancellation. Calling `start` on the same
+`createMediaUpload` task can supersede an unsettled call. Earlier callbacks can
+continue. Enforce remote upload concurrency and retry policy in the host.
+Cancellation does not prove that remote work stopped. Host callbacks enforce
 size, content, authorization, and quota limits. `MediaContent` and image preview
 parts work without `EditorRoot`. Compose `MediaPreviewRoot`,
 `MediaPreviewTrigger`, and `MediaPreviewDialog`, or use `MediaPreviewGallery`.
 Supply unique image IDs. Zoom stays local. Use the house Slider and ScrollArea
 controls for keyboard zoom and scrolling. `MediaEmbedContent` needs an explicit
 provider or exact HTTPS-origin policy. Frames need user consent. Source, policy,
-and disabled changes discard consent. Tweet embeds use the fixed
-platform.twitter.com endpoint. HTML exports keep inert links. Origin validation
-does not check DNS or redirects. Keep these controls in the host. Use HTTPS URLs
-without credentials. Supply alt text and captions for your content. Keep native
-playback, file links, and iframe controls usable in read-only roots. Supply
-bounded, abort-aware host uploads with server authorization and validation.
-Private assets need explicit same-origin delivery integration. Never put tokens
-in media URLs. Register `MediaNode` in document readers. Do not flatten
-unsupported media during conversion.
+and disabled changes discard consent. Frame consent does not cover images,
+video, audio, or caption tracks. Images can request their URLs when rendered.
+Native media and tracks can make network requests. Preload settings do not
+guarantee network privacy. Successful uploads retain the file name and URL.
+Media JSON and tagged HTML can include URLs, names, alt text, and captions.
+Account for this data in host delivery, CSP, logs, clipboard, and storage
+policies. Tweet embeds use the fixed platform.twitter.com endpoint. HTML exports
+keep inert links. Origin validation does not check DNS or redirects. Keep these
+controls in the host. Use absolute HTTPS source and track URLs without
+credentials. See the optional editor document section for portable reader URL
+limits. Supply alt text and captions for your content. Keep native playback,
+file links, and iframe controls usable in read-only roots. Supply bounded,
+abort-aware host uploads with server authorization and validation. Private
+assets need explicit same-origin delivery integration. Never put tokens in media
+URLs. Register `MediaNode` in document readers. Do not flatten unsupported media
+during conversion.
 
 ## Optional footnotes and table of contents
 
@@ -848,13 +884,17 @@ this API. S3 fetches receive cancellation signals.
 
 Install `editor-block-selection` separately. Create one stable controller with
 `createEditorBlockSelection`. Compose `EditorBlockSelection` inside
-`EditorRoot`. Use the gutter and actions for keyboard selection and movement.
-Use drag handles for pointer movement. Keep keyboard movement available. Require
-synchronous literal `true` from `authorizeCut` before native cut. Preserve
-native MIME handlers and higher-priority host cancellation. Require literal
-`true` from custom document validation. Content, selection, and read-only
-changes expire saved operations. Authorize persisted document writes separately.
-Import parts from `@/components/editor/block-selection-index`.
+`EditorRoot`. Keep the wrapper mounted without a gutter. Use `onKeyDown` for
+host Escape cancellation. Forward wrapper refs and `onKeyDownCapture` through
+custom render elements. Same-document React portals retain wrapper ownership.
+Keep native composition and unowned Escape behavior. Use the gutter and actions
+for keyboard selection and movement. Use drag handles for pointer movement. Keep
+keyboard movement available. Require synchronous literal `true` from
+`authorizeCut` before native cut. Preserve native MIME handlers and
+higher-priority host cancellation. Require literal `true` from custom document
+validation. Content, selection, and read-only changes expire saved operations.
+Authorize persisted document writes separately. Import parts from
+`@/components/editor/block-selection-index`.
 
 ## Optional CSV paste
 

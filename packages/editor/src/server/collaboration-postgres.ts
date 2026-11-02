@@ -3,6 +3,7 @@ import { z } from "zod"
 import type { EditorIdentity } from "./auth"
 
 import { candidateState, CollaborationError } from "./collaboration/protocol"
+import { boundedState, DocumentError } from "./document-model"
 
 export type CollaborationQuery = (
   text: string,
@@ -131,6 +132,7 @@ export function createPostgresCollaborationLog(config: CollaborationLogConfig) {
       query: CollaborationQuery,
       authorize: () => Promise<void>,
       signal: AbortSignal,
+      check: () => void,
     ) => Promise<T>,
   ) {
     if (
@@ -222,7 +224,7 @@ export function createPostgresCollaborationLog(config: CollaborationLogConfig) {
             return rows
           }
 
-          const result = await work(guardedQuery, authorize, signal)
+          const result = await work(guardedQuery, authorize, signal, check)
           check()
 
           return result
@@ -325,7 +327,7 @@ export function createPostgresCollaborationLog(config: CollaborationLogConfig) {
         context,
         "document:write",
         true,
-        async function initializeSnapshot(query, authorize, signal) {
+        async function initializeSnapshot(query, authorize, signal, check) {
           const row = await canonical(query, input.documentId)
 
           if (
@@ -336,6 +338,19 @@ export function createPostgresCollaborationLog(config: CollaborationLogConfig) {
             BigInt(row.revision) >= maxRevision
           )
             throw new CollaborationError("conflict")
+
+          try {
+            boundedState(row.state_json, row.schema_version, () => true)
+          } catch (error) {
+            check()
+            throw new CollaborationError(
+              error instanceof DocumentError && error.code === "budget"
+                ? "budget"
+                : "invalid",
+            )
+          }
+
+          check()
 
           const bytes = await input.initialize({
             state: row.state_json,

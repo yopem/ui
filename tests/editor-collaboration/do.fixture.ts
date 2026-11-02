@@ -119,7 +119,13 @@ export class Room {
         await env.DB.prepare(
           "UPDATE editor_documents SET revision=revision+1,state_json=? WHERE document_id=?",
         )
-          .bind(JSON.stringify({ fixtureText: "new saved" }), documentId)
+          .bind(
+            JSON.stringify({
+              root: { type: "root", children: [] },
+              fixtureText: "new saved",
+            }),
+            documentId,
+          )
           .run()
 
       if (action?.action === "delete")
@@ -135,7 +141,10 @@ export class Room {
         )
           .bind(
             "d".repeat(64),
-            JSON.stringify({ fixtureText: "new generation" }),
+            JSON.stringify({
+              root: { type: "root", children: [] },
+              fixtureText: "new generation",
+            }),
             documentId,
           )
           .run()
@@ -206,8 +215,28 @@ export class Room {
         return Promise.resolve(token === "fixture-csrf")
       },
       async initialize({ state, schemaVersion, documentId }) {
+        const ignore = await env.DB.prepare(
+          "SELECT action FROM fixture_faults WHERE document_id=? AND phase='ignore-snapshot'",
+        )
+          .bind(documentId)
+          .first<{ action: string }>()
+
+        if (ignore) {
+          await env.DB.prepare(
+            "DELETE FROM fixture_faults WHERE document_id=? AND phase='ignore-snapshot'",
+          )
+            .bind(documentId)
+            .run()
+          const doc = new Y.Doc()
+          doc.getText("text").insert(0, "ignored")
+          const result = Y.encodeStateAsUpdate(doc)
+          doc.destroy()
+
+          return result
+        }
+
         const parsed = z
-          .strictObject({ fixtureText: z.string().max(1024) })
+          .object({ fixtureText: z.string().max(1024) })
           .parse(JSON.parse(state))
 
         if (schemaVersion !== 1) throw new Error("unsupported fixture snapshot")

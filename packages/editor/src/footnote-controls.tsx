@@ -5,7 +5,6 @@ import type { Dispatch, MouseEvent, ReactNode, SetStateAction } from "react"
 
 import { useStableCallback } from "@base-ui/utils/useStableCallback"
 import { Button } from "@registry/components/ui/button"
-import { HStack } from "@registry/components/ui/hstack"
 import {
   Popover,
   PopoverPopup,
@@ -14,8 +13,10 @@ import {
 } from "@registry/components/ui/popover"
 import { Stack } from "@registry/components/ui/stack"
 import { Text } from "@registry/components/ui/text"
+import { Wrap } from "@registry/components/ui/wrap"
 import { $createNodeSelection, $getNodeByKey, $setSelection } from "lexical"
 import { useState, useSyncExternalStore } from "react"
+import { flushSync } from "react-dom"
 
 import {
   INSERT_EDITOR_FOOTNOTE_COMMAND,
@@ -49,23 +50,28 @@ function preventEditorFootnoteMouseDown(event: MouseEvent<HTMLButtonElement>) {
 function focusReference(editor: LexicalEditor, key: NodeKey) {
   const element = editor.getElementByKey(key)
 
+  if (!element) return
+
   if (!editor.isEditable()) {
-    element?.focus()
-    element?.scrollIntoView({ block: "nearest" })
+    element.focus()
+    element.scrollIntoView({ block: "nearest" })
 
     return
   }
 
-  editor.update(() => {
-    const node = $getNodeByKey(key)
+  editor.getRootElement()?.focus({ preventScroll: true })
+  editor.update(
+    () => {
+      const node = $getNodeByKey(key)
 
-    if (!(node instanceof EditorFootnoteReferenceNode)) return
-    const selection = $createNodeSelection()
-    selection.add(node.getKey())
-    $setSelection(selection)
-  })
-  element?.scrollIntoView({ block: "nearest" })
-  editor.focus()
+      if (!(node instanceof EditorFootnoteReferenceNode)) return
+      const selection = $createNodeSelection()
+      selection.add(node.getKey())
+      $setSelection(selection)
+    },
+    { discrete: true },
+  )
+  element.scrollIntoView({ block: "nearest" })
 }
 
 export function EditorFootnoteBacklinks() {
@@ -89,12 +95,13 @@ export function EditorFootnoteBacklinks() {
             variant="ghost"
             size="sm"
             data-slot="editor-footnote-backlinks"
+            aria-label="Footnote backlinks"
           />
         }
         aria-expanded={open}
         onMouseDown={preventEditorFootnoteMouseDown}
       >
-        Footnote backlinks
+        Backlinks
       </PopoverTrigger>
       <PopoverPopup
         aria-label="Footnote backlinks"
@@ -133,9 +140,12 @@ function EditorFootnoteBacklink({
   referenceIndex: number
   setOpen: Dispatch<SetStateAction<boolean>>
 }) {
-  const activate = useStableCallback(function activate() {
+  const activate = useStableCallback(function activate(
+    event: MouseEvent<HTMLButtonElement>,
+  ) {
+    if (event.defaultPrevented) return
+    flushSync(() => setOpen(false))
     focusReference(editor, referenceKey)
-    setOpen(false)
   })
 
   return (
@@ -211,11 +221,12 @@ export function EditorFootnoteRenumberControl() {
       variant="ghost"
       size="sm"
       data-slot="editor-footnote-renumber-control"
+      aria-label="Renumber duplicate definition"
       disabled={!state.editable || !duplicate || !selected}
       onMouseDown={preventEditorFootnoteMouseDown}
       onClick={renumber}
     >
-      Renumber duplicate definition
+      Renumber
     </Button>
   )
 }
@@ -234,11 +245,12 @@ export function EditorFootnoteRemoveControl() {
       variant="ghost"
       size="sm"
       data-slot="editor-footnote-remove-control"
+      aria-label="Remove selected footnote part"
       disabled={!state.editable || !selected}
       onMouseDown={preventEditorFootnoteMouseDown}
       onClick={remove}
     >
-      Remove selected footnote part
+      Remove
     </Button>
   )
 }
@@ -251,12 +263,12 @@ export function EditorFootnoteControls({
   children,
 }: EditorFootnoteControlsProps) {
   return (
-    <HStack data-slot="editor-footnote-controls">
+    <Wrap data-slot="editor-footnote-controls">
       <EditorFootnoteInsertControl />
       <EditorFootnoteRemoveControl />
       <EditorFootnoteRenumberControl />
       <EditorFootnoteBacklinks />
       {children}
-    </HStack>
+    </Wrap>
   )
 }

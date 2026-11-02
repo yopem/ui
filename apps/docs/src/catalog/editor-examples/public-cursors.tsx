@@ -21,6 +21,7 @@ import {
 } from "@yopem-ui/editor"
 import { validateEditorAiConfig } from "@yopem-ui/editor/ai/client"
 import { EditorCursorOverlay } from "@yopem-ui/editor/cursor-overlay"
+import { Redo2Icon, Undo2Icon } from "lucide-react"
 import { useId, useReducer, useRef, useState } from "react"
 
 const initialState = JSON.stringify({
@@ -182,8 +183,22 @@ export function PublicCursorsExample() {
         initialState={initialState}
       >
         <EditorToolbar aria-label="Editor controls">
-          <EditorHistoryButton action="undo" />
-          <EditorHistoryButton action="redo" />
+          <EditorHistoryButton
+            action="undo"
+            aria-label="Undo"
+            title="Undo"
+            render={<Button variant="ghost" size="icon-sm" />}
+          >
+            <Undo2Icon aria-hidden="true" size={16} />
+          </EditorHistoryButton>
+          <EditorHistoryButton
+            action="redo"
+            aria-label="Redo"
+            title="Redo"
+            render={<Button variant="ghost" size="icon-sm" />}
+          >
+            <Redo2Icon aria-hidden="true" size={16} />
+          </EditorHistoryButton>
           <Button variant="outline" type="button">
             Focused toolbar control
           </Button>

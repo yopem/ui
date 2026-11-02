@@ -157,6 +157,19 @@ export function PrintableEditor() {
     </EditorRoot>
   )
 }`,
+  "editor-document-export-pdf": `"use client"
+
+import { EditorContent, EditorRoot } from "@/components/editor"
+import { EditorDocumentPDFExportControl, type EditorDocumentPDFExportControlProps } from "@/components/editor/document-export-pdf"
+
+export function DocumentPdfEditor({ capture }: Pick<EditorDocumentPDFExportControlProps, "capture">) {
+  return (
+    <EditorRoot ariaLabel="PDF export document">
+      <EditorContent />
+      <EditorDocumentPDFExportControl capture={capture} />
+    </EditorRoot>
+  )
+}`,
   "editor-document-export-image": `"use client"
 
 import { EditorContent, EditorRoot } from "@/components/editor"
@@ -186,15 +199,22 @@ export function WordEditor() {
 }`,
   "editor-labels": `"use client"
 
-import { EditorLabelsPicker } from "@/components/editor/labels"
-import { useState } from "react"
+import { EditorContent, EditorRoot } from "@/components/editor"
+import {
+  createEditorLabelsExtension,
+  EditorLabelsSelect,
+} from "@/components/editor/labels"
 
 const options = ["Editor", "Dialog", "Form"]
+const extensions = [createEditorLabelsExtension(options)]
 
 export function LabelOptionsExample() {
-  const [value, setValue] = useState<readonly string[]>([])
-
-  return <EditorLabelsPicker aria-label="Available labels" options={options} value={value} onValueChange={setValue} />
+  return (
+    <EditorRoot ariaLabel="Label document" extensions={extensions}>
+      <EditorLabelsSelect options={options} name="labels" />
+      <EditorContent />
+    </EditorRoot>
+  )
 }
 `,
   "editor-autoformat": `"use client"
@@ -274,10 +294,25 @@ export function CursorEditor() {
   )
 }`,
 
+  "editor-toolbar-menus": `"use client"
+
+import { EditorContent, EditorRoot } from "@/components/editor"
+import { EditorFixedToolbar, EditorFixedToolbarButtons } from "@/components/editor/toolbar-menus"
+
+export function ToolbarMenuEditor() {
+  return (
+    <EditorRoot ariaLabel="Toolbar menu document">
+      <EditorFixedToolbar aria-label="Document controls">
+        <EditorFixedToolbarButtons />
+      </EditorFixedToolbar>
+      <EditorContent />
+    </EditorRoot>
+  )
+}`,
   "editor-floating-toolbar": `"use client"
 
-import { EditorRoot, EditorContent, EditorFormatButton } from "@/components/editor"
-import { EditorFloatingToolbar } from "@/components/editor/floating-toolbar"
+import { EditorRoot, EditorContent, EditorFormatButton, EditorLinkControl } from "@/components/editor"
+import { EditorFloatingToolbar, EditorLinkFloatingToolbar } from "@/components/editor/floating-toolbar"
 
 export function FloatingEditorExample() {
   return (
@@ -285,7 +320,9 @@ export function FloatingEditorExample() {
       <EditorFloatingToolbar aria-label="Text formatting">
         <EditorFormatButton format="bold" />
         <EditorFormatButton format="italic" />
+        <EditorLinkControl />
       </EditorFloatingToolbar>
+      <EditorLinkFloatingToolbar />
       <EditorContent />
     </EditorRoot>
   )
@@ -382,10 +419,44 @@ import { prettierEditorCodeFormatter } from "@/components/editor/code-format"
 export function FormattedCodeEditor() {
   return <EditorCode formatter={prettierEditorCodeFormatter} />
 }`,
+  "editor-media-placeholder": `"use client"
+
+import { useState } from "react"
+
+import { EditorContent, EditorRoot, EditorToolbar } from "@/components/editor"
+import { MediaExtension } from "@/components/editor/media"
+import {
+  createMediaPlaceholderExtension,
+  MediaPlaceholderInsertButton,
+  MediaUploadNotification,
+  type EditorMediaPlaceholderController,
+} from "@/components/editor/media-placeholder"
+
+export function MediaPlaceholderEditor({ controller }: { controller: EditorMediaPlaceholderController }) {
+  const [extensions] = useState(() => [MediaExtension, createMediaPlaceholderExtension(controller)])
+
+  return (
+    <EditorRoot ariaLabel="Media placeholder document" extensions={extensions}>
+      <EditorToolbar aria-label="Upload controls">
+        <MediaPlaceholderInsertButton controller={controller} kind="image" />
+      </EditorToolbar>
+      <EditorContent />
+      <MediaUploadNotification controller={controller} />
+    </EditorRoot>
+  )
+}`,
   "editor-media": `"use client"
 
 import { EditorContent, EditorRoot, EditorToolbar } from "@/components/editor"
-import { MediaExtension, MediaInsertControl } from "@/components/editor/media"
+import {
+  MediaActions,
+  MediaCaptionTextarea,
+  MediaEditControl,
+  MediaExtension,
+  MediaImageResize,
+  MediaInsertControl,
+} from "@/components/editor/media"
+import { Field, FieldLabel } from "@/components/ui/field"
 
 const extensions = [MediaExtension]
 
@@ -400,25 +471,35 @@ export function MediaEditor() {
         <MediaInsertControl kind="embed" />
       </EditorToolbar>
       <EditorContent />
+      <MediaActions>
+        <MediaEditControl />
+        <Field>
+          <FieldLabel>Caption</FieldLabel>
+          <MediaCaptionTextarea />
+        </Field>
+        <MediaImageResize />
+      </MediaActions>
     </EditorRoot>
   )
 }`,
   "editor-footnotes": `"use client"
 
+import { useState } from "react"
 import { EditorRoot, EditorToolbar } from "@/components/editor"
 import {
+  createEditorFootnoteTypeahead,
   EditorFootnoteControls,
-  EditorFootnoteExtension,
   EditorFootnoteTypeahead,
 } from "@/components/editor/footnote"
 
-const extensions = [EditorFootnoteExtension]
-
 export function FootnoteEditor() {
+  const [controller] = useState(() => createEditorFootnoteTypeahead())
+  const [extensions] = useState(() => [controller.extension])
+
   return (
     <EditorRoot extensions={extensions} ariaLabel="Footnote editor">
       <EditorToolbar aria-label="Footnote controls"><EditorFootnoteControls /></EditorToolbar>
-      <EditorFootnoteTypeahead />
+      <EditorFootnoteTypeahead controller={controller} />
     </EditorRoot>
   )
 }`,

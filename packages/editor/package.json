@@ -29,6 +29,7 @@
     "./math-node": "./src/math-node.ts",
     "./math-controls": "./src/math-controls.tsx",
     "./math/model": "./src/math-model.ts",
+    "./json-duplicates": "./src/json-duplicates.ts",
     "./document": "./src/document/index.ts",
     "./document/static": "./src/document/static.tsx",
     "./block-presentation-extension": "./src/block-presentation-extension.ts",
@@ -42,6 +43,9 @@
     "./date/model": "./src/date-model.ts",
     "./date-model": "./src/date-model.ts",
     "./media": "./src/media.ts",
+    "./media-placeholder": "./src/media-placeholder.tsx",
+    "./media-placeholder-model": "./src/media-placeholder-model.ts",
+    "./media-placeholder-node": "./src/media-placeholder-node.ts",
     "./media/schema": "./src/media/schema.ts",
     "./media/html": "./src/media/html.ts",
     "./media/model": "./src/media/model.ts",
@@ -78,6 +82,7 @@
     "./search": "./src/search.tsx",
     "./search-model": "./src/search-model.ts",
     "./floating-toolbar": "./src/floating-toolbar.tsx",
+    "./toolbar-menus": "./src/toolbar-menus.tsx",
     "./editing-rules": "./src/editing-rules.ts",
     "./block-placeholder": "./src/block-placeholder.tsx",
     "./autoformat": "./src/autoformat.ts",
@@ -118,6 +123,7 @@
     "./media-preview": "./src/media-preview.tsx",
     "./media-embed": "./src/media-embed.tsx",
     "./document-export": "./src/document-export.tsx",
+    "./document-export-pdf": "./src/document-export-pdf.tsx",
     "./document-export-html-to-image": "./src/document-export-html-to-image.ts"
   },
   "scripts": {

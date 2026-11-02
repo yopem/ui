@@ -24,6 +24,7 @@ import {
   parseEditorFootnoteReferenceNode,
   validateEditorFootnotesJSON,
 } from "@yopem-ui/editor/footnote-model"
+import { scanDocumentJSON } from "@yopem-ui/editor/json-duplicates"
 import {
   editorLabelNodeSchema,
   EDITOR_LABEL_MAX_COUNT,
@@ -34,6 +35,11 @@ import {
   isEditorListMarkerForType,
 } from "@yopem-ui/editor/list-presentation/model"
 import { editorMathNodeSchema } from "@yopem-ui/editor/math-model"
+import {
+  MEDIA_PLACEHOLDER_LIMIT,
+  mediaPlaceholderKindSchema,
+  mediaPlaceholderNodeSchema,
+} from "@yopem-ui/editor/media-placeholder-model"
 import { mentionNodeSchema } from "@yopem-ui/editor/mention-codec"
 import {
   tablePresentationDocumentSchema,
@@ -49,8 +55,11 @@ import {
   $getEditor,
   $getRoot,
   $getSelection,
+  $getSlot,
+  $getSlotNames,
   $hasUpdateTag,
   $isElementNode,
+  $isParagraphNode,
   configExtension,
   defineExtension,
   COMMAND_PRIORITY_LOW,
@@ -65,6 +74,7 @@ import {
   checkTree,
   DocumentError,
   documentLimits,
+  documentSlotNameSchema,
   parseHTML,
   parseHTMLSyntax,
   safeDocumentStyle,
@@ -120,6 +130,7 @@ const nativeFormatSchema = z.union([
 const nodeSchema = z.strictObject({
   type: z.enum([
     "yopem-media",
+    "editor-media-placeholder",
     "editor-math",
     "mention",
     "editor-callout",
@@ -157,6 +168,7 @@ const nodeSchema = z.strictObject({
   tex: z.string().optional(),
   identity: z.unknown().optional(),
   media: z.unknown().optional(),
+  uploadKind: mediaPlaceholderKindSchema.optional(),
   identifier: editorFootnoteIdSchema.optional(),
   layout: z.array(z.number().int().min(12).max(76)).min(2).max(4).optional(),
   label: z.string().optional(),
@@ -219,6 +231,7 @@ type SerializedDocumentNode = z.infer<typeof nodeSchema>
 
 const leafTypes = new Set<SerializedDocumentNode["type"]>([
   "yopem-media",
+  "editor-media-placeholder",
   "text",
   "tab",
   "code-highlight",
@@ -235,6 +248,7 @@ const leafTypes = new Set<SerializedDocumentNode["type"]>([
 ])
 
 const slotlessTypes = new Set<SerializedDocumentNode["type"]>([
+  "editor-media-placeholder",
   "text",
   "tab",
   "code-highlight",
@@ -277,6 +291,7 @@ const nodeFields = new Map(
     code: [...elementFields, "language"],
     "editor-math": ["kind", "tex"],
     "yopem-media": ["media"],
+    "editor-media-placeholder": ["uploadKind"],
     "editor-footnote-reference": ["identifier"],
     "editor-footnote-definition": [...elementFields, "identifier"],
     "editor-toc": [],
@@ -324,6 +339,16 @@ function serializedText(node: SerializedDocumentNode): string {
     .join("")
 }
 
+function checkDocumentJSONKeys(source: string) {
+  const result = scanDocumentJSON(source, documentLimits.depth)
+
+  if (result === "duplicate")
+    throw new DocumentError(["Duplicate document JSON key."])
+
+  if (result === "depth")
+    throw new DocumentError(["Document exceeds depth limit."])
+}
+
 function validateJSON(source: string) {
   checkText(source)
   let parsed: unknown
@@ -335,6 +360,7 @@ function validateJSON(source: string) {
   }
 
   checkTree(parsed)
+  checkDocumentJSONKeys(source)
 
   try {
     validateEditorBlocksJSON(z.object({ root: z.unknown() }).parse(parsed))
@@ -354,13 +380,22 @@ function validateJSON(source: string) {
 
   let tableSlots = 0
   let labelCount = 0
+  let placeholderCount = 0
   const labels = new Set<string>()
   const optionalTypes = new Set<string>()
 
-  const pendingNodes = [document.data.root]
+  const pendingNodes = [{ value: document.data.root, depth: 0, inSlot: false }]
+  let nodeCount = 0
 
   while (pendingNodes.length) {
-    const result = nodeSchema.safeParse(pendingNodes.pop())
+    const entry = pendingNodes.pop()
+
+    if (!entry) break
+
+    if (++nodeCount > 10000 || entry.depth > 64)
+      throw new DocumentError(["Document exceeds editor block limits."])
+
+    const result = nodeSchema.safeParse(entry.value)
 
     if (!result.success)
       throw new DocumentError([
@@ -369,6 +404,17 @@ function validateJSON(source: string) {
 
     const node = result.data
     optionalTypes.add(node.type)
+
+    if (
+      entry.inSlot &&
+      (node.type === "editor-callout" ||
+        node.type.startsWith("editor-toggle") ||
+        node.type === "editor-columns-group" ||
+        node.type === "editor-column" ||
+        node.type === "editor-footnote-definition" ||
+        node.type === "editor-media-placeholder")
+    )
+      throw new DocumentError(["Unsupported document node inside a slot."])
 
     const allowed = new Set([
       "type",
@@ -460,6 +506,15 @@ function validateJSON(source: string) {
     if (node.type === "mention") mentionNodeSchema.parse(node)
 
     if (node.type === "yopem-media") documentMediaSchema.parse(node.media)
+
+    if (node.type === "editor-media-placeholder") {
+      mediaPlaceholderNodeSchema.parse(node)
+
+      if (++placeholderCount > MEDIA_PLACEHOLDER_LIMIT)
+        throw new DocumentError([
+          "Document exceeds the media placeholder limit.",
+        ])
+    }
 
     if (node.type === "editor-footnote-reference")
       parseEditorFootnoteReferenceNode(node)
@@ -558,6 +613,10 @@ function validateJSON(source: string) {
     if (node.backgroundColor)
       safeDocumentStyle(`background-color: ${node.backgroundColor}`)
 
+    for (const name of Object.keys(node.$slots ?? {}))
+      if (!documentSlotNameSchema.safeParse(name).success)
+        throw new DocumentError(["Invalid document slot name."])
+
     const slotValues = Object.values(node.$slots ?? {})
 
     if (slotValues.length > 0 && slotlessTypes.has(node.type))
@@ -565,6 +624,14 @@ function validateJSON(source: string) {
 
     for (const child of node.children ?? []) {
       const parsedChild = nodeSchema.parse(child)
+
+      if (
+        parsedChild.type === "editor-media-placeholder" &&
+        node.type !== "root"
+      )
+        throw new DocumentError([
+          "Media placeholders require the document root.",
+        ])
 
       if (
         ["yopem-media", "horizontalrule"].includes(parsedChild.type) &&
@@ -580,10 +647,15 @@ function validateJSON(source: string) {
         ].includes(node.type)
       )
         throw new DocumentError(["Media and rules require a block container."])
-      pendingNodes.push(child)
+      pendingNodes.push({
+        value: child,
+        depth: entry.depth + 1,
+        inSlot: entry.inSlot,
+      })
     }
 
-    for (const slot of slotValues) pendingNodes.push(slot)
+    for (const slot of slotValues)
+      pendingNodes.push({ value: slot, depth: entry.depth + 1, inSlot: true })
   }
 
   if (nodeSchema.parse(document.data.root).type !== "root")
@@ -638,6 +710,27 @@ function validateJSON(source: string) {
   return source
 }
 
+const jsonValueSchema = z.json()
+
+const jsonObjectSchema = z.record(z.string(), z.json())
+
+function canonicalJSON(value: z.infer<typeof jsonValueSchema>) {
+  return JSON.stringify(
+    value,
+    (_key, item: z.infer<typeof jsonValueSchema>) => {
+      const object = jsonObjectSchema.safeParse(item)
+
+      return object.success
+        ? Object.fromEntries(
+            Object.entries(object.data).toSorted(([left], [right]) =>
+              left < right ? -1 : left > right ? 1 : 0,
+            ),
+          )
+        : item
+    },
+  )
+}
+
 function checkRetainedJSON(
   expected: z.infer<typeof nodeSchema>,
   actual: z.infer<typeof nodeSchema>,
@@ -647,7 +740,10 @@ function checkRetainedJSON(
   for (const [key, value] of Object.entries(expected)) {
     if (
       key !== "children" &&
-      JSON.stringify(value) !== JSON.stringify(output.get(key))
+      key !== "$slots" &&
+      (!output.has(key) ||
+        canonicalJSON(jsonValueSchema.parse(value)) !==
+          canonicalJSON(jsonValueSchema.parse(output.get(key))))
     )
       throw new DocumentError([
         `Native JSON field cannot be retained: ${expected.type}.${key}.`,
@@ -661,6 +757,22 @@ function checkRetainedJSON(
     checkRetainedJSON(
       nodeSchema.parse(child),
       nodeSchema.parse(actual.children?.[index]),
+    )
+
+  const expectedSlots = Object.keys(expected.$slots ?? {})
+  const actualSlots = Object.keys(actual.$slots ?? {})
+
+  if (
+    (expected.$slots !== undefined && actual.$slots === undefined) ||
+    expectedSlots.length !== actualSlots.length ||
+    expectedSlots.some((name) => !Object.hasOwn(actual.$slots ?? {}, name))
+  )
+    throw new DocumentError(["Native JSON slots cannot be retained."])
+
+  for (const name of expectedSlots)
+    checkRetainedJSON(
+      nodeSchema.parse(expected.$slots?.[name]),
+      nodeSchema.parse(actual.$slots?.[name]),
     )
 }
 
@@ -742,26 +854,79 @@ export function importDocument(
   editor.setEditorState(state, { tag: HISTORY_PUSH_TAG })
 }
 
-export function exportDocument(editor: LexicalEditor, format: DocumentFormat) {
-  return editor.read(() => {
-    const pending: LexicalNode[] = [$getRoot()]
+function $preflightExportTree() {
+  const pending: { node: LexicalNode; depth: number }[] = [
+    { node: $getRoot(), depth: 0 },
+  ]
 
-    while (pending.length) {
-      const node = pending.pop()
+  const visited = new Set<string>()
+  let hasParagraphSlots = false
 
-      if (!$isElementNode(node)) continue
+  while (pending.length) {
+    const entry = pending.pop()
 
+    if (!entry) break
+    const { node, depth } = entry
+    const key = node.getKey()
+
+    if (depth > 64 || visited.has(key) || visited.size >= 10000)
+      throw new DocumentError(["Document exceeds editor block limits."])
+    visited.add(key)
+
+    const childCount = $isElementNode(node) ? node.getChildrenSize() : 0
+    const names = $getSlotNames(node)
+
+    if ($isParagraphNode(node) && names.length) hasParagraphSlots = true
+
+    if (visited.size + pending.length + childCount + names.length > 10000)
+      throw new DocumentError(["Document exceeds editor block limits."])
+
+    if ($isElementNode(node)) {
       if (node.getStyle())
         throw new DocumentError([
           "Unpersisted native element style cannot be exported.",
         ])
-      pending.push(...node.getChildren())
+
+      for (const child of node.getChildren())
+        pending.push({ node: child, depth: depth + 1 })
     }
 
+    for (const name of names) {
+      const slot = $getSlot(node, name)
+
+      if (!slot)
+        throw new DocumentError(["Document slot needs one block node."])
+      pending.push({ node: slot, depth: depth + 1 })
+    }
+  }
+
+  return hasParagraphSlots
+}
+
+function $checkPortableRootMetadata() {
+  const root = $getRoot()
+
+  if (
+    root.getFormat() !== 0 ||
+    root.getDirection() !== null ||
+    root.getIndent() !== 0
+  )
+    throw new DocumentError(["Portable export cannot retain root metadata."])
+}
+
+export function exportDocument(editor: LexicalEditor, format: DocumentFormat) {
+  return editor.read(() => {
+    const hasParagraphSlots = $preflightExportTree()
     const json = validateJSON(JSON.stringify(editor.getEditorState().toJSON()))
 
     if (format === "json") return json
 
+    $checkPortableRootMetadata()
+
+    if (hasParagraphSlots)
+      throw new DocumentError([
+        "Portable export cannot retain paragraph slots.",
+      ])
     const tree = validateHTMLTree($exportTree(format === "markdown"))
 
     const output = format === "html" ? treeHTML(tree) : treeMarkdown(tree)
@@ -862,7 +1027,14 @@ export function htmlDocument(editor: LexicalEditor, title = "Document") {
 
   const tree = typesetDocumentTree(
     editor.read(() => {
+      const hasParagraphSlots = $preflightExportTree()
       validateJSON(JSON.stringify(editor.getEditorState().toJSON()))
+      $checkPortableRootMetadata()
+
+      if (hasParagraphSlots)
+        throw new DocumentError([
+          "Portable export cannot retain paragraph slots.",
+        ])
 
       return validateHTMLTree($exportTree())
     }),
@@ -1054,7 +1226,10 @@ function validatePasteTarget(
     if (klass && !editor.hasNode(klass))
       throw new DocumentError([`Unsupported target node: ${node.type}.`])
 
-    for (const child of node.children ?? [])
+    for (const child of [
+      ...(node.children ?? []),
+      ...Object.values(node.$slots ?? {}),
+    ])
       pending.push(nodeSchema.parse(child))
   }
 
@@ -1078,6 +1253,9 @@ function rejectUntrustedReviewState(
     const node = pending.pop()
 
     if (!node) continue
+
+    if (Object.keys(node.$slots ?? {}).length)
+      throw new DocumentError(["Markdown fragments cannot contain slots."])
 
     if (
       node.$?.yopemReview !== undefined ||
@@ -1137,7 +1315,7 @@ function $importDocumentJSON(
   const editor = $getEditor()
   const registration = pasteRegistrations.get(editor)
 
-  if (!registration || !$hasUpdateTag(PASTE_TAG)) return next()
+  if (!registration) return next()
 
   if (!editor.isEditable()) return true
 
@@ -1145,6 +1323,7 @@ function $importDocumentJSON(
     checkText(data)
     const input: unknown = JSON.parse(data)
     checkTree(input)
+    checkDocumentJSONKeys(data)
 
     const payload = z
       .strictObject({
@@ -1219,7 +1398,7 @@ function $importDocumentJSON(
         : new DocumentError(["Invalid clipboard JSON."]),
     )
 
-    return false
+    return true
   }
 
   return next()
@@ -1315,8 +1494,7 @@ function $importDocumentText(
 ) {
   const registration = pasteRegistrations.get($getEditor())
 
-  if ($hasUpdateTag(PASTE_TAG) && registration?.rejected.has(dataTransfer))
-    return true
+  if (registration?.rejected.has(dataTransfer)) return true
 
   if (allowMarkdown && registration?.markdown && $hasUpdateTag(PASTE_TAG))
     return $importDocumentMarkdown(data, selection, next)

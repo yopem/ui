@@ -126,7 +126,7 @@ export function createMediaExtension(options: MediaExtensionOptions = {}) {
       }
 
       function remove(event: KeyboardEvent | null) {
-        if (!editor.isEditable()) return false
+        if (event?.defaultPrevented || !editor.isEditable()) return false
         const selection = $getSelection()
 
         if (!$isNodeSelection(selection)) return false

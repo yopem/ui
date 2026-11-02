@@ -169,6 +169,33 @@ import {
   RootNode,
 } from "lexical"
 import {
+  AlignCenterIcon,
+  AlignLeftIcon,
+  AlignRightIcon,
+  BoldIcon,
+  ChevronRightIcon,
+  ChevronsUpDownIcon,
+  FileCode2Icon,
+  Heading1Icon,
+  Heading2Icon,
+  IndentDecreaseIcon,
+  IndentIncreaseIcon,
+  ItalicIcon,
+  LinkIcon,
+  ListChecksIcon,
+  ListIcon,
+  ListOrderedIcon,
+  MessageSquareTextIcon,
+  PilcrowIcon,
+  QuoteIcon,
+  Redo2Icon,
+  RemoveFormattingIcon,
+  TableIcon,
+  TablePropertiesIcon,
+  UnderlineIcon,
+  Undo2Icon,
+} from "lucide-react"
+import {
   useId,
   useReducer,
   useState,
@@ -916,8 +943,22 @@ function DrawingControls({
         <Button disabled={!editable} onClick={insertDrawingFixture}>
           {labels.insertDrawingFixture}
         </Button>
-        <EditorHistoryButton action="undo" />
-        <EditorHistoryButton action="redo" />
+        <EditorHistoryButton
+          action="undo"
+          aria-label="Undo"
+          title="Undo"
+          render={<Button variant="ghost" size="icon-sm" />}
+        >
+          <Undo2Icon aria-hidden="true" size={16} />
+        </EditorHistoryButton>
+        <EditorHistoryButton
+          action="redo"
+          aria-label="Redo"
+          title="Redo"
+          render={<Button variant="ghost" size="icon-sm" />}
+        >
+          <Redo2Icon aria-hidden="true" size={16} />
+        </EditorHistoryButton>
       </EditorToolbar>
     </Stack>
   )
@@ -1143,18 +1184,54 @@ function StandardPlaygroundContent({
           <Text>{labels.readOnlyShortcut}</Text>
           <EditorToolbar aria-label={labels.toolbar}>
             {aiMenuConfig ? <EditorAiMenuTrigger /> : null}
-            <EditorFormatButton format="bold">
-              {locale === "en" ? "Bold" : "加粗"}
+            <EditorFormatButton
+              format="bold"
+              aria-label={locale === "en" ? "Bold" : "加粗"}
+              title={locale === "en" ? "Bold" : "加粗"}
+              render={<Button variant="ghost" size="icon-sm" />}
+            >
+              <BoldIcon aria-hidden="true" size={16} />
             </EditorFormatButton>
-            <EditorFormatButton format="italic">
-              {locale === "en" ? "Italic" : "斜体"}
+            <EditorFormatButton
+              format="italic"
+              aria-label={locale === "en" ? "Italic" : "斜体"}
+              title={locale === "en" ? "Italic" : "斜体"}
+              render={<Button variant="ghost" size="icon-sm" />}
+            >
+              <ItalicIcon aria-hidden="true" size={16} />
             </EditorFormatButton>
-            <EditorFormatButton format="underline">
-              {locale === "en" ? "Underline" : "下划线"}
+            <EditorFormatButton
+              format="underline"
+              aria-label={locale === "en" ? "Underline" : "下划线"}
+              title={locale === "en" ? "Underline" : "下划线"}
+              render={<Button variant="ghost" size="icon-sm" />}
+            >
+              <UnderlineIcon aria-hidden="true" size={16} />
             </EditorFormatButton>
-            <EditorAlignmentButton alignment="left" />
-            <EditorAlignmentButton alignment="center" />
-            <EditorAlignmentButton alignment="right" />
+            <EditorAlignmentButton
+              alignment="left"
+              aria-label="Align left"
+              title="Align left"
+              render={<Button variant="ghost" size="icon-sm" />}
+            >
+              <AlignLeftIcon aria-hidden="true" size={16} />
+            </EditorAlignmentButton>
+            <EditorAlignmentButton
+              alignment="center"
+              aria-label="Align center"
+              title="Align center"
+              render={<Button variant="ghost" size="icon-sm" />}
+            >
+              <AlignCenterIcon aria-hidden="true" size={16} />
+            </EditorAlignmentButton>
+            <EditorAlignmentButton
+              alignment="right"
+              aria-label="Align right"
+              title="Align right"
+              render={<Button variant="ghost" size="icon-sm" />}
+            >
+              <AlignRightIcon aria-hidden="true" size={16} />
+            </EditorAlignmentButton>
             {variant === "listClassic" ? (
               <>
                 <EditorListMarkerControl />
@@ -1162,11 +1239,46 @@ function StandardPlaygroundContent({
               </>
             ) : (
               <>
-                <EditorIndentButton direction="indent" />
-                <EditorIndentButton direction="outdent" />
-                <EditorListButton listType="bullet" />
-                <EditorListButton listType="number" />
-                <EditorListButton listType="check" />
+                <EditorIndentButton
+                  direction="indent"
+                  aria-label="Indent"
+                  title="Indent"
+                  render={<Button variant="ghost" size="icon-sm" />}
+                >
+                  <IndentIncreaseIcon aria-hidden="true" size={16} />
+                </EditorIndentButton>
+                <EditorIndentButton
+                  direction="outdent"
+                  aria-label="Outdent"
+                  title="Outdent"
+                  render={<Button variant="ghost" size="icon-sm" />}
+                >
+                  <IndentDecreaseIcon aria-hidden="true" size={16} />
+                </EditorIndentButton>
+                <EditorListButton
+                  listType="bullet"
+                  aria-label="Bullet list"
+                  title="Bullet list"
+                  render={<Button variant="ghost" size="icon-sm" />}
+                >
+                  <ListIcon aria-hidden="true" size={16} />
+                </EditorListButton>
+                <EditorListButton
+                  listType="number"
+                  aria-label="Numbered list"
+                  title="Numbered list"
+                  render={<Button variant="ghost" size="icon-sm" />}
+                >
+                  <ListOrderedIcon aria-hidden="true" size={16} />
+                </EditorListButton>
+                <EditorListButton
+                  listType="check"
+                  aria-label="Checklist"
+                  title="Checklist"
+                  render={<Button variant="ghost" size="icon-sm" />}
+                >
+                  <ListChecksIcon aria-hidden="true" size={16} />
+                </EditorListButton>
               </>
             )}
             {variant !== "listClassic" ? (
@@ -1177,20 +1289,97 @@ function StandardPlaygroundContent({
             <EditorFontFamilyControl />
             <EditorFontSizeControl />
             <EditorFontWeightControl />
-            <EditorClearFormattingButton />
-            <EditorBlockButton block="h1" />
+            <EditorClearFormattingButton
+              aria-label="Clear formatting"
+              title="Clear formatting"
+              render={<Button variant="ghost" size="icon-sm" />}
+            >
+              <RemoveFormattingIcon aria-hidden="true" size={16} />
+            </EditorClearFormattingButton>
+            <EditorBlockButton
+              block="h1"
+              aria-label="Heading 1"
+              title="Heading 1"
+              render={<Button variant="ghost" size="icon-sm" />}
+            >
+              <Heading1Icon aria-hidden="true" size={16} />
+            </EditorBlockButton>
             {variant === "forced-layout" ? (
-              <EditorBlockButton block="paragraph" />
+              <EditorBlockButton
+                block="paragraph"
+                aria-label="Paragraph"
+                title="Paragraph"
+                render={<Button variant="ghost" size="icon-sm" />}
+              >
+                <PilcrowIcon aria-hidden="true" size={16} />
+              </EditorBlockButton>
             ) : null}
-            <EditorBlockButton block="h2" />
-            <EditorBlockButton block="quote" />
-            <EditorBlockButton block="code" />
-            <EditorLinkControl />
-            <EditorTableButton />
-            <EditorTableMenu />
-            <EditorCalloutButton />
-            <EditorToggleButton />
-            <EditorDisclosureButton />
+            <EditorBlockButton
+              block="h2"
+              aria-label="Heading 2"
+              title="Heading 2"
+              render={<Button variant="ghost" size="icon-sm" />}
+            >
+              <Heading2Icon aria-hidden="true" size={16} />
+            </EditorBlockButton>
+            <EditorBlockButton
+              block="quote"
+              aria-label="Quote"
+              title="Quote"
+              render={<Button variant="ghost" size="icon-sm" />}
+            >
+              <QuoteIcon aria-hidden="true" size={16} />
+            </EditorBlockButton>
+            <EditorBlockButton
+              block="code"
+              aria-label="Code block"
+              title="Code block"
+              render={<Button variant="ghost" size="icon-sm" />}
+            >
+              <FileCode2Icon aria-hidden="true" size={16} />
+            </EditorBlockButton>
+            <EditorLinkControl
+              aria-label="Link"
+              title="Link"
+              render={<Button variant="ghost" size="icon-sm" />}
+            >
+              <LinkIcon aria-hidden="true" size={16} />
+            </EditorLinkControl>
+            <EditorTableButton
+              aria-label="Insert table"
+              title="Insert table"
+              render={<Button variant="ghost" size="icon-sm" />}
+            >
+              <TableIcon aria-hidden="true" size={16} />
+            </EditorTableButton>
+            <EditorTableMenu
+              aria-label="Table actions"
+              title="Table actions"
+              render={<Button variant="ghost" size="icon-sm" />}
+            >
+              <TablePropertiesIcon aria-hidden="true" size={16} />
+            </EditorTableMenu>
+            <EditorCalloutButton
+              aria-label="Insert callout"
+              title="Insert callout"
+              render={<Button variant="ghost" size="icon-sm" />}
+            >
+              <MessageSquareTextIcon aria-hidden="true" size={16} />
+            </EditorCalloutButton>
+            <EditorToggleButton
+              aria-label="Insert toggle"
+              title="Insert toggle"
+              render={<Button variant="ghost" size="icon-sm" />}
+            >
+              <ChevronRightIcon aria-hidden="true" size={16} />
+            </EditorToggleButton>
+            <EditorDisclosureButton
+              aria-label="Toggle disclosure"
+              title="Toggle disclosure"
+              render={<Button variant="ghost" size="icon-sm" />}
+            >
+              <ChevronsUpDownIcon aria-hidden="true" size={16} />
+            </EditorDisclosureButton>
             {editorCalloutAppearances.map((appearance) => (
               <EditorCalloutAppearanceButton
                 key={appearance}
@@ -1205,8 +1394,22 @@ function StandardPlaygroundContent({
             {mediaKinds.map((kind) => (
               <MediaInsertControl key={kind} kind={kind} />
             ))}
-            <EditorHistoryButton action="undo" />
-            <EditorHistoryButton action="redo" />
+            <EditorHistoryButton
+              action="undo"
+              aria-label="Undo"
+              title="Undo"
+              render={<Button variant="ghost" size="icon-sm" />}
+            >
+              <Undo2Icon aria-hidden="true" size={16} />
+            </EditorHistoryButton>
+            <EditorHistoryButton
+              action="redo"
+              aria-label="Redo"
+              title="Redo"
+              render={<Button variant="ghost" size="icon-sm" />}
+            >
+              <Redo2Icon aria-hidden="true" size={16} />
+            </EditorHistoryButton>
             <Button onClick={toggleReadOnly} variant="outline">
               {readOnly ? labels.enableEditing : labels.makeReadOnly}
             </Button>
@@ -1494,7 +1697,7 @@ export function PublicPlaygroundExample() {
         </Fieldset>
         {variant === "copilot" && !copilotConfig ? (
           <HostAiSetup
-            key={`${variant}-${locale}`}
+            key={`copilot-setup-${variant}-${locale}`}
             locale={locale}
             mode="copilot"
             onConfigure={setCopilotConfig}
@@ -1502,7 +1705,7 @@ export function PublicPlaygroundExample() {
         ) : null}
         {variant !== "copilot" && variant !== "drawing" && !aiMenuConfig ? (
           <HostAiSetup
-            key={`${variant}-${locale}`}
+            key={`ai-menu-setup-${variant}-${locale}`}
             locale={locale}
             mode="ai-menu"
             onConfigure={setAiMenuConfig}

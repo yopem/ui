@@ -1,5 +1,14 @@
 export { MediaInsertControl } from "./media/controls"
 
+export {
+  MediaActions,
+  MediaAlignButton,
+  MediaCaptionTextarea,
+  MediaDeleteButton,
+  MediaEditControl,
+  MediaImageResize,
+} from "./media/actions"
+
 export { MediaFileClipboard } from "./media/clipboard"
 
 export { MediaContent } from "./media/view"

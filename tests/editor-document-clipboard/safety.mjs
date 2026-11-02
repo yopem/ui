@@ -328,24 +328,14 @@ for (const record of records) {
   try {
     const after = record.after.editors[2]
 
-    if (record.name.startsWith("adversarial-")) {
-      if (record.fallback) {
-        assert(
-          text(after).includes("Fallback"),
-          record.name + ": missing fallback",
-        )
-        assert(text(after).includes("Keep original"))
-      } else
-        assert.deepEqual(
-          after,
-          record.before.editors[2],
-          record.name + ": partial mutation",
-        )
-    }
+    if (record.name.startsWith("adversarial-"))
+      assert.deepEqual(
+        after,
+        record.before.editors[2],
+        record.name + ": partial mutation",
+      )
 
-    if (
-      ["malformed", "cross-schema", "unknown-with-html"].includes(record.name)
-    ) {
+    if (record.name === "cross-schema") {
       assert(
         text(after).includes("Fallback"),
         record.name + ": missing safe fallback",
@@ -359,6 +349,8 @@ for (const record of records) {
     if (
       [
         "unknown-without-html",
+        "malformed",
+        "unknown-with-html",
         "unsafe-json-and-html",
         "malformed-without-html",
         "foreign-without-html",
@@ -402,7 +394,15 @@ for (const record of records) {
         record.name + ": mutation",
       )
 
-    if (record.name === "unregister" || record.name === "direct-import") {
+    if (record.name === "direct-import") {
+      assert(
+        !text(after).includes("Cleanup"),
+        "direct import bypassed validation",
+      )
+      assert.equal(record.after.errors.length, 1)
+    }
+
+    if (record.name === "unregister") {
       assert(text(after).includes("Cleanup"), "cleanup failed")
       assert(
         text(after).includes("customClipboardState"),

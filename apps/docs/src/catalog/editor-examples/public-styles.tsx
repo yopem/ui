@@ -21,6 +21,17 @@ import {
   useEditor,
 } from "@yopem-ui/editor"
 import { $getRoot, HISTORY_PUSH_TAG } from "lexical"
+import {
+  AlignCenterIcon,
+  AlignJustifyIcon,
+  AlignLeftIcon,
+  AlignRightIcon,
+  BoldIcon,
+  IndentDecreaseIcon,
+  IndentIncreaseIcon,
+  Redo2Icon,
+  Undo2Icon,
+} from "lucide-react"
 import { useState } from "react"
 
 const extensions = [EditorBlockPresentationExtension]
@@ -105,18 +116,80 @@ export function PublicStylesExample() {
   return (
     <EditorRoot ariaLabel="Public styles editor" extensions={extensions}>
       <EditorToolbar aria-label="Public styles">
-        <EditorAlignmentButton alignment="left" />
-        <EditorAlignmentButton alignment="center" />
-        <EditorAlignmentButton alignment="right" />
-        <EditorAlignmentButton alignment="justify" />
-        <EditorIndentButton direction="indent" />
-        <EditorIndentButton direction="outdent" />
+        <EditorAlignmentButton
+          alignment="left"
+          aria-label="Align left"
+          title="Align left"
+          render={<Button variant="ghost" size="icon-sm" />}
+        >
+          <AlignLeftIcon aria-hidden="true" size={16} />
+        </EditorAlignmentButton>
+        <EditorAlignmentButton
+          alignment="center"
+          aria-label="Align center"
+          title="Align center"
+          render={<Button variant="ghost" size="icon-sm" />}
+        >
+          <AlignCenterIcon aria-hidden="true" size={16} />
+        </EditorAlignmentButton>
+        <EditorAlignmentButton
+          alignment="right"
+          aria-label="Align right"
+          title="Align right"
+          render={<Button variant="ghost" size="icon-sm" />}
+        >
+          <AlignRightIcon aria-hidden="true" size={16} />
+        </EditorAlignmentButton>
+        <EditorAlignmentButton
+          alignment="justify"
+          aria-label="Align justify"
+          title="Align justify"
+          render={<Button variant="ghost" size="icon-sm" />}
+        >
+          <AlignJustifyIcon aria-hidden="true" size={16} />
+        </EditorAlignmentButton>
+        <EditorIndentButton
+          direction="indent"
+          aria-label="Indent"
+          title="Indent"
+          render={<Button variant="ghost" size="icon-sm" />}
+        >
+          <IndentIncreaseIcon aria-hidden="true" size={16} />
+        </EditorIndentButton>
+        <EditorIndentButton
+          direction="outdent"
+          aria-label="Outdent"
+          title="Outdent"
+          render={<Button variant="ghost" size="icon-sm" />}
+        >
+          <IndentDecreaseIcon aria-hidden="true" size={16} />
+        </EditorIndentButton>
         <EditorFontColorControl />
         <EditorBackgroundColorControl />
         <EditorLineHeightControl />
-        <EditorFormatButton format="bold" />
-        <EditorHistoryButton action="undo" />
-        <EditorHistoryButton action="redo" />
+        <EditorFormatButton
+          format="bold"
+          title="Bold"
+          render={<Button variant="ghost" size="icon-sm" />}
+        >
+          <BoldIcon aria-hidden="true" size={16} />
+        </EditorFormatButton>
+        <EditorHistoryButton
+          action="undo"
+          aria-label="Undo"
+          title="Undo"
+          render={<Button variant="ghost" size="icon-sm" />}
+        >
+          <Undo2Icon aria-hidden="true" size={16} />
+        </EditorHistoryButton>
+        <EditorHistoryButton
+          action="redo"
+          aria-label="Redo"
+          title="Redo"
+          render={<Button variant="ghost" size="icon-sm" />}
+        >
+          <Redo2Icon aria-hidden="true" size={16} />
+        </EditorHistoryButton>
       </EditorToolbar>
       <EditorContent placeholder="Write text and select a block or range…" />
       <PublicStylesRoundtrip />

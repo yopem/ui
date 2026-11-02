@@ -18,6 +18,15 @@ import {
   $getRoot,
   HISTORY_PUSH_TAG,
 } from "lexical"
+import {
+  BoldIcon,
+  Heading2Icon,
+  ItalicIcon,
+  StrikethroughIcon,
+  SubscriptIcon,
+  SuperscriptIcon,
+  UnderlineIcon,
+} from "lucide-react"
 import { useReducer, type KeyboardEvent } from "react"
 
 const initialState = JSON.stringify({
@@ -112,13 +121,56 @@ export function FloatingExampleControls() {
       aria-label="Text formatting"
       onKeyDownCapture={handleHostShortcut}
     >
-      <EditorFormatButton format="bold" />
-      <EditorFormatButton format="italic" />
-      <EditorFormatButton format="underline" />
-      <EditorFormatButton format="strikethrough" />
-      <EditorFormatButton format="subscript" />
-      <EditorFormatButton format="superscript" />
-      <EditorBlockButton block="h2" />
+      <EditorFormatButton
+        format="bold"
+        title="Bold"
+        render={<Button variant="ghost" size="icon-sm" />}
+      >
+        <BoldIcon aria-hidden="true" size={16} />
+      </EditorFormatButton>
+      <EditorFormatButton
+        format="italic"
+        title="Italic"
+        render={<Button variant="ghost" size="icon-sm" />}
+      >
+        <ItalicIcon aria-hidden="true" size={16} />
+      </EditorFormatButton>
+      <EditorFormatButton
+        format="underline"
+        title="Underline"
+        render={<Button variant="ghost" size="icon-sm" />}
+      >
+        <UnderlineIcon aria-hidden="true" size={16} />
+      </EditorFormatButton>
+      <EditorFormatButton
+        format="strikethrough"
+        title="Strikethrough"
+        render={<Button variant="ghost" size="icon-sm" />}
+      >
+        <StrikethroughIcon aria-hidden="true" size={16} />
+      </EditorFormatButton>
+      <EditorFormatButton
+        format="subscript"
+        title="Subscript"
+        render={<Button variant="ghost" size="icon-sm" />}
+      >
+        <SubscriptIcon aria-hidden="true" size={16} />
+      </EditorFormatButton>
+      <EditorFormatButton
+        format="superscript"
+        title="Superscript"
+        render={<Button variant="ghost" size="icon-sm" />}
+      >
+        <SuperscriptIcon aria-hidden="true" size={16} />
+      </EditorFormatButton>
+      <EditorBlockButton
+        block="h2"
+        aria-label="Heading 2"
+        title="Heading 2"
+        render={<Button variant="ghost" size="icon-sm" />}
+      >
+        <Heading2Icon aria-hidden="true" size={16} />
+      </EditorBlockButton>
     </EditorFloatingToolbar>
   )
 }

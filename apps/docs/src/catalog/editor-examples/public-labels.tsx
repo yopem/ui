@@ -30,6 +30,7 @@ import {
   EditorLabelsPicker,
   EditorLabelsOption,
 } from "@yopem-ui/editor/labels"
+import { Redo2Icon, Undo2Icon } from "lucide-react"
 import { useId, useState } from "react"
 
 const labelOptions = [
@@ -78,8 +79,22 @@ export function PublicLabelsExample() {
         xstyle={styles.root}
       >
         <EditorToolbar aria-label="Public labels history">
-          <EditorHistoryButton action="undo" />
-          <EditorHistoryButton action="redo" />
+          <EditorHistoryButton
+            action="undo"
+            aria-label="Undo"
+            title="Undo"
+            render={<Button variant="ghost" size="icon-sm" />}
+          >
+            <Undo2Icon aria-hidden="true" size={16} />
+          </EditorHistoryButton>
+          <EditorHistoryButton
+            action="redo"
+            aria-label="Redo"
+            title="Redo"
+            render={<Button variant="ghost" size="icon-sm" />}
+          >
+            <Redo2Icon aria-hidden="true" size={16} />
+          </EditorHistoryButton>
         </EditorToolbar>
         <EditorContent placeholder="Choose labels in the form" />
         <PublicLabelsForm

@@ -33,6 +33,7 @@ import {
   type EditorNativeCollaborationOptions,
   type EditorNativeCollaborationProvider,
 } from "@yopem-ui/editor/collaboration/native"
+import { Redo2Icon, Undo2Icon } from "lucide-react"
 import {
   useId,
   useReducer,
@@ -310,8 +311,22 @@ function NativeEditor({
               {collaboration.writable ? "enabled" : "disabled"}.
             </Text>
             <EditorToolbar aria-label="Native collaboration history">
-              <EditorHistoryButton action="undo" />
-              <EditorHistoryButton action="redo" />
+              <EditorHistoryButton
+                action="undo"
+                aria-label="Undo"
+                title="Undo"
+                render={<Button variant="ghost" size="icon-sm" />}
+              >
+                <Undo2Icon aria-hidden="true" size={16} />
+              </EditorHistoryButton>
+              <EditorHistoryButton
+                action="redo"
+                aria-label="Redo"
+                title="Redo"
+                render={<Button variant="ghost" size="icon-sm" />}
+              >
+                <Redo2Icon aria-hidden="true" size={16} />
+              </EditorHistoryButton>
               <Button
                 type="button"
                 aria-pressed={!editable}

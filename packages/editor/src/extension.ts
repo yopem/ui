@@ -8,6 +8,7 @@ import type {
   TextFormatType,
 } from "lexical"
 
+import { ClipboardImportExtension } from "@lexical/clipboard"
 import { CodeExtension } from "@lexical/code"
 import { HistoryExtension } from "@lexical/history"
 import { LinkExtension, LinkNode } from "@lexical/link"
@@ -30,7 +31,11 @@ import {
 
 import { EditorAutoLinkExtension } from "./autolink"
 import { createChecklistAccessibilityExtension } from "./checklist-accessibility"
-import { registerEditorClipboardGuard } from "./clipboard-guard"
+import {
+  $guardEditorNativeJSON,
+  registerEditorClipboardGuard,
+} from "./clipboard-guard"
+import { scanDocumentJSON } from "./json-duplicates"
 import { isSafeLink } from "./link-url"
 import { editorStyles, editorTheme } from "./theme"
 
@@ -73,16 +78,24 @@ export function createEditorSetup({
   ariaLabel = "Rich text editor",
   extensions = [],
 }: EditorProps) {
+  if (initialState && !(initialState instanceof Object)) {
+    JSON.parse(initialState)
+
+    if (scanDocumentJSON(initialState, initialState.length) === "duplicate")
+      throw new Error("Duplicate document JSON key.")
+  }
+
   const listeners = new Set<() => void>()
 
-  let snapshot: EditorStateSnapshot = {
+  const serverSnapshot: EditorStateSnapshot = {
     ariaLabel,
-    editable,
+    editable: false,
     canUndo: false,
     canRedo: false,
     formats: [],
   }
 
+  let snapshot = serverSnapshot
   let onChange: EditorProps["onChange"]
   let editor: LexicalEditor | undefined
   let currentEditable = editable
@@ -106,6 +119,11 @@ export function createEditorSetup({
       throw error
     },
     dependencies: [
+      configExtension(ClipboardImportExtension, {
+        $importMimeType: {
+          "application/x-lexical-editor": [$guardEditorNativeJSON],
+        },
+      }),
       RichTextExtension,
       HistoryExtension,
       ListExtension,
@@ -122,6 +140,13 @@ export function createEditorSetup({
     register(instance) {
       editor = instance
 
+      function publishEditability() {
+        const editable =
+          instance.getRootElement() !== null && instance.isEditable()
+
+        if (snapshot.editable !== editable) publish({ ...snapshot, editable })
+      }
+
       function configureTableViewport(key: NodeKey) {
         const element = instance.getElementByKey(key)
 
@@ -134,8 +159,10 @@ export function createEditorSetup({
 
       return mergeRegister(
         registerEditorClipboardGuard(instance),
+        instance.registerEditableListener(publishEditability),
         instance.registerRootListener((root) => {
           instance.setEditable(root !== null && currentEditable)
+          publishEditability()
 
           if (root)
             instance.getEditorState().read(() => {
@@ -201,6 +228,9 @@ export function createEditorSetup({
     getSnapshot(this: void) {
       return snapshot
     },
+    getServerSnapshot(this: void) {
+      return serverSnapshot
+    },
     subscribe(this: void, listener: () => void) {
       listeners.add(listener)
 
@@ -216,10 +246,11 @@ export function createEditorSetup({
       onChange = callback
       currentEditable = isEditable
 
-      if (snapshot.editable !== isEditable || snapshot.ariaLabel !== label)
-        publish({ ...snapshot, editable: isEditable, ariaLabel: label })
+      if (snapshot.ariaLabel !== label)
+        publish({ ...snapshot, ariaLabel: label })
 
-      if (editor?.getRootElement()) editor.setEditable(isEditable)
+      if (editor)
+        editor.setEditable(editor.getRootElement() !== null && isEditable)
 
       return () => {
         onChange = undefined

@@ -12,6 +12,7 @@ import {
   EditorColumnsControls,
   EditorColumnsExtension,
 } from "@yopem-ui/editor/columns"
+import { Redo2Icon, Undo2Icon } from "lucide-react"
 import { useReducer } from "react"
 
 const extensions = [EditorColumnsExtension]
@@ -111,8 +112,22 @@ export function ColumnsExample() {
       >
         <EditorToolbar aria-label="Column tools">
           <EditorColumnsControls />
-          <EditorHistoryButton action="undo" />
-          <EditorHistoryButton action="redo" />
+          <EditorHistoryButton
+            action="undo"
+            aria-label="Undo"
+            title="Undo"
+            render={<Button variant="ghost" size="icon-sm" />}
+          >
+            <Undo2Icon aria-hidden="true" size={16} />
+          </EditorHistoryButton>
+          <EditorHistoryButton
+            action="redo"
+            aria-label="Redo"
+            title="Redo"
+            render={<Button variant="ghost" size="icon-sm" />}
+          >
+            <Redo2Icon aria-hidden="true" size={16} />
+          </EditorHistoryButton>
         </EditorToolbar>
         <EditorContent placeholder="Write in each column" />
       </EditorRoot>

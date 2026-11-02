@@ -18,9 +18,10 @@ export const editorStoreItem: SourceItem = {
       "DocumentError",
     ],
     usage:
-      "Import server helpers from @/lib/editor-store. Apply one copied SQL migration. Supply existing authentication, document policy, CSRF verification, and complete Lexical validation. See /docs/editor-store.",
+      "Import server helpers from @/lib/editor-store. Apply one copied SQL migration. Supply existing authentication, document policy, CSRF verification, and complete Lexical validation. Duplicate JSON keys are rejected. Existing records with duplicate keys cannot be read, changed, or deleted until the host repairs them. See /docs/editor-store.",
   },
   files: [
+    "json-duplicates.ts",
     "index.ts",
     "document-http.ts",
     "document-model.ts",

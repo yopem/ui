@@ -29,18 +29,24 @@ import {
   HISTORY_PUSH_TAG,
 } from "lexical"
 import {
-  useRef,
   useState,
   useSyncExternalStore,
+  type ComponentProps,
   type ChangeEvent,
   type KeyboardEvent,
-  type MouseEvent,
-  type PointerEvent,
 } from "react"
 
 import type { createMediaStore } from "./extension"
 import type { MediaData, MediaEmbedPolicy } from "./schema"
 
+import {
+  MediaActions,
+  MediaAlignButton,
+  MediaCaptionTextarea,
+  MediaDeleteButton,
+  MediaEditControl,
+  MediaImageResize,
+} from "./actions"
 import { MediaNode } from "./model"
 import { parseMedia } from "./schema"
 
@@ -66,12 +72,7 @@ const styles = stylex.create({
   end: { marginInlineStart: "auto" },
   toolbar: { flexWrap: "wrap" },
   target: { minInlineSize: 44, minBlockSize: 44 },
-  resize: {
-    minInlineSize: 44,
-    minBlockSize: 44,
-    touchAction: "none",
-    cursor: "ew-resize",
-  },
+  caption: { whiteSpace: "pre-wrap" },
 })
 
 export function MediaView({
@@ -127,11 +128,10 @@ export function MediaView({
     }
   })
 
-  const [preview, setPreview] = useState<number | null>(null)
-
-  const drag = useRef<{ start: number; width: number; value: number } | null>(
-    null,
-  )
+  const [preview, setPreview] = useState<{
+    width: number
+    revision: string
+  } | null>(null)
 
   const change = useStableCallback(function change(patch: Partial<MediaData>) {
     if (!editor.isEditable()) return
@@ -171,207 +171,121 @@ export function MediaView({
   const handleSelectKeyDown = useStableCallback(function handleSelectKeyDown(
     event: KeyboardEvent<HTMLElement>,
   ) {
-    if (["Delete", "Backspace"].includes(event.key)) {
+    if (
+      !event.defaultPrevented &&
+      ["Delete", "Backspace"].includes(event.key)
+    ) {
       event.preventDefault()
       remove()
     }
   })
 
-  const changeAlignment = useStableCallback(function changeAlignment(
-    event: MouseEvent<HTMLElement>,
-  ) {
-    const alignment = event.currentTarget.dataset.alignment
-
-    if (alignment === "start" || alignment === "center" || alignment === "end")
-      change({ alignment })
-  })
-
   const handleAltChange = useStableCallback(function handleAltChange(
     event: ChangeEvent<HTMLInputElement>,
   ) {
-    change({ alt: event.currentTarget.value })
+    if (!event.defaultPrevented) change({ alt: event.currentTarget.value })
   })
 
-  const handleCaptionChange = useStableCallback(function handleCaptionChange(
-    event: ChangeEvent<HTMLInputElement>,
-  ) {
-    change({ caption: event.currentTarget.value })
-  })
-
-  const handleWidthChange = useStableCallback(function handleWidthChange(
-    event: ChangeEvent<HTMLInputElement>,
-  ) {
-    change({ width: Number(event.currentTarget.value) })
-  })
-
-  const handleWidthKeyDown = useStableCallback(function handleWidthKeyDown(
-    event: KeyboardEvent<HTMLInputElement>,
-  ) {
-    const media = data?.media
-
-    if (media?.kind !== "image") return
-
-    const delta = ["ArrowRight", "ArrowUp"].includes(event.key)
-      ? 16
-      : ["ArrowLeft", "ArrowDown"].includes(event.key)
-        ? -16
-        : 0
-
-    if (delta || ["Home", "End"].includes(event.key)) {
-      event.preventDefault()
-      change({
-        width:
-          event.key === "Home"
-            ? 64
-            : event.key === "End"
-              ? 4096
-              : Math.max(64, Math.min(4096, media.width + delta)),
-      })
-    }
-  })
-
-  const handlePointerDown = useStableCallback(function handlePointerDown(
-    event: PointerEvent<HTMLInputElement>,
-  ) {
-    const media = data?.media
-
-    if (!editor.isEditable() || media?.kind !== "image") return
-    event.preventDefault()
-    event.currentTarget.focus()
-    drag.current = {
-      start: event.clientX,
-      width: media.width,
-      value: media.width,
-    }
-    event.currentTarget.setPointerCapture(event.pointerId)
-  })
-
-  const handlePointerMove = useStableCallback(function handlePointerMove(
-    event: PointerEvent<HTMLInputElement>,
-  ) {
-    const active = drag.current
-
-    if (!active) return
-    active.value = Math.max(
-      64,
-      Math.min(4096, Math.round(active.width + event.clientX - active.start)),
-    )
-    setPreview(active.value)
-  })
-
-  const handlePointerUp = useStableCallback(function handlePointerUp() {
-    if (drag.current) change({ width: drag.current.value })
-    drag.current = null
-    setPreview(null)
-  })
-
-  const cancelPointer = useStableCallback(function cancelPointer() {
-    drag.current = null
-    setPreview(null)
-  })
+  const handlePreviewWidthChange = useStableCallback(
+    function handlePreviewWidthChange(
+      width: Parameters<
+        NonNullable<
+          ComponentProps<typeof MediaImageResize>["onPreviewWidthChange"]
+        >
+      >[0],
+    ) {
+      if (data)
+        setPreview(
+          width === null ? null : { width, revision: data.imageRevision },
+        )
+    },
+  )
 
   if (!data) return null
   const { media, selected, images, imageRevision } = data
 
   return (
-    <Box
-      render={<figure />}
-      data-slot="editor-media"
-      data-alignment={media.alignment}
-      contentEditable={false}
-      onKeyDown={stopKeyDown}
-      xstyle={[
-        styles.figure,
-        styles[media.alignment],
-        selected && styles.selected,
-      ]}
-    >
-      {media.kind === "image" ? (
-        <MediaPreviewGallery key={imageRevision} images={images}>
-          <MediaPreviewTrigger imageId={nodeKey}>
-            <MediaContent media={media} width={preview ?? media.width} />
-          </MediaPreviewTrigger>
-        </MediaPreviewGallery>
-      ) : (
-        <MediaContent media={media} embedPolicy={embedPolicy} />
-      )}
-      {media.caption ? <Figcaption>{media.caption}</Figcaption> : null}
-      {snapshot.editable ? (
-        <Stack>
-          <Toolbar aria-label="Media actions" xstyle={styles.toolbar}>
-            <ToolbarButton
-              render={<Button xstyle={styles.target} />}
-              aria-label="Select media"
-              aria-pressed={selected}
-              onClick={select}
-              onKeyDown={handleSelectKeyDown}
-            >
-              Select media
-            </ToolbarButton>
-            {(["start", "center", "end"] as const).map((alignment) => (
+    <MediaActions nodeKey={nodeKey}>
+      <Box
+        render={<figure />}
+        data-slot="editor-media"
+        data-alignment={media.alignment}
+        contentEditable={false}
+        onKeyDown={stopKeyDown}
+        xstyle={[
+          styles.figure,
+          styles[media.alignment],
+          selected && styles.selected,
+        ]}
+      >
+        {media.kind === "image" ? (
+          <MediaPreviewGallery key={imageRevision} images={images}>
+            <MediaPreviewTrigger imageId={nodeKey}>
+              <MediaContent
+                media={media}
+                width={
+                  snapshot.editable && preview?.revision === imageRevision
+                    ? preview.width
+                    : media.width
+                }
+              />
+            </MediaPreviewTrigger>
+          </MediaPreviewGallery>
+        ) : (
+          <MediaContent media={media} embedPolicy={embedPolicy} />
+        )}
+        {media.caption ? (
+          <Figcaption xstyle={styles.caption}>{media.caption}</Figcaption>
+        ) : null}
+        {snapshot.editable ? (
+          <Stack>
+            <Toolbar aria-label="Media actions" xstyle={styles.toolbar}>
               <ToolbarButton
-                key={alignment}
                 render={<Button xstyle={styles.target} />}
-                aria-label={`Align ${alignment}`}
-                aria-pressed={media.alignment === alignment}
-                data-alignment={alignment}
-                onClick={changeAlignment}
+                aria-label="Select media"
+                aria-pressed={selected}
+                onClick={select}
+                onKeyDown={handleSelectKeyDown}
               >
-                {alignment}
+                Select media
               </ToolbarButton>
-            ))}
-            <ToolbarButton
-              render={<Button xstyle={styles.target} />}
-              onClick={remove}
-            >
-              Delete media
-            </ToolbarButton>
-          </Toolbar>
-          <Wrap>
-            <Field>
-              <FieldLabel>Alternative text</FieldLabel>
-              <Input
+              <MediaEditControl
+                render={<ToolbarButton />}
                 xstyle={styles.target}
-                value={media.alt}
-                maxLength={2000}
-                onChange={handleAltChange}
               />
-            </Field>
-            <Field>
-              <FieldLabel>Caption</FieldLabel>
-              <Input
+              {(["start", "center", "end"] as const).map((alignment) => (
+                <MediaAlignButton
+                  key={alignment}
+                  alignment={alignment}
+                  render={<ToolbarButton />}
+                  xstyle={styles.target}
+                />
+              ))}
+              <MediaDeleteButton
+                render={<ToolbarButton />}
                 xstyle={styles.target}
-                value={media.caption}
-                maxLength={10000}
-                onChange={handleCaptionChange}
               />
-            </Field>
-          </Wrap>
-          {media.kind === "image" ? (
-            <input
-              type="range"
-              min={64}
-              max={4096}
-              step={1}
-              value={preview ?? media.width}
-              onChange={handleWidthChange}
-              aria-label="Image width"
-              aria-valuemin={64}
-              aria-valuemax={4096}
-              aria-valuenow={preview ?? media.width}
-              aria-valuetext={`${preview ?? media.width} pixels`}
-              {...stylex.props(styles.resize)}
-              onKeyDown={handleWidthKeyDown}
-              onPointerDown={handlePointerDown}
-              onPointerMove={handlePointerMove}
-              onPointerUp={handlePointerUp}
-              onPointerCancel={cancelPointer}
-              onLostPointerCapture={cancelPointer}
-            />
-          ) : null}
-        </Stack>
-      ) : null}
-    </Box>
+            </Toolbar>
+            <Wrap>
+              <Field>
+                <FieldLabel>Alternative text</FieldLabel>
+                <Input
+                  xstyle={styles.target}
+                  value={media.alt}
+                  maxLength={2000}
+                  onChange={handleAltChange}
+                />
+              </Field>
+              <Field>
+                <FieldLabel>Caption</FieldLabel>
+                <MediaCaptionTextarea />
+              </Field>
+            </Wrap>
+            <MediaImageResize onPreviewWidthChange={handlePreviewWidthChange} />
+          </Stack>
+        ) : null}
+      </Box>
+    </MediaActions>
   )
 }
 

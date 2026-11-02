@@ -30,6 +30,12 @@ import {
   HISTORY_PUSH_TAG,
   type LexicalEditor,
 } from "lexical"
+import {
+  Redo2Icon,
+  TableIcon,
+  TablePropertiesIcon,
+  Undo2Icon,
+} from "lucide-react"
 import { useState } from "react"
 
 const extensions = [EditorTablePresentationExtension]
@@ -156,10 +162,36 @@ export function PublicTablesExample() {
         extensions={extensions}
       >
         <EditorToolbar aria-label="Public table formatting">
-          <EditorTableButton />
-          <EditorTableMenu />
-          <EditorHistoryButton action="undo" />
-          <EditorHistoryButton action="redo" />
+          <EditorTableButton
+            aria-label="Insert table"
+            title="Insert table"
+            render={<Button variant="ghost" size="icon-sm" />}
+          >
+            <TableIcon aria-hidden="true" size={16} />
+          </EditorTableButton>
+          <EditorTableMenu
+            aria-label="Table actions"
+            title="Table actions"
+            render={<Button variant="ghost" size="icon-sm" />}
+          >
+            <TablePropertiesIcon aria-hidden="true" size={16} />
+          </EditorTableMenu>
+          <EditorHistoryButton
+            action="undo"
+            aria-label="Undo"
+            title="Undo"
+            render={<Button variant="ghost" size="icon-sm" />}
+          >
+            <Undo2Icon aria-hidden="true" size={16} />
+          </EditorHistoryButton>
+          <EditorHistoryButton
+            action="redo"
+            aria-label="Redo"
+            title="Redo"
+            render={<Button variant="ghost" size="icon-sm" />}
+          >
+            <Redo2Icon aria-hidden="true" size={16} />
+          </EditorHistoryButton>
         </EditorToolbar>
         <EditorTableResizeControls />
         <EditorTableCellPresentation />
@@ -172,9 +204,29 @@ export function PublicTablesExample() {
         extensions={noMergeExtensions}
       >
         <EditorToolbar aria-label="No-merge table formatting">
-          <EditorTableMenu />
-          <EditorHistoryButton action="undo" />
-          <EditorHistoryButton action="redo" />
+          <EditorTableMenu
+            aria-label="Table actions"
+            title="Table actions"
+            render={<Button variant="ghost" size="icon-sm" />}
+          >
+            <TablePropertiesIcon aria-hidden="true" size={16} />
+          </EditorTableMenu>
+          <EditorHistoryButton
+            action="undo"
+            aria-label="Undo"
+            title="Undo"
+            render={<Button variant="ghost" size="icon-sm" />}
+          >
+            <Undo2Icon aria-hidden="true" size={16} />
+          </EditorHistoryButton>
+          <EditorHistoryButton
+            action="redo"
+            aria-label="Redo"
+            title="Redo"
+            render={<Button variant="ghost" size="icon-sm" />}
+          >
+            <Redo2Icon aria-hidden="true" size={16} />
+          </EditorHistoryButton>
         </EditorToolbar>
         <EditorTableDimensions />
         <EditorTableResizeControls />

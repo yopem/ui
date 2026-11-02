@@ -1,5 +1,42 @@
 export const editorMediaParts = [
   {
+    name: "MediaActions",
+    slug: "media-actions",
+    item: "editor-media",
+    description: "Share one selected media target across editing controls.",
+  },
+  {
+    name: "MediaEditControl",
+    slug: "media-edit-control",
+    item: "editor-media",
+    description:
+      "Change a selected media source without inserting another node.",
+  },
+  {
+    name: "MediaCaptionTextarea",
+    slug: "media-caption-textarea",
+    item: "editor-media",
+    description: "Edit a bounded plain-text caption with multiple lines.",
+  },
+  {
+    name: "MediaImageResize",
+    slug: "media-image-resize",
+    item: "editor-media",
+    description: "Resize one image with pointer or keyboard input.",
+  },
+  {
+    name: "MediaAlignButton",
+    slug: "media-align-button",
+    item: "editor-media",
+    description: "Set the alignment of selected media.",
+  },
+  {
+    name: "MediaDeleteButton",
+    slug: "media-delete-button",
+    item: "editor-media",
+    description: "Remove selected media with native undo support.",
+  },
+  {
     name: "MediaFileClipboard",
     slug: "media-file-clipboard",
     item: "editor-media",

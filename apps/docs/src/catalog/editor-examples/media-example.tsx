@@ -17,6 +17,7 @@ import {
   MediaInsertControl,
   mediaKinds,
 } from "@yopem-ui/editor/media"
+import { Redo2Icon, Undo2Icon } from "lucide-react"
 import { useState } from "react"
 
 const extensions = [MediaExtension]
@@ -106,8 +107,22 @@ export function MediaExample({ upload }: { upload?: MediaUpload }) {
               <MediaInsertControl key={kind} kind={kind} upload={upload} />
             ))}
           </Wrap>
-          <EditorHistoryButton action="undo" />
-          <EditorHistoryButton action="redo" />
+          <EditorHistoryButton
+            action="undo"
+            aria-label="Undo"
+            title="Undo"
+            render={<Button variant="ghost" size="icon-sm" />}
+          >
+            <Undo2Icon aria-hidden="true" size={16} />
+          </EditorHistoryButton>
+          <EditorHistoryButton
+            action="redo"
+            aria-label="Redo"
+            title="Redo"
+            render={<Button variant="ghost" size="icon-sm" />}
+          >
+            <Redo2Icon aria-hidden="true" size={16} />
+          </EditorHistoryButton>
         </EditorToolbar>
         <EditorContent placeholder="Select an insertion point." />
       </EditorRoot>

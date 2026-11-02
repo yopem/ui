@@ -186,7 +186,7 @@ export type EditorBlockButtonProps = EditorControlProps & {
     | "code"
 }
 
-const blockLabels = {
+export const editorBlockLabels = {
   paragraph: "Paragraph",
   h1: "Heading 1",
   h2: "Heading 2",
@@ -198,6 +198,27 @@ const blockLabels = {
   code: "Code block",
 }
 
+export function $createEditorBlock(block: EditorBlockButtonProps["block"]) {
+  switch (block) {
+    case "paragraph":
+      return $createParagraphNode()
+    case "quote":
+      return $createQuoteNode()
+    case "code":
+      return $createCodeNode()
+    default:
+      return $createHeadingNode(block)
+  }
+}
+
+export function $setEditorBlockType(block: EditorBlockButtonProps["block"]) {
+  $removeList()
+  const selection = $getSelection()
+
+  if ($isRangeSelection(selection))
+    $setBlocksType(selection, () => $createEditorBlock(block))
+}
+
 export function EditorBlockButton({
   block,
   children,
@@ -207,28 +228,13 @@ export function EditorBlockButton({
 
   function command() {
     editor.update(() => {
-      $removeList()
-      const selection = $getSelection()
-
-      if (!$isRangeSelection(selection)) return
-      $setBlocksType(selection, () => {
-        switch (block) {
-          case "paragraph":
-            return $createParagraphNode()
-          case "quote":
-            return $createQuoteNode()
-          case "code":
-            return $createCodeNode()
-          default:
-            return $createHeadingNode(block)
-        }
-      })
+      $setEditorBlockType(block)
     })
   }
 
   return (
     <EditorCommandButton {...props} command={command}>
-      {children ?? blockLabels[block]}
+      {children ?? editorBlockLabels[block]}
     </EditorCommandButton>
   )
 }
@@ -237,7 +243,7 @@ export type EditorListButtonProps = EditorControlProps & {
   listType: "bullet" | "number" | "check"
 }
 
-const listCommands: Record<
+export const editorListCommands: Record<
   EditorListButtonProps["listType"],
   LexicalCommand<void>
 > = {
@@ -246,7 +252,7 @@ const listCommands: Record<
   check: INSERT_CHECK_LIST_COMMAND,
 }
 
-const listLabels = {
+export const editorListLabels = {
   bullet: "Bullet list",
   number: "Numbered list",
   check: "Checklist",
@@ -260,12 +266,12 @@ export function EditorListButton({
   const editor = useEditor()
 
   function command() {
-    editor.dispatchCommand(listCommands[listType], undefined)
+    editor.dispatchCommand(editorListCommands[listType], undefined)
   }
 
   return (
     <EditorCommandButton {...props} command={command}>
-      {children ?? listLabels[listType]}
+      {children ?? editorListLabels[listType]}
     </EditorCommandButton>
   )
 }

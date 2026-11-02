@@ -15,6 +15,7 @@ import {
   EditorRoot,
   EditorToolbar,
 } from "@yopem-ui/editor"
+import { BoldIcon, Redo2Icon, Undo2Icon } from "lucide-react"
 import { useId, useState } from "react"
 import { z } from "zod"
 
@@ -192,9 +193,29 @@ export function PublicDemoHostExample() {
         initialState={mounted.first}
       >
         <EditorToolbar aria-label="First fixture tools">
-          <EditorFormatButton format="bold" />
-          <EditorHistoryButton action="undo" />
-          <EditorHistoryButton action="redo" />
+          <EditorFormatButton
+            format="bold"
+            title="Bold"
+            render={<Button variant="ghost" size="icon-sm" />}
+          >
+            <BoldIcon aria-hidden="true" size={16} />
+          </EditorFormatButton>
+          <EditorHistoryButton
+            action="undo"
+            aria-label="Undo"
+            title="Undo"
+            render={<Button variant="ghost" size="icon-sm" />}
+          >
+            <Undo2Icon aria-hidden="true" size={16} />
+          </EditorHistoryButton>
+          <EditorHistoryButton
+            action="redo"
+            aria-label="Redo"
+            title="Redo"
+            render={<Button variant="ghost" size="icon-sm" />}
+          >
+            <Redo2Icon aria-hidden="true" size={16} />
+          </EditorHistoryButton>
         </EditorToolbar>
         <EditorContent />
       </EditorRoot>
@@ -204,9 +225,29 @@ export function PublicDemoHostExample() {
         initialState={mounted.second}
       >
         <EditorToolbar aria-label="Second fixture tools">
-          <EditorFormatButton format="bold" />
-          <EditorHistoryButton action="undo" />
-          <EditorHistoryButton action="redo" />
+          <EditorFormatButton
+            format="bold"
+            title="Bold"
+            render={<Button variant="ghost" size="icon-sm" />}
+          >
+            <BoldIcon aria-hidden="true" size={16} />
+          </EditorFormatButton>
+          <EditorHistoryButton
+            action="undo"
+            aria-label="Undo"
+            title="Undo"
+            render={<Button variant="ghost" size="icon-sm" />}
+          >
+            <Undo2Icon aria-hidden="true" size={16} />
+          </EditorHistoryButton>
+          <EditorHistoryButton
+            action="redo"
+            aria-label="Redo"
+            title="Redo"
+            render={<Button variant="ghost" size="icon-sm" />}
+          >
+            <Redo2Icon aria-hidden="true" size={16} />
+          </EditorHistoryButton>
         </EditorToolbar>
         <EditorContent />
       </EditorRoot>

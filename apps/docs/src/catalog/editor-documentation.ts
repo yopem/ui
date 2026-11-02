@@ -10,12 +10,22 @@ export async function getEditorDocumentation(slug: string) {
 
   if (part.item === "editor-block-placeholder")
     sourcePath = "./editor-examples/public-placeholder.tsx"
-  else if (part.item === "editor-floating-toolbar")
+  else if (part.name === "EditorFloatingToolbar")
     sourcePath = "./editor-examples/public-floating-toolbar.tsx"
   else if (part.item === "editor-drawing")
     sourcePath = "./editor-examples/public-drawing.tsx"
   else if (part.item === "editor-cursor-overlay")
     sourcePath = "./editor-examples/public-cursors.tsx"
+  else if (part.item === "editor-media-placeholder")
+    sourcePath = "./editor-previews/media-placeholder-example.tsx"
+  else if (part.name === "EditorReviewModeMenu")
+    sourcePath = "./editor-previews/review-mode-menu.tsx"
+  else if (
+    part.item === "editor-toolbar-menus" &&
+    part.name !== "EditorFloatingToolbarButtons" &&
+    part.name !== "EditorTurnIntoMenu"
+  )
+    sourcePath = "./editor-preview-compositions/toolbar-menus.tsx"
   else if (part.item === "editor-ai-menu")
     sourcePath = "./editor-preview-compositions/ai-menu.tsx"
   else if (part.item === "editor-diagram")
@@ -36,11 +46,25 @@ export async function getEditorDocumentation(slug: string) {
         ? "./editor-preview-compositions/document-print.tsx"
         : "./editor-examples/public-document-export.tsx"
   else if (part.item === "editor-labels")
-    sourcePath = "./editor-examples/public-labels.tsx"
+    sourcePath =
+      part.name === "EditorLabelsPicker" || part.name === "EditorLabelsOption"
+        ? "./editor-examples/public-labels.tsx"
+        : "./editor-previews/labels-select.tsx"
   else if (part.item === "editor-search")
     sourcePath = "./editor-preview-compositions/search.tsx"
   else if (part.name.startsWith("EditorInlineCombobox"))
     sourcePath = "./editor-preview-compositions/inline-combobox.tsx"
+  else if (
+    [
+      "MediaActions",
+      "MediaEditControl",
+      "MediaCaptionTextarea",
+      "MediaAlignButton",
+      "MediaDeleteButton",
+      "MediaImageResize",
+    ].includes(part.name)
+  )
+    sourcePath = "./editor-previews/media-actions.tsx"
   else if (part.name.startsWith("MediaPreview"))
     sourcePath = "./editor-preview-compositions/media-preview.tsx"
   else if (part.name === "MediaEmbedContent")
@@ -93,12 +117,16 @@ export async function getEditorDocumentation(slug: string) {
 
   return {
     installNames:
-      part.item === "editor-document-export" &&
-      part.name !== "EditorDocumentPrintControl"
-        ? [part.item, "editor-document-export-image", "editor-math"]
-        : part.name === "editorTocSlashCommand"
-          ? [part.item, "editor-typeahead"]
-          : [part.item],
+      part.item === "editor-document-export-pdf"
+        ? [part.item, "editor-document-export-image"]
+        : part.name === "EditorFloatingToolbarButtons"
+          ? [part.item, "editor-floating-toolbar"]
+          : part.item === "editor-document-export" &&
+              part.name !== "EditorDocumentPrintControl"
+            ? [part.item, "editor-document-export-image", "editor-math"]
+            : part.name === "editorTocSlashCommand"
+              ? [part.item, "editor-typeahead"]
+              : [part.item],
     title: part.name,
     description: part.description,
     usage,
@@ -118,7 +146,7 @@ export async function getEditorDocumentation(slug: string) {
             "Register EditorDrawingExtension in a stable array. Load the separate browser entry and SDK stylesheet inside a framework browser boundary.",
             "Self-host SDK fonts before mounting and restrict fallback font resources through CSP. Register one runtime per root and run its cleanup.",
             "Scenes reject files, images, link targets, custom metadata and unsupported elements. Validate drafts and sanitize SVG before download.",
-            "SDK dependency advisories and runtime/accessibility acceptance remain unresolved. Generic document conversion does not support drawing nodes.",
+            "SDK dependency advisories and runtime/accessibility acceptance remain unresolved. Document readers retain validated scene metadata without SDK rendering.",
           ]
         : []),
       ...(part.item === "editor-cursor-overlay"
@@ -154,6 +182,12 @@ export async function getEditorDocumentation(slug: string) {
             "EditorReviewRichComposer creates its own root. EditorReviewRichContent renders validated content without an EditorRoot.",
           ]
         : []),
+      ...(part.name === "DocumentStatic"
+        ? [
+            "Optional idPrefix has 1–64 ASCII characters. Start with an ASCII letter. Use ASCII letters, digits, underscores, or non-consecutive hyphens after it. Invalid prefixes throw. Use the same stable prefix for server rendering and hydration. Use a distinct prefix for each document in one owner document. Reserve generated IDs against other host markup. Choose distinct, meaningful aria-label values for multiple documents.",
+            "A prefix changes rendered IDs and fragment targets to <idPrefix>--<canonical-id>. Update deep links when opting in. Native fragment activation can change the URL and browser history. Changing a prefix changes its links. Omitting idPrefix preserves canonical IDs and existing deep links, but does not isolate multiple instances. Static prefixing does not change document data. Prefixed markup is not portable document HTML.",
+          ]
+        : []),
       ...(part.item === "editor-document"
         ? [
             "Import DocumentStatic from the separate document/static entry. No EditorRoot is required.",
@@ -163,26 +197,30 @@ export async function getEditorDocumentation(slug: string) {
       ...(part.item === "editor-media"
         ? [
             "Register MediaExtension in a stable root extension array. MediaInsertControl belongs inside EditorToolbar.",
+            "MediaInsertControl and MediaEditControl reject literal ? and #, including empty delimiters. The insert rule applies to direct URLs and upload results. Use query-free provider URLs with this control. In URL paths, %3F and %23 are path data. Provider and iframe rules can be stricter. The pure parseProvider helper keeps its supported provider forms.",
+            "MediaInsertControl requires a fresh valid range, a connected editable root, and a registered MediaNode. Content, changed non-null selection, read-only, or root changes can invalidate the target. A null selection can remain while the dialog has focus. On success, the control inserts after the ordered selection-end root child or at the exact root gap. Its insertion keeps selected content, list and table structure, and empty target blocks. It adds an empty paragraph and selects the new media node.",
+            "$insertMedia uses Lexical nearest-root insertion on the current range. MediaFileClipboard restores its range and calls $insertMedia. Its drop range comes from the drop position. Clipboard completion requires an unchanged non-null range. The insert control and clipboard insertion request HISTORY_PUSH_TAG. Media action changes and removal also request it. This tag does not guarantee exact undo grouping. The standalone $insertMedia helper adds no history tag or saved-target lease. Its caller owns the update, selection, and history policy. These paths use parseMedia, not the insert control's delimiter rule. Provider-specific checks still apply. Ordinary URLs can have nonempty components that the portable reader rejects. Placement has no control preservation guarantee.",
+            "Cancellation signals the host and discards stale local results. Remote cancellation is cooperative. Each mounted MediaInsertControl instance keeps its upload slot until its callback settles. Separate instances and remounts do not share that slot. The placeholder controller keeps its own busy slot until settlement. MediaFileClipboard does not retain an equivalent slot after cancellation. Calling start on the same createMediaUpload task can supersede an unsettled call. Earlier callbacks can continue. Enforce remote upload concurrency and retry policy in the host. Cancellation does not prove that remote work stopped.",
             "MediaContent and MediaPreview parts work without EditorRoot. Keep native playback and file links usable in read-only views.",
             "Compose MediaPreviewRoot, Trigger, and Dialog, or use MediaPreviewGallery. Supply unique image IDs. Zoom uses keyboard-accessible Slider and ScrollArea controls and is not saved.",
-            "MediaEmbedContent needs an explicit provider or exact HTTPS-origin policy. Frames stay blocked until consent. Source, policy, and disabled changes reset consent. DNS and redirects need host controls.",
+            "MediaEmbedContent needs an explicit provider or exact HTTPS-origin policy. Frames stay blocked until consent. Source, policy, and disabled changes reset consent. Frame consent does not cover images, video, audio, or caption tracks. Images can request their URLs when rendered. Native media and tracks can make network requests. Preload settings do not guarantee network privacy. Successful uploads retain the file name and URL. Media JSON and tagged HTML can include URLs, names, alt text, and captions. Account for this data in host delivery, CSP, logs, clipboard, and storage policies. DNS and redirects need host controls.",
             "Use HTTPS URLs without credentials. Host uploads require authorization and bounded validation.",
             "Mount MediaFileClipboard inside EditorRoot with a stable upload callback. It handles one file per paste or drop. Rich MIME and higher-priority host handlers stay first. Without upload it registers nothing. Callback changes cancel pending work. Host callbacks enforce size, content, authorization, and quota limits.",
-            "Install editor-document separately for document IO. Preserve canonical media metadata and reject URL queries and fragments.",
+            "Install editor-document separately for document IO. Both native media and the portable reader require absolute HTTPS source and track URLs without credentials. The portable reader rejects nonempty query or fragment components. It may retain canonical ordinary-media and track URLs with empty trailing ? or #, subject to all other checks.",
           ]
         : []),
       ...(part.item === "editor-columns"
         ? [
             "Register EditorColumnsExtension in a stable extensions array. Import pure codecs from @/components/editor/columns-model.",
             "Select a column before layout, resize, move, or remove actions. Remove deletes the group and its content.",
-            "Generic editor-document converters do not support columns. Keep native rich block nesting; nested column groups are rejected.",
+            "Document readers retain validated columns. Register feature nodes before live imports. Nested column groups are rejected.",
           ]
         : []),
       ...(part.item === "editor-date"
         ? [
             "Register EditorDateExtension in a stable extensions array. Import pure codecs from @/components/editor/date-model.",
             "EditorDateNode renders EditorDateInline with its current node key and date. Do not supply detached node keys.",
-            "Store YYYY-MM-DD values without timezone conversion. Generic editor-document converters do not support date nodes.",
+            "Store YYYY-MM-DD values without timezone conversion. Document readers retain validated dates. Register feature nodes before live imports.",
           ]
         : []),
       ...(part.item === "editor-footnotes"
@@ -191,7 +229,7 @@ export async function getEditorDocumentation(slug: string) {
             "Register EditorFootnoteExtension in a stable array. The createEditorFootnoteTypeahead controller includes this extension; do not register it twice.",
             "EditorFootnoteTypeahead renders EditorContent. Do not add another editable surface beside it.",
             "Select a definition before removal or duplicate renumbering. Backlinks navigate to native references, including in read-only roots.",
-            "Generic editor-document converters do not support footnotes. Validate complete documents before replacement.",
+            "Document readers retain validated footnotes. Register feature nodes before live imports. Validate complete documents before replacement.",
           ]
         : []),
       ...(part.item === "editor-toc"
@@ -199,7 +237,7 @@ export async function getEditorDocumentation(slug: string) {
             "Install editor-toc separately. Import controls from @/components/editor/toc and pure codecs from @/components/editor/toc-model.",
             "Register EditorTocExtension in a stable array. The overview follows native document headings. Select its node before removal.",
             "Slash insertion also requires editor-typeahead. Pass editorTocSlashCommand() to createEditorTypeahead and register its controller extension.",
-            "Generic editor-document converters do not support TOC nodes. Validate complete documents before replacement.",
+            "Document readers retain validated TOC nodes. Register feature nodes before live imports. Validate complete documents before replacement.",
           ]
         : []),
       ...(part.item === "editor-math"

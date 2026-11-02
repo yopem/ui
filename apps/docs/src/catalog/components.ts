@@ -1,16 +1,21 @@
 import type { RouteComponent } from "@tanstack/react-router"
 import type { FunctionComponent } from "react"
 
+import { rewriteImports } from "@registry/source-files"
 import { lazyRouteComponent } from "@tanstack/react-router"
+
+import { getSnippetDependencies } from "./snippet-dependencies"
 
 export interface CatalogPreview {
   component: RouteComponent
   title: string
+  setupCommand?: string
 }
 
 export interface CatalogItem {
   name: string
   preview?: CatalogPreview
+  additionalPreviews?: (CatalogPreview & { source: string })[]
   slug: string
   title: string
 }
@@ -18,6 +23,38 @@ export interface CatalogItem {
 const modules = import.meta.glob<{ Preview: FunctionComponent }>(
   "./previews/*.tsx",
 )
+
+const focusModules = import.meta.glob<{ Preview: FunctionComponent }>(
+  "./preview-compositions/combobox-focus.tsx",
+)
+
+const focusSources = import.meta.glob<string>(
+  "./preview-compositions/combobox-focus.tsx",
+  { query: "?raw", import: "default", eager: true },
+)
+
+const loadComboboxFocus =
+  focusModules["./preview-compositions/combobox-focus.tsx"]
+
+const comboboxFocusSource =
+  focusSources["./preview-compositions/combobox-focus.tsx"]
+
+if (!loadComboboxFocus || !comboboxFocusSource)
+  throw new Error("Missing Combobox focus preview")
+
+const comboboxFocusConsumerSource = rewriteImports(comboboxFocusSource)
+
+const comboboxFocusPreview = {
+  component: lazyRouteComponent(loadComboboxFocus, "Preview"),
+  title: "Equipment selection workflows",
+  source: comboboxFocusConsumerSource,
+  setupCommand: [
+    ...getSnippetDependencies(comboboxFocusConsumerSource).components.map(
+      (name) => `bunx --bun @yopem-ui/cli add ${name}`,
+    ),
+    "bun add @base-ui/react@^1.9.0",
+  ].join("\n"),
+}
 
 const compositionOverrides = new Map<
   string,
@@ -160,6 +197,8 @@ export const catalog: CatalogItem[] = Object.entries(modules)
         component: lazyRouteComponent(load, "Preview"),
         title: previewDescriptions.get(slug) ?? `${title} in use`,
       },
+      additionalPreviews:
+        slug === "combobox" ? [comboboxFocusPreview] : undefined,
       slug,
       title,
     }

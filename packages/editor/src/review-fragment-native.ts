@@ -1,5 +1,6 @@
 import { z } from "zod"
 
+import { scanDocumentJSON } from "./json-duplicates"
 import { parseReviewDocumentJSON } from "./review-codecs"
 import { parseReviewJSONValue } from "./review-validation"
 
@@ -213,9 +214,11 @@ export function parseEditorReviewNativeFragment(
     return { status: "rejected", reason: "size-limit" }
 
   try {
-    const payload = nativeClipboardPayloadSchema.parse(
-      parseReviewJSONValue(data),
-    )
+    const input = parseReviewJSONValue(data)
+
+    if (scanDocumentJSON(data, data.length))
+      return { status: "rejected", reason: "invalid-fragment" }
+    const payload = nativeClipboardPayloadSchema.parse(input)
 
     if (payload.namespace !== namespace)
       return { status: "rejected", reason: "namespace-mismatch" }

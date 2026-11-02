@@ -31,12 +31,27 @@ test("basic-marks: composes marks with native keyboard input and history", async
   const editor = example.getByRole("textbox")
   await expect(editor).toHaveAttribute("contenteditable", "true")
   const toolbar = example.getByRole("toolbar")
+  const bold = toolbar.getByRole("button", { name: "Bold", exact: true })
   await editor.fill("Foundation")
   await editor.press("ControlOrMeta+a")
-  await toolbar.getByRole("button", { name: "Bold", exact: true }).click()
+  await expect(editor.locator("strong, b")).toHaveText("Foundation")
+  await expect(bold).toHaveAttribute("aria-pressed", "true")
+  await bold.click()
+  await expect(bold).toHaveAttribute("aria-pressed", "false")
+  await expect(editor.locator("strong, b")).toHaveCount(0)
+  await expect(editor).toHaveText("Foundation")
+  await bold.click()
+  await expect(bold).toHaveAttribute("aria-pressed", "true")
+  await expect(editor.locator("strong, b")).toHaveText("Foundation")
   await editor.press("ControlOrMeta+i")
   await editor.press("ControlOrMeta+u")
   await expect(editor.locator("strong, b")).toHaveText("Foundation")
+  await expect(bold).toHaveAttribute("aria-pressed", "true")
+  await expect(editor.locator("strong, b")).toHaveCSS("font-style", "italic")
+  await expect(editor.locator("strong, b")).toHaveCSS(
+    "text-decoration-line",
+    /underline/,
+  )
   await expect(
     toolbar.getByRole("button", { name: "Italic", exact: true }),
   ).toHaveAttribute("aria-pressed", "true")
@@ -171,12 +186,28 @@ test("installation-next-02-marks: seeded marks support keyboard toolbar operatio
   await editor.fill("Keyboard selection")
   await editor.press("ControlOrMeta+a")
   const bold = toolbar.getByRole("button", { name: "Bold", exact: true })
+  await expect(editor.locator("strong, b")).toHaveText("Keyboard selection")
+  await expect(bold).toHaveAttribute("aria-pressed", "true")
   await bold.focus()
   await bold.press("Enter")
   await expect(editor).toBeFocused()
+  await expect(bold).toHaveAttribute("aria-pressed", "false")
+  await expect(editor.locator("strong, b")).toHaveCount(0)
+  await expect(editor).toHaveText("Keyboard selection")
+  await bold.focus()
+  await bold.press("Enter")
+  await expect(editor).toBeFocused()
+  await expect(bold).toHaveAttribute("aria-pressed", "true")
   await expect(editor.locator("strong, b")).toHaveText("Keyboard selection")
   await editor.press("ControlOrMeta+i")
   await editor.press("ControlOrMeta+u")
+  await expect(editor.locator("strong, b")).toHaveText("Keyboard selection")
+  await expect(bold).toHaveAttribute("aria-pressed", "true")
+  await expect(editor.locator("strong, b")).toHaveCSS("font-style", "italic")
+  await expect(editor.locator("strong, b")).toHaveCSS(
+    "text-decoration-line",
+    /underline/,
+  )
   await expect(
     toolbar.getByRole("button", { name: "Italic", exact: true }),
   ).toHaveAttribute("aria-pressed", "true")
@@ -296,34 +327,162 @@ test("editor-disabled: prevents mutation and removes editor from tab order", asy
   const editor = example.getByRole("textbox")
   await expect(editor).toHaveAttribute("contenteditable", "false")
   await expect(editor).toHaveAttribute("aria-disabled", "true")
+  await expect(editor).toHaveAttribute("aria-readonly", "true")
   await expect(editor).toHaveAttribute("tabindex", "-1")
   await expect(editor).toHaveText("")
   await expect(editor).toHaveAttribute(
     "aria-placeholder",
     "Editing is disabled.",
   )
-  await editor.click()
+  await editor.scrollIntoViewIfNeeded()
+  await expect(editor).toBeVisible()
+  const bounds = await editor.boundingBox()
+  expect(bounds).not.toBeNull()
+
+  if (!bounds) throw new Error("Disabled editor has no bounding box")
+
+  const point = {
+    x: bounds.x + bounds.width / 2,
+    y: bounds.y + bounds.height / 2,
+  }
+
+  expect(
+    await editor.evaluate(
+      (element, { x, y }) =>
+        element.contains(element.ownerDocument.elementFromPoint(x, y)),
+      point,
+    ),
+  ).toBe(true)
+  await page.mouse.click(point.x, point.y)
+  await expect(editor).toBeFocused()
   await page.keyboard.type("Must not appear")
   await expect(editor).toHaveText("")
 
-  for (const button of await example
-    .getByRole("toolbar")
-    .getByRole("button")
-    .all()) {
+  const buttons = example.getByRole("toolbar").getByRole("button")
+  await expect(buttons).toHaveCount(5)
+
+  for (const button of await buttons.all()) {
     await expect(button).toBeDisabled()
   }
 
-  await example
-    .getByRole("button", { name: "Copy source", exact: true })
-    .focus()
-  await page.keyboard.press("Tab")
-  await expect(editor).not.toBeFocused()
+  const livePreview = example.getByRole("button", {
+    name: "Live preview",
+    exact: true,
+  })
+
+  const copySource = example.getByRole("button", {
+    name: "Copy source",
+    exact: true,
+  })
+
+  await livePreview.focus()
+  await expect(livePreview).toBeFocused()
+
+  for (const [key, target] of [
+    ["Tab", copySource],
+    ["Shift+Tab", livePreview],
+  ] as const) {
+    for (let step = 0; step < 8; step++) {
+      await page.keyboard.press(key)
+      await expect(editor).not.toBeFocused()
+
+      if (
+        await target.evaluate(
+          (element) => element.ownerDocument.activeElement === element,
+        )
+      )
+        break
+    }
+
+    await expect(target).toBeFocused()
+  }
+
+  await expect(editor).toHaveText("")
+})
+
+test("gallery starts with basics and resets a closed live preview", async ({
+  page,
+}, testInfo) => {
+  const gallery = page.getByTestId("editor-examples-core")
+
+  const first = gallery
+    .locator('section[data-testid^="editor-example-"]')
+    .first()
+
+  await expect(first).toHaveAttribute(
+    "data-testid",
+    "editor-example-basic-marks",
+  )
+  await first.getByRole("button", { name: "Live preview", exact: true }).click()
+  const editor = first.getByRole("textbox")
+  await expect(editor).toHaveAttribute("data-lexical-editor", "true")
+  const initialText = await editor.textContent()
+  expect(initialText).toBeTruthy()
+  await editor.fill("Unsaved gallery draft")
+  const next = page.getByTestId("editor-example-basic-nodes")
+  await next.getByRole("button", { name: "Live preview", exact: true }).click()
+  await expect(next.getByRole("textbox")).toBeVisible()
+  await expect(first.getByRole("textbox", { includeHidden: true })).toHaveCount(
+    0,
+  )
+  await expect(gallery.getByRole("textbox")).toHaveCount(1)
+  await first.getByRole("button", { name: "Live preview", exact: true }).click()
+  await expect(next.getByRole("textbox", { includeHidden: true })).toHaveCount(
+    0,
+  )
+  await expect(editor).toHaveText(initialText ?? "")
+  await testInfo.attach("gallery-first-live-preview.png", {
+    body: await first.screenshot({ scale: "css" }),
+    contentType: "image/png",
+  })
+  await testInfo.attach("gallery-preview-reset.html", {
+    body: await first.innerHTML(),
+    contentType: "text/html",
+  })
+})
+
+test("gallery keeps limits and installation available without a live editor", async ({
+  page,
+}, testInfo) => {
+  const example = page.getByTestId("editor-example-basic-marks")
+
+  const trigger = example.getByRole("button", {
+    name: "Limits and setup",
+    exact: true,
+  })
+
+  await expect(trigger).toHaveAttribute("aria-expanded", "false")
+  await trigger.click()
+
+  const details = example.getByRole("region", {
+    name: / limits and installation$/,
+  })
+
+  await expect(details).toBeVisible()
+  await expect(details).toHaveAttribute(
+    "id",
+    (await trigger.getAttribute("aria-controls")) ?? "",
+  )
+  await expect(
+    example.getByRole("textbox", { includeHidden: true }),
+  ).toHaveCount(0)
+
+  const report = await new AxeBuilder({ page })
+    .include('[data-testid="editor-example-basic-marks"]')
+    .analyze()
+
+  await testInfo.attach("gallery-details-axe.json", {
+    body: JSON.stringify(report),
+    contentType: "application/json",
+  })
+  expect(report.violations).toEqual([])
 })
 
 for (const width of [390, 768, 1440]) {
   test(`@a11y core gallery: ${width}px containment and accessible controls`, async ({
     page,
   }, testInfo) => {
+    test.slow()
     await page.setViewportSize({ width, height: 1000 })
 
     for (const slug of slugs) {
@@ -332,6 +491,9 @@ for (const width of [390, 768, 1440]) {
         .getByRole("button", { name: "Live preview", exact: true })
         .click()
       await expect(example.getByRole("textbox")).toBeVisible()
+      await expect(
+        page.getByTestId("editor-examples-core").getByRole("textbox"),
+      ).toHaveCount(1)
       const bounds = await example.boundingBox()
       expect(bounds).not.toBeNull()
 
@@ -339,10 +501,22 @@ for (const width of [390, 768, 1440]) {
         expect(bounds.x).toBeGreaterThanOrEqual(0)
         expect(bounds.x + bounds.width).toBeLessThanOrEqual(width + 1)
       }
+
+      const previewReport = await new AxeBuilder({ page })
+        .include(`[data-testid="editor-example-${slug}"]`)
+        .options({ resultTypes: ["violations", "incomplete"] })
+        .analyze()
+
+      await testInfo.attach(`core-${slug}-${width}-axe.json`, {
+        body: JSON.stringify(previewReport),
+        contentType: "application/json",
+      })
+      expect(previewReport.violations).toEqual([])
     }
 
     const report = await new AxeBuilder({ page })
       .include('[data-testid="editor-examples-core"]')
+      .options({ resultTypes: ["violations", "incomplete"] })
       .analyze()
 
     await testInfo.attach(`core-${width}-axe.json`, {
@@ -350,6 +524,9 @@ for (const width of [390, 768, 1440]) {
       contentType: "application/json",
     })
     expect(report.violations).toEqual([])
+    await page.evaluate(() =>
+      window.scrollTo({ top: 0, left: 0, behavior: "instant" }),
+    )
     await testInfo.attach(`core-${width}.png`, {
       body: await page.screenshot({ fullPage: true, scale: "css" }),
       contentType: "image/png",
@@ -370,7 +547,10 @@ test("core gallery: copies complete consumer composition through native clipboar
       .click()
     await expect(
       example.getByRole("button", { name: "Copy source", exact: true }),
-    ).toHaveText("Copied")
+    ).toHaveText("Copy source")
+    await expect(example.locator('[data-slot="clipboard-status"]')).toHaveText(
+      "Copied to clipboard",
+    )
     const source = await page.evaluate(() => navigator.clipboard.readText())
     expect(source).toContain('"use client"')
     expect(source).toContain('from "@/components/editor"')

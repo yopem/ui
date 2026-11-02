@@ -1,5 +1,6 @@
 "use client"
 
+import { Button } from "@registry/components/ui/button"
 import {
   EditorContent,
   EditorHistoryButton,
@@ -7,6 +8,7 @@ import {
   EditorRoot,
   EditorToolbar,
 } from "@yopem-ui/editor"
+import { LinkIcon, Redo2Icon, Undo2Icon } from "lucide-react"
 
 const initialState = JSON.stringify({
   root: {
@@ -42,9 +44,29 @@ export function LinkExample() {
   return (
     <EditorRoot ariaLabel="Link editor" initialState={initialState}>
       <EditorToolbar>
-        <EditorLinkControl />
-        <EditorHistoryButton action="undo" />
-        <EditorHistoryButton action="redo" />
+        <EditorLinkControl
+          aria-label="Link"
+          title="Link"
+          render={<Button variant="ghost" size="icon-sm" />}
+        >
+          <LinkIcon aria-hidden="true" size={16} />
+        </EditorLinkControl>
+        <EditorHistoryButton
+          action="undo"
+          aria-label="Undo"
+          title="Undo"
+          render={<Button variant="ghost" size="icon-sm" />}
+        >
+          <Undo2Icon aria-hidden="true" size={16} />
+        </EditorHistoryButton>
+        <EditorHistoryButton
+          action="redo"
+          aria-label="Redo"
+          title="Redo"
+          render={<Button variant="ghost" size="icon-sm" />}
+        >
+          <Redo2Icon aria-hidden="true" size={16} />
+        </EditorHistoryButton>
       </EditorToolbar>
       <EditorContent placeholder="Write link text…" />
     </EditorRoot>

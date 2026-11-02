@@ -9,7 +9,6 @@ import {
   parseEditorListStartHTML,
 } from "@editor/list-presentation-model"
 import { createHeadlessEditor } from "@lexical/headless"
-import { withDOM } from "@lexical/headless/dom"
 import { $generateHtmlFromNodes, $generateNodesFromDOM } from "@lexical/html"
 import {
   $createListItemNode,
@@ -17,6 +16,7 @@ import {
   ListItemNode,
   ListNode,
 } from "@lexical/list"
+import { withDOM } from "@workspace/tests/fixtures/lexical-dom"
 import { expect, test } from "bun:test"
 import {
   $createTextNode,

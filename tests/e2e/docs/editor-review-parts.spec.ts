@@ -1,5 +1,8 @@
 import { expect, test } from "@playwright/test"
-import { editorParts } from "@workspace/apps/docs/src/catalog/editor-parts"
+import {
+  editorPartLabel,
+  editorParts,
+} from "@workspace/apps/docs/src/catalog/editor-parts"
 import { editorReviewParts } from "@workspace/apps/docs/src/catalog/editor-review-parts"
 
 const reviewParts = editorParts.filter((part) => part.item === "editor-review")
@@ -17,7 +20,11 @@ for (const part of reviewParts) {
   }) => {
     await page.goto(`/editor/${part.slug}`)
     await expect(
-      page.getByRole("heading", { name: part.name, exact: true }).first(),
+      page.getByRole("heading", {
+        name: editorPartLabel(part.name),
+        level: 1,
+        exact: true,
+      }),
     ).toBeVisible()
     await expect(
       page.locator('[data-slot="editor-part-preview"]'),

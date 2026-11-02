@@ -20,7 +20,7 @@ const search = createSearchAPI("simple", {
     },
     ...getCoreEditorExamples().map((example) => ({
       title: example.title,
-      url: example.url,
+      url: example.standaloneUrl ?? example.url,
       content: `${example.description} ${example.limits}`,
     })),
     ...editorParts.map((part) => ({

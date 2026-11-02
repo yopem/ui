@@ -43,6 +43,10 @@ Replace `button` with the required item name. Install each component before
 importing it; init installs only base files. Import from the copied file, such
 as `@/components/ui/button`. Do not infer props from another UI library.
 
+Import `CSPProvider` from `@base-ui/react/csp-provider`. Import
+`DirectionProvider` from `@base-ui/react/direction-provider`. Supply the host
+CSP nonce. Keep the host CSP policy intact.
+
 ## Prefer components before custom styles
 
 Use existing UI, layout, and typography components before writing custom StyleX.
@@ -86,7 +90,33 @@ the same spelling. Read the required item's exports and compound parts.
 Use Editor for rich-text entry. Install the `editor` registry item before use.
 Keep its document state in Lexical JSON. Slate documents and Plate plugins are
 not compatible. Use the installed source and editor documentation for supported
-features. Do not assume full Plate parity.
+features. Do not assume full Plate parity. Use Lucide icons for standard toolbar
+actions. Keep full accessible names and titles. For standard editor actions,
+pass Button icon sizes through render. Keep current values visible in selection
+controls. Set aria-pressed on ToolbarButton for controlled toggle actions.
+Native toggle renderers keep their own state.
+
+Open https://ui.yopem.com/editor/examples/notion-like for the standalone
+Potion-style workspace. Keep the app height within the viewport. Use separate
+ScrollArea viewports for navigation and document content. Use Sheet navigation
+when the parent is narrow. Keep page controls outside document scrolling. Native
+controls include links, demo mentions, callouts, math, contents, and URL images.
+Demo mention IDs grant no access. The Table of Contents page has a separate
+outline and an in-document contents block. Both show the first 500 nonempty
+headings in preorder. Titles normalize whitespace and truncate to 256 UTF-16
+code units. The outline does not change saved content. See
+https://ui.yopem.com/editor/examples#notion-like for consumer source and
+installation commands. Public runtime observations guide this example. The
+deployed Potion revision is unknown. It uses `yopem-ui:notion-like:v1:document:`
+keys for validated known-page JSON drafts. Stored documents validate before the
+native root mounts. Rejected stored bytes stay unchanged. Storage or validation
+failure pauses writes. Memory editing and active-page JSON copy remain
+available. Page switches reset undo history and selection. Titles and page
+options stay in memory. Browser drafts are unencrypted. Scripts on this origin
+can read them. Browser storage can remove drafts. Two tabs can overwrite drafts.
+No conflict resolution or remote synchronization exists. Do not treat browser
+drafts as private or durable storage. Supply accounts, collaboration, and other
+host services separately.
 
 Use framework links for application navigation. Native anchors remain valid.
 `variant="link"` changes Button appearance, not its element or navigation
@@ -143,9 +173,12 @@ export function ComposedNotes() {
 
 Add `EditorListButton`, `EditorIndentButton`, `EditorLinkControl`, or
 `EditorTableButton` when needed. Use `useEditor` for Lexical commands and
-`useEditorState` for text formats and history availability inside the root.
-Preserve keyboard behavior, URL validation, read-only state, refs, and consumer
-props. This API does not accept Slate documents or Plate plugins.
+`useEditorState` for text formats and history availability inside the root. Use
+`useEditorState().editable` for mutation controls. It reports attached native
+editability. Server markup stays read-only until the native root connects. The
+`editable` prop keeps the requested setting. Preserve keyboard behavior, URL
+validation, read-only state, refs, and consumer props. This API does not accept
+Slate documents or Plate plugins.
 
 Use `EditorTableMenu` for row, column, header, merge, and split actions.
 Register `EditorTablePresentationExtension` for bounded tables and persisted
@@ -160,6 +193,12 @@ both directions and keyboard-accessible. Validate external table JSON and HTML
 before conversion. Invalid updates must preserve existing content. Discard saved
 table selections after document changes. Preserve resize cancellation, history,
 and right-to-left keyboard behavior.
+
+Before loading or mutating live Lexical slots, bound occupied slots and preserve
+acyclic ownership. Validate complete candidates at host boundaries. Root
+transforms do not validate all queued updates. Rejected updates can discard
+coalesced pending edits. Do not rely on transforms for `skipTransforms` updates
+or unvalidated external state.
 
 Configure `disableMerge:true` on `EditorTablePresentationExtension` at mount
 time to block house merge actions. Existing spans remain. Explicit splitting
@@ -392,7 +431,13 @@ Use `SelectTrigger` with `SelectValue`, and `SelectPopup` with `SelectItem`.
 `SelectButton` supplies styling, not popup trigger behavior. Read the installed
 Combobox/Autocomplete item-rendering contract before building a searchable
 control. For object values, check label, submitted-value, and equality
-callbacks.
+callbacks. Combobox chip navigation closes open suggestions before focus moves
+to a chip. If closing is cancelled, navigation does not focus a chip. ScrollArea
+viewports use tabIndex=0 by default. Use viewportTabIndex={-1} when an input
+owns composite keyboard navigation. ComboboxList and AutocompleteList set this
+automatically. Keep standalone viewports keyboard-accessible. Use
+portalProps.container for a host landmark that contains nonmodal suggestions.
+Check popup position and clipping after setting the container.
 
 ### Dialog composition
 
@@ -798,6 +843,32 @@ automatically. Keep tokens out of browser storage, URLs, and logs. Cancellation
 does not prove that billing stops. See https://ui.yopem.com/docs/editor-ai for
 provider schema and deployment limits.
 
+## Optional editor toolbar menus
+
+Install this optional item before importing its parts:
+
+```sh
+bunx --bun @yopem-ui/cli add editor-toolbar-menus
+npx @yopem-ui/cli add editor-toolbar-menus
+pnpm dlx @yopem-ui/cli add editor-toolbar-menus
+yarn dlx @yopem-ui/cli add editor-toolbar-menus
+```
+
+Import parts from `@/components/editor/toolbar-menus`. Compose
+`EditorFixedToolbarButtons` inside `EditorFixedToolbar` within `EditorRoot`. Use
+`EditorListToolbarButtons` for grouped list controls. Use grouped icon controls
+with full accessible names. Keep each group within its toolbar.
+`EditorInsertMenu` adds an empty block after one current root block. It does not
+convert selected content. `EditorTurnIntoMenu` converts native blocks.
+`EditorMoreMenu` applies strikethrough, subscript, superscript, and highlight.
+Saved selections expire after document or editable-state changes. Preserve host
+event cancellation. Configured `authorizeAction` must return literal `true`. It
+checks menu actions, not all grouped controls. Install `editor-floating-toolbar`
+separately before composing `EditorFloatingToolbarButtons` inside
+`EditorFloatingToolbar`. Optional feature nodes are not included. Native
+keyboard, history, focus, and accessibility checks remain unvalidated. See
+https://ui.yopem.com/components/editor-toolbar-menus for API notes.
+
 ## Optional editor review
 
 Install `editor-review` separately from `editor`:
@@ -814,6 +885,18 @@ Import `EditorReviewPreset` and `EditorReviewHost` from
 surface. For custom composition, create one controller per root and add its
 extension to the stable root extension list. Place `EditorReviewProvider` inside
 `EditorRoot`.
+
+Import `EditorReviewModeMenu` from `@/components/editor/review`. Keep it outside
+a disabled `EditorToolbar`. Supply controlled `value`, synchronous
+`canChangeMode`, and `onModeChange` for Editing, Suggestion, and Viewing. The
+default accessible name includes the current mode. An explicit `aria-label` also
+sets default visible text. Keep custom child text in the accessible name. Values
+are `editing`, `suggestion`, and `viewing`. The host owns editable state and
+review mode. Keep `onModeChange` synchronous. Commit the controlled value only
+after review accepts. Recheck host write and suggestion policies in the
+callback. Mode changes never grant permission. Enable editing synchronously
+before `setSuggesting` when leaving Viewing. Restore the previous editable state
+if review rejects.
 
 Set `viewer` from a verified host identity. Supply a synchronous `can` policy.
 Allow each action only when current policy returns literal `true`. Serialized
@@ -873,7 +956,9 @@ limits.
 Use EditorInlineCombobox with Input, Content, List, Item, Empty, Status, Group,
 GroupLabel, and Row parts. EditorInlineComboboxInput renders EditorContent. Do
 not add a second query input. Keep every current item in controller order. Read
-state with useEditorInlineCombobox. Compose EditorEmojiPopover,
+state with useEditorInlineCombobox. Keep default option names short.
+Descriptions use aria-describedby outside the named option. Keep the complete
+row available for pointer selection. Compose EditorEmojiPopover,
 EditorEmojiToolbarButton, EditorEmojiPopoverContent, and EditorEmojiPicker
 inside EditorToolbar. EditorEmojiPicker is the panel. EditorEmojiMenu is the
 complete toolbar preset. Compose EditorEmojiSearch, EditorEmojiCategory,
@@ -893,6 +978,20 @@ Import portable helpers from `@/components/editor/document`. Import
 does not require `EditorRoot`. Keep `@types/hast` and `@types/mdast` as direct
 consumer dependencies. Keep copied pure models and `document/optional-nodes.ts`.
 
+Optional `idPrefix` has 1–64 ASCII characters. Start with an ASCII letter. Use
+ASCII letters, digits, underscores, or non-consecutive hyphens after it. Invalid
+prefixes throw. Use the same stable prefix for server rendering and hydration.
+Use a distinct prefix for each document in one owner document. Reserve generated
+IDs against other host markup. Choose distinct, meaningful `aria-label` values
+for multiple documents.
+
+A prefix changes rendered IDs and fragment targets to
+`<idPrefix>--<canonical-id>`. Update deep links when opting in. Native fragment
+activation can change the URL and browser history. Changing a prefix changes its
+links. Omitting `idPrefix` preserves canonical IDs and existing deep links, but
+does not isolate multiple instances. Static prefixing does not change document
+data. Prefixed markup is not portable document HTML.
+
 Register `EditorDocumentClipboardExtension` in the stable root extension array.
 Call `registerDocumentPaste` after editor creation. Retain its cleanup callback.
 Keep native MIME policy composition and host paste vetoes intact. Validate
@@ -906,39 +1005,125 @@ and standalone HTML use native MathML. Mentions use the validated identity
 codec. Saved mention identities do not grant access. Media JSON and canonical
 tagged figure HTML retain native metadata. Markdown uses canonical HTML for
 media. Register `MediaExtension` for live rendering or `MediaNode` in headless
-readers. Media URLs cannot contain credentials, queries, or fragments. Register
-optional feature nodes before live import. Readers retain footnotes, contents,
-columns, dates, labels, drawings, editable cards, and diagram metadata. Optional
-nodes use canonical HTML fallback. Markdown footnote input is supported.
-Transient card fields are not saved. Drawing SDKs do not run during static
-conversion. Review nodes remain unsupported. Do not silently remove unknown
-nodes or formatting during conversion. See
-https://ui.yopem.com/components/editor-document for supported formats.
+readers. The portable reader rejects credentials and nonempty query or fragment
+components. It may retain canonical ordinary-media and track URLs with empty
+trailing delimiters, subject to all other checks. Register optional feature
+nodes before live import. Readers retain footnotes, contents, columns, dates,
+labels, drawings, editable cards, and diagram metadata. Optional nodes use
+canonical HTML fallback. Markdown footnote input is supported. Transient card
+fields are not saved. Drawing SDKs do not run during static conversion. Review
+nodes remain unsupported. Do not silently remove unknown nodes or formatting
+during conversion. See https://ui.yopem.com/components/editor-document for
+supported formats.
 
 ## Optional editor media
 
 Install `editor-media` separately. Import parts from
 `@/components/editor/media`. Register `MediaExtension` in a stable root
-extension array. Compose `MediaInsertControl` inside `EditorToolbar`. Mount
-`MediaFileClipboard` inside `EditorRoot` with a stable host upload callback. It
-handles one file per paste or drop. Without upload, it registers nothing. Rich
-MIME and higher-priority host handlers stay first. Callback changes cancel
-pending work. Moving the caret cancels pending insertion. Host callbacks enforce
-size, content, authorization, and quota limits. `MediaContent` and image preview
-parts work without `EditorRoot`. Compose `MediaPreviewRoot`,
+extension array. Compose `MediaInsertControl` inside `EditorToolbar`.
+`MediaInsertControl` and `MediaEditControl` reject literal `?` and `#`,
+including empty delimiters. This insert rule applies to direct URLs and upload
+results. Use query-free provider URLs with this control. In URL paths, `%3F` and
+`%23` are path data. Provider and iframe rules can be stricter.
+`MediaInsertControl` requires a fresh valid range, a connected editable root,
+and a registered `MediaNode`. Content, changed non-null selection, read-only, or
+root changes can invalidate the target. A null selection can remain while the
+dialog has focus. On success, the control inserts after the ordered
+selection-end root child or at the exact root gap. Its insertion keeps selected
+content, list and table structure, and empty target blocks. It adds an empty
+paragraph and selects the new media node. `$insertMedia` uses Lexical
+nearest-root insertion on the current range. `MediaFileClipboard` restores its
+range and calls `$insertMedia`. Its drop range comes from the drop position.
+Clipboard completion requires an unchanged non-null range. The insert control
+and clipboard insertion request `HISTORY_PUSH_TAG`. Media action changes and
+removal also request it. This tag does not guarantee exact undo grouping. The
+standalone `$insertMedia` helper adds no history tag or saved-target lease. Its
+caller owns the update, selection, and history policy. These paths use
+`parseMedia`, not the insert control's delimiter rule. Provider-specific checks
+still apply. Ordinary URLs can have nonempty components that the portable reader
+rejects. Placement has no control preservation guarantee. Cancellation signals
+the host and discards stale local results. Remote cancellation is cooperative.
+Each mounted `MediaInsertControl` instance keeps its upload slot until its
+callback settles. Separate instances and remounts do not share that slot. The
+placeholder controller keeps its own busy slot until settlement.
+`MediaFileClipboard` does not retain an equivalent slot after cancellation.
+Calling `start` on the same `createMediaUpload` task can supersede an unsettled
+call. Earlier callbacks can continue. Enforce remote upload concurrency and
+retry policy in the host. Cancellation does not prove that remote work stopped.
+Mount `MediaFileClipboard` inside `EditorRoot` with a stable host upload
+callback. It handles one file per paste or drop. Without upload, it registers
+nothing. Rich MIME and higher-priority host handlers stay first. Callback
+changes cancel pending work. Moving the caret cancels pending insertion. Host
+callbacks enforce size, content, authorization, and quota limits. `MediaContent`
+and image preview parts work without `EditorRoot`. Compose `MediaPreviewRoot`,
 `MediaPreviewTrigger`, and `MediaPreviewDialog`, or use `MediaPreviewGallery`.
 Supply unique image IDs. Zoom stays local. Use the house Slider and ScrollArea
 controls for keyboard zoom and scrolling. `MediaEmbedContent` needs an explicit
 provider or exact HTTPS-origin policy. Frames need user consent. Source, policy,
-and disabled changes discard consent. Tweet embeds use the fixed
-platform.twitter.com endpoint. HTML exports keep inert links. Origin validation
-does not check DNS or redirects. Keep these controls in the host. Use HTTPS URLs
-without credentials. Supply alt text and captions for your content. Keep native
+and disabled changes discard consent. Frame consent does not cover images,
+video, audio, or caption tracks. Images can request their URLs when rendered.
+Native media and tracks can make network requests. Preload settings do not
+guarantee network privacy. Successful uploads retain the file name and URL.
+Media JSON and tagged HTML can include URLs, names, alt text, and captions.
+Account for this data in host delivery, CSP, logs, clipboard, and storage
+policies. Tweet embeds use the fixed platform.twitter.com endpoint. HTML exports
+keep inert links. Origin validation does not check DNS or redirects. Keep these
+controls in the host. Use absolute HTTPS source and track URLs without
+credentials. Supply alt text and captions for your content. Keep native
 playback, file links, and iframe controls usable in read-only roots. Supply
 bounded, abort-aware host uploads with server authorization and validation.
 Private assets need explicit same-origin delivery integration. Never put tokens
 in media URLs. Register `MediaNode` in document readers. Do not flatten
 unsupported media during conversion.
+
+Compose selected-media controls inside `MediaActions` and `EditorRoot`. Omit
+`nodeKey` to follow one selected media node. Keep an explicit `nodeKey` fixed
+until unmount. `MediaEditControl` changes the current source without another
+insertion. `MediaCaptionTextarea` stores plain text with line breaks and a
+10000-character limit. `MediaImageResize` supports images only. Escape and
+pointer cancellation discard resize drafts. Content, target, and read-only
+changes expire saved edits. Host event cancellation takes priority.
+
+## Optional editor media placeholders
+
+Install this optional item separately:
+
+```sh
+bunx --bun @yopem-ui/cli add editor-media-placeholder
+npx @yopem-ui/cli add editor-media-placeholder
+pnpm dlx @yopem-ui/cli add editor-media-placeholder
+yarn dlx @yopem-ui/cli add editor-media-placeholder
+```
+
+Import parts from `@/components/editor/media-placeholder`. Create one stable
+`createEditorMediaPlaceholder({ upload })` controller per root. Register
+`MediaExtension` and `createMediaPlaceholderExtension(controller)` in a stable
+root extensions array. Compose `MediaPlaceholderInsertButton` inside
+`EditorToolbar` and `MediaUploadNotification` beside `EditorContent`. The native
+node renders file, progress, typed failure, retry, cancel, and remove controls
+through `MediaPlaceholderElement`. Each root allows at most 16 placeholders and
+one active upload task. Files require 1 byte through 16 MiB and names of at most
+512 characters. Use `controller.configure(upload)` when host authentication or
+the upload callback changes. Document, changed non-null selection, read-only,
+root, and host changes invalidate work. Cancel retains the busy slot until the
+task settles. Cancellation does not prove that remote storage stopped. Retry
+requires an explicit action. Success replaces the placeholder with validated
+media. Placeholder upload results reject literal `?` and `#`, including empty
+delimiters. JSON stores only `type: "editor-media-placeholder"`, `version: 1`,
+and `uploadKind`. Never serialize File objects or private data. Restored
+placeholders need a fresh file selection. An active upload holds a File in
+memory. A failed upload can retain one File for explicit retry until
+invalidation or cleanup. The host callback receives the File and can retain or
+copy it, including after settlement. Successful replacement stores the file name
+and URL in media JSON and tagged HTML. JSON omission does not erase memory or
+remote copies. Insertion, replacement, and removal each create a separate
+history step. Progress, failure, retry, and cancellation add no history steps.
+Undo invalidates work; redo never uploads. No automatic upload, retry, or fetch
+is supplied. No file-upload paste or drop handler is supplied. The extension
+checks clipboard node insertion for placeholder limits and valid placement. Keep
+authorization, content validation, and quotas in the host. Source workflows
+remain runtime-unvalidated. See
+https://ui.yopem.com/components/editor-media-placeholder for API notes.
 
 ## Optional footnotes and table of contents
 
@@ -948,12 +1133,17 @@ extensions stable when the root mounts. Compose controls inside `EditorToolbar`.
 `EditorFootnoteTypeahead` owns the editable surface. Do not add adjacent
 `EditorContent`. Keep repeated and unresolved references and duplicate
 definitions. Renumber a selected duplicate explicitly. Do not silently rewrite
-identifiers. Table-of-contents links target the current editor only. Base
-contents controls do not require typeahead. Add `editorTocSlashCommand` only to
-a configured slash controller. Register feature nodes in each reader. Model
-fragment codecs do not validate complete host documents. Document readers
-support validated footnotes and table-of-contents nodes. Keep canonical
-reference IDs.
+identifiers. Table-of-contents links target the current editor only. Live
+contents and native TOC HTML show the first 500 nonempty headings in preorder.
+Titles normalize whitespace and truncate to 256 UTF-16 code units. Portable
+document export uses all headings and full text, subject to document limits. It
+uses canonical document-scoped IDs, not live editor-scoped IDs. Portable HTML
+input requires complete canonical heading links. Native TOC HTML can fail this
+check. Base contents controls do not require typeahead. Add
+`editorTocSlashCommand` only to a configured slash controller. Register feature
+nodes in each reader. Model fragment codecs do not validate complete host
+documents. Document readers support validated footnotes and table-of-contents
+nodes. Keep canonical reference IDs.
 
 ## Optional editor columns and dates
 
@@ -1043,13 +1233,17 @@ this API. S3 fetches receive cancellation signals.
 
 Install `editor-block-selection` separately. Create one stable controller with
 `createEditorBlockSelection`. Compose `EditorBlockSelection` inside
-`EditorRoot`. Use the gutter and actions for keyboard selection and movement.
-Use drag handles for pointer movement. Keep keyboard movement available. Require
-synchronous literal `true` from `authorizeCut` before native cut. Preserve
-native MIME handlers and higher-priority host cancellation. Require literal
-`true` from custom document validation. Content, selection, and read-only
-changes expire saved operations. Authorize persisted document writes separately.
-Import parts from `@/components/editor/block-selection-index`.
+`EditorRoot`. Keep the wrapper mounted without a gutter. Use `onKeyDown` for
+host Escape cancellation. Forward wrapper refs and `onKeyDownCapture` through
+custom render elements. Same-document React portals retain wrapper ownership.
+Keep native composition and unowned Escape behavior. Use the gutter and actions
+for keyboard selection and movement. Use drag handles for pointer movement. Keep
+keyboard movement available. Require synchronous literal `true` from
+`authorizeCut` before native cut. Preserve native MIME handlers and
+higher-priority host cancellation. Require literal `true` from custom document
+validation. Content, selection, and read-only changes expire saved operations.
+Authorize persisted document writes separately. Import parts from
+`@/components/editor/block-selection-index`.
 
 ## Optional CSV paste
 
@@ -1078,9 +1272,11 @@ cancellation and read-only navigation.
 Install `editor-floating-toolbar` separately. Import `EditorFloatingToolbar`
 from the copied `@/components/editor/floating-toolbar` module. Compose it inside
 EditorRoot beside EditorContent. Use existing editor controls as children.
-Select native text to open the toolbar. Press Alt+F10 to focus its first enabled
-button. Keep the saved-range guard. Document changes and read-only transitions
-invalidate the target.
+Select native text to open the toolbar. Use `EditorLinkFloatingToolbar` from the
+same module for open, edit, and remove actions at a collapsed link caret.
+Expanded link text keeps the text toolbar. Press Alt+F10 to focus the first
+enabled control. Keep the saved-range guard. Document changes and read-only
+transitions invalidate the target.
 
 ## Optional native editing rules
 
@@ -1144,12 +1340,19 @@ composition, history, and nested contexts before production use.
 Install optional `editor-labels`. Import parts from
 `@/components/editor/labels`. Keep `createEditorLabelsExtension(options)` stable
 for the root. Compose the picker or house CheckboxGroup options. Use one through
-64 unique options and at most ten tokens. Apply host minimum counts separately.
-Replace only label-only content. Register EditorLabelNode in each reader. Use
-labels-model for pure validation. Invalid node metadata rejects. Unknown,
-duplicate, and excess valid tokens become plain text. Labels grant no access.
-Document readers retain validated label tokens. Register label nodes before live
-import.
+64 unique options and at most ten tokens. Use `EditorLabelsSelect` for filtered
+multiselect with removable tags. Compose `EditorLabelsInput`,
+`EditorLabelsContent`, and `EditorLabelsTag` for custom layouts. Uncontrolled
+selections update the native label document with undo support. Controlled
+`value` needs `onValueChange`. Commit document changes through
+`$replaceEditorLabels` in the host callback. Keep `options` identical to the
+labels extension. Disabled and read-only changes close suggestions and clear the
+query. Restoring editing does not open suggestions. Apply host minimum counts
+separately. Replace only label-only content. Register EditorLabelNode in each
+reader. Use labels-model for pure validation. Invalid node metadata rejects.
+Unknown, duplicate, and excess valid tokens become plain text. Labels grant no
+access. Document readers retain validated label tokens. Register label nodes
+before live import.
 
 ## Optional Word clipboard
 
@@ -1211,6 +1414,33 @@ work retains capacity until it settles. Native print dialogs and synchronous
 browser work cannot be stopped. Verify local fonts, SVG foreignObject, CSP,
 keyboard access, and owner-document cleanup. Browser and output checks remain
 deferred.
+
+## Optional editor PDF export
+
+Install this optional item separately:
+
+```sh
+bunx --bun @yopem-ui/cli add editor-document-export-pdf
+npx @yopem-ui/cli add editor-document-export-pdf
+pnpm dlx @yopem-ui/cli add editor-document-export-pdf
+yarn dlx @yopem-ui/cli add editor-document-export-pdf
+```
+
+Import `EditorDocumentPDFExportControl` from
+`@/components/editor/document-export-pdf`. Compose it inside `EditorRoot` with
+an explicit PNG `capture` callback. Install `editor-document-export-image` only
+to use its optional `captureEditorDocumentImageWithHtmlToImage` adapter. Import
+that adapter from `@/components/editor/document-export-html-to-image`. No
+capture adapter is installed automatically. The control downloads `plate.pdf`
+directly. It does not use native print. Output contains one raster page with an
+opaque white JPEG image. Text is not selectable. Keep the existing export
+resource policy, CSP nonce, stale-target checks, and shared operation lease.
+Dimensions allow 4096 by 16384 pixels and 16777216 pixels total. Output has a 16
+MiB limit. Decoded image dimensions must match the snapshot. Cancelled work
+retains capacity until outstanding work settles. Read-only roots can export
+without changes to saved content, selection, or history. Synchronous browser
+work cannot be stopped. Browser and real PDF output checks remain unvalidated.
+See https://ui.yopem.com/components/editor-document-export-pdf for API notes.
 
 ## Optional Word files
 
@@ -1279,19 +1509,20 @@ model selection on the server. Cancellation does not prove billing stops.
 Install optional `editor-block-menu`. Import `createEditorBlockMenu` and
 `EditorBlockMenu` from `@/components/editor/block-menu-index`. Keep one stable
 controller per root. Register its extension before wrapping `EditorContent` with
-the menu. Right-click or press Shift+F10. Configured policy must return literal
-`true`; stale or pending targets reject. Host Ask AI and Code Drawing callbacks
-require separate authorization. No default service is supplied. Their second
-argument retains a validated target after menu close. Subscribe to its
-availability. Call `restoreSelection` from the native control's `onClick`
-handler. Prevent default when restoration fails. Call `refresh` after host
-policy changes. Dispose retained preparations during cleanup. New captures,
-content changes, and read-only transitions invalidate them. For Add comment,
-supply `onAddComment` and an `authorizeAction` policy that returns literal
-`true`. The callback owns review UI, focus, and storage. It receives frozen
-block context. The controller does not restore the captured selection for this
-action. Preserve native selection, clipboard policy, history, and host event
-cancellation.
+the menu. Compose `EditorBlockSelection` with a separate stable controller for
+gutter actions. Register both controller extensions once. Right-click or press
+Shift+F10. Configured policy must return literal `true`; stale or pending
+targets reject. Host Ask AI and Code Drawing callbacks require separate
+authorization. No default service is supplied. Their second argument retains a
+validated target after menu close. Subscribe to its availability. Call
+`restoreSelection` from the native control's `onClick` handler. Prevent default
+when restoration fails. Call `refresh` after host policy changes. Dispose
+retained preparations during cleanup. New captures, content changes, and
+read-only transitions invalidate them. For Add comment, supply `onAddComment`
+and an `authorizeAction` policy that returns literal `true`. The callback owns
+review UI, focus, and storage. It receives frozen block context. The controller
+does not restore the captured selection for this action. Preserve native
+selection, clipboard policy, history, and host event cancellation.
 
 ## Native diagram controls
 

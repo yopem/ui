@@ -6,6 +6,7 @@ import {
   DocumentError,
   documentNodes,
   importDocument,
+  parseDocument,
 } from "@yopem-ui/editor/document"
 import {
   createEditorReview,
@@ -90,6 +91,36 @@ test("unsafe Markdown and proposal-supplied review state reject without mutation
       editor.update(() => $insertDocumentFragment(source), { discrete: true }),
     ).toThrow(DocumentError)
     expect(editor.getEditorState().toJSON()).toEqual(before)
+  }
+})
+
+test("root and nested slot fragments reject before replacing selected text", () => {
+  const editor = createDocumentEditor()
+  importDocument(editor, "Keep selected content", "markdown")
+
+  for (const source of [
+    '<p>Host</p><div data-editor-slot="note"><p>Slot</p></div>',
+    '<blockquote><p>Host</p><div data-editor-slot="note"><p>Slot</p></div></blockquote>',
+  ]) {
+    expect(parseDocument(source, "markdown").root).toBeDefined()
+    editor.update(
+      () => {
+        const text = $getRoot().getAllTextNodes()[0]
+
+        if (!text) throw new Error("Test document has no text.")
+        text.select(5, 13)
+      },
+      { discrete: true },
+    )
+    const before = editor.getEditorState().toJSON()
+
+    expect(() =>
+      editor.update(() => $insertDocumentFragment(source), { discrete: true }),
+    ).toThrow("Markdown fragments cannot contain slots.")
+    expect(editor.getEditorState().toJSON()).toEqual(before)
+    editor.getEditorState().read(() => {
+      expect($getRoot().getTextContent()).toBe("Keep selected content")
+    })
   }
 })
 

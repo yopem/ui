@@ -1,6 +1,7 @@
 "use client"
 
 import { Box } from "@registry/components/ui/box"
+import { Button } from "@registry/components/ui/button"
 import { Text } from "@registry/components/ui/text"
 import {
   EditorHistoryButton,
@@ -68,6 +69,7 @@ import {
   type EditorSlashCommand,
   type MentionIdentity,
 } from "@yopem-ui/editor/typeahead"
+import { Redo2Icon, Undo2Icon } from "lucide-react"
 import { useState } from "react"
 
 const slashCommands: readonly EditorSlashCommand[] = [
@@ -284,8 +286,22 @@ export function PublicTypeaheadExample() {
       </Text>
       <EditorRoot ariaLabel="Public typeahead editor" extensions={extensions}>
         <EditorToolbar>
-          <EditorHistoryButton action="undo" />
-          <EditorHistoryButton action="redo" />
+          <EditorHistoryButton
+            action="undo"
+            aria-label="Undo"
+            title="Undo"
+            render={<Button variant="ghost" size="icon-sm" />}
+          >
+            <Undo2Icon aria-hidden="true" size={16} />
+          </EditorHistoryButton>
+          <EditorHistoryButton
+            action="redo"
+            aria-label="Redo"
+            title="Redo"
+            render={<Button variant="ghost" size="icon-sm" />}
+          >
+            <Redo2Icon aria-hidden="true" size={16} />
+          </EditorHistoryButton>
           <EditorEmojiPopover
             history={controller.emojiHistory}
             inventory={editorEmojiInventory}

@@ -72,7 +72,9 @@ export const EditorFootnoteClipboardExtension = defineExtension({
           const html = event.clipboardData.getData("text/html")
 
           if (
-            (json.includes("editor-footnote-") && json.length > 1_048_576) ||
+            json.length > 1_048_576 ||
+            (json.length > 0 &&
+              new TextEncoder().encode(json).byteLength > 1_048_576) ||
             (html.includes("data-editor-footnote") && html.length > 1_048_576)
           )
             throw new Error("Clipboard payload is too large")

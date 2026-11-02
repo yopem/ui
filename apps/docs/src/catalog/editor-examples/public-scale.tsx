@@ -15,6 +15,7 @@ import {
   EditorRoot,
   EditorToolbar,
 } from "@yopem-ui/editor"
+import { Redo2Icon, Undo2Icon } from "lucide-react"
 import { type ChangeEvent, useId, useState } from "react"
 
 const paragraphCounts = [100, 250, 500] as const
@@ -177,8 +178,22 @@ export function PublicScaleExample() {
               initialState={documentState}
             >
               <EditorToolbar aria-label="Long document history">
-                <EditorHistoryButton action="undo" />
-                <EditorHistoryButton action="redo" />
+                <EditorHistoryButton
+                  action="undo"
+                  aria-label="Undo"
+                  title="Undo"
+                  render={<Button variant="ghost" size="icon-sm" />}
+                >
+                  <Undo2Icon aria-hidden="true" size={16} />
+                </EditorHistoryButton>
+                <EditorHistoryButton
+                  action="redo"
+                  aria-label="Redo"
+                  title="Redo"
+                  render={<Button variant="ghost" size="icon-sm" />}
+                >
+                  <Redo2Icon aria-hidden="true" size={16} />
+                </EditorHistoryButton>
               </EditorToolbar>
               <EditorContent
                 placeholder="Edit the bounded local document"

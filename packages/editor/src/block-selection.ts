@@ -30,10 +30,14 @@ import {
   mergeRegister,
   COMMAND_PRIORITY_HIGH,
   COMMAND_PRIORITY_LOW,
+  BEFORE_INPUT_COMMAND,
   COPY_COMMAND,
   CUT_COMMAND,
   CUT_TAG,
+  DELETE_CHARACTER_COMMAND,
   HISTORY_PUSH_TAG,
+  KEY_BACKSPACE_COMMAND,
+  KEY_DELETE_COMMAND,
   KEY_DOWN_COMMAND,
   SKIP_DOM_SELECTION_TAG,
 } from "lexical"
@@ -73,6 +77,20 @@ export interface EditorBlockSelectionSnapshot {
   readonly dropTarget: { key: NodeKey; edge: "before" | "after" } | null
 }
 
+export function $blockContainsSlots(node: LexicalNode) {
+  const pending = [node]
+
+  while (pending.length) {
+    const current = pending.pop()!
+
+    if ($getSlotNames(current).length) return true
+
+    if ($isElementNode(current)) pending.push(...current.getChildren())
+  }
+
+  return false
+}
+
 export function createEditorBlockSelection(
   options: EditorBlockSelectionOptions = {},
 ) {
@@ -98,6 +116,8 @@ export function createEditorBlockSelection(
   let marqueeStart: number | null = null
   let marqueeBase: readonly NodeKey[] = []
   let gutter: HTMLElement | null = null
+  const keyboardBoundaries = new Set<HTMLElement>()
+  const keyboardEvents = new WeakMap<KeyboardEvent, HTMLElement>()
 
   function publish(patch: Partial<EditorBlockSelectionSnapshot>) {
     snapshot = { ...snapshot, ...patch }
@@ -148,6 +168,48 @@ export function createEditorBlockSelection(
         },
         { discrete: true },
       )
+  }
+
+  function connectKeyboardBoundary(element: HTMLElement) {
+    keyboardBoundaries.add(element)
+
+    return function disconnectKeyboardBoundary() {
+      keyboardBoundaries.delete(element)
+    }
+  }
+
+  function captureKeyboardEvent(event: KeyboardEvent, element: HTMLElement) {
+    if (keyboardBoundaries.has(element)) keyboardEvents.set(event, element)
+  }
+
+  function hasKeyboardBoundary(event: KeyboardEvent) {
+    const captured = keyboardEvents.get(event)
+    const path = event.composedPath()
+
+    for (const boundary of keyboardBoundaries)
+      if (
+        boundary.isConnected &&
+        (boundary === captured || path.includes(boundary))
+      )
+        return true
+
+    return false
+  }
+
+  function escape(event: KeyboardEvent) {
+    if (
+      event.key !== "Escape" ||
+      event.defaultPrevented ||
+      event.isComposing ||
+      event.keyCode === 229 ||
+      (!snapshot.mode && !snapshot.dragging && marqueeStart === null)
+    )
+      return false
+
+    clear()
+    event.preventDefault()
+
+    return true
   }
 
   function readBlocks() {
@@ -206,6 +268,18 @@ export function createEditorBlockSelection(
     }
 
     return nodes
+  }
+
+  function hasSlottedSelection() {
+    if (!hasCurrentSelection()) return false
+
+    const selected = new Set(snapshot.selected)
+
+    const nodes = $getRoot()
+      .getChildren()
+      .filter((node) => selected.has(node.getKey()))
+
+    return nodes.length !== selected.size || nodes.some($blockContainsSlots)
   }
 
   function syncSelection(keys: readonly NodeKey[]) {
@@ -358,6 +432,9 @@ export function createEditorBlockSelection(
               previous = node
             }
           } else if (action === "delete") {
+            if (nodes.some($blockContainsSlots))
+              throw new Error("Cannot delete blocks with owned slots")
+
             const remaining = original.filter(
               (_, index) => !selected.has(keys[index]),
             )
@@ -494,8 +571,13 @@ export function createEditorBlockSelection(
     if (!root) return fail("Editor is not mounted")
 
     try {
+      if (current.getEditorState().read(hasSlottedSelection))
+        return fail("Cannot cut blocks with owned slots")
       current.getEditorState().read(selectedNodes)
       root.focus()
+
+      if (current.getEditorState().read(hasSlottedSelection))
+        return fail("Cannot cut blocks with owned slots")
       current.getEditorState().read(selectedNodes)
 
       return (
@@ -513,12 +595,19 @@ export function createEditorBlockSelection(
   ) {
     if (!snapshot.mode) return false
 
+    if (event?.defaultPrevented) return true
+
+    if (cutting && hasSlottedSelection()) {
+      event?.preventDefault()
+      fail("Cannot cut blocks with owned slots")
+
+      return true
+    }
+
     if (!event || !("clipboardData" in event) || !event.clipboardData)
       return false
 
     const clipboardEvent = event
-
-    if (clipboardEvent.defaultPrevented) return true
 
     try {
       if (!editor || (cutting && !editor.isEditable()))
@@ -667,17 +756,15 @@ export function createEditorBlockSelection(
     if (root) observer?.observe(root)
     observer?.observe(element)
 
-    function escape(event: KeyboardEvent) {
+    function escapeOutsideBoundary(event: KeyboardEvent) {
       if (
-        event.key === "Escape" &&
+        !hasKeyboardBoundary(event) &&
         (snapshot.dragging || marqueeStart !== null)
-      ) {
-        clear()
-        event.preventDefault()
-      }
+      )
+        escape(event)
     }
 
-    element.ownerDocument.addEventListener("keydown", escape, true)
+    element.ownerDocument.addEventListener("keydown", escapeOutsideBoundary)
     view?.addEventListener("resize", schedule)
     view?.addEventListener("scroll", schedule, true)
     schedule()
@@ -685,7 +772,10 @@ export function createEditorBlockSelection(
     return function disconnectGutter() {
       if (frame) view?.cancelAnimationFrame(frame)
       observer?.disconnect()
-      element.ownerDocument.removeEventListener("keydown", escape, true)
+      element.ownerDocument.removeEventListener(
+        "keydown",
+        escapeOutsideBoundary,
+      )
       view?.removeEventListener("resize", schedule)
       view?.removeEventListener("scroll", schedule, true)
       measure = null
@@ -768,17 +858,67 @@ export function createEditorBlockSelection(
           COMMAND_PRIORITY_LOW,
         ),
         currentEditor.registerCommand(
-          KEY_DOWN_COMMAND,
+          DELETE_CHARACTER_COMMAND,
+          () =>
+            hasCurrentSelection() &&
+            (!currentEditor.isEditable() || hasSlottedSelection()),
+          COMMAND_PRIORITY_LOW,
+        ),
+        ...[KEY_BACKSPACE_COMMAND, KEY_DELETE_COMMAND].map((command) =>
+          currentEditor.registerCommand(
+            command,
+            (event) => {
+              if (!hasCurrentSelection()) return false
+
+              if (event.defaultPrevented) return true
+
+              if (event.isComposing || event.keyCode === 229) return false
+
+              if (!currentEditor.isEditable() || hasSlottedSelection()) {
+                event.preventDefault()
+
+                return true
+              }
+
+              return false
+            },
+            COMMAND_PRIORITY_LOW,
+          ),
+        ),
+        currentEditor.registerCommand(
+          BEFORE_INPUT_COMMAND,
           (event) => {
-            if (!snapshot.mode || event.defaultPrevented || event.isComposing)
+            if (!event.inputType.startsWith("delete") || !hasCurrentSelection())
               return false
 
-            if (event.key === "Escape") {
-              clear()
+            if (event.defaultPrevented) return true
+
+            if (event.isComposing || currentEditor.isComposing()) return false
+
+            if (!currentEditor.isEditable() || hasSlottedSelection()) {
               event.preventDefault()
 
               return true
             }
+
+            return false
+          },
+          COMMAND_PRIORITY_LOW,
+        ),
+        currentEditor.registerCommand(
+          KEY_DOWN_COMMAND,
+          (event) => {
+            if (!snapshot.mode || event.isComposing || event.keyCode === 229)
+              return false
+
+            if (event.defaultPrevented)
+              return (
+                (event.key === "Backspace" || event.key === "Delete") &&
+                hasCurrentSelection()
+              )
+
+            if (event.key === "Escape")
+              return hasKeyboardBoundary(event) ? false : escape(event)
 
             if (
               (event.metaKey || event.ctrlKey) &&
@@ -823,12 +963,15 @@ export function createEditorBlockSelection(
     select,
     selectAll,
     clear,
+    escape,
     beginDrag,
     cancelDrag,
     drop,
     copy,
     cut,
     connectGutter,
+    connectKeyboardBoundary,
+    captureKeyboardEvent,
     startMarquee,
     marquee,
     endMarquee() {

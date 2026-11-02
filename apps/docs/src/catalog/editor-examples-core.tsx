@@ -10,13 +10,17 @@ import {
   CollapsibleTrigger,
 } from "@registry/components/ui/collapsible"
 import { Heading } from "@registry/components/ui/heading"
+import { Prose } from "@registry/components/ui/prose"
 import { Stack } from "@registry/components/ui/stack"
 import { Text } from "@registry/components/ui/text"
+import { Wrap } from "@registry/components/ui/wrap"
 import { rewriteImports } from "@registry/source-files"
 import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
-import { useHydrated } from "@tanstack/react-router"
+import { Link, useHydrated } from "@tanstack/react-router"
+import { useState } from "react"
 
+import { CopyableCode } from "./code-block"
 import { EditorDrawingClient } from "./editor-drawing-client"
 import { BasicMarksExample } from "./editor-examples/basic-marks"
 import { BasicNodesExample } from "./editor-examples/basic-nodes"
@@ -31,6 +35,7 @@ import { ElementsSetupExample } from "./editor-examples/installation-next-03-ele
 import { LinkExample } from "./editor-examples/link"
 import { MathExample } from "./editor-examples/math-example"
 import { MediaExample } from "./editor-examples/media-example"
+import { NotionLikeExample } from "./editor-examples/notion-like"
 import { PublicAiExample } from "./editor-examples/public-ai"
 import { PublicAutoformatExample } from "./editor-examples/public-autoformat"
 import { PublicBlockMenuExample } from "./editor-examples/public-block-menu"
@@ -78,6 +83,7 @@ import { PublicTypeaheadExample } from "./editor-examples/public-typeahead"
 import { PublicWordClipboardExample } from "./editor-examples/public-word-clipboard"
 import { EditorNativeCollaborationClient } from "./editor-native-collaboration-client"
 import { EditorPlaygroundClient } from "./editor-playground-client"
+import { convertPackageManagerCommand, packageManagers } from "./source-code"
 
 const sources = import.meta.glob<string>("./editor-examples/*.tsx", {
   query: "?raw",
@@ -86,6 +92,133 @@ const sources = import.meta.glob<string>("./editor-examples/*.tsx", {
 })
 
 const examples = [
+  {
+    slug: "basic-marks",
+    title: "Basic marks",
+    Component: BasicMarksExample,
+    items: ["editor"],
+    description:
+      "Combine text marks. Use the toolbar or native bold, italic, and underline shortcuts.",
+    limits:
+      "Keyboard-label text remains ordinary editable text. The editor has no keyboard-label mark.",
+  },
+  {
+    slug: "basic-nodes",
+    title: "Basic nodes",
+    Component: BasicNodesExample,
+    items: ["editor"],
+    description:
+      "Change headings, paragraphs, quotes, and text marks in one document.",
+    limits:
+      "Horizontal rules use the installed native HorizontalRuleExtension and a local toolbar control. This does not add a house Editor API.",
+  },
+  {
+    slug: "link",
+    title: "Links",
+    Component: LinkExample,
+    items: ["editor"],
+    description:
+      "Select text. Add, change, or remove a safe URL. Paste a safe URL over selected text to keep its label.",
+    limits:
+      "Accepted URL schemes are HTTP, HTTPS, mailto, and tel. Relative URLs are not accepted.",
+  },
+  {
+    slug: "installation-next-01-editor",
+    title: "Minimal editor setup",
+    Component: MinimalEditorExample,
+    items: ["editor"],
+    description:
+      "Start with one empty editable surface. Native rich-text shortcuts work without a toolbar.",
+    limits:
+      "This client composition is framework-independent. It does not configure a Next.js application.",
+  },
+  {
+    slug: "installation-next-02-marks",
+    title: "Marks setup",
+    Component: MarksSetupExample,
+    items: ["editor"],
+    description:
+      "Start with formatted text. Compose bold, italic, underline, undo, and redo controls.",
+    limits:
+      "The toolbar shows selected controls. EditorRoot still registers its standard native extensions.",
+  },
+  {
+    slug: "installation-next-03-elements",
+    title: "Elements setup",
+    Component: ElementsSetupExample,
+    items: ["editor"],
+    description:
+      "Load native heading, quote, paragraph, and mark state. Change selected content with focused controls.",
+    limits: "The seed uses Lexical JSON, not Slate or Plate JSON.",
+  },
+  {
+    slug: "editor-default",
+    title: "Default editor",
+    Component: DefaultEditorExample,
+    items: ["editor"],
+    description:
+      "Use the house Editor preset with its default toolbar, editable surface, and history.",
+    limits:
+      "This is the house preset, not the full Plate EditorKit. Optional editor features are not included.",
+  },
+  {
+    slug: "editor-disabled",
+    title: "Disabled editor composition",
+    Component: DisabledEditorExample,
+    items: ["editor"],
+    description:
+      "Show an empty non-editable surface with disabled controls, disabled semantics, and no editor tab stop.",
+    limits:
+      "Editor has no disabled prop. This composition uses editable=false, aria-disabled, and tabIndex=-1. It is not a native disabled form field.",
+  },
+  {
+    slug: "editor-full-width",
+    title: "Full-width editor",
+    Component: FullWidthEditorExample,
+    items: ["editor", "container"],
+    description:
+      "Use the house preset inside a fluid Container. The editor fills the available parent width.",
+    limits:
+      "Parent layout still bounds the width. This is not the full Plate EditorKit or a fullWidth editor variant.",
+  },
+  {
+    slug: "notion-like",
+    title: "Notion-like local workspace",
+    standaloneUrl: "/editor/examples/notion-like",
+    Component: NotionLikeExample,
+    items: [
+      "editor",
+      "editor-blocks",
+      "editor-document",
+      "editor-typeahead",
+      "editor-block-selection",
+      "editor-block-menu",
+      "editor-floating-toolbar",
+      "editor-math",
+      "editor-toc",
+      "editor-media",
+      "box",
+      "button",
+      "clipboard",
+      "field",
+      "fieldset",
+      "grid",
+      "heading",
+      "hstack",
+      "input",
+      "menu",
+      "popover",
+      "scroll-area",
+      "sheet",
+      "stack",
+      "text",
+      "wrap",
+    ],
+    description:
+      "Explore a Potion-style workspace with thirteen pages, native editing, page menus, slash commands, and responsive navigation.",
+    limits:
+      "Public Potion observations guide this composition. Its deployed revision is unknown. Validated document drafts use browser storage. Rejected stored bytes stay unchanged. Storage or validation failures pause writes but keep memory editing and active-page JSON copy available. Drafts are unencrypted and readable by scripts on this origin. Browser storage can remove drafts. Two tabs can overwrite drafts. No conflict resolution or remote synchronization exists. Page switches reset undo history and selection. Titles have a 120-character limit. Titles, font, size, width, icon, cover, and lock choices stay in memory. Native link, demo mention, callout, math, contents, and URL-image controls are connected. Browser acceptance remains pending. Demo mention IDs grant no access. AI, Copilot, identity directories, uploads, rich captions, video controls, accounts, imports, collaboration, and version history need host or feature integration. Local locks and cut approval grant no server permission. This is not full Potion or Plate workflow equivalence.",
+  },
   {
     slug: "public-optional-document",
     workflowIds: [],
@@ -251,95 +384,6 @@ const examples = [
       "Move through card controls with native Tab order. Keep list and code editing in independent roots.",
     limits:
       "Nested editor history is independent. Browser Tab order and keyboard acceptance remain unverified.",
-  },
-  {
-    slug: "basic-marks",
-    title: "Basic marks",
-    Component: BasicMarksExample,
-    items: ["editor"],
-    description:
-      "Combine text marks. Use the toolbar or native bold, italic, and underline shortcuts.",
-    limits:
-      "Keyboard-label text remains ordinary editable text. The editor has no keyboard-label mark.",
-  },
-  {
-    slug: "basic-nodes",
-    title: "Basic nodes",
-    Component: BasicNodesExample,
-    items: ["editor"],
-    description:
-      "Change headings, paragraphs, quotes, and text marks in one document.",
-    limits:
-      "Horizontal rules use the installed native HorizontalRuleExtension and a local toolbar control. This does not add a house Editor API.",
-  },
-  {
-    slug: "link",
-    title: "Links",
-    Component: LinkExample,
-    items: ["editor"],
-    description:
-      "Select text. Add, change, or remove a safe URL. Paste a safe URL over selected text to keep its label.",
-    limits:
-      "Accepted URL schemes are HTTP, HTTPS, mailto, and tel. Relative URLs are not accepted.",
-  },
-  {
-    slug: "installation-next-01-editor",
-    title: "Minimal editor setup",
-    Component: MinimalEditorExample,
-    items: ["editor"],
-    description:
-      "Start with one empty editable surface. Native rich-text shortcuts work without a toolbar.",
-    limits:
-      "This client composition is framework-independent. It does not configure a Next.js application.",
-  },
-  {
-    slug: "installation-next-02-marks",
-    title: "Marks setup",
-    Component: MarksSetupExample,
-    items: ["editor"],
-    description:
-      "Start with formatted text. Compose bold, italic, underline, undo, and redo controls.",
-    limits:
-      "The toolbar shows selected controls. EditorRoot still registers its standard native extensions.",
-  },
-  {
-    slug: "installation-next-03-elements",
-    title: "Elements setup",
-    Component: ElementsSetupExample,
-    items: ["editor"],
-    description:
-      "Load native heading, quote, paragraph, and mark state. Change selected content with focused controls.",
-    limits: "The seed uses Lexical JSON, not Slate or Plate JSON.",
-  },
-  {
-    slug: "editor-default",
-    title: "Default editor",
-    Component: DefaultEditorExample,
-    items: ["editor"],
-    description:
-      "Use the house Editor preset with its default toolbar, editable surface, and history.",
-    limits:
-      "This is the house preset, not the full Plate EditorKit. Optional editor features are not included.",
-  },
-  {
-    slug: "editor-disabled",
-    title: "Disabled editor composition",
-    Component: DisabledEditorExample,
-    items: ["editor"],
-    description:
-      "Show an empty non-editable surface with disabled controls, disabled semantics, and no editor tab stop.",
-    limits:
-      "Editor has no disabled prop. This composition uses editable=false, aria-disabled, and tabIndex=-1. It is not a native disabled form field.",
-  },
-  {
-    slug: "editor-full-width",
-    title: "Full-width editor",
-    Component: FullWidthEditorExample,
-    items: ["editor", "container"],
-    description:
-      "Use the house preset inside a fluid Container. The editor fills the available parent width.",
-    limits:
-      "Parent layout still bounds the width. This is not the full Plate EditorKit or a fullWidth editor variant.",
   },
   {
     slug: "equation",
@@ -900,7 +944,12 @@ export function getCoreEditorExampleSource(slug: string) {
     workflowIds:
       "workflowIds" in example ? [...example.workflowIds] : [example.slug],
     title: example.title,
+    standaloneUrl:
+      "standaloneUrl" in example ? example.standaloneUrl : undefined,
     installNames: [...example.items],
+    installCommand: example.items
+      .map((item) => `bunx --bun @yopem-ui/cli add ${item}`)
+      .join("\n"),
     filename: `${sourceFile}.tsx`,
     source: rewriteImports(source),
     limits: example.limits,
@@ -914,6 +963,8 @@ export function getCoreEditorExamples() {
     workflowIds:
       "workflowIds" in example ? [...example.workflowIds] : [example.slug],
     title: example.title,
+    standaloneUrl:
+      "standaloneUrl" in example ? example.standaloneUrl : undefined,
     description: example.description,
     limits: example.limits,
     installNames: [...example.items],
@@ -924,6 +975,7 @@ export function getCoreEditorExamples() {
 export function getCoreEditorExamplesMarkdown() {
   return [
     "# Editor examples",
+    "Use Bun, npm, pnpm, or Yarn 2 and later. Run one add command for each required registry item.",
     ...getCoreEditorExamples().map((example) => {
       const documentation = getCoreEditorExampleSource(example.slug)
 
@@ -936,6 +988,13 @@ export function getCoreEditorExamplesMarkdown() {
         example.limits,
         `Mapped workflows: ${example.workflowIds.join(", ")}`,
         `Required registry items: ${example.installNames.join(", ")}`,
+        ...(example.standaloneUrl
+          ? [`[Open workspace](${example.standaloneUrl})`]
+          : []),
+        ...packageManagers.map(
+          (manager) =>
+            `### ${manager}\n\n\`\`\`sh\n${convertPackageManagerCommand(documentation.installCommand, manager)}\n\`\`\``,
+        ),
         `\`\`\`tsx\n${documentation.source}\n\`\`\``,
       ].join("\n\n")
     }),
@@ -944,24 +1003,35 @@ export function getCoreEditorExamplesMarkdown() {
 
 export function CoreEditorExamplesGallery() {
   const hydrated = useHydrated()
+  const [activePreview, setActivePreview] = useState<string | null>(null)
 
   return (
     <Stack data-testid="editor-examples-core">
       <Heading>Core compositions</Heading>
-      <Text>
-        These native Lexical compositions use house Editor APIs. Browser
-        acceptance and consumer installation checks have not run.
-      </Text>
-      <Text>
-        Open one live preview at a time. Closing a preview resets its local
-        document. Copy source without opening the preview.
-      </Text>
-      <Text>
-        Install each example's listed registry items first. Keep the generated
-        StyleX setup and application fonts loaded. Copy one complete file. Each
-        file exports a named React component and includes its own seed when
-        needed.
-      </Text>
+      <Prose>
+        <Text>
+          Open a live preview or copy complete source. Opening another preview
+          closes the previous editor and discards unsaved changes.
+        </Text>
+      </Prose>
+      <Collapsible>
+        <CollapsibleTrigger
+          disabled={!hydrated}
+          render={<Button variant="outline" />}
+        >
+          Installation and use
+        </CollapsibleTrigger>
+        <CollapsiblePanel>
+          <Prose>
+            <Text>
+              Read each example's limits before use. Install its listed registry
+              items first. Keep the generated StyleX setup and application fonts
+              loaded. Copy one complete file. Each file exports a named React
+              component and includes its own seed when needed.
+            </Text>
+          </Prose>
+        </CollapsiblePanel>
+      </Collapsible>
       {examples.map(
         ({ slug, title, description, limits, Component, items }) => {
           const documentation = getCoreEditorExampleSource(slug)
@@ -978,37 +1048,87 @@ export function CoreEditorExamplesGallery() {
               xstyle={styles.section}
             >
               <Stack>
-                <Heading id={`${slug}-title`}>{title}</Heading>
-                <Text>{description}</Text>
-                <Text>{limits}</Text>
-                <Text>Required registry items: {items.join(", ")}</Text>
+                <Heading render={<h3>{title}</h3>} id={`${slug}-title`} />
+                {documentation.standaloneUrl ? (
+                  <Button render={<Link to={documentation.standaloneUrl} />}>
+                    Open workspace
+                  </Button>
+                ) : null}
+                <Prose>
+                  <Text>{description}</Text>
+                </Prose>
                 <Collapsible>
                   <CollapsibleTrigger
                     disabled={!hydrated}
                     render={<Button variant="outline" />}
                   >
-                    Live preview
+                    Limits and setup
                   </CollapsibleTrigger>
-                  <CollapsiblePanel>
-                    <Box xstyle={styles.preview}>
-                      <Component />
-                    </Box>
+                  <CollapsiblePanel
+                    render={
+                      <Box
+                        render={
+                          <section
+                            aria-label={`${title} limits and installation`}
+                          />
+                        }
+                      />
+                    }
+                  >
+                    <Prose>
+                      <Stack>
+                        <Text>{limits}</Text>
+                        <Text>Required registry items: {items.join(", ")}</Text>
+                        <CopyableCode
+                          code={documentation.installCommand}
+                          language="shellscript"
+                          title="Install registry items"
+                          preview
+                        />
+                      </Stack>
+                    </Prose>
                   </CollapsiblePanel>
                 </Collapsible>
-                <Clipboard
-                  disabled={!hydrated}
-                  value={documentation.source}
-                  aria-label="Copy source"
+                <Collapsible
+                  open={activePreview === slug}
+                  onOpenChange={(open) => {
+                    setActivePreview((current) => {
+                      if (open) return slug
+
+                      return current === slug ? null : current
+                    })
+                  }}
                 >
-                  Copy source
-                </Clipboard>
-                <Collapsible>
-                  <CollapsibleTrigger
-                    disabled={!hydrated}
-                    render={<Button variant="outline" />}
-                  >
-                    View source
+                  <CollapsibleTrigger disabled={!hydrated} render={<Button />}>
+                    Live preview
                   </CollapsibleTrigger>
+                  <CollapsiblePanel keepMounted={false}>
+                    <Stack>
+                      <Prose>
+                        <Text>{limits}</Text>
+                      </Prose>
+                      <Box xstyle={styles.preview}>
+                        <Component />
+                      </Box>
+                    </Stack>
+                  </CollapsiblePanel>
+                </Collapsible>
+                <Collapsible>
+                  <Wrap>
+                    <CollapsibleTrigger
+                      disabled={!hydrated}
+                      render={<Button variant="outline" />}
+                    >
+                      View source
+                    </CollapsibleTrigger>
+                    <Clipboard
+                      disabled={!hydrated}
+                      value={documentation.source}
+                      aria-label="Copy source"
+                    >
+                      Copy source
+                    </Clipboard>
+                  </Wrap>
                   <CollapsiblePanel xstyle={styles.details}>
                     <Codeblock>{documentation.source}</Codeblock>
                   </CollapsiblePanel>

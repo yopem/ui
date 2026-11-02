@@ -48,6 +48,6 @@ export const editorTocItem: SourceItem = {
       "validateEditorTocHTML",
     ],
     usage:
-      "Import parts from @/components/editor/toc. Register EditorTocExtension in a stable root extension array. Compose controls inside EditorToolbar. The table of contents derives entries from current document headings. Navigation stays within the current editor. Register EditorTocNode in every reader that loads this document type. Generic editor-document conversion does not yet support table-of-contents nodes.",
+      "Import parts from @/components/editor/toc. Register EditorTocExtension in a stable root extension array. Compose controls inside EditorToolbar. Live contents show the first 500 nonempty headings in preorder. Titles normalize whitespace and truncate to 256 UTF-16 code units. Navigation stays within the current editor. Register EditorTocNode in live readers. The optional editor-document reader retains validated contents nodes. Portable document export uses all headings and full text, subject to document limits. It uses canonical document-scoped IDs, not live editor-scoped IDs. Portable HTML input requires complete canonical heading links. Native TOC HTML can fail this check.",
   },
 }

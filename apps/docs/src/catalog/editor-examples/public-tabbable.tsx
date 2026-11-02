@@ -16,6 +16,7 @@ import {
   EditorEditableCardExtension,
   EditorEditableCardInsertButton,
 } from "@yopem-ui/editor/editable-card"
+import { FileCode2Icon, ListIcon } from "lucide-react"
 
 const extensions = [EditorEditableCardExtension]
 
@@ -50,7 +51,14 @@ function NativeListEditor() {
       <Stack xstyle={styles.section}>
         <EditorRoot ariaLabel="Native list editor">
           <EditorToolbar aria-label="Native list tools">
-            <EditorListButton listType="bullet" />
+            <EditorListButton
+              listType="bullet"
+              aria-label="Bullet list"
+              title="Bullet list"
+              render={<Button variant="ghost" size="icon-sm" />}
+            >
+              <ListIcon aria-hidden="true" size={16} />
+            </EditorListButton>
           </EditorToolbar>
           <EditorContent placeholder="Write list items…" />
         </EditorRoot>
@@ -65,7 +73,14 @@ function NativeCodeEditor() {
       <Stack xstyle={styles.section}>
         <EditorRoot ariaLabel="Native code editor">
           <EditorToolbar aria-label="Native code tools">
-            <EditorBlockButton block="code" />
+            <EditorBlockButton
+              block="code"
+              aria-label="Code block"
+              title="Code block"
+              render={<Button variant="ghost" size="icon-sm" />}
+            >
+              <FileCode2Icon aria-hidden="true" size={16} />
+            </EditorBlockButton>
           </EditorToolbar>
           <EditorContent placeholder="Write code…" />
         </EditorRoot>

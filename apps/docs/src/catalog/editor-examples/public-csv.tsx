@@ -24,6 +24,7 @@ import {
   defineExtension,
   PASTE_COMMAND,
 } from "lexical"
+import { Redo2Icon, TablePropertiesIcon, Undo2Icon } from "lucide-react"
 import { useState } from "react"
 
 export function CsvEditorExample() {
@@ -104,9 +105,29 @@ export function CsvEditorExample() {
         extensions={extensions}
       >
         <EditorToolbar aria-label="CSV editing actions">
-          <EditorHistoryButton action="undo">Undo</EditorHistoryButton>
-          <EditorHistoryButton action="redo">Redo</EditorHistoryButton>
-          <EditorTableMenu />
+          <EditorHistoryButton
+            action="undo"
+            aria-label="Undo"
+            title="Undo"
+            render={<Button variant="ghost" size="icon-sm" />}
+          >
+            <Undo2Icon aria-hidden="true" size={16} />
+          </EditorHistoryButton>
+          <EditorHistoryButton
+            action="redo"
+            aria-label="Redo"
+            title="Redo"
+            render={<Button variant="ghost" size="icon-sm" />}
+          >
+            <Redo2Icon aria-hidden="true" size={16} />
+          </EditorHistoryButton>
+          <EditorTableMenu
+            aria-label="Table actions"
+            title="Table actions"
+            render={<Button variant="ghost" size="icon-sm" />}
+          >
+            <TablePropertiesIcon aria-hidden="true" size={16} />
+          </EditorTableMenu>
         </EditorToolbar>
         <EditorContent placeholder="Paste a CSV table" />
       </EditorRoot>

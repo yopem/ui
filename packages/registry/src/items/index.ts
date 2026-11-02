@@ -36,6 +36,7 @@ import {
   editorDocumentExportItem,
   editorDocumentExportImageItem,
 } from "@registry/items/editor-document-export"
+import { editorDocumentExportPDFItem } from "@registry/items/editor-document-export-pdf"
 import { editorDocxItem } from "@registry/items/editor-docx"
 import { editorDrawingItem } from "@registry/items/editor-drawing"
 import { editorEditableCardItem } from "@registry/items/editor-editable-card"
@@ -46,10 +47,12 @@ import { editorLabelsItem } from "@registry/items/editor-labels"
 import { editorListPresentationItem } from "@registry/items/editor-list-presentation"
 import { editorMathItem } from "@registry/items/editor-math"
 import { editorMediaItem } from "@registry/items/editor-media"
+import { editorMediaPlaceholderItem } from "@registry/items/editor-media-placeholder"
 import { editorReviewItem } from "@registry/items/editor-review"
 import { editorSearchItem } from "@registry/items/editor-search"
 import { editorStoreItem } from "@registry/items/editor-store"
 import { editorTocItem } from "@registry/items/editor-toc"
+import { editorToolbarMenusItem } from "@registry/items/editor-toolbar-menus"
 import { editorTypeaheadItem } from "@registry/items/editor-typeahead"
 import { editorWordClipboardItem } from "@registry/items/editor-word-clipboard"
 import { foundationItems } from "@registry/items/foundation"
@@ -71,6 +74,7 @@ export const sourceItems = [
   editorBlocksItem,
   editorMathItem,
   editorMediaItem,
+  editorMediaPlaceholderItem,
   editorCollaborationItem,
   editorCollaborationBunItem,
   editorCollaborationGrantsItem,
@@ -91,11 +95,13 @@ export const sourceItems = [
   editorDrawingItem,
   editorSearchItem,
   editorFloatingToolbarItem,
+  editorToolbarMenusItem,
   editorAutoformatItem,
   editorBlockBehaviorItem,
   editorDocxItem,
   editorDocumentExportItem,
   editorDocumentExportImageItem,
+  editorDocumentExportPDFItem,
   editorDiagramItem,
   editorDiagramMermaidItem,
   editorDiagramPlantUmlItem,

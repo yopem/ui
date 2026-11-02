@@ -1,10 +1,55 @@
 import AxeBuilder from "@axe-core/playwright"
-import { expect, test } from "@playwright/test"
+import { expect, test, type Locator } from "@playwright/test"
 import { readFile } from "node:fs/promises"
+
+function mainEditable(workspace: Locator) {
+  return workspace.locator(
+    '[contenteditable="true"]:not(aside[aria-label="Document review"] section[aria-label="Thread public-playground-anchor"] [aria-label="Reply to thread public-playground-anchor"])',
+  )
+}
+
+async function expectWorkspaceEditables(
+  workspace: Locator,
+  editor: Locator,
+  replyCount: number,
+  totalCount: number,
+) {
+  await expect(editor).toHaveCount(1)
+  await expect(editor).toHaveAttribute("contenteditable", "true")
+  await expect(
+    workspace.locator(
+      'aside[aria-label="Document review"] section[aria-label="Thread public-playground-anchor"] [aria-label="Reply to thread public-playground-anchor"][contenteditable="true"]',
+    ),
+  ).toHaveCount(replyCount)
+  await expect(workspace.locator('[contenteditable="true"]')).toHaveCount(
+    totalCount,
+  )
+}
+
+async function placeTableCaret(editor: Locator) {
+  const paragraph = editor.locator(":scope > p").first()
+  await paragraph.click()
+  await editor.press("End")
+  await expect(editor).toBeFocused()
+  await expect
+    .poll(() =>
+      paragraph.evaluate((element) => {
+        const selection = element.ownerDocument.getSelection()
+
+        return (
+          selection?.isCollapsed === true &&
+          selection.anchorNode !== null &&
+          selection.focusNode !== null &&
+          element.contains(selection.anchorNode) &&
+          element.contains(selection.focusNode)
+        )
+      }),
+    )
+    .toBe(true)
+}
 
 test.describe("Integrated playground workflows", () => {
   test.beforeEach(async ({ page }) => {
-    test.slow()
     await page.goto("/editor/examples#public-playground")
     const example = page.getByTestId("editor-example-public-playground")
     await example
@@ -33,7 +78,9 @@ test.describe("Integrated playground workflows", () => {
       exact: true,
     })
 
+    await placeTableCaret(editor)
     await workspace
+      .getByRole("toolbar", { name: "Integrated editor tools", exact: true })
       .getByRole("button", { name: "Insert table", exact: true })
       .click()
     await expect(editor.getByRole("table")).toBeVisible()
@@ -53,7 +100,8 @@ test.describe("Integrated playground workflows", () => {
     await expect(
       workspace.getByRole("textbox", { name: "Host CSRF token" }),
     ).toHaveCount(0)
-    await expect(workspace.locator('[contenteditable="true"]')).toHaveCount(1)
+    await expect(mainEditable(workspace)).toHaveCount(1)
+    await expectWorkspaceEditables(workspace, editor, 1, 2)
     await expect(editor.getByRole("table")).toBeVisible()
     await workspace.getByRole("button", { name: "Undo", exact: true }).click()
     await expect(editor.getByRole("table")).toHaveCount(0)
@@ -77,13 +125,13 @@ test.describe("Integrated playground workflows", () => {
         modifiers: ["Alt"],
       })
     await expect(
-      workspace.getByRole("dialog", { name: "AI command menu" }),
+      page.getByRole("dialog", { name: "AI command menu", exact: true }),
     ).toHaveCount(0)
 
     await editor.locator("p").first().selectText()
     await editor.press("ControlOrMeta+j")
 
-    const dialog = workspace.getByRole("dialog", {
+    const dialog = page.getByRole("dialog", {
       name: "AI command menu",
       exact: true,
     })
@@ -114,7 +162,9 @@ test.describe("Integrated playground workflows", () => {
     await expect(editor).toHaveAttribute("contenteditable", "true")
     await expect(editor.locator("h1")).toHaveCount(1)
     await expect(editor.locator("table")).toHaveCount(0)
+    await placeTableCaret(editor)
     await workspace
+      .getByRole("toolbar", { name: "Integrated editor tools", exact: true })
       .getByRole("button", { name: "Insert table", exact: true })
       .click()
     await expect(editor.getByRole("table")).toBeVisible()
@@ -140,7 +190,7 @@ test.describe("Integrated playground workflows", () => {
       .toContain("review")
   })
 
-  test("locale and variant remount: updates labels and restores the normal seed", async ({
+  test("initial Insert table click works before placing an editor caret", async ({
     page,
   }) => {
     const workspace = page.getByTestId("public-playground-workspace")
@@ -150,7 +200,66 @@ test.describe("Integrated playground workflows", () => {
       exact: true,
     })
 
+    await expect(editor.locator("table")).toHaveCount(0)
+    await workspace
+      .getByRole("toolbar", { name: "Integrated editor tools", exact: true })
+      .getByRole("button", { name: "Insert table", exact: true })
+      .click()
+    await expect(editor.getByRole("table")).toBeVisible()
+  })
+
+  test("locale and variant remount: resets host setup, document, and history", async ({
+    page,
+  }) => {
+    const requests: string[] = []
+    await page.route("**/api/editor-ai", async (route) => {
+      requests.push(route.request().url())
+      await route.abort()
+    })
+    const workspace = page.getByTestId("public-playground-workspace")
+
+    const editor = workspace.getByRole("textbox", {
+      name: "Integrated playground editor",
+      exact: true,
+    })
+
+    await expect(editor).toHaveCount(1)
+    await expect(mainEditable(workspace)).toHaveCount(1)
+    await expectWorkspaceEditables(workspace, editor, 1, 2)
+    await expect(
+      workspace.getByRole("textbox", {
+        name: "Reply to thread public-playground-anchor",
+        exact: true,
+      }),
+    ).toHaveCount(1)
+    await expect(
+      workspace.getByRole("button", { name: "Configure AI menu", exact: true }),
+    ).toHaveCount(1)
+    await expect(
+      workspace.getByRole("button", { name: "Configure Copilot", exact: true }),
+    ).toHaveCount(0)
     await editor.fill("Unsaved draft")
+
+    for (const [name, value] of [
+      ["Host endpoint", `${new URL(page.url()).origin}/api/editor-ai`],
+      ["Host document ID", "locale-document"],
+      ["Host CSRF token", "locale-csrf"],
+    ]) {
+      const field = workspace.getByRole("textbox", { name, exact: true })
+      await expect(field).toHaveCount(1)
+      await field.fill(value)
+    }
+
+    await workspace
+      .getByRole("button", { name: "Configure AI menu", exact: true })
+      .click()
+    await expect(
+      workspace.getByRole("textbox", { name: /^Host / }),
+    ).toHaveCount(0)
+    await expect(editor).toHaveText("Unsaved draft")
+    await expect(mainEditable(workspace)).toHaveCount(1)
+    await expectWorkspaceEditables(workspace, editor, 1, 2)
+    await expect.poll(() => requests.length).toBe(0)
     await workspace
       .getByRole("button", { name: "简体中文", exact: true })
       .click()
@@ -164,14 +273,90 @@ test.describe("Integrated playground workflows", () => {
     await expect(localizedEditor).not.toContainText("Unsaved draft")
     await expect(localizedEditor.locator("h1")).toHaveText("集成原生编辑器")
     await expect(localizedEditor).toHaveAttribute("lang", "zh-CN")
+    await expect(localizedEditor).toHaveCount(1)
+    await expect(editor).toHaveCount(0)
+    await expect(mainEditable(workspace)).toHaveCount(1)
+    await expectWorkspaceEditables(workspace, localizedEditor, 1, 2)
+    await expect(
+      workspace.getByRole("button", { name: "配置 AI 菜单", exact: true }),
+    ).toHaveCount(1)
+    await expect(
+      workspace.getByRole("button", { name: "Undo", exact: true }),
+    ).toBeDisabled()
+
+    for (const name of ["主机端点", "主机文档 ID", "主机 CSRF 令牌"]) {
+      const field = workspace.getByRole("textbox", { name, exact: true })
+      await expect(field).toHaveCount(1)
+      await expect(field).toHaveValue("")
+    }
+
+    for (const name of ["加粗", "斜体", "下划线"]) {
+      const command = workspace.getByRole("button", { name, exact: true })
+      await expect(command).toHaveText("")
+      await expect(command).toHaveAttribute("title", name)
+      await expect(command.locator("svg")).toHaveAttribute(
+        "aria-hidden",
+        "true",
+      )
+    }
+
     await workspace
       .getByRole("button", { name: "Copilot", exact: true })
       .click()
     await expect(localizedEditor).toHaveAttribute("contenteditable", "true")
     await expect(localizedEditor.locator("h1")).toHaveText("集成原生编辑器")
+    await expect(localizedEditor).toHaveCount(1)
+    await expect(mainEditable(workspace)).toHaveCount(1)
+    await expectWorkspaceEditables(workspace, localizedEditor, 1, 2)
+    await expect(
+      workspace.getByRole("button", { name: "配置 AI 菜单", exact: true }),
+    ).toHaveCount(0)
+
+    for (const [name, value] of [
+      ["主机端点", `${new URL(page.url()).origin}/api/editor-ai`],
+      ["主机文档 ID", "copilot-locale-document"],
+      ["主机 CSRF 令牌", "copilot-locale-csrf"],
+    ]) {
+      const field = workspace.getByRole("textbox", { name, exact: true })
+      await expect(field).toHaveCount(1)
+      await expect(field).toHaveValue("")
+      await field.fill(value)
+    }
+
+    await workspace
+      .getByRole("button", { name: "配置 Copilot", exact: true })
+      .click()
+    await expect(workspace.getByRole("textbox", { name: /^主机/ })).toHaveCount(
+      0,
+    )
+    await expect(localizedEditor).toHaveCount(1)
+    await expect(mainEditable(workspace)).toHaveCount(1)
+    await expectWorkspaceEditables(workspace, localizedEditor, 1, 2)
+    await expect.poll(() => requests.length).toBe(0)
     await workspace
       .getByRole("button", { name: "English", exact: true })
       .click()
+    await expect(
+      workspace.getByRole("button", { name: "Configure Copilot", exact: true }),
+    ).toHaveCount(1)
+    await expect(
+      workspace.getByRole("button", { name: "Configure AI menu", exact: true }),
+    ).toHaveCount(0)
+    await expect(localizedEditor).toHaveCount(0)
+    await expect(editor).toHaveCount(1)
+    await expect(mainEditable(workspace)).toHaveCount(1)
+    await expectWorkspaceEditables(workspace, editor, 1, 2)
+
+    for (const name of [
+      "Host endpoint",
+      "Host document ID",
+      "Host CSRF token",
+    ]) {
+      const field = workspace.getByRole("textbox", { name, exact: true })
+      await expect(field).toHaveCount(1)
+      await expect(field).toHaveValue("")
+    }
+
     await workspace.getByRole("button", { name: "Normal", exact: true }).click()
 
     const normalEditor = workspace.getByRole("textbox", {
@@ -184,6 +369,30 @@ test.describe("Integrated playground workflows", () => {
     )
     await expect(normalEditor).toHaveAttribute("lang", "en")
     await expect(normalEditor).not.toContainText("Unsaved draft")
+    await expect(normalEditor).toHaveCount(1)
+    await expect(mainEditable(workspace)).toHaveCount(1)
+    await expectWorkspaceEditables(workspace, normalEditor, 1, 2)
+    await expect(
+      workspace.getByRole("button", { name: "Configure AI menu", exact: true }),
+    ).toHaveCount(1)
+    await expect(
+      workspace.getByRole("button", { name: "Configure Copilot", exact: true }),
+    ).toHaveCount(0)
+    await expect(
+      workspace.getByRole("button", { name: "Undo", exact: true }),
+    ).toBeDisabled()
+
+    for (const name of [
+      "Host endpoint",
+      "Host document ID",
+      "Host CSRF token",
+    ]) {
+      const field = workspace.getByRole("textbox", { name, exact: true })
+      await expect(field).toHaveCount(1)
+      await expect(field).toHaveValue("")
+    }
+
+    await expect.poll(() => requests.length).toBe(0)
   })
 
   test("listClassic variant uses native markers and keeps control focus", async ({
@@ -318,16 +527,14 @@ test.describe("Integrated playground workflows", () => {
       .getByRole("button", { name: "View drawing", exact: true })
       .click()
 
-    const viewDialog = workspace.getByRole("dialog", {
+    const viewDialog = page.getByRole("dialog", {
       name: "View drawing",
       exact: true,
     })
 
     await expect(viewDialog).toBeVisible()
 
-    const report = await new AxeBuilder({ page })
-      .include('[role="dialog"]')
-      .analyze()
+    const report = await new AxeBuilder({ page }).analyze()
 
     expect(report.violations).toEqual([])
     await expect(
@@ -337,6 +544,9 @@ test.describe("Integrated playground workflows", () => {
       .getByRole("button", { name: "Cancel drawing", exact: true })
       .click()
     await expect(viewDialog).toBeHidden()
+    await expect(
+      preview.getByRole("button", { name: "View drawing", exact: true }),
+    ).toBeFocused()
 
     await assets.uncheck()
     await expect(editor.getByTestId("editor-drawing-preview")).toHaveCount(0)
@@ -447,11 +657,21 @@ test.describe("Integrated playground workflows", () => {
       workspace.getByText("No endpoint is configured.", { exact: true }),
     ).toBeVisible()
     await expect(
-      workspace.getByRole("textbox", {
-        name: "Integrated playground editor",
-        exact: true,
-      }),
-    ).toHaveAttribute("contenteditable", "true")
+      workspace.getByRole("button", { name: "Configure Copilot", exact: true }),
+    ).toHaveCount(1)
+    await expect(
+      workspace.getByRole("button", { name: "Configure AI menu", exact: true }),
+    ).toHaveCount(0)
+
+    const editor = workspace.getByRole("textbox", {
+      name: "Integrated playground editor",
+      exact: true,
+    })
+
+    await expect(editor).toHaveCount(1)
+    await expect(editor).toHaveAttribute("contenteditable", "true")
+    await expect(mainEditable(workspace)).toHaveCount(1)
+    await expectWorkspaceEditables(workspace, editor, 1, 2)
     await workspace
       .getByRole("textbox", { name: "Host endpoint", exact: true })
       .fill("https://invalid.example/api/ai")
@@ -471,8 +691,17 @@ test.describe("Integrated playground workflows", () => {
         exact: true,
       }),
     ).toHaveAttribute("contenteditable", "true")
+    await expect(mainEditable(workspace)).toHaveCount(1)
+    await expectWorkspaceEditables(workspace, editor, 1, 2)
     await expect.poll(() => requests.length).toBe(0)
 
+    await editor.press("ControlOrMeta+End")
+    await placeTableCaret(editor)
+    await workspace
+      .getByRole("toolbar", { name: "Integrated editor tools", exact: true })
+      .getByRole("button", { name: "Insert table", exact: true })
+      .click()
+    await expect(editor.getByRole("table")).toHaveCount(1)
     const sameOriginEndpoint = `${new URL(page.url()).origin}/api/editor-ai`
     await workspace
       .getByRole("textbox", { name: "Host endpoint", exact: true })
@@ -486,7 +715,59 @@ test.describe("Integrated playground workflows", () => {
         exact: true,
       }),
     ).toHaveAttribute("contenteditable", "true")
+    await expect(mainEditable(workspace)).toHaveCount(1)
+    await expectWorkspaceEditables(workspace, editor, 1, 2)
+    await expect(
+      workspace.getByRole("textbox", { name: /^Host / }),
+    ).toHaveCount(0)
+    await expect(
+      workspace.getByRole("button", { name: /^Configure (AI menu|Copilot)$/ }),
+    ).toHaveCount(0)
+    await expect(editor.getByRole("table")).toHaveCount(1)
+    await editor.press("ControlOrMeta+z")
+    await expect(editor.getByRole("table")).toHaveCount(0)
+    await workspace.getByRole("button", { name: "Redo", exact: true }).click()
+    await expect(editor.getByRole("table")).toHaveCount(1)
     await expect.poll(() => requests.length).toBe(0)
+
+    for (const [variant, setup, absentSetup] of [
+      ["Normal", "Configure AI menu", "Configure Copilot"],
+      ["Copilot", "Configure Copilot", "Configure AI menu"],
+    ]) {
+      await workspace
+        .getByRole("button", { name: variant, exact: true })
+        .click()
+      await expect(editor).toHaveCount(1)
+      await expect(editor).toHaveAttribute("contenteditable", "true")
+      await expect(mainEditable(workspace)).toHaveCount(1)
+      await expectWorkspaceEditables(workspace, editor, 1, 2)
+      await expect(editor.getByRole("table")).toHaveCount(0)
+      await expect(editor.locator("h1")).toHaveText("Integrated native editor")
+      await expect(
+        workspace.getByRole("button", { name: setup, exact: true }),
+      ).toHaveCount(1)
+      await expect(
+        workspace.getByRole("button", { name: absentSetup, exact: true }),
+      ).toHaveCount(0)
+
+      for (const name of [
+        "Host endpoint",
+        "Host document ID",
+        "Host CSRF token",
+      ]) {
+        const field = workspace.getByRole("textbox", { name, exact: true })
+        await expect(field).toHaveCount(1)
+        await expect(field).toHaveValue("")
+      }
+
+      for (const name of ["Undo", "Redo"]) {
+        await expect(
+          workspace.getByRole("button", { name, exact: true }),
+        ).toBeDisabled()
+      }
+
+      await expect.poll(() => requests.length).toBe(0)
+    }
   })
 
   test("forced layout retains converted content behind a required first heading", async ({
@@ -518,33 +799,29 @@ test.describe("Integrated playground workflows", () => {
     await editor.locator("h1").first().fill("Required document title")
     await expect(editor.locator("blockquote")).toContainText(original)
 
-    const report = await new AxeBuilder({ page })
-      .include('[data-testid="public-playground-workspace"]')
-      .analyze()
+    const report = await new AxeBuilder({ page }).analyze()
 
     expect(report.violations).toEqual([])
   })
 
-  test("responsive states: editor stays contained and accessible", async ({
-    page,
-  }, testInfo) => {
-    const workspace = page.getByTestId("public-playground-workspace")
+  for (const width of [1440, 768, 390]) {
+    test(`responsive states: editor stays contained and accessible at ${width}px`, async ({
+      page,
+    }, testInfo) => {
+      const workspace = page.getByTestId("public-playground-workspace")
 
-    for (const width of [1440, 768, 390]) {
       await page.setViewportSize({ width, height: 900 })
       await expect
         .poll(() => page.evaluate(() => document.documentElement.scrollWidth))
         .toBeLessThanOrEqual(width + 1)
 
-      const report = await new AxeBuilder({ page })
-        .include('[data-testid="public-playground-workspace"]')
-        .analyze()
+      const report = await new AxeBuilder({ page }).analyze()
 
       expect(report.violations).toEqual([])
       await testInfo.attach(`public-playground-${width}.png`, {
         body: await workspace.screenshot({ scale: "css" }),
         contentType: "image/png",
       })
-    }
-  })
+    })
+  }
 })

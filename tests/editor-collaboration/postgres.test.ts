@@ -67,7 +67,12 @@ async function fixture() {
   )
   await db.query(
     "INSERT INTO editor_documents VALUES($1,$2,1,'snapshot',$3,1,0,$4)",
-    ["host/doc", generation, '{"root":{"text":"seed"}}', "b".repeat(64)],
+    [
+      "host/doc",
+      generation,
+      '{"root":{"type":"root","children":[],"text":"seed"}}',
+      "b".repeat(64),
+    ],
   )
   await db.query("INSERT INTO editor_generations VALUES($1,$2)", [
     generation,
@@ -160,6 +165,71 @@ async function fixture() {
 }
 
 describe("PostgreSQL canonical-head collaboration log", function postgresContracts() {
+  test("rejects duplicate snapshot keys before custom initialization and permits a valid retry", async function duplicateSnapshots() {
+    const f = await fixture()
+
+    const valid =
+      '{"root":{"type":"root","children":[],"meta":{"x":1}},"other":{"x":2}}'
+
+    const invalid = [
+      '{"root":{"type":"root","children":[],"meta":{"x":1,"x":2}}}',
+      '{"root":{"type":"root","children":[],"meta":{"x":1,"\\u0078":2}}}',
+      '{"root":null,"root":{"type":"root","children":[]}}',
+    ]
+
+    let calls = 0
+
+    const input = {
+      documentId: "host/doc",
+      generation,
+      revision: "1",
+      initialize() {
+        calls++
+
+        return Promise.resolve(content("ignored snapshot"))
+      },
+    }
+
+    for (const raw of invalid) {
+      await f.db.query("UPDATE editor_documents SET state_json=$1", [raw])
+      const before = (await f.db.query("SELECT * FROM editor_documents")).rows
+
+      for (let retry = 0; retry < 2; retry++) {
+        await rejects(f.first.initialize(input, context()), /invalid/)
+        expect(calls).toBe(0)
+        expect(
+          (await f.db.query("SELECT * FROM editor_documents")).rows,
+        ).toEqual(before)
+        expect(
+          (await f.db.query("SELECT * FROM editor_collaboration_heads")).rows,
+        ).toHaveLength(0)
+        expect(
+          (await f.db.query("SELECT * FROM editor_collaboration_updates")).rows,
+        ).toHaveLength(0)
+      }
+    }
+
+    const aborted = new AbortController()
+    aborted.abort()
+    await rejects(
+      f.first.initialize(input, { ...context(), signal: aborted.signal }),
+      /aborted/,
+    )
+    expect(calls).toBe(0)
+    await f.db.query("UPDATE editor_documents SET state_json=$1", [valid])
+    const result = await f.first.initialize(input, context())
+    expect(calls).toBe(1)
+    expect(text(result.state)).toBe("ignored snapshot")
+    expect(result.revision).toBe("2")
+    expect(
+      (
+        await f.db.query<{ state_json: string }>(
+          "SELECT state_json FROM editor_documents",
+        )
+      ).rows[0]?.state_json,
+    ).toBe(valid)
+  })
+
   test("authoritative bootstrap, two replicas, durable append, bounded poll and recovery", async function replicaRecovery() {
     const f = await fixture()
     const boot = await f.initialize()

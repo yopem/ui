@@ -5,7 +5,7 @@ import {
   sanitizeEditorDiagramSvg,
   type EditorDiagramRenderInput,
 } from "@editor/diagram-render"
-import { withDOM } from "@lexical/headless/dom"
+import { withDOM } from "@workspace/tests/fixtures/lexical-dom"
 import { afterEach, beforeEach, describe, expect, test } from "bun:test"
 
 const DOMParser = withDOM((window) => window.DOMParser)

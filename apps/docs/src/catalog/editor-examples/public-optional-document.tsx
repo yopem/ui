@@ -45,6 +45,7 @@ import {
 import { createEditorLabelsExtension } from "@yopem-ui/editor/labels"
 import { EditorTocControls, EditorTocExtension } from "@yopem-ui/editor/toc"
 import { $getRoot, HISTORY_PUSH_TAG } from "lexical"
+import { Redo2Icon, Undo2Icon } from "lucide-react"
 import { useId, useState } from "react"
 
 const labelOptions = ["Approved", "Needs review"]
@@ -338,8 +339,22 @@ export function PublicOptionalDocumentExample() {
           initialState={initialState}
         >
           <EditorToolbar aria-label="Optional document feature controls">
-            <EditorHistoryButton action="undo" />
-            <EditorHistoryButton action="redo" />
+            <EditorHistoryButton
+              action="undo"
+              aria-label="Undo"
+              title="Undo"
+              render={<Button variant="ghost" size="icon-sm" />}
+            >
+              <Undo2Icon aria-hidden="true" size={16} />
+            </EditorHistoryButton>
+            <EditorHistoryButton
+              action="redo"
+              aria-label="Redo"
+              title="Redo"
+              render={<Button variant="ghost" size="icon-sm" />}
+            >
+              <Redo2Icon aria-hidden="true" size={16} />
+            </EditorHistoryButton>
             <EditorFootnoteControls />
             <EditorTocControls />
             <EditorColumnsControls />

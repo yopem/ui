@@ -1,5 +1,12 @@
 export const editorDocumentExportParts = [
   {
+    name: "EditorDocumentPDFExportControl",
+    slug: "document-pdf-export-control",
+    item: "editor-document-export-pdf",
+    description:
+      "Download one bounded raster PDF page with an explicit capture callback.",
+  },
+  {
     name: "EditorDocumentPrintControl",
     slug: "document-print-control",
     item: "editor-document-export",

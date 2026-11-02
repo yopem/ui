@@ -6,6 +6,7 @@ import { registryDependency } from "@registry/registry-dependencies"
 export const editorDocumentItem: SourceItem = {
   categories: ["input"],
   dependencies: [
+    editorDependency("@lexical/clipboard"),
     editorDependency("@lexical/extension"),
     editorDependency("@types/hast"),
     editorDependency("@types/mdast"),
@@ -40,7 +41,7 @@ export const editorDocumentItem: SourceItem = {
       "DocumentStatic",
     ],
     usage:
-      "Import portable helpers from @/components/editor/document. Import DocumentStatic from @/components/editor/document/static. Register EditorDocumentClipboardExtension at root creation. Keep registerDocumentPaste cleanup in the host lifecycle. Call $insertDocumentFragment inside editor.update to insert validated Markdown at the current selection. This helper does not replace the document. Register EditorBlocksExtension for live callouts and toggles. Register math, mention, and media nodes before importing their representations. Use EditorListPresentationExtension for live custom list markers. Preserve yopemListMarker and native ordered starts in document readers. Register each optional node in every live document reader before import. Document conversion supports validated footnotes, contents, columns, dates, labels, drawings, editable cards, and diagram metadata. Optional nodes use canonical HTML fallback in Markdown. Drawings export scene metadata, not rendered SVG. Editable cards export their saved node, not transient form values. Use MediaExtension for live media rendering. Media Markdown uses canonical HTML. Reject media URL queries and fragments. Mention identities do not grant access. Review metadata remains unsupported. See /docs/editor.",
+      "JSON import rejects duplicate object keys, including escaped equivalents. Invalid clipboard JSON does not use fallback formats. A foreign namespace can fall back to HTML. Higher-priority host handlers keep control. Register document paste to enable clipboard validation. Import portable helpers from @/components/editor/document. Import DocumentStatic from @/components/editor/document/static. Register EditorDocumentClipboardExtension at root creation. Keep registerDocumentPaste cleanup in the host lifecycle. Call $insertDocumentFragment inside editor.update to insert validated Markdown at the current selection. This helper does not replace the document. Register EditorBlocksExtension for live callouts and toggles. Register math, mention, and media nodes before importing their representations. Use EditorListPresentationExtension for live custom list markers. Preserve yopemListMarker and native ordered starts in document readers. Register each optional node in every live document reader before import. Document conversion supports validated footnotes, contents, columns, dates, labels, drawings, editable cards, and diagram metadata. Optional nodes use canonical HTML fallback in Markdown. Drawings export scene metadata, not rendered SVG. Editable cards export their saved node, not transient form values. Use MediaExtension for live media rendering. Media Markdown uses canonical HTML. Both native media and the portable reader require absolute HTTPS source and track URLs without credentials. The portable reader rejects nonempty query or fragment components. It may retain empty trailing ? or # on ordinary media and track URLs, subject to other checks. Native MediaNode JSON and tagged HTML use parseMedia. Ordinary media and track URLs can contain nonempty queries or fragments there. Provider, tweet, and iframe rules can be stricter. Mention identities do not grant access. Review metadata remains unsupported. See /docs/editor.",
   },
   files: [
     ...[
@@ -63,6 +64,9 @@ export const editorDocumentItem: SourceItem = {
       type: "registry:ui" as const,
     })),
     ...[
+      "json-duplicates.ts",
+      "media-placeholder-model.ts",
+      "media-placeholder-node.ts",
       "math-model.ts",
       "math-node.ts",
       "math-render.ts",

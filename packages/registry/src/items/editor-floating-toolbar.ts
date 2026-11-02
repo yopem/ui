@@ -5,14 +5,22 @@ import { registryDependency } from "@registry/registry-dependencies"
 
 export const editorFloatingToolbarItem: SourceItem = {
   categories: ["input"],
-  dependencies: [editorDependency("lexical")],
+  dependencies: [
+    editorDependency("lexical"),
+    editorDependency("@lexical/link"),
+  ],
   description:
     "Compose a floating toolbar anchored to a native Lexical text range.",
   devDependencies: [],
   docs: {
-    api: ["EditorFloatingToolbar", "EditorFloatingToolbarProps"],
+    api: [
+      "EditorFloatingToolbar",
+      "EditorFloatingToolbarProps",
+      "EditorLinkFloatingToolbar",
+      "EditorLinkFloatingToolbarProps",
+    ],
     usage:
-      "Place EditorFloatingToolbar inside EditorRoot beside EditorContent. Compose existing editor controls as children. Select text to open the toolbar. Press Alt+F10 to focus its first enabled button. Saved ranges expire after document changes or read-only transitions.",
+      "Place EditorFloatingToolbar inside EditorRoot beside EditorContent. Compose existing editor controls as children. Select text to open the toolbar. Use EditorLinkFloatingToolbar for open, edit, and remove actions at a link caret. Press Alt+F10 to focus the first enabled control. Saved ranges expire after document changes or read-only transitions.",
   },
   files: [
     {
@@ -26,7 +34,7 @@ export const editorFloatingToolbarItem: SourceItem = {
     registryDependency("react"),
     registryDependency("react-dom"),
   ],
-  registryDependencies: ["editor", "popover", "toolbar"],
+  registryDependencies: ["editor", "popover", "toolbar", "button"],
   title: "Editor floating toolbar",
   type: "registry:ui",
 }

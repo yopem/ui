@@ -119,8 +119,19 @@ export function EditorLinkControl({
     editor.focus()
   }
 
-  const changeOpen = useStableCallback(function changeOpen(next: boolean) {
+  const changeOpen = useStableCallback(function changeOpen(
+    next: boolean,
+    details: Parameters<
+      NonNullable<ComponentProps<typeof Popover>["onOpenChange"]>
+    >[1],
+  ) {
     if (next) {
+      if (details.event.defaultPrevented || disabled || !editor.isEditable()) {
+        details.cancel()
+
+        return
+      }
+
       const currentTarget = editor.getEditorState().read(() => {
         bookmark.capture()
 
@@ -141,6 +152,16 @@ export function EditorLinkControl({
     }
 
     setOpen(next)
+  })
+
+  const handleClick = useStableCallback(function handleClick(
+    event: Parameters<
+      NonNullable<ComponentProps<typeof PopoverTrigger>["onClick"]>
+    >[0],
+  ) {
+    onClick?.(event)
+
+    if (event.defaultPrevented) event.preventBaseUIHandler()
   })
 
   const handleMouseDown = useStableCallback(function handleMouseDown(
@@ -172,12 +193,16 @@ export function EditorLinkControl({
     setNewTab(checked === true)
   })
 
-  const applyCurrentLink = useStableCallback(function applyCurrentLink() {
-    applyLink(false)
+  const applyCurrentLink = useStableCallback(function applyCurrentLink(
+    event: Parameters<NonNullable<ComponentProps<typeof Button>["onClick"]>>[0],
+  ) {
+    if (!event.defaultPrevented) applyLink(false)
   })
 
-  const removeCurrentLink = useStableCallback(function removeCurrentLink() {
-    applyLink(true)
+  const removeCurrentLink = useStableCallback(function removeCurrentLink(
+    event: Parameters<NonNullable<ComponentProps<typeof Button>["onClick"]>>[0],
+  ) {
+    if (!event.defaultPrevented) applyLink(true)
   })
 
   const controlDisabled = disabled === true || !editable || !hasSelection
@@ -193,7 +218,7 @@ export function EditorLinkControl({
             disabled={!editable || disabled}
           />
         }
-        onClick={onClick}
+        onClick={handleClick}
         onMouseDown={handleMouseDown}
       >
         {children}

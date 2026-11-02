@@ -1,3 +1,4 @@
+import { scanDocumentJSON } from "@yopem-ui/editor/json-duplicates"
 import { z } from "zod"
 
 import type { EditorIdentity } from "./auth"
@@ -107,6 +108,12 @@ export class DocumentError extends Error {
   }
 }
 
+class DuplicateDocumentStateError extends DocumentError {
+  constructor() {
+    super("invalid")
+  }
+}
+
 export const maxRevision = 9223372036854775807n
 
 const tagPattern = /^"([0-9a-f]{64}):([1-9][0-9]{0,18})"$/
@@ -173,10 +180,21 @@ export function boundedState(
     } else if (character === "}" || character === "]") depth--
   }
 
+  let parsed: unknown
+
+  try {
+    parsed = JSON.parse(raw)
+  } catch {
+    throw new DocumentError("invalid")
+  }
+
+  if (scanDocumentJSON(raw, 64) === "duplicate")
+    throw new DuplicateDocumentStateError()
+
   let state: JsonValue
 
   try {
-    state = z.json().parse(JSON.parse(raw))
+    state = z.json().parse(parsed)
   } catch {
     throw new DocumentError("invalid")
   }
@@ -228,9 +246,18 @@ export function decodeRecord(
     if (row.state_json !== null) throw new DocumentError("corrupt")
   } else {
     if (row.state_json === null) throw new DocumentError("corrupt")
-    state = boundedState(row.state_json, row.schema_version, (value, version) =>
-      config.validateState(value, version),
-    )
+
+    try {
+      state = boundedState(
+        row.state_json,
+        row.schema_version,
+        (value, version) => config.validateState(value, version),
+      )
+    } catch (error) {
+      if (error instanceof DuplicateDocumentStateError)
+        throw new DocumentError("corrupt")
+      throw error
+    }
   }
 
   return {

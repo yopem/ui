@@ -58,7 +58,7 @@ test("footnote: typeahead preserves rich definitions, repeated references, unres
 
   await expect(suggestions).toBeVisible()
   await suggestions
-    .getByRole("option", { name: "Footnote [^1]", exact: true })
+    .getByRole("option", { name: /^Footnote \[\^1\](?:\s|$)/ })
     .click()
   await expect(references).toHaveCount(3)
   await expect(duplicates).toHaveCount(2)
@@ -140,6 +140,19 @@ test("toc: insertion follows heading edits, navigates within editor, and exports
     exact: true,
   })
 
+  await reference.evaluate((link) => {
+    link.addEventListener(
+      "click",
+      function preventNavigation(event) {
+        event.preventDefault()
+      },
+      { capture: true, once: true },
+    )
+  })
+  await reference.click()
+  await expect(
+    editor.getByRole("heading", { name: "Reference", exact: true }),
+  ).not.toBeFocused()
   await reference.click()
   await expect(
     editor.getByRole("heading", { name: "Reference", exact: true }),

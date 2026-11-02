@@ -19,6 +19,7 @@ import {
   MediaPreviewGallery,
   MediaPreviewTrigger,
 } from "@yopem-ui/editor/media"
+import { Redo2Icon, Undo2Icon } from "lucide-react"
 import { useReducer, useState, type ComponentProps } from "react"
 import { createPortal } from "react-dom"
 
@@ -71,7 +72,7 @@ const initialState = JSON.stringify({
         version: 1,
         media: {
           kind: "image",
-          url: "https://interactive-examples.mdn.mozilla.net/media/cc0-images/grapefruit-slice.jpg",
+          url: "https://interactive-examples.mdn.mozilla.net/media/cc0-images/grapefruit-slice-332-332.jpg",
           alt: "Grapefruit slice",
           caption: "Grapefruit slice",
           width: 320,
@@ -106,8 +107,22 @@ export function PublicMediaPreviewExample() {
         onChange={setDocumentState}
       >
         <EditorToolbar aria-label="Media preview history">
-          <EditorHistoryButton action="undo" />
-          <EditorHistoryButton action="redo" />
+          <EditorHistoryButton
+            action="undo"
+            aria-label="Undo"
+            title="Undo"
+            render={<Button variant="ghost" size="icon-sm" />}
+          >
+            <Undo2Icon aria-hidden="true" size={16} />
+          </EditorHistoryButton>
+          <EditorHistoryButton
+            action="redo"
+            aria-label="Redo"
+            title="Redo"
+            render={<Button variant="ghost" size="icon-sm" />}
+          >
+            <Redo2Icon aria-hidden="true" size={16} />
+          </EditorHistoryButton>
         </EditorToolbar>
         <EditorContent placeholder="Image preview gallery." />
       </EditorRoot>

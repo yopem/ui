@@ -5,10 +5,64 @@ export const EDITOR_TOC_TYPE = "editor-toc"
 
 export const EDITOR_TOC_HTML_ATTRIBUTE = "data-editor-toc"
 
-export const editorTocNodeSchema = z.strictObject({
-  type: z.literal(EDITOR_TOC_TYPE),
-  version: z.literal(1),
+const slotNameSchema = z
+  .string()
+  .regex(/^[A-Za-z][A-Za-z0-9_-]{0,63}$/)
+  .refine((name) => name !== "constructor" && name !== "prototype")
+
+const slotValueSchema = z.looseObject({
+  type: z.string().min(1).max(128),
+  version: z.number().int().positive(),
 })
+
+const slotMapSchema = z
+  .record(slotNameSchema, slotValueSchema)
+  .refine((slots) => Object.keys(slots).length > 0)
+
+export const editorTocNodeSchema = z
+  .strictObject({
+    type: z.literal(EDITOR_TOC_TYPE),
+    version: z.literal(1),
+    $: z.never({ error: "TOC NodeState is not supported" }).optional(),
+    $slots: slotMapSchema.optional(),
+  })
+  .superRefine((toc, context) => {
+    const pending: { value: unknown; depth: number }[] = Object.values(
+      toc.$slots ?? {},
+    ).map((value) => ({ value, depth: 1 }))
+
+    let count = 1
+
+    while (pending.length > 0) {
+      const entry = pending.pop()
+
+      if (!entry) break
+      count++
+      const node = nodeSchema.safeParse(entry.value)
+
+      if (!node.success || count > limits.nodes || entry.depth > limits.depth) {
+        context.addIssue({ code: "custom", message: "Invalid TOC slot tree" })
+
+        return
+      }
+
+      for (const child of node.data.children ?? [])
+        pending.push({ value: child, depth: entry.depth + 1 })
+
+      if (node.data.$slots !== undefined) {
+        const slots = slotMapSchema.safeParse(node.data.$slots)
+
+        if (!slots.success) {
+          context.addIssue({ code: "custom", message: "Invalid TOC slot map" })
+
+          return
+        }
+
+        for (const value of Object.values(slots.data))
+          pending.push({ value, depth: entry.depth + 1 })
+      }
+    }
+  })
 
 const documentSchema = z.looseObject({ root: z.unknown() })
 
@@ -190,6 +244,9 @@ const tocDocumentSchema = documentSchema.transform(
 
     for (const child of root.children)
       pending.push({ value: child, parent: "root", depth: 1 })
+
+    for (const slot of Object.values(root.$slots ?? {}))
+      pending.push({ value: slot, parent: "root", depth: 1 })
     let count = 1
 
     while (pending.length > 0) {

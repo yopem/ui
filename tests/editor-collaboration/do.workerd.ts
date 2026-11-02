@@ -137,7 +137,10 @@ async function setup(id = `doc:${crypto.randomUUID()}`) {
     .bind(
       id,
       generation,
-      JSON.stringify({ fixtureText: "saved" }),
+      JSON.stringify({
+        root: { type: "root", children: [] },
+        fixtureText: "saved",
+      }),
       "b".repeat(64),
     )
     .run()
@@ -502,6 +505,127 @@ void test(
       const close = closed(client.socket)
       client.socket.send(payload)
       assert.equal(await close, 1008)
+    }
+  },
+)
+
+void test(
+  "duplicate snapshots never reach an initializer that ignores input, including on retry",
+  { timeout: 180000 },
+  async () => {
+    for (const raw of [
+      '{"root":{"type":"root","children":[],"meta":{"x":1,"x":2}},"fixtureText":"saved"}',
+      '{"root":{"type":"root","children":[],"meta":{"x":1,"\\u0078":2}},"fixtureText":"saved"}',
+      '{"root":null,"root":{"type":"root","children":[]},"fixtureText":"saved"}',
+    ]) {
+      const { id, writer, reader } = await setup()
+      await db
+        .prepare("UPDATE editor_documents SET state_json=? WHERE document_id=?")
+        .bind(raw, id)
+        .run()
+      await fault(id, "ignore-snapshot", "ignore")
+
+      const before = await db
+        .prepare("SELECT * FROM editor_documents WHERE document_id=?")
+        .bind(id)
+        .first()
+
+      assert.equal((await issue(id, reader)).status, 403)
+
+      for (let attempt = 0; attempt < 2; attempt++) {
+        assert.equal((await issue(id, writer)).status, 503)
+        assert.deepEqual(
+          await db
+            .prepare("SELECT * FROM editor_documents WHERE document_id=?")
+            .bind(id)
+            .first(),
+          before,
+        )
+        assert.equal(
+          (
+            await db
+              .prepare(
+                "SELECT count(*) AS count FROM fixture_faults WHERE document_id=? AND phase='ignore-snapshot'",
+              )
+              .bind(id)
+              .first<{ count: number }>()
+          )?.count,
+          1,
+        )
+        assert.equal(
+          (
+            await db
+              .prepare(
+                "SELECT count(*) AS count FROM editor_do_bootstrap WHERE document_id=?",
+              )
+              .bind(id)
+              .first<{ count: number }>()
+          )?.count,
+          0,
+        )
+
+        const storage = await mf.unsafeGetDurableObjectStorage(
+          "collaboration-fixture",
+          "Room",
+          { name: id },
+        )
+
+        assert.equal(
+          (
+            await storage.exec<{ count: number }>(
+              "SELECT count(*) AS count FROM collaboration_head",
+            )
+          )[0]?.count,
+          0,
+        )
+      }
+
+      const valid =
+        '{"root":{"type":"root","children":[],"meta":{"x":1}},"fixtureText":"saved","other":{"x":2}}'
+
+      await db
+        .prepare("UPDATE editor_documents SET state_json=? WHERE document_id=?")
+        .bind(valid, id)
+        .run()
+      assert.equal(
+        (await issue(id, writer, "write", { "X-Fixture-Aborted-Request": "1" }))
+          .status,
+        503,
+      )
+      assert.equal(
+        (
+          await db
+            .prepare(
+              "SELECT count(*) AS count FROM fixture_faults WHERE document_id=? AND phase='ignore-snapshot'",
+            )
+            .bind(id)
+            .first<{ count: number }>()
+        )?.count,
+        1,
+      )
+      assert.equal((await issue(id, writer)).status, 200)
+      assert.equal(
+        (
+          await db
+            .prepare(
+              "SELECT state_json FROM editor_documents WHERE document_id=?",
+            )
+            .bind(id)
+            .first<{ state_json: string }>()
+        )?.state_json,
+        valid,
+      )
+      assert.equal(
+        (
+          await db
+            .prepare(
+              "SELECT count(*) AS count FROM fixture_faults WHERE document_id=? AND phase='ignore-snapshot'",
+            )
+            .bind(id)
+            .first<{ count: number }>()
+        )?.count,
+        0,
+      )
     }
   },
 )

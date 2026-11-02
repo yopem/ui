@@ -197,7 +197,10 @@ const styles = stylex.create({
     paddingBlock: "0.75rem",
     borderRadius: tokens["--radius-md"],
     cursor: "pointer",
-    ":hover": { backgroundColor: tokens["--sidebar-accent"] },
+    ":hover": {
+      backgroundColor: tokens["--sidebar-accent"],
+      color: tokens["--sidebar-accent-foreground"],
+    },
     ":focus-visible": {
       outline: `2px solid ${tokens["--ring"]}`,
       outlineOffset: 2,

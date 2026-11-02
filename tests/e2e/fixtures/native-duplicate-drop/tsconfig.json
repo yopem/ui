@@ -1,0 +1,8 @@
+{
+  "extends": "../../../tsconfig.json",
+  "include": [
+    "fixture.tsx",
+    "bundle.ts",
+    "../../docs/editor-native-duplicate-drop.spec.ts"
+  ]
+}

@@ -27,7 +27,7 @@ export const editorFootnotesItem: SourceItem = {
     "box",
     "button",
     "command",
-    "hstack",
+    "wrap",
     "popover",
     "preview-card",
     "stack",

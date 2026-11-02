@@ -520,12 +520,20 @@ when required for fidelity. Static and standalone HTML use native MathML.
 Mention Markdown uses the validated identity codec. Saved identities do not
 grant access. Media JSON and canonical tagged figure HTML retain native
 metadata. Markdown uses canonical HTML for media. Register `MediaExtension` for
-live rendering or `MediaNode` in headless readers. Media URLs cannot contain
-credentials, queries, or fragments. Review formats remain unsupported. Plain
-text does not carry those semantics. Handle `DocumentError.diagnostics` at the
-host boundary. JSON retains supported NodeState. HTML and Markdown retain
-supported element NodeState. Persisted code-view booleans require JSON; HTML and
-Markdown report diagnostics.
+live rendering or `MediaNode` in headless readers. Both native media and the
+portable reader require absolute HTTPS source and track URLs without
+credentials. The portable reader rejects nonempty query or fragment components.
+It may retain empty trailing `?` or `#` on ordinary media and track URLs,
+subject to other checks. Native `MediaNode` JSON and tagged HTML use
+`parseMedia`. Ordinary media and track URLs can contain nonempty queries or
+fragments there. Provider, tweet, and iframe rules can be stricter. Review
+formats remain unsupported. Plain text does not carry those semantics. Handle
+`DocumentError.diagnostics` at the host boundary. JSON retains supported
+NodeState. HTML and Markdown retain supported element NodeState. Persisted
+code-view booleans require JSON; HTML and Markdown report diagnostics. Portable
+export rejects paragraph-owned slots to prevent loss of ownership. Use JSON for
+these documents. Standalone HTML, downloads, and DOCX export also reject these
+slots. Other slot ownership cases still need validation.
 
 Readers also retain validated footnotes, table of contents, columns, dates,
 labels, drawings, editable cards, and diagram metadata. Register the matching
@@ -571,6 +579,20 @@ do not download fonts.
 Use `downloadDocument(editor, "html", ownerDocument)` for HTML files. Use
 `"markdown"` for Markdown files. `DocumentStatic` validates its HTML fragment
 before rendering. It does not load editing controls or bypass sanitization.
+
+Optional `idPrefix` has 1–64 ASCII characters. Start with an ASCII letter. Use
+ASCII letters, digits, underscores, or non-consecutive hyphens after it. Invalid
+prefixes throw. Use the same stable prefix for server rendering and hydration.
+Use a distinct prefix for each document in one owner document. Reserve generated
+IDs against other host markup. Choose distinct, meaningful `aria-label` values
+for multiple documents.
+
+A prefix changes rendered IDs and fragment targets to
+`<idPrefix>--<canonical-id>`. Update deep links when opting in. Native fragment
+activation can change the URL and browser history. Changing a prefix changes its
+links. Omitting `idPrefix` preserves canonical IDs and existing deep links, but
+does not isolate multiple instances. Static prefixing does not change document
+data. Prefixed markup is not portable document HTML.
 
 `streamMarkdown` accepts an async text iterator and an optional abort signal. It
 commits once after verified EOF. Cancellation, source failure, read-only
@@ -1256,9 +1278,28 @@ Register `MediaExtension` in a stable root extension array. Compose
 alignment, or image width. Read-only roots retain native playback and file
 links.
 
-Use HTTPS URLs without credentials. Give images useful alt text. Supply captions
-and transcript links when your content requires them. Embedded providers use
-canonical URLs from exact supported hosts.
+`MediaInsertControl` and `MediaEditControl` reject literal `?` and `#` in the
+source, including empty delimiters. The insert rule also applies to upload
+results. In URL paths, `%3F` and `%23` are path data. Provider and iframe rules
+can be stricter. The insert control requires a fresh valid range, a connected
+editable root, and a registered `MediaNode`. A null selection can remain while
+its dialog has focus. The control inserts after the ordered selection-end root
+child or at the exact root gap. It keeps selected content, list and table
+structure, and empty target blocks. It adds an empty paragraph and selects the
+media node. `$insertMedia` uses Lexical nearest-root insertion on the current
+range. `MediaFileClipboard` restores its saved range and calls `$insertMedia`.
+Its drop range comes from the drop position. These paths use `parseMedia`, not
+the control delimiter rule. They do not promise the control placement or
+preservation behavior. Clipboard completion requires an unchanged non-null
+range. The insert control and clipboard insertion request `HISTORY_PUSH_TAG`.
+Media action changes and removal also request it. This tag does not guarantee
+exact undo grouping. The standalone helper adds no history tag or saved-target
+lease. Its caller owns the update, selection, and history policy.
+
+Use absolute HTTPS source and track URLs without credentials. See Document
+import and export for portable reader URL limits. Give images useful alt text.
+Supply captions and transcript links when your content requires them. Embedded
+providers use canonical URLs from exact supported hosts.
 
 `MediaContent` renders validated `parseMedia` data without an `EditorRoot`. Use
 it for a standalone media view. Keep upload services and provider credentials on
@@ -1277,19 +1318,31 @@ or exact HTTPS-origin policy. Configure live nodes with a stable
 register both extensions in one root.
 
 External frames load only after user consent. Source, policy, and disabled
-changes discard consent. Tweet embeds use the fixed `platform.twitter.com`
-endpoint. HTML exports keep inert links instead of active frames. An origin
-allowlist does not validate DNS, redirects, or host network policy.
+changes discard consent. Frame consent does not cover images, video, audio, or
+caption tracks. Images can request their URLs when rendered. Native media and
+tracks can make network requests. Preload settings do not guarantee network
+privacy. Successful uploads retain the file name and URL. Media JSON and tagged
+HTML can include URLs, names, alt text, and captions. Account for this data in
+host delivery, CSP, logs, clipboard, and storage policies. Tweet embeds use the
+fixed `platform.twitter.com` endpoint. HTML exports keep inert links instead of
+active frames. An origin allowlist does not validate DNS, redirects, or host
+network policy.
 
 Supply a bounded, abort-aware host upload callback through `createMediaUpload`.
 Mount `MediaFileClipboard` inside `EditorRoot` to handle one pasted or dropped
 file. Pass the callback through `upload`. Without it, the part registers
 nothing. Rich clipboard formats and higher-priority host handlers stay first.
-Moving the caret cancels pending insertion. Keep the callback stable. Changing
-it cancels the current upload. Failed, cancelled, stale, and read-only
-insertions keep current content. Authorize each upload on the server. Validate
-content before publication. Cancellation does not prove that a server write
-stopped.
+Moving the caret cancels pending insertion. Each mounted `MediaInsertControl`
+instance keeps its upload slot until its callback settles. Separate instances
+and remounts do not share that slot. The placeholder controller keeps its own
+busy slot until settlement. `MediaFileClipboard` does not retain an equivalent
+slot after cancellation. Calling `start` on the same `createMediaUpload` task
+can supersede an unsettled call. Earlier callbacks can continue. Enforce remote
+upload concurrency and retry policy in the host. Cancellation does not prove
+that remote work stopped. Keep the callback stable. Changing it cancels the
+current upload. Failed, cancelled, stale, and read-only insertions keep current
+content. Authorize each upload on the server. Validate content before
+publication.
 
 This item does not configure private asset storage or delivery. A private asset
 route needs existing same-origin authentication and explicit host integration.

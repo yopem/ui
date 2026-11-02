@@ -74,6 +74,110 @@ describe("portable table geometry", () => {
     expect(valid(document(deep))).toBe(false)
     expect(() => parseTablePresentationJSON(" ".repeat(1_048_577))).toThrow()
   })
+  test("slot edges preserve table ancestry and share document budgets", () => {
+    const paragraph = { type: "paragraph", children: [] }
+
+    function slotted<T extends TestNode>(value: T) {
+      return { ...paragraph, $slots: { note: value } }
+    }
+
+    const nested = {
+      type: "table",
+      children: [
+        {
+          type: "tablerow",
+          children: [{ ...cell(), children: [slotted(table(1, 1))] }],
+        },
+      ],
+    }
+
+    expect(valid(document(slotted(table(1, 1))))).toBe(true)
+    expect(valid(document(slotted({ type: "tablerow", children: [] })))).toBe(
+      false,
+    )
+    expect(valid(document(slotted(cell())))).toBe(false)
+    expect(valid(document(nested))).toBe(false)
+    expect(valid(document(table(50, 50), slotted(table(1, 1))))).toBe(false)
+    expect(
+      valid(document(slotted({ ...table(1, 1), colWidths: [48, 48] }))),
+    ).toBe(false)
+    expect(
+      valid(document(slotted({ ...table(1, 1), $slots: { row: cell() } }))),
+    ).toBe(false)
+    expect(valid(document({ ...paragraph, $slots: { note: null } }))).toBe(
+      false,
+    )
+    expect(valid(document({ ...paragraph, $slots: [] }))).toBe(false)
+
+    let deep: TestNode = table(1, 1)
+
+    for (let index = 0; index < 65; index += 1) deep = slotted(deep)
+    expect(valid(document(slotted(deep)))).toBe(false)
+  })
+  test("table slots retain ancestry, metadata, and shared traversal limits", () => {
+    const value = {
+      root: {
+        type: "root",
+        children: [],
+        $slots: {
+          note: { ...table(1, 1), $: { host: { value: 1 } }, $slots: {} },
+        },
+      },
+    }
+
+    const before = structuredClone(value)
+
+    expect(tablePresentationDocumentSchema.safeParse(value).success).toBe(true)
+    expect(value).toEqual(before)
+    expect(valid(document({ type: "paragraph", $slots: {} }))).toBe(true)
+    expect(
+      valid(
+        document({
+          type: "paragraph",
+          $slots: {
+            note: {
+              type: "paragraph",
+              children: Array.from({ length: 9997 }, () => ({ type: "text" })),
+            },
+          },
+        }),
+      ),
+    ).toBe(true)
+    expect(
+      valid(
+        document({
+          type: "paragraph",
+          $slots: {
+            note: {
+              type: "paragraph",
+              children: Array.from({ length: 9998 }, () => ({ type: "text" })),
+            },
+          },
+        }),
+      ),
+    ).toBe(false)
+
+    let node: TestNode & { $slots?: Record<string, TestNode> } = {
+      type: "text",
+    }
+
+    for (let index = 0; index < 63; index += 1)
+      node = { type: "paragraph", $slots: { note: node } }
+    expect(valid(document(node))).toBe(true)
+    node = { type: "paragraph", $slots: { note: node } }
+    expect(valid(document(node))).toBe(false)
+    expect(
+      valid(document({ ...table(1, 1), $slots: { nested: table(1, 1) } })),
+    ).toBe(false)
+    expect(
+      valid(
+        document({
+          ...table(1, 1),
+          $slots: { row: { type: "tablerow", children: [cell()] } },
+        }),
+      ),
+    ).toBe(false)
+  })
   test("presentation values reject rather than normalize", () => {
     for (const attributes of [
       { width: 47 },

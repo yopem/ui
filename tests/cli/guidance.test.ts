@@ -252,6 +252,8 @@ function checkGuidance(text: string, shared = false) {
     "EditorCodeToggle",
     "EditorCodeStatus",
     "EditorBlocksExtension",
+    "DocumentStatic",
+    "idPrefix",
     "EditorReviewPreset",
     "EditorReviewHost",
     "EditorReviewProvider",
@@ -263,6 +265,11 @@ function checkGuidance(text: string, shared = false) {
     "EditorEmojiPicker",
     "EditorInlineCombobox",
     "EditorInlineComboboxInput",
+    "aria-describedby",
+    "aria-pressed",
+    "skipTransforms",
+    "acyclic ownership",
+    "ToolbarButton",
     "EditorEmojiMenu",
     "EditorEmojiToolbarButton",
     "MentionNode",
@@ -270,9 +277,11 @@ function checkGuidance(text: string, shared = false) {
     "stylex.create",
     "stylex.props",
     "stylexProps",
-    "xstyle",
     'aria-pressed="true"',
+    "xstyle",
     "controlXstyle",
+    "viewportTabIndex",
+    "portalProps.container",
     "className",
     "data-slot",
     "ThemeScript",
@@ -300,6 +309,17 @@ function checkGuidance(text: string, shared = false) {
   expect(managed).toContain(
     shared ? "@acme/ui/components/editor/review" : "@/components/editor/review",
   )
+  expect(managed).toContain(
+    shared
+      ? "@acme/ui/components/editor/document/static"
+      : "@/components/editor/document/static",
+  )
+  expect(managed).toContain(
+    shared
+      ? "@acme/ui/components/editor/floating-toolbar"
+      : "@/components/editor/floating-toolbar",
+  )
+  expect(managed).toContain("EditorLinkFloatingToolbar")
 
   for (const command of [
     "bunx --bun @yopem-ui/cli",
@@ -316,6 +336,17 @@ function checkGuidance(text: string, shared = false) {
     shared ? "@acme/ui/styles/tokens.stylex" : "@/styles/tokens.stylex",
   )
   expect(managed).toContain(shared ? "@acme/ui/lib/stylex" : "@/lib/stylex")
+  expect(managed).toContain("@base-ui/react/csp-provider")
+  expect(managed).toContain("@base-ui/react/direction-provider")
+  expect(managed).toContain("https://ui.yopem.com/editor/examples#notion-like")
+  expect(managed).toContain("https://ui.yopem.com/editor/examples/notion-like")
+  expect(managed).toContain("useEditorState().editable")
+  expect(managed).toContain("MediaInsertControl")
+  expect(managed).toContain("$insertMedia")
+  expect(managed).toContain("onKeyDownCapture")
+  expect(managed).toContain("yopem-ui:notion-like:v1:document:")
+
+  expect(managed).not.toContain("packages/registry/")
   expect(managed).toContain(
     shared
       ? "@acme/ui/components/editor/typeahead-index"
@@ -336,6 +367,14 @@ function checkGuidance(text: string, shared = false) {
     resolve(packageRoot, "../../AGENTS.md"),
     "utf8",
   )
+
+  for (const guidance of [managed, repositoryGuidance]) {
+    expect(guidance).toContain("500 nonempty headings")
+    expect(guidance).toContain("preorder")
+    expect(guidance).toContain("normalize whitespace")
+    expect(guidance).toContain("256 UTF-16 code units")
+    expect(guidance).toContain("Portable document export")
+  }
 
   const tokenFile = "styles/tokens.stylex.ts"
 

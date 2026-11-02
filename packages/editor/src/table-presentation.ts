@@ -25,6 +25,8 @@ import {
 import {
   $createTextNode,
   $getRoot,
+  $getSlot,
+  $getSlotNames,
   $getSelection,
   $getState,
   $insertNodes,
@@ -734,37 +736,97 @@ export const editorTablePresentationHTML =
 
 export function registerTablePresentationValidation(editor: LexicalEditor) {
   return editor.registerNodeTransform(RootNode, () => {
-    let count = 0
+    type SerializedNode = SerializedLexicalNode & {
+      children?: SerializedLexicalNode[]
+      $slots?: Record<string, SerializedLexicalNode>
+    }
 
-    function serialize(
-      node: LexicalNode,
-      depth: number,
-    ): SerializedLexicalNode & { children?: SerializedLexicalNode[] } {
-      count += 1
+    let root: SerializedLexicalNode | undefined
 
-      if (count > TABLE_MAX_NODES || depth > TABLE_MAX_DEPTH)
-        throw new TablePresentationError(
-          "Table document exceeds traversal budget.",
-        )
-      const value = node.exportJSON()
+    const pending: {
+      node: LexicalNode
+      depth: number
+      assign: (value: SerializedLexicalNode) => void
+    }[] = [
+      {
+        node: $getRoot(),
+        depth: 0,
+        assign: (value) => {
+          root = value
+        },
+      },
+    ]
 
-      if (!$isElementNode(node)) return value
-      const children = node.getChildren()
+    const visited = new Set<string>()
 
-      if (children.length + count > TABLE_MAX_NODES)
+    while (pending.length) {
+      const entry = pending.pop()
+
+      if (!entry) break
+      const { node, depth } = entry
+      const key = node.getKey()
+
+      if (depth > TABLE_MAX_DEPTH || visited.has(key))
+        throw new TablePresentationError("Invalid table traversal.")
+      visited.add(key)
+      const names = $getSlotNames(node)
+      const childCount = $isElementNode(node) ? node.getChildrenSize() : 0
+
+      if (
+        visited.size + pending.length + childCount + names.length >
+        TABLE_MAX_NODES
+      )
         throw new TablePresentationError("Table document exceeds node budget.")
+      const value: SerializedNode = { ...node.exportJSON() }
 
-      return {
-        ...value,
-        children: children.map((child) => serialize(child, depth + 1)),
+      if (
+        value.type !== node.getType() ||
+        ($isElementNode(node) && !Array.isArray(value.children))
+      )
+        throw new TablePresentationError("Invalid node export.")
+      delete value.children
+      delete value.$slots
+      entry.assign(value)
+
+      if ($isElementNode(node)) {
+        const children: SerializedLexicalNode[] = []
+        value.children = children
+
+        for (const [index, child] of node.getChildren().entries())
+          pending.push({
+            node: child,
+            depth: depth + 1,
+            assign: (item) => {
+              children[index] = item
+            },
+          })
+      }
+
+      if (names.length) {
+        const slots: Record<string, SerializedLexicalNode> = Object.create(null)
+
+        value.$slots = slots
+
+        for (let index = names.length - 1; index >= 0; index -= 1) {
+          const name = names[index]
+
+          if (name === undefined)
+            throw new TablePresentationError("Missing slot name.")
+          const child = $getSlot(node, name)
+
+          if (!child) throw new TablePresentationError("Missing slot value.")
+          pending.push({
+            node: child,
+            depth: depth + 1,
+            assign: (item) => {
+              slots[name] = item
+            },
+          })
+        }
       }
     }
 
-    const result = tablePresentationDocumentSchema.safeParse({
-      root: serialize($getRoot(), 0),
-    })
-
-    if (!result.success)
+    if (!tablePresentationDocumentSchema.safeParse({ root }).success)
       throw new TablePresentationError("Invalid table state.")
   })
 }

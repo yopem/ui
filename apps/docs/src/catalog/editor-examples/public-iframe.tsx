@@ -2,6 +2,7 @@
 
 import { useStableCallback } from "@base-ui/utils/useStableCallback"
 import { Box } from "@registry/components/ui/box"
+import { Button } from "@registry/components/ui/button"
 import { Field, FieldLabel } from "@registry/components/ui/field"
 import { Heading } from "@registry/components/ui/heading"
 import { Input } from "@registry/components/ui/input"
@@ -17,6 +18,7 @@ import {
   EditorRoot,
   EditorToolbar,
 } from "@yopem-ui/editor"
+import { BoldIcon, ItalicIcon, Redo2Icon, Undo2Icon } from "lucide-react"
 import { useId, useRef, useState, type SyntheticEvent } from "react"
 import { createPortal } from "react-dom"
 
@@ -291,10 +293,36 @@ export function PublicIframeExample() {
                   initialState={initialDocument}
                 >
                   <EditorToolbar aria-label="Isolated editor controls">
-                    <EditorFormatButton format="bold" />
-                    <EditorFormatButton format="italic" />
-                    <EditorHistoryButton action="undo" />
-                    <EditorHistoryButton action="redo" />
+                    <EditorFormatButton
+                      format="bold"
+                      title="Bold"
+                      render={<Button variant="ghost" size="icon-sm" />}
+                    >
+                      <BoldIcon aria-hidden="true" size={16} />
+                    </EditorFormatButton>
+                    <EditorFormatButton
+                      format="italic"
+                      title="Italic"
+                      render={<Button variant="ghost" size="icon-sm" />}
+                    >
+                      <ItalicIcon aria-hidden="true" size={16} />
+                    </EditorFormatButton>
+                    <EditorHistoryButton
+                      action="undo"
+                      aria-label="Undo"
+                      title="Undo"
+                      render={<Button variant="ghost" size="icon-sm" />}
+                    >
+                      <Undo2Icon aria-hidden="true" size={16} />
+                    </EditorHistoryButton>
+                    <EditorHistoryButton
+                      action="redo"
+                      aria-label="Redo"
+                      title="Redo"
+                      render={<Button variant="ghost" size="icon-sm" />}
+                    >
+                      <Redo2Icon aria-hidden="true" size={16} />
+                    </EditorHistoryButton>
                   </EditorToolbar>
                   <EditorContent placeholder="Write in this frame…" />
                 </EditorRoot>

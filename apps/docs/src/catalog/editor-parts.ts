@@ -20,12 +20,24 @@ import { editorLabelsParts } from "./editor-labels-parts"
 import { editorListPresentationParts } from "./editor-list-presentation-parts"
 import { editorMathParts } from "./editor-math-parts"
 import { editorMediaParts } from "./editor-media-parts"
+import { editorMediaPlaceholderParts } from "./editor-media-placeholder-parts"
 import { editorReviewParts } from "./editor-review-parts"
 import { editorSearchParts } from "./editor-search-parts"
 import { editorTocParts } from "./editor-toc-parts"
+import { editorToolbarMenuParts } from "./editor-toolbar-menu-parts"
 import { editorTypeaheadParts } from "./editor-typeahead-parts"
 
+export function editorPartLabel(name: string) {
+  return name
+    .replace(/^editor(?=[A-Z])/i, "")
+    .replace(/([a-z0-9])([A-Z])/g, "$1 $2")
+    .replace(/([A-Z])([A-Z][a-z])/g, "$1 $2")
+    .replace(/\bToc\b/g, "TOC")
+}
+
 export const editorParts = [
+  ...editorToolbarMenuParts,
+  ...editorMediaPlaceholderParts,
   ...editorDocumentExportParts,
   ...editorDiagramParts,
   ...editorAiMenuParts,

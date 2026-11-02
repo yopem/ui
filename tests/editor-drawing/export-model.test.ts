@@ -10,7 +10,7 @@ import {
   validateEditorDrawingJSON,
   waitForEditorDrawingExport,
 } from "@editor/drawing-export-model"
-import { withDOM } from "@lexical/headless/dom"
+import { withDOM } from "@workspace/tests/fixtures/lexical-dom"
 import { expect, test } from "bun:test"
 import { parseHTML } from "linkedom"
 

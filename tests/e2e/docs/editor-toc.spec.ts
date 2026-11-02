@@ -18,6 +18,16 @@ test("@a11y TOC follows real headings and moves focus to the selected heading", 
   ).toBeVisible()
   await toc.getByRole("link", { name: "Example Content", exact: true }).click()
   await expect(heading).toBeFocused()
+  await page.keyboard.insertText("Marker ")
+  await expect(
+    editor.getByRole("heading", {
+      name: "Marker Example Content",
+      exact: true,
+    }),
+  ).toBeVisible()
+  await expect(
+    toc.getByRole("link", { name: "Marker Example Content", exact: true }),
+  ).toBeVisible()
   expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([])
   await page.screenshot({
     path: testInfo.outputPath("toc-navigation.png"),
@@ -86,6 +96,23 @@ for (const slug of ["toc-insert-control", "toc-remove-control"]) {
         .getByRole("button", { name: "Insert table of contents", exact: true })
         .click()
       await expect(editor.locator("[data-editor-toc]")).toHaveCount(2)
+      expect(
+        (await editor.getByRole("heading").allTextContents()).every(
+          (title) => title.trim().length > 0,
+        ),
+      ).toBe(true)
+      await expect(
+        editor.getByRole("navigation", {
+          name: "Table of contents 1",
+          exact: true,
+        }),
+      ).toBeVisible()
+      await expect(
+        editor.getByRole("navigation", {
+          name: "Table of contents 2",
+          exact: true,
+        }),
+      ).toBeVisible()
     } else {
       await page.keyboard.press("ArrowLeft")
 
@@ -108,3 +135,45 @@ for (const slug of ["toc-insert-control", "toc-remove-control"]) {
     })
   })
 }
+
+test("middle-heading insertion keeps both text halves, native history, and the next typing target", async ({
+  page,
+}, testInfo) => {
+  await page.goto("/editor/toc-insert-control")
+  const editor = page.getByRole("textbox", { name: "TOC editor", exact: true })
+  const entries = editor.locator("[data-editor-toc]").first().getByRole("link")
+  await expect(entries).toHaveText(["Example Content", "Subsection"])
+  await editor
+    .getByRole("heading", { name: "Example Content", exact: true })
+    .click()
+  await page.keyboard.press("Home")
+
+  for (let index = 0; index < 8; index += 1)
+    await page.keyboard.press("ArrowRight")
+  await page
+    .getByRole("button", { name: "Insert table of contents", exact: true })
+    .click()
+  await expect(editor.getByRole("heading")).toHaveCount(3)
+  expect(await editor.getByRole("heading").allTextContents()).toEqual([
+    "Example ",
+    "Content",
+    "Subsection",
+  ])
+  await expect(entries).toHaveText(["Example", "Content", "Subsection"])
+  await editor.press("ControlOrMeta+z")
+  await expect(editor.getByRole("heading")).toHaveCount(2)
+  await expect(editor.locator("[data-editor-toc]")).toHaveCount(1)
+  await expect(entries).toHaveText(["Example Content", "Subsection"])
+  await editor.press("ControlOrMeta+Shift+z")
+  await expect(editor.getByRole("heading")).toHaveCount(3)
+  await expect(editor.locator("[data-editor-toc]")).toHaveCount(2)
+  await expect(entries).toHaveText(["Example", "Content", "Subsection"])
+  await page.keyboard.insertText("Marker ")
+  await expect(
+    editor.getByRole("heading", { name: "Marker Content", exact: true }),
+  ).toBeVisible()
+  await testInfo.attach("split-heading-history.html", {
+    body: await editor.innerHTML(),
+    contentType: "text/html",
+  })
+})

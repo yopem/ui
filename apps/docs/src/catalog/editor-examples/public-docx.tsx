@@ -26,6 +26,18 @@ import {
   EditorDocxImportControl,
   EditorDocxExportControl,
 } from "@yopem-ui/editor/docx/client"
+import {
+  BoldIcon,
+  Heading2Icon,
+  ItalicIcon,
+  LinkIcon,
+  PilcrowIcon,
+  QuoteIcon,
+  Redo2Icon,
+  TableIcon,
+  TablePropertiesIcon,
+  Undo2Icon,
+} from "lucide-react"
 import { useReducer, useState, type ReactNode } from "react"
 
 const extensions = [
@@ -121,16 +133,81 @@ export function PublicDocxExample({ children }: { children?: ReactNode }) {
         onChange={change}
       >
         <EditorToolbar aria-label="Native Word tools">
-          <EditorHistoryButton action="undo" />
-          <EditorHistoryButton action="redo" />
-          <EditorFormatButton format="bold" />
-          <EditorFormatButton format="italic" />
-          <EditorBlockButton block="paragraph" />
-          <EditorBlockButton block="h2" />
-          <EditorBlockButton block="quote" />
-          <EditorLinkControl />
-          <EditorTableButton />
-          <EditorTableMenu />
+          <EditorHistoryButton
+            action="undo"
+            aria-label="Undo"
+            title="Undo"
+            render={<Button variant="ghost" size="icon-sm" />}
+          >
+            <Undo2Icon aria-hidden="true" size={16} />
+          </EditorHistoryButton>
+          <EditorHistoryButton
+            action="redo"
+            aria-label="Redo"
+            title="Redo"
+            render={<Button variant="ghost" size="icon-sm" />}
+          >
+            <Redo2Icon aria-hidden="true" size={16} />
+          </EditorHistoryButton>
+          <EditorFormatButton
+            format="bold"
+            title="Bold"
+            render={<Button variant="ghost" size="icon-sm" />}
+          >
+            <BoldIcon aria-hidden="true" size={16} />
+          </EditorFormatButton>
+          <EditorFormatButton
+            format="italic"
+            title="Italic"
+            render={<Button variant="ghost" size="icon-sm" />}
+          >
+            <ItalicIcon aria-hidden="true" size={16} />
+          </EditorFormatButton>
+          <EditorBlockButton
+            block="paragraph"
+            aria-label="Paragraph"
+            title="Paragraph"
+            render={<Button variant="ghost" size="icon-sm" />}
+          >
+            <PilcrowIcon aria-hidden="true" size={16} />
+          </EditorBlockButton>
+          <EditorBlockButton
+            block="h2"
+            aria-label="Heading 2"
+            title="Heading 2"
+            render={<Button variant="ghost" size="icon-sm" />}
+          >
+            <Heading2Icon aria-hidden="true" size={16} />
+          </EditorBlockButton>
+          <EditorBlockButton
+            block="quote"
+            aria-label="Quote"
+            title="Quote"
+            render={<Button variant="ghost" size="icon-sm" />}
+          >
+            <QuoteIcon aria-hidden="true" size={16} />
+          </EditorBlockButton>
+          <EditorLinkControl
+            aria-label="Link"
+            title="Link"
+            render={<Button variant="ghost" size="icon-sm" />}
+          >
+            <LinkIcon aria-hidden="true" size={16} />
+          </EditorLinkControl>
+          <EditorTableButton
+            aria-label="Insert table"
+            title="Insert table"
+            render={<Button variant="ghost" size="icon-sm" />}
+          >
+            <TableIcon aria-hidden="true" size={16} />
+          </EditorTableButton>
+          <EditorTableMenu
+            aria-label="Table actions"
+            title="Table actions"
+            render={<Button variant="ghost" size="icon-sm" />}
+          >
+            <TablePropertiesIcon aria-hidden="true" size={16} />
+          </EditorTableMenu>
         </EditorToolbar>
         <EditorContent />
         {children ?? <EditorDocxControls />}

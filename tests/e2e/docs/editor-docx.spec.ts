@@ -7,7 +7,7 @@ const docxMimeType =
 
 async function openExample(page: Page) {
   await page.goto("/editor/examples#public-docx")
-  const example = page.locator("#editor-example-public-docx")
+  const example = page.getByTestId("editor-example-public-docx")
   await example
     .getByRole("button", { name: "Live preview", exact: true })
     .click()

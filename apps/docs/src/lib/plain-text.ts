@@ -161,6 +161,7 @@ ${guideLinks}
 
 - [Editor overview](${url("/editor.md")})
 - [Core editor examples](${url("/editor/examples.md")}): Working compositions, consumer source, and current limits
+- [Notion-like workspace](${url("/editor/examples/notion-like")}): Standalone local page workspace
 ${editorParts.map((part) => `- [${part.name}](${url(`/editor/${part.slug}.md`)}): ${part.description}`).join("\n")}
 
 ## Components

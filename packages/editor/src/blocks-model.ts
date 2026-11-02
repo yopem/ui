@@ -14,6 +14,8 @@ import {
   $applyNodeReplacement,
   $createParagraphNode,
   $getSelection,
+  $getSlotHost,
+  $getSlotNames,
   $isNodeSelection,
   $isRangeSelection,
   $isBlockFullySelected,
@@ -65,6 +67,7 @@ const iconSchema = z
 const nodeSchema = z.object({
   type: z.string(),
   children: z.array(z.unknown()).max(10000).optional(),
+  $slots: z.record(z.string(), z.unknown()).optional(),
 })
 
 const documentSchema = z.object({ root: z.unknown() })
@@ -79,6 +82,7 @@ const elementSchema = z.strictObject({
   textFormat: z.number().int().min(0).max(65535).optional(),
   textStyle: z.string().max(1048576).optional(),
   $: z.record(z.string(), z.json()).optional(),
+  $slots: z.record(z.string(), z.unknown()).optional(),
 })
 
 const calloutSchema = elementSchema.extend({
@@ -155,6 +159,14 @@ export function validateEditorBlocksJSON(
         child,
         depth + 1,
         node.type,
+        summary || node.type === "editor-toggle-summary",
+      )
+
+    for (const slot of Object.values(node.$slots ?? {}))
+      visit(
+        slot,
+        depth + 1,
+        undefined,
         summary || node.type === "editor-toggle-summary",
       )
   }
@@ -798,7 +810,19 @@ export function $findEditorBlock(
   return null
 }
 
+export function $canReplaceEditorBlock(node: CalloutNode | ToggleNode) {
+  return (
+    !$getSlotHost(node) &&
+    $getSlotNames(node).length === 0 &&
+    (!(node instanceof ToggleNode) ||
+      ($getSlotNames(node.getSummary()).length === 0 &&
+        $getSlotNames(node.getBody()).length === 0))
+  )
+}
+
 export function $unwrapEditorBlock(node: CalloutNode | ToggleNode) {
+  if (!$canReplaceEditorBlock(node)) return false
+
   const children =
     node instanceof ToggleNode
       ? [node.getSummary(), ...node.getBody().getChildren()]
@@ -815,6 +839,8 @@ export function $unwrapEditorBlock(node: CalloutNode | ToggleNode) {
   }
 
   node.remove()
+
+  return true
 }
 
 export function $isInToggleBody(node: LexicalNode, toggle: ToggleNode) {

@@ -35,6 +35,7 @@ import {
   decodeEditorLabelNode,
   editorLabelSchema,
 } from "@yopem-ui/editor/labels/model"
+import { MediaPlaceholderNode } from "@yopem-ui/editor/media-placeholder-node"
 import {
   editorTocNodeSchema,
   EDITOR_TOC_TYPE,
@@ -229,7 +230,7 @@ export class DocumentTocNode extends DecoratorNode<null> {
   static importJSON(value: SerializedDocumentToc) {
     editorTocNodeSchema.parse(value)
 
-    return $applyNodeReplacement(new DocumentTocNode())
+    return $applyNodeReplacement(new DocumentTocNode()).updateFromJSON(value)
   }
 
   exportJSON(): SerializedDocumentToc {
@@ -606,6 +607,7 @@ export class DocumentEditableCardNode extends DecoratorNode<null> {
 }
 
 export const documentOptionalNodes = [
+  MediaPlaceholderNode,
   DocumentFootnoteReferenceNode,
   DocumentFootnoteDefinitionNode,
   DocumentTocNode,

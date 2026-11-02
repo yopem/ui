@@ -16,6 +16,7 @@ import {
 } from "@yopem-ui/editor"
 import { EditorBlockPlaceholder } from "@yopem-ui/editor/block-placeholder"
 import { type EditorState } from "lexical"
+import { Heading2Icon, PilcrowIcon, Redo2Icon, Undo2Icon } from "lucide-react"
 import { type KeyboardEvent, useReducer, useState } from "react"
 
 const labels = {
@@ -127,10 +128,38 @@ export function PublicPlaceholderExample() {
         onChange={updateDocument}
       >
         <EditorToolbar aria-label="Placeholder block controls">
-          <EditorBlockButton block="paragraph" />
-          <EditorBlockButton block="h2" />
-          <EditorHistoryButton action="undo" />
-          <EditorHistoryButton action="redo" />
+          <EditorBlockButton
+            block="paragraph"
+            aria-label="Paragraph"
+            title="Paragraph"
+            render={<Button variant="ghost" size="icon-sm" />}
+          >
+            <PilcrowIcon aria-hidden="true" size={16} />
+          </EditorBlockButton>
+          <EditorBlockButton
+            block="h2"
+            aria-label="Heading 2"
+            title="Heading 2"
+            render={<Button variant="ghost" size="icon-sm" />}
+          >
+            <Heading2Icon aria-hidden="true" size={16} />
+          </EditorBlockButton>
+          <EditorHistoryButton
+            action="undo"
+            aria-label="Undo"
+            title="Undo"
+            render={<Button variant="ghost" size="icon-sm" />}
+          >
+            <Undo2Icon aria-hidden="true" size={16} />
+          </EditorHistoryButton>
+          <EditorHistoryButton
+            action="redo"
+            aria-label="Redo"
+            title="Redo"
+            render={<Button variant="ghost" size="icon-sm" />}
+          >
+            <Redo2Icon aria-hidden="true" size={16} />
+          </EditorHistoryButton>
         </EditorToolbar>
         {visible && <EditorBlockPlaceholder labels={labels} />}
         <EditorContent />

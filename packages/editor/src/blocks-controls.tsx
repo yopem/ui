@@ -58,19 +58,21 @@ function EditorBlocksCommandButton({
     onClick?.(event)
 
     if (event.defaultPrevented || disabled || !editor.isEditable()) return
+    let handled = false
     editor.update(
       () => {
-        editor.dispatchCommand(command, undefined)
+        handled = editor.dispatchCommand(command, undefined)
       },
       { tag: HISTORY_PUSH_TAG },
     )
-    editor.focus()
+
+    if (handled) editor.focus()
   })
 
   return (
     <ToolbarButton
       {...props}
-      render={<Button variant="ghost" size="sm" />}
+      render={props.render ?? <Button variant="ghost" size="sm" />}
       disabled={disabled === true || !editable}
       onMouseDown={handleMouseDown}
       onClick={handleClick}
@@ -159,7 +161,7 @@ export function EditorCalloutAppearanceButton({
   return (
     <ToolbarButton
       {...props}
-      render={<Button variant="ghost" size="sm" />}
+      render={props.render ?? <Button variant="ghost" size="sm" />}
       disabled={disabled === true || !editable}
       onMouseDown={handleMouseDown}
       onClick={handleClick}
@@ -193,19 +195,21 @@ export function EditorBlockTypeButton({
     onClick?.(event)
 
     if (event.defaultPrevented || disabled || !editor.isEditable()) return
+    let handled = false
     editor.update(
       () => {
-        editor.dispatchCommand(CONVERT_EDITOR_BLOCK_COMMAND, kind)
+        handled = editor.dispatchCommand(CONVERT_EDITOR_BLOCK_COMMAND, kind)
       },
       { tag: HISTORY_PUSH_TAG },
     )
-    editor.focus()
+
+    if (handled) editor.focus()
   })
 
   return (
     <ToolbarButton
       {...props}
-      render={<Button variant="ghost" size="sm" />}
+      render={props.render ?? <Button variant="ghost" size="sm" />}
       disabled={disabled === true || !editable}
       onMouseDown={handleMouseDown}
       onClick={handleClick}
