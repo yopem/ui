@@ -330,7 +330,7 @@ test("StyleX search opens, finds a component, and navigates", async ({
 })
 
 for (const theme of ["light", "dark"] as const) {
-  test(`Inter and IBM Plex Mono load in ${theme} theme`, async ({ page }) => {
+  test(`Geist Sans and Geist Mono load in ${theme} theme`, async ({ page }) => {
     await page.addInitScript(
       (value) => localStorage.setItem("yopem-ui-theme", value),
       theme,
@@ -344,22 +344,22 @@ for (const theme of ["light", "dark"] as const) {
       page.locator("body"),
       page.getByRole("heading", { name: "Button", exact: true, level: 1 }),
     ]) {
-      await expect(element).toHaveCSS("font-family", /Inter/)
+      await expect(element).toHaveCSS("font-family", /Geist/)
     }
 
     for (const element of [
       page.locator("main pre").first(),
       page.locator("main code").first(),
     ]) {
-      await expect(element).toHaveCSS("font-family", /IBM Plex Mono/)
+      await expect(element).toHaveCSS("font-family", /Geist Mono/)
     }
 
     await expect
       .poll(() =>
         page.evaluate(async () => {
           const fonts = await Promise.all([
-            document.fonts.load('16px "Inter Variable"'),
-            document.fonts.load('16px "IBM Plex Mono"'),
+            document.fonts.load('16px "Geist Variable"'),
+            document.fonts.load('16px "Geist Mono Variable"'),
           ])
 
           return Math.min(...fonts.map((faces) => faces.length))

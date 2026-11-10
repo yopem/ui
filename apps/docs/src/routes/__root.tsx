@@ -1,10 +1,7 @@
 import type { ErrorComponentProps } from "@tanstack/react-router"
 
-import "@fontsource-variable/inter"
-import "@fontsource/ibm-plex-mono"
-import "@fontsource/ibm-plex-mono/500.css"
-import "@fontsource/ibm-plex-mono/600.css"
-import "@fontsource/ibm-plex-mono/700.css"
+import "@fontsource-variable/geist"
+import "@fontsource-variable/geist-mono"
 import { Button } from "@registry/components/ui/button"
 import { Text } from "@registry/components/ui/text"
 
