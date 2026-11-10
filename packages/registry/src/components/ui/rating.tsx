@@ -19,7 +19,7 @@ const styles = stylex.create({
     backgroundColor: "transparent",
     borderStyle: "none",
     borderWidth: 0,
-    borderRadius: tokens["--radius-md"],
+    borderRadius: tokens["--radius"],
     color: tokens["--muted-foreground"],
     cursor: { default: "pointer", "[data-disabled]": "not-allowed" },
     display: "inline-flex",
@@ -43,7 +43,7 @@ const styles = stylex.create({
     strokeWidth: 1.5,
   },
   starFilled: {
-    color: tokens["--primary"],
+    color: tokens["--accent-solid"],
     fill: "currentColor",
   },
 })

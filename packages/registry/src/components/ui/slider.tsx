@@ -77,13 +77,13 @@ const styles = stylex.create({
     },
   },
   indicator: {
-    backgroundColor: tokens["--primary"],
+    backgroundColor: tokens["--accent-solid"],
     borderRadius: "9999px",
     userSelect: "none",
   },
   thumb: {
     backgroundClip: "padding-box",
-    backgroundColor: "#fff",
+    backgroundColor: tokens["--accent-solid-foreground"],
     blockSize: {
       default: "1.25rem",
       "@media (min-width: 640px)": "1rem",
@@ -96,7 +96,7 @@ const styles = stylex.create({
     borderRadius: "9999px",
     borderStyle: "solid",
     borderWidth: 1,
-    boxShadow: "0 1px 2px color-mix(in oklab, #000 5%, transparent)",
+    boxShadow: tokens["--shadow-sm"],
     display: "block",
     flexShrink: 0,
     inlineSize: {

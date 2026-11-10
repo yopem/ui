@@ -5,27 +5,23 @@ import type { ComponentProps } from "react"
 
 import { Checkbox as CheckboxPrimitive } from "@base-ui/react/checkbox"
 import { mergeStylexProps, stylexProps } from "@registry/lib/stylex"
-import { themeMarker, tokens } from "@registry/styles/tokens.stylex"
+import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 
 const styles = stylex.create({
   root: {
     alignItems: "center",
-    backgroundColor: {
-      default: tokens["--background"],
-      [stylex.when.ancestor('[data-theme="dark"]', themeMarker)]:
-        "color-mix(in oklab, var(--input, currentColor) 32%, transparent)",
-    },
+    backgroundColor: tokens["--control-background"],
     blockSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
     borderColor: {
       default: tokens["--input"],
       "[aria-invalid]":
         "color-mix(in oklab, var(--destructive, currentColor) 36%, transparent)",
     },
-    borderRadius: "var(--radius-md)",
+    borderRadius: "0.25rem",
     borderStyle: "solid",
     borderWidth: 1,
-    boxShadow: "0 1px 2px color-mix(in oklab, #000 5%, transparent)",
+    boxShadow: tokens["--shadow-sm"],
     cursor: { default: "default", "[data-disabled]": "not-allowed" },
     display: "inline-flex",
     flexShrink: 0,
@@ -43,12 +39,13 @@ const styles = stylex.create({
     alignItems: "center",
     backgroundColor: {
       default: "transparent",
-      "[data-checked]": tokens["--primary"],
+      "[data-checked]": tokens["--accent-solid"],
+      "[data-indeterminate]": tokens["--accent-solid"],
     },
-    borderRadius: "var(--radius-md)",
+    borderRadius: "0.25rem",
     color: {
-      default: tokens["--primary-foreground"],
-      "[data-indeterminate]": tokens["--foreground"],
+      default: tokens["--accent-solid-foreground"],
+      "[data-indeterminate]": tokens["--accent-solid-foreground"],
     },
     display: { default: "flex", "[data-unchecked]": "none" },
     inset: -1,

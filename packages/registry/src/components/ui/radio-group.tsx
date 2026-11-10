@@ -5,18 +5,14 @@ import type { StyleXComponentProps } from "@registry/lib/stylex"
 import { Radio as RadioPrimitive } from "@base-ui/react/radio"
 import { RadioGroup as RadioGroupPrimitive } from "@base-ui/react/radio-group"
 import { mergeStylexProps, stylexProps } from "@registry/lib/stylex"
-import { themeMarker, tokens } from "@registry/styles/tokens.stylex"
+import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 
 const styles = stylex.create({
   group: { display: "flex", flexDirection: "column", gap: "0.75rem" },
   radio: {
     alignItems: "center",
-    backgroundColor: {
-      default: tokens["--background"],
-      [stylex.when.ancestor('[data-theme="dark"]', themeMarker)]:
-        "color-mix(in oklab, var(--input, currentColor) 32%, transparent)",
-    },
+    backgroundColor: tokens["--control-background"],
     blockSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
     borderColor: {
       default: tokens["--input"],
@@ -26,7 +22,7 @@ const styles = stylex.create({
     borderRadius: "9999px",
     borderStyle: "solid",
     borderWidth: 1,
-    boxShadow: "0 1px 2px color-mix(in oklab, #000 5%, transparent)",
+    boxShadow: tokens["--shadow-sm"],
     cursor: { default: "default", "[data-disabled]": "not-allowed" },
     display: "inline-flex",
     flexShrink: 0,
@@ -44,7 +40,7 @@ const styles = stylex.create({
     alignItems: "center",
     backgroundColor: {
       default: "transparent",
-      "[data-checked]": tokens["--primary"],
+      "[data-checked]": tokens["--accent-solid"],
     },
     blockSize: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
     borderRadius: "9999px",
@@ -54,7 +50,7 @@ const styles = stylex.create({
     justifyContent: "center",
     position: "absolute",
     "::before": {
-      backgroundColor: tokens["--primary-foreground"],
+      backgroundColor: tokens["--accent-solid-foreground"],
       blockSize: { default: "0.5rem", "@media (min-width: 640px)": "0.375rem" },
       borderRadius: "9999px",
       content: '""',
