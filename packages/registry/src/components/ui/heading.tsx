@@ -19,10 +19,10 @@ const styles = stylex.create({
       ":is(h5)": "1rem",
       ":is(h6)": "0.875rem",
     },
-    fontWeight: 600,
+    fontWeight: 400,
     lineHeight: 1.25,
     margin: 0,
-    letterSpacing: "-0.025em",
+    letterSpacing: "-0.02em",
   },
 })
 

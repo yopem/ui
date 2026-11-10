@@ -13,7 +13,7 @@ const styles = stylex.create({
     fontWeight: 400,
     margin: 0,
     lineHeight: 1.7,
-    maxInlineSize: "68ch",
+    maxInlineSize: "42rem",
   },
 })
 

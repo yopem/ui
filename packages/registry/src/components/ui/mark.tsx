@@ -8,7 +8,7 @@ import * as stylex from "@stylexjs/stylex"
 const styles = stylex.create({
   root: {
     backgroundColor: tokens["--accent"],
-    borderRadius: tokens["--radius-md"],
+    borderRadius: tokens["--radius-sm"],
     fontFamily: "inherit",
     fontSize: "inherit",
     fontWeight: "inherit",

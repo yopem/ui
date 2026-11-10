@@ -5,6 +5,16 @@ import type { StyleXComponentProps } from "@registry/lib/stylex"
 import { mergeProps } from "@base-ui/react/merge-props"
 import { useRender } from "@base-ui/react/use-render"
 import { stylexProps } from "@registry/lib/stylex"
+import { tokens } from "@registry/styles/tokens.stylex"
+import * as stylex from "@stylexjs/stylex"
+
+const styles = stylex.create({
+  root: {
+    color: tokens["--accent-foreground"],
+    textDecorationLine: "underline",
+    textUnderlineOffset: "0.2em",
+  },
+})
 
 export type LinkProps = StyleXComponentProps<useRender.ComponentProps<"a">>
 
@@ -18,7 +28,7 @@ export function Link({
   const xstyle = consumerXstyle
 
   const defaultProps = {
-    ...stylexProps(className, xstyle),
+    ...stylexProps(className, styles.root, xstyle),
     "data-slot": "link",
   }
 

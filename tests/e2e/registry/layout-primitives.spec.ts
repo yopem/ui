@@ -194,14 +194,14 @@ test.describe("layout and typography primitives", () => {
         await expect(element).toHaveCSS("margin-top", "0px")
         await expect(element).toHaveCSS("margin-bottom", "0px")
         await expect(element).toHaveCSS("color", color)
-        await expect(element).toHaveCSS("font-family", /Inter/)
+        await expect(element).toHaveCSS("font-family", /Geist/)
       }
 
       await expect(text).toHaveCSS("font-size", "16px")
       await expect(text).toHaveCSS("line-height", "24px")
       await expect(heading).toHaveCSS("font-size", "24px")
       await expect(heading).toHaveCSS("line-height", "30px")
-      await expect(heading).toHaveCSS("font-weight", "600")
+      await expect(heading).toHaveCSS("font-weight", "400")
       await expect(page.getByTestId("text-secondary")).toHaveCSS(
         "font-size",
         "14px",
