@@ -16,11 +16,18 @@ const styles = stylex.create({
     gap: "0.5rem",
     tabSize: 4,
   },
+  bordered: {
+    borderColor: tokens["--border"],
+    borderRadius: "var(--radius)",
+    borderStyle: "solid",
+    borderWidth: 1,
+    padding: "1rem",
+  },
   label: {
     alignItems: "center",
     color: tokens["--foreground"],
     display: "inline-flex",
-    fontSize: { default: "1rem", "@media (min-width: 640px)": "0.875rem" },
+    fontSize: { default: "0.875rem", "@media (min-width: 640px)": "0.75rem" },
     fontWeight: 500,
     gap: "0.5rem",
     lineHeight: { default: "1.125rem", "@media (min-width: 640px)": "1rem" },
@@ -42,15 +49,24 @@ const styles = stylex.create({
 export function Field({
   xstyle: consumerXstyle,
   className,
+  bordered = false,
   ...restProps
-}: StyleXComponentProps<FieldPrimitive.Root.Props>) {
+}: StyleXComponentProps<FieldPrimitive.Root.Props, { bordered?: boolean }>) {
   const props = restProps
   const xstyle = consumerXstyle
 
   return (
     <FieldPrimitive.Root
       data-slot="field"
-      {...mergeStylexProps(stylexProps(className, styles.root, xstyle), props)}
+      {...mergeStylexProps(
+        stylexProps(
+          className,
+          styles.root,
+          bordered && styles.bordered,
+          xstyle,
+        ),
+        props,
+      )}
     />
   )
 }

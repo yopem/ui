@@ -18,23 +18,32 @@ const styles = stylex.create({
 
 export function Preview() {
   return (
-    <Fieldset xstyle={styles.fieldset}>
-      <FieldsetLegend>Station membership</FieldsetLegend>
-      <Field>
-        <FieldLabel>Group</FieldLabel>
-        <Input placeholder="Willow Creek volunteers" type="text" />
-        <FieldDescription>
-          The group that will use the equipment.
-        </FieldDescription>
-      </Field>
+    <>
+      <Fieldset xstyle={styles.fieldset}>
+        <FieldsetLegend>Station membership</FieldsetLegend>
+        <Field>
+          <FieldLabel>Group</FieldLabel>
+          <Input placeholder="Willow Creek volunteers" type="text" />
+          <FieldDescription>
+            The group that will use the equipment.
+          </FieldDescription>
+        </Field>
 
-      <Field>
-        <FieldLabel>Member ID</FieldLabel>
-        <Input placeholder="WC-2048" type="text" />
-        <FieldDescription>
-          Find this code on your station membership card.
-        </FieldDescription>
-      </Field>
-    </Fieldset>
+        <Field>
+          <FieldLabel>Member ID</FieldLabel>
+          <Input placeholder="WC-2048" type="text" />
+          <FieldDescription>
+            Find this code on your station membership card.
+          </FieldDescription>
+        </Field>
+      </Fieldset>
+      <Fieldset bordered disabled xstyle={styles.fieldset}>
+        <FieldsetLegend>Archived membership</FieldsetLegend>
+        <Field>
+          <FieldLabel>Archived group</FieldLabel>
+          <Input type="text" />
+        </Field>
+      </Fieldset>
+    </>
   )
 }

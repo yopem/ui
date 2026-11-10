@@ -8,21 +8,36 @@ import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 
 const styles = stylex.create({
-  legend: { color: tokens["--foreground"], fontWeight: 600 },
+  bordered: {
+    borderColor: tokens["--border"],
+    borderRadius: "var(--radius)",
+    borderStyle: "solid",
+    borderWidth: 1,
+    padding: "1rem",
+  },
+  legend: {
+    color: tokens["--foreground"],
+    fontSize: "0.875rem",
+    fontWeight: 500,
+  },
 })
 
 export function Fieldset({
   xstyle: consumerXstyle,
   className,
+  bordered = false,
   ...restProps
-}: StyleXComponentProps<FieldsetPrimitive.Root.Props>) {
+}: StyleXComponentProps<FieldsetPrimitive.Root.Props, { bordered?: boolean }>) {
   const props = restProps
   const xstyle = consumerXstyle
 
   return (
     <FieldsetPrimitive.Root
       data-slot="fieldset"
-      {...mergeStylexProps(stylexProps(className, xstyle), props)}
+      {...mergeStylexProps(
+        stylexProps(className, bordered && styles.bordered, xstyle),
+        props,
+      )}
     />
   )
 }

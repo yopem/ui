@@ -7,12 +7,18 @@ import { Input } from "@registry/components/ui/input"
 
 export function Preview() {
   return (
-    <Field>
-      <FieldLabel>Name</FieldLabel>
-      <Input placeholder="Nora Ellis" type="text" />
-      <FieldDescription>
-        Use the name on your equipment reservation.
-      </FieldDescription>
-    </Field>
+    <>
+      <Field>
+        <FieldLabel>Name</FieldLabel>
+        <Input placeholder="Nora Ellis" type="text" />
+        <FieldDescription>
+          Use the name on your equipment reservation.
+        </FieldDescription>
+      </Field>
+      <Field bordered>
+        <FieldLabel>Display name</FieldLabel>
+        <Input type="text" />
+      </Field>
+    </>
   )
 }
