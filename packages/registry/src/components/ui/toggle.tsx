@@ -4,17 +4,20 @@ import type { StyleXComponentProps } from "@registry/lib/stylex"
 
 import { Toggle as TogglePrimitive } from "@base-ui/react/toggle"
 import { mergeStylexProps, stylexProps } from "@registry/lib/stylex"
-import { themeMarker, tokens } from "@registry/styles/tokens.stylex"
+import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import { clsx } from "clsx"
 
 const styles = stylex.create({
   root: {
     alignItems: "center",
-    borderRadius: tokens["--radius-md"],
+    borderRadius: tokens["--radius"],
     borderStyle: "solid",
     borderWidth: 1,
-    color: tokens["--foreground"],
+    color: {
+      default: tokens["--foreground"],
+      "[data-pressed]": tokens["--accent-solid-foreground"],
+    },
     cursor: "pointer",
     display: "inline-flex",
     flexShrink: 0,
@@ -33,8 +36,7 @@ const styles = stylex.create({
     backgroundColor: {
       default: "transparent",
       ":hover": tokens["--accent"],
-      "[data-pressed]":
-        "color-mix(in oklab, var(--input, currentColor) 64%, transparent)",
+      "[data-pressed]": tokens["--accent-solid"],
     },
     ":focus-visible": {
       boxShadow: `0 0 0 2px ${tokens["--ring"]}, 0 0 0 3px ${tokens["--background"]}`,
@@ -104,34 +106,34 @@ const styles = stylex.create({
   },
   sizeDefault: {
     blockSize: {
-      default: "2.25rem",
-      "@media (min-width: 640px)": "2rem",
+      default: "2.5rem",
+      "@media (min-width: 640px)": "2.5rem",
     },
     minInlineSize: {
-      default: "2.25rem",
-      "@media (min-width: 640px)": "2rem",
+      default: "2.5rem",
+      "@media (min-width: 640px)": "2.5rem",
     },
     paddingInline: "calc(0.5rem - 1px)",
   },
   sizeLarge: {
     blockSize: {
-      default: "2.5rem",
-      "@media (min-width: 640px)": "2.25rem",
+      default: "3rem",
+      "@media (min-width: 640px)": "3rem",
     },
     minInlineSize: {
-      default: "2.5rem",
-      "@media (min-width: 640px)": "2.25rem",
+      default: "3rem",
+      "@media (min-width: 640px)": "3rem",
     },
     paddingInline: "calc(0.625rem - 1px)",
   },
   sizeSmall: {
     blockSize: {
       default: "2rem",
-      "@media (min-width: 640px)": "1.75rem",
+      "@media (min-width: 640px)": "2rem",
     },
     minInlineSize: {
       default: "2rem",
-      "@media (min-width: 640px)": "1.75rem",
+      "@media (min-width: 640px)": "2rem",
     },
     paddingInline: "calc(0.375rem - 1px)",
   },
@@ -140,15 +142,12 @@ const styles = stylex.create({
   },
   outline: {
     backgroundColor: {
-      default: tokens["--background"],
-      [stylex.when.ancestor('[data-theme="dark"]', themeMarker)]:
-        "color-mix(in oklab, var(--input, currentColor) 32%, transparent)",
+      default: tokens["--control-background"],
       ":hover": tokens["--accent"],
-      "[data-pressed]":
-        "color-mix(in oklab, var(--input, currentColor) 64%, transparent)",
+      "[data-pressed]": tokens["--accent-solid"],
     },
     borderColor: tokens["--input"],
-    boxShadow: "0 1px 2px color-mix(in oklab, #000 5%, transparent)",
+    boxShadow: tokens["--shadow-sm"],
   },
 })
 

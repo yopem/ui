@@ -19,7 +19,12 @@ const styles = stylex.create({
   root: { display: "flex", inlineSize: "fit-content" },
   horizontal: { flexDirection: "row" },
   vertical: { flexDirection: "column" },
-  default: { gap: "0.125rem" },
+  default: {
+    backgroundColor: tokens["--muted"],
+    borderRadius: tokens["--radius"],
+    gap: "0.25rem",
+    padding: "0.25rem",
+  },
   outline: { gap: 0 },
   separator: {
     backgroundColor: tokens["--input"],
