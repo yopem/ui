@@ -36,6 +36,12 @@ const styles = stylex.create({
   },
   button: { inlineSize: "100%" },
   card: { inlineSize: "100%", maxInlineSize: "20rem" },
+  cards: {
+    flexDirection: "column",
+    gap: "1rem",
+    inlineSize: "100%",
+    maxInlineSize: "20rem",
+  },
   flex: {
     gap: "0.25rem",
     fontSize: "0.75rem",
@@ -88,25 +94,30 @@ function ReservationForm() {
 
 export function Preview() {
   return (
-    <Card xstyle={styles.card}>
-      <CardHeader>
-        <CardTitle>Reserve a field kit</CardTitle>
-        <CardDescription>
-          Choose equipment for your next field visit.
-        </CardDescription>
-      </CardHeader>
-      <CardPanel>
-        <ReservationForm />
-      </CardPanel>
-      <CardFooter>
-        <Flex xstyle={styles.flex}>
-          <CircleAlertIcon {...stylex.props(previewStyles.preview5)} />
-          <Text xstyle={styles.inheritedText}>
-            Collect your kit from the station desk.
-          </Text>
-        </Flex>
-      </CardFooter>
-    </Card>
+    <Flex xstyle={styles.cards}>
+      <Card xstyle={styles.card}>
+        <CardHeader>
+          <CardTitle>Reserve a field kit</CardTitle>
+          <CardDescription>
+            Choose equipment for your next field visit.
+          </CardDescription>
+        </CardHeader>
+        <CardPanel>
+          <ReservationForm />
+        </CardPanel>
+        <CardFooter>
+          <Flex xstyle={styles.flex}>
+            <CircleAlertIcon {...stylex.props(previewStyles.preview5)} />
+            <Text xstyle={styles.inheritedText}>
+              Collect your kit from the station desk.
+            </Text>
+          </Flex>
+        </CardFooter>
+      </Card>
+      <Card bordered={false} aria-label="Borderless card" xstyle={styles.card}>
+        <CardPanel>Equipment is ready for your visit.</CardPanel>
+      </Card>
+    </Flex>
   )
 }
 
