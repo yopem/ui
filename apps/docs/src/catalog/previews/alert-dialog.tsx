@@ -16,7 +16,7 @@ export function Preview() {
       <AlertDialogTrigger render={<Button variant="destructive-outline" />}>
         Delete field note
       </AlertDialogTrigger>
-      <AlertDialogPopup>
+      <AlertDialogPopup frameTitle="Delete note">
         <AlertDialogHeader>
           <AlertDialogTitle>Delete this field note?</AlertDialogTitle>
           <AlertDialogDescription>

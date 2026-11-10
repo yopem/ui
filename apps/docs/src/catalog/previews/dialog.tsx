@@ -14,6 +14,7 @@ import { Field, FieldLabel } from "@registry/components/ui/field"
 import { Form } from "@registry/components/ui/form"
 import { Input } from "@registry/components/ui/input"
 import * as stylex from "@stylexjs/stylex"
+import { useRef } from "react"
 
 const styles = stylex.create({
   dialogPopup: { maxInlineSize: { "@media (min-width: 768px)": "24rem" } },
@@ -27,12 +28,18 @@ const reservationFields = [
 ]
 
 export function Preview() {
+  const inputRef = useRef<HTMLInputElement>(null)
+
   return (
     <Dialog>
       <DialogTrigger render={<Button variant="outline" />}>
         Open Dialog
       </DialogTrigger>
-      <DialogPopup xstyle={styles.dialogPopup}>
+      <DialogPopup
+        frameTitle="Reservation"
+        initialFocus={inputRef}
+        xstyle={styles.dialogPopup}
+      >
         <DialogHeader>
           <DialogTitle>Edit reservation</DialogTitle>
           <DialogDescription>
@@ -45,7 +52,11 @@ export function Preview() {
             {reservationFields.map((field) => (
               <Field key={field.label}>
                 <FieldLabel>{field.label}</FieldLabel>
-                <Input defaultValue={field.defaultValue} type="text" />
+                <Input
+                  ref={field.label === "Name" ? inputRef : undefined}
+                  defaultValue={field.defaultValue}
+                  type="text"
+                />
               </Field>
             ))}
           </DialogPanel>

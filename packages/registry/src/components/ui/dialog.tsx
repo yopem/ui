@@ -1,6 +1,7 @@
 "use client"
 
 import type { StyleXComponentProps } from "@registry/lib/stylex"
+import type { ReactNode } from "react"
 
 import { Dialog as DialogPrimitive } from "@base-ui/react/dialog"
 import { mergeProps } from "@base-ui/react/merge-props"
@@ -8,7 +9,7 @@ import { useRender } from "@base-ui/react/use-render"
 import { Button } from "@registry/components/ui/button"
 import { ScrollArea } from "@registry/components/ui/scroll-area"
 import { mergeStylexProps, stylexProps } from "@registry/lib/stylex"
-import { themeMarker, tokens } from "@registry/styles/tokens.stylex"
+import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import { XIcon } from "lucide-react"
 
@@ -22,7 +23,7 @@ const styles = stylex.create({
   },
   backdrop: {
     backdropFilter: "blur(4px)",
-    backgroundColor: "rgb(0 0 0 / 0.32)",
+    backgroundColor: tokens["--overlay-backdrop"],
     inset: 0,
     position: "fixed",
     transitionDuration: "200ms",
@@ -49,13 +50,13 @@ const styles = stylex.create({
   },
   popup: {
     backgroundClip: "padding-box",
-    backgroundColor: tokens["--popover"],
-    borderColor: tokens["--border"],
-    borderRadius: "var(--radius-md)",
+    backgroundColor: tokens["--overlay-shell"],
+    borderColor: tokens["--card-border"],
+    borderRadius: "var(--radius)",
     borderStyle: "solid",
     borderWidth: 1,
-    boxShadow: "0 10px 15px -3px color-mix(in oklab, #000 5%, transparent)",
-    color: tokens["--popover-foreground"],
+    boxShadow: tokens["--shadow-md"],
+    color: tokens["--card-foreground"],
     display: "flex",
     flexDirection: "column",
     gridRowStart: 2,
@@ -63,6 +64,7 @@ const styles = stylex.create({
     maxBlockSize: "100%",
     maxInlineSize: "32rem",
     minBlockSize: 0,
+    padding: "0.25rem",
 
     opacity: "calc(1 - var(--nested-dialogs))",
     outline: "none",
@@ -72,18 +74,6 @@ const styles = stylex.create({
     transitionProperty: "scale, opacity, translate",
     transitionTimingFunction: "ease-in-out",
     willChange: "transform",
-    "::before": {
-      borderRadius: "calc(var(--radius-md) - 1px)",
-      boxShadow: {
-        default: "0 1px rgb(0 0 0 / 0.04)",
-        [stylex.when.ancestor('[data-theme="dark"]', themeMarker)]:
-          "0 -1px rgb(255 255 255 / 0.06)",
-      },
-      content: '""',
-      inset: 0,
-      pointerEvents: "none",
-      position: "absolute",
-    },
     "[data-ending-style]": { opacity: 0 },
     "[data-starting-style]": { opacity: 0 },
     "@media (min-width: 640px)": {
@@ -99,20 +89,38 @@ const styles = stylex.create({
       borderRadius: 0,
       maxInlineSize: "none",
       transformOrigin: "bottom",
-      "::before": { display: "none" },
       "[data-ending-style]": { translate: "0 1rem" },
       "[data-starting-style]": { translate: "0 1rem" },
     },
   },
   close: {
-    insetBlockStart: "0.5rem",
-    insetInlineEnd: "0.5rem",
+    insetBlockStart: "0.125rem",
+    insetInlineEnd: "0.125rem",
     position: "absolute",
+  },
+  surface: {
+    backgroundColor: tokens["--card"],
+    borderRadius: "var(--radius-sm)",
+    display: "flex",
+    flexDirection: "column",
+    gap: "inherit",
+    minBlockSize: 0,
+    overflowX: "hidden",
+    overflowY: "auto",
+  },
+  frameTitle: {
+    alignItems: "center",
+    color: tokens["--muted-foreground"],
+    display: "flex",
+    flexShrink: 0,
+    fontSize: "0.875rem",
+    minBlockSize: "2.5rem",
+    paddingInline: "0.75rem 2.75rem",
   },
   header: {
     paddingBlockEnd: {
       default: null,
-      ':is(:is([data-slot="dialog-popup"], [data-slot="sheet-popup"], [data-slot="drawer-popup"]):has([data-slot$="panel"]) > [data-slot="dialog-header"])':
+      ':is(:is([data-slot="dialog-surface"], [data-slot="sheet-popup"], [data-slot="drawer-popup"]):has([data-slot$="panel"]) > [data-slot="dialog-header"])':
         "0.75rem",
       "@media (max-width: 639px)": "1rem",
     },
@@ -127,24 +135,19 @@ const styles = stylex.create({
     gap: "0.5rem",
     paddingInline: "1.5rem",
     "@media (min-width: 640px)": {
-      borderEndEndRadius: "calc(var(--radius-md) - 1px)",
-      borderEndStartRadius: "calc(var(--radius-md) - 1px)",
+      borderEndEndRadius: "calc(var(--radius) - 1px)",
+      borderEndStartRadius: "calc(var(--radius) - 1px)",
       flexDirection: "row",
       justifyContent: "flex-end",
     },
   },
   footerDefault: {
-    backgroundColor:
-      "color-mix(in oklab, var(--muted, transparent) 72%, transparent)",
-    borderBlockStartColor: tokens["--border"],
-    borderBlockStartStyle: "solid",
-    borderBlockStartWidth: 1,
     paddingBlock: "1rem",
   },
   footerBare: {
     paddingBlockStart: {
       default: "1rem",
-      ':is(:is([data-slot="dialog-popup"], [data-slot="sheet-popup"], [data-slot="drawer-popup"]):has([data-slot$="panel"]) > [data-slot="dialog-footer"])':
+      ':is(:is([data-slot="dialog-surface"], [data-slot="sheet-popup"], [data-slot="drawer-popup"]):has([data-slot$="panel"]) [data-slot="dialog-footer"])':
         "0.75rem",
     },
     paddingBlockEnd: "1.5rem",
@@ -152,8 +155,8 @@ const styles = stylex.create({
   title: {
     fontFamily: tokens["--font-heading"],
     fontSize: "1.25rem",
-    fontWeight: 600,
-    lineHeight: 1,
+    fontWeight: 400,
+    lineHeight: 1.25,
   },
   description: { color: tokens["--muted-foreground"], fontSize: "0.875rem" },
   panel: {
@@ -255,6 +258,7 @@ export function DialogPopup({
   children,
   showCloseButton = true,
   bottomStickOnMobile = true,
+  frameTitle,
   closeProps,
   portalProps,
   ...restProps
@@ -263,6 +267,7 @@ export function DialogPopup({
   {
     showCloseButton?: boolean
     bottomStickOnMobile?: boolean
+    frameTitle?: ReactNode
     closeProps?: DialogPrimitive.Close.Props
     portalProps?: DialogPrimitive.Portal.Props
   }
@@ -291,7 +296,10 @@ export function DialogPopup({
             props,
           )}
         >
-          {children}
+          <div {...stylex.props(styles.frameTitle)}>{frameTitle}</div>
+          <div data-slot="dialog-surface" {...stylex.props(styles.surface)}>
+            {children}
+          </div>
           {showCloseButton ? (
             <DialogPrimitive.Close
               aria-label="Close"
