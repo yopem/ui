@@ -7,7 +7,7 @@ import type { ComponentProps, MouseEvent } from "react"
 import { Input, type InputProps } from "@registry/components/ui/input"
 import { Textarea, type TextareaProps } from "@registry/components/ui/textarea"
 import { mergeStylexProps, stylexProps } from "@registry/lib/stylex"
-import { themeMarker, tokens } from "@registry/styles/tokens.stylex"
+import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import { useState } from "react"
 
@@ -15,11 +15,7 @@ const styles = stylex.create({
   root: {
     alignItems: "center",
     backgroundClip: "padding-box",
-    backgroundColor: {
-      default: tokens["--background"],
-      [stylex.when.ancestor('[data-theme="dark"]', themeMarker)]:
-        "color-mix(in oklab, var(--input, currentColor) 32%, transparent)",
-    },
+    backgroundColor: tokens["--control-background"],
     borderColor: {
       default: tokens["--input"],
       ":has(input:focus-visible, textarea:focus-visible)": tokens["--ring"],
@@ -28,11 +24,11 @@ const styles = stylex.create({
       ':has(input[aria-invalid="true"], textarea[aria-invalid="true"]):has(input:focus-visible, textarea:focus-visible)':
         "color-mix(in oklab, var(--destructive, currentColor) 36%, transparent)",
     },
-    borderRadius: tokens["--radius-md"],
+    borderRadius: tokens["--radius"],
     borderStyle: "solid",
     borderWidth: 1,
     boxShadow: {
-      default: "0 1px 2px color-mix(in oklab, #000 5%, transparent)",
+      default: tokens["--shadow-sm"],
       ":has(input:focus-visible, textarea:focus-visible)":
         "0 0 0 3px color-mix(in oklab, var(--ring, currentColor) 24%, transparent)",
       ":has(input:disabled, textarea:disabled)": "none",
@@ -63,6 +59,9 @@ const styles = stylex.create({
         ':is([data-slot="group"] *)': "1.25rem",
       },
     },
+  },
+  borderless: {
+    borderWidth: 0,
   },
   addon: {
     alignItems: "center",
@@ -110,7 +109,7 @@ const styles = stylex.create({
     whiteSpace: "nowrap",
   },
   textarea: {
-    minBlockSize: "5.125rem",
+    minBlockSize: "7.5rem",
     resize: "none",
   },
   control: {
@@ -128,8 +127,9 @@ const alignStyles = {
 export function InputGroup({
   xstyle: consumerXstyle,
   className,
+  bordered = true,
   ...restProps
-}: StyleXComponentProps<ComponentProps<"div">>) {
+}: StyleXComponentProps<ComponentProps<"div">, { bordered?: boolean }>) {
   const props = restProps
   const xstyle = consumerXstyle
 
@@ -137,7 +137,15 @@ export function InputGroup({
     <div
       data-slot="input-group"
       role="group"
-      {...mergeStylexProps(stylexProps(className, styles.root, xstyle), props)}
+      {...mergeStylexProps(
+        stylexProps(
+          className,
+          styles.root,
+          !bordered && styles.borderless,
+          xstyle,
+        ),
+        props,
+      )}
     />
   )
 }

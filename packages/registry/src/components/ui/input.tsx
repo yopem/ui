@@ -11,18 +11,15 @@ import {
   isString,
   stylexProps,
 } from "@registry/lib/stylex"
-import { themeMarker, tokens } from "@registry/styles/tokens.stylex"
+import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import { clsx } from "clsx"
 
 const styles = stylex.create({
   control: {
     backgroundClip: "padding-box",
-    backgroundColor: {
-      default: "var(--input-control-background, var(--background))",
-      [stylex.when.ancestor('[data-theme="dark"]', themeMarker)]:
-        "var(--input-control-background, color-mix(in oklab, var(--input, currentColor) 32%, transparent))",
-    },
+    backgroundColor:
+      "var(--input-control-background, var(--control-background))",
     borderColor: {
       default: "var(--input-control-border, var(--input))",
       ":has(:focus-visible)": tokens["--ring"],
@@ -31,7 +28,7 @@ const styles = stylex.create({
       ':has([aria-invalid="true"]):has(:focus-visible)':
         "color-mix(in oklab, var(--destructive, currentColor) 36%, transparent)",
     },
-    borderRadius: "var(--radius-md)",
+    borderRadius: "var(--radius)",
     borderStyle: "solid",
     borderWidth: 1,
     boxShadow: {
@@ -64,12 +61,9 @@ const styles = stylex.create({
     position: "relative",
     transitionProperty: "box-shadow",
     "::before": {
-      borderRadius: "calc(var(--radius-md) - 1px)",
+      borderRadius: "calc(var(--radius) - 1px)",
       boxShadow: {
-        default:
-          "var(--input-control-inset-shadow, var(--button-outline-inset-shadow))",
-        [stylex.when.ancestor('[data-theme="dark"]', themeMarker)]:
-          "var(--input-control-inset-shadow, var(--button-outline-inset-shadow-dark))",
+        default: "var(--input-control-inset-shadow, none)",
         ":has(:disabled)": "none",
         ":has(:focus-visible)": "none",
         ':has([aria-invalid="true"])': "none",
@@ -81,25 +75,27 @@ const styles = stylex.create({
       position: "absolute",
     },
   },
+  borderless: {
+    borderWidth: 0,
+  },
   input: {
     blockSize: {
-      default: "2.125rem",
-      "@media (min-width: 640px)": "1.875rem",
+      default: "2.375rem",
+      "@media (min-width: 640px)": "2.375rem",
     },
     borderRadius: "inherit",
     color: tokens["--foreground"],
     inlineSize: "100%",
     lineHeight: {
-      default: "2.125rem",
-      "@media (min-width: 640px)": "1.875rem",
+      default: "2.375rem",
+      "@media (min-width: 640px)": "2.375rem",
     },
 
     outline: "none",
     paddingInline: "calc(0.75rem - 1px)",
     transition: "background-color 5000000s ease-in-out 0s",
     "::placeholder": {
-      color:
-        "color-mix(in oklab, var(--muted-foreground, currentColor) 72%, transparent)",
+      color: tokens["--muted-foreground"],
     },
     WebkitTextFillColor: {
       default: null,
@@ -114,11 +110,11 @@ const styles = stylex.create({
   small: {
     blockSize: {
       default: "1.875rem",
-      "@media (min-width: 640px)": "1.625rem",
+      "@media (min-width: 640px)": "1.875rem",
     },
     lineHeight: {
       default: "1.875rem",
-      "@media (min-width: 640px)": "1.625rem",
+      "@media (min-width: 640px)": "1.875rem",
     },
     paddingInlineStart: "calc(0.625rem - 1px)",
     paddingInlineEnd: {
@@ -129,12 +125,12 @@ const styles = stylex.create({
   },
   large: {
     blockSize: {
-      default: "2.375rem",
-      "@media (min-width: 640px)": "2.125rem",
+      default: "2.875rem",
+      "@media (min-width: 640px)": "2.875rem",
     },
     lineHeight: {
-      default: "2.375rem",
-      "@media (min-width: 640px)": "2.125rem",
+      default: "2.875rem",
+      "@media (min-width: 640px)": "2.875rem",
     },
   },
   search: {
@@ -182,6 +178,7 @@ export type InputProps = StyleXComponentProps<
     size?: "sm" | "default" | "lg" | number
     unstyled?: boolean
     nativeInput?: boolean
+    bordered?: boolean
     /** Applies StyleX styles to the decorative wrapper, including its borders and corner radii in a Group. */
     controlXstyle?: StyleXProps["xstyle"]
   }
@@ -211,6 +208,7 @@ export function Input({
   size = "default",
   unstyled = false,
   nativeInput = false,
+  bordered = true,
   ...restProps
 }: InputProps) {
   const props = restProps
@@ -235,6 +233,7 @@ export function Input({
       {...stylexProps(
         wrapperClassName,
         !unstyled && styles.control,
+        !unstyled && !bordered && styles.borderless,
         unstyled && styles.groupControl,
         controlXstyle,
       )}

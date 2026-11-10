@@ -37,7 +37,7 @@ const styles = stylex.create({
       "[aria-invalid]":
         "color-mix(in oklab, var(--destructive, currentColor) 36%, transparent)",
     },
-    borderRadius: tokens["--radius-md"],
+    borderRadius: tokens["--radius"],
     borderStyle: "solid",
     borderWidth: 1,
     color: tokens["--foreground"],
@@ -46,8 +46,8 @@ const styles = stylex.create({
     fontSize: { default: "1rem", "@media (min-width: 640px)": "0.875rem" },
     inlineSize: "100%",
     minBlockSize: {
-      default: "2.25rem",
-      "@media (min-width: 640px)": "2rem",
+      default: "2.5rem",
+      "@media (min-width: 640px)": "2.5rem",
       "@media (pointer: coarse)": "2.75rem",
     },
     minInlineSize: "9rem",
