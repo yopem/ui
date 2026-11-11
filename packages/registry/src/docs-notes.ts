@@ -328,6 +328,7 @@ const usageNoteValues = {
   sheet: [
     "Compose SheetTrigger and SheetPopup inside Sheet, with SheetTitle, SheetDescription and SheetPanel in the popup.",
     "side selects the viewport edge. SheetPopup includes the portal, backdrop, viewport, and an optional close button. Use frameTitle for an optional frame caption. SheetTitle gives the dialog its accessible name. Use Drawer if swipe gestures are required.",
+    "Use surfaceXstyle to change the inner Sheet surface. Mobile Sidebar uses this slot to keep one flat surface.",
   ],
   tooltip: [
     "Place TooltipTrigger and TooltipPopup inside Tooltip. Share timing across nearby tooltips with TooltipProvider.",
@@ -358,6 +359,7 @@ const usageNoteValues = {
     "Wrap Sidebar and the main content in SidebarProvider. Place SidebarTrigger where users can reach it. Use SidebarInset for inset content.",
     "Build navigation with SidebarGroup, SidebarMenu, SidebarMenuItem, and SidebarMenuButton. Use render for links. Use isActive for the current location.",
     "collapsible selects offcanvas, icon, or none. Mobile layout uses a sheet. useSidebar provides desktop and mobile state separately. Tooltip text identifies icon-only items in the collapsed state.",
+    "Mobile Sidebar uses one flat sidebar-colored surface. Its inner surface inherits the outer background and corner radius.",
   ],
   toast: [
     'Mount ToastProvider once, then call toastManager.add({ title: "Saved" }) after an action.',

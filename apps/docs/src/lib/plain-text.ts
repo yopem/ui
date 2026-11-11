@@ -134,6 +134,7 @@ Input, InputGroup, and Card have borders by default. Set bordered={false} to rem
 Field and Fieldset are borderless by default. Set bordered to add a border and padding to the wrapper only.
 NumberField is compact by default; set fullWidth to fill its parent. Table has no body row dividers by default; set rowBorders to add them.
 AutocompleteInput accepts controlXstyle for its outer Input wrapper.
+SheetPopup accepts surfaceXstyle for its inner surface. Mobile Sidebar uses this slot for one flat surface.
 Dialog, AlertDialog, Sheet, Drawer, and Command popups accept frameTitle as a visual caption. Provide a separate accessible title or label.
 AlertDialog shows its close button by default; it cancels, not confirms. Drawer hides its close button by default. CommandDialogPopup includes the Dialog close button.
 Drawer uses one sidebar-colored surface for its frame, content, and footer.

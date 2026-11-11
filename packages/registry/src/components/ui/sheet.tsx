@@ -1,6 +1,7 @@
 "use client"
 
 import type { StyleXComponentProps } from "@registry/lib/stylex"
+import type { StyleXStyles } from "@stylexjs/stylex"
 import type { ReactNode } from "react"
 
 import { Dialog as SheetPrimitive } from "@base-ui/react/dialog"
@@ -314,6 +315,7 @@ export function SheetPopup({
   side = "right",
   variant = "default",
   frameTitle,
+  surfaceXstyle,
   closeProps,
   portalProps,
   ...restProps
@@ -324,6 +326,7 @@ export function SheetPopup({
     side?: SheetSide
     variant?: SheetVariant
     frameTitle?: ReactNode
+    surfaceXstyle?: StyleXStyles
     closeProps?: SheetPrimitive.Close.Props
     portalProps?: SheetPrimitive.Portal.Props
   }
@@ -351,7 +354,10 @@ export function SheetPopup({
           )}
         >
           <div {...stylex.props(styles.frameTitle)}>{frameTitle}</div>
-          <div data-slot="sheet-surface" {...stylex.props(styles.surface)}>
+          <div
+            data-slot="sheet-surface"
+            {...stylex.props(styles.surface, surfaceXstyle)}
+          >
             {children}
           </div>
           {showCloseButton ? (

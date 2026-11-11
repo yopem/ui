@@ -13,6 +13,8 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarProvider,
+  SidebarTrigger,
+  useSidebar,
 } from "@registry/components/ui/sidebar"
 import { Stack } from "@registry/components/ui/stack"
 import { Text } from "@registry/components/ui/text"
@@ -32,6 +34,12 @@ const styles = stylex.create({
   sectionHeading: { fontSize: "1.5rem" },
   subsectionHeading: { fontSize: "1.25rem" },
   sidebar: { inlineSize: "100%", maxInlineSize: "14rem", minBlockSize: 0 },
+  sidebarProvider: {
+    inlineSize: "100%",
+    justifyContent: "center",
+    maxInlineSize: "14rem",
+    minBlockSize: 0,
+  },
   sidebarTitle: {
     color: tokens["--foreground"],
     fontSize: "0.875rem",
@@ -49,7 +57,12 @@ export function HomepagePreview({ item }: { item: CatalogItem }) {
 
   if (item.slug === "label") return <HomepageLabelPreview />
 
-  if (item.slug === "sidebar") return <HomepageSidebarPreview />
+  if (item.slug === "sidebar")
+    return (
+      <SidebarProvider xstyle={styles.sidebarProvider}>
+        <HomepageSidebarPreview />
+      </SidebarProvider>
+    )
 
   const Preview = item.preview?.component
 
@@ -84,9 +97,15 @@ export function HomepageLabelPreview() {
 }
 
 export function HomepageSidebarPreview() {
+  const { isMobile } = useSidebar()
+
   return (
-    <SidebarProvider xstyle={styles.sidebar}>
-      <Sidebar collapsible="none" xstyle={styles.sidebar}>
+    <>
+      {isMobile ? <SidebarTrigger aria-label="Open example sidebar" /> : null}
+      <Sidebar
+        collapsible={isMobile ? "offcanvas" : "none"}
+        xstyle={isMobile ? undefined : styles.sidebar}
+      >
         <SidebarHeader>
           <Text xstyle={styles.sidebarTitle}>Yopem UI</Text>
         </SidebarHeader>
@@ -110,6 +129,6 @@ export function HomepageSidebarPreview() {
           </SidebarGroup>
         </SidebarContent>
       </Sidebar>
-    </SidebarProvider>
+    </>
   )
 }

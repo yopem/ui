@@ -259,6 +259,8 @@ panels. Do not alternate card fills or add decorative shadows.
   close button defaults to visible and cancels; it does not confirm. `closeProps`
   configures that close control. Drawer hides its close button by default.
   CommandDialogPopup includes the Dialog close button.
+  SheetPopup accepts `surfaceXstyle` for its inner surface. Mobile Sidebar uses
+  this slot for one flat surface.
   Drawer uses one sidebar-colored surface for its frame, content, and footer.
   Select and Combobox use neutral hover and solid-accent selected rows.
   Steps is a static ordered process, not a navigation control.

@@ -211,7 +211,9 @@ and an appropriate description. `frameTitle` supplies a visual caption, not the
 accessible title. Dialog, AlertDialog, Sheet, Drawer, and Command popups accept
 it. AlertDialog shows its close button by default. It cancels, not confirms.
 Drawer hides its close button by default. Its frame, content, and footer share
-the sidebar surface. CommandDialogPopup includes the Dialog close button.
+the sidebar surface. CommandDialogPopup includes the Dialog close button. Use
+`SheetPopup.surfaceXstyle` to style its inner surface. Mobile Sidebar uses this
+slot for one flat surface.
 
 ```tsx
 "use client"

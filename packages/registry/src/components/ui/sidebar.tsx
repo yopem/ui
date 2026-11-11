@@ -81,9 +81,15 @@ const styles = stylex.create({
   },
   mobilePopup: {
     backgroundColor: tokens["--sidebar"],
+    borderInlineEndWidth: 0,
+    borderInlineStartWidth: 0,
     color: tokens["--sidebar-foreground"],
     inlineSize: "var(--sidebar-width)",
     padding: 0,
+  },
+  mobileSurface: {
+    backgroundColor: "inherit",
+    borderRadius: "inherit",
   },
   visuallyHidden: {
     blockSize: 1,
@@ -735,6 +741,7 @@ export function Sidebar({
         <SheetPopup
           className={className}
           xstyle={[styles.mobilePopup, styles.mobileWidth, xstyle]}
+          surfaceXstyle={styles.mobileSurface}
           data-mobile="true"
           data-sidebar="sidebar"
           data-slot="sidebar"

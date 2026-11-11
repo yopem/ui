@@ -247,6 +247,7 @@ function checkGuidance(text: string, shared = false) {
     "stylexProps",
     "xstyle",
     "controlXstyle",
+    "surfaceXstyle",
     "className",
     "data-slot",
     "ThemeScript",
