@@ -43,10 +43,10 @@ const styles = stylex.create({
   },
   listDefault: {
     backgroundColor: tokens["--muted"],
-    borderRadius: tokens["--radius-md"],
-    columnGap: "0.125rem",
+    borderRadius: tokens["--radius"],
+    columnGap: "0.25rem",
     color: tokens["--muted-foreground"],
-    padding: "0.125rem",
+    padding: "0.25rem",
   },
   listUnderline: {
     columnGap: "0.125rem",
@@ -71,12 +71,12 @@ const styles = stylex.create({
       [stylex.when.ancestor('[data-theme="dark"]', themeMarker)]:
         tokens["--input"],
     },
-    borderRadius: tokens["--radius-md"],
-    boxShadow: "0 1px 2px color-mix(in oklab, #000 5%, transparent)",
+    borderRadius: tokens["--radius"],
+    boxShadow: tokens["--shadow-sm"],
     zIndex: -1,
   },
   indicatorUnderline: {
-    backgroundColor: tokens["--primary"],
+    backgroundColor: tokens["--accent-solid"],
     zIndex: 10,
     "[data-orientation=horizontal]": {
       blockSize: "0.125rem",
@@ -97,7 +97,7 @@ const styles = stylex.create({
     },
     alignItems: "center",
     borderColor: "transparent",
-    borderRadius: tokens["--radius-md"],
+    borderRadius: tokens["--radius"],
     borderStyle: "solid",
     borderWidth: 1,
     cursor: "pointer",
@@ -121,7 +121,7 @@ const styles = stylex.create({
     color: {
       default: null,
       ":hover": tokens["--muted-foreground"],
-      "[data-active]": tokens["--foreground"],
+      "[data-active]": tokens["--accent-foreground"],
     },
     boxShadow: {
       default: null,
