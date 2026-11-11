@@ -8,10 +8,10 @@ export function Preview() {
   return (
     <Avatar>
       <AvatarImage
-        alt="Nora Ellis"
-        src="https://images.unsplash.com/photo-1543610892-0b1f7e6d8ac1?w=128&h=128&dpr=2&q=80"
+        alt="Casey Blake"
+        src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=128&h=128&auto=format&fit=crop"
       />
-      <AvatarFallback>NE</AvatarFallback>
+      <AvatarFallback>CB</AvatarFallback>
     </Avatar>
   )
 }
