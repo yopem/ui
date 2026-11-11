@@ -12,8 +12,8 @@ import { useRef, useState } from "react"
 const styles = stylex.create({
   root: {
     backgroundColor: tokens["--code"],
-    borderColor: tokens["--border"],
-    borderRadius: tokens["--radius-md"],
+    borderColor: tokens["--card-border"],
+    borderRadius: tokens["--radius"],
     borderStyle: "solid",
     borderWidth: 1,
     color: tokens["--code-foreground"],
@@ -22,26 +22,29 @@ const styles = stylex.create({
   },
   toolbar: {
     alignItems: "center",
-    borderBlockEndColor: tokens["--border"],
+    backgroundColor: tokens["--muted"],
+    borderBlockEndColor: tokens["--card-border"],
     borderBlockEndStyle: "solid",
     borderBlockEndWidth: 1,
     display: "flex",
     justifyContent: "space-between",
-    paddingBlock: "0.5rem",
+    minBlockSize: "2.5rem",
+    paddingBlock: "0.25rem",
     paddingInline: "0.75rem",
   },
   button: {
-    backgroundColor: "transparent",
-    borderColor: tokens["--border"],
-    borderRadius: tokens["--radius-md"],
-    borderStyle: "solid",
-    borderWidth: 1,
-    color: tokens["--foreground"],
+    backgroundColor: { default: "transparent", ":hover": tokens["--accent"] },
+    borderRadius: tokens["--radius-sm"],
+    borderWidth: 0,
+    color: {
+      default: tokens["--muted-foreground"],
+      ":hover": tokens["--foreground"],
+    },
     cursor: "pointer",
-    fontFamily: tokens["--font-sans"],
-    fontSize: "0.875rem",
-    minBlockSize: "2.75rem",
-    paddingInline: "0.75rem",
+    fontFamily: tokens["--font-mono"],
+    fontSize: "0.75rem",
+    minBlockSize: { default: "2rem", "@media (pointer: coarse)": "2.75rem" },
+    paddingInline: "0.5rem",
     ":focus-visible": {
       outlineColor: tokens["--ring"],
       outlineOffset: 2,
@@ -51,7 +54,7 @@ const styles = stylex.create({
   },
   status: {
     color: tokens["--muted-foreground"],
-    fontSize: "0.8125rem",
+    fontSize: "0.75rem",
   },
   pre: {
     margin: 0,
@@ -63,6 +66,7 @@ const styles = stylex.create({
   code: {
     fontFamily: tokens["--font-mono"],
     fontSize: "0.875rem",
+    lineHeight: 1.65,
     tabSize: 2,
   },
 })

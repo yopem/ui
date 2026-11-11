@@ -47,10 +47,10 @@ const primitiveStyles = stylex.create({
   },
   button: {
     backgroundColor: tokens["--accent"],
-    borderColor: tokens["--border"],
+    borderColor: tokens["--card-border"],
     borderStyle: "solid",
     borderWidth: 1,
-    borderRadius: tokens["--radius-md"],
+    borderRadius: tokens["--radius"],
     color: tokens["--accent-foreground"],
     cursor: "pointer",
     fontSize: "0.75rem",
@@ -79,10 +79,10 @@ const primitiveStyles = stylex.create({
   box2: {
     backgroundColor: tokens["--code"],
     color: tokens["--code-foreground"],
-    borderColor: tokens["--border"],
+    borderColor: tokens["--card-border"],
     borderStyle: "solid",
     borderWidth: 1,
-    borderRadius: tokens["--radius-md"],
+    borderRadius: tokens["--radius"],
     marginBlock: "1.5rem",
 
     overflow: "hidden",
@@ -94,10 +94,10 @@ const primitiveStyles = stylex.create({
   box3: {
     backgroundColor: tokens["--code"],
     color: tokens["--code-foreground"],
-    borderColor: tokens["--border"],
+    borderColor: tokens["--card-border"],
     borderStyle: "solid",
     borderWidth: 1,
-    borderRadius: tokens["--radius-md"],
+    borderRadius: tokens["--radius"],
     marginBlock: "1.5rem",
 
     overflow: "hidden",
@@ -110,11 +110,9 @@ const primitiveStyles = stylex.create({
       ":is(:hover, [data-hover]):not(:disabled, [disabled], [aria-disabled=true], [data-disabled])":
         tokens["--accent"],
     },
-    blockSize: "2rem",
-    borderColor: tokens["--border"],
-    borderStyle: "solid",
-    borderWidth: 1,
-    borderRadius: tokens["--radius-md"],
+    blockSize: { default: "2rem", "@media (pointer: coarse)": "2.75rem" },
+    borderWidth: 0,
+    borderRadius: tokens["--radius-sm"],
     color: tokens["--foreground"],
     cursor: {
       default: "pointer",
@@ -126,7 +124,7 @@ const primitiveStyles = stylex.create({
       default: 1,
     },
     display: "flex",
-    inlineSize: "2rem",
+    inlineSize: { default: "2rem", "@media (pointer: coarse)": "2.75rem" },
     insetBlockStart: "0.75rem",
     insetInlineEnd: "0.75rem",
     justifyContent: "center",
@@ -143,7 +141,8 @@ const primitiveStyles = stylex.create({
   },
   box4: {
     alignItems: "center",
-    borderBlockEndColor: tokens["--border"],
+    backgroundColor: tokens["--muted"],
+    borderBlockEndColor: tokens["--card-border"],
     borderBlockEndStyle: "solid",
     borderBlockEndWidth: 1,
     display: "flex",
@@ -160,7 +159,7 @@ const primitiveStyles = stylex.create({
   code: {
     fontFamily: tokens["--font-mono"],
     fontSize: "0.8125rem",
-    fontWeight: 600,
+    fontWeight: 400,
     overflowWrap: "anywhere",
   },
 })
