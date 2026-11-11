@@ -25,8 +25,8 @@ const styles = stylex.create({
       "@media (min-width: 640px)": "0.875rem",
     },
     "--otp-field-input-size": {
-      default: "2.25rem",
-      "@media (min-width: 640px)": "2rem",
+      default: "2.5rem",
+      "@media (min-width: 640px)": "2.5rem",
     },
   },
   largeSize: {
@@ -35,8 +35,8 @@ const styles = stylex.create({
       "@media (min-width: 640px)": "1rem",
     },
     "--otp-field-input-size": {
-      default: "2.5rem",
-      "@media (min-width: 640px)": "2.25rem",
+      default: "3rem",
+      "@media (min-width: 640px)": "3rem",
     },
   },
   input: {
@@ -44,15 +44,11 @@ const styles = stylex.create({
       default: "padding-box",
       [stylex.when.ancestor('[data-theme="dark"]', themeMarker)]: "border-box",
     },
-    backgroundColor: {
-      default: tokens["--background"],
-      [stylex.when.ancestor('[data-theme="dark"]', themeMarker)]:
-        "color-mix(in oklab, var(--input, currentColor) 32%, transparent)",
-    },
+    backgroundColor: tokens["--control-background"],
     blockSize: {
       default: "var(--otp-field-input-size)",
       ':is([data-slot="otp-field"][data-size="lg"] [data-slot="otp-field-input"])':
-        "2.5rem",
+        "3rem",
     },
     borderColor: {
       default: tokens["--input"],
@@ -62,7 +58,7 @@ const styles = stylex.create({
       ':focus-visible[aria-invalid="true"]':
         "color-mix(in oklab, var(--destructive, currentColor) 64%, transparent)",
     },
-    borderRadius: tokens["--radius-md"],
+    borderRadius: tokens["--radius"],
     borderStyle: "solid",
     borderWidth: 1,
     boxShadow: {
@@ -83,7 +79,7 @@ const styles = stylex.create({
     inlineSize: {
       default: "var(--otp-field-input-size)",
       ':is([data-slot="otp-field"][data-size="lg"] [data-slot="otp-field-input"])':
-        "2.5rem",
+        "3rem",
     },
     lineHeight: "var(--otp-field-input-size)",
 
@@ -96,7 +92,7 @@ const styles = stylex.create({
       ":focus-visible": 10,
     },
     "::before": {
-      borderRadius: "calc(var(--radius-md) - 1px)",
+      borderRadius: "calc(var(--radius) - 1px)",
       boxShadow: {
         default: "var(--button-outline-inset-shadow)",
         [stylex.when.ancestor('[data-theme="dark"]', themeMarker)]:
