@@ -22,6 +22,7 @@ jobs:
           base: ${{ github.ref }}
           filters: |
             docs:
+              - '.github/workflows/quality.yml'
               - 'apps/docs/**'
               - 'packages/registry/**'
               - 'tests/e2e/**'
@@ -42,7 +43,13 @@ jobs:
       - run: bun run fmt:check
       - run: bun run typecheck
       - run: bun run test
-      - run: bunx playwright install --with-deps chromium
+      - name: Install Chromium and system dependencies
         if: steps.changes.outputs.docs == 'true'
+        run: |
+          printf '%s\n' \
+            'https://archive.ubuntu.com/ubuntu' \
+            'https://security.ubuntu.com/ubuntu' |
+            sudo tee /etc/apt/apt-mirrors.txt
+          bunx playwright install --with-deps chromium
       - run: bun run test:e2e && bun run test:a11y
         if: steps.changes.outputs.docs == 'true'
