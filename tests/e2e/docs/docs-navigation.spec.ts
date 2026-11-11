@@ -1,10 +1,12 @@
 import AxeBuilder from "@axe-core/playwright"
 import { expect, test } from "@playwright/test"
 
+import { openDocsPage } from "./helpers"
+
 test("header GitHub link supports keyboard navigation", async ({
   page,
 }, testInfo) => {
-  await page.goto("/components/button")
+  await openDocsPage(page, "/components/button")
   const link = page.getByRole("banner").getByRole("link", { name: "GitHub" })
 
   await expect(link).toBeVisible()
@@ -31,7 +33,8 @@ test("@a11y grouped navigation preserves inventory, keyboard collapse, and mobil
 
   expect(componentHrefs.length).toBeGreaterThan(0)
 
-  await page.goto("/components/button")
+  await openDocsPage(page, "/components/button")
+
   const mobile = (page.viewportSize()?.width ?? 0) < 768
   const trigger = page.getByRole("button", { name: "Open navigation" })
 
@@ -157,7 +160,7 @@ for (const [path, previous, next] of [
   ["/components/use-media-query", "/components/use-event-callback", null],
 ] as const) {
   test(`global page sequence at ${path}`, async ({ page }) => {
-    await page.goto(path)
+    await openDocsPage(page, path)
 
     const nav = page.getByRole("navigation", {
       name: "Documentation pages",
@@ -217,7 +220,7 @@ test("desktop sidebar keyboard navigation keeps focused link", async ({
   page,
 }) => {
   test.skip((page.viewportSize()?.width ?? 0) < 768, "Desktop sidebar only")
-  await page.goto("/components/button")
+  await openDocsPage(page, "/components/button")
 
   const nav = page.getByRole("navigation", {
     name: "Documentation",

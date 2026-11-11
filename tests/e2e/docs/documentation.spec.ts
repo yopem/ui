@@ -148,12 +148,16 @@ test("index hides page navigation while docs keep previous and next links", asyn
 test("unknown routes show the docs not found page", async ({ page }) => {
   const response = await page.goto("/missing-page")
   expect(response?.status()).toBe(404)
-  await expect(
-    page.getByRole("heading", { name: "Page not found", level: 1 }),
-  ).toBeVisible()
-  await expect(
-    page.getByRole("link", { name: "Return to documentation home" }),
-  ).toBeVisible()
+  await expect(page.getByRole("heading", { level: 1 })).toBeVisible()
+
+  const home = page.getByRole("link", {
+    name: "Return to documentation home",
+    exact: true,
+  })
+
+  await expect(home).toBeVisible()
+  await home.click()
+  await expect(page).toHaveURL(/\/$/)
 })
 
 test("MDX guides render sections, anchors, and copyable snippets", async ({

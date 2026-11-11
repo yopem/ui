@@ -1,5 +1,7 @@
 import { expect, test } from "@playwright/test"
 
+import { openDocsPage } from "./helpers"
+
 for (const { systemTheme, savedTheme, blockedStorage, expectedTheme } of [
   {
     systemTheme: "dark",
@@ -117,7 +119,7 @@ for (const path of [
 
       page.on("pageerror", (error) => errors.push(error.message))
       await page.emulateMedia({ colorScheme: systemTheme })
-      const response = await page.goto(path)
+      const response = await openDocsPage(page, path)
       expect(response?.status(), path).toBe(200)
       await expect(page.locator("h1").first()).toBeVisible()
       await expect(
@@ -213,7 +215,7 @@ test("header contains theme button without horizontal overflow", async ({
 }, testInfo) => {
   for (const width of [1440, 320]) {
     await page.setViewportSize({ width, height: 1000 })
-    await page.goto("/docs/getting-started")
+    await openDocsPage(page, "/docs/getting-started")
 
     const header = page.getByRole("banner")
 

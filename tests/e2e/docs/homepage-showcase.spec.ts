@@ -3,21 +3,16 @@ import type { Page } from "@playwright/test"
 import AxeBuilder from "@axe-core/playwright"
 import { expect, test } from "@playwright/test"
 
+import { openDocsPage } from "./helpers"
+
 function showcase(page: Page, slug: string) {
   return page.locator(`section[aria-labelledby="showcase-${slug}"]`)
-}
-
-async function openHomepage(page: Page) {
-  await page.goto("/")
-  await expect(
-    page.getByRole("button", { name: "Search documentation", exact: true }),
-  ).toBeEnabled()
 }
 
 test("distant previews load on approach and retain edited state", async ({
   page,
 }) => {
-  await openHomepage(page)
+  await openDocsPage(page, "/")
   const label = showcase(page, "label")
   await expect(label.getByRole("textbox")).toHaveCount(0)
   await label.scrollIntoViewIfNeeded()
@@ -34,7 +29,7 @@ test("previews load when IntersectionObserver is unavailable", async ({
   await page.addInitScript(() => {
     Reflect.deleteProperty(window, "IntersectionObserver")
   })
-  await openHomepage(page)
+  await openDocsPage(page, "/")
   await expect(showcase(page, "label").getByRole("textbox")).toHaveCount(1)
 })
 
@@ -58,7 +53,7 @@ for (const theme of ["light", "dark"] as const) {
       page.on("console", (message) => {
         if (message.type() === "error") errors.push(message.text())
       })
-      await openHomepage(page)
+      await openDocsPage(page, "/")
       await expect(page.locator("html")).toHaveAttribute("data-theme", theme)
 
       const response = await request.get("/components.md")
@@ -133,7 +128,7 @@ for (const theme of ["light", "dark"] as const) {
     test("selection examples keep independent state and support keyboard input", async ({
       page,
     }) => {
-      await openHomepage(page)
+      await openDocsPage(page, "/")
       const reservation = showcase(page, "card")
       await reservation
         .getByRole("textbox", { name: "Name", exact: true })
@@ -219,12 +214,13 @@ for (const theme of ["light", "dark"] as const) {
     test("input examples accept values and preserve disabled controls", async ({
       page,
     }) => {
-      await openHomepage(page)
+      await openDocsPage(page, "/")
 
       await showcase(page, "number-field").scrollIntoViewIfNeeded()
 
       const quantity = showcase(page, "number-field").getByRole("textbox", {
         name: "Quantity",
+        exact: true,
       })
 
       await quantity.focus()
@@ -294,7 +290,7 @@ for (const theme of ["light", "dark"] as const) {
     test("@a11y overlays open from keyboard and restore trigger focus", async ({
       page,
     }, testInfo) => {
-      await openHomepage(page)
+      await openDocsPage(page, "/")
 
       await showcase(page, "dialog").scrollIntoViewIfNeeded()
 

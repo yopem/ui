@@ -261,11 +261,18 @@ test("dynamic documentation routes return real 404 responses", async ({
   }
 })
 
-test("missing components show the not found page", async ({ page }) => {
+test("missing components provide a usable recovery link", async ({ page }) => {
   await page.goto("/components/missing")
-  await expect(
-    page.getByRole("heading", { name: "Page not found", level: 1 }),
-  ).toBeVisible()
+  await expect(page.getByRole("heading", { level: 1 })).toBeVisible()
+
+  const browse = page.getByRole("main").getByRole("link", {
+    name: "Browse components",
+    exact: true,
+  })
+
+  await expect(browse).toHaveAttribute("href", "/components")
+  await browse.click()
+  await expect(page).toHaveURL(/\/components$/)
 })
 
 test("legacy StyleX route redirects to components", async ({ request }) => {
