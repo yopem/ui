@@ -1,6 +1,7 @@
 "use client"
 
 import type { StyleXComponentProps } from "@registry/lib/stylex"
+import type { ReactNode } from "react"
 
 import { Dialog as SheetPrimitive } from "@base-ui/react/dialog"
 import { mergeProps } from "@base-ui/react/merge-props"
@@ -8,7 +9,7 @@ import { useRender } from "@base-ui/react/use-render"
 import { Button } from "@registry/components/ui/button"
 import { ScrollArea } from "@registry/components/ui/scroll-area"
 import { mergeStylexProps, stylexProps } from "@registry/lib/stylex"
-import { themeMarker, tokens } from "@registry/styles/tokens.stylex"
+import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import { XIcon } from "lucide-react"
 
@@ -26,7 +27,7 @@ const styles = stylex.create({
   },
   backdrop: {
     backdropFilter: "blur(4px)",
-    backgroundColor: "rgb(0 0 0 / 0.32)",
+    backgroundColor: tokens["--overlay-backdrop"],
     inset: 0,
     position: "fixed",
     transitionDuration: "200ms",
@@ -43,37 +44,26 @@ const styles = stylex.create({
   viewportInset: { "@media (min-width: 640px)": { padding: "1rem" } },
   popup: {
     backgroundClip: "padding-box",
-    backgroundColor: tokens["--popover"],
-    color: tokens["--popover-foreground"],
+    backgroundColor: tokens["--background"],
+    color: tokens["--card-foreground"],
     display: "flex",
     flexDirection: "column",
     inlineSize: "100%",
     maxBlockSize: "100%",
     minBlockSize: 0,
+    padding: "0.25rem",
 
     position: "relative",
     transitionDuration: "200ms",
     transitionProperty: "opacity, translate",
     transitionTimingFunction: "ease-in-out",
     willChange: "transform",
-    boxShadow: "0 10px 15px -3px color-mix(in oklab, #000 5%, transparent)",
-    "::before": {
-      boxShadow: {
-        default: "0 1px rgb(0 0 0 / 0.04)",
-        [stylex.when.ancestor('[data-theme="dark"]', themeMarker)]:
-          "0 -1px rgb(255 255 255 / 0.06)",
-      },
-      content: '""',
-      inset: 0,
-      pointerEvents: "none",
-      position: "absolute",
-      "@media (max-width: 639px)": { display: "none" },
-    },
+    boxShadow: tokens["--shadow-md"],
     "[data-ending-style]": { opacity: 0 },
     "[data-starting-style]": { opacity: 0 },
   },
   popupBottom: {
-    borderBlockStartColor: tokens["--border"],
+    borderBlockStartColor: tokens["--card-border"],
     borderBlockStartStyle: "solid",
     borderBlockStartWidth: 1,
     gridRowStart: 2,
@@ -81,14 +71,14 @@ const styles = stylex.create({
     "[data-starting-style]": { translate: "0 2rem" },
   },
   popupTop: {
-    borderBlockEndColor: tokens["--border"],
+    borderBlockEndColor: tokens["--card-border"],
     borderBlockEndStyle: "solid",
     borderBlockEndWidth: 1,
     "[data-ending-style]": { translate: "0 -2rem" },
     "[data-starting-style]": { translate: "0 -2rem" },
   },
   popupLeft: {
-    borderInlineEndColor: tokens["--border"],
+    borderInlineEndColor: tokens["--card-border"],
     borderInlineEndStyle: "solid",
     borderInlineEndWidth: 1,
     inlineSize: "calc(100% - 3rem)",
@@ -97,7 +87,7 @@ const styles = stylex.create({
     "[data-starting-style]": { translate: "-2rem 0" },
   },
   popupRight: {
-    borderInlineStartColor: tokens["--border"],
+    borderInlineStartColor: tokens["--card-border"],
     borderInlineStartStyle: "solid",
     borderInlineStartWidth: 1,
     gridColumnStart: 2,
@@ -107,23 +97,42 @@ const styles = stylex.create({
     "[data-starting-style]": { translate: "2rem 0" },
   },
   popupInset: {
-    "::before": { display: "none" },
     "@media (min-width: 640px)": {
-      borderColor: tokens["--border"],
-      borderRadius: "var(--radius-md)",
+      borderColor: tokens["--card-border"],
+      borderRadius: "var(--radius)",
       borderStyle: "solid",
       borderWidth: 1,
     },
   },
   close: {
-    insetBlockStart: "0.5rem",
-    insetInlineEnd: "0.5rem",
+    insetBlockStart: "0.125rem",
+    insetInlineEnd: "0.125rem",
     position: "absolute",
+  },
+  surface: {
+    backgroundColor: tokens["--card"],
+    borderRadius: "var(--radius-sm)",
+    display: "flex",
+    flex: 1,
+    flexDirection: "column",
+    gap: "inherit",
+    minBlockSize: 0,
+    overflowX: "hidden",
+    overflowY: "auto",
+  },
+  frameTitle: {
+    alignItems: "center",
+    color: tokens["--muted-foreground"],
+    display: "flex",
+    flexShrink: 0,
+    fontSize: "0.875rem",
+    minBlockSize: "2.5rem",
+    paddingInline: "0.75rem 2.75rem",
   },
   header: {
     paddingBlockEnd: {
       default: null,
-      ':is(:is([data-slot="dialog-popup"], [data-slot="sheet-popup"], [data-slot="drawer-popup"]):has([data-slot$="panel"]) > [data-slot="sheet-header"])':
+      ':is(:is([data-slot="dialog-surface"], [data-slot="sheet-surface"], [data-slot="drawer-popup"]):has([data-slot$="panel"]) > [data-slot="sheet-header"])':
         "0.75rem",
       "@media (max-width: 639px)": "1rem",
     },
@@ -145,7 +154,7 @@ const styles = stylex.create({
       "@media (min-width: 640px)": {
         default: null,
         ':is([data-slot="sheet-popup"][data-variant="inset"] [data-slot="sheet-footer"])':
-          "calc(var(--radius-md) - 1px)",
+          "calc(var(--radius) - 1px)",
       },
     },
     borderEndStartRadius: {
@@ -153,7 +162,7 @@ const styles = stylex.create({
       "@media (min-width: 640px)": {
         default: null,
         ':is([data-slot="sheet-popup"][data-variant="inset"] [data-slot="sheet-footer"])':
-          "calc(var(--radius-md) - 1px)",
+          "calc(var(--radius) - 1px)",
       },
     },
     justifyContent: {
@@ -162,17 +171,12 @@ const styles = stylex.create({
     },
   },
   footerDefault: {
-    backgroundColor:
-      "color-mix(in oklab, var(--muted, transparent) 72%, transparent)",
-    borderBlockStartColor: tokens["--border"],
-    borderBlockStartStyle: "solid",
-    borderBlockStartWidth: 1,
     paddingBlock: "1rem",
   },
   footerBare: {
     paddingBlockStart: {
       default: "1rem",
-      ':is(:is([data-slot="dialog-popup"], [data-slot="sheet-popup"], [data-slot="drawer-popup"]):has([data-slot$="panel"]) > [data-slot="sheet-footer"])':
+      ':is(:is([data-slot="dialog-surface"], [data-slot="sheet-surface"], [data-slot="drawer-popup"]):has([data-slot$="panel"]) [data-slot="sheet-footer"])':
         "0.75rem",
     },
     paddingBlockEnd: "1.5rem",
@@ -308,6 +312,7 @@ export function SheetPopup({
   showCloseButton = true,
   side = "right",
   variant = "default",
+  frameTitle,
   closeProps,
   portalProps,
   ...restProps
@@ -317,6 +322,7 @@ export function SheetPopup({
     showCloseButton?: boolean
     side?: SheetSide
     variant?: SheetVariant
+    frameTitle?: ReactNode
     closeProps?: SheetPrimitive.Close.Props
     portalProps?: SheetPrimitive.Portal.Props
   }
@@ -343,7 +349,10 @@ export function SheetPopup({
             props,
           )}
         >
-          {children}
+          <div {...stylex.props(styles.frameTitle)}>{frameTitle}</div>
+          <div data-slot="sheet-surface" {...stylex.props(styles.surface)}>
+            {children}
+          </div>
           {showCloseButton ? (
             <SheetPrimitive.Close
               aria-label="Close"

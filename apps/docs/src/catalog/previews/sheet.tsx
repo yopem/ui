@@ -31,7 +31,7 @@ export function Preview() {
       <SheetTrigger render={<Button variant="outline" />}>
         Open Sheet
       </SheetTrigger>
-      <SheetPopup>
+      <SheetPopup frameTitle="Field visit">
         <SheetHeader>
           <SheetTitle>Edit field visit</SheetTitle>
           <SheetDescription>
