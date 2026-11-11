@@ -62,8 +62,7 @@ const styles = stylex.create({
     "[data-orientation=vertical]": { inlineSize: "0.375rem" },
   },
   thumb: {
-    backgroundColor:
-      "color-mix(in oklab, var(--foreground, currentColor) 20%, transparent)",
+    backgroundColor: tokens["--input"],
     borderRadius: "9999px",
     flex: 1,
     position: "relative",
