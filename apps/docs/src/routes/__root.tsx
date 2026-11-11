@@ -96,7 +96,7 @@ function NotFoundPage() {
   )
 }
 
-const rootDocumentConfig = { position: "bottom-right" } as const
+const rootDocumentConfig = { position: "bottom-left" } as const
 
 const rootDocumentPlugins = [
   {

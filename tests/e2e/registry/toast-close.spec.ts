@@ -8,6 +8,7 @@ test("toast closes with an accessible icon button", async ({
   await openPreview(page, "toast")
   await page.getByRole("button", { name: "Default Toast", exact: true }).click()
   const toast = page.locator('[data-slot="toast-root"]').first()
+  await toast.hover()
 
   const close = toast.getByRole("button", {
     name: "Dismiss notification",

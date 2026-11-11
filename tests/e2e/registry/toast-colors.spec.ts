@@ -59,6 +59,7 @@ for (const theme of ["light", "dark"] as const) {
       await page.getByRole("button", { name, exact: true }).click()
       const root = page.locator('[data-slot="toast-root"]')
       await expect(root).toHaveCount(1)
+      await root.hover()
 
       const icon = root.locator(
         `[data-slot="toast-icon"] [data-toast-type="${type}"]`,
@@ -127,5 +128,10 @@ for (const theme of ["light", "dark"] as const) {
       body: await page.screenshot(),
       contentType: "image/png",
     })
+    await anchored.hover()
+    await anchored
+      .getByRole("button", { name: "Dismiss notification", exact: true })
+      .click()
+    await expect(anchored).toBeHidden()
   })
 }
