@@ -34,26 +34,54 @@ for (const theme of ["light", "dark"] as const) {
     await expect(
       popup.getByRole("button", { name: "Close", exact: true }),
     ).toHaveCount(1)
+    const close = popup.getByRole("button", { name: "Close", exact: true })
     const shellBox = await popup.boundingBox()
     const surfaceBox = await surface.boundingBox()
-    expect(shellBox).not.toBeNull()
-    expect(surfaceBox).not.toBeNull()
-    expect(surfaceBox!.x).toBeGreaterThan(shellBox!.x)
-    expect(surfaceBox!.y).toBeGreaterThan(shellBox!.y)
+    const closeBox = await close.boundingBox()
+
+    if (!shellBox || !surfaceBox || !closeBox)
+      throw new Error(
+        "The Drawer frame, surface, and close control must render",
+      )
+
+    expect(surfaceBox.x).toBeGreaterThan(shellBox.x)
+    expect(surfaceBox.y).toBeGreaterThan(shellBox.y)
+    expect(closeBox.x + closeBox.width / 2).toBeGreaterThan(
+      shellBox.x + shellBox.width / 2,
+    )
+    expect(closeBox.y + closeBox.height / 2).toBeLessThan(surfaceBox.y)
     await testInfo.attach(`drawer-${theme}`, {
       body: await popup.screenshot(),
       contentType: "image/png",
     })
-    await popup
-      .getByRole("button", { name: "Close", exact: true })
-      .last()
-      .click()
+    await close.click()
     await expect(popup).toBeHidden()
     await expect(trigger).toBeFocused()
     await trigger.focus()
     await page.keyboard.press("Enter")
     await expect(popup).toBeVisible()
     await page.keyboard.press("Escape")
+    await expect(popup).toBeHidden()
+    await expect(trigger).toBeFocused()
+    await trigger.click()
+    await expect(popup).toBeVisible()
+
+    const bar = popup.locator('[data-slot="drawer-bar"]')
+    const barBox = await bar.boundingBox()
+    const swipeBox = await popup.boundingBox()
+
+    if (!barBox || !swipeBox)
+      throw new Error("The Drawer swipe handle must render")
+
+    const swipeX = barBox.x + barBox.width / 2
+    const swipeY = barBox.y + barBox.height / 2
+
+    await page.mouse.move(swipeX, swipeY)
+    await page.mouse.down()
+    await page.mouse.move(swipeX, swipeBox.y + swipeBox.height + 100, {
+      steps: 12,
+    })
+    await page.mouse.up()
     await expect(popup).toBeHidden()
     await expect(trigger).toBeFocused()
   })

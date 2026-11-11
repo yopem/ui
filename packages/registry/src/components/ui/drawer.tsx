@@ -311,6 +311,7 @@ const styles = stylex.create({
     insetBlockStart: "0.125rem",
     insetInlineEnd: "0.125rem",
     position: "absolute",
+    zIndex: 1,
   },
   frameTitle: {
     alignItems: "center",
@@ -776,8 +777,9 @@ export function DrawerPopup({
           {showCloseButton ? (
             <DrawerPrimitive.Close
               aria-label="Close"
-              className={stylex.props(styles.close).className}
-              render={<Button size="icon" variant="ghost" />}
+              render={
+                <Button size="icon" variant="ghost" xstyle={styles.close} />
+              }
             >
               <XIcon {...stylex.props(styles.closeIcon)} />
             </DrawerPrimitive.Close>
