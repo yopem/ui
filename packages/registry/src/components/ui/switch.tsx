@@ -58,14 +58,13 @@ const styles = stylex.create({
     borderRadius: "9999px",
     boxShadow: tokens["--shadow-sm"],
     display: "block",
-    pointerEvents: "none",
-    transform: {
-      default: "translateX(4px)",
-      "[data-checked]": "translateX(22px)",
-      ":dir(rtl)": "translateX(-4px)",
-      "[data-checked]:dir(rtl)": "translateX(-22px)",
+    insetInlineStart: {
+      default: "4px",
+      "[data-checked]": "22px",
     },
-    transition: "transform .15s, border-radius .15s, scale .1s .1s",
+    pointerEvents: "none",
+    position: "relative",
+    transition: "inset-inline-start .15s, border-radius .15s, scale .1s .1s",
     willChange: "transform",
     scale: {
       default: null,

@@ -70,6 +70,8 @@ published React component package.
 - Add `AutocompleteInput.controlXstyle` for its rendered Input wrapper.
 - Update Switch with a 37px by 18px track and an 8px thumb. Preserve RTL
   placement and coarse-pointer targets.
+- Use logical positioning for Switch thumb travel. Honor text direction
+  independently of document language.
 - Align Calendar, OTPField, Tabs, and Toolbar controls with the revised surfaces
   and spacing.
 - Start the Toolbar font selector with the valid `geist` option.

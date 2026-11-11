@@ -84,6 +84,26 @@ test("thumb moves toward the left in RTL", async ({ page }) => {
     .toBeLessThan(off.x)
 })
 
+test("thumb follows explicit LTR direction with Arabic language", async ({
+  page,
+}) => {
+  await page.locator("html").evaluate((element) => {
+    element.setAttribute("lang", "ar")
+    element.setAttribute("dir", "ltr")
+  })
+
+  const control = page.getByRole("switch", { name: "Trail condition alerts" })
+  const thumb = control.locator('[data-slot="switch-thumb"]')
+  const off = await thumb.boundingBox()
+
+  if (!off) throw new Error("Switch thumb must have visible bounds")
+  await control.click()
+  await expect(control).toBeChecked()
+  await expect
+    .poll(async () => (await thumb.boundingBox())?.x ?? 0)
+    .toBeGreaterThan(off.x)
+})
+
 test("coarse pointer can activate outside the visual track", async ({
   page,
   isMobile,
