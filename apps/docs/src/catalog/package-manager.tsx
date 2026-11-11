@@ -160,7 +160,7 @@ const styles = stylex.create({
     blockSize: "1.75rem",
     minInlineSize: "1.75rem",
     paddingInline: "0.5rem",
-    borderRadius: tokens["--radius-md"],
+    borderRadius: tokens["--radius"],
     borderColor: {
       default: "transparent",
       "[data-pressed]": tokens["--border"],
