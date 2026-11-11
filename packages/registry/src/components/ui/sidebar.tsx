@@ -43,7 +43,7 @@ const SIDEBAR_COOKIE_NAME = "sidebar_state"
 
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7
 
-const SIDEBAR_WIDTH = "16rem"
+const SIDEBAR_WIDTH = "14rem"
 
 const SIDEBAR_WIDTH_MOBILE = "18rem"
 
@@ -191,7 +191,7 @@ const styles = stylex.create({
       "@media (min-width: 800px)": {
         default: null,
         ':is([data-slot="sidebar"][data-variant="inset"] ~ *)':
-          tokens["--radius-md"],
+          tokens["--radius"],
       },
     },
     margin: {
@@ -324,13 +324,14 @@ const styles = stylex.create({
   },
   menuItem: { position: "relative" },
   menuButton: {
+    borderWidth: 0,
     paddingInlineEnd: {
       default: null,
       ':is([data-slot="sidebar-menu-item"]:has([data-sidebar="menu-action"]) *)':
         "2rem",
     },
     alignItems: "center",
-    borderRadius: tokens["--radius-md"],
+    borderRadius: tokens["--radius-sm"],
     color: {
       default: tokens["--sidebar-foreground"],
       ":hover": tokens["--sidebar-accent-foreground"],
@@ -370,9 +371,15 @@ const styles = stylex.create({
       "[data-active=true]": 500,
     },
   },
-  menuButtonDefault: { blockSize: "2rem", fontSize: "0.875rem" },
+  menuButtonDefault: {
+    blockSize: { default: "2rem", "@media (pointer: coarse)": "2.75rem" },
+    fontSize: "0.875rem",
+  },
   menuButtonLarge: { blockSize: "3rem", fontSize: "0.875rem" },
-  menuButtonSmall: { blockSize: "1.75rem", fontSize: "0.75rem" },
+  menuButtonSmall: {
+    blockSize: { default: "1.75rem", "@media (pointer: coarse)": "2.75rem" },
+    fontSize: "0.75rem",
+  },
   menuButtonOutline: {
     backgroundColor: tokens["--background"],
     boxShadow: `0 0 0 1px ${tokens["--sidebar-border"]}`,
@@ -468,7 +475,7 @@ const styles = stylex.create({
   },
   skeletonIcon: {
     blockSize: "1rem",
-    borderRadius: tokens["--radius-md"],
+    borderRadius: tokens["--radius"],
     inlineSize: "1rem",
   },
   widths: (sidebarWidth: string, sidebarWidthIcon: string) => ({
@@ -488,9 +495,6 @@ const styles = stylex.create({
       default: "flex",
       ':is([data-slot="sidebar"][data-collapsible="icon"] *)': "none",
     },
-    borderInlineStartColor: tokens["--sidebar-border"],
-    borderInlineStartStyle: "solid",
-    borderInlineStartWidth: 1,
     flexDirection: "column",
     gap: "0.25rem",
     marginInline: "0.875rem",
@@ -502,7 +506,7 @@ const styles = stylex.create({
   subButton: {
     alignItems: "center",
     blockSize: { default: "2rem", "@media (min-width: 640px)": "1.75rem" },
-    borderRadius: tokens["--radius-md"],
+    borderRadius: tokens["--radius-sm"],
     color: tokens["--sidebar-foreground"],
     display: "flex",
     gap: "0.5rem",
