@@ -24,6 +24,7 @@ const styles = stylex.create({
     },
   },
   table: {
+    "--table-row-border-width": "0px",
     borderSpacing: {
       default: 0,
       ':is([data-slot="table-container"][data-variant="card"] [data-slot="table"])': 0,
@@ -37,46 +38,48 @@ const styles = stylex.create({
         "separate",
     },
   },
+  rowBorders: { "--table-row-border-width": "1px" },
   body: {
     position: "relative",
     borderRadius: {
       default: null,
       ':is([data-slot="table-container"][data-variant="card"] [data-slot="table-body"])':
-        tokens["--radius-md"],
+        tokens["--radius"],
     },
     boxShadow: {
       default: null,
       ':is([data-slot="table-container"][data-variant="card"] [data-slot="table-body"])':
-        "0 1px 2px color-mix(in oklab, #000 5%, transparent)",
+        tokens["--shadow-sm"],
     },
   },
   footer: {
     backgroundColor: "transparent",
     borderBlockStartColor: tokens["--border"],
     borderBlockStartStyle: "solid",
-    borderBlockStartWidth: 1,
+    borderBlockStartWidth: "var(--table-row-border-width, 0px)",
     fontWeight: 500,
   },
   row: {
     borderBlockEndColor: tokens["--border"],
     borderBlockEndStyle: "solid",
     borderBlockEndWidth: {
-      default: 1,
+      default: "var(--table-row-border-width, 0px)",
+      ':is([data-slot="table-body"] > [data-slot="table-row"]:last-child)': 0,
       ':is([data-slot="table-container"][data-variant="card"] [data-slot="table-row"])': 0,
     },
     position: "relative",
     backgroundColor: {
       default: "transparent",
-      ":hover": "color-mix(in srgb, var(--background), #000 2%)",
-      "[data-state=selected]": "color-mix(in srgb, var(--background), #000 4%)",
+      ":hover": tokens["--muted"],
+      "[data-state=selected]": tokens["--accent"],
     },
   },
   head: {
-    blockSize: "2.5rem",
+    blockSize: "3rem",
     color: tokens["--muted-foreground"],
     fontWeight: 500,
     lineHeight: 1,
-    paddingInline: "0.625rem",
+    paddingInline: "1rem",
     textAlign: "start",
     verticalAlign: "middle",
     whiteSpace: "nowrap",
@@ -96,22 +99,22 @@ const styles = stylex.create({
   cell: {
     backgroundClip: "padding-box",
     lineHeight: 1,
-    padding: "0.625rem",
+    padding: "1rem",
     verticalAlign: "middle",
     whiteSpace: "nowrap",
     backgroundColor: {
       default: null,
       ':is([data-slot="table-container"][data-variant="card"] [data-slot="table-cell"])':
         tokens["--card"],
+      ':is([data-slot="table-container"][data-variant="card"] [data-slot="table-row"][data-state="selected"] [data-slot="table-cell"])':
+        tokens["--accent"],
       ':is([data-slot="table-container"][data-variant="card"] [data-slot="table-row"]:hover [data-slot="table-cell"])':
-        "color-mix(in srgb, var(--card), #000 2%)",
-      ':is([data-theme="dark"] [data-slot="table-container"][data-variant="card"] [data-slot="table-row"]:hover [data-slot="table-cell"])':
-        "color-mix(in srgb, var(--card), #fff 2%)",
+        tokens["--muted"],
     },
     borderBlockEnd: {
       default: null,
       ':is([data-slot="table-container"][data-variant="card"] [data-slot="table-cell"])':
-        "1px solid var(--border, currentColor)",
+        "var(--table-row-border-width, 0px) solid var(--border, currentColor)",
       ':is([data-slot="table-container"][data-variant="card"] [data-slot="table-row"]:last-child [data-slot="table-cell"])': 0,
     },
     inlineSize: {
@@ -140,6 +143,7 @@ export type TableProps = StyleXComponentProps<
   ComponentProps<"table">,
   {
     variant?: TableVariant
+    rowBorders?: boolean
     render?: useRender.ComponentProps<"div">["render"]
   }
 >
@@ -148,6 +152,7 @@ export function Table({
   xstyle: consumerXstyle,
   className,
   variant = "default",
+  rowBorders = false,
   render,
   ...restProps
 }: StyleXComponentProps<TableProps>) {
@@ -159,7 +164,12 @@ export function Table({
       <table
         data-slot="table"
         {...mergeStylexProps(
-          stylexProps(className, styles.table, xstyle),
+          stylexProps(
+            className,
+            styles.table,
+            rowBorders && styles.rowBorders,
+            xstyle,
+          ),
           props,
         )}
       />
