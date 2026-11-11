@@ -178,8 +178,16 @@ for (const [path, previous, next] of [
     }
 
     if (next) {
-      await nav.getByRole("link", { name: /^Next:/ }).click()
+      const nextLink = nav.getByRole("link", { name: /^Next:/ })
+
+      const nextName = (await nextLink.innerText()).replace(/^Next:\s*/, "")
+
+      expect(nextName).toBeTruthy()
+      await nextLink.click()
       await expect(page).toHaveURL(new RegExp(`${next}$`))
+      await expect(
+        page.getByRole("heading", { level: 1, name: nextName, exact: true }),
+      ).toBeVisible()
 
       const mobile = (page.viewportSize()?.width ?? 0) < 768
 
