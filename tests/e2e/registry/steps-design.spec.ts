@@ -14,15 +14,9 @@ for (const theme of ["light", "dark"] as const) {
     await openPreview(page, "steps")
     const list = page.locator('[data-slot="steps"]').last()
 
-    const completed = list
-      .getByRole("listitem")
-      .filter({ hasText: "Choose equipment" })
-
-    const current = list.getByRole("listitem").filter({ hasText: "Plan visit" })
-
-    const upcoming = list
-      .getByRole("listitem")
-      .filter({ hasText: "Confirm loan" })
+    const completed = list.locator('[data-state="completed"]')
+    const current = list.locator('[aria-current="step"]')
+    const upcoming = list.locator('[data-state="upcoming"]')
 
     await expect(current).toHaveAttribute("aria-current", "step")
     await expect(completed).toHaveAttribute("data-state", "completed")
@@ -43,7 +37,7 @@ for (const theme of ["light", "dark"] as const) {
     for (const item of [completed, current]) {
       const marker = await item.evaluate((element) => ({
         background: getComputedStyle(element, "::before").backgroundColor,
-        color: getComputedStyle(element, "::before").color,
+        color: getComputedStyle(element, "::marker").color,
       }))
 
       expect(marker.background).toBe(colors.accent)
@@ -52,7 +46,7 @@ for (const theme of ["light", "dark"] as const) {
 
     expect(
       await completed.evaluate(
-        (element) => getComputedStyle(element, "::before").content,
+        (element) => getComputedStyle(element, "::marker").content,
       ),
     ).toContain("✓")
 

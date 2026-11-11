@@ -7,28 +7,32 @@ import * as stylex from "@stylexjs/stylex"
 
 const styles = stylex.create({
   root: {
-    display: "flex",
-    flexDirection: "column",
-    counterReset: "step",
     listStyleType: "decimal",
     marginBlock: 0,
-    paddingInlineStart: 0,
+    paddingInlineStart: "1.5rem",
   },
   item: {
     color: {
       default: tokens["--muted-foreground"],
       "[aria-current=step]": tokens["--foreground"],
     },
-    counterIncrement: "step",
     fontSize: "0.875rem",
     fontWeight: 400,
+    isolation: "isolate",
     lineHeight: "1.5rem",
     minBlockSize: "2.75rem",
-    paddingInlineStart: "2.25rem",
+    paddingInlineStart: "0.75rem",
     position: "relative",
-    "::marker": { fontSize: 0 },
+    "::marker": {
+      color: {
+        default: tokens["--foreground"],
+        '[data-state="completed"]': tokens["--accent-solid-foreground"],
+        '[data-state="current"]': tokens["--accent-solid-foreground"],
+      },
+      content: { default: "normal", '[data-state="completed"]': '"✓  "' },
+      fontSize: "0.75rem",
+    },
     "::before": {
-      alignItems: "center",
       backgroundColor: {
         default: tokens["--muted"],
         '[data-state="completed"]': tokens["--accent-solid"],
@@ -44,19 +48,12 @@ const styles = stylex.create({
       borderWidth: 1,
       blockSize: "1.5rem",
       boxSizing: "border-box",
-      color: {
-        default: tokens["--foreground"],
-        '[data-state="completed"]': tokens["--accent-solid-foreground"],
-        '[data-state="current"]': tokens["--accent-solid-foreground"],
-      },
-      content: { default: "counter(step)", '[data-state="completed"]': '"✓"' },
-      display: "flex",
-      fontSize: "0.75rem",
+      content: '""',
       inlineSize: "1.5rem",
       insetBlockStart: 0,
-      insetInlineStart: 0,
-      justifyContent: "center",
+      insetInlineStart: "-1.5rem",
       position: "absolute",
+      zIndex: -1,
     },
     "::after": {
       backgroundColor: tokens["--border"],
@@ -65,8 +62,9 @@ const styles = stylex.create({
       display: { default: "block", ":last-child": "none" },
       inlineSize: 1,
       insetBlockStart: "1.5rem",
-      insetInlineStart: "0.71875rem",
+      insetInlineStart: "-0.78125rem",
       position: "absolute",
+      zIndex: -1,
     },
   },
 })

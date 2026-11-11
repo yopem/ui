@@ -165,6 +165,7 @@ const usageNoteValues = {
   ],
   steps: [
     "Compose StepsItem inside Steps in process order. Set status=current for the active item; the current step is exposed with aria-current=step.",
+    "The visible numbers follow native start, reversed, and item value attributes.",
   ],
   group: [
     "Wrap adjacent controls in Group. Apply groupItemStyles.item through xstyle on each direct control. For Input and Textarea wrappers, use controlXstyle instead. GroupText and GroupSeparator apply joining styles themselves.",
