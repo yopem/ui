@@ -6,7 +6,7 @@ import type { Context, ComponentProps } from "react"
 import { NumberField as NumberFieldPrimitive } from "@base-ui/react/number-field"
 import { Label } from "@registry/components/ui/label"
 import { mergeStylexProps, stylexProps } from "@registry/lib/stylex"
-import { themeMarker, tokens } from "@registry/styles/tokens.stylex"
+import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import { MinusIcon, PlusIcon } from "lucide-react"
 import { createContext, useId, useContext, useState } from "react"
@@ -17,7 +17,8 @@ const styles = stylex.create({
     display: "flex",
     flexDirection: "column",
     gap: "0.5rem",
-    inlineSize: "100%",
+    inlineSize: "fit-content",
+    maxInlineSize: "100%",
     lineHeight: {
       default: null,
       ':is([data-slot="group"] *)': "1.5rem",
@@ -37,18 +38,17 @@ const styles = stylex.create({
       },
     },
   },
+  fullWidth: {
+    inlineSize: "100%",
+  },
   group: {
     backgroundClip: "padding-box",
-    backgroundColor: {
-      default: tokens["--background"],
-      [stylex.when.ancestor('[data-theme="dark"]', themeMarker)]:
-        "color-mix(in oklab, var(--input, currentColor) 32%, transparent)",
-    },
+    backgroundColor: tokens["--control-background"],
     borderColor: tokens["--input"],
-    borderRadius: tokens["--radius-md"],
+    borderRadius: tokens["--radius"],
     borderStyle: "solid",
     borderWidth: 1,
-    boxShadow: "0 1px 2px color-mix(in oklab, #000 5%, transparent)",
+    boxShadow: tokens["--shadow-sm"],
     color: tokens["--foreground"],
     display: "flex",
     fontSize: {
@@ -109,46 +109,47 @@ const styles = stylex.create({
     },
   },
   decrement: {
-    borderEndStartRadius: "calc(var(--radius-md) - 1px)",
-    borderStartStartRadius: "calc(var(--radius-md) - 1px)",
+    borderEndStartRadius: "calc(var(--radius) - 1px)",
+    borderStartStartRadius: "calc(var(--radius) - 1px)",
   },
   increment: {
-    borderEndEndRadius: "calc(var(--radius-md) - 1px)",
-    borderStartEndRadius: "calc(var(--radius-md) - 1px)",
+    borderEndEndRadius: "calc(var(--radius) - 1px)",
+    borderStartEndRadius: "calc(var(--radius) - 1px)",
   },
   input: {
     backgroundColor: "transparent",
     blockSize: {
-      default: "2.125rem",
+      default: "2.375rem",
       "@media (min-width: 640px)": {
-        default: "1.875rem",
+        default: "2.375rem",
         ':is([data-slot="number-field"][data-size="sm"] [data-slot="number-field-input"])':
           "1.875rem",
         ':is([data-slot="number-field"][data-size="lg"] [data-slot="number-field-input"])':
-          "2.375rem",
+          "2.875rem",
       },
       ':is([data-slot="number-field"][data-size="sm"] [data-slot="number-field-input"])':
         "1.875rem",
       ':is([data-slot="number-field"][data-size="lg"] [data-slot="number-field-input"])':
-        "2.375rem",
+        "2.875rem",
     },
     color: tokens["--foreground"],
     flexGrow: 1,
     fontVariantNumeric: "tabular-nums",
-    inlineSize: "100%",
+    inlineSize: "4.5rem",
+    minInlineSize: 0,
     lineHeight: {
-      default: "2.125rem",
+      default: "2.375rem",
       "@media (min-width: 640px)": {
-        default: "1.875rem",
+        default: "2.375rem",
         ':is([data-slot="number-field"][data-size="sm"] [data-slot="number-field-input"])':
           "1.875rem",
         ':is([data-slot="number-field"][data-size="lg"] [data-slot="number-field-input"])':
-          "2.375rem",
+          "2.875rem",
       },
       ':is([data-slot="number-field"][data-size="sm"] [data-slot="number-field-input"])':
         "1.875rem",
       ':is([data-slot="number-field"][data-size="lg"] [data-slot="number-field-input"])':
-        "2.375rem",
+        "2.875rem",
     },
 
     outline: "none",
@@ -167,7 +168,7 @@ const styles = stylex.create({
     cursor: "ew-resize",
   },
   cursor: {
-    filter: "drop-shadow(0 1px 1px #0008)",
+    filter: "drop-shadow(0 1px 1px var(--muted-foreground))",
   },
   icon: {
     blockSize: {
@@ -191,11 +192,13 @@ export function NumberField({
   id,
   className,
   size = "default",
+  fullWidth = false,
   ...restProps
 }: StyleXComponentProps<
   NumberFieldPrimitive.Root.Props,
   {
     size?: "sm" | "default" | "lg"
+    fullWidth?: boolean
   }
 >) {
   const props = restProps
@@ -214,7 +217,12 @@ export function NumberField({
         data-slot="number-field"
         id={fieldId}
         {...mergeStylexProps(
-          stylexProps(className, styles.root, xstyle),
+          stylexProps(
+            className,
+            styles.root,
+            fullWidth && styles.fullWidth,
+            xstyle,
+          ),
           props,
         )}
       />
