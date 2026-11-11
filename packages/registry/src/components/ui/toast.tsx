@@ -7,7 +7,7 @@ import type { ComponentProps } from "react"
 import { Toast } from "@base-ui/react/toast"
 import { buttonVariants } from "@registry/components/ui/button"
 import { mergeStylexProps } from "@registry/lib/stylex"
-import { themeMarker, tokens } from "@registry/styles/tokens.stylex"
+import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import {
   CircleAlertIcon,
@@ -15,6 +15,7 @@ import {
   InfoIcon,
   LoaderCircleIcon,
   TriangleAlertIcon,
+  XIcon,
 } from "lucide-react"
 
 const successOdd = stylex.keyframes({
@@ -69,13 +70,12 @@ const styles = stylex.create({
   },
   root: {
     backgroundClip: "padding-box",
-    backgroundColor:
-      "color-mix(in srgb, var(--popover), #000 calc(1% * max(0, var(--toast-index, 0))))",
+    backgroundColor: tokens["--popover"],
     borderColor: tokens["--border"],
-    borderRadius: tokens["--radius-md"],
+    borderRadius: tokens["--radius"],
     borderStyle: "solid",
     borderWidth: 1,
-    boxShadow: "0 10px 15px -3px color-mix(in oklab, #000 5%, transparent)",
+    boxShadow: tokens["--shadow-md"],
     color: tokens["--popover-foreground"],
     blockSize: "var(--toast-calc-height)",
     inlineSize: "100%",
@@ -89,18 +89,6 @@ const styles = stylex.create({
     "--toast-peek": "0.75rem",
     "--toast-scale": "calc(max(0, 1 - (var(--toast-index) * .1)))",
     "--toast-shrink": "calc(1 - var(--toast-scale))",
-    "::before": {
-      borderRadius: "calc(var(--radius-md) - 1px)",
-      boxShadow: {
-        default: "0 1px rgb(0 0 0 / 0.04)",
-        [stylex.when.ancestor('[data-theme="dark"]', themeMarker)]:
-          "0 -1px rgb(255 255 255 / 0.06)",
-      },
-      content: '""',
-      inset: 0,
-      pointerEvents: "none",
-      position: "absolute",
-    },
     "::after": {
       blockSize: "calc(var(--toast-gap) + 1px)",
       content: '""',
@@ -246,29 +234,16 @@ const styles = stylex.create({
     position: "relative",
     textWrap: "balance",
     transitionProperty: "scale, opacity",
-    "::before": {
-      boxShadow: {
-        default: "0 1px rgb(0 0 0 / 0.04)",
-        [stylex.when.ancestor('[data-theme="dark"]', themeMarker)]:
-          "0 -1px rgb(255 255 255 / 0.06)",
-      },
-      content: '""',
-      inset: 0,
-      pointerEvents: "none",
-      position: "absolute",
-    },
     "[data-ending-style]": { opacity: 0, scale: 0.98 },
     "[data-starting-style]": { opacity: 0, scale: 0.98 },
   },
   anchoredTooltip: {
-    borderRadius: tokens["--radius-md"],
-    boxShadow: "0 4px 6px -1px color-mix(in oklab, #000 5%, transparent)",
-    "::before": { borderRadius: "calc(var(--radius-md) - 1px)" },
+    borderRadius: tokens["--radius"],
+    boxShadow: tokens["--shadow-sm"],
   },
   anchoredDefault: {
-    borderRadius: tokens["--radius-md"],
-    boxShadow: "0 10px 15px -3px color-mix(in oklab, #000 5%, transparent)",
-    "::before": { borderRadius: "calc(var(--radius-md) - 1px)" },
+    borderRadius: tokens["--radius"],
+    boxShadow: tokens["--shadow-md"],
   },
   tooltipContent: {
     paddingBlock: "0.25rem",
@@ -362,6 +337,13 @@ function DefaultToastContent({ toast }: { toast: Toast.Root.Props["toast"] }) {
           {toast.actionProps.children}
         </Toast.Action>
       ) : null}
+      <Toast.Close
+        aria-label="Dismiss notification"
+        className={buttonVariants({ variant: "ghost", size: "icon-xs" })}
+        data-slot="toast-close"
+      >
+        <XIcon size={16} aria-hidden="true" />
+      </Toast.Close>
     </Toast.Content>
   )
 }
@@ -432,6 +414,7 @@ function AnchoredToasts({
     <Toast.Portal data-slot="toast-portal-anchored" {...portalProps}>
       <Toast.Viewport
         {...stylex.props(styles.anchoredViewport)}
+        aria-label="Anchored notifications"
         data-slot="toast-viewport-anchored"
       >
         {toasts.map((toast) => {
