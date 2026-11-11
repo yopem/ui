@@ -1,9 +1,11 @@
 import { expect, test } from "@playwright/test"
 
+import { openPreview } from "./helpers"
+
 test("field borders do not change their controls", async ({
   page,
 }, testInfo) => {
-  await page.goto("/components/field")
+  await openPreview(page, "field")
 
   const preview = page.locator('[aria-label$="live preview"]').first()
   const normal = preview.getByRole("textbox", { name: "Name", exact: true })
@@ -31,7 +33,7 @@ test("field borders do not change their controls", async ({
 test("fieldset borders preserve legend and disabled behavior", async ({
   page,
 }, testInfo) => {
-  await page.goto("/components/fieldset")
+  await openPreview(page, "fieldset")
 
   const preview = page.locator('[aria-label$="live preview"]').first()
   const normal = preview.getByRole("group", { name: "Station membership" })
@@ -48,7 +50,7 @@ test("fieldset borders preserve legend and disabled behavior", async ({
   await expect(disabledInput.locator("..")).toHaveCSS("border-top-width", "1px")
   await expect(normal).not.toHaveAttribute("bordered")
   await expect(bordered).not.toHaveAttribute("bordered")
-  await expect(bordered.locator("legend")).toHaveText("Archived membership")
+  await expect(bordered).toHaveAccessibleName("Archived membership")
   await expect(disabledInput).toBeDisabled()
   await preview.getByText("Group", { exact: true }).click()
   await expect(normalInput).toBeFocused()

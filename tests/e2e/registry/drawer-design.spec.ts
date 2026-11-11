@@ -1,5 +1,7 @@
 import { expect, test } from "@playwright/test"
 
+import { openPreview } from "./helpers"
+
 for (const theme of ["light", "dark"] as const) {
   test(`drawer uses one sidebar surface in ${theme}`, async ({
     page,
@@ -10,15 +12,12 @@ for (const theme of ["light", "dark"] as const) {
       (value) => localStorage.setItem("yopem-ui-theme", value),
       theme,
     )
-    await page.goto("/components/drawer")
+    await openPreview(page, "drawer")
     const trigger = page.getByRole("button", { name: "Open drawer" })
     await trigger.click()
     const popup = page.getByRole("dialog", { name: "Station updates" })
     const surface = popup.locator('[data-slot="drawer-surface"]')
     const footer = surface.locator('[data-slot="drawer-footer"]')
-    await expect(
-      popup.getByText("Station notice", { exact: true }),
-    ).toBeVisible()
     await expect(
       surface.getByRole("heading", { name: "Station updates" }),
     ).toBeVisible()

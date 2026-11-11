@@ -3,6 +3,8 @@ import type { Page } from "@playwright/test"
 import AxeBuilder from "@axe-core/playwright"
 import { expect, test } from "@playwright/test"
 
+import { openPreview } from "./helpers"
+
 async function openLayoutPreview(
   page: Page,
   theme: "light" | "dark" = "light",
@@ -12,6 +14,9 @@ async function openLayoutPreview(
     theme,
   )
   await page.goto("/docs/layout")
+  await expect(
+    page.getByRole("button", { name: "Search documentation", exact: true }),
+  ).toBeEnabled()
   await page.getByText("Show live layout examples", { exact: true }).click()
   await expect(page.getByTestId("layout-root")).toBeVisible()
   await expect(page.getByTestId("inspect-refs")).toBeEnabled()
@@ -424,7 +429,7 @@ test.describe("layout and typography primitives", () => {
   }) => {
     await openLayoutPreview(page)
 
-    const name = page.getByLabel("Name")
+    const name = page.getByLabel("Name", { exact: true })
     await expect(name).toHaveAttribute("name", "name")
     await expect(name).toHaveAttribute("required", "")
     await expect(name).toHaveJSProperty("type", "text")
@@ -471,7 +476,7 @@ for (const [name, tag] of [
   test(`@a11y ${name} keeps typography defaults and semantics`, async ({
     page,
   }) => {
-    await page.goto(`/components/${name}`)
+    await openPreview(page, name)
     const element = page.locator(`[data-slot="${name}"]`).first()
     await expect(element).toBeVisible()
     await expect(element).toHaveJSProperty("tagName", tag)

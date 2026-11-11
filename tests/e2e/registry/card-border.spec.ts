@@ -1,9 +1,11 @@
 import { expect, test } from "@playwright/test"
 
+import { openPreview } from "./helpers"
+
 test("cards support bordered and borderless surfaces", async ({
   page,
 }, testInfo) => {
-  await page.goto("/components/card")
+  await openPreview(page, "card")
   const preview = page.locator('[aria-label$="live preview"]')
   const card = preview.locator('[data-slot="card"]').first()
   const borderless = preview.getByLabel("Borderless card")

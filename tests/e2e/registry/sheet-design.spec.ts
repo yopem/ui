@@ -1,5 +1,7 @@
 import { expect, test } from "@playwright/test"
 
+import { openPreview } from "./helpers"
+
 for (const theme of ["light", "dark"] as const) {
   test(`sheet frame and footer use surface colors in ${theme}`, async ({
     page,
@@ -10,7 +12,7 @@ for (const theme of ["light", "dark"] as const) {
       (value) => localStorage.setItem("yopem-ui-theme", value),
       theme,
     )
-    await page.goto("/components/sheet")
+    await openPreview(page, "sheet")
     await page.getByRole("button", { name: "Open Sheet" }).click()
 
     const popup = page.getByRole("dialog", { name: "Edit field visit" })
@@ -44,7 +46,7 @@ for (const theme of ["light", "dark"] as const) {
 test("sheet focuses the input and restores focus after close and Escape", async ({
   page,
 }) => {
-  await page.goto("/components/sheet")
+  await openPreview(page, "sheet")
   const trigger = page.getByRole("button", { name: "Open Sheet" })
   await trigger.focus()
   await page.keyboard.press("Enter")
@@ -66,7 +68,7 @@ test("sheet remains usable in a short mobile viewport", async ({
   page,
 }, testInfo) => {
   await page.setViewportSize({ width: 375, height: 240 })
-  await page.goto("/components/sheet")
+  await openPreview(page, "sheet")
   await page.getByRole("button", { name: "Open Sheet" }).click()
   const popup = page.getByRole("dialog", { name: "Edit field visit" })
   const save = popup.getByRole("button", { name: "Save" })

@@ -1,6 +1,8 @@
 import AxeBuilder from "@axe-core/playwright"
 import { expect, test } from "@playwright/test"
 
+import { openPreview } from "./helpers"
+
 for (const theme of ["light", "dark"] as const) {
   for (const [slug, tag] of [
     ["aspect-ratio", "DIV"],
@@ -13,7 +15,7 @@ for (const theme of ["light", "dark"] as const) {
         (value) => localStorage.setItem("yopem-ui-theme", value),
         theme,
       )
-      await page.goto(`/components/${slug}`)
+      await openPreview(page, slug)
       const preview = page.getByLabel(/live preview$/).first()
       const element = preview.locator(`[data-slot="${slug}"]`).first()
       await expect(element).toBeVisible()

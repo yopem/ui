@@ -2,6 +2,8 @@ import { expect, test } from "@playwright/test"
 import { readdir } from "node:fs/promises"
 import { resolve } from "node:path"
 
+import { openPreview } from "./helpers"
+
 const previews = (
   await readdir(
     resolve(import.meta.dirname, "../../../apps/docs/src/catalog/previews"),
@@ -17,7 +19,7 @@ test.describe("server-rendered previews", () => {
   test("preview controls render without waiting for client JavaScript", async ({
     page,
   }) => {
-    await page.goto("/components/popover")
+    await openPreview(page, "popover")
     await expect(
       page.getByRole("button", { name: "Open Popover" }),
     ).toBeVisible()
@@ -40,7 +42,7 @@ for (const slug of previews) {
       (value) => localStorage.setItem("yopem-ui-theme", value),
       theme,
     )
-    const response = await page.goto(`/components/${slug}`)
+    const response = await openPreview(page, slug)
     expect(response?.status(), slug).toBe(200)
     await expect(
       page.getByRole("heading", { name: "Preview", exact: true }),

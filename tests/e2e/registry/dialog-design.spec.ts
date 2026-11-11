@@ -1,5 +1,7 @@
 import { expect, test } from "@playwright/test"
 
+import { openPreview } from "./helpers"
+
 for (const theme of ["light", "dark"] as const) {
   for (const kind of ["dialog", "alert-dialog"] as const) {
     test(`${kind} has an inset surface in ${theme}`, async ({
@@ -11,7 +13,7 @@ for (const theme of ["light", "dark"] as const) {
         (value) => localStorage.setItem("yopem-ui-theme", value),
         theme,
       )
-      await page.goto(`/components/${kind}`)
+      await openPreview(page, kind)
 
       const trigger = page
         .getByRole("button", {
@@ -52,7 +54,7 @@ for (const theme of ["light", "dark"] as const) {
 test("dialog keeps input focus, dismisses, and returns focus", async ({
   page,
 }) => {
-  await page.goto("/components/dialog")
+  await openPreview(page, "dialog")
   const trigger = page.getByRole("button", { name: "Open Dialog" })
   await trigger.focus()
   await page.keyboard.press("Enter")
@@ -70,7 +72,7 @@ test("dialog keeps input focus, dismisses, and returns focus", async ({
 test("alert close cancels without activating the destructive action", async ({
   page,
 }) => {
-  await page.goto("/components/alert-dialog")
+  await openPreview(page, "alert-dialog")
 
   const trigger = page
     .getByRole("button", { name: "Delete field note" })
@@ -101,7 +103,7 @@ test("alert close cancels without activating the destructive action", async ({
 
 test("dialog remains usable in a short viewport", async ({ page }) => {
   await page.setViewportSize({ width: 375, height: 240 })
-  await page.goto("/components/dialog")
+  await openPreview(page, "dialog")
   await page.getByRole("button", { name: "Open Dialog" }).click()
   const dialog = page.getByRole("dialog", { name: "Edit reservation" })
   const save = dialog.getByRole("button", { name: "Save" })

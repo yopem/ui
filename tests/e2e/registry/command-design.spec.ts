@@ -1,5 +1,7 @@
 import { expect, test } from "@playwright/test"
 
+import { openPreview } from "./helpers"
+
 for (const theme of ["light", "dark"] as const) {
   test(`command palette surface and search in ${theme}`, async ({
     page,
@@ -9,7 +11,7 @@ for (const theme of ["light", "dark"] as const) {
       (value) => localStorage.setItem("yopem-ui-theme", value),
       theme,
     )
-    await page.goto("/components/command")
+    await openPreview(page, "command")
     const trigger = page.getByRole("button", { name: /Open Command Palette/ })
     await expect(trigger).toBeEnabled()
     await trigger.focus()
@@ -102,6 +104,9 @@ test("homepage and docs use the same Command example", async ({
 
   for (const path of ["/components/command", "/"]) {
     await page.goto(path)
+    await expect(
+      page.getByRole("button", { name: "Search documentation", exact: true }),
+    ).toBeEnabled()
 
     if (path === "/") {
       await page

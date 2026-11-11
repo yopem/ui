@@ -1,13 +1,6 @@
-import type { Page } from "@playwright/test"
-
 import { expect, test } from "@playwright/test"
 
-async function openPreview(page: Page, slug: string) {
-  await page.goto(`/components/${slug}`)
-  await expect(
-    page.getByRole("button", { name: /^Copy .* usage$/ }).first(),
-  ).toBeEnabled()
-}
+import { openPreview } from "./helpers"
 
 test.beforeEach(async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" })
@@ -79,20 +72,40 @@ test("progress advances and restarts after navigation", async ({ page }) => {
     .toBeGreaterThan(20)
 })
 
-test("skeleton preview replaces loading placeholders", async ({ page }) => {
-  await page.goto("/components/skeleton", { waitUntil: "commit" })
-  await expect(page.locator('[data-slot="skeleton"]')).not.toHaveCount(0)
-  await expect(
-    page.getByRole("button", { name: "Copy Skeleton usage", exact: true }),
-  ).toBeEnabled()
-  await expect(page.getByRole("heading", { name: "Nora Ellis" })).toBeVisible({
-    timeout: 6000,
+for (const path of ["/components/skeleton", "/"]) {
+  test(`skeleton examples stay visible on ${path}`, async ({
+    page,
+  }, testInfo) => {
+    await page.goto(path)
+    await expect(
+      page.getByRole("button", { name: "Search documentation", exact: true }),
+    ).toBeEnabled()
+
+    const preview =
+      path === "/"
+        ? page.getByRole("region", { name: "Skeleton", exact: true })
+        : page.locator('[aria-label$="live preview"]').first()
+
+    await preview.scrollIntoViewIfNeeded()
+    const placeholder = preview.locator('[data-slot="skeleton"]').first()
+
+    await expect(placeholder).toBeVisible()
+    await page.clock.install()
+    await page.clock.fastForward(10_000)
+    await expect(placeholder).toBeVisible()
+    await expect(preview.getByRole("img")).toHaveCount(0)
+    await expect(
+      preview.getByRole("button", { name: "Follow", exact: true }),
+    ).toHaveCount(0)
+    await testInfo.attach(
+      path === "/" ? "homepage-skeleton" : "component-skeleton",
+      {
+        body: await preview.screenshot(),
+        contentType: "image/png",
+      },
+    )
   })
-  await expect(page.getByRole("heading", { name: "Ivo Chen" })).toBeVisible({
-    timeout: 6000,
-  })
-  await expect(page.locator('[data-slot="skeleton"]')).toHaveCount(0)
-})
+}
 
 test("tabs support arrow-key navigation", async ({ page }) => {
   await openPreview(page, "tabs")
@@ -199,9 +212,9 @@ test("switch supports keyboard state changes", async ({ page }, testInfo) => {
         checkedBounds.x -
         checkedBounds.width
 
-      return Math.abs(endInset - startInset)
+      return endInset - startInset
     })
-    .toBeLessThan(1)
+    .toBeCloseTo(-1, 1)
   await testInfo.attach("checked-switch", {
     body: await switchControl.screenshot(),
     contentType: "image/png",

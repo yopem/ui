@@ -1,10 +1,15 @@
 import AxeBuilder from "@axe-core/playwright"
 import { expect, test } from "@playwright/test"
 
+import { openPreview } from "./helpers"
+
 test("@a11y rating supports keyboard selection and announces selected value", async ({
   page,
 }) => {
   await page.goto("/components/rating", { waitUntil: "domcontentloaded" })
+  await expect(
+    page.getByRole("button", { name: "Search documentation", exact: true }),
+  ).toBeEnabled()
   await expect(
     page.getByRole("button", { name: "Copy Rating usage", exact: true }),
   ).toBeEnabled()
@@ -117,6 +122,9 @@ test("@a11y native select keeps aligned fields and keyboard behavior", async ({
 test("marquee can be paused and resumed", async ({ page }) => {
   await page.goto("/components/marquee", { waitUntil: "domcontentloaded" })
   await expect(
+    page.getByRole("button", { name: "Search documentation", exact: true }),
+  ).toBeEnabled()
+  await expect(
     page.getByRole("button", { name: "Copy Marquee usage", exact: true }),
   ).toBeEnabled()
   await page.getByRole("button", { name: "Pause scrolling content" }).click()
@@ -134,14 +142,14 @@ test("marquee can be paused and resumed", async ({ page }) => {
 test("highlight marks matching text without losing surrounding words", async ({
   page,
 }) => {
-  await page.goto("/components/highlight")
+  await openPreview(page, "highlight")
   const highlight = page.locator('[data-slot="highlight"]')
   await expect(highlight.locator("mark")).toHaveText("heron")
   await expect(highlight).toContainText(/.+heron.+/)
 })
 
 test("prose constrains long-form content", async ({ page }) => {
-  await page.goto("/components/prose")
+  await openPreview(page, "prose")
   const prose = page.locator('[data-slot="prose"]')
   await expect(prose).toBeVisible()
   await expect
@@ -154,7 +162,7 @@ test("prose constrains long-form content", async ({ page }) => {
 })
 
 test("@a11y steps expose active item as current step", async ({ page }) => {
-  await page.goto("/components/steps")
+  await openPreview(page, "steps")
   await expect(
     page.locator('[data-slot="steps-item"]').filter({ hasText: "Plan visit" }),
   ).toHaveAttribute("aria-current", "step")
@@ -164,6 +172,9 @@ test("@a11y steps expose active item as current step", async ({ page }) => {
 test("clipboard reports copied content", async ({ page, context }) => {
   await context.grantPermissions(["clipboard-read", "clipboard-write"])
   await page.goto("/components/clipboard", { waitUntil: "domcontentloaded" })
+  await expect(
+    page.getByRole("button", { name: "Search documentation", exact: true }),
+  ).toBeEnabled()
   await expect(
     page.getByRole("button", { name: "Copy Clipboard usage" }),
   ).toBeEnabled({ timeout: 20_000 })
@@ -182,6 +193,9 @@ test("clipboard reports copied content", async ({ page, context }) => {
 test("codeblock preserves source and copies it", async ({ page, context }) => {
   await context.grantPermissions(["clipboard-read", "clipboard-write"])
   await page.goto("/components/codeblock", { waitUntil: "domcontentloaded" })
+  await expect(
+    page.getByRole("button", { name: "Search documentation", exact: true }),
+  ).toBeEnabled()
   await expect(
     page.getByRole("button", { name: "Copy Codeblock usage", exact: true }),
   ).toBeEnabled()

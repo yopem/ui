@@ -70,7 +70,7 @@ for (const component of cases) {
   })
 }
 
-test("sheet close button stays in the popup corner without shifting content", async ({
+test("sheet close button stays above the content in the frame corner", async ({
   page,
 }) => {
   await page.goto("/components/sheet")
@@ -80,27 +80,29 @@ test("sheet close button stays in the popup corner without shifting content", as
   await page.getByRole("button", { name: "Open Sheet" }).click()
 
   const popup = page.locator('[data-slot="sheet-popup"]')
-  const header = page.locator('[data-slot="sheet-header"]')
+  const title = popup.locator('[data-slot="sheet-title"]')
   const close = popup.getByRole("button", { name: "Close" })
-  await expect(close).toHaveCSS("position", "absolute")
-  await expect(popup).toHaveCSS("translate", "none")
+  await expect(close).toBeVisible()
+  await expect(close).toBeEnabled()
 
   const popupBox = await popup.boundingBox()
-  const headerBox = await header.boundingBox()
+  const titleBox = await title.boundingBox()
   const closeBox = await close.boundingBox()
   expect(popupBox).not.toBeNull()
-  expect(headerBox).not.toBeNull()
+  expect(titleBox).not.toBeNull()
   expect(closeBox).not.toBeNull()
 
-  if (popupBox && headerBox && closeBox) {
-    expect(closeBox.x).toBeGreaterThan(
-      popupBox.x + popupBox.width - closeBox.width - 12,
-    )
-    expect(closeBox.x + closeBox.width).toBeLessThanOrEqual(
-      popupBox.x + popupBox.width,
-    )
-    expect(closeBox.y).toBeLessThan(headerBox.y + headerBox.height)
-    expect(headerBox.y).toBeCloseTo(popupBox.y, 0)
+  if (popupBox && titleBox && closeBox) {
+    const popupEnd = popupBox.x + popupBox.width
+    const closeEnd = closeBox.x + closeBox.width
+
+    expect(closeEnd).toBeGreaterThan(popupEnd - closeBox.width)
+    expect(closeEnd).toBeLessThanOrEqual(popupEnd)
+    expect(closeBox.x).toBeGreaterThanOrEqual(popupBox.x)
+    expect(closeBox.y).toBeGreaterThanOrEqual(popupBox.y)
+    expect(closeBox.y + closeBox.height).toBeLessThanOrEqual(titleBox.y)
+    expect(titleBox.x).toBeGreaterThanOrEqual(popupBox.x)
+    expect(titleBox.x + titleBox.width).toBeLessThanOrEqual(popupEnd)
   }
 
   await close.click()
