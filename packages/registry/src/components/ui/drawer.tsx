@@ -1,7 +1,7 @@
 "use client"
 
 import type { StyleXComponentProps } from "@registry/lib/stylex"
-import type { ComponentProps, ReactElement } from "react"
+import type { ComponentProps, ReactElement, ReactNode } from "react"
 
 import { Checkbox as CheckboxPrimitive } from "@base-ui/react/checkbox"
 import { Drawer as DrawerPrimitive } from "@base-ui/react/drawer"
@@ -12,7 +12,7 @@ import { useRender } from "@base-ui/react/use-render"
 import { Button } from "@registry/components/ui/button"
 import { ScrollArea } from "@registry/components/ui/scroll-area"
 import { mergeStylexProps, stylexProps } from "@registry/lib/stylex"
-import { themeMarker, tokens } from "@registry/styles/tokens.stylex"
+import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import { ChevronRightIcon, XIcon } from "lucide-react"
 import { createContext, useContext } from "react"
@@ -58,7 +58,7 @@ const styles = stylex.create({
   swipeRight: { inlineSize: "2rem", insetBlock: 0, insetInlineEnd: 0 },
   backdrop: {
     backdropFilter: "blur(4px)",
-    backgroundColor: "rgb(0 0 0 / 0.32)",
+    backgroundColor: tokens["--overlay-backdrop"],
     inset: 0,
     opacity: "calc(1 - var(--drawer-swipe-progress))",
     position: "fixed",
@@ -102,13 +102,15 @@ const styles = stylex.create({
   viewportInsetNotTop: { paddingBlockEnd: "var(--inset)" },
   popup: {
     backgroundClip: "padding-box",
-    backgroundColor: tokens["--popover"],
-    color: tokens["--popover-foreground"],
+    backgroundColor: tokens["--sidebar"],
+    color: tokens["--card-foreground"],
     display: "flex",
     flexDirection: "column",
     inlineSize: "100%",
     maxBlockSize: "100%",
     minBlockSize: 0,
+    paddingBlock: "0.25rem",
+    paddingInline: "0.25rem",
 
     outline: "none",
     position: "relative",
@@ -128,18 +130,13 @@ const styles = stylex.create({
     "--stack-progress": "clamp(0, var(--drawer-swipe-progress), 1)",
     "--stack-step": "0.05",
     "::before": {
-      boxShadow: {
-        default: "0 1px rgb(0 0 0 / 0.04)",
-        [stylex.when.ancestor('[data-theme="dark"]', themeMarker)]:
-          "0 -1px rgb(255 255 255 / 0.06)",
-      },
       content: '""',
       inset: 0,
       pointerEvents: "none",
       position: "absolute",
     },
     "::after": {
-      backgroundColor: tokens["--popover"],
+      backgroundColor: tokens["--sidebar"],
       content: '""',
       pointerEvents: "none",
       position: "absolute",
@@ -160,7 +157,7 @@ const styles = stylex.create({
     marginBlockEnd:
       "calc(max(0px, calc(var(--drawer-snap-point-offset, 0px) + clamp(0, 1, var(--drawer-snap-point-offset, 0px) / 1px) * var(--drawer-swipe-movement-y, 0px))) * -1)",
     paddingBlockEnd:
-      "max(0px, calc(env(safe-area-inset-bottom, 0px) + var(--drawer-snap-point-offset, 0px) + clamp(0, 1, var(--drawer-snap-point-offset, 0px) / 1px) * var(--drawer-swipe-movement-y, 0px)))",
+      "calc(0.25rem + max(0px, calc(env(safe-area-inset-bottom, 0px) + var(--drawer-snap-point-offset, 0px) + clamp(0, 1, var(--drawer-snap-point-offset, 0px) / 1px) * var(--drawer-swipe-movement-y, 0px))))",
     transform:
       "translateY(calc(var(--drawer-snap-point-offset) + var(--drawer-swipe-movement-y)))",
     transformOrigin: "50% calc(100% - var(--inset))",
@@ -264,46 +261,46 @@ const styles = stylex.create({
     "[data-nested-drawer-open]": { blockSize: "var(--height)" },
   },
   roundedBottom: {
-    borderStartEndRadius: "var(--radius-md)",
-    borderStartStartRadius: "var(--radius-md)",
+    borderStartEndRadius: "var(--radius)",
+    borderStartStartRadius: "var(--radius)",
     "::before": {
-      borderStartEndRadius: "calc(var(--radius-md) - 1px)",
-      borderStartStartRadius: "calc(var(--radius-md) - 1px)",
+      borderStartEndRadius: "calc(var(--radius) - 1px)",
+      borderStartStartRadius: "calc(var(--radius) - 1px)",
     },
   },
   roundedTop: {
-    borderEndEndRadius: "var(--radius-md)",
-    borderEndStartRadius: "var(--radius-md)",
+    borderEndEndRadius: "var(--radius)",
+    borderEndStartRadius: "var(--radius)",
     "::before": {
-      borderEndEndRadius: "calc(var(--radius-md) - 1px)",
-      borderEndStartRadius: "calc(var(--radius-md) - 1px)",
+      borderEndEndRadius: "calc(var(--radius) - 1px)",
+      borderEndStartRadius: "calc(var(--radius) - 1px)",
     },
   },
   roundedLeft: {
-    borderEndEndRadius: "var(--radius-md)",
-    borderStartEndRadius: "var(--radius-md)",
+    borderEndEndRadius: "var(--radius)",
+    borderStartEndRadius: "var(--radius)",
     "::before": {
-      borderEndEndRadius: "calc(var(--radius-md) - 1px)",
-      borderStartEndRadius: "calc(var(--radius-md) - 1px)",
+      borderEndEndRadius: "calc(var(--radius) - 1px)",
+      borderStartEndRadius: "calc(var(--radius) - 1px)",
     },
   },
   roundedRight: {
-    borderEndStartRadius: "var(--radius-md)",
-    borderStartStartRadius: "var(--radius-md)",
+    borderEndStartRadius: "var(--radius)",
+    borderStartStartRadius: "var(--radius)",
     "::before": {
-      borderEndStartRadius: "calc(var(--radius-md) - 1px)",
-      borderStartStartRadius: "calc(var(--radius-md) - 1px)",
+      borderEndStartRadius: "calc(var(--radius) - 1px)",
+      borderStartStartRadius: "calc(var(--radius) - 1px)",
     },
   },
   insetPopup: {
     "::before": { display: "none" },
     "@media (min-width: 640px)": {
       borderColor: tokens["--border"],
-      borderRadius: "var(--radius-md)",
+      borderRadius: "var(--radius)",
       borderStyle: "solid",
       borderWidth: 1,
       "::before": {
-        borderRadius: "calc(var(--radius-md) - 1px)",
+        borderRadius: "calc(var(--radius) - 1px)",
         display: "block",
       },
       "::after": { backgroundColor: "transparent" },
@@ -311,14 +308,32 @@ const styles = stylex.create({
   },
   straightPopup: { "--stack-step": "0" },
   close: {
-    insetBlockStart: "0.5rem",
-    insetInlineEnd: "0.5rem",
+    insetBlockStart: "0.125rem",
+    insetInlineEnd: "0.125rem",
     position: "absolute",
+  },
+  frameTitle: {
+    alignItems: "center",
+    color: tokens["--muted-foreground"],
+    display: "flex",
+    flexShrink: 0,
+    fontSize: "0.875rem",
+    minBlockSize: "2.5rem",
+    paddingInline: "0.75rem 2.75rem",
+  },
+  surface: {
+    backgroundColor: "inherit",
+    borderRadius: "var(--radius-sm)",
+    display: "flex",
+    flexDirection: "column",
+    minBlockSize: 0,
+    overflowX: "hidden",
+    overflowY: "auto",
   },
   header: {
     paddingBlockEnd: {
       default: null,
-      ':is(:is([data-slot="dialog-popup"], [data-slot="sheet-popup"], [data-slot="drawer-popup"]):has([data-slot$="panel"]) > [data-slot="drawer-header"])':
+      ':is(:is([data-slot="dialog-surface"], [data-slot="sheet-surface"], [data-slot="drawer-surface"]):has([data-slot$="panel"]) > [data-slot="drawer-header"])':
         "0.75rem",
       "@media (max-width: 639px)": "1rem",
     },
@@ -328,6 +343,7 @@ const styles = stylex.create({
     padding: "1.5rem",
   },
   footer: {
+    backgroundColor: "inherit",
     display: "flex",
     flexDirection: {
       default: "column-reverse",
@@ -341,7 +357,7 @@ const styles = stylex.create({
       "@media (min-width: 640px)": {
         default: null,
         ':is([data-slot="drawer-popup"][data-variant="inset"] [data-slot="drawer-footer"])':
-          "calc(var(--radius-md) - 1px)",
+          "calc(var(--radius) - 1px)",
       },
     },
     borderEndStartRadius: {
@@ -349,7 +365,7 @@ const styles = stylex.create({
       "@media (min-width: 640px)": {
         default: null,
         ':is([data-slot="drawer-popup"][data-variant="inset"] [data-slot="drawer-footer"])':
-          "calc(var(--radius-md) - 1px)",
+          "calc(var(--radius) - 1px)",
       },
     },
     justifyContent: {
@@ -358,18 +374,13 @@ const styles = stylex.create({
     },
   },
   footerDefault: {
-    backgroundColor:
-      "color-mix(in oklab, var(--muted, transparent) 72%, transparent)",
-    borderBlockStartColor: tokens["--border"],
-    borderBlockStartStyle: "solid",
-    borderBlockStartWidth: 1,
     paddingBlockEnd: "calc(env(safe-area-inset-bottom, 0px) + 1rem)",
     paddingBlockStart: "1rem",
   },
   footerBare: {
     paddingBlockStart: {
       default: "1rem",
-      ':is(:is([data-slot="dialog-popup"], [data-slot="sheet-popup"], [data-slot="drawer-popup"]):has([data-slot$="panel"]) > [data-slot="drawer-footer"])':
+      ':is(:is([data-slot="dialog-surface"], [data-slot="sheet-surface"], [data-slot="drawer-surface"]):has([data-slot$="panel"]) > [data-slot="drawer-footer"])':
         "0.75rem",
     },
     paddingBlockEnd: "calc(env(safe-area-inset-bottom, 0px) + 1.5rem)",
@@ -378,8 +389,8 @@ const styles = stylex.create({
   title: {
     fontFamily: tokens["--font-heading"],
     fontSize: "1.25rem",
-    fontWeight: 600,
-    lineHeight: 1,
+    fontWeight: 400,
+    lineHeight: 1.25,
   },
   description: { color: tokens["--muted-foreground"], fontSize: "0.875rem" },
   panel: {
@@ -424,7 +435,7 @@ const styles = stylex.create({
   menu: { display: "flex", flexDirection: "column", margin: "-0.5rem" },
   menuItem: {
     alignItems: "center",
-    borderRadius: tokens["--radius-md"],
+    borderRadius: tokens["--radius"],
     color: tokens["--foreground"],
     cursor: "default",
     display: "flex",
@@ -464,7 +475,7 @@ const styles = stylex.create({
   },
   choiceItem: {
     alignItems: "center",
-    borderRadius: tokens["--radius-md"],
+    borderRadius: tokens["--radius"],
     color: tokens["--foreground"],
     cursor: "default",
     display: "grid",
@@ -501,7 +512,7 @@ const styles = stylex.create({
     inlineSize: "calc(var(--thumb-size) * 2 - 2px)",
     padding: 1,
     "--thumb-size": { default: "1rem", "@media (min-width: 640px)": "0.75rem" },
-    "[data-checked]": { backgroundColor: tokens["--primary"] },
+    "[data-checked]": { backgroundColor: tokens["--accent-solid"] },
   },
   switchThumb: {
     scale: {
@@ -713,6 +724,7 @@ export function DrawerPopup({
   position: positionProp,
   variant = "default",
   showBar = false,
+  frameTitle,
   portalProps,
   ...restProps
 }: StyleXComponentProps<
@@ -722,6 +734,7 @@ export function DrawerPopup({
     position?: DrawerPosition
     variant?: DrawerVariant
     showBar?: boolean
+    frameTitle?: ReactNode
     portalProps?: DrawerPrimitive.Portal.Props
   }
 >) {
@@ -754,7 +767,12 @@ export function DrawerPopup({
             props,
           )}
         >
-          {children}
+          {frameTitle != null || showCloseButton ? (
+            <div {...stylex.props(styles.frameTitle)}>{frameTitle}</div>
+          ) : null}
+          <div data-slot="drawer-surface" {...stylex.props(styles.surface)}>
+            {children}
+          </div>
           {showCloseButton ? (
             <DrawerPrimitive.Close
               aria-label="Close"
