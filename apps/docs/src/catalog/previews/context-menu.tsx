@@ -1,8 +1,12 @@
 import {
   ContextMenu,
+  ContextMenuCheckboxItem,
   ContextMenuItem,
   ContextMenuPopup,
   ContextMenuSeparator,
+  ContextMenuSub,
+  ContextMenuSubPopup,
+  ContextMenuSubTrigger,
   ContextMenuTrigger,
 } from "@registry/components/ui/context-menu"
 import * as stylex from "@stylexjs/stylex"
@@ -35,6 +39,15 @@ export function Preview() {
         <ContextMenuItem>Duplicate note</ContextMenuItem>
         <ContextMenuSeparator />
         <ContextMenuItem>Copy note link</ContextMenuItem>
+        <ContextMenuSeparator />
+        <ContextMenuCheckboxItem>Pin note</ContextMenuCheckboxItem>
+        <ContextMenuCheckboxItem disabled>Archive note</ContextMenuCheckboxItem>
+        <ContextMenuSub>
+          <ContextMenuSubTrigger>Move note</ContextMenuSubTrigger>
+          <ContextMenuSubPopup>
+            <ContextMenuItem>Field notes</ContextMenuItem>
+          </ContextMenuSubPopup>
+        </ContextMenuSub>
       </ContextMenuPopup>
     </ContextMenu>
   )
