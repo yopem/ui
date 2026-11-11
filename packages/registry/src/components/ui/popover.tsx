@@ -4,7 +4,7 @@ import type { StyleXComponentProps } from "@registry/lib/stylex"
 
 import { Popover as PopoverPrimitive } from "@base-ui/react/popover"
 import { mergeStylexProps, stylexProps } from "@registry/lib/stylex"
-import { themeMarker, tokens } from "@registry/styles/tokens.stylex"
+import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 
 const styles = stylex.create({
@@ -17,17 +17,14 @@ const styles = stylex.create({
     "[data-instant]": { transitionProperty: "none" },
   },
   popup: {
-    borderRadius: {
-      default: tokens["--radius-md"],
-      ':has([data-slot="calendar"])': "0.875rem",
-    },
+    borderRadius: tokens["--radius"],
     backgroundClip: "padding-box",
     backgroundColor: tokens["--popover"],
     blockSize: "var(--popup-height, auto)",
     borderColor: tokens["--border"],
     borderStyle: "solid",
     borderWidth: 1,
-    boxShadow: "0 10px 15px -3px color-mix(in oklab, #000 5%, transparent)",
+    boxShadow: tokens["--shadow-md"],
     color: tokens["--popover-foreground"],
     display: "flex",
     inlineSize: "var(--popup-width, auto)",
@@ -46,37 +43,13 @@ const styles = stylex.create({
       default: null,
       "[data-starting-style]": 0.98,
     },
-    "::before": {
-      borderRadius: {
-        default: "calc(var(--radius-md, 0.75rem) - 1px)",
-        ':has([data-slot="calendar"])': "calc(var(--radius-md) - 1px)",
-      },
-      boxShadow: {
-        default: "0 1px rgb(0 0 0 / 0.04)",
-        [stylex.when.ancestor('[data-theme="dark"]', themeMarker)]:
-          "0 -1px rgb(255 255 255 / 0.06)",
-      },
-      content: '""',
-      inset: 0,
-      pointerEvents: "none",
-      position: "absolute",
-    },
   },
   tooltipPopup: {
-    borderRadius: {
-      default: tokens["--radius-md"],
-      ':has([data-slot="calendar"])': "0.875rem",
-    },
-    boxShadow: "0 4px 6px -1px color-mix(in oklab, #000 5%, transparent)",
+    borderRadius: tokens["--radius"],
+    boxShadow: tokens["--shadow-sm"],
     fontSize: "0.75rem",
     inlineSize: "fit-content",
     textWrap: "balance",
-    "::before": {
-      borderRadius: {
-        default: "calc(var(--radius-md, 0.75rem) - 1px)",
-        ':has([data-slot="calendar"])': "calc(var(--radius-md) - 1px)",
-      },
-    },
   },
   viewport: {
     padding: {
