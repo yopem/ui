@@ -2,14 +2,13 @@ import type { StyleXComponentProps } from "@registry/lib/stylex"
 import type { ComponentProps } from "react"
 
 import { mergeStylexProps, stylexProps } from "@registry/lib/stylex"
-import { themeMarker, tokens } from "@registry/styles/tokens.stylex"
+import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 
 const styles = stylex.create({
   root: {
-    backgroundColor:
-      "color-mix(in oklab, var(--muted, currentColor) 72%, transparent)",
-    borderRadius: "var(--radius-md)",
+    backgroundColor: tokens["--muted"],
+    borderRadius: tokens["--radius"],
     display: "flex",
     flexDirection: "column",
     padding: "0.25rem",
@@ -19,14 +18,10 @@ const styles = stylex.create({
     backgroundClip: "padding-box",
     backgroundColor: tokens["--background"],
     borderColor: tokens["--border"],
-    borderRadius: tokens["--radius-md"],
+    borderRadius: tokens["--radius"],
     borderStyle: "solid",
     borderWidth: 1,
-    boxShadow: {
-      default: "0 1px 2px color-mix(in oklab, #000 5%, transparent)",
-      [stylex.when.ancestor('[data-theme="dark"]', themeMarker)]:
-        "0 -1px 0 color-mix(in oklab, #fff 6%, transparent)",
-    },
+    boxShadow: tokens["--shadow-sm"],
     padding: "1.25rem",
     position: "relative",
     marginBlockStart: {
