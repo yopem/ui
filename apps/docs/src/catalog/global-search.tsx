@@ -11,8 +11,13 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@registry/components/ui/dialog"
-import { Input } from "@registry/components/ui/input"
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+} from "@registry/components/ui/input-group"
 import { ScrollArea } from "@registry/components/ui/scroll-area"
+import { Stack } from "@registry/components/ui/stack"
 import { useEventCallback } from "@registry/hooks/use-event-callback"
 import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
@@ -31,7 +36,22 @@ const primitiveStyles = stylex.create({
       "@media (max-width: 767.98px)": "center",
     },
     color: tokens["--muted-foreground"],
+    backgroundColor: {
+      default: tokens["--muted"],
+      ":hover": tokens["--accent"],
+    },
+    borderWidth: 0,
+    blockSize: "2.5rem",
+    gap: "0.75rem",
+    paddingInline: "0.875rem",
+    boxShadow: "none",
+    borderRadius: tokens["--radius"],
   },
+  searchField: {
+    backgroundColor: tokens["--muted"],
+    minBlockSize: "3rem",
+  },
+  searchInput: { fontSize: "1rem" },
   span: {
     display: { default: "inline", "@media (max-width: 767.98px)": "none" },
   },
@@ -41,12 +61,8 @@ const primitiveStyles = stylex.create({
     fontSize: "0.6875rem",
     display: { default: "inline", "@media (max-width: 767.98px)": "none" },
   },
-  dialogPopup: {
-    paddingBlock: "1.5rem",
-    paddingInline: "1.5rem",
-    gap: "1rem",
-    maxBlockSize: "min(42rem, 85dvh)",
-  },
+  dialogPopup: { maxBlockSize: "min(42rem, 85dvh)" },
+  dialogContent: { padding: "1.5rem", gap: "1rem", minBlockSize: 0 },
   output: {
     color: tokens["--muted-foreground"],
     fontSize: "0.8125rem",
@@ -189,14 +205,14 @@ export function GlobalSearch() {
         disabled={!hydrated}
         render={
           <Button
-            variant="outline"
+            variant="ghost"
             ref={registerTrigger}
             aria-label="Search documentation"
             xstyle={primitiveStyles.searchDocumentation}
           />
         }
       >
-        <SearchIcon size={16} />
+        <SearchIcon size={16} aria-hidden="true" />
         <Box render={<span />} xstyle={primitiveStyles.span}>
           Search docs
         </Box>
@@ -209,65 +225,74 @@ export function GlobalSearch() {
         initialFocus={inputRef}
         finalFocus={triggerRef}
         bottomStickOnMobile={false}
+        frameTitle="Documentation"
       >
-        <DialogTitle>Search documentation</DialogTitle>
-        <DialogDescription>
-          Find components, previews, installation steps, and guides.
-        </DialogDescription>
-        <Input
-          ref={inputRef}
-          aria-label="Search documentation"
-          type="search"
-          value={query}
-          placeholder="Search components, previews, and guides…"
-          onChange={handleChange}
-        />
-        <Box
-          render={<output />}
-          aria-live="polite"
-          xstyle={primitiveStyles.output}
-        >
-          {status === "error" ? (
-            <Box render={<span />} xstyle={primitiveStyles.span2}>
-              Search unavailable. Change your query to try again.
-            </Box>
-          ) : !query.trim() ? (
-            "Type to search all documentation."
-          ) : status === "loading" ? (
-            "Searching…"
-          ) : (
-            `${results.length} results`
-          )}
-        </Box>
-        <ScrollArea
-          aria-label="Search results"
-          overscrollContain
-          scrollFade
-          xstyle={primitiveStyles.searchResults}
-        >
-          <Box render={<ul />} xstyle={primitiveStyles.ul}>
-            {status === "ready"
-              ? results.map((result) => (
-                  <Box render={<li />} key={result.id}>
-                    <Link
-                      to={result.url}
-                      onClick={handleClick}
-                      {...stylex.props(styles.result)}
-                    >
-                      {result.breadcrumbs?.length ? (
-                        <Box render={<span />} xstyle={primitiveStyles.span3}>
-                          {result.breadcrumbs
-                            .join(" / ")
-                            .replace(/<\/?mark>/g, "")}
-                        </Box>
-                      ) : null}
-                      {result.content.replace(/<\/?mark>/g, "")}
-                    </Link>
-                  </Box>
-                ))
-              : null}
+        <Stack xstyle={primitiveStyles.dialogContent}>
+          <DialogTitle>Search documentation</DialogTitle>
+          <DialogDescription>
+            Find components, previews, installation steps, and guides.
+          </DialogDescription>
+          <InputGroup bordered={false} xstyle={primitiveStyles.searchField}>
+            <InputGroupAddon>
+              <SearchIcon size={20} aria-hidden="true" />
+            </InputGroupAddon>
+            <InputGroupInput
+              ref={inputRef}
+              aria-label="Search documentation"
+              type="search"
+              value={query}
+              placeholder="Search components, previews, and guides…"
+              onChange={handleChange}
+              xstyle={primitiveStyles.searchInput}
+            />
+          </InputGroup>
+          <Box
+            render={<output />}
+            aria-live="polite"
+            xstyle={primitiveStyles.output}
+          >
+            {status === "error" ? (
+              <Box render={<span />} xstyle={primitiveStyles.span2}>
+                Search unavailable. Change your query to try again.
+              </Box>
+            ) : !query.trim() ? (
+              "Type to search all documentation."
+            ) : status === "loading" ? (
+              "Searching…"
+            ) : (
+              `${results.length} results`
+            )}
           </Box>
-        </ScrollArea>
+          <ScrollArea
+            aria-label="Search results"
+            overscrollContain
+            scrollFade
+            xstyle={primitiveStyles.searchResults}
+          >
+            <Box render={<ul />} xstyle={primitiveStyles.ul}>
+              {status === "ready"
+                ? results.map((result) => (
+                    <Box render={<li />} key={result.id}>
+                      <Link
+                        to={result.url}
+                        onClick={handleClick}
+                        {...stylex.props(styles.result)}
+                      >
+                        {result.breadcrumbs?.length ? (
+                          <Box render={<span />} xstyle={primitiveStyles.span3}>
+                            {result.breadcrumbs
+                              .join(" / ")
+                              .replace(/<\/?mark>/g, "")}
+                          </Box>
+                        ) : null}
+                        {result.content.replace(/<\/?mark>/g, "")}
+                      </Link>
+                    </Box>
+                  ))
+                : null}
+            </Box>
+          </ScrollArea>
+        </Stack>
       </DialogPopup>
     </Dialog>
   )
@@ -279,7 +304,7 @@ const styles = stylex.create({
     padding: "0.875rem",
     textDecoration: "none",
     color: tokens["--foreground"],
-    borderRadius: tokens["--radius-md"],
+    borderRadius: tokens["--radius"],
     ":hover": { backgroundColor: tokens["--accent"] },
     ":focus-visible": {
       outlineColor: tokens["--ring"],
