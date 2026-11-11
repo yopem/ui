@@ -2,6 +2,7 @@ import type { RouteComponent } from "@tanstack/react-router"
 import type { FunctionComponent } from "react"
 
 import { lazyRouteComponent } from "@tanstack/react-router"
+import { lazy } from "react"
 
 export interface CatalogPreview {
   component: RouteComponent
@@ -135,11 +136,25 @@ export const catalog: CatalogItem[] = Object.entries(modules)
 
     const override = compositionOverrides.get(slug)
     const title = override?.title ?? titleCase(slug)
+    const Preview = lazyRouteComponent(load, "Preview")
+
+    async function preload() {
+      await Preview.preload?.()
+    }
+
+    const component = Object.assign(
+      lazy(async () => {
+        await preload()
+
+        return { default: Preview }
+      }),
+      { preload },
+    )
 
     return {
       name: override?.name ?? componentIdentifier(slug),
       preview: {
-        component: lazyRouteComponent(load, "Preview"),
+        component,
         title: previewDescriptions.get(slug) ?? `${title} in use`,
       },
       slug,
