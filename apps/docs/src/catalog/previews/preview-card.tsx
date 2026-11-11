@@ -8,7 +8,6 @@ import {
   PreviewCardTrigger,
 } from "@registry/components/ui/preview-card"
 import { Text } from "@registry/components/ui/text"
-import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import { CornerUpLeftIcon, StarIcon } from "lucide-react"
 
@@ -18,7 +17,7 @@ const styles = stylex.create({
   h2: {
     fontSize: "0.875rem",
     lineHeight: "calc(1.25 / 0.875)",
-    fontWeight: "500",
+    fontWeight: "400",
   },
   paragraph: {
     fontSize: "0.875rem",
@@ -37,7 +36,7 @@ const styles = stylex.create({
     inlineSize: "calc(0.25rem * 2)",
     blockSize: "calc(0.25rem * 2)",
     borderRadius: "calc(infinity * 1px)",
-    backgroundColor: tokens["--info"],
+    backgroundColor: "var(--muted-foreground)",
   },
   flex5: { alignItems: "center", gap: "0.25rem" },
   flex6: { alignItems: "center", gap: "0.25rem" },
