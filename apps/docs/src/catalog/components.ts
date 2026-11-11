@@ -142,14 +142,16 @@ export const catalog: CatalogItem[] = Object.entries(modules)
       await Preview.preload?.()
     }
 
-    const component = Object.assign(
-      lazy(async () => {
-        await preload()
+    const component = import.meta.env.SSR
+      ? Preview
+      : Object.assign(
+          lazy(async () => {
+            await preload()
 
-        return { default: Preview }
-      }),
-      { preload },
-    )
+            return { default: Preview }
+          }),
+          { preload },
+        )
 
     return {
       name: override?.name ?? componentIdentifier(slug),

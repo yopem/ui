@@ -19,7 +19,7 @@ test.describe("server-rendered previews", () => {
   test("preview controls render without waiting for client JavaScript", async ({
     page,
   }) => {
-    await openPreview(page, "popover")
+    await page.goto("/components/popover")
     await expect(
       page.getByRole("button", { name: "Open Popover" }),
     ).toBeVisible()
