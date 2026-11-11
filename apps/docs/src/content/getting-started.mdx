@@ -67,8 +67,11 @@ change, pass `xstyle`. This Button example changes its border radius:
 ```tsx
 import * as stylex from "@stylexjs/stylex"
 import { Button } from "@/components/ui/button"
+import { tokens } from "@/styles/tokens.stylex"
 
-const styles = stylex.create({ button: { borderRadius: "999px" } })
+const styles = stylex.create({
+  button: { borderRadius: tokens["--radius-sm"] },
+})
 
 export function SaveButton() {
   return <Button xstyle={styles.button}>Save changes</Button>

@@ -15,25 +15,40 @@ Replace the required values. Keep all other existing values.
 // Find these keys in src/styles/tokens.stylex.ts.
 export const lightValues = {
   // Keep the other existing values.
-  "--primary": "#1d4ed8",
+  "--primary": "#111111",
   "--primary-foreground": "#ffffff",
   "--ring": "#2563eb",
-  "--font-heading": '"App Sans", system-ui, sans-serif',
-  "--radius-lg": "0.75rem",
+  "--font-heading": '"Geist Variable", Geist, sans-serif',
+  "--radius": "0.75rem",
+  "--radius-sm": "0.5rem",
 }
 
 export const darkValues = {
   ...lightValues,
   // Keep the other existing dark values.
-  "--primary": "#93c5fd",
-  "--primary-foreground": "#172554",
+  "--primary": "#f5f5f5",
+  "--primary-foreground": "#090909",
   "--ring": "#60a5fa",
 }
 ```
 
-Change background and foreground pairs together to keep text readable. Font
-tokens select a font family. They do not download font files. Run a production
-build after you edit tokens.
+Keep primary actions neutral. Use `--accent` for neutral hover surfaces. Use the
+`--accent-solid` pair for selected indicators. Use `--ring` for focus. Keep
+existing token names when you change their values.
+
+Use `--control-background` for fields and `--overlay-backdrop` for backdrops.
+Use `--overlay-shell` for dialog frames and the card pair for inset content and
+footers. Use the popover pair for floating menus and tooltips.
+
+Change background and foreground pairs together to keep text readable. This
+includes primary, secondary, muted, accent, card, and popover pairs. Use the
+success, warning, destructive, and info tokens for status.
+
+Use `--radius` for standard surfaces and `--radius-sm` for compact details.
+Other radius tokens are explicit overrides. Keep functional circles intact. Font
+tokens select a font family. They do not download font files. Load Geist Sans
+and Geist Mono or configure other font tokens. Run a production build after you
+edit tokens.
 
 <span id="xstyle" />
 
@@ -47,11 +62,11 @@ import * as stylex from "@stylexjs/stylex"
 import { Button } from "@/components/ui/button"
 
 const styles = stylex.create({
-  pill: { borderRadius: "999px" },
+  action: { minInlineSize: "8rem" },
 })
 
 export function SaveButton() {
-  return <Button xstyle={styles.pill}>Save changes</Button>
+  return <Button xstyle={styles.action}>Save changes</Button>
 }
 ```
 
