@@ -44,7 +44,7 @@ const styles = stylex.create({
   viewportInset: { "@media (min-width: 640px)": { padding: "1rem" } },
   popup: {
     backgroundClip: "padding-box",
-    backgroundColor: tokens["--background"],
+    backgroundColor: tokens["--overlay-shell"],
     color: tokens["--card-foreground"],
     display: "flex",
     flexDirection: "column",
@@ -188,6 +188,7 @@ const styles = stylex.create({
     lineHeight: 1,
   },
   description: { color: tokens["--muted-foreground"], fontSize: "0.875rem" },
+  panelScrollArea: { minBlockSize: "2.75rem" },
   panel: {
     paddingBlockStart: {
       default: null,
@@ -484,7 +485,11 @@ export function SheetPanel({
   })
 
   return (
-    <ScrollArea overscrollContain scrollFade={scrollFade}>
+    <ScrollArea
+      overscrollContain
+      scrollFade={scrollFade}
+      xstyle={styles.panelScrollArea}
+    >
       {content}
     </ScrollArea>
   )

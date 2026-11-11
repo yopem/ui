@@ -14,6 +14,7 @@ import {
   SheetTrigger,
 } from "@registry/components/ui/sheet"
 import * as stylex from "@stylexjs/stylex"
+import { useRef } from "react"
 
 const styles = stylex.create({
   form: { display: "contents" },
@@ -26,12 +27,14 @@ const visitFields = [
 ]
 
 export function Preview() {
+  const nameRef = useRef<HTMLInputElement>(null)
+
   return (
     <Sheet>
       <SheetTrigger render={<Button variant="outline" />}>
         Open Sheet
       </SheetTrigger>
-      <SheetPopup frameTitle="Field visit">
+      <SheetPopup frameTitle="Field visit" initialFocus={nameRef}>
         <SheetHeader>
           <SheetTitle>Edit field visit</SheetTitle>
           <SheetDescription>
@@ -43,7 +46,11 @@ export function Preview() {
             {visitFields.map(({ defaultValue, label }) => (
               <Field key={label}>
                 <FieldLabel>{label}</FieldLabel>
-                <Input defaultValue={defaultValue} type="text" />
+                <Input
+                  defaultValue={defaultValue}
+                  ref={label === "Name" ? nameRef : undefined}
+                  type="text"
+                />
               </Field>
             ))}
           </SheetPanel>
