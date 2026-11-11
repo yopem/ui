@@ -82,13 +82,17 @@ the same spelling. Read the required item's exports and compound parts.
 | Semantic importance                           | `strong`                                                                           |
 | Moving content                                | `marquee`                                                                          |
 
+Use Card with CardHeader, CardPanel, and CardFooter for card content. Set
+`bordered={false}` to remove the Card border. CardFrame adds an outer frame.
+
 Use framework links for application navigation. Native anchors remain valid.
 `variant="link"` changes Button appearance, not its element or navigation
 behavior.
 
 Use `Progress` for task completion and `Meter` for bounded measurements. `Table`
-does not supply sorting or data loading. `Pagination` does not calculate page
-ranges. `Kbd` displays shortcuts; it does not register keyboard handlers.
+does not supply sorting or data loading. Set `rowBorders` for body row dividers;
+the default is false. `Pagination` does not calculate page ranges. `Kbd`
+displays shortcuts; it does not register keyboard handlers.
 
 Use `SidebarProvider` around Sidebar parts. Use `ToastProvider` and
 `toastManager` for toast notifications. Do not invent a `Toast` root. Install
@@ -126,7 +130,9 @@ individual labels. A standalone `Label` needs matching `htmlFor` and control
 
 Input visual sizes are `sm`, `default`, and `lg`. Numeric `size` controls native
 input width. Use `rows` for Textarea height. `controlXstyle` targets the outer
-Input/Textarea wrapper; `xstyle` targets the native control.
+Input/Textarea wrapper; `xstyle` targets the native control. AutocompleteInput
+also accepts `controlXstyle` for its outer Input wrapper. NumberField is compact
+by default. Set `fullWidth` to fill its parent.
 
 This example delegates the accepted value to the caller. Validate submitted data
 on the server too. Use `Form errors` for server errors keyed by field name.
@@ -201,7 +207,11 @@ close button. Do not add a second portal or backdrop around it.
 
 Use `DialogPanel` for scrollable body content. Keep Base UI focus management,
 Escape handling, dismissal, and focus return. Give dialogs an accessible title
-and an appropriate description.
+and an appropriate description. `frameTitle` supplies a visual caption, not the
+accessible title. Dialog, AlertDialog, Sheet, Drawer, and Command popups accept
+it. AlertDialog shows its close button by default. It cancels, not confirms.
+Drawer hides its close button by default. Its frame, content, and footer share
+the sidebar surface. CommandDialogPopup includes the Dialog close button.
 
 ```tsx
 "use client"
@@ -372,7 +382,7 @@ export function ProjectsPage() {
 
 ## Set typography with semantic components
 
-Typography uses Inter for body text and headings, and IBM Plex Mono for code.
+Typography uses Geist Sans for body text and headings, and Geist Mono for code.
 Load both fonts in the application; font tokens do not download fonts.
 
 These components accept native attributes, refs, `className`, and `xstyle`. Only
@@ -382,7 +392,7 @@ Heading supports `render`. Do not invent `size`, `weight`, `level`, `as`, or
 | Component  | Semantics and defaults                                                                                                          |
 | ---------- | ------------------------------------------------------------------------------------------------------------------------------- |
 | Text       | Fixed paragraph; `1rem`, line height `1.5`, weight 400, zero margin.                                                            |
-| Heading    | h2 by default; line height `1.25`, weight 600, zero margin. Use `render={<h1 />}` through h6.                                   |
+| Heading    | h2 by default; line height `1.25`, weight 400, zero margin. Use `render={<h1 />}` through h6.                                   |
 | Blockquote | Block quotation; italic, muted foreground, line height `1.65`, inline-start border. Native `cite` does not display attribution. |
 | Em         | Inline semantic stress with italic text; inherits font size, weight, and line height.                                           |
 | Strong     | Semantic strong; weight 600; inherits surrounding font family, size, line height, and color.                                    |
@@ -474,9 +484,23 @@ earlier entries. Components merge consumer styles after defaults and variants.
   blocks.
 - Prefer logical properties such as `marginInline` and `inlineSize`.
 - Use semantic tokens for colors, spacing, typography, and radius.
-- Rounded surfaces default to md (12px). Use xstyle to change border radius. Use
-  controlXstyle for Input and Textarea wrappers. Keep circular indicators
-  intact.
+- Use `--radius` (12px) for standard controls and surfaces. Use `--radius-sm`
+  (8px) for compact details. Other radius tokens are explicit overrides. Use
+  xstyle to change corners. Use controlXstyle for Input and Textarea wrappers.
+  Keep functional circles and compact indicators intact.
+- Use neutral inverse primary actions. Keep links and hover surfaces neutral,
+  including on hover. Keep accent and sidebar-accent pairs neutral. Use the blue
+  accent-solid pair for checked and selected indicators, `--ring` for focus,
+  info tokens for status, and sidebar-primary for occasional actions.
+- Use `--overlay-shell` for the outer Dialog, AlertDialog, Sheet, and Drawer
+  frame. Use the card pair for the inner surface and footer. Use the popover
+  pair for floating menus, Popover, Select, and Toast. Use
+  `--control-background` for field surfaces and `--overlay-backdrop` for
+  backdrops.
+- Input, InputGroup, and Card have borders by default. Set `bordered={false}` to
+  remove them. Field and Fieldset are borderless by default. Set `bordered` to
+  add a border and padding to the wrapper only.
+- Use shadow tokens for subtle depth.
 - Keep StyleX object shapes static. Do not add spreads or computed keys except
   supported StyleX `when` conditions.
 - Style owned slots explicitly. Do not add broad SVG or descendant selectors.

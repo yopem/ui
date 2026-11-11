@@ -146,6 +146,7 @@ artifacts; docs dev, registry build, and registry typecheck regenerate API data.
 
 ## Component conventions
 
+- Do not add code comments.
 - Preserve Base UI behavior, public exports, consumer props, `className`, and
   `data-slot` values.
 - Use `"use client"` for client components and Base UI primitives from
@@ -214,20 +215,32 @@ artifacts; docs dev, registry build, and registry typecheck regenerate API data.
   overrides for intentional native boundaries. Docs migration is separate from
   enabling this rule; do not globally suppress checks to hide new violations.
 
-Rounded components use md (12px) by default. Use xstyle to change corner radii. Use controlXstyle for Input and Textarea wrappers. Keep circular indicators and edge-attached corners intact.
+Use `--radius` (12px by default) for standard buttons, inputs, cards, dialogs, menus, sidebars, and app surfaces. Use `--radius-sm` (8px by default) for compact details. Other radius tokens are explicit overrides. Use xstyle to change corners. Use controlXstyle for Input and Textarea wrappers. Keep functional circles, compact indicators, and edge-attached corners intact.
+
+For the docs layout, use a 14rem sidebar with compact neutral rows. Use
+`--background` for the header, sidebar, and main area in both themes. Keep the
+header and sidebar borderless. Use a borderless InputGroup for search. On the
+home showcase, use square muted preview panels with a thin `--card-border`.
+Center each preview on both axes. Put captions and neutral arrows below the
+panels. Do not alternate card fills or add decorative shadows.
 
 ## Design system foundations
 
 - Use neutral light and dark surfaces. Use semantic color pairs for text and
   surfaces: background/foreground, primary, secondary, muted, accent, card, and
   popover. Use destructive, success, warning, and info tokens for status.
-- Use Inter for body text and headings.
-  Use IBM Plex Mono for code and mono text.
+  Use neutral inverse primary actions.
+  Keep links and hover surfaces neutral, including on hover. Use `--ring` for focus.
+  Use the blue accent-solid pair for checked and selected indicators. Use blue for info status and occasional sidebar-primary actions.
+  Keep the accent and sidebar-accent pairs neutral.
+  Keep existing color token names. Add tokens when a new role needs them.
+- Use Geist Sans for body text and headings.
+  Use Geist Mono for code and mono text.
   The font tokens specify these families. Load both fonts in the application.
 - Use `tokens["--spacing"]` as the spacing unit. Its default is `0.25rem`.
   Stack, VStack, and HStack use four spacing units by default.
-- Use radius tokens. The defaults are `0.5rem` (sm), `0.75rem` (md),
-  `1rem` (lg), and `1.5rem` (xl).
+- Use the main and compact radius defaults described above. The other radius
+  tokens are available as explicit overrides.
 - Keep light and dark themes complete. Define theme values in
   `packages/registry/src/styles/tokens.stylex.ts`. Keep StyleX theme object
   spreads in that module. Keep the theme marker and root styles intact.
@@ -241,54 +254,93 @@ Rounded components use md (12px) by default. Use xstyle to change corner radii. 
 - Use Dialog, AlertDialog, Sheet, Drawer, Popover, Tooltip, PreviewCard, Menu,
   and ContextMenu for their documented interaction patterns. Keep Base UI focus
   management, dismissal, accessible names, and keyboard behavior intact.
+  Dialog, AlertDialog, Sheet, Drawer, and Command popups accept `frameTitle` as a
+  visual caption. Provide a separate accessible title or label. AlertDialog's
+  close button defaults to visible and cancels; it does not confirm. `closeProps`
+  configures that close control. Drawer hides its close button by default.
+  CommandDialogPopup includes the Dialog close button.
+  Drawer uses one sidebar-colored surface for its frame, content, and footer.
+  Select and Combobox use neutral hover and solid-accent selected rows.
+  Steps is a static ordered process, not a navigation control.
+- Use Card with CardHeader, CardPanel, and CardFooter for card content. Set
+  `bordered={false}` to remove the Card border. CardFrame adds an outer frame.
+- NumberField is compact by default; set `fullWidth` to fill its parent. Table
+  has no body row dividers by default; set `rowBorders` to add them.
+  AutocompleteInput accepts `controlXstyle` for its outer Input wrapper.
 - Use existing navigation, feedback, data display, and utility components.
   Check registry metadata and component documentation before adding substitutes.
+
+Use `--control-background` for field surfaces. Use `--overlay-shell` for the
+outer Dialog, AlertDialog, Sheet, and Command frame. Use the card pair for the
+inner surface and footer. Use the popover pair for floating menus, Popover,
+Select, and Toast. Use `--overlay-backdrop` for overlay backdrops. Do not add
+inset highlight shadows. Use `bordered={false}` on Input or InputGroup for a
+borderless control. Keep the focus indicator. Field and Fieldset are borderless by
+default. Use `bordered` to add a border and padding to the wrapper only.
 
 ### Color values
 
 These are Yopem UI defaults from `tokens.stylex.ts`.
 Use current token and component values when the project has overrides.
-Keep the CSS color expressions intact. Transparent colors depend on the surface below them.
+Keep the CSS color values intact.
 Use semantic tokens in styles, not these literal values.
 
 | Token | Light value | Dark value |
 | --- | --- | --- |
-| `--accent` | `color-mix(in oklab, #000 4%, transparent)` | `color-mix(in oklab, #fff 4%, transparent)` |
-| `--accent-foreground` | `oklch(26.9% 0 none)` | `oklch(97% 0 none)` |
-| `--background` | `#fff` | `color-mix(in srgb, oklch(14.5% 0 none) 96%, #fff)` |
-| `--border` | `color-mix(in oklab, #000 8%, transparent)` | `color-mix(in oklab, #fff 6%, transparent)` |
-| `--card` | `#fff` | `color-mix( in srgb, color-mix(in srgb, oklch(14.5% 0 none) 96%, #fff) 98%, #fff )` |
-| `--card-foreground` | `oklch(26.9% 0 none)` | `oklch(97% 0 none)` |
-| `--code` | `#fff` | `color-mix( in srgb, color-mix(in srgb, oklch(14.5% 0 none) 96%, #fff) 98%, #fff )` |
-| `--code-foreground` | `oklch(26.9% 0 none)` | `oklch(97% 0 none)` |
-| `--code-highlight` | `color-mix(in oklab, #000 4%, transparent)` | `color-mix(in oklab, #fff 4%, transparent)` |
-| `--destructive` | `oklch(63.7% 0.237 25.331)` | `color-mix(in srgb, oklch(63.7% 0.237 25.331) 90%, #fff)` |
-| `--destructive-foreground` | `oklch(50.5% 0.213 27.518)` | `oklch(70.4% 0.191 22.216)` |
-| `--foreground` | `oklch(26.9% 0 none)` | `oklch(97% 0 none)` |
-| `--info` | `oklch(62.3% 0.214 259.815)` | `oklch(62.3% 0.214 259.815)` |
-| `--info-foreground` | `oklch(48.8% 0.243 264.376)` | `oklch(70.7% 0.165 254.624)` |
-| `--input` | `color-mix(in oklab, #000 10%, transparent)` | `color-mix(in oklab, #fff 8%, transparent)` |
-| `--muted` | `color-mix(in oklab, #000 4%, transparent)` | `color-mix(in oklab, #fff 4%, transparent)` |
-| `--muted-foreground` | `color-mix(in srgb, oklch(55.6% 0 none) 90%, #000)` | `oklch(76% 0 none)` |
-| `--popover` | `#fff` | `color-mix( in srgb, color-mix(in srgb, oklch(14.5% 0 none) 96%, #fff) 96%, #fff )` |
-| `--popover-foreground` | `oklch(26.9% 0 none)` | `oklch(97% 0 none)` |
-| `--primary` | `oklch(26.9% 0 none)` | `oklch(97% 0 none)` |
-| `--primary-foreground` | `oklch(98.5% 0 none)` | `oklch(26.9% 0 none)` |
-| `--ring` | `oklch(70.8% 0 none)` | `oklch(55.6% 0 none)` |
-| `--secondary` | `color-mix(in oklab, #000 4%, transparent)` | `color-mix(in oklab, #fff 4%, transparent)` |
-| `--secondary-foreground` | `oklch(26.9% 0 none)` | `oklch(97% 0 none)` |
-| `--sidebar` | `oklch(98.5% 0 none)` | `color-mix(in srgb, oklch(14.5% 0 none) 97%, #fff)` |
-| `--sidebar-accent` | `color-mix(in oklab, #000 4%, transparent)` | `color-mix(in oklab, #fff 4%, transparent)` |
-| `--sidebar-accent-foreground` | `oklch(26.9% 0 none)` | `oklch(97% 0 none)` |
-| `--sidebar-border` | `color-mix(in oklab, #000 6%, transparent)` | `color-mix(in oklab, #fff 5%, transparent)` |
-| `--sidebar-foreground` | `color-mix( in srgb, oklch(26.9% 0 none) 64%, oklch(98.5% 0 none) )` | `color-mix( in srgb, oklch(97% 0 none) 64%, color-mix(in srgb, oklch(14.5% 0 none) 97%, #fff) )` |
-| `--sidebar-primary` | `oklch(26.9% 0 none)` | `oklch(97% 0 none)` |
-| `--sidebar-primary-foreground` | `oklch(98.5% 0 none)` | `oklch(26.9% 0 none)` |
-| `--sidebar-ring` | `oklch(70.8% 0 none)` | `oklch(70.8% 0 none)` |
-| `--success` | `oklch(69.6% 0.17 162.48)` | `oklch(69.6% 0.17 162.48)` |
-| `--success-foreground` | `oklch(50.8% 0.118 165.612)` | `oklch(76.5% 0.177 163.223)` |
-| `--warning` | `oklch(76.9% 0.188 70.08)` | `oklch(76.9% 0.188 70.08)` |
-| `--warning-foreground` | `oklch(55.5% 0.163 48.998)` | `oklch(82.8% 0.189 84.429)` |
+| `--accent` | `#f3f4f6` | `#212121` |
+| `--accent-foreground` | `#111111` | `#f5f5f5` |
+| `--accent-solid` | `#2563eb` | `#2563eb` |
+| `--accent-solid-foreground` | `#fff` | `#fff` |
+| `--background` | `#fff` | `#090909` |
+| `--border` | `#e5e7eb` | `#292929` |
+| `--control-background` | `#fff` | `#181818` |
+| `--overlay-backdrop` | `rgb(0 0 0 / 0.7)` | `rgb(0 0 0 / 0.7)` |
+| `--overlay-shell` | `#f3f4f6` | `#090909` |
+| `--destructive-hover` | `#b91c1c` | `#b91c1c` |
+| `--destructive-solid-foreground` | `#fff` | `#fff` |
+| `--card` | `#fff` | `#111111` |
+| `--card-border` | `#e5e7eb` | `#181818` |
+| `--card-foreground` | `#111111` | `#f5f5f5` |
+| `--code` | `#fff` | `#111111` |
+| `--code-foreground` | `#111111` | `#f5f5f5` |
+| `--code-highlight` | `#f3f4f6` | `#212121` |
+| `--destructive` | `#dc2626` | `#dc2626` |
+| `--destructive-foreground` | `#b91c1c` | `#fca5a5` |
+| `--foreground` | `#111111` | `#f5f5f5` |
+| `--info` | `#2563eb` | `#60a5fa` |
+| `--info-foreground` | `#1d4ed8` | `#93c5fd` |
+| `--input` | `#e5e7eb` | `#212121` |
+| `--muted` | `#f9fafb` | `#111111` |
+| `--muted-foreground` | `#606775` | `#a3a3a3` |
+| `--popover` | `#fff` | `#181818` |
+| `--popover-foreground` | `#111111` | `#f5f5f5` |
+| `--primary` | `#111111` | `#f5f5f5` |
+| `--primary-foreground` | `#fff` | `#090909` |
+| `--ring` | `#2563eb` | `#60a5fa` |
+| `--secondary` | `#f3f4f6` | `#212121` |
+| `--secondary-foreground` | `#111111` | `#f5f5f5` |
+| `--sidebar` | `#fff` | `#090909` |
+| `--sidebar-accent` | `#f3f4f6` | `#111111` |
+| `--sidebar-accent-foreground` | `#111111` | `#f5f5f5` |
+| `--sidebar-border` | `#e5e7eb` | `#181818` |
+| `--sidebar-foreground` | `#606775` | `#a3a3a3` |
+| `--sidebar-primary` | `#2563eb` | `#2563eb` |
+| `--sidebar-primary-foreground` | `#fff` | `#fff` |
+| `--sidebar-ring` | `#2563eb` | `#60a5fa` |
+| `--success` | `#059669` | `#34d399` |
+| `--success-foreground` | `#047857` | `#6ee7b7` |
+| `--warning` | `#d97706` | `#fbbf24` |
+| `--warning-foreground` | `#92400e` | `#fcd34d` |
+
+### Shadow values
+
+Use shadow tokens for subtle depth.
+
+| Token | Light value | Dark value |
+| --- | --- | --- |
+| `--shadow-lg` | `0 0 30px rgb(0 0 0 / 0.04), 0 0 10px rgb(0 0 0 / 0.06)` | `0 0 30px rgb(0 0 0 / 0.2), 0 0 10px rgb(0 0 0 / 0.24)` |
+| `--shadow-md` | `0 0 15px rgb(0 0 0 / 0.04), 0 0 2px rgb(0 0 0 / 0.06)` | `0 0 15px rgb(0 0 0 / 0.16), 0 0 2px rgb(0 0 0 / 0.24)` |
+| `--shadow-sm` | `0 1px 2px rgb(0 0 0 / 0.05)` | `0 1px 2px rgb(0 0 0 / 0.15)` |
 
 ### Spacing values
 
@@ -327,33 +379,38 @@ Heading size follows the rendered heading level. Line height values are unitless
 | Component | Font size | Line height | Font weight |
 | --- | --- | --- | --- |
 | Text | `1rem` (16px) | `1.5` | 400 |
-| Heading h1 | `2.25rem` (36px) | `1.25` | 600 |
-| Heading h2 | `1.5rem` (24px) | `1.25` | 600 |
-| Heading h3 | `1.25rem` (20px) | `1.25` | 600 |
-| Heading h4 | `1.125rem` (18px) | `1.25` | 600 |
-| Heading h5 | `1rem` (16px) | `1.25` | 600 |
-| Heading h6 | `0.875rem` (14px) | `1.25` | 600 |
+| Heading h1 | `2.25rem` (36px) | `1.25` | 400 |
+| Heading h2 | `1.5rem` (24px) | `1.25` | 400 |
+| Heading h3 | `1.25rem` (20px) | `1.25` | 400 |
+| Heading h4 | `1.125rem` (18px) | `1.25` | 400 |
+| Heading h5 | `1rem` (16px) | `1.25` | 400 |
+| Heading h6 | `0.875rem` (14px) | `1.25` | 400 |
 
 ### Control sizes
 
 The responsive breakpoint is `640px`.
 Input heights exclude the wrapper's 1px borders.
+The default Input is 40px high with its borders.
 Icon button width equals its height.
 
 | Component size | Height below 640px | Height at 640px and above |
 | --- | --- | --- |
-| Button xs / icon-xs | `1.75rem` (28px) | `1.5rem` (24px) |
-| Button sm / icon-sm | `2rem` (32px) | `1.75rem` (28px) |
-| Button default / icon | `2.25rem` (36px) | `2rem` (32px) |
-| Button lg / icon-lg | `2.5rem` (40px) | `2.25rem` (36px) |
-| Button xl / icon-xl | `2.75rem` (44px) | `2.5rem` (40px) |
-| Input sm | `1.875rem` (30px) | `1.625rem` (26px) |
-| Input default | `2.125rem` (34px) | `1.875rem` (30px) |
-| Input lg | `2.375rem` (38px) | `2.125rem` (34px) |
+| Button xs / icon-xs | `2rem` (32px) | `2rem` (32px) |
+| Button sm / icon-sm | `2rem` (32px) | `2rem` (32px) |
+| Button default / icon | `2.5rem` (40px) | `2.5rem` (40px) |
+| Button lg / icon-lg | `3rem` (48px) | `3rem` (48px) |
+| Button xl / icon-xl | `3rem` (48px) | `3rem` (48px) |
+| Input sm | `1.875rem` (30px) | `1.875rem` (30px) |
+| Input default | `2.375rem` (38px) | `2.375rem` (38px) |
+| Input lg | `2.875rem` (46px) | `2.875rem` (46px) |
 
 Default Button and Input text uses `1rem` (16px) below 640px and `0.875rem` (14px) at 640px and above.
 Button xs text uses `0.875rem` (14px) below 640px and `0.75rem` (12px) at 640px and above.
 Button xl text uses `1.125rem` (18px) below 640px and `1rem` (16px) at 640px and above.
+Select defaults to 40px height and 14px text. Its popup uses a soft shadow.
+Selected options are blue. Unselected options have a neutral highlight.
+Switch has a 37px by 18px visual track and an 8px thumb. Its checked track is
+blue. Its off state uses neutral colors. Its coarse-pointer target is at least 44px.
 
 ### Layout and radius sizes
 
@@ -366,7 +423,8 @@ Button xl text uses `1.125rem` (18px) below 640px and `1rem` (16px) at 640px and
 | `--radius-sm` | `0.5rem` | 8px |
 | `--radius-md` | `0.75rem` | 12px |
 | `--radius-lg` | `1rem` | 16px |
-| `--radius-xl` | `1.5rem` | 24px |
+| `--radius-xl` | `2rem` | 32px |
+| `--radius-full` | `9999px` | 9999px |
 
 A fluid Container uses full width without a maximum width.
 

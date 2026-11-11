@@ -263,8 +263,8 @@ function checkGuidance(text: string, shared = false) {
   )
   expect(managed).toContain(shared ? "@acme/ui/lib/stylex" : "@/lib/stylex")
   expect(managed).not.toContain("@registry/")
-  expect(managed).toContain("Use Inter for body text and headings.")
-  expect(managed).toContain("Use IBM Plex Mono for code and mono text.")
+  expect(managed).toContain("Use Geist Sans for body text and headings.")
+  expect(managed).toContain("Use Geist Mono for code and mono text.")
   expect(managed).toMatch(/semantic.*tokens/i)
   expect(managed).toMatch(/keyboard/i)
   expect(managed).toMatch(/focus/i)
@@ -307,7 +307,7 @@ function checkGuidance(text: string, shared = false) {
   expect(sourceValue(tokenFile, "lightValues", "--radius-sm")).toBe("0.5rem")
   expect(sourceValue(tokenFile, "lightValues", "--radius-md")).toBe("0.75rem")
   expect(sourceValue(tokenFile, "lightValues", "--radius-lg")).toBe("1rem")
-  expect(sourceValue(tokenFile, "lightValues", "--radius-xl")).toBe("1.5rem")
+  expect(sourceValue(tokenFile, "lightValues", "--radius-xl")).toBe("2rem")
 
   for (const units of [
     0, 0.5, 1, 1.5, 2, 3, 4, 5, 6, 8, 10, 12, 16, 20, 24, 32,
@@ -319,20 +319,20 @@ function checkGuidance(text: string, shared = false) {
 
   const sizeRows = [
     "| Text | `1rem` (16px) | `1.5` | 400 |",
-    "| Heading h1 | `2.25rem` (36px) | `1.25` | 600 |",
-    "| Heading h2 | `1.5rem` (24px) | `1.25` | 600 |",
-    "| Heading h3 | `1.25rem` (20px) | `1.25` | 600 |",
-    "| Heading h4 | `1.125rem` (18px) | `1.25` | 600 |",
-    "| Heading h5 | `1rem` (16px) | `1.25` | 600 |",
-    "| Heading h6 | `0.875rem` (14px) | `1.25` | 600 |",
-    "| Button xs / icon-xs | `1.75rem` (28px) | `1.5rem` (24px) |",
-    "| Button sm / icon-sm | `2rem` (32px) | `1.75rem` (28px) |",
-    "| Button default / icon | `2.25rem` (36px) | `2rem` (32px) |",
-    "| Button lg / icon-lg | `2.5rem` (40px) | `2.25rem` (36px) |",
-    "| Button xl / icon-xl | `2.75rem` (44px) | `2.5rem` (40px) |",
-    "| Input sm | `1.875rem` (30px) | `1.625rem` (26px) |",
-    "| Input default | `2.125rem` (34px) | `1.875rem` (30px) |",
-    "| Input lg | `2.375rem` (38px) | `2.125rem` (34px) |",
+    "| Heading h1 | `2.25rem` (36px) | `1.25` | 400 |",
+    "| Heading h2 | `1.5rem` (24px) | `1.25` | 400 |",
+    "| Heading h3 | `1.25rem` (20px) | `1.25` | 400 |",
+    "| Heading h4 | `1.125rem` (18px) | `1.25` | 400 |",
+    "| Heading h5 | `1rem` (16px) | `1.25` | 400 |",
+    "| Heading h6 | `0.875rem` (14px) | `1.25` | 400 |",
+    "| Button xs / icon-xs | `2rem` (32px) | `2rem` (32px) |",
+    "| Button sm / icon-sm | `2rem` (32px) | `2rem` (32px) |",
+    "| Button default / icon | `2.5rem` (40px) | `2.5rem` (40px) |",
+    "| Button lg / icon-lg | `3rem` (48px) | `3rem` (48px) |",
+    "| Button xl / icon-xl | `3rem` (48px) | `3rem` (48px) |",
+    "| Input sm | `1.875rem` (30px) | `1.875rem` (30px) |",
+    "| Input default | `2.375rem` (38px) | `2.375rem` (38px) |",
+    "| Input lg | `2.875rem` (46px) | `2.875rem` (46px) |",
     "| Container maximum width | `90rem` | 1440px |",
     "| Container inline padding | `1rem` (4 spacing units) | 16px |",
     "| Button coarse-pointer target minimum | `2.75rem` | 44px |",
@@ -357,7 +357,7 @@ function checkGuidance(text: string, shared = false) {
   ).toBe(1.25)
   expect(
     sourceValue("components/ui/heading.tsx", "styles", "root", "fontWeight"),
-  ).toBe(600)
+  ).toBe(400)
 
   for (const [level, size] of [
     [1, "2.25rem"],
@@ -378,19 +378,19 @@ function checkGuidance(text: string, shared = false) {
     ).toBe(size)
 
   for (const [file, variant, small, large] of [
-    ["button", "sizeXSmall", "1.75rem", "1.5rem"],
-    ["button", "sizeIconXSmall", "1.75rem", "1.5rem"],
-    ["button", "sizeSmall", "2rem", "1.75rem"],
-    ["button", "sizeIconSmall", "2rem", "1.75rem"],
-    ["button", "sizeDefault", "2.25rem", "2rem"],
-    ["button", "sizeIcon", "2.25rem", "2rem"],
-    ["button", "sizeLarge", "2.5rem", "2.25rem"],
-    ["button", "sizeIconLarge", "2.5rem", "2.25rem"],
-    ["button", "sizeXLarge", "2.75rem", "2.5rem"],
-    ["button", "sizeIconXLarge", "2.75rem", "2.5rem"],
-    ["input", "small", "1.875rem", "1.625rem"],
-    ["input", "input", "2.125rem", "1.875rem"],
-    ["input", "large", "2.375rem", "2.125rem"],
+    ["button", "sizeXSmall", "2rem", "2rem"],
+    ["button", "sizeIconXSmall", "2rem", "2rem"],
+    ["button", "sizeSmall", "2rem", "2rem"],
+    ["button", "sizeIconSmall", "2rem", "2rem"],
+    ["button", "sizeDefault", "2.5rem", "2.5rem"],
+    ["button", "sizeIcon", "2.5rem", "2.5rem"],
+    ["button", "sizeLarge", "3rem", "3rem"],
+    ["button", "sizeIconLarge", "3rem", "3rem"],
+    ["button", "sizeXLarge", "3rem", "3rem"],
+    ["button", "sizeIconXLarge", "3rem", "3rem"],
+    ["input", "small", "1.875rem", "1.875rem"],
+    ["input", "input", "2.375rem", "2.375rem"],
+    ["input", "large", "2.875rem", "2.875rem"],
   ]) {
     expect(
       sourceValue(

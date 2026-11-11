@@ -120,8 +120,25 @@ Use existing form and overlay components. Preserve Base UI keyboard behavior, fo
 ## Themes and lint rules
 
 Use neutral light and dark surfaces with semantic color pairs.
-Use Inter for text and headings and IBM Plex Mono for code. Load both fonts in your app.
-Use spacing and radius tokens instead of separate design values.
+Use Geist Sans for text and headings and Geist Mono for code. Load both fonts in your app.
+Use neutral inverse primary actions. Keep links and hover surfaces neutral, including on hover.
+Keep accent and sidebar-accent pairs neutral. Use the blue accent-solid pair for checked and selected indicators.
+Use --ring for focus, info tokens for status, and sidebar-primary for occasional actions.
+Use --radius (12px) for standard controls and surfaces, and --radius-sm (8px) for compact details.
+Use other radius tokens as explicit overrides. Keep functional circles and compact indicators intact.
+Use spacing and shadow tokens instead of separate design values.
+Use --overlay-shell for the outer Dialog, AlertDialog, Sheet, and Command frame. Use the card pair for the inner surface and footer.
+Use the popover pair for floating menus, Popover, Select, and Toast.
+Use --control-background for field surfaces and --overlay-backdrop for backdrops.
+Input, InputGroup, and Card have borders by default. Set bordered={false} to remove them.
+Field and Fieldset are borderless by default. Set bordered to add a border and padding to the wrapper only.
+NumberField is compact by default; set fullWidth to fill its parent. Table has no body row dividers by default; set rowBorders to add them.
+AutocompleteInput accepts controlXstyle for its outer Input wrapper.
+Dialog, AlertDialog, Sheet, Drawer, and Command popups accept frameTitle as a visual caption. Provide a separate accessible title or label.
+AlertDialog shows its close button by default; it cancels, not confirms. Drawer hides its close button by default. CommandDialogPopup includes the Dialog close button.
+Drawer uses one sidebar-colored surface for its frame, content, and footer.
+Select and Combobox use neutral hover and solid-accent selected rows.
+Steps is a static ordered process, not a navigation control.
 
 Theme switching adds theme.tsx and theme-provider.tsx to the base installation.
 Use ThemeProvider, ThemeScript, and useTheme for light, dark, and system modes.

@@ -83,7 +83,8 @@ yarn dlx @yopem-ui/cli init
 
 Init installs tokens, reset CSS, and StyleX helpers. It configures aliases,
 build extraction, root styles, Oxlint, and the Yopem plugin. It does not install
-all components, theme switching, or fonts.
+all components, theme switching, or fonts. Load Geist Sans and Geist Mono in the
+application to use the default font tokens.
 
 Init can migrate supported Babel or PostCSS configuration and remove old config
 files. Next.js setup can change dev/build scripts to webpack. Inspect the full
