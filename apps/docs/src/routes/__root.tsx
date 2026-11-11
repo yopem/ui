@@ -4,9 +4,10 @@ import "@fontsource-variable/geist"
 import "@fontsource-variable/geist-mono"
 import { Button } from "@registry/components/ui/button"
 import { Text } from "@registry/components/ui/text"
+import { ToastProvider } from "@registry/components/ui/toast"
 
 import "@/styles.css"
-import { ToastProvider } from "@registry/components/ui/toast"
+import { Wrap } from "@registry/components/ui/wrap"
 import { getRootThemeProps, ThemeScript } from "@registry/theme/theme"
 import { ThemeProvider } from "@registry/theme/theme-provider"
 import * as stylex from "@stylexjs/stylex"
@@ -87,9 +88,14 @@ function NotFoundPage() {
           This address does not match a documentation page.
         </DocsDescription>
         <DocsBody>
-          <Link to="/" {...stylex.props(docsStyles.link)}>
-            Return to documentation home
-          </Link>
+          <Wrap>
+            <Link to="/components" {...stylex.props(docsStyles.link)}>
+              Browse components
+            </Link>
+            <Link to="/" {...stylex.props(docsStyles.link)}>
+              Return to documentation home
+            </Link>
+          </Wrap>
         </DocsBody>
       </DocsPage>
     </DocumentationLayout>

@@ -151,6 +151,8 @@ published React component package.
 - Redesign documentation search with a quiet borderless trigger, search icon,
   and borderless input group.
 - Adapt global search to the shared inset Dialog frame.
+- Add a `Browse components` link to the shared static 404 page. Keep recovery
+  usable without JavaScript.
 - Update homepage component showcases with square bordered preview panels and
   captions outside the panels.
 - Center showcase content and use neutral caption links.
