@@ -2,6 +2,7 @@
 
 import type { FormEvent } from "react"
 
+import { AspectRatio } from "@registry/components/ui/aspect-ratio"
 import { Box } from "@registry/components/ui/box"
 import { Button } from "@registry/components/ui/button"
 import { Grid } from "@registry/components/ui/grid"
@@ -30,49 +31,56 @@ const styles = stylex.create({
     maxInlineSize: "90rem",
     marginInline: "auto",
     paddingInline: { default: "2rem", "@media (max-width: 639.98px)": "1rem" },
-    paddingBlockEnd: "2rem",
+    paddingBlockEnd: "4rem",
   },
   hero: {
     display: "flex",
     flexDirection: "column",
     paddingBlock: {
-      default: "3.5rem",
-      "@media (max-width: 639.98px)": "2.5rem",
+      default: "6rem",
+      "@media (max-width: 639.98px)": "3rem",
     },
     gap: "1.5rem",
     alignItems: "flex-start",
   },
   title: {
-    maxInlineSize: "24ch",
+    maxInlineSize: "22ch",
     fontFamily: tokens["--font-heading"],
-    fontSize: { default: "3.5rem", "@media (max-width: 639.98px)": "2.5rem" },
-    fontWeight: 650,
-    letterSpacing: "-0.045em",
-    lineHeight: 1.08,
+    fontSize: { default: "4.5rem", "@media (max-width: 639.98px)": "2.75rem" },
+    fontWeight: 400,
+    letterSpacing: "-0.04em",
+    lineHeight: 1.05,
     textWrap: "balance",
   },
-  actions: { gap: "0.75rem" },
-  action: { minBlockSize: "2.75rem" },
-  sections: { gap: "3rem" },
+  actions: { gap: "0.75rem", marginBlockStart: "1rem" },
+  action: { minBlockSize: "3rem", paddingInline: "1.5rem" },
+  sections: { gap: "4rem" },
   section: {
     display: "flex",
     flexDirection: "column",
     gap: "1.25rem",
     scrollMarginBlockStart: "5rem",
   },
-  sectionTitle: { fontSize: "1.5rem" },
-  sectionLinks: { gap: "0.5rem", paddingBlockEnd: "2rem" },
+  sectionTitle: {
+    fontSize: "1.875rem",
+    fontWeight: 400,
+    letterSpacing: "-0.02em",
+  },
+  sectionLinks: { gap: "0.5rem", paddingBlockEnd: "3rem" },
   sectionLink: {
     borderColor: tokens["--border"],
     borderStyle: "solid",
     borderWidth: 1,
-    borderRadius: tokens["--radius-md"],
-    color: tokens["--foreground"],
+    borderRadius: tokens["--radius"],
+    color: tokens["--muted-foreground"],
     fontSize: "0.875rem",
     paddingBlock: "0.625rem",
     paddingInline: "1rem",
     textDecoration: "none",
-    ":hover": { backgroundColor: tokens["--accent"] },
+    ":hover": {
+      backgroundColor: tokens["--accent"],
+      color: tokens["--accent-foreground"],
+    },
     ":focus-visible": {
       outlineColor: tokens["--ring"],
       outlineStyle: "solid",
@@ -86,45 +94,52 @@ const styles = stylex.create({
       "@media (max-width: 1199.98px)": "repeat(2, minmax(0, 1fr))",
       "@media (max-width: 767.98px)": "minmax(0, 1fr)",
     },
-    gap: "1rem",
+    gap: "2rem",
     alignItems: "stretch",
   },
   card: {
-    backgroundColor: tokens["--card"],
-    color: tokens["--card-foreground"],
-    borderColor: tokens["--border"],
-    borderStyle: "solid",
-    borderWidth: 1,
-    borderRadius: tokens["--radius-md"],
-    overflow: "hidden",
+    color: tokens["--foreground"],
     display: "flex",
     flexDirection: "column",
+    gap: "1.5rem",
   },
-  mutedCard: { backgroundColor: tokens["--muted"] },
-  previewScroll: { flexGrow: 1, maxBlockSize: "28rem" },
+  previewFrame: {
+    backgroundColor: tokens["--muted"],
+    borderColor: tokens["--card-border"],
+    borderStyle: "solid",
+    borderWidth: 1,
+    borderRadius: tokens["--radius"],
+    overflow: "hidden",
+  },
+  previewScroll: { blockSize: "100%" },
   preview: {
     padding: { default: "1.5rem", "@media (max-width: 639.98px)": "1rem" },
     alignItems: "safe center",
     justifyContent: "safe center",
-    minBlockSize: "12rem",
+    minBlockSize: "100%",
     gap: "1rem",
   },
   loading: { blockSize: "9rem", inlineSize: "100%" },
-  caption: { padding: "1.25rem", gap: "0.375rem" },
-  cardTitle: { fontSize: "0.9375rem", fontWeight: 600, lineHeight: 1.4 },
+  caption: { gap: "0.25rem" },
+  cardTitle: { fontSize: "1.25rem", fontWeight: 400, lineHeight: 1.4 },
   cardDescription: {
     color: tokens["--muted-foreground"],
-    fontSize: "0.8125rem",
+    fontSize: "1rem",
     lineHeight: 1.5,
   },
   link: {
-    color: tokens["--foreground"],
-    fontSize: "0.8125rem",
-    textDecoration: "underline",
-    textDecorationColor: tokens["--border"],
-    textUnderlineOffset: "0.25em",
-    borderRadius: tokens["--radius-md"],
-    ":hover": { textDecorationColor: tokens["--foreground"] },
+    alignItems: "center",
+    alignSelf: "flex-start",
+    color: {
+      default: tokens["--foreground"],
+      ":hover": tokens["--muted-foreground"],
+    },
+    display: "inline-flex",
+    fontSize: "1rem",
+    gap: "0.5rem",
+    marginBlockStart: "0.5rem",
+    textDecorationLine: "none",
+    borderRadius: tokens["--radius-sm"],
     ":focus-visible": {
       outlineColor: tokens["--ring"],
       outlineStyle: "solid",
@@ -159,13 +174,7 @@ const showcaseGroups = navigationGroups
       ),
   }))
 
-export function ShowcaseCard({
-  item,
-  muted,
-}: {
-  item: ShowcaseItem
-  muted: boolean
-}) {
+export function ShowcaseCard({ item }: { item: ShowcaseItem }) {
   const id = `showcase-${item.slug}`
   const [submitted, setSubmitted] = useState(false)
   const [visible, setVisible] = useState(() => featuredSlugs.has(item.slug))
@@ -209,8 +218,43 @@ export function ShowcaseCard({
       render={<section aria-labelledby={id} />}
       onSubmit={handleSubmit}
       ref={observePreview}
-      xstyle={[styles.card, muted && styles.mutedCard]}
+      xstyle={styles.card}
     >
+      <AspectRatio ratio={1} xstyle={styles.previewFrame}>
+        <ScrollArea
+          aria-label={`${item.title} live preview`}
+          clampContentMinWidth={false}
+          fill
+          overscrollContain
+          xstyle={styles.previewScroll}
+        >
+          <Stack data-testid="homepage-preview" xstyle={styles.preview}>
+            <Suspense
+              fallback={
+                <Box
+                  render={
+                    <output aria-label={`Loading ${item.title} preview`} />
+                  }
+                >
+                  <Skeleton xstyle={styles.loading} />
+                </Box>
+              }
+            >
+              {visible ? (
+                <HomepagePreview item={item} />
+              ) : (
+                <Box
+                  render={
+                    <output aria-label={`Loading ${item.title} preview`} />
+                  }
+                >
+                  <Skeleton xstyle={styles.loading} />
+                </Box>
+              )}
+            </Suspense>
+          </Stack>
+        </ScrollArea>
+      </AspectRatio>
       <Stack xstyle={styles.caption}>
         <Heading
           render={<h3 id={id}>{item.title}</h3>}
@@ -225,36 +269,9 @@ export function ShowcaseCard({
           {...stylex.props(styles.link)}
         >
           {item.title} source and API
+          <ArrowRight size={16} aria-hidden="true" />
         </Link>
       </Stack>
-      <ScrollArea
-        aria-label={`${item.title} live preview`}
-        clampContentMinWidth={false}
-        overscrollContain
-        xstyle={styles.previewScroll}
-      >
-        <Stack data-testid="homepage-preview" xstyle={styles.preview}>
-          <Suspense
-            fallback={
-              <Box
-                render={<output aria-label={`Loading ${item.title} preview`} />}
-              >
-                <Skeleton xstyle={styles.loading} />
-              </Box>
-            }
-          >
-            {visible ? (
-              <HomepagePreview item={item} />
-            ) : (
-              <Box
-                render={<output aria-label={`Loading ${item.title} preview`} />}
-              >
-                <Skeleton xstyle={styles.loading} />
-              </Box>
-            )}
-          </Suspense>
-        </Stack>
-      </ScrollArea>
       {submitted ? (
         <Box
           render={<output />}
@@ -320,12 +337,8 @@ export function Introduction() {
                 xstyle={styles.sectionTitle}
               />
               <Grid xstyle={styles.gallery}>
-                {group.items.map((item, index) => (
-                  <ShowcaseCard
-                    key={item.slug}
-                    item={item}
-                    muted={index % 4 === 0}
-                  />
+                {group.items.map((item) => (
+                  <ShowcaseCard key={item.slug} item={item} />
                 ))}
               </Grid>
             </Box>

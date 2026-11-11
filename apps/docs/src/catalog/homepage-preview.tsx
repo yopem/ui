@@ -8,14 +8,18 @@ import {
   SidebarContent,
   SidebarGroup,
   SidebarGroupLabel,
+  SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarProvider,
 } from "@registry/components/ui/sidebar"
 import { Stack } from "@registry/components/ui/stack"
+import { Text } from "@registry/components/ui/text"
+import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import { Link } from "@tanstack/react-router"
+import { BookOpenIcon, PackageIcon } from "lucide-react"
 import { useId } from "react"
 
 import type { CatalogItem } from "./components"
@@ -27,7 +31,13 @@ const styles = stylex.create({
   pageHeading: { fontSize: "2.25rem" },
   sectionHeading: { fontSize: "1.5rem" },
   subsectionHeading: { fontSize: "1.25rem" },
-  sidebar: { inlineSize: "100%", maxInlineSize: "16rem", minBlockSize: 0 },
+  sidebar: { inlineSize: "100%", maxInlineSize: "14rem", minBlockSize: 0 },
+  sidebarTitle: {
+    color: tokens["--foreground"],
+    fontSize: "0.875rem",
+    fontWeight: 500,
+    paddingInline: "0.5rem",
+  },
 })
 
 export function HomepagePreview({ item }: { item: CatalogItem }) {
@@ -77,17 +87,22 @@ export function HomepageSidebarPreview() {
   return (
     <SidebarProvider xstyle={styles.sidebar}>
       <Sidebar collapsible="none" xstyle={styles.sidebar}>
+        <SidebarHeader>
+          <Text xstyle={styles.sidebarTitle}>Yopem UI</Text>
+        </SidebarHeader>
         <SidebarContent>
           <SidebarGroup>
             <SidebarGroupLabel>Workspace</SidebarGroupLabel>
             <SidebarMenu>
               <SidebarMenuItem>
-                <SidebarMenuButton render={<Link to="/components" />}>
+                <SidebarMenuButton isActive render={<Link to="/components" />}>
+                  <PackageIcon size={16} aria-hidden="true" />
                   Components
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
                 <SidebarMenuButton render={<Link to="/docs/getting-started" />}>
+                  <BookOpenIcon size={16} aria-hidden="true" />
                   Getting started
                 </SidebarMenuButton>
               </SidebarMenuItem>
