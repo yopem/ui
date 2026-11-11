@@ -4,7 +4,7 @@ import type { StyleXComponentProps } from "@registry/lib/stylex"
 
 import { Tooltip as TooltipPrimitive } from "@base-ui/react/tooltip"
 import { mergeStylexProps, stylexProps } from "@registry/lib/stylex"
-import { themeMarker, tokens } from "@registry/styles/tokens.stylex"
+import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 
 const styles = stylex.create({
@@ -20,43 +20,50 @@ const styles = stylex.create({
     backgroundClip: "padding-box",
     backgroundColor: tokens["--popover"],
     blockSize: "var(--popup-height, auto)",
-    borderColor: tokens["--border"],
-    borderRadius: tokens["--radius-md"],
+    borderColor: tokens["--card-border"],
+    borderRadius: tokens["--radius-sm"],
     borderStyle: "solid",
     borderWidth: 1,
-    boxShadow: "0 4px 6px -1px color-mix(in oklab, #000 5%, transparent)",
+    boxShadow: tokens["--shadow-md"],
     color: tokens["--popover-foreground"],
     display: "flex",
-    fontSize: "0.75rem",
+    fontSize: "0.875rem",
     inlineSize: "var(--popup-width, auto)",
     position: "relative",
     textWrap: "balance",
     transformOrigin: "var(--transform-origin)",
     transitionProperty: "width, height, scale, opacity",
-    "::before": {
-      borderRadius: "calc(var(--radius-md) - 1px)",
-      boxShadow: {
-        default: "0 1px rgb(0 0 0 / 0.04)",
-        [stylex.when.ancestor('[data-theme="dark"]', themeMarker)]:
-          "0 -1px rgb(255 255 255 / 0.06)",
-      },
-      content: '""',
-      inset: 0,
-      pointerEvents: "none",
-      position: "absolute",
-    },
     "[data-ending-style]": { opacity: 0, scale: 0.98 },
     "[data-instant]": { transitionDuration: "0ms" },
     "[data-starting-style]": { opacity: 0, scale: 0.98 },
+  },
+  arrow: {
+    backgroundColor: tokens["--popover"],
+    blockSize: "0.625rem",
+    inlineSize: "0.625rem",
+    rotate: "45deg",
+    borderColor: tokens["--card-border"],
+    borderStyle: "solid",
+    borderWidth: {
+      default: "0",
+      '[data-side="top"]': "0 1px 1px 0",
+      '[data-side="bottom"]': "1px 0 0 1px",
+      '[data-side="left"]': "1px 1px 0 0",
+      '[data-side="right"]': "0 0 1px 1px",
+    },
+    top: { default: null, '[data-side="bottom"]': "-0.3125rem" },
+    bottom: { default: null, '[data-side="top"]': "-0.3125rem" },
+    left: { default: null, '[data-side="right"]': "-0.3125rem" },
+    right: { default: null, '[data-side="left"]': "-0.3125rem" },
   },
   viewport: {
     blockSize: "100%",
     inlineSize: "100%",
     overflow: "clip",
-    paddingBlock: "0.25rem",
+    paddingBlock: "0.375rem",
     paddingInline: "var(--viewport-inline-padding)",
     position: "relative",
-    "--viewport-inline-padding": "0.5rem",
+    "--viewport-inline-padding": "0.75rem",
     "[data-instant]": { transitionProperty: "none" },
   },
 })
@@ -125,6 +132,10 @@ export function TooltipPopup({
             props,
           )}
         >
+          <TooltipPrimitive.Arrow
+            data-slot="tooltip-arrow"
+            {...stylex.props(styles.arrow)}
+          />
           <TooltipPrimitive.Viewport
             {...stylex.props(styles.viewport)}
             data-slot="tooltip-viewport"
