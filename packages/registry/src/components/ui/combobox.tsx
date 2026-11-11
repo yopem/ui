@@ -13,7 +13,7 @@ import {
   mergeStylexProps,
   stylexProps,
 } from "@registry/lib/stylex"
-import { themeMarker, tokens } from "@registry/styles/tokens.stylex"
+import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import { ChevronsUpDownIcon, XIcon } from "lucide-react"
 import { createContext, forwardRef, useContext, useState } from "react"
@@ -104,7 +104,7 @@ const styles = stylex.create({
     alignItems: "center",
     blockSize: { default: "2rem", "@media (min-width: 640px)": "1.75rem" },
     borderColor: "transparent",
-    borderRadius: tokens["--radius-md"],
+    borderRadius: tokens["--radius"],
     borderStyle: "solid",
     borderWidth: 1,
     cursor: "pointer",
@@ -131,11 +131,8 @@ const styles = stylex.create({
   surface: {
     backgroundClip: "padding-box",
     backgroundColor: tokens["--popover"],
-    borderColor: tokens["--border"],
-    borderRadius: tokens["--radius-md"],
-    borderStyle: "solid",
-    borderWidth: 1,
-    boxShadow: "0 10px 15px -3px color-mix(in oklab, #000 5%, transparent)",
+    borderRadius: tokens["--radius"],
+    boxShadow: tokens["--shadow-md"],
     display: "flex",
     maxBlockSize: "100%",
     maxInlineSize: "var(--available-width)",
@@ -143,21 +140,9 @@ const styles = stylex.create({
     position: "relative",
     transformOrigin: "var(--transform-origin)",
     transitionProperty: "scale, opacity",
-    "::before": {
-      borderRadius: "calc(var(--radius-md) - 1px)",
-      boxShadow: {
-        default: "0 1px rgb(0 0 0 / 0.04)",
-        [stylex.when.ancestor('[data-theme="dark"]', themeMarker)]:
-          "0 -1px rgb(255 255 255 / 0.06)",
-      },
-      content: '""',
-      inset: 0,
-      pointerEvents: "none",
-      position: "absolute",
-    },
   },
   popup: {
-    color: tokens["--foreground"],
+    color: tokens["--popover-foreground"],
     display: "flex",
     flex: 1,
     flexDirection: "column",
@@ -170,31 +155,33 @@ const styles = stylex.create({
         "calc(var(--anchor-width) + 1.25rem)",
     },
     alignItems: "center",
-    borderRadius: tokens["--radius-md"],
+    borderRadius: tokens["--radius-sm"],
     cursor: "default",
     display: "grid",
-    fontSize: {
-      default: "1rem",
-      "@media (min-width: 640px)": "0.875rem",
-    },
+    fontSize: "0.875rem",
+    fontWeight: 450,
+    lineHeight: "1.25rem",
     gap: "0.5rem",
     gridTemplateColumns: "1rem 1fr",
     minBlockSize: {
       default: "2rem",
-      "@media (min-width: 640px)": "1.75rem",
+      "@media (pointer: coarse)": "2.75rem",
     },
     outline: "none",
-    paddingBlock: "0.25rem",
-    paddingInlineEnd: "1rem",
-    paddingInlineStart: "0.5rem",
+    paddingBlock: "0.375rem",
+    paddingInline: "0.5rem",
     userSelect: "none",
     backgroundColor: {
       default: null,
       "[data-highlighted]": tokens["--accent"],
+      "[data-selected]": tokens["--accent-solid"],
+      "[data-selected][data-highlighted]": tokens["--accent-solid"],
     },
     color: {
       default: null,
       "[data-highlighted]": tokens["--accent-foreground"],
+      "[data-selected]": tokens["--accent-solid-foreground"],
+      "[data-selected][data-highlighted]": tokens["--accent-solid-foreground"],
     },
     opacity: {
       default: null,
@@ -249,20 +236,16 @@ const styles = stylex.create({
       ":has(:disabled)": "none",
     },
     backgroundClip: "padding-box",
-    backgroundColor: {
-      default: tokens["--background"],
-      [stylex.when.ancestor('[data-theme="dark"]', themeMarker)]:
-        "color-mix(in oklab, var(--input, transparent) 32%, transparent)",
-    },
+    backgroundColor: tokens["--control-background"],
     borderColor: {
       default: tokens["--input"],
       ":focus-within": tokens["--ring"],
     },
-    borderRadius: tokens["--radius-md"],
+    borderRadius: tokens["--radius"],
     borderStyle: "solid",
     borderWidth: 1,
     boxShadow: {
-      default: "0 1px 2px color-mix(in oklab, #000 5%, transparent)",
+      default: tokens["--shadow-sm"],
       ":focus-within": `0 0 0 3px color-mix(in oklab, var(--ring, currentColor) 24%, transparent)`,
     },
     display: "inline-flex",
@@ -273,10 +256,7 @@ const styles = stylex.create({
     },
     gap: "0.25rem",
     inlineSize: "100%",
-    minBlockSize: {
-      default: "2.25rem",
-      "@media (min-width: 640px)": "2rem",
-    },
+    minBlockSize: "2.5rem",
     outline: "none",
     padding: "calc(0.25rem - 1px)",
     position: "relative",
@@ -294,7 +274,7 @@ const styles = stylex.create({
     minBlockSize: { default: "1.75rem", "@media (min-width: 640px)": "1.5rem" },
     alignItems: "center",
     backgroundColor: tokens["--accent"],
-    borderRadius: "calc(var(--radius-md) - 1px)",
+    borderRadius: "calc(var(--radius) - 1px)",
     color: tokens["--accent-foreground"],
     display: "flex",
     fontSize: { default: "0.875rem", "@media (min-width: 640px)": "0.75rem" },
