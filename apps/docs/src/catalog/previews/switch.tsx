@@ -7,13 +7,20 @@ export function Preview() {
   const id = useId()
 
   const labelId = `${id}-label`
+  const disabledId = `${id}-disabled`
 
   return (
     <HStack>
-      <Switch id={id} aria-labelledby={labelId} />
-      <Label id={labelId} htmlFor={id}>
-        Trail condition alerts
-      </Label>
+      <HStack>
+        <Switch id={id} aria-labelledby={labelId} />
+        <Label id={labelId} htmlFor={id}>
+          Trail condition alerts
+        </Label>
+      </HStack>
+      <HStack>
+        <Switch id={disabledId} disabled />
+        <Label htmlFor={disabledId}>Disabled alerts</Label>
+      </HStack>
     </HStack>
   )
 }
