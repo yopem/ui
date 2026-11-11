@@ -22,7 +22,7 @@ const styles = stylex.create({
   },
   item: { alignItems: "center", display: "inline-flex", gap: "0.375rem" },
   link: {
-    color: { default: null, ":hover": tokens["--foreground"] },
+    color: { default: null, ":hover": tokens["--accent-foreground"] },
     transitionProperty: "color",
   },
   page: { color: tokens["--foreground"], fontWeight: 400 },

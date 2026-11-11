@@ -7,6 +7,7 @@ import { mergeProps } from "@base-ui/react/merge-props"
 import { useRender } from "@base-ui/react/use-render"
 import { type Button, buttonVariants } from "@registry/components/ui/button"
 import { mergeStylexProps, stylexProps } from "@registry/lib/stylex"
+import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import { clsx } from "clsx"
 import {
@@ -26,7 +27,12 @@ const styles = stylex.create({
     alignItems: "center",
     display: "flex",
     flexDirection: "row",
-    gap: "0.25rem",
+    gap: "0.5rem",
+  },
+  active: {
+    backgroundColor: tokens["--accent"],
+    borderColor: "transparent",
+    color: tokens["--accent-foreground"],
   },
   compact: {
     "@media (max-width: 639px)": { aspectRatio: "1", padding: 0 },
@@ -132,7 +138,7 @@ export function PaginationLink({
   ...restProps
 }: PaginationLinkProps) {
   const props = restProps
-  const xstyle = consumerXstyle
+  const xstyle = [isActive ? styles.active : null, consumerXstyle]
 
   const defaultProps = {
     "aria-current": isActive ? ("page" as const) : undefined,
