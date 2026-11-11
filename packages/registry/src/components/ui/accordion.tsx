@@ -23,7 +23,7 @@ const styles = stylex.create({
   header: { display: "flex" },
   trigger: {
     alignItems: "flex-start",
-    borderRadius: tokens["--radius-md"],
+    borderRadius: tokens["--radius"],
     cursor: "pointer",
     display: "flex",
     flex: 1,
@@ -37,6 +37,7 @@ const styles = stylex.create({
     textAlign: "start",
     transitionDuration: "150ms",
     transitionProperty: "all",
+    ":hover": { color: tokens["--accent-foreground"] },
     ":disabled": { opacity: 0.64, pointerEvents: "none" },
     ":focus-visible": { boxShadow: `0 0 0 3px ${tokens["--ring"]}` },
   },
