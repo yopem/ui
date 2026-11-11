@@ -1,7 +1,7 @@
 "use client"
 
 import type { StyleXComponentProps } from "@registry/lib/stylex"
-import type { ComponentProps } from "react"
+import type { ComponentProps, ReactNode } from "react"
 
 import { Dialog as CommandDialogPrimitive } from "@base-ui/react/dialog"
 import {
@@ -15,15 +15,16 @@ import {
   AutocompleteList,
   AutocompleteSeparator,
 } from "@registry/components/ui/autocomplete"
+import { DialogPopup } from "@registry/components/ui/dialog"
 import { mergeStylexProps, stylexProps } from "@registry/lib/stylex"
-import { themeMarker, tokens } from "@registry/styles/tokens.stylex"
+import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import { SearchIcon } from "lucide-react"
 
 const styles = stylex.create({
   backdrop: {
     backdropFilter: "blur(4px)",
-    backgroundColor: "rgb(0 0 0 / 0.32)",
+    backgroundColor: tokens["--overlay-backdrop"],
     inset: 0,
     position: "fixed",
     transitionDuration: "200ms",
@@ -45,92 +46,58 @@ const styles = stylex.create({
     position: "fixed",
     zIndex: 50,
   },
-  popup: {
-    backgroundClip: "padding-box",
-    backgroundColor: tokens["--popover"],
-    borderColor: tokens["--border"],
-    borderRadius: "var(--radius-md)",
-    borderStyle: "solid",
-    borderWidth: 1,
-    boxShadow: "0 10px 15px -3px color-mix(in oklab, #000 5%, transparent)",
-    color: tokens["--popover-foreground"],
-    display: "flex",
-    flexDirection: "column",
-    inlineSize: "100%",
-    maxBlockSize: "26.25rem",
-    maxInlineSize: "36rem",
-    minBlockSize: 0,
-
-    opacity: "calc(1 - 0.1 * var(--nested-dialogs))",
-    outline: "none",
-    position: "relative",
-    scale: "calc(1 - 0.1 * var(--nested-dialogs))",
-    transform: "translateY(calc(-1.25rem * var(--nested-dialogs)))",
-    transitionDuration: "200ms",
-    transitionProperty: "scale, opacity, translate",
-    transitionTimingFunction: "ease-in-out",
-    willChange: "transform",
-    "::before": {
-      backgroundColor:
-        "color-mix(in oklab, var(--muted, transparent) 72%, transparent)",
-      borderRadius: "calc(var(--radius-md) - 1px)",
-      boxShadow: {
-        default: "0 1px rgb(0 0 0 / 0.04)",
-        [stylex.when.ancestor('[data-theme="dark"]', themeMarker)]:
-          "0 -1px rgb(255 255 255 / 0.06)",
-      },
-      content: '""',
-      inset: 0,
-      pointerEvents: "none",
-      position: "absolute",
+  popup: { maxBlockSize: "min(100%, 30rem)", maxInlineSize: "42rem" },
+  inputWrap: {
+    borderBlockEndColor: tokens["--border"],
+    borderBlockEndStyle: "solid",
+    borderBlockEndWidth: 1,
+    paddingInline: "1rem",
+    boxShadow: {
+      default: "none",
+      ":has(:focus-visible)": `inset 0 -2px 0 ${tokens["--ring"]}`,
     },
-    "[data-ending-style]": { opacity: 0, scale: 0.98 },
-    "[data-starting-style]": { opacity: 0, scale: 0.98 },
-    "[data-nested]": {
-      "[data-ending-style]": { translate: "0 2rem" },
-      "[data-starting-style]": { translate: "0 2rem" },
-    },
-    "[data-nested-dialog-open]": { transformOrigin: "top" },
   },
-  inputWrap: { paddingBlock: "0.375rem", paddingInline: "0.625rem" },
-  commandInput: {
+  inputControl: {
     backgroundColor: "transparent",
-    borderColor: "transparent",
-    boxShadow: "none",
+    borderWidth: 0,
+    borderRadius: 0,
+    boxShadow: {
+      default: "none",
+      ":has(:focus-visible)": "none",
+    },
   },
+  commandInput: {
+    blockSize: "3rem",
+    fontSize: "0.875rem",
+    paddingInlineStart: "2.75rem",
+    paddingInlineEnd: "1rem",
+  },
+  searchIcon: { blockSize: "1.25rem", inlineSize: "1.25rem" },
   list: { ":not(:empty)": { padding: "0.5rem", scrollPaddingBlock: "0.5rem" } },
   empty: { ":not(:empty)": { paddingBlock: "1.5rem" } },
-  panel: {
-    backgroundClip: "padding-box",
-    backgroundColor: tokens["--popover"],
-    borderColor: tokens["--border"],
-    borderRadius: "var(--radius-md) var(--radius-md) 0 0",
-    borderStyle: "solid",
-    borderWidth: 1,
-    borderBlockEndWidth: 0,
-    boxShadow: "0 1px 2px color-mix(in oklab, #000 5%, transparent)",
-    clipPath: "inset(0 1px)",
-    marginInline: -1,
-    minBlockSize: 0,
-    position: "relative",
-    "::before": {
-      borderStartEndRadius: "calc(var(--radius-md) - 1px)",
-      borderStartStartRadius: "calc(var(--radius-md) - 1px)",
-      content: '""',
-      inset: 0,
-      pointerEvents: "none",
-      position: "absolute",
+  panel: { minBlockSize: 0 },
+  groupLabel: {
+    fontSize: "0.6875rem",
+    letterSpacing: "0.05em",
+    textTransform: "uppercase",
+  },
+  item: {
+    borderRadius: tokens["--radius-sm"],
+    minBlockSize: "2rem",
+    paddingBlock: "0.375rem",
+    paddingInline: "0.5rem",
+    "[data-highlighted]": {
+      backgroundColor: tokens["--accent"],
+      color: tokens["--accent-foreground"],
     },
   },
-  item: { paddingBlock: "0.375rem" },
   separator: { marginBlock: "0.5rem" },
   shortcut: {
-    color:
-      "color-mix(in oklab, var(--muted-foreground, currentColor) 72%, transparent)",
-    fontFamily: tokens["--font-sans"],
+    color: tokens["--muted-foreground"],
+    fontFamily: tokens["--font-mono"],
     fontSize: "0.75rem",
     fontWeight: 500,
-    letterSpacing: "0.1em",
+    letterSpacing: 0,
     marginInlineStart: "auto",
   },
   footer: {
@@ -138,8 +105,8 @@ const styles = stylex.create({
     borderBlockStartColor: tokens["--border"],
     borderBlockStartStyle: "solid",
     borderBlockStartWidth: 1,
-    borderEndEndRadius: "calc(var(--radius-md) - 1px)",
-    borderEndStartRadius: "calc(var(--radius-md) - 1px)",
+    borderEndEndRadius: "calc(var(--radius) - 1px)",
+    borderEndStartRadius: "calc(var(--radius) - 1px)",
     color: tokens["--muted-foreground"],
     display: "flex",
     fontSize: "0.75rem",
@@ -218,31 +185,27 @@ export function CommandDialogPopup({
   className,
   children,
   portalProps,
+  frameTitle,
   ...restProps
 }: StyleXComponentProps<
   CommandDialogPrimitive.Popup.Props,
   {
     portalProps?: CommandDialogPrimitive.Portal.Props
+    frameTitle?: ReactNode
   }
 >) {
-  const props = restProps
-  const xstyle = consumerXstyle
-
   return (
-    <CommandDialogPortal {...portalProps}>
-      <CommandDialogBackdrop />
-      <CommandDialogViewport>
-        <CommandDialogPrimitive.Popup
-          data-slot="command-dialog-popup"
-          {...mergeStylexProps(
-            stylexProps(className, styles.popup, xstyle),
-            props,
-          )}
-        >
-          {children}
-        </CommandDialogPrimitive.Popup>
-      </CommandDialogViewport>
-    </CommandDialogPortal>
+    <DialogPopup
+      bottomStickOnMobile={false}
+      className={className}
+      data-slot="command-dialog-popup"
+      frameTitle={frameTitle}
+      portalProps={portalProps}
+      xstyle={[styles.popup, consumerXstyle]}
+      {...restProps}
+    >
+      {children}
+    </DialogPopup>
   )
 }
 
@@ -264,6 +227,7 @@ export function Command({
 
 export function CommandInput({
   xstyle: consumerXstyle,
+  controlXstyle,
   className,
   placeholder,
   ...restProps
@@ -271,16 +235,21 @@ export function CommandInput({
   const props = restProps
   const xstyle = consumerXstyle
 
+  const controlStyles = controlXstyle
+    ? [styles.inputControl, controlXstyle]
+    : styles.inputControl
+
   return (
-    <div {...stylex.props(styles.inputWrap)}>
+    <div data-slot="command-input-wrapper" {...stylex.props(styles.inputWrap)}>
       <AutocompleteInput
         // oxlint-disable-next-line jsx-a11y/no-autofocus, react-doctor/no-autofocus -- command palettes intentionally focus their search input
         autoFocus
         className={className}
+        controlXstyle={controlStyles}
         xstyle={[styles.commandInput, xstyle]}
         placeholder={placeholder}
         size="lg"
-        startAddon={<SearchIcon />}
+        startAddon={<SearchIcon {...stylex.props(styles.searchIcon)} />}
         {...props}
       />
     </div>
@@ -368,7 +337,7 @@ export function CommandGroupLabel({
   return (
     <AutocompleteGroupLabel
       className={className}
-      xstyle={xstyle}
+      xstyle={[styles.groupLabel, xstyle]}
       data-slot="command-group-label"
       {...props}
     />

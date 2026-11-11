@@ -1,6 +1,6 @@
 "use client"
 
-import type { StyleXComponentProps } from "@registry/lib/stylex"
+import type { StyleXComponentProps, StyleXProps } from "@registry/lib/stylex"
 import type { ReactNode } from "react"
 
 import { Autocomplete as AutocompletePrimitive } from "@base-ui/react/autocomplete"
@@ -12,7 +12,7 @@ import {
   mergeStylexProps,
   stylexProps,
 } from "@registry/lib/stylex"
-import { themeMarker, tokens } from "@registry/styles/tokens.stylex"
+import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import { ChevronsUpDownIcon, XIcon } from "lucide-react"
 import { forwardRef } from "react"
@@ -31,7 +31,7 @@ const styles = stylex.create({
     paddingInlineStart: {
       default: null,
       ':is([data-slot="autocomplete-input-group"][data-has-start-addon] input)':
-        "calc(2.125rem - 1px)",
+        "calc(2.75rem - 1px)",
     },
     paddingInlineEnd: {
       default: null,
@@ -78,7 +78,7 @@ const styles = stylex.create({
     alignItems: "center",
     blockSize: { default: "2rem", "@media (min-width: 640px)": "1.75rem" },
     borderColor: "transparent",
-    borderRadius: tokens["--radius-md"],
+    borderRadius: tokens["--radius"],
     borderStyle: "solid",
     borderWidth: 1,
     cursor: "pointer",
@@ -106,10 +106,10 @@ const styles = stylex.create({
     backgroundClip: "padding-box",
     backgroundColor: tokens["--popover"],
     borderColor: tokens["--border"],
-    borderRadius: tokens["--radius-md"],
+    borderRadius: tokens["--radius"],
     borderStyle: "solid",
     borderWidth: 1,
-    boxShadow: "0 10px 15px -3px color-mix(in oklab, #000 5%, transparent)",
+    boxShadow: tokens["--shadow-md"],
     display: "flex",
     maxBlockSize: "100%",
     maxInlineSize: "var(--available-width)",
@@ -117,18 +117,6 @@ const styles = stylex.create({
     position: "relative",
     transformOrigin: "var(--transform-origin)",
     transitionProperty: "scale, opacity",
-    "::before": {
-      borderRadius: "calc(var(--radius-md) - 1px)",
-      boxShadow: {
-        default: "0 1px rgb(0 0 0 / 0.04)",
-        [stylex.when.ancestor('[data-theme="dark"]', themeMarker)]:
-          "0 -1px rgb(255 255 255 / 0.06)",
-      },
-      content: '""',
-      inset: 0,
-      pointerEvents: "none",
-      position: "absolute",
-    },
   },
   popup: {
     color: tokens["--foreground"],
@@ -139,7 +127,7 @@ const styles = stylex.create({
   },
   item: {
     alignItems: "center",
-    borderRadius: tokens["--radius-md"],
+    borderRadius: tokens["--radius"],
     cursor: "default",
     display: "flex",
     fontSize: { default: "1rem", "@media (min-width: 640px)": "0.875rem" },
@@ -197,6 +185,7 @@ type AutocompleteInputProps = StyleXComponentProps<
     showTrigger?: boolean
     showClear?: boolean
     startAddon?: ReactNode
+    controlXstyle?: StyleXProps["xstyle"]
     size?: "sm" | "default" | "lg" | number
     triggerProps?: AutocompletePrimitive.Trigger.Props
     clearProps?: AutocompletePrimitive.Clear.Props
@@ -213,6 +202,7 @@ export const AutocompleteInput = forwardRef<
     showTrigger = false,
     showClear = false,
     startAddon,
+    controlXstyle,
     size,
     triggerProps,
     clearProps,
@@ -248,6 +238,7 @@ export const AutocompleteInput = forwardRef<
         render={
           <Input
             nativeInput
+            controlXstyle={controlXstyle}
             size={sizeValue}
             xstyle={[styles.inputPadding, xstyle]}
           />

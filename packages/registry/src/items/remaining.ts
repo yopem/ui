@@ -427,7 +427,7 @@ const definitions: Definition[] = [
     categories: ["navigation", "controls"],
     description: "Provides a command palette and searchable action list.",
     name: "command",
-    registryDependencies: ["autocomplete"],
+    registryDependencies: ["autocomplete", "dialog"],
     title: "Command",
   },
   {

@@ -116,7 +116,10 @@ export function Preview() {
           <Kbd>J</Kbd>
         </KbdGroup>
       </CommandDialogTrigger>
-      <CommandDialogPopup>
+      <CommandDialogPopup
+        aria-label="Command palette"
+        frameTitle="Command palette"
+      >
         <Command items={groupedItems}>
           <CommandInput placeholder="Search station tools..." />
           <CommandPanel>
