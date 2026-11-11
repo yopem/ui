@@ -8,12 +8,15 @@ test("number field supports compact and full-width controls", async ({
   await openPreview(page, "number-field")
   const preview = page.locator('[aria-label$="live preview"]').first()
 
-  const compact = preview.getByRole("spinbutton", {
+  const compact = preview.getByRole("textbox", {
     name: "Quantity",
     exact: true,
   })
 
-  const wide = preview.getByRole("spinbutton", { name: "Full-width quantity" })
+  const wide = preview.getByRole("textbox", {
+    name: "Full-width quantity",
+    exact: true,
+  })
 
   const compactRoot = compact.locator(
     'xpath=ancestor::*[@data-slot="number-field"]',
