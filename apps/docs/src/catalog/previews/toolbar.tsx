@@ -42,8 +42,8 @@ const styles = stylex.create({
 })
 
 const items = [
-  { label: "Inter", value: "inter" },
-  { label: "IBM Plex Mono", value: "ibm-plex-mono" },
+  { label: "Geist Sans", value: "geist" },
+  { label: "Geist Mono", value: "geist-mono" },
   { label: "Georgia", value: "georgia" },
 ]
 
@@ -135,7 +135,7 @@ export function Preview() {
         </ToolbarGroup>
         <ToolbarSeparator />
         <ToolbarGroup>
-          <Select defaultValue="inter" items={items}>
+          <Select defaultValue="geist" items={items}>
             <Tooltip>
               <TooltipTrigger
                 render={
