@@ -9,8 +9,8 @@ const usageNoteValues = {
     "Object queries accept min, max, and pointer (coarse or fine). Minimum widths are inclusive. Maximum widths are exclusive. Server snapshots return false. matchMedia change listeners update the client. They unsubscribe when the component unmounts or the query changes.",
   ],
   base: [
-    "Rounded surfaces use md (12px). Use xstyle to change corner radii. Use controlXstyle for Input and Textarea wrappers. Circular indicators keep their shape.",
-    "Copy the base files. Configure StyleX in your bundler. Import styles/styles.css once. Native StyleX tokens provide light defaults. You do not need a provider, script, or font package.",
+    "Use --radius (12px by default) for standard controls and surfaces. Use --radius-sm (8px by default) for compact details. Other radius tokens are explicit overrides. Use xstyle to change corners. Use controlXstyle for Input and Textarea wrappers. Functional circles and compact indicators keep their shape.",
+    "Copy the base files. Configure StyleX in your bundler. Import styles/styles.css once. Native StyleX tokens provide light defaults. A fixed theme needs no provider or script. Load Geist Sans and Geist Mono to use the default font families.",
     "Change tokens in tokens.stylex.ts. Create complete light and dark themes in that file. The optional theme item saves light, dark, and system preferences. styles.css contains reset, reduced-motion policy, and required upstream viewport rules. It does not contain theme values.",
     "The documentation copies components into src/components/ui and uses the standard @/* alias for src. Keep this alias in TypeScript, your bundler, and StyleX.",
     "Create local styles with stylex.create. Apply them through xstyle after component defaults and variants. Use className for external CSS integration.",
@@ -47,6 +47,7 @@ const usageNoteValues = {
   card: [
     "Compose CardHeader, CardTitle, CardDescription, CardPanel and CardFooter inside Card.",
     "CardContent is an alias for CardPanel. Use separator on CardHeader or CardFooter to add a divider and matching spacing. CardFrame parts add an outer frame.",
+    "Card has a border by default. Set bordered={false} to remove it. Use xstyle to override the card styles.",
   ],
   empty: [
     "Use EmptyHeader with EmptyMedia, EmptyTitle and EmptyDescription, followed by EmptyContent for recovery actions.",
@@ -142,7 +143,7 @@ const usageNoteValues = {
     "Codeblock preserves code whitespace and allows horizontal scrolling. Supply a language label outside the block when context is not obvious.",
   ],
   heading: [
-    "Heading renders h2 by default. It uses the heading font token and foreground color token. Default sizes are h1 2.25rem, h2 1.5rem, h3 1.25rem, h4 1.125rem, h5 1rem, and h6 0.875rem. Other defaults are weight 600, 1.25 line height, -0.025em letter spacing, and zero margins. Use render={<h1 />} through render={<h6 />} to select semantic levels. The Base UI render prop also supports callbacks and custom components. Sizes follow the rendered native heading tag, including callbacks and custom components. Other rendered tags use the h2 size. Use xstyle to override the size.",
+    "Heading renders h2 by default. It uses the heading font token and foreground color token. Default sizes are h1 2.25rem, h2 1.5rem, h3 1.25rem, h4 1.125rem, h5 1rem, and h6 0.875rem. Other defaults are weight 400, 1.25 line height, -0.02em letter spacing, and zero margins. Use render={<h1 />} through render={<h6 />} to select semantic levels. The Base UI render prop also supports callbacks and custom components. Sizes follow the rendered native heading tag, including callbacks and custom components. Other rendered tags use the h2 size. Use xstyle to override the size.",
   ],
   checkmark: [
     "Checkmark is decorative and hidden from assistive technology. Include text that communicates success or selection beside it.",
@@ -183,10 +184,12 @@ const usageNoteValues = {
   ],
   table: [
     "Compose TableCaption, TableHeader, TableBody and TableFooter with TableRow, TableHead and TableCell.",
+    "Rows have no dividers by default. Set rowBorders to add dividers between body rows.",
     "Use scope on header cells to identify row or column headers. Table provides an overflow wrapper. variant selects the presentation. It does not control sorting or pagination.",
   ],
   input: [
     "Pair Input with a label using Field or matching id and htmlFor.",
+    "Set bordered={false} to remove the outer border. Use controlXstyle to change the outer control styles.",
     "The default uses Base UI Input. nativeInput selects a plain input. A numeric size controls native input width. String sizes control visual size. unstyled removes only the outer wrapper styles. The inner input keeps its styles. A string className applies to the wrapper. A className callback receives the Base UI input state.",
   ],
   textarea: [
@@ -199,10 +202,12 @@ const usageNoteValues = {
   ],
   field: [
     "Wrap FieldLabel, a control, FieldDescription and FieldError in Field.",
+    "Set bordered to add a border and padding to Field. The default is false. This does not change the control border.",
     "Field connects validation state and accessible descriptions. FieldControl provides the underlying control integration. FieldValidity provides render access to validation results. FieldItem arranges a control and its label.",
   ],
   fieldset: [
     "Group related controls inside Fieldset with FieldsetLegend as their shared label.",
+    "Set bordered to add a border and padding to Fieldset. The default is false. This does not change the control borders.",
     "Each control still needs its own label. Use this for a set of radio buttons or related contact fields.",
   ],
   form: [
@@ -211,6 +216,7 @@ const usageNoteValues = {
   ],
   "input-group": [
     "Place InputGroupInput or InputGroupTextarea inside InputGroup. Use InputGroupAddon for icons or controls and InputGroupText for fixed text.",
+    "Set bordered={false} on InputGroup to remove the group border. Use xstyle to change the group styles.",
     "Addon align accepts inline-start, inline-end, block-start or block-end. Addons do not replace the input's accessible label.",
   ],
   checkbox: [
@@ -228,6 +234,7 @@ const usageNoteValues = {
   switch: [
     "Use Switch for a setting that takes effect immediately.",
     "Pair it with a label that describes the setting, not the current state. checked and onCheckedChange control the state. defaultChecked supplies the initial state.",
+    "The track is 37px by 18px with an 8px thumb. It uses blue when checked and neutral colors when off. The coarse-pointer target is at least 44px.",
   ],
   slider: [
     "Use Slider for a value within min and max. Supply an array value for multiple thumbs.",
@@ -242,7 +249,7 @@ const usageNoteValues = {
     "Use a numeric value when you know how much of the task is complete. Use null for indeterminate progress. Label the task, not only its percentage.",
   ],
   "number-field": [
-    "Compose NumberFieldGroup with NumberFieldDecrement, NumberFieldInput and NumberFieldIncrement inside NumberField.",
+    "Compose NumberFieldGroup with NumberFieldDecrement, NumberFieldInput and NumberFieldIncrement inside NumberField. The root is compact by default. Set fullWidth to fill the parent width.",
     "Set min, max, and step to match the quantity. NumberFieldScrubArea requires a label. It supports pointer scrubbing. CursorGrowIcon is the scrub cursor graphic.",
   ],
   "otp-field": [
@@ -284,6 +291,7 @@ const usageNoteValues = {
   "alert-dialog": [
     "Compose AlertDialogTrigger and AlertDialogPopup inside AlertDialog, with AlertDialogTitle, AlertDialogDescription and confirmation controls in the popup.",
     "Popup includes the portal, backdrop, and viewport. Do not wrap it in a second portal. Use this dialog for decisions that require a response. Keep the cancel action easy to reach.",
+    "frameTitle is an optional visual caption, not the accessible title. The close button is visible by default. Set showCloseButton={false} to hide it. closeProps configures the close control, which cancels rather than confirms.",
   ],
   "context-menu": [
     "Place ContextMenuTrigger and ContextMenuPopup inside ContextMenu. Put ContextMenuItem or ContextMenuLinkItem controls in the popup.",
@@ -291,12 +299,12 @@ const usageNoteValues = {
   ],
   dialog: [
     "Compose DialogTrigger and DialogPopup inside Dialog. Give the popup a DialogTitle and, when useful, DialogDescription.",
-    "DialogPopup includes its portal, backdrop, viewport, and optional close button. DialogPanel provides a scrolling content region. DialogContent is an alias for DialogPopup. DialogOverlay is an alias for DialogBackdrop.",
+    "DialogPopup includes its portal, backdrop, viewport, and optional close button. Use frameTitle for a visual caption, not the accessible title. DialogPanel provides a scrolling content region. DialogContent is an alias for DialogPopup. DialogOverlay is an alias for DialogBackdrop.",
   ],
   drawer: [
     "Compose DrawerTrigger and DrawerPopup inside Drawer, with DrawerTitle, DrawerDescription and DrawerPanel in the popup.",
-    "position selects the edge and sets the default swipe direction. DrawerPopup includes the portal, backdrop, and viewport. DrawerContent is the Base UI content region. It is not an alias for DrawerPopup.",
-    "DrawerMenu parts arrange actions inside a drawer. They do not turn the drawer into an anchored Menu.",
+    "position selects the edge and sets the default swipe direction. DrawerPopup includes the portal, backdrop, and viewport. Use frameTitle for an optional frame caption. DrawerTitle gives the dialog its accessible name. DrawerContent is the Base UI content region. It is not an alias for DrawerPopup.",
+    "The drawer uses one sidebar-colored surface for its frame, content, and footer. The close button is hidden by default. Set showCloseButton to show it. DrawerMenu parts arrange actions inside a drawer. They do not turn the drawer into an anchored Menu.",
   ],
   menu: [
     "Compose MenuTrigger and MenuPopup inside Menu. Add MenuItem for actions and MenuLinkItem for links.",
@@ -308,17 +316,18 @@ const usageNoteValues = {
     "Popup includes the portal and positioner. side, align, and offsets control placement. Use a dialog if the content must block interaction outside it.",
   ],
   "preview-card": [
-    "Compose PreviewCardTrigger and PreviewCardPopup inside PreviewCard to preview a linked resource.",
+    "Compose PreviewCardTrigger and PreviewCardPopup inside PreviewCard to preview a linked resource. The popup uses a responsive width and a matched arrow.",
     "Keep essential information available without the preview. HoverCard, HoverCardTrigger, and HoverCardContent are aliases.",
   ],
   select: [
     "Place SelectTrigger and SelectPopup inside Select. Place SelectValue inside SelectTrigger. Place SelectItem choices inside SelectPopup.",
     "Assign a value to each item. Use SelectGroup with SelectGroupLabel for sections. Popup includes its portal and positioner. alignItemWithTrigger aligns the selected item with the trigger when possible.",
     "SelectButton is a styled button without the selection trigger behavior. Use SelectTrigger for a working select.",
+    "The default trigger is 40px high with 14px text. The popup uses a soft shadow. Selected options use blue. Unselected options use a neutral highlight.",
   ],
   sheet: [
     "Compose SheetTrigger and SheetPopup inside Sheet, with SheetTitle, SheetDescription and SheetPanel in the popup.",
-    "side selects the viewport edge. SheetPopup includes the portal, backdrop, viewport, and an optional close button. Use Drawer if swipe gestures are required.",
+    "side selects the viewport edge. SheetPopup includes the portal, backdrop, viewport, and an optional close button. Use frameTitle for an optional frame caption. SheetTitle gives the dialog its accessible name. Use Drawer if swipe gestures are required.",
   ],
   tooltip: [
     "Place TooltipTrigger and TooltipPopup inside Tooltip. Share timing across nearby tooltips with TooltipProvider.",
@@ -327,7 +336,7 @@ const usageNoteValues = {
   autocomplete: [
     "Place AutocompleteInput and AutocompletePopup inside Autocomplete. Use AutocompleteList and AutocompleteItem for results.",
     "Autocomplete suggests text. The input does not have to equal an option. Supply items. Render matching results through the list or collection. AutocompleteEmpty handles no matches. AutocompleteStatus announces result updates.",
-    "The input can include a trigger, clear button and start addon. Use Combobox when users must select values.",
+    "The input can include a trigger, clear button and start addon. Use controlXstyle to style its outer Input wrapper. Use Combobox when users must select values.",
   ],
   calendar: [
     'Use Calendar with mode="single", "multiple" or "range", matching selected and onSelect to that mode.',
@@ -337,12 +346,13 @@ const usageNoteValues = {
   combobox: [
     "Compose ComboboxInput and ComboboxPopup with ComboboxList and ComboboxItem inside Combobox.",
     "For multiple selection, use ComboboxChips, ComboboxChip, and ComboboxChipsInput. Each chip includes a remove control. Supply items. If options are objects, supply a stable mapping from each item to its value.",
+    "Option hover uses the neutral accent pair. Selected options use the solid accent pair, including when highlighted.",
     "ComboboxEmpty handles no matches. ComboboxCollection supports grouped rendering. useComboboxFilter matches strings for the selected locale.",
   ],
   command: [
     "Compose CommandInput and CommandList with CommandItem controls inside Command. Use CommandEmpty for no matches.",
     "Command is built on Autocomplete. Group results with CommandGroup and CommandGroupLabel. CommandShortcut displays a shortcut but does not register it.",
-    "For a command palette, place Command inside CommandDialogPopup under CommandDialog. The popup includes the portal, backdrop, and viewport. Supply an accessible title or aria-label.",
+    "For a command palette, place Command inside CommandDialogPopup under CommandDialog. The popup includes the portal, backdrop, viewport, and close button. Use frameTitle for an optional frame caption. Supply an accessible title or aria-label.",
   ],
   sidebar: [
     "Wrap Sidebar and the main content in SidebarProvider. Place SidebarTrigger where users can reach it. Use SidebarInset for inset content.",
@@ -352,7 +362,7 @@ const usageNoteValues = {
   toast: [
     'Mount ToastProvider once, then call toastManager.add({ title: "Saved" }) after an action.',
     "Use anchoredToastManager with AnchoredToastProvider for anchor-positioned notifications. Keep the matching provider mounted while sending updates or closing a toast.",
-    "ToastProvider position selects the viewport corner or center edge. Use timeout to control dismissal. Include actions only if users have sufficient time to reach them.",
+    "ToastProvider position selects the viewport corner or center edge. Use timeout to control dismissal. Include actions only if users have sufficient time to reach them. The icon-only close control has the accessible name Dismiss notification.",
   ],
 } satisfies Record<string, [string, ...string[]]>
 

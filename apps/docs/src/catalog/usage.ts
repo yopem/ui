@@ -469,8 +469,8 @@ import {
 export function Preview() {
   return (
     <Avatar>
-      <AvatarImage src="/avatar.jpg" alt="Nora Ellis" />
-      <AvatarFallback aria-label="Nora Ellis">NE</AvatarFallback>
+      <AvatarImage src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=128&h=128&auto=format&fit=crop" alt="Casey Blake" />
+      <AvatarFallback aria-label="Casey Blake">CB</AvatarFallback>
     </Avatar>
   )
 }
@@ -553,6 +553,14 @@ export function Preview() {
       </CardHeader>
       <CardPanel>Includes equipment loans and access to the reference library.</CardPanel>
       <CardFooter>Equipment must return before the station closes.</CardFooter>
+    </Card>
+  )
+}
+
+export function BorderlessCard() {
+  return (
+    <Card bordered={false}>
+      <CardPanel>Equipment is ready for your visit.</CardPanel>
     </Card>
   )
 }
@@ -795,7 +803,7 @@ export function Preview() {
       <DrawerTrigger render={<Button variant="outline" />}>
         Read notice
       </DrawerTrigger>
-      <DrawerPopup>
+      <DrawerPopup frameTitle="Station notice">
         <DrawerHeader>
           <DrawerTitle>Station closing time</DrawerTitle>
           <DrawerDescription>
@@ -843,7 +851,7 @@ import { Input } from "@/components/ui/input"
 
 export function Preview() {
   return (
-    <Field name="name">
+    <Field name="name" bordered>
       <FieldLabel>Name</FieldLabel>
       <Input autoComplete="name" />
       <FieldDescription>Use the name on your equipment reservation.</FieldDescription>
@@ -859,7 +867,7 @@ import { Input } from "@/components/ui/input"
 
 export function Preview() {
   return (
-    <Fieldset>
+    <Fieldset bordered>
       <FieldsetLegend>Station membership</FieldsetLegend>
       <Field name="company">
         <FieldLabel>Group</FieldLabel>
@@ -1096,10 +1104,13 @@ import { Input } from "@/components/ui/input"
 
 export function Preview() {
   return (
-    <Field>
-      <FieldLabel>Email</FieldLabel>
-      <Input type="email" autoComplete="email" placeholder="nora@example.com" />
-    </Field>
+    <>
+      <Field>
+        <FieldLabel>Email</FieldLabel>
+        <Input type="email" autoComplete="email" placeholder="nora@example.com" />
+      </Field>
+      <Input bordered={false} aria-label="Search notes" placeholder="Search notes" />
+    </>
   )
 }
 `,
@@ -1114,7 +1125,7 @@ import {
 
 export function Preview() {
   return (
-    <InputGroup>
+    <InputGroup bordered={false}>
       <InputGroupInput aria-label="Website address" placeholder="example.com/field-notes" />
       <InputGroupAddon>
         <InputGroupText>https://</InputGroupText>
@@ -1237,13 +1248,22 @@ import {
 
 export function Preview() {
   return (
-    <NumberField defaultValue={1} min={1}>
-      <NumberFieldGroup>
-        <NumberFieldDecrement aria-label="Decrease quantity" />
-        <NumberFieldInput aria-label="Quantity" />
-        <NumberFieldIncrement aria-label="Increase quantity" />
-      </NumberFieldGroup>
-    </NumberField>
+    <>
+      <NumberField defaultValue={1} min={1}>
+        <NumberFieldGroup>
+          <NumberFieldDecrement aria-label="Decrease quantity" />
+          <NumberFieldInput aria-label="Quantity" />
+          <NumberFieldIncrement aria-label="Increase quantity" />
+        </NumberFieldGroup>
+      </NumberField>
+      <NumberField defaultValue={1} min={1} fullWidth>
+        <NumberFieldGroup>
+          <NumberFieldDecrement aria-label="Decrease full-width quantity" />
+          <NumberFieldInput aria-label="Full-width quantity" />
+          <NumberFieldIncrement aria-label="Increase full-width quantity" />
+        </NumberFieldGroup>
+      </NumberField>
+    </>
   )
 }
 `,
@@ -1470,7 +1490,7 @@ export function Preview() {
       <SheetTrigger render={<Button variant="outline" />}>
         Read notice
       </SheetTrigger>
-      <SheetPopup>
+      <SheetPopup frameTitle="Station notice">
         <SheetHeader>
           <SheetTitle>Station closing time</SheetTitle>
           <SheetDescription>
@@ -1602,7 +1622,7 @@ import {
 
 export function Preview() {
   return (
-    <Table>
+    <Table rowBorders>
       <TableCaption>Field visits</TableCaption>
       <TableHeader>
         <TableRow>
