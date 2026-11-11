@@ -17,7 +17,7 @@ import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import { Link } from "@tanstack/react-router"
 import { ArrowRight } from "lucide-react"
-import { Suspense, useRef, useState } from "react"
+import { startTransition, Suspense, useRef, useState } from "react"
 
 import type { CatalogItem } from "./components"
 
@@ -187,7 +187,7 @@ export function ShowcaseCard({ item }: { item: ShowcaseItem }) {
     if (!node || visible) return
 
     if (!("IntersectionObserver" in window)) {
-      setVisible(true)
+      startTransition(() => setVisible(true))
 
       return
     }
