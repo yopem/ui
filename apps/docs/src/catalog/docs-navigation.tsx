@@ -19,7 +19,7 @@ const exactActiveOptions = { exact: true }
 
 const primitiveStyles = stylex.create({
   documentationNavigation: { flex: 1, minBlockSize: 0 },
-  documentation: { paddingBlock: "1.25rem", paddingInline: "1.25rem" },
+  documentation: { paddingBlock: "0.5rem", paddingInline: "0.5rem" },
   ul: {
     listStyleType: "none",
     paddingBlock: "calc(var(--spacing) * 0)",
@@ -28,10 +28,9 @@ const primitiveStyles = stylex.create({
   },
   li2: {
     color: tokens["--muted-foreground"],
-    fontSize: "0.6875rem",
-    fontWeight: 600,
-    letterSpacing: "0.075em",
-    textTransform: "uppercase",
+    fontSize: "0.75rem",
+    fontWeight: 500,
+    letterSpacing: "0.01em",
     paddingInline: "0.75rem",
     paddingBlock: "1.25rem 0.625rem",
   },
@@ -42,9 +41,9 @@ const primitiveStyles = stylex.create({
       ":is(:hover, [data-hover]):not(:disabled, [disabled], [aria-disabled=true], [data-disabled])":
         tokens["--sidebar-accent-foreground"],
     },
-    paddingBlock: "0.5rem",
-    paddingInline: "0.75rem",
-    borderRadius: tokens["--radius-md"],
+    paddingBlock: "0.375rem",
+    paddingInline: "0.5rem",
+    borderRadius: tokens["--radius"],
     textDecoration: "none",
     fontSize: "0.875rem",
     lineHeight: 1.4,
@@ -191,11 +190,11 @@ const styles = stylex.create({
     backgroundColor: "transparent",
     color: tokens["--sidebar-foreground"],
     fontFamily: "inherit",
-    fontSize: "0.875rem",
-    fontWeight: 600,
-    paddingInline: "0.75rem",
+    fontSize: "0.75rem",
+    fontWeight: 500,
+    paddingInline: "0.5rem",
     paddingBlock: "0.75rem",
-    borderRadius: tokens["--radius-md"],
+    borderRadius: tokens["--radius"],
     cursor: "pointer",
     ":hover": { backgroundColor: tokens["--sidebar-accent"] },
     ":focus-visible": {
@@ -212,9 +211,9 @@ const styles = stylex.create({
   link: {
     display: "block",
     color: tokens["--muted-foreground"],
-    paddingBlock: "0.5rem",
-    paddingInline: "0.75rem",
-    borderRadius: tokens["--radius-md"],
+    paddingBlock: "0.375rem",
+    paddingInline: "0.5rem",
+    borderRadius: tokens["--radius"],
     textDecoration: "none",
     fontSize: "0.875rem",
     lineHeight: 1.4,
@@ -230,8 +229,8 @@ const styles = stylex.create({
     },
   },
   active: {
-    backgroundColor: tokens["--sidebar-accent"],
-    color: tokens["--sidebar-accent-foreground"],
-    fontWeight: 600,
+    backgroundColor: tokens["--background"],
+    color: tokens["--foreground"],
+    fontWeight: 500,
   },
 })

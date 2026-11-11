@@ -16,9 +16,9 @@ const styles = stylex.create({
   section: { marginBlock: "2rem", minInlineSize: "calc(var(--spacing) * 0)" },
   h3: { marginBlock: "0 0.75rem" },
   scrollArea: {
-    backgroundColor: tokens["--background"],
+    backgroundColor: tokens["--sidebar"],
     borderColor: tokens["--border"],
-    borderRadius: tokens["--radius-md"],
+    borderRadius: tokens["--radius"],
     borderStyle: "solid",
     borderWidth: 1,
     minBlockSize: "12rem",
@@ -30,8 +30,8 @@ const styles = stylex.create({
     display: "flex",
     gap: "1rem",
     justifyContent: "center",
-    minBlockSize: "12rem",
-    paddingBlock: "1.5rem",
+    minBlockSize: "14rem",
+    paddingBlock: "2rem",
     paddingInline: "1.5rem",
   },
 })

@@ -31,7 +31,7 @@ const styles = stylex.create({
       default: "minmax(0, 1fr)",
       "@media (min-width: 1280px)": "minmax(0, 48rem) 10rem",
     },
-    gap: "2.5rem",
+    gap: "3rem",
     maxInlineSize: "72rem",
     marginInline: "auto",
     paddingBlock: { default: "3.5rem", "@media (max-width: 479.98px)": "2rem" },
@@ -45,7 +45,7 @@ const styles = stylex.create({
   },
   box: {
     color: tokens["--foreground"],
-    fontSize: "0.9375rem",
+    fontSize: "1rem",
     lineHeight: 1.75,
 
     overflowWrap: "break-word",
@@ -53,12 +53,12 @@ const styles = stylex.create({
   h1: {
     fontFamily: tokens["--font-heading"],
     fontSize: {
-      default: "2.75rem",
-      "@media (max-width: 479.98px)": "2.125rem",
+      default: "3rem",
+      "@media (max-width: 479.98px)": "2.25rem",
     },
-    letterSpacing: "-0.045em",
-    fontWeight: 650,
-    lineHeight: 1.1,
+    letterSpacing: "-0.03em",
+    fontWeight: 400,
+    lineHeight: 1.2,
     marginBlock: "0 1rem",
     textWrap: "balance",
   },

@@ -30,8 +30,8 @@ import { usePackageManagerCommand } from "./package-manager"
 const styles = stylex.create({
   h2: {
     fontFamily: tokens["--font-heading"],
-    fontSize: "1.5rem",
-    fontWeight: 650,
+    fontSize: "1.875rem",
+    fontWeight: 400,
     letterSpacing: "-0.025em",
     lineHeight: 1.3,
     marginBlockStart: "3rem",
@@ -40,8 +40,8 @@ const styles = stylex.create({
   },
   h3: {
     fontFamily: tokens["--font-heading"],
-    fontSize: "1.2rem",
-    fontWeight: 600,
+    fontSize: "1.25rem",
+    fontWeight: 500,
     lineHeight: 1.4,
     marginBlockStart: "2rem",
     marginBlockEnd: "0.75rem",
@@ -52,7 +52,7 @@ const styles = stylex.create({
     color: tokens["--code-foreground"],
     paddingBlock: "1.25rem",
     paddingInline: "1.25rem",
-    borderRadius: tokens["--radius-md"],
+    borderRadius: tokens["--radius"],
     overflowX: "auto",
     fontFamily: tokens["--font-mono"],
     fontSize: "0.8125rem",
@@ -66,7 +66,7 @@ const styles = stylex.create({
     verticalAlign: "top",
   },
   link: {
-    color: tokens["--foreground"],
+    color: tokens["--accent-foreground"],
     textDecoration: "underline",
     textDecorationColor: {
       default: tokens["--border"],
@@ -74,7 +74,7 @@ const styles = stylex.create({
         tokens["--foreground"],
     },
     textUnderlineOffset: "0.25em",
-    borderRadius: tokens["--radius-md"],
+    borderRadius: tokens["--radius"],
     outlineColor: {
       ":is(:focus-visible, [data-focus-visible])": tokens["--ring"],
     },
@@ -103,7 +103,7 @@ const styles = stylex.create({
     fontSize: "0.875em",
     backgroundColor: tokens["--code"],
     color: tokens["--code-foreground"],
-    borderRadius: tokens["--radius-md"],
+    borderRadius: tokens["--radius"],
     paddingBlock: "0.15rem",
     paddingInline: "0.35rem",
     overflowWrap: "anywhere",

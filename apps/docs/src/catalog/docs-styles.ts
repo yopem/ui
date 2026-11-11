@@ -3,12 +3,12 @@ import * as stylex from "@stylexjs/stylex"
 
 export const docsStyles = stylex.create({
   link: {
-    color: tokens["--foreground"],
+    color: tokens["--accent-foreground"],
     textDecoration: "underline",
     textDecorationColor: tokens["--border"],
     textUnderlineOffset: "0.25em",
     borderRadius: tokens["--radius-sm"],
-    ":hover": { textDecorationColor: tokens["--foreground"] },
+    ":hover": { textDecorationColor: tokens["--accent-foreground"] },
     ":focus-visible": {
       outline: `2px solid ${tokens["--ring"]}`,
       outlineOffset: 4,
@@ -26,7 +26,7 @@ export const catalogStyles = stylex.create({
       default: tokens["--border"],
       ":hover": tokens["--ring"],
     },
-    borderRadius: tokens["--radius-xl"],
+    borderRadius: tokens["--radius"],
     borderStyle: "solid",
     borderWidth: 1,
     color: tokens["--foreground"],
@@ -35,7 +35,7 @@ export const catalogStyles = stylex.create({
     fontFamily: tokens["--font-sans"],
     gap: "0.5rem",
     minBlockSize: "10.5rem",
-    padding: "1.25rem",
+    padding: "1.5rem",
     textDecorationLine: "none",
     ":focus-visible": {
       outlineColor: tokens["--ring"],

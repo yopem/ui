@@ -43,7 +43,7 @@ const primitiveStyles = stylex.create({
     padding: "0.75rem 1rem",
     backgroundColor: tokens["--primary"],
     color: tokens["--primary-foreground"],
-    borderRadius: tokens["--radius-md"],
+    borderRadius: tokens["--radius"],
     transform: {
       default: "translateY(-200%)",
       ":is(:focus, [data-focus])": "translateY(0)",
@@ -53,8 +53,11 @@ const primitiveStyles = stylex.create({
     display: "flex",
     alignItems: "center",
     gap: "1rem",
-    blockSize: "4rem",
-    paddingInline: { default: "2rem", "@media (max-width: 767.98px)": "1rem" },
+    blockSize: "4.5rem",
+    paddingInline: {
+      default: "2.5rem",
+      "@media (max-width: 767.98px)": "1rem",
+    },
     backgroundColor: tokens["--background"],
     position: "sticky",
     insetBlockStart: "calc(var(--spacing) * 0)",
@@ -72,21 +75,33 @@ const primitiveStyles = stylex.create({
   grid: {
     display: "grid",
     gridTemplateColumns: {
-      default: "16rem minmax(0, 1fr)",
+      default: "14rem minmax(0, 1fr)",
       "@media (max-width: 767.98px)": "minmax(0, 1fr)",
     },
     maxInlineSize: "100rem",
     marginInline: "auto",
   },
+  navigationGrid: {
+    gap: { default: "0.5rem", "@media (max-width: 767.98px)": 0 },
+    paddingInlineEnd: { default: "0.5rem", "@media (max-width: 767.98px)": 0 },
+    paddingBlockEnd: { default: "0.5rem", "@media (max-width: 767.98px)": 0 },
+  },
   fullWidth: { gridTemplateColumns: "minmax(0, 1fr)" },
   aside: {
     display: { default: "flex", "@media (max-width: 767.98px)": "none" },
     flexDirection: "column",
-    blockSize: "calc(100dvh - 4rem)",
+    blockSize: "calc(100dvh - 4.5rem)",
+    backgroundColor: tokens["--background"],
     position: "sticky",
-    insetBlockStart: "4rem",
+    insetBlockStart: "4.5rem",
   },
-  main: { outline: "none" },
+  main: { outline: "none", backgroundColor: tokens["--background"] },
+  insetMain: {
+    borderRadius: {
+      default: tokens["--radius"],
+      "@media (max-width: 767.98px)": 0,
+    },
+  },
 })
 
 export function DocumentationLayout({
@@ -163,6 +178,7 @@ export function DocumentationLayout({
       <Grid
         xstyle={[
           primitiveStyles.grid,
+          navigation && primitiveStyles.navigationGrid,
           !navigation && primitiveStyles.fullWidth,
         ]}
       >
@@ -175,7 +191,10 @@ export function DocumentationLayout({
           render={<main />}
           id="docs-content"
           tabIndex={-1}
-          xstyle={primitiveStyles.main}
+          xstyle={[
+            primitiveStyles.main,
+            navigation && primitiveStyles.insetMain,
+          ]}
         >
           {children}
           {navigation && pageIndex >= 0 ? (
@@ -227,10 +246,10 @@ const styles = stylex.create({
     },
   },
   pageLink: {
-    color: tokens["--foreground"],
+    color: tokens["--accent-foreground"],
     textDecoration: "none",
     padding: "0.75rem",
-    borderRadius: tokens["--radius-md"],
+    borderRadius: tokens["--radius"],
     ":hover": { backgroundColor: tokens["--accent"] },
     ":focus-visible": {
       outline: `2px solid ${tokens["--ring"]}`,
@@ -243,9 +262,9 @@ const styles = stylex.create({
     display: "inline-flex",
     gap: "0.5rem",
     fontFamily: tokens["--font-heading"],
-    fontWeight: 700,
+    fontWeight: 500,
     fontSize: "1.125rem",
-    letterSpacing: "-0.04em",
+    letterSpacing: "-0.02em",
     textDecoration: "none",
     whiteSpace: "nowrap",
     ":focus-visible": {
