@@ -159,6 +159,7 @@ const styles = stylex.create({
     lineHeight: 1.25,
   },
   description: { color: tokens["--muted-foreground"], fontSize: "0.875rem" },
+  panelScrollArea: { minBlockSize: "2.75rem" },
   panel: {
     paddingBlockStart: {
       default: null,
@@ -431,7 +432,11 @@ export function DialogPanel({
   })
 
   return (
-    <ScrollArea overscrollContain scrollFade={scrollFade}>
+    <ScrollArea
+      overscrollContain
+      scrollFade={scrollFade}
+      xstyle={styles.panelScrollArea}
+    >
       {content}
     </ScrollArea>
   )
