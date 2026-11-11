@@ -2,14 +2,14 @@ import type { StyleXComponentProps } from "@registry/lib/stylex"
 import type { ComponentProps } from "react"
 
 import { mergeStylexProps, stylexProps } from "@registry/lib/stylex"
-import { themeMarker, tokens } from "@registry/styles/tokens.stylex"
+import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 
 const styles = stylex.create({
   root: {
     alignItems: "start",
     borderColor: tokens["--border"],
-    borderRadius: tokens["--radius-md"],
+    borderRadius: tokens["--radius"],
     borderStyle: "solid",
     borderWidth: 1,
     color: tokens["--card-foreground"],
@@ -23,18 +23,14 @@ const styles = stylex.create({
       ':has(> svg):has([data-slot="alert-action"])': "1rem 1fr auto",
     },
     lineHeight: "1.25rem",
-    paddingBlock: "0.75rem",
-    paddingInline: "0.875rem",
+    paddingBlock: "1rem",
+    paddingInline: "1.5rem",
     position: "relative",
     rowGap: "0.125rem",
     width: "100%",
   },
   default: {
-    backgroundColor: {
-      default: "transparent",
-      [stylex.when.ancestor('[data-theme="dark"]', themeMarker)]:
-        "color-mix(in oklab, var(--input, currentColor) 32%, transparent)",
-    },
+    backgroundColor: tokens["--muted"],
   },
   error: {
     backgroundColor:
@@ -43,8 +39,7 @@ const styles = stylex.create({
       "color-mix(in oklab, var(--destructive, currentColor) 32%, transparent)",
   },
   info: {
-    backgroundColor:
-      "color-mix(in oklab, var(--info, currentColor) 4%, transparent)",
+    backgroundColor: tokens["--accent"],
     borderColor:
       "color-mix(in oklab, var(--info, currentColor) 32%, transparent)",
   },

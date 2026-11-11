@@ -21,8 +21,8 @@ const styles = stylex.create({
     color: tokens["--foreground"],
     fontSize: "1.875rem",
     fontVariantNumeric: "tabular-nums",
-    fontWeight: 600,
-    lineHeight: 1.2,
+    fontWeight: 400,
+    lineHeight: 1.25,
     margin: 0,
   },
   description: {
