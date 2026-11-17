@@ -263,7 +263,8 @@ panels. Do not alternate card fills or add decorative shadows.
   this slot for one flat surface.
   Drawer uses one sidebar-colored surface for its frame, content, and footer.
   Select and Combobox use neutral hover and solid-accent selected rows.
-  Steps is a static ordered process, not a navigation control.
+  Steps is a static ordered process, not a navigation control. Center each step
+  number in its circle without a period. Keep native ordered-list numbering.
 - Use Card with CardHeader, CardPanel, and CardFooter for card content. Set
   `bordered={false}` to remove the Card border. CardFrame adds an outer frame.
 - NumberField is compact by default; set `fullWidth` to fill its parent. Table

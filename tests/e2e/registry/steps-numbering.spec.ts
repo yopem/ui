@@ -10,10 +10,11 @@ const scenarios = [
 ] as const
 
 for (const scenario of scenarios) {
-  test(`Steps preserves native ${scenario.name} numbering`, async ({
+  test(`steps preserves native ${scenario.name} numbering`, async ({
     page,
   }, testInfo) => {
     await openPreview(page, "steps")
+    await page.waitForFunction(() => document.fonts.status === "loaded")
 
     const steps = page.locator('[data-slot="steps"]')
     const useLastStep = scenario.start === null && scenario.reversed
@@ -44,6 +45,8 @@ for (const scenario of scenarios) {
 
         const start = input.start ?? (input.reversed ? items.length : 1)
         const offset = items.indexOf(numbered) * (input.reversed ? -1 : 1)
+        // Chromium keeps stale CSS counters after list attribute changes.
+        list.replaceWith(list.cloneNode(true))
 
         return input.value ?? start + offset
       },
@@ -55,7 +58,7 @@ for (const scenario of scenarios) {
     )
 
     const fontSize = await target.evaluate((item) =>
-      Number.parseFloat(getComputedStyle(item, "::marker").fontSize),
+      Number.parseFloat(getComputedStyle(item, "::before").fontSize),
     )
 
     expect(fontSize).toBeGreaterThan(0)
@@ -80,18 +83,25 @@ for (const scenario of scenarios) {
       })
 
       const marker = described.node.pseudoElements?.find(
-        (node) => node.pseudoType === "marker",
+        (node) => node.pseudoType === "before",
       )
 
       if (!marker) throw new Error("The rendered step marker is missing")
 
-      const tree = await session.send("Accessibility.getPartialAXTree", {
-        backendNodeId: marker.backendNodeId,
-        fetchRelatives: true,
-      })
+      const tree = await session.send("Accessibility.getFullAXTree")
+
+      const markerNode = tree.nodes.find(
+        (node) => node.backendDOMNodeId === marker.backendNodeId,
+      )
+
+      const contentNode = tree.nodes.find(
+        (node) => node.parentId === markerNode?.nodeId,
+      )
 
       const text = tree.nodes.find(
-        (node) => node.backendDOMNodeId === marker.backendNodeId,
+        (node) =>
+          node.parentId === contentNode?.nodeId &&
+          node.role?.value === "StaticText",
       )?.name?.value
 
       await testInfo.attach("native-step-number", {
@@ -104,7 +114,7 @@ for (const scenario of scenarios) {
         body: await steps.screenshot({ scale: "css" }),
         contentType: "image/png",
       })
-      expect(Number.parseInt(String(text), 10)).toBe(expected)
+      expect(String(text)).toBe(String(expected))
     } finally {
       await session.detach()
     }

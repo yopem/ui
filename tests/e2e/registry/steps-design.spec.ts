@@ -37,7 +37,7 @@ for (const theme of ["light", "dark"] as const) {
     for (const item of [completed, current]) {
       const marker = await item.evaluate((element) => ({
         background: getComputedStyle(element, "::before").backgroundColor,
-        color: getComputedStyle(element, "::marker").color,
+        color: getComputedStyle(element, "::before").color,
       }))
 
       expect(marker.background).toBe(colors.accent)
@@ -46,7 +46,7 @@ for (const theme of ["light", "dark"] as const) {
 
     expect(
       await completed.evaluate(
-        (element) => getComputedStyle(element, "::marker").content,
+        (element) => getComputedStyle(element, "::before").content,
       ),
     ).toContain("✓")
 

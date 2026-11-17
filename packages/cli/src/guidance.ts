@@ -291,7 +291,8 @@ SheetPopup accepts \`surfaceXstyle\` for its inner surface. Mobile Sidebar uses
 this slot for one flat surface.
 Drawer uses one sidebar-colored surface for its frame, content, and footer.
 Select and Combobox use neutral hover and solid-accent selected rows.
-Steps is a static ordered process, not a navigation control.
+Steps is a static ordered process, not a navigation control. Center each step
+number in its circle without a period. Keep native ordered-list numbering.
 
 ### Themes and accessibility
 

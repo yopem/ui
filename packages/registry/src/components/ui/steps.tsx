@@ -24,13 +24,7 @@ const styles = stylex.create({
     paddingInlineStart: "0.75rem",
     position: "relative",
     "::marker": {
-      color: {
-        default: tokens["--foreground"],
-        '[data-state="completed"]': tokens["--accent-solid-foreground"],
-        '[data-state="current"]': tokens["--accent-solid-foreground"],
-      },
-      content: { default: "normal", '[data-state="completed"]': '"✓  "' },
-      fontSize: "0.75rem",
+      content: '""',
     },
     "::before": {
       backgroundColor: {
@@ -48,8 +42,19 @@ const styles = stylex.create({
       borderWidth: 1,
       blockSize: "1.5rem",
       boxSizing: "border-box",
-      content: '""',
+      color: {
+        default: tokens["--foreground"],
+        '[data-state="completed"]': tokens["--accent-solid-foreground"],
+        '[data-state="current"]': tokens["--accent-solid-foreground"],
+      },
+      content: {
+        default: "counter(list-item)",
+        '[data-state="completed"]': '"✓"',
+      },
+      display: "grid",
+      fontSize: "0.75rem",
       inlineSize: "1.5rem",
+      placeItems: "center",
       insetBlockStart: 0,
       insetInlineStart: "-1.5rem",
       position: "absolute",
