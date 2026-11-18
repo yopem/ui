@@ -23,8 +23,8 @@ const components = [
   ["strong", "Strong"],
   ["highlight", "Highlight"],
   ["mark", "Mark"],
+  ["pre", "Pre"],
   ["prose", "Prose"],
-  ["codeblock", "Codeblock"],
   ["link", "Link"],
   ["text", "Text"],
   ["heading", "Heading"],
@@ -52,6 +52,25 @@ test("@a11y layout guide lists components and preserves legacy links", async ({
     page.getByRole("link", { name: "Style with StyleX" }),
   ).toHaveAttribute("href", "/docs/styling")
   expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([])
+})
+
+test("Codeblock appears in the Components catalog group", async ({ page }) => {
+  await page.goto("/components/codeblock", { waitUntil: "domcontentloaded" })
+  const trigger = page.getByRole("button", { name: "Open navigation" })
+
+  if (await trigger.isVisible()) await trigger.click()
+
+  const navigation = page
+    .getByRole("navigation", { name: "Documentation", exact: true })
+    .filter({ visible: true })
+
+  const group = navigation.locator('[data-slot="collapsible"]').filter({
+    has: page.getByRole("button", { name: "Components", exact: true }),
+  })
+
+  await expect(
+    group.getByRole("link", { name: "Codeblock", exact: true }),
+  ).toHaveAttribute("href", "/components/codeblock")
 })
 
 test("layout section has no duplicate overview page", async ({ page }) => {

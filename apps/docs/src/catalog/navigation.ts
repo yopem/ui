@@ -19,7 +19,6 @@ const layoutSlugs = new Set([
 
 const typographySlugs = new Set([
   "blockquote",
-  "codeblock",
   "em",
   "figcaption",
   "heading",

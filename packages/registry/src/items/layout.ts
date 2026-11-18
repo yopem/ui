@@ -187,10 +187,29 @@ const definitions: Definition[] = [
     title: "Prose",
   },
   {
-    api: ["CodeblockProps", "Codeblock"],
-    categories: ["typography"],
-    description: "Displays preformatted source code with scrolling.",
+    api: [
+      "CodeblockProps",
+      "Codeblock",
+      "CodeblockHeaderProps",
+      "CodeblockHeader",
+      "CodeblockTitleProps",
+      "CodeblockTitle",
+      "CodeblockActionsProps",
+      "CodeblockActions",
+      "CodeblockCopyButtonProps",
+      "CodeblockCopyButton",
+      "CodeblockContentProps",
+      "CodeblockContent",
+      "CodeblockLineProps",
+      "CodeblockLine",
+      "CodeblockFooterProps",
+      "CodeblockFooter",
+    ],
+    categories: ["display"],
+    description:
+      "Displays source code with headers, actions, line numbers, and scrolling.",
     name: "codeblock",
+    registryDependencies: ["button", "pre", "use-event-callback"],
     title: "Codeblock",
   },
   {
@@ -206,9 +225,12 @@ const definitions: Definition[] = [
 export const layoutItems: SourceItem[] = definitions.map(
   ({ api, categories, description, name, registryDependencies, title }) => ({
     categories,
-    dependencies: ["box", "heading", "link", "list"].includes(name)
-      ? ["@base-ui/react@^1.7.0"]
-      : [],
+    dependencies: [
+      ...(["box", "heading", "link", "list"].includes(name)
+        ? ["@base-ui/react@^1.7.0"]
+        : []),
+      ...(name === "codeblock" ? ["lucide-react@^1.33.0"] : []),
+    ],
     description,
     devDependencies: [],
     docs: {
@@ -224,11 +246,7 @@ export const layoutItems: SourceItem[] = definitions.map(
     ],
     name,
     peerDependencies: ["react@>=19 <20", "react-dom@>=19 <20"],
-    registryDependencies: [
-      "base",
-      ...(registryDependencies ?? []),
-      ...(name === "codeblock" ? ["use-event-callback"] : []),
-    ],
+    registryDependencies: ["base", ...(registryDependencies ?? [])],
     title,
     type: "registry:ui" as const,
   }),

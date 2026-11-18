@@ -320,10 +320,29 @@ export function Preview() {
 `,
   codeblock: `"use client"
 
-import { Codeblock } from "@/components/ui/codeblock"
+import {
+  Codeblock,
+  CodeblockActions,
+  CodeblockContent,
+  CodeblockCopyButton,
+  CodeblockHeader,
+  CodeblockTitle,
+} from "@/components/ui/codeblock"
+
+const source = 'const station = "Willow Creek"'
 
 export function Preview() {
-  return <Codeblock>{'const station = "Willow Creek"'}</Codeblock>
+  return (
+    <Codeblock>
+      <CodeblockHeader>
+        <CodeblockTitle>station.ts</CodeblockTitle>
+        <CodeblockActions>
+          <CodeblockCopyButton value={source} />
+        </CodeblockActions>
+      </CodeblockHeader>
+      <CodeblockContent lineNumbers>{source}</CodeblockContent>
+    </Codeblock>
+  )
 }
 `,
   em: `"use client"
