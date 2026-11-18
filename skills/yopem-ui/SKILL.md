@@ -77,7 +77,7 @@ the same spelling. Read the required item's exports and compound parts.
 | Navigation and process steps                  | `breadcrumb`, `pagination`, `sidebar`, `steps`, `link`                             |
 | Search and command selection                  | `command`                                                                          |
 | Status, loading, completion, and measurements | `alert`, `toast`, `empty`, `spinner`, `skeleton`, `progress`, `meter`, `checkmark` |
-| Identity, metadata, and data                  | `avatar`, `badge`, `stat`, `table`, `kbd`                                          |
+| Identity, metadata, and data                  | `avatar`, `badge`, `chart`, `stat`, `table`, `kbd`                                 |
 | Content and control structure                 | `card`, `frame`, `group`, `separator`, `scroll-area`                               |
 | Media proportions, lists, and captions        | `aspect-ratio`, `list`, `figcaption`                                               |
 | Semantic importance                           | `strong`                                                                           |
@@ -89,6 +89,17 @@ Use Card with CardHeader, CardPanel, and CardFooter for card content. Set
 Use framework links for application navigation. Native anchors remain valid.
 `variant="link"` changes Button appearance, not its element or navigation
 behavior.
+
+Use `ChartContainer` with `Chart` for data charts. Pass a TanStack Charts
+definition and an `ariaLabel`. Build native marks with `@tanstack/charts`. Match
+native color ranges to config colors. Config does not change marks. Use
+`defaultIndex` only for initial tooltip focus. Keep persistent selection in
+caller state. Compose a Table or CSV export for underlying values. Use
+`ChartTooltipContent` and `ChartLegendContent` for series labels and indicators.
+Use `--chart-1` through `--chart-5` for colors. Keep series labels available
+without color. Keep the colorful blue, cyan, indigo, teal, and violet palette
+with neutral surfaces. Keep series colors identical in both themes. The palette
+starts with blue `#2563eb`. Keep chart SVG focus indicators on `--ring`.
 
 Use `Progress` for task completion and `Meter` for bounded measurements. `Table`
 does not supply sorting or data loading. Set `rowBorders` for body row dividers;

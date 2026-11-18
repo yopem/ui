@@ -288,6 +288,16 @@ panels. Do not alternate card fills or add decorative shadows.
 - NumberField is compact by default; set `fullWidth` to fill its parent. Table
   has no body row dividers by default; set `rowBorders` to add them.
   AutocompleteInput accepts `controlXstyle` for its outer Input wrapper.
+- Use ChartContainer with Chart for data charts. Chart accepts a TanStack Charts definition and requires ariaLabel.
+  Use ChartTooltipContent and ChartLegendContent for configured labels, icons, and indicators.
+  Build marks, scales, and interactions with @tanstack/charts.
+  Match native color ranges to config colors. Config does not change marks.
+  Use defaultIndex only for initial tooltip focus. Keep persistent selection in caller state.
+  Keep chart SVG focus indicators on --ring.
+  Compose a Table or CSV export when readers need the underlying values.
+  Use --chart-1 through --chart-5 for series colors. Keep series labels available without color.
+  Keep chart colors in the blue, cyan, indigo, teal, and violet family. Match the neutral surfaces and blue accent.
+  Keep chart series colors identical in light and dark themes. Use #2563eb as the palette anchor.
 - Use existing navigation, feedback, data display, and utility components.
   Check registry metadata and component documentation before adding substitutes.
 
