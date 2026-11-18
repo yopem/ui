@@ -91,6 +91,7 @@ function createChangeset() {
     `---\n${releases.sort().join("\n")}\n---\n\n${message}\n`,
     { flag: "wx" },
   )
+  execFileSync("bun", ["--bun", "oxfmt", path], { stdio: "inherit" })
   git("add", "--", path)
   git(
     "commit",
