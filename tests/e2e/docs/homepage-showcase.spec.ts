@@ -345,3 +345,15 @@ for (const theme of ["light", "dark"] as const) {
     })
   })
 }
+
+test("chart homepage uses one compact preview", async ({ page }, testInfo) => {
+  await openDocsPage(page, "/")
+  const card = showcase(page, "chart")
+  await card.scrollIntoViewIfNeeded()
+  await expect(card.locator("svg[role=img]")).toHaveCount(1)
+  await expect(card.getByRole("region", { name: /examples$/ })).toHaveCount(0)
+  await card.screenshot({
+    path: testInfo.outputPath("chart-homepage.png"),
+    scale: "css",
+  })
+})
