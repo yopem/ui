@@ -576,6 +576,43 @@ const view = <><AspectRatio style={{}} xstyle={styles.root} /><Items style={{}} 
   expect(result.output.match(/reactStyle styling is disabled/g)).toHaveLength(7)
 })
 
+test("FileUpload enforces styling policies for consumer imports", () => {
+  const source = `import * as sx from "@stylexjs/stylex";
+import { FileUpload, FileUpload as Upload } from "@/components/ui/file-upload";
+import * as UI from "@/components/ui/file-upload";
+import { FileUpload as OtherUpload } from "other-library";
+const styles = sx.create({ root: { color: "red", marginInline: 4 } });
+const view = <><FileUpload style={{}} xstyle={styles.root} /><Upload style={{}} xstyle={styles.root} /><UI.FileUpload style={{}} xstyle={styles.root} /><OtherUpload style={{}} xstyle={styles.root} /></>;`
+
+  const result = lint(source, {
+    "yopem-ui/no-restyle": "error",
+    "yopem-ui/enforce-styling-methods": "error",
+  })
+
+  expect(result.status).toBe(1)
+  expect(result.output.match(/color cannot restyle FileUpload/g)).toHaveLength(
+    3,
+  )
+  expect(result.output.match(/reactStyle styling is disabled/g)).toHaveLength(3)
+  expect(result.output).not.toContain("marginInline cannot restyle")
+
+  const allowed = lint(
+    `import * as sx from "@stylexjs/stylex";
+import { FileUpload as Upload } from "@/components/ui/file-upload";
+const styles = sx.create({ root: { color: "red" } });
+const view = <Upload className="custom" xstyle={styles.root} />;`,
+    {
+      "yopem-ui/no-restyle": [
+        "error",
+        { contracts: [{ pattern: "^FileUpload$", allow: ["color"] }] },
+      ],
+      "yopem-ui/enforce-styling-methods": "error",
+    },
+  )
+
+  expect(allowed.status).toBe(0)
+})
+
 test("restyle resolves logical results and static bracket keys without treating AND guards as styles", () => {
   const result = lint(
     `${imports}
