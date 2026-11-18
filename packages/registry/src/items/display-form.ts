@@ -11,6 +11,23 @@ interface Definition {
 
 const definitions: Definition[] = [
   {
+    api: [
+      "ChartConfig",
+      "ChartContainer",
+      "Chart",
+      "ChartTooltipContent",
+      "ChartTooltipContentProps",
+      "ChartLegendContent",
+      "ChartLegendItem",
+      "useChart",
+    ],
+    categories: ["display"],
+    description:
+      "Displays responsive TanStack charts with themed colors, tooltips, and legends.",
+    name: "chart",
+    title: "Chart",
+  },
+  {
     api: ["Checkmark"],
     categories: ["display"],
     description: "Shows a decorative check icon for a confirmed state.",
@@ -469,6 +486,7 @@ export const displayFormItems: SourceItem[] = definitions.map(
   }) => ({
     categories,
     dependencies: [
+      ...(name === "chart" ? ["@tanstack/charts@^1.5.0"] : []),
       ...(baseUiComponents.has(name) ? ["@base-ui/react@^1.7.0"] : []),
       ...(lucideComponents.has(name) ? ["lucide-react@^1.33.0"] : []),
     ],

@@ -119,4 +119,8 @@
     text-overflow: ellipsis;
     white-space: nowrap;
   }
+  [data-slot="chart"] svg[role="img"]:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
 }

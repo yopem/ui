@@ -182,6 +182,19 @@ const usageNoteValues = {
   rating: [
     "Rating uses Base UI radio controls with arrow-key selection. Supply an accessible group label and use value or defaultValue with onValueChange.",
   ],
+  chart: [
+    "Compose Chart inside ChartContainer. Pass config for series labels, icons, and colors. Chart requires ariaLabel and a TanStack Charts definition.",
+    "Build area, bar, line, pie, radar, and radial charts with @tanstack/charts marks. Compose marks for stacked and mixed charts. Pass native marks, scales, and interactions.",
+    "ChartConfig sets tooltip and legend metadata. It does not rewrite marks. Match the native color range to the configured series colors.",
+    "Use defaultIndex for initial tooltip focus. Chart waits until that scene-point index exists. Later defaultIndex values do not change focus. User focus takes priority. Keep persistent selection in caller state with onSelect.",
+    "Press Escape in the chart or on its initial-focus trigger to dismiss its tooltip. Escape in other controls does not clear chart focus.",
+    "Use --chart-1 through --chart-5 from tokens.stylex for series colors. The colorful palette stays identical in both themes and starts with blue #2563eb. Surfaces, labels, and grid lines follow the theme. Use useChart().getColor for config colors or explicit theme overrides.",
+    "Pass the TanStack tooltip context to ChartTooltipContent from renderTooltipBody. Choose dot, line, or dashed indicators. hideLabel and hideIndicator remove visual details.",
+    "Use formatter and labelFormatter for custom tooltip content. Both callbacks receive the native context. nameKey reads a series key from each datum. labelKey reads the heading from the primary datum. Use getRowPayload when custom native labels do not match point groups. Return the datum for each tooltip row. ChartLegendContent uses nameKey with item fields or payload fields. Missing fields keep native labels. Pass item colors when native legend colors are not in config.",
+    "Use closed shapes for radar fills and outlines. Remove decorative marks from native interaction points. Labels and overlapping dots must not add tooltip rows or keyboard stops.",
+    "Keep native TanStack keyboard focus and tooltip dismissal. Provide a text summary or table when users need the complete data. Do not use color alone to identify series.",
+    "Keep interactive selection in application state. Use TanStack focus and selection callbacks. Configure chart marks, axes, grids, curves, labels, and tooltip behavior in the definition.",
+  ],
   stat: [
     "Compose StatLabel, StatValue and optional StatDescription inside Stat. The definition list keeps values paired with their labels.",
   ],
