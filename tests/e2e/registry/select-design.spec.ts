@@ -18,7 +18,14 @@ test("select supports pointer and keyboard selection", async ({ page }) => {
   await expect(trigger).toBeFocused()
 
   await page.keyboard.press("ArrowDown")
+  await expect(page.getByRole("listbox")).toBeVisible()
+  await expect(
+    page.getByRole("option", { name: "Trail mapping", exact: true }),
+  ).toBeFocused()
   await page.keyboard.press("ArrowUp")
+  await expect(
+    page.getByRole("option", { name: "Audio recording", exact: true }),
+  ).toBeFocused()
   await page.keyboard.press("Enter")
   await expect(trigger).toContainText("Audio recording")
   await expect(trigger).toBeFocused()
