@@ -4,6 +4,13 @@ const usageNoteValues = {
     "The returned function keeps its identity. It calls the latest committed callback. Arguments, return values, promises, and errors do not change.",
     "Use it only for event handlers and effect callbacks. Do not call it during render. A call before the first commit throws an error. Insertion effects publish updates. Aborted renders do not replace the committed callback.",
   ],
+  "use-highlighted-code": [
+    "Pass source text and a language to useHighlightedCode. It returns one React node per line. Render each node inside CodeblockLine.",
+    "The hook supports server rendering and updates when the source or language changes. Unknown languages return plain text. One trailing newline is removed.",
+    "During streaming, completed lines keep their grammar state. New lines continue from that state. Source replacement or language changes clear the cached lines.",
+    "The highlighter uses the JavaScript regular expression engine. It does not need a WebAssembly file. Static language imports keep the copied source compatible with the application bundler.",
+    "Install codeblock separately when you use its display components. Pass the original source to CodeblockCopyButton so copied text excludes line numbers and change markers.",
+  ],
   "use-media-query": [
     "Pass a named breakpoint, max-md, a range such as sm:max-lg, or a raw CSS media query. Named breakpoint widths in pixels: sm=640, md=800, lg=1024, xl=1280, 2xl=1536, 3xl=1600, and 4xl=2000.",
     "Object queries accept min, max, and pointer (coarse or fine). Minimum widths are inclusive. Maximum widths are exclusive. Server snapshots return false. matchMedia change listeners update the client. They unsubscribe when the component unmounts or the query changes.",
@@ -145,8 +152,17 @@ const usageNoteValues = {
   prose: [
     "Prose uses the sans font token, foreground color token, 1rem text, and 1.7 line height. It supplies a readable width for long-form content. Compose semantic headings, paragraphs and lists inside it.",
   ],
+  pre: [
+    "Pre renders a native pre element. It preserves whitespace and supports horizontal scrolling. It does not add a toolbar or copy button.",
+    "Use Pre for generic preformatted text. Use Codeblock for source code with actions, line numbers, or change markers.",
+    "Native attributes, events, and refs target the pre element. Apply custom styles through xstyle. className supports external CSS integration.",
+  ],
   codeblock: [
-    "Codeblock preserves code whitespace and allows horizontal scrolling. Supply a language label outside the block when context is not obvious.",
+    "Pass source children to Codeblock for the automatic toolbar, copy button, and content. This simple API remains available. Codeblock preserves whitespace and allows horizontal scrolling.",
+    "For a custom layout, compose CodeblockHeader, CodeblockTitle, CodeblockActions, CodeblockCopyButton, CodeblockContent, and CodeblockFooter. Actions float when they are direct root children and stay inline in the header.",
+    "Pass the original source string to CodeblockCopyButton as value. The button accepts Button props. Keep wrap state in your application when you add a custom wrap action.",
+    "Use wrap, lineNumbers, and startLine on CodeblockContent. It accepts native pre props. Use CodeblockLine for individual lines and added, removed, or highlighted variants. Line children can contain highlighted React nodes. Codeblock does not provide syntax highlighting.",
+    "Codeblock supports default and sm sizes and default and destructive variants. All parts accept xstyle, className, refs, and native props.",
   ],
   heading: [
     "Heading renders h2 by default. It uses the heading font token and foreground color token. Default sizes are h1 2.25rem, h2 1.5rem, h3 1.25rem, h4 1.125rem, h5 1rem, and h6 0.875rem. Other defaults are weight 400, 1.25 line height, -0.02em letter spacing, and zero margins. Use render={<h1 />} through render={<h6 />} to select semantic levels. The Base UI render prop also supports callbacks and custom components. Sizes follow the rendered native heading tag, including callbacks and custom components. Other rendered tags use the h2 size. Use xstyle to override the size.",

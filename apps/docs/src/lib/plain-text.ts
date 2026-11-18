@@ -113,7 +113,10 @@ Do not add utility classes, Tailwind, cva, inline style props, or styling aliase
 
 Use Box for generic containers and its render prop for semantic tags.
 Choose Flex, Stack, HStack, VStack, Grid, Center, Container, AbsoluteCenter, Bleed, Float, or Wrap for layout.
-Use Heading, Text, Blockquote, Em, Mark, Highlight, Prose, and Codeblock for content.
+Use Heading, Text, Blockquote, Em, Mark, Highlight, and Prose for text content.
+Use Pre for generic preformatted text with native pre attributes and refs.
+Use Codeblock for source code. Compose its header, actions, content, lines, and footer.
+Use useHighlightedCode from the Hooks catalog to highlight source text.
 Keep framework links for application navigation. Native anchors remain valid for navigation and downloads.
 Use existing form and overlay components. Preserve Base UI keyboard behavior, focus management, accessible names, and reduced motion.
 

@@ -275,7 +275,7 @@ composition cannot meet.
 
 | Primitive      | Default and purpose                                                                                                     |
 | -------------- | ----------------------------------------------------------------------------------------------------------------------- |
-| Box            | Generic div. Use `render` for sections, landmarks, figures, inline spans, or generic preformatted content.              |
+| Box            | Generic div. Use `render` for sections, landmarks, figures, or inline spans.                                            |
 | Flex           | Flex row; no gap or wrapping. Use for custom alignment and direction.                                                   |
 | Stack          | Flex column; children stretch; gap four spacing units.                                                                  |
 | VStack         | Flex column; children center across the column; gap four spacing units.                                                 |
@@ -411,6 +411,7 @@ Heading supports `render`. Do not invent `size`, `weight`, `level`, `as`, or
 | Mark       | Inline marked text; accent surface/foreground pair and small radius.                                                            |
 | Highlight  | Inline span; required string `query`; wraps matching text with Mark.                                                            |
 | Prose      | Div with maximum width `68ch` and line height `1.7`; no automatic descendant styling or content spacing.                        |
+| Pre        | Native pre with mono text, preserved whitespace, and horizontal scrolling. No toolbar or copy button.                           |
 | Codeblock  | Div with copy toolbar and internal pre/code; mono text `0.875rem`, preserved whitespace, horizontal scrolling.                  |
 
 | Heading level | Default font size |
@@ -437,11 +438,21 @@ supplied child elements. It does not split the query into terms or match across
 separate text nodes. Empty queries leave the content readable without marks. Its
 `xstyle` targets the outer span, not generated Mark elements.
 
-Codeblock has no `language`, `filename`, `showLineNumbers`, or `preProps` props.
-Supply string children. It does not provide syntax highlighting. Its ref,
-events, and `xstyle` target the outer div, not the internal pre. Use
-`Box render={<pre />}` for generic preformatted content with native pre
-behavior.
+Pass source children to Codeblock for the automatic toolbar, copy button, and
+content. For a custom layout, compose CodeblockHeader, CodeblockTitle,
+CodeblockActions, CodeblockCopyButton, CodeblockContent, CodeblockLine, and
+CodeblockFooter. Actions float at the root and stay inline in the header. Pass
+the original source string to CodeblockCopyButton as `value`. Content accepts
+`wrap`, `lineNumbers`, `startLine`, and native pre props. Keep custom wrap
+action state in the application. Line accepts highlighted React nodes and
+`default`, `added`, `removed`, or `highlighted` variants. Codeblock has
+`default` and `sm` sizes and `default` and `destructive` variants. Install the
+separate `use-highlighted-code` hook for syntax highlighting. Pass source and
+language to `useHighlightedCode`. Render each returned node inside
+CodeblockLine. Unknown languages return plain text. All parts accept `xstyle`,
+`className`, refs, and native props. The root ref, events, and `xstyle` target
+the outer div. Use Pre for generic preformatted content. Native attributes,
+events, refs, `className`, and `xstyle` target its pre element.
 
 ```tsx
 "use client"

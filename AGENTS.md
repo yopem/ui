@@ -177,8 +177,9 @@ artifacts; docs dev, registry build, and registry typecheck regenerate API data.
   children, elements with refs/events, and prop spreads. Preserve all native
   attributes, keyboard behavior, accessible semantics, and ref types.
 - Start with Box (div by default, border-box sizing, minimum inline size zero).
-  Use `Box render={<section />}` for semantic landmarks, inline spans, and generic preformatted
-  content. Do not replace semantic elements with an unqualified div.
+  Use `Box render={<section />}` for semantic landmarks and inline spans.
+  Use Pre for generic preformatted text. Do not replace semantic elements with
+  an unqualified div.
 - Choose Flex for custom direction/alignment; Stack or VStack for columns with
   four spacing units; HStack for rows with centered cross-axis alignment and four
   spacing units; Grid for columns/rows; Center for centering on both axes.
@@ -200,8 +201,20 @@ artifacts; docs dev, registry build, and registry typecheck regenerate API data.
   Use Figcaption inside `Box render={<figure />}` for figure captions; there is no Figure primitive.
   Figcaption renders figcaption with muted text, `0.875rem` font size, and `1.5` line height.
   Choose Highlight for matching words and Prose for readable long-form content.
-- Use Codeblock intentionally for code displays. Its div wrapper, toolbar, and
-  internal pre mean it cannot blindly replace a native pre or its ref/events.
+- Pre renders a native pre with mono text, preserved whitespace, and horizontal
+  scrolling. It adds no toolbar or copy button. Its ref, events, native attributes,
+  className, and xstyle target the pre element.
+- Use Codeblock for code displays. Source children keep the automatic toolbar,
+  copy button, and content. For custom layouts, compose Header, Title, Actions,
+  CopyButton, Content, Line, and Footer with the Codeblock prefix. Actions float
+  at the root and stay inline in the header. Pass the original source string to
+  CopyButton as `value`. Content accepts `wrap`, `lineNumbers`, `startLine`, and
+  native pre props. Keep custom wrap action state in the application. Line accepts
+  highlighted React nodes and diff variants. Use the separate useHighlightedCode
+  hook for syntax highlighting. Render each returned node inside CodeblockLine.
+  Unknown languages return plain text. Codeblock belongs to Components, not
+  Typography. The hook belongs to Hooks. The Codeblock wrapper and internal pre
+  cannot replace every native pre or its ref/events.
 - Link is excluded: prefer TanStack Router Link for app navigation; native anchors
   remain valid for native navigation/downloads. Do not require registry Link or
   apply its default styling contracts to framework links.

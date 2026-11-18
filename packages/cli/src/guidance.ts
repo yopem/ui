@@ -259,7 +259,14 @@ Preserve semantic elements, native attributes, events, and ref types.
 - Use Figcaption inside \`Box render={<figure />}\` for figure captions. There is no Figure primitive.
 - Figcaption renders figcaption with muted text, \`0.875rem\` font size, and \`1.5\` line height.
 - Use Highlight for matching words. Use Prose for readable long-form content.
-- Use Codeblock for code displays. Its wrapper, toolbar, and internal pre cannot replace every native pre.
+- Use Pre for generic preformatted text. It renders a native pre with mono text, preserved whitespace, and horizontal scrolling. It adds no toolbar or copy button.
+- Pre accepts native attributes, events, refs, className, and xstyle on the pre element.
+- Use Codeblock for code displays. Source children keep the automatic toolbar, copy button, and content.
+- For custom layouts, compose CodeblockHeader, CodeblockTitle, CodeblockActions, CodeblockCopyButton, CodeblockContent, CodeblockLine, and CodeblockFooter.
+- Actions float at the root and stay inline in the header. Pass the original source string to CodeblockCopyButton as \`value\`.
+- CodeblockContent accepts \`wrap\`, \`lineNumbers\`, \`startLine\`, and native pre props. Keep custom wrap action state in the application.
+- CodeblockLine accepts highlighted React nodes and diff variants. Use the separate useHighlightedCode hook for syntax highlighting. Render each returned node inside CodeblockLine. Unknown languages return plain text.
+- The Codeblock wrapper and internal pre cannot replace every native pre.
 - Use framework links for application navigation. Native anchors remain valid for navigation and downloads.
 - Keep native controls, tables, metadata, SVG, custom elements, and inline code where no equivalent applies.
 - Component selection guidance does not expand the lint rule's supported native tags.
