@@ -111,9 +111,9 @@ tags from checks. Native elements inside a `render` prop are permitted. The rule
 does not check native anchors or framework links. It also permits controls,
 tables, document metadata, SVG, custom elements, `strong`, and inline `code`.
 
-Use `Box render={<pre />}` for generic preformatted content. Use Codeblock for
-code displays. Codeblock adds a wrapper and toolbar, so it cannot directly
-replace a native `pre` or its ref.
+Use Pre for generic preformatted content. Preserve native props and refs. Use
+Codeblock for code displays. Codeblock adds a wrapper and toolbar, so it cannot
+directly replace a native `pre` or its ref.
 
 Set `elements` to replace the default tag list. An empty array disables tag
 checks.

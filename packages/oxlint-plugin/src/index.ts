@@ -727,9 +727,10 @@ const nativePrimitiveRecommendations = new Map<string, string>([
     "div",
     "Box (or Flex, Stack, HStack, VStack, Grid, Center, Container, AbsoluteCenter, Bleed, Float, or Wrap for its layout purpose)",
   ],
-  ..."span main section article aside header footer nav address figure figcaption search hgroup ul ol li dl dt dd pre"
+  ..."span main section article aside header footer nav address figure figcaption search hgroup ul ol li dl dt dd"
     .split(" ")
     .map((tag): [string, string] => [tag, `Box render={<${tag} />}`]),
+  ["pre", "Pre"],
   ["p", "Text"],
   ["blockquote", "Blockquote"],
   ["em", "Em"],

@@ -32,9 +32,10 @@ Choose layout components for the required layout, not through a CSS heuristic.
 Available components include Flex, Stack, HStack, VStack, Grid, Center,
 Container, AbsoluteCenter, Bleed, Float, and Wrap.
 
-Use `Box render={<pre />}` for generic `pre` content. Use Codeblock for code
-displays. Codeblock is not a tag-compatible replacement for `pre`. Choose Prose
-and Highlight for the content that they support.
+Use Pre for generic `pre` content. Preserve native props and refs. Use Codeblock
+for code displays. Codeblock is not a tag-compatible replacement for `pre`. The
+styling rules recognize Pre and all Codeblock parts, including aliased and
+namespace imports. Choose Prose and Highlight for the content that they support.
 
 The rule permits native anchors, TanStack Router Link, controls, tables, SVG,
 custom elements, and text tags without an equivalent component. Use file
@@ -51,7 +52,8 @@ native semantics, events, and ref types. See the
 ## Style contracts
 
 Default component detection includes all public StyleX components except Link.
-This includes AspectRatio, Container, List, ListItem, Strong, and Figcaption.
+This includes AspectRatio, Container, List, ListItem, Pre, Strong, and
+Figcaption.
 
 `no-restyle` resolves local styles through arrays, conditional expressions,
 logical results, and static string bracket access. It does not check dynamic

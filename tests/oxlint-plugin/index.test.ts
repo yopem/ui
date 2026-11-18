@@ -411,7 +411,7 @@ test("design-system-first covers semantic wrappers and typography without guessi
     "Mark",
     "Heading render={<h1 />}",
     "Heading render={<h6 />}",
-    "Box render={<pre />}",
+    "Use Pre instead of <pre>",
   ])
     expect(typography.output).toContain(component)
   expect(typography.output).not.toContain("Codeblock")
@@ -574,6 +574,24 @@ const view = <><AspectRatio style={{}} xstyle={styles.root} /><Items style={{}} 
   expect(result.status).toBe(1)
   expect(result.output.match(/color cannot restyle/g)).toHaveLength(7)
   expect(result.output.match(/reactStyle styling is disabled/g)).toHaveLength(7)
+})
+
+test("Pre enforces styling policies for consumer imports", () => {
+  const result = lint(
+    `import * as sx from "@stylexjs/stylex";
+import { Pre as Preformatted } from "@/components/ui/pre";
+import * as UI from "@/components/ui/pre";
+const styles = sx.create({ root: { color: "red" } });
+const view = <><Preformatted style={{}} xstyle={styles.root} /><UI.Pre style={{}} xstyle={styles.root} /></>;`,
+    {
+      "yopem-ui/no-restyle": "error",
+      "yopem-ui/enforce-styling-methods": "error",
+    },
+  )
+
+  expect(result.status).toBe(1)
+  expect(result.output.match(/color cannot restyle/g)).toHaveLength(2)
+  expect(result.output.match(/reactStyle styling is disabled/g)).toHaveLength(2)
 })
 
 test("FileUpload enforces styling policies for consumer imports", () => {

@@ -104,8 +104,8 @@ Use `Box render={<section />}` for sections. Use List for ul and
 `List render={<ol />}` for ordered lists, with ListItem for li. Use Strong for
 importance and Figcaption inside `Box render={<figure />}` for figure captions.
 Use `Text` for paragraphs and `Heading render={<h1 />}` through h6 for headings.
-Use `Box render={<pre />}` for generic preformatted content. Codeblock adds a
-wrapper and toolbar; it cannot replace every native pre ref.
+Use Pre for generic preformatted content. Preserve native props and refs.
+Codeblock adds a wrapper and toolbar; it cannot replace every native pre ref.
 
 The rule checks supported native tags regardless of styling or props. Native
 markup inside `render` is permitted. Native controls, tables, SVG, metadata,
@@ -134,7 +134,8 @@ these default source prefixes:
 
 The last entry is a detection pattern, not a component package to install.
 Default detection includes AspectRatio, Container, List, ListItem, Strong, and
-Figcaption. Registry Link is excluded from the default component-name set.
+Figcaption and Pre. Registry Link is excluded from the default component-name
+set.
 
 For custom aliases or shared packages, set `componentSources` on both rules. The
 option replaces defaults. Include every source prefix the project uses. The
