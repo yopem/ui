@@ -28,6 +28,7 @@ const typographySlugs = new Set([
   "link",
   "list",
   "mark",
+  "pre",
   "prose",
   "strong",
   "text",

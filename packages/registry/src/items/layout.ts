@@ -173,6 +173,13 @@ const definitions: Definition[] = [
     title: "Mark",
   },
   {
+    api: ["PreProps", "Pre"],
+    categories: ["typography"],
+    description: "Renders preformatted text with preserved whitespace.",
+    name: "pre",
+    title: "Pre",
+  },
+  {
     api: ["ProseProps", "Prose"],
     categories: ["typography"],
     description: "Provides a readable container for long-form content.",

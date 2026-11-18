@@ -163,6 +163,12 @@ export function Preview() {
   )
 }
 `,
+  pre: `import { Pre } from "@/components/ui/pre"
+
+export function Preview() {
+  return <Pre>{"Station       Status\\nWillow Creek  Open\\nPine Ridge    Closed"}</Pre>
+}
+`,
   "use-media-query": `"use client"
 
 import { Text } from "@/components/ui/text"

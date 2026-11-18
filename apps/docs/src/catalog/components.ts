@@ -49,6 +49,7 @@ const previewDescriptionValues = {
   float: "Corner badge over a card",
   highlight: "Search term highlighted in text",
   mark: "Marked text",
+  pre: "Preformatted text with preserved whitespace",
   prose: "Readable long-form content",
   wrap: "Wrapping tag list",
   alert: "Informational alert with guidance",
