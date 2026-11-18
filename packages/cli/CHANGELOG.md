@@ -1,5 +1,13 @@
 # @yopem-ui/cli
 
+## 0.5.1
+
+### Patch Changes
+
+- [`9d6e2b8`](https://github.com/yopem/ui/commit/9d6e2b8ba4502857239236dae3ee329d3fd3a22f)
+  Thanks [@karyanayandi](https://github.com/karyanayandi)! - feat(steps):
+  improve step numbering alignment
+
 ## 0.5.0
 
 ### Minor Changes
