@@ -7,6 +7,11 @@ pre-commit:
       glob: "*.{css,html,js,json,md,mjs,toml,ts,tsx,yml}"
       run: bun --bun oxfmt {staged_files}
 
+post-commit:
+  commands:
+    changeset:
+      run: bun scripts/changeset.mjs
+
 pre-push:
   commands:
     lint:
