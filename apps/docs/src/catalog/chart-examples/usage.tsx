@@ -443,6 +443,7 @@ export function ChartUsage({ type }: { type: keyof typeof chartUsageSources }) {
           code={chartUsageSources[type]}
           language="tsx"
           title={`${label} usage`}
+          preview
         />
       </Stack>
     </Box>

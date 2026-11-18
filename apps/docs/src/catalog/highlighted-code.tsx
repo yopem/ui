@@ -10,8 +10,8 @@ import json from "@shikijs/langs/json"
 import shellscript from "@shikijs/langs/shellscript"
 import tsx from "@shikijs/langs/tsx"
 import typescript from "@shikijs/langs/typescript"
-import githubDark from "@shikijs/themes/github-dark"
-import githubLight from "@shikijs/themes/github-light"
+import githubDark from "@shikijs/themes/github-dark-high-contrast"
+import githubLight from "@shikijs/themes/github-light-high-contrast"
 import { useState } from "react"
 
 const highlighter = createHighlighterCoreSync({
@@ -45,7 +45,10 @@ function highlightCode(code: string, title: string, language?: string) {
         ? language
         : "text"
       : getCodeLanguage(title),
-    themes: { dark: "github-dark", light: "github-light" },
+    themes: {
+      dark: "github-dark-high-contrast",
+      light: "github-light-high-contrast",
+    },
     transformers: [
       {
         code(node) {
