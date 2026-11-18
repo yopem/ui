@@ -114,6 +114,7 @@ test("public registry inventory ships source, dependencies, and documentation", 
 
   for (const name of [
     "container",
+    "file-upload",
     "clipboard",
     "codeblock",
     "marquee",
@@ -171,6 +172,7 @@ test("public registry inventory ships source, dependencies, and documentation", 
     if (
       [
         "clipboard",
+        "file-upload",
         "codeblock",
         "marquee",
         "rating",

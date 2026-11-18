@@ -77,6 +77,7 @@ const previewDescriptionValues = {
   empty: "Empty field visit schedule",
   field: "Visitor name field with help text",
   fieldset: "Station membership fields",
+  "file-upload": "File selection with size and type limits",
   flex: "Aligned items with spacing",
   form: "Email validation form",
   frame: "Section header and content frame",

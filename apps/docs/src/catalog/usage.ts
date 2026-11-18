@@ -1,5 +1,32 @@
 // Standalone TSX files use the standard @ alias for src.
 const usageSnippetValues = {
+  "file-upload": `"use client"
+
+import { Button } from "@/components/ui/button"
+import { FileUpload } from "@/components/ui/file-upload"
+import { Stack } from "@/components/ui/stack"
+import { useState } from "react"
+
+export function Preview() {
+  const [files, setFiles] = useState<File[]>([])
+
+  return (
+    <Stack>
+      <FileUpload
+        accept=".txt,.pdf"
+        label="Attachments"
+        maxFiles={3}
+        maxSize={1048576}
+        multiple
+      />
+      <FileUpload disabled label="Disabled upload" />
+      <FileUpload accept="image/*" label="Profile image" />
+      <FileUpload label="Controlled upload" value={files} onValueChange={setFiles} />
+      <Button variant="outline" onClick={() => setFiles([])}>Reset selection</Button>
+    </Stack>
+  )
+}
+`,
   "aspect-ratio": `"use client"
 
 import { AspectRatio } from "@/components/ui/aspect-ratio"
