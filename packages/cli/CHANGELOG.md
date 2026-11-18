@@ -1,5 +1,17 @@
 # @yopem-ui/cli
 
+## 0.6.0
+
+### Minor Changes
+
+- [`e8185cd`](https://github.com/yopem/ui/commit/e8185cd8078f6cb9ddde6a02a38ee7878ce3b3d8)
+  Thanks [@karyanayandi](https://github.com/karyanayandi)! - feat(cli): add file
+  upload guidance
+
+  Explain file selection and application-owned upload transport. Keep generated
+  guidance and the consumer skill aligned. Check FileUpload in real CLI guidance
+  workflows.
+
 ## 0.5.2
 
 ### Patch Changes
