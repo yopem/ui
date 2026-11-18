@@ -27,6 +27,39 @@ export const hookItems: SourceItem[] = [
   },
   {
     categories: ["hooks"],
+    dependencies: [
+      "@shikijs/core@^4.4.3",
+      "@shikijs/engine-javascript@^4.4.3",
+      "@shikijs/langs@^4.4.3",
+      "@shikijs/themes@^4.4.3",
+    ],
+    description: "Highlights code as React nodes for each line.",
+    devDependencies: [],
+    docs: {
+      api: ["useHighlightedCode"],
+      usage:
+        "Import useHighlightedCode from @/hooks/use-highlighted-code. Pass code and a language. Render the returned nodes as lines. Unsupported languages return plain text. A final newline does not add a line.",
+    },
+    files: [
+      {
+        path: "hooks/use-highlighted-code.ts",
+        target: "@/hooks/use-highlighted-code.ts",
+        type: "registry:hook",
+      },
+      {
+        path: "components/ui/codeblock-highlighter.tsx",
+        target: "@/components/ui/codeblock-highlighter.tsx",
+        type: "registry:ui",
+      },
+    ],
+    name: "use-highlighted-code",
+    peerDependencies: ["react@>=18 <20"],
+    registryDependencies: ["base"],
+    title: "useHighlightedCode",
+    type: "registry:hook",
+  },
+  {
+    categories: ["hooks"],
     dependencies: [],
     description:
       "Tracks media queries with named breakpoints, ranges, and pointer queries.",

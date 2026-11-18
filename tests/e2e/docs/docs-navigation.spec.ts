@@ -82,6 +82,7 @@ test("@a11y grouped navigation preserves inventory, keyboard collapse, and mobil
 
   for (const href of [
     "/components/use-event-callback",
+    "/components/use-highlighted-code",
     "/components/use-media-query",
   ])
     await expect(hooks.locator(`a[href="${href}"]`)).toHaveCount(1)
@@ -157,7 +158,7 @@ for (const [path, previous, next] of [
   ["/components/tooltip", "/components/toolbar", "/components/absolute-center"],
   ["/components/wrap", "/components/vstack", "/components/blockquote"],
   ["/components/text", "/components/strong", "/components/use-event-callback"],
-  ["/components/use-media-query", "/components/use-event-callback", null],
+  ["/components/use-media-query", "/components/use-highlighted-code", null],
 ] as const) {
   test(`global page sequence at ${path}`, async ({ page }) => {
     await openDocsPage(page, path)

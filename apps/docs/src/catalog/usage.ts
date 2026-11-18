@@ -169,6 +169,27 @@ export function Preview() {
   return <Pre>{"Station       Status\\nWillow Creek  Open\\nPine Ridge    Closed"}</Pre>
 }
 `,
+  "use-highlighted-code": `"use client"
+
+import { Codeblock, CodeblockContent, CodeblockLine } from "@/components/ui/codeblock"
+import { useHighlightedCode } from "@/hooks/use-highlighted-code"
+
+const source = 'const station = "Willow Creek"'
+
+export function Preview() {
+  const lines = useHighlightedCode(source, "typescript")
+
+  return (
+    <Codeblock>
+      <CodeblockContent lineNumbers>
+        {lines.map((line, index) => (
+          <CodeblockLine key={index}>{line}</CodeblockLine>
+        ))}
+      </CodeblockContent>
+    </Codeblock>
+  )
+}
+`,
   "use-media-query": `"use client"
 
 import { Text } from "@/components/ui/text"

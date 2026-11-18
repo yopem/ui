@@ -118,10 +118,12 @@ test("public registry inventory ships source, dependencies, and documentation", 
     "clipboard",
     "codeblock",
     "marquee",
+    "pre",
     "rating",
     "sidebar",
     "theme",
     "use-event-callback",
+    "use-highlighted-code",
     "use-media-query",
   ])
     expect(names).toContain(name)
@@ -138,8 +140,7 @@ test("public registry inventory ships source, dependencies, and documentation", 
     expect(item.name).toBe(entry.name)
     expect(item.type).toBe(entry.type)
 
-    if (["use-event-callback", "use-media-query"].includes(item.name))
-      expect(item.type).toBe("registry:hook")
+    if (item.name.startsWith("use-")) expect(item.type).toBe("registry:hook")
     expect(item.registryDependencies).toEqual(entry.registryDependencies)
     expect(item.files.map(({ path, target }) => ({ path, target }))).toEqual(
       entry.files.map(({ path, target }) => ({ path, target })),
@@ -165,6 +166,13 @@ test("public registry inventory ships source, dependencies, and documentation", 
         expect.arrayContaining([expect.objectContaining({ target })]),
       )
     }
+
+    if (item.name === "codeblock") expect(item.categories).toContain("display")
+
+    if (item.name === "pre") expect(item.categories).toContain("typography")
+
+    if (item.name === "use-highlighted-code")
+      expect(item.categories).toContain("hooks")
 
     if (item.name === "container")
       expect(item.registryDependencies).toContain("base")
@@ -235,7 +243,7 @@ test("public registry inventory ships source, dependencies, and documentation", 
     expect(examples, path).toMatch(/from "@\/(?:components\/ui|hooks)\//)
   }
 
-  for (const name of ["use-event-callback", "use-media-query"]) {
+  for (const name of names.filter((name) => name.startsWith("use-"))) {
     const docs = await request.get(`/components/${name}.md`)
     expect(await docs.text()).toContain(`from "@/hooks/${name}"`)
   }

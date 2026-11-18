@@ -17,6 +17,10 @@
   "dependencies": {
     "@base-ui/react": "^1.8.0",
     "@daypicker/react": "catalog:",
+    "@shikijs/core": "^4.4.3",
+    "@shikijs/engine-javascript": "^4.4.3",
+    "@shikijs/langs": "^4.4.3",
+    "@shikijs/themes": "^4.4.3",
     "@stylexjs/stylex": "catalog:",
     "clsx": "^2.1.1",
     "lucide-react": "catalog:",

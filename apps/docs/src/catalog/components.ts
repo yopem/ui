@@ -30,11 +30,17 @@ const compositionOverrides = new Map<
     "use-event-callback",
     { name: "useEventCallback", title: "useEventCallback" },
   ],
+  [
+    "use-highlighted-code",
+    { name: "useHighlightedCode", title: "useHighlightedCode" },
+  ],
   ["use-media-query", { name: "useMediaQuery", title: "useMediaQuery" }],
 ])
 
 const previewDescriptionValues = {
   "use-event-callback": "Stable handler reading the latest count",
+  "use-highlighted-code":
+    "Syntax highlighting with editable source and language selection",
   "use-media-query": "Live viewport breakpoint matches",
   "aspect-ratio": "Default, square, fallback, and custom ratios",
   list: "Unordered and reversed ordered lists",
