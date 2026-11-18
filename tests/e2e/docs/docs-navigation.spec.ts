@@ -18,6 +18,50 @@ test("header GitHub link supports keyboard navigation", async ({
   await page.screenshot({ path: testInfo.outputPath("github-navigation.png") })
 })
 
+test("header action icons keep consistent dimensions", async ({
+  page,
+}, testInfo) => {
+  await openDocsPage(page, "/components/button")
+  const header = page.getByRole("banner")
+  const search = header.getByRole("button", { name: "Search documentation" })
+
+  const theme = header.getByRole("button", {
+    name: /^Switch to (light|dark) theme$/,
+  })
+
+  const github = header.getByRole("link", { name: "GitHub" })
+
+  await expect(search).toBeEnabled()
+  await expect(theme).toBeEnabled()
+
+  for (const state of ["initial", "toggled"]) {
+    const themeIcon = await theme.locator("svg").boundingBox()
+
+    expect(themeIcon).not.toBeNull()
+
+    for (const action of [search, theme, github]) {
+      const icon = await action.locator("svg").boundingBox()
+
+      expect(icon).not.toBeNull()
+      expect(icon?.width).toBe(themeIcon?.width)
+      expect(icon?.height).toBe(themeIcon?.height)
+    }
+
+    await header.screenshot({
+      path: testInfo.outputPath(`header-icons-${state}.png`),
+    })
+    const previousLabel = await theme.getAttribute("aria-label")
+
+    await theme.click()
+    await expect(theme).not.toHaveAttribute("aria-label", previousLabel ?? "")
+  }
+
+  await search.click()
+  await expect(page.getByRole("dialog")).toBeVisible()
+  await page.keyboard.press("Escape")
+  await expect(search).toBeFocused()
+})
+
 const groups = ["Setup", "Components", "Layout", "Typography", "Hooks"]
 
 test("@a11y grouped navigation preserves inventory, keyboard collapse, and mobile dismissal", async ({

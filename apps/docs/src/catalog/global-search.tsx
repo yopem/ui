@@ -43,7 +43,10 @@ const primitiveStyles = stylex.create({
     borderWidth: 0,
     blockSize: "2.5rem",
     gap: "0.75rem",
-    paddingInline: "0.875rem",
+    paddingInline: {
+      default: "0.875rem",
+      "@media (max-width: 767.98px)": 0,
+    },
     boxShadow: "none",
     borderRadius: tokens["--radius"],
   },
@@ -212,7 +215,7 @@ export function GlobalSearch() {
           />
         }
       >
-        <SearchIcon size={16} aria-hidden="true" />
+        <SearchIcon size={20} aria-hidden="true" />
         <Box render={<span />} xstyle={primitiveStyles.span}>
           Search docs
         </Box>
