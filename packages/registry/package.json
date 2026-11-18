@@ -22,6 +22,7 @@
     "@shikijs/langs": "^4.4.3",
     "@shikijs/themes": "^4.4.3",
     "@stylexjs/stylex": "catalog:",
+    "@tanstack/charts": "^1.5.0",
     "clsx": "^2.1.1",
     "lucide-react": "catalog:",
     "zod": "catalog:"
