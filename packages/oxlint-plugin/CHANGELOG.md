@@ -1,5 +1,40 @@
 # @yopem-ui/oxlint-plugin
 
+## 0.2.0
+
+### Minor Changes
+
+- [`bd09325`](https://github.com/yopem/ui/commit/bd093258f78907253aea91e243a41525d1e8890d)
+  Thanks [@karyanayandi](https://github.com/karyanayandi)! - feat(codeblock):
+  add compound parts
+
+  Add header, title, actions, copy, content, line, and footer parts. Keep the
+  simple Codeblock API and source copy behavior. Move Codeblock to Components
+  and use Pre for its content. Use the built-in StyleX marker without a
+  companion file.
+
+- [`47bbe69`](https://github.com/yopem/ui/commit/47bbe69dc79f2aa79cad83d534939c159003006c)
+  Thanks [@karyanayandi](https://github.com/karyanayandi)! - feat(oxlint):
+  recognize file upload
+
+  Add FileUpload to the built-in component inventory. Cover imports, aliases,
+  namespaces, and no-restyle contracts.
+
+- [`ffeb6fb`](https://github.com/yopem/ui/commit/ffeb6fbec927f5061c0571326c0b98924e01b64f)
+  Thanks [@karyanayandi](https://github.com/karyanayandi)! - feat(typography):
+  add Pre
+
+  Add a native Pre primitive, registry entry, and preview. Keep whitespace,
+  native props, and horizontal scrolling. Register Pre for styling checks and
+  add browser coverage.
+
+- [`0fa59e2`](https://github.com/yopem/ui/commit/0fa59e282fbadc568b60b20b63d996d799d28b86)
+  Thanks [@karyanayandi](https://github.com/karyanayandi)! - feat(oxlint):
+  recommend Pre for native tags
+
+  Recommend Pre for native pre elements. Check consumer aliases and namespace
+  imports. Update rule documentation and consumer lint guidance.
+
 ## 0.1.3
 
 ### Patch Changes
