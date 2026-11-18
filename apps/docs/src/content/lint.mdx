@@ -170,8 +170,9 @@ export function Action() {
 ```
 
 The rule checks local `stylex.create` declarations, arrays, conditional styles,
-and nested selectors. It cannot verify imported styles or dynamic computed
-access. Registry Link is excluded by default.
+logical results, static string bracket access, and nested selectors. It does not
+check the left guard of `&&`. It cannot verify imported styles or dynamic
+computed access. Registry Link is excluded by default.
 
 Use property names, `*` patterns, or categories in `allow` and `deny`.
 Categories are `layout`, `spacing`, `color`, `typography`, `shape`, `effects`,

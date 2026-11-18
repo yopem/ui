@@ -53,6 +53,10 @@ native semantics, events, and ref types. See the
 Default component detection includes all public StyleX components except Link.
 This includes AspectRatio, Container, List, ListItem, Strong, and Figcaption.
 
+`no-restyle` resolves local styles through arrays, conditional expressions,
+logical results, and static string bracket access. It does not check dynamic
+keys or imported style contents. The left side of `&&` is a guard, not a style.
+
 ## Unused StyleX styles (opt-in)
 
 Enable `no-unused-stylex-styles` explicitly. Recommended rules and CLI init keep

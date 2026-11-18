@@ -577,6 +577,16 @@ function resolveStyle(
       onStyle,
     )
   } else if (value.type === "LogicalExpression") {
+    if (getProperty(value, "operator") !== "&&") {
+      resolveStyle(
+        getProperty(value, "left"),
+        declarations,
+        node,
+        context,
+        onStyle,
+      )
+    }
+
     resolveStyle(
       getProperty(value, "right"),
       declarations,
@@ -588,13 +598,14 @@ function resolveStyle(
     onStyle(value)
   } else if (value.type === "MemberExpression") {
     const name = getIdentifier(getProperty(value, "object"))
-    const key = getPropertyName(getProperty(value, "property"))
+    const property = getProperty(value, "property")
 
-    if (
-      name !== null &&
-      key !== null &&
-      getProperty(value, "computed") !== true
-    ) {
+    const key =
+      getProperty(value, "computed") === true
+        ? getLiteralString(property)
+        : getPropertyName(property)
+
+    if (name !== null && key !== null) {
       const variable = getVariable(node, name, context)
       const style = variable && declarations.get(variable)?.get(key)
 

@@ -576,6 +576,20 @@ const view = <><AspectRatio style={{}} xstyle={styles.root} /><Items style={{}} 
   expect(result.output.match(/reactStyle styling is disabled/g)).toHaveLength(7)
 })
 
+test("restyle resolves logical results and static bracket keys without treating AND guards as styles", () => {
+  const result = lint(
+    `${imports}
+const styles = sx.create({ left: { color: "red" }, right: { padding: 4 } });
+const key = "left";
+const view = <><Action xstyle={styles.left || styles.right} /><Action xstyle={styles.left ?? styles.right} /><Action xstyle={styles.left && styles.right} /><Action xstyle={styles["left"]} /><Action xstyle={styles[key]} /></>;`,
+    { "yopem-ui/no-restyle": "error" },
+  )
+
+  expect(result.status).toBe(1)
+  expect(result.output.match(/color cannot restyle/g)).toHaveLength(3)
+  expect(result.output.match(/padding cannot restyle/g)).toHaveLength(3)
+})
+
 test("new rules remain opt-in", () => {
   const result = lint(
     `${imports}
