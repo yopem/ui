@@ -89,10 +89,15 @@ Use semantic tokens in styles, not these literal values.
 | \`--card-border\` | \`#e5e7eb\` | \`#181818\` |
 | \`--card-foreground\` | \`#111111\` | \`#f5f5f5\` |
 | \`--chart-1\` | \`#2563eb\` | \`#2563eb\` |
+| \`--chart-1-foreground\` | \`#fff\` | \`#fff\` |
 | \`--chart-2\` | \`#0891b2\` | \`#0891b2\` |
+| \`--chart-2-foreground\` | \`#111111\` | \`#111111\` |
 | \`--chart-3\` | \`#4f46e5\` | \`#4f46e5\` |
+| \`--chart-3-foreground\` | \`#fff\` | \`#fff\` |
 | \`--chart-4\` | \`#0d9488\` | \`#0d9488\` |
+| \`--chart-4-foreground\` | \`#111111\` | \`#111111\` |
 | \`--chart-5\` | \`#7c3aed\` | \`#7c3aed\` |
+| \`--chart-5-foreground\` | \`#fff\` | \`#fff\` |
 | \`--code\` | \`#fff\` | \`#111111\` |
 | \`--code-foreground\` | \`#111111\` | \`#f5f5f5\` |
 | \`--code-highlight\` | \`#f3f4f6\` | \`#212121\` |
@@ -303,6 +308,7 @@ Use \`defaultIndex\` only for initial tooltip focus. Keep persistent selection i
 Keep chart SVG focus indicators on --ring.
 Compose a Table or CSV export when readers need the underlying values.
 Use \`--chart-1\` through \`--chart-5\` for series colors. Keep series labels available without color.
+Use \`--chart-1-foreground\` through \`--chart-5-foreground\` for text inside matching filled marks.
 Keep chart colors in the blue, cyan, indigo, teal, and violet family. Match the neutral surfaces and blue accent.
 Keep chart series colors identical in light and dark themes. Use \`#2563eb\` as the palette anchor.
 NumberField is compact by default; set \`fullWidth\` to fill its parent. Table

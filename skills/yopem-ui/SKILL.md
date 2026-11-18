@@ -99,7 +99,9 @@ caller state. Compose a Table or CSV export for underlying values. Use
 Use `--chart-1` through `--chart-5` for colors. Keep series labels available
 without color. Keep the colorful blue, cyan, indigo, teal, and violet palette
 with neutral surfaces. Keep series colors identical in both themes. The palette
-starts with blue `#2563eb`. Keep chart SVG focus indicators on `--ring`.
+starts with blue `#2563eb`. Keep chart SVG focus indicators on `--ring`. Use
+`--chart-1-foreground` through `--chart-5-foreground` for text inside matching
+filled marks.
 
 Use `Progress` for task completion and `Meter` for bounded measurements. `Table`
 does not supply sorting or data loading. Set `rowBorders` for body row dividers;
