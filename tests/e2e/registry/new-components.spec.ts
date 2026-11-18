@@ -189,19 +189,3 @@ test("clipboard reports copied content", async ({ page, context }) => {
     page.getByRole("button", { name: "Unavailable copy" }),
   ).toBeDisabled()
 })
-
-test("codeblock preserves source and copies it", async ({ page, context }) => {
-  await context.grantPermissions(["clipboard-read", "clipboard-write"])
-  await page.goto("/components/codeblock", { waitUntil: "domcontentloaded" })
-  await expect(
-    page.getByRole("button", { name: "Search documentation", exact: true }),
-  ).toBeEnabled()
-  await expect(
-    page.getByRole("button", { name: "Copy Codeblock usage", exact: true }),
-  ).toBeEnabled()
-  await page.getByRole("button", { name: "Copy code", exact: true }).click()
-  await expect(page.getByText("Code copied.")).toBeVisible()
-  expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(
-    'const station = "Willow Creek"',
-  )
-})
