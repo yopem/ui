@@ -88,6 +88,11 @@ Use semantic tokens in styles, not these literal values.
 | \`--card\` | \`#fff\` | \`#111111\` |
 | \`--card-border\` | \`#e5e7eb\` | \`#181818\` |
 | \`--card-foreground\` | \`#111111\` | \`#f5f5f5\` |
+| \`--chart-1\` | \`#2563eb\` | \`#2563eb\` |
+| \`--chart-2\` | \`#0891b2\` | \`#0891b2\` |
+| \`--chart-3\` | \`#4f46e5\` | \`#4f46e5\` |
+| \`--chart-4\` | \`#0d9488\` | \`#0d9488\` |
+| \`--chart-5\` | \`#7c3aed\` | \`#7c3aed\` |
 | \`--code\` | \`#fff\` | \`#111111\` |
 | \`--code-foreground\` | \`#111111\` | \`#f5f5f5\` |
 | \`--code-highlight\` | \`#f3f4f6\` | \`#212121\` |
