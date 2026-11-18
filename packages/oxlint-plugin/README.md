@@ -48,6 +48,11 @@ and non-DOM JSX renderers. The rule has no automatic fix. Replacements must keep
 native semantics, events, and ref types. See the
 [full policy](https://ui.yopem.com/docs/lint) for checked tags and examples.
 
+## Component detection
+
+Default component detection includes all public StyleX components except Link.
+This includes AspectRatio, Container, List, ListItem, Strong, and Figcaption.
+
 ## Unused StyleX styles (opt-in)
 
 Enable `no-unused-stylex-styles` explicitly. Recommended rules and CLI init keep

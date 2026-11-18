@@ -1,4 +1,8 @@
-import uiPlugin, { recommendedRules } from "@yopem-ui/oxlint-plugin"
+import registryDocs from "@registry/docs.generated.json"
+import uiPlugin, {
+  recommendedRules,
+  styleComponentNames,
+} from "@yopem-ui/oxlint-plugin"
 import { afterAll, expect, test } from "bun:test"
 import { mkdirSync, rmSync, writeFileSync } from "node:fs"
 import { resolve } from "node:path"
@@ -529,6 +533,47 @@ const computed = stylex[create]({ ignored: {} });`,
   expect(result.status).toBe(1)
   expect(result.output.match(/is unused/g)).toHaveLength(2)
   expect(result.output).not.toContain('StyleX style "ignored"')
+})
+
+test("styling policies recognize every public StyleX component", () => {
+  const exclusions = new Set(["Link"])
+
+  const components = registryDocs.items.flatMap((item) =>
+    item.parts
+      .filter(
+        (part) =>
+          part.kind === "component" &&
+          !part.name.includes(".") &&
+          part.props.some(
+            (index) => registryDocs.properties[index]?.name === "xstyle",
+          ) &&
+          !exclusions.has(part.name),
+      )
+      .map((part) => part.name),
+  )
+
+  expect(components.length).toBeGreaterThan(0)
+  expect(
+    components.filter((name) => !styleComponentNames.includes(name)),
+  ).toEqual([])
+})
+
+test("new primitives enforce styling policies for named, aliased, and namespace imports", () => {
+  const result = lint(
+    `import * as sx from "@stylexjs/stylex";
+import { AspectRatio, List as Items, ListItem, Strong, Figcaption, Container } from "@registry/components/ui/layout";
+import * as UI from "@registry/components/ui/layout";
+const styles = sx.create({ root: { color: "red" } });
+const view = <><AspectRatio style={{}} xstyle={styles.root} /><Items style={{}} xstyle={styles.root} /><ListItem style={{}} xstyle={styles.root} /><Strong style={{}} xstyle={styles.root} /><Figcaption style={{}} xstyle={styles.root} /><Container style={{}} xstyle={styles.root} /><UI.Strong style={{}} xstyle={styles.root} /></>;`,
+    {
+      "yopem-ui/no-restyle": "error",
+      "yopem-ui/enforce-styling-methods": "error",
+    },
+  )
+
+  expect(result.status).toBe(1)
+  expect(result.output.match(/color cannot restyle/g)).toHaveLength(7)
+  expect(result.output.match(/reactStyle styling is disabled/g)).toHaveLength(7)
 })
 
 test("new rules remain opt-in", () => {
