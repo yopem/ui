@@ -1,5 +1,34 @@
 # @yopem-ui/oxlint-plugin
 
+## 0.1.3
+
+### Patch Changes
+
+- [`9248a37`](https://github.com/yopem/ui/commit/9248a37c252400f9558f06f9f2845bf8b1d07ac5)
+  Thanks [@karyanayandi](https://github.com/karyanayandi)! - fix(oxlint):
+  recognize styled components
+
+  Add the missing layout and text components to default detection. Check the
+  public StyleX inventory and cover named, aliased, and namespace imports with
+  real Oxlint runs.
+
+- [`39ddae8`](https://github.com/yopem/ui/commit/39ddae8236a0e76e3ed058a7df4fff81df2178de)
+  Thanks [@karyanayandi](https://github.com/karyanayandi)! - fix(oxlint): check
+  named style slots
+
+  Apply component policies to supported control and surface slots. Permit
+  separate slot contracts that keep inherited policy fields. Cover aliases,
+  namespaces, custom sources, and independent policies. Update the lint guide
+  and consumer agent guidance.
+
+- [`69ebb24`](https://github.com/yopem/ui/commit/69ebb24da92c2e57d2c22b501248cee581b4c829)
+  Thanks [@karyanayandi](https://github.com/karyanayandi)! - fix(oxlint):
+  resolve static style expressions
+
+  Check both possible style results for logical OR and nullish values. Keep AND
+  guards out of property checks. Resolve static string keys without treating
+  dynamic member access as a known style.
+
 ## 0.1.2
 
 ### Patch Changes
