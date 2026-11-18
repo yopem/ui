@@ -64,6 +64,7 @@ the same spelling. Read the required item's exports and compound parts.
 | --------------------------------------------- | ---------------------------------------------------------------------------------- |
 | Actions, copying, and grouped commands        | `button`, `clipboard`, `toggle`, `toggle-group`, `toolbar`                         |
 | Text entry and form structure                 | `input`, `textarea`, `input-group`, `label`, `field`, `fieldset`, `form`           |
+| File selection                                | `file-upload`                                                                      |
 | Independent choices and settings              | `checkbox`, `checkbox-group`, `switch`                                             |
 | One option or popup selection                 | `radio-group`, `native-select`, `select`                                           |
 | Searchable values or text suggestions         | `combobox`, `autocomplete`                                                         |
@@ -173,6 +174,14 @@ export function EmailForm({ onSubmit }: { onSubmit: (email: string) => void }) {
   )
 }
 ```
+
+### File selection
+
+Use FileUpload to select files, not to send them. Multiple selection appends;
+single selection replaces. Invalid batches keep the previous selection. Use
+`value` and `onValueChange` for controlled state. Append selected files to
+FormData manually; FileUpload does not submit a named form control. Validate
+files on the server.
 
 ### Selection state
 

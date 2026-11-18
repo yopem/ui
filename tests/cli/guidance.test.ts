@@ -234,6 +234,7 @@ function checkGuidance(text: string, shared = false) {
     "ListItem",
     "Strong",
     "Figcaption",
+    "FileUpload",
     "Text",
     "Heading",
     "Blockquote",

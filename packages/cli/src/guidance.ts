@@ -278,6 +278,11 @@ Use existing components before building substitutes. Check their documented prop
 
 Use Card with CardHeader, CardPanel, and CardFooter for card content. Set
 \`bordered={false}\` to remove the Card border. CardFrame adds an outer frame.
+Use FileUpload to select files, not to send them. Multiple selection appends;
+single selection replaces. Invalid batches keep the previous selection. Use
+\`value\` and \`onValueChange\` for controlled state. Append selected files to
+FormData manually; FileUpload does not submit a named form control. Validate
+files on the server.
 NumberField is compact by default; set \`fullWidth\` to fill its parent. Table
 has no body row dividers by default; set \`rowBorders\` to add them.
 AutocompleteInput accepts \`controlXstyle\` for its outer Input wrapper.
