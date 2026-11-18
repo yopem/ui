@@ -7,15 +7,15 @@ published entry point uses JavaScript. Oxlint can load it through Node from
 
 ## Rules
 
-| Rule                       | Default     | Purpose                                                                              |
-| -------------------------- | ----------- | ------------------------------------------------------------------------------------ |
-| `prefer-layout-primitives` | Recommended | Use layout and typography components while preserving native semantics.              |
-| `no-restyle`               | Recommended | Limit `xstyle` properties on imported UI components. Use `variant` and `size` first. |
-| `enforce-styling-methods`  | Recommended | Permit `xstyle` and `className`. Reject other component styling methods by default.  |
-| `static-stylex`            | Recommended | Require static object shapes and keys in `stylex.create`.                            |
-| `no-raw-stylex-colors`     | CLI init    | Use design tokens instead of literal hex colors and CSS color functions.             |
-| `no-unused-stylex-styles`  | Off         | Report unused keys in local StyleX declarations.                                     |
-| `atoms`                    | Off         | Permit, reject, or require StyleX atoms.                                             |
+| Rule                       | Default     | Purpose                                                                                             |
+| -------------------------- | ----------- | --------------------------------------------------------------------------------------------------- |
+| `prefer-layout-primitives` | Recommended | Use layout and typography components while preserving native semantics.                             |
+| `no-restyle`               | Recommended | Limit `xstyle` and supported style slots on imported UI components. Use `variant` and `size` first. |
+| `enforce-styling-methods`  | Recommended | Permit `xstyle` and `className`. Reject other component styling methods by default.                 |
+| `static-stylex`            | Recommended | Require static object shapes and keys in `stylex.create`.                                           |
+| `no-raw-stylex-colors`     | CLI init    | Use design tokens instead of literal hex colors and CSS color functions.                            |
+| `no-unused-stylex-styles`  | Off         | Report unused keys in local StyleX declarations.                                                    |
+| `atoms`                    | Off         | Permit, reject, or require StyleX atoms.                                                            |
 
 See [rule examples and configuration](https://ui.yopem.com/docs/lint) for
 accepted and rejected code for every rule.
@@ -48,7 +48,7 @@ and non-DOM JSX renderers. The rule has no automatic fix. Replacements must keep
 native semantics, events, and ref types. See the
 [full policy](https://ui.yopem.com/docs/lint) for checked tags and examples.
 
-## Component detection
+## Style contracts
 
 Default component detection includes all public StyleX components except Link.
 This includes AspectRatio, Container, List, ListItem, Strong, and Figcaption.
@@ -56,6 +56,12 @@ This includes AspectRatio, Container, List, ListItem, Strong, and Figcaption.
 `no-restyle` resolves local styles through arrays, conditional expressions,
 logical results, and static string bracket access. It does not check dynamic
 keys or imported style contents. The left side of `&&` is a guard, not a style.
+
+The rule checks `controlXstyle` on Input, Textarea, and AutocompleteInput. It
+checks `surfaceXstyle` on SheetPopup. Slots inherit the component policy. A
+contract pattern such as `^Input\\.controlXstyle$` selects a separate slot
+policy. In JSON, escape the backslash. Put specific slot contracts after broad
+component patterns. Slot contracts do not change the primary `xstyle` policy.
 
 ## Unused StyleX styles (opt-in)
 

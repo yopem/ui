@@ -457,6 +457,14 @@ instructions in `AGENTS.md`. Do not add a root `DESIGN.md`.
 - Write consumer guidance in the target app directory, including shared UI setup.
   Preserve text outside the Yopem UI managed block. Do not write both files.
 
+The `no-restyle` rule checks `controlXstyle` on Input, Textarea, and
+AutocompleteInput, plus `surfaceXstyle` on SheetPopup. Each slot inherits the
+component policy. A contract can target `Input.controlXstyle` or another supported
+component-slot name. Use an escaped dot in the regex for an exact slot target.
+Put specific slot contracts after broad component patterns. Slot contracts do
+not change the primary `xstyle` policy. Static string bracket access and logical
+results are checked. The left side of `&&` is a guard, not a style.
+
 ## Agent skills
 
 Consumer agent skills live in `skills/yopem-ui/`, `skills/yopem-ui-cli/`, and

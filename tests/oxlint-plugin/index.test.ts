@@ -590,6 +590,69 @@ const view = <><Action xstyle={styles.left || styles.right} /><Action xstyle={st
   expect(result.output.match(/padding cannot restyle/g)).toHaveLength(3)
 })
 
+test("named style slots enforce component policies and permit independent slot contracts", () => {
+  const source = `import * as sx from "@stylexjs/stylex";
+import { Input as Control, Textarea, AutocompleteInput, SheetPopup, Button } from "@registry/components/ui/controls";
+import * as UI from "@registry/components/ui/controls";
+const styles = sx.create({ root: { color: "red", marginInline: 4 } });
+const view = <><Control controlXstyle={styles.root} /><Textarea controlXstyle={styles.root} /><AutocompleteInput controlXstyle={styles.root} /><SheetPopup surfaceXstyle={styles.root} /><UI.Input controlXstyle={styles.root} /><Button controlXstyle={styles.root} /><Control surfaceXstyle={styles.root} /></>;`
+
+  const result = lint(source, { "yopem-ui/no-restyle": "error" })
+
+  expect(result.status).toBe(1)
+  expect(result.output.match(/color cannot restyle/g)).toHaveLength(5)
+  expect(result.output).not.toContain("marginInline cannot restyle")
+
+  const allowed = lint(source, {
+    "yopem-ui/no-restyle": [
+      "error",
+      {
+        contracts: [
+          {
+            pattern: "^(Input|Textarea|AutocompleteInput)\\.controlXstyle$",
+            allow: ["color", "layout"],
+          },
+          {
+            pattern: "^SheetPopup\\.surfaceXstyle$",
+            allow: ["color", "layout"],
+          },
+        ],
+      },
+    ],
+  })
+
+  expect(allowed.status).toBe(0)
+})
+
+test("slot contracts inherit component restrictions without changing the primary slot", () => {
+  const result = lint(
+    `import * as sx from "@stylexjs/stylex";
+import { Input } from "@acme/ui";
+const styles = sx.create({ root: { color: "red", padding: 4, marginInline: 4 } });
+const view = <Input xstyle={styles.root} controlXstyle={styles.root} />;`,
+    {
+      "yopem-ui/no-restyle": [
+        "error",
+        {
+          componentSources: ["@acme/ui"],
+          contracts: [
+            {
+              pattern: "^Input$",
+              allow: ["layout", "color"],
+              deny: ["padding"],
+            },
+            { pattern: "^Input\\.controlXstyle$", allow: ["layout"] },
+          ],
+        },
+      ],
+    },
+  )
+
+  expect(result.status).toBe(1)
+  expect(result.output.match(/color cannot restyle/g)).toHaveLength(1)
+  expect(result.output.match(/padding cannot restyle/g)).toHaveLength(2)
+})
+
 test("new rules remain opt-in", () => {
   const result = lint(
     `${imports}

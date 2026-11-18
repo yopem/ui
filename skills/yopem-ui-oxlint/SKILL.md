@@ -149,9 +149,18 @@ categories. Matching deny entries win. An empty allow list rejects all checked
 properties. Component contracts use regex `pattern` values; the last matching
 contract wins. Unspecified contract fields inherit the global policy.
 
-Do not assume imported style contents, arbitrary prop spreads, dynamic member
-access, or `controlXstyle` receive the same checks as explicit local `xstyle`. A
-passing lint run does not prove every override follows policy.
+`no-restyle` checks local styles in logical results and static string bracket
+access. The left side of `&&` is a guard, not a style.
+
+It checks `controlXstyle` on Input, Textarea, and AutocompleteInput, plus
+`surfaceXstyle` on SheetPopup. These slots inherit the component policy. Use a
+contract pattern such as `^Input\\.controlXstyle$` for a separate slot policy.
+Escape the backslash in JSON. Put specific slot contracts after broad component
+patterns. Slot fields not set keep the component policy values.
+
+Do not assume imported style contents, arbitrary prop spreads, or dynamic member
+access receive the same checks as explicit local `xstyle`. A passing lint run
+does not prove every override follows policy.
 
 ### Static styles, colors, and unused keys
 

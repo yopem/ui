@@ -801,6 +801,13 @@ const preferLayoutPrimitivesRule: Rule = {
   },
 }
 
+const COMPONENT_STYLE_SLOTS = new Map<string, string>([
+  ["Input", "controlXstyle"],
+  ["Textarea", "controlXstyle"],
+  ["AutocompleteInput", "controlXstyle"],
+  ["SheetPopup", "surfaceXstyle"],
+])
+
 const noRestyleRule: Rule = {
   meta: {
     type: "problem",
@@ -871,10 +878,26 @@ const noRestyleRule: Rule = {
             })
           )
             continue
-          const policy = getPolicy(component, policyOptions)
+
+          const componentPolicy = getPolicy(component, policyOptions)
 
           for (const attribute of node.attributes) {
-            if (getAttributeName(attribute) !== "xstyle") continue
+            const slot = getAttributeName(attribute)
+
+            if (
+              slot !== "xstyle" &&
+              slot !== COMPONENT_STYLE_SLOTS.get(component)
+            )
+              continue
+
+            const policy =
+              slot === "xstyle"
+                ? componentPolicy
+                : getPolicy(`${component}.${slot}`, {
+                    ...policyOptions,
+                    ...componentPolicy,
+                  })
+
             resolveStyle(
               getAttributeExpression(attribute),
               declarations,

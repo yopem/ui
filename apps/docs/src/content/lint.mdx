@@ -205,6 +205,30 @@ no properties. A matching `deny` entry takes priority over `allow`.
 component names. The last matching contract wins. It replaces only the policy
 fields that it sets. Custom messages support `{{component}}` and `{{property}}`.
 
+The rule also checks `controlXstyle` on Input, Textarea, and AutocompleteInput.
+It checks `surfaceXstyle` on SheetPopup. Each slot inherits its component
+policy. Use a slot contract to change that slot without changing `xstyle`:
+
+```json
+{
+  "yopem-ui/no-restyle": [
+    "error",
+    {
+      "contracts": [
+        {
+          "pattern": "^Input\\.controlXstyle$",
+          "allow": ["layout", "shape"]
+        }
+      ]
+    }
+  ]
+}
+```
+
+Slot contracts use the same last-match order. Put specific slot contracts after
+broad component patterns. Fields not set by a slot contract keep the component
+policy values. Other component props do not become style slots.
+
 ### yopem-ui/enforce-styling-methods
 
 **Recommended.** Choose which styling methods imported UI components can accept.

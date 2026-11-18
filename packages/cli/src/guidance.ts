@@ -281,6 +281,12 @@ Use Card with CardHeader, CardPanel, and CardFooter for card content. Set
 NumberField is compact by default; set \`fullWidth\` to fill its parent. Table
 has no body row dividers by default; set \`rowBorders\` to add them.
 AutocompleteInput accepts \`controlXstyle\` for its outer Input wrapper.
+The \`no-restyle\` rule checks \`controlXstyle\` on Input, Textarea, and AutocompleteInput.
+It checks \`surfaceXstyle\` on SheetPopup. Each slot inherits the component policy.
+A contract can target \`Input.controlXstyle\` or another supported component-slot name.
+Use an escaped dot in the regex for an exact slot target.
+Put specific slot contracts after broad component patterns. Slot contracts do not change \`xstyle\`.
+The rule checks static string bracket access and logical results, but not the left guard of \`&&\`.
 
 Dialog, AlertDialog, Sheet, Drawer, and Command popups accept \`frameTitle\` as a
 visual caption. Provide a separate accessible title or label. AlertDialog's
