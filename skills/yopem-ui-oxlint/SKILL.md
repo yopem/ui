@@ -73,6 +73,16 @@ example. For JavaScript configuration, the plugin exposes
 `configs.recommended.rules` and named `recommendedRules`; plugin registration is
 still required.
 
+## Check rule coverage
+
+Enable JavaScript plugin rules in the configuration. Check the selected source
+files, rule modes, and file overrides before you report results. Use an explicit
+configuration path when the project needs one. An empty log does not prove that
+the required rules checked the required files.
+
+Do not enable conflicting atoms modes together. Use `disallow` for a project
+that prohibits atoms. Use `enforce` only when the project has an atoms compiler.
+
 ## Repair diagnostics
 
 | Rule                       | Repair                                                                                                   |
@@ -123,7 +133,8 @@ these default source prefixes:
 ```
 
 The last entry is a detection pattern, not a component package to install.
-Registry Link is excluded from the default component-name set.
+Default detection includes AspectRatio, Container, List, ListItem, Strong, and
+Figcaption. Registry Link is excluded from the default component-name set.
 
 For custom aliases or shared packages, set `componentSources` on both rules. The
 option replaces defaults. Include every source prefix the project uses. The
@@ -149,18 +160,25 @@ categories. Matching deny entries win. An empty allow list rejects all checked
 properties. Component contracts use regex `pattern` values; the last matching
 contract wins. Unspecified contract fields inherit the global policy.
 
-`no-restyle` checks local styles in logical results and static string bracket
-access. The left side of `&&` is a guard, not a style.
+`no-restyle` checks local styles through arrays, conditional expressions,
+logical results, and static string bracket access. It checks both sides of `||`
+and `??`. The left side of `&&` is a guard, not a style.
 
 It checks `controlXstyle` on Input, Textarea, and AutocompleteInput, plus
 `surfaceXstyle` on SheetPopup. These slots inherit the component policy. Use a
-contract pattern such as `^Input\\.controlXstyle$` for a separate slot policy.
+contract pattern such as `^Input\.controlXstyle$` for a separate slot policy.
 Escape the backslash in JSON. Put specific slot contracts after broad component
-patterns. Slot fields not set keep the component policy values.
+patterns. Slot fields not set keep the component policy values. A slot contract
+does not change the primary `xstyle` policy.
 
 Do not assume imported style contents, arbitrary prop spreads, or dynamic member
 access receive the same checks as explicit local `xstyle`. A passing lint run
 does not prove every override follows policy.
+
+For a strict default policy, remove unsupported overrides. Use component props
+and defaults first. Choose a layout primitive when its defaults meet the need.
+Do not move forbidden styles into imported values, helpers, or `render` props to
+avoid a diagnostic.
 
 ### Static styles, colors, and unused keys
 
