@@ -175,8 +175,16 @@ Do not assume imported style contents, arbitrary prop spreads, or dynamic member
 access receive the same checks as explicit local `xstyle`. A passing lint run
 does not prove every override follows policy.
 
-For a strict default policy, remove unsupported overrides. Use component props
-and defaults first. Choose a layout primitive when its defaults meet the need.
+Preserve the intended design and behavior when you repair diagnostics. Compare
+each override with component props and defaults. Remove redundant overrides only
+when the rendered result stays the same.
+
+A contract mismatch does not prove that the design is wrong. If the default
+policy rejects required customization, report the mismatch before you edit.
+Propose a narrow contract or a supported composition. Confirm visual changes
+before a broad migration. Do not delete styles or change visual test
+expectations only to get a clean lint result.
+
 Do not move forbidden styles into imported values, helpers, or `render` props to
 avoid a diagnostic.
 
