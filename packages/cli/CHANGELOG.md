@@ -1,5 +1,18 @@
 # @yopem-ui/cli
 
+## 0.5.2
+
+### Patch Changes
+
+- [`39ddae8`](https://github.com/yopem/ui/commit/39ddae8236a0e76e3ed058a7df4fff81df2178de)
+  Thanks [@karyanayandi](https://github.com/karyanayandi)! - fix(oxlint): check
+  named style slots
+
+  Apply component policies to supported control and surface slots. Permit
+  separate slot contracts that keep inherited policy fields. Cover aliases,
+  namespaces, custom sources, and independent policies. Update the lint guide
+  and consumer agent guidance.
+
 ## 0.5.1
 
 ### Patch Changes
