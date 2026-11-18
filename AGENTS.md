@@ -251,6 +251,11 @@ panels. Do not alternate card fills or add decorative shadows.
   Keep its `data-cfasync="false"` attribute to prevent Rocket Loader deferral.
 - Use Field, Fieldset, Form, and Label for form structure. Use the matching
   input, selection, and validation components instead of new control systems.
+- Use FileUpload to select files, not to send them. Multiple selection appends;
+  single selection replaces. Invalid batches keep the previous selection. Use
+  `value` and `onValueChange` for controlled state. Append selected files to
+  FormData manually; FileUpload does not submit a named form control. Validate
+  files on the server.
 - Use Dialog, AlertDialog, Sheet, Drawer, Popover, Tooltip, PreviewCard, Menu,
   and ContextMenu for their documented interaction patterns. Keep Base UI focus
   management, dismissal, accessible names, and keyboard behavior intact.

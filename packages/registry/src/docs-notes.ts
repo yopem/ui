@@ -20,6 +20,12 @@ const usageNoteValues = {
     "Create custom themes with StyleX in tokens.stylex.ts. Call createThemeConfig in your existing root layout. You do not need another configuration file. Use the same storageKey and defaultTheme in the provider and initial-paint script.",
     'ThemeScript must run before the first paint. Its data-cfasync="false" attribute prevents Cloudflare Rocket Loader from deferring theme selection.',
   ],
+  "file-upload": [
+    "FileUpload selects files. It does not send them. Use label to name the control. The default label is Upload files.",
+    "multiple appends files to the selection. Single selection replaces it. Files with the same name, size, lastModified, and type are duplicates. A rejected batch leaves the selection unchanged.",
+    "Use accept for comma-separated MIME types or extensions, maxSize for bytes, and maxFiles for a positive file count. Validate files on the server; file metadata can be false.",
+    "Use defaultValue for initial files or value and onValueChange for controlled state. The control includes file removal. It is not a native form submission control and does not support name. Append selected files to FormData manually.",
+  ],
   spinner: [
     "Use Spinner beside a loading label or inside a pending action.",
     "Keep a text status available to assistive technology. A spinner alone does not explain what is loading.",

@@ -207,6 +207,14 @@ const definitions: Definition[] = [
     title: "Table",
   },
   {
+    api: ["FileUpload", "FileUploadProps"],
+    categories: ["forms", "controls"],
+    description: "Selects files for an application to process or upload.",
+    name: "file-upload",
+    registryDependencies: ["button", "use-event-callback"],
+    title: "File Upload",
+  },
+  {
     api: ["Input", "InputProps", "InputPrimitive"],
     categories: ["forms"],
     description: "Provides a styled text input with native and Base UI modes.",
@@ -442,6 +450,7 @@ const baseUiComponents = new Set([
 ])
 
 const lucideComponents = new Set([
+  "file-upload",
   "breadcrumb",
   "checkmark",
   "native-select",
