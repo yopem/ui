@@ -118,7 +118,9 @@ test("tabs support arrow-key navigation", async ({ page }) => {
 
   await page.keyboard.press("Enter")
   await expect(secondTab).toHaveAttribute("aria-selected", "true")
-  await expect(page.getByRole("tabpanel")).toBeVisible()
+  await expect(
+    page.getByRole("tabpanel", { name: "Equipment", exact: true }),
+  ).toBeVisible()
 })
 
 test("checkbox toggles with Space", async ({ page }) => {

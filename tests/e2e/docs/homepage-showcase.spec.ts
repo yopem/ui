@@ -157,7 +157,9 @@ for (const theme of ["light", "dark"] as const) {
       await expect(
         tabs.getByRole("tab", { name: "Equipment", exact: true }),
       ).toHaveAttribute("aria-selected", "true")
-      await expect(tabs.getByRole("tabpanel")).toBeVisible()
+      await expect(
+        tabs.getByRole("tabpanel", { name: "Equipment", exact: true }),
+      ).toBeVisible()
 
       await reservation
         .getByRole("button", { name: "Reserve kit", exact: true })
