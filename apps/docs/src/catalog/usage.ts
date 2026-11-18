@@ -291,6 +291,45 @@ export function Preview() {
   )
 }
 `,
+  chart: `"use client"
+
+import { barY, defineChart } from "@tanstack/charts"
+import { scaleBand } from "@tanstack/charts/scales/band"
+import { scaleLinear } from "@tanstack/charts/scales/linear"
+import { tooltip } from "@tanstack/charts/tooltip"
+import { Chart, ChartContainer, ChartLegendContent, ChartTooltipContent } from "@/components/ui/chart"
+import { tokens } from "@/styles/tokens.stylex"
+
+const config = {
+  visits: { label: "Visits", color: tokens["--chart-1"] },
+}
+const observations = [
+  { month: "January", visits: 120 },
+  { month: "February", visits: 180 },
+  { month: "March", visits: 150 },
+]
+const definition = defineChart({
+  marks: [barY(observations, { x: "month", y: "visits", fill: config.visits.color })],
+  scales: {
+    x: { scale: () => scaleBand<string>().padding(0.2) },
+    y: { scale: scaleLinear, grid: true },
+  },
+  tooltip: { use: tooltip, items: [{ field: "visits", label: "visits" }] },
+})
+
+export function Example() {
+  return (
+    <ChartContainer config={config}>
+      <Chart
+        ariaLabel="Monthly visits"
+        definition={definition}
+        height={260}
+        renderTooltipBody={(context) => <ChartTooltipContent context={context} />}
+      />
+      <ChartLegendContent items={[{ name: "visits" }]} />
+    </ChartContainer>
+  )
+}`,
   stat: `"use client"
 
 import { Stat, StatDescription, StatLabel, StatValue } from "@/components/ui/stat"

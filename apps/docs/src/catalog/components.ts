@@ -69,6 +69,7 @@ const previewDescriptionValues = {
   button: "Clickable default action",
   calendar: "Date selection",
   card: "Equipment reservation card",
+  chart: "Area, bar, line, pie, radar, and radial charts",
   center: "Centered content block",
   container: "Centered page-width wrapper",
   checkbox: "Checkbox with label",
