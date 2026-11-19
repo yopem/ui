@@ -1,5 +1,16 @@
 # @yopem-ui/cli
 
+## 0.6.1
+
+### Patch Changes
+
+- [`e3860ef`](https://github.com/yopem/ui/commit/e3860ef469259c6cae706f41c6a75a6bf2ce35cb)
+  Thanks [@karyanayandi](https://github.com/karyanayandi)! - fix(charts): keep
+  filled labels readable
+
+  Add paired foreground tokens for text inside chart fills. Keep the fixed
+  series colors in both themes.
+
 ## 0.6.0
 
 ### Minor Changes

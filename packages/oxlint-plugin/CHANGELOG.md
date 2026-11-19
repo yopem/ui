@@ -1,5 +1,16 @@
 # @yopem-ui/oxlint-plugin
 
+## 0.2.1
+
+### Patch Changes
+
+- [`78d4ab8`](https://github.com/yopem/ui/commit/78d4ab8aa5bc87ccf14dcbdbb4ed1ff168435372)
+  Thanks [@karyanayandi](https://github.com/karyanayandi)! - fix(oxlint): check
+  Message and Chart styles
+
+  Apply the standard style rules to Message and Chart parts. Test named imports,
+  aliases, namespace imports, and overrides.
+
 ## 0.2.0
 
 ### Minor Changes
