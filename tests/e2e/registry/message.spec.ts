@@ -179,27 +179,29 @@ test("message content wraps within a narrow viewport", async ({ page }) => {
 
   const messageText = content.locator('[data-slot="text"]')
 
-  await messageText.scrollIntoViewIfNeeded()
-  await expect(messageText).toBeVisible()
+  await expect
+    .poll(() =>
+      messageText.evaluateAll(([element]) => {
+        if (!element?.clientWidth) return null
 
-  const size = await messageText.evaluate((element) => {
-    element.textContent = "Unbroken".repeat(50)
+        const originalText = element.textContent
+        element.textContent = "Unbroken".repeat(50)
 
-    const range = document.createRange()
-    range.selectNodeContents(element)
+        const range = document.createRange()
+        range.selectNodeContents(element)
 
-    return {
-      lines: range.getClientRects().length,
-      clientWidth: element.clientWidth,
-      scrollWidth: element.scrollWidth,
-    }
-  })
+        const result = {
+          wraps: range.getClientRects().length > 1,
+          fits: element.scrollWidth <= element.clientWidth + 1,
+          pageFits: document.documentElement.scrollWidth <= 320,
+        }
 
-  expect(size.scrollWidth).toBeLessThanOrEqual(size.clientWidth + 1)
-  expect(size.lines).toBeGreaterThan(1)
-  expect(
-    await page.evaluate(() => document.documentElement.scrollWidth),
-  ).toBeLessThanOrEqual(320)
+        element.textContent = originalText
+
+        return result
+      }),
+    )
+    .toEqual({ wraps: true, fits: true, pageFits: true })
 })
 
 test("message actions copy text and download an attachment", async ({
