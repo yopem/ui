@@ -179,6 +179,9 @@ test("message content wraps within a narrow viewport", async ({ page }) => {
 
   const messageText = content.locator('[data-slot="text"]')
 
+  await messageText.scrollIntoViewIfNeeded()
+  await expect(messageText).toBeVisible()
+
   const size = await messageText.evaluate((element) => {
     element.textContent = "Unbroken".repeat(50)
 
