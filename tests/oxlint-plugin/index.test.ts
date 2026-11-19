@@ -576,6 +576,94 @@ const view = <><AspectRatio style={{}} xstyle={styles.root} /><Items style={{}} 
   expect(result.output.match(/reactStyle styling is disabled/g)).toHaveLength(7)
 })
 
+test("Message and Chart parts use the default styling contracts", () => {
+  const names = [
+    "Message",
+    "MessageGroup",
+    "MessageAvatar",
+    "MessageContent",
+    "MessageHeader",
+    "MessageFooter",
+    "Chart",
+    "ChartContainer",
+    "ChartTooltipContent",
+    "ChartLegendContent",
+  ]
+
+  const imports = names
+    .map(
+      (name, index) =>
+        `import { ${name} as Part${index} } from "@/components/ui/${index < 6 ? "message" : "chart"}";`,
+    )
+    .join("\n")
+
+  const parts = names
+    .map(
+      (name, index) =>
+        `<Part${index} style={{}} xstyle={styles.root} /><UI.${name} css={{}} xstyle={styles.root} />`,
+    )
+    .join("")
+
+  const result = lint(
+    `import * as sx from "@stylexjs/stylex";
+${imports}
+import * as UI from "@registry/components/ui/index";
+import { Message as OtherMessage } from "other-library";
+const styles = sx.create({ root: { color: "red", marginInline: 4 } });
+const view = <>${parts}<OtherMessage style={{}} xstyle={styles.root} /></>;`,
+    {
+      "yopem-ui/no-restyle": "error",
+      "yopem-ui/enforce-styling-methods": "error",
+      "yopem-ui/prefer-layout-primitives": "error",
+    },
+  )
+
+  expect(result.status).toBe(1)
+
+  for (const name of names) {
+    expect(
+      result.output.match(new RegExp(`color cannot restyle ${name}\\.`, "g")),
+    ).toHaveLength(2)
+  }
+
+  expect(result.output.match(/reactStyle styling is disabled/g)).toHaveLength(
+    names.length,
+  )
+  expect(result.output.match(/css styling is disabled/g)).toHaveLength(
+    names.length,
+  )
+  expect(result.output).not.toContain("marginInline cannot restyle")
+  expect(result.output).not.toContain("Use Box")
+})
+
+test("Message and Chart parts honor normal policy overrides without extra style slots", () => {
+  const result = lint(
+    `import * as sx from "@stylexjs/stylex";
+import { Message as ChatMessage } from "@/components/ui/message";
+import { ChartContainer } from "@/components/ui/chart";
+const styles = sx.create({ root: { color: "red", marginInline: 4 } });
+const view = <><ChatMessage className="custom" xstyle={styles.root} controlXstyle={styles.root} /><ChartContainer className="custom" xstyle={styles.root} surfaceXstyle={styles.root} /></>;`,
+    {
+      "yopem-ui/no-restyle": [
+        "error",
+        {
+          contracts: [
+            {
+              pattern: "^(Message|ChartContainer)$",
+              allow: ["color", "layout"],
+            },
+            { pattern: "\\.", allow: [] },
+          ],
+        },
+      ],
+      "yopem-ui/enforce-styling-methods": "error",
+      "yopem-ui/prefer-layout-primitives": "error",
+    },
+  )
+
+  expect(result.status).toBe(0)
+})
+
 test("Pre enforces styling policies for consumer imports", () => {
   const result = lint(
     `import * as sx from "@stylexjs/stylex";
