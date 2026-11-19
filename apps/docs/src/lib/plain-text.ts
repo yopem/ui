@@ -181,6 +181,20 @@ export function createComponentText(
     ? `\`\`\`tsx\n${data.previewSource.trim()}\n\`\`\``
     : "See Usage below for an example. No preview is available."
 
+  const examples = data.examples.map(
+    ({ title, description, source }) =>
+      `### ${title}\n\n${description}\n\n\`\`\`tsx\n${source.trim()}\n\`\`\``,
+  )
+
+  if (data.sharedExampleSource)
+    examples.push(
+      `### Shared example source\n\nSave the shared source as \`message-demo-parts.tsx\` in the same directory as the examples.\n\n\`\`\`tsx\n${data.sharedExampleSource.trim()}\n\`\`\``,
+    )
+
+  const examplesSection = examples.length
+    ? `## Examples\n\n${examples.join("\n\n")}\n\n`
+    : ""
+
   const api = data.api
     .map((part) => {
       const properties = [...part.parameters, ...part.props]
@@ -194,7 +208,7 @@ export function createComponentText(
     })
     .join("\n\n")
 
-  return `# ${title}\n\n${data.description}\n\n## Installation\n\n${cliRunners}\nRun \`bunx --bun @yopem-ui/cli init\` in a supported project.\nThen run \`bunx --bun @yopem-ui/cli add <component>\`.\nThe init command configures StyleX.\nThe add command installs required source files and dependencies.\n\n## Preview\n\n${preview}\n\n## Usage\n\n${data.notes.join("\n\n")}\n\n\`\`\`tsx\n${data.usage.trim()}\n\`\`\`\n\n## API reference\n\n${api}\n`
+  return `# ${title}\n\n${data.description}\n\n## Installation\n\n${cliRunners}\nRun \`bunx --bun @yopem-ui/cli init\` in a supported project.\nThen run \`bunx --bun @yopem-ui/cli add <component>\`.\nThe init command configures StyleX.\nThe add command installs required source files and dependencies.\n\n## Preview\n\n${preview}\n\n## Usage\n\n${data.notes.join("\n\n")}\n\n\`\`\`tsx\n${data.usage.trim()}\n\`\`\`\n\n${examplesSection}## API reference\n\n${api}\n`
 }
 
 export function createGuideText(page: { content: string; title: string }) {

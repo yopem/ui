@@ -4,6 +4,7 @@ import { Box } from "@registry/components/ui/box"
 import { Flex } from "@registry/components/ui/flex"
 import { Heading } from "@registry/components/ui/heading"
 import { ScrollArea } from "@registry/components/ui/scroll-area"
+import { Text } from "@registry/components/ui/text"
 import { tokens } from "@registry/styles/tokens.stylex"
 import * as stylex from "@stylexjs/stylex"
 import { Suspense } from "react"
@@ -14,7 +15,8 @@ import { CopyableCode } from "./code-block"
 
 const styles = stylex.create({
   section: { marginBlock: "2rem", minInlineSize: "calc(var(--spacing) * 0)" },
-  h3: { marginBlock: "0 0.75rem" },
+  h3: { marginBlock: "0 0.75rem", scrollMarginBlockStart: "6rem" },
+  description: { marginBlockEnd: "1rem" },
   scrollArea: {
     backgroundColor: tokens["--sidebar"],
     borderColor: tokens["--border"],
@@ -49,9 +51,13 @@ const previewHelpers = Object.entries(
 }))
 
 export function PreviewPanel({
+  description,
+  id,
   preview,
   source,
 }: {
+  description?: string
+  id?: string
   preview: CatalogPreview
   source: string
 }) {
@@ -59,7 +65,10 @@ export function PreviewPanel({
 
   return (
     <Box render={<section />} xstyle={styles.section}>
-      <Heading render={<h3>{preview.title}</h3>} xstyle={styles.h3} />
+      <Heading render={<h3>{preview.title}</h3>} id={id} xstyle={styles.h3} />
+      {description ? (
+        <Text xstyle={styles.description}>{description}</Text>
+      ) : null}
       <ScrollArea
         xstyle={styles.scrollArea}
         aria-label={`${preview.title} live preview`}

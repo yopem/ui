@@ -4,6 +4,7 @@ import { rewriteImports } from "@registry/source-files"
 import { z } from "zod"
 
 import { getDocumentationItems, getRequiredItems } from "./docs-data"
+import { messageExampleDetails } from "./message-example-details"
 import { usageSnippets } from "./usage"
 
 const sources = import.meta.glob<string>(
@@ -14,10 +15,13 @@ const sources = import.meta.glob<string>(
   },
 )
 
-const previewSources = import.meta.glob<string>("./previews/*.tsx", {
-  query: "?raw",
-  import: "default",
-})
+const previewSources = import.meta.glob<string>(
+  ["./previews/*.tsx", "./message-examples/*.tsx"],
+  {
+    query: "?raw",
+    import: "default",
+  },
+)
 
 const documentationSources = import.meta.glob<(typeof componentDocs)[number]>(
   "../../public/r/docs/*.json",
@@ -42,13 +46,44 @@ export async function getDocumentation({ data }: { data: string }) {
     }),
   )
 
-  const previewLoader = previewSources[`./previews/${slug}.tsx`]
+  const previewLoader =
+    previewSources[
+      slug === "message"
+        ? "./message-examples/basic-conversation.tsx"
+        : `./previews/${slug}.tsx`
+    ]
 
   const previewSource = previewLoader
     ? rewriteImports(await previewLoader())
     : null
 
-  const allItems = getRequiredItems(slug, previewSource ?? "")
+  const sharedExampleLoader =
+    slug === "message"
+      ? previewSources["./message-examples/message-demo-parts.tsx"]
+      : undefined
+
+  const sharedExampleSource = sharedExampleLoader
+    ? rewriteImports(await sharedExampleLoader())
+    : null
+
+  const examples = await Promise.all(
+    (slug === "message" ? messageExampleDetails : []).map(async (example) => {
+      const load = previewSources[`./message-examples/${example.id}.tsx`]
+
+      if (!load) throw new Error(`Missing example source: ${example.id}`)
+
+      return { ...example, source: rewriteImports(await load()) }
+    }),
+  )
+
+  const allItems = getRequiredItems(
+    slug,
+    [
+      previewSource,
+      sharedExampleSource,
+      ...examples.map(({ source }) => source),
+    ].join("\n"),
+  )
 
   const files = [
     ...new Map(
@@ -86,6 +121,8 @@ export async function getDocumentation({ data }: { data: string }) {
     description: items.map((item) => item.description).join(" "),
     usage: usageSnippets.get(slug) ?? "",
     previewSource,
+    sharedExampleSource,
+    examples,
     notes: items.flatMap((item) => {
       const doc = docs.find((entry) => entry.name === item.name)
 

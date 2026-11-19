@@ -47,7 +47,16 @@ for (const slug of previews) {
     await expect(
       page.getByRole("heading", { name: "Preview", exact: true }),
     ).toBeVisible()
-    await expect(page.locator(`[aria-label$="live preview"]`)).toBeVisible()
+    const previews = page.locator('[aria-label$="live preview"]')
+    await expect(previews.first()).toBeVisible()
+
+    for (const preview of await previews.all()) {
+      await expect(preview).toBeVisible()
+      await expect(
+        preview.locator('[data-slot="flex"]').first().locator(":scope > *"),
+      ).not.toHaveCount(0)
+    }
+
     await expect(
       page.getByRole("button", { name: /^Copy .* usage$/ }).first(),
     ).toBeEnabled()

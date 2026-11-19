@@ -100,7 +100,7 @@ const previewDescriptionValues = {
   link: "Link to component catalog",
   marquee: "Pauseable scrolling content",
   menu: "Field recording actions menu",
-  message: "Conversation with avatars, grouped messages, and actions",
+  message: "Basic conversation",
   meter: "Storage usage meter",
   navigation: "Segmented navigation",
   "native-select": "Native theme selection",
@@ -137,6 +137,30 @@ const previewDescriptionValues = {
 
 const previewDescriptions = new Map(Object.entries(previewDescriptionValues))
 
+export function createCatalogPreview(
+  load: () => Promise<{ Preview: FunctionComponent }>,
+  title: string,
+) {
+  const Preview = lazyRouteComponent(load, "Preview")
+
+  async function preload() {
+    await Preview.preload?.()
+  }
+
+  const component = import.meta.env.SSR
+    ? Preview
+    : Object.assign(
+        lazy(async () => {
+          await preload()
+
+          return { default: Preview }
+        }),
+        { preload },
+      )
+
+  return { component, title }
+}
+
 export const catalog: CatalogItem[] = Object.entries(modules)
   .map(([path, load]): CatalogItem => {
     const slug =
@@ -147,29 +171,13 @@ export const catalog: CatalogItem[] = Object.entries(modules)
 
     const override = compositionOverrides.get(slug)
     const title = override?.title ?? titleCase(slug)
-    const Preview = lazyRouteComponent(load, "Preview")
-
-    async function preload() {
-      await Preview.preload?.()
-    }
-
-    const component = import.meta.env.SSR
-      ? Preview
-      : Object.assign(
-          lazy(async () => {
-            await preload()
-
-            return { default: Preview }
-          }),
-          { preload },
-        )
 
     return {
       name: override?.name ?? componentIdentifier(slug),
-      preview: {
-        component,
-        title: previewDescriptions.get(slug) ?? `${title} in use`,
-      },
+      preview: createCatalogPreview(
+        load,
+        previewDescriptions.get(slug) ?? `${title} in use`,
+      ),
       slug,
       title,
     }

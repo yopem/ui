@@ -1,4 +1,4 @@
-import type { SyntheticEvent } from "react"
+import type { FunctionComponent, SyntheticEvent } from "react"
 
 import { Box } from "@registry/components/ui/box"
 import { Heading } from "@registry/components/ui/heading"
@@ -12,7 +12,7 @@ import { useState } from "react"
 import { ApiReference } from "@/catalog/api-reference"
 import { PreviewPanel } from "@/catalog/catalog-ui"
 import { CopyableCode } from "@/catalog/code-block"
-import { getCatalogItem } from "@/catalog/components"
+import { createCatalogPreview, getCatalogItem } from "@/catalog/components"
 import { DocumentationLayout } from "@/catalog/docs-layout"
 import {
   DocsBody,
@@ -22,6 +22,7 @@ import {
 } from "@/catalog/docs-page"
 import { docsStyles } from "@/catalog/docs-styles"
 import { getDocumentation } from "@/catalog/docs.functions"
+import { messageExampleDetails } from "@/catalog/message-example-details"
 import { createSeo } from "@/lib/seo"
 
 const styles = stylex.create({
@@ -104,6 +105,28 @@ const styles = stylex.create({
   },
 })
 
+const exampleModules = import.meta.glob<{ Preview: FunctionComponent }>(
+  "../../catalog/message-examples/*.tsx",
+)
+
+const examplePreviews = new Map(
+  messageExampleDetails.map(({ id, title }) => {
+    const load = exampleModules[`../../catalog/message-examples/${id}.tsx`]
+
+    if (!load) throw new Error(`Missing live example: ${id}`)
+
+    return [id, createCatalogPreview(load, title)] as const
+  }),
+)
+
+function getExamplePreview(id: string) {
+  const preview = examplePreviews.get(id)
+
+  if (!preview) throw new Error(`Missing live example: ${id}`)
+
+  return preview
+}
+
 export const Route = createFileRoute("/components/$name")({
   loader: async ({ params }) => {
     const item = getCatalogItem(params.name)
@@ -114,6 +137,12 @@ export const Route = createFileRoute("/components/$name")({
       getDocumentation({ data: params.name }),
       item.preview?.component.preload?.(),
     ])
+
+    await Promise.all(
+      documentation.examples
+        .map(({ id }) => getExamplePreview(id).component.preload?.())
+        .filter((pending) => pending !== undefined),
+    )
 
     return documentation
   },
@@ -130,12 +159,26 @@ export const Route = createFileRoute("/components/$name")({
   notFoundComponent: MissingComponent,
 })
 
-const toc = [
+const introToc = [
   { title: "Overview", url: "#overview", depth: 2 },
   { title: "Preview", url: "#preview", depth: 2 },
   { title: "Installation", url: "#installation", depth: 2 },
   { title: "Usage", url: "#usage", depth: 2 },
-  { title: "API reference", url: "#api-reference", depth: 2 },
+]
+
+const apiToc = { title: "API reference", url: "#api-reference", depth: 2 }
+
+const toc = [...introToc, apiToc]
+
+const messageToc = [
+  ...introToc,
+  { title: "Examples", url: "#examples", depth: 2 },
+  ...messageExampleDetails.map(({ id, title }) => ({
+    title,
+    url: `#${id}`,
+    depth: 3,
+  })),
+  apiToc,
 ]
 
 function ComponentPage() {
@@ -147,7 +190,7 @@ function ComponentPage() {
 
   return (
     <DocumentationLayout>
-      <DocsPage toc={toc}>
+      <DocsPage toc={data.examples.length ? messageToc : toc}>
         <DocsTitle>{item.title}</DocsTitle>
         <DocsDescription>{data.description}</DocsDescription>
         <DocsBody>
@@ -208,6 +251,46 @@ function ComponentPage() {
             Import from the local file installed by the CLI.
           </Text>
           <CopyableCode code={data.usage} title={`${item.title} usage`} />
+          {data.examples.length ? (
+            <>
+              <Heading
+                render={<h2>Examples</h2>}
+                xstyle={styles.h24}
+                id="examples"
+              />
+              {data.sharedExampleSource ? (
+                <Text xstyle={styles.paragraph8}>
+                  Copy the example you want to use. Copy the{" "}
+                  <a href="#shared-example-source">shared source</a> into the
+                  same directory.
+                </Text>
+              ) : null}
+              {data.examples.map((example) => (
+                <PreviewPanel
+                  key={example.id}
+                  id={example.id}
+                  description={example.description}
+                  preview={getExamplePreview(example.id)}
+                  source={example.source}
+                />
+              ))}
+              {data.sharedExampleSource ? (
+                <>
+                  <Heading
+                    render={<h3>Shared example source</h3>}
+                    id="shared-example-source"
+                  />
+                  <Text xstyle={styles.paragraph8}>
+                    Save this file as <code>message-demo-parts.tsx</code>.
+                  </Text>
+                  <CopyableCode
+                    code={data.sharedExampleSource}
+                    title="message-demo-parts.tsx"
+                  />
+                </>
+              ) : null}
+            </>
+          ) : null}
           <Heading
             render={<h2>API reference</h2>}
             xstyle={styles.h25}

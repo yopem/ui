@@ -29,7 +29,7 @@ import type { CatalogItem } from "./components"
 import { ChartThumbnail } from "./chart-examples/thumbnail"
 import { Preview as FileUploadPreview } from "./previews/file-upload"
 import { Preview as FramePreview } from "./previews/frame"
-import { MessageThumbnail } from "./previews/message"
+import { Preview as MessageThumbnail } from "./previews/message"
 import { Preview as ProsePreview } from "./previews/prose"
 
 const styles = stylex.create({

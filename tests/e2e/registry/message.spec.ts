@@ -2,17 +2,73 @@ import { expect, test } from "@playwright/test"
 
 import { openPreview } from "./helpers"
 
+test("message examples have independent previews and heading anchors", async ({
+  page,
+}) => {
+  await openPreview(page, "message")
+
+  const examples = [
+    ["Avatar", "avatar"],
+    ["Group", "group"],
+    ["Header and footer", "header-and-footer"],
+    ["Actions", "actions"],
+    ["Attachment", "attachment"],
+    ["Status updates", "status-updates"],
+  ] as const
+
+  const previews = page.locator('[aria-label$="live preview"]')
+  await expect(previews).toHaveCount(examples.length + 1)
+  await expect(previews.nth(0)).toHaveAttribute(
+    "aria-label",
+    "Basic conversation live preview",
+  )
+
+  for (const [index, [name, id]] of examples.entries()) {
+    await expect(previews.nth(index + 1)).toHaveAttribute(
+      "aria-label",
+      `${name} live preview`,
+    )
+    const heading = page.getByRole("heading", { name, exact: true })
+    await expect(heading).toBeVisible()
+    await expect(heading).toHaveAttribute("id", id)
+    await page.goto(`/components/message#${id}`)
+    await expect(page).toHaveURL(new RegExp(`#${id}$`))
+    await expect(heading).toBeVisible()
+  }
+})
+
+test("message examples copy their own source", async ({ page, context }) => {
+  await context.grantPermissions(["clipboard-read", "clipboard-write"])
+  await openPreview(page, "message")
+
+  const sources: string[] = []
+
+  for (const name of ["Avatar", "Group"]) {
+    await page
+      .getByRole("button", { name: `Copy ${name} source`, exact: true })
+      .click()
+    await expect
+      .poll(() => page.evaluate(() => navigator.clipboard.readText()))
+      .not.toBe(sources.at(-1) ?? "")
+    const source = await page.evaluate(() => navigator.clipboard.readText())
+    expect(source).toContain('from "@/components/ui/message"')
+    expect(source).toContain("Preview")
+    expect(source).not.toContain("@registry/")
+    sources.push(source)
+  }
+
+  expect(sources[0]).not.toContain("MessageGroup")
+  expect(sources[1]).toContain("MessageGroup")
+  expect(sources[1]).not.toContain("Copy message")
+  expect(sources[0]).not.toBe(sources[1])
+})
+
 test("message previews mirror layout and keep grouped content aligned", async ({
   page,
 }, testInfo) => {
   await openPreview(page, "message")
 
-  const preview = page.getByLabel(/live preview$/).first()
-  const sections = preview.locator("section")
-
-  const avatars = sections.filter({
-    has: page.getByRole("heading", { name: "Avatar", exact: true }),
-  })
+  const avatars = page.getByLabel("Avatar live preview", { exact: true })
 
   const messages = avatars.locator('[data-slot="message"]')
 
@@ -22,7 +78,7 @@ test("message previews mirror layout and keep grouped content aligned", async ({
     ["ltr", true],
     ["rtl", false],
   ] as const) {
-    await preview.evaluate(
+    await avatars.evaluate(
       (element, value) => element.setAttribute("dir", value),
       direction,
     )
@@ -52,11 +108,9 @@ test("message previews mirror layout and keep grouped content aligned", async ({
     }
   }
 
-  await preview.evaluate((element) => element.removeAttribute("dir"))
+  await avatars.evaluate((element) => element.removeAttribute("dir"))
 
-  const group = sections.filter({
-    has: page.getByRole("heading", { name: "Group", exact: true }),
-  })
+  const group = page.getByLabel("Group live preview", { exact: true })
 
   const groupMessages = group.locator('[data-slot="message"]')
 
@@ -99,8 +153,8 @@ test("message previews mirror layout and keep grouped content aligned", async ({
 
   expect(firstContent.x).toBeCloseTo(lastContent.x, 0)
 
-  const details = sections.filter({
-    has: page.getByRole("heading", { name: "Header and footer", exact: true }),
+  const details = page.getByLabel("Header and footer live preview", {
+    exact: true,
   })
 
   const content = details.locator('[data-slot="message-content"]').first()
@@ -119,8 +173,7 @@ test("message content wraps within a narrow viewport", async ({ page }) => {
   await openPreview(page, "message")
 
   const content = page
-    .getByLabel(/live preview$/)
-    .first()
+    .getByLabel("Basic conversation live preview", { exact: true })
     .locator('[data-slot="message-content"]')
     .first()
 
@@ -155,7 +208,12 @@ test("message actions copy text and download an attachment", async ({
   await context.grantPermissions(["clipboard-read", "clipboard-write"])
   await openPreview(page, "message")
 
-  const action = page.getByRole("button", { name: "Copy message", exact: true })
+  const actions = page.getByLabel("Actions live preview", { exact: true })
+
+  const action = actions.getByRole("button", {
+    name: "Copy message",
+    exact: true,
+  })
 
   if (hasTouch) await action.tap()
   else {
@@ -168,9 +226,12 @@ test("message actions copy text and download an attachment", async ({
     .poll(() => page.evaluate(() => navigator.clipboard.readText()))
     .toBe("I can send the notes this afternoon.")
 
-  const like = page.getByRole("button", { name: "Like message", exact: true })
+  const like = actions.getByRole("button", {
+    name: "Like message",
+    exact: true,
+  })
 
-  const dislike = page.getByRole("button", {
+  const dislike = actions.getByRole("button", {
     name: "Dislike message",
     exact: true,
   })
@@ -181,15 +242,17 @@ test("message actions copy text and download an attachment", async ({
   await expect(like).toHaveAttribute("aria-pressed", "false")
   await expect(dislike).toHaveAttribute("aria-pressed", "true")
 
-  const retry = page.getByRole("button", { name: "Retry send", exact: true })
+  const retry = actions.getByRole("button", { name: "Retry send", exact: true })
 
   await retry.click()
   await expect(retry).toBeDisabled()
 
-  const attachment = page.getByRole("link", {
-    name: "Meeting notes.txt",
-    exact: true,
-  })
+  const attachment = page
+    .getByLabel("Attachment live preview", { exact: true })
+    .getByRole("link", {
+      name: "Meeting notes.txt",
+      exact: true,
+    })
 
   const [download] = await Promise.all([
     page.waitForEvent("download"),
@@ -209,10 +272,7 @@ test("message uses portraits when available and falls back on image failure", as
 
   await openPreview(page, "message")
 
-  const example = page
-    .getByLabel(/live preview$/)
-    .locator("section")
-    .filter({ has: page.getByRole("heading", { name: "Avatar", exact: true }) })
+  const example = page.getByLabel("Avatar live preview", { exact: true })
 
   const image = example.locator('[data-slot="avatar-image"]')
   const fallback = example.locator('[data-slot="avatar-fallback"]')

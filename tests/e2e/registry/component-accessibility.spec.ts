@@ -32,10 +32,15 @@ for (const theme of ["light", "dark"] as const) {
         page.getByRole("button", { name: /^Copy .* usage$/ }).first(),
       ).toBeEnabled()
       const preview = page.locator('[aria-label$="live preview"]')
-      await preview.waitFor()
-      await expect(
-        preview.locator('[data-slot="flex"]').first().locator(":scope > *"),
-      ).not.toHaveCount(0)
+      await expect(preview.first()).toBeVisible()
+
+      for (const panel of await preview.all()) {
+        await expect(panel).toBeVisible()
+        await expect(
+          panel.locator('[data-slot="flex"]').first().locator(":scope > *"),
+        ).not.toHaveCount(0)
+      }
+
       await page.waitForFunction(() => document.fonts.status === "loaded")
 
       const result = await new AxeBuilder({ page })
