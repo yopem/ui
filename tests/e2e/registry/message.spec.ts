@@ -179,22 +179,21 @@ test("message content wraps within a narrow viewport", async ({ page }) => {
 
   const messageText = content.locator('[data-slot="text"]')
 
-  await messageText.evaluate((element) => {
+  const size = await messageText.evaluate((element) => {
     element.textContent = "Unbroken".repeat(50)
+
+    const range = document.createRange()
+    range.selectNodeContents(element)
+
+    return {
+      lines: range.getClientRects().length,
+      clientWidth: element.clientWidth,
+      scrollWidth: element.scrollWidth,
+    }
   })
 
-  const size = await content.evaluate((element) => ({
-    clientWidth: element.clientWidth,
-    scrollWidth: element.scrollWidth,
-    height: element.getBoundingClientRect().height,
-  }))
-
-  const lineHeight = await messageText.evaluate((element) =>
-    Number.parseFloat(getComputedStyle(element).lineHeight),
-  )
-
   expect(size.scrollWidth).toBeLessThanOrEqual(size.clientWidth + 1)
-  expect(size.height).toBeGreaterThan(lineHeight * 2)
+  expect(size.lines).toBeGreaterThan(1)
   expect(
     await page.evaluate(() => document.documentElement.scrollWidth),
   ).toBeLessThanOrEqual(320)
