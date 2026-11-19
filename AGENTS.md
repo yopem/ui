@@ -527,20 +527,35 @@ commands. Keep installation instructions in `README.md`.
   corresponding tests, sitemap, and `llms.txt` in the same change. Update the
   source data that generates the sitemap and `llms.txt`, not generated output.
 
-For component work:
+### New or ported components and hooks
 
-1. Update canonical source in `packages/registry/src/components/ui/`.
-2. Update metadata in `packages/registry/src/items/`, including files,
-   dependencies, registry dependencies, docs, and exports.
-3. Update `docs-notes.ts` and `apps/docs/src/catalog/usage.ts` when public API,
-   defaults, or usage changes.
-4. Add or update catalog re-exports and the component's curated preview under
-   `apps/docs/src/catalog/previews/`.
-5. Update this `AGENTS.md` and `packages/cli/src/guidance.ts` for new components
-   and design system changes.
-6. Run `bun run registry:build`.
-7. Run focused registry, docs, interaction, and accessibility tests as needed,
-   then required checks.
+Treat every request to add or port a component or hook as a registry change.
+Complete the source and all applicable integrations in the same change.
+Use a similar published component or hook as the reference.
+
+1. Add canonical source in the applicable registry directory. Register its
+   files, dependencies, registry dependencies, docs, and public exports in
+   `packages/registry/src/items/`.
+2. Add the catalog entry and re-exports. Document the public API, defaults,
+   usage, and accessibility requirements. Add a copyable consumer example.
+   Use `docs-notes.ts` and `apps/docs/src/catalog/usage.ts` as applicable.
+3. Add a live docs preview under `apps/docs/src/catalog/previews/`. Show a hook
+   in use with a component. Add a homepage preview using the existing showcase
+   pattern. Use a component that demonstrates the hook when applicable.
+4. Check navigation, search, SEO metadata, canonical URLs, `llms.txt`, and the
+   sitemap. Add or update source entries where the shared generators do not
+   include the item automatically. Do not edit generated output.
+5. Make the item installable through the CLI. Verify its destination, consumer
+   imports, and dependencies. Update this `AGENTS.md`, the CLI guidance template,
+   and the applicable consumer skills under `skills/`.
+6. Apply applicable Oxlint plugin rules and contracts to the new exports. Add
+   or update plugin coverage when those contracts change. Do not add a rule
+   solely because the registry has a new item.
+7. Run `bun run registry:build`. Verify the generated registry and docs entries.
+   Run focused CLI, Oxlint, docs, interaction, and accessibility tests for the
+   affected behavior. Run the required checks and production build.
+
+If an integration does not apply, state which one and why in the change summary.
 
 <!-- BEGIN:turborepo-agent-rules -->
 
