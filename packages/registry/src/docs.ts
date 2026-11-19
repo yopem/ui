@@ -100,7 +100,8 @@ function describeProperty(prop: ApiProp) {
       prop.description.length > 0
         ? prop.description
         : ((/^(components|theme|styles|lib)\//.test(prop.source)
-            ? ownPropNotes.get(prop.name)
+            ? (ownPropNotes.get(`${prop.source}:${prop.name}`) ??
+              ownPropNotes.get(prop.name))
             : undefined) ??
           (prop.source.startsWith("@types/react")
             ? `React/HTML ${prop.name} attribute or event handler.`

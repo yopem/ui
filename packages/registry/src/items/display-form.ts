@@ -50,6 +50,21 @@ const definitions: Definition[] = [
     title: "Marquee",
   },
   {
+    api: [
+      "Message",
+      "MessageGroup",
+      "MessageAvatar",
+      "MessageContent",
+      "MessageHeader",
+      "MessageFooter",
+    ],
+    categories: ["display"],
+    description:
+      "Displays conversation messages with optional avatars, headers, and footers.",
+    name: "message",
+    title: "Message",
+  },
+  {
     api: ["NativeSelectProps", "NativeSelect"],
     categories: ["controls"],
     description:

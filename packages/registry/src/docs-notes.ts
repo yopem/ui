@@ -33,6 +33,16 @@ const usageNoteValues = {
     "Use accept for comma-separated MIME types or extensions, maxSize for bytes, and maxFiles for a positive file count. Validate files on the server; file metadata can be false.",
     "Use defaultValue for initial files or value and onValueChange for controlled state. The control includes file removal. It is not a native form submission control and does not support name. Append selected files to FormData manually.",
   ],
+  message: [
+    'Use align="end" for outgoing messages. The default is logical start. Both values follow the text direction.',
+    "Put MessageAvatar before MessageContent. Use AvatarImage before AvatarFallback inside Avatar. Leave MessageAvatar empty to align earlier grouped rows.",
+    "Use MessageGroup for consecutive messages from one sender. Put MessageHeader and MessageFooter inside MessageContent.",
+    "Use MessageHeader for the sender name. Use MessageFooter for delivery status or message actions.",
+    "Compose the message body with Text, Box, or Card. Message does not add a bubble. Use the accent-solid color pair for sent bubbles.",
+    "Install Box separately for the usage example.",
+    "Use alternative text for an informative image. Use a named link for each downloadable attachment.",
+    'Give icon-only actions accessible names. Use role="status" for progress updates that need an announcement.',
+  ],
   spinner: [
     "Use Spinner beside a loading label or inside a pending action.",
     "Keep a text status available to assistive technology. A spinner alone does not explain what is loading.",
@@ -465,6 +475,8 @@ const ownPropNoteValues = {
   side: "Selects the edge or anchored placement side. Collision handling can change anchored placement.",
   align:
     "Aligns the popup along its anchor, or positions an input addon along its group.",
+  "components/ui/message.tsx:align":
+    "Places the message at the logical start or end of the row.",
   sideOffset:
     "Distance from the anchor along the placement axis, in CSS pixels, or an offset callback.",
   alignOffset:
