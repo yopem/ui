@@ -78,6 +78,7 @@ the same spelling. Read the required item's exports and compound parts.
 | Search and command selection                  | `command`                                                                          |
 | Status, loading, completion, and measurements | `alert`, `toast`, `empty`, `spinner`, `skeleton`, `progress`, `meter`, `checkmark` |
 | Identity, metadata, and data                  | `avatar`, `badge`, `chart`, `stat`, `table`, `kbd`                                 |
+| Conversation messages                         | `message`, `avatar`, `card`                                                        |
 | Content and control structure                 | `card`, `frame`, `group`, `separator`, `scroll-area`                               |
 | Media proportions, lists, and captions        | `aspect-ratio`, `list`, `figcaption`                                               |
 | Semantic importance                           | `strong`                                                                           |
@@ -90,18 +91,31 @@ Use framework links for application navigation. Native anchors remain valid.
 `variant="link"` changes Button appearance, not its element or navigation
 behavior.
 
-Use `ChartContainer` with `Chart` for data charts. Pass a TanStack Charts
-definition and an `ariaLabel`. Build native marks with `@tanstack/charts`. Match
-native color ranges to config colors. Config does not change marks. Use
-`defaultIndex` only for initial tooltip focus. Keep persistent selection in
-caller state. Compose a Table or CSV export for underlying values. Use
-`ChartTooltipContent` and `ChartLegendContent` for series labels and indicators.
+Install the `chart` item for data charts. Use `ChartContainer` with `Chart`.
+Pass a TanStack Charts definition and an `ariaLabel`. Build native marks with
+`@tanstack/charts`. Match native color ranges to config colors. Config does not
+change marks. Pass the native context from `renderTooltipBody` to
+`ChartTooltipContent`. Use `ChartLegendContent` for series labels and
+indicators. Use `defaultIndex` only for initial tooltip focus. Keep persistent
+selection in caller state. Compose a Table or CSV export for underlying values.
 Use `--chart-1` through `--chart-5` for colors. Keep series labels available
 without color. Keep the colorful blue, cyan, indigo, teal, and violet palette
 with neutral surfaces. Keep series colors identical in both themes. The palette
 starts with blue `#2563eb`. Keep chart SVG focus indicators on `--ring`. Use
 `--chart-1-foreground` through `--chart-5-foreground` for text inside matching
-filled marks.
+filled marks. See the
+[Chart documentation](https://ui.yopem.com/components/chart.md).
+
+Install the `message` item for conversation rows. Import `Message`,
+`MessageGroup`, `MessageAvatar`, `MessageContent`, `MessageHeader`, and
+`MessageFooter` from `@/components/ui/message`. Message defaults to logical
+`align="start"`; use `align="end"` for the other side. Put the header and footer
+inside MessageContent. MessageAvatar is an optional wrapper for Avatar. Use an
+empty MessageAvatar wrapper to align grouped rows without an avatar. Compose a
+surface with Box or Card when needed; Message has no built-in bubble. All slots
+accept `xstyle`, `className`, and native div props. Keep accessible names for
+avatars and controls. Announce progress with a status when needed. See the
+[Message documentation](https://ui.yopem.com/components/message.md).
 
 Use `Progress` for task completion and `Meter` for bounded measurements. `Table`
 does not supply sorting or data loading. Set `rowBorders` for body row dividers;
