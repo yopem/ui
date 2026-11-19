@@ -101,6 +101,66 @@ test("machine-readable documentation exposes formats and public resources", asyn
   })
 })
 
+test("message publishes installable source and documentation links", async ({
+  request,
+}, testInfo) => {
+  const paths = [
+    "/r/registry.json",
+    "/r/message.json",
+    "/r/docs/message.json",
+    "/components/message.md",
+    "/llms.txt",
+    "/sitemap.xml",
+  ] as const
+
+  const [inventory, item, api, markdown, llms, sitemap] = await Promise.all(
+    paths.map(async (path) => {
+      const response = await request.get(path)
+
+      expect(response.status(), path).toBe(200)
+
+      return response.text()
+    }),
+  )
+
+  expect(registrySchema.parse(JSON.parse(inventory)).items).toContainEqual(
+    expect.objectContaining({ name: "message", type: "registry:ui" }),
+  )
+
+  const component = registryItemSchema.parse(JSON.parse(item))
+
+  expect(component.categories).toContain("display")
+  expect(component.registryDependencies).toEqual(["base"])
+  expect(component.files).toEqual([
+    expect.objectContaining({
+      target: "@/components/ui/message.tsx",
+      content: expect.stringContaining('from "@/lib/stylex"'),
+    }),
+  ])
+  expect(
+    documentationSchema
+      .parse(JSON.parse(api))
+      .parts.map(({ name }) => name)
+      .toSorted(),
+  ).toEqual([
+    "Message",
+    "MessageAvatar",
+    "MessageContent",
+    "MessageFooter",
+    "MessageGroup",
+    "MessageHeader",
+  ])
+  expect(markdown).toContain('from "@/components/ui/message"')
+  expect(llms).toContain("https://ui.yopem.com/components/message.md")
+  expect(sitemap).toContain(
+    "<loc>https://ui.yopem.com/components/message</loc>",
+  )
+  await testInfo.attach("message-registry-api.json", {
+    body: api,
+    contentType: "application/json",
+  })
+})
+
 test("public registry inventory ships source, dependencies, and documentation", async ({
   request,
 }, testInfo) => {

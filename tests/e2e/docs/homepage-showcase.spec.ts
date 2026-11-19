@@ -346,6 +346,32 @@ for (const theme of ["light", "dark"] as const) {
   })
 }
 
+test("message homepage uses a compact conversation", async ({
+  page,
+}, testInfo) => {
+  await page.goto("/")
+  await expect(
+    page.getByRole("button", { name: "Search documentation", exact: true }),
+  ).toBeEnabled({ timeout: 30_000 })
+
+  const card = showcase(page, "message")
+
+  await card.scrollIntoViewIfNeeded()
+
+  const preview = card.getByTestId("homepage-preview")
+
+  await expect(preview.locator('[data-slot="message"]')).toHaveCount(2)
+  await expect(preview.getByRole("button")).toHaveCount(0)
+  await expect(preview.getByRole("link")).toHaveCount(0)
+  await expect(
+    card.getByRole("link", { name: "Message source and API" }),
+  ).toHaveAttribute("href", "/components/message")
+  await card.screenshot({
+    path: testInfo.outputPath("message-homepage.png"),
+    scale: "css",
+  })
+})
+
 test("chart homepage uses one compact preview", async ({ page }, testInfo) => {
   await openDocsPage(page, "/")
   const card = showcase(page, "chart")

@@ -29,6 +29,7 @@ import type { CatalogItem } from "./components"
 import { ChartThumbnail } from "./chart-examples/thumbnail"
 import { Preview as FileUploadPreview } from "./previews/file-upload"
 import { Preview as FramePreview } from "./previews/frame"
+import { MessageThumbnail } from "./previews/message"
 import { Preview as ProsePreview } from "./previews/prose"
 
 const styles = stylex.create({
@@ -56,6 +57,8 @@ export function HomepagePreview({ item }: { item: CatalogItem }) {
   if (item.slug === "file-upload") return <FileUploadPreview embedded />
 
   if (item.slug === "frame") return <FramePreview embedded />
+
+  if (item.slug === "message") return <MessageThumbnail />
 
   if (item.slug === "prose") return <ProsePreview embedded />
 

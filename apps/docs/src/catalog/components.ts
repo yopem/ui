@@ -100,6 +100,7 @@ const previewDescriptionValues = {
   link: "Link to component catalog",
   marquee: "Pauseable scrolling content",
   menu: "Field recording actions menu",
+  message: "Conversation with avatars, grouped messages, and actions",
   meter: "Storage usage meter",
   navigation: "Segmented navigation",
   "native-select": "Native theme selection",

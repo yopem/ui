@@ -1,5 +1,51 @@
 // Standalone TSX files use the standard @ alias for src.
 const usageSnippetValues = {
+  message: `import { Box } from "@/components/ui/box"
+import {
+  Message,
+  MessageContent,
+  MessageFooter,
+  MessageGroup,
+  MessageHeader,
+} from "@/components/ui/message"
+import { tokens } from "@/styles/tokens.stylex"
+import * as stylex from "@stylexjs/stylex"
+
+const styles = stylex.create({
+  sent: {
+    backgroundColor: tokens["--accent-solid"],
+    borderRadius: tokens["--radius"],
+    color: tokens["--accent-solid-foreground"],
+    paddingBlock: tokens["--spacing"],
+    paddingInline: \`calc(\${tokens["--spacing"]} * 3)\`,
+  },
+})
+
+export function Conversation() {
+  return (
+    <>
+      <MessageGroup>
+        <Message>
+          <MessageContent>
+            <MessageHeader>Sam</MessageHeader>
+            Can you send the meeting notes?
+          </MessageContent>
+        </Message>
+        <Message>
+          <MessageContent>The draft is ready for review.</MessageContent>
+        </Message>
+      </MessageGroup>
+      <Message align="end">
+        <MessageContent>
+          <MessageHeader>You</MessageHeader>
+          <Box xstyle={styles.sent}>I can send the notes this afternoon.</Box>
+          <MessageFooter>Delivered</MessageFooter>
+        </MessageContent>
+      </Message>
+    </>
+  )
+}
+`,
   "file-upload": `"use client"
 
 import { Button } from "@/components/ui/button"
