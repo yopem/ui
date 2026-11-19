@@ -291,7 +291,14 @@ Use existing components before building substitutes. Check their documented prop
 - Actions and navigation: Button, Link, Menu, ContextMenu, Toolbar, Tabs, Breadcrumb, Pagination, Sidebar, Steps.
 - Overlays: Dialog, AlertDialog, Sheet, Drawer, Popover, Tooltip, PreviewCard.
 - Feedback: Alert, Toast, Badge, Progress, Meter, Spinner, Skeleton, Empty, Checkmark.
-- Content: Card, Frame, Table, Avatar, Accordion, Collapsible, Separator, ScrollArea, Stat, Kbd, Clipboard, Group, Marquee.
+- Content: Card, Frame, Table, Chart, Message, Avatar, Accordion, Collapsible, Separator, ScrollArea, Stat, Kbd, Clipboard, Group, Marquee.
+
+Use Message and MessageContent for conversation rows. Set \`align="end"\` for
+outgoing messages. Use MessageGroup for consecutive messages from one sender.
+Put MessageAvatar before MessageContent. An empty MessageAvatar reserves space.
+Put MessageHeader and MessageFooter inside MessageContent. Compose the body
+with existing components. Message does not add a bubble.
+Give icon-only actions accessible names. Use \`role="status"\` for progress updates.
 
 Use Card with CardHeader, CardPanel, and CardFooter for card content. Set
 \`bordered={false}\` to remove the Card border. CardFrame adds an outer frame.

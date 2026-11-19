@@ -283,6 +283,12 @@ panels. Do not alternate card fills or add decorative shadows.
   Select and Combobox use neutral hover and solid-accent selected rows.
   Steps is a static ordered process, not a navigation control. Center each step
   number in its circle without a period. Keep native ordered-list numbering.
+- Use Message and MessageContent for conversation rows. Set `align="end"` for
+  outgoing messages. Use MessageGroup for consecutive messages from one sender.
+  Put MessageAvatar before MessageContent. An empty MessageAvatar reserves space.
+  Put MessageHeader and MessageFooter inside MessageContent. Compose the body
+  with existing components. Message does not add a bubble.
+  Give icon-only actions accessible names. Use `role="status"` for progress updates.
 - Use Card with CardHeader, CardPanel, and CardFooter for card content. Set
   `bordered={false}` to remove the Card border. CardFrame adds an outer frame.
 - NumberField is compact by default; set `fullWidth` to fill its parent. Table
