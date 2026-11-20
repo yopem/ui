@@ -1,5 +1,16 @@
 # @yopem-ui/oxlint-plugin
 
+## 0.3.0
+
+### Minor Changes
+
+- [`038d49a`](https://github.com/yopem/ui/commit/038d49a098129bd689aae08d230ba77c3f3bcdf5)
+  Thanks [@karyanayandi](https://github.com/karyanayandi)! - feat(oxlint): check
+  theme control styles
+
+  Apply the default styling rules to both theme controls. Test named imports and
+  namespace imports.
+
 ## 0.2.1
 
 ### Patch Changes
