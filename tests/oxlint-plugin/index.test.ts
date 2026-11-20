@@ -576,24 +576,35 @@ const view = <><AspectRatio style={{}} xstyle={styles.root} /><Items style={{}} 
   expect(result.output.match(/reactStyle styling is disabled/g)).toHaveLength(7)
 })
 
-test("Message and Chart parts use the default styling contracts", () => {
-  const names = [
-    "Message",
-    "MessageGroup",
-    "MessageAvatar",
-    "MessageContent",
-    "MessageHeader",
-    "MessageFooter",
-    "Chart",
-    "ChartContainer",
-    "ChartTooltipContent",
-    "ChartLegendContent",
-  ]
+test("Message, Chart, and theme controls use the default styling contracts", () => {
+  const items = {
+    message: [
+      "Message",
+      "MessageGroup",
+      "MessageAvatar",
+      "MessageContent",
+      "MessageHeader",
+      "MessageFooter",
+    ],
+    chart: [
+      "Chart",
+      "ChartContainer",
+      "ChartTooltipContent",
+      "ChartLegendContent",
+    ],
+    "theme-switcher": ["ThemeToggle", "ThemeSwitcher"],
+  }
 
-  const imports = names
+  const components = Object.entries(items).flatMap(([item, names]) =>
+    names.map((name) => ({ item, name })),
+  )
+
+  const names = components.map(({ name }) => name)
+
+  const imports = components
     .map(
-      (name, index) =>
-        `import { ${name} as Part${index} } from "@/components/ui/${index < 6 ? "message" : "chart"}";`,
+      ({ item, name }, index) =>
+        `import { ${name} as Part${index} } from "@/components/ui/${item}";`,
     )
     .join("\n")
 
