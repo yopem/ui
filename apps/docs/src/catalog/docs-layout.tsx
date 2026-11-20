@@ -1,6 +1,7 @@
 import type { ReactNode } from "react"
 
 import { Box } from "@registry/components/ui/box"
+import { BrandLogo } from "@registry/components/ui/brand-logo"
 import { Button } from "@registry/components/ui/button"
 import {
   Dialog,
@@ -19,8 +20,6 @@ import * as stylex from "@stylexjs/stylex"
 import { Link, useHydrated, useLocation } from "@tanstack/react-router"
 import { MenuIcon } from "lucide-react"
 import { useState } from "react"
-
-import { BrandLogo } from "@/components/brand-logo"
 
 import { DocsNavigation } from "./docs-navigation"
 import { GlobalSearch } from "./global-search"

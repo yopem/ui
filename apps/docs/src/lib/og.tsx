@@ -1,9 +1,8 @@
 import type { CSSProperties } from "react"
 
+import { brandLogoPath } from "@registry/lib/brand-logo-path"
 import { Resvg } from "@resvg/resvg-js"
 import satori from "satori"
-
-import { brandLogoPath } from "./brand"
 
 const ogStyles = {
   root: {

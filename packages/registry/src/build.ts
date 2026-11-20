@@ -1,3 +1,6 @@
+import type { SourceItem } from "@registry/items/types"
+
+import { brandLogoItem } from "@registry/items/brand-logo"
 import { sourceItems } from "@registry/items/index"
 import { registryItemSchema, registrySchema } from "@registry/schema"
 import { rewriteImports } from "@registry/source-files"
@@ -28,29 +31,33 @@ async function writeJson<Value>(path: string, value: Value) {
   await writeFile(path, `${JSON.stringify(value, null, 2)}\n`)
 }
 
+async function buildItem(sourceItem: SourceItem) {
+  const files = await Promise.all(
+    sourceItem.files.map(async (file) => {
+      const content = rewriteImports(
+        await readFile(resolve(root, "src", file.path), "utf8"),
+      )
+
+      return { ...file, content, integrity: integrity(content) }
+    }),
+  )
+
+  return registryItemSchema.parse({
+    ...sourceItem,
+    $schema: `${schemaBase}/registry-item.json`,
+    files,
+    registryVersion: version,
+    schemaVersion: 1,
+  })
+}
+
 await rm(dist, { force: true, recursive: true })
 
-const items = await Promise.all(
-  sourceItems.map(async (sourceItem) => {
-    const files = await Promise.all(
-      sourceItem.files.map(async (file) => {
-        const content = rewriteImports(
-          await readFile(resolve(root, "src", file.path), "utf8"),
-        )
+const items = await Promise.all(sourceItems.map(buildItem))
 
-        return { ...file, content, integrity: integrity(content) }
-      }),
-    )
+const brandLogo = await buildItem(brandLogoItem)
 
-    return registryItemSchema.parse({
-      ...sourceItem,
-      $schema: `${schemaBase}/registry-item.json`,
-      files,
-      registryVersion: version,
-      schemaVersion: 1,
-    })
-  }),
-)
+await writeJson(resolve(dist, "private/r", `${brandLogo.name}.json`), brandLogo)
 
 for (const item of items) {
   await writeJson(resolve(dist, "r", `${item.name}.json`), item)

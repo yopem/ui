@@ -2,6 +2,18 @@ import { expect, test } from "@playwright/test"
 
 import { openDocsPage } from "./helpers"
 
+test("navigation home link shows a decorative brand logo", async ({ page }) => {
+  await openDocsPage(page, "/components/card")
+
+  const home = page
+    .getByRole("banner")
+    .getByRole("link", { name: "UI", exact: true })
+
+  const logo = home.locator("svg")
+  await expect(logo).toBeVisible()
+  await expect(logo).toHaveAttribute("aria-hidden", "true")
+})
+
 for (const theme of ["light", "dark"] as const) {
   for (const path of ["/", "/components/card"]) {
     test(`header, sidebar, and search have no dividing borders on ${path} in ${theme}`, async ({

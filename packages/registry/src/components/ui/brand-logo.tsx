@@ -1,6 +1,5 @@
+import { brandLogoPath } from "@registry/lib/brand-logo-path"
 import * as stylex from "@stylexjs/stylex"
-
-import { brandLogoPath } from "@/lib/brand"
 
 export function BrandLogo() {
   return (

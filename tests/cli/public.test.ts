@@ -275,6 +275,87 @@ function verifyBuild(
   )
 }
 
+test("packed CLI installs BrandLogo from a private registry", async () => {
+  const project = mkdtempSync(join(tmpdir(), "yopem-private-cli-"))
+  const logs: string[] = []
+
+  const privateRegistry = Bun.serve({
+    hostname: "127.0.0.1",
+    port: 0,
+    async fetch(request) {
+      if (new URL(request.url).pathname !== "/r/brand-logo.json") {
+        return new Response(null, { status: 404 })
+      }
+
+      const file = Bun.file(
+        join(root, "packages/registry/dist/private/r/brand-logo.json"),
+      )
+
+      return (await file.exists())
+        ? new Response(file)
+        : new Response(null, { status: 404 })
+    },
+  })
+
+  try {
+    const publicRegistry = join(root, "apps/docs/public/r")
+
+    for (const path of ["brand-logo.json", "docs/brand-logo.json"]) {
+      expect(await Bun.file(join(publicRegistry, path)).exists()).toBe(false)
+    }
+
+    const inventory: { items: { name: string }[] } = await Bun.file(
+      join(publicRegistry, "registry.json"),
+    ).json()
+
+    expect(inventory.items.some(({ name }) => name === "brand-logo")).toBe(
+      false,
+    )
+    logs.push("BrandLogo is absent from the public item files and inventory")
+
+    mkdirSync(join(project, "src"))
+    writeFileSync(
+      join(project, "package.json"),
+      JSON.stringify({ name: "yopem-private-cli-test", private: true }),
+    )
+    await run(
+      logs,
+      join(root, "packages/cli"),
+      "bun",
+      "pm",
+      "pack",
+      "--destination",
+      project,
+    )
+    const archive = readdirSync(project).find((name) => name.endsWith(".tgz"))
+
+    if (!archive) throw new Error("Missing packed CLI archive")
+
+    await run(logs, project, "bun", "add", "-d", join(project, archive))
+    await run(
+      logs,
+      project,
+      "bunx",
+      "yopem-ui",
+      "add",
+      "brand-logo",
+      "--registry",
+      `${privateRegistry.url}r`,
+    )
+
+    for (const file of [
+      "components/ui/brand-logo.tsx",
+      "lib/brand-logo-path.ts",
+    ]) {
+      expect(await Bun.file(join(project, "src", file)).exists()).toBe(true)
+    }
+  } finally {
+    await privateRegistry.stop(true)
+    saveLogs("packed-private-brand-logo", logs)
+    rmSync(project, { recursive: true, force: true })
+  }
+}, 180_000)
+
 test("packed CLI installs from local registry, builds Vite and runs published lint plugin", async () => {
   const response = await fetch("http://localhost:3100/r/base.json")
   expect(response.ok).toBe(true)
