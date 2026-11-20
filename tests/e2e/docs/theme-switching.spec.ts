@@ -136,9 +136,7 @@ for (const path of [
         name: /Switch to (dark|light) theme/,
       })
 
-      await expect(
-        page.getByRole("button", { name: /Switch to (dark|light) theme/ }),
-      ).toHaveCount(1)
+      await expect(toggle).toHaveCount(1)
       await expect(toggle).toHaveAccessibleName(
         `Switch to ${oppositeTheme} theme`,
       )

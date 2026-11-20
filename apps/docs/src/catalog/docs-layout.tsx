@@ -11,6 +11,7 @@ import {
 } from "@registry/components/ui/dialog"
 import { Grid } from "@registry/components/ui/grid"
 import { Link as UiLink } from "@registry/components/ui/link"
+import { ThemeToggle } from "@registry/components/ui/theme-switcher"
 import { useEventCallback } from "@registry/hooks/use-event-callback"
 import { tokens } from "@registry/styles/tokens.stylex"
 import { RiGithubFill } from "@remixicon/react"
@@ -24,7 +25,6 @@ import { BrandLogo } from "@/components/brand-logo"
 import { DocsNavigation } from "./docs-navigation"
 import { GlobalSearch } from "./global-search"
 import { navigationPages } from "./navigation"
-import { ThemeToggle } from "./theme-toggle"
 
 const primitiveStyles = stylex.create({
   box: {

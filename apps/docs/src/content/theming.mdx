@@ -122,36 +122,20 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 }
 ```
 
-Add a control that calls `useTheme`. Use your existing Select or Segmented
-Control component in the interface.
+Add the [Theme Switcher](/components/theme-switcher) registry item. Put
+`ThemeSwitcher` inside `ThemeProvider` to let users select Light, Dark, or
+System. Use `ThemeToggle` for an icon button that changes between light and
+dark.
 
 ```tsx
-"use client"
+import { ThemeSwitcher } from "@/components/ui/theme-switcher"
 
-import { useTheme } from "@/theme/theme-provider"
-
-export function ThemePicker() {
-  const { theme, setTheme } = useTheme()
-
-  return (
-    <fieldset>
-      <legend>Appearance</legend>
-      {(["light", "dark", "system"] as const).map((value) => (
-        <label key={value}>
-          <input
-            type="radio"
-            name="theme"
-            value={value}
-            checked={theme === value}
-            onChange={() => setTheme(value)}
-          />
-          {value}
-        </label>
-      ))}
-    </fieldset>
-  )
+export function AppearanceSettings() {
+  return <ThemeSwitcher />
 }
 ```
+
+Use `useTheme` from your theme provider to build a custom control.
 
 ThemeScript must run before the first paint. It uses `data-cfasync="false"` to
 prevent Cloudflare Rocket Loader from deferring theme selection.

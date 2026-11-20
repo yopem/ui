@@ -1875,6 +1875,18 @@ export function Preview() {
   return <Toggle aria-label="Bold">Bold</Toggle>
 }
 `,
+  "theme-switcher": `"use client"
+
+import { ThemeSwitcher, ThemeToggle } from "@/components/ui/theme-switcher"
+
+export function AppearanceControls() {
+  return (
+    <>
+      <ThemeToggle />
+      <ThemeSwitcher />
+    </>
+  )
+}`,
   "toggle-group": `"use client"
 
 import {

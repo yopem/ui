@@ -129,6 +129,7 @@ const previewDescriptionValues = {
   textarea: "Multiline message input",
   toast: "Notification toast",
   toggle: "Toggleable button state",
+  "theme-switcher": "Light, dark, and system theme controls",
   "toggle-group": "Rich-text formatting toggles",
   toolbar: "Formatting controls",
   tooltip: "Helpful hint on hover",
