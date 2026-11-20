@@ -576,7 +576,10 @@ theme object spreads in that module.
 
 Fixed themes do not need a provider or script. For user-selectable themes,
 install the `theme` item through the CLI. Then wire `getRootThemeProps`,
-`ThemeScript`, and `ThemeProvider` into the framework root.
+`ThemeScript`, and `ThemeProvider` into the framework root. Install
+[theme-switcher](https://ui.yopem.com/components/theme-switcher) to add controls
+inside `ThemeProvider`. Use `ThemeToggle` to change between light and dark. Use
+`ThemeSwitcher` for Light, Dark, and System options.
 
 Use identical theme configuration across all three. Keep `defaultTheme` and
 `storageKey` identical in the script and provider. Run the script before

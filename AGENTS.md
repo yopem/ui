@@ -262,6 +262,9 @@ panels. Do not alternate card fills or add decorative shadows.
   Pass the CSP nonce to ThemeScript when required. Keep `theme.tsx` server-safe.
   Only `theme-provider.tsx` is a client entry. Keep ThemeScript synchronous.
   Keep its `data-cfasync="false"` attribute to prevent Rocket Loader deferral.
+  Use `ThemeToggle` for an icon button that changes between light and dark.
+  Use `ThemeSwitcher` for Light, Dark, and System options. Render either control
+  inside `ThemeProvider`.
 - Use Field, Fieldset, Form, and Label for form structure. Use the matching
   input, selection, and validation components instead of new control systems.
 - Use FileUpload to select files, not to send them. Multiple selection appends;

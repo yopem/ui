@@ -312,7 +312,7 @@ test("packed CLI installs from local registry, builds Vite and runs published li
     )
     writeFileSync(
       join(project, "src/main.tsx"),
-      'import React from "react"\nimport { createRoot } from "react-dom/client"\nimport { Button } from "@/components/ui/button"\ncreateRoot(document.getElementById("root")!).render(<Button>Build smoke</Button>)',
+      'import React from "react"\nimport { createRoot } from "react-dom/client"\nimport { Button } from "@/components/ui/button"\nimport { ThemeSwitcher, ThemeToggle } from "@/components/ui/theme-switcher"\nimport { ThemeProvider } from "@/themes/theme-provider"\ncreateRoot(document.getElementById("root")!).render(<ThemeProvider><Button>Build smoke</Button><ThemeToggle /><ThemeSwitcher /></ThemeProvider>)',
     )
     await installPackedCli(logs, directory, project)
     await previewPackedCli(logs, project, ["add", "button", ...registry])
@@ -334,9 +334,19 @@ test("packed CLI installs from local registry, builds Vite and runs published li
     expect(guidance).toContain("@/components/ui/")
     expect(guidance).toContain("@/styles/tokens.stylex")
     expect(guidance).toContain("stylex.create")
+    expect(guidance).toContain("`ThemeSwitcher`")
     await previewPackedCli(logs, project, ["add", "button", ...registry])
     await run(logs, project, "bunx", "yopem-ui", "add", "button", ...registry)
     await verifyNoOpPackedCli(logs, project)
+    await run(
+      logs,
+      project,
+      "bunx",
+      "yopem-ui",
+      "add",
+      "theme-switcher",
+      ...registry,
+    )
     await run(logs, project, "bun", "run", "build")
     verifyBuild(project, "vite", "packaged-cli", logs)
     const tokens = join(project, "src/styles/tokens.stylex.ts")

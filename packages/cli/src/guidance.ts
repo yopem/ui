@@ -349,6 +349,9 @@ Use identical theme configuration in root props, ThemeScript, and ThemeProvider.
 Use matching \`defaultTheme\` and \`storageKey\` values in the script and provider.
 Pass the CSP nonce to ThemeScript when required.
 Keep \`theme.tsx\` server-safe. Only \`theme-provider.tsx\` is a client entry.
+Use \`ThemeToggle\` for an icon button that changes between light and dark.
+Use \`ThemeSwitcher\` for Light, Dark, and System options. Render either control
+inside ThemeProvider.
 Keep ThemeScript synchronous. Keep its \`data-cfasync="false"\` attribute to prevent Rocket Loader deferral.
 
 Preserve Base UI keyboard behavior, focus management, dismissal, and disabled states.
