@@ -307,6 +307,13 @@ const usageNoteValues = {
     "Use Toggle for a pressed or unpressed action such as bold formatting.",
     "Use pressed and onPressedChange for controlled state. A toggle is not a checkbox replacement when collecting form data.",
   ],
+  "theme-switcher": [
+    "Set up ThemeProvider and ThemeScript as shown in the theming guide. Render either control inside ThemeProvider.",
+    "Use ThemeToggle for an icon button that sets the opposite of the current light or dark theme. This sets a fixed preference, even if the previous preference was System.",
+    "Use ThemeSwitcher to select Light, Dark, or System. System follows the device setting. The provider saves the selected preference when browser storage is available.",
+    "Both controls stay disabled before hydration. Set disabled to prevent changes. Use className or xstyle to style the control.",
+    "Use the arrow keys to move between the theme options. Press Space or Enter to select the focused option.",
+  ],
   "toggle-group": [
     "Place ToggleGroupItem controls with distinct values inside ToggleGroup.",
     "multiple allows more than one selected item. The group supplies size and variant to its items. ToggleGroupSeparator divides adjacent sections.",

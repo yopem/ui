@@ -414,6 +414,20 @@ const definitions: Definition[] = [
     title: "OTP Field",
   },
   {
+    api: ["ThemeToggle", "ThemeSwitcher", "ThemeControlProps"],
+    categories: ["controls"],
+    description:
+      "Switches between light and dark themes or follows the system setting.",
+    name: "theme-switcher",
+    registryDependencies: [
+      "button",
+      "toggle-group",
+      "theme",
+      "use-event-callback",
+    ],
+    title: "Theme Switcher",
+  },
+  {
     api: ["toggleVariants", "Toggle", "ToggleVariantProps", "TogglePrimitive"],
     categories: ["controls"],
     description:
@@ -488,6 +502,7 @@ const lucideComponents = new Set([
   "native-select",
   "number-field",
   "rating",
+  "theme-switcher",
 ])
 
 export const displayFormItems: SourceItem[] = definitions.map(
